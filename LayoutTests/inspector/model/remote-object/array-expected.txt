@@ -1,0 +1,778 @@
+
+-----------------------------------------------------
+EXPRESSION: []
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 0,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 0,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [0, -0, 1, 2]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "-0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "2"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[1],[2],[3]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "3"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [true, 1, 1.234, "string", /regex/]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 5,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 5,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "boolean",
+        "_value": "true"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1.234"
+      },
+      {
+        "_name": "3",
+        "_type": "string",
+        "_value": "string"
+      },
+      {
+        "_name": "4",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[null]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "object",
+              "_subtype": "null",
+              "_value": "null"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[undefined]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "undefined",
+              "_value": "undefined"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [{a:1}, {b:2}, {c:2}]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "1",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "c",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 3,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "a",
+                    "_type": "number",
+                    "_value": "1"
+                  }
+                ],
+                "_entries": null
+              }
+            },
+            {
+              "_name": "1",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "b",
+                    "_type": "number",
+                    "_value": "2"
+                  }
+                ],
+                "_entries": null
+              }
+            },
+            {
+              "_name": "2",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "c",
+                    "_type": "number",
+                    "_value": "2"
+                  }
+                ],
+                "_entries": null
+              }
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr[0] = arr; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 100,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 100,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 100,
+    "_properties": [
+      {
+        "_name": "10",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: a = null; (function() { a = arguments; })(1, "2", /3/); a
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Arguments",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Arguments",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "1",
+        "_type": "string",
+        "_value": "2"
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/3/"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Int32Array(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Uint8ClampedArray(12)
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Uint8ClampedArray",
+  "_size": 12,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Uint8ClampedArray",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 12,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "2"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "3"
+      }
+    ],
+    "_entries": null
+  }
+}
+

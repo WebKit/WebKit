@@ -147,7 +147,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
                     other.disabled = true;
 
                 let spinner = new WI.IndeterminateProgressSpinner;
-                button.insertAdjacentElement("afterend", spinner.element);
+                buttons.lastValue.insertAdjacentElement("afterend", spinner.element);
 
                 handleClick();
             });

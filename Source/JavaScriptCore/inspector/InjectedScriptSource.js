@@ -591,10 +591,24 @@ let InjectedScript = class InjectedScript
         if (isSymbol(object))
             return false;
 
-        let descriptors = this._propertyDescriptors(object, collectionMode, {fetchStart, fetchCount, nativeGettersAsValues});
+        let start = fetchStart || 0;
+        if (start < 0)
+            start = 0;
 
-        for (let i = 0; i < descriptors.length; ++i) {
-            let descriptor = descriptors[i];
+        let count = fetchCount || 0;
+        if (count < 0)
+            count = 0;
+
+        // Always include __proto__ at the end, but only for the first fetch.
+        let includeProto = !start;
+
+        let descriptors = [];
+        this._forEachPropertyDescriptor(object, collectionMode, (descriptor) => {
+            if (start > 0) {
+                --start;
+                return InjectedScript.PropertyFetchAction.Continue;
+            }
+
             if ("get" in descriptor)
                 descriptor.get = RemoteObject.create(descriptor.get, objectGroupName);
             if ("set" in descriptor)
@@ -603,8 +617,13 @@ let InjectedScript = class InjectedScript
                 descriptor.value = RemoteObject.create(descriptor.value, objectGroupName, false, generatePreview);
             if ("symbol" in descriptor)
                 descriptor.symbol = RemoteObject.create(descriptor.symbol, objectGroupName);
-        }
+            descriptors.push(descriptor);
 
+            if (includeProto && count && descriptors.length >= count && descriptor.name !== "__proto__")
+                return InjectedScript.PropertyFetchAction.Stop;
+
+            return (count && descriptors.length >= count) ? InjectedScript.PropertyFetchAction.Stop : InjectedScript.PropertyFetchAction.Continue;
+        }, {nativeGettersAsValues, includeProto});
         return descriptors;
     }
 
@@ -625,23 +644,15 @@ let InjectedScript = class InjectedScript
         return descriptors;
     }
 
-    _propertyDescriptors(object, collectionMode, {fetchStart, fetchCount, nativeGettersAsValues})
+    _forEachPropertyDescriptor(object, collectionMode, callback, {nativeGettersAsValues, includeProto})
     {
         if (InjectedScriptHost.subtype(object) === "proxy")
-            return [];
+            return;
 
-        let descriptors = [];
         let nameProcessed = new Set;
 
-        let start = fetchStart || 0;
-        if (start < 0)
-            start = 0;
-
-        let count = fetchCount || 0;
-        if (count < 0)
-            count = 0;
-        else if (count > 0 && start > 0)
-            count += start;
+        // Handled below when `includeProto`.
+        nameProcessed.add("__proto__");
 
         function createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
@@ -678,77 +689,53 @@ let InjectedScript = class InjectedScript
         function processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             // All properties.
-            if (collectionMode & InjectedScript.CollectionMode.AllProperties) {
-                descriptors.push(descriptor);
-                return;
-            }
+            if (collectionMode & InjectedScript.CollectionMode.AllProperties)
+                return callback(descriptor);
 
             // Own properties.
-            if (collectionMode & InjectedScript.CollectionMode.OwnProperties && isOwnProperty) {
-                descriptors.push(descriptor);
-                return;
-            }
+            if (collectionMode & InjectedScript.CollectionMode.OwnProperties && isOwnProperty)
+                return callback(descriptor);
 
             // Native Getter properties.
             if (collectionMode & InjectedScript.CollectionMode.NativeGetterProperties) {
-                if (possibleNativeBindingGetter) {
-                    descriptors.push(descriptor);
-                    return;
-                }
+                if (possibleNativeBindingGetter)
+                    return callback(descriptor);
             }
         }
 
-        function processProperties(o, properties, isOwnProperty)
+        function processProperty(o, propertyName, isOwnProperty)
         {
-            for (let i = 0; i < properties.length; ++i) {
-                if (count && descriptors.length === count)
-                    break;
+            if (nameProcessed.has(propertyName))
+                return InjectedScript.PropertyFetchAction.Continue;
 
-                let property = properties[i];
-                if (nameProcessed.has(property) || property === "__proto__")
-                    continue;
+            nameProcessed.add(propertyName);
 
-                nameProcessed.add(property);
+            let name = toString(propertyName);
+            let symbol = isSymbol(propertyName) ? propertyName : null;
 
-                let name = toString(property);
-                let symbol = isSymbol(property) ? property : null;
-
-                let descriptor = Object.getOwnPropertyDescriptor(o, property);
-                if (!descriptor) {
-                    // FIXME: Bad descriptor. Can we get here?
-                    // Fall back to very restrictive settings.
-                    let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty);
-                    processDescriptor(fakeDescriptor, isOwnProperty);
-                    continue;
-                }
-
-                if (nativeGettersAsValues) {
-                    if (String(descriptor.get).endsWith("[native code]\n}") || (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
-                        // Developers may create such a descriptor, so we should be resilient:
-                        // let x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
-                        let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
-                        processDescriptor(fakeDescriptor, isOwnProperty, true);
-                        continue;
-                    }
-                }
-
-                descriptor.name = name;
-                if (isOwnProperty)
-                    descriptor.isOwn = true;
-                if (symbol)
-                    descriptor.symbol = symbol;
-                processDescriptor(descriptor, isOwnProperty);
+            let descriptor = Object.getOwnPropertyDescriptor(o, propertyName);
+            if (!descriptor) {
+                // FIXME: Bad descriptor. Can we get here?
+                // Fall back to very restrictive settings.
+                let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty);
+                return processDescriptor(fakeDescriptor, isOwnProperty);
             }
-        }
 
-        function arrayIndexPropertyNames(o, length)
-        {
-            let array = [];
-            for (let i = 0; i < length; ++i) {
-                if (i in o)
-                    array.push("" + i);
+            if (nativeGettersAsValues) {
+                if (String(descriptor.get).endsWith("[native code]\n}") || (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
+                    // Developers may create such a descriptor, so we should be resilient:
+                    // let x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
+                    let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
+                    return processDescriptor(fakeDescriptor, isOwnProperty, true);
+                }
             }
-            return array;
+
+            descriptor.name = name;
+            if (isOwnProperty)
+                descriptor.isOwn = true;
+            if (symbol)
+                descriptor.symbol = symbol;
+            return processDescriptor(descriptor, isOwnProperty);
         }
 
         let isArrayLike = false;
@@ -758,37 +745,55 @@ let InjectedScript = class InjectedScript
 
         for (let o = object; isDefined(o); o = Object.getPrototypeOf(o)) {
             let isOwnProperty = o === object;
+            let shouldBreak = false;
 
             // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
-            if (isArrayLike && isOwnProperty)
-                processProperties(o, arrayIndexPropertyNames(o, object.length), isOwnProperty);
-            else
-                processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
+            if (isArrayLike && isOwnProperty) {
+                for (let i = 0; i < o.length; ++i) {
+                    if (!(i in o))
+                        continue;
 
-            if (count && descriptors.length === count)
+                    let result = processProperty(o, toString(i), isOwnProperty);
+                    shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                    if (shouldBreak)
+                        break;
+                }
+            } else {
+                let propertyNames = Object.getOwnPropertyNames(o);
+                for (let i = 0; i < propertyNames.length; ++i) {
+                    let result = processProperty(o, propertyNames[i], isOwnProperty);
+                    shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                    if (shouldBreak)
+                        break;
+                }
+            }
+
+            if (shouldBreak)
                 break;
 
             if (Object.getOwnPropertySymbols) {
-                processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
-
-                if (count && descriptors.length === count)
-                    break;
+                let propertySymbols = Object.getOwnPropertySymbols(o);
+                for (let i = 0; i < propertySymbols.length; ++i) {
+                    let result = processProperty(o, propertySymbols[i], isOwnProperty);
+                    shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                    if (shouldBreak)
+                        break;
+                }
             }
+
+            if (shouldBreak)
+                break;
 
             if (collectionMode === InjectedScript.CollectionMode.OwnProperties)
                 break;
         }
 
-        // Always include __proto__ at the end, but only for the first fetch.
-        if (!start) {
+        if (includeProto) {
             try {
                 if (object.__proto__)
-                    descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, isOwn: true});
+                    callback({name: "__proto__", value: object.__proto__, writable: true, configurable: true, isOwn: true});
             } catch { }
-            return descriptors;
         }
-
-        return descriptors.slice(start);
     }
 
     _getSetEntries(object, fetchStart, fetchCount)
@@ -889,6 +894,11 @@ InjectedScript.CollectionMode = {
     NativeGetterProperties: 1 << 1, // native getter properties in the prototype chain.
     AllProperties: 1 << 2,          // all properties in the prototype chain.
 };
+
+InjectedScript.PropertyFetchAction = {
+    Continue: Symbol("continue"),
+    Stop: Symbol("stop"),
+}
 
 var injectedScript = new InjectedScript;
 
@@ -1141,19 +1151,20 @@ let RemoteObject = class RemoteObject
             // Internal Properties.
             let internalPropertyDescriptors = injectedScript._internalPropertyDescriptors(object, true);
             if (internalPropertyDescriptors) {
-                this._appendPropertyPreviews(object, preview, internalPropertyDescriptors, true, propertiesThreshold, firstLevelKeys, secondLevelKeys);
-                if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
-                    return preview;
+                for (let i = 0; i < internalPropertyDescriptors.length; ++i) {
+                    let result = this._appendPropertyPreview(object, preview, internalPropertyDescriptors[i], propertiesThreshold, firstLevelKeys, secondLevelKeys, {internal: true});
+                    if (result === InjectedScript.PropertyFetchAction.Stop)
+                        return preview;
+                }
             }
 
             if (preview.entries)
                 return preview;
 
             // Properties.
-            let descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties, {nativeGettersAsValues: true});
-            this._appendPropertyPreviews(object, preview, descriptors, false, propertiesThreshold, firstLevelKeys, secondLevelKeys);
-            if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
-                return preview;
+            injectedScript._forEachPropertyDescriptor(object, InjectedScript.CollectionMode.AllProperties, (descriptor) => {
+                return this._appendPropertyPreview(object, preview, descriptor, propertiesThreshold, firstLevelKeys, secondLevelKeys);
+            }, {nativeGettersAsValues: true, includeProto: true})
         } catch {
             preview.lossless = false;
         }
@@ -1161,145 +1172,132 @@ let RemoteObject = class RemoteObject
         return preview;
     }
 
-    _appendPropertyPreviews(object, preview, descriptors, internal, propertiesThreshold, firstLevelKeys, secondLevelKeys)
+    _appendPropertyPreview(object, preview, descriptor, propertiesThreshold, firstLevelKeys, secondLevelKeys, {internal} = {})
     {
-        for (let i = 0; i < descriptors.length; ++i) {
-            let descriptor = descriptors[i];
-
-            // Seen enough.
-            if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
-                break;
-
-            // Error in descriptor.
-            if (descriptor.wasThrown) {
-                preview.lossless = false;
-                continue;
-            }
-
-            // Do not show "__proto__" in preview.
-            let name = descriptor.name;
-            if (name === "__proto__") {
-                // Non basic __proto__ objects may have interesting, non-enumerable, methods to show.
-                if (descriptor.value && descriptor.value.constructor
-                    && descriptor.value.constructor !== Object
-                    && descriptor.value.constructor !== Array
-                    && descriptor.value.constructor !== RegExp)
-                    preview.lossless = false;
-                continue;
-            }
-
-            // For arrays, only allow indexes.
-            if (this.subtype === "array" && !isUInt32(name))
-                continue;
-
-            // Do not show non-enumerable non-own properties.
-            // Special case to allow array indexes that may be on the prototype.
-            // Special case to allow native getters on non-RegExp objects.
-            if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" || (this.subtype !== "regexp" && descriptor.nativeGetter)))
-                continue;
-
-            // If we have a filter, only show properties in the filter.
-            // FIXME: Currently these filters do nothing on the backend.
-            if (firstLevelKeys && !firstLevelKeys.includes(name))
-                continue;
-
-            // Getter/setter.
-            if (!("value" in descriptor)) {
-                preview.lossless = false;
-                this._appendPropertyPreview(preview, internal, {name, type: "accessor"}, propertiesThreshold);
-                continue;
-            }
-
-            // Null value.
-            let value = descriptor.value;
-            if (value === null) {
-                this._appendPropertyPreview(preview, internal, {name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
-                continue;
-            }
-
-            // Ignore non-enumerable functions.
-            let type = typeof value;
-            if (!descriptor.enumerable && type === "function")
-                continue;
-
-            // Fix type of document.all.
-            if (InjectedScriptHost.isHTMLAllCollection(value))
-                type = "object";
-
-            // Primitive.
-            const maxLength = 100;
-            if (isPrimitiveValue(value) || isBigInt(value)) {
-                if (type === "string" && value.length > maxLength) {
-                    value = this._abbreviateString(value, maxLength, true);
-                    preview.lossless = false;
-                }
-                this._appendPropertyPreview(preview, internal, {name, type, value: toStringDescription(value)}, propertiesThreshold);
-                continue;
-            }
-
-            // Symbol.
-            if (isSymbol(value)) {
-                let symbolString = toString(value);
-                if (symbolString.length > maxLength) {
-                    symbolString = this._abbreviateString(symbolString, maxLength, true);
-                    preview.lossless = false;
-                }
-                this._appendPropertyPreview(preview, internal, {name, type, value: symbolString}, propertiesThreshold);
-                continue;
-            }
-
-            // Object.
-            let property = {name, type};
-            let subtype = RemoteObject.subtype(value);
-            if (subtype)
-                property.subtype = subtype;
-
-            // Second level.
-            if ((secondLevelKeys === null || secondLevelKeys) || this._isPreviewableObject(value, object)) {
-                // FIXME: If we want secondLevelKeys filter to continue we would need some refactoring.
-                let subPreview = RemoteObject.createObjectPreviewForValue(value, value !== object, secondLevelKeys);
-                property.valuePreview = subPreview;
-                if (!subPreview.lossless)
-                    preview.lossless = false;
-                if (subPreview.overflow)
-                    preview.overflow = true;
-            } else {
-                let description = "";
-                if (type !== "function" || subtype === "class") {
-                    let fullDescription;
-                    if (subtype === "class")
-                        fullDescription = "class " + value.name;
-                    else if (subtype === "node")
-                        fullDescription = RemoteObject.nodePreview(value);
-                    else
-                        fullDescription = RemoteObject.describe(value);
-                    description = this._abbreviateString(fullDescription, maxLength, subtype === "regexp");
-                }
-                property.value = description;
-                preview.lossless = false;
-            }
-
-            this._appendPropertyPreview(preview, internal, property, propertiesThreshold);
-        }
-    }
-
-    _appendPropertyPreview(preview, internal, property, propertiesThreshold)
-    {
-        if (toString(property.name >>> 0) === property.name)
-            propertiesThreshold.indexes--;
-        else
-            propertiesThreshold.properties--;
-
-        if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0) {
-            preview.overflow = true;
+        // Error in descriptor.
+        if (descriptor.wasThrown) {
             preview.lossless = false;
-            return;
+            return InjectedScript.PropertyFetchAction.Continue;
         }
 
-        if (internal)
-            property.internal = true;
+        // Do not show "__proto__" in preview.
+        let name = descriptor.name;
+        if (name === "__proto__") {
+            // Non basic __proto__ objects may have interesting, non-enumerable, methods to show.
+            if (descriptor.value && descriptor.value.constructor
+                && descriptor.value.constructor !== Object
+                && descriptor.value.constructor !== Array
+                && descriptor.value.constructor !== RegExp)
+                preview.lossless = false;
+            return InjectedScript.PropertyFetchAction.Continue;
+        }
 
-        preview.properties.push(property);
+        // For arrays, only allow indexes.
+        if (this.subtype === "array" && !isUInt32(name))
+            return InjectedScript.PropertyFetchAction.Continue;
+
+        // Do not show non-enumerable non-own properties.
+        // Special case to allow array indexes that may be on the prototype.
+        // Special case to allow native getters on non-RegExp objects.
+        if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" || (this.subtype !== "regexp" && descriptor.nativeGetter)))
+            return InjectedScript.PropertyFetchAction.Continue;
+
+        // If we have a filter, only show properties in the filter.
+        // FIXME: Currently these filters do nothing on the backend.
+        if (firstLevelKeys && !firstLevelKeys.includes(name))
+            return InjectedScript.PropertyFetchAction.Continue;
+
+        function appendPreview(property) {
+            if (toString(property.name >>> 0) === property.name)
+                propertiesThreshold.indexes--;
+            else
+                propertiesThreshold.properties--;
+
+            if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0) {
+                preview.overflow = true;
+                preview.lossless = false;
+                return InjectedScript.PropertyFetchAction.Stop;
+            }
+
+            if (internal)
+                property.internal = true;
+
+            preview.properties.push(property);
+            return InjectedScript.PropertyFetchAction.Continue;
+        }
+
+        // Getter/setter.
+        if (!("value" in descriptor)) {
+            preview.lossless = false;
+            return appendPreview({name, type: "accessor"});
+        }
+
+        // Null value.
+        let value = descriptor.value;
+        if (value === null)
+            return appendPreview({name, type: "object", subtype: "null", value: "null"});
+
+        // Ignore non-enumerable functions.
+        let type = typeof value;
+        if (!descriptor.enumerable && type === "function")
+            return InjectedScript.PropertyFetchAction.Continue;
+
+        // Fix type of document.all.
+        if (InjectedScriptHost.isHTMLAllCollection(value))
+            type = "object";
+
+        // Primitive.
+        const maxLength = 100;
+        if (isPrimitiveValue(value) || isBigInt(value)) {
+            if (type === "string" && value.length > maxLength) {
+                value = this._abbreviateString(value, maxLength, true);
+                preview.lossless = false;
+            }
+            return appendPreview({name, type, value: toStringDescription(value)});
+        }
+
+        // Symbol.
+        if (isSymbol(value)) {
+            let symbolString = toString(value);
+            if (symbolString.length > maxLength) {
+                symbolString = this._abbreviateString(symbolString, maxLength, true);
+                preview.lossless = false;
+            }
+            return appendPreview({name, type, value: symbolString});
+        }
+
+        // Object.
+        let property = {name, type};
+        let subtype = RemoteObject.subtype(value);
+        if (subtype)
+            property.subtype = subtype;
+
+        // Second level.
+        if ((secondLevelKeys === null || secondLevelKeys) || this._isPreviewableObject(value, object)) {
+            // FIXME: If we want secondLevelKeys filter to continue we would need some refactoring.
+            let subPreview = RemoteObject.createObjectPreviewForValue(value, value !== object, secondLevelKeys);
+            property.valuePreview = subPreview;
+            if (!subPreview.lossless)
+                preview.lossless = false;
+            if (subPreview.overflow)
+                preview.overflow = true;
+        } else {
+            let description = "";
+            if (type !== "function" || subtype === "class") {
+                let fullDescription;
+                if (subtype === "class")
+                    fullDescription = "class " + value.name;
+                else if (subtype === "node")
+                    fullDescription = RemoteObject.nodePreview(value);
+                else
+                    fullDescription = RemoteObject.describe(value);
+                description = this._abbreviateString(fullDescription, maxLength, subtype === "regexp");
+            }
+            property.value = description;
+            preview.lossless = false;
+        }
+
+        return appendPreview(property);
     }
 
     _appendEntryPreviews(object, preview)

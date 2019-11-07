@@ -1,0 +1,37 @@
+
+-----------------------------------------------------
+EXPRESSION: new Date(99)
+{
+  "_type": "object",
+  "_subtype": "date",
+  "_objectId": "<filtered>",
+  "_description": "Wed Dec 31 1969 16:00:00 GMT-0800 (PST)",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "date",
+    "_description": "Wed Dec 31 1969 16:00:00 GMT-0800 (PST)",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Date(1421903245871)
+{
+  "_type": "object",
+  "_subtype": "date",
+  "_objectId": "<filtered>",
+  "_description": "Wed Jan 21 2015 21:07:25 GMT-0800 (PST)",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "date",
+    "_description": "Wed Jan 21 2015 21:07:25 GMT-0800 (PST)",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+

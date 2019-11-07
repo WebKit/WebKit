@@ -43,7 +43,7 @@ function test()
 
                 let properties = getPropertiesResponse.properties;
                 if (properties) {
-                    ProtocolTest.assert(!fetchCount || properties.length <= fetchCount, `Should only get ${fetchCount} properties.`);
+                    ProtocolTest.assert(!fetchCount || properties.length <= fetchCount + (fetchStart ? 0 : 1), `Should only get ${fetchCount} properties.`);
 
                     ProtocolTest.log("Properties:");
                     properties.forEach(ProtocolTest.PropertyDescriptorUtilities.logForEach);

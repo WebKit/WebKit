@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
+<script>
+function test()
+{
+    let steps = [
+        {expression: `[]`},
+        {expression: `[0, -0, 1, 2]`},
+        {expression: `[[1],[2],[3]]`},
+        {expression: `[true, 1, 1.234, "string", /regex/]`},
+        {expression: `[[null]]`},
+        {expression: `[[undefined]]`},
+        {expression: `[{a:1}, {b:2}, {c:2}]`},
+        {expression: `[[{a:1}, {b:2}, {c:2}]]`},
+        {expression: `arr = []; arr[0] = arr; arr`}, // cyclic
+        {expression: `arr = []; arr.length = 100; arr`}, // 100 empty elements
+        {expression: `arr = []; arr.length = 100; arr.fill(1)`}, // 100 full elements
+        {expression: `arr = []; arr.length = 100; arr[10] = 1; arr`}, // sparse
+        {expression: `a = null; (function() { a = arguments; })(1, "2", /3/); a`}, // arguments
+        {expression: `new Int32Array(new ArrayBuffer(16))`},
+        {expression: `new Uint8ClampedArray(12)`},
+        {expression: `var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray`},
+    ];
+
+    if (!window.WI) {
+        window.steps = steps;
+        return;
+    }
+
+    runSteps(steps);
+}
+</script>
+</head>
+<body onload="runTest(); runInBrowserTest();"></body>
+</html>

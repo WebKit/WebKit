@@ -1,3 +1,82 @@
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r250087): inspector/model/remote-object.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=202934
+        <rdar://problem/56270900>
+
+        Reviewed by Timothy Hatcher.
+
+        Split inspector/model/remote-object.html into separate tests for each type of object being
+        tested, as well as specialized tests for extremely large values. This allows us to better
+        know which specific expression can cause a timeout.
+
+        * inspector/model/remote-object.html: Removed.
+        * inspector/model/remote-object-expected.txt: Removed.
+        * platform/mac-wk1/inspector/model/remote-object-expected.txt: Removed.
+
+        * inspector/model/remote-object/array.html: Added.
+        * inspector/model/remote-object/array-expected.txt: Added.
+        * inspector/model/remote-object/array-large.html: Added.
+        * inspector/model/remote-object/array-large-expected.txt: Added.
+        * inspector/model/remote-object/boolean.html: Added.
+        * inspector/model/remote-object/boolean-expected.txt: Added.
+        * inspector/model/remote-object/class.html: Added.
+        * inspector/model/remote-object/class-expected.txt: Added.
+        * inspector/model/remote-object/date.html: Added.
+        * inspector/model/remote-object/date-expected.txt: Added.
+        * inspector/model/remote-object/error.html: Added.
+        * inspector/model/remote-object/error-expected.txt: Added.
+        * inspector/model/remote-object/function.html: Added.
+        * inspector/model/remote-object/function-expected.txt: Added.
+        * inspector/model/remote-object/immutable.html: Added.
+        * inspector/model/remote-object/immutable-expected.txt: Added.
+        * inspector/model/remote-object/iterator.html: Added.
+        * inspector/model/remote-object/iterator-expected.txt:  Added.
+        * inspector/model/remote-object/iterator-large.html: Added.
+        * inspector/model/remote-object/iterator-large-expected.txt: Added.
+        * inspector/model/remote-object/map.html: Added.
+        * inspector/model/remote-object/map-expected.txt: Added.
+        * inspector/model/remote-object/map-large.html: Added.
+        * inspector/model/remote-object/map-large-expected.txt: Added.
+        * inspector/model/remote-object/null.html: Added.
+        * inspector/model/remote-object/null-expected.txt: Added.
+        * inspector/model/remote-object/number.html: Added.
+        * inspector/model/remote-object/number-expected.txt: Added.
+        * platform/mac-wk1/inspector/number-expected.txt: Added.
+        * inspector/model/remote-object/object.html: Added.
+        * inspector/model/remote-object/object-expected.txt: Added.
+        * inspector/model/remote-object/object-large.html: Added.
+        * inspector/model/remote-object/object-large-expected.txt: Added.
+        * inspector/model/remote-object/promise.html: Added.
+        * inspector/model/remote-object/promise-expected.txt: Added.
+        * inspector/model/remote-object/regexp.html: Added.
+        * inspector/model/remote-object/regexp-expected.txt: Added.
+        * inspector/model/remote-object/set.html: Added.
+        * inspector/model/remote-object/set-expected.txt: Added.
+        * inspector/model/remote-object/set-large.html: Added.
+        * inspector/model/remote-object/set-large-expected.txt: Added.
+        * inspector/model/remote-object/string.html: Added.
+        * inspector/model/remote-object/string-expected.txt: Added.
+        * inspector/model/remote-object/string-large.html: Added.
+        * inspector/model/remote-object/string-large-expected.txt: Added.
+        * inspector/model/remote-object/undefined.html: Added.
+        * inspector/model/remote-object/undefined-expected.txt: Added.
+
+        * inspector/model/remote-object/dom.html: Renamed from LayoutTests/inspector/model/remote-object-dom.html.
+        * inspector/model/remote-object/dom-expected.txt: Renamed from LayoutTests/inspector/model/remote-object-dom-expected.txt.
+        * inspector/model/remote-object/iterators-mutated.html: Renamed from LayoutTests/inspector/model/remote-object-mutated-iterators.html.
+        * inspector/model/remote-object/iterators-mutated-expected.txt: Renamed from LayoutTests/inspector/model/remote-object-mutated-iterators-expected.txt.
+
+        * inspector/model/remote-object/resources/remote-object-utilities.js: Renamed from LayoutTests/inspector/model/resources/remote-object-utilities.js.
+
+        * inspector/runtime/getDisplayableProperties.html:
+        * inspector/runtime/getDisplayableProperties-expected.txt:
+        * inspector/runtime/getProperties.html:
+        * inspector/runtime/getProperties-expected.txt:
+        Drive-by: fix assertion for when the `__proto__` is included if `fetchStart` is 0.
+
+        * TestExpectations:
+
 2019-11-07  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         didPassSomeTestsSilenty and didFaileSomeTests are misspelled in standalone-pre.js

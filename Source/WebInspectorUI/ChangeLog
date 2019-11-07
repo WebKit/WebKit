@@ -1,5 +1,17 @@
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r250087): inspector/model/remote-object.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=202934
+        <rdar://problem/56270900>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.addShowMoreIfNeeded):
+        Drive-by: ensure that the indeterminate progress spinner is added after the last button.
+
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r249451): missing "Reveal in DOM Tree" on nodes logged to the console
         https://bugs.webkit.org/show_bug.cgi?id=203836
 

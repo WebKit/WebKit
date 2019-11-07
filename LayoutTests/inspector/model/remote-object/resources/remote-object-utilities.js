@@ -15,13 +15,15 @@ function runInBrowserTest() {
 }
 
 TestPage.registerInitializer(() => {
-    function remoteObjectJSONFilter(key, value) {
+    function remoteObjectJSONFilter(filter, key, value) {
         if (key === "_target" || key === "_hasChildren" || key === "_listeners")
             return undefined;
         if (key === "_objectId" || key === "_stackTrace")
             return "<filtered>";
         if (typeof value === "bigint")
             return "<filtered " + String(value) + "n>";
+        if (filter && filter(key, value))
+            return "<filtered>";
         return value;
     }
 
@@ -33,18 +35,20 @@ TestPage.registerInitializer(() => {
                 InspectorTest.completeTest();
         }
 
-        for (let {expression, browserOnly} of steps) {
+        for (let {expression, browserOnly, filter} of steps) {
             if (browserOnly) {
                 checkComplete();
                 continue;
             }
+
+            filter = remoteObjectJSONFilter.bind(null, filter);
 
             WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, (remoteObject, wasThrown) => {
                 InspectorTest.log("");
                 InspectorTest.log("-----------------------------------------------------");
                 InspectorTest.log("EXPRESSION: " + expression);
                 InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
-                InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, 2));
+                InspectorTest.log(JSON.stringify(remoteObject, filter, 2));
                 checkComplete();
             });
         }

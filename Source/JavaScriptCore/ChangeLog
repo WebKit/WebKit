@@ -1,3 +1,35 @@
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r250087): inspector/model/remote-object.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=202934
+        <rdar://problem/56270900>
+
+        Reviewed by Timothy Hatcher.
+
+        In r250087, the inspector injected script was changed so that remote objects actually
+        iterate the keys of an array and generate a property descriptor for each. While this worked
+        fine (and was performant) for fetching remote objects, this was not efficient when creating
+        object previews, as that path wouldn't be limited by any sort of `fetchCount`, meaning that
+        a descriptor for every index would be created even though only the first 10 would be used.
+
+        Refactor the inspector injected script code so that both the fetch and preview paths only
+        examine exactly the number of properties desired instead of considering all of them and then
+        slicing to fit.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._getProperties):
+        (InjectedScript.prototype._forEachPropertyDescriptor): Added.
+        (InjectedScript.prototype._forEachPropertyDescriptor.createFakeValueDescriptor): Added.
+        (InjectedScript.prototype._forEachPropertyDescriptor.processDescriptor): Added.
+        (InjectedScript.prototype._forEachPropertyDescriptor.processProperty): Added.
+        (RemoteObject.prototype._generatePreview):
+        (RemoteObject.prototype._appendPropertyPreview): Added.
+        (RemoteObject.prototype._appendPropertyPreview.appendPreview): Added.
+        (InjectedScript.prototype._propertyDescriptors): Deleted.
+        (InjectedScript.prototype._propertyDescriptors.processProperties): Deleted.
+        (InjectedScript.prototype._propertyDescriptors.arrayIndexPropertyNames): Deleted.
+        (RemoteObject.prototype._appendPropertyPreviews): Deleted.
+
 2019-11-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [[HasProperty]] result of Proxy in prototype chain is ignored

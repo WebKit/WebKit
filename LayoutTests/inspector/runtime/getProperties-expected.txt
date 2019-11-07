@@ -149,7 +149,6 @@ Properties:
 -- Running test case: Runtime.getProperties.fetchCount.Object
 Evaluating expression...
 Getting own properties with fetchCount 5...
-ASSERT: Should only get 5 properties.
 Properties:
     "A"          =>  0 (number)  [writable | enumerable | configurable | isOwn]
     "Y"          =>  1 (number)  [writable | enumerable | configurable | isOwn]
@@ -180,7 +179,6 @@ Properties:
 -- Running test case: Runtime.getProperties.fetchCount.Array
 Evaluating expression...
 Getting own properties with fetchCount 5...
-ASSERT: Should only get 5 properties.
 Properties:
     "0"          =>  "A" (string)  [writable | enumerable | configurable | isOwn]
     "1"          =>  "Y" (string)  [writable | enumerable | configurable | isOwn]

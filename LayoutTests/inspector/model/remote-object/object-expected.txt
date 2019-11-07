@@ -1,0 +1,345 @@
+
+-----------------------------------------------------
+EXPRESSION: ({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: 0, c: -0, d: 456n})
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "SyntaxError: No identifiers allowed directly after numeric literal"
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol("sym")})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "string",
+        "_value": "string"
+      },
+      {
+        "_name": "c",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
+      },
+      {
+        "_name": "d",
+        "_type": "symbol",
+        "_value": "Symbol(sym)"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: o = {a:1}; o.b = o; o
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "object",
+        "_value": "Object"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "b",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "getter",
+        "_type": "accessor"
+      },
+      {
+        "_name": "setter",
+        "_type": "accessor"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Foo() {}; new Foo
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo",
+  "_preview": {
+    "_type": "object",
+    "_description": "Foo",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var Foo2 = function() {}; new Foo2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo2",
+  "_preview": {
+    "_type": "object",
+    "_description": "Foo2",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Foo3
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar",
+  "_preview": {
+    "_type": "object",
+    "_description": "Bar",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
+      },
+      {
+        "_name": "constructor",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "x",
+        "_type": "accessor"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return this._x;}}; new Bar2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar2",
+  "_preview": {
+    "_type": "object",
+    "_description": "Bar2",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new ArrayBuffer(16)
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "ArrayBuffer",
+  "_preview": {
+    "_type": "object",
+    "_description": "ArrayBuffer",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new DataView(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "DataView",
+  "_preview": {
+    "_type": "object",
+    "_description": "DataView",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
+      },
+      {
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: obj = {}; obj["prop"] = 1; obj[Symbol()] = 2; obj[Symbol("sym")] = 3; obj[Symbol("sym")] = 4; obj[Symbol.iterator] = Symbol(); obj
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "prop",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "Symbol()",
+        "_type": "number",
+        "_value": "2"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "4"
+      },
+      {
+        "_name": "Symbol(Symbol.iterator)",
+        "_type": "symbol",
+        "_value": "Symbol()"
+      }
+    ],
+    "_entries": null
+  }
+}
+

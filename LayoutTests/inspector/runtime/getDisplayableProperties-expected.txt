@@ -163,7 +163,6 @@ Properties:
 -- Running test case: Runtime.getDisplayableProperties.fetchCount.Object
 Evaluating expression...
 Getting displayable properties with fetchCount 5...
-ASSERT: Should only get 5 properties.
 Properties:
     "A"          =>  0 (number)  [writable | enumerable | configurable | isOwn]
     "Y"          =>  1 (number)  [writable | enumerable | configurable | isOwn]
@@ -194,7 +193,6 @@ Properties:
 -- Running test case: Runtime.getDisplayableProperties.fetchCount.Array
 Evaluating expression...
 Getting displayable properties with fetchCount 5...
-ASSERT: Should only get 5 properties.
 Properties:
     "0"          =>  "A" (string)  [writable | enumerable | configurable | isOwn]
     "1"          =>  "Y" (string)  [writable | enumerable | configurable | isOwn]
