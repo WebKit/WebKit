@@ -299,7 +299,7 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
 
     interface.setTargetIsFullscreen(false);
 
-    if (interface.animationState() == VideoFullscreenInterfaceContext::AnimationType::FromFullscreen)
+    if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None)
         return;
     interface.setAnimationState(VideoFullscreenInterfaceContext::AnimationType::FromFullscreen);
     m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)));
