@@ -1525,7 +1525,7 @@ void WebProcessProxy::startBackgroundActivityForFullscreenInput()
     if (m_backgroundActivityForFullscreenFormControls)
         return;
 
-    m_backgroundActivityForFullscreenFormControls = m_throttler.backgroundActivity("Fullscreen input"_s);
+    m_backgroundActivityForFullscreenFormControls = m_throttler.backgroundActivity("Fullscreen input"_s).moveToUniquePtr();
     RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because it is presenting fullscreen UI for form controls.");
 }
 

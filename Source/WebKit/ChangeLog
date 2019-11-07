@@ -1,3 +1,10 @@
+2019-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix watchOS build after r252011.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::startBackgroundActivityForFullscreenInput):
+
 2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WEBCORE_TESTSUPPORT_EXPORT should be used only for WebCoreTestSupport, not for WebCore
