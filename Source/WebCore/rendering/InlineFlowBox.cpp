@@ -1367,7 +1367,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
     // Shadow comes first and is behind the background and border.
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
-        paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
+        paintBoxShadow(paintInfo, lineStyle, ShadowStyle::Normal, paintRect);
 
     auto color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
     auto compositeOp = renderer().document().compositeOperatorForBackgroundColor(color, renderer());
@@ -1375,7 +1375,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     color = lineStyle.colorByApplyingColorFilter(color);
 
     paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect, compositeOp);
-    paintBoxShadow(paintInfo, lineStyle, Inset, paintRect);
+    paintBoxShadow(paintInfo, lineStyle, ShadowStyle::Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
     // non-first-line style.

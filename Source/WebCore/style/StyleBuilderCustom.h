@@ -829,17 +829,17 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& shadowValue = downcast<CSSShadowValue>(item.get());
         auto conversionData = builderState.cssToLengthConversionData();
-        int x = shadowValue.x->computeLength<int>(conversionData);
-        int y = shadowValue.y->computeLength<int>(conversionData);
+        auto x = shadowValue.x->computeLength<LayoutUnit>(conversionData);
+        auto y = shadowValue.y->computeLength<LayoutUnit>(conversionData);
         int blur = shadowValue.blur ? shadowValue.blur->computeLength<int>(conversionData) : 0;
-        int spread = shadowValue.spread ? shadowValue.spread->computeLength<int>(conversionData) : 0;
-        ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? Inset : Normal;
+        auto spread = shadowValue.spread ? shadowValue.spread->computeLength<LayoutUnit>(conversionData) : LayoutUnit(0);
+        ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
         Color color;
         if (shadowValue.color)
             color = builderState.colorFromPrimitiveValue(*shadowValue.color);
         else
             color = builderState.style().color();
-        auto shadowData = makeUnique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
+        auto shadowData = makeUnique<ShadowData>(LayoutPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else

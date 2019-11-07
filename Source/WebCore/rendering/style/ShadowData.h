@@ -30,25 +30,19 @@
 
 namespace WebCore {
 
-enum ShadowStyle { Normal, Inset };
+enum class ShadowStyle : uint8_t { Normal, Inset };
 
 // This class holds information about shadows for the text-shadow and box-shadow properties.
 
 class ShadowData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ShadowData()
-        : m_radius(0)
-        , m_spread(0)
-        , m_style(Normal)
-        , m_isWebkitBoxShadow(false)
-    {
-    }
+    ShadowData() = default;
 
-    ShadowData(const IntPoint& location, int radius, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
+    ShadowData(const LayoutPoint& location, int radius, LayoutUnit spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
         : m_location(location)
-        , m_radius(radius)
         , m_spread(spread)
+        , m_radius(radius)
         , m_color(color)
         , m_style(style)
         , m_isWebkitBoxShadow(isWebkitBoxShadow)
@@ -66,19 +60,19 @@ public:
         return !(*this == o);
     }
     
-    int x() const { return m_location.x(); }
-    int y() const { return m_location.y(); }
-    IntPoint location() const { return m_location; }
+    LayoutUnit x() const { return m_location.x(); }
+    LayoutUnit y() const { return m_location.y(); }
+    LayoutPoint location() const { return m_location; }
     int radius() const { return m_radius; }
-    int paintingExtent() const
+    LayoutUnit paintingExtent() const
     {
         // Blurring uses a Gaussian function whose std. deviation is m_radius/2, and which in theory
         // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
         // undetectable at around 1.4x the radius.
         const float radiusExtentMultiplier = 1.4;
-        return ceilf(m_radius * radiusExtentMultiplier);
+        return LayoutUnit(ceilf(m_radius * radiusExtentMultiplier));
     }
-    int spread() const { return m_spread; }
+    LayoutUnit spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
     const Color& color() const { return m_color; }
     bool isWebkitBoxShadow() const { return m_isWebkitBoxShadow; }
@@ -90,12 +84,12 @@ public:
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
-    IntPoint m_location;
-    int m_radius; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
-    int m_spread;
+    LayoutPoint m_location;
+    LayoutUnit m_spread;
+    int m_radius { 0 }; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
     Color m_color;
-    ShadowStyle m_style;
-    bool m_isWebkitBoxShadow;
+    ShadowStyle m_style { ShadowStyle::Normal };
+    bool m_isWebkitBoxShadow { false };
     std::unique_ptr<ShadowData> m_next;
 };
 

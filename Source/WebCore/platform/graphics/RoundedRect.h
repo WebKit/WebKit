@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RoundedRect_h
-#define RoundedRect_h
+#pragma once
 
 #include "FloatQuad.h"
 #include "LayoutRect.h"
@@ -132,5 +131,3 @@ inline bool operator==(const RoundedRect& a, const RoundedRect& b)
 WEBCORE_EXPORT Region approximateAsRegion(const RoundedRect&, unsigned stepLength = 20);
 
 } // namespace WebCore
-
-#endif // RoundedRect_h

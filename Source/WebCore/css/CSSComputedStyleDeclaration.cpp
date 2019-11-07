@@ -613,7 +613,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, C
         auto y = adjustLengthForZoom(currShadowData->y(), style, adjust);
         auto blur = adjustLengthForZoom(currShadowData->radius(), style, adjust);
         auto spread = propertyID == CSSPropertyTextShadow ? RefPtr<CSSPrimitiveValue>() : adjustLengthForZoom(currShadowData->spread(), style, adjust);
-        auto style = propertyID == CSSPropertyTextShadow || currShadowData->style() == Normal ? RefPtr<CSSPrimitiveValue>() : cssValuePool.createIdentifierValue(CSSValueInset);
+        auto style = propertyID == CSSPropertyTextShadow || currShadowData->style() == ShadowStyle::Normal ? RefPtr<CSSPrimitiveValue>() : cssValuePool.createIdentifierValue(CSSValueInset);
         auto color = cssValuePool.createColorValue(currShadowData->color());
         list->prepend(CSSShadowValue::create(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
     }
@@ -691,7 +691,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
                 DropShadowFilterOperation& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
                 filterValue = CSSFunctionValue::create(CSSValueDropShadow);
                 // We want our computed style to look like that of a text shadow (has neither spread nor inset style).
-                ShadowData shadowData = ShadowData(dropShadowOperation.location(), dropShadowOperation.stdDeviation(), 0, Normal, false, dropShadowOperation.color());
+                ShadowData shadowData = ShadowData(dropShadowOperation.location(), dropShadowOperation.stdDeviation(), 0, ShadowStyle::Normal, false, dropShadowOperation.color());
                 filterValue->append(valueForShadow(&shadowData, CSSPropertyTextShadow, style, adjust));
                 break;
             }

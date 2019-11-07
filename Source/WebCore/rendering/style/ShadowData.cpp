@@ -29,8 +29,8 @@ namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
     : m_location(o.m_location)
-    , m_radius(o.m_radius)
     , m_spread(o.m_spread)
+    , m_radius(o.m_radius)
     , m_color(o.m_color)
     , m_style(o.m_style)
     , m_isWebkitBoxShadow(o.m_isWebkitBoxShadow)
@@ -58,11 +58,11 @@ bool ShadowData::operator==(const ShadowData& o) const
         && m_isWebkitBoxShadow == o.m_isWebkitBoxShadow;
 }
 
-static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, int& shadowLeft, int& shadowRight, int& shadowTop, int& shadowBottom)
+static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
 {
     do {
-        int extentAndSpread = shadow->paintingExtent() + shadow->spread() + additionalOutlineSize;
-        if (shadow->style() == Normal) {
+        LayoutUnit extentAndSpread = shadow->paintingExtent() + shadow->spread() + additionalOutlineSize;
+        if (shadow->style() == ShadowStyle::Normal) {
             shadowLeft = std::min(shadow->x() - extentAndSpread, shadowLeft);
             shadowRight = std::max(shadow->x() + extentAndSpread, shadowRight);
             shadowTop = std::min(shadow->y() - extentAndSpread, shadowTop);
@@ -75,10 +75,10 @@ static inline void calculateShadowExtent(const ShadowData* shadow, int additiona
 
 void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize) const
 {
-    int shadowLeft = 0;
-    int shadowRight = 0;
-    int shadowTop = 0;
-    int shadowBottom = 0;
+    LayoutUnit shadowLeft;
+    LayoutUnit shadowRight;
+    LayoutUnit shadowTop;
+    LayoutUnit shadowBottom;
     calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);
@@ -88,10 +88,10 @@ void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize
 
 void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize) const
 {
-    int shadowLeft = 0;
-    int shadowRight = 0;
-    int shadowTop = 0;
-    int shadowBottom = 0;
+    LayoutUnit shadowLeft = 0;
+    LayoutUnit shadowRight = 0;
+    LayoutUnit shadowTop = 0;
+    LayoutUnit shadowBottom = 0;
     calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);

@@ -810,6 +810,67 @@
         (WebCore::WebAnimation::hasPendingActivity const):
         * animation/WebAnimation.h:
 
+2019-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Box-shadow spread radius does not transition or animate correctly with CSS Transitions & Animations
+        https://bugs.webkit.org/show_bug.cgi?id=202489
+
+        Reviewed by Zalan Bujtas.
+        
+        Fix box-shadow offset and spread to support subpixel values, and make the rendering subpixel-aware.
+        This also makes animation of shadow spread and offset be smoother on Retina displays.
+
+        Also make ShadowStyle an enum class.
+
+        Test: fast/box-shadow/hidpi-box-shadow.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength const):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::shadowForBlending):
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::blend):
+        * platform/graphics/RoundedRect.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::applyBoxShadowForBackground):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        (WebCore::areaCastingShadowInHole):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        Move the snapping until after we've adjusted rects for offset and spread. The "extraOffset"
+        computation makes the snapping a little more complex; we have to snap before and after applying
+        shadowOffset, and give to GraphicsContext the delta between the snapped values.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::getShadowExtent const):
+        (WebCore::RenderStyle::getShadowInsetExtent const):
+        (WebCore::RenderStyle::getShadowHorizontalExtent const):
+        (WebCore::RenderStyle::getShadowVerticalExtent const):
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::calculateShadowExtent):
+        (WebCore::ShadowData::adjustRectForShadow const):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::x const):
+        (WebCore::ShadowData::y const):
+        (WebCore::ShadowData::location const):
+        (WebCore::ShadowData::paintingExtent const):
+        (WebCore::ShadowData::spread const):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyTextOrBoxShadowValue):
+
 2019-11-04  Chris Dumez  <cdumez@apple.com>
 
         MediaRecorder should not prevent entering the back/forward cache

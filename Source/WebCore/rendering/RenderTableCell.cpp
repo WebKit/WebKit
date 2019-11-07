@@ -1318,12 +1318,12 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
     adjustBorderBoxRectForPainting(paintRect);
 
-    paintBoxShadow(paintInfo, paintRect, style(), Normal);
+    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Normal);
     
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, paintOffset, this);
 
-    paintBoxShadow(paintInfo, paintRect, style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Inset);
 
     if (!style().hasBorder() || table->collapseBorders())
         return;

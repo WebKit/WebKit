@@ -1408,7 +1408,7 @@ void RenderStyle::setPageScaleTransform(float scale)
 
 void RenderStyle::setTextShadow(std::unique_ptr<ShadowData> shadowData, bool add)
 {
-    ASSERT(!shadowData || (!shadowData->spread() && shadowData->style() == Normal));
+    ASSERT(!shadowData || (!shadowData->spread() && shadowData->style() == ShadowStyle::Normal));
 
     auto& rareData = m_rareInheritedData.access();
     if (!add) {
@@ -1882,10 +1882,10 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit& top, Lay
     left = 0;
 
     for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == Inset)
+        if (shadow->style() == ShadowStyle::Inset)
             continue;
 
-        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        auto extentAndSpread = shadow->paintingExtent() + shadow->spread();
         top = std::min<LayoutUnit>(top, shadow->y() - extentAndSpread);
         right = std::max<LayoutUnit>(right, shadow->x() + extentAndSpread);
         bottom = std::max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
@@ -1901,10 +1901,10 @@ LayoutBoxExtent RenderStyle::getShadowInsetExtent(const ShadowData* shadow) cons
     LayoutUnit left;
 
     for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == Normal)
+        if (shadow->style() == ShadowStyle::Normal)
             continue;
 
-        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        auto extentAndSpread = shadow->paintingExtent() + shadow->spread();
         top = std::max<LayoutUnit>(top, shadow->y() + extentAndSpread);
         right = std::min<LayoutUnit>(right, shadow->x() - extentAndSpread);
         bottom = std::min<LayoutUnit>(bottom, shadow->y() - extentAndSpread);
@@ -1920,10 +1920,10 @@ void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit
     right = 0;
 
     for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == Inset)
+        if (shadow->style() == ShadowStyle::Inset)
             continue;
 
-        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        auto extentAndSpread = shadow->paintingExtent() + shadow->spread();
         left = std::min<LayoutUnit>(left, shadow->x() - extentAndSpread);
         right = std::max<LayoutUnit>(right, shadow->x() + extentAndSpread);
     }
@@ -1935,10 +1935,10 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     bottom = 0;
 
     for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == Inset)
+        if (shadow->style() == ShadowStyle::Inset)
             continue;
 
-        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        auto extentAndSpread = shadow->paintingExtent() + shadow->spread();
         top = std::min<LayoutUnit>(top, shadow->y() - extentAndSpread);
         bottom = std::max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
     }

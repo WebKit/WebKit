@@ -285,11 +285,11 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     fontPanel.shadowOpacity = 1;
     [fontPanel toggleShadow];
     EXPECT_WK_STREQ("baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 1px 8px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 1.25px 8px", textShadowAroundSelection());
     {
         NSShadow *shadow = [webView typingAttributes][NSShadowAttributeName];
         EXPECT_EQ(shadow.shadowOffset.width, 0);
-        EXPECT_EQ(shadow.shadowOffset.height, 1);
+        EXPECT_EQ(shadow.shadowOffset.height, 1.25);
         EXPECT_EQ(shadow.shadowBlurRadius, 8);
         EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:1]]);
     }
@@ -306,7 +306,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 1px 5px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 1.25px 5px", textShadowAroundSelection());
     EXPECT_WK_STREQ("underline line-through", textDecorationsAroundSelection());
     {
         NSDictionary *typingAttributes = [webView typingAttributes];
@@ -315,7 +315,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
 
         NSShadow *shadow = typingAttributes[NSShadowAttributeName];
         EXPECT_EQ(shadow.shadowOffset.width, 0);
-        EXPECT_EQ(shadow.shadowOffset.height, 1);
+        EXPECT_EQ(shadow.shadowOffset.height, 1.25);
         EXPECT_EQ(shadow.shadowBlurRadius, 5);
         EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.2]]);
     }

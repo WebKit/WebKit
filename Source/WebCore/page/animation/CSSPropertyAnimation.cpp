@@ -107,10 +107,10 @@ static inline ShadowStyle blendFunc(const CSSPropertyBlendingClient* anim, Shado
     if (from == to)
         return to;
 
-    double fromVal = from == Normal ? 1 : 0;
-    double toVal = to == Normal ? 1 : 0;
+    double fromVal = from == ShadowStyle::Normal ? 1 : 0;
+    double toVal = to == ShadowStyle::Normal ? 1 : 0;
     double result = blendFunc(anim, fromVal, toVal, progress);
-    return result > 0 ? Normal : Inset;
+    return result > 0 ? ShadowStyle::Normal : ShadowStyle::Inset;
 }
 
 static inline std::unique_ptr<ShadowData> blendFunc(const CSSPropertyBlendingClient* anim, const ShadowData* from, const ShadowData* to, double progress)
@@ -759,15 +759,15 @@ static inline size_t shadowListLength(const ShadowData* shadow)
 
 static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, const ShadowData* otherShadow)
 {
-    static NeverDestroyed<ShadowData> defaultShadowData(IntPoint(), 0, 0, Normal, false, Color::transparent);
-    static NeverDestroyed<ShadowData> defaultInsetShadowData(IntPoint(), 0, 0, Inset, false, Color::transparent);
-    static NeverDestroyed<ShadowData> defaultWebKitBoxShadowData(IntPoint(), 0, 0, Normal, true, Color::transparent);
-    static NeverDestroyed<ShadowData> defaultInsetWebKitBoxShadowData(IntPoint(), 0, 0, Inset, true, Color::transparent);
+    static NeverDestroyed<ShadowData> defaultShadowData(LayoutPoint(), 0, 0, ShadowStyle::Normal, false, Color::transparent);
+    static NeverDestroyed<ShadowData> defaultInsetShadowData(LayoutPoint(), 0, 0, ShadowStyle::Inset, false, Color::transparent);
+    static NeverDestroyed<ShadowData> defaultWebKitBoxShadowData(LayoutPoint(), 0, 0, ShadowStyle::Normal, true, Color::transparent);
+    static NeverDestroyed<ShadowData> defaultInsetWebKitBoxShadowData(LayoutPoint(), 0, 0, ShadowStyle::Inset, true, Color::transparent);
 
     if (srcShadow)
         return srcShadow;
 
-    if (otherShadow->style() == Inset)
+    if (otherShadow->style() == ShadowStyle::Inset)
         return otherShadow->isWebkitBoxShadow() ? &defaultInsetWebKitBoxShadowData.get() : &defaultInsetShadowData.get();
 
     return otherShadow->isWebkitBoxShadow() ? &defaultWebKitBoxShadowData.get() : &defaultShadowData.get();

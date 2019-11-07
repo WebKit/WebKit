@@ -1321,7 +1321,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
     if (!boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance))
-        paintBoxShadow(paintInfo, paintRect, style(), Normal);
+        paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Normal);
 
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
@@ -1352,7 +1352,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         if (style().hasAppearance())
             theme().paintDecorations(*this, paintInfo, paintRect);
     }
-    paintBoxShadow(paintInfo, paintRect, style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())

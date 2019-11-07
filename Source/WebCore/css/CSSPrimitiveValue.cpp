@@ -596,6 +596,11 @@ template<> double CSSPrimitiveValue::computeLength(const CSSToLengthConversionDa
     return computeLengthDouble(conversionData);
 }
 
+template<> LayoutUnit CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const
+{
+    return LayoutUnit(computeLengthDouble(conversionData));
+}
+
 double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& conversionData) const
 {
     if (m_primitiveUnitType == CSS_CALC)
