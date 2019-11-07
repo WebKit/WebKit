@@ -1,5 +1,11 @@
 2019-11-07  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.26.2 release
+
+        * wpe/NEWS: Add release notes for 2.26.2.
+
+2019-11-07  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unreviewed build fixed for non-unified builds.
 
         * NetworkProcess/NetworkConnectionToWebProcess.cpp: Add missin inclusion of the Logging.h header
