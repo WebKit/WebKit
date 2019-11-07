@@ -1,3 +1,16 @@
+2019-11-07  Chris Dumez  <cdumez@apple.com>
+
+        Port ServiceWorkerContainer to the HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203963
+
+        Reviewed by Ryosuke Niwa.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::startMessages):
+        (WebCore::ServiceWorkerContainer::postMessage):
+        * workers/service/ServiceWorkerContainer.h:
+
 2019-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate scroll event into HTML5 event loop

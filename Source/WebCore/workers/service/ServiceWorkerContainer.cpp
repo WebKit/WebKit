@@ -73,13 +73,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
 ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, NavigatorBase& navigator)
     : ActiveDOMObject(context)
     , m_navigator(navigator)
-    , m_messageQueue(GenericEventQueue::create(*this))
 {
     suspendIfNeeded();
     
     // We should queue messages until the DOMContentLoaded event has fired or startMessages() has been called.
     if (is<Document>(context) && downcast<Document>(*context).parsing())
-        m_messageQueue->setPaused(true);
+        m_shouldDeferMessageEvents = true;
 }
 
 ServiceWorkerContainer::~ServiceWorkerContainer()
@@ -314,7 +313,10 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerContainer::startMessages()
 {
-    m_messageQueue->setPaused(false);
+    m_shouldDeferMessageEvents = false;
+    auto deferredMessageEvents = WTFMove(m_deferredMessageEvents);
+    for (auto& messageEvent : deferredMessageEvents)
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(messageEvent));
 }
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
@@ -404,8 +406,12 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
 
     auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source));
-    
-    m_messageQueue->enqueueEvent(WTFMove(messageEvent));
+    if (m_shouldDeferMessageEvents)
+        m_deferredMessageEvents.append(WTFMove(messageEvent));
+    else {
+        ASSERT(m_deferredMessageEvents.isEmpty());
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(messageEvent));
+    }
 }
 
 void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey& registrationKey)

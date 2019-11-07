@@ -29,7 +29,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include "IDLTypes.h"
 #include "SWClientConnection.h"
 #include "SWServer.h"
@@ -142,7 +141,8 @@ private:
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
-    UniqueRef<GenericEventQueue> m_messageQueue;
+    bool m_shouldDeferMessageEvents { false };
+    Vector<Ref<Event>> m_deferredMessageEvents;
 };
 
 } // namespace WebCore
