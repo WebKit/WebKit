@@ -61,6 +61,16 @@ TextureCacheCV::TextureCacheCV(GraphicsContext3D& context, RetainPtr<TextureCach
 
 RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelBufferRef image, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type)
 {
+#if USE(ANGLE)
+    // FIXME: figure out how to do this integrating via ANGLE.
+    UNUSED_PARAM(image);
+    UNUSED_PARAM(outputTarget);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    return nullptr;
+#else
     TextureType bareVideoTexture = nullptr;
 #if USE(OPENGL_ES)
     size_t width = CVPixelBufferGetWidth(image);
@@ -75,15 +85,6 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
     UNUSED_PARAM(type);
     if (kCVReturnSuccess != CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_cache.get(), image, nullptr, &bareVideoTexture))
         return nullptr;
-#elif USE(ANGLE)
-    // FIXME: figure out how to do this integrating via ANGLE.
-    UNUSED_PARAM(image);
-    UNUSED_PARAM(outputTarget);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalFormat);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    return nullptr;
 #endif
     RetainPtr<TextureType> videoTexture = adoptCF(bareVideoTexture);
 
@@ -91,16 +92,17 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
     dispatch_async(dispatch_get_main_queue(), [weakThis] {
         if (!weakThis)
             return;
-        
+
         if (auto cache = weakThis->m_cache.get())
 #if USE(OPENGL_ES)
             CVOpenGLESTextureCacheFlush(cache, 0);
-#else
+#elif USE(OPENGL)
             CVOpenGLTextureCacheFlush(cache, 0);
 #endif
     });
 
     return videoTexture;
+#endif
 }
 
 }

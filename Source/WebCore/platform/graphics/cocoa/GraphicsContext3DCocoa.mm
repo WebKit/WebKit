@@ -69,6 +69,7 @@ typedef void* GLeglContext;
 #include <ANGLE/eglext.h>
 #include <ANGLE/eglext_angle.h>
 #include <ANGLE/entry_points_egl.h>
+#include <ANGLE/entry_points_egl_ext.h>
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
 #include <ANGLE/entry_points_gles_ext_autogen.h>
 #include <ANGLE/gl2ext.h>
@@ -287,6 +288,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART);
 
 #elif USE(ANGLE)
+
     UNUSED_PARAM(hostWindow);
     UNUSED_PARAM(sharedContext);
 
@@ -338,6 +340,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     }
     contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
+
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         contextAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
@@ -355,30 +358,23 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
     EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
 
-    static constexpr const char* requiredExtensions[] = {
-        "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures
-        "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface
-    };
-
-    static constexpr const char* optionalExtensions[] = {
-        "GL_EXT_debug_marker",
-    };
-
+#if PLATFORM(MAC)
     Extensions3D& extensions = getExtensions();
+
+    static constexpr const char* requiredExtensions[] = {
+        "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures.
+        "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface.
+    };
 
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(requiredExtensions); ++i) {
         if (!extensions.supports(requiredExtensions[i])) {
-            LOG(WebGL, "Missing required extension.");
+            LOG(WebGL, "Missing required extension. %s", requiredExtensions[i]);
             return;
         }
 
         extensions.ensureEnabled(requiredExtensions[i]);
     }
-
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(optionalExtensions); ++i) {
-        if (extensions.supports(optionalExtensions[i]))
-            extensions.ensureEnabled(optionalExtensions[i]);
-    }
+#endif // PLATFORM(MAC)
 
 #endif // #elif USE(ANGLE)
 
@@ -391,7 +387,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
 #if USE(ANGLE)
-        [m_webGLLayer setEGLDisplay:m_displayObj andConfig:config];
+        [m_webGLLayer setEGLDisplay:m_displayObj config:config];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -414,13 +410,20 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     ::glBindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
 #elif USE(ANGLE)
+
+#if PLATFORM(MAC)
+    GLenum textureType = GL_TEXTURE_RECTANGLE_ANGLE;
+#else
+    GLenum textureType = GL_TEXTURE_2D;
+#endif
+
     gl::GenTextures(1, &m_texture);
-    gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
-    gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+    gl::BindTexture(textureType, m_texture);
+    gl::TexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::BindTexture(textureType, 0);
 #else
 #error Unsupported configuration
 #endif
@@ -717,14 +720,20 @@ void GraphicsContext3D::setContextVisibility(bool isVisible)
 #if USE(ANGLE)
 void GraphicsContext3D::allocateIOSurfaceBackingStore(IntSize size)
 {
+#if HAVE(IOSURFACE)
     LOG(WebGL, "GraphicsContext3D::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
     [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:m_attrs.alpha];
+#else
+    UNUSED_PARAM(size);
+#endif
 }
 
 void GraphicsContext3D::updateFramebufferTextureBackingStoreFromLayer()
 {
+#if HAVE(IOSURFACE)
     LOG(WebGL, "GraphicsContext3D::updateFramebufferTextureBackingStoreFromLayer(). (%p)", this);
     [m_webGLLayer bindFramebufferToNextAvailableSurface];
+#endif
 }
 #endif // USE(ANGLE)
 

@@ -24,10 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemporaryOpenGLSetting_h
-#define TemporaryOpenGLSetting_h
+#pragma once
 
 #include "GraphicsTypes3D.h"
+
+#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
 
 #include <wtf/Noncopyable.h>
 

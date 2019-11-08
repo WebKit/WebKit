@@ -1,3 +1,167 @@
+2019-11-07  Dean Jackson  <dino@apple.com>
+
+        Add ANGLE backend for iOS device
+        https://bugs.webkit.org/show_bug.cgi?id=202159
+        <rdar://57000166>
+
+        Reviewed by Myles Maxfield.
+
+        Add an OpenGLES backend over EAGL for iOS to ANGLE.
+
+        This is basically a copy of all the files in
+        libANGLE/renderer/gl/cgl into libANGLE/renderer/gl/eagl, then with
+        modifications to make it work on iOS's OpenGL ES. Most notably,
+        some format enums and the manner in which you bind an IOSurface to
+        a GL texture are different.
+
+        This introduces a few places where we have to do a compile time
+        switch for iOS, some of which might actually be applicable to
+        other OpenGL ES backends.
+
+        The biggest missing piece is support for the iOS simulator. At the moment
+        this backend relies on an IOSurface binding as a rendering target.
+        But the iOS Simulator does not have the required ability to have a
+        GL ES texture backed by an IOSurface.
+
+        The WindowSurfaceEAGL code is incomplete, but was not necessary
+        in order to get WebGL operational. And even if you are using ANGLE
+        directly, you can have the client code render into a CALayer without
+        going through the WindowSurface.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/EGL/eglext_angle.h:
+        * src/common/PackedEnums.cpp:
+        (egl_gl::EGLTextureTargetToTextureType):
+        * src/common/platform.h:
+        * src/gpu_info_util/SystemInfo_ios.cpp: Added.
+        (angle::GetSystemInfo):
+        * src/gpu_info_util/SystemInfo_macos.cpp: Renamed from Source/ThirdParty/ANGLE/src/gpu_info_util/SystemInfo_mac.cpp.
+        (angle::GetSystemInfo):
+        * src/libANGLE/Caps.h:
+        * src/libANGLE/Display.cpp:
+        * src/libANGLE/formatutils.cpp:
+        (gl::BuildInternalFormatInfoMap):
+        * src/libANGLE/renderer/gl/cgl/DeviceCGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp:
+        (rx::IOSurfaceSurfaceCGL::bindTexImage):
+        * src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/RendererCGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+        * src/libANGLE/renderer/gl/eagl/ContextEAGL.cpp: Added.
+        (rx::ContextEAGL::ContextEAGL):
+        * src/libANGLE/renderer/gl/eagl/ContextEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp: Added.
+        (rx::DeviceEAGL::DeviceEAGL):
+        (rx::DeviceEAGL::~DeviceEAGL):
+        (rx::DeviceEAGL::initialize):
+        (rx::DeviceEAGL::getAttribute):
+        (rx::DeviceEAGL::getType):
+        (rx::DeviceEAGL::generateExtensions const):
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm: Added.
+        (rx::FunctionsGLEAGL::FunctionsGLEAGL):
+        (rx::DisplayEAGL::DisplayEAGL):
+        (rx::DisplayEAGL::~DisplayEAGL):
+        (rx::DisplayEAGL::initialize):
+        (rx::DisplayEAGL::terminate):
+        (rx::DisplayEAGL::createWindowSurface):
+        (rx::DisplayEAGL::createPbufferSurface):
+        (rx::DisplayEAGL::createPbufferFromClientBuffer):
+        (rx::DisplayEAGL::createPixmapSurface):
+        (rx::DisplayEAGL::createContext):
+        (rx::DisplayEAGL::createDevice):
+        (rx::DisplayEAGL::generateConfigs):
+        (rx::DisplayEAGL::testDeviceLost):
+        (rx::DisplayEAGL::restoreLostDevice):
+        (rx::DisplayEAGL::isValidNativeWindow const):
+        (rx::DisplayEAGL::validateClientBuffer const):
+        (rx::DisplayEAGL::getVendorString const):
+        (rx::DisplayEAGL::getEAGLContext const):
+        (rx::DisplayEAGL::getEAGLPixelFormat const):
+        (rx::DisplayEAGL::generateExtensions const):
+        (rx::DisplayEAGL::generateCaps const):
+        (rx::DisplayEAGL::waitClient):
+        (rx::DisplayEAGL::waitNative):
+        (rx::DisplayEAGL::getMaxSupportedESVersion const):
+        (rx::DisplayEAGL::makeCurrentSurfaceless):
+        (rx::WorkerContextEAGL::WorkerContextEAGL):
+        (rx::WorkerContextEAGL::~WorkerContextEAGL):
+        (rx::WorkerContextEAGL::makeCurrent):
+        (rx::WorkerContextEAGL::unmakeCurrent):
+        (rx::DisplayEAGL::createWorkerContext):
+        (rx::DisplayEAGL::initializeFrontendFeatures const):
+        (rx::DisplayEAGL::populateFeatureList):
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm: Copied from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp.
+        (rx::IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL):
+        (rx::IOSurfaceSurfaceEAGL::~IOSurfaceSurfaceEAGL):
+        (rx::IOSurfaceSurfaceEAGL::initialize):
+        (rx::IOSurfaceSurfaceEAGL::makeCurrent):
+        (rx::IOSurfaceSurfaceEAGL::unMakeCurrent):
+        (rx::IOSurfaceSurfaceEAGL::swap):
+        (rx::IOSurfaceSurfaceEAGL::postSubBuffer):
+        (rx::IOSurfaceSurfaceEAGL::querySurfacePointerANGLE):
+        (rx::IOSurfaceSurfaceEAGL::bindTexImage):
+        (rx::IOSurfaceSurfaceEAGL::releaseTexImage):
+        (rx::IOSurfaceSurfaceEAGL::setSwapInterval):
+        (rx::IOSurfaceSurfaceEAGL::getWidth const):
+        (rx::IOSurfaceSurfaceEAGL::getHeight const):
+        (rx::IOSurfaceSurfaceEAGL::isPostSubBufferSupported const):
+        (rx::IOSurfaceSurfaceEAGL::getSwapBehavior const):
+        (rx::IOSurfaceSurfaceEAGL::validateAttributes):
+        (rx::IOSurfaceFramebuffer::IOSurfaceFramebuffer):
+        (rx::IOSurfaceSurfaceEAGL::createDefaultFramebuffer):
+        (rx::IOSurfaceSurfaceEAGL::initializeAlphaChannel):
+        (rx::IOSurfaceSurfaceEAGL::hasEmulatedAlphaChannel const):
+        * src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp: Copied from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp.
+        (rx::PbufferSurfaceEAGL::PbufferSurfaceEAGL):
+        (rx::PbufferSurfaceEAGL::~PbufferSurfaceEAGL):
+        (rx::PbufferSurfaceEAGL::initialize):
+        (rx::PbufferSurfaceEAGL::makeCurrent):
+        (rx::PbufferSurfaceEAGL::swap):
+        (rx::PbufferSurfaceEAGL::postSubBuffer):
+        (rx::PbufferSurfaceEAGL::querySurfacePointerANGLE):
+        (rx::PbufferSurfaceEAGL::bindTexImage):
+        (rx::PbufferSurfaceEAGL::releaseTexImage):
+        (rx::PbufferSurfaceEAGL::setSwapInterval):
+        (rx::PbufferSurfaceEAGL::getWidth const):
+        (rx::PbufferSurfaceEAGL::getHeight const):
+        (rx::PbufferSurfaceEAGL::isPostSubBufferSupported const):
+        (rx::PbufferSurfaceEAGL::getSwapBehavior const):
+        (rx::PbufferSurfaceEAGL::createDefaultFramebuffer):
+        * src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/RendererEAGL.cpp: Added.
+        (rx::RendererEAGL::RendererEAGL):
+        (rx::RendererEAGL::~RendererEAGL):
+        (rx::RendererEAGL::createWorkerContext):
+        * src/libANGLE/renderer/gl/eagl/RendererEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h: Added.
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm: Copied from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm.
+        (-[WebSwapLayer initWithSharedState:withContext:withFunctions:]):
+        (-[WebSwapLayer display]):
+        (rx::WindowSurfaceEAGL::WindowSurfaceEAGL):
+        (rx::WindowSurfaceEAGL::~WindowSurfaceEAGL):
+        (rx::WindowSurfaceEAGL::initialize):
+        (rx::WindowSurfaceEAGL::makeCurrent):
+        (rx::WindowSurfaceEAGL::swap):
+        (rx::WindowSurfaceEAGL::postSubBuffer):
+        (rx::WindowSurfaceEAGL::querySurfacePointerANGLE):
+        (rx::WindowSurfaceEAGL::bindTexImage):
+        (rx::WindowSurfaceEAGL::releaseTexImage):
+        (rx::WindowSurfaceEAGL::setSwapInterval):
+        (rx::WindowSurfaceEAGL::getWidth const):
+        (rx::WindowSurfaceEAGL::getHeight const):
+        (rx::WindowSurfaceEAGL::isPostSubBufferSupported const):
+        (rx::WindowSurfaceEAGL::getSwapBehavior const):
+        (rx::WindowSurfaceEAGL::createDefaultFramebuffer):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::GenerateCaps):
+        * src/libANGLE/validationES2.cpp:
+        (gl::ValidateFramebufferTexture2D):
+        * src/libGLESv2/entry_points_egl_ext.cpp:
+
 2019-11-06  Dean Jackson  <dino@apple.com>
 
         [ANGLE] IOSurfaceSurfaceCGL has format and internalFormat flipped

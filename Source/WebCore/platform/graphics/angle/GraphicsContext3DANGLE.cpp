@@ -186,24 +186,13 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     // resize regular FBO
     gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     ASSERT(m_texture);
-#if PLATFORM(COCOA)
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     allocateIOSurfaceBackingStore(IntSize(width, height));
     updateFramebufferTextureBackingStoreFromLayer();
     gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
-#elif PLATFORM(IOS_FAMILY)
-    // FIXME (kbr): implement iOS path, ideally using glFramebufferTexture2DMultisample.
-    // gl::BindRenderbuffer(GL_RENDERBUFFER, m_texture);
-    // gl::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_texture);
-    // setRenderbufferStorageFromDrawable(m_currentWidth, m_currentHeight);
 #else
-#error Unknown Cocoa platform
-#endif
-#else
-
-#error Must port to non-Cocoa platforms
-
+#error FIXME: Port to non-Cocoa platforms.
 #endif // PLATFORM(COCOA)
 
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);

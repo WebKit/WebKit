@@ -301,6 +301,15 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
             }
             error = dev->getAttribute(attribute, value);
             break;
+        case EGL_EAGL_CONTEXT_ANGLE:
+            if (!dev->getExtensions().deviceEAGL)
+            {
+                thread->setError(EglBadAttribute(), GetDebug(), "eglQueryDeviceAttribEXT",
+                                 GetDeviceIfValid(dev));
+                return EGL_FALSE;
+            }
+            error = dev->getAttribute(attribute, value);
+            break;
         case EGL_CGL_CONTEXT_ANGLE:
         case EGL_CGL_PIXEL_FORMAT_ANGLE:
             if (!dev->getExtensions().deviceCGL)

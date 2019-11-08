@@ -117,6 +117,10 @@
 #        define ANGLE_PLATFORM_MACOS 1
 #    elif TARGET_OS_IOS
 #        define ANGLE_PLATFORM_IOS 1
+#        define GLES_SILENCE_DEPRECATION
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
 #    endif
 #endif
 

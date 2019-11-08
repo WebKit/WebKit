@@ -259,6 +259,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryDisplayAttribANGLE(EGLDisplay dpy, EGLint 
 #define EGL_CGL_PIXEL_FORMAT_ANGLE 0x3486
 #endif
 
+#ifndef EGL_ANGLE_device_eagl
+#define EGL_ANGLE_device_eagl 1
+#define EGL_EAGL_CONTEXT_ANGLE 0x3487
+// FIXME: Do we need an EGL_PIXEL_FORMAT_ANGLE?
+// #define EGL_EAGL_PIXEL_FORMAT_ANGLE 0x3488
+#endif
+
 // clang-format on
 
 #endif  // INCLUDE_EGL_EGLEXT_ANGLE_

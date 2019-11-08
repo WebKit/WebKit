@@ -52,8 +52,10 @@
 #        include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
 #    elif defined(ANGLE_USE_X11)
 #        include "libANGLE/renderer/gl/glx/DisplayGLX.h"
-#    elif defined(ANGLE_PLATFORM_APPLE)
+#    elif defined(ANGLE_PLATFORM_MACOS)
 #        include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#    elif defined(ANGLE_PLATFORM_IOS)
+#        include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #    elif defined(ANGLE_USE_OZONE)
 #        include "libANGLE/renderer/gl/egl/ozone/DisplayOzone.h"
 #    elif defined(ANGLE_PLATFORM_ANDROID)
@@ -232,8 +234,10 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const D
             impl = new rx::DisplayWGL(state);
 #    elif defined(ANGLE_USE_X11)
             impl = new rx::DisplayGLX(state);
-#    elif defined(ANGLE_PLATFORM_APPLE)
+#    elif defined(ANGLE_PLATFORM_MACOS)
             impl = new rx::DisplayCGL(state);
+#    elif defined(ANGLE_PLATFORM_IOS)
+            impl = new rx::DisplayEAGL(state);
 #    elif defined(ANGLE_USE_OZONE)
             // This might work but has never been tried, so disallow for now.
             impl = nullptr;

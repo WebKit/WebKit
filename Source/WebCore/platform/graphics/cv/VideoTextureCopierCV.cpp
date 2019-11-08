@@ -874,20 +874,36 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     GLfloat lowerRight[2] = { 0, 0 };
     GLfloat upperRight[2] = { 0, 0 };
     GLfloat upperLeft[2] = { 0, 0 };
+    Platform3DObject videoTextureName;
+    GC3Denum videoTextureTarget;
+
 #if USE(OPENGL_ES)
-    Platform3DObject videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
-    GC3Denum videoTextureTarget = CVOpenGLESTextureGetTarget(inputVideoTexture);
+    videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
+    videoTextureTarget = CVOpenGLESTextureGetTarget(inputVideoTexture);
     CVOpenGLESTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
 #elif USE(OPENGL)
-    Platform3DObject videoTextureName = CVOpenGLTextureGetName(inputVideoTexture);
-    GC3Denum videoTextureTarget = CVOpenGLTextureGetTarget(inputVideoTexture);
+    videoTextureName = CVOpenGLTextureGetName(inputVideoTexture);
+    videoTextureTarget = CVOpenGLTextureGetTarget(inputVideoTexture);
     CVOpenGLTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
 #elif USE(ANGLE)
-    Platform3DObject videoTextureName = CVOpenGLTextureGetName(inputVideoTexture);
-    GC3Denum videoTextureTarget = CVOpenGLTextureGetTarget(inputVideoTexture);
-    CVOpenGLTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
+    UNUSED_PARAM(lowerLeft);
+    UNUSED_PARAM(lowerRight);
+    UNUSED_PARAM(upperLeft);
+    UNUSED_PARAM(upperRight);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(outputTexture);
+    UNUSED_PARAM(outputTarget);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(premultiplyAlpha);
+    UNUSED_PARAM(flipY);
+    UNUSED_PARAM(swapColorChannels);
     // FIXME: determine how to access rectangular textures via ANGLE.
-    ASSERT_NOT_REACHED();
+    UNIMPLEMENTED();
+    return false;
 #endif
 
     if (lowerLeft[1] < upperRight[1])

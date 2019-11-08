@@ -374,7 +374,11 @@ gl::TextureType EGLTextureTargetToTextureType(EGLenum eglTarget)
             return gl::TextureType::_2D;
 
         case EGL_TEXTURE_RECTANGLE_ANGLE:
+#if defined(ANGLE_PLATFORM_IOS)
+            return gl::TextureType::_2D;
+#else
             return gl::TextureType::Rectangle;
+#endif
 
         default:
             UNREACHABLE();

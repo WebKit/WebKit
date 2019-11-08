@@ -1198,7 +1198,7 @@ public:
     void updateCGLContext();
 #endif
 
-#if USE(ANGLE) && PLATFORM(MAC)
+#if USE(ANGLE)
     void allocateIOSurfaceBackingStore(IntSize);
     void updateFramebufferTextureBackingStoreFromLayer();
 #endif
@@ -1360,7 +1360,7 @@ private:
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(OPENGL_ES)
     void setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
 #endif
 

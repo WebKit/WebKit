@@ -60,6 +60,19 @@
 		31012E8018B97B9B0039062F /* VersionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E1118B97B9B0039062F /* VersionGLSL.h */; };
 		312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0915FEC91E0097EBC7 /* ANGLE.plist */; };
 		312BDB0E15FECAE50097EBC7 /* LICENSE in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0A15FECA3A0097EBC7 /* LICENSE */; };
+		313BCE542361133A00FC39E5 /* DisplayEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE462361133800FC39E5 /* DisplayEAGL.h */; };
+		313BCE552361133A00FC39E5 /* IOSurfaceSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */; };
+		313BCE562361133A00FC39E5 /* PbufferSurfaceEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */; };
+		313BCE572361133A00FC39E5 /* RendererEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE492361133900FC39E5 /* RendererEAGL.h */; };
+		313BCE582361133A00FC39E5 /* ContextEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE4A2361133900FC39E5 /* ContextEAGL.cpp */; };
+		313BCE592361133A00FC39E5 /* RendererEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE4B2361133900FC39E5 /* RendererEAGL.cpp */; };
+		313BCE5A2361133A00FC39E5 /* DeviceEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE4C2361133900FC39E5 /* DeviceEAGL.cpp */; };
+		313BCE5B2361133A00FC39E5 /* DeviceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE4D2361133900FC39E5 /* DeviceEAGL.h */; };
+		313BCE5C2361133A00FC39E5 /* IOSurfaceSurfaceEAGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */; };
+		313BCE5D2361133A00FC39E5 /* PbufferSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE4F2361133900FC39E5 /* PbufferSurfaceEAGL.h */; };
+		313BCE5E2361133A00FC39E5 /* WindowSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE502361133900FC39E5 /* WindowSurfaceEAGL.h */; };
+		313BCE5F2361133A00FC39E5 /* ContextEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE512361133900FC39E5 /* ContextEAGL.h */; };
+		313BCE612361133A00FC39E5 /* DisplayEAGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE532361133900FC39E5 /* DisplayEAGL.mm */; };
 		315EBD3F1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD3E1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp */; };
 		315EBD781FCE443600AC7A89 /* TranslatorVulkan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD401FCE442600AC7A89 /* TranslatorVulkan.cpp */; };
 		315EBD7B1FCE443600AC7A89 /* UtilsHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD431FCE442700AC7A89 /* UtilsHLSL.cpp */; };
@@ -139,6 +152,9 @@
 		31A331C81EA5ED5F00FD2203 /* vector_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331C51EA5ED5F00FD2203 /* vector_utils.h */; };
 		31A331DC1EA5EDDA00FD2203 /* Severity.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331D11EA5EDDA00FD2203 /* Severity.h */; };
 		31A331E21EA5EFB800FD2203 /* trace_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331E11EA5EFB800FD2203 /* trace_event.h */; };
+		31B15720236B7FAF00CAA4FD /* SystemInfo_ios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */; };
+		31B15722236B803300CAA4FD /* SystemInfo_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B15721236B803300CAA4FD /* SystemInfo_internal.h */; };
+		31B15723236B82BB00CAA4FD /* WindowSurfaceEAGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 313BCE522361133900FC39E5 /* WindowSurfaceEAGL.mm */; };
 		5C1BAA9A1DFB60FF002906BB /* gl3.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1BAA961DFB60FF002906BB /* gl3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C1BAA9B1DFB60FF002906BB /* gl3platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1BAA971DFB60FF002906BB /* gl3platform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C1BAA9C1DFB60FF002906BB /* gl31.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1BAA981DFB60FF002906BB /* gl31.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -542,7 +558,7 @@
 		5CCD59932284FC400018F2D8 /* imageformats.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598B2284FC400018F2D8 /* imageformats.h */; };
 		5CCD59942284FC400018F2D8 /* generatemip.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598C2284FC400018F2D8 /* generatemip.h */; };
 		5CCD59952284FC400018F2D8 /* loadimage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD598D2284FC400018F2D8 /* loadimage.cpp */; };
-		5CCD599A2284FC750018F2D8 /* SystemInfo_mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59972284FC750018F2D8 /* SystemInfo_mac.cpp */; };
+		5CCD599A2284FC750018F2D8 /* SystemInfo_macos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59972284FC750018F2D8 /* SystemInfo_macos.cpp */; };
 		5CCD599B2284FC750018F2D8 /* SystemInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59982284FC750018F2D8 /* SystemInfo.cpp */; };
 		5CCD599C2284FC750018F2D8 /* SystemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59992284FC750018F2D8 /* SystemInfo.h */; };
 		5CCD599E2284FCDE0018F2D8 /* Context_gles_1_0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD599D2284FCDD0018F2D8 /* Context_gles_1_0.cpp */; };
@@ -801,6 +817,20 @@
 		31012E1118B97B9B0039062F /* VersionGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionGLSL.h; sourceTree = "<group>"; };
 		312BDB0915FEC91E0097EBC7 /* ANGLE.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ANGLE.plist; sourceTree = "<group>"; };
 		312BDB0A15FECA3A0097EBC7 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		313BCE462361133800FC39E5 /* DisplayEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayEAGL.h; sourceTree = "<group>"; };
+		313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSurfaceEAGL.h; sourceTree = "<group>"; };
+		313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PbufferSurfaceEAGL.cpp; sourceTree = "<group>"; };
+		313BCE492361133900FC39E5 /* RendererEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RendererEAGL.h; sourceTree = "<group>"; };
+		313BCE4A2361133900FC39E5 /* ContextEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextEAGL.cpp; sourceTree = "<group>"; };
+		313BCE4B2361133900FC39E5 /* RendererEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RendererEAGL.cpp; sourceTree = "<group>"; };
+		313BCE4C2361133900FC39E5 /* DeviceEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceEAGL.cpp; sourceTree = "<group>"; };
+		313BCE4D2361133900FC39E5 /* DeviceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceEAGL.h; sourceTree = "<group>"; };
+		313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSurfaceSurfaceEAGL.mm; sourceTree = "<group>"; };
+		313BCE4F2361133900FC39E5 /* PbufferSurfaceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PbufferSurfaceEAGL.h; sourceTree = "<group>"; };
+		313BCE502361133900FC39E5 /* WindowSurfaceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowSurfaceEAGL.h; sourceTree = "<group>"; };
+		313BCE512361133900FC39E5 /* ContextEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextEAGL.h; sourceTree = "<group>"; };
+		313BCE522361133900FC39E5 /* WindowSurfaceEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowSurfaceEAGL.mm; sourceTree = "<group>"; };
+		313BCE532361133900FC39E5 /* DisplayEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayEAGL.mm; sourceTree = "<group>"; };
 		315EBD3E1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uniform_type_info_autogen.cpp; sourceTree = "<group>"; };
 		315EBD401FCE442600AC7A89 /* TranslatorVulkan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorVulkan.cpp; sourceTree = "<group>"; };
 		315EBD431FCE442700AC7A89 /* UtilsHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsHLSL.cpp; sourceTree = "<group>"; };
@@ -881,6 +911,8 @@
 		31A331C51EA5ED5F00FD2203 /* vector_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector_utils.h; sourceTree = "<group>"; };
 		31A331D11EA5EDDA00FD2203 /* Severity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Severity.h; sourceTree = "<group>"; };
 		31A331E11EA5EFB800FD2203 /* trace_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trace_event.h; path = trace_event/trace_event.h; sourceTree = "<group>"; };
+		31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemInfo_ios.cpp; sourceTree = "<group>"; };
+		31B15721236B803300CAA4FD /* SystemInfo_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo_internal.h; sourceTree = "<group>"; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -1285,7 +1317,7 @@
 		5CCD598B2284FC400018F2D8 /* imageformats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imageformats.h; sourceTree = "<group>"; };
 		5CCD598C2284FC400018F2D8 /* generatemip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = generatemip.h; sourceTree = "<group>"; };
 		5CCD598D2284FC400018F2D8 /* loadimage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loadimage.cpp; sourceTree = "<group>"; };
-		5CCD59972284FC750018F2D8 /* SystemInfo_mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemInfo_mac.cpp; sourceTree = "<group>"; };
+		5CCD59972284FC750018F2D8 /* SystemInfo_macos.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemInfo_macos.cpp; sourceTree = "<group>"; };
 		5CCD59982284FC750018F2D8 /* SystemInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemInfo.cpp; sourceTree = "<group>"; };
 		5CCD59992284FC750018F2D8 /* SystemInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo.h; sourceTree = "<group>"; };
 		5CCD599D2284FCDD0018F2D8 /* Context_gles_1_0.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Context_gles_1_0.cpp; sourceTree = "<group>"; };
@@ -1621,6 +1653,27 @@
 				312BDB0915FEC91E0097EBC7 /* ANGLE.plist */,
 			);
 			name = misc;
+			sourceTree = "<group>";
+		};
+		313BCE272360F78900FC39E5 /* eagl */ = {
+			isa = PBXGroup;
+			children = (
+				313BCE4A2361133900FC39E5 /* ContextEAGL.cpp */,
+				313BCE512361133900FC39E5 /* ContextEAGL.h */,
+				313BCE4C2361133900FC39E5 /* DeviceEAGL.cpp */,
+				313BCE4D2361133900FC39E5 /* DeviceEAGL.h */,
+				313BCE462361133800FC39E5 /* DisplayEAGL.h */,
+				313BCE532361133900FC39E5 /* DisplayEAGL.mm */,
+				313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */,
+				313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */,
+				313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */,
+				313BCE4F2361133900FC39E5 /* PbufferSurfaceEAGL.h */,
+				313BCE4B2361133900FC39E5 /* RendererEAGL.cpp */,
+				313BCE492361133900FC39E5 /* RendererEAGL.h */,
+				313BCE502361133900FC39E5 /* WindowSurfaceEAGL.h */,
+				313BCE522361133900FC39E5 /* WindowSurfaceEAGL.mm */,
+			);
+			path = eagl;
 			sourceTree = "<group>";
 		};
 		315EBE0B1FCE45AC00AC7A89 /* third_party */ = {
@@ -2333,8 +2386,9 @@
 			children = (
 				5CCD59982284FC750018F2D8 /* SystemInfo.cpp */,
 				5CCD59992284FC750018F2D8 /* SystemInfo.h */,
-				313BCE442360F9AD00FC39E5 /* SystemInfo_internal.h */,
-				5CCD59972284FC750018F2D8 /* SystemInfo_mac.cpp */,
+				31B15721236B803300CAA4FD /* SystemInfo_internal.h */,
+				31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */,
+				5CCD59972284FC750018F2D8 /* SystemInfo_macos.cpp */,
 			);
 			name = gpuinfoutil;
 			path = gpu_info_util;
@@ -2543,7 +2597,7 @@
 				5C1DBDE31B0438D300235552 /* Context.h in Headers */,
 				A30307272305F7C4002DA972 /* Context.inl.h in Headers */,
 				5CCD597B2284FA830018F2D8 /* ContextCGL.h in Headers */,
-				313BCE3D2360F78A00FC39E5 /* ContextEAGL.h in Headers */,
+				313BCE5F2361133A00FC39E5 /* ContextEAGL.h in Headers */,
 				5CB3011D1DE39F1A00D2C405 /* ContextGL.h in Headers */,
 				5CB304DE1DE4164800D2C405 /* ContextImpl.h in Headers */,
 				5CCD598E2284FC400018F2D8 /* copyimage.h in Headers */,
@@ -2554,7 +2608,7 @@
 				5C55D68922826B9F00B5BA2C /* DeferGlobalInitializers.h in Headers */,
 				5C1DBDE71B0438D300235552 /* Device.h in Headers */,
 				6E31A0A4234EEED400C84784 /* DeviceCGL.h in Headers */,
-				313BCE432360F78A00FC39E5 /* DeviceEAGL.h in Headers */,
+				313BCE5B2361133A00FC39E5 /* DeviceEAGL.h in Headers */,
 				5CB304E01DE4164800D2C405 /* DeviceImpl.h in Headers */,
 				31012E2718B97B9B0039062F /* Diagnostics.h in Headers */,
 				A264F8AD16974DED006FAA5A /* DiagnosticsBase.h in Headers */,
@@ -2564,7 +2618,7 @@
 				315EBDBC1FCE44BF00AC7A89 /* DispatchTableGL_autogen.h in Headers */,
 				5C1DBDE91B0438D300235552 /* Display.h in Headers */,
 				5CB3014F1DE39F4700D2C405 /* DisplayCGL.h in Headers */,
-				313BCE3B2360F78A00FC39E5 /* DisplayEAGL.h in Headers */,
+				313BCE542361133A00FC39E5 /* DisplayEAGL.h in Headers */,
 				5CB3011F1DE39F1A00D2C405 /* DisplayGL.h in Headers */,
 				5CB304E21DE4164800D2C405 /* DisplayImpl.h in Headers */,
 				315EBDC91FCE44E400AC7A89 /* driver_utils.h in Headers */,
@@ -2663,7 +2717,7 @@
 				5C55D70822826CB300B5BA2C /* IntermNodePatternMatcher.h in Headers */,
 				5C55D70122826CB300B5BA2C /* IntermTraverse.h in Headers */,
 				5CCD59772284FA830018F2D8 /* IOSurfaceSurfaceCGL.h in Headers */,
-				313BCE412360F78A00FC39E5 /* IOSurfaceSurfaceEAGL.h in Headers */,
+				313BCE552361133A00FC39E5 /* IOSurfaceSurfaceEAGL.h in Headers */,
 				315EBD8E1FCE443600AC7A89 /* IsASTDepthBelowLimit.h in Headers */,
 				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
 				5C1DBC321B04375F00235552 /* length_limits.h in Headers */,
@@ -2704,7 +2758,7 @@
 				5CB3012E1DE39F1A00D2C405 /* PathGL.h in Headers */,
 				5CB304F11DE4164800D2C405 /* PathImpl.h in Headers */,
 				5CB301511DE39F4700D2C405 /* PbufferSurfaceCGL.h in Headers */,
-				313BCE3C2360F78A00FC39E5 /* PbufferSurfaceEAGL.h in Headers */,
+				313BCE5D2361133A00FC39E5 /* PbufferSurfaceEAGL.h in Headers */,
 				5C1DBBF51B0436EC00235552 /* platform.h in Headers */,
 				315EBE291FCF808C00AC7A89 /* PMurHash.h in Headers */,
 				5C55D7272282747700B5BA2C /* PoolAlloc.h in Headers */,
@@ -2743,7 +2797,7 @@
 				5CB304F51DE4164800D2C405 /* RenderbufferImpl_mock.h in Headers */,
 				5CB304F81DE4164800D2C405 /* renderer_utils.h in Headers */,
 				5CCD597C2284FA830018F2D8 /* RendererCGL.h in Headers */,
-				313BCE3E2360F78A00FC39E5 /* RendererEAGL.h in Headers */,
+				313BCE572361133A00FC39E5 /* RendererEAGL.h in Headers */,
 				5CB301381DE39F1A00D2C405 /* RendererGL.h in Headers */,
 				5CB301361DE39F1A00D2C405 /* renderergl_utils.h in Headers */,
 				A30307072305F636002DA972 /* ReplaceShadowingVariables.h in Headers */,
@@ -2808,7 +2862,7 @@
 				31A331C71EA5ED5F00FD2203 /* system_utils.h in Headers */,
 				5C55D72B2282747700B5BA2C /* system_utils_unittest_helper.h in Headers */,
 				5CCD599C2284FC750018F2D8 /* SystemInfo.h in Headers */,
-				313BCE452360F9AD00FC39E5 /* SystemInfo_internal.h in Headers */,
+				31B15722236B803300CAA4FD /* SystemInfo_internal.h in Headers */,
 				5C1DBF311B0438D300235552 /* Texture.h in Headers */,
 				315EBD9E1FCE443600AC7A89 /* TextureFunctionHLSL.h in Headers */,
 				5CB301421DE39F1A00D2C405 /* TextureGL.h in Headers */,
@@ -2886,7 +2940,7 @@
 				5C1DBF421B0438D300235552 /* VertexAttribute.h in Headers */,
 				5C55D70022826CB300B5BA2C /* Visit.h in Headers */,
 				A31B6183230B747F001610D7 /* WindowSurfaceCGL.h in Headers */,
-				313BCE372360F78A00FC39E5 /* WindowSurfaceEAGL.h in Headers */,
+				313BCE5E2361133A00FC39E5 /* WindowSurfaceEAGL.h in Headers */,
 				315EBDFA1FCE452D00AC7A89 /* WorkerThread.h in Headers */,
 				5C55D67522826B9F00B5BA2C /* WrapSwitchStatementsInBlocks.h in Headers */,
 				5CCD59512284ECD10018F2D8 /* xxhash.h in Headers */,
@@ -3007,6 +3061,7 @@
 				A30307242305F7C4002DA972 /* Context_gl.cpp in Sources */,
 				5CCD599E2284FCDE0018F2D8 /* Context_gles_1_0.cpp in Sources */,
 				5CCD59782284FA830018F2D8 /* ContextCGL.cpp in Sources */,
+				313BCE582361133A00FC39E5 /* ContextEAGL.cpp in Sources */,
 				5CB3011C1DE39F1A00D2C405 /* ContextGL.cpp in Sources */,
 				5CB304DD1DE4164800D2C405 /* ContextImpl.cpp in Sources */,
 				5CCD598F2284FC400018F2D8 /* copyimage.cpp in Sources */,
@@ -3017,6 +3072,7 @@
 				5C55D6AF22826BC800B5BA2C /* DeferGlobalInitializers.cpp in Sources */,
 				5C1DBDE61B0438D300235552 /* Device.cpp in Sources */,
 				6E31A0A3234EEED400C84784 /* DeviceCGL.cpp in Sources */,
+				313BCE5A2361133A00FC39E5 /* DeviceEAGL.cpp in Sources */,
 				5CB304DF1DE4164800D2C405 /* DeviceImpl.cpp in Sources */,
 				31012E2618B97B9B0039062F /* Diagnostics.cpp in Sources */,
 				A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */,
@@ -3026,6 +3082,7 @@
 				315EBDBE1FCE44BF00AC7A89 /* DispatchTableGL_autogen.cpp in Sources */,
 				5C1DBDE81B0438D300235552 /* Display.cpp in Sources */,
 				5CCD596E2284F9510018F2D8 /* DisplayCGL.mm in Sources */,
+				313BCE612361133A00FC39E5 /* DisplayEAGL.mm in Sources */,
 				5CB3011E1DE39F1A00D2C405 /* DisplayGL.cpp in Sources */,
 				5CB304E11DE4164800D2C405 /* DisplayImpl.cpp in Sources */,
 				315EBDCC1FCE44E400AC7A89 /* driver_utils.cpp in Sources */,
@@ -3095,6 +3152,7 @@
 				5C55D70422826CB300B5BA2C /* IntermNodePatternMatcher.cpp in Sources */,
 				5C55D70222826CB300B5BA2C /* IntermTraverse.cpp in Sources */,
 				5CCD59792284FA830018F2D8 /* IOSurfaceSurfaceCGL.cpp in Sources */,
+				313BCE5C2361133A00FC39E5 /* IOSurfaceSurfaceEAGL.mm in Sources */,
 				315EBD9C1FCE443600AC7A89 /* IsASTDepthBelowLimit.cpp in Sources */,
 				A264F8B616974DED006FAA5A /* Lexer.cpp in Sources */,
 				5CB304EF1DE4164800D2C405 /* load_functions_table_autogen.cpp in Sources */,
@@ -3129,6 +3187,7 @@
 				5CCD817A1DBFE999006066B8 /* Path.cpp in Sources */,
 				5CB3012D1DE39F1A00D2C405 /* PathGL.cpp in Sources */,
 				5CCD596F2284F9550018F2D8 /* PbufferSurfaceCGL.cpp in Sources */,
+				313BCE562361133A00FC39E5 /* PbufferSurfaceEAGL.cpp in Sources */,
 				5C1DBDFE1B0438D300235552 /* Platform.cpp in Sources */,
 				315EBE281FCF808C00AC7A89 /* PMurHash.cpp in Sources */,
 				31012E5618B97B9B0039062F /* PoolAlloc.cpp in Sources */,
@@ -3160,6 +3219,7 @@
 				5CB301331DE39F1A00D2C405 /* RenderbufferGL.cpp in Sources */,
 				5CB304F71DE4164800D2C405 /* renderer_utils.cpp in Sources */,
 				5CCD597A2284FA830018F2D8 /* RendererCGL.cpp in Sources */,
+				313BCE592361133A00FC39E5 /* RendererEAGL.cpp in Sources */,
 				5CB301371DE39F1A00D2C405 /* RendererGL.cpp in Sources */,
 				5CB301351DE39F1A00D2C405 /* renderergl_utils.cpp in Sources */,
 				A30307052305F636002DA972 /* ReplaceShadowingVariables.cpp in Sources */,
@@ -3212,7 +3272,8 @@
 				5C55D7302282747700B5BA2C /* system_utils_posix.cpp in Sources */,
 				5C55D7202282747700B5BA2C /* system_utils_unittest_helper.cpp in Sources */,
 				5CCD599B2284FC750018F2D8 /* SystemInfo.cpp in Sources */,
-				5CCD599A2284FC750018F2D8 /* SystemInfo_mac.cpp in Sources */,
+				31B15720236B7FAF00CAA4FD /* SystemInfo_ios.cpp in Sources */,
+				5CCD599A2284FC750018F2D8 /* SystemInfo_macos.cpp in Sources */,
 				5C1DBF301B0438D300235552 /* Texture.cpp in Sources */,
 				315EBD991FCE443600AC7A89 /* TextureFunctionHLSL.cpp in Sources */,
 				5CB301411DE39F1A00D2C405 /* TextureGL.cpp in Sources */,
@@ -3275,6 +3336,7 @@
 				5CB301451DE39F1A00D2C405 /* VertexArrayGL.cpp in Sources */,
 				5C1DBF411B0438D300235552 /* VertexAttribute.cpp in Sources */,
 				A31B6184230B747F001610D7 /* WindowSurfaceCGL.mm in Sources */,
+				31B15723236B82BB00CAA4FD /* WindowSurfaceEAGL.mm in Sources */,
 				315EBDE71FCE452D00AC7A89 /* WorkerThread.cpp in Sources */,
 				5C55D6D522826BC800B5BA2C /* WrapSwitchStatementsInBlocks.cpp in Sources */,
 				5CCD59502284ECD10018F2D8 /* xxhash.c in Sources */,

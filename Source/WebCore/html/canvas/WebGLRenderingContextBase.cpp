@@ -2059,7 +2059,10 @@ bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3De
 
 bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, unsigned primitiveCount)
 {
-#if !USE(ANGLE)
+#if USE(ANGLE)
+    UNUSED_PARAM(elementCount);
+    UNUSED_PARAM(primitiveCount);
+#else
     if (!m_currentProgram)
         return false;
 
@@ -2127,9 +2130,6 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
             return false;
         }
     }
-#else
-    UNUSED_PARAM(elementCount);
-    UNUSED_PARAM(primitiveCount);
 #endif
     
     return true;
