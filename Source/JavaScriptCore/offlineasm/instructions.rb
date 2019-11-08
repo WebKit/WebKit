@@ -46,6 +46,7 @@ MACRO_INSTRUCTIONS =
      "ori",
      "orf",
      "ord",
+     "orh",
      "rshifti",
      "urshifti",
      "rshiftp",

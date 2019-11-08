@@ -1000,8 +1000,8 @@ end)
 
 llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, return)
 
-    macro arithProfile(type)
-        ori type, OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t5]
+    macro updateArithProfile(type)
+        orh type, OpNegate::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t5]
     end
 
     metadata(t5, t0)
@@ -1010,12 +1010,12 @@ llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, r
     bineq t1, Int32Tag, .opNegateSrcNotInt
     btiz t2, 0x7fffffff, .opNegateSlow
     negi t2
-    arithProfile(ArithProfileInt)
+    updateArithProfile(ArithProfileInt)
     return (Int32Tag, t2)
 .opNegateSrcNotInt:
     bia t1, LowestTag, .opNegateSlow
     xori 0x80000000, t1
-    arithProfile(ArithProfileNumber)
+    updateArithProfile(ArithProfileNumber)
     return(t1, t2)
 
 .opNegateSlow:
@@ -1027,7 +1027,7 @@ end)
 macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, doubleOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro arithProfile(type)
-            ori type, %opcodeStruct%::Metadata::m_arithProfile + ArithProfile::m_bits[t5]
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + BinaryArithProfile::m_bits[t5]
         end
 
         metadata(t5, t2)

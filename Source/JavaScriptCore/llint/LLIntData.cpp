@@ -147,36 +147,49 @@ void Data::performAssertions(VM& vm)
 #endif
 
     {
-        ArithProfile arithProfile;
+        UnaryArithProfile arithProfile;
+        arithProfile.argSawInt32();
+        ASSERT(arithProfile.bits() == UnaryArithProfile::observedIntBits());
+        ASSERT(arithProfile.argObservedType().isOnlyInt32());
+    }
+    {
+        UnaryArithProfile arithProfile;
+        arithProfile.argSawNumber();
+        ASSERT(arithProfile.bits() == UnaryArithProfile::observedNumberBits());
+        ASSERT(arithProfile.argObservedType().isOnlyNumber());
+    }
+
+    {
+        BinaryArithProfile arithProfile;
         arithProfile.lhsSawInt32();
         arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryIntInt().bits());
-        STATIC_ASSERT(ArithProfile::observedBinaryIntInt().lhsObservedType().isOnlyInt32());
-        STATIC_ASSERT(ArithProfile::observedBinaryIntInt().rhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.bits() == BinaryArithProfile::observedIntIntBits());
+        ASSERT(arithProfile.lhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.rhsObservedType().isOnlyInt32());
     }
     {
-        ArithProfile arithProfile;
+        BinaryArithProfile arithProfile;
         arithProfile.lhsSawNumber();
         arithProfile.rhsSawInt32();
-        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryNumberInt().bits());
-        STATIC_ASSERT(ArithProfile::observedBinaryNumberInt().lhsObservedType().isOnlyNumber());
-        STATIC_ASSERT(ArithProfile::observedBinaryNumberInt().rhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.bits() == BinaryArithProfile::observedNumberIntBits());
+        ASSERT(arithProfile.lhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.rhsObservedType().isOnlyInt32());
     }
     {
-        ArithProfile arithProfile;
+        BinaryArithProfile arithProfile;
         arithProfile.lhsSawNumber();
         arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryNumberNumber().bits());
-        STATIC_ASSERT(ArithProfile::observedBinaryNumberNumber().lhsObservedType().isOnlyNumber());
-        STATIC_ASSERT(ArithProfile::observedBinaryNumberNumber().rhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.bits() == BinaryArithProfile::observedNumberNumberBits());
+        ASSERT(arithProfile.lhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.rhsObservedType().isOnlyNumber());
     }
     {
-        ArithProfile arithProfile;
+        BinaryArithProfile arithProfile;
         arithProfile.lhsSawInt32();
         arithProfile.rhsSawNumber();
-        ASSERT(arithProfile.bits() == ArithProfile::observedBinaryIntNumber().bits());
-        STATIC_ASSERT(ArithProfile::observedBinaryIntNumber().lhsObservedType().isOnlyInt32());
-        STATIC_ASSERT(ArithProfile::observedBinaryIntNumber().rhsObservedType().isOnlyNumber());
+        ASSERT(arithProfile.bits() == BinaryArithProfile::observedIntNumberBits());
+        ASSERT(arithProfile.lhsObservedType().isOnlyInt32());
+        ASSERT(arithProfile.rhsObservedType().isOnlyNumber());
     }
 }
 IGNORE_WARNINGS_END

@@ -527,7 +527,7 @@ def mipsLowerMisplacedImmediates(list)
                 end
             when /^(addi|subi)/
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, -0x7fff..0x7fff)
-            when "andi", "andp", "ori", "orp", "xori", "xorp"
+            when "andi", "andp", "ori", "orp", "orh", "xori", "xorp"
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, 0..0xffff)
             else
                 newList << node
@@ -860,7 +860,7 @@ class Instruction
             end
         when "andi", "andp"
             emitMIPSCompact("and", "and", operands)
-        when "ori", "orp"
+        when "ori", "orp", "orh"
             emitMIPSCompact("or", "orr", operands)
         when "oris"
             emitMIPSCompact("or", "orrs", operands)
