@@ -56,6 +56,8 @@ String inputTypeNameForEditingAction(EditAction action)
         return "formatSuperscript"_s;
     case EditAction::Underline:
         return "formatUnderline"_s;
+    case EditAction::StrikeThrough:
+        return "formatStrikeThrough"_s;
     case EditAction::SetColor:
         return "formatFontColor"_s;
     case EditAction::DeleteByDrag:

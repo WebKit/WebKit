@@ -84,6 +84,8 @@ String undoRedoLabel(EditAction editAction)
         return WEB_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
     case EditAction::Underline:
         return WEB_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
+    case EditAction::StrikeThrough:
+        return WEB_UI_STRING_KEY("StrikeThrough", "StrikeThrough (Undo action name)", "Undo action name");
     case EditAction::Outline:
         return WEB_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
     case EditAction::Unscript:

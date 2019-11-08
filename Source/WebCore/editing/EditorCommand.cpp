@@ -1082,8 +1082,7 @@ static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource sourc
 {
     Ref<EditingStyle> style = EditingStyle::create();
     style->setStrikeThroughChange(textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s));
-    // FIXME: Needs a new EditAction!
-    return applyCommandToFrame(frame, source, EditAction::Underline, WTFMove(style));
+    return applyCommandToFrame(frame, source, EditAction::StrikeThrough, WTFMove(style));
 }
 
 static bool executeStyleWithCSS(Frame& frame, Event*, EditorCommandSource, const String& value)

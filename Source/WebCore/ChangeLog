@@ -1,3 +1,22 @@
+2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        'Strikethrough' editing command reported as 'formatUnderline'
+        https://bugs.webkit.org/show_bug.cgi?id=203944
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add an EditAction for strikeThrough command.
+
+        Test: fast/events/input-events-strikethrough-type.html
+
+        * editing/EditAction.cpp:
+        (WebCore::undoRedoLabel): Handle StrikeThrough action.
+        * editing/EditAction.h:
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction): Ditto.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeStrikethrough): Use StrikeThrough action instead of Underline.
+
 2019-11-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Default NamepaceURI must be gotten from the topmost parent before the SVG <foreignObject>

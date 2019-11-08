@@ -59,6 +59,7 @@ enum class EditAction : uint8_t {
     Subscript,
     Superscript,
     Underline,
+    StrikeThrough,
     Outline,
     Unscript,
     DeleteByDrag,

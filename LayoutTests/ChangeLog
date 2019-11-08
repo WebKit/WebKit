@@ -1,3 +1,13 @@
+2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        'Strikethrough' editing command reported as 'formatUnderline'
+        https://bugs.webkit.org/show_bug.cgi?id=203944
+
+        Reviewed by Adrian Perez de Castro.
+
+        * fast/events/input-events-strikethrough-type-expected.txt: Added.
+        * fast/events/input-events-strikethrough-type.html: Added.
+
 2019-11-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Default NamepaceURI must be gotten from the topmost parent before the SVG <foreignObject>
