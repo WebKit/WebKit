@@ -84,8 +84,6 @@ private:
     Vector<Ref<FetchResponse>> cloneResponses(const Vector<CacheStorageRecord>&);
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
-    void enqueueTask(Function<void()>&&);
-
     String m_name;
     uint64_t m_identifier;
     Ref<CacheStorageConnection> m_connection;
