@@ -36,27 +36,14 @@
 
 namespace WebCore {
 
-template<typename T> struct TaskQueueConstructor {
-    static UniqueRef<GenericTaskQueue<T>> construct(ScriptExecutionContext* context) { return makeUniqueRef<GenericTaskQueue<T>>(context); }
-};
-
-template<> struct TaskQueueConstructor<Timer> {
-    static UniqueRef<GenericTaskQueue<Timer>> construct(ScriptExecutionContext*) { return makeUniqueRef<GenericTaskQueue<Timer>>(); }
-};
-
-template<typename T>
-GenericEventQueueBase<T>::GenericEventQueueBase(EventTarget& owner)
+MainThreadGenericEventQueue::MainThreadGenericEventQueue(EventTarget& owner)
     : ActiveDOMObject(owner.scriptExecutionContext())
     , m_owner(owner)
-    , m_taskQueue(TaskQueueConstructor<T>::construct(owner.scriptExecutionContext()))
+    , m_taskQueue(makeUniqueRef<GenericTaskQueue<Timer>>())
 {
 }
 
-template<typename T>
-GenericEventQueueBase<T>::~GenericEventQueueBase() = default;
-
-template<typename T>
-void GenericEventQueueBase<T>::enqueueEvent(RefPtr<Event>&& event)
+void MainThreadGenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
 {
     if (m_isClosed)
         return;
@@ -69,11 +56,10 @@ void GenericEventQueueBase<T>::enqueueEvent(RefPtr<Event>&& event)
     if (isSuspendedOrPausedByClient())
         return;
 
-    m_taskQueue->enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
+    m_taskQueue->enqueueTask(std::bind(&MainThreadGenericEventQueue::dispatchOneEvent, this));
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::dispatchOneEvent()
+void MainThreadGenericEventQueue::dispatchOneEvent()
 {
     ASSERT(!m_pendingEvents.isEmpty());
 
@@ -86,8 +72,7 @@ void GenericEventQueueBase<T>::dispatchOneEvent()
     target.dispatchEvent(*event);
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::close()
+void MainThreadGenericEventQueue::close()
 {
     m_isClosed = true;
 
@@ -95,21 +80,18 @@ void GenericEventQueueBase<T>::close()
     m_pendingEvents.clear();
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::cancelAllEvents()
+void MainThreadGenericEventQueue::cancelAllEvents()
 {
     m_taskQueue->cancelAllTasks();
     m_pendingEvents.clear();
 }
 
-template<typename T>
-bool GenericEventQueueBase<T>::hasPendingEvents() const
+bool MainThreadGenericEventQueue::hasPendingEvents() const
 {
     return !m_pendingEvents.isEmpty();
 }
 
-template<typename T>
-bool GenericEventQueueBase<T>::hasPendingEventsOfType(const AtomString& type) const
+bool MainThreadGenericEventQueue::hasPendingEventsOfType(const AtomString& type) const
 {
     for (auto& event : m_pendingEvents) {
         if (event->type() == type)
@@ -119,8 +101,7 @@ bool GenericEventQueueBase<T>::hasPendingEventsOfType(const AtomString& type) co
     return false;
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::setPaused(bool shouldPause)
+void MainThreadGenericEventQueue::setPaused(bool shouldPause)
 {
     if (m_isPausedByClient == shouldPause)
         return;
@@ -132,8 +113,7 @@ void GenericEventQueueBase<T>::setPaused(bool shouldPause)
         rescheduleAllEventsIfNeeded();
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::suspend(ReasonForSuspension)
+void MainThreadGenericEventQueue::suspend(ReasonForSuspension)
 {
     if (m_isSuspended)
         return;
@@ -142,8 +122,7 @@ void GenericEventQueueBase<T>::suspend(ReasonForSuspension)
     m_taskQueue->cancelAllTasks();
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::resume()
+void MainThreadGenericEventQueue::resume()
 {
     if (!m_isSuspended)
         return;
@@ -152,36 +131,23 @@ void GenericEventQueueBase<T>::resume()
     rescheduleAllEventsIfNeeded();
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded()
+void MainThreadGenericEventQueue::rescheduleAllEventsIfNeeded()
 {
     if (isSuspendedOrPausedByClient())
         return;
 
     for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
-        m_taskQueue->enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
+        m_taskQueue->enqueueTask(std::bind(&MainThreadGenericEventQueue::dispatchOneEvent, this));
 }
 
-template<typename T>
-void GenericEventQueueBase<T>::stop()
+void MainThreadGenericEventQueue::stop()
 {
     close();
 }
 
-template<typename T>
-const char* GenericEventQueueBase<T>::activeDOMObjectName() const
+const char* MainThreadGenericEventQueue::activeDOMObjectName() const
 {
-    return "GenericEventQueueBase";
-}
-
-template class GenericEventQueueBase<Timer>;
-template class GenericEventQueueBase<ScriptExecutionContext>;
-
-UniqueRef<GenericEventQueue> GenericEventQueue::create(EventTarget& eventTarget)
-{
-    auto eventQueue = makeUniqueRef<GenericEventQueue>(eventTarget);
-    eventQueue->suspendIfNeeded();
-    return eventQueue;
+    return "MainThreadGenericEventQueue";
 }
 
 UniqueRef<MainThreadGenericEventQueue> MainThreadGenericEventQueue::create(EventTarget& eventTarget)

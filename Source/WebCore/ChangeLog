@@ -1,5 +1,52 @@
 2019-11-07  Chris Dumez  <cdumez@apple.com>
 
+        Drop GenericEventQueue class now that it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=203980
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop GenericEventQueue class now that it is unused. All users have been ported to the HTML
+        event loop. MainThreadGenericEventQueue remains for now but will get dropped in a follow-up
+        patch, once it is no longer used.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::MainThreadGenericEventQueue::MainThreadGenericEventQueue):
+        (WebCore::MainThreadGenericEventQueue::enqueueEvent):
+        (WebCore::MainThreadGenericEventQueue::dispatchOneEvent):
+        (WebCore::MainThreadGenericEventQueue::close):
+        (WebCore::MainThreadGenericEventQueue::cancelAllEvents):
+        (WebCore::MainThreadGenericEventQueue::hasPendingEvents const):
+        (WebCore::MainThreadGenericEventQueue::hasPendingEventsOfType const):
+        (WebCore::MainThreadGenericEventQueue::setPaused):
+        (WebCore::MainThreadGenericEventQueue::suspend):
+        (WebCore::MainThreadGenericEventQueue::resume):
+        (WebCore::MainThreadGenericEventQueue::rescheduleAllEventsIfNeeded):
+        (WebCore::MainThreadGenericEventQueue::stop):
+        (WebCore::MainThreadGenericEventQueue::activeDOMObjectName const):
+        (WebCore::TaskQueueConstructor::construct): Deleted.
+        (WebCore::TaskQueueConstructor<Timer>::construct): Deleted.
+        (WebCore::GenericEventQueueBase<T>::GenericEventQueueBase): Deleted.
+        (WebCore::GenericEventQueueBase<T>::enqueueEvent): Deleted.
+        (WebCore::GenericEventQueueBase<T>::dispatchOneEvent): Deleted.
+        (WebCore::GenericEventQueueBase<T>::close): Deleted.
+        (WebCore::GenericEventQueueBase<T>::cancelAllEvents): Deleted.
+        (WebCore::GenericEventQueueBase<T>::hasPendingEvents const): Deleted.
+        (WebCore::GenericEventQueueBase<T>::hasPendingEventsOfType const): Deleted.
+        (WebCore::GenericEventQueueBase<T>::setPaused): Deleted.
+        (WebCore::GenericEventQueueBase<T>::suspend): Deleted.
+        (WebCore::GenericEventQueueBase<T>::resume): Deleted.
+        (WebCore::GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded): Deleted.
+        (WebCore::GenericEventQueueBase<T>::stop): Deleted.
+        (WebCore::GenericEventQueueBase<T>::activeDOMObjectName const): Deleted.
+        (WebCore::GenericEventQueue::create): Deleted.
+        * dom/GenericEventQueue.h:
+        (WebCore::GenericEventQueueBase::isSuspended const): Deleted.
+        (WebCore::GenericEventQueueBase::isSuspendedOrPausedByClient const): Deleted.
+        (WebCore::MainThreadGenericEventQueue::MainThreadGenericEventQueue): Deleted.
+        (WebCore::GenericEventQueue::GenericEventQueue): Deleted.
+
+2019-11-07  Chris Dumez  <cdumez@apple.com>
+
         Port Worker to the HTML5 event loop
         https://bugs.webkit.org/show_bug.cgi?id=203919
 
