@@ -1,3 +1,11 @@
+2019-11-08  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix for platforms without WebRTC's SSL after r252185
+        https://bugs.webkit.org/show_bug.cgi?id=203934
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        The new test uses TLS with the HTTPS proxy.  Don't compile it if we can't compile it.
+
 2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add pointer lock permission request API

@@ -504,6 +504,7 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
 @end
 
+#if HAVE(SSL)
 TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 {
     using namespace TestWebKitAPI;
@@ -573,6 +574,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     EXPECT_TRUE(contains(messages, @"1"));
     EXPECT_TRUE(contains(messages, @"2"));
 }
+#endif // HAVE(SSL)
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {
