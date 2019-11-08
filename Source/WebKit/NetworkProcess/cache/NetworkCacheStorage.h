@@ -108,10 +108,6 @@ public:
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     static const unsigned version = 15;
-#if PLATFORM(MAC)
-    /// Allow the last stable version of the cache to co-exist with the latest development one.
-    static const unsigned lastStableVersion = 13;
-#endif
 
     String basePathIsolatedCopy() const;
     String versionPath() const;

@@ -143,6 +143,16 @@ public:
     unsigned activeCount { 0 };
 };
 
+static String makeCachePath(const String& baseCachePath)
+{
+#if PLATFORM(MAC)
+    // Put development cache to a different directory to avoid affecting the system cache.
+    if (!AuxiliaryProcess::isSystemWebKit())
+        return FileSystem::pathByAppendingComponent(baseCachePath, "Development"_s);
+#endif
+    return baseCachePath;
+}
+
 static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
 {
     String versionSubdirectory = makeString(versionDirectoryPrefix, Storage::version);
@@ -164,15 +174,19 @@ static String makeSaltFilePath(const String& baseDirectoryPath)
     return FileSystem::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), saltFileName);
 }
 
-RefPtr<Storage> Storage::open(const String& cachePath, Mode mode)
+RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode)
 {
     ASSERT(RunLoop::isMain());
 
+    auto cachePath = makeCachePath(baseCachePath);
+
     if (!FileSystem::makeAllDirectories(makeVersionedDirectoryPath(cachePath)))
         return nullptr;
+
     auto salt = readOrMakeSalt(makeSaltFilePath(cachePath));
     if (!salt)
         return nullptr;
+
     return adoptRef(new Storage(cachePath, mode, *salt));
 }
 
@@ -1122,10 +1136,6 @@ void Storage::deleteOldVersions()
                 return;
             if (directoryVersion >= version)
                 return;
-#if PLATFORM(MAC)
-            if (!AuxiliaryProcess::isSystemWebKit() && directoryVersion == lastStableVersion)
-                return;
-#endif
 
             auto oldVersionPath = FileSystem::pathByAppendingComponent(cachePath, subdirName);
             LOG(NetworkCacheStorage, "(NetworkProcess) deleting old cache version, path %s", oldVersionPath.utf8().data());
