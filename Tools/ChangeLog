@@ -1,3 +1,14 @@
+2019-11-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Prioritize builders over testers when a bot is shared over multiple queues
+        https://bugs.webkit.org/show_bug.cgi?id=204007
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig):
+        (prioritizeBuilders): Method to prioritize builder queues over tester queues.
+
 2019-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Build fix for platforms without WebRTC's SSL after r252185

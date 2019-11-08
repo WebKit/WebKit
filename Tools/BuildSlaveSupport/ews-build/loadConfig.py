@@ -77,6 +77,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
 
         c['builders'].append(builder)
 
+    c['prioritizeBuilders'] = prioritizeBuilders
     c['schedulers'] = []
     for scheduler in config['schedulers']:
         schedulerClassName = scheduler.pop('type')
@@ -89,6 +90,12 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
             # FIXME: Read the credentials from local file on disk.
             scheduler['userpass'] = [(os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser'), os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
         c['schedulers'].append(schedulerClass(**scheduler))
+
+
+def prioritizeBuilders(buildmaster, builders):
+    # Prioritize builder queues over tester queues
+    builders.sort(key=lambda b: 'build' in b.name.lower(), reverse=True)
+    return builders
 
 
 def checkValidWorker(worker):
