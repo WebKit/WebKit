@@ -1075,6 +1075,7 @@ typedef struct WebEdgeInsets {
 @end
 
 #if TARGET_OS_IPHONE
+
 @interface WebView (WebViewIOSPDF)
 + (Class)_getPDFRepresentationClass;
 + (void)_setPDFRepresentationClass:(Class)pdfRepresentationClass;
@@ -1082,6 +1083,11 @@ typedef struct WebEdgeInsets {
 + (Class)_getPDFViewClass;
 + (void)_setPDFViewClass:(Class)pdfViewClass;
 @end
+
+@interface WebView (WebViewIOSAdditions)
+- (NSArray<DOMElement *> *)_editableElementsInRect:(CGRect)rect;
+@end
+
 #endif
 
 @interface NSObject (WebViewFrameLoadDelegatePrivate)

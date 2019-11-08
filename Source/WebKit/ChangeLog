@@ -1,3 +1,22 @@
+2019-11-08  Daniel Bates  <dabates@apple.com>
+
+        Add WebKit Legacy SPI to retrieve editable elements in rect
+        https://bugs.webkit.org/show_bug.cgi?id=204006
+        <rdar://problem/57024093>
+
+        Reviewed by Wenson Hsieh.
+
+        Write WebPage::textInputContextsInRect() in terms of Page::editableElementsInRect().
+        Also make use of Element::clientRect() instead of elementRectInRootViewCoordinates(),
+        which duplicates what the former does.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect): Write in terms of Page::editableElementsInRect().
+        (WebKit::WebPage::contextForElement const): Use Element::clientRect() which does what
+        elementRectInRootViewCoordinates() does.
+        (WebKit::elementRectInRootViewCoordinates): Deleted.
+        (WebKit::isEditableTextInputElement): Deleted.
+
 2019-11-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Return NotAllowedError immediately for UI cancellations

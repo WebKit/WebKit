@@ -10131,6 +10131,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 @end
 
 #if PLATFORM(IOS_FAMILY)
+
 @implementation WebView (WebViewIOSPDF)
 
 + (Class)_getPDFRepresentationClass
@@ -10158,6 +10159,25 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 }
 
 @end
+
+@implementation WebView (WebViewIOSAdditions)
+
+- (NSArray<DOMElement *> *)_editableElementsInRect:(CGRect)rect
+{
+    auto* page = core(self);
+    if (!page)
+        return @[];
+    auto coreElements = page->editableElementsInRect(rect);
+    if (coreElements.isEmpty())
+        return @[];
+    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:coreElements.size()]);
+    for (auto& coreElement : coreElements)
+        [result addObject:kit(coreElement.ptr())];
+    return result.autorelease();
+}
+
+@end
+
 #endif
 
 @implementation WebView (WebViewFullScreen)

@@ -62,6 +62,8 @@
 #include "FullscreenManager.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLTextAreaElement.h"
+#include "HTMLTextFormControlElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "InspectorClient.h"
@@ -124,6 +126,7 @@
 #include "VoidCallback.h"
 #include "WheelEventDeltaFilter.h"
 #include "Widget.h"
+#include <wtf/Deque.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -910,6 +913,45 @@ void Page::unmarkAllTextMatches()
         frame->document()->markers().removeMarkers(DocumentMarker::TextMatch);
         frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
+}
+
+static bool isEditableTextInputElement(const Element& element)
+{
+    if (is<HTMLTextFormControlElement>(element)) {
+        if (!element.isTextField() && !is<HTMLTextAreaElement>(element))
+            return false;
+        return downcast<HTMLTextFormControlElement>(element).isInnerTextElementEditable();
+    }
+    return element.isRootEditableElement();
+}
+
+Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
+{
+    Vector<Ref<Element>> result;
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+
+        Deque<Node*> nodesToSearch;
+        nodesToSearch.append(document);
+        while (!nodesToSearch.isEmpty()) {
+            auto* node = nodesToSearch.takeFirst();
+
+            // It is possible to have nested text input contexts (e.g. <input type='text'> inside contenteditable) but
+            // in this case we just take the outermost context and skip the rest.
+            if (!is<Element>(node) || !isEditableTextInputElement(downcast<Element>(*node))) {
+                for (auto* child = node->firstChild(); child; child = child->nextSibling())
+                    nodesToSearch.append(child);
+                continue;
+            }
+
+            auto& element = downcast<Element>(*node);
+            if (searchRectInRootViewCoordinates.intersects(element.clientRect()))
+                result.append(element);
+        }
+    }
+    return result;
 }
 
 const VisibleSelection& Page::selection() const

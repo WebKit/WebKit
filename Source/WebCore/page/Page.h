@@ -717,6 +717,8 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
+    WEBCORE_EXPORT Vector<Ref<Element>> editableElementsInRect(const FloatRect&) const;
+
 private:
     struct Navigation {
         RegistrableDomain domain;
