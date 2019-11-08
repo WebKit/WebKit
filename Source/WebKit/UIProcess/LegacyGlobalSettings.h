@@ -27,6 +27,7 @@
 
 #include "CacheModel.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -35,19 +36,35 @@ class LegacyGlobalSettings {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static LegacyGlobalSettings& singleton();
-    
+
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
-    
+
     void setHSTSStorageDirectory(String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
     const String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
-    
+
+    const HashSet<String>& schemesToRegisterAsSecure() { return m_schemesToRegisterAsSecure; }
+    void registerURLSchemeAsSecure(const String& scheme) { m_schemesToRegisterAsSecure.add(scheme); }
+
+    const HashSet<String>& schemesToRegisterAsBypassingContentSecurityPolicy() { return m_schemesToRegisterAsBypassingContentSecurityPolicy; }
+    void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme) { m_schemesToRegisterAsBypassingContentSecurityPolicy.add(scheme); }
+
+    const HashSet<String>& schemesToRegisterAsLocal() { return m_schemesToRegisterAsLocal; }
+    void registerURLSchemeAsLocal(const String& scheme) { m_schemesToRegisterAsLocal.add(scheme); }
+
+    const HashSet<String>& schemesToRegisterAsNoAccess() { return m_schemesToRegisterAsNoAccess; }
+    void registerURLSchemeAsNoAccess(const String& scheme) { m_schemesToRegisterAsNoAccess.add(scheme); }
+
 private:
     friend class NeverDestroyed<LegacyGlobalSettings>;
     LegacyGlobalSettings();
     
     CacheModel m_cacheModel { CacheModel::PrimaryWebBrowser };
     String m_hstsStorageDirectory;
+    HashSet<String> m_schemesToRegisterAsSecure;
+    HashSet<String> m_schemesToRegisterAsBypassingContentSecurityPolicy;
+    HashSet<String> m_schemesToRegisterAsLocal;
+    HashSet<String> m_schemesToRegisterAsNoAccess;
 };
 
 } // namespace WebKit

@@ -57,9 +57,9 @@ WK_EXPORT void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, b
 
 WK_EXPORT void WKContextSetShouldUseFontSmoothing(WKContextRef context, bool useFontSmoothing);
 
-WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme);
+WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy(WKContextRef context, WKStringRef urlScheme);
+WK_EXPORT void WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy(WKContextRef context, WKStringRef urlScheme) WK_C_API_DEPRECATED;
 
 WK_EXPORT void WKContextRegisterURLSchemeAsCachePartitioned(WKContextRef context, WKStringRef urlScheme);
 
