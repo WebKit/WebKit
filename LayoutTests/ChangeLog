@@ -1,5 +1,30 @@
 2019-11-07  Justin Fan  <justin_fan@apple.com>
 
+        [WebGL] Fixing WebGL tests: Add new baselines for iOS bots
+        https://bugs.webkit.org/show_bug.cgi?id=203938
+
+        Unreviewed test expectation gardening.
+
+        Follow-up to https://bugs.webkit.org/show_bug.cgi?id=203908.
+        New baselines for iOS tests generated from simulator.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/webgl/1.0.3/conformance/extensions/get-extension-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/extensions/oes-texture-float-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/extensions/webgl-draw-buffers-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/more/functions/readPixelsBadArgs-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/more/functions/texImage2DHTML-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/more/functions/texSubImage2DHTML-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats-expected.txt: Added.
+        * platform/ios/webgl/1.0.3/conformance/textures/texture-npot-video-expected.txt: Added.
+        * platform/ios/webgl/2.0.0/conformance/extensions/angle-instanced-arrays-expected.txt: Added.
+        * platform/ios/webgl/2.0.0/conformance/extensions/oes-vertex-array-object-expected.txt: Added.
+
+2019-11-07  Justin Fan  <justin_fan@apple.com>
+
         webgl/1.0.3/conformance/context/context-release-upon-reload.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=203984
 
