@@ -59,8 +59,6 @@ private:
     Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&);
     Optional<ClientOrigin> origin() const;
 
-    void enqueueTask(Function<void()>&&);
-
     Vector<Ref<DOMCache>> m_caches;
     uint64_t m_updateCounter { 0 };
     Ref<CacheStorageConnection> m_connection;

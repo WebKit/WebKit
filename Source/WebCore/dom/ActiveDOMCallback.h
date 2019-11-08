@@ -51,6 +51,9 @@ public:
     virtual ~ActiveDOMCallback();
 
     WEBCORE_EXPORT bool canInvokeCallback() const;
+
+    WEBCORE_EXPORT bool activeDOMObjectsAreSuspended() const;
+    WEBCORE_EXPORT bool activeDOMObjectAreStopped() const;
     
     virtual void visitJSFunction(JSC::SlotVisitor&) { }
 };

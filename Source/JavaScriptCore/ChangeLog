@@ -1,3 +1,23 @@
+2019-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Make DeferredPromise behave nicely with regards to the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203976
+
+        Reviewed by Ryosuke Niwa.
+
+        Add template parameter to JSC::Strong to indicate that the destructor should grab the JS lock.
+        Normally, the callers are in charge of grabbing the lock but this is not always feasible.
+        In particular, in this patch, I capture a JSC::Strong in a lambda. If the document gets destroyed
+        before the lambda has run, the lambda will get destroyed and it will destroy the captured JSC::Strong
+        as a result.
+
+        * heap/Handle.h:
+        * heap/Strong.h:
+        (JSC::Strong::clear):
+        * heap/StrongInlines.h:
+        (JSC::shouldStrongDestructorGrabLock>::Strong):
+        (JSC::shouldStrongDestructorGrabLock>::set):
+
 2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use LinkTimeConstants and make some properties lazy

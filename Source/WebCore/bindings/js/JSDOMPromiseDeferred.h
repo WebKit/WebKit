@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "AbstractEventLoop.h"
 #include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromise.h>
 
@@ -58,8 +60,9 @@ public:
     template<class IDLType>
     void resolve(typename IDLType::ParameterType value)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -69,8 +72,9 @@ public:
 
     void resolve()
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -81,8 +85,9 @@ public:
     template<class IDLType>
     void resolveWithNewlyCreated(typename IDLType::ParameterType value)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -93,8 +98,9 @@ public:
     template<class IDLType>
     void resolveCallbackValueWithNewlyCreated(const Function<typename IDLType::InnerParameterType(ScriptExecutionContext&)>& createValue)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
@@ -105,8 +111,9 @@ public:
     template<class IDLType>
     void reject(typename IDLType::ParameterType value)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -123,8 +130,9 @@ public:
     template<typename Callback>
     void resolveWithCallback(Callback callback)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -135,8 +143,9 @@ public:
     template<typename Callback>
     void rejectWithCallback(Callback callback)
     {
-        if (isSuspended())
+        if (shouldIgnoreRequestToFulfill())
             return;
+
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
@@ -154,6 +163,8 @@ private:
         , m_mode(mode)
     {
     }
+
+    bool shouldIgnoreRequestToFulfill() const { return isEmpty() || activeDOMObjectAreStopped(); }
 
     JSC::JSPromise* deferred() const { return guarded(); }
 

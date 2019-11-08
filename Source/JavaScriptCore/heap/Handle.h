@@ -37,6 +37,8 @@ namespace JSC {
     lifetime is guaranteed by something else.
 */
 
+enum class ShouldStrongDestructorGrabLock : bool { No, Yes };
+
 template <class T> class Handle;
 
 // Creating a JSValue Handle is invalid
@@ -44,7 +46,7 @@ template <> class Handle<JSValue>;
 
 class HandleBase {
     template <typename T> friend class Weak;
-    template <typename T> friend class Strong;
+    template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock> friend class Strong;
     friend class HandleSet;
     friend struct JSCallbackObjectData;
 

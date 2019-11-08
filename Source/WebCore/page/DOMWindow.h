@@ -37,6 +37,7 @@
 #include "ScrollTypes.h"
 #include "Supplementable.h"
 #include <JavaScriptCore/HandleTypes.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
@@ -45,7 +46,6 @@ namespace JSC {
 class CallFrame;
 class JSObject;
 class JSValue;
-template<typename> class Strong;
 }
 
 namespace WebCore {

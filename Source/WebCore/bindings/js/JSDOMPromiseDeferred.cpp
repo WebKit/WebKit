@@ -33,6 +33,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/JSPromiseConstructor.h>
+#include <JavaScriptCore/Strong.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -45,8 +46,17 @@ JSC::JSValue DeferredPromise::promise() const
 
 void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveMode mode, JSValue resolution)
 {
-    if (!canInvokeCallback())
+    if (shouldIgnoreRequestToFulfill())
         return;
+
+    if (activeDOMObjectsAreSuspended()) {
+        JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, *scriptExecutionContext(), [this, protectedThis = makeRef(*this), mode, strongResolution = WTFMove(strongResolution)]() mutable {
+            if (!shouldIgnoreRequestToFulfill())
+                callFunction(*globalObject(), mode, strongResolution.get());
+        });
+        return;
+    }
 
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
     // https://bugs.webkit.org/show_bug.cgi?id=203402
@@ -65,15 +75,22 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 
 void DeferredPromise::whenSettled(Function<void()>&& callback)
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
+
+    if (activeDOMObjectsAreSuspended()) {
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, *scriptExecutionContext(), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+            whenSettled(WTFMove(callback));
+        });
+        return;
+    }
 
     DOMPromise::whenPromiseIsSettled(globalObject(), deferred(), WTFMove(callback));
 }
 
 void DeferredPromise::reject()
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
 
     ASSERT(deferred());
@@ -85,7 +102,7 @@ void DeferredPromise::reject()
 
 void DeferredPromise::reject(std::nullptr_t)
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
 
     ASSERT(deferred());
@@ -97,7 +114,7 @@ void DeferredPromise::reject(std::nullptr_t)
 
 void DeferredPromise::reject(Exception exception)
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
 
     ASSERT(deferred());
@@ -129,7 +146,7 @@ void DeferredPromise::reject(Exception exception)
 
 void DeferredPromise::reject(ExceptionCode ec, const String& message)
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
 
     ASSERT(deferred());
@@ -162,7 +179,7 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message)
 
 void DeferredPromise::reject(const JSC::PrivateName& privateName)
 {
-    if (isSuspended())
+    if (shouldIgnoreRequestToFulfill())
         return;
 
     ASSERT(deferred());

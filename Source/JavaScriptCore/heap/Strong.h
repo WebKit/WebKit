@@ -28,16 +28,17 @@
 #include <wtf/Assertions.h>
 #include "Handle.h"
 #include "HandleSet.h"
+#include "JSLock.h"
 
 namespace JSC {
 
 class VM;
 
 // A strongly referenced handle that prevents the object it points to from being garbage collected.
-template <typename T> class Strong : public Handle<T> {
+template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock = ShouldStrongDestructorGrabLock::No> class Strong : public Handle<T> {
     using Handle<T>::slot;
     using Handle<T>::setSlot;
-    template <typename U> friend class Strong;
+    template <typename U, ShouldStrongDestructorGrabLock> friend class Strong;
 
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
@@ -120,8 +121,16 @@ public:
     {
         if (!slot())
             return;
-        HandleSet::heapFor(slot())->deallocate(slot());
-        setSlot(0);
+
+        auto* heap = HandleSet::heapFor(slot());
+        if (shouldStrongDestructorGrabLock == ShouldStrongDestructorGrabLock::Yes) {
+            JSLockHolder holder(heap->vm());
+            heap->deallocate(slot());
+            setSlot(0);
+        } else {
+            heap->deallocate(slot());
+            setSlot(0);
+        }
     }
 
 private:

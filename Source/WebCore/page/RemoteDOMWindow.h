@@ -27,6 +27,7 @@
 
 #include "AbstractDOMWindow.h"
 #include "RemoteFrame.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/TypeCasts.h>
 
@@ -35,7 +36,6 @@ class CallFrame;
 class JSGlobalObject;
 class JSObject;
 class JSValue;
-template<typename> class Strong;
 }
 
 namespace WebCore {

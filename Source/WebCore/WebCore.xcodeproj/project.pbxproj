@@ -1250,6 +1250,7 @@
 		46EF142C1F97B7D800C2A524 /* ServiceWorkerClients.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14221F97B7BA00C2A524 /* ServiceWorkerClients.h */; };
 		46EF142D1F97B7D800C2A524 /* ServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14241F97B7BA00C2A524 /* ServiceWorkerClient.h */; };
 		46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46F02A1A23737F8300106A64 /* AbstractEventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0ABCA123679AB300B45085 /* AbstractEventLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
@@ -28743,6 +28744,7 @@
 				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				46B95195207D633400A7D2DD /* AbstractDOMWindow.h in Headers */,
+				46F02A1A23737F8300106A64 /* AbstractEventLoop.h in Headers */,
 				46B95196207D633A00A7D2DD /* AbstractFrame.h in Headers */,
 				F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,

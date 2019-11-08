@@ -230,53 +230,48 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
-    auto* document = this->document();
-    if (!document)
-        return completionHandler();
 
-    document->eventLoop().queueTask(TaskSource::UserInteraction, *document, [this, protectedThis = makeRef(*this), audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
-            auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler();
-            });
-            if (isContextStopped())
-                return;
-
-            if (!privateStream) {
-                RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
-                deny(MediaAccessDenialReason::HardwareError);
-                return;
-            }
-
-            auto& document = downcast<Document>(*m_scriptExecutionContext);
-            privateStream->monitorOrientation(document.orientationNotifier());
-
-            auto stream = MediaStream::create(document, privateStream.releaseNonNull());
-            stream->startProducingData();
-
-            if (!isMediaStreamCorrectlyStarted(stream)) {
-                deny(MediaAccessDenialReason::HardwareError);
-                return;
-            }
-
-            ASSERT(document.isCapturing());
-            stream->document()->setHasCaptureMediaStreamTrack();
-            m_promise->resolve(WTFMove(stream));
-        };
-
-        auto& document = downcast<Document>(*scriptExecutionContext());
-        document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
-
-        RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
-
-        if (!m_scriptExecutionContext)
+    auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+        auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+        if (isContextStopped())
             return;
 
+        if (!privateStream) {
+            RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
+            deny(MediaAccessDenialReason::HardwareError);
+            return;
+        }
+
+        auto& document = downcast<Document>(*m_scriptExecutionContext);
+        privateStream->monitorOrientation(document.orientationNotifier());
+
+        auto stream = MediaStream::create(document, privateStream.releaseNonNull());
+        stream->startProducingData();
+
+        if (!isMediaStreamCorrectlyStarted(stream)) {
+            deny(MediaAccessDenialReason::HardwareError);
+            return;
+        }
+
+        ASSERT(document.isCapturing());
+        stream->document()->setHasCaptureMediaStreamTrack();
+        m_promise->resolve(WTFMove(stream));
+    };
+
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
+
+    RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
+
+    if (!m_scriptExecutionContext)
+        return;
+
 #if ENABLE(WEB_RTC)
-        if (auto* page = document.page())
-            page->rtcController().disableICECandidateFilteringForDocument(document);
+    if (auto* page = document.page())
+        page->rtcController().disableICECandidateFilteringForDocument(document);
 #endif
-    });
 }
 
 void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)
@@ -324,12 +319,10 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         break;
     }
 
-    document()->eventLoop().queueTask(TaskSource::UserInteraction, *document(), [this, protectedThis = makeRef(*this), code, message]() mutable {
-        if (!message.isEmpty())
-            m_promise->reject(code, message);
-        else
-            m_promise->reject(code);
-    });
+    if (!message.isEmpty())
+        m_promise->reject(code, message);
+    else
+        m_promise->reject(code);
 }
 
 void UserMediaRequest::stop()

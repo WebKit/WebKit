@@ -1,3 +1,85 @@
+2019-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Make DeferredPromise behave nicely with regards to the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203976
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously, DeferredPromise would ignore requests to fulfill the promise if
+        reject/resolve/settle got called while the promise's script execution context
+        is suspended in the back/forward cache. This is really never the right thing to
+        do though because this means the promise will never be fulfilled if the user
+        ever goes back to this page.
+
+        To address the issue, DeferredPromise now schedules a task on the event loop if
+        it gets fulfilled while its script execution context is suspended. As a result,
+        the promise will properly get fulfilled if the document ever comes out of the
+        back/forward cache and developers using DeferredPromise do not have to worry
+        about suspension.
+
+        Now that DeferredPromise properly deals with suspended documents, this patch also
+        reverts changes I made recently in code using DeferredPromise. I had made them
+        queue a task on the event loop before fulfilling the promise, which did not match
+        their specification and is no longer needed.
+
+        Note that capturing the Strong<> in the lambda is correct here because we want
+        the resolution value to survive until either:
+        1. The task is processed by the event loop and the promise is resolved.
+        2. The back/forward cache entry containing this document is destroyed
+
+        Note that we do not leak here because when the back/forward cache's CachedFrame
+        gets destroyed, it will call Document::prepareForDestruction(), which will call
+        WindowEventLoop::stop() and destroys all pending tasks associated with this
+        document. This will therefore destroy the Strong captured in the task.
+
+        No new tests, covered by existing back/forward cache tests.
+
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::doSequentialMatch):
+        (WebCore::DOMCacheStorage::match):
+        (WebCore::DOMCacheStorage::has):
+        (WebCore::DOMCacheStorage::open):
+        (WebCore::DOMCacheStorage::doOpen):
+        (WebCore::DOMCacheStorage::remove):
+        (WebCore::DOMCacheStorage::doRemove):
+        (WebCore::DOMCacheStorage::keys):
+        * Modules/cache/DOMCacheStorage.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::blobChunk):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        (WebCore::UserMediaRequest::deny):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/IDLTypes.h:
+        * bindings/js/JSDOMGuardedObject.h:
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::whenSettled):
+        (WebCore::DeferredPromise::reject):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::resolve):
+        (WebCore::DeferredPromise::resolveWithNewlyCreated):
+        (WebCore::DeferredPromise::resolveCallbackValueWithNewlyCreated):
+        (WebCore::DeferredPromise::reject):
+        (WebCore::DeferredPromise::resolveWithCallback):
+        (WebCore::DeferredPromise::rejectWithCallback):
+        (WebCore::DeferredPromise::shouldIgnoreRequestToFulfill const):
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::didFirstLayout):
+        (WebCore::FontFaceSet::completedLoading):
+        (WebCore::FontFaceSet::faceFinished):
+        * dom/ActiveDOMCallback.cpp:
+        (WebCore::ActiveDOMCallback::activeDOMObjectsAreSuspended const):
+        (WebCore::ActiveDOMCallback::activeDOMObjectAreStopped const):
+        * dom/ActiveDOMCallback.h:
+        * dom/Element.h:
+        * dom/ScriptExecutionContext.h:
+        * page/DOMWindow.h:
+        * page/RemoteDOMWindow.h:
+
 2019-11-08  Antti Koivisto  <antti@apple.com>
 
         StyleResolver state should store user agent appearance style as RenderStyle

@@ -199,22 +199,14 @@ void FontFaceSet::startedLoading()
 void FontFaceSet::didFirstLayout()
 {
     m_isFirstLayoutDone = true;
-    if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled()) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [this] {
-            if (!m_readyPromise->isFulfilled())
-                m_readyPromise->resolve(*this);
-        });
-    }
+    if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 }
 
 void FontFaceSet::completedLoading()
 {
-    if (m_isFirstLayoutDone && !m_readyPromise->isFulfilled()) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [this] {
-            if (!m_readyPromise->isFulfilled())
-                m_readyPromise->resolve(*this);
-        });
-    }
+    if (m_isFirstLayoutDone && !m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 }
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
@@ -226,22 +218,20 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     if (pendingPromises.isEmpty())
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [pendingPromises = WTFMove(pendingPromises), newStatus] {
-        for (auto& pendingPromise : pendingPromises) {
-            if (pendingPromise->hasReachedTerminalState)
-                continue;
-            if (newStatus == CSSFontFace::Status::Success) {
-                if (pendingPromise->hasOneRef()) {
-                    pendingPromise->promise->resolve(pendingPromise->faces);
-                    pendingPromise->hasReachedTerminalState = true;
-                }
-            } else {
-                ASSERT(newStatus == CSSFontFace::Status::Failure);
-                pendingPromise->promise->reject(NetworkError);
+    for (auto& pendingPromise : pendingPromises) {
+        if (pendingPromise->hasReachedTerminalState)
+            continue;
+        if (newStatus == CSSFontFace::Status::Success) {
+            if (pendingPromise->hasOneRef()) {
+                pendingPromise->promise->resolve(pendingPromise->faces);
                 pendingPromise->hasReachedTerminalState = true;
             }
+        } else {
+            ASSERT(newStatus == CSSFontFace::Status::Failure);
+            pendingPromise->promise->reject(NetworkError);
+            pendingPromise->hasReachedTerminalState = true;
         }
-    });
+    }
 }
 
 FontFaceSet& FontFaceSet::readyPromiseResolve()

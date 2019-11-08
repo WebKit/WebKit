@@ -39,17 +39,6 @@
 
 namespace WebCore {
 
-void FetchBodyOwner::runNetworkTaskWhenPossible(Function<void()>&& task)
-{
-    auto* context = scriptExecutionContext();
-    if (!context || !scriptExecutionContext()->activeDOMObjectsAreSuspended())
-        return task();
-
-    context->eventLoop().queueTask(TaskSource::Networking, *context, [pendingActivity = makePendingActivity(*this), task = WTFMove(task)] {
-        task();
-    });
-}
-
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(&context)
     , m_body(WTFMove(body))
@@ -281,31 +270,27 @@ void FetchBodyOwner::finishBlobLoading()
 void FetchBodyOwner::blobLoadingSucceeded()
 {
     ASSERT(!isBodyNull());
-    runNetworkTaskWhenPossible([this]() mutable {
 #if ENABLE(STREAMS_API)
-        if (m_readableStreamSource) {
-            m_readableStreamSource->close();
-            m_readableStreamSource = nullptr;
-        }
+    if (m_readableStreamSource) {
+        m_readableStreamSource->close();
+        m_readableStreamSource = nullptr;
+    }
 #endif
-        m_body->loadingSucceeded();
-    });
+    m_body->loadingSucceeded();
     finishBlobLoading();
 }
 
 void FetchBodyOwner::blobLoadingFailed()
 {
     ASSERT(!isBodyNull());
-    runNetworkTaskWhenPossible([this]() mutable {
 #if ENABLE(STREAMS_API)
-        if (m_readableStreamSource) {
-            if (!m_readableStreamSource->isCancelling())
-                m_readableStreamSource->error(Exception { TypeError, "Blob loading failed"_s});
-            m_readableStreamSource = nullptr;
-        } else
+    if (m_readableStreamSource) {
+        if (!m_readableStreamSource->isCancelling())
+            m_readableStreamSource->error(Exception { TypeError, "Blob loading failed"_s});
+        m_readableStreamSource = nullptr;
+    } else
 #endif
-            m_body->loadingFailed(Exception { TypeError, "Blob loading failed"_s});
-    });
+        m_body->loadingFailed(Exception { TypeError, "Blob loading failed"_s});
     finishBlobLoading();
 }
 
@@ -314,10 +299,8 @@ void FetchBodyOwner::blobChunk(const char* data, size_t size)
     ASSERT(data);
 #if ENABLE(STREAMS_API)
     ASSERT(m_readableStreamSource);
-    runNetworkTaskWhenPossible([this, arrayBuffer = ArrayBuffer::tryCreate(data, size)]() mutable {
-        if (!m_readableStreamSource->enqueue(WTFMove(arrayBuffer)))
-            stop();
-    });
+    if (!m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
+        stop();
 #else
     UNUSED_PARAM(data);
     UNUSED_PARAM(size);

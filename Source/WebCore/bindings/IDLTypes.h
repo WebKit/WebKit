@@ -43,7 +43,6 @@ class ArrayBufferView;
 class DataView;
 class JSValue;
 class JSObject;
-template<typename> class Strong;
 }
 
 namespace WebCore {

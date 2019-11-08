@@ -44,7 +44,6 @@ class CallFrame;
 class Exception;
 class JSPromise;
 class VM;
-template<typename> class Strong;
 }
 
 namespace Inspector {

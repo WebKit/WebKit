@@ -51,7 +51,7 @@ protected:
     DOMGuardedObject(JSDOMGlobalObject&, JSC::JSCell&);
 
     void contextDestroyed() override;
-    bool isEmpty() { return !m_guarded; }
+    bool isEmpty() const { return !m_guarded; }
 
     JSC::Weak<JSC::JSCell> m_guarded;
     JSC::Weak<JSDOMGlobalObject> m_globalObject;

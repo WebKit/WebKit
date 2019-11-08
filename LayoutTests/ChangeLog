@@ -1,3 +1,15 @@
+2019-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Make DeferredPromise behave nicely with regards to the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203976
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test where ordering has changed slightly due to not queueing a task anymore before
+        resolving the promise. This restores pre-r251746 behavior.
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+
 2019-11-08  Truitt Savell  <tsavell@apple.com>
 
         Update expectations for 3 fast/events/ios/key-events-comprehensive tests

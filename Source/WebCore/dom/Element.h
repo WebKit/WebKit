@@ -34,6 +34,7 @@
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
+#include <JavaScriptCore/Strong.h>
 
 namespace WebCore {
 
