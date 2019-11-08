@@ -152,11 +152,12 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     m_pictureInPictureWindow->setSize(windowSize);
 
+    EnterPictureInPictureEvent::Init initializer;
+    initializer.bubbles = true;
+    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
+    m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
+
     if (m_enterPictureInPicturePromise) {
-        EnterPictureInPictureEvent::Init initializer;
-        initializer.bubbles = true;
-        initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-        m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
         m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
         m_enterPictureInPicturePromise = nullptr;
     }
@@ -167,9 +168,9 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     INFO_LOG(LOGIDENTIFIER);
     m_pictureInPictureWindow->close();
     m_videoElement.document().setPictureInPictureElement(nullptr);
+    m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     if (m_exitPictureInPicturePromise) {
-        m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         m_exitPictureInPicturePromise->resolve();
         m_exitPictureInPicturePromise = nullptr;
     }

@@ -1,3 +1,18 @@
+2019-11-08  Peng Liu  <peng.liu6@apple.com>
+
+        Picture-in-Picture events are not fired when enter/exit the Picture-in-Picture mode through modern media controls
+        https://bugs.webkit.org/show_bug.cgi?id=203933
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing layout test cases. No new test is required.
+
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.buttonWasPressed):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::didEnterPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didExitPictureInPicture):
+
 2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         'Strikethrough' editing command reported as 'formatUnderline'
