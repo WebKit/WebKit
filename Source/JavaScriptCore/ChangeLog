@@ -1,3 +1,42 @@
+2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use LinkTimeConstants and make some properties lazy
+        https://bugs.webkit.org/show_bug.cgi?id=203795
+
+        Reviewed by Keith Miller.
+
+        This patch makes Map and Set lazily initialized in JSGlobalObject by leveraging link-time-constant. @Set was accessed from
+        builtin-JS. So we cannot make it lazily-allocated. But now we have link-time-constant mechanism that makes such accesses
+        lazily-initialized. We use this to make Set lazily-allocated.
+
+        And, instead of JSGlobalObject's last sequence of initialization, we initialize watchpoint in MapPrototype::finishCreation
+        and SetPrototype::finishCreation. This allows us to make Map and Set lazily-allocated. We also refactor NumberPrototype to
+        align to this model.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesWatchpointIsValid):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::setupAdaptiveWatchpoint):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint):
+        (JSC::JSGlobalObject::installNumberPrototypeWatchpoint):
+        (JSC::JSGlobalObject::installMapPrototypeWatchpoint):
+        (JSC::JSGlobalObject::installSetPrototypeWatchpoint):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::numberProtoToStringFunction const):
+        (JSC::JSGlobalObject::mapPrototype const):
+        (JSC::JSGlobalObject::jsSetPrototype const):
+        (JSC::JSGlobalObject::numberObjectStructure const):
+        (JSC::JSGlobalObject::mapStructure const): Deleted.
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        * runtime/NumberPrototype.h:
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
 2019-11-08  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid assertion in DFG's compileNewArray().

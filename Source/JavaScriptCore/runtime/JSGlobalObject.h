@@ -132,8 +132,6 @@ constexpr bool typeExposedByDefault = true;
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(String, string, stringObject, StringObject, String, object, typeExposedByDefault) \
-    macro(Map, map, map, JSMap, Map, object, typeExposedByDefault) \
-    macro(Set, set, set, JSSet, Set, object, typeExposedByDefault) \
     macro(JSPromise, promise, promise, JSPromise, Promise, object, typeExposedByDefault) \
     macro(BigInt, bigInt, bigIntObject, BigIntObject, BigInt, object, Options::useBigInt()) \
     macro(WeakObjectRef, weakObjectRef, weakObjectRef, JSWeakObjectRef, WeakRef, object, Options::useWeakRefs()) \
@@ -149,7 +147,9 @@ constexpr bool typeExposedByDefault = true;
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean, object, typeExposedByDefault) \
     macro(Date, date, date, DateInstance, Date, object, typeExposedByDefault) \
     macro(Error, error, error, ErrorInstance, Error, object, typeExposedByDefault) \
+    macro(Map, map, map, JSMap, Map, object, typeExposedByDefault) \
     macro(Number, number, numberObject, NumberObject, Number, object, typeExposedByDefault) \
+    macro(Set, set, set, JSSet, Set, object, typeExposedByDefault) \
     macro(Symbol, symbol, symbolObject, SymbolObject, Symbol, object, typeExposedByDefault) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
@@ -302,8 +302,8 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
+    LazyProperty<JSGlobalObject, JSFunction> m_numberProtoToStringFunction;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
-    WriteBarrier<JSFunction> m_numberProtoToStringFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
@@ -615,7 +615,7 @@ public:
     JSFunction* rejectPromiseFunction() const;
     JSFunction* promiseProtoThenFunction() const;
     JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
-    JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.get(); }
+    JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSFunction* regExpProtoExecFunction() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
@@ -644,9 +644,9 @@ public:
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
-    MapPrototype* mapPrototype() const { return m_mapPrototype.get(); }
+    JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
-    SetPrototype* jsSetPrototype() const { return m_setPrototype.get(); }
+    JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
     JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
     AsyncGeneratorPrototype* asyncGeneratorPrototype() const { return m_asyncGeneratorPrototype.get(); }
     AsyncGeneratorFunctionPrototype* asyncGeneratorFunctionPrototype() const { return m_asyncGeneratorFunctionPrototype.get(); }
@@ -745,7 +745,6 @@ public:
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(this); }
-    Structure* mapStructure() const { return m_mapStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* generatorStructure() const { return m_generatorStructure.get(); }
     Structure* asyncGeneratorStructure() const { return m_asyncGeneratorStructure.get(); }
@@ -1012,7 +1011,10 @@ public:
     void setWrapperMap(std::unique_ptr<WrapperMap>&&);
 #endif
 
-    void tryInstallArraySpeciesWatchpoint(JSGlobalObject*);
+    void tryInstallArraySpeciesWatchpoint();
+    void installNumberPrototypeWatchpoint(NumberPrototype*);
+    void installMapPrototypeWatchpoint(MapPrototype*);
+    void installSetPrototypeWatchpoint(SetPrototype*);
 
 protected:
     struct GlobalPropertyInfo {

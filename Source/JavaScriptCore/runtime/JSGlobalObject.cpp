@@ -388,7 +388,9 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
   Date                  JSGlobalObject::m_dateStructure              DontEnum|ClassStructure
   Error                 JSGlobalObject::m_errorStructure             DontEnum|ClassStructure
   Boolean               JSGlobalObject::m_booleanObjectStructure     DontEnum|ClassStructure
+  Map                   JSGlobalObject::m_mapStructure               DontEnum|ClassStructure
   Number                JSGlobalObject::m_numberObjectStructure      DontEnum|ClassStructure
+  Set                   JSGlobalObject::m_setStructure               DontEnum|ClassStructure
   Symbol                JSGlobalObject::m_symbolObjectStructure      DontEnum|ClassStructure
   WeakMap               JSGlobalObject::m_weakMapStructure           DontEnum|ClassStructure
   WeakSet               JSGlobalObject::m_weakSetStructure           DontEnum|ClassStructure
@@ -458,6 +460,29 @@ static GetterSetter* getGetterById(JSGlobalObject* globalObject, JSObject* base,
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
     baseValue.getPropertySlot(globalObject, ident, slot);
     return jsCast<GetterSetter*>(slot.getPureResult());
+}
+
+static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObject, JSObject* base, const Identifier& ident)
+{
+    // Performing these gets should not throw.
+    VM& vm = globalObject->vm();
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
+    bool result = base->getOwnPropertySlot(base, globalObject, ident, slot);
+    ASSERT_UNUSED(result, result);
+    catchScope.assertNoException();
+    RELEASE_ASSERT(slot.isCacheableValue());
+    JSValue functionValue = slot.getValue(globalObject, ident);
+    catchScope.assertNoException();
+    ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
+
+    ObjectPropertyCondition condition = generateConditionForSelfEquivalence(vm, nullptr, base, ident.impl());
+    RELEASE_ASSERT(condition.requiredValue() == functionValue);
+
+    bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
+    RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
+
+    return condition;
 }
 
 template<ErrorType errorType>
@@ -541,6 +566,11 @@ void JSGlobalObject::init(VM& vm)
     m_promiseResolveFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
             init.set(JSFunction::create(init.vm, promiseConstructorResolveCodeGenerator(init.vm), init.owner));
+        });
+
+    m_numberProtoToStringFunction.initLater(
+        [] (const Initializer<JSFunction>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->toString.string(), numberProtoFuncToString, NumberPrototypeToStringIntrinsic));
         });
 
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
@@ -946,7 +976,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpBuiltinExec)].set(vm, this, jsCast<JSFunction*>(m_regExpPrototype->getDirect(vm, vm.propertyNames->exec)));
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpPrototypeSymbolReplace)].set(vm, this, m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol).asCell());
 
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].set(vm, this, setConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isArray)].set(vm, this, arrayConstructor->getDirect(vm, vm.propertyNames->isArray).asCell());
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::callFunction)].set(vm, this, callFunction);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::applyFunction)].set(vm, this, applyFunction);
@@ -977,6 +1006,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     jsCast<JSObject*>(linkTimeConstant(LinkTimeConstant::SetIterator))->putDirect(vm, vm.propertyNames->prototype, setIteratorPrototype);
 
     // Map and Set helpers.
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(jsCast<JSGlobalObject*>(init.owner)->setConstructor());
+        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketHead)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), mapPrivateFuncMapBucketHead, JSMapBucketHeadIntrinsic));
         });
@@ -1186,97 +1218,48 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
 #undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
 
-    auto setupAdaptiveWatchpoint = [&] (JSObject* base, const Identifier& ident) -> ObjectPropertyCondition {
-        // Performing these gets should not throw.
-        PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
-        bool result = base->getOwnPropertySlot(base, this, ident, slot);
-        ASSERT_UNUSED(result, result);
-        catchScope.assertNoException();
-        RELEASE_ASSERT(slot.isCacheableValue());
-        JSValue functionValue = slot.getValue(this, ident);
-        catchScope.assertNoException();
-        ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
-
-        ObjectPropertyCondition condition = generateConditionForSelfEquivalence(vm, nullptr, base, ident.impl());
-        RELEASE_ASSERT(condition.requiredValue() == functionValue);
-
-        bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
-        RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
-
-        return condition;
-    };
-
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next);
         m_arrayIteratorPrototypeNext = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayIteratorProtocolWatchpointSet);
         m_arrayIteratorPrototypeNext->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->iteratorSymbol);
         m_arrayPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayIteratorProtocolWatchpointSet);
         m_arrayPrototypeSymbolIteratorWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), vm.propertyNames->join);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->join);
         m_arrayPrototypeJoinWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayJoinWatchpointSet);
         m_arrayPrototypeJoinWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, mapIteratorPrototype, vm.propertyNames->next);
         m_mapIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapIteratorProtocolWatchpointSet);
         m_mapIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), vm.propertyNames->iteratorSymbol);
-        m_mapPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapIteratorProtocolWatchpointSet);
-        m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
-    }
-
-    {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, setIteratorPrototype, vm.propertyNames->next);
         m_setIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setIteratorProtocolWatchpointSet);
         m_setIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), vm.propertyNames->iteratorSymbol);
-        m_setPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setIteratorProtocolWatchpointSet);
-        m_setPrototypeSymbolIteratorWatchpoint->install(vm);
-    }
-
-    {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, m_stringIteratorPrototype.get(), vm.propertyNames->next);
         m_stringIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_stringIteratorProtocolWatchpointSet);
         m_stringIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, m_stringPrototype.get(), vm.propertyNames->iteratorSymbol);
         m_stringPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_stringIteratorProtocolWatchpointSet);
         m_stringPrototypeSymbolIteratorWatchpoint->install(vm);
-    }
-
-    {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), vm.propertyNames->set);
-        m_mapPrototypeSetWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapSetWatchpointSet);
-        m_mapPrototypeSetWatchpoint->install(vm);
-    }
-
-    {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), vm.propertyNames->add);
-        m_setPrototypeAddWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setAddWatchpointSet);
-        m_setPrototypeAddWatchpoint->install(vm);
     }
 
     // Unfortunately, the prototype objects of the builtin objects can be touched from concurrent compilers. So eagerly initialize them only if we use JIT.
     if (VM::canUseJIT()) {
         this->booleanPrototype();
-        auto* numberPrototype = this->numberPrototype();
+        this->numberPrototype();
         this->symbolPrototype();
-
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype, vm.propertyNames->toString);
-        m_numberPrototypeToStringWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_numberToStringWatchpointSet);
-        m_numberPrototypeToStringWatchpoint->install(vm);
-        m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype->getDirect(vm, vm.propertyNames->toString)));
     }
 
     fixupPrototypeChainWithObjectPrototype(vm);
@@ -1770,7 +1753,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_iteratorProtocolFunction.visit(visitor);
     thisObject->m_promiseResolveFunction.visit(visitor);
     visitor.append(thisObject->m_objectProtoValueOfFunction);
-    visitor.append(thisObject->m_numberProtoToStringFunction);
+    thisObject->m_numberProtoToStringFunction.visit(visitor);
     visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
     visitor.append(thisObject->m_regExpProtoSymbolReplace);
@@ -1945,12 +1928,12 @@ void JSGlobalObject::clearRareData(JSCell* cell)
     jsCast<JSGlobalObject*>(cell)->m_rareData = nullptr;
 }
 
-void JSGlobalObject::tryInstallArraySpeciesWatchpoint(JSGlobalObject* globalObject)
+void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
 {
     RELEASE_ASSERT(!m_arrayPrototypeConstructorWatchpoint);
     RELEASE_ASSERT(!m_arrayConstructorSpeciesWatchpoint);
 
-    VM& vm = globalObject->vm();
+    VM& vm = this->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // First we need to make sure that the Array.prototype.constructor property points to Array
@@ -1970,11 +1953,11 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint(JSGlobalObject* globalObje
     };
 
     PropertySlot constructorSlot(arrayPrototype, PropertySlot::InternalMethodType::VMInquiry);
-    arrayPrototype->getOwnPropertySlot(arrayPrototype, globalObject, vm.propertyNames->constructor, constructorSlot);
+    arrayPrototype->getOwnPropertySlot(arrayPrototype, this, vm.propertyNames->constructor, constructorSlot);
     scope.assertNoException();
     if (constructorSlot.slotBase() != arrayPrototype
         || !constructorSlot.isCacheableValue()
-        || constructorSlot.getValue(globalObject, vm.propertyNames->constructor) != arrayConstructor) {
+        || constructorSlot.getValue(this, vm.propertyNames->constructor) != arrayConstructor) {
         invalidateWatchpoint();
         return;
     }
@@ -1984,7 +1967,7 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint(JSGlobalObject* globalObje
         constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
 
     PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
-    arrayConstructor->getOwnPropertySlot(arrayConstructor, globalObject, vm.propertyNames->speciesSymbol, speciesSlot);
+    arrayConstructor->getOwnPropertySlot(arrayConstructor, this, vm.propertyNames->speciesSymbol, speciesSlot);
     scope.assertNoException();
     if (speciesSlot.slotBase() != arrayConstructor
         || !speciesSlot.isCacheableGetter()
@@ -2014,6 +1997,43 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint(JSGlobalObject* globalObje
 
     m_arrayConstructorSpeciesWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, speciesCondition, m_arraySpeciesWatchpointSet);
     m_arrayConstructorSpeciesWatchpoint->install(vm);
+}
+
+void JSGlobalObject::installNumberPrototypeWatchpoint(NumberPrototype* numberPrototype)
+{
+    VM& vm = this->vm();
+    ASSERT(m_numberToStringWatchpointSet.isStillValid());
+    ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, numberPrototype, vm.propertyNames->toString);
+    m_numberPrototypeToStringWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_numberToStringWatchpointSet);
+    m_numberPrototypeToStringWatchpoint->install(vm);
+}
+
+void JSGlobalObject::installMapPrototypeWatchpoint(MapPrototype* mapPrototype)
+{
+    VM& vm = this->vm();
+    if (m_mapIteratorProtocolWatchpointSet.isStillValid()) {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, mapPrototype, vm.propertyNames->iteratorSymbol);
+        m_mapPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapIteratorProtocolWatchpointSet);
+        m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
+    ASSERT(m_mapSetWatchpointSet.isStillValid());
+    ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, mapPrototype, vm.propertyNames->set);
+    m_mapPrototypeSetWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapSetWatchpointSet);
+    m_mapPrototypeSetWatchpoint->install(vm);
+}
+
+void JSGlobalObject::installSetPrototypeWatchpoint(SetPrototype* setPrototype)
+{
+    VM& vm = this->vm();
+    if (m_setIteratorProtocolWatchpointSet.isStillValid()) {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, setPrototype, vm.propertyNames->iteratorSymbol);
+        m_setPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setIteratorProtocolWatchpointSet);
+        m_setPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
+    ASSERT(m_setAddWatchpointSet.isStillValid());
+    ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, setPrototype, vm.propertyNames->add);
+    m_setPrototypeAddWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setAddWatchpointSet);
+    m_setPrototypeAddWatchpoint->install(vm);
 }
 
 void slowValidateCell(JSGlobalObject* globalObject)

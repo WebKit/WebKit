@@ -199,7 +199,7 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject)
 
     if (globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == ClearWatchpoint) {
         dataLogLnIf(ArrayPrototypeInternal::verbose, "Initializing Array species watchpoints for Array.prototype: ", pointerDump(arrayPrototype), " with structure: ", pointerDump(arrayPrototype->structure(vm)), "\nand Array: ", pointerDump(globalObject->arrayConstructor()), " with structure: ", pointerDump(globalObject->arrayConstructor()->structure(vm)));
-        globalObject->tryInstallArraySpeciesWatchpoint(globalObject);
+        globalObject->tryInstallArraySpeciesWatchpoint();
         ASSERT(globalObject->arraySpeciesWatchpointSet().stateOnJSThread() != ClearWatchpoint);
     }
 
