@@ -1,3 +1,14 @@
+2019-11-07  Tim Horton  <timothy_horton@apple.com>
+
+        Remove an unused icon resource
+        https://bugs.webkit.org/show_bug.cgi?id=203983
+
+        Reviewed by Wenson Hsieh.
+
+        * Resources/mac/mediaIcon.pdf: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        This file has not been used in years.
+
 2019-11-07  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add logging and telemetry to more mach lookup rules
