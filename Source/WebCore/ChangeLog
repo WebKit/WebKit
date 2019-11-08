@@ -1,3 +1,19 @@
+2019-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression r252209: Layout Test fast/workers/worker-close-more.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=203995
+        <rdar://problem/57020558>
+
+        Reviewed by Ryosuke Niwa.
+
+        We should not dispatch events on a MessagePort objects in a WorkerGlobalScope which is
+        closing (i.e. WorkerGlobalScope.close() has been called).
+
+        No new tests, covered by fast/workers/worker-close-more.html.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchEvent):
+
 2019-11-08  Peng Liu  <peng.liu6@apple.com>
 
         Picture-in-Picture events are not fired when enter/exit the Picture-in-Picture mode through modern media controls

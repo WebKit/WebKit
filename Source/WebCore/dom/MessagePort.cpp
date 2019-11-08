@@ -288,6 +288,9 @@ void MessagePort::dispatchEvent(Event& event)
     if (m_closed)
         return;
 
+    if (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
+        return;
+
     EventTarget::dispatchEvent(event);
 }
 
