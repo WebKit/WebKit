@@ -1,3 +1,19 @@
+2019-11-07  Basuke Suzuki  <Basuke.Suzuki@sony.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Bug fix for wait time when it's in mini mode.
+        https://bugs.webkit.org/show_bug.cgi?id=203121
+
+        Reviewed by Saam Barati.
+
+        Basuke pointed out that we never changed m_waitTime in scavenger when we are in iOS and mini-mode.
+        So previously, we are always executing scavenger for each 10ms in mini-mode. After fixing it, we
+        found that this unintentional behavior was better policy for RAMification.
+        In this patch, we explicitly use the old behavior, "scavenge for each 10ms" in iOS mini-mode.
+        We should revisit scavenger's behavior in the future to explore further better behavior.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2019-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, roll-out r251268 due to RAMification regression

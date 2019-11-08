@@ -495,15 +495,11 @@ void Scavenger::threadRunLoop()
                 static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(timeSpentScavenging).count()) / 1000);
         }
 
-        std::chrono::milliseconds newWaitTime;
-
-        if (m_isInMiniMode) {
-            timeSpentScavenging *= 50;
-            newWaitTime = std::chrono::duration_cast<std::chrono::milliseconds>(timeSpentScavenging);
-            newWaitTime = std::min(std::max(newWaitTime, std::chrono::milliseconds(25)), std::chrono::milliseconds(500));
-        } else {
+        // FIXME: We need to investigate mini-mode's adjustment.
+        // https://bugs.webkit.org/show_bug.cgi?id=203987
+        if (!m_isInMiniMode) {
             timeSpentScavenging *= 150;
-            newWaitTime = std::chrono::duration_cast<std::chrono::milliseconds>(timeSpentScavenging);
+            std::chrono::milliseconds newWaitTime = std::chrono::duration_cast<std::chrono::milliseconds>(timeSpentScavenging);
             m_waitTime = std::min(std::max(newWaitTime, std::chrono::milliseconds(100)), std::chrono::milliseconds(10000));
         }
 
