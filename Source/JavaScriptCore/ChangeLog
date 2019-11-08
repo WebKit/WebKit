@@ -1,3 +1,28 @@
+2019-11-08  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid assertion in DFG's compileNewArray().
+        https://bugs.webkit.org/show_bug.cgi?id=204002
+        <rdar://problem/56973531>
+
+        Reviewed by Robin Morisset.
+
+        The assertion is in an if clause conditional on !globalObject->isHavingABadTime().
+        The assertion tests the IndexingType of a structure returned by
+        arrayStructureForIndexingTypeDuringAllocation().  
+
+        However, the structures returned by arrayStructureForIndexingTypeDuringAllocation()
+        may have started transitioning to their SlowPut variant because the mutator will
+        be imminently firing the HavingABadTime watchpoint, but haven't done so yet.
+        In a race, the DFG may see the SlowPut variants of the structures before
+        isHavingABadTime() returns true.  Hence, the assertion is invalid.
+
+        Note that the FTL does not have this assertion.
+
+        This issue is already tested by stress/racy-slow-put-cloned-arguments-when-having-a-bad-time.js.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+
 2019-11-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PlayStation][JSC] Unreviewed build fix.

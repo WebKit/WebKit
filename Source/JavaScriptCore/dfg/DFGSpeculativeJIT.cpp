@@ -7978,12 +7978,6 @@ void SpeculativeJIT::compileNewArray(Node* node)
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
     if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {
-        ASSERT(
-            hasUndecided(structure->indexingType())
-            || hasInt32(structure->indexingType())
-            || hasDouble(structure->indexingType())
-            || hasContiguous(structure->indexingType()));
-
         unsigned numElements = node->numChildren();
         unsigned vectorLengthHint = node->vectorLengthHint();
         ASSERT(vectorLengthHint >= numElements);
