@@ -496,6 +496,7 @@ private:
     bool m_usingServerMode { false };
     bool m_gcBetweenTests { false };
     bool m_shouldDumpPixelsForAllTests { false };
+    bool m_createdOtherPage { false };
     std::vector<std::string> m_paths;
     std::set<std::string> m_allowedHosts;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;

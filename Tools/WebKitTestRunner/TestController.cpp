@@ -314,6 +314,8 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
     if (!m_currentInvocation->canOpenWindows())
         return nullptr;
 
+    m_createdOtherPage = true;
+
     PlatformWebView* view = platformCreateOtherPage(parentView, configuration, parentView->options());
     WKPageRef newPage = view->page();
 
@@ -767,7 +769,9 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
     auto options = test.options();
 
     if (m_mainWebView) {
-        if (m_mainWebView->viewSupportsOptions(options))
+        // Having created another page (via window.open()) prevents process swapping on navigation and it may therefore
+        // cause flakiness to reuse the view.
+        if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options))
             return;
 
         willDestroyWebView();
@@ -777,6 +781,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         WKPageClose(m_mainWebView->page());
 
         m_mainWebView = nullptr;
+        m_createdOtherPage = false;
     }
 
     createWebViewWithOptions(options);
