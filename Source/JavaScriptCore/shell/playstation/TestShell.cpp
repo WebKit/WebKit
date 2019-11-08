@@ -33,7 +33,7 @@ extern "C" void setupTestRun()
     WTF::initializeThreading();
 
     // Need to override and enable restricted options before we start parsing options below.
-    Options::enableRestrictedOptions(true);
+    Config::enableRestrictedOptions();
 
     // Initialize JSC before getting VM.
     WTF::initializeMainThread();
@@ -42,15 +42,15 @@ extern "C" void setupTestRun()
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
-    Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+    Gigacage::forbidDisablingPrimitiveGigacage();
 }
 
 extern "C" void preTest()
 {
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
     JSC::Options::name_() = JSC::Options::name_##Default();
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(INIT_OPTION)
+#undef INIT_OPTION
 }
 
 extern "C" int runTest(int argc, char* argv[])
