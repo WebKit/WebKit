@@ -45,6 +45,8 @@
 #include "JSWebGLBuffer.h"
 #include "JSWebGLCompressedTextureASTC.h"
 #include "JSWebGLCompressedTextureATC.h"
+#include "JSWebGLCompressedTextureETC.h"
+#include "JSWebGLCompressedTextureETC1.h"
 #include "JSWebGLCompressedTexturePVRTC.h"
 #include "JSWebGLCompressedTextureS3TC.h"
 #include "JSWebGLDebugRendererInfo.h"
@@ -176,6 +178,10 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugShaders&>(extension));
     case WebGLExtension::WebGLCompressedTextureATCName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureATC&>(extension));
+    case WebGLExtension::WebGLCompressedTextureETCName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureETC&>(extension));
+    case WebGLExtension::WebGLCompressedTextureETC1Name:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureETC1&>(extension));
     case WebGLExtension::WebGLCompressedTexturePVRTCName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTexturePVRTC&>(extension));
     case WebGLExtension::WebGLCompressedTextureS3TCName:

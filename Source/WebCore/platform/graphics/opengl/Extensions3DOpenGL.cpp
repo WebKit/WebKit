@@ -227,9 +227,15 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
 #endif
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
     if (name == "GL_EXT_packed_depth_stencil")
         return m_availableExtensions.contains("GL_OES_packed_depth_stencil");
+
+    if (name == "GL_OES_compressed_ETC1_RGB8_texture"
+        || name == "GL_ANGLE_compressed_texture_etc") {
+        // Implicitly enabled with ES 3.0 contexts.
+        return m_context->m_isForWebGL2;
+    }
 #endif
 
     return m_availableExtensions.contains(name);

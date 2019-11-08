@@ -1927,6 +1927,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureATC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureATC.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC1.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC1.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTexturePVRTC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTexturePVRTC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureS3TC.cpp

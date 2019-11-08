@@ -1314,6 +1314,8 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLCompressedTextureASTC.cpp
         html/canvas/WebGLCompressedTextureATC.cpp
+        html/canvas/WebGLCompressedTextureETC.cpp
+        html/canvas/WebGLCompressedTextureETC1.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
         html/canvas/WebGLCompressedTextureS3TC.cpp
         html/canvas/WebGLContextEvent.cpp
@@ -1363,6 +1365,8 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLBuffer.idl
         html/canvas/WebGLCompressedTextureASTC.idl
         html/canvas/WebGLCompressedTextureATC.idl
+        html/canvas/WebGLCompressedTextureETC.idl
+        html/canvas/WebGLCompressedTextureETC1.idl
         html/canvas/WebGLCompressedTexturePVRTC.idl
         html/canvas/WebGLCompressedTextureS3TC.idl
         html/canvas/WebGLContextAttributes.idl

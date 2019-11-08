@@ -243,7 +243,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         attribs.append(static_cast<CGLPixelFormatAttribute>(4));
     }
 
-    if (attrs.isWebGL2) {
+    if (m_attrs.isWebGL2) {
         // FIXME: Instead of backing a WebGL2 GraphicsContext3D with a OpenGL 4 context, we should instead back it with ANGLE.
         // Use an OpenGL 4 context for now until the ANGLE backend is ready.
         attribs.append(kCGLPFAOpenGLProfile);
@@ -278,7 +278,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         return;
     }
 
-    m_isForWebGL2 = attrs.isWebGL2;
+    m_isForWebGL2 = m_attrs.isWebGL2;
 
     CGLSetCurrentContext(m_contextObj);
 
@@ -326,7 +326,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     }
 
     std::vector<EGLint> contextAttributes;
-    if (attrs.isWebGL2) {
+    if (m_attrs.isWebGL2) {
         contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
         contextAttributes.push_back(3);
     } else {

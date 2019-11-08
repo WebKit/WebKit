@@ -1,3 +1,61 @@
+2019-11-07  Kenneth Russell  <kbr@chromium.org>
+
+        Please support WEBGL_compressed_texture_etc1 extension (and possibly WEBGL_compressed_texture_etc too)
+        https://bugs.webkit.org/show_bug.cgi?id=197900
+
+        Reviewed by Dean Jackson.
+
+        Support the ETC1 and ETC2 compressed texture formats in WebKit's WebGL
+        implementation.
+
+        Tested by changing the code to allocate an OpenGL ES 3.0 context for WebGL,
+        and running in the iOS Simulator. The WebGL conformance tests
+        webgl-compressed-texture-etc.html and webgl-compressed-texture-etc1.html all
+        pass with these changes.
+
+        When an ANGLE backend is supported on iOS, these extensions will
+        automatically be supported, and some of the new validation code can be
+        removed.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLCompressedTextureETC.cpp: Added.
+        (WebCore::WebGLCompressedTextureETC::WebGLCompressedTextureETC):
+        (WebCore::WebGLCompressedTextureETC::getName const):
+        (WebCore::WebGLCompressedTextureETC::supported):
+        * html/canvas/WebGLCompressedTextureETC.h: Added.
+        * html/canvas/WebGLCompressedTextureETC.idl: Added.
+        * html/canvas/WebGLCompressedTextureETC1.cpp: Added.
+        (WebCore::WebGLCompressedTextureETC1::WebGLCompressedTextureETC1):
+        (WebCore::WebGLCompressedTextureETC1::getName const):
+        (WebCore::WebGLCompressedTextureETC1::supported):
+        * html/canvas/WebGLCompressedTextureETC1.h: Added.
+        * html/canvas/WebGLCompressedTextureETC1.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexDimensions):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexSubDimensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+
 2019-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         WindowEventLoop should be shared among similar origin documents

@@ -51,6 +51,8 @@
 #include "RenderBox.h"
 #include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
+#include "WebGLCompressedTextureETC.h"
+#include "WebGLCompressedTextureETC1.h"
 #include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLDebugRendererInfo.h"
@@ -148,10 +150,12 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", enableSupportedExtension("GL_OES_vertex_array_object"_s));
     ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", enableSupportedExtension("GL_OES_element_index_uint"_s));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureETC, m_webglCompressedTextureETC, "WEBGL_compressed_texture_etc", WebGLCompressedTextureETC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureETC1, m_webglCompressedTextureETC1, "WEBGL_compressed_texture_etc1", WebGLCompressedTextureETC1::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTexturePVRTC, m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc", WebGLCompressedTexturePVRTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*this));
-    ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context));
     if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers")) {
         if (!m_webglDrawBuffers) {
@@ -217,14 +221,18 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     if (m_context->getExtensions().supports("GL_OES_element_index_uint"_s))
         result.append("OES_element_index_uint"_s);
     result.append("WEBGL_lose_context"_s);
+    if (WebGLCompressedTextureASTC::supported(*this))
+        result.append("WEBGL_compressed_texture_astc"_s);
     if (WebGLCompressedTextureATC::supported(*this))
         result.append("WEBKIT_WEBGL_compressed_texture_atc"_s);
+    if (WebGLCompressedTextureETC::supported(*this))
+        result.append("WEBGL_compressed_texture_etc"_s);
+    if (WebGLCompressedTextureETC1::supported(*this))
+        result.append("WEBGL_compressed_texture_etc1"_s);
     if (WebGLCompressedTexturePVRTC::supported(*this))
         result.append("WEBKIT_WEBGL_compressed_texture_pvrtc"_s);
     if (WebGLCompressedTextureS3TC::supported(*this))
         result.append("WEBGL_compressed_texture_s3tc"_s);
-    if (WebGLCompressedTextureASTC::supported(*this))
-        result.append("WEBGL_compressed_texture_astc"_s);
     if (WebGLDepthTexture::supported(*m_context))
         result.append("WEBGL_depth_texture"_s);
     if (supportsDrawBuffers())
