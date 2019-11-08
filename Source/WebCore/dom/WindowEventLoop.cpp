@@ -30,9 +30,33 @@
 
 namespace WebCore {
 
-Ref<WindowEventLoop> WindowEventLoop::create()
+static HashMap<RegistrableDomain, WindowEventLoop*>& windowEventLoopMap()
 {
-    return adoptRef(*new WindowEventLoop);
+    RELEASE_ASSERT(isMainThread());
+    static NeverDestroyed<HashMap<RegistrableDomain, WindowEventLoop*>> map;
+    return map.get();
+}
+
+Ref<WindowEventLoop> WindowEventLoop::ensureForRegistrableDomain(const RegistrableDomain& domain)
+{
+    auto addResult = windowEventLoopMap().add(domain, nullptr);
+    if (UNLIKELY(addResult.isNewEntry)) {
+        auto newEventLoop = adoptRef(*new WindowEventLoop(domain));
+        addResult.iterator->value = newEventLoop.ptr();
+        return newEventLoop;
+    }
+    return *addResult.iterator->value;
+}
+
+inline WindowEventLoop::WindowEventLoop(const RegistrableDomain& domain)
+    : m_domain(domain)
+{
+}
+
+WindowEventLoop::~WindowEventLoop()
+{
+    auto didRemove = windowEventLoopMap().remove(m_domain);
+    RELEASE_ASSERT(didRemove);
 }
 
 void WindowEventLoop::queueTask(TaskSource source, ScriptExecutionContext& context, TaskFunction&& task)

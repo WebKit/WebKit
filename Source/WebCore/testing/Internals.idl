@@ -765,6 +765,7 @@ enum CompositingPolicy {
     boolean usingAppleInternalSDK();
 
     void postTask(VoidCallback callback);
+    [CallWith=ScriptExecutionContext, MayThrowException] void queueTask(DOMString source, VoidCallback callback);
     void markContextAsInsecure();
 
     void setMaxCanvasPixelMemory(unsigned long size);

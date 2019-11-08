@@ -27,6 +27,7 @@
 
 #include "AbstractEventLoop.h"
 #include "DocumentIdentifier.h"
+#include "RegistrableDomain.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -36,7 +37,9 @@ class Document;
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
 class WindowEventLoop final : public AbstractEventLoop {
 public:
-    static Ref<WindowEventLoop> create();
+    static Ref<WindowEventLoop> ensureForRegistrableDomain(const RegistrableDomain&);
+
+    ~WindowEventLoop();
 
     void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) override;
 
@@ -45,7 +48,7 @@ public:
     void stop(Document&);
 
 private:
-    WindowEventLoop() = default;
+    WindowEventLoop(const RegistrableDomain&);
 
     void scheduleToRunIfNeeded();
     void run();
@@ -58,8 +61,9 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<Task> m_tasks;
-    bool m_isScheduledToRun { false };
     HashSet<DocumentIdentifier> m_documentIdentifiersForSuspendedTasks;
+    RegistrableDomain m_domain;
+    bool m_isScheduledToRun { false };
 };
 
 } // namespace WebCore

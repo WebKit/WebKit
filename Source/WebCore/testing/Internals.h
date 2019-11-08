@@ -776,6 +776,7 @@ public:
     bool isSystemPreviewImage(Element&) const;
 
     void postTask(RefPtr<VoidCallback>&&);
+    ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, RefPtr<VoidCallback>&&);
     void markContextAsInsecure();
 
     bool usingAppleInternalSDK() const;

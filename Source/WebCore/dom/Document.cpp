@@ -6224,14 +6224,9 @@ void Document::pendingTasksTimerFired()
 AbstractEventLoop& Document::eventLoop()
 {
     ASSERT(isMainThread());
-    if (!m_eventLoop) {
-        if (m_contextDocument)
-            m_eventLoop = m_contextDocument->m_eventLoop;
-        else // FIXME: Documents of similar origin should share the same event loop.
-            m_eventLoop = WindowEventLoop::create();
-    }
+    if (UNLIKELY(!m_eventLoop))
+        m_eventLoop = WindowEventLoop::ensureForRegistrableDomain(RegistrableDomain { securityOrigin().data() });
     return *m_eventLoop;
-
 }
 
 void Document::suspendScheduledTasks(ReasonForSuspension reason)

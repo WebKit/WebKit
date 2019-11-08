@@ -1,0 +1,11 @@
+This tests the order by which tasks are scheduled across documents that are not similar origins.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS logs.join(", ") is "1, 2, 3, 4, 5"
+PASS crossOriginLogs.join(", ") is "10, 11, 12"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

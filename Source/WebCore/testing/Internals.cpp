@@ -28,6 +28,7 @@
 #include "Internals.h"
 
 #include "AXObjectCache.h"
+#include "AbstractEventLoop.h"
 #include "ActiveDOMCallbackMicrotask.h"
 #include "ActivityState.h"
 #include "AnimationTimeline.h"
@@ -4673,6 +4674,21 @@ void Internals::postTask(RefPtr<VoidCallback>&& callback)
     document->postTask([callback = WTFMove(callback)](ScriptExecutionContext&) {
         callback->handleEvent();
     });
+}
+
+ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
+{
+    TaskSource source;
+    if (taskSourceName == "DOMManipulation")
+        source = TaskSource::DOMManipulation;
+    else
+        return Exception { NotSupportedError };
+
+    context.eventLoop().queueTask(source, context, [callback = WTFMove(callback)]() {
+        callback->handleEvent();
+    });
+
+    return { };
 }
 
 Vector<String> Internals::accessKeyModifiers() const

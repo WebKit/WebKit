@@ -1,3 +1,20 @@
+2019-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WindowEventLoop should be shared among similar origin documents
+        https://bugs.webkit.org/show_bug.cgi?id=203882
+
+        Reviewed by Wenson Hsieh.
+
+        Added some tests to make sure the event loop is shared among similar origin documents.
+
+        * http/tests/eventloop: Added.
+        * http/tests/eventloop/queue-task-across-cross-site-frames-expected.txt: Added.
+        * http/tests/eventloop/queue-task-across-cross-site-frames.html: Added.
+        * http/tests/eventloop/queue-task-across-frames-expected.txt: Added.
+        * http/tests/eventloop/queue-task-across-frames.html: Added.
+        * http/tests/eventloop/resources: Added.
+        * http/tests/eventloop/resources/eventloop-helper.html: Added.
+
 2019-11-07  youenn fablet  <youenn@apple.com>
 
         Layout Test http/tests/appcache/remove-cache.html is a flaky failure
