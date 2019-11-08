@@ -1,3 +1,20 @@
+2019-11-07  youenn fablet  <youenn@apple.com>
+
+        Layout Test http/tests/appcache/remove-cache.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=199124
+        <rdar://problem/52008712>
+
+        Reviewed by Chris Dumez.
+
+        The flakiness probably comes from the use of a setTimeout that might kick in while in most runs, it never kicks in.
+        When the timer kicks in, the test is reloaded, which triggers a new console log line.
+        The current console lines do not bring more values than what the test checks with appcache events.
+        Removing console log lines from the expected file will fix the flakiness.
+
+        * TestExpectations:
+        * http/tests/appcache/remove-cache-expected.txt:
+        * platform/mac/TestExpectations:
+
 2019-11-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: http/tests/inspector/target/target-events-for-provisional-page.html is flaky when running with other tests

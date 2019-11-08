@@ -2105,6 +2105,8 @@ webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeou
 
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
 
+http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
+
 # PiP tests are only relevant on macOS Sierra and newer.
 media/click-placeholder-not-pausing.html [ WontFix ]
 media/controls/picture-in-picture.html [ WontFix ]
