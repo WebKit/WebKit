@@ -1,3 +1,13 @@
+2019-11-08  Dean Jackson  <dino@apple.com>
+
+        Add ANGLE backend for iOS device
+        https://bugs.webkit.org/show_bug.cgi?id=202159
+        <rdar://57000166>
+
+        Build fix. Don't include IOSurface.h on iOS (public SDK doesn't have it).
+
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+
 2019-11-07  Dean Jackson  <dino@apple.com>
 
         Add ANGLE backend for iOS device

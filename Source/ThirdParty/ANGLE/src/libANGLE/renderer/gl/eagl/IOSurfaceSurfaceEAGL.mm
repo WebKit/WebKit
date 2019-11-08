@@ -39,7 +39,6 @@
 #import "libANGLE/renderer/gl/TextureGL.h"
 #import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
-#import <IOSurface/IOSurface.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLIOSurface.h>
 #import <OpenGLES/EAGLDrawable.h>
