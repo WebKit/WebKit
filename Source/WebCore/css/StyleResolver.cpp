@@ -97,21 +97,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline void StyleResolver::State::cacheBorderAndBackground()
-{
-    m_hasUAAppearance = m_style->hasAppearance();
-    if (m_hasUAAppearance) {
-        m_borderData = m_style->border();
-        m_backgroundData = m_style->backgroundLayers();
-        m_backgroundColor = m_style->backgroundColor();
-    }
-}
-
 inline void StyleResolver::State::clear()
 {
     m_element = nullptr;
     m_parentStyle = nullptr;
     m_ownedParentStyle = nullptr;
+    m_userAgentAppearanceStyle = nullptr;
 }
 
 StyleResolver::StyleResolver(Document& document)
@@ -285,7 +276,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     applyMatchedProperties(collector.matchResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *state.parentStyle(), parentBoxStyle, &element);
+    adjustRenderStyle(*state.style(), *state.parentStyle(), parentBoxStyle, &element, state.userAgentAppearanceStyle());
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -313,7 +304,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     Style::Builder builder(*this, result, { Style::CascadeLevel::Author });
     builder.applyAllProperties();
 
-    adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr, nullptr);
+    adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr, nullptr, state.userAgentAppearanceStyle());
 
     // Add all the animating properties to the keyframe.
     unsigned propertyCount = keyframe->properties().propertyCount();
@@ -469,7 +460,7 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     applyMatchedProperties(collector.matchResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *m_state.parentStyle(), parentBoxStyle, nullptr);
+    adjustRenderStyle(*state.style(), *m_state.parentStyle(), parentBoxStyle, nullptr, state.userAgentAppearanceStyle());
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -779,7 +770,7 @@ bool StyleResolver::adjustRenderStyleForTextAutosizing(RenderStyle& style, const
 }
 #endif
 
-void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
+void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
     // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
     // We don't have it when resolving computed style for display:none subtree. Use parent style for adjustments in that case.
@@ -999,7 +990,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // Let the theme also have a crack at adjusting the style.
     if (style.hasAppearance())
-        RenderTheme::singleton().adjustStyle(*this, style, element, m_state.hasUAAppearance(), m_state.borderData(), m_state.backgroundData(), m_state.backgroundColor());
+        RenderTheme::singleton().adjustStyle(*this, style, element, userAgentAppearanceStyle);
 
     // If we have first-letter pseudo style, do not share this style.
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
@@ -1138,14 +1129,14 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     }
 
     if (elementTypeHasAppearanceFromUAStyle(element)) {
-        // FIXME: This is such a hack.
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        Style::Builder builder(*this, matchResult, { Style::CascadeLevel::UserAgent }, includedProperties);
+        auto userAgentStyle = RenderStyle::clonePtr(style);
+        Style::Builder builder(*userAgentStyle, *this, matchResult, { Style::CascadeLevel::UserAgent });
         builder.applyAllProperties();
 
-        state.cacheBorderAndBackground();
+        state.setUserAgentAppearanceStyle(WTFMove(userAgentStyle));
     }
 
     Style::Builder builder(*this, matchResult, Style::allCascadeLevels(), includedProperties);

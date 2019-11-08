@@ -66,7 +66,7 @@ protected:
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
     int baselinePosition(const RenderBox&) const override;
 
-    bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
+    bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const override;
 
     // Methods for each appearance value.
     void adjustCheckboxStyle(StyleResolver&, RenderStyle&, const Element*) const override;

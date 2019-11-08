@@ -447,16 +447,16 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
     return RenderTheme::baselinePosition(box);
 }
 
-bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const BorderData& border, const FillLayer& background, const Color& backgroundColor) const
+bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.appearance() == PushButtonPart || style.appearance() == MenulistButtonPart)
         return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
     if (style.appearance() == TextFieldPart || style.appearance() == TextAreaPart)
-        return style.backgroundLayers() != background;
+        return style.backgroundLayers() != userAgentStyle.backgroundLayers();
 
-    return RenderTheme::isControlStyled(style, border, background, backgroundColor);
+    return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
 void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, const Element*) const

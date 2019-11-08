@@ -1,3 +1,46 @@
+2019-11-08  Antti Koivisto  <antti@apple.com>
+
+        StyleResolver state should store user agent appearance style as RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=204008
+
+        Reviewed by Zalan Bujtas.
+
+        Generate and pass around user agent style as RenderStyle for apperance computation instead
+        of awkwardly passing around separate property values.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::State::cacheBorderAndBackground): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::element const):
+        (WebCore::StyleResolver::State::userAgentAppearanceStyle const):
+        (WebCore::StyleResolver::State::setUserAgentAppearanceStyle):
+        (WebCore::StyleResolver::element): Deleted.
+        (WebCore::StyleResolver::State::hasUAAppearance const): Deleted.
+        (WebCore::StyleResolver::State::borderData const): Deleted.
+        (WebCore::StyleResolver::State::backgroundData const): Deleted.
+        (WebCore::StyleResolver::State::backgroundColor const): Deleted.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::isControlStyled const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::isControlStyled const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled const):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::Builder):
+
+        Allow providing style separately from StyleResolver state.
+
+        * style/StyleBuilder.h:
+
 2019-11-08  Daniel Bates  <dabates@apple.com>
 
         Add WebKit Legacy SPI to retrieve editable elements in rect

@@ -49,12 +49,17 @@ static PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
     return { style.direction(), style.writingMode() };
 }
 
+Builder::Builder(RenderStyle& style, const StyleResolver& resolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
+    : m_cascade(matchResult, cascadeLevels, includedProperties, directionFromStyle(style))
+    , m_state(*this, style, *resolver.parentStyle(), resolver.rootElementStyle(), resolver.document(), resolver.element())
+{
+    ASSERT(resolver.parentStyle());
+}
+
 Builder::Builder(StyleResolver& resolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevels, includedProperties, directionFromStyle(*resolver.style()))
-    , m_state(*this, *resolver.style(), *resolver.parentStyle(), resolver.rootElementStyle(), resolver.document(), resolver.element())
+    : Builder(*resolver.style(), resolver, matchResult, cascadeLevels, includedProperties)
 {
     ASSERT(resolver.style());
-    ASSERT(resolver.parentStyle());
 }
 
 Builder::~Builder() = default;

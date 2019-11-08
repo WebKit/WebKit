@@ -117,7 +117,7 @@ public:
     RenderStyle* style() const { return m_state.style(); }
     const RenderStyle* parentStyle() const { return m_state.parentStyle(); }
     const RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
-    const Element* element() { return m_state.element(); }
+    const Element* element() const { return m_state.element(); }
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
     const Settings& settings() const { return m_document.settings(); }
@@ -183,7 +183,7 @@ public:
     void clearCachedDeclarationsAffectedByViewportUnits();
 
 private:
-    void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
+    void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*, const RenderStyle* userAgentStyle);
     void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
 
     enum class UseMatchedDeclarationsCache { Yes, No };
@@ -215,11 +215,8 @@ public:
         const RenderStyle* parentStyle() const { return m_parentStyle; }
         const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
-        void cacheBorderAndBackground();
-        bool hasUAAppearance() const { return m_hasUAAppearance; }
-        BorderData borderData() const { return m_borderData; }
-        FillLayer backgroundData() const { return m_backgroundData; }
-        const Color& backgroundColor() const { return m_backgroundColor; }
+        const RenderStyle* userAgentAppearanceStyle() const { return m_userAgentAppearanceStyle.get(); }
+        void setUserAgentAppearanceStyle(std::unique_ptr<RenderStyle> style) { m_userAgentAppearanceStyle = WTFMove(style); }
 
         const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
@@ -232,11 +229,7 @@ public:
 
         const SelectorFilter* m_selectorFilter { nullptr };
 
-        BorderData m_borderData;
-        FillLayer m_backgroundData { FillLayerType::Background };
-        Color m_backgroundColor;
-
-        bool m_hasUAAppearance { false };
+        std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
     };
 
     State& state() { return m_state; }

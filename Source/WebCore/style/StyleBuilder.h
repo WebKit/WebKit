@@ -35,6 +35,7 @@ namespace Style {
 class Builder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    Builder(RenderStyle&, const StyleResolver&, const MatchResult&, OptionSet<CascadeLevel>, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All);
     Builder(StyleResolver&, const MatchResult&, OptionSet<CascadeLevel>, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All);
     ~Builder();
 

@@ -49,7 +49,7 @@ public:
 
     void adjustRepaintRect(const RenderObject&, FloatRect&) final;
 
-    bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const final;
+    bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const final;
 
     bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const final;
 
