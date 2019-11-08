@@ -320,7 +320,7 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
     if (!callFrame)
         return noSourceID;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (!codeBlock)
+    if (!codeBlock || callFrame->callee().isWasm())
         return noSourceID;
     return codeBlock->ownerExecutable()->sourceID();
 }

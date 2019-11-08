@@ -1,3 +1,17 @@
+2019-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Inspector's DebuggerCallFrame should be aware of Wasm frames
+        https://bugs.webkit.org/show_bug.cgi?id=203925
+
+        Reviewed by Mark Lam.
+
+        The DebuggerCallFrame checks for CallFrame::codeBlock to determine if it the current frame is a
+        valid JS frame, but since the Wasm interpreter stores the Wasm::FunctionCodeBlock to this slot,
+        that check is not sufficient. Add an extra check for CalleeBits::isWasm.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::sourceIDForCallFrame):
+
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r250087): inspector/model/remote-object.html is timing out
