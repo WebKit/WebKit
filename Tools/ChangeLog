@@ -1,3 +1,12 @@
+2019-11-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Clicking on EWS status-bubble should open the results in new tab
+        https://bugs.webkit.org/show_bug.cgi?id=204012
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html:
+
 2019-11-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Return NotAllowedError immediately for UI cancellations
