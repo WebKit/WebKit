@@ -1,3 +1,36 @@
+2019-11-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Default NamepaceURI must be gotten from the topmost parent before the SVG <foreignObject>
+        https://bugs.webkit.org/show_bug.cgi?id=203868
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensure that we don't cross boundaries from HTML to SVG when traversing
+        the tree of nodes upward. We need to stop at the foreignObject if it is
+        one of the ancestors of the contextElement.
+
+        Tests: svg/foreignObject/foreign-object-dynamic-parsing.svg
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::HTMLTableCellElement):
+        This assertion should not fire if the tag has a prefix like <h:th> or
+        <h:td> where 'h' is a defined namespace.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::parseDocumentFragment):
+        Stop at the first SVG <foreignObject> ancestor when calculating the
+        defaultNamespaceURI.
+
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
+        (WebCore::XMLDocumentParser::startElementNs):
+        We need to special case setting the namespaceURI of the SVGElmenets. The
+        defaultNamespaceURI can be wrong for them if the context element is an
+        HTML element, <div> for example, and the innerHTML is set to something
+        like: '<svg><rect/></svg>'.
+
 2019-11-07  Chris Dumez  <cdumez@apple.com>
 
         Use ActiveDOMObject::queueTaskKeepingObjectAlive() in DOMCache

@@ -57,7 +57,7 @@ Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagN
 HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document& document)
     : HTMLTablePartElement(tagName, document)
 {
-    ASSERT(tagName == thTag || tagName == tdTag);
+    ASSERT(hasLocalName(thTag->localName()) || hasLocalName(tdTag->localName()));
 }
 
 unsigned HTMLTableCellElement::colSpan() const

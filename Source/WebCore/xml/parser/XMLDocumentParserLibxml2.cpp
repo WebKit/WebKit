@@ -571,44 +571,16 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
 {
 }
 
-XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parentElement, ParserContentPolicy parserContentPolicy)
+XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, ParserContentPolicy parserContentPolicy)
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
     , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&fragment)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
+    , m_prefixToNamespaceMap(WTFMove(prefixToNamespaceMap))
+    , m_defaultNamespaceURI(defaultNamespaceURI)
 {
     fragment.ref();
-
-    // Add namespaces based on the parent node
-    Vector<Element*> elemStack;
-    while (parentElement) {
-        elemStack.append(parentElement);
-
-        ContainerNode* node = parentElement->parentNode();
-        if (!is<Element>(node))
-            break;
-        parentElement = downcast<Element>(node);
-    }
-
-    if (elemStack.isEmpty())
-        return;
-
-    // FIXME: Share code with isDefaultNamespace() per http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#parsing-xhtml-fragments
-    for (; !elemStack.isEmpty(); elemStack.removeLast()) {
-        Element* element = elemStack.last();
-        if (element->hasAttributes()) {
-            for (const Attribute& attribute : element->attributesIterator()) {
-                if (attribute.localName() == xmlnsAtom())
-                    m_defaultNamespaceURI = attribute.value();
-                else if (attribute.prefix() == xmlnsAtom())
-                    m_prefixToNamespaceMap.set(attribute.localName(), attribute.value());
-            }
-        }
-    }
-
-    if (m_defaultNamespaceURI.isNull())
-        m_defaultNamespaceURI = parentElement->namespaceURI();
 }
 
 XMLParserContext::~XMLParserContext()
@@ -769,6 +741,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (m_parsingFragment && uri.isNull()) {
         if (!prefix.isNull())
             uri = m_prefixToNamespaceMap.get(prefix);
+        else if (is<SVGElement>(m_currentNode) || localName == SVGNames::svgTag->localName())
+            uri = SVGNames::svgNamespaceURI;
         else
             uri = m_defaultNamespaceURI;
     }
