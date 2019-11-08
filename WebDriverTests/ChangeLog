@@ -1,3 +1,14 @@
+2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement get page source command
+        https://bugs.webkit.org/show_bug.cgi?id=180399
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Unskip tests that are now passing.
+
+        * TestExpectations.json:
+
 2019-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: correctly handle errors when focusing element before sending key events

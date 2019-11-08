@@ -107,6 +107,7 @@ public:
     void elementClick(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementClear(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementSendKeys(const String& elementID, const String& text, Function<void (CommandResult&&)>&&);
+    void getPageSource(Function<void (CommandResult&&)>&&);
     void executeScript(const String& script, RefPtr<JSON::Array>&& arguments, ExecuteScriptMode, Function<void (CommandResult&&)>&&);
     void getAllCookies(Function<void (CommandResult&&)>&&);
     void getNamedCookie(const String& name, Function<void (CommandResult&&)>&&);

@@ -153,6 +153,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/clear", &WebDriverService::elementClear },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/value", &WebDriverService::elementSendKeys },
 
+    { HTTPMethod::Get, "/session/$sessionId/source", &WebDriverService::getPageSource },
     { HTTPMethod::Post, "/session/$sessionId/execute/sync", &WebDriverService::executeScript },
     { HTTPMethod::Post, "/session/$sessionId/execute/async", &WebDriverService::executeAsyncScript },
 
@@ -1393,6 +1394,16 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
     }
 
     m_session->elementSendKeys(elementID.value(), text, WTFMove(completionHandler));
+}
+
+void WebDriverService::getPageSource(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §15.1 Getting Page Source.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#getting-page-source
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    m_session->getPageSource(WTFMove(completionHandler));
 }
 
 static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)

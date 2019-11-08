@@ -399,12 +399,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/get_page_source/source.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/180399"}}
-    },
-    "imported/w3c/webdriver/tests/get_page_source/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/180399"}}
-    },
     "imported/w3c/webdriver/tests/element_click/bubbling.py": {
         "subtests": {
             "test_spin_event_loop": {
