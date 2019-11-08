@@ -52,7 +52,7 @@
 #        include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
 #    elif defined(ANGLE_USE_X11)
 #        include "libANGLE/renderer/gl/glx/DisplayGLX.h"
-#    elif defined(ANGLE_PLATFORM_MACOS)
+#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 #        include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 #    elif defined(ANGLE_PLATFORM_IOS)
 #        include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
@@ -234,7 +234,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const D
             impl = new rx::DisplayWGL(state);
 #    elif defined(ANGLE_USE_X11)
             impl = new rx::DisplayGLX(state);
-#    elif defined(ANGLE_PLATFORM_MACOS)
+#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
             impl = new rx::DisplayCGL(state);
 #    elif defined(ANGLE_PLATFORM_IOS)
             impl = new rx::DisplayEAGL(state);

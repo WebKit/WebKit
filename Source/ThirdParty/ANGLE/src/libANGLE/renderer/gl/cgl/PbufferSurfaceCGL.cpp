@@ -9,7 +9,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
 #include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 

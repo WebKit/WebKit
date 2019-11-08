@@ -8,7 +8,7 @@
 
 #include "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
 #include "gpu_info_util/SystemInfo_internal.h"
 

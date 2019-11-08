@@ -115,11 +115,14 @@
 #    include <TargetConditionals.h>
 #    if TARGET_OS_OSX
 #        define ANGLE_PLATFORM_MACOS 1
-#    elif TARGET_OS_IOS
+#    elif TARGET_OS_IPHONE
 #        define ANGLE_PLATFORM_IOS 1
 #        define GLES_SILENCE_DEPRECATION
 #        if TARGET_OS_SIMULATOR
 #            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
+#        if TARGET_OS_MACCATALYST
+#            define ANGLE_PLATFORM_MACCATALYST
 #        endif
 #    endif
 #endif

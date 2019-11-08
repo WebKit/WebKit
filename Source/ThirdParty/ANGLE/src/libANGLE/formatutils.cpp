@@ -975,7 +975,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddRGBAFormat(&map, GL_RGBA,           false,  8,  8,  8,  8, 0, GL_RGBA,           GL_BYTE,                        GL_SIGNED_NORMALIZED,   false, NeverSupported,                                   NeverSupported,  NeverSupported,                                 NeverSupported);
     AddRGBAFormat(&map, GL_SRGB,           false,  8,  8,  8,  0, 0, GL_SRGB,           GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::sRGB>,                    AlwaysSupported, NeverSupported,                                 NeverSupported);
     AddRGBAFormat(&map, GL_SRGB_ALPHA_EXT, false,  8,  8,  8,  8, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::sRGB>,                    AlwaysSupported, RequireExt<&Extensions::sRGB>,                  NeverSupported);
-#if defined(ANGLE_PLATFORM_IOS)
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
     AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireES<2, 0>,   AlwaysSupported, RequireES<2, 0>, NeverSupported);
 #else
     AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureFormatBGRA8888>,   AlwaysSupported, RequireExt<&Extensions::textureFormatBGRA8888>, NeverSupported);

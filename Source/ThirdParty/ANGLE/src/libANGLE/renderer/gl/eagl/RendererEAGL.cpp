@@ -27,7 +27,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS)
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #include "libANGLE/renderer/gl/eagl/RendererEAGL.h"

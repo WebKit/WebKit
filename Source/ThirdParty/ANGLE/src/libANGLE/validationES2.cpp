@@ -6387,7 +6387,7 @@ bool ValidateFramebufferTexture2D(Context *context,
                     context->validationError(GL_INVALID_VALUE, kInvalidMipLevel);
                     return false;
                 }
-#if defined(ANGLE_PLATFORM_IOS)
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
                 const TextureType expectedType { TextureType::_2D };
 #else
                 const TextureType expectedType { TextureType::Rectangle };

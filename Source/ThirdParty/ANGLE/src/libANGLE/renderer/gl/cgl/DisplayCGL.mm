@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
 #import "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 

@@ -27,7 +27,7 @@
 
 #include "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS)
+#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #include "gpu_info_util/SystemInfo_internal.h"
 
