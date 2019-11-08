@@ -1,3 +1,12 @@
+2019-11-08  Guillaume Emont  <guijemont@igalia.com>
+
+        Temporarily skip another broken test on MIPS due to OSR exit to LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=204003
+
+        Unreviewed gardening.
+
+        * stress/global-import-function-should-return-a-promise-when-clearing-exceptions.js:
+
 2019-11-07  Mark Lam  <mark.lam@apple.com>
 
         Add a stack overflow check in Yarr::ByteCompiler::emitDisjunction().
