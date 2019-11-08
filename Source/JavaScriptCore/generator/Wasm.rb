@@ -58,7 +58,7 @@ module Wasm
 template<>
 auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = lhs;
     #{op.capitalized_name}::emit(this, result, lhs, rhs);
     return { };
 }
@@ -70,7 +70,7 @@ auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rh
 template<>
 auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType operand, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = operand;
     #{op.capitalized_name}::emit(this, result, operand);
     return { };
 }

@@ -352,12 +352,16 @@ auto LLIntGenerator::callInformationFor(const Signature& signature, CallRole rol
     };
 
 
-    for (uint32_t i = 0; i < gprCount; i++)
-        registers.append(newTemporary());
-    for (uint32_t i = 0; i < fprCount; i++)
-        registers.append(newTemporary());
+    if (role == CallRole::Callee) {
+        // Reuse the slots we allocated to spill the registers in addArguments
+        for (uint32_t i = gprCount + fprCount; i--;)
+            registers.append(new RegisterID(::JSC::virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + i)));
+    } else {
+        for (uint32_t i = 0; i < gprCount; i++)
+            registers.append(newTemporary());
+        for (uint32_t i = 0; i < fprCount; i++)
+            registers.append(newTemporary());
 
-    if (role == CallRole::Caller) {
         for (uint32_t i = 0; i < signature.argumentCount(); i++)
             allocateStackRegister(signature.argument(i));
         gprIndex = 0;
@@ -629,7 +633,7 @@ auto LLIntGenerator::addReturn(const ControlType& data, const ExpressionList& re
 
     LLIntCallInformation info = callInformationFor(*data.m_signature, CallRole::Callee);
     unifyValuesWithBlock(info.results, returnValues);
-    WasmRet::emit(this, info.stackOffset);
+    WasmRet::emit(this);
 
     return { };
 }
@@ -747,7 +751,7 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
 auto LLIntGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = value;
     WasmRefIsNull::emit(this, result, value);
 
     return { };
@@ -763,7 +767,7 @@ auto LLIntGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
 
 auto LLIntGenerator::addTableGet(unsigned tableIndex, ExpressionType index, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = index;
     WasmTableGet::emit(this, result, index, tableIndex);
 
     return { };
@@ -786,7 +790,7 @@ auto LLIntGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -
 
 auto LLIntGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = fill;
     WasmTableGrow::emit(this, result, fill, delta, tableIndex);
 
     return { };
@@ -816,7 +820,7 @@ auto LLIntGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 
 auto LLIntGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = delta;
     WasmGrowMemory::emit(this, result, delta);
 
     return { };
@@ -824,7 +828,7 @@ auto LLIntGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result)
 
 auto LLIntGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
 {
-    result = newTemporary();
+    result = condition;
     WasmSelect::emit(this, result, condition, nonZero, zero);
 
     return { };
@@ -832,7 +836,7 @@ auto LLIntGenerator::addSelect(ExpressionType condition, ExpressionType nonZero,
 
 auto LLIntGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
 {
-    result = newTemporary();
+    result = pointer;
     switch (op) {
     case LoadOpType::I32Load8S:
         WasmI32Load8S::emit(this, result, pointer, offset);

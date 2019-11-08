@@ -1287,10 +1287,7 @@ op :jmp,
         targetLabel: WasmBoundLabel,
     }
 
-op :ret,
-    args: {
-        stackOffset: unsigned,
-    }
+op :ret
 
 op :switch,
     args: {

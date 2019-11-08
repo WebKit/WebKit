@@ -604,16 +604,11 @@ end)
 
 unprefixedWasmOp(wasm_ret, WasmRet, macro(ctx)
     checkSwitchToJITForEpilogue()
-    wgetu(ctx, m_stackOffset, ws1)
-    lshifti 3, ws1
-    negi ws1
-    sxi2q ws1, ws1
-    addp cfr, ws1
     forEachArgumentGPR(macro (offset, gpr)
-        loadq offset[ws1], gpr
+        loadq -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr
     end)
     forEachArgumentFPR(macro (offset, fpr)
-        loadd offset[ws1], fpr
+        loadd -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
     end)
     doReturn()
 end)
