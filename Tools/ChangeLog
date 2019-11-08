@@ -1,3 +1,14 @@
+2019-11-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Return NotAllowedError immediately for UI cancellations
+        https://bugs.webkit.org/show_bug.cgi?id=203937
+        <rdar://problem/56962420>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2019-11-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Prioritize builders over testers when a bot is shared over multiple queues

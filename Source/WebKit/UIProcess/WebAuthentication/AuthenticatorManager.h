@@ -92,7 +92,6 @@ private:
     void initTimeOutTimer();
     void timeOutTimerFired();
     void runPanel();
-    void resetState();
     void restartDiscovery();
     TransportSet getTransports() const;
 

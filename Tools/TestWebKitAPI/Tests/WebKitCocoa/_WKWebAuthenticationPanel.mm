@@ -558,9 +558,8 @@ TEST(WebAuthenticationPanel, PanelHidCancel)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
     [[delegate panel] cancel];
-    [webView waitForMessage:@"Operation timed out."];
-    EXPECT_FALSE(webAuthenticationPanelFailed);
-    EXPECT_FALSE(webAuthenticationPanelSucceded);
+    [webView waitForMessage:@"This request has been cancelled by the user."];
+    EXPECT_TRUE(webAuthenticationPanelFailed);
 }
 
 TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFound)
