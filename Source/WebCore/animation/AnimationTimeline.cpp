@@ -36,6 +36,7 @@
 #include "DocumentTimeline.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "StylePropertyShorthand.h"
@@ -75,8 +76,10 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
     ASSERT(!animation.timeline() || animation.timeline() == this);
     m_animations.remove(&animation);
     if (is<KeyframeEffect>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffect>(animation.effect())->target())
+        if (auto* target = downcast<KeyframeEffect>(animation.effect())->target()) {
             animationWasRemovedFromElement(animation, *target);
+            target->ensureKeyframeEffectStack().removeEffect(*downcast<KeyframeEffect>(animation.effect()));
+        }
     }
 }
 
@@ -243,12 +246,15 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
 
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle)
 {
+    Vector<String> animationNames;
+
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
     if (currentStyle && currentStyle->hasAnimations() && currentStyle->display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
         if (m_elementToCSSAnimationByName.contains(&element)) {
             for (const auto& cssAnimationsByNameMapItem : m_elementToCSSAnimationByName.take(&element))
                 cancelDeclarativeAnimation(*cssAnimationsByNameMapItem.value);
         }
+        element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
         return;
     }
 
@@ -275,6 +281,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         for (size_t i = 0; i < currentAnimations->size(); ++i) {
             auto& currentAnimation = currentAnimations->animation(i);
             auto& name = currentAnimation.name();
+            animationNames.append(name);
             if (namesOfPreviousAnimations.contains(name)) {
                 // We've found the name of this animation in our list of previous animations, this means we've already
                 // created a CSSAnimation object for it and need to ensure that this CSSAnimation is backed by the current
@@ -296,6 +303,8 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         if (auto animation = cssAnimationsByName.take(nameOfAnimationToRemove))
             cancelDeclarativeAnimation(*animation);
     }
+
+    element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
 }
 
 RefPtr<WebAnimation> AnimationTimeline::cssAnimationForElementAndProperty(Element& element, CSSPropertyID property)

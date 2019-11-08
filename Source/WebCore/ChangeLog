@@ -1,3 +1,72 @@
+2019-11-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Use a keyframe effect stack to resolve animations on an element
+        https://bugs.webkit.org/show_bug.cgi?id=204010
+
+        Reviewed by Dean Jackson.
+
+        Until now, when resolving animations for an element, we would call animationsForElement() during each resolution which
+        means doing several hash table lookups to locate the various classes of animations for that given element, sorting each
+        of those animations and inserting them into a new Vector.
+
+        We now use a KeyframeEffectStack which keeps a list of KeyframeEffect objects that apply to a given target, provided the
+        effect also has a valid animation and that animation has a valid timeline, all pre-conditions for that effect to produce
+        an animated value. Any time one of those pre-conditions change, we update the membership of that effect in the stack.
+        The KeyframeEffectStack is a new member of ElementRareData.
+
+        Now, each time we resolve an animation for an element, we iterate over the KeyframeEffect objects returned by calling
+        sortEffects() on the KeyframeEffectStack which will sort the stack's effects only if a new effect had been added since
+        the last iteration, which means that simple animations that are not mutated will require sorting of the stack just once,
+        and the addition of several animations in a single animation frame will require sorting just once as well.
+
+        It was also found while doing this work that Style::TreeResolver::createAnimatedElementUpdate would call RenderStyle::clonePtr()
+        for any element that was part of a document containing a timeline, regardless of whether that element had any animations. Now
+        we check whether that element's KeyframeEffectStack contains any effects prior to cloning the style.
+
+        No tests or changes to existed test expectations as this should not yield any change in behavior.
+
+        * Sources.txt: Add the new KeyframeEffectStack.
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.h:
+        (WebCore::AnimationEffect::setAnimation):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Since we need to know the order of CSS @keyframes rules listed in animation-name
+        when sorting effects, we must compile the ordered list of those @keyframe rules as we update CSS animations for an element and store it on its
+        KeyframeEffectStack.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::resolveAnimationsForElement): Deleted. Replaced by Element::applyKeyframeEffects().
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::animationTimelineDidChange):
+        (WebCore::KeyframeEffect::setAnimation):
+        (WebCore::KeyframeEffect::setTarget):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffectStack.cpp: Added.
+        (WebCore::KeyframeEffectStack::KeyframeEffectStack):
+        (WebCore::KeyframeEffectStack::~KeyframeEffectStack):
+        (WebCore::KeyframeEffectStack::addEffect):
+        (WebCore::KeyframeEffectStack::removeEffect):
+        (WebCore::KeyframeEffectStack::sortedEffects):
+        (WebCore::KeyframeEffectStack::ensureEffectsAreSorted):
+        (WebCore::KeyframeEffectStack::setCSSAnimationNames):
+        * animation/KeyframeEffectStack.h: Added.
+        (WebCore::KeyframeEffectStack::hasEffects const):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setTimelineInternal):
+        (WebCore::WebAnimation::persist):
+        * dom/Element.cpp:
+        (WebCore::Element::ensureKeyframeEffectStack):
+        (WebCore::Element::hasKeyframeEffects const):
+        (WebCore::Element::applyKeyframeEffects):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::keyframeEffectStack):
+        (WebCore::ElementRareData::setKeyframeEffectStack):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
 2019-11-07  Dean Jackson  <dino@apple.com>
 
         Add ANGLE backend for iOS device

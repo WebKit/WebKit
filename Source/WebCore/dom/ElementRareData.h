@@ -25,6 +25,7 @@
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "IntersectionObserver.h"
+#include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "PseudoElement.h"
@@ -99,6 +100,9 @@ public:
 
     bool hasCSSAnimation() const { return m_hasCSSAnimation; }
     void setHasCSSAnimation(bool value) { m_hasCSSAnimation = value; }
+
+    KeyframeEffectStack* keyframeEffectStack() { return m_keyframeEffectStack.get(); }
+    void setKeyframeEffectStack(std::unique_ptr<KeyframeEffectStack>&& keyframeEffectStack) { m_keyframeEffectStack = WTFMove(keyframeEffectStack); }
 
     bool hasElementIdentifier() const { return m_hasElementIdentifier; }
     void setHasElementIdentifier(bool value) { m_hasElementIdentifier = value; }
@@ -185,6 +189,8 @@ private:
 #if ENABLE(RESIZE_OBSERVER)
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
 #endif
+
+    std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;

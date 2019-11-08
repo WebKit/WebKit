@@ -448,6 +448,7 @@ accessibility/isolatedtree/AXIsolatedTree.cpp
 accessibility/isolatedtree/AXIsolatedTreeNode.cpp
 
 animation/AnimationEffect.cpp
+animation/KeyframeEffectStack.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp

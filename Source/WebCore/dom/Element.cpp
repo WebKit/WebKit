@@ -31,6 +31,7 @@
 #include "AttributeChangeInvalidation.h"
 #include "CSSAnimationController.h"
 #include "CSSParser.h"
+#include "CSSPropertyAnimation.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClassChangeInvalidation.h"
@@ -3676,6 +3677,47 @@ IntersectionObserverData* Element::intersectionObserverData()
     return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }
 #endif
+
+KeyframeEffectStack& Element::ensureKeyframeEffectStack()
+{
+    auto& rareData = ensureElementRareData();
+    if (!rareData.keyframeEffectStack())
+        rareData.setKeyframeEffectStack(makeUnique<KeyframeEffectStack>());
+    return *rareData.keyframeEffectStack();
+}
+
+bool Element::hasKeyframeEffects() const
+{
+    if (!hasRareData())
+        return false;
+
+    auto* keyframeEffectStack = elementRareData()->keyframeEffectStack();
+    return keyframeEffectStack && keyframeEffectStack->hasEffects();
+}
+
+bool Element::applyKeyframeEffects(RenderStyle& targetStyle)
+{
+    bool hasNonAcceleratedAnimationProperty = false;
+
+    for (const auto& effect : ensureKeyframeEffectStack().sortedEffects()) {
+        ASSERT(effect->animation());
+        effect->animation()->resolve(targetStyle);
+
+        if (hasNonAcceleratedAnimationProperty)
+            continue;
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=204009
+        // KeyframeEffectStack and KeyframeEffect should indicate whether it only contains accelerated animation properties
+        for (auto cssPropertyId : effect->animatedProperties()) {
+            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
+                hasNonAcceleratedAnimationProperty = true;
+                break;
+            }
+        }
+    }
+
+    return !hasNonAcceleratedAnimationProperty;
+}
 
 #if ENABLE(RESIZE_OBSERVER)
 void Element::disconnectFromResizeObservers()

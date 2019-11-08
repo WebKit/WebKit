@@ -114,9 +114,12 @@ public:
     void invalidate() override;
     void animationDidSeek() final;
     void animationSuspensionStateDidChange(bool) final;
+    void animationTimelineDidChange(AnimationTimeline*) final;
     void applyPendingAcceleratedActions();
     bool isRunningAccelerated() const { return m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
     bool hasPendingAcceleratedAction() const { return !m_pendingAcceleratedActions.isEmpty() && isRunningAccelerated(); }
+
+    void setAnimation(WebAnimation*) final;
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;

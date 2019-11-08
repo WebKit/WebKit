@@ -317,11 +317,11 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         }
     }
 
-    if (auto timeline = m_document.existingTimeline()) {
-        // Now we can update all Web animations, which will include CSS Animations as well
-        // as animations created via the JS API.
+    // Now we can update all Web animations, which will include CSS Animations as well
+    // as animations created via the JS API.
+    if (element.hasKeyframeEffects()) {
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        shouldRecompositeLayer = timeline->resolveAnimationsForElement(element, *animatedStyle);
+        shouldRecompositeLayer = element.applyKeyframeEffects(*animatedStyle);
         newStyle = WTFMove(animatedStyle);
     }
 

@@ -47,6 +47,7 @@ class Frame;
 class HTMLDocument;
 class IntSize;
 class JSCustomElementInterface;
+class KeyframeEffectStack;
 class KeyboardEvent;
 class Locale;
 class PlatformKeyboardEvent;
@@ -488,6 +489,10 @@ public:
     bool hasCSSAnimation() const;
     void setHasCSSAnimation();
     void clearHasCSSAnimation();
+
+    KeyframeEffectStack& ensureKeyframeEffectStack();
+    bool hasKeyframeEffects() const;
+    bool applyKeyframeEffects(RenderStyle&);
 
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;

@@ -28,7 +28,6 @@
 
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
-#include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
@@ -671,32 +670,6 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
         }
         animation->applyPendingAcceleratedActions();
     }
-}
-
-bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle& targetStyle)
-{
-    bool hasNonAcceleratedAnimationProperty = false;
-
-    for (const auto& animation : animationsForElement(element)) {
-        animation->resolve(targetStyle);
-
-        if (hasNonAcceleratedAnimationProperty)
-            continue;
-
-        auto* effect = animation->effect();
-        if (!effect || !is<KeyframeEffect>(effect))
-            continue;
-
-        auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-        for (auto cssPropertyId : keyframeEffect->animatedProperties()) {
-            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
-                hasNonAcceleratedAnimationProperty = true;
-                break;
-            }
-        }
-    }
-
-    return !hasNonAcceleratedAnimationProperty;
 }
 
 bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const

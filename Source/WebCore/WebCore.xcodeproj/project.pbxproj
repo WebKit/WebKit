@@ -2092,6 +2092,7 @@
 		71729F7E20F3BB4700801CE6 /* JSDocumentTimelineOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 71729F7C20F3BAB900801CE6 /* JSDocumentTimelineOptions.h */; };
 		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
+		71A58196236F467600D81A24 /* KeyframeEffectStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A58193236F466400D81A24 /* KeyframeEffectStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71B28427203CEC4C0036AA5D /* JSCSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71B5AB2621F1D9F400376E5C /* PointerCaptureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B5AB2421F1D9E200376E5C /* PointerCaptureController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71B7EE0D21B5C6870031C1EF /* TouchAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AEE4EB21B5A49C00DDB036 /* TouchAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9474,6 +9475,8 @@
 		71A1B6071DEE5A820073BCFB /* en */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = en; path = "en.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
+		71A58193236F466400D81A24 /* KeyframeEffectStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyframeEffectStack.h; sourceTree = "<group>"; };
+		71A58195236F466500D81A24 /* KeyframeEffectStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyframeEffectStack.cpp; sourceTree = "<group>"; };
 		71AEE4EB21B5A49C00DDB036 /* TouchAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchAction.h; sourceTree = "<group>"; };
 		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
 		71B28424203CEC0B0036AA5D /* JSCSSAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSAnimation.cpp; sourceTree = "<group>"; };
@@ -20854,6 +20857,8 @@
 				71556CAB1F9F099C00E78D08 /* KeyframeEffect.idl */,
 				71247E321FEA5F7F008C08CE /* KeyframeEffectOptions.h */,
 				71247E301FEA5F7E008C08CE /* KeyframeEffectOptions.idl */,
+				71A58195236F466500D81A24 /* KeyframeEffectStack.cpp */,
+				71A58193236F466400D81A24 /* KeyframeEffectStack.h */,
 				7120733D216DFAF100C78329 /* OptionalEffectTiming.h */,
 				7120733F216DFAF200C78329 /* OptionalEffectTiming.idl */,
 				712BE47E1FE8649D002031CC /* PlaybackDirection.h */,
@@ -30668,7 +30673,6 @@
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
-				E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */,
 				314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */,
 				3140C5271FDF558200D2A873 /* JSOffscreenCanvasRenderingContext2D.h in Headers */,
 				57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */,
@@ -31082,6 +31086,7 @@
 				71247E391FEA5F86008C08CE /* KeyframeAnimationOptions.h in Headers */,
 				71556CB41F9F09BA00E78D08 /* KeyframeEffect.h in Headers */,
 				71247E3A1FEA5F86008C08CE /* KeyframeEffectOptions.h in Headers */,
+				71A58196236F467600D81A24 /* KeyframeEffectStack.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
@@ -31173,6 +31178,7 @@
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */,
+				E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */,
 				FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,

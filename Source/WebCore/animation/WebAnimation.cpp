@@ -237,6 +237,9 @@ void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
         m_timeline->removeAnimation(*this);
 
     m_timeline = WTFMove(timeline);
+
+    if (m_effect)
+        m_effect->animationTimelineDidChange(m_timeline.get());
 }
 
 void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)
@@ -1258,8 +1261,12 @@ void WebAnimation::persist()
     auto previousReplaceState = std::exchange(m_replaceState, ReplaceState::Persisted);
 
     if (previousReplaceState == ReplaceState::Removed && m_timeline) {
-        if (is<KeyframeEffect>(m_effect))
-            m_timeline->animationWasAddedToElement(*this, *downcast<KeyframeEffect>(m_effect.get())->target());
+        if (is<KeyframeEffect>(m_effect)) {
+            auto& keyframeEffect = downcast<KeyframeEffect>(*m_effect);
+            auto& target = *keyframeEffect.target();
+            m_timeline->animationWasAddedToElement(*this, target);
+            target.ensureKeyframeEffectStack().addEffect(keyframeEffect);
+        }
     }
 }
 

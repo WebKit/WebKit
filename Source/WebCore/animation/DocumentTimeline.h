@@ -67,7 +67,6 @@ public:
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
     void applyPendingAcceleratedAnimations();
     bool runningAnimationsForElementAreAllAccelerated(Element&) const;
-    bool resolveAnimationsForElement(Element&, RenderStyle&);
     void detachFromDocument();
 
     void enqueueAnimationPlaybackEvent(AnimationPlaybackEvent&);

@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-class AnimationEffect : public RefCounted<AnimationEffect> {
+class AnimationEffect : public RefCounted<AnimationEffect>, public CanMakeWeakPtr<AnimationEffect> {
 public:
     virtual ~AnimationEffect();
 
@@ -62,9 +62,10 @@ public:
     virtual void invalidate() = 0;
     virtual void animationDidSeek() = 0;
     virtual void animationSuspensionStateDidChange(bool) = 0;
+    virtual void animationTimelineDidChange(AnimationTimeline*) = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
-    void setAnimation(WebAnimation* animation) { m_animation = makeWeakPtr(animation); }
+    virtual void setAnimation(WebAnimation* animation) { m_animation = makeWeakPtr(animation); }
 
     Seconds delay() const { return m_delay; }
     void setDelay(const Seconds&);

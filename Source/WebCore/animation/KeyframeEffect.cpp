@@ -44,6 +44,7 @@
 #include "JSCompositeOperationOrAuto.h"
 #include "JSDOMConvert.h"
 #include "JSKeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -990,6 +991,29 @@ void KeyframeEffect::computeStackingContextImpact()
     }
 }
 
+void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
+{
+    if (!m_target)
+        return;
+
+    if (timeline)
+        m_target->ensureKeyframeEffectStack().addEffect(*this);
+    else
+        m_target->ensureKeyframeEffectStack().removeEffect(*this);
+}
+
+void KeyframeEffect::setAnimation(WebAnimation* animation)
+{
+    bool animationChanged = animation != this->animation();
+    AnimationEffect::setAnimation(animation);
+    if (m_target && animationChanged) {
+        if (animation)
+            m_target->ensureKeyframeEffectStack().addEffect(*this);
+        else
+            m_target->ensureKeyframeEffectStack().removeEffect(*this);
+    }
+}
+
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
     if (m_target == newTarget)
@@ -1009,6 +1033,11 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     // Likewise, we need to invalidate styles on the previous target so that
     // any animated styles are removed immediately.
     invalidateElement(previousTarget.get());
+
+    if (previousTarget)
+        previousTarget->ensureKeyframeEffectStack().removeEffect(*this);
+    if (m_target)
+        m_target->ensureKeyframeEffectStack().addEffect(*this);
 }
 
 void KeyframeEffect::apply(RenderStyle& targetStyle)
