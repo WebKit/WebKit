@@ -1,3 +1,16 @@
+2019-11-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] [iOS] Add logging and telemetry to mach lookup rules
+        https://bugs.webkit.org/show_bug.cgi?id=203999
+
+        Reviewed by Brent Fulgham.
+
+        Add logging and telemetry to help determine if mach lookups to a set of services can be denied in the WebContent process.
+
+        No new tests, since this only adds logging and telemetry.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Make DownloadID an ObjectIdentifier
