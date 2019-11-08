@@ -48,7 +48,6 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class DownloadID;
 class DownloadProxyMap;
 class WebPageProxy;
 class WebProcessPool;

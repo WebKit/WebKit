@@ -27,6 +27,7 @@
 #define WKDownload_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -38,7 +39,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKDownloadGetTypeID();
 
-WK_EXPORT uint64_t WKDownloadGetID(WKDownloadRef download);
+WK_EXPORT uint64_t WKDownloadGetID(WKDownloadRef download) WK_C_API_DEPRECATED;
 WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
 WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
 WK_EXPORT void WKDownloadCancel(WKDownloadRef download);

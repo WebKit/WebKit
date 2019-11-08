@@ -44,12 +44,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-static uint64_t generateDownloadID()
-{
-    static uint64_t uniqueDownloadID = 0;
-    return ++uniqueDownloadID;
-}
     
 Ref<DownloadProxy> DownloadProxy::create(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest)
 {
@@ -60,7 +54,7 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
     , m_processPool(&processPool)
-    , m_downloadID(generateDownloadID())
+    , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
 {
 }

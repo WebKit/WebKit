@@ -23,74 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadID_h
-#define DownloadID_h
+#pragma once
 
-#include "ArgumentCoder.h"
-#include "Decoder.h"
-#include "Encoder.h"
-#include <wtf/HashTraits.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class DownloadID {
-public:
-    DownloadID()
-    {
-    }
-
-    explicit DownloadID(uint64_t downloadID)
-        : m_downloadID(downloadID)
-    {
-    }
-
-    bool operator==(DownloadID other) const { return m_downloadID == other.m_downloadID; }
-    bool operator!=(DownloadID other) const { return m_downloadID != other.m_downloadID; }
-
-    uint64_t downloadID() const { return m_downloadID; }
-private:
-    uint64_t m_downloadID { 0 };
-};
+enum DownloadIdentifierType { };
+using DownloadID = ObjectIdentifier<DownloadIdentifierType>;
 
 }
-
-namespace IPC {
-    
-template<> struct ArgumentCoder<WebKit::DownloadID> {
-    static void encode(Encoder& encoder, const WebKit::DownloadID& downloadID)
-    {
-        encoder << downloadID.downloadID();
-    }
-    static bool decode(Decoder& decoder, WebKit::DownloadID& downloadID)
-    {
-        uint64_t id;
-        if (!decoder.decode(id))
-            return false;
-
-        downloadID = WebKit::DownloadID(id);
-        
-        return true;
-    }
-};
-
-}
-
-namespace WTF {
-    
-struct DownloadIDHash {
-    static unsigned hash(const WebKit::DownloadID& d) { return intHash(d.downloadID()); }
-    static bool equal(const WebKit::DownloadID& a, const WebKit::DownloadID& b) { return a.downloadID() == b.downloadID(); }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-template<> struct HashTraits<WebKit::DownloadID> : GenericHashTraits<WebKit::DownloadID> {
-    static WebKit::DownloadID emptyValue() { return { }; }
-    
-    static void constructDeletedValue(WebKit::DownloadID& slot) { slot = WebKit::DownloadID(std::numeric_limits<uint64_t>::max()); }
-    static bool isDeletedValue(const WebKit::DownloadID& slot) { return slot.downloadID() == std::numeric_limits<uint64_t>::max(); }
-};
-template<> struct DefaultHash<WebKit::DownloadID> {
-    typedef DownloadIDHash Hash;
-};
-
-}
-#endif /* DownloadID_h */

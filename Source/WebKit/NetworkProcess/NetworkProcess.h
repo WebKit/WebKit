@@ -27,6 +27,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
+#include "DownloadID.h"
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
@@ -75,7 +76,6 @@ class SessionID;
 namespace WebCore {
 class CertificateInfo;
 class CurlProxySettings;
-class DownloadID;
 class ProtectionSpace;
 class StorageQuotaManager;
 class NetworkStorageSession;

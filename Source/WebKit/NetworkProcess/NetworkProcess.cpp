@@ -1967,12 +1967,12 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::Res
 
 void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)
 {
-    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID.downloadID());
+    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID);
 }
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
-    uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
+    auto destinationID = networkDataTask.pendingDownloadID();
     downloadProxyConnection()->send(Messages::DownloadProxy::DidReceiveResponse(response), destinationID);
 
     downloadManager().willDecidePendingDownloadDestination(networkDataTask, WTFMove(completionHandler));

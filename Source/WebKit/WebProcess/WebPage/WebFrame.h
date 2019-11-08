@@ -181,7 +181,7 @@ private:
     WebCore::FramePolicyFunction m_policyFunction;
     ForNavigationAction m_policyFunctionForNavigationAction { ForNavigationAction::No };
     HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
-    DownloadID m_policyDownloadID { 0 };
+    DownloadID m_policyDownloadID;
 
     std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;
     LoadListener* m_loadListener { nullptr };

@@ -279,7 +279,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyChec
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)
 {
-    ASSERT(m_policyDownloadID.downloadID());
+    ASSERT(m_policyDownloadID);
 
     auto policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = { };
@@ -289,7 +289,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT(m_policyDownloadID.downloadID());
+    ASSERT(m_policyDownloadID);
 
     auto policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = { };
