@@ -215,6 +215,7 @@ set(WTF_PUBLIC_HEADERS
     SpanningTree.h
     Spectrum.h
     StackBounds.h
+    StackCheck.h
     StackPointer.h
     StackShot.h
     StackShotProfiler.h

@@ -1093,6 +1093,7 @@ private:
     friend class Heap;
     friend class CatchScope;
     friend class ExceptionScope;
+    friend class JSDollarVMHelper;
     friend class ThrowScope;
     friend class VMTraps;
     friend class WTF::DoublyLinkedListNode<VM>;

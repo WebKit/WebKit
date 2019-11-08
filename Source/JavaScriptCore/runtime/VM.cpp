@@ -881,7 +881,7 @@ static void preCommitStackMemory(void* stackLimit)
 }
 #endif
 
-inline void VM::updateStackLimits()
+void VM::updateStackLimits()
 {
 #if OS(WINDOWS)
     void* lastSoftStackLimit = m_softStackLimit;

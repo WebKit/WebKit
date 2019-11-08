@@ -1,3 +1,24 @@
+2019-11-07  Mark Lam  <mark.lam@apple.com>
+
+        Add a stack overflow check in Yarr::ByteCompiler::emitDisjunction().
+        https://bugs.webkit.org/show_bug.cgi?id=203936
+        <rdar://problem/56624724>
+
+        Reviewed by Saam Barati.
+
+        1. Add a StackCheck utility class so that we don't have to keep reinventing this
+           every time we need to add stack checking somewhere.
+        2. Rename some arguments and constants in StackBounds to be more descriptive of
+           what they actually are.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::recursionLimit const):
+        * wtf/StackCheck.h: Added.
+        (WTF::StackCheck::StackCheck):
+        (WTF::StackCheck::isSafeToRecurse):
+
 2019-11-06  Mark Lam  <mark.lam@apple.com>
 
         Remove remnants of support code for an upwards growing stack.

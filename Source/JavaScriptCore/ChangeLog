@@ -1,3 +1,60 @@
+2019-11-07  Mark Lam  <mark.lam@apple.com>
+
+        Add a stack overflow check in Yarr::ByteCompiler::emitDisjunction().
+        https://bugs.webkit.org/show_bug.cgi?id=203936
+        <rdar://problem/56624724>
+
+        Reviewed by Saam Barati.
+
+        Basically, any functions below Yarr::ByteCompiler::compile() that recurses need
+        to check if it's safe to recurse before doing so.  This patch adds the stack
+        checks in Yarr::ByteCompiler::compile() because it is the entry point to this
+        sub-system, and Yarr::ByteCompiler::emitDisjunction() because it is the only
+        function that recurses.  All other functions called below compile() are either
+        leaf functions or have shallow stack usage.  Hence, their stack needs are covered
+        by the DefaultReservedZone, and they do not need stack checks.
+
+        This patch also does the following:
+        1. Added $vm.callWithStackSize() which can be used to call a test function near
+           the end of the physical stack.  This enables is to simulate the smaller stack
+           size of more resource constrained devices.
+
+           $vm.callWithStackSize() uses inline asm to adjust the stack pointer and
+           does the callback via the JIT probe trampoline.
+
+        2. Added the --disableOptionsFreezingForTesting to the jsc shell to make it
+           possible to disable freezing of JSC options.  $vm.callWithStackSize() relies
+           on this to modify the VM's stack limits.
+
+        3. Removed the inline modifier on VM::updateStackLimits() so that we can call it
+           from $vm.callWithStackSize() as well.  It is not a performance critical
+           function and is rarely called.
+
+        4. Added a JSDollarVMHelper class that other parts of the system can declare as
+           a friend.  This gives $vm a backdoor into the private functions and fields of
+           classes for its debugging work.  In this patch, we're only using it to access
+           VM::updateVMStackLimits().
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/VM.cpp:
+        (JSC::VM::updateStackLimits):
+        * runtime/VM.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMHelper::JSDollarVMHelper):
+        (JSC::JSDollarVMHelper::vmStackStart):
+        (JSC::JSDollarVMHelper::vmStackLimit):
+        (JSC::JSDollarVMHelper::vmSoftStackLimit):
+        (JSC::JSDollarVMHelper::updateVMStackLimits):
+        (JSC::callWithStackSizeProbeFunction):
+        (JSC::functionCallWithStackSize):
+        (JSC::JSDollarVM::finishCreation):
+        (IGNORE_WARNINGS_BEGIN): Deleted.
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        (JSC::Yarr::ByteCompiler::isSafeToRecurse):
+
 2019-11-07  Tadeu Zagallo  <tzagallo@apple.com>
 
         Use fewer virtual registers in Wasm LLInt

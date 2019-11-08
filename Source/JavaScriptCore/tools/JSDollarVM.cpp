@@ -31,6 +31,7 @@
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
 #include "Debugger.h"
+#include "Error.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
@@ -43,6 +44,7 @@
 #include "JSString.h"
 #include "Options.h"
 #include "Parser.h"
+#include "ProbeContext.h"
 #include "ShadowChicken.h"
 #include "Snippet.h"
 #include "SnippetParams.h"
@@ -63,6 +65,26 @@
 using namespace JSC;
 
 IGNORE_WARNINGS_BEGIN("frame-address")
+
+extern "C" void ctiMasmProbeTrampoline();
+
+namespace JSC {
+
+// This class is only here as a simple way to grant JSDollarVM friend privileges
+// to all the classes that it needs special access to.
+class JSDollarVMHelper {
+public:
+    JSDollarVMHelper(VM& vm)
+        : m_vm(vm)
+    { }
+
+    void updateVMStackLimits() { return m_vm.updateStackLimits(); };
+
+private:
+    VM& m_vm;
+};
+
+} // namespace JSC
 
 namespace {
 
@@ -1968,6 +1990,123 @@ static EncodedJSValue JSC_HOST_CALL functionIsHavingABadTime(JSGlobalObject* glo
     return JSValue::encode(jsBoolean(target->isHavingABadTime()));
 }
 
+// Calls the specified test function after adjusting the stack to have the specified
+// remaining size from the end of the physical stack.
+// Usage: $vm.callWithStackSize(funcToCall, desiredStackSize)
+//
+// This function will only work in test configurations, specifically, only if JSC
+// options are not frozen. For the jsc shell, the --disableOptionsFreezingForTesting
+// argument needs to be passed in on the command line.
+
+#if ENABLE(MASM_PROBE)
+static void callWithStackSizeProbeFunction(Probe::State* state)
+{
+    JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
+    JSFunction* function = bitwise_cast<JSFunction*>(state->probeFunction);
+    state->initializeStackFunction = nullptr;
+    state->initializeStackArg = nullptr;
+
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+
+    CallData callData;
+    CallType callType = getCallData(vm, function, callData);
+    MarkedArgumentBuffer args;
+    call(globalObject, function, callType, callData, jsUndefined(), args);
+}
+#endif // ENABLE(MASM_PROBE)
+
+static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+#if OS(DARWIN) && CPU(X86_64)
+    constexpr bool isSupportedByPlatform = true;
+#else
+    constexpr bool isSupportedByPlatform = false;
+#endif
+
+    if (!isSupportedByPlatform)
+        return throwVMError(globalObject, throwScope, "Not supported for this platform");
+
+#if ENABLE(MASM_PROBE)
+    if (g_jscConfig.isPermanentlyFrozen || !g_jscConfig.disabledFreezingForTesting)
+        return throwVMError(globalObject, throwScope, "Options are frozen");
+
+    if (callFrame->argumentCount() < 2)
+        return throwVMError(globalObject, throwScope, "Invalid number of arguments");
+    JSValue arg0 = callFrame->argument(0);
+    JSValue arg1 = callFrame->argument(1);
+    if (!arg0.isFunction(vm))
+        return throwVMError(globalObject, throwScope, "arg0 should be a function");
+    if (!arg1.isNumber())
+        return throwVMError(globalObject, throwScope, "arg1 should be a number");
+
+    JSFunction* function = jsCast<JSFunction*>(arg0.toObject(globalObject));
+    size_t desiredStackSize = arg1.asNumber();
+
+    const StackBounds& bounds = Thread::current().stack();
+    uint8_t* currentStackPosition = bitwise_cast<uint8_t*>(currentStackPointer());
+    uint8_t* end = bitwise_cast<uint8_t*>(bounds.end());
+    uint8_t* desiredStart = end + desiredStackSize;
+    if (desiredStart >= currentStackPosition)
+        return throwVMError(globalObject, throwScope, "Unable to setup desired stack size");
+
+    JSDollarVMHelper helper(vm);
+
+    unsigned originalMaxPerThreadStackUsage = Options::maxPerThreadStackUsage();
+    void* originalVMSoftStackLimit = vm.softStackLimit();
+    void* originalVMStackLimit = vm.stackLimit();
+
+    // This is a hack to make the VM think it's stack limits are near the end
+    // of the physical stack.
+    uint8_t* vmStackStart = bitwise_cast<uint8_t*>(vm.stackPointerAtVMEntry());
+    uint8_t* vmStackEnd = vmStackStart - originalMaxPerThreadStackUsage;
+    ptrdiff_t sizeDiff = vmStackEnd - end;
+    RELEASE_ASSERT(sizeDiff >= 0);
+    RELEASE_ASSERT(sizeDiff < UINT_MAX);
+
+    Options::maxPerThreadStackUsage() = originalMaxPerThreadStackUsage + sizeDiff;
+    helper.updateVMStackLimits();
+
+#if OS(DARWIN) && CPU(X86_64)
+    __asm__ volatile (
+        "subq %[sizeDiff], %%rsp" "\n"
+        "pushq %%rax" "\n"
+        "pushq %%rcx" "\n"
+        "pushq %%rdx" "\n"
+        "pushq %%rbx" "\n"
+        "callq *%%rax" "\n"
+        "addq %[sizeDiff], %%rsp" "\n"
+        :
+        : "a" (ctiMasmProbeTrampoline)
+        , "c" (callWithStackSizeProbeFunction)
+        , "d" (function)
+        , "b" (globalObject)
+        , [sizeDiff] "rm" (sizeDiff)
+        : "memory"
+    );
+#else
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(callWithStackSizeProbeFunction);
+#endif // OS(DARWIN) && CPU(X86_64)
+
+    Options::maxPerThreadStackUsage() = originalMaxPerThreadStackUsage;
+    helper.updateVMStackLimits();
+    RELEASE_ASSERT(vm.softStackLimit() == originalVMSoftStackLimit);
+    RELEASE_ASSERT(vm.stackLimit() == originalVMStackLimit);
+
+    return encodedJSUndefined();
+
+#else // not ENABLE(MASM_PROBE)
+    UNUSED_PARAM(callFrame);
+    return throwVMError(globalObject, throwScope, "Not supported for this platform");
+#endif // ENABLE(MASM_PROBE)
+}
+
 // Creates a new global object.
 // Usage: $vm.createGlobalObject()
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(JSGlobalObject* globalObject, CallFrame*)
@@ -2629,6 +2768,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "haveABadTime", functionHaveABadTime, 1);
     addFunction(vm, "isHavingABadTime", functionIsHavingABadTime, 1);
+
+    addFunction(vm, "callWithStackSize", functionCallWithStackSize, 2);
 
     addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
     addFunction(vm, "createProxy", functionCreateProxy, 1);

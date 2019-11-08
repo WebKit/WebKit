@@ -34,6 +34,7 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
+#include <wtf/StackCheck.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -1694,6 +1695,11 @@ public:
 
     std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator, ConcurrentJSLock* lock, ErrorCode& errorCode)
     {
+        if (UNLIKELY(!isSafeToRecurse())) {
+            errorCode = ErrorCode::TooManyDisjunctions;
+            return nullptr;
+        }
+
         regexBegin(m_pattern.m_numSubpatterns, m_pattern.m_body->m_callFrameSize, m_pattern.m_body->m_alternatives[0]->onceThrough());
         if (auto error = emitDisjunction(m_pattern.m_body, 0, 0)) {
             errorCode = error.value();
@@ -2028,6 +2034,9 @@ public:
 
     Optional<ErrorCode> WARN_UNUSED_RETURN emitDisjunction(PatternDisjunction* disjunction, Checked<unsigned, RecordOverflow> inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked)
     {
+        if (UNLIKELY(!isSafeToRecurse()))
+            return ErrorCode::TooManyDisjunctions;
+
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             auto currentCountAlreadyChecked = inputCountAlreadyChecked;
 
@@ -2405,8 +2414,11 @@ public:
 #endif
 
 private:
+    inline bool isSafeToRecurse() { return m_stackCheck.isSafeToRecurse(); }
+
     YarrPattern& m_pattern;
     std::unique_ptr<ByteDisjunction> m_bodyDisjunction;
+    StackCheck m_stackCheck;
     unsigned m_currentAlternativeIndex { 0 };
     Vector<ParenthesesStackEntry> m_parenthesesStack;
     Vector<std::unique_ptr<ByteDisjunction>> m_allParenthesesInfo;

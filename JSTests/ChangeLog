@@ -1,3 +1,19 @@
+2019-11-07  Mark Lam  <mark.lam@apple.com>
+
+        Add a stack overflow check in Yarr::ByteCompiler::emitDisjunction().
+        https://bugs.webkit.org/show_bug.cgi?id=203936
+        <rdar://problem/56624724>
+
+        Reviewed by Saam Barati.
+
+        This issue originally manifested as incorrect-exception-assertion-in-operationRegExpExecNonGlobalOrSticky.js
+        failing on iOS devices due to its smaller stack.  We adapted the original test
+        here using $vm.callWithStackSize() to reproduce the issue on x86_64 though it
+        has a much larger physical stack to work with.  This new test will crash while
+        stepping on the guard page beyond the end of the stack if the fix is not applied.
+
+        * stress/stack-overflow-in-yarr-byteCompile.js: Added.
+
 2019-11-07  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         didPassSomeTestsSilenty is misspelled in standalone-pre.js

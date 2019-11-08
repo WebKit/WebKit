@@ -2891,6 +2891,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_destroyVM = true;
             continue;
         }
+        if (!strcmp(arg, "--disableOptionsFreezingForTesting")) {
+            Config::disableFreezingForTesting();
+            continue;
+        }
 
         static const char* timeoutMultiplierOptStr = "--timeoutMultiplier=";
         static const unsigned timeoutMultiplierOptStrLength = strlen(timeoutMultiplierOptStr);

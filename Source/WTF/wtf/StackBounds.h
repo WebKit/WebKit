@@ -34,15 +34,15 @@ namespace WTF {
 
 class StackBounds {
     WTF_MAKE_FAST_ALLOCATED;
+public:
 
     // This 64k number was picked because a sampling of stack usage differences
     // between consecutive entries into one of the Interpreter::execute...()
     // functions was seen to be as high as 27k. Hence, 64k is chosen as a
     // conservative availability value that is not too large but comfortably
     // exceeds 27k with some buffer for error.
-    static constexpr size_t s_defaultAvailabilityDelta = 64 * 1024;
+    static constexpr size_t DefaultReservedZone = 64 * 1024;
 
-public:
     static constexpr StackBounds emptyBounds() { return StackBounds(); }
 
 #if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
@@ -82,10 +82,10 @@ public:
         return (m_origin >= p) && (p > m_bound);
     }
 
-    void* recursionLimit(size_t minAvailableDelta = s_defaultAvailabilityDelta) const
+    void* recursionLimit(size_t minReservedZone = DefaultReservedZone) const
     {
         checkConsistency();
-        return static_cast<char*>(m_bound) + minAvailableDelta;
+        return static_cast<char*>(m_bound) + minReservedZone;
     }
 
     void* recursionLimit(char* startOfUserStack, size_t maxUserStack, size_t reservedZoneSize) const
