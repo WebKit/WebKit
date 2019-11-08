@@ -731,6 +731,24 @@ webkit_device_info_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitPointerLockPermissionRequest</FILE>
+WebKitPointerLockPermissionRequest
+
+<SUBSECTION Standard>
+WebKitPointerLockPermissionRequestClass
+WEBKIT_TYPE_POINTER_LOCK_PERMISSION_REQUEST
+WEBKIT_POINTER_LOCK_PERMISSION_REQUEST
+WEBKIT_IS_POINTER_LOCK_PERMISSION_REQUEST
+WEBKIT_POINTER_LOCK_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_POINTER_LOCK_PERMISSION_REQUEST_CLASS
+WEBKIT_POINTER_LOCK_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitPointerLockPermissionRequestPrivate
+webkit_pointer_lock_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitNavigationAction</FILE>
 WebKitNavigationAction
 webkit_navigation_action_copy

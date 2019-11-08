@@ -27,6 +27,7 @@
 #include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitNotificationPermissionRequestPrivate.h"
+#include "WebKitPointerLockPermissionRequestPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -48,6 +49,14 @@ public:
     explicit UIClient(WebKitWebView* webView)
         : m_webView(webView)
     {
+    }
+
+    ~UIClient()
+    {
+#if ENABLE(POINTER_LOCK)
+        if (m_pointerLockPermissionRequest)
+            g_object_remove_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
+#endif
     }
 
 private:
@@ -253,17 +262,28 @@ private:
 #if ENABLE(POINTER_LOCK)
     void requestPointerLock(WebPageProxy* page) final
     {
-        webkitWebViewRequestPointerLock(m_webView);
+        GRefPtr<WebKitPointerLockPermissionRequest> permissionRequest = adoptGRef(webkitPointerLockPermissionRequestCreate(m_webView));
+        RELEASE_ASSERT(!m_pointerLockPermissionRequest);
+        m_pointerLockPermissionRequest = permissionRequest.get();
+        g_object_add_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
+        webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(permissionRequest.get()));
     }
 
     void didLosePointerLock(WebPageProxy*) final
     {
+        if (m_pointerLockPermissionRequest) {
+            webkitPointerLockPermissionRequestDidLosePointerLock(m_pointerLockPermissionRequest);
+            g_object_remove_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
+            m_pointerLockPermissionRequest = nullptr;
+        }
         webkitWebViewDidLosePointerLock(m_webView);
     }
 #endif
 
-
     WebKitWebView* m_webView;
+#if ENABLE(POINTER_LOCK)
+    WebKitPointerLockPermissionRequest* m_pointerLockPermissionRequest { nullptr };
+#endif
 };
 
 void attachUIClientToView(WebKitWebView* webView)

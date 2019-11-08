@@ -218,7 +218,8 @@ public:
 
         test->m_mouseTargetHitTestResult = hitTestResult;
         test->m_mouseTargetModifiers = modifiers;
-        g_main_loop_quit(test->m_mainLoop);
+        if (test->m_waitingForMouseTargetChange)
+            g_main_loop_quit(test->m_mainLoop);
     }
 
     static gboolean permissionRequested(WebKitWebView*, WebKitPermissionRequest* request, UIClientTest* test)
@@ -308,8 +309,10 @@ public:
 
     WebKitHitTestResult* moveMouseAndWaitUntilMouseTargetChanged(int x, int y, unsigned mouseModifiers = 0)
     {
+        m_waitingForMouseTargetChange = true;
         mouseMoveTo(x, y, mouseModifiers);
         g_main_loop_run(m_mainLoop);
+        m_waitingForMouseTargetChange = false;
         return m_mouseTargetHitTestResult.get();
     }
 
@@ -384,6 +387,7 @@ public:
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
     unsigned m_mouseTargetModifiers;
     GUniquePtr<char> m_permissionResult;
+    bool m_waitingForMouseTargetChange { false };
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -947,6 +951,44 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
 }
 #endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(POINTER_LOCK)
+static void testWebViewPointerLockPermissionRequest(UIClientTest* test, gconstpointer)
+{
+#if PLATFORM(GTK)
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+#endif
+
+    static const char* pointerLockRequestHTML =
+        "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "    document.onpointerlockchange = function () { document.title = \"Locked\" };"
+        "    document.onpointerlockerror = function () { document.title = \"Error\" };"
+        "    document.getElementById('target').requestPointerLock();"
+        "  }"
+        "  </script>"
+        "  <body>"
+        "   <input style='position:absolute; left:0; top:0; margin:0; padding:0' type='button' value='click to lock pointer' onclick='runTest()'/>"
+        "   <div id='target'></div>"
+        "  </body>"
+        "</html>";
+
+    test->loadHtml(pointerLockRequestHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->clickMouseButton(5, 5, 1);
+    test->waitUntilTitleChangedTo("Error");
+
+    // Test allowing a permission request.
+    test->m_allowPermissionRequests = true;
+    test->clickMouseButton(5, 5, 1);
+    test->waitUntilTitleChangedTo("Locked");
+}
+#endif
+
 #if PLATFORM(GTK)
 class FileChooserTest: public UIClientTest {
 public:
@@ -1203,6 +1245,9 @@ void beforeAll()
 #endif
 #if PLATFORM(GTK)
     ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
+#endif
+#if ENABLE(POINTER_LOCK)
+    UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
 #endif
 }
 

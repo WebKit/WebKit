@@ -106,5 +106,6 @@ void webkitWebViewDidReceiveUserMessage(WebKitWebView*, WebKit::UserMessage&&, C
 
 #if ENABLE(POINTER_LOCK)
 void webkitWebViewRequestPointerLock(WebKitWebView*);
+void webkitWebViewDenyPointerLockRequest(WebKitWebView*);
 void webkitWebViewDidLosePointerLock(WebKitWebView*);
 #endif

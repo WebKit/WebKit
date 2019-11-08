@@ -158,6 +158,7 @@ UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitNotificationProvider.cpp @no-unify
 UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
+UIProcess/API/glib/WebKitPointerLockPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify
 UIProcess/API/glib/WebKitPrivate.cpp @no-unify
 UIProcess/API/glib/WebKitProtocolHandler.cpp @no-unify

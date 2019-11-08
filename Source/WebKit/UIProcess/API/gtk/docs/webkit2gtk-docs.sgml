@@ -64,6 +64,7 @@
     <xi:include href="xml/WebKitApplicationInfo.xml"/>
     <xi:include href="xml/WebKitGeolocationManager.xml"/>
     <xi:include href="xml/WebKitUserMessage.xml"/>
+    <xi:include href="xml/WebKitPointerLockPermissionRequest.xml"/>
   </chapter>
 
   <chapter>

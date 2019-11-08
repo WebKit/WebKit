@@ -1,3 +1,21 @@
+2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add pointer lock permission request API
+        https://bugs.webkit.org/show_bug.cgi?id=203896
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle pointer lock permission requests in MiniBrowser and add a new tests case to check the new API.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (pointerLockMessageTimeoutCallback):
+        (decidePermissionRequest):
+        (browserTabFinalize):
+        (browserTabConstructed):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewPointerLockPermissionRequest):
+        (beforeAll):
+
 2019-11-07  Chris Dumez  <cdumez@apple.com>
 
         TestController may reuse a view that used window.open(), which prevents process-swapping and causes flakiness

@@ -48,6 +48,8 @@ struct _BrowserTab {
     gboolean inspectorIsVisible;
     GtkWidget *fullScreenMessageLabel;
     guint fullScreenMessageLabelId;
+    GtkWidget *pointerLockMessageLabel;
+    guint pointerLockMessageLabelId;
 
     /* Tab Title */
     GtkWidget *titleBox;
@@ -204,6 +206,13 @@ static gboolean loadFailedWithTLSerrors(WebKitWebView *webView, const char *fail
     return TRUE;
 }
 
+static gboolean pointerLockMessageTimeoutCallback(BrowserTab *tab)
+{
+    gtk_widget_hide(tab->pointerLockMessageLabel);
+    tab->pointerLockMessageLabelId = 0;
+    return FALSE;
+}
+
 static void permissionRequestDialogResponse(GtkWidget *dialog, gint response, PermissionRequestData *requestData)
 {
     switch (response) {
@@ -262,6 +271,19 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         }
         g_free(origin);
         return FALSE;
+    } else if (WEBKIT_IS_POINTER_LOCK_PERMISSION_REQUEST(request)) {
+        const gchar *titleOrURI = webkit_web_view_get_title(tab->webView);
+        if (!titleOrURI || !titleOrURI[0])
+            titleOrURI = webkit_web_view_get_uri(tab->webView);
+
+        char *message = g_strdup_printf("%s wants to lock the pointer. Press ESC to get the pointer back.", titleOrURI);
+        gtk_label_set_text(GTK_LABEL(tab->pointerLockMessageLabel), message);
+        g_free(message);
+        gtk_widget_show(tab->pointerLockMessageLabel);
+
+        tab->pointerLockMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)pointerLockMessageTimeoutCallback, tab);
+        g_source_set_name_by_id(tab->pointerLockMessageLabelId, "[WebKit]pointerLockMessageTimeoutCallback");
+        return TRUE;
     } else {
         g_print("%s request not handled\n", G_OBJECT_TYPE_NAME(request));
         return FALSE;
@@ -353,6 +375,8 @@ static void browserTabFinalize(GObject *gObject)
 
     if (tab->fullScreenMessageLabelId)
         g_source_remove(tab->fullScreenMessageLabelId);
+    if (tab->pointerLockMessageLabelId)
+        g_source_remove(tab->pointerLockMessageLabelId);
 
     G_OBJECT_CLASS(browser_tab_parent_class)->finalize(gObject);
 }
@@ -389,6 +413,12 @@ static void browserTabConstructed(GObject *gObject)
     gtk_widget_set_valign(tab->fullScreenMessageLabel, GTK_ALIGN_CENTER);
     gtk_widget_set_no_show_all(tab->fullScreenMessageLabel, TRUE);
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->fullScreenMessageLabel);
+
+    tab->pointerLockMessageLabel = gtk_label_new(NULL);
+    gtk_widget_set_halign(tab->pointerLockMessageLabel, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(tab->pointerLockMessageLabel, GTK_ALIGN_START);
+    gtk_widget_set_no_show_all(tab->pointerLockMessageLabel, TRUE);
+    gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->pointerLockMessageLabel);
 
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));

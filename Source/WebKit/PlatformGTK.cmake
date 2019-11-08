@@ -95,6 +95,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitOptionMenuItem.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPlugin.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPointerLockPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPolicyDecision.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintOperation.h
