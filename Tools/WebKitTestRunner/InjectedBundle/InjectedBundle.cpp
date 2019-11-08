@@ -925,7 +925,7 @@ void InjectedBundle::setCacheModel(int model)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetCacheModel"));
     WKRetainPtr<WKUInt64Ref> messageBody = adoptWK(WKUInt64Create(model));
-    WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), messageBody.get(), nullptr);
 }
 
 bool InjectedBundle::shouldProcessWorkQueue() const

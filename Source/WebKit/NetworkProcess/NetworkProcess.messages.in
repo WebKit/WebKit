@@ -69,7 +69,8 @@ messages -> NetworkProcess LegacyReceiver {
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
     
     ClearCacheForAllOrigins(uint32_t cachesToClear)
-    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel, String overrideCacheStorageDirectory);
+    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel, String overrideCacheStorageDirectory)
+    SetCacheModelSynchronouslyForTesting(enum:uint8_t WebKit::CacheModel cacheModel) -> () Synchronous
 
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()

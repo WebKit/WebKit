@@ -406,6 +406,7 @@ private:
     void applicationWillEnterForeground();
 
     void setCacheModel(CacheModel, String overrideCacheStorageDirectory);
+    void setCacheModelSynchronouslyForTesting(CacheModel, CompletionHandler<void()>&&);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
     void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);

@@ -1,3 +1,16 @@
+2019-11-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix flaky tests in http/tests/cache/disk-cache
+        https://bugs.webkit.org/show_bug.cgi?id=203822
+
+        Reviewed by Youenn Fablet.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setCacheModel):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-11-08  Aakash Jain  <aakash_jain@apple.com>
 
         Clicking on EWS status-bubble should open the results in new tab

@@ -546,13 +546,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetCacheModel")) {
-        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
-        uint64_t model = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        WKContextSetCacheModel(TestController::singleton().context(), model);
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetCustomPolicyDelegate")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
@@ -877,6 +870,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool isActive = TestController::singleton().isGeolocationProviderActive();
         WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(isActive));
         return result;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCacheModel")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        uint64_t model = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
+        WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(TestController::websiteDataStore(), model);
+        return nullptr;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsWorkQueueEmpty")) {

@@ -78,6 +78,7 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
+enum class CacheModel : uint8_t;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct WebsiteDataRecord;
@@ -138,6 +139,7 @@ public:
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
 
     void getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
+    void setCacheModelSynchronouslyForTesting(CacheModel);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);

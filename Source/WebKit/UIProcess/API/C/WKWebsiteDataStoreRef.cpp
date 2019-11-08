@@ -682,3 +682,7 @@ void WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(WKWebsi
     });
 }
 
+void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteDataStoreRef dataStoreRef, WKCacheModel cacheModel)
+{
+    WebKit::toImpl(dataStoreRef)->setCacheModelSynchronouslyForTesting(WebKit::toCacheModel(cacheModel));
+}

@@ -1574,6 +1574,14 @@ void WebProcessPool::setCacheModel(CacheModel cacheModel)
         m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel, { }), 0);
 }
 
+void WebProcessPool::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
+{
+    updateBackForwardCacheCapacity();
+
+    if (m_networkProcess)
+        m_networkProcess->sendSync(Messages::NetworkProcess::SetCacheModelSynchronouslyForTesting(cacheModel), { }, { });
+}
+
 void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));

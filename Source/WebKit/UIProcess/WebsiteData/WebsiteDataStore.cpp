@@ -2063,6 +2063,12 @@ uint64_t WebsiteDataStore::perThirdPartyOriginStorageQuota() const
     return WebCore::StorageQuotaManager::defaultThirdPartyQuotaFromPerOriginQuota(perOriginStorageQuota());
 }
 
+void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
+{
+    for (auto processPool : WebProcessPool::allProcessPools())
+        processPool->setCacheModelSynchronouslyForTesting(cacheModel);
+}
+
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {

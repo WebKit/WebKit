@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+typedef uint32_t WKCacheModel;
+
 WK_EXPORT WKTypeID WKWebsiteDataStoreGetTypeID();
 
 WK_EXPORT WKWebsiteDataStoreRef WKWebsiteDataStoreGetDefaultDataStore();
@@ -150,6 +152,8 @@ WK_EXPORT void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteD
 
 typedef void (*WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemovalFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemovalFunction callback);
+
+WK_EXPORT void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteDataStoreRef dataStoreRef, WKCacheModel cacheModel);
 
 #ifdef __cplusplus
 }

@@ -283,6 +283,8 @@ public:
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
     void setCacheModel(CacheModel);
+    void setCacheModelSynchronouslyForTesting(CacheModel);
+
 
     void setDefaultRequestTimeoutInterval(double);
 

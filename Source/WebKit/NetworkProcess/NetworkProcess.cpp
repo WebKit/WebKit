@@ -1993,6 +1993,12 @@ void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloa
         downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
 }
 
+void NetworkProcess::setCacheModelSynchronouslyForTesting(CacheModel cacheModel, CompletionHandler<void()>&& completionHandler)
+{
+    setCacheModel(cacheModel, { });
+    completionHandler();
+}
+
 void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDirectory)
 {
     if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
