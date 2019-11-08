@@ -316,9 +316,8 @@ type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCo
 Test Command + Control + .:
 type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keydown, key: Control, code: ControlLeft, keyIdentifier: Control, keyCode: 17, charCode: 0, keyCode: 17, which: 17, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
-type: keydown, key: UIKeyInputEscape, code: Period, keyIdentifier: Unidentified, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
-type: keypress, key: UIKeyInputEscape, code: Period, keyIdentifier: , keyCode: 46, charCode: 46, keyCode: 46, which: 46, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
-type: keyup, key: UIKeyInputEscape, code: Period, keyIdentifier: Unidentified, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
+type: keydown, key: UIKeyInputEscape, code: Period, keyIdentifier: Unidentified, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
+type: keypress, key: UIKeyInputEscape, code: Period, keyIdentifier: , keyCode: 46, charCode: 46, keyCode: 46, which: 46, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
 type: keyup, key: Control, code: ControlLeft, keyIdentifier: Control, keyCode: 17, charCode: 0, keyCode: 17, which: 17, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
 

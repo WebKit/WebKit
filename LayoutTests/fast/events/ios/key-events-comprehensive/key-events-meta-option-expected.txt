@@ -292,9 +292,8 @@ type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCo
 Test Command + Option + .:
 type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
-type: keydown, key: ≥, code: Period, keyIdentifier: Unidentified, keyCode: 85, charCode: 0, keyCode: 85, which: 85, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
-type: keypress, key: ≥, code: Period, keyIdentifier: , keyCode: 8805, charCode: 8805, keyCode: 8805, which: 8805, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
-type: keyup, key: ≥, code: Period, keyIdentifier: Unidentified, keyCode: 85, charCode: 0, keyCode: 85, which: 85, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
+type: keydown, key: ≥, code: Period, keyIdentifier: Unidentified, keyCode: 85, charCode: 0, keyCode: 85, which: 85, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
+type: keypress, key: ≥, code: Period, keyIdentifier: , keyCode: 8805, charCode: 8805, keyCode: 8805, which: 8805, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false, location: 0, keyLocation: 0
 type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
 

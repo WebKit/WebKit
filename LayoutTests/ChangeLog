@@ -1,3 +1,14 @@
+2019-11-08  Truitt Savell  <tsavell@apple.com>
+
+        Update expectations for 3 fast/events/ios/key-events-comprehensive tests
+        https://bugs.webkit.org/show_bug.cgi?id=204020
+
+        Unreviewed test gardening
+
+        * fast/events/ios/key-events-comprehensive/key-events-meta-control-expected.txt:
+        * fast/events/ios/key-events-comprehensive/key-events-meta-option-expected.txt:
+        * fast/events/ios/key-events-comprehensive/key-events-meta-shift-expected.txt:
+
 2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         'Strikethrough' editing command reported as 'formatUnderline'

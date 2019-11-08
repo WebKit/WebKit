@@ -315,9 +315,8 @@ type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCo
 Test Command + Shift + .:
 type: keydown, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true, location: 1, keyLocation: 1
-type: keydown, key: ., code: Period, keyIdentifier: U+003E, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
-type: keypress, key: ., code: Period, keyIdentifier: , keyCode: 46, charCode: 46, keyCode: 46, which: 46, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
-type: keyup, key: ., code: Period, keyIdentifier: Unidentified, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true, location: 0, keyLocation: 0
+type: keydown, key: ., code: Period, keyIdentifier: U+003E, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ., code: Period, keyIdentifier: , keyCode: 46, charCode: 46, keyCode: 46, which: 46, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true, location: 0, keyLocation: 0
 type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false, location: 1, keyLocation: 1
 type: keyup, key: Meta, code: MetaLeft, keyIdentifier: Meta, keyCode: 91, charCode: 0, keyCode: 91, which: 91, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
 
