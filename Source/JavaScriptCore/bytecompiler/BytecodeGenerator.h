@@ -1225,6 +1225,7 @@ namespace JSC {
 
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<LabelScope, 32> m_labelScopes;
+        SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         unsigned m_finallyDepth { 0 };
         unsigned m_localScopeDepth { 0 };
         const CodeType m_codeType;

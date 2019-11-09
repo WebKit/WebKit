@@ -85,7 +85,6 @@ protected:
 
     SegmentedVector<GenericLabel<Traits>, 32> m_labels;
     SegmentedVector<RegisterID, 32> m_calleeLocals;
-    SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
 };
 
 } // namespace JSC

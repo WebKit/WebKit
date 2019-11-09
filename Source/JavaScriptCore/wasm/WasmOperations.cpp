@@ -126,6 +126,8 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
         context.gpr(GPRInfo::argumentGPR0) = 0;
     };
 
+    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == osrEntryData.values().size());
+
     uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
     if (!buffer)
         return returnWithoutOSREntry();

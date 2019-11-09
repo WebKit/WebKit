@@ -1,3 +1,30 @@
+2019-11-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] LLIntGenerator should not retain VirtualRegisters used for constants
+        https://bugs.webkit.org/show_bug.cgi?id=204028
+
+        Reviewed by Yusuke Suzuki.
+
+        The LLIntGenerator was keeping track of which RegisterIDs contained constants in order to materialize
+        the OSR entry data, since constants were not included in the OSR entry buffer. This was originally done
+        by adding the registers that contained constants to a vector and never reusing them. This is bad because
+        the bytecode generator reclaims registers by popping unused registers from the end of the vector and
+        stops as soon as it finds a used register. As it turns out, constants *should* be included in the buffer,
+        so we don't need to worry about whether registers contain constants and we can just stop retaining the
+        registers. An assertion was added to doOSREntry to ensure that the size of the scratch buffer matches the
+        size of the values to be written, which was not true before.
+        Additionally, add m_constantMap to LLIntGenerator to avoid adding duplicate constants to code blocks.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGeneratorBase.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addConstant):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::doOSREntry):
+
 2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix debug JSC tests failures due to missing exception check

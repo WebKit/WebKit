@@ -39,6 +39,7 @@
 #include "WasmFunctionParser.h"
 #include "WasmThunks.h"
 #include <wtf/RefPtr.h>
+#include <wtf/StdUnorderedMap.h>
 #include <wtf/Variant.h>
 
 namespace JSC { namespace Wasm {
@@ -251,18 +252,6 @@ private:
         return m_jsNullConstant;
     }
 
-    bool isConstant(RefPtr<RegisterID> reg)
-    {
-        VirtualRegister virtualRegister = reg->virtualRegister();
-        if (virtualRegister.isConstant())
-            return true;
-        for (auto& constant : m_constantPoolRegisters) {
-            if (constant.virtualRegister() == virtualRegister)
-                return true;
-        }
-        return false;
-    }
-
     struct SwitchEntry {
         InstructionStream::Offset offset;
         InstructionStream::Offset* jumpTarget;
@@ -275,6 +264,7 @@ private:
     HashMap<Label*, Vector<SwitchEntry>> m_switches;
     ExpressionType m_jsNullConstant;
     ExpressionList m_unitializedLocals;
+    StdUnorderedMap<uint64_t, VirtualRegister> m_constantMap;
 };
 
 Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info, uint32_t functionIndex, ThrowWasmException throwWasmException)
@@ -511,10 +501,12 @@ void LLIntGenerator::didFinishParsingLocals()
 auto LLIntGenerator::addConstant(Type, uint64_t value) -> ExpressionType
 {
     VirtualRegister source(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
+    auto result = m_constantMap.emplace(value, source);
+    if (result.second)
+        m_codeBlock->m_constants.append(value);
+    else
+        source = result.first->second;
     auto target = newTemporary();
-    target->ref();
-    m_constantPoolRegisters.append(target);
-    m_codeBlock->m_constants.append(value);
     WasmMov::emit(this, target, source);
     return target;
 }
@@ -570,11 +562,8 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         osrEntryData.append(::JSC::virtualRegisterForLocal(i));
     for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
         ExpressionList& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        for (auto& expression : expressionStack) {
-            if (isConstant(expression))
-                continue;
+        for (auto& expression : expressionStack)
             osrEntryData.append(expression->virtualRegister());
-        }
     }
 
     WasmLoopHint::emit(this);

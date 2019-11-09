@@ -1299,8 +1299,10 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
             B3::InsertionSet insertionSet(m_proc);
             for (unsigned i = 0; i < expressionStack.size(); i++) {
                 auto* value = expressionStack[i];
-                if (value->isConstant())
+                if (value->isConstant()) {
+                    ++indexInBuffer;
                     continue;
+                }
 
                 if (value->owner != sourceBlock) {
                     insertionSet.execute(sourceBlock);
