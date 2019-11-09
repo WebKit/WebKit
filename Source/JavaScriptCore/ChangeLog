@@ -1,3 +1,124 @@
+2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make IsoSubspace scalable
+        https://bugs.webkit.org/show_bug.cgi?id=201908
+
+        Reviewed by Keith Miller.
+
+        This patch introduces lower-tier into IsoSubspace so that we can avoid allocating MarkedBlock
+        if a certain type of object is not allocated so many. This optimization allows us apply IsoSubspace
+        more aggressively to various types of objects without introducing memory regression even if such a
+        type of object is allocated so frequently.
+
+        We use LargeAllocation for these lower-tier objects. Each IsoSubspace holds up to 8 lower-tier objects
+        allocated via LargeAllocation. We use this special LargeAllocation when we tend to allocate small # of cells
+        for this type. Specifically, what we are doing right now is, (1) first, try to allocate in an existing
+        MarkedBlock (there won't be one to start), and (2) then, try to allocate in LargeAllocation, and if we cannot
+        allocate lower-tier objects, (3) finally we allocate a new MarkedBlock. Once this LargeAllocation is allocated
+        to a certain type, we do not deallocate it until VM is destroyed, so that we can keep IsoSubspace's
+        characteristics: once an address is assigned to a certain type, we continue using this address only for this type.
+
+        To introduce this optimization, we need to remove an restriction that no callee cells can be a LargeAllocation.
+        This also turns out that SamplingProfiler's isValueGCObject is heavily relies on that all the callee is small-sized.
+        isValueGCObject relies on the thing that MarkedSpace::m_largeAllocations is sorted. But this is not true since
+        this vector is sorted only when conservative scan happens. And further, this vector is only partially sorted: we
+        sort only an eden part part of this vector. So we cannot use this vector to implement isValueGCObject in the sampling
+        profiler. Instead we register HeapCell address into a hash-set in MarkedSpace. Since we do not need to find a pointer
+        that is pointing at the middle of the JSCell in sampling profiler, just registering cell address is enough. And we
+        maintain this hash-set only when sampling profiler is enabled to save memory in major cases.
+
+        We also fix the code that is relying on that JSString is always allocated in MarkedBlock. And we also fix PackedCellPtr's
+        assumption that CodeBlock is always allocated in MarkedBlock.
+
+        We also make sizeof(LargeAllocation) small since it is now used for non-large allocations.
+
+        JetStream2 and Speedometer2 are neutral. RAMification shows 0.6% progression on iOS devices.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::BlockDirectory):
+        * heap/BlockDirectory.h:
+        * heap/BlockDirectoryInlines.h:
+        (JSC::BlockDirectory::tryAllocateFromLowerTier):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocateLargeAllocationNonVirtual):
+        * heap/Heap.cpp:
+        (JSC::Heap::dumpHeapStatisticsAtVMDestruction):
+        (JSC::Heap::addCoreConstraints):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::isPointerGCObjectJSCell):
+        (JSC::HeapUtil::isValueGCObject):
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeMemory):
+        (JSC::IsoAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::~IsoCellSet):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::add):
+        (JSC::IsoCellSet::remove):
+        (JSC::IsoCellSet::contains const):
+        (JSC::IsoCellSet::forEachMarkedCell):
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        (JSC::IsoCellSet::forEachLiveCell):
+        (JSC::IsoCellSet::sweepLowerTierCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::tryAllocateFromLowerTier):
+        (JSC::IsoSubspace::sweepLowerTierCell):
+        * heap/IsoSubspace.h:
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryReallocate):
+        (JSC::LargeAllocation::createForLowerTier):
+        (JSC::LargeAllocation::reuseForLowerTier):
+        (JSC::LargeAllocation::LargeAllocation):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::lowerTierIndex const):
+        (JSC::LargeAllocation::isLowerTier const):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::allocateSlowCase):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::Handle):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::forEachCell):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeMemory):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweepLargeAllocations):
+        (JSC::MarkedSpace::enableLargeAllocationTracking):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace:: const):
+        * heap/PackedCellPtr.h:
+        (JSC::PackedCellPtr::PackedCellPtr):
+        * heap/Subspace.h:
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::~WeakSet):
+        (JSC::WeakSet::findAllocator):
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::WeakSet):
+        (JSC::WeakSet::resetAllocator):
+        (JSC::WeakSet::container const): Deleted.
+        (JSC::WeakSet::setContainer): Deleted.
+        * heap/WeakSetInlines.h:
+        (JSC::WeakSet::allocate):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::JSCallee):
+        * runtime/JSString.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::releaseStackTraces):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+
 2019-11-08  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r252229.

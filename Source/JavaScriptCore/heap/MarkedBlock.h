@@ -77,6 +77,9 @@ public:
     static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
     static constexpr size_t atomsPerBlock = blockSize / atomSize;
+
+    static constexpr size_t numberOfLowerTierCells = 8;
+    static_assert(numberOfLowerTierCells <= 256);
     
     static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
     static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
@@ -308,9 +311,6 @@ public:
     static constexpr size_t footerSize = blockSize - payloadSize;
 
     static_assert(payloadSize == ((blockSize - sizeof(MarkedBlock::Footer)) & ~(atomSize - 1)), "Payload size computed the alternate way should give the same result");
-    // Some of JSCell types assume that the last JSCell in a MarkedBlock has a subsequent memory region (Footer) that can still safely accessed.
-    // For example, JSRopeString assumes that it can safely access up to 2 bytes beyond the JSRopeString cell.
-    static_assert(sizeof(Footer) >= sizeof(uint16_t));
     
     static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         
@@ -643,7 +643,7 @@ inline IterationStatus MarkedBlock::Handle::forEachCell(const Functor& functor)
     HeapCell::Kind kind = m_attributes.cellKind;
     for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
-        if (functor(cell, kind) == IterationStatus::Done)
+        if (functor(i, cell, kind) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     return IterationStatus::Continue;

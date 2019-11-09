@@ -213,6 +213,11 @@ void MarkedSpace::freeMemory()
         });
     for (LargeAllocation* allocation : m_largeAllocations)
         allocation->destroy();
+    forEachSubspace([&](Subspace& subspace) {
+        if (subspace.isIsoSubspace())
+            static_cast<IsoSubspace&>(subspace).destroyLowerTierFreeList();
+        return IterationStatus::Continue;
+    });
 }
 
 void MarkedSpace::lastChanceToFinalize()
@@ -224,6 +229,7 @@ void MarkedSpace::lastChanceToFinalize()
         });
     for (LargeAllocation* allocation : m_largeAllocations)
         allocation->lastChanceToFinalize();
+    // We do not call lastChanceToFinalize for lower-tier swept cells since we need nothing to do.
 }
 
 void MarkedSpace::sweep()
@@ -245,8 +251,14 @@ void MarkedSpace::sweepLargeAllocations()
         LargeAllocation* allocation = m_largeAllocations[srcIndex++];
         allocation->sweep();
         if (allocation->isEmpty()) {
-            m_capacity -= allocation->cellSize();
-            allocation->destroy();
+            if (auto* set = largeAllocationSet())
+                set->remove(allocation->cell());
+            if (allocation->isLowerTier())
+                static_cast<IsoSubspace*>(allocation->subspace())->sweepLowerTierCell(allocation);
+            else {
+                m_capacity -= allocation->cellSize();
+                allocation->destroy();
+            }
             continue;
         }
         allocation->setIndexInSpace(dstIndex);
@@ -269,6 +281,13 @@ void MarkedSpace::prepareForAllocation()
     else
         m_largeAllocationsNurseryOffsetForSweep = 0;
     m_largeAllocationsNurseryOffset = m_largeAllocations.size();
+}
+
+void MarkedSpace::enableLargeAllocationTracking()
+{
+    m_largeAllocationSet = makeUnique<HashSet<HeapCell*>>();
+    for (auto* allocation : m_largeAllocations)
+        m_largeAllocationSet->add(allocation->cell());
 }
 
 void MarkedSpace::visitWeakSets(SlotVisitor& visitor)

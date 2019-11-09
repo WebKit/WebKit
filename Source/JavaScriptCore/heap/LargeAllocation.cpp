@@ -67,6 +67,7 @@ LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* s
 
 LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
 {
+    ASSERT(!isLowerTier());
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
 
@@ -118,15 +119,58 @@ LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
     return newAllocation;
 }
 
+
+LargeAllocation* LargeAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+{
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(heap.expectDoesGC());
+
+    size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
+    static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
+
+    void* space = subspace->alignedMemoryAllocator()->tryAllocateMemory(adjustedAlignmentAllocationSize);
+    RELEASE_ASSERT(space);
+
+    bool adjustedAlignment = false;
+    if (!isAlignedForLargeAllocation(space)) {
+        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
+        adjustedAlignment = true;
+        ASSERT(isAlignedForLargeAllocation(space));
+    }
+
+    if (scribbleFreeCells())
+        scribble(space, size);
+    LargeAllocation* largeAllocation = new (NotNull, space) LargeAllocation(heap, size, subspace, 0, adjustedAlignment);
+    largeAllocation->m_lowerTierIndex = lowerTierIndex;
+    return largeAllocation;
+}
+
+LargeAllocation* LargeAllocation::reuseForLowerTier()
+{
+    Heap& heap = *this->heap();
+    size_t size = m_cellSize;
+    Subspace* subspace = m_subspace;
+    bool adjustedAlignment = m_adjustedAlignment;
+    uint8_t lowerTierIndex = m_lowerTierIndex;
+
+    void* space = this->basePointer();
+    this->~LargeAllocation();
+
+    LargeAllocation* largeAllocation = new (NotNull, space) LargeAllocation(heap, size, subspace, 0, adjustedAlignment);
+    largeAllocation->m_lowerTierIndex = lowerTierIndex;
+    largeAllocation->m_hasValidCell = false;
+    return largeAllocation;
+}
+
 LargeAllocation::LargeAllocation(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace, bool adjustedAlignment)
-    : m_cellSize(size)
-    , m_indexInSpace(indexInSpace)
+    : m_indexInSpace(indexInSpace)
+    , m_cellSize(size)
     , m_isNewlyAllocated(true)
     , m_hasValidCell(true)
     , m_adjustedAlignment(adjustedAlignment)
     , m_attributes(subspace->attributes())
     , m_subspace(subspace)
-    , m_weakSet(heap.vm(), *this)
+    , m_weakSet(heap.vm())
 {
     m_isMarked.store(0);
 }

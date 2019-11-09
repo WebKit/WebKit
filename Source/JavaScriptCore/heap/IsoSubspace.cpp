@@ -29,6 +29,7 @@
 #include "AllocatorInlines.h"
 #include "BlockDirectoryInlines.h"
 #include "IsoAlignedMemoryAllocator.h"
+#include "IsoCellSetInlines.h"
 #include "IsoSubspaceInlines.h"
 #include "LocalAllocatorInlines.h"
 
@@ -41,6 +42,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     , m_localAllocator(&m_directory)
     , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>())
 {
+    m_isIsoSubspace = true;
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 
     auto locker = holdLock(m_space.directoryLock());
@@ -86,6 +88,50 @@ void IsoSubspace::didBeginSweepingToFreeList(MarkedBlock::Handle* block)
         [&] (IsoCellSet* set) {
             set->sweepToFreeList(block);
         });
+}
+
+void* IsoSubspace::tryAllocateFromLowerTier()
+{
+    auto revive = [&] (LargeAllocation* allocation) {
+        allocation->setIndexInSpace(m_space.m_largeAllocations.size());
+        allocation->m_hasValidCell = true;
+        m_space.m_largeAllocations.append(allocation);
+        if (auto* set = m_space.largeAllocationSet())
+            set->add(allocation->cell());
+        ASSERT(allocation->indexInSpace() == m_space.m_largeAllocations.size() - 1);
+        m_largeAllocations.append(allocation);
+        return allocation->cell();
+    };
+
+    if (!m_lowerTierFreeList.isEmpty()) {
+        LargeAllocation* allocation = m_lowerTierFreeList.begin();
+        allocation->remove();
+        return revive(allocation);
+    }
+    if (m_lowerTierCellCount != MarkedBlock::numberOfLowerTierCells) {
+        size_t size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(m_size);
+        LargeAllocation* allocation = LargeAllocation::createForLowerTier(*m_space.heap(), size, this, m_lowerTierCellCount++);
+        return revive(allocation);
+    }
+    return nullptr;
+}
+
+void IsoSubspace::sweepLowerTierCell(LargeAllocation* largeAllocation)
+{
+    unsigned lowerTierIndex = largeAllocation->lowerTierIndex();
+    largeAllocation = largeAllocation->reuseForLowerTier();
+    m_lowerTierFreeList.append(largeAllocation);
+    m_cellSets.forEach(
+        [&] (IsoCellSet* set) {
+            set->sweepLowerTierCell(lowerTierIndex);
+        });
+}
+
+void IsoSubspace::destroyLowerTierFreeList()
+{
+    m_lowerTierFreeList.forEach([&](LargeAllocation* allocation) {
+        allocation->destroy();
+    });
 }
 
 } // namespace JSC

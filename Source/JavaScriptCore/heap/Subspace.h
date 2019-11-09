@@ -101,6 +101,8 @@ public:
     virtual void didRemoveBlock(size_t blockIndex);
     virtual void didBeginSweepingToFreeList(MarkedBlock::Handle*);
 
+    bool isIsoSubspace() const { return m_isIsoSubspace; }
+
 protected:
     void initialize(HeapCellType*, AlignedMemoryAllocator*);
     
@@ -111,10 +113,12 @@ protected:
     
     BlockDirectory* m_firstDirectory { nullptr };
     BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
-    SentinelLinkedList<LargeAllocation, BasicRawSentinelNode<LargeAllocation>> m_largeAllocations;
+    SentinelLinkedList<LargeAllocation, PackedRawSentinelNode<LargeAllocation>> m_largeAllocations;
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 
     CString m_name;
+
+    bool m_isIsoSubspace { false };
 };
 
 } // namespace JSC

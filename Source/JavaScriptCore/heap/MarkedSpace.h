@@ -39,7 +39,9 @@ namespace JSC {
 
 class CompleteSubspace;
 class Heap;
+class HeapCell;
 class HeapIterationScope;
+class IsoSubspace;
 class LLIntOffsetsExtractor;
 class Subspace;
 class WeakSet;
@@ -153,6 +155,9 @@ public:
     const Vector<LargeAllocation*>& largeAllocations() const { return m_largeAllocations; }
     unsigned largeAllocationsNurseryOffset() const { return m_largeAllocationsNurseryOffset; }
     unsigned largeAllocationsOffsetForThisCollection() const { return m_largeAllocationsOffsetForThisCollection; }
+    HashSet<HeapCell*>* largeAllocationSet() const { return m_largeAllocationSet.get(); }
+
+    void enableLargeAllocationTracking();
     
     // These are cached pointers and offsets for quickly searching the large allocations that are
     // relevant to this collection.
@@ -183,6 +188,7 @@ private:
     friend class JIT;
     friend class WeakSet;
     friend class Subspace;
+    friend class IsoSubspace;
     
     // Use this version when calling from within the GC where we know that the directories
     // have already been stopped.
@@ -198,6 +204,7 @@ private:
 
     Vector<Subspace*> m_subspaces;
 
+    std::unique_ptr<HashSet<HeapCell*>> m_largeAllocationSet;
     Vector<LargeAllocation*> m_largeAllocations;
     unsigned m_largeAllocationsNurseryOffset { 0 };
     unsigned m_largeAllocationsOffsetForThisCollection { 0 };

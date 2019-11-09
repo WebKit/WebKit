@@ -307,6 +307,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     }
 
     m_currentFrames.grow(256);
+    vm.heap.objectSpace().enableLargeAllocationTracking();
 }
 
 SamplingProfiler::~SamplingProfiler()
@@ -468,7 +469,7 @@ static ALWAYS_INLINE BytecodeIndex tryGetBytecodeIndex(unsigned llintPC, CodeBlo
 #endif
 }
 
-void SamplingProfiler::processUnverifiedStackTraces()
+void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
 {
     // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
@@ -951,7 +952,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const 
     ASSERT(m_lock.isLocked());
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces();
+        processUnverifiedStackTraces(locker);
     }
 
     Vector<StackTrace> result(WTFMove(m_stackTraces));
@@ -962,11 +963,11 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const 
 String SamplingProfiler::stackTracesAsJSON()
 {
     DeferGC deferGC(m_vm.heap);
-    LockHolder locker(m_lock);
+    auto locker = holdLock(m_lock);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces();
+        processUnverifiedStackTraces(locker);
     }
 
     StringBuilder json;
@@ -1038,12 +1039,12 @@ void SamplingProfiler::reportTopFunctions()
 
 void SamplingProfiler::reportTopFunctions(PrintStream& out)
 {
-    LockHolder locker(m_lock);
+    auto locker = holdLock(m_lock);
     DeferGCForAWhile deferGC(m_vm.heap);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces();
+        processUnverifiedStackTraces(locker);
     }
 
 
@@ -1091,12 +1092,12 @@ void SamplingProfiler::reportTopBytecodes()
 
 void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 {
-    LockHolder locker(m_lock);
+    auto locker = holdLock(m_lock);
     DeferGCForAWhile deferGC(m_vm.heap);
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces();
+        processUnverifiedStackTraces(locker);
     }
 
     HashMap<String, size_t> bytecodeCounts;

@@ -62,11 +62,9 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, AlignedMemoryAllocator* 
 
 MarkedBlock::Handle::Handle(Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator, void* blockSpace)
     : m_alignedMemoryAllocator(alignedMemoryAllocator)
-    , m_weakSet(heap.vm(), CellContainer())
+    , m_weakSet(heap.vm())
 {
     m_block = new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this);
-    
-    m_weakSet.setContainer(*m_block);
     
     heap.didAllocateBlock(blockSize);
 }
@@ -149,7 +147,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
     blockFooter().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
 
     forEachCell(
-        [&] (HeapCell* cell, HeapCell::Kind) -> IterationStatus {
+        [&] (size_t, HeapCell* cell, HeapCell::Kind) -> IterationStatus {
             block().setNewlyAllocated(cell);
             return IterationStatus::Continue;
         });

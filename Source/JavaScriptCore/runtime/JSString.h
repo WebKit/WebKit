@@ -286,10 +286,7 @@ public:
         JSString* fiber2() const
         {
 #if CPU(LITTLE_ENDIAN)
-            // This access exceeds the sizeof(JSRopeString). But this is OK because JSRopeString is always allocated in MarkedBlock,
-            // and the last JSRopeString cell in the block has some subsequent bytes which are used for MarkedBlock::Footer.
-            // So the following access does not step over the page boundary in which the latter page does not have read permission.
-            return bitwise_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber2Lower) & addressMask);
+            return bitwise_cast<JSString*>(WTF::unalignedLoad<uintptr_t>(&m_fiber1Upper) >> 16);
 #else
             return bitwise_cast<JSString*>(static_cast<uintptr_t>(m_fiber2Lower) | (static_cast<uintptr_t>(m_fiber2Upper) << 16));
 #endif

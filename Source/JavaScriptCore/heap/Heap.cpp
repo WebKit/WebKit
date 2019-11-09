@@ -372,13 +372,13 @@ void Heap::dumpHeapStatisticsAtVMDestruction()
     unsigned counter = 0;
     m_objectSpace.forEachBlock([&] (MarkedBlock::Handle* block) {
         unsigned live = 0;
-        block->forEachCell([&] (HeapCell* cell, HeapCell::Kind) {
+        block->forEachCell([&] (size_t, HeapCell* cell, HeapCell::Kind) {
             if (cell->isLive())
                 live++;
             return IterationStatus::Continue;
         });
         dataLogLn("[", counter++, "] ", block->cellSize(), ", ", live, " / ", block->cellsPerBlock(), " ", static_cast<double>(live) / block->cellsPerBlock() * 100, "% ", block->attributes(), " ", block->subspace()->name());
-        block->forEachCell([&] (HeapCell* heapCell, HeapCell::Kind kind) {
+        block->forEachCell([&] (size_t, HeapCell* heapCell, HeapCell::Kind kind) {
             if (heapCell->isLive() && kind == HeapCell::Kind::JSCell) {
                 auto* cell = static_cast<JSCell*>(heapCell);
                 if (cell->isObject())
@@ -2774,8 +2774,8 @@ void Heap::addCoreConstraints()
 
 #if ENABLE(SAMPLING_PROFILER)
             if (SamplingProfiler* samplingProfiler = m_vm.samplingProfiler()) {
-                LockHolder locker(samplingProfiler->getLock());
-                samplingProfiler->processUnverifiedStackTraces();
+                auto locker = holdLock(samplingProfiler->getLock());
+                samplingProfiler->processUnverifiedStackTraces(locker);
                 samplingProfiler->visit(slotVisitor);
                 if (Options::logGC() == GCLogging::Verbose)
                     dataLog("Sampling Profiler data:\n", slotVisitor);

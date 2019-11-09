@@ -33,6 +33,8 @@ namespace JSC {
 
 inline bool IsoCellSet::add(HeapCell* cell)
 {
+    if (cell->isLargeAllocation())
+        return !m_lowerTierBits.concurrentTestAndSet(cell->largeAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto& bitsPtrRef = m_bits[atomIndices.blockIndex];
     auto* bits = bitsPtrRef.get();
@@ -43,6 +45,8 @@ inline bool IsoCellSet::add(HeapCell* cell)
 
 inline bool IsoCellSet::remove(HeapCell* cell)
 {
+    if (cell->isLargeAllocation())
+        return !m_lowerTierBits.concurrentTestAndClear(cell->largeAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto& bitsPtrRef = m_bits[atomIndices.blockIndex];
     auto* bits = bitsPtrRef.get();
@@ -53,6 +57,8 @@ inline bool IsoCellSet::remove(HeapCell* cell)
 
 inline bool IsoCellSet::contains(HeapCell* cell) const
 {
+    if (cell->isLargeAllocation())
+        return !m_lowerTierBits.get(cell->largeAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto* bits = m_bits[atomIndices.blockIndex].get();
     if (bits)
@@ -75,6 +81,13 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
                         func(cell, kind);
                     return IterationStatus::Continue;
                 });
+        });
+
+    CellAttributes attributes = m_subspace.attributes();
+    m_subspace.forEachLargeAllocation(
+        [&] (LargeAllocation* allocation) {
+            if (m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isMarked())
+                func(allocation->cell(), attributes.cellKind);
         });
 }
 
@@ -102,6 +115,20 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
                         return IterationStatus::Continue;
                     });
             }
+
+            {
+                auto locker = holdLock(m_lock);
+                if (!m_needToVisitLargeAllocations)
+                    return;
+                m_needToVisitLargeAllocations = false;
+            }
+
+            CellAttributes attributes = m_set.m_subspace.attributes();
+            m_set.m_subspace.forEachLargeAllocation(
+                [&] (LargeAllocation* allocation) {
+                    if (m_set.m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isMarked())
+                        m_func(visitor, allocation->cell(), attributes.cellKind);
+                });
         }
         
     private:
@@ -109,6 +136,7 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
         Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
         Lock m_lock;
+        bool m_needToVisitLargeAllocations { true };
     };
     
     return adoptRef(*new Task(*this, func));
@@ -122,16 +150,26 @@ void IsoCellSet::forEachLiveCell(const Func& func)
         [&] (size_t blockIndex) {
             MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
-            // FIXME: We could optimize this by checking our bits before querying isLive.
-            // OOPS! (need bug URL)
             auto* bits = m_bits[blockIndex].get();
-            block->forEachLiveCell(
+            block->forEachCell(
                 [&] (size_t atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
-                    if (bits->get(atomNumber))
+                    if (bits->get(atomNumber) && block->isLive(cell))
                         func(cell, kind);
                     return IterationStatus::Continue;
                 });
         });
+
+    CellAttributes attributes = m_subspace.attributes();
+    m_subspace.forEachLargeAllocation(
+        [&] (LargeAllocation* allocation) {
+            if (m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isLive())
+                func(allocation->cell(), attributes.cellKind);
+        });
+}
+
+inline void IsoCellSet::sweepLowerTierCell(unsigned index)
+{
+    m_lowerTierBits.concurrentTestAndClear(index);
 }
 
 } // namespace JSC

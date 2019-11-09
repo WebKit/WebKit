@@ -41,13 +41,10 @@ public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(VM&, CellContainer);
+    WeakSet(VM&);
     ~WeakSet();
     void lastChanceToFinalize();
     
-    CellContainer container() const { return m_container; }
-    void setContainer(CellContainer container) { m_container = container; }
-
     Heap* heap() const;
     VM& vm() const;
 
@@ -62,25 +59,21 @@ public:
     void resetAllocator();
 
 private:
-    JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator();
+    JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator(CellContainer);
     WeakBlock::FreeCell* tryFindAllocator();
-    WeakBlock::FreeCell* addAllocator();
+    WeakBlock::FreeCell* addAllocator(CellContainer);
     void removeAllocator(WeakBlock*);
 
-    WeakBlock::FreeCell* m_allocator;
-    WeakBlock* m_nextAllocator;
+    WeakBlock::FreeCell* m_allocator { nullptr };
+    WeakBlock* m_nextAllocator { nullptr };
     DoublyLinkedList<WeakBlock> m_blocks;
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
     VM* m_vm;
-    CellContainer m_container;
 };
 
-inline WeakSet::WeakSet(VM& vm, CellContainer container)
-    : m_allocator(0)
-    , m_nextAllocator(0)
-    , m_vm(&vm)
-    , m_container(container)
+inline WeakSet::WeakSet(VM& vm)
+    : m_vm(&vm)
 {
 }
 
@@ -133,7 +126,7 @@ inline void WeakSet::reap()
 
 inline void WeakSet::resetAllocator()
 {
-    m_allocator = 0;
+    m_allocator = nullptr;
     m_nextAllocator = m_blocks.head();
 }
 

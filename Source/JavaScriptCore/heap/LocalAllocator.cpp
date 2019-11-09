@@ -133,8 +133,14 @@ void* LocalAllocator::allocateSlowCase(GCDeferralContext* deferralContext, Alloc
     
     void* result = tryAllocateWithoutCollecting();
     
-    if (LIKELY(result != 0))
+    if (LIKELY(result != nullptr))
         return result;
+
+    Subspace* subspace = m_directory->m_subspace;
+    if (subspace->isIsoSubspace()) {
+        if (void* result = static_cast<IsoSubspace*>(subspace)->tryAllocateFromLowerTier())
+            return result;
+    }
     
     MarkedBlock::Handle* block = m_directory->tryAllocateBlock();
     if (!block) {

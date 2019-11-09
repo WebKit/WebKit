@@ -30,6 +30,7 @@
 
 namespace JSC {
 
+class IsoSubspace;
 class SlotVisitor;
 
 // WebKit has a good malloc that already knows what to do for large allocations. The GC shouldn't
@@ -37,11 +38,15 @@ class SlotVisitor;
 // objects directly using malloc, and put the LargeAllocation header just before them. We can detect
 // when a HeapCell* is a LargeAllocation because it will have the MarkedBlock::atomSize / 2 bit set.
 
-class LargeAllocation : public BasicRawSentinelNode<LargeAllocation> {
+class LargeAllocation : public PackedRawSentinelNode<LargeAllocation> {
 public:
     friend class LLIntOffsetsExtractor;
+    friend class IsoSubspace;
 
     static LargeAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
+
+    static LargeAllocation* createForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
+    LargeAllocation* reuseForLowerTier();
 
     LargeAllocation* tryReallocate(size_t, Subspace*);
     
@@ -93,6 +98,8 @@ public:
     bool isEmpty();
     
     size_t cellSize() const { return m_cellSize; }
+
+    uint8_t lowerTierIndex() const { return m_lowerTierIndex; }
     
     bool aboveLowerBound(const void* rawPtr)
     {
@@ -146,6 +153,8 @@ public:
     void destroy();
     
     void dump(PrintStream&) const;
+
+    bool isLowerTier() const { return m_lowerTierIndex != UINT8_MAX; }
     
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;
@@ -156,13 +165,14 @@ private:
     
     void* basePointer() const;
     
-    size_t m_cellSize;
     unsigned m_indexInSpace { 0 };
+    size_t m_cellSize;
     bool m_isNewlyAllocated : 1;
     bool m_hasValidCell : 1;
     bool m_adjustedAlignment : 1;
     Atomic<bool> m_isMarked;
     CellAttributes m_attributes;
+    uint8_t m_lowerTierIndex { UINT8_MAX };
     Subspace* m_subspace;
     WeakSet m_weakSet;
 };

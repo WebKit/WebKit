@@ -180,7 +180,7 @@ public:
     JS_EXPORT_PRIVATE String stackTracesAsJSON();
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
     void noticeCurrentThreadAsJSCExecutionThread(const AbstractLocker&);
-    void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
+    void processUnverifiedStackTraces(const AbstractLocker&);
     void setStopWatch(const AbstractLocker&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
     void pause(const AbstractLocker&);
     void clearData(const AbstractLocker&);

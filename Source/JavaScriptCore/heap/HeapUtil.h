@@ -128,32 +128,15 @@ public:
             tryPointer(alignedPointer - candidate->cellSize());
     }
     
-    static bool isPointerGCObjectJSCell(
-        Heap& heap, TinyBloomFilter filter, const void* pointer)
+    static bool isPointerGCObjectJSCell(Heap& heap, TinyBloomFilter filter, JSCell* pointer)
     {
         // It could point to a large allocation.
-        const Vector<LargeAllocation*>& largeAllocations = heap.objectSpace().largeAllocations();
-        if (!largeAllocations.isEmpty()) {
-            if (largeAllocations[0]->aboveLowerBound(pointer)
-                && largeAllocations.last()->belowUpperBound(pointer)) {
-                LargeAllocation*const* result = approximateBinarySearch<LargeAllocation*const>(
-                    largeAllocations.begin(), largeAllocations.size(),
-                    LargeAllocation::fromCell(pointer),
-                    [] (LargeAllocation*const* ptr) -> LargeAllocation* { return *ptr; });
-                if (result) {
-                    if (result > largeAllocations.begin()
-                        && result[-1]->cell() == pointer
-                        && isJSCellKind(result[-1]->attributes().cellKind))
-                        return true;
-                    if (result[0]->cell() == pointer
-                        && isJSCellKind(result[0]->attributes().cellKind))
-                        return true;
-                    if (result + 1 < largeAllocations.end()
-                        && result[1]->cell() == pointer
-                        && isJSCellKind(result[1]->attributes().cellKind))
-                        return true;
-                }
-            }
+        if (pointer->isLargeAllocation()) {
+            auto* set = heap.objectSpace().largeAllocationSet();
+            ASSERT(set);
+            if (set->isEmpty())
+                return false;
+            return set->contains(pointer);
         }
     
         const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
@@ -179,12 +162,14 @@ public:
         return true;
     }
     
+    // This does not find the cell if the pointer is pointing at the middle of a JSCell.
     static bool isValueGCObject(
         Heap& heap, TinyBloomFilter filter, JSValue value)
     {
+        ASSERT(heap.objectSpace().largeAllocationSet());
         if (!value.isCell())
             return false;
-        return isPointerGCObjectJSCell(heap, filter, static_cast<void*>(value.asCell()));
+        return isPointerGCObjectJSCell(heap, filter, value.asCell());
     }
 };
 

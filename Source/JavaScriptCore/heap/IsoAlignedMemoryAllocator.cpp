@@ -89,18 +89,19 @@ void IsoAlignedMemoryAllocator::dump(PrintStream& out) const
     out.print("Iso(", RawPointer(this), ")");
 }
 
-void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t)
+void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return FastMalloc::tryMalloc(size);
 }
 
-void IsoAlignedMemoryAllocator::freeMemory(void*)
+void IsoAlignedMemoryAllocator::freeMemory(void* pointer)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    FastMalloc::free(pointer);
 }
 
 void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 {
+    // In IsoSubspace-managed LargeAllocation, we must not perform realloc.
     RELEASE_ASSERT_NOT_REACHED();
 }
 

@@ -79,8 +79,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     if (false)
         dataLog("Creating BlockDirectory/LocalAllocator for ", m_name, ", ", attributes(), ", ", sizeClass, ".\n");
     
-    std::unique_ptr<BlockDirectory> uniqueDirectory =
-        makeUnique<BlockDirectory>(m_space.heap(), sizeClass);
+    std::unique_ptr<BlockDirectory> uniqueDirectory = makeUnique<BlockDirectory>(m_space.heap(), sizeClass);
     BlockDirectory* directory = uniqueDirectory.get();
     m_directories.append(WTFMove(uniqueDirectory));
     
@@ -145,6 +144,8 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
         return nullptr;
     
     m_space.m_largeAllocations.append(allocation);
+    if (auto* set = m_space.largeAllocationSet())
+        set->add(allocation->cell());
     ASSERT(allocation->indexInSpace() == m_space.m_largeAllocations.size() - 1);
     vm.heap.didAllocate(size);
     m_space.m_capacity += size;
@@ -193,6 +194,14 @@ void* CompleteSubspace::reallocateLargeAllocationNonVirtual(VM& vm, HeapCell* ol
         return nullptr;
     }
     ASSERT(oldIndexInSpace == allocation->indexInSpace());
+
+    // If reallocation changes the address, we should update HashSet.
+    if (oldAllocation != allocation) {
+        if (auto* set = m_space.largeAllocationSet()) {
+            set->remove(oldAllocation->cell());
+            set->add(allocation->cell());
+        }
+    }
 
     m_space.m_largeAllocations[oldIndexInSpace] = allocation;
     vm.heap.didAllocate(difference);

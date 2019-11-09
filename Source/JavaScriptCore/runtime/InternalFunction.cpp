@@ -40,8 +40,6 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     , m_functionForConstruct(functionForConstruct ? functionForConstruct : callHostFunctionAsConstructor)
     , m_globalObject(vm, this, structure->globalObject())
 {
-    // globalObject->vm() wants callees to not be large allocations.
-    RELEASE_ASSERT(!isLargeAllocation());
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
 }

@@ -33,14 +33,12 @@
 namespace JSC {
 
 template<typename T>
-class PackedCellPtr : public PackedAlignedPtr<T, MarkedBlock::atomSize> {
+class PackedCellPtr : public PackedAlignedPtr<T, 8> {
 public:
-    using Base = PackedAlignedPtr<T, MarkedBlock::atomSize>;
+    using Base = PackedAlignedPtr<T, 8>;
     PackedCellPtr(T* pointer)
         : Base(pointer)
     {
-        static_assert((sizeof(T) <= MarkedSpace::largeCutoff && std::is_final<T>::value) || isAllocatedFromIsoSubspace<T>::value, "LargeAllocation does not have 16byte alignment");
-        ASSERT(!(bitwise_cast<uintptr_t>(pointer) & (16 - 1)));
     }
 };
 

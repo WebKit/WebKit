@@ -39,7 +39,6 @@ JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
     , m_scope(vm, this, globalObject)
 {
-    RELEASE_ASSERT(!isLargeAllocation());
 }
 
 JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)

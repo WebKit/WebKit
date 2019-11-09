@@ -48,6 +48,11 @@ public:
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
     void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
+    void sweepLowerTierCell(LargeAllocation*);
+
+    void* tryAllocateFromLowerTier();
+    void destroyLowerTierFreeList();
+
 private:
     friend class IsoCellSet;
     
@@ -59,7 +64,9 @@ private:
     BlockDirectory m_directory;
     LocalAllocator m_localAllocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
-    SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
+    SentinelLinkedList<LargeAllocation, PackedRawSentinelNode<LargeAllocation>> m_lowerTierFreeList;
+    SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
+    uint8_t m_lowerTierCellCount { 0 };
 };
 
 ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
