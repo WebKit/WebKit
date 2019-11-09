@@ -1,3 +1,53 @@
+2019-11-08  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: List failing tests for criteria
+        https://bugs.webkit.org/show_bug.cgi?id=203905
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/controller/api_routes.py:
+        (APIRoutes.__init__): Add FailureController and /failures endpoint.
+        * resultsdbpy/resultsdbpy/controller/failure_controller.py: Added.
+        (FailureController): Added FailureController object to drive /failure endpoint.
+        (FailureController.__init__):
+        (FailureController.failures): Return a json list of failures for a range.
+        * resultsdbpy/resultsdbpy/controller/failure_controller_unittest.py: Added.
+        (FailureControllerTest): Test the /failure API.
+        (FailureControllerTest.setup_webserver):
+        (FailureControllerTest.test_failures_collapsed):
+        (FailureControllerTest.test_unexpected_failures_collapsed):
+        (FailureControllerTest.test_failures):
+        (FailureControllerTest.test_unexpected_failures):
+        (FailureControllerTest.test_failure_by_time):
+        * resultsdbpy/resultsdbpy/model/failure_context.py: Added.
+        (FailureContext): Database access to tables recording test failures.
+        (FailureContext.TestFailuresBase):
+        (FailureContext.TestFailuresBase.unpack):
+        (FailureContext.TestFailuresByCommit): Save test failures sorted by commit.
+        (FailureContext.TestFailuresByStartTime): Save test failures sorted by start time.
+        (FailureContext.UnexpectedTestFailuresByCommit): Save unexpected test failures
+        sorted by commit.
+        (FailureContext.UnexpectedTestFailuresByStartTime): Save unexpected test failures
+        sorted by commit.
+        (FailureContext.__init__):
+        (FailureContext.register): Register test failures to each of the 4 tables for an upload.
+        (FailureContext._failures): Return a list of test failures from a table.
+        (FailureContext.failures_by_commit): Return a list of test failures from a table sorted
+        by commit.
+        (FailureContext.failures_by_start_time): Return a list of test failures from a table
+        sorted by commit.
+        * resultsdbpy/resultsdbpy/model/failure_context_unittest.py: Added.
+        (FailureContextTest):
+        (FailureContextTest.init_database):
+        (FailureContextTest.test_failures_collapsed):
+        (FailureContextTest.test_unexpected_failures_collapsed):
+        (FailureContextTest.test_failures):
+        (FailureContextTest.test_unexpected_failures):
+        * resultsdbpy/resultsdbpy/model/model.py:
+        (Model.__init__):
+        * resultsdbpy/resultsdbpy/view/templates/documentation.html: Add documentation
+        for the /failure endpoint.
+
 2019-11-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix flaky tests in http/tests/cache/disk-cache

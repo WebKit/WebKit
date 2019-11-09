@@ -314,7 +314,7 @@ const documentation = {
             documentEndpoint(
                 '/api/results/&ltsuite&gt/&lttest&gt',
                 ['GET'],
-                ['Branch', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
                 [
                     `Access results for a specific test on a specific commit with a specific configuration. This endpoint only returns results for a single test. Each result is stored in dictionary formatted like this:`,
                     codeBlock('{\n' +
@@ -343,7 +343,43 @@ const documentation = {
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}' and &ltrun-a1&gt, &ltrun-a2&gt, &ltrun-b1&gt and &ltrun-b2&gt are all the afformentioned single test result dictionary.`,
                 ],
             ),
-        ], 'CI Links': [
+        ], 'Failure Analysis': [
+            `Results databases provide a few APIs to assist in the investigation of test failures. These analysis endpoints aggregate data from multiple test runs for consumption by both humans and automated systems.`,
+            documentEndpoint(
+                '/api/failures/&ltsuite&gt',
+                ['GET'],
+                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [
+                    `Returns a list of tests which failed during test runs matching the specified criteria. When collapsed, these results will be a sorted list looking like this:`,
+                    codeBlock('[\n' +
+                    '    "suite.sub-1.test-1",\n' +
+                    '    "suite.sub-1.test-2",\n' +
+                    '    "suite.sub-2.test-1"\n' +
+                    ']'),
+                    `When uncollapsed, these results will be separated by the upload that generated them. These results are laid out much like the ${localLink(['API', '/api/results/&ltsuite&gt'], '/api/results/&ltsuite&gt')} and ${localLink(['API', '/api/results/&ltsuite&gt/&lttest&gt'], '/api/results/&ltsuite&gt/&lttest&gt')} endpoints.`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "results": {\n' +
+                    '            "start_time": <UTC time test run started>,\n' +
+                    '            "uuid": <UUID for test run>,\n' +
+                    '            "suite.sub-1.test-1": "FAIL",\n' +
+                    '            "suite.sub-1.test-2": "FAIL",\n' +
+                    '        }\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "results": {\n' +
+                    '            "start_time": <UTC time test run started>,\n' +
+                    '            "uuid": <UUID for test run>,\n' +
+                    '            "suite.sub-1.test-1": "FAIL",\n' +
+                    '            "suite.sub-2.test-1": "CRASH",\n' +
+                    '        }\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                ],
+            ),
+        ],'CI Links': [
             `Results database instances are usually storing test results from some sort of continuous integration system. While the results database doesn't assume any particular continuous integration system, it does make some basic assumptions. The results database assumes that every upload has a URL associated with it and that every upload was run on a specific machine. Additionally, the results database assumes that for a given configuration, there is a corresponding 'queue' that all continuous integration runs with that specific configuration are associated with`,
             `If these assumptions aren't true for a particular instance of the results database, or if URLs are not included in upload data, the continuous integration endpoints may be dead links. That should not effect the operation or usage of the results database.`,
             documentEndpoint(
@@ -418,6 +454,14 @@ const documentation = {
             ),
         ],
     }, 'Query Parameters': {
+        'Aggregation': [
+            `Some endpoints in the results database aggregate data from multiple test runs. Such endpoints accept query parameters that control how this aggregation is preformed. The first of these is the collapsed parameter, which is set to True by default in aggregation endpoints:`,
+            codeBlock('collapsed=False'),
+            `The collapsed parameter indicates that a single result will be returned for all uploads which match the specified criteria. If false, aggregation endpoints will return the results which would have otherwise been aggregated.`,
+            `Because the results database distinguishes between expected and unexpected failures, endpoints performing aggregation will often filter out expected failures, and flag unexpected passes. To modify the behavior of these algorithms, these endpoints will support the unexpected flag:`,
+            codeBlock('unexpected=False'),
+            `By default, this flag is 'True' and endpoints will ignore tests which matched their expected behavior. If set to 'False', endpoints will return results for all failing tests, regardless of what their expectation is.`,
+        ],
         'Branch': [
             `Most data in the results database is partitioned by branch, and it is generally expected that results on seperate branches are independent of one another. By default, endpoints that support the branch query will assume that the branch is master for git repositories and trunk for SVN repositories if no value is specified. If multiple values for branch are specified, only the first will be respected. A request which intended to search for results on only results on the safari-607 branch would use a query like this:`,
             codeBlock('branch=safari-607'),

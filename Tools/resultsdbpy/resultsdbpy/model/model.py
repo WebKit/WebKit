@@ -30,6 +30,7 @@ from resultsdbpy.model.configuration_context import ConfigurationContext
 from resultsdbpy.model.upload_context import UploadContext
 from resultsdbpy.model.suite_context import SuiteContext
 from resultsdbpy.model.test_context import TestContext
+from resultsdbpy.model.failure_context import FailureContext
 
 
 class Model(object):
@@ -66,13 +67,18 @@ class Model(object):
             commit_context=self.commit_context,
             ttl_seconds=self.default_ttl_seconds,
         )
+        self.failure_context = FailureContext(
+            configuration_context=self.configuration_context,
+            commit_context=self.commit_context,
+            ttl_seconds=self.default_ttl_seconds,
+        )
         self.ci_context = CIContext(
             configuration_context=self.configuration_context,
             commit_context=self.commit_context,
             ttl_seconds=self.default_ttl_seconds,
         )
 
-        for context in [self.suite_context, self.test_context, self.ci_context]:
+        for context in [self.suite_context, self.test_context, self.ci_context, self.failure_context]:
             self.upload_context.register_upload_callback(context.name, context.register)
 
         self.archive_context = ArchiveContext(
