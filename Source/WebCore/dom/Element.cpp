@@ -31,7 +31,6 @@
 #include "AttributeChangeInvalidation.h"
 #include "CSSAnimationController.h"
 #include "CSSParser.h"
-#include "CSSPropertyAnimation.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClassChangeInvalidation.h"
@@ -3703,17 +3702,8 @@ bool Element::applyKeyframeEffects(RenderStyle& targetStyle)
         ASSERT(effect->animation());
         effect->animation()->resolve(targetStyle);
 
-        if (hasNonAcceleratedAnimationProperty)
-            continue;
-
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=204009
-        // KeyframeEffectStack and KeyframeEffect should indicate whether it only contains accelerated animation properties
-        for (auto cssPropertyId : effect->animatedProperties()) {
-            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
-                hasNonAcceleratedAnimationProperty = true;
-                break;
-            }
-        }
+        if (!hasNonAcceleratedAnimationProperty && !effect->isAccelerated())
+            hasNonAcceleratedAnimationProperty = true;
     }
 
     return !hasNonAcceleratedAnimationProperty;

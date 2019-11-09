@@ -1,3 +1,18 @@
+2019-11-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Optimize animation resolution to not re-compute whether effects only contain accelerated animation properties
+        https://bugs.webkit.org/show_bug.cgi?id=204009
+
+        Reviewed by Dean Jackson.
+
+        A KeyframeEffect already exposes whether it only affects CSS properties that can be accelerated, so use this information instead
+        of iterating over an effect's animated properties during resolution to get at the same information. 
+
+        No tests or changes to existed test expectations as this should not yield any change in behavior.
+
+        * dom/Element.cpp:
+        (WebCore::Element::applyKeyframeEffects):
+
 2019-11-08  Chris Dumez  <cdumez@apple.com>
 
         Add back/forward cache quirk for Vimeo.com
