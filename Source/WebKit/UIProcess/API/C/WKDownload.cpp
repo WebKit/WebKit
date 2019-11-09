@@ -40,9 +40,9 @@ WKTypeID WKDownloadGetTypeID()
     return toAPI(DownloadProxy::APIType);
 }
 
-uint64_t WKDownloadGetID(WKDownloadRef)
+uint64_t WKDownloadGetID(WKDownloadRef download)
 {
-    return 0;
+    return toImpl(download)->downloadID().downloadID();
 }
 
 WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)

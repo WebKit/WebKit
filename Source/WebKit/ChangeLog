@@ -1,3 +1,15 @@
+2019-11-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, rolling out r252260.
+
+        Breaks half of API tests
+
+        Reverted changeset:
+
+        "Make DownloadID an ObjectIdentifier"
+        https://bugs.webkit.org/show_bug.cgi?id=203962
+        https://trac.webkit.org/changeset/252260
+
 2019-11-08  Antti Koivisto  <antti@apple.com>
 
         Use separate cache directory for development WebKit on Mac

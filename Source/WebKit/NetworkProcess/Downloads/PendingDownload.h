@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DownloadID.h"
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
@@ -42,6 +41,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class Download;
+class DownloadID;
 class NetworkLoad;
 class NetworkLoadParameters;
 class NetworkSession;

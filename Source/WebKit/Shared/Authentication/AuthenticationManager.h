@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DownloadID.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "WebPageProxyIdentifier.h"
@@ -54,6 +53,8 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
+class Download;
+class DownloadID;
 class NetworkProcess;
 class WebFrame;
 

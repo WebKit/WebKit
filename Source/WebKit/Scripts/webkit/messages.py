@@ -217,7 +217,6 @@ def types_that_cannot_be_forward_declared():
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
-        'WebKit::DownloadID',
         'WebKit::LayerHostingContextID',
         'WebKit::TransactionID',
         'WebKit::StorageAreaIdentifier',
