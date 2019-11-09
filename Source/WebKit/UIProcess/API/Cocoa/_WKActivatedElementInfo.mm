@@ -73,10 +73,10 @@
     
     if (information.isAttachment)
         _type = _WKActivatedElementTypeAttachment;
-    else if (information.isImage)
-        _type = _WKActivatedElementTypeImage;
     else if (information.isLink)
         _type = _WKActivatedElementTypeLink;
+    else if (information.isImage)
+        _type = _WKActivatedElementTypeImage;
     else
         _type = _WKActivatedElementTypeUnspecified;
     

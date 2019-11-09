@@ -1,3 +1,26 @@
+2019-11-09  Dean Jackson  <dino@apple.com>
+
+        Clicky Orbing support.apple.com categories shows a PNG instead of the web page preview, tapping loads image asset only instead of web page
+        https://bugs.webkit.org/show_bug.cgi?id=204037
+        <rdar://55614939>
+
+        Reviewed by Simon Fraser.
+
+        New tests for a link wrapping an image, and the ordering of API and SPI.
+
+        Rename these tests so that they are much easier to filter on the command line.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (TEST):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate _webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate webView:contextMenuWillPresentForElement:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/image.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/link-with-image.html: Added.
+
 2019-11-08  Brady Eidson  <beidson@apple.com>
 
         WKWebView Find-in-page API.

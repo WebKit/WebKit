@@ -1,3 +1,31 @@
+2019-11-09  Dean Jackson  <dino@apple.com>
+
+        Clicky Orbing support.apple.com categories shows a PNG instead of the web page preview, tapping loads image asset only instead of web page
+        https://bugs.webkit.org/show_bug.cgi?id=204037
+        <rdar://55614939>
+
+        Reviewed by Simon Fraser.
+
+        When Safari adopted the ContextMenu API they began providing a PreviewViewController that
+        showed the image rather than the link, for the case of <a><img></a>.
+
+        This could be fixed in Safari, but I noticed that we actually tell the delegate that the
+        type of the activated element is an image, which is why they treat it as such. It's not
+        clear that because the image also has a link attached, a client should defer to the link.
+
+        Instead, I think it makes more sense to identify this as a link, because that is the more
+        important information in this API.
+
+        While here I also changed the logic to make sure we call the API if both the API and SPI
+        are available.
+
+        New ContextMenus and WKRequestActivatedElementInfo API tests.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm: Identify as a link if you have a link.
+        (-[_WKActivatedElementInfo _initWithInteractionInformationAtPosition:userInfo:]):
+        * UIProcess/ios/WKContentViewInteraction.mm: Look for the API before the SPI.
+        (-[WKContentView continueContextMenuInteraction:]):
+
 2019-11-08  Brady Eidson  <beidson@apple.com>
 
         WKWebView Find-in-page API.
