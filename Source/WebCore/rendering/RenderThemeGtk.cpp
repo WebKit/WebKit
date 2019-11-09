@@ -290,7 +290,7 @@ static GtkStateFlags themePartStateFlags(const RenderThemeGtk& theme, RenderThem
     return static_cast<GtkStateFlags>(stateFlags);
 }
 
-void RenderThemeGtk::adjustButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustButtonStyle(RenderStyle& style, const Element*) const
 {
     // Some layout tests check explicitly that buttons ignore line-height.
     if (style.appearance() == PushButtonPart)
@@ -396,7 +396,7 @@ static Color menuListColor(const Element* element)
     return comboWidget.button().color();
 }
 
-void RenderThemeGtk::adjustMenuListStyle(StyleResolver&, RenderStyle& style, const Element* element) const
+void RenderThemeGtk::adjustMenuListStyle(RenderStyle& style, const Element* element) const
 {
     // The tests check explicitly that select menu buttons ignore line height.
     style.setLineHeight(RenderStyle::initialLineHeight());
@@ -408,9 +408,9 @@ void RenderThemeGtk::adjustMenuListStyle(StyleResolver&, RenderStyle& style, con
         style.setColor(menuListColor(element));
 }
 
-void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, const Element* e) const
+void RenderThemeGtk::adjustMenuListButtonStyle(RenderStyle& style, const Element* e) const
 {
-    adjustMenuListStyle(styleResolver, style, e);
+    adjustMenuListStyle(style, e);
 }
 
 /*
@@ -491,7 +491,7 @@ static IntSize spinButtonSize()
 }
 
 
-void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle& style, const Element* element) const
+void RenderThemeGtk::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
 {
     if (!is<HTMLInputElement>(element) || !shouldHaveSpinButton(downcast<HTMLInputElement>(*element)))
         return;
@@ -558,9 +558,9 @@ bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, co
     return paintTextField(o, i, r);
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(StyleResolver& styleResolver, RenderStyle& style, const Element* e) const
+void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* e) const
 {
-    adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
+    adjustSearchFieldCancelButtonStyle(style, e);
 }
 
 bool RenderThemeGtk::paintSearchFieldResultsButton(const RenderBox& o, const PaintInfo& i, const IntRect& rect)
@@ -568,12 +568,12 @@ bool RenderThemeGtk::paintSearchFieldResultsButton(const RenderBox& o, const Pai
     return paintSearchFieldResultsDecorationPart(o, i, rect);
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     adjustSearchFieldIconStyle(EntryIconLeft, style);
 }
 
-void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(RenderStyle& style, const Element*) const
 {
     adjustSearchFieldIconStyle(EntryIconRight, style);
 }
@@ -606,7 +606,7 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject,
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-void RenderThemeGtk::adjustListButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustListButtonStyle(RenderStyle& style, const Element*) const
 {
     // Add a margin to place the button at end of the input field.
     if (style.isLeftToRightDirection())
@@ -633,7 +633,7 @@ void RenderThemeGtk::paintListButtonForInput(const RenderObject& renderObject, c
 }
 #endif
 
-void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustSearchFieldStyle(RenderStyle& style, const Element*) const
 {
     // We cannot give a proper rendering when border radius is active, unfortunately.
     style.resetBorderRadius();
@@ -650,14 +650,14 @@ bool RenderThemeGtk::shouldHaveCapsLockIndicator(const HTMLInputElement& element
     return element.isPasswordField();
 }
 
-void RenderThemeGtk::adjustSliderTrackStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustSliderTrackStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
 }
 
-void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, const Element* element) const
+void RenderThemeGtk::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
-    RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
+    RenderTheme::adjustSliderThumbStyle(style, element);
     style.setBoxShadow(nullptr);
 }
 
@@ -817,7 +817,7 @@ RenderTheme::InnerSpinButtonLayout RenderThemeGtk::innerSpinButtonLayout(const R
     return renderObject.style().direction() == TextDirection::RTL ? InnerSpinButtonLayout::HorizontalUpLeft : InnerSpinButtonLayout::HorizontalUpRight;
 }
 
-void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustInnerSpinButtonStyle(RenderStyle& style, const Element*) const
 {
     style.setWidth(Length(spinButtonSize().width(), Fixed));
     style.setHeight(Length(spinButtonSize().height(), Fixed));
@@ -1140,7 +1140,7 @@ bool RenderThemeGtk::paintMediaCurrentTime(const RenderObject&, const PaintInfo&
 }
 #endif
 
-void RenderThemeGtk::adjustProgressBarStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeGtk::adjustProgressBarStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
 }

@@ -133,7 +133,6 @@ public:
     void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
 
     void addCurrentSVGFontFaceRules();
-    static void adjustSVGElementStyle(const SVGElement&, RenderStyle&);
 
     void setNewStateWithElement(const Element&);
     std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
@@ -183,9 +182,6 @@ public:
     void clearCachedDeclarationsAffectedByViewportUnits();
 
 private:
-    void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*, const RenderStyle* userAgentStyle);
-    void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
-
     enum class UseMatchedDeclarationsCache { Yes, No };
     void applyMatchedProperties(const MatchResult&, const Element&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
 
@@ -195,8 +191,6 @@ private:
     KeyframesRuleMap m_keyframesRuleMap;
 
 public:
-    typedef HashMap<CSSPropertyID, RefPtr<CSSValue>> PendingImagePropertyMap;
-
     class State {
     public:
         State() { }
@@ -236,8 +230,6 @@ public:
     const State& state() const { return m_state; }
 
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
-
-    bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
 private:
     void cacheBorderAndBackground();

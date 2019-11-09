@@ -51,6 +51,7 @@
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "ShadowRoot.h"
+#include "StyleAdjuster.h"
 #include "XMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -597,7 +598,7 @@ Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentS
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto styleElement = makeRefPtr(this->correspondingElement())) {
         Optional<ElementStyle> style = styleElement->resolveStyle(&parentStyle);
-        StyleResolver::adjustSVGElementStyle(*this, *style->renderStyle);
+        Style::Adjuster::adjustSVGElementStyle(*style->renderStyle, *this);
         return style;
     }
 

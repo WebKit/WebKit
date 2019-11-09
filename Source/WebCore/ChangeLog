@@ -1,3 +1,122 @@
+2019-11-09  Antti Koivisto  <antti@apple.com>
+
+        Move style adjustment code out of StyleResolver and into a class of its own
+        https://bugs.webkit.org/show_bug.cgi?id=204041
+
+        Reviewed by Zalan Bujtas.
+
+        Introduce Style::Adjuster.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::addIntrinsicMargins): Deleted.
+        (WebCore::equivalentBlockDisplay): Deleted.
+        (WebCore::doesNotInheritTextDecoration): Deleted.
+        (WebCore::isScrollableOverflow): Deleted.
+        (WebCore::hasEffectiveDisplayNoneForDisplayContents): Deleted.
+        (WebCore::adjustDisplayContentsStyle): Deleted.
+        (WebCore::StyleResolver::adjustSVGElementStyle): Deleted.
+        (WebCore::computeEffectiveTouchActions): Deleted.
+        (WebCore::hasTextChild): Deleted.
+        (WebCore::StyleResolver::adjustRenderStyleForTextAutosizing): Deleted.
+        (WebCore::StyleResolver::adjustRenderStyle): Deleted.
+        (WebCore::StyleResolver::adjustRenderStyleForSiteSpecificQuirks): Deleted.
+        * css/StyleResolver.h:
+        * page/Page.cpp:
+        (WebCore::Page::recomputeTextAutoSizingInAllFrames):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+
+        None of this code uses the StyleResolver argument so remove it.
+
+        (WebCore::RenderTheme::adjustCheckboxStyle const):
+        (WebCore::RenderTheme::adjustRadioStyle const):
+        (WebCore::RenderTheme::adjustButtonStyle const):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle const):
+        (WebCore::RenderTheme::adjustTextFieldStyle const):
+        (WebCore::RenderTheme::adjustTextAreaStyle const):
+        (WebCore::RenderTheme::adjustMenuListStyle const):
+        (WebCore::RenderTheme::adjustMeterStyle const):
+        (WebCore::RenderTheme::adjustCapsLockIndicatorStyle const):
+        (WebCore::RenderTheme::adjustAttachmentStyle const):
+        (WebCore::RenderTheme::adjustListButtonStyle const):
+        (WebCore::RenderTheme::adjustProgressBarStyle const):
+        (WebCore::RenderTheme::adjustMenuListButtonStyle const):
+        (WebCore::RenderTheme::adjustMediaControlStyle const):
+        (WebCore::RenderTheme::adjustSliderTrackStyle const):
+        (WebCore::RenderTheme::adjustSliderThumbStyle const):
+        (WebCore::RenderTheme::adjustSearchFieldStyle const):
+        (WebCore::RenderTheme::adjustSearchFieldCancelButtonStyle const):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationPartStyle const):
+        (WebCore::RenderTheme::adjustSearchFieldResultsDecorationPartStyle const):
+        (WebCore::RenderTheme::adjustSearchFieldResultsButtonStyle const):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::adjustApplePayButtonStyle const):
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::adjustApplePayButtonStyle const):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle const):
+        (WebCore::RenderThemeGtk::adjustMenuListButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle const):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle const):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustListButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle const):
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle const):
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle const):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle const):
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle const):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle const):
+        (WebCore::RenderThemeIOS::adjustRadioStyle const):
+        (WebCore::RenderThemeIOS::adjustMenuListButtonStyle const):
+        (WebCore::RenderThemeIOS::adjustSliderTrackStyle const):
+        (WebCore::RenderThemeIOS::adjustSearchFieldStyle const):
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize const):
+        (WebCore::RenderThemeMac::adjustListButtonStyle const):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle const):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle const):
+        (WebCore::RenderThemeMac::adjustProgressBarStyle const):
+        (WebCore::RenderThemeMac::adjustMenuListStyle const):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle const):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle const):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle const):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle const):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle const):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationPartStyle const):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle const):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle const):
+        * style/StyleAdjuster.cpp: Added.
+        (WebCore::Style::Adjuster::Adjuster):
+        (WebCore::Style::addIntrinsicMargins):
+        (WebCore::Style::equivalentBlockDisplay):
+        (WebCore::Style::isAtShadowBoundary):
+        (WebCore::Style::doesNotInheritTextDecoration):
+        (WebCore::Style::isScrollableOverflow):
+        (WebCore::Style::computeEffectiveTouchActions):
+        (WebCore::Style::Adjuster::adjust const):
+        (WebCore::Style::hasEffectiveDisplayNoneForDisplayContents):
+        (WebCore::Style::Adjuster::adjustDisplayContentsStyle const):
+        (WebCore::Style::Adjuster::adjustSVGElementStyle):
+        (WebCore::Style::Adjuster::adjustForSiteSpecificQuirks const):
+        (WebCore::Style::hasTextChild):
+        (WebCore::Style::Adjuster::adjustForTextAutosizing):
+        * style/StyleAdjuster.h: Added.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::resolveCustomStyle):
+
 2019-11-08  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Optimize animation resolution to not re-compute whether effects only contain accelerated animation properties

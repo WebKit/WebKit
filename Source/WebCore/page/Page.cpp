@@ -113,6 +113,7 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
+#include "StyleAdjuster.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SubframeLoader.h"
@@ -3061,13 +3062,12 @@ void Page::recomputeTextAutoSizingInAllFrames()
         if (!frame->document())
             continue;
         auto& document = *frame->document();
-        if (!document.renderView() || !document.styleScope().resolverIfExists())
+        if (!document.renderView())
             continue;
 
-        auto& styleResolver = document.styleScope().resolver();
         for (auto& renderer : descendantsOfType<RenderElement>(*document.renderView())) {
             if (auto* element = renderer.element()) {
-                auto needsLayout = styleResolver.adjustRenderStyleForTextAutosizing(renderer.mutableStyle(), *element);
+                auto needsLayout = Style::Adjuster::adjustForTextAutosizing(renderer.mutableStyle(), *element);
                 if (needsLayout)
                     renderer.setNeedsLayout();
             }

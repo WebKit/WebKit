@@ -118,44 +118,44 @@ private:
 #endif
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
 
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    void adjustTextAreaStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
 
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    void adjustMenuListStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustMenuListStyle(RenderStyle&, const Element*) const final;
 
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
-    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
 
-    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSliderTrackStyle(RenderStyle&, const Element*) const final;
 
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSliderThumbStyle(RenderStyle&, const Element*) const final;
 
     bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
-    void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
-    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
-    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)
     void paintListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect&);
-    void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
+    void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
 #if ENABLE(VIDEO)
@@ -185,7 +185,7 @@ private:
     void setSizeFromFont(RenderStyle&, const IntSize* sizes) const;
     IntSize sizeForFont(const RenderStyle&, const IntSize* sizes) const;
     IntSize sizeForSystemFont(const RenderStyle&, const IntSize* sizes) const;
-    void setFontFromControlSize(StyleResolver&, RenderStyle&, NSControlSize) const;
+    void setFontFromControlSize(RenderStyle&, NSControlSize) const;
 
     void updateCheckedState(NSCell*, const RenderObject&);
     void updateEnabledState(NSCell*, const RenderObject&);

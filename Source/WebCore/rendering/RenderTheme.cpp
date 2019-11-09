@@ -78,7 +78,7 @@ RenderTheme::RenderTheme()
 {
 }
 
-void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
+void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
     ControlPart part = style.appearance();
@@ -97,7 +97,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
             part = MenulistButtonPart;
             break;
         case TextFieldPart:
-            adjustTextFieldStyle(styleResolver, style, element);
+            adjustTextFieldStyle(style, element);
             FALLTHROUGH;
         default:
             style.setAppearance(NoControlPart);
@@ -200,9 +200,9 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     switch (style.appearance()) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return adjustCheckboxStyle(styleResolver, style, element);
+        return adjustCheckboxStyle(style, element);
     case RadioPart:
-        return adjustRadioStyle(styleResolver, style, element);
+        return adjustRadioStyle(style, element);
     case PushButtonPart:
     case SquareButtonPart:
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -210,18 +210,18 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
 #endif
     case DefaultButtonPart:
     case ButtonPart:
-        return adjustButtonStyle(styleResolver, style, element);
+        return adjustButtonStyle(style, element);
     case InnerSpinButtonPart:
-        return adjustInnerSpinButtonStyle(styleResolver, style, element);
+        return adjustInnerSpinButtonStyle(style, element);
 #endif
     case TextFieldPart:
-        return adjustTextFieldStyle(styleResolver, style, element);
+        return adjustTextFieldStyle(style, element);
     case TextAreaPart:
-        return adjustTextAreaStyle(styleResolver, style, element);
+        return adjustTextAreaStyle(style, element);
     case MenulistPart:
-        return adjustMenuListStyle(styleResolver, style, element);
+        return adjustMenuListStyle(style, element);
     case MenulistButtonPart:
-        return adjustMenuListButtonStyle(styleResolver, style, element);
+        return adjustMenuListButtonStyle(style, element);
     case MediaPlayButtonPart:
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
@@ -229,54 +229,54 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case MediaExitFullscreenButtonPart:
     case MediaMuteButtonPart:
     case MediaVolumeSliderContainerPart:
-        return adjustMediaControlStyle(styleResolver, style, element);
+        return adjustMediaControlStyle(style, element);
     case MediaSliderPart:
     case MediaVolumeSliderPart:
     case MediaFullScreenVolumeSliderPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return adjustSliderTrackStyle(styleResolver, style, element);
+        return adjustSliderTrackStyle(style, element);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return adjustSliderThumbStyle(styleResolver, style, element);
+        return adjustSliderThumbStyle(style, element);
     case SearchFieldPart:
-        return adjustSearchFieldStyle(styleResolver, style, element);
+        return adjustSearchFieldStyle(style, element);
     case SearchFieldCancelButtonPart:
-        return adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
+        return adjustSearchFieldCancelButtonStyle(style, element);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(styleResolver, style, element);
+        return adjustSearchFieldDecorationPartStyle(style, element);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
+        return adjustSearchFieldResultsDecorationPartStyle(style, element);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
+        return adjustSearchFieldResultsButtonStyle(style, element);
     case ProgressBarPart:
-        return adjustProgressBarStyle(styleResolver, style, element);
+        return adjustProgressBarStyle(style, element);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-        return adjustMeterStyle(styleResolver, style, element);
+        return adjustMeterStyle(style, element);
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         break;
 #endif
     case CapsLockIndicatorPart:
-        return adjustCapsLockIndicatorStyle(styleResolver, style, element);
+        return adjustCapsLockIndicatorStyle(style, element);
 #if ENABLE(APPLE_PAY)
     case ApplePayButtonPart:
-        return adjustApplePayButtonStyle(styleResolver, style, element);
+        return adjustApplePayButtonStyle(style, element);
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
     case BorderlessAttachmentPart:
-        return adjustAttachmentStyle(styleResolver, style, element);
+        return adjustAttachmentStyle(style, element);
 #endif
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
-        return adjustListButtonStyle(styleResolver, style, element);
+        return adjustListButtonStyle(style, element);
 #endif
     default:
         break;
@@ -926,7 +926,7 @@ bool RenderTheme::isDefault(const RenderObject& o) const
 
 #if !USE(NEW_THEME)
 
-void RenderTheme::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element*) const
 {
     // A summary of the rules for checkbox designed to match WinIE:
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
@@ -943,7 +943,7 @@ void RenderTheme::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, const 
     style.setBoxShadow(nullptr);
 }
 
-void RenderTheme::adjustRadioStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element*) const
 {
     // A summary of the rules for checkbox designed to match WinIE:
     // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
@@ -960,7 +960,7 @@ void RenderTheme::adjustRadioStyle(StyleResolver&, RenderStyle& style, const Ele
     style.setBoxShadow(nullptr);
 }
 
-void RenderTheme::adjustButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element*) const
 {
     // Most platforms will completely honor all CSS, and so we have no need to
     // adjust the style at all by default. We will still allow the theme a crack
@@ -968,26 +968,26 @@ void RenderTheme::adjustButtonStyle(StyleResolver&, RenderStyle& style, const El
     setButtonSize(style);
 }
 
-void RenderTheme::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const
 {
 }
 #endif
 
-void RenderTheme::adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustTextFieldStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustTextAreaStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustTextAreaStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustMenuListStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustMenuListStyle(RenderStyle&, const Element*) const
 {
 }
 
 #if ENABLE(METER_ELEMENT)
 
-void RenderTheme::adjustMeterStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
 }
@@ -1009,7 +1009,7 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
 
 #endif // METER_ELEMENT
 
-void RenderTheme::adjustCapsLockIndicatorStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustCapsLockIndicatorStyle(RenderStyle&, const Element*) const
 {
 }
 
@@ -1020,7 +1020,7 @@ bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, 
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void RenderTheme::adjustAttachmentStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustAttachmentStyle(RenderStyle&, const Element*) const
 {
 }
 
@@ -1049,7 +1049,7 @@ String RenderTheme::dataListStyleSheet() const
     return "datalist { display: none; }"_s;
 }
 
-void RenderTheme::adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustListButtonStyle(RenderStyle&, const Element*) const
 {
 }
 
@@ -1150,7 +1150,7 @@ Seconds RenderTheme::animationDurationForProgressBar(RenderProgress&) const
     return 0_s;
 }
 
-void RenderTheme::adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustProgressBarStyle(RenderStyle&, const Element*) const
 {
 }
 
@@ -1169,19 +1169,19 @@ bool RenderTheme::shouldHaveCapsLockIndicator(const HTMLInputElement&) const
     return false;
 }
 
-void RenderTheme::adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustMenuListButtonStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustMediaControlStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustMediaControlStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSliderTrackStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSliderThumbStyle(StyleResolver&, RenderStyle& style, const Element* element) const
+void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
     adjustSliderThumbSize(style, element);
 }
@@ -1190,23 +1190,23 @@ void RenderTheme::adjustSliderThumbSize(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSearchFieldStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
+void RenderTheme::adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const
 {
 }
 

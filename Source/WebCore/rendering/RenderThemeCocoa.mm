@@ -54,7 +54,7 @@ static const auto applePayButtonMinimumWidth = 140;
 static const auto applePayButtonPlainMinimumWidth = 100;
 static const auto applePayButtonMinimumHeight = 30;
 
-void RenderThemeCocoa::adjustApplePayButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
+void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Element*) const
 {
     if (style.applePayButtonType() == ApplePayButtonType::Plain)
         style.setMinWidth(Length(applePayButtonPlainMinimumWidth, Fixed));
