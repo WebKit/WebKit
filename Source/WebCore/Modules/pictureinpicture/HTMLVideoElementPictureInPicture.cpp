@@ -71,6 +71,11 @@ HTMLVideoElementPictureInPicture* HTMLVideoElementPictureInPicture::from(HTMLVid
     return supplement;
 }
 
+void HTMLVideoElementPictureInPicture::providePictureInPictureTo(HTMLVideoElement& videoElement)
+{
+    provideTo(&videoElement, supplementName(), makeUnique<HTMLVideoElementPictureInPicture>(videoElement));
+}
+
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
     if (!supportsPictureInPicture()) {

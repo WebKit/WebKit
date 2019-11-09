@@ -1,3 +1,23 @@
+2019-11-08  Peng Liu  <peng.liu6@apple.com>
+
+        Entering/Exiting Picture-in-Picture mode through webkitSetPresentationMode() does not fire events (enterpictureinpicture and leavepictureinpicture) defined in the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203989
+
+        Reviewed by Eric Carlson.
+
+        Instantiate a HTMLVideoElementPictureInPicture object when we create a new video element
+        so that the events defined in the spec will be fired no matter which interface is used
+        to enter/exit the Picture-in-Picture mode.
+
+        Test: media/picture-in-picture/picture-in-picture-events.html
+
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::providePictureInPictureTo):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::create):
+
 2019-11-08  Chris Dumez  <cdumez@apple.com>
 
         Make DeferredPromise behave nicely with regards to the back/forward cache

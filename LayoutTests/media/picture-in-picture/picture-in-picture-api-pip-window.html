@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="video-test.js"></script>
-    <script src="media-file.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
     <script>
         window.addEventListener('load', async event => {
             findMediaElement();
@@ -10,24 +10,30 @@
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
             run('internals.setPictureInPictureAPITestEnabled(video, true)');
 
-            run('video.src = findMediaFile("video", "content/test")');
+            run('video.src = findMediaFile("video", "../content/test")');
             await waitFor(video, 'canplaythrough');
+
             runWithKeyDown(function() {
                 video.requestPictureInPicture()
-                .then(() => {
+                .then(pipWindow => {
+                    window.pipWindow = pipWindow;
+                    testExpected('pipWindow.width', 0, '>');
+                    testExpected('pipWindow.height', 0, '>');
+
                     document.exitPictureInPicture().then(endTest).catch(() => {
                         failTest('Failed to exit the Picture-in-Picture mode.');
                     });
                 })
-                .catch(() => {
-                    failTest('request Picture-in-Picture does not resolve on user click.');
+                .catch(error => {
+                    failTest("Failed to enter the Picture-in-Picture mode.");
                 });
             });
+
         });
     </script>
 </head>
 <body>
-    <div>This tests that request Picture-in-Picture resolves on user click.</div>
+    <div>This tests that a pip window is returned correctly when a video element enters the Picture-in-Picture mode.</div>
     <video controls></video>
 </body>
 </html>

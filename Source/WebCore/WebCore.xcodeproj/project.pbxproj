@@ -626,6 +626,8 @@
 		1CCD81502231F83E0065FC2B /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E152551416FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm */; };
 		1CCDF5BE1990332400BCEBAD /* SVGToOTFFontConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDF5BC1990332400BCEBAD /* SVGToOTFFontConversion.h */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
+		1D0026A42374D62400CA6CDF /* JSPictureInPictureWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D0026A22374D62300CA6CDF /* JSPictureInPictureWindow.h */; };
+		1D0026AA2374F9EA00CA6CDF /* JSEnterPictureInPictureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D0026A82374F9D900CA6CDF /* JSEnterPictureInPictureEvent.h */; };
 		1D2C82B7236A3F6A0055D6C5 /* PictureInPictureSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D2C82B6236A3F6A0055D6C5 /* PictureInPictureSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2F8E03234474EF00993B68 /* DocumentPictureInPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06DD233D2E1C00EE228D /* DocumentPictureInPicture.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2F8E042344751600993B68 /* EnterPictureInPictureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CA233C3D0B00EE228D /* EnterPictureInPictureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6469,6 +6471,10 @@
 		1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNativeTypeWriter.h; sourceTree = "<group>"; };
 		1CF0BFD42298706800ED2074 /* TextSizeAdjustment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextSizeAdjustment.cpp; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		1D0026A22374D62300CA6CDF /* JSPictureInPictureWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPictureInPictureWindow.h; sourceTree = "<group>"; };
+		1D0026A32374D62400CA6CDF /* JSPictureInPictureWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPictureInPictureWindow.cpp; sourceTree = "<group>"; };
+		1D0026A82374F9D900CA6CDF /* JSEnterPictureInPictureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEnterPictureInPictureEvent.h; path = JSEnterPictureInPictureEvent.h; sourceTree = "<group>"; };
+		1D0026A92374F9D900CA6CDF /* JSEnterPictureInPictureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEnterPictureInPictureEvent.cpp; path = JSEnterPictureInPictureEvent.cpp; sourceTree = "<group>"; };
 		1D2C82B6236A3F6A0055D6C5 /* PictureInPictureSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureSupport.h; sourceTree = "<group>"; };
 		1DBC1B552347B3D200B901AF /* PictureInPictureObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureObserver.h; sourceTree = "<group>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
@@ -16772,6 +16778,7 @@
 				33503C9C10179A9A003B47E1 /* Notifications */,
 				1AC226020DB69EA70089B669 /* Offline */,
 				A1CC564A1F4613BB00A4555B /* PaymentRequest */,
+				1D00269A2374B9F800CA6CDF /* PictureInPicture */,
 				A9D247F90D757E4100FDF959 /* Plugins */,
 				89F60B17157F6A020075E157 /* Quota */,
 				BC9854460CD3DA5F00069BC1 /* Ranges */,
@@ -17475,6 +17482,17 @@
 				D0F75598220391C300118058 /* WHLSLVertexBufferIndexCalculator.h */,
 			);
 			path = Metal;
+			sourceTree = "<group>";
+		};
+		1D00269A2374B9F800CA6CDF /* PictureInPicture */ = {
+			isa = PBXGroup;
+			children = (
+				1D0026A92374F9D900CA6CDF /* JSEnterPictureInPictureEvent.cpp */,
+				1D0026A82374F9D900CA6CDF /* JSEnterPictureInPictureEvent.h */,
+				1D0026A32374D62400CA6CDF /* JSPictureInPictureWindow.cpp */,
+				1D0026A22374D62300CA6CDF /* JSPictureInPictureWindow.h */,
+			);
+			name = PictureInPicture;
 			sourceTree = "<group>";
 		};
 		1DEF06A2233C32DB00EE228D /* pictureinpicture */ = {
@@ -30451,6 +30469,7 @@
 				71495DDB202B06F100ADFD34 /* JSEffectTiming.h in Headers */,
 				65DF31FA09D1CC60000BE325 /* JSElement.h in Headers */,
 				ADEC78F818EE5308001315C2 /* JSElementCustom.h in Headers */,
+				1D0026AA2374F9EA00CA6CDF /* JSEnterPictureInPictureEvent.h in Headers */,
 				83EE598F1F50958E003E8B30 /* JSErrorCallback.h in Headers */,
 				2ECF7ADD10162B3800427DE7 /* JSErrorEvent.h in Headers */,
 				F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */,
@@ -30717,6 +30736,7 @@
 				CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
 				FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */,
+				1D0026A42374D62400CA6CDF /* JSPictureInPictureWindow.h in Headers */,
 				712BE4891FE86875002031CC /* JSPlaybackDirection.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */,
 				5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */,

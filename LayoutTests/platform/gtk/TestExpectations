@@ -2478,7 +2478,7 @@ webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html
 
 webkit.org/b/187266 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Pass Timeout ]
 
-webkit.org/b/187273 media/picture-in-picture-interruption.html [ Timeout ]
+webkit.org/b/187273 media/picture-in-picture/picture-in-picture-interruption.html [ Timeout ]
 
 webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html [ Failure Pass ]
 webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html [ Failure Pass ]

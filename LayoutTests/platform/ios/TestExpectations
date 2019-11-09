@@ -991,7 +991,7 @@ http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip
 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
-media/picture-in-picture-interruption.html [ Skip ]
+media/picture-in-picture/picture-in-picture-interruption.html [ Skip ]
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Skip ]

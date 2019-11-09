@@ -50,6 +50,7 @@ class HTMLVideoElementPictureInPicture
 public:
     HTMLVideoElementPictureInPicture(HTMLVideoElement&);
     static HTMLVideoElementPictureInPicture* from(HTMLVideoElement&);
+    static void providePictureInPictureTo(HTMLVideoElement&);
     virtual ~HTMLVideoElementPictureInPicture();
 
     static void requestPictureInPicture(HTMLVideoElement&, Ref<DeferredPromise>&&);

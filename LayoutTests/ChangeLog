@@ -1,3 +1,42 @@
+2019-11-08  Peng Liu  <peng.liu6@apple.com>
+
+        Entering/Exiting Picture-in-Picture mode through webkitSetPresentationMode() does not fire events (enterpictureinpicture and leavepictureinpicture) defined in the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203989
+
+        Reviewed by Eric Carlson.
+
+        Move all layout tests for Picture-in-Picture to folder media/picture-in-picture.
+        Add a layout test to verify the events defined in the spec are fired when we call the webkit prefixed API.
+        Update TestExpectations files since webkit.org/b/203614 has been fixed.
+
+        * TestExpectations:
+        * media/picture-in-picture/picture-in-picture-api-element-attributes-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-element-attributes-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-element-attributes.html: Renamed from LayoutTests/media/picture-in-picture-api-element-attributes.html.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-1-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-1-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-1.html: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-1.html.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-2-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-2-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-2.html: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-2.html.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-3-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-3-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-3.html: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-3.html.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-4-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-4-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-4.html: Renamed from LayoutTests/media/picture-in-picture-api-enter-pip-4.html.
+        * media/picture-in-picture/picture-in-picture-api-events-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-pip-events-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-events.html: Renamed from LayoutTests/media/picture-in-picture-api-pip-events.html.
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-1-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-exit-pip-1-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-1.html: Renamed from LayoutTests/media/picture-in-picture-api-exit-pip-1.html.
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-2-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-exit-pip-2-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-2.html: Renamed from LayoutTests/media/picture-in-picture-api-exit-pip-2.html.
+        * media/picture-in-picture/picture-in-picture-api-pip-window-expected.txt: Renamed from LayoutTests/media/picture-in-picture-api-pip-window-expected.txt.
+        * media/picture-in-picture/picture-in-picture-api-pip-window.html: Renamed from LayoutTests/media/picture-in-picture-api-pip-window.html.
+        * media/picture-in-picture/picture-in-picture-events-expected.txt: Added.
+        * media/picture-in-picture/picture-in-picture-events.html: Added.
+        * media/picture-in-picture/picture-in-picture-interruption-expected.txt: Renamed from LayoutTests/media/picture-in-picture-interruption-expected.txt.
+        * media/picture-in-picture/picture-in-picture-interruption.html: Renamed from LayoutTests/media/picture-in-picture-interruption.html.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ipad/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-11-08  Chris Dumez  <cdumez@apple.com>
 
         Make DeferredPromise behave nicely with regards to the back/forward cache

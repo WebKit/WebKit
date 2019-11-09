@@ -2,7 +2,7 @@ This tests that a pip window is returned correctly when a video element enters t
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
 RUN(internals.setPictureInPictureAPITestEnabled(video, true))
-RUN(video.src = findMediaFile("video", "content/test"))
+RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 EXPECTED (pipWindow.width > '0') OK
 EXPECTED (pipWindow.height > '0') OK

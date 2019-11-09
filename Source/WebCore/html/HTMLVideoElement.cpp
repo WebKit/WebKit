@@ -48,8 +48,12 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "PictureInPictureObserver.h"
 #include "VideoFullscreenModel.h"
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+#include "HTMLVideoElementPictureInPicture.h"
+#include "PictureInPictureObserver.h"
 #endif
 
 namespace WebCore {
@@ -69,6 +73,11 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     auto videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    HTMLVideoElementPictureInPicture::providePictureInPictureTo(videoElement);
+#endif
+
     videoElement->finishInitialization();
     videoElement->suspendIfNeeded();
     return videoElement;
