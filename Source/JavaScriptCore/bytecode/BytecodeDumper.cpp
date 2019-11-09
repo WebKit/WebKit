@@ -28,6 +28,7 @@
 #include "BytecodeDumper.h"
 
 #include "ArithProfile.h"
+#include "B3Type.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeStructs.h"
 #include "CallLinkStatus.h"
@@ -42,6 +43,10 @@
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include "WasmFunctionCodeBlock.h"
+#include "WasmGeneratorTraits.h"
+#include "WasmModuleInformation.h"
+#include "WasmOps.h"
+#include "WasmSignatureInlines.h"
 
 namespace JSC {
 
@@ -245,10 +250,103 @@ void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionSt
 }
 
 template class BytecodeDumper<CodeBlock>;
-#if ENABLE(WEBASSEMBLY)
-template class BytecodeDumper<Wasm::FunctionCodeBlock>;
-#endif
 template class CodeBlockBytecodeDumper<UnlinkedCodeBlock>;
 template class CodeBlockBytecodeDumper<CodeBlock>;
 
+#if ENABLE(WEBASSEMBLY)
+
+namespace Wasm {
+
+void BytecodeDumper::dumpBlock(FunctionCodeBlock* block, const ModuleInformation& moduleInformation, PrintStream& out)
+{
+    size_t instructionCount = 0;
+    size_t wide16InstructionCount = 0;
+    size_t wide32InstructionCount = 0;
+
+    for (auto it = block->instructions().begin(); it != block->instructions().end(); it += it->size<WasmOpcodeTraits>()) {
+        if (it->isWide16())
+            ++wide16InstructionCount;
+        else if (it->isWide32())
+            ++wide32InstructionCount;
+        ++instructionCount;
+    }
+
+    size_t functionIndexSpace = moduleInformation.importFunctionCount() + block->functionIndex();
+    out.print(makeString(IndexOrName(functionIndexSpace, moduleInformation.nameSection->get(functionIndexSpace))));
+
+    const auto& function = moduleInformation.functions[block->functionIndex()];
+    SignatureIndex signatureIndex = moduleInformation.internalFunctionSignatureIndices[block->functionIndex()];
+    const Signature& signature = SignatureInformation::get(signatureIndex);
+    out.print(" : ", signature, "\n");
+    out.print("wasm size: ", function.data.size(), " bytes\n");
+
+    out.printf(
+        "bytecode: %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions); %lu bytes; %d parameter(s); %d local(s); %d callee register(s)\n",
+        static_cast<unsigned long>(instructionCount),
+        static_cast<unsigned long>(wide16InstructionCount),
+        static_cast<unsigned long>(wide32InstructionCount),
+        static_cast<unsigned long>(block->instructions().sizeInBytes()),
+        block->numArguments(),
+        block->numVars(),
+        block->numCalleeLocals());
+
+    BytecodeDumper dumper(block, out);
+    for (auto it = block->instructions().begin(); it != block->instructions().end(); it += it->size<WasmOpcodeTraits>()) {
+        dumpWasm(&dumper, it.offset(), it.ptr());
+        out.print("\n");
+    }
+
+    dumper.dumpConstants();
+
+    out.printf("\n");
+}
+
+void BytecodeDumper::dumpConstants()
+{
+    FunctionCodeBlock* block = this->block();
+    if (!block->constants().isEmpty()) {
+        this->m_out.printf("\nConstants:\n");
+        unsigned i = 0;
+        for (const auto& constant : block->constants()) {
+            Type type = block->constantTypes()[i];
+            this->m_out.print("   const", i, " : ", type, " = ", formatConstant(type, constant), "\n");
+            ++i;
+        }
+    }
+}
+
+CString BytecodeDumper::constantName(int index) const
+{
+    FunctionCodeBlock* block = this->block();
+    auto value = formatConstant(block->getConstantType(index), block->getConstant(index));
+    return toCString(value, "(", VirtualRegister(index), ")");
+}
+
+CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
+{
+    switch (type) {
+    case Type::I32:
+        return toCString(static_cast<int32_t>(constant));
+    case Type::I64:
+        return toCString(constant);
+    case Type::F32:
+        return toCString(bitwise_cast<float>(static_cast<int32_t>(constant)));
+        break;
+    case Type::F64:
+        return toCString(bitwise_cast<double>(constant));
+        break;
+    case Type::Anyref:
+    case Type::Funcref:
+        if (JSValue::decode(constant) == jsNull())
+            return "null";
+        return toCString(RawPointer(bitwise_cast<void*>(constant)));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return "";
+    }
+}
+
+} // namespace Wasm
+
+#endif // ENABLE(WEBASSEMBLY)
 }

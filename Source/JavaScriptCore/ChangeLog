@@ -1,3 +1,57 @@
+2019-11-09  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Improve bytecode dumping
+        https://bugs.webkit.org/show_bug.cgi?id=204051
+
+        Reviewed by Keith Miller.
+
+        This patch improves the bytecode dumping for Wasm by:
+        - Adding a new option that dumps only the Wasm bytecode. It can be quite hard to find
+          the Wasm bytecode in the middle of a ton of JS bytecode dumps.
+        - Adding a header with name of the function and stats, similar to the JS dump.
+        - Using Wasm types to properly print constants, and including the type in constants
+          table at the end of the dump.
+
+        Here's an example of the updated bytecode dump:
+
+        <?>.wasm-function[26] : (I32) -> [I32]
+        wasm size: 4 bytes
+        bytecode: 6 instructions (0 16-bit instructions, 0 32-bit instructions); 14 bytes; 1 parameter(s); 18 local(s); 22 callee register(s)
+        [   0] enter
+        [   1] mov                loc18, null(const0)
+        [   4] mov                loc20, loc4
+        [   7] mov                loc19, loc20
+        [  10] mov                loc4, loc19
+        [  13] ret
+
+        Constants:
+           const0 : Anyref = null
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::dumpBlock):
+        (JSC::Wasm::BytecodeDumper::dumpConstants):
+        (JSC::Wasm::BytecodeDumper::constantName const):
+        (JSC::Wasm::BytecodeDumper::formatConstant const):
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumper::~BytecodeDumper):
+        * runtime/OptionsList.h:
+        * wasm/WasmFunctionCodeBlock.cpp:
+        * wasm/WasmFunctionCodeBlock.h:
+        (JSC::Wasm::FunctionCodeBlock::functionIndex const):
+        (JSC::Wasm::FunctionCodeBlock::numVars const):
+        (JSC::Wasm::FunctionCodeBlock::numCalleeLocals const):
+        (JSC::Wasm::FunctionCodeBlock::numArguments const):
+        (JSC::Wasm::FunctionCodeBlock::constantTypes const):
+        (JSC::Wasm::FunctionCodeBlock::constants const):
+        (JSC::Wasm::FunctionCodeBlock::instructions const):
+        (JSC::Wasm::FunctionCodeBlock::getConstantType const):
+        * wasm/WasmGeneratorTraits.h: Added.
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addConstant):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+
 2019-11-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] LLIntGenerator should not retain VirtualRegisters used for constants

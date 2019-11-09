@@ -70,6 +70,8 @@ public:
     {
     }
 
+    virtual ~BytecodeDumper() { }
+
 protected:
     Block* block() const { return m_block; }
 
@@ -79,7 +81,7 @@ protected:
 
 private:
     CString registerName(int r) const;
-    CString constantName(int index) const;
+    virtual CString constantName(int index) const;
 
     Block* m_block;
     InstructionStream::Offset m_currentLocation { 0 };
@@ -103,5 +105,29 @@ private:
     void dumpSwitchJumpTables();
     void dumpStringSwitchJumpTables();
 };
+
+#if ENABLE(WEBASSEMBLY)
+
+namespace Wasm {
+
+class FunctionCodeBlock;
+struct ModuleInformation;
+enum Type : int8_t;
+
+class BytecodeDumper : public JSC::BytecodeDumper<FunctionCodeBlock> {
+public:
+    static void dumpBlock(FunctionCodeBlock*, const ModuleInformation&, PrintStream& out);
+
+private:
+    using JSC::BytecodeDumper<FunctionCodeBlock>::BytecodeDumper;
+
+    void dumpConstants();
+    CString constantName(int index) const override;
+    CString formatConstant(Type, uint64_t) const;
+};
+
+} // namespace Wasm
+
+#endif // ENABLE(WEBASSEMBLY)
 
 }

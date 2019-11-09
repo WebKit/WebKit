@@ -37,20 +37,13 @@
 #include "WasmContextInlines.h"
 #include "WasmFunctionCodeBlock.h"
 #include "WasmFunctionParser.h"
+#include "WasmGeneratorTraits.h"
 #include "WasmThunks.h"
 #include <wtf/RefPtr.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/Variant.h>
 
 namespace JSC { namespace Wasm {
-
-struct GeneratorTraits {
-    using OpcodeTraits = WasmOpcodeTraits;
-    using OpcodeID = WasmOpcodeID;
-    using OpNop = WasmNop;
-    using CodeBlock = std::unique_ptr<FunctionCodeBlock>;
-    static constexpr OpcodeID opcodeForDisablingOptimizations = wasm_unreachable;
-};
 
 class LLIntGenerator : public BytecodeGeneratorBase<GeneratorTraits> {
 public:
@@ -498,13 +491,15 @@ void LLIntGenerator::didFinishParsingLocals()
     m_unitializedLocals.clear();
 }
 
-auto LLIntGenerator::addConstant(Type, uint64_t value) -> ExpressionType
+auto LLIntGenerator::addConstant(Type type, uint64_t value) -> ExpressionType
 {
     VirtualRegister source(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
     auto result = m_constantMap.emplace(value, source);
-    if (result.second)
+    if (result.second) {
         m_codeBlock->m_constants.append(value);
-    else
+        if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+            m_codeBlock->m_constantTypes.append(type);
+    } else
         source = result.first->second;
     auto target = newTemporary();
     WasmMov::emit(this, target, source);

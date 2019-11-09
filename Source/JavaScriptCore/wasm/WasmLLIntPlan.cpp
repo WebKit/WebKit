@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
+#include "BytecodeDumper.h"
 #include "CalleeBits.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
@@ -90,11 +91,6 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
 
 void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 {
-    if (Options::dumpGeneratedBytecodes()) {
-        for (const auto& codeBlock : m_wasmInternalFunctions)
-            codeBlock->dumpBytecode();
-    }
-
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
@@ -121,6 +117,10 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
         Vector<CCallHelpers::Jump> jumps(functionCount);
         for (unsigned i = 0; i < functionCount; ++i) {
             size_t functionIndexSpace = i + m_moduleInformation->importFunctionCount();
+
+            if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+                BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
+
             m_callees[i] = Wasm::LLIntCallee::create(WTFMove(m_wasmInternalFunctions[i]), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
             entrypoints[i] = jit.label();
 #if CPU(X86_64)

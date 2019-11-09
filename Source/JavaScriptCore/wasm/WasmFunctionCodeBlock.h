@@ -46,6 +46,7 @@ namespace Wasm {
 
 class Signature;
 struct GeneratorTraits;
+enum Type : int8_t;
 
 // FIXME: Consider merging this with LLIntCallee
 // https://bugs.webkit.org/show_bug.cgi?id=203691
@@ -63,12 +64,22 @@ public:
     {
     }
 
+    uint32_t functionIndex() const { return m_functionIndex; }
+    int numVars() const { return m_numVars; }
+    int numCalleeLocals() const { return m_numCalleeLocals; }
+    uint32_t numArguments() const { return m_numArguments; }
+    const Vector<Type>& constantTypes() const { return m_constantTypes; }
+    const Vector<uint64_t>& constants() const { return m_constants; }
+    const InstructionStream& instructions() const { return *m_instructions; }
+
     ALWAYS_INLINE uint64_t getConstant(int index) const { return m_constants[index - FirstConstantRegisterIndex]; }
-    ALWAYS_INLINE uint32_t functionIndex() const { return m_functionIndex; }
+    ALWAYS_INLINE Type getConstantType(int index) const
+    {
+        ASSERT(Options::dumpGeneratedWasmBytecodes());
+        return m_constantTypes[index - FirstConstantRegisterIndex];
+    }
 
     void setInstructions(std::unique_ptr<InstructionStream>);
-    void dumpBytecode();
-
     void addJumpTarget(InstructionStream::Offset jumpTarget) { m_jumpTargets.append(jumpTarget); }
     InstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
     InstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
@@ -109,6 +120,7 @@ private:
     // Number of VirtualRegister. The naming is unfortunate, but has to match UnlinkedCodeBlock
     int m_numCalleeLocals { 0 };
     uint32_t m_numArguments { 0 };
+    Vector<Type> m_constantTypes;
     Vector<uint64_t> m_constants;
     std::unique_ptr<InstructionStream> m_instructions;
     const void* m_instructionsRawPointer { nullptr };

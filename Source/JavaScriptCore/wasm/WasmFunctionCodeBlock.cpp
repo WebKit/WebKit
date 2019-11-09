@@ -42,15 +42,6 @@ void FunctionCodeBlock::setInstructions(std::unique_ptr<InstructionStream> instr
     m_instructionsRawPointer = m_instructions->rawPointer();
 }
 
-void FunctionCodeBlock::dumpBytecode()
-{
-    BytecodeDumper<FunctionCodeBlock> dumper(this, WTF::dataFile());
-    for (auto it = m_instructions->begin(); it != m_instructions->end(); it += it->size<WasmOpcodeTraits>()) {
-        dumpWasm(&dumper, it.offset(), it.ptr());
-        dataLogLn();
-    }
-}
-
 void FunctionCodeBlock::addOutOfLineJumpTarget(InstructionStream::Offset bytecodeOffset, int target)
 {
     RELEASE_ASSERT(target);
