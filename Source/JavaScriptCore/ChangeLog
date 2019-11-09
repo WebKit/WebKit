@@ -1,5 +1,13 @@
 2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix debug JSC tests failures due to missing exception check
+        https://bugs.webkit.org/show_bug.cgi?id=203936
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCallWithStackSize):
+
+2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Rename LargeAllocation to PreciseAllocation
         https://bugs.webkit.org/show_bug.cgi?id=204040
 

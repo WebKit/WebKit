@@ -2045,7 +2045,7 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
     if (!arg1.isNumber())
         return throwVMError(globalObject, throwScope, "arg1 should be a number");
 
-    JSFunction* function = jsCast<JSFunction*>(arg0.toObject(globalObject));
+    JSFunction* function = jsCast<JSFunction*>(arg0);
     size_t desiredStackSize = arg1.asNumber();
 
     const StackBounds& bounds = Thread::current().stack();
