@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class SWServerWorker;
+
 class SWServerJobQueue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -51,7 +53,7 @@ public:
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
-    void didFinishInstall(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, bool wasSuccessful);
+    void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);
     void didResolveRegistrationPromise();
     void cancelJobsFromConnection(SWServerConnectionIdentifier);
     void cancelJobsFromServiceWorker(ServiceWorkerIdentifier);

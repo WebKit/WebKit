@@ -177,25 +177,21 @@ void SWServerJobQueue::didResolveRegistrationPromise()
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier identifier, bool wasSuccessful)
+void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerWorker& worker, bool wasSuccessful)
 {
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
 
-    auto* registration = m_server.getRegistration(m_registrationKey);
+    auto* registration = worker.registration();
     ASSERT(registration);
-    ASSERT(registration->installingWorker());
-    ASSERT(registration->installingWorker()->identifier() == identifier);
+    ASSERT(registration->installingWorker() == &worker);
 
     if (!wasSuccessful) {
-        RefPtr<SWServerWorker> worker = m_server.workerByID(identifier);
-        RELEASE_ASSERT(worker);
-
-        worker->terminate();
+        worker.terminate();
         // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
         registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
         // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
+        registration->updateWorkerState(worker, ServiceWorkerState::Redundant);
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
@@ -211,12 +207,9 @@ void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jo
         registration->updateWorkerState(*waitingWorker, ServiceWorkerState::Redundant);
     }
 
-    auto* installing = registration->installingWorker();
-    ASSERT(installing);
-
-    registration->updateRegistrationState(ServiceWorkerRegistrationState::Waiting, installing);
+    registration->updateRegistrationState(ServiceWorkerRegistrationState::Waiting, &worker);
     registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
-    registration->updateWorkerState(*installing, ServiceWorkerState::Installed);
+    registration->updateWorkerState(worker, ServiceWorkerState::Installed);
 
     finishCurrentJob();
 

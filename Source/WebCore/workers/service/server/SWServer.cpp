@@ -445,7 +445,7 @@ void SWServer::didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>& 
         RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::didFinishInstall: Failed SW install for job %s", this, jobDataIdentifier->loggingString().utf8().data());
 
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->didFinishInstall(*jobDataIdentifier, worker.identifier(), wasSuccessful);
+        jobQueue->didFinishInstall(*jobDataIdentifier, worker, wasSuccessful);
 }
 
 void SWServer::didFinishActivation(SWServerWorker& worker)

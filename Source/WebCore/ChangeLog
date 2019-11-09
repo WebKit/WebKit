@@ -1,3 +1,28 @@
+2019-11-08  Youenn Fablet  <youenn@apple.com>
+
+        SWServerWorker in redundant state do not need to process messages from the context process
+        https://bugs.webkit.org/show_bug.cgi?id=204019
+
+        Reviewed by Chris Dumez.
+
+        When a service worker is marked as redundant in network process, it might still receive some messages like didFinishActivation or didFinishInstall.
+        In that state, we do not need to process these messages.
+        Did some refactoring to directly pass the service worker to the job queue.
+        This makes it clear the registration and service worker are the correct ones.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::didFinishInstall):
+        Pass the worker instead of its identifier.
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::didFinishInstall):
+        Now that we are given the service worker, get its registration directly.
+        * workers/service/server/SWServerJobQueue.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::didFinishInstall):
+        Exit early in redundant state.
+        (WebCore::SWServerWorker::didFinishActivation):
+        Exit early in redundant state.
+
 2019-11-08  youenn fablet  <youenn@apple.com>
 
         XMLHttpRequestUpload should be exposed in dedicated workers

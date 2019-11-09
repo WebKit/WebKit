@@ -118,14 +118,24 @@ void SWServerWorker::scriptContextStarted(const Optional<ServiceWorkerJobDataIde
 
 void SWServerWorker::didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool wasSuccessful)
 {
+    auto state = this->state();
+    if (state == ServiceWorkerState::Redundant)
+        return;
+
     ASSERT(m_server);
+    RELEASE_ASSERT(state == ServiceWorkerState::Installing);
     if (m_server)
         m_server->didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
 
 void SWServerWorker::didFinishActivation()
 {
+    auto state = this->state();
+    if (state == ServiceWorkerState::Redundant)
+        return;
+
     ASSERT(m_server);
+    RELEASE_ASSERT(state == ServiceWorkerState::Activating);
     if (m_server)
         m_server->didFinishActivation(*this);
 }
