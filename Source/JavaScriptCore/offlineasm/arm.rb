@@ -299,7 +299,7 @@ class Sequence
             end
         }
         result = riscLowerMalformedAddressesDouble(result)
-        result = riscLowerMisplacedImmediates(result, ["storeb", "storeh", "storei", "storep", "storeq"])
+        result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep", "storeq"])
         result = riscLowerMalformedImmediates(result, 0..0xff, 0..0x0ff)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)
@@ -418,7 +418,7 @@ class Instruction
             end
         when "andi", "andp"
             emitArmCompact("ands", "and", operands)
-        when "ori", "orp", "orh"
+        when "ori", "orp"
             emitArmCompact("orrs", "orr", operands)
         when "oris"
             emitArmCompact("orrs", "orrs", operands)

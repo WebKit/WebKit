@@ -462,7 +462,7 @@ def riscLowerMisplacedAddresses(list)
             postInstructions = []
             annotation = node.annotation
             case node.opcode
-            when "addi", "addis", "andi", "lshifti", "muli", "negi", "noti", "ori", "orh", "oris",
+            when "addi", "addis", "andi", "lshifti", "muli", "negi", "noti", "ori", "oris",
                 "rshifti", "urshifti", "subi", "subis", "xori", /^bi/, /^bti/, /^ci/, /^ti/
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,

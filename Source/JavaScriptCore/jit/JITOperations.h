@@ -38,8 +38,6 @@ typedef int64_t EncodedJSValue;
     
 class ArrayAllocationProfile;
 class ArrayProfile;
-class UnaryArithProfile;
-class BinaryArithProfile;
 class Butterfly;
 class CallFrame;
 class CallLinkInfo;
@@ -66,6 +64,7 @@ class WatchpointSet;
 struct ByValInfo;
 struct InlineCallFrame;
 struct Instruction;
+struct ArithProfile;
 
 extern "C" {
 
@@ -78,7 +77,7 @@ typedef char* UnusedPtr;
     A: JSArray*
     Aap: ArrayAllocationProfile*
     Ap: ArrayProfile*
-    Arp: BinaryArithProfile*
+    Arp: ArithProfile*
     B: Butterfly*
     By: ByValInfo*
     C: JSCell*
@@ -283,7 +282,7 @@ int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(VM
 int32_t JIT_OPERATION operationInstanceOfCustom(JSGlobalObject*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance) WTF_INTERNAL;
 
 EncodedJSValue JIT_OPERATION operationValueAdd(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueAddProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BinaryArithProfile*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueAddProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddProfiledOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITAddIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddProfiledNoOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITAddIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITAddIC*) WTF_INTERNAL;
@@ -293,13 +292,13 @@ EncodedJSValue JIT_OPERATION operationValueMulOptimize(JSGlobalObject*, EncodedJ
 EncodedJSValue JIT_OPERATION operationValueMulNoOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITMulIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueMulProfiledOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITMulIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueMulProfiledNoOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITMulIC*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueMulProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BinaryArithProfile*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueMulProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArithNegate(JSGlobalObject*, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject*, EncodedJSValue operand, UnaryArithProfile*);
+EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject*, EncodedJSValue operand, ArithProfile*);
 EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject*, EncodedJSValue encodedOperand, JITNegIC*);
 EncodedJSValue JIT_OPERATION operationArithNegateOptimize(JSGlobalObject*, EncodedJSValue encodedOperand, JITNegIC*);
 EncodedJSValue JIT_OPERATION operationValueSub(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueSubProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BinaryArithProfile*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueSubProfiled(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueSubOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueSubNoOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueSubProfiledOptimize(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, JITSubIC*) WTF_INTERNAL;

@@ -919,7 +919,7 @@ namespace JSC {
         // It will give the slow path the same value read by the fast path.
         GetPutInfo copiedGetPutInfo(OpPutToScope);
         template<typename BinaryOp>
-        BinaryArithProfile copiedArithProfile(BinaryOp);
+        ArithProfile copiedArithProfile(BinaryOp);
 
         Interpreter* m_interpreter;
 
@@ -939,7 +939,7 @@ namespace JSC {
         Vector<SwitchRecord> m_switches;
 
         HashMap<unsigned, unsigned> m_copiedGetPutInfos;
-        HashMap<uint64_t, BinaryArithProfile> m_copiedArithProfiles;
+        HashMap<uint64_t, ArithProfile> m_copiedArithProfiles;
 
         JumpList m_exceptionChecks;
         JumpList m_exceptionChecksWithCallFrameRollback;
