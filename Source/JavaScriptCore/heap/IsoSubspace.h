@@ -48,7 +48,7 @@ public:
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
     void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
-    void sweepLowerTierCell(LargeAllocation*);
+    void sweepLowerTierCell(PreciseAllocation*);
 
     void* tryAllocateFromLowerTier();
     void destroyLowerTierFreeList();
@@ -64,7 +64,7 @@ private:
     BlockDirectory m_directory;
     LocalAllocator m_localAllocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
-    SentinelLinkedList<LargeAllocation, PackedRawSentinelNode<LargeAllocation>> m_lowerTierFreeList;
+    SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
     uint8_t m_lowerTierCellCount { 0 };
 };

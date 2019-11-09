@@ -1,5 +1,159 @@
 2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Rename LargeAllocation to PreciseAllocation
+        https://bugs.webkit.org/show_bug.cgi?id=204040
+
+        Reviewed by Keith Miller.
+
+        After r252298, LargeAllocation is also used for small allocations.
+        This patch renames from LargeAllocation to PreciseAllocation since it reflects the behavior.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/CellContainer.cpp:
+        (JSC::CellContainer::isNewlyAllocated const):
+        * heap/CellContainer.h:
+        (JSC::CellContainer::CellContainer):
+        (JSC::CellContainer::isMarkedBlock const):
+        (JSC::CellContainer::isPreciseAllocation const):
+        (JSC::CellContainer::preciseAllocation const):
+        (JSC::CellContainer::isLargeAllocation const): Deleted.
+        (JSC::CellContainer::largeAllocation const): Deleted.
+        * heap/CellContainerInlines.h:
+        (JSC::CellContainer::vm const):
+        (JSC::CellContainer::isMarked const):
+        (JSC::CellContainer::noteMarked):
+        (JSC::CellContainer::assertValidCell const):
+        (JSC::CellContainer::cellSize const):
+        (JSC::CellContainer::weakSet const):
+        (JSC::CellContainer::aboutToMark):
+        (JSC::CellContainer::areMarksStale const):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocatePreciseAllocationNonVirtual):
+        (JSC::CompleteSubspace::reallocateLargeAllocationNonVirtual): Deleted.
+        * heap/CompleteSubspace.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::sweepInFinalize):
+        * heap/HeapCell.cpp:
+        (JSC::HeapCell::isLive):
+        * heap/HeapCell.h:
+        * heap/HeapCellInlines.h:
+        (JSC::HeapCell::isPreciseAllocation const):
+        (JSC::HeapCell::cellContainer const):
+        (JSC::HeapCell::preciseAllocation const):
+        (JSC::HeapCell::vm const):
+        (JSC::HeapCell::cellSize const):
+        (JSC::HeapCell::cellAttributes const):
+        (JSC::HeapCell::subspace const):
+        (JSC::HeapCell::isLargeAllocation const): Deleted.
+        (JSC::HeapCell::largeAllocation const): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        (JSC::HeapUtil::isPointerGCObjectJSCell):
+        (JSC::HeapUtil::isValueGCObject):
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::add):
+        (JSC::IsoCellSet::remove):
+        (JSC::IsoCellSet::contains const):
+        (JSC::IsoCellSet::forEachMarkedCell):
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        (JSC::IsoCellSet::forEachLiveCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::tryAllocateFromLowerTier):
+        (JSC::IsoSubspace::sweepLowerTierCell):
+        (JSC::IsoSubspace::destroyLowerTierFreeList):
+        * heap/IsoSubspace.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeMemory):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweepPreciseAllocations):
+        (JSC::MarkedSpace::prepareForAllocation):
+        (JSC::MarkedSpace::enablePreciseAllocationTracking):
+        (JSC::MarkedSpace::prepareForConservativeScan):
+        (JSC::MarkedSpace::prepareForMarking):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::endMarking):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::sweepLargeAllocations): Deleted.
+        (JSC::MarkedSpace::enableLargeAllocationTracking): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace:: const):
+        (JSC::MarkedSpace::preciseAllocationsNurseryOffset const):
+        (JSC::MarkedSpace::preciseAllocationsOffsetForThisCollection const):
+        (JSC::MarkedSpace::preciseAllocationsForThisCollectionBegin const):
+        (JSC::MarkedSpace::preciseAllocationsForThisCollectionEnd const):
+        (JSC::MarkedSpace::preciseAllocationsForThisCollectionSize const):
+        (JSC::MarkedSpace::largeAllocationsNurseryOffset const): Deleted.
+        (JSC::MarkedSpace::largeAllocationsOffsetForThisCollection const): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionBegin const): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionEnd const): Deleted.
+        (JSC::MarkedSpace::largeAllocationsForThisCollectionSize const): Deleted.
+        * heap/MarkedSpaceInlines.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        * heap/PreciseAllocation.cpp: Renamed from Source/JavaScriptCore/heap/LargeAllocation.cpp.
+        (JSC::isAlignedForPreciseAllocation):
+        (JSC::PreciseAllocation::tryCreate):
+        (JSC::PreciseAllocation::tryReallocate):
+        (JSC::PreciseAllocation::createForLowerTier):
+        (JSC::PreciseAllocation::reuseForLowerTier):
+        (JSC::PreciseAllocation::PreciseAllocation):
+        (JSC::PreciseAllocation::~PreciseAllocation):
+        (JSC::PreciseAllocation::lastChanceToFinalize):
+        (JSC::PreciseAllocation::shrink):
+        (JSC::PreciseAllocation::visitWeakSet):
+        (JSC::PreciseAllocation::reapWeakSet):
+        (JSC::PreciseAllocation::flip):
+        (JSC::PreciseAllocation::isEmpty):
+        (JSC::PreciseAllocation::sweep):
+        (JSC::PreciseAllocation::destroy):
+        (JSC::PreciseAllocation::dump const):
+        (JSC::PreciseAllocation::assertValidCell const):
+        * heap/PreciseAllocation.h: Renamed from Source/JavaScriptCore/heap/LargeAllocation.h.
+        (JSC::PreciseAllocation::fromCell):
+        (JSC::PreciseAllocation::isPreciseAllocation):
+        (JSC::PreciseAllocation::headerSize):
+        (JSC::PreciseAllocation::basePointer const):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendHiddenSlowImpl):
+        (JSC::SlotVisitor::appendToMarkStack):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarriered):
+        (JSC::SlotVisitor::appendHiddenUnbarriered):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachPreciseAllocation):
+        (JSC::Subspace::forEachMarkedCell):
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        (JSC::Subspace::forEachLiveCell):
+        (JSC::Subspace::forEachLargeAllocation): Deleted.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::reallocArrayRightIfPossible):
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::isInHeap):
+        * tools/VMInspectorInlines.h:
+        (JSC::VMInspector::verifyCell):
+
+2019-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make IsoSubspace scalable
         https://bugs.webkit.org/show_bug.cgi?id=201908
 

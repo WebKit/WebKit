@@ -47,7 +47,7 @@ template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functo
         if (result == IterationStatus::Done)
             return;
     }
-    for (LargeAllocation* allocation : m_largeAllocations) {
+    for (PreciseAllocation* allocation : m_preciseAllocations) {
         if (allocation->isLive()) {
             if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)
                 return;
@@ -63,7 +63,7 @@ template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIteratio
         if ((*it)->handle().forEachDeadCell(functor) == IterationStatus::Done)
             return;
     }
-    for (LargeAllocation* allocation : m_largeAllocations) {
+    for (PreciseAllocation* allocation : m_preciseAllocations) {
         if (!allocation->isLive()) {
             if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)
                 return;

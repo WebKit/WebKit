@@ -46,8 +46,8 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
         return;
     
     Dependency dependency;
-    if (UNLIKELY(cell->isLargeAllocation())) {
-        if (LIKELY(cell->largeAllocation().isMarked())) {
+    if (UNLIKELY(cell->isPreciseAllocation())) {
+        if (LIKELY(cell->preciseAllocation().isMarked())) {
             if (LIKELY(!m_heapAnalyzer))
                 return;
         }
@@ -84,8 +84,8 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
         return;
     
     Dependency dependency;
-    if (UNLIKELY(cell->isLargeAllocation())) {
-        if (LIKELY(cell->largeAllocation().isMarked()))
+    if (UNLIKELY(cell->isPreciseAllocation())) {
+        if (LIKELY(cell->preciseAllocation().isMarked()))
             return;
     } else {
         MarkedBlock& block = cell->markedBlock();

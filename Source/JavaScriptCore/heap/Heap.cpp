@@ -2153,7 +2153,7 @@ void Heap::waitForCollection(Ticket ticket)
 
 void Heap::sweepInFinalize()
 {
-    m_objectSpace.sweepLargeAllocations();
+    m_objectSpace.sweepPreciseAllocations();
     vm().eagerlySweptDestructibleObjectSpace.sweep();
 }
 

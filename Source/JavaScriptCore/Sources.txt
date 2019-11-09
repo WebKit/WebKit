@@ -524,7 +524,7 @@ heap/IsoCellSet.cpp
 heap/IsoSubspace.cpp
 heap/IsoSubspacePerVM.cpp
 heap/JITStubRoutineSet.cpp
-heap/LargeAllocation.cpp
+heap/PreciseAllocation.cpp
 heap/LocalAllocator.cpp
 heap/MachineStackMarker.cpp
 heap/MarkStack.cpp

@@ -557,8 +557,8 @@ const NotInitialization = constexpr InitializationMode::NotInitialization
 const MarkedBlockSize = constexpr MarkedBlock::blockSize
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 const MarkedBlockFooterOffset = constexpr MarkedBlock::offsetOfFooter
-const LargeAllocationHeaderSize = constexpr (LargeAllocation::headerSize())
-const LargeAllocationVMOffset = (LargeAllocation::m_weakSet + WeakSet::m_vm - LargeAllocationHeaderSize)
+const PreciseAllocationHeaderSize = constexpr (PreciseAllocation::headerSize())
+const PreciseAllocationVMOffset = (PreciseAllocation::m_weakSet + WeakSet::m_vm - PreciseAllocationHeaderSize)
 
 const BlackThreshold = constexpr blackThreshold
 
@@ -1165,12 +1165,12 @@ macro notFunctionCodeBlockSetter(sourceRegister)
 end
 
 macro convertCalleeToVM(callee)
-    btpnz callee, (constexpr LargeAllocation::halfAlignment), .largeAllocation
+    btpnz callee, (constexpr PreciseAllocation::halfAlignment), .preciseAllocation
     andp MarkedBlockMask, callee
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[callee], callee
     jmp .done
-.largeAllocation:
-    loadp LargeAllocationVMOffset[callee], callee
+.preciseAllocation:
+    loadp PreciseAllocationVMOffset[callee], callee
 .done:
 end
 

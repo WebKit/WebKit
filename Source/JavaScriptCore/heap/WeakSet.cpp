@@ -56,7 +56,7 @@ void WeakSet::sweep()
         if (block->isLogicallyEmptyButNotFree()) {
             // If this WeakBlock is logically empty, but still has Weaks pointing into it,
             // we can't destroy it just yet. Detach it from the WeakSet and hand ownership
-            // to the Heap so we don't pin down the entire MarkedBlock or LargeAllocation.
+            // to the Heap so we don't pin down the entire MarkedBlock or PreciseAllocation.
             m_blocks.remove(block);
             heap()->addLogicallyEmptyWeakBlock(block);
             block->disconnectContainer();

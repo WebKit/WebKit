@@ -231,7 +231,7 @@ bool VMInspector::isInHeap(Heap* heap, void* ptr)
     MarkedBlock* candidate = MarkedBlock::blockFor(ptr);
     if (heap->objectSpace().blocks().set().contains(candidate))
         return true;
-    for (LargeAllocation* allocation : heap->objectSpace().largeAllocations()) {
+    for (PreciseAllocation* allocation : heap->objectSpace().preciseAllocations()) {
         if (allocation->contains(ptr))
             return true;
     }

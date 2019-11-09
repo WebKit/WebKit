@@ -307,7 +307,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     }
 
     m_currentFrames.grow(256);
-    vm.heap.objectSpace().enableLargeAllocationTracking();
+    vm.heap.objectSpace().enablePreciseAllocationTracking();
 }
 
 SamplingProfiler::~SamplingProfiler()

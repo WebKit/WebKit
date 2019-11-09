@@ -57,24 +57,24 @@ public:
         char* pointer = static_cast<char*>(passedPointer);
         
         // It could point to a large allocation.
-        if (heap.objectSpace().largeAllocationsForThisCollectionSize()) {
-            if (heap.objectSpace().largeAllocationsForThisCollectionBegin()[0]->aboveLowerBound(pointer)
-                && heap.objectSpace().largeAllocationsForThisCollectionEnd()[-1]->belowUpperBound(pointer)) {
-                LargeAllocation** result = approximateBinarySearch<LargeAllocation*>(
-                    heap.objectSpace().largeAllocationsForThisCollectionBegin(),
-                    heap.objectSpace().largeAllocationsForThisCollectionSize(),
-                    LargeAllocation::fromCell(pointer),
-                    [] (LargeAllocation** ptr) -> LargeAllocation* { return *ptr; });
+        if (heap.objectSpace().preciseAllocationsForThisCollectionSize()) {
+            if (heap.objectSpace().preciseAllocationsForThisCollectionBegin()[0]->aboveLowerBound(pointer)
+                && heap.objectSpace().preciseAllocationsForThisCollectionEnd()[-1]->belowUpperBound(pointer)) {
+                PreciseAllocation** result = approximateBinarySearch<PreciseAllocation*>(
+                    heap.objectSpace().preciseAllocationsForThisCollectionBegin(),
+                    heap.objectSpace().preciseAllocationsForThisCollectionSize(),
+                    PreciseAllocation::fromCell(pointer),
+                    [] (PreciseAllocation** ptr) -> PreciseAllocation* { return *ptr; });
                 if (result) {
-                    auto attemptLarge = [&] (LargeAllocation* allocation) {
+                    auto attemptLarge = [&] (PreciseAllocation* allocation) {
                         if (allocation->contains(pointer))
                             func(allocation->cell(), allocation->attributes().cellKind);
                     };
                     
-                    if (result > heap.objectSpace().largeAllocationsForThisCollectionBegin())
+                    if (result > heap.objectSpace().preciseAllocationsForThisCollectionBegin())
                         attemptLarge(result[-1]);
                     attemptLarge(result[0]);
-                    if (result + 1 < heap.objectSpace().largeAllocationsForThisCollectionEnd())
+                    if (result + 1 < heap.objectSpace().preciseAllocationsForThisCollectionEnd())
                         attemptLarge(result[1]);
                 }
             }
@@ -131,8 +131,8 @@ public:
     static bool isPointerGCObjectJSCell(Heap& heap, TinyBloomFilter filter, JSCell* pointer)
     {
         // It could point to a large allocation.
-        if (pointer->isLargeAllocation()) {
-            auto* set = heap.objectSpace().largeAllocationSet();
+        if (pointer->isPreciseAllocation()) {
+            auto* set = heap.objectSpace().preciseAllocationSet();
             ASSERT(set);
             if (set->isEmpty())
                 return false;
@@ -166,7 +166,7 @@ public:
     static bool isValueGCObject(
         Heap& heap, TinyBloomFilter filter, JSValue value)
     {
-        ASSERT(heap.objectSpace().largeAllocationSet());
+        ASSERT(heap.objectSpace().preciseAllocationSet());
         if (!value.isCell())
             return false;
         return isPointerGCObjectJSCell(heap, filter, value.asCell());

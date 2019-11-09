@@ -92,35 +92,35 @@ void IsoSubspace::didBeginSweepingToFreeList(MarkedBlock::Handle* block)
 
 void* IsoSubspace::tryAllocateFromLowerTier()
 {
-    auto revive = [&] (LargeAllocation* allocation) {
-        allocation->setIndexInSpace(m_space.m_largeAllocations.size());
+    auto revive = [&] (PreciseAllocation* allocation) {
+        allocation->setIndexInSpace(m_space.m_preciseAllocations.size());
         allocation->m_hasValidCell = true;
-        m_space.m_largeAllocations.append(allocation);
-        if (auto* set = m_space.largeAllocationSet())
+        m_space.m_preciseAllocations.append(allocation);
+        if (auto* set = m_space.preciseAllocationSet())
             set->add(allocation->cell());
-        ASSERT(allocation->indexInSpace() == m_space.m_largeAllocations.size() - 1);
-        m_largeAllocations.append(allocation);
+        ASSERT(allocation->indexInSpace() == m_space.m_preciseAllocations.size() - 1);
+        m_preciseAllocations.append(allocation);
         return allocation->cell();
     };
 
     if (!m_lowerTierFreeList.isEmpty()) {
-        LargeAllocation* allocation = m_lowerTierFreeList.begin();
+        PreciseAllocation* allocation = m_lowerTierFreeList.begin();
         allocation->remove();
         return revive(allocation);
     }
     if (m_lowerTierCellCount != MarkedBlock::numberOfLowerTierCells) {
         size_t size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(m_size);
-        LargeAllocation* allocation = LargeAllocation::createForLowerTier(*m_space.heap(), size, this, m_lowerTierCellCount++);
+        PreciseAllocation* allocation = PreciseAllocation::createForLowerTier(*m_space.heap(), size, this, m_lowerTierCellCount++);
         return revive(allocation);
     }
     return nullptr;
 }
 
-void IsoSubspace::sweepLowerTierCell(LargeAllocation* largeAllocation)
+void IsoSubspace::sweepLowerTierCell(PreciseAllocation* preciseAllocation)
 {
-    unsigned lowerTierIndex = largeAllocation->lowerTierIndex();
-    largeAllocation = largeAllocation->reuseForLowerTier();
-    m_lowerTierFreeList.append(largeAllocation);
+    unsigned lowerTierIndex = preciseAllocation->lowerTierIndex();
+    preciseAllocation = preciseAllocation->reuseForLowerTier();
+    m_lowerTierFreeList.append(preciseAllocation);
     m_cellSets.forEach(
         [&] (IsoCellSet* set) {
             set->sweepLowerTierCell(lowerTierIndex);
@@ -129,7 +129,7 @@ void IsoSubspace::sweepLowerTierCell(LargeAllocation* largeAllocation)
 
 void IsoSubspace::destroyLowerTierFreeList()
 {
-    m_lowerTierFreeList.forEach([&](LargeAllocation* allocation) {
+    m_lowerTierFreeList.forEach([&](PreciseAllocation* allocation) {
         allocation->destroy();
     });
 }

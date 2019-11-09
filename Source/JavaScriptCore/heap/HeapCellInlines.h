@@ -27,20 +27,20 @@
 
 #include "CellContainer.h"
 #include "HeapCell.h"
-#include "LargeAllocation.h"
+#include "PreciseAllocation.h"
 #include "VM.h"
 
 namespace JSC {
 
-ALWAYS_INLINE bool HeapCell::isLargeAllocation() const
+ALWAYS_INLINE bool HeapCell::isPreciseAllocation() const
 {
-    return LargeAllocation::isLargeAllocation(const_cast<HeapCell*>(this));
+    return PreciseAllocation::isPreciseAllocation(const_cast<HeapCell*>(this));
 }
 
 ALWAYS_INLINE CellContainer HeapCell::cellContainer() const
 {
-    if (isLargeAllocation())
-        return largeAllocation();
+    if (isPreciseAllocation())
+        return preciseAllocation();
     return markedBlock();
 }
 
@@ -49,9 +49,9 @@ ALWAYS_INLINE MarkedBlock& HeapCell::markedBlock() const
     return *MarkedBlock::blockFor(this);
 }
 
-ALWAYS_INLINE LargeAllocation& HeapCell::largeAllocation() const
+ALWAYS_INLINE PreciseAllocation& HeapCell::preciseAllocation() const
 {
-    return *LargeAllocation::fromCell(const_cast<HeapCell*>(this));
+    return *PreciseAllocation::fromCell(const_cast<HeapCell*>(this));
 }
 
 ALWAYS_INLINE Heap* HeapCell::heap() const
@@ -61,22 +61,22 @@ ALWAYS_INLINE Heap* HeapCell::heap() const
 
 ALWAYS_INLINE VM& HeapCell::vm() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().vm();
+    if (isPreciseAllocation())
+        return preciseAllocation().vm();
     return markedBlock().vm();
 }
     
 ALWAYS_INLINE size_t HeapCell::cellSize() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().cellSize();
+    if (isPreciseAllocation())
+        return preciseAllocation().cellSize();
     return markedBlock().cellSize();
 }
 
 ALWAYS_INLINE CellAttributes HeapCell::cellAttributes() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().attributes();
+    if (isPreciseAllocation())
+        return preciseAllocation().attributes();
     return markedBlock().attributes();
 }
 
@@ -92,8 +92,8 @@ ALWAYS_INLINE HeapCell::Kind HeapCell::cellKind() const
 
 ALWAYS_INLINE Subspace* HeapCell::subspace() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().subspace();
+    if (isPreciseAllocation())
+        return preciseAllocation().subspace();
     return markedBlock().subspace();
 }
 

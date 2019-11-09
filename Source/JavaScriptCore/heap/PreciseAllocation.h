@@ -34,27 +34,27 @@ class IsoSubspace;
 class SlotVisitor;
 
 // WebKit has a good malloc that already knows what to do for large allocations. The GC shouldn't
-// have to think about such things. That's where LargeAllocation comes in. We will allocate large
-// objects directly using malloc, and put the LargeAllocation header just before them. We can detect
-// when a HeapCell* is a LargeAllocation because it will have the MarkedBlock::atomSize / 2 bit set.
+// have to think about such things. That's where PreciseAllocation comes in. We will allocate large
+// objects directly using malloc, and put the PreciseAllocation header just before them. We can detect
+// when a HeapCell* is a PreciseAllocation because it will have the MarkedBlock::atomSize / 2 bit set.
 
-class LargeAllocation : public PackedRawSentinelNode<LargeAllocation> {
+class PreciseAllocation : public PackedRawSentinelNode<PreciseAllocation> {
 public:
     friend class LLIntOffsetsExtractor;
     friend class IsoSubspace;
 
-    static LargeAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
+    static PreciseAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
 
-    static LargeAllocation* createForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
-    LargeAllocation* reuseForLowerTier();
+    static PreciseAllocation* createForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
+    PreciseAllocation* reuseForLowerTier();
 
-    LargeAllocation* tryReallocate(size_t, Subspace*);
+    PreciseAllocation* tryReallocate(size_t, Subspace*);
     
-    ~LargeAllocation();
+    ~PreciseAllocation();
     
-    static LargeAllocation* fromCell(const void* cell)
+    static PreciseAllocation* fromCell(const void* cell)
     {
-        return bitwise_cast<LargeAllocation*>(bitwise_cast<char*>(cell) - headerSize());
+        return bitwise_cast<PreciseAllocation*>(bitwise_cast<char*>(cell) - headerSize());
     }
     
     HeapCell* cell() const
@@ -62,7 +62,7 @@ public:
         return bitwise_cast<HeapCell*>(bitwise_cast<char*>(this) + headerSize());
     }
     
-    static bool isLargeAllocation(HeapCell* cell)
+    static bool isPreciseAllocation(HeapCell* cell)
     {
         return bitwise_cast<uintptr_t>(cell) & halfAlignment;
     }
@@ -158,10 +158,10 @@ public:
     
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;
-    static constexpr unsigned headerSize() { return ((sizeof(LargeAllocation) + halfAlignment - 1) & ~(halfAlignment - 1)) | halfAlignment; }
+    static constexpr unsigned headerSize() { return ((sizeof(PreciseAllocation) + halfAlignment - 1) & ~(halfAlignment - 1)) | halfAlignment; }
 
 private:
-    LargeAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, bool adjustedAlignment);
+    PreciseAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, bool adjustedAlignment);
     
     void* basePointer() const;
     
@@ -177,7 +177,7 @@ private:
     WeakSet m_weakSet;
 };
 
-inline void* LargeAllocation::basePointer() const
+inline void* PreciseAllocation::basePointer() const
 {
     if (m_adjustedAlignment)
         return bitwise_cast<char*>(this) - halfAlignment;

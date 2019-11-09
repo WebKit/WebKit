@@ -60,9 +60,9 @@ void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
 }
 
 template<typename Func>
-void Subspace::forEachLargeAllocation(const Func& func)
+void Subspace::forEachPreciseAllocation(const Func& func)
 {
-    for (LargeAllocation* allocation = m_largeAllocations.begin(); allocation != m_largeAllocations.end(); allocation = allocation->next())
+    for (PreciseAllocation* allocation = m_preciseAllocations.begin(); allocation != m_preciseAllocations.end(); allocation = allocation->next())
         func(allocation);
 }
 
@@ -78,8 +78,8 @@ void Subspace::forEachMarkedCell(const Func& func)
                 });
         });
     CellAttributes attributes = this->attributes();
-    forEachLargeAllocation(
-        [&] (LargeAllocation* allocation) {
+    forEachPreciseAllocation(
+        [&] (PreciseAllocation* allocation) {
             if (allocation->isMarked())
                 func(allocation->cell(), attributes.cellKind);
         });
@@ -109,14 +109,14 @@ Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const 
             
             {
                 auto locker = holdLock(m_lock);
-                if (!m_needToVisitLargeAllocations)
+                if (!m_needToVisitPreciseAllocations)
                     return;
-                m_needToVisitLargeAllocations = false;
+                m_needToVisitPreciseAllocations = false;
             }
             
             CellAttributes attributes = m_subspace.attributes();
-            m_subspace.forEachLargeAllocation(
-                [&] (LargeAllocation* allocation) {
+            m_subspace.forEachPreciseAllocation(
+                [&] (PreciseAllocation* allocation) {
                     if (allocation->isMarked())
                         m_func(visitor, allocation->cell(), attributes.cellKind);
                 });
@@ -127,7 +127,7 @@ Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const 
         Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
         Lock m_lock;
-        bool m_needToVisitLargeAllocations { true };
+        bool m_needToVisitPreciseAllocations { true };
     };
     
     return adoptRef(*new Task(*this, func));
@@ -145,8 +145,8 @@ void Subspace::forEachLiveCell(const Func& func)
                 });
         });
     CellAttributes attributes = this->attributes();
-    forEachLargeAllocation(
-        [&] (LargeAllocation* allocation) {
+    forEachPreciseAllocation(
+        [&] (PreciseAllocation* allocation) {
             if (allocation->isLive())
                 func(allocation->cell(), attributes.cellKind);
         });

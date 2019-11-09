@@ -616,7 +616,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/IsoSubspace.h
     heap/IsoSubspaceInlines.h
     heap/IsoSubspacePerVM.h
-    heap/LargeAllocation.h
     heap/LocalAllocator.h
     heap/LocalAllocatorInlines.h
     heap/LockDuringMarking.h
@@ -629,6 +628,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MarkingConstraint.h
     heap/MutatorState.h
     heap/PackedCellPtr.h
+    heap/PreciseAllocation.h
     heap/RegisterState.h
     heap/RunningScope.h
     heap/SimpleMarkingConstraint.h

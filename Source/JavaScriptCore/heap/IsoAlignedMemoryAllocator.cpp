@@ -101,7 +101,7 @@ void IsoAlignedMemoryAllocator::freeMemory(void* pointer)
 
 void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 {
-    // In IsoSubspace-managed LargeAllocation, we must not perform realloc.
+    // In IsoSubspace-managed PreciseAllocation, we must not perform realloc.
     RELEASE_ASSERT_NOT_REACHED();
 }
 

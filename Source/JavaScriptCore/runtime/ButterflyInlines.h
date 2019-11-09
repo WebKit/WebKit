@@ -206,12 +206,12 @@ inline Butterfly* Butterfly::reallocArrayRightIfPossible(
     size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
     ASSERT(newSize >= oldSize);
 
-    // We can eagerly destroy butterfly backed by LargeAllocation if (1) concurrent collector is not active and (2) the butterfly does not contain any property storage.
+    // We can eagerly destroy butterfly backed by PreciseAllocation if (1) concurrent collector is not active and (2) the butterfly does not contain any property storage.
     // This is because during deallocation concurrent collector can access butterfly and DFG concurrent compilers accesses properties.
     // Objects with no properties are common in arrays, and we are focusing on very large array crafted by repeating Array#push, so... that's fine!
-    bool canRealloc = !propertyCapacity && !vm.heap.mutatorShouldBeFenced() && bitwise_cast<HeapCell*>(theBase)->isLargeAllocation();
+    bool canRealloc = !propertyCapacity && !vm.heap.mutatorShouldBeFenced() && bitwise_cast<HeapCell*>(theBase)->isPreciseAllocation();
     if (canRealloc) {
-        void* newBase = vm.jsValueGigacageAuxiliarySpace.reallocateLargeAllocationNonVirtual(vm, bitwise_cast<HeapCell*>(theBase), newSize, &deferralContext, AllocationFailureMode::ReturnNull);
+        void* newBase = vm.jsValueGigacageAuxiliarySpace.reallocatePreciseAllocationNonVirtual(vm, bitwise_cast<HeapCell*>(theBase), newSize, &deferralContext, AllocationFailureMode::ReturnNull);
         if (!newBase)
             return nullptr;
         return fromBase(newBase, 0, propertyCapacity);

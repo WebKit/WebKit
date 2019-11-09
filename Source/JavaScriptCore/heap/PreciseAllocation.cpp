@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LargeAllocation.h"
+#include "PreciseAllocation.h"
 
 #include "AlignedMemoryAllocator.h"
 #include "Heap.h"
@@ -34,13 +34,13 @@
 
 namespace JSC {
 
-static inline bool isAlignedForLargeAllocation(void* memory)
+static inline bool isAlignedForPreciseAllocation(void* memory)
 {
     uintptr_t allocatedPointer = bitwise_cast<uintptr_t>(memory);
-    return !(allocatedPointer & (LargeAllocation::alignment - 1));
+    return !(allocatedPointer & (PreciseAllocation::alignment - 1));
 }
 
-LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
+PreciseAllocation* PreciseAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
 {
     if (validateDFGDoesGC)
         RELEASE_ASSERT(heap.expectDoesGC());
@@ -54,18 +54,18 @@ LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* s
         return nullptr;
 
     bool adjustedAlignment = false;
-    if (!isAlignedForLargeAllocation(space)) {
+    if (!isAlignedForPreciseAllocation(space)) {
         space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
         adjustedAlignment = true;
-        ASSERT(isAlignedForLargeAllocation(space));
+        ASSERT(isAlignedForPreciseAllocation(space));
     }
     
     if (scribbleFreeCells())
         scribble(space, size);
-    return new (NotNull, space) LargeAllocation(heap, size, subspace, indexInSpace, adjustedAlignment);
+    return new (NotNull, space) PreciseAllocation(heap, size, subspace, indexInSpace, adjustedAlignment);
 }
 
-LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
+PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subspace)
 {
     ASSERT(!isLowerTier());
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
@@ -81,12 +81,12 @@ LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
     if (!newBasePointer)
         return nullptr;
 
-    LargeAllocation* newAllocation = bitwise_cast<LargeAllocation*>(newBasePointer);
+    PreciseAllocation* newAllocation = bitwise_cast<PreciseAllocation*>(newBasePointer);
     bool newAdjustedAlignment = false;
-    if (!isAlignedForLargeAllocation(newBasePointer)) {
+    if (!isAlignedForPreciseAllocation(newBasePointer)) {
         newAdjustedAlignment = true;
-        newAllocation = bitwise_cast<LargeAllocation*>(bitwise_cast<uintptr_t>(newBasePointer) + halfAlignment);
-        ASSERT(isAlignedForLargeAllocation(static_cast<void*>(newAllocation)));
+        newAllocation = bitwise_cast<PreciseAllocation*>(bitwise_cast<uintptr_t>(newBasePointer) + halfAlignment);
+        ASSERT(isAlignedForPreciseAllocation(static_cast<void*>(newAllocation)));
     }
 
     // We have 4 patterns.
@@ -102,7 +102,7 @@ LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
             // Old   [ 8 ][  content  ]
             // Now   [   ][  content  ]
             // New   [  content  ]...
-            memmove(newBasePointer, bitwise_cast<char*>(newBasePointer) + halfAlignment, oldCellSize + LargeAllocation::headerSize());
+            memmove(newBasePointer, bitwise_cast<char*>(newBasePointer) + halfAlignment, oldCellSize + PreciseAllocation::headerSize());
         } else {
             ASSERT(newAdjustedAlignment);
             ASSERT(newAllocation != newBasePointer);
@@ -110,7 +110,7 @@ LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
             // Old   [  content  ]
             // Now   [  content  ][   ]
             // New   [ 8 ][  content  ]
-            memmove(bitwise_cast<char*>(newBasePointer) + halfAlignment, newBasePointer, oldCellSize + LargeAllocation::headerSize());
+            memmove(bitwise_cast<char*>(newBasePointer) + halfAlignment, newBasePointer, oldCellSize + PreciseAllocation::headerSize());
         }
     }
 
@@ -120,7 +120,7 @@ LargeAllocation* LargeAllocation::tryReallocate(size_t size, Subspace* subspace)
 }
 
 
-LargeAllocation* LargeAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+PreciseAllocation* PreciseAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
 {
     if (validateDFGDoesGC)
         RELEASE_ASSERT(heap.expectDoesGC());
@@ -132,20 +132,20 @@ LargeAllocation* LargeAllocation::createForLowerTier(Heap& heap, size_t size, Su
     RELEASE_ASSERT(space);
 
     bool adjustedAlignment = false;
-    if (!isAlignedForLargeAllocation(space)) {
+    if (!isAlignedForPreciseAllocation(space)) {
         space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
         adjustedAlignment = true;
-        ASSERT(isAlignedForLargeAllocation(space));
+        ASSERT(isAlignedForPreciseAllocation(space));
     }
 
     if (scribbleFreeCells())
         scribble(space, size);
-    LargeAllocation* largeAllocation = new (NotNull, space) LargeAllocation(heap, size, subspace, 0, adjustedAlignment);
-    largeAllocation->m_lowerTierIndex = lowerTierIndex;
-    return largeAllocation;
+    PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustedAlignment);
+    preciseAllocation->m_lowerTierIndex = lowerTierIndex;
+    return preciseAllocation;
 }
 
-LargeAllocation* LargeAllocation::reuseForLowerTier()
+PreciseAllocation* PreciseAllocation::reuseForLowerTier()
 {
     Heap& heap = *this->heap();
     size_t size = m_cellSize;
@@ -154,15 +154,15 @@ LargeAllocation* LargeAllocation::reuseForLowerTier()
     uint8_t lowerTierIndex = m_lowerTierIndex;
 
     void* space = this->basePointer();
-    this->~LargeAllocation();
+    this->~PreciseAllocation();
 
-    LargeAllocation* largeAllocation = new (NotNull, space) LargeAllocation(heap, size, subspace, 0, adjustedAlignment);
-    largeAllocation->m_lowerTierIndex = lowerTierIndex;
-    largeAllocation->m_hasValidCell = false;
-    return largeAllocation;
+    PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustedAlignment);
+    preciseAllocation->m_lowerTierIndex = lowerTierIndex;
+    preciseAllocation->m_hasValidCell = false;
+    return preciseAllocation;
 }
 
-LargeAllocation::LargeAllocation(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace, bool adjustedAlignment)
+PreciseAllocation::PreciseAllocation(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace, bool adjustedAlignment)
     : m_indexInSpace(indexInSpace)
     , m_cellSize(size)
     , m_isNewlyAllocated(true)
@@ -175,13 +175,13 @@ LargeAllocation::LargeAllocation(Heap& heap, size_t size, Subspace* subspace, un
     m_isMarked.store(0);
 }
 
-LargeAllocation::~LargeAllocation()
+PreciseAllocation::~PreciseAllocation()
 {
     if (isOnList())
         remove();
 }
 
-void LargeAllocation::lastChanceToFinalize()
+void PreciseAllocation::lastChanceToFinalize()
 {
     m_weakSet.lastChanceToFinalize();
     clearMarked();
@@ -189,33 +189,33 @@ void LargeAllocation::lastChanceToFinalize()
     sweep();
 }
 
-void LargeAllocation::shrink()
+void PreciseAllocation::shrink()
 {
     m_weakSet.shrink();
 }
 
-void LargeAllocation::visitWeakSet(SlotVisitor& visitor)
+void PreciseAllocation::visitWeakSet(SlotVisitor& visitor)
 {
     m_weakSet.visit(visitor);
 }
 
-void LargeAllocation::reapWeakSet()
+void PreciseAllocation::reapWeakSet()
 {
     return m_weakSet.reap();
 }
 
-void LargeAllocation::flip()
+void PreciseAllocation::flip()
 {
     ASSERT(heap()->collectionScope() == CollectionScope::Full);
     clearMarked();
 }
 
-bool LargeAllocation::isEmpty()
+bool PreciseAllocation::isEmpty()
 {
     return !isMarked() && m_weakSet.isEmpty() && !isNewlyAllocated();
 }
 
-void LargeAllocation::sweep()
+void PreciseAllocation::sweep()
 {
     m_weakSet.sweep();
     
@@ -226,21 +226,21 @@ void LargeAllocation::sweep()
     }
 }
 
-void LargeAllocation::destroy()
+void PreciseAllocation::destroy()
 {
     AlignedMemoryAllocator* allocator = m_subspace->alignedMemoryAllocator();
     void* basePointer = this->basePointer();
-    this->~LargeAllocation();
+    this->~PreciseAllocation();
     allocator->freeMemory(basePointer);
 }
 
-void LargeAllocation::dump(PrintStream& out) const
+void PreciseAllocation::dump(PrintStream& out) const
 {
     out.print(RawPointer(this), ":(cell at ", RawPointer(cell()), " with size ", m_cellSize, " and attributes ", m_attributes, ")");
 }
 
 #if !ASSERT_DISABLED
-void LargeAllocation::assertValidCell(VM& vm, HeapCell* cell) const
+void PreciseAllocation::assertValidCell(VM& vm, HeapCell* cell) const
 {
     ASSERT(&vm == &this->vm());
     ASSERT(cell == this->cell());

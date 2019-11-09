@@ -183,7 +183,7 @@ namespace JSC {
     v(Double, gcIncrementScale, 0, Normal, nullptr) \
     v(Bool, scribbleFreeCells, false, Normal, nullptr) \
     v(Double, sizeClassProgression, 1.4, Normal, nullptr) \
-    v(Unsigned, largeAllocationCutoff, 100000, Normal, nullptr) \
+    v(Unsigned, preciseAllocationCutoff, 100000, Normal, nullptr) \
     v(Bool, dumpSizeClasses, false, Normal, nullptr) \
     v(Bool, useBumpAllocator, true, Normal, nullptr) \
     v(Bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \

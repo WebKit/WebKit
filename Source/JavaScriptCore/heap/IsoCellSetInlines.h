@@ -33,8 +33,8 @@ namespace JSC {
 
 inline bool IsoCellSet::add(HeapCell* cell)
 {
-    if (cell->isLargeAllocation())
-        return !m_lowerTierBits.concurrentTestAndSet(cell->largeAllocation().lowerTierIndex());
+    if (cell->isPreciseAllocation())
+        return !m_lowerTierBits.concurrentTestAndSet(cell->preciseAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto& bitsPtrRef = m_bits[atomIndices.blockIndex];
     auto* bits = bitsPtrRef.get();
@@ -45,8 +45,8 @@ inline bool IsoCellSet::add(HeapCell* cell)
 
 inline bool IsoCellSet::remove(HeapCell* cell)
 {
-    if (cell->isLargeAllocation())
-        return !m_lowerTierBits.concurrentTestAndClear(cell->largeAllocation().lowerTierIndex());
+    if (cell->isPreciseAllocation())
+        return !m_lowerTierBits.concurrentTestAndClear(cell->preciseAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto& bitsPtrRef = m_bits[atomIndices.blockIndex];
     auto* bits = bitsPtrRef.get();
@@ -57,8 +57,8 @@ inline bool IsoCellSet::remove(HeapCell* cell)
 
 inline bool IsoCellSet::contains(HeapCell* cell) const
 {
-    if (cell->isLargeAllocation())
-        return !m_lowerTierBits.get(cell->largeAllocation().lowerTierIndex());
+    if (cell->isPreciseAllocation())
+        return !m_lowerTierBits.get(cell->preciseAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto* bits = m_bits[atomIndices.blockIndex].get();
     if (bits)
@@ -84,8 +84,8 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
         });
 
     CellAttributes attributes = m_subspace.attributes();
-    m_subspace.forEachLargeAllocation(
-        [&] (LargeAllocation* allocation) {
+    m_subspace.forEachPreciseAllocation(
+        [&] (PreciseAllocation* allocation) {
             if (m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isMarked())
                 func(allocation->cell(), attributes.cellKind);
         });
@@ -118,14 +118,14 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
 
             {
                 auto locker = holdLock(m_lock);
-                if (!m_needToVisitLargeAllocations)
+                if (!m_needToVisitPreciseAllocations)
                     return;
-                m_needToVisitLargeAllocations = false;
+                m_needToVisitPreciseAllocations = false;
             }
 
             CellAttributes attributes = m_set.m_subspace.attributes();
-            m_set.m_subspace.forEachLargeAllocation(
-                [&] (LargeAllocation* allocation) {
+            m_set.m_subspace.forEachPreciseAllocation(
+                [&] (PreciseAllocation* allocation) {
                     if (m_set.m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isMarked())
                         m_func(visitor, allocation->cell(), attributes.cellKind);
                 });
@@ -136,7 +136,7 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
         Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
         Lock m_lock;
-        bool m_needToVisitLargeAllocations { true };
+        bool m_needToVisitPreciseAllocations { true };
     };
     
     return adoptRef(*new Task(*this, func));
@@ -160,8 +160,8 @@ void IsoCellSet::forEachLiveCell(const Func& func)
         });
 
     CellAttributes attributes = m_subspace.attributes();
-    m_subspace.forEachLargeAllocation(
-        [&] (LargeAllocation* allocation) {
+    m_subspace.forEachPreciseAllocation(
+        [&] (PreciseAllocation* allocation) {
             if (m_lowerTierBits.get(allocation->lowerTierIndex()) && allocation->isLive())
                 func(allocation->cell(), attributes.cellKind);
         });

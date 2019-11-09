@@ -257,8 +257,8 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenSlowImpl(JSCell* cell, Dependency de
     validate(cell);
 #endif
     
-    if (cell->isLargeAllocation())
-        setMarkedAndAppendToMarkStack(cell->largeAllocation(), cell, dependency);
+    if (cell->isPreciseAllocation())
+        setMarkedAndAppendToMarkStack(cell->preciseAllocation(), cell, dependency);
     else
         setMarkedAndAppendToMarkStack(cell->markedBlock(), cell, dependency);
 }
@@ -281,8 +281,8 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
 
 void SlotVisitor::appendToMarkStack(JSCell* cell)
 {
-    if (cell->isLargeAllocation())
-        appendToMarkStack(cell->largeAllocation(), cell);
+    if (cell->isPreciseAllocation())
+        appendToMarkStack(cell->preciseAllocation(), cell);
     else
         appendToMarkStack(cell->markedBlock(), cell);
 }

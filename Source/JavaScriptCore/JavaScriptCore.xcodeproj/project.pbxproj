@@ -134,7 +134,7 @@
 		0F070A471D543A8B006E7232 /* CellContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F070A421D543A89006E7232 /* CellContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F070A481D543A90006E7232 /* CellContainerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F070A431D543A89006E7232 /* CellContainerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F070A491D543A93006E7232 /* HeapCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F070A441D543A89006E7232 /* HeapCellInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F070A4B1D543A98006E7232 /* LargeAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F070A461D543A89006E7232 /* LargeAllocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F070A461D543A89006E7232 /* PreciseAllocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B286B1EB8E6CF000EB5D2 /* JSWeakPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B286A1EB8E6CD000EB5D2 /* JSWeakPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B286D1EB8E6D5000EB5D2 /* JSMarkingConstraintPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B28681EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2221,8 +2221,8 @@
 		0F070A421D543A89006E7232 /* CellContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellContainer.h; sourceTree = "<group>"; };
 		0F070A431D543A89006E7232 /* CellContainerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellContainerInlines.h; sourceTree = "<group>"; };
 		0F070A441D543A89006E7232 /* HeapCellInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapCellInlines.h; sourceTree = "<group>"; };
-		0F070A451D543A89006E7232 /* LargeAllocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LargeAllocation.cpp; sourceTree = "<group>"; };
-		0F070A461D543A89006E7232 /* LargeAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LargeAllocation.h; sourceTree = "<group>"; };
+		0F070A451D543A89006E7232 /* PreciseAllocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreciseAllocation.cpp; sourceTree = "<group>"; };
+		0F070A461D543A89006E7232 /* PreciseAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseAllocation.h; sourceTree = "<group>"; };
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
 		0F0B28671EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMarkingConstraintPrivate.cpp; sourceTree = "<group>"; };
 		0F0B28681EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMarkingConstraintPrivate.h; sourceTree = "<group>"; };
@@ -6201,8 +6201,6 @@
 				0F5E0FE52086AD460097F0DE /* IsoSubspacePerVM.h */,
 				0F766D2915A8CC34008F363E /* JITStubRoutineSet.cpp */,
 				0F766D2A15A8CC34008F363E /* JITStubRoutineSet.h */,
-				0F070A451D543A89006E7232 /* LargeAllocation.cpp */,
-				0F070A461D543A89006E7232 /* LargeAllocation.h */,
 				0F75A059200D25F00038E2CF /* LocalAllocator.cpp */,
 				0F75A057200D25F00038E2CF /* LocalAllocator.h */,
 				0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */,
@@ -6232,6 +6230,8 @@
 				0FA762031DB9242300B7A2FD /* MutatorState.h */,
 				E356987122841183008CDCCB /* PackedCellPtr.h */,
 				0F9DAA081FD1C3C80079C5B2 /* ParallelSourceAdapter.h */,
+				0F070A451D543A89006E7232 /* PreciseAllocation.cpp */,
+				0F070A461D543A89006E7232 /* PreciseAllocation.h */,
 				0FBB73B61DEF3AAC002C009E /* PreventCollectionScope.h */,
 				0FD0E5EF1E46BF230006AB08 /* RegisterState.h */,
 				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
@@ -8930,7 +8930,6 @@
 				0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */,
 				3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */,
 				0F5BF1711F23A5A10029D91D /* B3EnsureLoopPreHeaders.h in Headers */,
-				522927D5235FD0B9005CB169 /* GCMemoryOperations.h in Headers */,
 				5318045C22EAAC4B004A7342 /* B3ExtractValue.h in Headers */,
 				0F6971EA1D92F42400BA02A5 /* B3FenceValue.h in Headers */,
 				0F6B8AE51C4EFE1700969052 /* B3FixSSA.h in Headers */,
@@ -9452,6 +9451,7 @@
 				0F2B66AE17B6B54500A7AE3F /* GCIncomingRefCountedSet.h in Headers */,
 				0F2B66AF17B6B54500A7AE3F /* GCIncomingRefCountedSetInlines.h in Headers */,
 				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
+				522927D5235FD0B9005CB169 /* GCMemoryOperations.h in Headers */,
 				0F9715311EB28BEE00A1645D /* GCRequest.h in Headers */,
 				A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */,
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
@@ -9836,7 +9836,6 @@
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
-				0F070A4B1D543A98006E7232 /* LargeAllocation.h in Headers */,
 				DCF3D56A1CD29470003D5C65 /* LazyClassStructure.h in Headers */,
 				DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
@@ -9964,6 +9963,7 @@
 				0FF9CE741B9CD6D0004EDCA6 /* PolymorphicAccess.h in Headers */,
 				0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */,
 				521131F71F82BF14007CCEEE /* PolyProtoAccessChain.h in Headers */,
+				0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */,
 				0F98206116BFE38300240D02 /* PreciseJumpTargets.h in Headers */,
 				E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */,
 				0FBB73B81DEF3AAE002C009E /* PreventCollectionScope.h in Headers */,

@@ -34,8 +34,8 @@ namespace JSC {
 
 bool HeapCell::isLive()
 {
-    if (isLargeAllocation())
-        return largeAllocation().isLive();
+    if (isPreciseAllocation())
+        return preciseAllocation().isLive();
     auto& markedBlockHandle = markedBlock().handle();
     if (markedBlockHandle.isFreeListed())
         return !markedBlockHandle.isFreeListedCell(this);

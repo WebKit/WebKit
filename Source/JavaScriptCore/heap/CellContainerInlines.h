@@ -27,16 +27,16 @@
 
 #include "CellContainer.h"
 #include "JSCast.h"
-#include "LargeAllocation.h"
 #include "MarkedBlock.h"
+#include "PreciseAllocation.h"
 #include "VM.h"
 
 namespace JSC {
 
 inline VM& CellContainer::vm() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().vm();
+    if (isPreciseAllocation())
+        return preciseAllocation().vm();
     return markedBlock().vm();
 }
 
@@ -47,55 +47,55 @@ inline Heap* CellContainer::heap() const
 
 inline bool CellContainer::isMarked(HeapCell* cell) const
 {
-    if (isLargeAllocation())
-        return largeAllocation().isMarked();
+    if (isPreciseAllocation())
+        return preciseAllocation().isMarked();
     return markedBlock().isMarked(cell);
 }
 
 inline bool CellContainer::isMarked(HeapVersion markingVersion, HeapCell* cell) const
 {
-    if (isLargeAllocation())
-        return largeAllocation().isMarked();
+    if (isPreciseAllocation())
+        return preciseAllocation().isMarked();
     return markedBlock().isMarked(markingVersion, cell);
 }
 
 inline void CellContainer::noteMarked()
 {
-    if (!isLargeAllocation())
+    if (!isPreciseAllocation())
         markedBlock().noteMarked();
 }
 
 inline void CellContainer::assertValidCell(VM& vm, HeapCell* cell) const
 {
-    if (isLargeAllocation())
-        largeAllocation().assertValidCell(vm, cell);
+    if (isPreciseAllocation())
+        preciseAllocation().assertValidCell(vm, cell);
     else
         markedBlock().assertValidCell(vm, cell);
 }
 
 inline size_t CellContainer::cellSize() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().cellSize();
+    if (isPreciseAllocation())
+        return preciseAllocation().cellSize();
     return markedBlock().cellSize();
 }
 
 inline WeakSet& CellContainer::weakSet() const
 {
-    if (isLargeAllocation())
-        return largeAllocation().weakSet();
+    if (isPreciseAllocation())
+        return preciseAllocation().weakSet();
     return markedBlock().weakSet();
 }
 
 inline void CellContainer::aboutToMark(HeapVersion markingVersion)
 {
-    if (!isLargeAllocation())
+    if (!isPreciseAllocation())
         markedBlock().aboutToMark(markingVersion);
 }
 
 inline bool CellContainer::areMarksStale() const
 {
-    if (isLargeAllocation())
+    if (isPreciseAllocation())
         return false;
     return markedBlock().areMarksStale();
 }

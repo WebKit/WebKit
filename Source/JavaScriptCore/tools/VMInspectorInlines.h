@@ -59,20 +59,20 @@ template<VMInspector::VerifierAction action, VMInspector::VerifyFunctor verifier
 bool VMInspector::verifyCell(VM& vm, JSCell* cell)
 {
     size_t allocatorCellSize = 0;
-    if (cell->isLargeAllocation()) {
-        LargeAllocation& largeAllocation = cell->largeAllocation();
-        AUDIT_VERIFY(action, verifier, &largeAllocation.vm() == &vm, cell, cell->type(), &largeAllocation.vm(), &vm);
+    if (cell->isPreciseAllocation()) {
+        PreciseAllocation& preciseAllocation = cell->preciseAllocation();
+        AUDIT_VERIFY(action, verifier, &preciseAllocation.vm() == &vm, cell, cell->type(), &preciseAllocation.vm(), &vm);
 
-        bool isValidLargeAllocation = false;
-        for (auto* i : vm.heap.objectSpace().largeAllocations()) {
-            if (i == &largeAllocation) {
-                isValidLargeAllocation = true;
+        bool isValidPreciseAllocation = false;
+        for (auto* i : vm.heap.objectSpace().preciseAllocations()) {
+            if (i == &preciseAllocation) {
+                isValidPreciseAllocation = true;
                 break;
             }
         }
-        AUDIT_VERIFY(action, verifier, isValidLargeAllocation, cell, cell->type());
+        AUDIT_VERIFY(action, verifier, isValidPreciseAllocation, cell, cell->type());
 
-        allocatorCellSize = largeAllocation.cellSize();
+        allocatorCellSize = preciseAllocation.cellSize();
     } else {
         MarkedBlock& block = cell->markedBlock();
         MarkedBlock::Handle& blockHandle = block.handle();

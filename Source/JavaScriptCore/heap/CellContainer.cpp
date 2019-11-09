@@ -32,8 +32,8 @@ namespace JSC {
 
 bool CellContainer::isNewlyAllocated(HeapCell* cell) const
 {
-    if (isLargeAllocation())
-        return largeAllocation().isNewlyAllocated();
+    if (isPreciseAllocation())
+        return preciseAllocation().isNewlyAllocated();
     MarkedBlock& block = markedBlock();
     return !block.isNewlyAllocatedStale()
         && block.isNewlyAllocated(cell);

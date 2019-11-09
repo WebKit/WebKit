@@ -31,14 +31,14 @@ namespace JSC {
 
 class Heap;
 class HeapCell;
-class LargeAllocation;
+class PreciseAllocation;
 class MarkedBlock;
 class WeakSet;
 class VM;
 
 typedef uint32_t HeapVersion;
 
-// This is how we abstract over either MarkedBlock& or LargeAllocation&. Put things in here as you
+// This is how we abstract over either MarkedBlock& or PreciseAllocation&. Put things in here as you
 // find need for them.
 
 class CellContainer {
@@ -53,8 +53,8 @@ public:
     {
     }
     
-    CellContainer(LargeAllocation& largeAllocation)
-        : m_encodedPointer(bitwise_cast<uintptr_t>(&largeAllocation) | isLargeAllocationBit)
+    CellContainer(PreciseAllocation& preciseAllocation)
+        : m_encodedPointer(bitwise_cast<uintptr_t>(&preciseAllocation) | isPreciseAllocationBit)
     {
     }
     
@@ -63,8 +63,8 @@ public:
     
     explicit operator bool() const { return !!m_encodedPointer; }
     
-    bool isMarkedBlock() const { return m_encodedPointer && !(m_encodedPointer & isLargeAllocationBit); }
-    bool isLargeAllocation() const { return m_encodedPointer & isLargeAllocationBit; }
+    bool isMarkedBlock() const { return m_encodedPointer && !(m_encodedPointer & isPreciseAllocationBit); }
+    bool isPreciseAllocation() const { return m_encodedPointer & isPreciseAllocationBit; }
     
     MarkedBlock& markedBlock() const
     {
@@ -72,10 +72,10 @@ public:
         return *bitwise_cast<MarkedBlock*>(m_encodedPointer);
     }
     
-    LargeAllocation& largeAllocation() const
+    PreciseAllocation& preciseAllocation() const
     {
-        ASSERT(isLargeAllocation());
-        return *bitwise_cast<LargeAllocation*>(m_encodedPointer - isLargeAllocationBit);
+        ASSERT(isPreciseAllocation());
+        return *bitwise_cast<PreciseAllocation*>(m_encodedPointer - isPreciseAllocationBit);
     }
     
     void aboutToMark(HeapVersion markingVersion);
@@ -94,7 +94,7 @@ public:
     WeakSet& weakSet() const;
     
 private:
-    static constexpr uintptr_t isLargeAllocationBit = 1;
+    static constexpr uintptr_t isPreciseAllocationBit = 1;
     uintptr_t m_encodedPointer;
 };
 

@@ -81,7 +81,7 @@ public:
     JS_EXPORT_PRIVATE Ref<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
     
     template<typename Func>
-    void forEachLargeAllocation(const Func&);
+    void forEachPreciseAllocation(const Func&);
     
     template<typename Func>
     void forEachMarkedCell(const Func&);
@@ -113,7 +113,7 @@ protected:
     
     BlockDirectory* m_firstDirectory { nullptr };
     BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
-    SentinelLinkedList<LargeAllocation, PackedRawSentinelNode<LargeAllocation>> m_largeAllocations;
+    SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_preciseAllocations;
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 
     CString m_name;

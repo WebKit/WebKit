@@ -31,7 +31,7 @@ namespace JSC {
 
 class CellContainer;
 class Heap;
-class LargeAllocation;
+class PreciseAllocation;
 class MarkedBlock;
 class Subspace;
 class VM;
@@ -61,13 +61,13 @@ public:
 
     bool isLive();
 
-    bool isLargeAllocation() const;
+    bool isPreciseAllocation() const;
     CellContainer cellContainer() const;
     MarkedBlock& markedBlock() const;
-    LargeAllocation& largeAllocation() const;
+    PreciseAllocation& preciseAllocation() const;
 
     // If you want performance and you know that your cell is small, you can do this instead:
-    // ASSERT(!cell->isLargeAllocation());
+    // ASSERT(!cell->isPreciseAllocation());
     // cell->markedBlock().vm()
     // We currently only use this hack for callees to make CallFrame::vm() fast. It's not
     // recommended to use it for too many other things, since the large allocation cutoff is
