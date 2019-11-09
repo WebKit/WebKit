@@ -1,3 +1,13 @@
+2019-11-08  youenn fablet  <youenn@apple.com>
+
+        XMLHttpRequestUpload should be exposed in dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=203901
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+
 2019-11-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>

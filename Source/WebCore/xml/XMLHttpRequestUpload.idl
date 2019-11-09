@@ -27,6 +27,7 @@
  */
 
 [
+    Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     JSGenerateToJSObject,
 ] interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {

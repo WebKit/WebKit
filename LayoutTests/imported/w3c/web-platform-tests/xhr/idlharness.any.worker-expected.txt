@@ -13,13 +13,13 @@ PASS XMLHttpRequestEventTarget interface: attribute onerror
 PASS XMLHttpRequestEventTarget interface: attribute onload 
 PASS XMLHttpRequestEventTarget interface: attribute ontimeout 
 PASS XMLHttpRequestEventTarget interface: attribute onloadend 
-FAIL XMLHttpRequestUpload interface: existence and properties of interface object assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload interface object length assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload interface object name assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
-FAIL XMLHttpRequestUpload must be primary interface of (new XMLHttpRequest()).upload assert_own_property: self does not have own property "XMLHttpRequestUpload" expected property "XMLHttpRequestUpload" missing
+PASS XMLHttpRequestUpload interface: existence and properties of interface object 
+PASS XMLHttpRequestUpload interface object length 
+PASS XMLHttpRequestUpload interface object name 
+PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object 
+PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property 
+PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object's @@unscopables property 
+PASS XMLHttpRequestUpload must be primary interface of (new XMLHttpRequest()).upload 
 PASS Stringification of (new XMLHttpRequest()).upload 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onloadstart" with the proper type 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onprogress" with the proper type 

@@ -32,7 +32,7 @@ PASS The Float32Array interface object should be exposed.
 PASS The Float64Array interface object should be exposed. 
 PASS The DataView interface object should be exposed. 
 PASS The XMLHttpRequestEventTarget interface object should be exposed. 
-FAIL The XMLHttpRequestUpload interface object should be exposed. assert_own_property: expected property "XMLHttpRequestUpload" missing
+PASS The XMLHttpRequestUpload interface object should be exposed. 
 PASS The XMLHttpRequest interface object should be exposed. 
 PASS The ProgressEvent interface object should be exposed. 
 FAIL The FormData interface object should be exposed. assert_own_property: expected property "FormData" missing
