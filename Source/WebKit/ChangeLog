@@ -1,3 +1,22 @@
+2019-11-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Add quirk needed to support legacy Google NFC Titan security keys
+        https://bugs.webkit.org/show_bug.cgi?id=204024
+        <rdar://problem/56962320>
+
+        Reviewed by Brent Fulgham.
+
+        Some legacy U2F keys such as Google T1 Titan don't understand the FIDO applet command. Instead,
+        they are configured to only have the FIDO applet. Therefore, when the above command fails, we
+        use U2F_VERSION command to double check if the connected tag can actually speak U2F, indicating
+        we are interacting with one of these legacy keys.
+
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::fido::compareVersion):
+        (WebKit::fido::trySelectFidoApplet):
+        (WebKit::NfcConnection::transact const):
+        (WebKit::NfcConnection::didDetectTags):
+
 2019-11-08  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r252260.
