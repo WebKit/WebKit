@@ -609,4 +609,24 @@ bool Quirks::needsFullWidthHeightFullscreenStyleQuirk() const
     return m_needsFullWidthHeightFullscreenStyleQuirk.value();
 }
 
+bool Quirks::shouldBypassBackForwardCache() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto topURL = m_document->topDocument().url();
+    auto host = topURL.host();
+
+    // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
+    // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
+    // because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
+    // when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/56996057>.
+    if (topURL.protocolIs("https") && equalLettersIgnoringASCIICase(host, "vimeo.com")) {
+        if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
+            return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    return false;
+}
+
 }

@@ -82,6 +82,8 @@ public:
     bool needsPreloadAutoQuirk() const;
     bool needsFullWidthHeightFullscreenStyleQuirk() const;
 
+    bool shouldBypassBackForwardCache() const;
+
 private:
     bool needsQuirks() const;
 

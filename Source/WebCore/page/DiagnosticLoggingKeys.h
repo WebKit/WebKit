@@ -149,6 +149,7 @@ public:
     static String sameLoadKey();
     static String scriptKey();
     static String serviceWorkerKey();
+    static String siteSpecificQuirkKey();
     WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
     WEBCORE_EXPORT static String succeededLessThan2SecondsKey();

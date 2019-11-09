@@ -535,6 +535,11 @@ String DiagnosticLoggingKeys::serviceWorkerKey()
     return "serviceWorker"_s;
 }
 
+String DiagnosticLoggingKeys::siteSpecificQuirkKey()
+{
+    return "siteSpecificQuirk"_s;
+}
+
 String DiagnosticLoggingKeys::streamingMedia()
 {
     return "streamingMedia"_s;

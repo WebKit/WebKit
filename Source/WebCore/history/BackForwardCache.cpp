@@ -45,6 +45,7 @@
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
@@ -116,6 +117,13 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         PCLOG(" Determining if subframe with URL (", currentURL.string(), ") can be cached:");
 
     bool isCacheable = true;
+
+    if (frame.isMainFrame() && frame.document()->quirks().shouldBypassBackForwardCache()) {
+        PCLOG("   -Disabled by site-specific quirk");
+        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::siteSpecificQuirkKey());
+        isCacheable = false;
+    }
+
     // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
     if (documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty()) {
         PCLOG("   -Frame is an error page");

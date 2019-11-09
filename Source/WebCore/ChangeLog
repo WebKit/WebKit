@@ -1,3 +1,28 @@
+2019-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Add back/forward cache quirk for Vimeo.com
+        https://bugs.webkit.org/show_bug.cgi?id=204025
+        <rdar://problem/56996057>
+
+        Reviewed by Antti Koivisto.
+
+        Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
+        We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
+        because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
+        when coming back from the back/forward cache (e.g. in 'pageshow' event handler).
+
+        To address the issue, this patch introduces a quirk to restore pre-r250437 on Vimeo.com, until they get
+        a chance to fix their content.
+
+        * history/BackForwardCache.cpp:
+        (WebCore::canCacheFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::siteSpecificQuirkKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldBypassBackForwardCache const):
+        * page/Quirks.h:
+
 2019-11-08  Youenn Fablet  <youenn@apple.com>
 
         SWServerWorker in redundant state do not need to process messages from the context process
