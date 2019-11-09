@@ -1,5 +1,15 @@
 2019-11-08  Jonathan Bedard  <jbedard@apple.com>
 
+        Simulators having trouble launching apps after booting
+        <rdar://problem/57032042>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Temporarily increase timeout to help out bots.
+
+2019-11-08  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: List failing tests for criteria
         https://bugs.webkit.org/show_bug.cgi?id=203905
 
