@@ -1,3 +1,57 @@
+2019-11-08  Brady Eidson  <beidson@apple.com>
+
+        WKWebView Find-in-page API.
+        <rdar://problem/46971112> and https://bugs.webkit.org/show_bug.cgi?id=203872
+
+        Reviewed by Tim Horton.
+
+        Covered by API tests.
+
+        - Promote _findString:
+        - Add a completion handler for it.
+
+        * SourcesCocoa.txt:
+        
+        * UIProcess/API/Cocoa/WKFindConfiguration.h: Added.
+        * UIProcess/API/Cocoa/WKFindConfiguration.mm: Added.
+        (-[WKFindConfiguration init]):
+        (-[WKFindConfiguration copyWithZone:]):
+
+        * UIProcess/API/Cocoa/WKFindResult.h: Added.
+        * UIProcess/API/Cocoa/WKFindResult.mm: Added.
+        (-[WKFindResult init]):
+        (-[WKFindResult _initWithMatchFound:]):
+        (-[WKFindResult copyWithZone:]):
+        * UIProcess/API/Cocoa/WKFindResultInternal.h: Added.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (toFindOptions):
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findString):
+        (WebKit::WebPageProxy::findStringCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        * WebProcess/WebPage/FindController.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findString):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-11-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add quirk needed to support legacy Google NFC Titan security keys

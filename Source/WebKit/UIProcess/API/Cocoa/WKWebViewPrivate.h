@@ -450,11 +450,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @interface WKWebView () <UIResponderStandardEditActions>
 @end
 
-#else
-
-@interface WKWebView (WKNSTextFinderClient) <NSTextFinderClient>
-@end
-
 #endif
 
 @interface WKWebView (WKTesting)

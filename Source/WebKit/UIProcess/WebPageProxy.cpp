@@ -3699,9 +3699,22 @@ void WebPageProxy::findStringMatches(const String& string, FindOptions options, 
     m_process->send(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), m_webPageID);
 }
 
-void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)
+void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount, Function<void (bool, CallbackBase::Error)>&& callbackFunction)
 {
-    m_process->send(Messages::WebPage::FindString(string, options, maxMatchCount), m_webPageID);
+    Optional<CallbackID> callbackID;
+    if (callbackFunction)
+        callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::findString"_s));
+
+    m_process->send(Messages::WebPage::FindString(string, options, maxMatchCount, callbackID), m_webPageID);
+}
+
+void WebPageProxy::findStringCallback(bool found, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<BoolCallback>(callbackID);
+    if (!callback)
+        return;
+
+    callback->performCallbackWithReturnValue(found);
 }
 
 void WebPageProxy::getImageForFindMatch(int32_t matchIndex)

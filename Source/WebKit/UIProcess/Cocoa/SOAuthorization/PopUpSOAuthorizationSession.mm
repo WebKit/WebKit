@@ -33,6 +33,7 @@
 #import "WKUIDelegate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
 

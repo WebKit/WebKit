@@ -59,6 +59,8 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKErrorInternal.h"
+#import "WKFindConfiguration.h"
+#import "WKFindResultInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
 #import "WKNSData.h"
@@ -4743,6 +4745,32 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
         } else
             completionHandlerBlock(wrapper(*data), nil);
+    });
+}
+
+inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
+{
+    unsigned findOptions = 0;
+
+    if (!configuration.caseSensitive)
+        findOptions |= WebKit::FindOptionsCaseInsensitive;
+    if (configuration.backwards)
+        findOptions |= WebKit::FindOptionsBackwards;
+    if (configuration.wraps)
+        findOptions |= WebKit::FindOptionsWrapAround;
+
+    return static_cast<WebKit::FindOptions>(findOptions);
+}
+
+- (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
+{
+    if (!string.length) {
+        completionHandler([[[WKFindResult alloc] _initWithMatchFound:NO] autorelease]);
+        return;
+    }
+
+    _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found, WebKit::CallbackBase::Error error) {
+        handler([[[WKFindResult alloc] _initWithMatchFound:(error == WebKit::CallbackBase::Error::None && found)] autorelease]);
     });
 }
 

@@ -83,6 +83,7 @@
 - (void)collapseToStart;
 - (void)collapseToEnd;
 - (void)addToTestWindow;
+- (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
 @end
 
 #if PLATFORM(IOS_FAMILY)

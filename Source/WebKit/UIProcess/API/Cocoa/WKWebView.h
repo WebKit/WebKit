@@ -35,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKBackForwardList;
 @class WKBackForwardListItem;
+@class WKFindConfiguration;
+@class WKFindResult;
 @class WKNavigation;
 @class WKPDFConfiguration;
 @class WKSnapshotConfiguration;
@@ -303,6 +305,16 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 @property (nonatomic) CGFloat pageZoom WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/* @abstract Searches the page contents for the given string.
+ @param string The string to search for.
+ @param configuration A set of options configuring the search.
+ @param completionHandler A block to invoke when the search completes.
+ @discussion If the WKFindConfiguration is nil, all of the default WKFindConfiguration values will be used.
+  A match found by the search is selected and the page is scrolled to reveal the selection.
+  The completion handler is called after the search completes.
+*/
+- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
  */
@@ -349,6 +361,10 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  */
 - (IBAction)stopLoading:(nullable id)sender;
 
+@end
+
+WK_API_AVAILABLE(macos(WK_MAC_TBA))
+@interface WKWebView (WKNSTextFinderClient) <NSTextFinderClient>
 @end
 
 #endif
