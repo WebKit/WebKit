@@ -1,3 +1,17 @@
+2019-11-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        New test inspector-protocol/page/archive.html added in r154828 fails on EFL, Qt, GTK
+        https://bugs.webkit.org/show_bug.cgi?id=120682
+
+        Reviewed by Devin Rousso.
+
+        Generate custom expectations for inspector-protocol/page/archive.html on the platforms
+        where Page.archive is not supported yet.
+
+        * inspector/page/archive.html: 'Not supported' is a valid response on some platforms.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/inspector/page/archive-expected.txt: Added.
+
 2019-11-08  Peng Liu  <peng.liu6@apple.com>
 
         Entering/Exiting Picture-in-Picture mode through webkitSetPresentationMode() does not fire events (enterpictureinpicture and leavepictureinpicture) defined in the spec
