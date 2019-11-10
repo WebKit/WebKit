@@ -5,6 +5,17 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Add a failing test expectation for now while we investigate how to fix the test.
+
+        * platform/ios/TestExpectations:
+
+2019-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: fast/events/scroll-subframe-in-rendering-update.html always fails
+        https://bugs.webkit.org/show_bug.cgi?id=204045
+
+        Reviewed by Alexey Proskuryakov.
+
         Disable the frame flattening to make the test work on iOS.
 
         * fast/events/scroll-subframe-in-rendering-update.html:
