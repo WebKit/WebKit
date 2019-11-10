@@ -41,18 +41,25 @@ namespace Style {
 
 class Builder;
 
+struct BuilderContext {
+    Ref<const Document> document;
+    const RenderStyle& parentStyle;
+    const RenderStyle* rootElementStyle = nullptr;
+    RefPtr<const Element> element = nullptr;
+};
+
 class BuilderState {
 public:
-    BuilderState(Builder&, RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* rootElementStyle, const Document&, const Element*);
+    BuilderState(Builder&, RenderStyle&, BuilderContext&&);
 
     Builder& builder() { return m_builder; }
 
     RenderStyle& style() { return m_style; }
-    const RenderStyle& parentStyle() const { return m_parentStyle; }
-    const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
+    const RenderStyle& parentStyle() const { return m_context.parentStyle; }
+    const RenderStyle* rootElementStyle() const { return m_context.rootElementStyle; }
 
-    const Document& document() const { return m_document.get(); }
-    const Element* element() const { return m_element.get(); }
+    const Document& document() const { return m_context.document.get(); }
+    const Element* element() const { return m_context.element.get(); }
 
     void setFontDescription(FontCascadeDescription&& fontDescription) { m_fontDirty |= m_style.setFontDescription(WTFMove(fontDescription)); }
     void setFontSize(FontCascadeDescription&, float size);
@@ -65,7 +72,7 @@ public:
     void setFontDirty() { m_fontDirty = true; }
 
     const FontCascadeDescription& fontDescription() { return m_style.fontDescription(); }
-    const FontCascadeDescription& parentFontDescription() { return m_parentStyle.fontDescription(); }
+    const FontCascadeDescription& parentFontDescription() { return parentStyle().fontDescription(); }
 
     // FIXME: These are mutually exclusive, clean up the code to take that into account.
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
@@ -105,13 +112,9 @@ private:
     CSSToStyleMap m_styleMap;
 
     RenderStyle& m_style;
-    const RenderStyle& m_parentStyle;
-    const RenderStyle* m_rootElementStyle;
+    const BuilderContext m_context;
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
-
-    Ref<const Document> m_document;
-    RefPtr<const Element> m_element;
 
     Bitmap<numCSSProperties> m_appliedProperties;
     HashSet<String> m_appliedCustomProperties;

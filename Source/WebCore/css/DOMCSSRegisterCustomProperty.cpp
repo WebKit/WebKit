@@ -52,7 +52,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
         // We need to initialize this so that we can successfully parse computationally dependent values (like em units).
         // We don't actually need the values to be accurate, since they will be rejected later anyway
-        styleResolver.applyPropertyToStyle(CSSPropertyInvalid, nullptr, styleResolver.defaultStyleForElement());
+        auto style = styleResolver.defaultStyleForElement(nullptr);
 
         HashSet<CSSPropertyID> dependencies;
         CSSPropertyParser::collectParsedCustomPropertyValueDependencies(descriptor.syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
@@ -60,8 +60,12 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         if (!dependencies.isEmpty())
             return Exception { SyntaxError, "The given initial value must be computationally independent." };
 
+
         MatchResult matchResult;
-        Style::Builder dummyBuilder(styleResolver, matchResult, { });
+
+        auto parentStyle = RenderStyle::clone(*style);
+        Style::Builder dummyBuilder(*style, { document, parentStyle }, matchResult, { });
+
         initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), strictCSSParserContext());
 
         if (!initialValue || !initialValue->isResolved())

@@ -1,3 +1,72 @@
+2019-11-10  Antti Koivisto  <antti@apple.com>
+
+        Stack allocate StyleResolver state
+        https://bugs.webkit.org/show_bug.cgi?id=204053
+
+        Reviewed by Zalan Bujtas.
+
+        State is currently awkwardly a member that gets cleared. It should be stack allocated and
+        passed around where needed.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::updateBlendingKeyframes):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::builderContext):
+
+        Helper for initializing Style::Builder from resolver state.
+
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::State::clear): Deleted.
+
+        Nothing to clear, state is transient.
+
+        (WebCore::StyleResolver::setNewStateWithElement): Deleted.
+        (WebCore::StyleResolver::applyPropertyToStyle): Deleted.
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle): Deleted.
+
+        Style::Builder can be used directly to apply properties instead of via these functions that require state setup.
+
+        (WebCore::StyleResolver::initializeFontStyle): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::inspectorCSSOMWrappers):
+        (WebCore::StyleResolver::style const): Deleted.
+        (WebCore::StyleResolver::parentStyle const): Deleted.
+        (WebCore::StyleResolver::rootElementStyle const): Deleted.
+        (WebCore::StyleResolver::element const): Deleted.
+        (WebCore::StyleResolver::state): Deleted.
+        (WebCore::StyleResolver::state const): Deleted.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+
+        Use Style::Builder directly to apply properties.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::Builder):
+
+        Encapsulte immutable arguments into BuilderContext type.
+
+        (WebCore::Style::Builder::applyPropertyValue):
+        * style/StyleBuilder.h:
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::BuilderState):
+        (WebCore::Style::BuilderState::updateFontForZoomChange):
+        (WebCore::Style::BuilderState::updateFontForGenericFamilyChange):
+        * style/StyleBuilderState.h:
+        (WebCore::Style::BuilderState::parentStyle const):
+        (WebCore::Style::BuilderState::rootElementStyle const):
+        (WebCore::Style::BuilderState::document const):
+        (WebCore::Style::BuilderState::element const):
+        (WebCore::Style::BuilderState::parentFontDescription):
+
 2019-11-09  Antti Koivisto  <antti@apple.com>
 
         Move style adjustment code out of StyleResolver and into a class of its own

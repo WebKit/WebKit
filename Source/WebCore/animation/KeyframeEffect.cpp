@@ -744,7 +744,6 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
     StyleResolver& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
-        styleResolver.setNewStateWithElement(*m_target);
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
 
         auto styleProperties = keyframe.style->immutableCopyIfNeeded();
@@ -752,7 +751,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
             keyframeList.addProperty(styleProperties->propertyAt(i).id());
 
         auto keyframeRule = StyleRuleKeyframe::create(WTFMove(styleProperties));
-        keyframeValue.setStyle(styleResolver.styleForKeyframe(&elementStyle, keyframeRule.ptr(), keyframeValue));
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, &elementStyle, keyframeRule.ptr(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
 

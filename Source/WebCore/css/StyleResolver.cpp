@@ -84,14 +84,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline void StyleResolver::State::clear()
-{
-    m_element = nullptr;
-    m_parentStyle = nullptr;
-    m_ownedParentStyle = nullptr;
-    m_userAgentAppearanceStyle = nullptr;
-}
-
 StyleResolver::StyleResolver(Document& document)
     : m_ruleSets(*this)
     , m_document(document)
@@ -173,10 +165,9 @@ StyleResolver::~StyleResolver()
 #endif
 }
 
-StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const SelectorFilter* selectorFilter)
+StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle)
     : m_element(&element)
     , m_parentStyle(parentStyle)
-    , m_selectorFilter(selectorFilter)
 {
     bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
     if (resetStyleInheritance)
@@ -207,24 +198,27 @@ static inline bool isAtShadowBoundary(const Element& element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-void StyleResolver::setNewStateWithElement(const Element& element)
+Style::BuilderContext StyleResolver::builderContext(const State& state)
 {
-    // Apply the declaration to the style. This is a simplified version of the logic in styleForElement.
-    m_state = State(element, nullptr);
+    return {
+        m_document,
+        *state.parentStyle(),
+        state.rootElementStyle(),
+        state.element()
+    };
 }
 
 ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_isDeleted);
 
-    m_state = State(element, parentStyle, m_overrideDocumentElementStyle, selectorFilter);
-    State& state = m_state;
+    auto state = State(element, parentStyle, m_overrideDocumentElementStyle);
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
         state.style()->inheritFrom(*state.parentStyle());
     } else {
-        state.setStyle(defaultStyleForElement());
+        state.setStyle(defaultStyleForElement(&element));
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
@@ -243,7 +237,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
 
-    ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
     collector.setMedium(&m_mediaQueryEvaluator);
 
     if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
@@ -260,7 +254,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     auto elementStyleRelations = Style::commitRelationsToRenderStyle(style, element, collector.styleRelations());
 
-    applyMatchedProperties(collector.matchResult(), element);
+    applyMatchedProperties(state, collector.matchResult());
 
     Style::Adjuster adjuster(document(), *state.parentStyle(), parentBoxStyle, &element);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
@@ -268,27 +262,22 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
 
-    state.clear(); // Clear out for the next resolve.
-
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
 }
 
-std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
+std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const Element& element, const RenderStyle* elementStyle, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     RELEASE_ASSERT(!m_isDeleted);
 
     MatchResult result;
     result.authorDeclarations.append({ &keyframe->properties() });
 
-    ASSERT(!m_state.style());
+    auto state = State(element, nullptr);
 
-    State& state = m_state;
-
-    // Create the style
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(*elementStyle));
 
-    Style::Builder builder(*this, result, { Style::CascadeLevel::Author });
+    Style::Builder builder(*state.style(), builderContext(state), result, { Style::CascadeLevel::Author });
     builder.applyAllProperties();
 
     Style::Adjuster adjuster(document(), *state.parentStyle(), nullptr, nullptr);
@@ -371,12 +360,10 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
 
     // Construct and populate the style for each keyframe.
     for (auto& keyframe : *keyframes) {
-        setNewStateWithElement(element);
-
         // Add this keyframe style to all the indicated key times
         for (auto key : keyframe->keys()) {
             KeyframeValue keyframeValue(0, nullptr);
-            keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe.ptr(), keyframeValue));
+            keyframeValue.setStyle(styleForKeyframe(element, elementStyle, keyframe.ptr(), keyframeValue));
             keyframeValue.setKey(key);
             if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
@@ -393,7 +380,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
             zeroPercentKeyframe->setKey(0);
         }
         KeyframeValue keyframeValue(0, nullptr);
-        keyframeValue.setStyle(styleForKeyframe(elementStyle, zeroPercentKeyframe, keyframeValue));
+        keyframeValue.setStyle(styleForKeyframe(element, elementStyle, zeroPercentKeyframe, keyframeValue));
         list.insert(WTFMove(keyframeValue));
     }
 
@@ -405,30 +392,24 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
             hundredPercentKeyframe->setKey(1);
         }
         KeyframeValue keyframeValue(1, nullptr);
-        keyframeValue.setStyle(styleForKeyframe(elementStyle, hundredPercentKeyframe, keyframeValue));
+        keyframeValue.setStyle(styleForKeyframe(element, elementStyle, hundredPercentKeyframe, keyframeValue));
         list.insert(WTFMove(keyframeValue));
     }
 }
 
 std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const SelectorFilter* selectorFilter)
 {
-    m_state = State(element, &parentStyle, m_overrideDocumentElementStyle, selectorFilter);
+    auto state = State(element, &parentStyle, m_overrideDocumentElementStyle);
 
-    State& state = m_state;
-
-    if (m_state.parentStyle()) {
+    if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
-        state.style()->inheritFrom(*m_state.parentStyle());
+        state.style()->inheritFrom(*state.parentStyle());
     } else {
-        state.setStyle(defaultStyleForElement());
+        state.setStyle(defaultStyleForElement(&element));
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
-    // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
-    // those rules.
-
-    // Check UA, user and author rules.
-    ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
     collector.setPseudoStyleRequest(pseudoStyleRequest);
     collector.setMedium(&m_mediaQueryEvaluator);
     collector.matchUARules();
@@ -445,7 +426,7 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
 
     state.style()->setStyleType(pseudoStyleRequest.pseudoId);
 
-    applyMatchedProperties(collector.matchResult(), element);
+    applyMatchedProperties(state, collector.matchResult());
 
     Style::Adjuster adjuster(document(), *state.parentStyle(), parentBoxStyle, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
@@ -453,7 +434,6 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
 
-    // Now return the style.
     return state.takeStyle();
 }
 
@@ -465,30 +445,42 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     if (!documentElement)
         return RenderStyle::createPtr();
 
-    m_state = State(*documentElement, m_document.renderStyle());
+    auto state = State(*documentElement, m_document.renderStyle());
 
-    m_state.setStyle(RenderStyle::createPtr());
-    m_state.style()->inheritFrom(*m_state.rootElementStyle());
+    state.setStyle(RenderStyle::createPtr());
+    state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(m_state, m_ruleSets);
+    PageRuleCollector collector(state, m_ruleSets);
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();
 
-    Style::Builder builder(*this, result, { Style::CascadeLevel::Author });
+    Style::Builder builder(*state.style(), builderContext(state), result, { Style::CascadeLevel::Author });
     builder.applyAllProperties();
 
     // Now return the style.
-    return m_state.takeStyle();
+    return state.takeStyle();
 }
 
-std::unique_ptr<RenderStyle> StyleResolver::defaultStyleForElement()
+std::unique_ptr<RenderStyle> StyleResolver::defaultStyleForElement(const Element* element)
 {
-    m_state.setStyle(RenderStyle::createPtr());
-    // Make sure our fonts are initialized if we don't inherit them from our parent style.
-    initializeFontStyle();
-    m_state.style()->fontCascade().update(&document().fontSelector());
-    return m_state.takeStyle();
+    auto style = RenderStyle::createPtr();
+
+    FontCascadeDescription fontDescription;
+    fontDescription.setRenderingMode(settings().fontRenderingMode());
+    fontDescription.setOneFamily(standardFamily);
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
+
+    auto size = Style::fontSizeForKeyword(CSSValueMedium, false, document());
+    fontDescription.setSpecifiedSize(size);
+    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), style.get(), document()));
+
+    fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
+    style->setFontDescription(WTFMove(fontDescription));
+
+    style->fontCascade().update(&document().fontSelector());
+
+    return style;
 }
 
 Vector<RefPtr<StyleRule>> StyleResolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
@@ -501,9 +493,9 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Elemen
     if (!element)
         return { };
 
-    m_state = State(*element, nullptr);
+    auto state = State(*element, nullptr);
 
-    ElementRuleCollector collector(*element, m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(&m_mediaQueryEvaluator);
@@ -546,14 +538,14 @@ void StyleResolver::clearCachedDeclarationsAffectedByViewportUnits()
     m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
 }
 
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, UseMatchedDeclarationsCache useMatchedDeclarationsCache)
+void StyleResolver::applyMatchedProperties(State& state, const MatchResult& matchResult, UseMatchedDeclarationsCache useMatchedDeclarationsCache)
 {
-    State& state = m_state;
     unsigned cacheHash = useMatchedDeclarationsCache == UseMatchedDeclarationsCache::Yes ? Style::MatchedDeclarationsCache::computeHash(matchResult) : 0;
     auto includedProperties = Style::PropertyCascade::IncludedProperties::All;
 
     auto& style = *state.style();
     auto& parentStyle = *state.parentStyle();
+    auto& element = *state.element();
 
     auto* cacheEntry = m_matchedDeclarationsCache.find(cacheHash, matchResult);
     if (cacheEntry && Style::MatchedDeclarationsCache::isCacheable(element, style, parentStyle)) {
@@ -579,24 +571,24 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
         auto userAgentStyle = RenderStyle::clonePtr(style);
-        Style::Builder builder(*userAgentStyle, *this, matchResult, { Style::CascadeLevel::UserAgent });
+        Style::Builder builder(*userAgentStyle, builderContext(state), matchResult, { Style::CascadeLevel::UserAgent });
         builder.applyAllProperties();
 
         state.setUserAgentAppearanceStyle(WTFMove(userAgentStyle));
     }
 
-    Style::Builder builder(*this, matchResult, Style::allCascadeLevels(), includedProperties);
+    Style::Builder builder(*state.style(), builderContext(state), matchResult, Style::allCascadeLevels(), includedProperties);
 
     // High priority properties may affect resolution of other properties (they are mostly font related).
     builder.applyHighPriorityProperties();
 
     // If the effective zoom value changes, we can't use the matched properties cache. Start over.
     if (cacheEntry && cacheEntry->renderStyle->effectiveZoom() != style.effectiveZoom())
-        return applyMatchedProperties(matchResult, element, UseMatchedDeclarationsCache::No);
+        return applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
 
     // If the font changed, we can't use the matched properties cache. Start over.
     if (cacheEntry && cacheEntry->renderStyle->fontDescription() != style.fontDescription())
-        return applyMatchedProperties(matchResult, element, UseMatchedDeclarationsCache::No);
+        return applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
 
     builder.applyLowPriorityProperties();
 
@@ -608,39 +600,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
     if (Style::MatchedDeclarationsCache::isCacheable(element, style, parentStyle))
         m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
-}
-
-void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std::unique_ptr<RenderStyle> style)
-{
-    m_state = State();
-    m_state.setParentStyle(RenderStyle::clonePtr(*style));
-    m_state.setStyle(WTFMove(style));
-    applyPropertyToCurrentStyle(id, value);
-}
-
-void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* value)
-{
-    if (!value)
-        return;
-
-    MatchResult matchResult;
-    Style::Builder builder(*this, matchResult, { });
-    builder.applyPropertyValue(id, *value);
-}
-
-void StyleResolver::initializeFontStyle()
-{
-    FontCascadeDescription fontDescription;
-    fontDescription.setRenderingMode(settings().fontRenderingMode());
-    fontDescription.setOneFamily(standardFamily);
-    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
-
-    auto size = Style::fontSizeForKeyword(CSSValueMedium, false, document());
-    fontDescription.setSpecifiedSize(size);
-    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(m_state.element()), m_state.style(), document()));
-
-    fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
-    style()->setFontDescription(WTFMove(fontDescription));
 }
 
 void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)

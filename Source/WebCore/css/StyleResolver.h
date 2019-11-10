@@ -29,6 +29,7 @@
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
+#include "StyleBuilderState.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -112,12 +113,8 @@ public:
     std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoStyleRequest&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle = nullptr, const SelectorFilter* = nullptr);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
-    std::unique_ptr<RenderStyle> defaultStyleForElement();
+    std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
 
-    RenderStyle* style() const { return m_state.style(); }
-    const RenderStyle* parentStyle() const { return m_state.parentStyle(); }
-    const RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
-    const Element* element() const { return m_state.element(); }
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
     const Settings& settings() const { return m_document.settings(); }
@@ -134,8 +131,7 @@ public:
 
     void addCurrentSVGFontFaceRules();
 
-    void setNewStateWithElement(const Element&);
-    std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
+    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
     bool isAnimationNameValid(const String&);
 
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -148,11 +144,6 @@ public:
     };
     Vector<RefPtr<StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
     Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(const Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
-
-    void applyPropertyToStyle(CSSPropertyID, CSSValue*, std::unique_ptr<RenderStyle>);
-    void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
-
-    void initializeFontStyle();
 
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
@@ -181,24 +172,17 @@ public:
     void invalidateMatchedDeclarationsCache();
     void clearCachedDeclarationsAffectedByViewportUnits();
 
+    InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
+
 private:
-    enum class UseMatchedDeclarationsCache { Yes, No };
-    void applyMatchedProperties(const MatchResult&, const Element&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
+    friend class PageRuleCollector;
 
-    DocumentRuleSets m_ruleSets;
-
-    typedef HashMap<AtomStringImpl*, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
-    KeyframesRuleMap m_keyframesRuleMap;
-
-public:
     class State {
     public:
         State() { }
-        State(const Element&, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr, const SelectorFilter* = nullptr);
+        State(const Element&, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr);
 
     public:
-        void clear();
-
         const Element* element() const { return m_element; }
 
         void setStyle(std::unique_ptr<RenderStyle>);
@@ -212,27 +196,25 @@ public:
         const RenderStyle* userAgentAppearanceStyle() const { return m_userAgentAppearanceStyle.get(); }
         void setUserAgentAppearanceStyle(std::unique_ptr<RenderStyle> style) { m_userAgentAppearanceStyle = WTFMove(style); }
 
-        const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
-        
     private:
         const Element* m_element { nullptr };
         std::unique_ptr<RenderStyle> m_style;
         const RenderStyle* m_parentStyle { nullptr };
-        std::unique_ptr<RenderStyle> m_ownedParentStyle;
+        std::unique_ptr<const RenderStyle> m_ownedParentStyle;
         const RenderStyle* m_rootElementStyle { nullptr };
-
-        const SelectorFilter* m_selectorFilter { nullptr };
 
         std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
     };
 
-    State& state() { return m_state; }
-    const State& state() const { return m_state; }
+    Style::BuilderContext builderContext(const State&);
 
-    InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
+    enum class UseMatchedDeclarationsCache { Yes, No };
+    void applyMatchedProperties(State&, const MatchResult&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
 
-private:
-    void cacheBorderAndBackground();
+    DocumentRuleSets m_ruleSets;
+
+    typedef HashMap<AtomStringImpl*, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
+    KeyframesRuleMap m_keyframesRuleMap;
 
     MediaQueryEvaluator m_mediaQueryEvaluator;
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
@@ -250,8 +232,6 @@ private:
 #endif
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
-
-    State m_state;
 
     Style::MatchedDeclarationsCache m_matchedDeclarationsCache;
 

@@ -37,29 +37,48 @@
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"
-#include "StyleResolver.h"
 
 namespace WebCore {
 namespace Style {
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
-static PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
+inline PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
 {
     return { style.direction(), style.writingMode() };
 }
 
-Builder::Builder(RenderStyle& style, const StyleResolver& resolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevels, includedProperties, directionFromStyle(style))
-    , m_state(*this, style, *resolver.parentStyle(), resolver.rootElementStyle(), resolver.document(), resolver.element())
+inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
-    ASSERT(resolver.parentStyle());
+    switch (id) {
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyCaretColor:
+    case CSSPropertyColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyColumnRuleColor:
+    case CSSPropertyTextDecorationColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyFill:
+    case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
 }
 
-Builder::Builder(StyleResolver& resolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
-    : Builder(*resolver.style(), resolver, matchResult, cascadeLevels, includedProperties)
+Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
+    : m_cascade(matchResult, cascadeLevels, includedProperties, directionFromStyle(style))
+    , m_state(*this, style, WTFMove(context))
 {
-    ASSERT(resolver.style());
 }
 
 Builder::~Builder() = default;
@@ -97,9 +116,12 @@ void Builder::applyLowPriorityProperties()
     ASSERT(!m_state.fontDirty());
 }
 
-void Builder::applyPropertyValue(CSSPropertyID propertyID, CSSValue& value)
+void Builder::applyPropertyValue(CSSPropertyID propertyID, CSSValue* value)
 {
-    applyProperty(propertyID, value, SelectorChecker::MatchDefault);
+    if (!value)
+        return;
+
+    applyProperty(propertyID, *value, SelectorChecker::MatchDefault);
 
     m_state.updateFont();
 }
