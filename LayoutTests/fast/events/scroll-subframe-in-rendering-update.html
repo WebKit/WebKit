@@ -7,6 +7,9 @@
 description('This tests that scroll event is dispatched in the update-the-rendering step in the event loop across all relevant frames');
 jsTestIsAsync = true;
 
+if (window.internals)
+    internals.settings.setFrameFlattening("Disabled");
+
 function createIframe(parentDocument)
 {
     const iframe = document.createElement('iframe');
