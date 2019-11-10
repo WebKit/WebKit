@@ -31,6 +31,7 @@
 #include "StorageManager.h"
 #include <WebCore/SecurityOriginData.h>
 #include <pal/SessionID.h>
+#include <wtf/WeakPtr.h>
 
 using WebCore::SecurityOriginData;
 
@@ -88,7 +89,7 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<StorageManager>> m_storageManagers;
     HashMap<PAL::SessionID, String> m_storageManagerPaths;
-    HashMap<StorageAreaIdentifier, StorageArea*> m_storageAreas;
+    HashMap<StorageAreaIdentifier, WeakPtr<StorageArea>> m_storageAreas;
 
     HashSet<IPC::Connection::UniqueID> m_connections;
     Ref<WorkQueue> m_queue;

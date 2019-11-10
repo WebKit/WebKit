@@ -1,3 +1,35 @@
+2019-11-10  David Kilzer  <ddkilzer@apple.com>
+
+        StorageManagerSet.m_storageAreas should use weak pointers to StorageArea
+        <https://webkit.org/b/204048>
+        <rdar://problem/55342744>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/WebStorage/StorageArea.h:
+        (class WebKit::StorageArea):
+        - Inherit from CanMakeWeakPtr<StorageArea>.
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::removeConnection):
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+        (WebKit::StorageManagerSet::connectToLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToTransientLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToSessionStorageArea):
+        (WebKit::StorageManagerSet::disconnectFromStorageArea):
+        (WebKit::StorageManagerSet::getValues): Initialize `quotaError`
+        stack value since it is not guaranteed to be set.
+        (WebKit::StorageManagerSet::setItem):
+        (WebKit::StorageManagerSet::removeItem):
+        (WebKit::StorageManagerSet::clear):
+        - Use makeWeakPtr() to add StorageArea pointers to
+          m_storageAreas.
+        - Use `const auto&` to store WeakPtr<StorageArea> values from
+          m_storageAreas.
+        - Add nullptr checks before using WeakPtr<StorageArea> values.
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        (WebKit::StorageManagerSet::m_storageAreas):
+        - Use WeakPtr<StorageArea>.
+
 2019-11-09  Dean Jackson  <dino@apple.com>
 
         Clicky Orbing support.apple.com categories shows a PNG instead of the web page preview, tapping loads image asset only instead of web page
