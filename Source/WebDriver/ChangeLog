@@ -1,3 +1,26 @@
+2019-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement proxy support
+        https://bugs.webkit.org/show_bug.cgi?id=180408
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Handle proxy object in capabilities.
+
+        * Capabilities.h: Add Proxy struct.
+        * WebDriverService.cpp:
+        (WebDriver::deserializeProxy): Deserialize the proxy from capabilities.
+        (WebDriver::WebDriverService::parseCapabilities const): Get the deserialized proxy.
+        (WebDriver::WebDriverService::validatedCapabilities const): Ensure proxy object is valid.
+        (WebDriver::WebDriverService::matchCapabilities const): Check proxy type is supported by the platform.
+        (WebDriver::WebDriverService::createSession): Only set an empty proxy object in capabilities if we don't have a
+        deserialized proxy.
+        * WebDriverService.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::buildSessionCapabilities const): Send the proxy settings to the browser.
+        * glib/WebDriverServiceGLib.cpp:
+        (WebDriver::WebDriverService::platformSupportProxyType const): Return false if proxy type is "pac".
+
 2019-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement get page source command

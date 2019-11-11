@@ -105,6 +105,37 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
             capabilities.certificates.uncheckedAppend({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
     }
 
+    if (GRefPtr<GVariant> proxy = g_variant_lookup_value(sessionCapabilities, "proxy", G_VARIANT_TYPE("a{sv}"))) {
+        capabilities.proxy = RemoteInspector::Client::SessionCapabilities::Proxy();
+
+        const char* proxyType;
+        g_variant_lookup(proxy.get(), "type", "&s", &proxyType);
+        capabilities.proxy->type = String::fromUTF8(proxyType);
+
+        const char* ftpURL;
+        if (g_variant_lookup(proxy.get(), "ftpURL", "&s", &ftpURL))
+            capabilities.proxy->ftpURL = String::fromUTF8(ftpURL);
+
+        const char* httpURL;
+        if (g_variant_lookup(proxy.get(), "httpURL", "&s", &httpURL))
+            capabilities.proxy->httpURL = String::fromUTF8(httpURL);
+
+        const char* httpsURL;
+        if (g_variant_lookup(proxy.get(), "httpsURL", "&s", &httpsURL))
+            capabilities.proxy->httpsURL = String::fromUTF8(httpsURL);
+
+        const char* socksURL;
+        if (g_variant_lookup(proxy.get(), "socksURL", "&s", &socksURL))
+            capabilities.proxy->socksURL = String::fromUTF8(socksURL);
+
+        if (GRefPtr<GVariant> ignoreAddressList = g_variant_lookup_value(proxy.get(), "ignoreAddressList", G_VARIANT_TYPE("as"))) {
+            gsize ignoreAddressListLength;
+            GUniquePtr<char> ignoreAddressArray(reinterpret_cast<char*>(g_variant_get_strv(ignoreAddressList.get(), &ignoreAddressListLength)));
+            for (unsigned i = 0; i < ignoreAddressListLength; ++i)
+                capabilities.proxy->ignoreAddressList.append(String::fromUTF8(reinterpret_cast<char**>(ignoreAddressArray.get())[i]));
+        }
+    }
+
     return capabilities;
 }
 const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {

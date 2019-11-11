@@ -267,7 +267,7 @@ bool SessionHost::matchCapabilities(GVariant* capabilities)
 
 bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
 {
-    if (!m_capabilities.acceptInsecureCerts && !m_capabilities.certificates)
+    if (!m_capabilities.acceptInsecureCerts && !m_capabilities.certificates && !m_capabilities.proxy)
         return false;
 
     g_variant_builder_init(builder, G_VARIANT_TYPE("a{sv}"));
@@ -282,6 +282,44 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
                 certificate.first.utf8().data(), certificate.second.utf8().data()));
         }
         g_variant_builder_add(builder, "{sv}", "certificates", g_variant_builder_end(&arrayBuilder));
+    }
+
+    if (m_capabilities.proxy) {
+        GVariantBuilder dictBuilder;
+        g_variant_builder_init(&dictBuilder, G_VARIANT_TYPE("a{sv}"));
+        g_variant_builder_add(&dictBuilder, "{sv}", "type", g_variant_new_string(m_capabilities.proxy->type.utf8().data()));
+        if (m_capabilities.proxy->ftpURL)
+            g_variant_builder_add(&dictBuilder, "{sv}", "ftpURL", g_variant_new_string(m_capabilities.proxy->ftpURL->string().utf8().data()));
+        if (m_capabilities.proxy->httpURL)
+            g_variant_builder_add(&dictBuilder, "{sv}", "httpURL", g_variant_new_string(m_capabilities.proxy->httpURL->string().utf8().data()));
+        if (m_capabilities.proxy->httpsURL)
+            g_variant_builder_add(&dictBuilder, "{sv}", "httpsURL", g_variant_new_string(m_capabilities.proxy->httpsURL->string().utf8().data()));
+        if (m_capabilities.proxy->socksURL) {
+            URL socksURL = m_capabilities.proxy->socksURL.value();
+            ASSERT(m_capabilities.proxy->socksVersion);
+            switch (m_capabilities.proxy->socksVersion.value()) {
+            case 4:
+                if (URL::hostIsIPAddress(socksURL.host()))
+                    socksURL.setProtocol("socks4");
+                else
+                    socksURL.setProtocol("socks4a");
+                break;
+            case 5:
+                socksURL.setProtocol("socks5");
+                break;
+            default:
+                break;
+            }
+            g_variant_builder_add(&dictBuilder, "{sv}", "socksURL", g_variant_new_string(socksURL.string().utf8().data()));
+        }
+        if (!m_capabilities.proxy->ignoreAddressList.isEmpty()) {
+            GUniquePtr<char*> ignoreAddressList(static_cast<char**>(g_new0(char*, m_capabilities.proxy->ignoreAddressList.size() + 1)));
+            unsigned i = 0;
+            for (const auto& ignoreAddress : m_capabilities.proxy->ignoreAddressList)
+                ignoreAddressList.get()[i++] = g_strdup(ignoreAddress.utf8().data());
+            g_variant_builder_add(&dictBuilder, "{sv}", "ignoreAddressList", g_variant_new_strv(ignoreAddressList.get(), -1));
+        }
+        g_variant_builder_add(builder, "{sv}", "proxy", g_variant_builder_end(&dictBuilder));
     }
 
     return true;

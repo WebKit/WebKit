@@ -58,4 +58,9 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
 {
 }
 
+bool WebDriverService::platformSupportProxyType(const String&) const
+{
+    return false;
+}
+
 } // namespace WebDriver

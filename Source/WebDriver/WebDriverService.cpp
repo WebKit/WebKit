@@ -346,6 +346,94 @@ static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
     return timeouts;
 }
 
+static Optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
+{
+    // §7.1 Proxy.
+    // https://w3c.github.io/webdriver/#proxy
+    Proxy proxy;
+    if (!proxyObject.getString("proxyType"_s, proxy.type))
+        return WTF::nullopt;
+
+    if (proxy.type == "direct" || proxy.type == "autodetect" || proxy.type == "system")
+        return proxy;
+
+    if (proxy.type == "pac") {
+        String autoconfigURL;
+        if (!proxyObject.getString("proxyAutoconfigUrl"_s, autoconfigURL))
+            return WTF::nullopt;
+
+        proxy.autoconfigURL = autoconfigURL;
+        return proxy;
+    }
+
+    if (proxy.type == "manual") {
+        RefPtr<JSON::Value> value;
+        if (proxyObject.getValue("ftpProxy"_s, value)) {
+            String ftpProxy;
+            if (!value->asString(ftpProxy))
+                return WTF::nullopt;
+
+            proxy.ftpURL = URL({ }, makeString("ftp://", ftpProxy));
+            if (!proxy.ftpURL->isValid())
+                return WTF::nullopt;
+        }
+        if (proxyObject.getValue("httpProxy"_s, value)) {
+            String httpProxy;
+            if (!value->asString(httpProxy))
+                return WTF::nullopt;
+
+            proxy.httpURL = URL({ }, makeString("http://", httpProxy));
+            if (!proxy.httpURL->isValid())
+                return WTF::nullopt;
+        }
+        if (proxyObject.getValue("sslProxy"_s, value)) {
+            String sslProxy;
+            if (!value->asString(sslProxy))
+                return WTF::nullopt;
+
+            proxy.httpsURL = URL({ }, makeString("https://", sslProxy));
+            if (!proxy.httpsURL->isValid())
+                return WTF::nullopt;
+        }
+        if (proxyObject.getValue("socksProxy", value)) {
+            String socksProxy;
+            if (!value->asString(socksProxy))
+                return WTF::nullopt;
+
+            proxy.socksURL = URL({ }, makeString("socks://", socksProxy));
+            if (!proxy.socksURL->isValid())
+                return WTF::nullopt;
+
+            RefPtr<JSON::Value> socksVersionValue;
+            if (!proxyObject.getValue("socksVersion", socksVersionValue))
+                return WTF::nullopt;
+
+            auto socksVersion = unsignedValue(*socksVersionValue);
+            if (!socksVersion || socksVersion.value() > 255)
+                return WTF::nullopt;
+            proxy.socksVersion = socksVersion.value();
+        }
+        if (proxyObject.getValue("noProxy"_s, value)) {
+            RefPtr<JSON::Array> noProxy;
+            if (!value->asArray(noProxy))
+                return WTF::nullopt;
+
+            auto noProxyLength = noProxy->length();
+            for (unsigned i = 0; i < noProxyLength; ++i) {
+                RefPtr<JSON::Value> addressValue = noProxy->get(i);
+                String address;
+                if (!addressValue->asString(address))
+                    return WTF::nullopt;
+                proxy.ignoreAddressList.append(WTFMove(address));
+            }
+        }
+
+        return proxy;
+    }
+
+    return WTF::nullopt;
+}
+
 static Optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
 {
     if (pageLoadStrategy == "none")
@@ -390,6 +478,9 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     String platformName;
     if (matchedCapabilities.getString("platformName"_s, platformName))
         capabilities.platformName = platformName;
+    RefPtr<JSON::Object> proxy;
+    if (matchedCapabilities.getObject("proxy"_s, proxy))
+        capabilities.proxy = deserializeProxy(*proxy);
     RefPtr<JSON::Object> timeouts;
     if (matchedCapabilities.getObject("timeouts"_s, timeouts))
         capabilities.timeouts = deserializeTimeouts(*timeouts);
@@ -443,7 +534,10 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
                 return nullptr;
             result->setString(it->key, pageLoadStrategy);
         } else if (it->key == "proxy") {
-            // FIXME: implement proxy support.
+            RefPtr<JSON::Object> proxy;
+            if (!it->value->asObject(proxy) || !deserializeProxy(*proxy))
+                return nullptr;
+            result->setValue(it->key, RefPtr<JSON::Value>(it->value));
         } else if (it->key == "timeouts") {
             RefPtr<JSON::Object> timeouts;
             if (!it->value->asObject(timeouts) || !deserializeTimeouts(*timeouts))
@@ -523,7 +617,12 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
             if (acceptInsecureCerts && !platformCapabilities.acceptInsecureCerts.value())
                 return nullptr;
         } else if (it->key == "proxy") {
-            // FIXME: implement proxy support.
+            RefPtr<JSON::Object> proxy;
+            it->value->asObject(proxy);
+            String proxyType;
+            proxy->getString("proxyType"_s, proxyType);
+            if (!platformSupportProxyType(proxyType))
+                return nullptr;
         } else if (!platformMatchCapability(it->key, it->value))
             return nullptr;
         matchedCapabilities->setValue(it->key, RefPtr<JSON::Value>(it->value));
@@ -729,8 +828,8 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
                 capabilitiesObject->setString("pageLoadStrategy"_s, "eager");
                 break;
             }
-            // FIXME: implement proxy support.
-            capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
+            if (!capabilities.proxy)
+                capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
             RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
             timeoutsObject->setInteger("script"_s, m_session->scriptTimeout().millisecondsAs<int>());
             timeoutsObject->setInteger("pageLoad"_s, m_session->pageLoadTimeout().millisecondsAs<int>());

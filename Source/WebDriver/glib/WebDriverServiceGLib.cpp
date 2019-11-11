@@ -73,4 +73,9 @@ bool WebDriverService::platformCompareBrowserVersions(const String& requiredVers
         || (proposedMajor == requiredMajor && proposedMinor == requiredMinor && proposedMicro >= requiredMicro);
 }
 
+bool WebDriverService::platformSupportProxyType(const String& proxyType) const
+{
+    return proxyType != "pac";
+}
+
 } // namespace WebDriver

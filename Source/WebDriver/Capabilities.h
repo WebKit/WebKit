@@ -28,6 +28,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,17 @@ enum class UnhandledPromptBehavior {
     Ignore
 };
 
+struct Proxy {
+    String type;
+    Optional<String> autoconfigURL;
+    Optional<URL> ftpURL;
+    Optional<URL> httpURL;
+    Optional<URL> httpsURL;
+    Optional<URL> socksURL;
+    Optional<uint8_t> socksVersion;
+    Vector<String> ignoreAddressList;
+};
+
 struct Capabilities {
     Optional<String> browserName;
     Optional<String> browserVersion;
@@ -62,6 +74,7 @@ struct Capabilities {
     Optional<Timeouts> timeouts;
     Optional<PageLoadStrategy> pageLoadStrategy;
     Optional<UnhandledPromptBehavior> unhandledPromptBehavior;
+    Optional<Proxy> proxy;
 #if PLATFORM(GTK) || PLATFORM(WPE)
     Optional<String> browserBinary;
     Optional<Vector<String>> browserArguments;

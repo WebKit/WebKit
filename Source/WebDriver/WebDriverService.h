@@ -123,6 +123,7 @@ private:
     RefPtr<JSON::Object> matchCapabilities(const JSON::Object&) const;
     bool platformValidateCapability(const String&, const RefPtr<JSON::Value>&) const;
     bool platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
+    bool platformSupportProxyType(const String&) const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);

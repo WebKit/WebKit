@@ -1,3 +1,16 @@
+2019-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement proxy support
+        https://bugs.webkit.org/show_bug.cgi?id=180408
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add optional Proxy struct to session capabilities.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::processSessionCapabilities):
+
 2019-11-09  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Improve bytecode dumping
