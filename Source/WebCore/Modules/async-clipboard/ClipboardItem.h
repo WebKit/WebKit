@@ -40,6 +40,7 @@ class ClipboardItemDataSource;
 class DeferredPromise;
 class DOMPromise;
 class Navigator;
+class PasteboardCustomData;
 struct PasteboardItemInfo;
 
 class ClipboardItem : public RefCounted<ClipboardItem> {
@@ -58,6 +59,8 @@ public:
 
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);
+
+    void collectDataForWriting(Clipboard& destination, CompletionHandler<void(Optional<PasteboardCustomData>)>&&);
 
     PresentationStyle presentationStyle() const { return m_presentationStyle; };
     Navigator* navigator();
