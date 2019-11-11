@@ -1,3 +1,18 @@
+2019-11-11  Jer Noble  <jer.noble@apple.com>
+
+        Ensure MediaRemote callback always called.
+        https://bugs.webkit.org/show_bug.cgi?id=204072
+        <rdar://problem/56301651>
+
+        Reviewed by Eric Carlson.
+
+        MediaRemote.framework will complain if the callback passed in via MRMediaRemoteAddAsyncCommandHandlerBlock()
+        is not called for each invocation of the handler. Make sure we always call the completion handler, even in
+        the case of unsupported commands, or if the listener object has already been destroyed.
+
+        * platform/mac/RemoteCommandListenerMac.mm:
+        (WebCore::RemoteCommandListenerMac::RemoteCommandListenerMac):
+
 2019-11-11  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Support picture-in-picture CSS pseudo-class
