@@ -400,12 +400,6 @@ const char* MediaStream::activeDOMObjectName() const
     return "MediaStream";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool MediaStream::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    return hasPendingActivity();
-}
-
 bool MediaStream::hasPendingActivity() const
 {
     return m_isActive;

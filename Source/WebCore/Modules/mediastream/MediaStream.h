@@ -146,7 +146,6 @@ private:
     // ActiveDOMObject API.
     void stop() final;
     const char* activeDOMObjectName() const final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
 
     void updateActiveState();
     void activityEventTimerFired();

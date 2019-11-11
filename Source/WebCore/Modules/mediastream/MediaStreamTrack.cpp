@@ -556,10 +556,18 @@ const char* MediaStreamTrack::activeDOMObjectName() const
     return "MediaStreamTrack";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool MediaStreamTrack::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+void MediaStreamTrack::suspend(ReasonForSuspension reason)
 {
-    return hasPendingActivity();
+    if (reason != ReasonForSuspension::BackForwardCache)
+        return;
+
+    // We only end capture tracks, other tracks (capture canvas, remote tracks) can still continue working.
+    if (m_ended || !isCaptureTrack())
+        return;
+
+    stopTrack();
+
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 bool MediaStreamTrack::hasPendingActivity() const
