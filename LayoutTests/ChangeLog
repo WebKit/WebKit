@@ -1,3 +1,31 @@
+2019-11-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        CrashTracer: com.apple.WebKit.Networking.Development at com.apple.WebKit: WebKit::NetworkProcess::setIsRunningResourceLoadStatisticsTest
+        https://bugs.webkit.org/show_bug.cgi?id=204081
+        <rdar://problem/56889809>
+
+        Reviewed by John Wilander.
+
+        This crash was happening in two places. First, in 
+        has-storage-access-true-if-third-party-has-cookies-database.html, 
+        the test was incorrectly marked as ephemeral then tried to use ITP by
+        calling setEnableFeature. ITP should not be used in ephemeral
+        sessions. There was also a small bug, ITP should be set to true (not
+        false) at the beginning of this test.
+
+        Second, both
+        has-storage-access-true-if-third-party-has-cookies-ephemeral.html and
+        has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html
+        had document.hrefs which redirected back to the non-ephemeral test cases after
+        setting a cookie. This caused a crash when trying to set ITP to false
+        using an ephemeral sessionID.
+
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database-expected.txt:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-expected.txt:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html:
+
 2019-11-11  Andy Estes  <aestes@apple.com>
 
         PaymentRequest / PaymentResponse should not prevent entering the back/forward cache
