@@ -1,3 +1,15 @@
+2019-11-11  Antti Koivisto  <antti@apple.com>
+
+        Empty property sets should not mark MatchedProperties uncacheable
+        https://bugs.webkit.org/show_bug.cgi?id=204079
+
+        Reviewed by Zalan Bujtas.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+
+        Bail out if there are no incoming properties.
+
 2019-11-11  Andy Estes  <aestes@apple.com>
 
         PaymentRequest / PaymentResponse should not prevent entering the back/forward cache

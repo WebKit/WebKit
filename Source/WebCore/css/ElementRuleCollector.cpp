@@ -123,13 +123,13 @@ void ElementRuleCollector::clearMatchedRules()
 
 inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
 {
-    if (!propertySet)
+    if (!propertySet || propertySet->isEmpty())
         return;
-
-    addMatchedProperties({ propertySet }, DeclarationOrigin::Author);
 
     if (!isCacheable)
         m_result.isCacheable = false;
+
+    addMatchedProperties({ propertySet }, DeclarationOrigin::Author);
 }
 
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest)
