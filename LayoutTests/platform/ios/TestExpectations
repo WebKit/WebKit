@@ -3464,5 +3464,3 @@ webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properti
 
 # This test fails in iOS due to subpixel differences for the marker position
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
-
-webkit.org/b/204045 fast/events/scroll-subframe-in-rendering-update.html [ Failure ]
