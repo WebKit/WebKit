@@ -39,10 +39,33 @@ using namespace fido;
 namespace {
 inline bool compareVersion(NSData *data, const uint8_t version[], size_t versionSize)
 {
+    if (!data)
+        return false;
     if (data.length != versionSize)
         return false;
     return !memcmp(data.bytes, version, versionSize);
 }
+
+// Confirm the FIDO applet is avaliable.
+// https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-applet-selection
+static bool trySelectFidoApplet(NFReaderSession *session)
+{
+    auto *versionData = [session transceive:adoptNS([[NSData alloc] initWithBytes:kCtapNfcAppletSelectionCommand length:sizeof(kCtapNfcAppletSelectionCommand)]).get()];
+    if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))
+        || compareVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap)))
+        return true;
+
+    // Some legacy U2F keys such as Google T1 Titan don't understand the FIDO applet command. Instead,
+    // they are configured to only have the FIDO applet. Therefore, when the above command fails, we
+    // use U2F_VERSION command to double check if the connected tag can actually speak U2F, indicating
+    // we are interacting with one of these legacy keys.
+    versionData = [session transceive:adoptNS([[NSData alloc] initWithBytes:kCtapNfcU2fVersionCommand length:sizeof(kCtapNfcU2fVersionCommand)]).get()];
+    if (compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f)))
+        return true;
+
+    return false;
+}
+
 } // namespace
 
 Ref<NfcConnection> NfcConnection::create(RetainPtr<NFReaderSession>&& session, NfcService& service)
@@ -68,10 +91,8 @@ NfcConnection::~NfcConnection()
 Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
 {
     Vector<uint8_t> response;
-    @autoreleasepool {
-        auto responseData = [m_session transceive:[NSData dataWithBytes:data.data() length:data.size()]];
-        response.append(reinterpret_cast<const uint8_t*>(responseData.bytes), responseData.length);
-    }
+    auto *responseData = [m_session transceive:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).get()];
+    response.append(reinterpret_cast<const uint8_t*>(responseData.bytes), responseData.length);
     return response;
 }
 
@@ -104,14 +125,9 @@ void NfcConnection::didDetectTags(NSArray *tags)
         if (tag.type != NFTagTypeGeneric4A || ![m_session connectTag:tag])
             continue;
 
-        // Confirm the FIDO applet is avaliable before return.
-        // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-applet-selection
-        @autoreleasepool {
-            auto versionData = [m_session transceive:[NSData dataWithBytes:kCtapNfcAppletSelectionCommand length:sizeof(kCtapNfcAppletSelectionCommand)]];
-            if (!versionData || (!compareVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f)) && !compareVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap)))) {
-                [m_session disconnectTag];
-                continue;
-            }
+        if (!trySelectFidoApplet(m_session.get())) {
+            [m_session disconnectTag];
+            continue;
         }
 
         m_service->didConnectTag();

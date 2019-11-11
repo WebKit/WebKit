@@ -223,6 +223,13 @@ const char kU2fVersion[] = "U2F_V2";
 const uint32_t kCtapHidUsagePage = 0xF1D0;
 const uint32_t kCtapHidUsage = 0x01;
 
+// U2F_VERSION command
+// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#getversion-request-and-response---u2f_version
+const uint8_t kCtapNfcU2fVersionCommand[] = {
+    0x00, 0x03, 0x00, 0x00, // CLA, INS, P1, P2
+    0x00, // L
+};
+
 // CTAPNFC Applet selection command and responses
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-applet-selection
 const uint8_t kCtapNfcAppletSelectionCommand[] = {
