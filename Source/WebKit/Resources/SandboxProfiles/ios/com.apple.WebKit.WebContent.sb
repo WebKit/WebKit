@@ -1129,5 +1129,6 @@
         (syscall-number SYS_kqueue) ;; <rdar://problem/49609201>
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
         (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/51134351>
+        (syscall-number SYS_faccessat) ;; <rdar://problem/56998930>
     )
 )

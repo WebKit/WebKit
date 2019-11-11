@@ -1,3 +1,16 @@
+2019-11-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Unable to view .pages files
+        https://bugs.webkit.org/show_bug.cgi?id=204076
+        <rdar://problem/57079557>
+
+        Reviewed by Brent Fulgham.
+
+        This is caused by a syscall being blocked by the sandbox. The syscall was previously unused in the
+        WebContent process.
+       
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement proxy support
