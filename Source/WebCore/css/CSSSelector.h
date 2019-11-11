@@ -152,6 +152,9 @@ namespace WebCore {
             PseudoClassAnimatingFullScreenTransition,
             PseudoClassFullScreenControlsHidden,
 #endif
+#if ENABLE(PICTURE_IN_PICTURE_API)
+            PseudoClassPictureInPicture,
+#endif
             PseudoClassInRange,
             PseudoClassOutOfRange,
 #if ENABLE(VIDEO_TRACK)

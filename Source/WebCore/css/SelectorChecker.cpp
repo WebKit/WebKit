@@ -1069,6 +1069,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassFullScreenControlsHidden:
             return matchesFullScreenControlsHiddenPseudoClass(element);
 #endif
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        case CSSSelector::PseudoClassPictureInPicture:
+            return matchesPictureInPicturePseudoClass(element);
+#endif
         case CSSSelector::PseudoClassInRange:
             return isInRange(element);
         case CSSSelector::PseudoClassOutOfRange:

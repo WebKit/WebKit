@@ -80,6 +80,10 @@ window-inactive
 -webkit-full-screen-controls-hidden
 #endif
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+picture-in-picture
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 future
 past

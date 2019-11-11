@@ -154,6 +154,7 @@ void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>
 void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& windowSize)
 {
     INFO_LOG(LOGIDENTIFIER);
+    m_videoElement.invalidateStyle();
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     m_pictureInPictureWindow->setSize(windowSize);
 
@@ -171,6 +172,7 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
 void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 {
     INFO_LOG(LOGIDENTIFIER);
+    m_videoElement.invalidateStyle();
     m_pictureInPictureWindow->close();
     m_videoElement.document().setPictureInPictureElement(nullptr);
     m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));

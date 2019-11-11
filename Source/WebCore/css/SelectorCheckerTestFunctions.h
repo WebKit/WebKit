@@ -43,6 +43,10 @@
 #include "WebVTTElement.h"
 #endif
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+#include "HTMLVideoElement.h"
+#endif
+
 namespace WebCore {
 
 ALWAYS_INLINE bool isAutofilled(const Element& element)
@@ -406,6 +410,15 @@ ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& ele
     if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
     return element.document().fullscreenManager().areFullscreenControlsHidden();
+}
+
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+
+ALWAYS_INLINE bool matchesPictureInPicturePseudoClass(const Element& element)
+{
+    return is<HTMLVideoElement>(element) && element.document().pictureInPictureElement() == &element;
 }
 
 #endif

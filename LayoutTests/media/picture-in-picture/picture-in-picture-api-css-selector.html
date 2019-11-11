@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <style>
+        video {
+            color: rgb(0, 0, 255);
+        }
+        :picture-in-picture {
+            color: rgb(0, 255, 0);
+        }
+        /* illegal selector list */
+        video, :picture-in-picture(*) {
+            color: rgb(255, 0, 0);
+        }
+    </style>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+            testExpected('getComputedStyle(video).color', 'rgb(0, 0, 255)');
+
+            runWithKeyDown(function() { video.requestPictureInPicture() });
+            await waitFor(video, 'enterpictureinpicture');
+            testExpected('getComputedStyle(video).color', 'rgb(0, 255, 0)');
+
+            document.exitPictureInPicture();
+            await waitFor(video, 'leavepictureinpicture');
+            testExpected('getComputedStyle(video).color', 'rgb(0, 0, 255)');
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that entering and leaving Picture-in-Picture toggles CSS selector.</div>
+    <video controls></video>
+</body>
+</html>

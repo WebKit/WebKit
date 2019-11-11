@@ -497,6 +497,11 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.appendLiteral(":-webkit-full-screen-controls-hidden");
                 break;
 #endif
+#if ENABLE(PICTURE_IN_PICTURE_API)
+            case CSSSelector::PseudoClassPictureInPicture:
+                builder.appendLiteral(":picture-in-picture");
+                break;
+#endif
             case CSSSelector::PseudoClassActive:
                 builder.appendLiteral(":active");
                 break;
