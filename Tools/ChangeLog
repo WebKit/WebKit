@@ -1,3 +1,16 @@
+2019-11-11  Dean Jackson  <dino@apple.com>
+
+        Regression r252309: API Test TestWebKitAPI._WKActivatedElementInfo.InfoForLinkAroundImage is failing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=204058
+        <rdar://problem/57056000>
+
+        Unreviewed.
+
+        Remove test that looks at screen dimensions, because it fails on iPad.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+
 2019-11-11  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Use named arguments in factories.py

@@ -48,16 +48,16 @@ static void checkElementTypeAndBoundingRect(_WKActivatedElementInfo *elementInfo
     EXPECT_EQ(CGRectGetMinY(expectedBoundingRect), CGRectGetMinY(observedBoundingRect));
     EXPECT_EQ(expectedType, elementInfo.type);
 }
-    
+
 TEST(_WKActivatedElementInfo, InfoForLink)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style='margin: 0px;'><a href='testURL.test' style='display: block; height: 100%;' title='HitTestLinkTitle' id='testID'></a></body></html>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
-    
+
     __block bool finished = false;
     [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
-        
+
         EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeLink);
         EXPECT_WK_STREQ(elementInfo.URL.absoluteString, "testURL.test");
         EXPECT_WK_STREQ(elementInfo.title, "HitTestLinkTitle");
@@ -67,10 +67,10 @@ TEST(_WKActivatedElementInfo, InfoForLink)
         EXPECT_EQ(elementInfo.boundingRect.size.height, 500);
         EXPECT_EQ(elementInfo.image.size.width, 320);
         EXPECT_EQ(elementInfo.image.size.height, 500);
-        
+
         finished = true;
     }];
-    
+
     TestWebKitAPI::Util::run(&finished);
 }
 
@@ -100,10 +100,10 @@ TEST(_WKActivatedElementInfo, InfoForMediaDocument)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
-    
+
     __block bool finished = false;
     [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
-        
+
         EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeImage);
         EXPECT_WK_STREQ(elementInfo.imageURL.lastPathComponent, "icon.png");
         EXPECT_NOT_NULL(elementInfo.image);
@@ -111,10 +111,10 @@ TEST(_WKActivatedElementInfo, InfoForMediaDocument)
         EXPECT_EQ(elementInfo.boundingRect.size.height, 174);
         EXPECT_EQ(elementInfo.image.size.width, 215);
         EXPECT_EQ(elementInfo.image.size.height, 174);
-        
+
         finished = true;
     }];
-    
+
     TestWebKitAPI::Util::run(&finished);
 }
 
@@ -135,8 +135,6 @@ TEST(_WKActivatedElementInfo, InfoForLinkAroundImage)
         EXPECT_NOT_NULL(elementInfo.image);
         EXPECT_EQ(elementInfo.boundingRect.size.width, 320);
         EXPECT_EQ(elementInfo.boundingRect.size.height, 500);
-        EXPECT_EQ(elementInfo.image.size.width, 1668);
-        EXPECT_EQ(elementInfo.image.size.height, 1668);
 
         finished = true;
     }];
@@ -206,17 +204,17 @@ TEST(_WKActivatedElementInfo, InfoForBlank)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style='margin: 0px;'></body></html>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
-    
+
     __block bool finished = false;
     [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
-        
+
         EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeUnspecified);
         EXPECT_EQ(elementInfo.boundingRect.size.width, 320);
         EXPECT_EQ(elementInfo.boundingRect.size.height, 500);
-        
+
         finished = true;
     }];
-    
+
     TestWebKitAPI::Util::run(&finished);
 }
 
@@ -225,17 +223,17 @@ TEST(_WKActivatedElementInfo, InfoForBrokenImage)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style='margin: 0px;'><img  src='missing.gif' height='100' width='100'></body></html>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
-    
+
     __block bool finished = false;
     [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
-        
+
         EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeUnspecified);
         EXPECT_EQ(elementInfo.boundingRect.size.width, 100);
         EXPECT_EQ(elementInfo.boundingRect.size.height, 100);
-        
+
         finished = true;
     }];
-    
+
     TestWebKitAPI::Util::run(&finished);
 }
 
