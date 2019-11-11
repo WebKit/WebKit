@@ -426,6 +426,7 @@ void Line::removeTrailingTrimmableContent()
         trimmableRun->setCollapsesToZeroAdvanceWidth();
     }
     m_lineBox.shrinkHorizontally(trimmableWidth);
+    m_trimmableRuns.clear();
 }
 
 void Line::moveLogicalLeft(LayoutUnit delta)
@@ -551,7 +552,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
-        m_trimmableRuns.add(lineRun.get());
+        m_trimmableRuns.append(lineRun.get());
 
     m_lineBox.expandHorizontally(lineRun->logicalRect().width());
     m_inlineItemRuns.append(WTFMove(lineRun));

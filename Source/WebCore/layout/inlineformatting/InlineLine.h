@@ -149,7 +149,7 @@ private:
 
     const InlineFormattingContext& m_inlineFormattingContext;
     Vector<std::unique_ptr<InlineItemRun>> m_inlineItemRuns;
-    ListHashSet<InlineItemRun*> m_trimmableRuns;
+    Vector<InlineItemRun*> m_trimmableRuns;
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;
