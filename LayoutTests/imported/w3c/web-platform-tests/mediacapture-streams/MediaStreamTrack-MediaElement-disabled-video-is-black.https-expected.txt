@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 49: SyntaxError: Unexpected token ')'
 When prompted, accept to share your video stream.
 
 Description
@@ -7,5 +6,7 @@ This test checks that a disabled video track in a MediaStream is rendered as bla
 
 
 
-FAIL A disabled video track is rendered as blackness SyntaxError: Unexpected token ')'
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Tests that a disabled video track in a MediaStream is rendered as blackness Test timed out
 

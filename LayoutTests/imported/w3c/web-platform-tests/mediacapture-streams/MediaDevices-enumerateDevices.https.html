@@ -16,32 +16,30 @@
 <script>
 "use strict";
 //NOTE ALEX: for completion, a test for ondevicechange event is missing.
-test(function () {
-  assert_true(undefined !== navigator.mediaDevices.enumerateDevices, "navigator.mediaDevices.enumerateDevices exists");
-  var p = navigator.mediaDevices.enumerateDevices()
-  p.then(function(list){
-    for(let mediainfo of list){
-      // TODO check the type of mediainfo
-      assert_true(undefined !== mediainfo.deviceId, "mediaInfo's deviceId should exist.");
-      assert_true(undefined !== mediainfo.kind,     "mediaInfo's kind     should exist.");
-      assert_true(undefined !== mediainfo.label,    "mediaInfo's label    should exist.");
-      assert_true(undefined !== mediainfo.groupId,  "mediaInfo's groupId  should exist.");
-      // TODO the values of some of those fields should be empty string by default if no permission has been requested.
-      if( mediainfo.kind == "audioinput" ||
-          mediainfo.kind == "videoinput") {
-        // NOTE ALEX: looks like nobody has implemented that. How can I make it a separate test,
-        // ...        to have better granularity?
-        // assert_true(undefined !== mediainfo.getCapabilities(), "MediaDeviceInfo.getCapabilities() exists.");
-        // var cap = mediainfo.getcapabilities();
-      } else if ( mediainfo.kind !== "audiooutput" ) {
-        assert_unreached("mediainfo.kind should be one of 'audioinput', 'videoinput', or 'audiooutput'.")
-      }
+promise_test(async () => {
+  assert_not_equals(navigator.mediaDevices.enumerateDevices, undefined, "navigator.mediaDevices.enumerateDevices exists");
+  const deviceList =  await navigator.mediaDevices.enumerateDevices();
+  for (const mediaInfo of deviceList) {
+    assert_not_equals(mediaInfo.deviceId, undefined, "mediaInfo's deviceId should exist.");
+    assert_not_equals(mediaInfo.kind, undefined,     "mediaInfo's kind     should exist.");
+    assert_not_equals(mediaInfo.label, undefined,    "mediaInfo's label    should exist.");
+    assert_not_equals(mediaInfo.groupId, undefined,  "mediaInfo's groupId  should exist.");
+    assert_in_array(mediaInfo.kind, ["videoinput", "audioinput", "audiooutput"]);
+  }
+}, "mediaDevices.enumerateDevices() is present and working");
+
+promise_test(async () => {
+  const deviceList =  await navigator.mediaDevices.enumerateDevices();
+  for (const mediaInfo of deviceList) {
+    if (mediaInfo.kind == "audioinput" || mediaInfo.kind == "videoinput") {
+      assert_true(mediaInfo instanceof InputDeviceInfo);
+    } else if ( mediaInfo.kind == "audiooutput" ) {
+      assert_true(mediaInfo instanceof MediaDeviceInfo);
+    } else {
+      assert_unreached("mediaInfo.kind should be one of 'audioinput', 'videoinput', or 'audiooutput'.")
     }
-  })
-  p.catch(function(err){
-    assert_unreached("A call to enumerateDevices() should never fail.");
-  });
-}, "mediaDevices.enumerateDevices() is present and working on navigator");
+  }
+}, "InputDeviceInfo is supported");
 </script>
 </body>
 </html>

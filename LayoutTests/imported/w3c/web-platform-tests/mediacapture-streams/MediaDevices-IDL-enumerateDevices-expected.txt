@@ -1,9 +1,0 @@
-Description
-
-This test checks for the presence of the navigator.mediaDevices.enumerateDevices() method.
-
-
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "WebIDLParseError: Syntax error at line 147, since `interface NavigatorUserMedia`:
-Navigator implements NavigatorUserMedia;
-^ Unrecognised tokens"
-

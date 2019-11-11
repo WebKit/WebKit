@@ -1826,6 +1826,9 @@
     "imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html": [
         "slow"
     ],

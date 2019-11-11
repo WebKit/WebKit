@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+
+FAIL applyConstraints rejects invalid groupID assert_equals: expected "OverconstrainedError" but got "Error"
+PASS applyConstraints accepts invalid ideal groupID, does not change setting 
+FAIL applyConstraints rejects attempt to switch device using groupId assert_equals: expected "OverconstrainedError" but got "Error"
+FAIL applyConstraints rejects invalid resizeMode assert_unreached: applyConstraints() must fail with invalid resizeMode Reached unreachable code
+PASS applyConstraints accepts invalid ideal resizeMode, does not change setting 
+

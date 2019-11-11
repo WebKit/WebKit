@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<!-- Copyright © 2016 Chromium authors and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang). -->
 <html>
     <head>
-        <title>Test that the HTMLMediaElement preload 'none' attribute value is ignored for MediaStream used as srcObject and MediaStream object URLs used as src.</title>>
+        <title>Test that the HTMLMediaElement preload 'none' attribute value is ignored for MediaStream used as srcObject and MediaStream object URLs used as src.</title>
         <link rel="author" title="Matthew Wolenetz" href="mailto:wolenetz@chromium.org"/>
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
     </head>
     <body>
         <p class="instructions">When prompted, accept to share your audio and video streams.</p>
-        <h1 class="instructions">Description</h1>
         <p class="instructions">This test checks that the HTMLMediaElement preload 'none' attribute value is ignored for MediaStream used as srcObject and MediaStream object URLs used as src.</p>
+        <div id=log></div>
 
         <audio preload="none"></audio>
         <video preload="none"></video>
@@ -40,14 +39,10 @@
                 navigator.mediaDevices.getUserMedia({audio:true})
                   .then(t.step_func(function(stream)
                   {
-                      testPreloadNone(t, aud, t.step_func(function()
-                      {
-                          aud.src = URL.createObjectURL(stream);
-                          t.add_cleanup(function() { URL.revokeObjectURL(aud.src); });
-                      }));
+                      testPreloadNone(t, aud, t.step_func(function() { aud.srcObject = stream; }));
                   }),
                   t.unreached_func("getUserMedia error callback was invoked."));
-            }, "Test that preload 'none' is ignored for MediaStream object URL used as src");
+            }, "Test that preload 'none' is ignored for MediaStream object URL used as srcObject for audio");
 
             async_test(function(t)
             {
@@ -57,7 +52,7 @@
                   {
                       testPreloadNone(t, vid, t.step_func(function() { vid.srcObject = stream; }));
                   }), t.unreached_func("getUserMedia error callback was invoked."));
-            }, "Test that preload 'none' is ignored for MediaStream used as srcObject");
+            }, "Test that preload 'none' is ignored for MediaStream used as srcObject for video");
         </script>
     </body>
 </html>

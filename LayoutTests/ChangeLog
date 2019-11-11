@@ -1,3 +1,12 @@
+2019-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Update WPT mediacapture-streams tests
+        https://bugs.webkit.org/show_bug.cgi?id=204073
+
+        Reviewed by Youenn Fablet.
+
+        * tests-options.json:
+
 2019-11-11  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Support picture-in-picture CSS pseudo-class
