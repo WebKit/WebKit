@@ -1,3 +1,44 @@
+2019-11-11  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r252248. rdar://problem/57058391
+
+    [WebAuthn] Return NotAllowedError immediately for UI cancellations
+    https://bugs.webkit.org/show_bug.cgi?id=203937
+    <rdar://problem/56962420>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    NotAllowedError representing UI cancellations should be returned to sites
+    immediately such that sites could show appropriate error page immediately.
+    
+    Covered by existing tests.
+    
+    * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+    (WebKit::AuthenticatorManager::cancelRequest):
+    (WebKit::AuthenticatorManager::clearState):
+    (WebKit::AuthenticatorManager::resetState): Deleted.
+    * UIProcess/WebAuthentication/AuthenticatorManager.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@252248 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-11-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Return NotAllowedError immediately for UI cancellations
+            https://bugs.webkit.org/show_bug.cgi?id=203937
+            <rdar://problem/56962420>
+
+            Reviewed by Brent Fulgham.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+            (TestWebKitAPI::TEST):
+
 2019-11-05  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/56903274

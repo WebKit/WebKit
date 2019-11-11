@@ -188,7 +188,9 @@ void AuthenticatorManager::cancelRequest(const API::WebAuthenticationPanel& pane
     RELEASE_ASSERT(RunLoop::isMain());
     if (!m_pendingCompletionHandler || m_pendingRequestData.panel.get() != &panel)
         return;
-    resetState();
+    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+    clearState();
+    m_requestTimeOutTimer.stop();
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -204,7 +206,9 @@ void AuthenticatorManager::clearState()
 {
     if (m_pendingCompletionHandler)
         return;
-    resetState();
+    m_authenticators.clear();
+    m_services.clear();
+    m_pendingRequestData = { };
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
@@ -345,13 +349,6 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
         });
     }
     m_pendingCompletionHandler(WTFMove(respond));
-}
-
-void AuthenticatorManager::resetState()
-{
-    m_authenticators.clear();
-    m_services.clear();
-    m_pendingRequestData = { };
 }
 
 void AuthenticatorManager::restartDiscovery()
