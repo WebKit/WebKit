@@ -152,9 +152,14 @@ PreciseAllocation* PreciseAllocation::reuseForLowerTier()
     Subspace* subspace = m_subspace;
     bool adjustedAlignment = m_adjustedAlignment;
     uint8_t lowerTierIndex = m_lowerTierIndex;
+    void* basePointer = this->basePointer();
 
-    void* space = this->basePointer();
     this->~PreciseAllocation();
+
+    void* space = basePointer;
+    ASSERT(isAlignedForPreciseAllocation(basePointer) == adjustedAlignment);
+    if (adjustedAlignment)
+        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(basePointer) + halfAlignment);
 
     PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustedAlignment);
     preciseAllocation->m_lowerTierIndex = lowerTierIndex;
