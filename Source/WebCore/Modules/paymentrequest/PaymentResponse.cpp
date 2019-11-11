@@ -125,18 +125,25 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
     m_retryPromise = nullptr;
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool PaymentResponse::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    ASSERT(m_state != State::Stopped);
-    return hasPendingActivity();
-}
-
 void PaymentResponse::stop()
 {
     settleRetryPromise(Exception { AbortError });
     m_pendingActivity = nullptr;
     m_state = State::Stopped;
+}
+
+void PaymentResponse::suspend(ReasonForSuspension reason)
+{
+    if (reason != ReasonForSuspension::BackForwardCache)
+        return;
+
+    if (m_state != State::Created) {
+        ASSERT(!hasPendingActivity());
+        ASSERT(!m_retryPromise);
+        return;
+    }
+
+    stop();
 }
 
 } // namespace WebCore

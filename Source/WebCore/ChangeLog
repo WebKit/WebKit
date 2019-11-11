@@ -1,3 +1,33 @@
+2019-11-11  Andy Estes  <aestes@apple.com>
+
+        PaymentRequest / PaymentResponse should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203101
+        <rdar://problem/56744409>
+
+        Reviewed by Chris Dumez.
+
+        Removed PaymentRequest's and PaymentResponse's override of
+        ActiveDOMObject::shouldPreventEnteringBackForwardCache_DEPRECATED and implemented
+        ActiveDOMObject::suspend instead.
+
+        Tests: http/tests/paymentrequest/page-cache-closed-payment-request.https.html
+               http/tests/paymentrequest/page-cache-completed-payment-response.https.html
+               http/tests/paymentrequest/page-cache-created-payment-request.https.html
+               http/tests/paymentrequest/page-cache-created-payment-response.https.html
+               http/tests/paymentrequest/page-cache-interactive-payment-request.https.html
+               http/tests/paymentrequest/page-cache-retried-payment-response.https.html
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::suspend):
+        (WebCore::PaymentRequest::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::suspend):
+        (WebCore::PaymentResponse::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/paymentrequest/PaymentResponse.h:
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
         Make MediaStream/MediaStreamTrack page cache friendly

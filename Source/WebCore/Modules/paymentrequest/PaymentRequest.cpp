@@ -488,6 +488,20 @@ void PaymentRequest::stop()
     settleShowPromise(Exception { AbortError });
 }
 
+void PaymentRequest::suspend(ReasonForSuspension reason)
+{
+    if (reason != ReasonForSuspension::BackForwardCache)
+        return;
+
+    if (!m_activePaymentHandler) {
+        ASSERT(!m_showPromise);
+        ASSERT(m_state != State::Interactive);
+        return;
+    }
+
+    stop();
+}
+
 // https://www.w3.org/TR/payment-request/#abort()-method
 void PaymentRequest::abort(AbortPromise&& promise)
 {
@@ -537,12 +551,6 @@ Optional<PaymentShippingType> PaymentRequest::shippingType() const
     if (m_options.requestShipping)
         return m_options.shippingType;
     return WTF::nullopt;
-}
-
-// FIXME: This should never prevent entering the back/forward cache.
-bool PaymentRequest::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    return hasPendingActivity();
 }
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)

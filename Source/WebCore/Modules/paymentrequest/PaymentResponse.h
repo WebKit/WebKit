@@ -98,8 +98,8 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentResponse"; }
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     void stop() final;
+    void suspend(ReasonForSuspension) final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentResponseEventTargetInterfaceType; }

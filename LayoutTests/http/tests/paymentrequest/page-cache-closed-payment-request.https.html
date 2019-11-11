@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src='/js-test-resources/js-test.js'></script>
+<script src='/js-test-resources/ui-helper.js'></script>
+<script src='/resources/payment-request.js'></script>
+<script>
+description('Tests that a page with a PaymentRequest in the Closed state goes into the back/forward cache.');
+window.jsTestIsAsync = true;
+
+window.addEventListener('pageshow', async function(event) {
+    debug('pageshow - ' + (event.persisted ? '' : 'not ') + 'from cache');
+
+    if (!event.persisted)
+        return;
+
+    testPassed('Page did enter and was restored from the back/forward cache');
+
+    UIHelper.withUserGesture(async function() {
+        debug('Testing that PaymentRequest remains in the Closed state.');
+        await shouldRejectWithErrorName('request.show()', 'InvalidStateError');
+
+        finishJSTest();
+    });
+}, false);
+
+window.addEventListener('pagehide', function(event) {
+    debug('pagehide - ' + (event.persisted ? '' : 'not ') + 'entering cache');
+
+    if (event.persisted)
+        return;
+
+    testFailed('Page failed to enter the back/forward cache.');
+    finishJSTest();
+}, false);
+
+window.addEventListener('load', function() {
+    UIHelper.withUserGesture(async function() {
+        debug('Creating a PaymentRequest in the Closed state.');
+        request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        responsePromise = request.show();
+        await request.abort();
+        await shouldRejectWithErrorName('responsePromise', 'AbortError');
+
+        setTimeout(function() {
+            window.location.href = '/navigation/resources/page-cache-helper.html';
+        }, 0);
+    });
+}, false);
+</script>
+</body>
+</html>

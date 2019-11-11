@@ -1,3 +1,27 @@
+2019-11-11  Andy Estes  <aestes@apple.com>
+
+        PaymentRequest / PaymentResponse should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203101
+        <rdar://problem/56744409>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/paymentrequest/page-cache-closed-payment-request.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-closed-payment-request.https.html: Added.
+        * http/tests/paymentrequest/page-cache-completed-payment-response.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-completed-payment-response.https.html: Added.
+        * http/tests/paymentrequest/page-cache-created-payment-request.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-created-payment-request.https.html: Added.
+        * http/tests/paymentrequest/page-cache-created-payment-response.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-created-payment-response.https.html: Added.
+        * http/tests/paymentrequest/page-cache-interactive-payment-request.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-interactive-payment-request.https.html: Added.
+        * http/tests/paymentrequest/page-cache-retried-payment-response.https-expected.txt: Added.
+        * http/tests/paymentrequest/page-cache-retried-payment-response.https.html: Added.
+        * resources/js-test.js:
+        (shouldReject):
+        (shouldRejectWithErrorName):
+
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
         Make MediaStream/MediaStreamTrack page cache friendly
