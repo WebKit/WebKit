@@ -37,7 +37,6 @@ public:
         , m_listStyle(style)
         , m_separator(separator)
     {
-        ASSERT(style != ListStyleType::String);
     }
 
     const AtomString& identifier() const { return m_identifier; }

@@ -758,7 +758,6 @@ TextStream& operator<<(TextStream& ts, ListStyleType styleType)
     case ListStyleType::HiraganaIroha: ts << "hiragana-iroha"; break;
     case ListStyleType::KatakanaIroha: ts << "katakana-iroha"; break;
     case ListStyleType::None: ts << "none"; break;
-    case ListStyleType::String: ts << "string"; break;
     }
     return ts;
 }

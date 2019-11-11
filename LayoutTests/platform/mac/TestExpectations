@@ -2006,7 +2006,3 @@ webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transition
 
 # rdar://54275897 ([ macOS ] Add support for batched key requests)
 platform/mac/media/encrypted-media/fps-multiple-pssh.html [ Skip ]
-
-# These tests fail in Mac due to subpixel differences for the marker position
-imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-004.html [ ImageOnlyFailure ]

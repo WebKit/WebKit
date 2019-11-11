@@ -1,5 +1,52 @@
 2019-11-11  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r252076.
+
+        This broke internal builds and tests. For more information
+        discuss with your reviewers.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isPartialKeywordPropertyID): Deleted.
+        * css/parser/CSSParserFastPaths.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::effectiveListMarkerType):
+        (WebCore::listMarkerSuffix):
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::styleDidChange):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::updateContent):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        (WebCore::RenderListMarker::suffix const):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/style/CounterContent.h:
+        (WebCore::CounterContent::CounterContent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialListStylePosition):
+        (WebCore::RenderStyle::listStyleStringValue const): Deleted.
+        (WebCore::RenderStyle::setListStyleStringValue): Deleted.
+        (WebCore::RenderStyle::initialListStyleStringValue): Deleted.
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritListStyleType): Deleted.
+        (WebCore::Style::BuilderCustom::applyInitialListStyleType): Deleted.
+        (WebCore::Style::BuilderCustom::applyValueListStyleType): Deleted.
+
+2019-11-11  Matt Lewis  <jlewis3@apple.com>
+
         Unreviewed, rolling out r252151.
 
         This broke internal builds and tests along with

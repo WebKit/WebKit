@@ -1,3 +1,16 @@
+2019-11-11  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r252076.
+
+        This broke internal builds and tests. For more information
+        discuss with your reviewers.
+
+        Reverted changeset:
+
+        "[css-lists] Implement list-style-type: <string>"
+        https://bugs.webkit.org/show_bug.cgi?id=167729
+        https://trac.webkit.org/changeset/252076
+
 2019-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         Update WPT mediacapture-streams tests

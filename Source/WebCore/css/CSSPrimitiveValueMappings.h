@@ -1931,10 +1931,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ListStyleType e)
     case ListStyleType::Square:
         m_value.valueID = CSSValueSquare;
         break;
-    case ListStyleType::String:
-        ASSERT_NOT_REACHED();
-        m_value.valueID = CSSValueInvalid;
-        break;
     case ListStyleType::Telugu:
         m_value.valueID = CSSValueTelugu;
         break;

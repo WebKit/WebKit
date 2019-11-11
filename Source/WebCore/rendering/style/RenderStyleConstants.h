@@ -631,8 +631,7 @@ enum class ListStyleType : uint8_t {
     Katakana,
     HiraganaIroha,
     KatakanaIroha,
-    None,
-    String
+    None
 };
 
 enum class QuoteType : uint8_t {
