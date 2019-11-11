@@ -759,7 +759,7 @@ private:
                     VALIDATE((node), !"Should not reach SetArgumentMaybe. GetLocal that has data flow that reaches a SetArgumentMaybe is invalid IR.");
                     break;
                 default:
-                    VALIDATE((node), !"Unexecpted node type.");
+                    VALIDATE((node), !"Unexpected node type.");
                     break;
                 }
             }
