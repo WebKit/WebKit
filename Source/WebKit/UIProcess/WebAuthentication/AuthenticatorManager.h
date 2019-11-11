@@ -91,7 +91,6 @@ private:
     void timeOutTimerFired();
     void runPanel();
     void startRequest();
-    void resetState();
     void restartDiscovery();
 
     // Request: We only allow one request per time. A new request will cancel any pending ones.
