@@ -1,5 +1,28 @@
 2019-11-11  Aakash Jain  <aakash_jain@apple.com>
 
+        [EWS] Use named arguments in factories.py
+        https://bugs.webkit.org/show_bug.cgi?id=204071
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__):
+        (StyleFactory.__init__):
+        (WatchListFactory.__init__):
+        (BindingsFactory.__init__):
+        (WebKitPerlFactory.__init__):
+        (WebKitPyFactory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (JSCTestsFactory.__init__):
+        (WindowsFactory.__init__):
+        (WinCairoFactory.__init__):
+        (GTKFactory.__init__):
+        (WPEFactory.__init__):
+        (ServicesFactory.__init__):
+
+2019-11-11  Aakash Jain  <aakash_jain@apple.com>
+
         EWS should retry build in case of kill-old-processes failure
         https://bugs.webkit.org/show_bug.cgi?id=203858
 
