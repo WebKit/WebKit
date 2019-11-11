@@ -56,7 +56,6 @@ struct Run {
             LayoutUnit horizontalExpansion;
         };
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
-        void resetExpansion() { m_expansionContext = WTF::nullopt; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
         void expand(const TextContext& other);
@@ -69,7 +68,7 @@ struct Run {
         String m_content;
     };
 
-    Run(const RenderStyle&, Rect logicalRect, Optional<TextContext> = WTF::nullopt);
+    Run(const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
 
     const Rect& logicalRect() const { return m_logicalRect; }
 
@@ -108,7 +107,7 @@ private:
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(const RenderStyle& style, Rect logicalRect, Optional<TextContext> textContext)
+inline Run::Run(const RenderStyle& style, const Rect& logicalRect, Optional<TextContext> textContext)
     : m_style(style)
     , m_logicalRect(logicalRect)
     , m_textContext(textContext)

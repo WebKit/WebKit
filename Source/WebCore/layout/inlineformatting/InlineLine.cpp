@@ -37,39 +37,109 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
-Line::Run::Run(const InlineItem& inlineItem, const Display::Run& displayRun)
-    : m_layoutBox(inlineItem.layoutBox())
-    , m_displayRun(displayRun)
-    , m_type(inlineItem.type())
-    , m_isWhitespace(is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isWhitespace())
-    , m_isCollapsible(is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isCollapsible())
+class InlineItemRun {
+WTF_MAKE_ISO_ALLOCATED_INLINE(InlineItemRun);
+public:
+    InlineItemRun(const InlineItem&, const Display::Rect&, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
+
+    const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
+    const Display::Rect& logicalRect() const { return m_logicalRect; }
+    Optional<Display::Run::TextContext> textContext() const { return m_textContext; }
+
+    bool isText() const { return m_inlineItem.isText(); }
+    bool isBox() const { return m_inlineItem.isBox(); }
+    bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
+    bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
+    InlineItem::Type type() const { return m_inlineItem.type(); }
+
+    void setIsCollapsed() { m_isCollapsed = true; }
+    bool isCollapsed() const { return m_isCollapsed; }
+
+    void setCollapsesToZeroAdvanceWidth();
+    bool isCollapsedToZeroAdvanceWidth() const { return m_collapsedToZeroAdvanceWidth; }
+
+    bool isCollapsible() const { return is<InlineTextItem>(m_inlineItem) && downcast<InlineTextItem>(m_inlineItem).isCollapsible(); }
+    bool isWhitespace() const { return is<InlineTextItem>(m_inlineItem) && downcast<InlineTextItem>(m_inlineItem).isWhitespace(); }
+
+    bool hasExpansionOpportunity() const { return isWhitespace() && !isCollapsedToZeroAdvanceWidth(); }
+
+private:
+    const InlineItem& m_inlineItem;
+    Display::Rect m_logicalRect;
+    const Optional<Display::Run::TextContext> m_textContext;
+    bool m_isCollapsed { false };
+    bool m_collapsedToZeroAdvanceWidth { false };
+};
+
+InlineItemRun::InlineItemRun(const InlineItem& inlineItem, const Display::Rect& logicalRect, WTF::Optional<Display::Run::TextContext> textContext)
+    : m_inlineItem(inlineItem)
+    , m_logicalRect(logicalRect)
+    , m_textContext(textContext)
 {
 }
 
-void Line::Run::expand(const Run& other)
+void InlineItemRun::setCollapsesToZeroAdvanceWidth()
+{
+    m_collapsedToZeroAdvanceWidth = true;
+    m_logicalRect.setWidth({ });
+}
+
+Line::Run::Run(const Box& layoutBox, InlineItem::Type type, const Display::Rect& logicalRect)
+    : m_layoutBox(layoutBox)
+    , m_type(type)
+    , m_logicalRect(logicalRect)
+{
+}
+
+void Line::Run::adjustExpansionBehavior(ExpansionBehavior expansionBehavior)
 {
     ASSERT(isText());
-    ASSERT(other.isText());
-    ASSERT(!isCollapsedToZeroAdvanceWidth());
-    ASSERT(!hasTrailingCollapsedContent());
+    ASSERT(hasExpansionOpportunity());
+    m_textContext->setExpansion({ expansionBehavior, m_textContext->expansion()->horizontalExpansion });
+}
 
-    auto& otherDisplayRun = other.displayRun();
-    m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
-    m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
-    m_hasTrailingCollapsedContent = other.isCollapsed();
-    m_isWhitespace &= other.isWhitespace();
-    m_isCollapsible = false;
+inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
+{
+    ASSERT(isText());
+    if (auto expansionContext = m_textContext->expansion())
+        return expansionContext->behavior;
+    return { };
+}
+
+void Line::Run::setHasExpansionOpportunity(ExpansionBehavior expansionBehavior)
+{
+    ASSERT(isText());
+    ASSERT(!hasExpansionOpportunity());
+    m_expansionOpportunityCount = 1;
+    m_textContext->setExpansion({ expansionBehavior, { } });
+}
+
+void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
+{
+    ASSERT(isText());
+    ASSERT(hasExpansionOpportunity());
+    m_logicalRect.expandHorizontally(logicalExpansion);
+    m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
+}
+
+void Line::Run::expand(const InlineItemRun& nextRun)
+{
+    ASSERT(isText());
+    ASSERT(nextRun.isText());
+    ASSERT(!isCollapsedToVisuallyEmpty());
+
+    m_logicalRect.expandHorizontally(nextRun.logicalRect().width());
+    m_textContext->expand(*nextRun.textContext());
 
     // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount. 
-    if (hasExpansionOpportunity() && other.hasExpansionOpportunity()) {
+    if (hasExpansionOpportunity() && nextRun.hasExpansionOpportunity()) {
         // Run is expanded with a whitespace content.
         adjustExpansionBehavior(ForbidLeadingExpansion | AllowTrailingExpansion);
-        m_expansionOpportunityCount = *m_expansionOpportunityCount + *other.expansionOpportunityCount();
-    } else if (!hasExpansionOpportunity() && other.hasExpansionOpportunity()) {
+        ++m_expansionOpportunityCount;
+    } else if (!hasExpansionOpportunity() && nextRun.hasExpansionOpportunity()) {
         // Nonwhitespace runs is expanded with whitespace.
         setHasExpansionOpportunity(ForbidLeadingExpansion | AllowTrailingExpansion);
-        m_expansionOpportunityCount = other.expansionOpportunityCount();
-    } else if (hasExpansionOpportunity() && !other.hasExpansionOpportunity()) {
+    } else if (hasExpansionOpportunity() && !nextRun.hasExpansionOpportunity()) {
         // Run is expanded with a nonwhitespace content.
         adjustExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
     }
@@ -88,6 +158,10 @@ Line::Line(const InlineFormattingContext& inlineFormattingContext, const Initial
     auto lineRect = Display::Rect { initialConstraints.logicalTopLeft, { }, initialLineHeight };
     auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
     m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
+}
+
+Line::~Line()
+{
 }
 
 static bool isInlineContainerConsideredEmpty(const FormattingContext& formattingContext, const Box& layoutBox)
@@ -118,7 +192,7 @@ bool Line::isVisuallyEmpty() const
     // FIXME: This should be cached instead -as the inline items are being added.
     // Return true for empty inline containers like <span></span>.
     auto& formattingContext = this->formattingContext();
-    for (auto& run : m_runList) {
+    for (auto& run : m_inlineItemRuns) {
         if (run->isContainerStart()) {
             if (!isInlineContainerConsideredEmpty(formattingContext, run->layoutBox()))
                 return false;
@@ -143,75 +217,90 @@ bool Line::isVisuallyEmpty() const
 
 Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
+    // 1. Remove trimmable trailing content.
+    // 2. Join text runs together when possible [foo][ ][bar] -> [foo bar].
+    // 3. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
-    // Join text runs together when possible.
-    unsigned index = 1;
-    while (index < m_runList.size()) {
-        auto canMergeRuns = [](const auto& previousRun, const auto& currentRun) {
-            // Do not merge runs across inline boxes (<span>foo</span><span>bar</span>)
-            if (&previousRun->layoutBox() !=  &currentRun->layoutBox())
-                return false;
-            // Only text content can be merged.
-            if (!previousRun->isText() || !currentRun->isText())
-                return false;
-            // Merged content needs to be continuous.
-            if (previousRun->hasTrailingCollapsedContent())
-                return false;
-            // Visually empty runs are ignored.
-            if (currentRun->isCollapsedToZeroAdvanceWidth() || previousRun->isCollapsedToZeroAdvanceWidth())
-                return false;
-            return true;
+    RunList runList;
+    for (unsigned i = 0; i < m_inlineItemRuns.size(); ++i) {
+
+        auto constructRun = [&] (const auto& inlineItemRun) {
+            runList.append(Run { inlineItemRun.layoutBox(), inlineItemRun.type(), inlineItemRun.logicalRect() });
+            if (!inlineItemRun.isText())
+                return;
+
+            auto& run = runList.last();
+            if (inlineItemRun.isCollapsedToZeroAdvanceWidth())
+                run.setIsCollapsedToVisuallyEmpty();
+            if (auto textContext = inlineItemRun.textContext()) {
+                run.setTextContext(*textContext);
+                if (isTextAlignJustify() && inlineItemRun.hasExpansionOpportunity())
+                    run.setHasExpansionOpportunity(DefaultExpansion);
+            }
         };
-        auto& previousRun = m_runList[index - 1];
-        auto& currentRun = m_runList[index];
-        if (canMergeRuns(previousRun, currentRun)) {
-            previousRun->expand(*currentRun);
-            m_runList.remove(index);
-            continue;
+
+        constructRun(*m_inlineItemRuns[i]);
+        // Merge eligible runs.
+        while (i < m_inlineItemRuns.size() - 1) {
+            auto canMergeRuns = [] (const auto& currentRun, const auto& nextRun) {
+                // Do not merge runs across inline boxes (<span>foo</span><span>bar</span>)
+                if (&currentRun.layoutBox() != &nextRun.layoutBox())
+                    return false;
+                // Only text content can be merged.
+                if (!currentRun.isText() || !nextRun.isText())
+                    return false;
+                // Merged content needs to be continuous.
+                if (currentRun.isCollapsed())
+                    return false;
+                // Visually empty runs are ignored.
+                if (currentRun.isCollapsedToZeroAdvanceWidth() || nextRun.isCollapsedToZeroAdvanceWidth())
+                    return false;
+                return true;
+            };
+            auto& currentRun = m_inlineItemRuns[i];
+            auto& nextRun = m_inlineItemRuns[i + 1];
+            if (!canMergeRuns(*currentRun, *nextRun))
+                break;
+            runList.last().expand(*nextRun);
+            // Skip the merged run.
+            ++i;
         }
-        ++index;
     }
 
     if (!m_skipAlignment) {
-        alignContentVertically();
-        alignContentHorizontally(isLastLineWithInlineContent);
+        if (isVisuallyEmpty()) {
+            m_lineBox.resetBaseline();
+            m_lineBox.setLogicalHeight({ });
+        }
+        // Remove descent when all content is baseline aligned but none of them have descent.
+        if (formattingContext().quirks().lineDescentNeedsCollapsing(runList)) {
+            m_lineBox.shrinkVertically(m_lineBox.baseline().descent());
+            m_lineBox.resetDescent();
+        }
+        alignContentVertically(runList);
+        alignContentHorizontally(runList, isLastLineWithInlineContent);
     }
-
-    return WTFMove(m_runList);
+    return runList;
 }
 
-void Line::alignContentVertically()
+void Line::alignContentVertically(RunList& runList) const
 {
     ASSERT(!m_skipAlignment);
-
-    if (isVisuallyEmpty()) {
-        m_lineBox.resetBaseline();
-        m_lineBox.setLogicalHeight({ });
-    }
-
-    // Remove descent when all content is baseline aligned but none of them have descent.
-    if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runList)) {
-        m_lineBox.shrinkVertically(m_lineBox.baseline().descent());
-        m_lineBox.resetDescent();
-    }
-
-    auto& layoutState = this->layoutState();
-    auto& formattingContext = this->formattingContext();
-    for (auto& run : m_runList) {
+    for (auto& run : runList) {
         LayoutUnit logicalTop;
-        auto& layoutBox = run->layoutBox();
+        auto& layoutBox = run.layoutBox();
         auto verticalAlign = layoutBox.style().verticalAlign();
         auto ascent = layoutBox.style().fontMetrics().ascent();
 
         switch (verticalAlign) {
         case VerticalAlign::Baseline:
-            if (run->isForcedLineBreak() || run->isText())
+            if (run.isForcedLineBreak() || run.isText())
                 logicalTop = baselineOffset() - ascent;
-            else if (run->isContainerStart()) {
-                auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+            else if (run.isContainerStart()) {
+                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 logicalTop = baselineOffset() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
             } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(downcast<Container>(layoutBox)));
+                auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
                 // Spec makes us generate at least one line -even if it is empty.
                 ASSERT(!formattingState.lineBoxes().isEmpty());
                 auto inlineBlockBaselineOffset = formattingState.lineBoxes().last()->baselineOffset();
@@ -229,73 +318,71 @@ void Line::alignContentVertically()
                 //     text | | |   v text
                 //     -----|-|-|---------- <- baseline
                 //
-                auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 auto baselineOffsetFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaselineOffset;
                 logicalTop = baselineOffset() - baselineOffsetFromMarginBox;
             } else
-                logicalTop = baselineOffset() - run->logicalRect().height();
+                logicalTop = baselineOffset() - run.logicalRect().height();
             break;
         case VerticalAlign::Top:
             logicalTop = { };
             break;
         case VerticalAlign::Bottom:
-            logicalTop = logicalBottom() - run->logicalRect().height();
+            logicalTop = logicalBottom() - run.logicalRect().height();
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
         }
-        run->adjustLogicalTop(logicalTop);
+        run.adjustLogicalTop(logicalTop);
         // Convert runs from relative to the line top/left to the formatting root's border box top/left.
-        run->moveVertically(this->logicalTop());
-        run->moveHorizontally(this->logicalLeft());
+        run.moveVertically(this->logicalTop());
+        run.moveHorizontally(this->logicalLeft());
     }
 }
 
-void Line::justifyRuns()
+void Line::justifyRuns(RunList& runList) const
 {
-    ASSERT(!m_runList.isEmpty());
+    ASSERT(!runList.isEmpty());
     ASSERT(availableWidth() > 0);
     // Need to fix up the last run first.
-    auto& lastRun = m_runList.last();
-    if (lastRun->hasExpansionOpportunity())
-        lastRun->adjustExpansionBehavior(*lastRun->expansionBehavior() | ForbidTrailingExpansion);
+    auto& lastRun = runList.last();
+    if (lastRun.hasExpansionOpportunity())
+        lastRun.adjustExpansionBehavior(*lastRun.expansionBehavior() | ForbidTrailingExpansion);
     // Collect the expansion opportunity numbers.
     auto expansionOpportunityCount = 0;
-    for (auto& run : m_runList) {
-        if (!run->hasExpansionOpportunity())
-            continue;
-        expansionOpportunityCount += *run->expansionOpportunityCount();
-    }
+    for (auto& run : runList)
+        expansionOpportunityCount += run.expansionOpportunityCount();
     // Nothing to distribute?
     if (!expansionOpportunityCount)
         return;
     // Distribute the extra space.
     auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
     LayoutUnit accumulatedExpansion;
-    for (auto& run : m_runList) {
+    for (auto& run : runList) {
         // Expand and moves runs by the accumulated expansion.
-        if (!run->hasExpansionOpportunity()) {
-            run->moveHorizontally(accumulatedExpansion);
+        if (!run.hasExpansionOpportunity()) {
+            run.moveHorizontally(accumulatedExpansion);
             continue;
         }
-        auto computedExpansion = expansionToDistribute * *run->expansionOpportunityCount();
-        run->setComputedHorizontalExpansion(computedExpansion);
-        run->moveHorizontally(accumulatedExpansion);
+        ASSERT(run.expansionOpportunityCount());
+        auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
+        run.setComputedHorizontalExpansion(computedExpansion);
+        run.moveHorizontally(accumulatedExpansion);
         accumulatedExpansion += computedExpansion;
     }
 }
 
-void Line::alignContentHorizontally(IsLastLineWithInlineContent lastLine)
+void Line::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
 {
     ASSERT(!m_skipAlignment);
-    if (m_runList.isEmpty() || availableWidth() <= 0)
+    if (runList.isEmpty() || availableWidth() <= 0)
         return;
 
     if (isTextAlignJustify()) {
         // Do not justify align the last line.
         if (lastLine == IsLastLineWithInlineContent::No)
-            justifyRuns();
+            justifyRuns(runList);
         return;
     }
 
@@ -324,16 +411,15 @@ void Line::alignContentHorizontally(IsLastLineWithInlineContent lastLine)
     if (!adjustment)
         return;
 
-    for (auto& run : m_runList)
-        run->moveHorizontally(*adjustment);
-    // FIXME: Find out if m_lineBox needs adjustmnent as well.
+    for (auto& run : runList)
+        run.moveHorizontally(*adjustment);
 }
 
 void Line::removeTrailingTrimmableContent()
 {
     // Collapse trimmable trailing content
     LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableContent) {
+    for (auto* trimmableRun : m_trimmableRuns) {
         ASSERT(trimmableRun->isText());
         // FIXME: We might need to be able to differentiate between trimmed and collapsed runs.
         trimmableWidth += trimmableRun->logicalRect().width();
@@ -360,7 +446,7 @@ void Line::moveLogicalRight(LayoutUnit delta)
 LayoutUnit Line::trailingTrimmableWidth() const
 {
     LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableContent)
+    for (auto* trimmableRun : m_trimmableRuns)
         trimmableWidth += trimmableRun->logicalRect().width();
     return trimmableWidth;
 }
@@ -382,7 +468,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
+    m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
     m_lineBox.expandHorizontally(logicalRect.width());
     if (logicalRect.width())
         m_lineBox.setIsConsideredNonEmpty();
@@ -411,7 +497,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 {
     auto isTrimmable = !shouldPreserveTrailingContent(inlineItem);
     if (!isTrimmable)
-        m_trimmableContent.clear();
+        m_trimmableRuns.clear();
 
     auto willCollapseCompletely = [&] {
         // Empty run.
@@ -420,14 +506,14 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
             return true;
         }
         // Leading whitespace.
-        if (m_runList.isEmpty())
+        if (m_inlineItemRuns.isEmpty())
             return !shouldPreserveLeadingContent(inlineItem);
 
         if (!inlineItem.isCollapsible())
             return false;
         // Check if the last item is collapsed as well.
-        for (auto i = m_runList.size(); i--;) {
-            auto& run = m_runList[i];
+        for (auto i = m_inlineItemRuns.size(); i--;) {
+            auto& run = m_inlineItemRuns[i];
             if (run->isBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
@@ -454,13 +540,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
     auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
-    auto lineRun = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
-
-    if (isTextAlignJustify()) {
-        // Register expansion opportunity for whitespace runs.
-        if (inlineItem.isWhitespace())
-            lineRun->setHasExpansionOpportunity(DefaultExpansion);
-    }
+    auto lineRun = makeUnique<InlineItemRun>(inlineItem, logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent });
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
@@ -471,10 +551,10 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
-        m_trimmableContent.add(lineRun.get());
+        m_trimmableRuns.add(lineRun.get());
 
     m_lineBox.expandHorizontally(lineRun->logicalRect().width());
-    m_runList.append(WTFMove(lineRun));
+    m_inlineItemRuns.append(WTFMove(lineRun));
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -491,10 +571,10 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
         logicalRect.setHeight(runHeight);
     }
 
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
+    m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_lineBox.setIsConsideredNonEmpty();
-    m_trimmableContent.clear();
+    m_trimmableRuns.clear();
 }
 
 void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -503,8 +583,6 @@ void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logi
     // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
     m_lineBox.setIsConsideredNonEmpty();
-    if (auto* replaced = inlineItem.layoutBox().replaced(); replaced && replaced->cachedImage())
-        m_runList.last()->m_displayRun.setImage(*replaced->cachedImage());
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem)
@@ -517,7 +595,7 @@ void Line::appendLineBreak(const InlineItem& inlineItem)
         logicalRect.setHeight(logicalHeight());
     }
     m_lineBox.setIsConsideredNonEmpty();
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
+    m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
 }
 
 void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem)

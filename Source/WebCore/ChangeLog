@@ -1,3 +1,89 @@
+2019-11-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move Line::Run's line layout specific logic to InlineItemRun
+        https://bugs.webkit.org/show_bug.cgi?id=204055
+        <rdar://problem/57053232>
+
+        Reviewed by Antti Koivisto.
+
+        Line::Run started getting a bit overloaded through supporting the line layout logic and providing the 'run' interface
+        to the caller (e.g. merging multiple runs happens at the very end of the line layout, when the line is being closed. When a run
+        is expanded some of the properties do not make sense anymore. It makes part of the Run's logic unnecessarily complicated).
+        This patch introduces the InlineItemRun structure to support the line layout logic. We construct InlineItemRuns
+        as InlineItems are getting appended to the line and when the line is getting closed, we turn them into Line::Runs (InlineItems are never merged, only Line::Runs are).
+
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::setExpansion):
+        (WebCore::Display::Run::Run):
+        (WebCore::Display::Run::TextContext::resetExpansion): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::InlineItemRun::layoutBox const):
+        (WebCore::Layout::InlineItemRun::logicalRect const):
+        (WebCore::Layout::InlineItemRun::textContext const):
+        (WebCore::Layout::InlineItemRun::isText const):
+        (WebCore::Layout::InlineItemRun::isBox const):
+        (WebCore::Layout::InlineItemRun::isContainerStart const):
+        (WebCore::Layout::InlineItemRun::isContainerEnd const):
+        (WebCore::Layout::InlineItemRun::type const):
+        (WebCore::Layout::InlineItemRun::setIsCollapsed):
+        (WebCore::Layout::InlineItemRun::isCollapsed const):
+        (WebCore::Layout::InlineItemRun::isCollapsedToZeroAdvanceWidth const):
+        (WebCore::Layout::InlineItemRun::isCollapsible const):
+        (WebCore::Layout::InlineItemRun::isWhitespace const):
+        (WebCore::Layout::InlineItemRun::hasExpansionOpportunity const):
+        (WebCore::Layout::InlineItemRun::InlineItemRun):
+        (WebCore::Layout::InlineItemRun::setCollapsesToZeroAdvanceWidth):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::Run::adjustExpansionBehavior):
+        (WebCore::Layout::Line::Run::expansionBehavior const):
+        (WebCore::Layout::Line::Run::setHasExpansionOpportunity):
+        (WebCore::Layout::Line::Run::setComputedHorizontalExpansion):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::~Line):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::alignContentVertically const):
+        (WebCore::Layout::Line::justifyRuns const):
+        (WebCore::Layout::Line::alignContentHorizontally const):
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::trailingTrimmableWidth const):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendReplacedInlineBox): Need to find a better place for setImage.
+        (WebCore::Layout::Line::appendLineBreak):
+        (WebCore::Layout::Line::alignContentVertically): Deleted.
+        (WebCore::Layout::Line::justifyRuns): Deleted.
+        (WebCore::Layout::Line::alignContentHorizontally): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::layoutBox const):
+        (WebCore::Layout::Line::Run::logicalRect const):
+        (WebCore::Layout::Line::Run::textContext const):
+        (WebCore::Layout::Line::Run::isCollapsedToVisuallyEmpty const):
+        (WebCore::Layout::Line::Run::adjustLogicalTop):
+        (WebCore::Layout::Line::Run::moveHorizontally):
+        (WebCore::Layout::Line::Run::moveVertically):
+        (WebCore::Layout::Line::Run::setTextContext):
+        (WebCore::Layout::Line::Run::setIsCollapsedToVisuallyEmpty):
+        (WebCore::Layout::Line::Run::hasExpansionOpportunity const):
+        (WebCore::Layout::Line::Run::expansionOpportunityCount const):
+        (WebCore::Layout::Line::Run::displayRun const): Deleted.
+        (WebCore::Layout::Line::Run::isCollapsed const): Deleted.
+        (WebCore::Layout::Line::Run::isCollapsible const): Deleted.
+        (WebCore::Layout::Line::Run::hasTrailingCollapsedContent const): Deleted.
+        (WebCore::Layout::Line::Run::isWhitespace const): Deleted.
+        (WebCore::Layout::Line::Run::setIsCollapsed): Deleted.
+        (WebCore::Layout::Line::Run::isCollapsedToZeroAdvanceWidth const): Deleted.
+        (WebCore::Layout::Line::Run::setCollapsesToZeroAdvanceWidth): Deleted.
+        (WebCore::Layout::Line::Run::expansionBehavior const): Deleted.
+        (WebCore::Layout::Line::Run::setHasExpansionOpportunity): Deleted.
+        (WebCore::Layout::Line::Run::adjustExpansionBehavior): Deleted.
+        (WebCore::Layout::Line::Run::setComputedHorizontalExpansion): Deleted.
+
 2019-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add some infrastructure to resolve ClipboardItems into pasteboard data for writing

@@ -43,24 +43,24 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
         return false;
 
     for (auto& run : runList) {
-        auto& layoutBox = run->layoutBox();
-        if (run->isContainerEnd() || layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
+        auto& layoutBox = run.layoutBox();
+        if (run.isContainerEnd() || layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
             continue;
 
-        if (run->isForcedLineBreak())
+        if (run.isForcedLineBreak())
             return false;
-        if (run->isText()) {
-            if (!run->isCollapsedToZeroAdvanceWidth())
+        if (run.isText()) {
+            if (!run.isCollapsedToVisuallyEmpty())
                 return false;
             continue;
         }
-        if (run->isContainerStart()) {
+        if (run.isContainerStart()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             if (boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()))
                 return false;
             continue;
         }
-        if (run->isBox()) {
+        if (run.isBox()) {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(downcast<Container>(layoutBox)));
                 ASSERT(!formattingState.lineBoxes().isEmpty());
