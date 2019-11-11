@@ -1,3 +1,18 @@
+2019-11-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r251460.
+        https://bugs.webkit.org/show_bug.cgi?id=204070
+
+        This patch caused a crash due to synchronous event firing
+        (Requested by jernoble on #webkit).
+
+        Reverted changeset:
+
+        "media/W3C/video/networkState/networkState_during_progress.html
+        is flaky"
+        https://bugs.webkit.org/show_bug.cgi?id=76280
+        https://trac.webkit.org/changeset/251460
+
 2019-11-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::m_trimmableRuns does not need to be a ListHashSet

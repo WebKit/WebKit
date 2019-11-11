@@ -2369,16 +2369,11 @@ void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
     if (hasMediaControls() && m_player->didLoadingProgress())
         mediaControls()->bufferingProgressed();
 
-    // Schedule one last *synchronous* progress event so we guarantee
-    // that at least one is fired for files that load very
-    // quickly. This must be synchronous since it's very easy for the
-    // async queue to dispatch this to JS after we set m_networkState
-    // to IDLE below, which breaks the invariant of onprogress
-    // happening during NETWORK_LOADING.
-    dispatchEvent(Event::create(eventNames().progressEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
-
-    m_networkState = NETWORK_IDLE;
+    // Schedule one last progress event so we guarantee that at least one is fired
+    // for files that load very quickly.
+    scheduleEvent(eventNames().progressEvent);
     scheduleEvent(eventNames().suspendEvent);
+    m_networkState = NETWORK_IDLE;
 }
 
 void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
