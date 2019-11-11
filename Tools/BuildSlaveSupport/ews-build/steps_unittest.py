@@ -591,7 +591,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Killed old processes (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to kill old processes')
         return self.runStep()
 
 

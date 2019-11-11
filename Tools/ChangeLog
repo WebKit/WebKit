@@ -1,3 +1,15 @@
+2019-11-11  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should retry build in case of kill-old-processes failure
+        https://bugs.webkit.org/show_bug.cgi?id=203858
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (KillOldProcesses.evaluateCommand): Retry the build in case of failure.
+        (KillOldProcesses.getResultSummary): Update the build-step summary string.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2019-11-09  Dean Jackson  <dino@apple.com>
 
         Clicky Orbing support.apple.com categories shows a PNG instead of the web page preview, tapping loads image asset only instead of web page

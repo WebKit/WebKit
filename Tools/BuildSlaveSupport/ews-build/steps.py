@@ -995,6 +995,16 @@ class KillOldProcesses(shell.Compile):
     def __init__(self, **kwargs):
         super(KillOldProcesses, self).__init__(timeout=60, logEnviron=False, **kwargs)
 
+    def evaluateCommand(self, cmd):
+        if cmd.didFail():
+            self.build.buildFinished(['Failed to kill old processes, retrying build'], RETRY)
+        return shell.Compile.evaluateCommand(self, cmd)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': u'Failed to kill old processes'}
+        return shell.Compile.getResultSummary(self)
+
 
 class RunWebKitTests(shell.Test):
     name = 'layout-tests'
