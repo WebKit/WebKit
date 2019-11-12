@@ -515,7 +515,11 @@ Optional<Seconds> KeyframeAnimation::timeToNextService()
 {
     Optional<Seconds> t = AnimationBase::timeToNextService();
     if (!t || t.value() != 0_s || preActive())
+#if COMPILER(MSVC) && _MSC_VER >= 1920
+        return WTFMove(t);
+#else
         return t;
+#endif
 
     // A return value of 0 means we need service. But if we only have accelerated animations we 
     // only need service at the end of the transition.

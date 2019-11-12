@@ -1,3 +1,21 @@
+2019-11-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Many legacy animation tests are timing out with VS2019
+        https://bugs.webkit.org/show_bug.cgi?id=204000
+
+        Reviewed by Brent Fulgham.
+
+        When compiling with VS2019, there is a compiler issue, where an Optional without a value is returned
+        when it should definitely have a value. Work around this issue by moving the local Optional value
+        when returning.
+
+        No new tests, covered by existing tests.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::timeToNextService):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::timeToNextService):
+
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
         DOMFormData should be available in workers
