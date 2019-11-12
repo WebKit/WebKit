@@ -1,3 +1,38 @@
+2019-11-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        RegExpBuiltinExec should create "groups" property unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=204067
+
+        Reviewed by Ross Kirsling.
+
+        After RegExp named capture groups were initially implemented in JSC, the spec was changed
+        to unconditionally create "groups" property.
+        (https://github.com/tc39/proposal-regexp-named-groups/issues/34)
+
+        This patch implements the change (that was shipped by V8), reducing number of structures
+        we use for RegExpMatchesArray, and also sets [[Prototype]] of "groups" object to `null`.
+        (step 24 of https://tc39.es/ecma262/#sec-regexpbuiltinexec)
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure const):
+        (JSC::JSGlobalObject::regExpMatchesArrayWithGroupsStructure const): Deleted.
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createStructureImpl):
+        (JSC::createRegExpMatchesArrayWithGroupsStructure): Deleted.
+        (JSC::createRegExpMatchesArrayWithGroupsSlowPutStructure): Deleted.
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2019-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix incorrect assertion

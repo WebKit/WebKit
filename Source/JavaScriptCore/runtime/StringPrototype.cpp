@@ -39,6 +39,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSStringIterator.h"
 #include "Lookup.h"
+#include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "ParseInt.h"
 #include "PropertyNameArray.h"
@@ -571,11 +572,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                 OUT_OF_MEMORY(globalObject, scope);
 
             cachedCall.clearArguments();
-
-            JSObject* groups = nullptr;
-
-            if (hasNamedCaptures)
-                groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+            JSObject* groups = hasNamedCaptures ? constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure()) : nullptr;
 
             for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
                 int matchStart = ovector[i * 2];
@@ -636,10 +633,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                     OUT_OF_MEMORY(globalObject, scope);
 
                 MarkedArgumentBuffer args;
-                JSObject* groups = nullptr;
-
-                if (hasNamedCaptures)
-                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+                JSObject* groups = hasNamedCaptures ? constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure()) : nullptr;
 
                 for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];

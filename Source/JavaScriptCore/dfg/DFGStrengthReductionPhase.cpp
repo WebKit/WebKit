@@ -606,12 +606,7 @@ private:
 
                 m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
 
-                Structure* structure;
-                if ((m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) && regExp->hasNamedCaptures())
-                    structure = globalObject->regExpMatchesArrayWithGroupsStructure();
-                else
-                    structure = globalObject->regExpMatchesArrayStructure();
-
+                Structure* structure = globalObject->regExpMatchesArrayStructure();
                 if (structure->indexingType() != ArrayWithContiguous) {
                     // This is further protection against a race with haveABadTime.
                     if (verbose)

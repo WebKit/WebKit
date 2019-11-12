@@ -1183,12 +1183,6 @@ test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
 test/built-ins/RegExp/named-groups/groups-object-subclass.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
-test/built-ins/RegExp/named-groups/groups-object-undefined.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
-test/built-ins/RegExp/named-groups/groups-object.js:
-  default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Object]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Object]Â») to be true'
 test/built-ins/RegExp/named-groups/string-replace-nocaptures.js:
   default: 'Test262Error: Expected SameValue(Â«$<snd>$<fst>cdÂ», Â«$<$<fst>cdÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«$<snd>$<fst>cdÂ», Â«$<$<fst>cdÂ») to be true'

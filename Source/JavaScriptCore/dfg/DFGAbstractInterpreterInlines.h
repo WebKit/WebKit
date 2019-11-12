@@ -2356,7 +2356,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
                     RegisteredStructureSet structureSet;
                     structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayStructure()));
-                    structureSet.add(m_graph.registerStructure(globalObject->regExpMatchesArrayWithGroupsStructure()));
                     setForNode(node, structureSet);
                     forNode(node).merge(SpecOther);
                     break;

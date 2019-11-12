@@ -1,3 +1,12 @@
+2019-11-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        RegExpBuiltinExec should create "groups" property unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=204067
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2019-11-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         UTC offset for Samoa is miscalculated when !HAVE(TIMEGM)
