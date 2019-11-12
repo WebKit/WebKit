@@ -21,6 +21,7 @@ set(DumpRenderTreeLib_SOURCES
     win/TextInputController.cpp
     win/TextInputControllerWin.cpp
     win/UIDelegate.cpp
+    win/UIScriptControllerWin.cpp
     win/WorkQueueItemWin.cpp
 )
 

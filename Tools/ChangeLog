@@ -1,3 +1,28 @@
+2019-11-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] UIScriptController::zoomToScale not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=180424
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/PlatformWin.cmake:
+        * DumpRenderTree/win/UIScriptControllerWin.cpp: Added.
+        (WTR::UIScriptController::create):
+        (WTR::UIScriptControllerWin::doAsyncTask):
+        (WTR::UIScriptControllerWin::zoomToScale):
+        (WTR::UIScriptControllerWin::zoomScale const):
+        * DumpRenderTree/win/UIScriptControllerWin.h: Added.
+        (WTR::UIScriptControllerWin::UIScriptControllerWin):
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        * WebKitTestRunner/PlatformWin.cmake:
+        * WebKitTestRunner/win/UIScriptControllerWin.cpp: Added.
+        (WTR::UIScriptController::create):
+        (WTR::UIScriptControllerWin::doAsyncTask):
+        (WTR::UIScriptControllerWin::zoomToScale):
+        (WTR::UIScriptControllerWin::zoomScale const):
+        * WebKitTestRunner/win/UIScriptControllerWin.h: Added.
+        (WTR::UIScriptControllerWin::UIScriptControllerWin):
+
 2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: implement new window command

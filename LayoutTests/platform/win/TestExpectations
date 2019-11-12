@@ -224,10 +224,6 @@ webkit.org/b/29287 http/tests/local/formdata/ [ Skip ]
 fast/events/autoscroll-with-software-keyboard.html [ Skip ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ]
 
-# UIScriptController::zoomToScale is not supported.
-fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip ]
-fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Skip ]
-
 # UIScriptController::removeViewFromWindow/addViewToWindow is not supported.
 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
 
@@ -691,21 +687,8 @@ http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
-# UIScriptController::zoomToScale is not implemented on Windows.
-webkit.org/b/180424 fast/visual-viewport/resize-event-fired.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/scroll-event-fired.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-under-page-zoom.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/viewport-dimensions.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/zoomed-fixed.html [ Skip ]
-webkit.org/b/180424 fast/visual-viewport/zoomed-rects.html [ Skip ]
-webkit.org/b/180424 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
-webkit.org/b/180424 fast/zooming/uiscript-zooming.html [ Skip ]
+fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
+fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############

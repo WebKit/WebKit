@@ -4,6 +4,7 @@ set(WebKitTestRunnerLib_SOURCES
     win/EventSenderProxyWin.cpp
     win/PlatformWebViewWin.cpp
     win/TestControllerWin.cpp
+    win/UIScriptControllerWin.cpp
     win/main.cpp
 )
 

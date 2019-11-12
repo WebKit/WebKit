@@ -58,7 +58,7 @@ DeviceOrientation* toDeviceOrientation(JSContextRef context, JSValueRef value)
     return nullptr;
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(COCOA)
+#if !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(WIN)
 Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
 {
     return adoptRef(*new UIScriptController(context));
