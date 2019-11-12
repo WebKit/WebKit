@@ -49,6 +49,11 @@ class PiPSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         const media = this.mediaController.media;
+        if (!document.pictureInPictureEnabled) {
+            media.webkitSetPresentationMode(media.webkitPresentationMode === PiPMode ? InlineMode : PiPMode);
+            return;
+        }
+
         if (!document.pictureInPictureElement)
             media.requestPictureInPicture();
         else
