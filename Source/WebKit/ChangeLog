@@ -1,5 +1,31 @@
 2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebDriver: implement new window command
+        https://bugs.webkit.org/show_bug.cgi?id=203994
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add new API to support new window command. The WebKitAutomationSession::create-web-view signal can now receive a
+        detail that can be "window" or "tab". Applications can use that to decide whether to add the new webview to a
+        new window or tab. WebKitWebView has a new construct only property automation-presentation-type, which is an
+        enum that can be either window or tab value. Appplications should use the new property when creating the web
+        view for automation to indicate whether the web view was added to a new window or tab.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkit_automation_session_class_init):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init):
+        (webkit_web_view_get_automation_presentation_type):
+        * UIProcess/API/gtk/WebKitAutomationSession.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
+2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r250707): [GTK] UIClient::setWindowFrame only works the first time
         https://bugs.webkit.org/show_bug.cgi?id=204068
 

@@ -75,6 +75,7 @@ private:
     void closeWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void switchToWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getWindowHandles(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void newWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void switchToFrame(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getWindowRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

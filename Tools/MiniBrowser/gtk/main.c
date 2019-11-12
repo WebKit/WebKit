@@ -465,9 +465,14 @@ static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKi
     }
 }
 
-static GtkWidget *createWebViewForAutomationCallback(WebKitAutomationSession* session)
+static GtkWidget *createWebViewForAutomationInWindowCallback(WebKitAutomationSession* session)
 {
     return GTK_WIDGET(browser_window_get_or_create_web_view_for_automation());
+}
+
+static GtkWidget *createWebViewForAutomationInTabCallback(WebKitAutomationSession* session)
+{
+    return GTK_WIDGET(browser_window_create_web_view_in_new_tab_for_automation());
 }
 
 static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutomationSession *session)
@@ -477,7 +482,8 @@ static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutoma
     webkit_automation_session_set_application_info(session, info);
     webkit_application_info_unref(info);
 
-    g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), NULL);
+    g_signal_connect(session, "create-web-view::window", G_CALLBACK(createWebViewForAutomationInWindowCallback), NULL);
+    g_signal_connect(session, "create-web-view::tab", G_CALLBACK(createWebViewForAutomationInTabCallback), NULL);
 }
 
 typedef struct {

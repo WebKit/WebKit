@@ -37,6 +37,20 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_AUTOMATION_SESSION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_AUTOMATION_SESSION))
 #define WEBKIT_AUTOMATION_SESSION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_AUTOMATION_SESSION, WebKitAutomationSessionClass))
 
+/**
+ * WebKitAutomationBrowsingContextPresentation:
+ * @WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW: a window
+ * @WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB: a tab
+ *
+ * Enum values used for determining the automation browsing context presentation.
+ *
+ * Since: 2.28
+ */
+typedef enum {
+    WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW,
+    WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB
+} WebKitAutomationBrowsingContextPresentation;
+
 typedef struct _WebKitAutomationSession        WebKitAutomationSession;
 typedef struct _WebKitAutomationSessionClass   WebKitAutomationSessionClass;
 typedef struct _WebKitAutomationSessionPrivate WebKitAutomationSessionPrivate;

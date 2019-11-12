@@ -126,6 +126,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Delete, "/session/$sessionId/window", &WebDriverService::closeWindow },
     { HTTPMethod::Post, "/session/$sessionId/window", &WebDriverService::switchToWindow },
     { HTTPMethod::Get, "/session/$sessionId/window/handles", &WebDriverService::getWindowHandles },
+    { HTTPMethod::Post, "/session/$sessionId/window/new", &WebDriverService::newWindow },
     { HTTPMethod::Post, "/session/$sessionId/frame", &WebDriverService::switchToFrame },
     { HTTPMethod::Post, "/session/$sessionId/frame/parent", &WebDriverService::switchToParentFrame },
     { HTTPMethod::Get, "/session/$sessionId/window/rect", &WebDriverService::getWindowRect },
@@ -1137,6 +1138,29 @@ void WebDriverService::getWindowHandles(RefPtr<JSON::Object>&& parameters, Funct
     // https://www.w3.org/TR/webdriver/#get-window-handles
     if (findSessionOrCompleteWithError(*parameters, completionHandler))
         m_session->getWindowHandles(WTFMove(completionHandler));
+}
+
+void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §11.5 New Window
+    // https://w3c.github.io/webdriver/#new-window
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    Optional<String> typeHint;
+    RefPtr<JSON::Value> value;
+    if (parameters->getValue("type"_s, value)) {
+        String valueString;
+        if (value->asString(valueString)) {
+            if (valueString == "window" || valueString == "tab")
+                typeHint = valueString;
+        } else if (!value->isNull()) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            return;
+        }
+    }
+
+    m_session->newWindow(typeHint, WTFMove(completionHandler));
 }
 
 void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

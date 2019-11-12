@@ -300,6 +300,9 @@ webkit_web_view_is_ephemeral                         (WebKitWebView             
 WEBKIT_API gboolean
 webkit_web_view_is_controlled_by_automation          (WebKitWebView             *web_view);
 
+WEBKIT_API WebKitAutomationBrowsingContextPresentation
+webkit_web_view_get_automation_presentation_type     (WebKitWebView             *web_view);
+
 WEBKIT_API WebKitWebsiteDataManager *
 webkit_web_view_get_website_data_manager             (WebKitWebView             *web_view);
 

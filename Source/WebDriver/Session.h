@@ -86,6 +86,7 @@ public:
     void closeWindow(Function<void (CommandResult&&)>&&);
     void switchToWindow(const String& windowHandle, Function<void (CommandResult&&)>&&);
     void getWindowHandles(Function<void (CommandResult&&)>&&);
+    void newWindow(Optional<String> typeHint, Function<void (CommandResult&&)>&&);
     void switchToFrame(RefPtr<JSON::Value>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
     void getWindowRect(Function<void (CommandResult&&)>&&);

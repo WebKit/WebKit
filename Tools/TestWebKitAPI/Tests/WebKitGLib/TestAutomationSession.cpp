@@ -166,6 +166,18 @@ public:
         return test->m_webViewForAutomation;
     }
 
+    static WebKitWebView* createWebViewInWindowCallback(WebKitAutomationSession* session, AutomationTest* test)
+    {
+        test->m_createWebViewInWindowWasCalled = true;
+        return test->m_webViewForAutomation;
+    }
+
+    static WebKitWebView* createWebViewInTabCallback(WebKitAutomationSession* session, AutomationTest* test)
+    {
+        test->m_createWebViewInTabWasCalled = true;
+        return test->m_webViewForAutomation;
+    }
+
     void automationStarted(WebKitAutomationSession* session)
     {
         m_session = session;
@@ -262,6 +274,42 @@ public:
         return false;
     }
 
+    bool createNewWindow(WebKitWebView* webView)
+    {
+        m_webViewForAutomation = webView;
+        m_createWebViewInWindowWasCalled = false;
+        m_message = { };
+        auto signalID = g_signal_connect(m_session, "create-web-view::window", G_CALLBACK(createWebViewInWindowCallback), this);
+        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Window\"}");
+        g_main_loop_run(m_mainLoop.get());
+        g_signal_handler_disconnect(m_session, signalID);
+        g_assert_true(m_createWebViewInWindowWasCalled);
+        g_assert_false(m_message.isNull());
+        m_webViewForAutomation = nullptr;
+
+        if (strstr(m_message.data(), "\"presentation\":\"Window\""))
+            return true;
+        return false;
+    }
+
+    bool createNewTab(WebKitWebView* webView)
+    {
+        m_webViewForAutomation = webView;
+        m_createWebViewInTabWasCalled = false;
+        m_message = { };
+        auto signalID = g_signal_connect(m_session, "create-web-view::tab", G_CALLBACK(createWebViewInTabCallback), this);
+        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Tab\"}");
+        g_main_loop_run(m_mainLoop.get());
+        g_signal_handler_disconnect(m_session, signalID);
+        g_assert_true(m_createWebViewInTabWasCalled);
+        g_assert_false(m_message.isNull());
+        m_webViewForAutomation = nullptr;
+
+        if (strstr(m_message.data(), "\"presentation\":\"Tab\""))
+            return true;
+        return false;
+    }
+
     GRefPtr<GMainLoop> m_mainLoop;
     GRefPtr<GDBusConnection> m_connection;
     WebKitAutomationSession* m_session;
@@ -270,6 +318,8 @@ public:
 
     WebKitWebView* m_webViewForAutomation { nullptr };
     bool m_createWebViewWasCalled { false };
+    bool m_createWebViewInWindowWasCalled { false };
+    bool m_createWebViewInTabWasCalled { false };
     CString m_message;
 };
 
@@ -314,7 +364,31 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
         "is-controlled-by-automation", TRUE,
         nullptr));
     g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
+    g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(webView.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+
+    auto newWebViewInWindow = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", test->m_webContext.get(),
+        "is-controlled-by-automation", TRUE,
+        nullptr));
+    g_assert_true(webkit_web_view_is_controlled_by_automation(newWebViewInWindow.get()));
+    g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(newWebViewInWindow.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
+    g_assert_true(test->createNewWindow(newWebViewInWindow.get()));
+
+    auto newWebViewInTab = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", test->m_webContext.get(),
+        "is-controlled-by-automation", TRUE,
+        "automation-presentation-type", WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB,
+        nullptr));
+    g_assert_true(webkit_web_view_is_controlled_by_automation(newWebViewInTab.get()));
+    g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(newWebViewInTab.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB);
+    g_assert_true(test->createNewTab(newWebViewInTab.get()));
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), FALSE);
 }

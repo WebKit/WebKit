@@ -586,6 +586,47 @@ void Session::getWindowHandles(Function<void (CommandResult&&)>&& completionHand
     });
 }
 
+void Session::newWindow(Optional<String> typeHint, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, protectedThis = makeRef(*this), typeHint, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        RefPtr<JSON::Object> parameters;
+        if (typeHint) {
+            parameters = JSON::Object::create();
+            parameters->setString("presentationHint"_s, typeHint.value() == "window" ? "Window"_s : "Tab"_s);
+        }
+        m_host->sendCommandToBackend("createBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            String handle;
+            if (!response.responseObject->getString("handle"_s, handle)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            String presentation;
+            if (!response.responseObject->getString("presentation"_s, presentation)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            RefPtr<JSON::Object> result = JSON::Object::create();
+            result->setString("handle"_s, handle);
+            result->setString("type"_s, presentation == "Window"_s ? "window"_s : "tab"_s);
+            completionHandler(CommandResult::success(WTFMove(result)));
+        });
+    });
+}
+
 void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
