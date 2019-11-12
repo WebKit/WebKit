@@ -1,3 +1,13 @@
+2019-11-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        UTC offset for Samoa is miscalculated when !HAVE(TIMEGM)
+        https://bugs.webkit.org/show_bug.cgi?id=204032
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+        Allow environment variables to be passed to "complex" tests.
+
 2019-11-11  Dean Jackson  <dino@apple.com>
 
         Regression r252309: API Test TestWebKitAPI._WKActivatedElementInfo.InfoForLinkAroundImage is failing consistently

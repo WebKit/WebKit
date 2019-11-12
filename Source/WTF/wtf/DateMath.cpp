@@ -269,9 +269,9 @@ static int32_t calculateUTCOffset()
 #if HAVE(TIMEGM)
     time_t utcOffset = timegm(&localt) - mktime(&localt);
 #else
-    // Using a canned date of 01/01/2009 on platforms with weaker date-handling foo.
-    localt.tm_year = 109;
-    time_t utcOffset = 1230768000 - mktime(&localt);
+    // Using a canned date of 01/01/2019 on platforms with weaker date-handling foo.
+    localt.tm_year = 119;
+    time_t utcOffset = 1546300800 - mktime(&localt);
 #endif
 
     return static_cast<int32_t>(utcOffset * 1000);

@@ -1,3 +1,14 @@
+2019-11-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        UTC offset for Samoa is miscalculated when !HAVE(TIMEGM)
+        https://bugs.webkit.org/show_bug.cgi?id=204032
+
+        Reviewed by Yusuke Suzuki.
+
+        * complex.yaml:
+        * complex/timezone-offset-apia.js: Added.
+        Add test to verify Date.prototype.getTimezoneOffset for TZ=Pacific/Apia.
+
 2019-11-08  Guillaume Emont  <guijemont@igalia.com>
 
         Temporarily skip another broken test on MIPS due to OSR exit to LLInt

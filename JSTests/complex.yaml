@@ -24,7 +24,10 @@
 # This is for writing a bit complex tests to drive in JSC shell (e.g. including multiple files with some special options).
 
 - path: complex/generator-regeneration.js
-  cmd: runComplexTest [], ["generator-regeneration-after.js"], "--useDollarVM=1"
+  cmd: runComplexTest [], ["generator-regeneration-after.js"], "", "--useDollarVM=1"
 
 - path: complex/tagged-template-regeneration.js
-  cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], "--useDollarVM=1"
+  cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], "", "--useDollarVM=1"
+
+- path: complex/timezone-offset-apia.js
+  cmd: runComplexTest [], [], "TZ=Pacific/Apia", "--useDollarVM=1"
