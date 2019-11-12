@@ -1,6 +1,9 @@
-def document_dimensions(session):
+def viewport_dimensions(session):
     return tuple(session.execute_script("""
-        let devicePixelRatio = window.devicePixelRatio;
-        let rect = document.documentElement.getBoundingClientRect();
-        return [Math.floor(rect.width * devicePixelRatio), Math.floor(rect.height * devicePixelRatio)];
+        let {devicePixelRatio, innerHeight, innerWidth} = window;
+
+        return [
+          Math.floor(innerWidth * devicePixelRatio),
+          Math.floor(innerHeight * devicePixelRatio)
+        ];
         """))

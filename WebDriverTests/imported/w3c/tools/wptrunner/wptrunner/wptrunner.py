@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
 
 import json
 import os
@@ -12,6 +12,7 @@ import testloader
 import wptcommandline
 import wptlogging
 import wpttest
+from mozlog import capture, handlers
 from font import FontInstaller
 from testrunner import ManagerGroup
 from browsers.base import NullBrowser
@@ -51,28 +52,26 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, **kwargs):
                                     browser_channel=kwargs.get("browser_channel"),
                                     verify=kwargs.get("verify"),
                                     debug=debug,
-                                    extras=run_info_extras)
+                                    extras=run_info_extras,
+                                    enable_webrender=kwargs.get("enable_webrender"))
 
     test_manifests = testloader.ManifestLoader(test_paths, force_manifest_update=kwargs["manifest_update"],
                                                manifest_download=kwargs["manifest_download"]).load()
 
     manifest_filters = []
-    meta_filters = []
 
-    if kwargs["include"] or kwargs["exclude"] or kwargs["include_manifest"]:
+    if kwargs["include"] or kwargs["exclude"] or kwargs["include_manifest"] or kwargs["default_exclude"]:
         manifest_filters.append(testloader.TestFilter(include=kwargs["include"],
                                                       exclude=kwargs["exclude"],
                                                       manifest_path=kwargs["include_manifest"],
-                                                      test_manifests=test_manifests))
-    if kwargs["tags"]:
-        meta_filters.append(testloader.TagFilter(tags=kwargs["tags"]))
+                                                      test_manifests=test_manifests,
+                                                      explicit=kwargs["default_exclude"]))
 
     ssl_enabled = sslutils.get_cls(kwargs["ssl_type"]).ssl_enabled
     test_loader = testloader.TestLoader(test_manifests,
                                         kwargs["test_types"],
                                         run_info,
                                         manifest_filters=manifest_filters,
-                                        meta_filters=meta_filters,
                                         chunk_type=kwargs["chunk_type"],
                                         total_chunks=kwargs["total_chunks"],
                                         chunk_number=kwargs["this_chunk"],
@@ -90,7 +89,7 @@ def list_test_groups(test_paths, product, **kwargs):
                                        run_info_extras=run_info_extras, **kwargs)
 
     for item in sorted(test_loader.groups(kwargs["test_types"])):
-        print item
+        print(item)
 
 
 def list_disabled(test_paths, product, **kwargs):
@@ -106,7 +105,7 @@ def list_disabled(test_paths, product, **kwargs):
     for test_type, tests in test_loader.disabled_tests.iteritems():
         for test in tests:
             rv.append({"test": test.id, "reason": test.disabled()})
-    print json.dumps(rv, indent=2)
+    print(json.dumps(rv, indent=2))
 
 
 def list_tests(test_paths, product, **kwargs):
@@ -118,34 +117,35 @@ def list_tests(test_paths, product, **kwargs):
                                        run_info_extras=run_info_extras, **kwargs)
 
     for test in test_loader.test_ids:
-        print test
+        print(test)
 
 
 def get_pause_after_test(test_loader, **kwargs):
-    total_tests = sum(len(item) for item in test_loader.tests.itervalues())
     if kwargs["pause_after_test"] is None:
         if kwargs["repeat_until_unexpected"]:
             return False
         if kwargs["headless"]:
             return False
-        if kwargs["repeat"] == 1 and kwargs["rerun"] == 1 and total_tests == 1:
+        tests = test_loader.tests
+        is_single_testharness = (sum(len(item) for item in tests.itervalues()) == 1 and
+                                 len(tests.get("testharness", [])) == 1)
+        if kwargs["repeat"] == 1 and kwargs["rerun"] == 1 and is_single_testharness:
             return True
         return False
     return kwargs["pause_after_test"]
 
 
 def run_tests(config, test_paths, product, **kwargs):
-    with wptlogging.CaptureIO(logger, not kwargs["no_capture_stdio"]):
+    """Set up the test environment, load the list of tests to be executed, and
+    invoke the remainder of the code to execute tests"""
+    with capture.CaptureIO(logger, not kwargs["no_capture_stdio"]):
         env.do_delayed_imports(logger, test_paths)
 
-        (check_args,
-         target_browser_cls, get_browser_kwargs,
-         executor_classes, get_executor_kwargs,
-         env_options, get_env_extras, run_info_extras) = products.load_product(config, product)
+        product = products.load_product(config, product, load_cls=True)
 
-        env_extras = get_env_extras(**kwargs)
+        env_extras = product.get_env_extras(**kwargs)
 
-        check_args(**kwargs)
+        product.check_args(**kwargs)
 
         if kwargs["install_fonts"]:
             env_extras.append(FontInstaller(
@@ -154,8 +154,8 @@ def run_tests(config, test_paths, product, **kwargs):
             ))
 
         run_info, test_loader = get_loader(test_paths,
-                                           product,
-                                           run_info_extras=run_info_extras(**kwargs),
+                                           product.name,
+                                           run_info_extras=product.run_info_extras(**kwargs),
                                            **kwargs)
 
         test_source_kwargs = {"processes": kwargs["processes"]}
@@ -172,6 +172,12 @@ def run_tests(config, test_paths, product, **kwargs):
         test_total = 0
         unexpected_total = 0
 
+        if len(test_loader.test_ids) == 0 and kwargs["test_list"]:
+            logger.critical("Unable to find any tests at the path(s):")
+            for path in kwargs["test_list"]:
+                logger.critical("  %s" % path)
+            logger.critical("Please check spelling and make sure there are tests in the specified path(s).")
+            return False
         kwargs["pause_after_test"] = get_pause_after_test(test_loader, **kwargs)
 
         ssl_config = {"type": kwargs["ssl_type"],
@@ -180,10 +186,13 @@ def run_tests(config, test_paths, product, **kwargs):
                                        "host_cert_path": kwargs["host_cert_path"],
                                        "ca_cert_path": kwargs["ca_cert_path"]}}
 
+        testharness_timeout_multipler = product.get_timeout_multiplier("testharness", run_info, **kwargs)
+
         with env.TestEnvironment(test_paths,
+                                 testharness_timeout_multipler,
                                  kwargs["pause_after_test"],
                                  kwargs["debug_info"],
-                                 env_options,
+                                 product.env_options,
                                  ssl_config,
                                  env_extras) as test_environment:
             try:
@@ -205,7 +214,9 @@ def run_tests(config, test_paths, product, **kwargs):
 
                 test_count = 0
                 unexpected_count = 0
-                logger.suite_start(test_loader.test_ids, name='web-platform-test', run_info=run_info,
+                logger.suite_start(test_loader.test_ids,
+                                   name='web-platform-test',
+                                   run_info=run_info,
                                    extra={"run_by_dir": kwargs["run_by_dir"]})
                 for test_type in kwargs["test_types"]:
                     logger.info("Running %s tests" % test_type)
@@ -218,23 +229,23 @@ def run_tests(config, test_paths, product, **kwargs):
                     if test_type == "wdspec":
                         browser_cls = NullBrowser
                     else:
-                        browser_cls = target_browser_cls
+                        browser_cls = product.browser_cls
 
-                    browser_kwargs = get_browser_kwargs(test_type,
-                                                        run_info,
-                                                        config=test_environment.config,
-                                                        **kwargs)
+                    browser_kwargs = product.get_browser_kwargs(test_type,
+                                                                run_info,
+                                                                config=test_environment.config,
+                                                                **kwargs)
 
-                    executor_cls = executor_classes.get(test_type)
-                    executor_kwargs = get_executor_kwargs(test_type,
-                                                          test_environment.config,
-                                                          test_environment.cache_manager,
-                                                          run_info,
-                                                          **kwargs)
+                    executor_cls = product.executor_classes.get(test_type)
+                    executor_kwargs = product.get_executor_kwargs(test_type,
+                                                                  test_environment.config,
+                                                                  test_environment.cache_manager,
+                                                                  run_info,
+                                                                  **kwargs)
 
                     if executor_cls is None:
                         logger.error("Unsupported test type %s for product %s" %
-                                     (test_type, product))
+                                     (test_type, product.name))
                         continue
 
                     for test in test_loader.disabled_tests[test_type]:
@@ -245,8 +256,8 @@ def run_tests(config, test_paths, product, **kwargs):
                     if test_type == "testharness":
                         run_tests = {"testharness": []}
                         for test in test_loader.tests["testharness"]:
-                            if (test.testdriver and not executor_cls.supports_testdriver) or (
-                                    test.jsshell and not executor_cls.supports_jsshell):
+                            if ((test.testdriver and not executor_cls.supports_testdriver) or
+                                (test.jsshell and not executor_cls.supports_jsshell)):
                                 logger.test_start(test.id)
                                 logger.test_end(test.id, status="SKIP")
                                 skipped_tests += 1
@@ -284,13 +295,19 @@ def run_tests(config, test_paths, product, **kwargs):
                 logger.suite_end()
                 if repeat_until_unexpected and unexpected_total > 0:
                     break
+                if repeat_count == 1 and len(test_loader.test_ids) == skipped_tests:
+                    break
 
     if test_total == 0:
         if skipped_tests > 0:
             logger.warning("All requested tests were skipped")
         else:
-            logger.error("No tests ran")
-            return False
+            if kwargs["default_exclude"]:
+                logger.info("No tests ran")
+                return True
+            else:
+                logger.critical("No tests ran")
+                return False
 
     if unexpected_total and not kwargs["fail_on_unexpected"]:
         logger.info("Tolerating %s unexpected results" % unexpected_total)
@@ -319,16 +336,25 @@ def check_stability(**kwargs):
 
 
 def start(**kwargs):
-    if kwargs["list_test_groups"]:
-        list_test_groups(**kwargs)
-    elif kwargs["list_disabled"]:
-        list_disabled(**kwargs)
-    elif kwargs["list_tests"]:
-        list_tests(**kwargs)
-    elif kwargs["verify"] or kwargs["stability"]:
-        return check_stability(**kwargs)
-    else:
-        return not run_tests(**kwargs)
+    assert logger is not None
+
+    logged_critical = wptlogging.LoggedAboveLevelHandler("CRITICAL")
+    handler = handlers.LogLevelFilter(logged_critical, "CRITICAL")
+    logger.add_handler(handler)
+
+    try:
+        if kwargs["list_test_groups"]:
+            list_test_groups(**kwargs)
+        elif kwargs["list_disabled"]:
+            list_disabled(**kwargs)
+        elif kwargs["list_tests"]:
+            list_tests(**kwargs)
+        elif kwargs["verify"] or kwargs["stability"]:
+            return check_stability(**kwargs) or logged_critical.has_log
+        else:
+            return not run_tests(**kwargs) or logged_critical.has_log
+    finally:
+        logger.remove_handler(handler)
 
 
 def main():
@@ -346,7 +372,7 @@ def main():
         if kwargs["pdb"]:
             import pdb
             import traceback
-            print traceback.format_exc()
+            print(traceback.format_exc())
             pdb.post_mortem()
         else:
             raise

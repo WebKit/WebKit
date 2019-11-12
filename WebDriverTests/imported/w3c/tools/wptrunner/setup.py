@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from __future__ import print_function
+
 import glob
 import os
 import sys
@@ -55,17 +57,16 @@ setup(name=PACKAGE_NAME,
                                   "prefs/*"]},
       include_package_data=True,
       data_files=[("requirements", requirements_files)],
-      install_requires=deps
       )
 
 if "install" in sys.argv:
     path = os.path.relpath(os.path.join(sys.prefix, "requirements"), os.curdir)
-    print textwrap.fill("""In order to use with one of the built-in browser
+    print(textwrap.fill("""In order to use with one of the built-in browser
 products, you will need to install the extra dependencies. These are provided
 as requirements_[name].txt in the %s directory and can be installed using
-e.g.""" % path, 80)
+e.g.""" % path, 80))
 
-    print """
+    print("""
 
 pip install -r %s/requirements_firefox.txt
-""" % path
+""" % path)

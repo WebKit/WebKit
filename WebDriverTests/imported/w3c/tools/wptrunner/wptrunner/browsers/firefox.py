@@ -7,6 +7,7 @@ import sys
 
 import mozinfo
 import mozleak
+import mozversion
 from mozprocess import ProcessHandler
 from mozprofile import FirefoxProfile, Preferences
 from mozrunner import FirefoxRunner
@@ -38,7 +39,8 @@ __wptrunner__ = {"product": "firefox",
                  "env_extras": "env_extras",
                  "env_options": "env_options",
                  "run_info_extras": "run_info_extras",
-                 "update_properties": "update_properties"}
+                 "update_properties": "update_properties",
+                 "timeout_multiplier": "get_timeout_multiplier"}
 
 
 def get_timeout_multiplier(test_type, run_info_data, **kwargs):
@@ -55,6 +57,9 @@ def get_timeout_multiplier(test_type, run_info_data, **kwargs):
         else:
             return 3
     elif run_info_data["os"] == "android":
+        return 4
+    # https://bugzilla.mozilla.org/show_bug.cgi?id=1538725
+    elif run_info_data["os"] == "win" and run_info_data["processor"] == "aarch64":
         return 4
     return 1
 
@@ -74,16 +79,18 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
             "certutil_binary": kwargs["certutil_binary"],
             "ca_certificate_path": config.ssl_config["ca_cert_path"],
             "e10s": kwargs["gecko_e10s"],
+            "enable_webrender": kwargs["enable_webrender"],
             "stackfix_dir": kwargs["stackfix_dir"],
             "binary_args": kwargs["binary_args"],
             "timeout_multiplier": get_timeout_multiplier(test_type,
                                                          run_info_data,
                                                          **kwargs),
-            "leak_check": kwargs["leak_check"],
+            "leak_check": run_info_data["debug"] and (kwargs["leak_check"] is not False),
             "asan": run_info_data.get("asan"),
             "stylo_threads": kwargs["stylo_threads"],
             "chaos_mode_flags": kwargs["chaos_mode_flags"],
             "config": config,
+            "browser_channel": kwargs["browser_channel"],
             "headless": kwargs["headless"]}
 
 
@@ -98,6 +105,8 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
                                                                    **kwargs)
     executor_kwargs["e10s"] = run_info_data["e10s"]
     capabilities = {}
+    if test_type == "testharness":
+        capabilities["pageLoadStrategy"] = "eager"
     if test_type == "reftest":
         executor_kwargs["reftest_internal"] = kwargs["reftest_internal"]
         executor_kwargs["reftest_screenshot"] = kwargs["reftest_screenshot"]
@@ -115,6 +124,8 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
         options["prefs"] = {
             "network.dns.localDomains": ",".join(server_config.domains_set)
         }
+        for pref, value in kwargs["extra_prefs"]:
+            options["prefs"].update({pref: Preferences.cast(value)})
         capabilities["moz:firefoxOptions"] = options
     if kwargs["certutil_binary"] is None:
         capabilities["acceptInsecureCerts"] = True
@@ -136,40 +147,69 @@ def env_options():
     #
     # https://github.com/web-platform-tests/wpt/pull/9480
     return {"server_host": "127.0.0.1",
-            "bind_address": False,
             "supports_debugger": True}
 
 
 def run_info_extras(**kwargs):
 
-    def get_bool_pref(pref):
+    def get_bool_pref_if_exists(pref):
         for key, value in kwargs.get('extra_prefs', []):
             if pref == key:
                 return value.lower() in ('true', '1')
-        return False
+        return None
 
-    return {"e10s": kwargs["gecko_e10s"],
-            "wasm": kwargs.get("wasm", True),
-            "verify": kwargs["verify"],
-            "headless": "MOZ_HEADLESS" in os.environ,
-            "sw-e10s": get_bool_pref("dom.serviceWorkers.parent_intercept"),}
+    def get_bool_pref(pref):
+        pref_value = get_bool_pref_if_exists(pref)
+        return pref_value if pref_value is not None else False
+
+    rv = {"e10s": kwargs["gecko_e10s"],
+          "wasm": kwargs.get("wasm", True),
+          "verify": kwargs["verify"],
+          "headless": kwargs.get("headless", False) or "MOZ_HEADLESS" in os.environ,
+          "fission": get_bool_pref("fission.autostart")}
+
+    # The value of `sw-e10s` defaults to whether the "parent_intercept"
+    # implementation is enabled for the current build. This value, however,
+    # can be overridden by explicitly setting the pref with the `--setpref` CLI
+    # flag, which is checked here. If not supplied, the default value of
+    # `sw-e10s` will be filled in in `RunInfo`'s constructor.
+    #
+    # We can't capture the default value right now because (currently), it
+    # defaults to the value of `nightly_build`, which isn't known until
+    # `RunInfo`'s constructor.
+    sw_e10s_override = get_bool_pref_if_exists("dom.serviceWorkers.parent_intercept")
+    if sw_e10s_override is not None:
+        rv["sw-e10s"] = sw_e10s_override
+
+    rv.update(run_info_browser_version(kwargs["binary"]))
+    return rv
+
+
+def run_info_browser_version(binary):
+    try:
+        version_info = mozversion.get_version(binary)
+    except mozversion.errors.VersionError:
+        version_info = None
+    if version_info:
+        return {"browser_build_id": version_info.get("application_buildid", None),
+                "browser_changeset": version_info.get("application_changeset", None)}
+    return {}
 
 
 def update_properties():
-    return (["debug", "webrender", "e10s", "os", "version", "processor", "bits"],
-            {"debug", "e10s", "webrender"})
+    return (["os", "debug", "webrender", "fission", "e10s", "sw-e10s", "processor"],
+            {"os": ["version"], "processor": ["bits"]})
 
 
 class FirefoxBrowser(Browser):
-    used_ports = set()
     init_timeout = 70
     shutdown_timeout = 70
 
     def __init__(self, logger, binary, prefs_root, test_type, extra_prefs=None, debug_info=None,
                  symbols_path=None, stackwalk_binary=None, certutil_binary=None,
-                 ca_certificate_path=None, e10s=False, stackfix_dir=None,
+                 ca_certificate_path=None, e10s=False, enable_webrender=False, stackfix_dir=None,
                  binary_args=None, timeout_multiplier=None, leak_check=False, asan=False,
-                 stylo_threads=1, chaos_mode_flags=None, config=None, headless=None, **kwargs):
+                 stylo_threads=1, chaos_mode_flags=None, config=None, browser_channel="nightly", headless=None, **kwargs):
         Browser.__init__(self, logger)
         self.binary = binary
         self.prefs_root = prefs_root
@@ -184,6 +224,7 @@ class FirefoxBrowser(Browser):
         self.ca_certificate_path = ca_certificate_path
         self.certutil_binary = certutil_binary
         self.e10s = e10s
+        self.enable_webrender = enable_webrender
         self.binary_args = binary_args
         self.config = config
         if stackfix_dir:
@@ -198,29 +239,37 @@ class FirefoxBrowser(Browser):
         self.asan = asan
         self.lsan_allowed = None
         self.lsan_max_stack_depth = None
+        self.mozleak_allowed = None
+        self.mozleak_thresholds = None
         self.leak_check = leak_check
         self.leak_report_file = None
         self.lsan_handler = None
         self.stylo_threads = stylo_threads
         self.chaos_mode_flags = chaos_mode_flags
+        self.browser_channel = browser_channel
         self.headless = headless
 
     def settings(self, test):
-        self.lsan_allowed = test.lsan_allowed
-        self.lsan_max_stack_depth = test.lsan_max_stack_depth
         return {"check_leaks": self.leak_check and not test.leaks,
-                "lsan_allowed": test.lsan_allowed}
+                "lsan_allowed": test.lsan_allowed,
+                "lsan_max_stack_depth": test.lsan_max_stack_depth,
+                "mozleak_allowed": self.leak_check and test.mozleak_allowed,
+                "mozleak_thresholds": self.leak_check and test.mozleak_threshold}
 
     def start(self, group_metadata=None, **kwargs):
         if group_metadata is None:
             group_metadata = {}
 
+        self.group_metadata = group_metadata
+        self.lsan_allowed = kwargs.get("lsan_allowed")
+        self.lsan_max_stack_depth = kwargs.get("lsan_max_stack_depth")
+        self.mozleak_allowed = kwargs.get("mozleak_allowed")
+        self.mozleak_thresholds = kwargs.get("mozleak_thresholds")
+
         if self.marionette_port is None:
-            self.marionette_port = get_free_port(2828, exclude=self.used_ports)
-            self.used_ports.add(self.marionette_port)
+            self.marionette_port = get_free_port()
 
         if self.asan:
-            print "Setting up LSAN"
             self.lsan_handler = mozleak.LSANLeaks(self.logger,
                                                   scope=group_metadata.get("scope", "/"),
                                                   allowed=self.lsan_allowed,
@@ -228,14 +277,18 @@ class FirefoxBrowser(Browser):
 
         env = test_environment(xrePath=os.path.dirname(self.binary),
                                debugger=self.debug_info is not None,
-                               log=self.logger,
-                               lsanPath=self.prefs_root)
+                               useLSan=True, log=self.logger)
 
         env["STYLO_THREADS"] = str(self.stylo_threads)
         if self.chaos_mode_flags is not None:
             env["MOZ_CHAOSMODE"] = str(self.chaos_mode_flags)
         if self.headless:
             env["MOZ_HEADLESS"] = "1"
+        if self.enable_webrender:
+            env["MOZ_WEBRENDER"] = "1"
+            env["MOZ_ACCELERATED"] = "1"
+        else:
+            env["MOZ_WEBRENDER"] = "0"
 
         preferences = self.load_prefs()
 
@@ -243,7 +296,7 @@ class FirefoxBrowser(Browser):
         self.profile.set_preferences({
             "marionette.port": self.marionette_port,
             "network.dns.localDomains": ",".join(self.config.domains_set),
-
+            "dom.file.createInChild": True,
             # TODO: Remove preferences once Firefox 64 is stable (Bug 905404)
             "network.proxy.type": 0,
             "places.history.enabled": False,
@@ -299,7 +352,10 @@ class FirefoxBrowser(Browser):
         if os.path.isfile(profiles):
             with open(profiles, 'r') as fh:
                 for name in json.load(fh)['web-platform-tests']:
-                    pref_paths.append(os.path.join(self.prefs_root, name, 'user.js'))
+                    if self.browser_channel in (None, 'nightly'):
+                        pref_paths.append(os.path.join(self.prefs_root, name, 'user.js'))
+                    elif name != 'unittest-features':
+                        pref_paths.append(os.path.join(self.prefs_root, name, 'user.js'))
         else:
             # Old preference files used before the creation of profiles.json (remove when no longer supported)
             legacy_pref_paths = (
@@ -341,21 +397,18 @@ class FirefoxBrowser(Browser):
         self.logger.debug("stopped")
 
     def process_leaks(self):
-        self.logger.debug("PROCESS LEAKS %s" % self.leak_report_file)
+        self.logger.info("PROCESS LEAKS %s" % self.leak_report_file)
         if self.lsan_handler:
             self.lsan_handler.process()
         if self.leak_report_file is not None:
             mozleak.process_leak_log(
                 self.leak_report_file,
-                leak_thresholds={
-                    "default": 0,
-                    "tab": 10000,  # See dependencies of bug 1051230.
-                    # GMP rarely gets a log, but when it does, it leaks a little.
-                    "geckomediaplugin": 20000,
-                },
-                ignore_missing_leaks=["geckomediaplugin"],
+                leak_thresholds=self.mozleak_thresholds,
+                ignore_missing_leaks=["gmplugin"],
                 log=self.logger,
-                stack_fixer=self.stack_fixer
+                stack_fixer=self.stack_fixer,
+                scope=self.group_metadata.get("scope"),
+                allowed=self.mozleak_allowed
             )
 
     def pid(self):
@@ -394,23 +447,15 @@ class FirefoxBrowser(Browser):
         assert self.marionette_port is not None
         return ExecutorBrowser, {"marionette_port": self.marionette_port}
 
-    def check_for_crashes(self):
+    def check_crash(self, process, test):
         dump_dir = os.path.join(self.profile.profile, "minidumps")
 
-        return bool(mozcrash.check_for_crashes(dump_dir,
-                                               symbols_path=self.symbols_path,
-                                               stackwalk_binary=self.stackwalk_binary,
-                                               quiet=True))
-
-    def log_crash(self, process, test):
-        dump_dir = os.path.join(self.profile.profile, "minidumps")
-
-        mozcrash.log_crashes(self.logger,
-                             dump_dir,
-                             symbols_path=self.symbols_path,
-                             stackwalk_binary=self.stackwalk_binary,
-                             process=process,
-                             test=test)
+        return bool(mozcrash.log_crashes(self.logger,
+                                         dump_dir,
+                                         symbols_path=self.symbols_path,
+                                         stackwalk_binary=self.stackwalk_binary,
+                                         process=process,
+                                         test=test))
 
     def setup_ssl(self):
         """Create a certificate database to use in the test profile. This is configured

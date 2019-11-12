@@ -98,6 +98,25 @@ wptupdate takes several useful options:
   Overwrite all the expectation data for any tests that have a result
   in the passed log files, not just data for the same platform.
 
+``--disable-intermittent``
+  When updating test results, disable tests that have inconsistent
+  results across many runs. This can precede a message providing a
+  reason why that test is disable. If no message is provided,
+  ``unstable`` is the default text.
+
+``--update-intermittent``
+  When this option is used, the ``expected`` key (see below) stores
+  expected intermittent statuses in addition to the primary expected
+  status. If there is more than one status, it appears as a list. The
+  default behaviour of this option is to retain any existing intermittent
+  statuses in the list unless ``--remove-intermittent`` is specified.
+
+``--remove-intermittent``
+  This option is used in conjunction with ``--update-intermittent``.
+  When the ``expected`` statuses are updated, any obsolete intermittent
+  statuses that did not occur in the specified logfiles are removed from
+  the list.
+
 Examples
 ~~~~~~~~
 
@@ -140,6 +159,24 @@ A simple example of a manifest file is::
 
   [another_section]
     another_key: another_value
+
+The web-platform-test harness knows about several keys:
+
+`expected`
+  Must evaluate to a possible test status indicating the expected
+  result of the test. The implicit default is PASS or OK when the
+  field isn't present. When `expected` is a list, the first status
+  is the primary expected status and the trailing statuses listed are
+  expected intermittent statuses.
+
+`disabled`
+  Any value indicates that the test is disabled.
+
+`reftype`
+  The type of comparison for reftests; either `==` or `!=`.
+
+`refurl`
+  The reference url for reftests.
 
 Conditional Values
 ~~~~~~~~~~~~~~~~~~
@@ -190,14 +227,8 @@ When used for expectation data, manifests have the following format:
  * A subsection per subtest, with the heading being the title of the
    subtest.
 
- * A key ``type`` indicating the test type. This takes the values
-   ``testharness`` and ``reftest``.
-
- * For reftests, keys ``reftype`` indicating the reference type
-   (``==`` or ``!=``) and ``refurl`` indicating the URL of the
-   reference.
-
- * A key ``expected`` giving the expectation value of each (sub)test.
+ * A key ``expected`` giving the expectation value or values of each 
+   (sub)test.
 
  * A key ``disabled`` which can be set to any value to indicate that
    the (sub)test is disabled and should either not be run (for tests)
@@ -206,6 +237,19 @@ When used for expectation data, manifests have the following format:
  * A key ``restart-after`` which can be set to any value to indicate that
    the runner should restart the browser after running this test (e.g. to
    clear out unwanted state).
+
+ * A key ``fuzzy`` that is used for reftests. This is interpreted as a
+   list containing entries like ``<meta name=fuzzy>`` content value,
+   which consists of an optional reference identifier followed by a
+   colon, then a range indicating the maximum permitted pixel
+   difference per channel, then semicolon, then a range indicating the
+   maximum permitted total number of differing pixels. The reference
+   identifier is either a single relative URL, resolved against the
+   base test URL, in which case the fuzziness applies to any
+   comparison with that URL, or takes the form lhs url, comparison,
+   rhs url, in which case the fuzziness only applies for any
+   comparison involving that specifc pair of URLs. Some illustrative
+   examples are given below.
 
  * Variables ``debug``, ``os``, ``version``, ``processor`` and
    ``bits`` that describe the configuration of the browser under
@@ -230,6 +274,9 @@ An simple example manifest might look like::
     [Test something unsupported]
        expected: FAIL
 
+    [Test with intermittent statuses]
+       expected: [PASS, TIMEOUT]
+
   [test.html?variant=broken]
     expected: ERROR
 
@@ -246,3 +293,18 @@ A more complex manifest with conditional properties might be::
 
 Note that ``PASS`` in the above works, but is unnecessary; ``PASS``
 (or ``OK``) is always the default expectation for (sub)tests.
+
+A manifest with fuzzy reftest values might be::
+
+  [reftest.html]
+    fuzzy: [10;200, ref1.html:20;200-300, subtest1.html==ref2.html:10-15;20]
+
+In this case the default fuzziness for any comparison would be to
+require a maximum difference per channel of less than or equal to 10
+and less than or equal to 200 total pixels different. For any
+comparison involving ref1.html on the right hand side, the limits
+would instead be a difference per channel not more than 20 and a total
+difference count of not less than 200 and not more than 300. For the
+specific comparison subtest1.html == ref2.html (both resolved against
+the test URL) these limits would instead be 10 to 15 and 0 to 20,
+respectively.

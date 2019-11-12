@@ -75,15 +75,15 @@ def test_out_of_bounds(session, rect):
 
 
 def test_width_height_floats(session):
-    response = set_window_rect(session, {"width": 500.5, "height": 420})
+    response = set_window_rect(session, {"width": 750.5, "height": 700})
     value = assert_success(response)
-    assert value["width"] == 500
-    assert value["height"] == 420
+    assert value["width"] == 750
+    assert value["height"] == 700
 
-    response = set_window_rect(session, {"width": 500, "height": 450.5})
+    response = set_window_rect(session, {"width": 750, "height": 700.5})
     value = assert_success(response)
-    assert value["width"] == 500
-    assert value["height"] == 450
+    assert value["width"] == 750
+    assert value["height"] == 700
 
 
 def test_x_y_floats(session):
@@ -147,10 +147,10 @@ def test_restore_from_minimized(session):
     session.window.minimize()
     assert document_hidden(session)
 
-    response = set_window_rect(session, {"width": 450, "height": 450})
+    response = set_window_rect(session, {"width": 750, "height": 700})
     value = assert_success(response)
-    assert value["width"] == 450
-    assert value["height"] == 450
+    assert value["width"] == 750
+    assert value["height"] == 700
 
     assert not document_hidden(session)
 
@@ -160,10 +160,10 @@ def test_restore_from_maximized(session):
     session.window.maximize()
     assert session.window.size != original_size
 
-    response = set_window_rect(session, {"width": 400, "height": 400})
+    response = set_window_rect(session, {"width": 750, "height": 700})
     value = assert_success(response)
-    assert value["width"] == 400
-    assert value["height"] == 400
+    assert value["width"] == 750
+    assert value["height"] == 700
 
 
 def test_height_width(session):
@@ -185,6 +185,17 @@ def test_height_width(session):
         "width": screen_width - 100,
         "height": screen_height - 100,
     })
+
+
+def test_height_width_smaller_than_minimum_browser_size(session):
+    original = session.window.rect
+
+    response = set_window_rect(session, {"width": 10, "height": 10})
+    rect = assert_success(response)
+    assert rect["width"] < original["width"]
+    assert rect["width"] > 10
+    assert rect["height"] < original["height"]
+    assert rect["height"] > 10
 
 
 def test_height_width_larger_than_max(session):
@@ -212,6 +223,36 @@ def test_height_width_as_current(session):
         "y": original["y"],
         "width": original["width"],
         "height": original["height"]
+    })
+
+
+def test_height_as_current(session):
+    original = session.window.rect
+
+    response = set_window_rect(session, {
+        "width": original["width"] + 10,
+        "height": original["height"]
+    })
+    assert_success(response, {
+        "x": original["x"],
+        "y": original["y"],
+        "width": original["width"] + 10,
+        "height": original["height"]
+    })
+
+
+def test_width_as_current(session):
+    original = session.window.rect
+
+    response = set_window_rect(session, {
+        "width": original["width"],
+        "height": original["height"] + 10
+    })
+    assert_success(response, {
+        "x": original["x"],
+        "y": original["y"],
+        "width": original["width"],
+        "height": original["height"] + 10
     })
 
 
@@ -267,40 +308,49 @@ def test_negative_x_y(session):
                                   "height": original["height"]})
 
 
-def test_move_to_same_position(session):
-    original_position = session.window.position
-    position = session.window.position = original_position
-    assert position == original_position
+def test_x_y_as_current(session):
+    original = session.window.rect
+
+    response = set_window_rect(session, {
+        "x": original["x"],
+        "y": original["y"]
+    })
+    assert_success(response, {
+        "x": original["x"],
+        "y": original["y"],
+        "width": original["width"],
+        "height": original["height"]
+    })
 
 
-def test_move_to_same_x(session):
-    original_x = session.window.position[0]
-    position = session.window.position = (original_x, 345)
-    assert position == (original_x, 345)
+def test_x_as_current(session):
+    original = session.window.rect
+
+    response = set_window_rect(session, {
+        "x": original["x"],
+        "y": original["y"] + 10
+    })
+    assert_success(response, {
+        "x": original["x"],
+        "y": original["y"] + 10,
+        "width": original["width"],
+        "height": original["height"]
+    })
 
 
-def test_move_to_same_y(session):
-    original_y = session.window.position[1]
-    position = session.window.position = (456, original_y)
-    assert position == (456, original_y)
+def test_y_as_current(session):
+    original = session.window.rect
 
-
-def test_resize_to_same_size(session):
-    original_size = session.window.size
-    size = session.window.size = original_size
-    assert size == original_size
-
-
-def test_resize_to_same_width(session):
-    original_width = session.window.size[0]
-    size = session.window.size = (original_width, 345)
-    assert size == (original_width, 345)
-
-
-def test_resize_to_same_height(session):
-    original_height = session.window.size[1]
-    size = session.window.size = (456, original_height)
-    assert size == (456, original_height)
+    response = set_window_rect(session, {
+        "x": original["x"] + 10,
+        "y": original["y"]
+    })
+    assert_success(response, {
+        "x": original["x"] + 10,
+        "y": original["y"],
+        "width": original["width"],
+        "height": original["height"]
+    })
 
 
 """

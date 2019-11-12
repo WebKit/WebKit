@@ -1,3 +1,69 @@
+2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/README.md:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/transport.py:
+        * imported/w3c/tools/wptrunner:
+        * imported/w3c/webdriver/tests/accept_alert/accept.py:
+        * imported/w3c/webdriver/tests/add_cookie/add.py:
+        * imported/w3c/webdriver/tests/dismiss_alert/dismiss.py:
+        * imported/w3c/webdriver/tests/element_clear/clear.py:
+        * imported/w3c/webdriver/tests/element_click/bubbling.py:
+        * imported/w3c/webdriver/tests/execute_async_script/collections.py:
+        * imported/w3c/webdriver/tests/execute_async_script/promise.py: Added.
+        * imported/w3c/webdriver/tests/execute_async_script/properties.py: Added.
+        * imported/w3c/webdriver/tests/execute_script/collections.py:
+        * imported/w3c/webdriver/tests/execute_script/execute.py:
+        * imported/w3c/webdriver/tests/execute_script/promise.py:
+        * imported/w3c/webdriver/tests/execute_script/properties.py: Added.
+        * imported/w3c/webdriver/tests/find_element_from_element/find.py:
+        * imported/w3c/webdriver/tests/get_alert_text/get.py:
+        * imported/w3c/webdriver/tests/get_current_url/get.py:
+        * imported/w3c/webdriver/tests/get_element_attribute/get.py:
+        * imported/w3c/webdriver/tests/get_element_property/get.py:
+        * imported/w3c/webdriver/tests/get_named_cookie/get.py:
+        * imported/w3c/webdriver/tests/get_window_rect/get.py:
+        * imported/w3c/webdriver/tests/maximize_window/maximize.py:
+        * imported/w3c/webdriver/tests/navigate_to/navigate.py:
+        * imported/w3c/webdriver/tests/new_session/conftest.py:
+        * imported/w3c/webdriver/tests/new_session/timeouts.py:
+        * imported/w3c/webdriver/tests/new_window/__init__.py: Added.
+        * imported/w3c/webdriver/tests/new_window/new.py: Added.
+        * imported/w3c/webdriver/tests/new_window/new_tab.py: Added.
+        * imported/w3c/webdriver/tests/new_window/new_window.py: Added.
+        * imported/w3c/webdriver/tests/new_window/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_events.py:
+        * imported/w3c/webdriver/tests/perform_actions/pointer.py:
+        * imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py:
+        * imported/w3c/webdriver/tests/perform_actions/pointer_origin.py:
+        * imported/w3c/webdriver/tests/perform_actions/support/keys.py:
+        * imported/w3c/webdriver/tests/perform_actions/validity.py:
+        * imported/w3c/webdriver/tests/permissions/set.py:
+        * imported/w3c/webdriver/tests/send_alert_text/conftest.py: Added.
+        * imported/w3c/webdriver/tests/send_alert_text/send.py:
+        * imported/w3c/webdriver/tests/set_timeouts/set.py:
+        * imported/w3c/webdriver/tests/set_window_rect/set.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+        * imported/w3c/webdriver/tests/support/authentication.py: Added.
+        * imported/w3c/webdriver/tests/support/defaults.py:
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/helpers.py:
+        * imported/w3c/webdriver/tests/support/inline.py:
+        * imported/w3c/webdriver/tests/switch_to_frame/cross_origin.py: Added.
+        * imported/w3c/webdriver/tests/switch_to_frame/switch.py:
+        * imported/w3c/webdriver/tests/switch_to_window/alerts.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/__init__.py:
+        * imported/w3c/webdriver/tests/take_element_screenshot/iframe.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/screenshot.py:
+        * imported/w3c/webdriver/tests/take_element_screenshot/user_prompts.py:
+        * imported/w3c/webdriver/tests/take_screenshot/__init__.py:
+        * imported/w3c/webdriver/tests/take_screenshot/iframe.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/screenshot.py:
+        * imported/w3c/webdriver/tests/take_screenshot/user_prompts.py:
+
 2019-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement proxy support

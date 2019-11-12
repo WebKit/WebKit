@@ -152,8 +152,9 @@ def session(capabilities, configuration, request):
         if not _current_session.session_id:
             raise
 
-    # Enforce a fixed default window size
+    # Enforce a fixed default window size and position
     _current_session.window.size = defaults.WINDOW_SIZE
+    _current_session.window.position = defaults.WINDOW_POSITION
 
     yield _current_session
 
@@ -167,9 +168,10 @@ def current_session():
 
 @pytest.fixture
 def url(server_config):
-    def inner(path, protocol="http", query="", fragment=""):
+    def inner(path, protocol="http", domain="", subdomain="", query="", fragment=""):
+        domain = server_config["domains"][domain][subdomain]
         port = server_config["ports"][protocol][0]
-        host = "%s:%s" % (server_config["browser_host"], port)
+        host = "{0}:{1}".format(domain, port)
         return urlparse.urlunsplit((protocol, host, path, query, fragment))
 
     inner.__name__ = "url"

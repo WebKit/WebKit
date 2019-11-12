@@ -245,9 +245,7 @@ def test_button(session):
 
 def test_button_with_subtree(session):
     """
-    Whilst an <input> is normally editable, the focusable area
-    where it is placed will default to the <button>.  I.e. if you
-    try to click <input> to focus it, you will hit the <button>.
+    Elements inside button elements are interactable.
     """
     session.url = inline("""
         <button>
@@ -257,7 +255,7 @@ def test_button_with_subtree(session):
     text_field = session.find.css("input", all=False)
 
     response = element_clear(session, text_field)
-    assert_error(response, "element not interactable")
+    assert_success(response)
 
 
 def test_contenteditable(session, add_event_listeners, tracked_events):
@@ -269,7 +267,7 @@ def test_contenteditable(session, add_event_listeners, tracked_events):
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("innerHTML") == ""
-    assert_events_equal(session, ["focus", "change", "blur"])
+    assert_events_equal(session, ["focus", "blur"])
     assert_element_has_focus(session.execute_script("return document.body"))
 
 
@@ -281,7 +279,7 @@ def test_designmode(session):
 
     response = element_clear(session, element)
     assert_success(response)
-    assert element.property("innerHTML") == "<br>"
+    assert element.property("innerHTML") in ["", "<br>"]
     assert_element_has_focus(session.execute_script("return document.body"))
 
 
