@@ -239,7 +239,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
 #endif
 
-    RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
+    RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
     OptionSet<WebKit::SuppressSelectionAssistantReason> _suppressSelectionAssistantReasons;
 
     RetainPtr<UITextInputTraits> _traits;

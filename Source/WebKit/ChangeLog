@@ -1,3 +1,52 @@
+2019-11-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename _textSelectionAssistant to _textInteractionAssistant to reflect the only class it can now represent
+        https://bugs.webkit.org/show_bug.cgi?id=204103
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests - rename only.
+
+        Now that UIWKSelectionAssistant is no longer, the _textSelectionAssistant can only be a
+        UIWKTextInteractionAssistant. There is enough confusion around all the selection and 
+        interaction assistants, renaming this should alleviate some of that confusion.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didExitStableState]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+        (-[WKContentView _scrollingNodeScrollingWillBegin]):
+        (-[WKContentView _scrollingNodeScrollingDidEnd]):
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _uiTextSelectionRects]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView setUpTextSelectionAssistant]):
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView _lookupForWebView:]):
+        (-[WKContentView _shareForWebView:]):
+        (-[WKContentView _addShortcutForWebView:]):
+        (-[WKContentView _promptForReplaceForWebView:]):
+        (-[WKContentView _transliterateChineseForWebView:]):
+        (-[WKContentView tintColorDidChange]):
+        (-[WKContentView _didHideMenu:]):
+        (-[WKContentView selectForWebView:]):
+        (-[WKContentView selectAllForWebView:]):
+        (-[WKContentView _showTextStyleOptionsForWebView:]):
+        (-[WKContentView _showDictionary:]):
+        (-[WKContentView interactionAssistant]):
+        (-[WKContentView _showKeyboard]):
+        (-[WKContentView _hideKeyboard]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView _startSuppressingSelectionAssistantForReason:]):
+        (-[WKContentView _stopSuppressingSelectionAssistantForReason:]):
+        (-[WKContentView _restoreCalloutBarIfNeeded]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+
 2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Support Pointer Events
