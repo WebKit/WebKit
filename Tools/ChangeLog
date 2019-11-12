@@ -1,3 +1,13 @@
+2019-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to access a WebsiteDataStore without instantiating it, and its configuration
+        https://bugs.webkit.org/show_bug.cgi?id=204089
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2019-11-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         UTC offset for Samoa is miscalculated when !HAVE(TIMEGM)

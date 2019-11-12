@@ -39,7 +39,7 @@ public:
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent)); }
     WebsiteDataStoreConfiguration(IsPersistent);
 
-    Ref<WebsiteDataStoreConfiguration> copy();
+    Ref<WebsiteDataStoreConfiguration> copy() const;
 
     bool isPersistent() const { return m_isPersistent == IsPersistent::Yes; }
 

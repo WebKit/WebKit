@@ -560,4 +560,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setClient(makeUniqueRef<WebsiteDataStoreClient>(delegate));
 }
 
+- (_WKWebsiteDataStoreConfiguration *)_configuration
+{
+    return wrapper(_websiteDataStore->configuration().copy());
+}
+
 @end

@@ -1,3 +1,30 @@
+2019-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to access a WebsiteDataStore without instantiating it, and its configuration
+        https://bugs.webkit.org/show_bug.cgi?id=204089
+
+        Reviewed by Tim Horton.
+
+        Calling WKWebViewConfiguration.websiteDataStore instantiates the default data store.
+        We need a way to query if it has been set but not instantiate anything if it hasn't.
+        We also need a way to access the configuration used to create a WKWebsiteDataStore like we do with WKWebView.
+        These have been requested to fix <rdar://problem/57091216> and I think they're a good idea in general.
+
+        Covered by API tests.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _websiteDataStoreIfExists]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setDelegate:]):
+        (-[WKWebsiteDataStore set_delegate:]):
+        (-[WKWebsiteDataStore _configuration]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        (WebKit::WebsiteDataStoreConfiguration::copy): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+
 2019-11-11  Sihui Liu  <sihui_liu@apple.com>
 
         Add size file for CacheStorage

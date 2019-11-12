@@ -529,6 +529,15 @@ TEST(WebKit, WebsiteDataStoreConfigurationPathNull)
     EXPECT_FALSE([[[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] _indexedDBDatabaseDirectory]);
 }
 
+TEST(WebKit, WebsiteDataStoreIfExists)
+{
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_FALSE([webViewConfiguration _websiteDataStoreIfExists]);
+    WKWebsiteDataStore *dataStore = [webViewConfiguration websiteDataStore];
+    EXPECT_TRUE([webViewConfiguration _websiteDataStoreIfExists]);
+    EXPECT_TRUE(dataStore._configuration.persistent);
+}
+
 TEST(WebKit, NetworkCacheDirectory)
 {
     using namespace TestWebKitAPI;

@@ -878,6 +878,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
 }
 
+- (WKWebsiteDataStore *)_websiteDataStoreIfExists
+{
+    return _websiteDataStore.peek();
+}
+
 - (BOOL)_drawsBackground
 {
     return _drawsBackground;

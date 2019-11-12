@@ -49,7 +49,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     }
 }
 
-Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
+Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 {
     auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent);
 
