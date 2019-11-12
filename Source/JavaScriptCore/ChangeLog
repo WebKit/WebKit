@@ -1,5 +1,13 @@
 2019-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix incorrect assertion
+        https://bugs.webkit.org/show_bug.cgi?id=201908
+
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::reuseForLowerTier):
+
+2019-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, fix alignment adjustment when reusing PreciseAllocation
         https://bugs.webkit.org/show_bug.cgi?id=201908
 

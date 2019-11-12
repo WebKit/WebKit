@@ -157,7 +157,7 @@ PreciseAllocation* PreciseAllocation::reuseForLowerTier()
     this->~PreciseAllocation();
 
     void* space = basePointer;
-    ASSERT(isAlignedForPreciseAllocation(basePointer) == adjustedAlignment);
+    ASSERT((!isAlignedForPreciseAllocation(basePointer)) == adjustedAlignment);
     if (adjustedAlignment)
         space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(basePointer) + halfAlignment);
 
