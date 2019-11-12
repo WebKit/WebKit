@@ -139,13 +139,15 @@ private:
     }
 
 #if PLATFORM(GTK)
-    static void windowConfigureEventCallback(GtkWindow* window, GdkEventConfigure*, GdkRectangle* targetGeometry)
+    static gboolean windowConfigureEventCallback(GtkWindow* window, GdkEventConfigure*, GdkRectangle* targetGeometry)
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
         gtk_window_get_position(window, &geometry.x, &geometry.y);
         gtk_window_get_size(window, &geometry.width, &geometry.height);
         if (geometry.x == targetGeometry->x && geometry.y == targetGeometry->y && geometry.width == targetGeometry->width && geometry.height == targetGeometry->height)
             RunLoop::current().stop();
+
+        return FALSE;
     }
 
     void setWindowFrameTimerFired()

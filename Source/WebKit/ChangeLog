@@ -1,3 +1,16 @@
+2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r250707): [GTK] UIClient::setWindowFrame only works the first time
+        https://bugs.webkit.org/show_bug.cgi?id=204068
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is because we are connecting to configure-event of parent window, but not returning FALSE from the callback
+        to propagate the event.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::windowConfigureEventCallback): Make it boolean and return FALSE.
+
 2019-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to access a WebsiteDataStore without instantiating it, and its configuration
