@@ -244,7 +244,7 @@ window.test_driver_internal.action_sequence = function(sources)
 
     if (pointerType === "touch")
         return dispatchTouchActions(pointerSource.actions);
-    if ("createTouch" in document)
+    if (testRunner.isIOSFamily && "createTouch" in document)
         return dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
     if (pointerType === "mouse")
         return dispatchMouseActions(pointerSource.actions);

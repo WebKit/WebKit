@@ -1,5 +1,19 @@
 2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK][WPE] Support Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=202789
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build support for PointerEvents when EXPERIMENTAL_FEATURES is enabled.
+        Currently support for PointerEvents of pointerType==mouse works fine,
+        but support for other type of PointerEvents is missing.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][WPE] Enable CSS Painting API
         https://bugs.webkit.org/show_bug.cgi?id=190710
 

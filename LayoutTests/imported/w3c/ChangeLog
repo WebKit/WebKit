@@ -1,3 +1,19 @@
+2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Support Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=202789
+
+        Reviewed by Carlos Garcia Campos.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+        The fix for iOS added in r245639 triggers a call to sendEventStream in
+        UIScriptController that crashes on GTK because that function is only
+        implemented for iOS. For Mac this was not an issue because the Mac port
+        doesn't enable TouchEvent support ("createTouch" in document).
+        However TouchEvent support is enabled for GTK. Fix this by only
+        trigerring the call to dispatchTouchActions when TouchEvent support
+        is enabled _and_ its iOS.
+
 2019-11-12  Rob Buis  <rbuis@igalia.com>
 
         Unskip some fetch tests

@@ -1,3 +1,16 @@
+2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Support Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=202789
+
+        Reviewed by Carlos Garcia Campos.
+
+        Covered by existing tests.
+
+        * UIProcess/PageClient.h: Add a ifdef for platform COCOA on two
+        function declarations that depend on the UIGestureRecognizer ObjC type.
+        This is not needed for GTK/WPE code.
+
 2019-11-12  Alex Christensen  <achristensen@webkit.org>
 
         Revert part of r251676

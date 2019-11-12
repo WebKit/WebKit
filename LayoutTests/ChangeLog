@@ -1,3 +1,19 @@
+2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Support Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=202789
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add test expectations for GTK/WPE.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification-expected.txt: Removed.
+          Now it passes with the general expectation.
+        * platform/gtk/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-verification-expected.txt: Removed.
+          Now it passes with the general expectation.
+        * platform/wpe/TestExpectations: Update also bug number for PointerLock.
+
 2019-11-12  Rob Buis  <rbuis@igalia.com>
 
         Unskip some fetch tests

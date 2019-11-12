@@ -4011,6 +4011,20 @@ imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
 
+# PointerEvents not enabled globally, but enabled for GTK (EXPERIMENTAL_FEATURES)
+pointerevents/mouse [ Pass ]
+imported/w3c/web-platform-tests/pointerevents [ Pass ]
+# PointerEvents currently only supports mouse on GTK (no Touch/Pen support)
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////
