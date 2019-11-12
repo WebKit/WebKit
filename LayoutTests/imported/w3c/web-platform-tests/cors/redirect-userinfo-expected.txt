@@ -1,10 +1,10 @@
 CORS userinfo redirect handling
 
 
-FAIL Disallow redirect with userinfo (user:pass@) assert_unreached: Reached unreachable code
-FAIL Disallow redirect with userinfo (user:@) assert_unreached: Reached unreachable code
-FAIL Disallow redirect with userinfo (user@) assert_unreached: Reached unreachable code
+PASS Disallow redirect with userinfo (user:pass@) 
+PASS Disallow redirect with userinfo (user:@) 
+PASS Disallow redirect with userinfo (user@) 
 PASS Allow redirect without userinfo (:@ is trimmed during URL parsing) 
-FAIL Disallow redirect with userinfo (:pass@) assert_unreached: Reached unreachable code
+PASS Disallow redirect with userinfo (:pass@) 
 PASS Allow redirect without userinfo (@ is trimmed during URL parsing) 
 

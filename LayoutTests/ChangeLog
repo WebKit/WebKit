@@ -1,3 +1,14 @@
+2019-11-11  Youenn Fablet  <youenn@apple.com>
+
+        Fail cross-origin redirection loads in case of CORS with redirection URLs having credentials
+        https://bugs.webkit.org/show_bug.cgi?id=204036
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-4-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async.html:
+
 2019-11-11  Kate Cheney  <katherine_cheney@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking.Development at com.apple.WebKit: WebKit::NetworkProcess::setIsRunningResourceLoadStatisticsTest

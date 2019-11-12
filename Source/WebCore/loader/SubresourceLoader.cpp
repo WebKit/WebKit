@@ -600,9 +600,11 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 
     // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 7 & 8.
     if (options().mode == FetchOptions::Mode::Cors) {
-        if (m_resource->isCrossOrigin() && !isValidCrossOriginRedirectionURL(newRequest.url())) {
-            errorMessage = "URL is either a non-HTTP URL or contains credentials."_s;
-            return false;
+        if (m_resource->isCrossOrigin()) {
+            auto locationString = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
+            errorMessage = validateCrossOriginRedirectionURL(URL(redirectResponse.url(), locationString));
+            if (!errorMessage.isNull())
+                return false;
         }
 
         ASSERT(m_origin);

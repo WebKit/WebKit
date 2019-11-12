@@ -1,3 +1,22 @@
+2019-11-11  Youenn Fablet  <youenn@apple.com>
+
+        Fail cross-origin redirection loads in case of CORS with redirection URLs having credentials
+        https://bugs.webkit.org/show_bug.cgi?id=204036
+
+        Reviewed by Alex Christensen.
+
+        Update checks in SubresourceLoader according networking process.
+        Make error messages consistent,
+        Test: http/tests/navigation/page-cache-mediastream.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validateCrossOriginRedirectionURL):
+        (WebCore::isValidCrossOriginRedirectionURL): Deleted.
+        * loader/CrossOriginAccessControl.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+
 2019-11-11  Jer Noble  <jer.noble@apple.com>
 
         ASSERT at PlatformCALayerCocoa::avPlayerLayer(): [platformLayer() sublayers].count == 1

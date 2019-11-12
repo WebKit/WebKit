@@ -127,11 +127,15 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
     return cachedRequest;
 }
 
-bool isValidCrossOriginRedirectionURL(const URL& redirectURL)
+String validateCrossOriginRedirectionURL(const URL& redirectURL)
 {
-    return LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying())
-        && redirectURL.user().isEmpty()
-        && redirectURL.pass().isEmpty();
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying()))
+        return makeString("not allowed to follow a cross-origin CORS redirection with non CORS scheme");
+
+    if (redirectURL.hasUsername() || redirectURL.hasPassword())
+        return makeString("redirection URL ", redirectURL.string(), " has credentials");
+
+    return { };
 }
 
 OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeepFromCleaning(const HTTPHeaderMap& headers)

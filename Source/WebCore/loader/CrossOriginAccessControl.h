@@ -54,8 +54,6 @@ WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrig
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);
 CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, Document&, const String& crossOriginAttribute, ResourceLoaderOptions&&);
 
-bool isValidCrossOriginRedirectionURL(const URL&);
-
 enum class HTTPHeadersToKeepFromCleaning {
     ContentType = 1 << 0,
     Referer = 1 << 1,
@@ -72,5 +70,6 @@ WEBCORE_EXPORT bool validatePreflightResponse(const ResourceRequest&, const Reso
 
 WEBCORE_EXPORT Optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin&, const URL&, const ResourceResponse&);
 Optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
+String validateCrossOriginRedirectionURL(const URL&);
 
 } // namespace WebCore

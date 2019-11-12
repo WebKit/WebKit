@@ -53,11 +53,10 @@ var tests = [
   access-control-allow-origin=http://127.0.0.1:8000",
   withoutCredentials, noCustomHeader, succeeds],
 
-// Receives a redirect response with a URL containing the userinfo production. Although loading should fail according fetch spec,
-// the underlying HTTP stack currently removes credentials from redirection URL, hence loading is successful.
+// Receives a redirect response with a URL containing the userinfo production.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
   access-control-allow-origin=http://127.0.0.1:8000",
-  withoutCredentials, noCustomHeader, succeeds],
+  withoutCredentials, noCustomHeader, fails],
 
 // Receives a redirect response with a URL with an unsupported scheme.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&\
