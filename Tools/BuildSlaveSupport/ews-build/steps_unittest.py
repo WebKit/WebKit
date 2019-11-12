@@ -996,10 +996,17 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_success(self):
+    def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(RunJavaScriptCoreTests())
-        self.setProperty('fullPlatform', 'jsc-only')
-        self.setProperty('configuration', 'release')
+        if platform:
+            self.setProperty('platform', platform)
+        if fullPlatform:
+            self.setProperty('fullPlatform', fullPlatform)
+        if configuration:
+            self.setProperty('configuration', configuration)
+
+    def test_success(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -1012,14 +1019,12 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_remote_success(self):
-        self.setupStep(RunJavaScriptCoreTests())
-        self.setProperty('fullPlatform', 'jsc-only')
-        self.setProperty('configuration', 'release')
+        self.configureStep(platform='jsc-only', fullPlatform='jsc-only', configuration='release')
         self.setProperty('remotes', 'remote-machines.json')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--jsc-only'],
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1028,9 +1033,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunJavaScriptCoreTests())
-        self.setProperty('fullPlatform', 'jsc-only')
-        self.setProperty('configuration', 'debug')
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -1044,45 +1047,15 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        self.jsonFileName = 'jsc_results.json'
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
+class TestReRunJavaScriptCoreTests(TestRunJavaScriptCoreTests):
+    def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(ReRunJavaScriptCoreTests())
-        self.setProperty('fullPlatform', 'jsc-only')
-        self.setProperty('configuration', 'release')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
-                        logfiles={'json': self.jsonFileName},
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(ReRunJavaScriptCoreTests())
-        self.setProperty('fullPlatform', 'jsc-only')
-        self.setProperty('configuration', 'debug')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
-                        logfiles={'json': self.jsonFileName},
-                        )
-            + ExpectShell.log('stdio', stdout='9 failures found.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
-        return self.runStep()
+        if platform:
+            self.setProperty('platform', platform)
+        if fullPlatform:
+            self.setProperty('fullPlatform', fullPlatform)
+        if configuration:
+            self.setProperty('configuration', configuration)
 
 
 class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
