@@ -13793,6 +13793,8 @@
 		CD8ACA871D237AA200ECC59E /* RemoteCommandListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandListenerMac.h; sourceTree = "<group>"; };
 		CD8ACA8C1D23971900ECC59E /* MediaRemoteSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRemoteSoftLink.cpp; sourceTree = "<group>"; };
 		CD8ACA8D1D23971900ECC59E /* MediaRemoteSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRemoteSoftLink.h; sourceTree = "<group>"; };
+		CD8B31A12379DC8300883FDE /* WebVideoContainerLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebVideoContainerLayer.h; sourceTree = "<group>"; };
+		CD8B31A22379DC8300883FDE /* WebVideoContainerLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoContainerLayer.mm; sourceTree = "<group>"; };
 		CD8B5A40180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoTrackPrivateMediaSourceAVFObjC.mm; sourceTree = "<group>"; };
 		CD8B5A41180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivateMediaSourceAVFObjC.h; sourceTree = "<group>"; };
 		CD8B5A44180DD8D6008B8E65 /* VideoTrackMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoTrackMediaSource.idl; sourceTree = "<group>"; };
@@ -18597,6 +18599,8 @@
 				31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */,
 				0F580FA11496939100FB5BD8 /* WebTiledBackingLayer.h */,
 				0F580FA21496939100FB5BD8 /* WebTiledBackingLayer.mm */,
+				CD8B31A12379DC8300883FDE /* WebVideoContainerLayer.h */,
+				CD8B31A22379DC8300883FDE /* WebVideoContainerLayer.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

@@ -35,27 +35,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MachSendRight.h>
 
-@interface WebVideoContainerLayer : CALayer
-@end
-
-@implementation WebVideoContainerLayer
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    for (CALayer* layer in self.sublayers)
-        layer.frame = bounds;
-}
-
-- (void)setPosition:(CGPoint)position
-{
-    if (!CATransform3DIsIdentity(self.transform)) {
-        // Pre-apply the transform added in the WebProcess to fix <rdar://problem/18316542> to the position.
-        position = CGPointApplyAffineTransform(position, CATransform3DGetAffineTransform(self.transform));
-    }
-    [super setPosition:position];
-}
-@end
+#include <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
@@ -76,6 +56,8 @@ void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, I
 #endif
     [m_videoInlineLayer setFrame:m_videoInlineFrame];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];
+    if ([videoLayer isKindOfClass:PAL::getAVPlayerLayerClass()])
+        [m_videoInlineLayer setPlayerLayer:(AVPlayerLayer *)videoLayer];
 
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];

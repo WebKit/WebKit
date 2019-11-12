@@ -29,9 +29,12 @@
 #include "IntSize.h"
 #include "PlatformLayer.h"
 #include "VideoFullscreenLayerManager.h"
+#include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+
+OBJC_CLASS AVPlayerLayer;
 
 namespace WebCore {
 
@@ -55,7 +58,7 @@ public:
 
 private:
     RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
-    RetainPtr<PlatformLayer> m_videoInlineLayer;
+    RetainPtr<WebVideoContainerLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     RetainPtr<PlatformLayer> m_videoLayer;
     FloatRect m_videoFullscreenFrame;

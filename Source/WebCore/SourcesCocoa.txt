@@ -278,6 +278,7 @@ platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
 platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm
 platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
+platform/graphics/ca/cocoa/WebVideoContainerLayer.mm
 
 platform/graphics/cg/ColorCG.cpp
 platform/graphics/cg/FloatPointCG.cpp

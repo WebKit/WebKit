@@ -1,3 +1,38 @@
+2019-11-11  Jer Noble  <jer.noble@apple.com>
+
+        ASSERT at PlatformCALayerCocoa::avPlayerLayer(): [platformLayer() sublayers].count == 1
+        https://bugs.webkit.org/show_bug.cgi?id=204077
+        <rdar://problem/56640423>
+
+        Reviewed by Simon Fraser.
+
+        Make PlatformCALayerCocoa::avPlayer() more robust against underlying layer changes.
+
+        Promote WebVideoContainerLayer to its own header file and give the class a "playerLayer" property. In
+        PlatformCALayerCocoa::avPlayer(), use that new property to retrieve the AVPlayerLayer.
+
+        Drive-by fix: Make PlatformCALayerCocoa::create() return a Ref<PlatformCALayerCocoa> rather than its parent class type.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.h:
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm:
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoLayer):
+        (-[WebVideoContainerLayer setBounds:]): Deleted.
+        (-[WebVideoContainerLayer setPosition:]): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::create):
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::clone const):
+        (WebCore::PlatformCALayerCocoa::avPlayerLayer const):
+        * platform/graphics/ca/cocoa/WebVideoContainerLayer.h: Added.
+        * platform/graphics/ca/cocoa/WebVideoContainerLayer.mm: Added.
+        (-[WebVideoContainerLayer initWithPlayerLayer:]):
+        (-[WebVideoContainerLayer playerLayer]):
+        (-[WebVideoContainerLayer setBounds:]):
+        (-[WebVideoContainerLayer setPosition:]):
+
 2019-11-11  Antti Koivisto  <antti@apple.com>
 
         Always use matched declarations cache fully when parent inherited style matches
