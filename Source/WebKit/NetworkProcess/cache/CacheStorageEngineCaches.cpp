@@ -51,6 +51,11 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
+static inline String cachesSizeFilename(const String& cachesRootsPath)
+{
+    return FileSystem::pathByAppendingComponent(cachesRootsPath, "estimatedsize"_s);
+}
+
 Ref<Caches> Caches::create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, WebCore::StorageQuotaManager& quotaManager)
 {
     auto caches = adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quotaManager });
@@ -203,6 +208,12 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
     });
 }
 
+void Caches::updateSizeFile()
+{
+    if (m_engine)
+        m_engine->writeSizeFile(cachesSizeFilename(m_rootPath), m_size);
+}
+
 void Caches::initializeSize()
 {
     if (!m_storage) {
@@ -221,6 +232,8 @@ void Caches::initializeSize()
                 return;
             }
             m_size = size;
+            updateSizeFile();
+
             m_isInitialized = true;
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
             for (auto& callback : pendingCallbacks)
@@ -535,6 +548,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
     ASSERT(m_size >= previousRecordSize);
     m_size += recordInformation.size;
     m_size -= previousRecordSize;
+    updateSizeFile();
 
     if (!shouldPersist()) {
         m_volatileStorage.set(recordInformation.key, WTFMove(record));
@@ -591,6 +605,8 @@ void Caches::removeRecord(const RecordInformation& record)
 
     ASSERT(m_size >= record.size);
     m_size -= record.size;
+    updateSizeFile();
+
     removeCacheEntry(record.key);
 }
 
@@ -608,6 +624,8 @@ void Caches::removeCacheEntry(const NetworkCache::Key& key)
 void Caches::resetSpaceUsed()
 {
     m_size = 0;
+    updateSizeFile();
+
     if (m_quotaManager) {
         m_quotaManager->removeUser(*this);
         m_quotaManager->addUser(*this);
