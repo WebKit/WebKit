@@ -553,7 +553,8 @@ void StyleResolver::applyMatchedProperties(State& state, const MatchResult& matc
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
         style.copyNonInheritedFrom(*cacheEntry->renderStyle);
-        if (parentStyle.inheritedDataShared(cacheEntry->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
+
+        if (parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle) && !isAtShadowBoundary(element)) {
             InsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
@@ -563,6 +564,7 @@ void StyleResolver::applyMatchedProperties(State& state, const MatchResult& matc
             style.setInsideLink(linkStatus);
             return;
         }
+        
         includedProperties = Style::PropertyCascade::IncludedProperties::InheritedOnly;
     }
 

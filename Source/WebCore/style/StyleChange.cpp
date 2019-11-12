@@ -50,7 +50,7 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
         return Detach;
 
     if (s1 != s2) {
-        if (s1.inheritedNotEqual(&s2))
+        if (!s1.inheritedEqual(s2))
             return Inherit;
 
         if (s1.alignItems() != s2.alignItems() || s1.justifyItems() != s2.justifyItems())

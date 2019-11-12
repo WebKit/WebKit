@@ -1396,8 +1396,7 @@ public:
 
     const AtomString& hyphenString() const;
 
-    bool inheritedNotEqual(const RenderStyle*) const;
-    bool inheritedDataShared(const RenderStyle*) const;
+    bool inheritedEqual(const RenderStyle&) const;
 
 #if ENABLE(TEXT_AUTOSIZING)
     uint32_t hashForTextAutosizing() const;

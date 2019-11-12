@@ -37,7 +37,7 @@ public:
     Ref<SVGRenderStyle> copy() const;
     ~SVGRenderStyle();
 
-    bool inheritedNotEqual(const SVGRenderStyle&) const;
+    bool inheritedEqual(const SVGRenderStyle&) const;
     void inheritFrom(const SVGRenderStyle&);
     void copyNonInheritedFrom(const SVGRenderStyle&);
 

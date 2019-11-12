@@ -1,5 +1,39 @@
 2019-11-11  Antti Koivisto  <antti@apple.com>
 
+        Always use matched declarations cache fully when parent inherited style matches
+        https://bugs.webkit.org/show_bug.cgi?id=204083
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties):
+
+        We used inheritedDataShared check here since it is always just pointer compare.
+        However instrumentation shows we miss out from singificant amount of cache benefit
+        due to this and the full check is not expensive.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::inheritedEqual const):
+        (WebCore::RenderStyle::inheritedNotEqual const): Deleted.
+
+        Reverse the logic.
+
+        (WebCore::RenderStyle::inheritedDataShared const): Deleted.
+
+        Not used anymore.
+
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::inheritedEqual const):
+        (WebCore::SVGRenderStyle::inheritedNotEqual const): Deleted.
+        * rendering/style/SVGRenderStyle.h:
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::createInheritedDisplayContentsStyleIfNeeded):
+
+2019-11-11  Antti Koivisto  <antti@apple.com>
+
         Empty property sets should not mark MatchedProperties uncacheable
         https://bugs.webkit.org/show_bug.cgi?id=204079
 

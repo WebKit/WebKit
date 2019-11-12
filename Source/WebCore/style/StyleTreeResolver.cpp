@@ -447,7 +447,7 @@ static std::unique_ptr<RenderStyle> createInheritedDisplayContentsStyleIfNeeded(
 {
     if (parentElementStyle.display() != DisplayType::Contents)
         return nullptr;
-    if (parentBoxStyle && !parentBoxStyle->inheritedNotEqual(&parentElementStyle))
+    if (parentBoxStyle && parentBoxStyle->inheritedEqual(parentElementStyle))
         return nullptr;
     // Compute style for imaginary unstyled <span> around the text node.
     auto style = RenderStyle::createPtr();

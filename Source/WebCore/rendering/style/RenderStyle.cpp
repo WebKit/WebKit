@@ -428,12 +428,12 @@ void RenderStyle::removeCachedPseudoStyle(PseudoId pid)
     }
 }
 
-bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
+bool RenderStyle::inheritedEqual(const RenderStyle& other) const
 {
-    return m_inheritedFlags != other->m_inheritedFlags
-        || m_inheritedData != other->m_inheritedData
-        || m_svgStyle->inheritedNotEqual(other->m_svgStyle)
-        || m_rareInheritedData != other->m_rareInheritedData;
+    return m_inheritedFlags == other.m_inheritedFlags
+        && m_inheritedData == other.m_inheritedData
+        && (m_svgStyle.ptr() == other.m_svgStyle.ptr() || m_svgStyle->inheritedEqual(other.m_svgStyle))
+        && m_rareInheritedData == other.m_rareInheritedData;
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -580,15 +580,6 @@ void RenderStyle::setAutosizeStatus(AutosizeStatus autosizeStatus)
 }
 
 #endif // ENABLE(TEXT_AUTOSIZING)
-
-bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
-{
-    // This is a fast check that only looks if the data structures are shared.
-    return m_inheritedFlags == other->m_inheritedFlags
-        && m_inheritedData.ptr() == other->m_inheritedData.ptr()
-        && m_svgStyle.ptr() == other->m_svgStyle.ptr()
-        && m_rareInheritedData.ptr() == other->m_rareInheritedData.ptr();
-}
 
 static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b, const Length& width)
 {
