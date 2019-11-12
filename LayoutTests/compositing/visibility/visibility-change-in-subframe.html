@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html class="root">
+<head>
+    <style>
+        iframe {
+            width: 100%;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function runTest()
+        {
+            let firstFrameWindow = document.getElementById('frame').contentWindow;
+            let innerFrame = firstFrameWindow.document.getElementById('inner-frame').contentWindow;
+            
+            requestAnimationFrame(() => {
+                firstFrameWindow.doVisibilityChange();
+                requestAnimationFrame(() => {
+                    innerFrame.doCompositingChange();
+                    requestAnimationFrame(() => {
+                        if (window.testRunner) {
+                            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+                            testRunner.notifyDone();
+                        }
+                    });
+                });
+            });
+        }
+
+        const expectedLoads = 2;
+        let receivedLoads = 0;
+        function receivedLoad()
+        {
+            if (++receivedLoads == expectedLoads)
+                runTest();
+        }
+        
+        window.addEventListener('load', async () => {
+            receivedLoad();
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe id="frame" src="resources/frame-with-visibility-change.html"></iframe>
+<pre id="layers"></pre>
+</body>
+</html>

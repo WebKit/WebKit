@@ -1442,6 +1442,33 @@
         * rendering/RenderListBox.cpp:
         (WebCore::RenderListBox::scrollTo):
 
+2019-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Captcha images render as blank white space
+        https://bugs.webkit.org/show_bug.cgi?id=204013
+        rdar://problem/50095458
+
+        Reviewed by Zalan Bujtas.
+        
+        If updating z-order lists adds layers to the paint-order lists that have
+        dirty bits, we need to propagate those dirty bits up the tree so that
+        later dirty bit propagation doesn't stop prematurely. This could happen
+        when content triggered visibility, and the missing dirty bits caused
+        subframe layers to not get parented, resulting in missing layers with reCaptcha.
+        We do this by accumulating dirty bits inside of collectLayers().
+
+        Test: compositing/visibility/visibility-change-in-subframe.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+        (WebCore::RenderLayerCompositor::layerTreeAsText): Log so that debugging test failures is easier.
+
 2019-11-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][MarginCollapsing] Drag anonymous block level boxes into margin collapsing

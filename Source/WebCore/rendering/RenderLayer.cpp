@@ -715,7 +715,9 @@ void RenderLayer::rebuildZOrderLists()
 {
     ASSERT(layerListMutationAllowed());
     ASSERT(isDirtyStackingContext());
-    rebuildZOrderLists(m_posZOrderList, m_negZOrderList);
+    
+    OptionSet<Compositing> childDirtyFlags;
+    rebuildZOrderLists(m_posZOrderList, m_negZOrderList, childDirtyFlags);
     m_zOrderListsDirty = false;
     
     bool hasNegativeZOrderList = m_negZOrderList && m_negZOrderList->size();
@@ -727,14 +729,24 @@ void RenderLayer::rebuildZOrderLists()
         if (isComposited())
             setNeedsCompositingConfigurationUpdate();
     }
+
+    // Building lists may have added layers with dirty flags, so make sure we propagate dirty bits up the tree.
+    if (m_compositingDirtyBits.containsAll({ Compositing::DescendantsNeedRequirementsTraversal, Compositing::DescendantsNeedBackingAndHierarchyTraversal }))
+        return;
+
+    if (childDirtyFlags.containsAny(computeCompositingRequirementsFlags()))
+        setDescendantsNeedCompositingRequirementsTraversal();
+
+    if (childDirtyFlags.containsAny(updateBackingOrHierarchyFlags()))
+        setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 }
 
-void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negZOrderList)
+void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
     bool includeHiddenLayers = compositor().usesCompositing();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         if (!isReflectionLayer(*child))
-            child->collectLayers(includeHiddenLayers, posZOrderList, negZOrderList);
+            child->collectLayers(includeHiddenLayers, posZOrderList, negZOrderList, accumulatedDirtyFlags);
     }
 
     auto compareZIndex = [] (const RenderLayer* first, const RenderLayer* second) -> bool {
@@ -749,7 +761,7 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
         std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
 }
 
-void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList)
+void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
     updateDescendantDependentFlags();
 
@@ -761,6 +773,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
         if (!layerList)
             layerList = makeUnique<Vector<RenderLayer*>>();
         layerList->append(this);
+        accumulatedDirtyFlags.add(m_compositingDirtyBits);
     }
 
     // Recur into our children to collect more layers, but only if we don't establish
@@ -769,7 +782,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
             if (!isReflectionLayer(*child))
-                child->collectLayers(includeHiddenLayers, positiveZOrderList, negativeZOrderList);
+                child->collectLayers(includeHiddenLayers, positiveZOrderList, negativeZOrderList, accumulatedDirtyFlags);
         }
     }
 }
@@ -6585,7 +6598,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 #endif
     }
 
-    // FIXME: RenderLayer already handles visibility changes through our visiblity dirty bits. This logic could
+    // FIXME: RenderLayer already handles visibility changes through our visibility dirty bits. This logic could
     // likely be folded along with the rest.
     if (oldStyle) {
         if (oldStyle->zIndex() != renderer().style().zIndex() || oldStyle->visibility() != renderer().style().visibility()) {

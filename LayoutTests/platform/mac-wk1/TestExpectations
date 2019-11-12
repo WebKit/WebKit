@@ -372,6 +372,7 @@ fast/scrolling/scroll-container-horizontally.html [ Failure ]
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
+compositing/visibility/visibility-change-in-subframe.html [ Failure ]
 
 # Disk cache is WK2 only
 http/tests/cache/disk-cache

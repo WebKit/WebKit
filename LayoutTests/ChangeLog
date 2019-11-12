@@ -432,6 +432,26 @@
         * platform/mac/TestExpectations:
         * platform/wpe/TestExpectations:
 
+2019-11-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Captcha images render as blank white space
+        https://bugs.webkit.org/show_bug.cgi?id=204013
+        rdar://problem/50095458
+
+        Reviewed by Zalan Bujtas.
+
+        New test. Fails in WK1 because of compositing timing differences in iframes in DRT which
+        has a non auto-displaying window.
+
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt: Progression.
+        * compositing/visibility/resources/become-composited.html: Added.
+        * compositing/visibility/resources/frame-with-visibility-change.html: Added.
+        * compositing/visibility/visibility-change-in-subframe-expected.txt: Added.
+        * compositing/visibility/visibility-change-in-subframe.html: Added.
+        * platform/ios-wk2/compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+        * platform/ios-wk2/compositing/visibility/visibility-change-in-subframe-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r250087): inspector/model/remote-object.html is timing out
