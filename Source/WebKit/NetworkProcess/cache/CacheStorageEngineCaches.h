@@ -105,8 +105,6 @@ private:
 
     bool hasActiveCache() const;
 
-    void updateSizeFile();
-
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };
     uint64_t m_updateCounter { 0 };

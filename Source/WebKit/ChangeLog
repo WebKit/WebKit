@@ -1,3 +1,15 @@
+2019-11-12  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r252351.
+
+        casued 50+ crashes on Mac and iOS wk2 debug
+
+        Reverted changeset:
+
+        "Add size file for CacheStorage"
+        https://bugs.webkit.org/show_bug.cgi?id=204027
+        https://trac.webkit.org/changeset/252351
+
 2019-11-12  Alex Christensen  <achristensen@webkit.org>
 
         Revert remainder of r251676

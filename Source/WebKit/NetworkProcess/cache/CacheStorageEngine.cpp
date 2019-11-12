@@ -35,7 +35,6 @@
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Scope.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -460,55 +459,6 @@ void Engine::removeFile(const String& filename)
     m_ioQueue->dispatch([filename = filename.isolatedCopy()]() mutable {
         FileSystem::deleteFile(filename);
     });
-}
-
-void Engine::writeSizeFile(const String& path, uint64_t size)
-{
-    if (!shouldPersist())
-        return;
-
-    m_ioQueue->dispatch([path = path.isolatedCopy(), size]() {
-        auto fileHandle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::Write, { FileSystem::FileLockMode::Exclusive });
-        auto closeFileHandle = makeScopeExit([&] {
-            FileSystem::unlockAndCloseFile(fileHandle);
-        });
-
-        if (!FileSystem::isHandleValid(fileHandle))
-            return;
-
-        FileSystem::truncateFile(fileHandle, 0);
-
-        FileSystem::writeToFile(fileHandle, String::number(size).utf8().data(), String::number(size).utf8().length());
-    });
-}
-
-Optional<uint64_t> Engine::readSizeFile(const String& path)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(FileSystem::fileExists(path));
-
-    auto fileHandle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::Read, { FileSystem::FileLockMode::Exclusive });
-    auto closeFileHandle = makeScopeExit([&] {
-        FileSystem::unlockAndCloseFile(fileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(fileHandle))
-        return WTF::nullopt;
-
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(path, fileSize) || !fileSize)
-        return WTF::nullopt;
-
-    size_t bytesToRead;
-    if (!WTF::convertSafely(fileSize, bytesToRead))
-        return WTF::nullopt;
-
-    Vector<char> buffer(bytesToRead);
-    size_t totalBytesRead = FileSystem::readFromFile(fileHandle, buffer.data(), buffer.size());
-    if (totalBytesRead != bytesToRead)
-        return WTF::nullopt;
-
-    return String::fromUTF8(buffer.data()).toUInt64Strict();
 }
 
 class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {
