@@ -46,6 +46,8 @@ public:
         MatchResult matchResult;
         std::unique_ptr<const RenderStyle> renderStyle;
         std::unique_ptr<const RenderStyle> parentRenderStyle;
+
+        bool isUsableAfterHighPriorityProperties(const RenderStyle&) const;
     };
 
     const Entry* find(unsigned hash, const MatchResult&);

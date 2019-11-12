@@ -584,13 +584,11 @@ void StyleResolver::applyMatchedProperties(State& state, const MatchResult& matc
     // High priority properties may affect resolution of other properties (they are mostly font related).
     builder.applyHighPriorityProperties();
 
-    // If the effective zoom value changes, we can't use the matched properties cache. Start over.
-    if (cacheEntry && cacheEntry->renderStyle->effectiveZoom() != style.effectiveZoom())
-        return applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
-
-    // If the font changed, we can't use the matched properties cache. Start over.
-    if (cacheEntry && cacheEntry->renderStyle->fontDescription() != style.fontDescription())
-        return applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
+    if (cacheEntry && !cacheEntry->isUsableAfterHighPriorityProperties(style)) {
+        // We need to resolve all properties without caching.
+        applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
+        return;
+    }
 
     builder.applyLowPriorityProperties();
 

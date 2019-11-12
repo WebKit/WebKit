@@ -64,6 +64,14 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     return true;
 }
 
+bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const RenderStyle& style) const
+{
+    if (style.effectiveZoom() != renderStyle->effectiveZoom())
+        return false;
+
+    return CSSPrimitiveValue::equalForLengthResolution(style, *renderStyle);
+}
+
 unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult)
 {
     if (!matchResult.isCacheable)

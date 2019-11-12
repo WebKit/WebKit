@@ -278,6 +278,8 @@ public:
     static double conversionToCanonicalUnitsScaleFactor(UnitType);
 
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, UnitType, double value);
+    // True if computeNonCalcLengthDouble would produce identical results when resolved against both these styles.
+    static bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
 
     Ref<DeprecatedCSSOMPrimitiveValue> createDeprecatedCSSOMPrimitiveWrapper(CSSStyleDeclaration&) const;
 

@@ -705,6 +705,25 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     return result;
 }
 
+bool CSSPrimitiveValue::equalForLengthResolution(const RenderStyle& styleA, const RenderStyle& styleB)
+{
+    // These properties affect results of computeNonCalcLengthDouble above.
+    if (styleA.fontDescription().computedSize() != styleB.fontDescription().computedSize())
+        return false;
+    if (styleA.fontDescription().specifiedSize() != styleB.fontDescription().specifiedSize())
+        return false;
+
+    if (styleA.fontMetrics().xHeight() != styleB.fontMetrics().xHeight())
+        return false;
+    if (styleA.fontMetrics().zeroWidth() != styleB.fontMetrics().zeroWidth())
+        return false;
+
+    if (styleA.zoom() != styleB.zoom())
+        return false;
+
+    return true;
+}
+
 ExceptionOr<void> CSSPrimitiveValue::setFloatValue(unsigned short, double)
 {
     // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects.

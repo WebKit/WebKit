@@ -1,3 +1,28 @@
+2019-11-12  Antti Koivisto  <antti@apple.com>
+
+        Skip matched declarations cache only for length resolution affecting font properties
+        https://bugs.webkit.org/show_bug.cgi?id=204098
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::equalForLengthResolution):
+
+        Put this next to the length resolution function, hopefully helping to keep them in sync.
+
+        * css/CSSPrimitiveValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties):
+
+        Replace test for font declaration change with a narrower test that only looks for those properties that affect length resolution.
+
+        * style/MatchedDeclarationsCache.cpp:
+        (WebCore::Style::MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties const):
+
+        Factor into function.
+
+        * style/MatchedDeclarationsCache.h:
+
 2019-11-12  Peng Liu  <peng.liu6@apple.com>
 
         Picture-in-Picture events are not fired if we switch the Picture-in-Picture mode through modern media controls
