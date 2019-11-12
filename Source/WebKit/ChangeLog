@@ -1,3 +1,45 @@
+2019-11-12  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/57123564
+
+    2019-11-12  Chris Dumez  <cdumez@apple.com>
+
+            Networking loading stalls / partial loading
+            <rdar://problem/57050996>
+
+            Reviewed by Ryosuke Niwa.
+
+            If the UIProcess's background task expires while we're holding a foreground assertion on behalf
+            of the network process, we would fail to release that assertion (i.e. reset the assertion state
+            to "Suspended"). We would send the ProcessWillSuspendImminently IPC to the network process, which
+            would suspend the StorageManager thread and everything would suspend shortly after.
+
+            When MobileSafari would come back to the foreground after this, the WKWebView would become visible and
+            it would indicate it needs a "Foreground" process assertion on behalf of its network process.
+            However, because we did not reset the network process assertion state on suspension, the UIProcess
+            would still think it has a "Foreground" process assertion on behalf of the network process and
+            it would do nothing. As a result, the UIProcess would fail to send the ProcessDidResume to the
+            network process and the network process would still have its StorageManager thread suspended.
+
+            If you then try to do a page load and the WebProcess ends up needing the local storage data for
+            the origin, it would do a synchronous IPC to the network process to get the data. Getting that
+            data is supposed to happen on the StorageManager thread in the network process, which is still
+            suspended / hung. As a result, the network process would fail to respond to the sync IPC and
+            the WebProcess would hang, usually in the middle of a page load.
+
+            To address the issue, we now reset the process assertion state to "Suspended" when
+            uiAssertionWillExpireImminently(), to properly reflect its new state (given that it expired).
+            As a result, if we later need a Foreground assertion for the network process, the UIProcess
+            will know it does not already have one and it will take one.
+
+            Note that this was already fixed on trunk via <rdar://problem/56547883> /
+            <https://trac.webkit.org/changeset/251577>. However, r251577 is fairly large because it
+            refactored the code at the same time. This patch only contains the part of r251577 that we
+            need on the branch to fix the suspension bug.
+
+            * UIProcess/ProcessThrottler.cpp:
+            (WebKit::ProcessThrottler::uiAssertionWillExpireImminently):
+
 2019-11-05  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/56903274
