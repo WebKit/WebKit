@@ -1,3 +1,13 @@
+2019-11-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Add 'test262-test' step to GTK and WPE build bots
+        https://bugs.webkit.org/show_bug.cgi?id=204063
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

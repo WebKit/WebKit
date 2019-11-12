@@ -106,8 +106,10 @@ class TestFactory(Factory):
         if platform == "gtk":
             self.addStep(RunGtkAPITests())
             self.addStep(RunWebDriverTests())
+            self.addStep(RunTest262Tests())
         if platform == "wpe":
             self.addStep(RunWPEAPITests())
+            self.addStep(RunTest262Tests())
 
 
 class BuildAndTestFactory(TestFactory):
