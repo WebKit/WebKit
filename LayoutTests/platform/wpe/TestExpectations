@@ -773,6 +773,10 @@ webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure
 
 webkit.org/b/200534 fast/events/focus-anchor-with-tabindex-hang.html [ Crash ]
 
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

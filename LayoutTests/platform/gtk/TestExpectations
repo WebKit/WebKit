@@ -1295,6 +1295,10 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-rep
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Pass Crash ]
 
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
