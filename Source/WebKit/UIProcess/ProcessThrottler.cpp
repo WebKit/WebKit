@@ -133,6 +133,8 @@ void ProcessThrottler::uiAssertionWillExpireImminently()
 {
     m_process.sendProcessWillSuspendImminently();
     m_uiAssertionExpired = true;
+    m_assertion->setState(AssertionState::Suspended);
+    m_process.didSetAssertionState(AssertionState::Suspended);
 }
 
 }
