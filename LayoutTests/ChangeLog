@@ -1,3 +1,14 @@
+2019-11-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: fast/scrolling/ios/scrollTo-at-page-load.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=204062
+
+        Reviewed by Wenson Hsieh.
+
+        Wait until the next rendering update for a scroll event.`
+
+        * fast/scrolling/ios/scrollTo-at-page-load.html:
+
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
         DOMFormData should be available in workers
