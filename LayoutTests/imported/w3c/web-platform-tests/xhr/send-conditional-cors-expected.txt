@@ -1,10 +1,6 @@
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.45864598185251126
-CONSOLE MESSAGE: line 37: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.45864598185251126 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.3336103787755589&cors=yes
-CONSOLE MESSAGE: line 37: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.3336103787755589&cors=yes due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/conditional.py?tag=0.017259906889160348 due to access control checks.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT 304 without appropriate CORS header Test timed out
-TIMEOUT 304 with appropriate CORS header Test timed out
+PASS 304 without appropriate CORS header 
+PASS 304 with appropriate CORS header 
 

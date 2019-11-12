@@ -104,39 +104,39 @@ PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit prop
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onload" with the proper type 
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "ontimeout" with the proper type 
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onloadend" with the proper type 
-FAIL FormData interface: existence and properties of interface object assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface object length assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface object name assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation append(USVString, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation append(USVString, Blob, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation delete(USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation get(USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation getAll(USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation has(USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation set(USVString, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: operation set(USVString, Blob, USVString) assert_own_property: self does not have own property "FormData" expected property "FormData" missing
-FAIL FormData interface: iterable<USVString, FormDataEntryValue> undefined is not an object (evaluating 'this.get_interface_object().prototype')
-FAIL FormData must be primary interface of new FormData() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL Stringification of new FormData() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "append(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling append(USVString, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "append(USVString, Blob, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling append(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "delete(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "get(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling get(USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "getAll(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling getAll(USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "has(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling has(USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "set(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling set(USVString, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: new FormData() must inherit property "set(USVString, Blob, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
-FAIL FormData interface: calling set(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormData"
+PASS FormData interface: existence and properties of interface object 
+PASS FormData interface object length 
+PASS FormData interface object name 
+PASS FormData interface: existence and properties of interface prototype object 
+PASS FormData interface: existence and properties of interface prototype object's "constructor" property 
+PASS FormData interface: existence and properties of interface prototype object's @@unscopables property 
+PASS FormData interface: operation append(USVString, USVString) 
+PASS FormData interface: operation append(USVString, Blob, USVString) 
+PASS FormData interface: operation delete(USVString) 
+PASS FormData interface: operation get(USVString) 
+PASS FormData interface: operation getAll(USVString) 
+PASS FormData interface: operation has(USVString) 
+PASS FormData interface: operation set(USVString, USVString) 
+PASS FormData interface: operation set(USVString, Blob, USVString) 
+PASS FormData interface: iterable<USVString, FormDataEntryValue> 
+PASS FormData must be primary interface of new FormData() 
+PASS Stringification of new FormData() 
+PASS FormData interface: new FormData() must inherit property "append(USVString, USVString)" with the proper type 
+PASS FormData interface: calling append(USVString, USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "append(USVString, Blob, USVString)" with the proper type 
+PASS FormData interface: calling append(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "delete(USVString)" with the proper type 
+PASS FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "get(USVString)" with the proper type 
+PASS FormData interface: calling get(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "getAll(USVString)" with the proper type 
+PASS FormData interface: calling getAll(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "has(USVString)" with the proper type 
+PASS FormData interface: calling has(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "set(USVString, USVString)" with the proper type 
+PASS FormData interface: calling set(USVString, USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "set(USVString, Blob, USVString)" with the proper type 
+PASS FormData interface: calling set(USVString, Blob, USVString) on new FormData() with too few arguments must throw TypeError 
 PASS ProgressEvent interface: existence and properties of interface object 
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 

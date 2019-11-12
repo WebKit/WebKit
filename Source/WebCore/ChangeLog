@@ -1,5 +1,31 @@
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
+        DOMFormData should be available in workers
+        https://bugs.webkit.org/show_bug.cgi?id=176674
+
+        Reviewed by Alex Christensen.
+
+        Expose DOMFormData and File to workers.
+        Covered by existing tests.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::bodyAsFormData const):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::resourceRequest const):
+        * fileapi/File.cpp:
+        (WebCore::File::computeNameAndContentType):
+        Isolate string as this might now get called from background threads.
+        * fileapi/File.idl:
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData):
+        * html/DOMFormData.idl:
+        * platform/network/FormData.cpp:
+
+2019-11-11  Youenn Fablet  <youenn@apple.com>
+
         Fail cross-origin redirection loads in case of CORS with redirection URLs having credentials
         https://bugs.webkit.org/show_bug.cgi?id=204036
 

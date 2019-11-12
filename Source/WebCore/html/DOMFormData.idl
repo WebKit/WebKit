@@ -30,12 +30,9 @@
 
 typedef (File or USVString) FormDataEntryValue;
 
-// FIXME: Should be Exposed=(Window,Worker) It is not currently possible to do this due to
-// Fetch and XMLHttpRequest expecting to have Document when processing DOMFormData to perform
-// file replacement (https://webkit.org/b/176674).
-
 [
     Constructor(optional HTMLFormElement? form),
+    Exposed=(Window,Worker),
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=FormData,

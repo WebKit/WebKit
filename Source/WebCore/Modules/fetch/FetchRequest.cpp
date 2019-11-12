@@ -311,7 +311,7 @@ ResourceRequest FetchRequest::resourceRequest() const
     request.setHTTPHeaderFields(m_headers->internalHeaders());
 
     if (!isBodyNull())
-        request.setHTTPBody(body().bodyAsFormData(*scriptExecutionContext()));
+        request.setHTTPBody(body().bodyAsFormData());
 
     return request;
 }

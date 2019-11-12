@@ -35,10 +35,10 @@ PASS The XMLHttpRequestEventTarget interface object should be exposed.
 PASS The XMLHttpRequestUpload interface object should be exposed. 
 PASS The XMLHttpRequest interface object should be exposed. 
 PASS The ProgressEvent interface object should be exposed. 
-FAIL The FormData interface object should be exposed. assert_own_property: expected property "FormData" missing
+PASS The FormData interface object should be exposed. 
 PASS The URL interface object should be exposed. 
 PASS The URLSearchParams interface object should be exposed. 
-FAIL The File interface object should be exposed. assert_own_property: expected property "File" missing
+PASS The File interface object should be exposed. 
 PASS The Blob interface object should be exposed. 
 FAIL The FileList interface object should be exposed. assert_own_property: expected property "FileList" missing
 PASS The FileReader interface object should be exposed. 

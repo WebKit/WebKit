@@ -245,7 +245,7 @@ void FetchBody::loadingSucceeded()
     m_consumer.loadingSucceeded();
 }
 
-RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) const
+RefPtr<FormData> FetchBody::bodyAsFormData() const
 {
     if (isText())
         return FormData::create(UTF8Encoding().encode(textBody(), UnencodableHandling::Entities));
@@ -261,7 +261,6 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
     if (isArrayBufferView())
         return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
     if (isFormData()) {
-        ASSERT_UNUSED(context, !context.isWorkerGlobalScope());
         auto body = makeRef(const_cast<FormData&>(formDataBody()));
         return body;
     }

@@ -139,7 +139,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         if (fetchBody.hasReadableStream())
             return Exception { TypeError, "Beacons cannot send ReadableStream body"_s };
 
-        request.setHTTPBody(fetchBody.bodyAsFormData(document));
+        request.setHTTPBody(fetchBody.bodyAsFormData());
         if (!mimeType.isEmpty()) {
             request.setHTTPContentType(mimeType);
             if (isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))

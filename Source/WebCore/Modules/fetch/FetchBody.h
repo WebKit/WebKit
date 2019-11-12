@@ -64,7 +64,7 @@ public:
     void loadingFailed(const Exception&);
     void loadingSucceeded();
 
-    RefPtr<FormData> bodyAsFormData(ScriptExecutionContext&) const;
+    RefPtr<FormData> bodyAsFormData() const;
 
     using TakenData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     TakenData take();

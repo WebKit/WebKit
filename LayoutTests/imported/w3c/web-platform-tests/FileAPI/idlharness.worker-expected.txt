@@ -23,25 +23,25 @@ PASS Blob interface: calling slice(long long, long long, DOMString) on new Blob(
 FAIL Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
 FAIL Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type assert_inherits: property "text" not found in prototype chain
 FAIL Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type assert_inherits: property "arrayBuffer" not found in prototype chain
-FAIL File interface: existence and properties of interface object assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface object length assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface object name assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface: existence and properties of interface prototype object assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface: attribute name assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File interface: attribute lastModified assert_own_property: self does not have own property "File" expected property "File" missing
-FAIL File must be primary interface of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Stringification of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "lastModified" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "size" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice(long long, long long, DOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: calling slice(long long, long long, DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
+PASS File interface: existence and properties of interface object 
+PASS File interface object length 
+PASS File interface object name 
+PASS File interface: existence and properties of interface prototype object 
+PASS File interface: existence and properties of interface prototype object's "constructor" property 
+PASS File interface: existence and properties of interface prototype object's @@unscopables property 
+PASS File interface: attribute name 
+PASS File interface: attribute lastModified 
+PASS File must be primary interface of new File(["myFileBits"], "myFileName") 
+PASS Stringification of new File(["myFileBits"], "myFileName") 
+PASS File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type 
+PASS File interface: new File(["myFileBits"], "myFileName") must inherit property "lastModified" with the proper type 
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "size" with the proper type 
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "type" with the proper type 
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice(long long, long long, DOMString)" with the proper type 
+PASS Blob interface: calling slice(long long, long long, DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError 
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type assert_inherits: property "text" not found in prototype chain
+FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type assert_inherits: property "arrayBuffer" not found in prototype chain
 FAIL FileList interface: existence and properties of interface object assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface object length assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface object name assert_own_property: self does not have own property "FileList" expected property "FileList" missing

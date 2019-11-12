@@ -1,5 +1,31 @@
 2019-11-11  Youenn Fablet  <youenn@apple.com>
 
+        DOMFormData should be available in workers
+        https://bugs.webkit.org/show_bug.cgi?id=176674
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+        * web-platform-tests/FileAPI/url/sandboxed-iframe-expected.txt:
+        * web-platform-tests/FileAPI/url/url-format.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/abort/serviceworker-intercepted.https-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt:
+        * web-platform-tests/mimesniff/mime-types/parsing.any.worker-expected.txt:
+        * web-platform-tests/xhr/access-control-and-redirects-async-same-origin-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-async-header-denied-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-async-method-denied-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-async-not-supported-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-sync-header-denied-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-sync-method-denied-expected.txt:
+        * web-platform-tests/xhr/access-control-preflight-sync-not-supported-expected.txt:
+        * web-platform-tests/xhr/event-error.sub-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+        * web-platform-tests/xhr/send-conditional-cors-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+
+2019-11-11  Youenn Fablet  <youenn@apple.com>
+
         Fail cross-origin redirection loads in case of CORS with redirection URLs having credentials
         https://bugs.webkit.org/show_bug.cgi?id=204036
 

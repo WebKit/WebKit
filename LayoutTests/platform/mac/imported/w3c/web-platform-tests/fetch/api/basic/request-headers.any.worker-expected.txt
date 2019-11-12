@@ -5,7 +5,7 @@ PASS Fetch with PUT without body
 PASS Fetch with PUT with body 
 PASS Fetch with POST without body 
 PASS Fetch with POST with text body 
-FAIL Fetch with POST with FormData body Can't find variable: FormData
+PASS Fetch with POST with FormData body 
 PASS Fetch with POST with URLSearchParams body 
 PASS Fetch with POST with Blob body 
 PASS Fetch with POST with ArrayBuffer body 

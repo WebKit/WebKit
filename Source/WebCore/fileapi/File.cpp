@@ -133,8 +133,11 @@ void File::computeNameAndContentType(const String& path, const String& nameOverr
 #endif
     effectiveName = nameOverride.isEmpty() ? FileSystem::pathGetFileName(path) : nameOverride;
     size_t index = effectiveName.reverseFind('.');
-    if (index != notFound)
-        effectiveContentType = MIMETypeRegistry::getMIMETypeForExtension(effectiveName.substring(index + 1));
+    if (index != notFound) {
+        callOnMainThreadAndWait([&effectiveContentType, &effectiveName, index] {
+            effectiveContentType = MIMETypeRegistry::getMIMETypeForExtension(effectiveName.substring(index + 1)).isolatedCopy();
+        });
+    }
 }
 
 String File::contentTypeForFile(const String& path)

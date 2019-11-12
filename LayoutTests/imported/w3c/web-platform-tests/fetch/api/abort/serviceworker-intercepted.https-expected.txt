@@ -5,5 +5,5 @@ PASS response.blob() rejects if already aborted
 PASS response.formData() rejects if already aborted 
 PASS response.json() rejects if already aborted 
 PASS response.text() rejects if already aborted 
-FAIL Stream errors once aborted. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Stream errors once aborted. 
 
