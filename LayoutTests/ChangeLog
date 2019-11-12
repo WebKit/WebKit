@@ -1,3 +1,14 @@
+2019-11-12  Rob Buis  <rbuis@igalia.com>
+
+        Unskip some fetch tests
+        https://bugs.webkit.org/show_bug.cgi?id=204047
+
+        Reviewed by Youenn Fablet.
+
+        Unskip two fetch tests that do not time out anymore.
+
+        * TestExpectations:
+
 2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Enable CSS Painting API
