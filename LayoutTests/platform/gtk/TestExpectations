@@ -711,9 +711,6 @@ Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap [ Skip ]
 
-# ENABLE(CSS_PAINTING_API) is disabled.
-webkit.org/b/190710 fast/css-custom-paint [ Skip ]
-
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]

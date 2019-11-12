@@ -1,5 +1,17 @@
 2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK][WPE] Enable CSS Painting API
+        https://bugs.webkit.org/show_bug.cgi?id=190710
+
+        Reviewed by Don Olmstead.
+
+        Unskip the tests that now pass.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [Pointer Events WPT] Delete manual tests imported as layout tests
         https://bugs.webkit.org/show_bug.cgi?id=203996
 

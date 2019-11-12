@@ -1379,7 +1379,7 @@ CSSCustomPropertiesAndValuesEnabled:
 
 CSSPaintingAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_CSS_PAINTING_API_ENABLED
   humanReadableName: "CSS Painting API"
   humanReadableDescription: "Enable the CSS Painting API"
   webcoreBinding: RuntimeEnabledFeatures
