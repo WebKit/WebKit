@@ -74,7 +74,8 @@ public:
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
 #if PLATFORM(IOS_FAMILY)
-    const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
+    static void setCTDataConnectionServiceType(const String&);
+    const String& dataConnectionServiceType() const;
 #endif
 
     static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);

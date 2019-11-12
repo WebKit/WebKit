@@ -366,6 +366,16 @@
 }
 
 #if PLATFORM(IOS_FAMILY)
+- (NSString *)CTDataConnectionServiceType
+{
+    return _processPoolConfiguration->ctDataConnectionServiceType();
+}
+
+- (void)setCTDataConnectionServiceType:(NSString *)ctDataConnectionServiceType
+{
+    _processPoolConfiguration->setCTDataConnectionServiceType(ctDataConnectionServiceType);
+}
+
 - (BOOL)alwaysRunsAtBackgroundPriority
 {
     return _processPoolConfiguration->alwaysRunsAtBackgroundPriority();

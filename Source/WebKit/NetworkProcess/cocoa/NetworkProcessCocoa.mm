@@ -95,6 +95,10 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
+#if PLATFORM(IOS_FAMILY)
+    NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
+#endif
+    
     initializeNetworkSettings();
 
 #if PLATFORM(MAC)

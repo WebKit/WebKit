@@ -293,6 +293,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
+#if PLATFORM(IOS_FAMILY)
+    parameters.ctDataConnectionServiceType = m_configuration->ctDataConnectionServiceType();
+#endif
+
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if PLATFORM(MAC)

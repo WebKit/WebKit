@@ -118,6 +118,11 @@ public:
     bool isJITEnabled() const { return m_isJITEnabled; }
     void setJITEnabled(bool enabled) { m_isJITEnabled = enabled; }
 
+#if PLATFORM(IOS_FAMILY)
+    const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
+    void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
+#endif
+
     ProcessID presentingApplicationPID() const { return m_presentingApplicationPID; }
     void setPresentingApplicationPID(ProcessID pid) { m_presentingApplicationPID = pid; }
 

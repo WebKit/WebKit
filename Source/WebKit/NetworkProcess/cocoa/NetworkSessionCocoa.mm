@@ -968,6 +968,27 @@ const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
     return m_sourceApplicationSecondaryIdentifier;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static String& globalCTDataConnectionServiceType()
+{
+    static NeverDestroyed<String> ctDataConnectionServiceType;
+    return ctDataConnectionServiceType.get();
+}
+
+void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
+{
+    ASSERT(!sessionsCreated);
+    globalCTDataConnectionServiceType() = type;
+}
+
+const String& NetworkSessionCocoa::dataConnectionServiceType() const
+{
+    if (!globalCTDataConnectionServiceType().isEmpty())
+        return globalCTDataConnectionServiceType();
+    return m_dataConnectionServiceType;
+}
+#endif
+
 std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
     return makeUnique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
@@ -1056,7 +1077,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration.connectionProxyDictionary = proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
 
 #if PLATFORM(IOS_FAMILY)
-    if (!m_dataConnectionServiceType.isEmpty())
+    if (!globalCTDataConnectionServiceType().isEmpty())
+        configuration._CTDataConnectionServiceType = globalCTDataConnectionServiceType();
+    else if (!m_dataConnectionServiceType.isEmpty())
         configuration._CTDataConnectionServiceType = m_dataConnectionServiceType;
 #endif
 

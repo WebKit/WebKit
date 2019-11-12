@@ -1297,6 +1297,8 @@ UIViewController *WebPageProxy::paymentCoordinatorPresentingViewController(const
 
 const String& WebPageProxy::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
+    if (!process().processPool().configuration().ctDataConnectionServiceType().isNull())
+        return process().processPool().configuration().ctDataConnectionServiceType();
     return websiteDataStore().configuration().dataConnectionServiceType();
 }
 
