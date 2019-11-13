@@ -62,6 +62,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID)
     WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+    RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+    UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 #endif
 
     RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (Optional<uint64_t> newQuota) Async

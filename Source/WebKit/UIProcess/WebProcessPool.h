@@ -396,6 +396,8 @@ public:
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
     void updateServiceWorkerUserAgent(const String& userAgent);
     const Optional<UserContentControllerIdentifier>& userContentControllerIdentifierForServiceWorkers() const { return m_userContentControllerIDForServiceWorker; }
+    bool hasServiceWorkerForegroundActivityForTesting() const;
+    bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
 
 #if PLATFORM(COCOA)

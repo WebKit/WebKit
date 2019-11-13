@@ -198,6 +198,11 @@ void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerIdentifier s
     }
 }
 
+WebCore::ProcessIdentifier WebSWServerToContextConnection::webProcessIdentifier() const
+{
+    return m_connection.webProcessIdentifier();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

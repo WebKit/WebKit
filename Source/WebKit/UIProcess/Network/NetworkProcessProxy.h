@@ -246,6 +246,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID);
     void workerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier);
+    void registerServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
+    void unregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
 #endif
 
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&&);

@@ -1565,18 +1565,52 @@ void WebProcessProxy::updateServiceWorkerProcessAssertion()
     if (!m_serviceWorkerInformation)
         return;
 
-    // FIXME: We could do better if we knew which WebContent processes needed this service worker process.
-    if (processPool().hasForegroundWebProcesses()) {
+    bool shouldTakeForegroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [](auto& process) {
+        return !!process.m_foregroundToken;
+    });
+    if (shouldTakeForegroundActivity) {
         if (!ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity))
             m_serviceWorkerInformation->activity = m_throttler.foregroundActivity("Service Worker for foreground view(s)"_s);
         return;
     }
-    if (processPool().hasBackgroundWebProcesses()) {
+
+    bool shouldTakeBackgroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [](auto& process) {
+        return !!process.m_backgroundToken;
+    });
+    if (shouldTakeBackgroundActivity) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))
             m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background view(s)"_s);
         return;
     }
     m_serviceWorkerInformation->activity = nullptr;
+}
+
+void WebProcessProxy::registerServiceWorkerClientProcess(WebProcessProxy& proxy)
+{
+    if (!m_serviceWorkerInformation)
+        return;
+
+    m_serviceWorkerInformation->clientProcesses.add(proxy);
+    updateServiceWorkerProcessAssertion();
+}
+
+void WebProcessProxy::unregisterServiceWorkerClientProcess(WebProcessProxy& proxy)
+{
+    if (!m_serviceWorkerInformation)
+        return;
+
+    m_serviceWorkerInformation->clientProcesses.remove(proxy);
+    updateServiceWorkerProcessAssertion();
+}
+
+bool WebProcessProxy::hasServiceWorkerForegroundActivityForTesting() const
+{
+    return m_serviceWorkerInformation ? ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity) : false;
+}
+
+bool WebProcessProxy::hasServiceWorkerBackgroundActivityForTesting() const
+{
+    return m_serviceWorkerInformation ? ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity) : false;
 }
 #endif // ENABLE(SERVICE_WORKER)
 
@@ -1627,6 +1661,7 @@ void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerI
 #endif
         },
         nullptr,
+        { }
     };
 #if ENABLE(SERVICE_WORKER)
     updateServiceWorkerProcessAssertion();

@@ -75,6 +75,8 @@ public:
     void registerFetch(ServiceWorkerFetchTask&);
     void unregisterFetch(ServiceWorkerFetchTask&);
 
+    WebCore::ProcessIdentifier webProcessIdentifier() const;
+
 private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;

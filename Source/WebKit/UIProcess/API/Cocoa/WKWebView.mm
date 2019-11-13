@@ -7705,6 +7705,32 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         _page->process().sendProcessDidResume();
 }
 
+- (void)_setAssertionStateForTesting:(int)value
+{
+    if (!_page)
+        return;
+
+    _page->process().setAssertionStateForTesting(static_cast<WebKit::AssertionState>(value));
+}
+
+- (BOOL)_hasServiceWorkerBackgroundActivityForTesting
+{
+#if ENABLE(SERVICE_WORKER)
+    return _page ? _page->process().processPool().hasServiceWorkerBackgroundActivityForTesting() : false;
+#else
+    return false;
+#endif
+}
+
+- (BOOL)_hasServiceWorkerForegroundActivityForTesting
+{
+#if ENABLE(SERVICE_WORKER)
+    return _page ? _page->process().processPool().hasServiceWorkerForegroundActivityForTesting() : false;
+#else
+    return false;
+#endif
+}
+
 - (void)_denyNextUserMediaRequest
 {
 #if ENABLE(MEDIA_STREAM)

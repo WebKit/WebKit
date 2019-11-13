@@ -2046,11 +2046,16 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 
 void WebProcessPool::updateProcessAssertions()
 {
-#if ENABLE(SERVICE_WORKER)
-    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
-        serviceWorkerProcess->updateServiceWorkerProcessAssertion();
-#endif
     ensureNetworkProcess().updateProcessAssertion();
+    // Check on next run loop since the web process proxy tokens are probably being updated.
+    callOnMainRunLoop([this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+#if ENABLE(SERVICE_WORKER)
+        for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+            serviceWorkerProcess->updateServiceWorkerProcessAssertion();
+#endif
+    });
 }
 
 bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
@@ -2396,5 +2401,21 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
 #endif
     terminateNetworkProcess();
 }
+
+#if ENABLE(SERVICE_WORKER)
+bool WebProcessPool::hasServiceWorkerForegroundActivityForTesting() const
+{
+    return WTF::anyOf(m_serviceWorkerProcesses.values(), [](auto& process) {
+        return process->hasServiceWorkerForegroundActivityForTesting();
+    });
+}
+
+bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
+{
+    return WTF::anyOf(m_serviceWorkerProcesses.values(), [](auto& process) {
+        return process->hasServiceWorkerBackgroundActivityForTesting();
+    });
+}
+#endif
 
 } // namespace WebKit

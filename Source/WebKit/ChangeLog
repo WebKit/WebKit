@@ -1,3 +1,49 @@
+2019-11-13  Youenn Fablet  <youenn@apple.com>
+
+        Take service worker assertions based on client processes assertion states
+        https://bugs.webkit.org/show_bug.cgi?id=204119
+
+        Reviewed by Chris Dumez.
+
+        Compute in network process which processes contain clients for service workers of a given process.
+        WebSWServerConnection implements it and sends update to UIProcess/WebProcessProxy.
+        WebProcessProxy keeps for each service worker process a set of client web processes.
+        WebProcessProxy now computes the service worker process assertion based on this set.
+
+        Add some private APIs to set process assertions/get service worker process assertion states.
+        Covered by new API test.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        (WebKit::WebSWServerConnection::unregisterServiceWorkerClient):
+        (WebKit::WebSWServerConnection::contextConnectionCreated):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::webProcessIdentifier const):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setAssertionStateForTesting:]):
+        (-[WKWebView _hasServiceWorkerBackgroundActivityForTesting]):
+        (-[WKWebView _hasServiceWorkerForegroundActivityForTesting]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::registerWebProcessToServiceWorkerProcess):
+        (WebKit::NetworkProcessProxy::unregisterWebProcessToServiceWorkerProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::hasServiceWorkerForegroundActivityForTesting const):
+        (WebKit::WebProcessPool::hasServiceWorkerBackgroundActivityForTesting const):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion):
+        (WebKit::WebProcessProxy::registerWebProcessToServiceWorkerProcess):
+        (WebKit::WebProcessProxy::unregisterWebProcessToServiceWorkerProcess):
+        (WebKit::WebProcessProxy::hasServiceWorkerForegroundActivityForTesting const):
+        (WebKit::WebProcessProxy::hasServiceWorkerBackgroundActivityForTesting const):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::setAssertionStateForTesting):
+
 2019-11-13  Andres Gonzalez  <andresg_22@apple.com>
 
         AXObjectCache::rootObject should generate the isolated tree.

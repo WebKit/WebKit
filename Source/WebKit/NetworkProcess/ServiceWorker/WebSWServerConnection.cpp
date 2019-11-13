@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -307,12 +308,24 @@ void WebSWServerConnection::getRegistrations(uint64_t registrationMatchRequestId
 
 void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& topOrigin, ServiceWorkerClientData&& data, const Optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
-    auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromURL(data.url) };
+    auto contextOrigin = SecurityOriginData::fromURL(data.url);
+    bool isNewOrigin = WTF::allOf(m_clientOrigins.values(), [&contextOrigin](auto& origin) {
+        return contextOrigin != origin.clientOrigin;
+    });
+
+    auto clientOrigin = ClientOrigin { WTFMove(topOrigin), WTFMove(contextOrigin) };
     m_clientOrigins.add(data.identifier, clientOrigin);
     server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent));
 
     if (!m_isThrottleable)
         updateThrottleState();
+
+    if (isNewOrigin) {
+        if (auto* contextConnection = server().contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin })) {
+            auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
+            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+        }
+    }
 }
 
 void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerClientIdentifier& clientIdentifier)
@@ -321,11 +334,24 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerCli
     if (iterator == m_clientOrigins.end())
         return;
 
-    server().unregisterServiceWorkerClient(iterator->value, clientIdentifier);
+    auto clientOrigin = iterator->value;
+
+    server().unregisterServiceWorkerClient(clientOrigin, clientIdentifier);
     m_clientOrigins.remove(iterator);
 
     if (!m_isThrottleable)
         updateThrottleState();
+
+    bool isDeletedOrigin = WTF::allOf(m_clientOrigins.values(), [&clientOrigin](auto& origin) {
+        return clientOrigin.clientOrigin != origin.clientOrigin;
+    });
+
+    if (isDeletedOrigin) {
+        if (auto* contextConnection = server().contextConnectionForRegistrableDomain(RegistrableDomain { clientOrigin.clientOrigin })) {
+            auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
+            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::UnregisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+        }
+    }
 }
 
 bool WebSWServerConnection::hasMatchingClient(const RegistrableDomain& domain) const
@@ -373,6 +399,9 @@ void WebSWServerConnection::contextConnectionCreated(WebCore::SWServerToContextC
 {
     auto& connection =  static_cast<WebSWServerToContextConnection&>(contextConnection);
     connection.setThrottleState(computeThrottleState(connection.registrableDomain()));
+
+    if (hasMatchingClient(connection.registrableDomain()))
+        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
 }
 
 void WebSWServerConnection::syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&& identifier, CompletionHandler<void()>&& completionHandler)

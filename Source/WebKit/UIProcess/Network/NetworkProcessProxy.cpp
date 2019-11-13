@@ -1228,6 +1228,26 @@ void NetworkProcessProxy::workerContextConnectionNoLongerNeeded(WebCore::Process
     if (auto* process = WebProcessProxy::processForIdentifier(identifier))
         process->disableServiceWorkers();
 }
+
+void NetworkProcessProxy::registerServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+{
+    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier);
+    if (!webProcess || !serviceWorkerProcess)
+        return;
+
+    serviceWorkerProcess->registerServiceWorkerClientProcess(*webProcess);
+}
+
+void NetworkProcessProxy::unregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+{
+    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    if (!webProcess || !serviceWorkerProcess)
+        return;
+
+    serviceWorkerProcess->unregisterServiceWorkerClientProcess(*webProcess);
+}
 #endif
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)

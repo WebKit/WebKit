@@ -53,6 +53,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace API {
 class Navigation;
@@ -339,7 +340,12 @@ public:
     void updateServiceWorkerPreferencesStore(const WebPreferencesStore&);
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->serviceWorkerPageProxyID == pageProxyID; }
     void updateServiceWorkerProcessAssertion();
+    void registerServiceWorkerClientProcess(WebProcessProxy&);
+    void unregisterServiceWorkerClientProcess(WebProcessProxy&);
+    bool hasServiceWorkerForegroundActivityForTesting() const;
+    bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
+    void setAssertionStateForTesting(AssertionState state) { didSetAssertionState(state); }
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -527,6 +533,7 @@ private:
         WebCore::PageIdentifier serviceWorkerPageID;
         ServiceWorkerInitializationData initializationData;
         ProcessThrottler::ActivityVariant activity;
+        WeakHashSet<WebProcessProxy> clientProcesses;
     };
     Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
 };

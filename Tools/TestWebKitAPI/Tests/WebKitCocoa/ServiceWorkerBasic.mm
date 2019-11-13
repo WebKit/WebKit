@@ -1614,6 +1614,77 @@ TEST(ServiceWorkers, OutOfAndInProcessServiceWorker)
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
 }
 
+void waitUntilServiceWorkerProcessForegroundActivityState(WKWebView *page, bool shouldHaveActivity)
+{
+    do {
+        if (page._hasServiceWorkerForegroundActivityForTesting == shouldHaveActivity)
+            return;
+        TestWebKitAPI::Util::spinRunLoop(1);
+    } while (true);
+}
+
+void waitUntilServiceWorkerProcessBackgroundActivityState(WKWebView *page, bool shouldHaveActivity)
+{
+    do {
+        if (page._hasServiceWorkerBackgroundActivityForTesting == shouldHaveActivity)
+            return;
+        TestWebKitAPI::Util::spinRunLoop(1);
+    } while (true);
+}
+
+void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServiceWorkerProcess)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    ServiceWorkerTCPServer server({
+        { "text/html", mainBytes },
+        { "application/javascript", scriptBytes },
+    });
+
+    auto *processPool = configuration.get().processPool;
+    [processPool _setUseSeparateServiceWorkerProcess: useSeparateServiceWorkerProcess];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request()];
+
+    waitUntilServiceWorkerProcessCount(processPool, 1);
+
+    [webView _setAssertionStateForTesting: 1];
+    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
+    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), true);
+
+    [webView _setAssertionStateForTesting: 3];
+    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), true);
+    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
+
+    [webView _setAssertionStateForTesting: 0];
+    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
+    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
+}
+
+TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcesses)
+{
+    bool useSeparateServiceWorkerProcess = false;
+    testSuspendServiceWorkerProcessBasedOnClientProcesses(useSeparateServiceWorkerProcess);
+
+    useSeparateServiceWorkerProcess = true;
+    testSuspendServiceWorkerProcessBasedOnClientProcesses(useSeparateServiceWorkerProcess);
+}
+
+
 TEST(ServiceWorkers, DISABLED_ThrottleCrash)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
