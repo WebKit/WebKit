@@ -1,3 +1,32 @@
+2019-11-13  Benjamin Nham  <nham@apple.com>
+
+        VeryHigh priority loads are actually loading at VeryLow priority
+        https://bugs.webkit.org/show_bug.cgi?id=203423
+        <rdar://problem/56621789>
+
+        Reviewed by Antti Koivisto.
+
+        There are two issues with the way we translate ResourceLoadPriority to
+        CFURLRequestPriority:
+
+        1. We call _CFNetworkHTTPConnectionCacheSetLimit and set 1 too few
+        priority levels. This means VeryHigh priority loads are actually out
+        of bounds, which causes CFNetwork to set the priority level back to 0
+        in HTTPConnectionCacheEntry::_prepareNewRequest. After this patch we'll
+        call _CFNetworkHTTPConnectionCacheSetLimit with the correct number of
+        levels.
+
+        2. _CFNetworkHTTPConnectionCacheSetLimit doesn't work for NSURLSession
+        right now (<rdar://problem/56621205>), so we have to map to the default
+        number of CFURLRequestPriority levels, which is 4. Right now we have 5
+        ResourceLoadPriority levels, so there will be some aliasing involved.
+        After this patch VeryLow gets a priority of -1 and Low gets a priority
+        of 0, but due to the aforementioned clamping behavior both VeryLow and
+        Low will effectively both have a CFURLRequestPriority of 0.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::initializeNetworkSettings):
+
 2019-11-13  Youenn Fablet  <youenn@apple.com>
 
         Remove timer to stop service worker process
