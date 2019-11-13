@@ -3995,7 +3995,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
+    BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
     JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
@@ -4019,7 +4019,7 @@ void SpeculativeJIT::compileValueSub(Node* node)
 
         CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
         BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
+        BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
         JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
@@ -4613,7 +4613,7 @@ void SpeculativeJIT::compileValueNegate(Node* node)
 {
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
+    UnaryArithProfile* arithProfile = baselineCodeBlock->unaryArithProfileForBytecodeIndex(bytecodeIndex);
     JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile);
     auto repatchingFunction = operationArithNegateOptimize;
     auto nonRepatchingFunction = operationArithNegate;
@@ -4836,7 +4836,7 @@ void SpeculativeJIT::compileValueMul(Node* node)
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
+    BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
     JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile);
     auto repatchingFunction = operationValueMulOptimize;
     auto nonRepatchingFunction = operationValueMul;

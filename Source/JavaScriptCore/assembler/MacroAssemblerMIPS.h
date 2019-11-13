@@ -475,6 +475,25 @@ public:
         m_assembler.subu(dest, MIPSRegisters::zero, src);
     }
 
+    void or16(TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        if (!imm.m_value && !m_fixedWidth)
+            return;
+
+        if (m_fixedWidth) {
+            // TODO: Swap dataTempRegister and immTempRegister usage
+            load16(dest.m_ptr, immTempRegister);
+            or32(imm, immTempRegister);
+            store16(immTempRegister, dest.m_ptr);
+        } else {
+            uintptr_t adr = reinterpret_cast<uintptr_t>(dest.m_ptr);
+            m_assembler.lui(addrTempRegister, (adr + 0x8000) >> 16);
+            m_assembler.lw(immTempRegister, addrTempRegister, adr & 0xffff);
+            or16(imm, immTempRegister);
+            m_assembler.sw(immTempRegister, addrTempRegister, adr & 0xffff);
+        }
+    }
+
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orInsn(dest, dest, src);

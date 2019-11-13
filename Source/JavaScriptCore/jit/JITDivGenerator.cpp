@@ -130,7 +130,7 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
     notDoubleZero.link(&jit);
 #endif
     if (m_arithProfile)
-        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::specialFastPathBit), CCallHelpers::AbsoluteAddress(m_arithProfile->addressOfBits()));
+        m_arithProfile->emitUnconditionalSet(jit, BinaryArithProfile::specialFastPathBit);
     jit.boxDouble(m_leftFPR, m_result);
 }
 

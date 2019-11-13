@@ -1104,6 +1104,31 @@ void testProbeModifiesStackValues()
 }
 #endif // ENABLE(MASM_PROBE)
 
+void testOrImmMem()
+{
+    // FIXME: this does not test that the or does not touch beyond its width.
+    // I am not sure how to do such a test without a lot of complexity (running multiple threads, with a race on the high bits of the memory location).
+    uint64_t memoryLocation = 0x12341234;
+    auto or32 = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.or32(CCallHelpers::TrustedImm32(42), CCallHelpers::AbsoluteAddress(&memoryLocation));
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    invoke<void>(or32);
+    CHECK_EQ(memoryLocation, 0x12341234 | 42);
+
+    memoryLocation = 0x12341234;
+    auto or16 = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.or16(CCallHelpers::TrustedImm32(42), CCallHelpers::AbsoluteAddress(&memoryLocation));
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    invoke<void>(or16);
+    CHECK_EQ(memoryLocation, 0x12341234 | 42);
+}
+
 void testByteSwap()
 {
 #if CPU(X86_64) || CPU(ARM64)
@@ -1359,6 +1384,8 @@ void run(const char* filter)
     RUN(testMoveDoubleConditionally64());
 
     RUN(testCagePreservesPACFailureBit());
+
+    RUN(testOrImmMem());
 
     if (tasks.isEmpty())
         usage();

@@ -32,7 +32,8 @@
 namespace JSC {
 
 #if ENABLE(JIT)
-void ArithProfile::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
 {
     if (!shouldEmitSetDouble() && !shouldEmitSetNonNumeric() && !shouldEmitSetBigInt())
         return;
@@ -58,41 +59,58 @@ void ArithProfile::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, TagReg
     done.link(&jit);
 }
 
-bool ArithProfile::shouldEmitSetDouble() const
+template<typename BitfieldType>
+bool ArithProfile<BitfieldType>::shouldEmitSetDouble() const
 {
-    uint32_t mask = ArithProfile::Int32Overflow | ArithProfile::Int52Overflow | ArithProfile::NegZeroDouble | ArithProfile::NonNegZeroDouble;
+    BitfieldType mask = Int32Overflow | Int52Overflow | NegZeroDouble | NonNegZeroDouble;
     return (m_bits & mask) != mask;
 }
 
-void ArithProfile::emitSetDouble(CCallHelpers& jit) const
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitSetDouble(CCallHelpers& jit) const
 {
     if (shouldEmitSetDouble())
-        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::Int32Overflow | ArithProfile::Int52Overflow | ArithProfile::NegZeroDouble | ArithProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(addressOfBits()));
+        emitUnconditionalSet(jit, Int32Overflow | Int52Overflow | NegZeroDouble | NonNegZeroDouble);
 }
 
-bool ArithProfile::shouldEmitSetNonNumeric() const
+template<typename BitfieldType>
+bool ArithProfile<BitfieldType>::shouldEmitSetNonNumeric() const
 {
-    uint32_t mask = ArithProfile::NonNumeric;
+    BitfieldType mask = ArithProfile::NonNumeric;
     return (m_bits & mask) != mask;
 }
 
-bool ArithProfile::shouldEmitSetBigInt() const
-{
-    uint32_t mask = ArithProfile::BigInt;
-    return (m_bits & mask) != mask;
-}
-
-void ArithProfile::emitSetNonNumeric(CCallHelpers& jit) const
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitSetNonNumeric(CCallHelpers& jit) const
 {
     if (shouldEmitSetNonNumeric())
-        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::NonNumeric), CCallHelpers::AbsoluteAddress(addressOfBits()));
+        emitUnconditionalSet(jit, NonNumeric);
 }
 
-void ArithProfile::emitSetBigInt(CCallHelpers& jit) const
+template<typename BitfieldType>
+bool ArithProfile<BitfieldType>::shouldEmitSetBigInt() const
+{
+    BitfieldType mask = ArithProfile::BigInt;
+    return (m_bits & mask) != mask;
+}
+
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitSetBigInt(CCallHelpers& jit) const
 {
     if (shouldEmitSetBigInt())
-        jit.or32(CCallHelpers::TrustedImm32(ArithProfile::BigInt), CCallHelpers::AbsoluteAddress(addressOfBits()));
+        emitUnconditionalSet(jit, BigInt);
 }
+
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitUnconditionalSet(CCallHelpers& jit, BitfieldType mask) const
+{
+    static_assert(std::is_same<BitfieldType, uint16_t>::value);
+    jit.or16(CCallHelpers::TrustedImm32(mask), CCallHelpers::AbsoluteAddress(addressOfBits()));
+}
+
+// Generate the implementations of the functions above for UnaryArithProfile/BinaryArithProfile
+// If changing the size of either, add the corresponding lines here.
+template class ArithProfile<uint16_t>;
 #endif // ENABLE(JIT)
 
 } // namespace JSC
@@ -101,7 +119,8 @@ namespace WTF {
     
 using namespace JSC;
 
-void printInternal(PrintStream& out, const ArithProfile& profile)
+template <typename T>
+void printInternal(PrintStream& out, const ArithProfile<T>& profile)
 {
     const char* separator = "";
 
@@ -135,18 +154,29 @@ void printInternal(PrintStream& out, const ArithProfile& profile)
             separator = "|";
         }
     }
-    if (profile.tookSpecialFastPath())
-        out.print(separator, "Took special fast path.");
     out.print(">");
+}
+
+void printInternal(PrintStream& out, const UnaryArithProfile& profile)
+{
+    printInternal(out, static_cast<ArithProfile<UnaryArithProfileBase>>(profile));
+
+    out.print(" Arg ObservedType:<");
+    out.print(profile.argObservedType());
+    out.print(">");
+}
+
+void printInternal(PrintStream& out, const BinaryArithProfile& profile)
+{
+    printInternal(out, static_cast<ArithProfile<UnaryArithProfileBase>>(profile));
+
+    if (profile.tookSpecialFastPath())
+        out.print(" Took special fast path.");
 
     out.print(" LHS ObservedType:<");
     out.print(profile.lhsObservedType());
     out.print("> RHS ObservedType:<");
     out.print(profile.rhsObservedType());
-    out.print(">");
-
-    out.print(" LHS ResultType:<", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(profile.lhsResultType().bits()))));
-    out.print("> RHS ResultType:<", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(profile.rhsResultType().bits()))));
     out.print(">");
 }
 

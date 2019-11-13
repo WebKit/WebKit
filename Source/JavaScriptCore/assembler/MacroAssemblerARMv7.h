@@ -365,6 +365,24 @@ public:
     {
         m_assembler.orr(dest, dest, src);
     }
+
+    void or16(TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        if (armImm.isValid()) {
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            load16(addressTempRegister, dataTempRegister);
+            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
+            store16(dataTempRegister, addressTempRegister);
+        } else {
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            load16(addressTempRegister, dataTempRegister);
+            move(imm, addressTempRegister);
+            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            store16(dataTempRegister, addressTempRegister);
+        }
+    }
     
     void or32(RegisterID src, AbsoluteAddress dest)
     {
@@ -782,6 +800,12 @@ public:
         return label;
     }
 
+    void load16(const void* address, RegisterID dest)
+    {
+        move(TrustedImmPtr(address), addressTempRegister);
+        m_assembler.ldrh(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
+    }
+
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);
@@ -887,6 +911,18 @@ public:
     void store16(RegisterID src, BaseIndex address)
     {
         store16(src, setupArmAddress(address));
+    }
+
+    void store16(RegisterID src, const void* address)
+    {
+        move(TrustedImmPtr(address), addressTempRegister);
+        m_assembler.strh(src, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+    }
+
+    void store16(TrustedImm32 imm, const void* address)
+    {
+        move(imm, dataTempRegister);
+        store16(dataTempRegister, address);
     }
 
     // Possibly clobbers src, but not on this architecture.

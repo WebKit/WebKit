@@ -615,6 +615,20 @@ public:
         m_assembler.neg<64>(dest, src);
     }
 
+    void or16(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);
+        if (logicalImm.isValid()) {
+            load16(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
+            m_assembler.orr<32>(dataTempRegister, dataTempRegister, logicalImm);
+            store16(dataTempRegister, address.m_ptr);
+        } else {
+            load16(address.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
+            or32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
+            store16(dataTempRegister, address.m_ptr);
+        }
+    }
+
     void or32(RegisterID src, RegisterID dest)
     {
         or32(dest, src, dest);
@@ -1238,6 +1252,11 @@ public:
             cachedMemoryTempRegister().invalidate();
     }
 
+    void load16(const void* address, RegisterID dest)
+    {
+        load<16>(address, dest);
+    }
+
     void load16Unaligned(ImplicitAddress address, RegisterID dest)
     {
         load16(address, dest);
@@ -1544,6 +1563,22 @@ public:
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
         m_assembler.strh(src, address.base, memoryTempRegister);
+    }
+
+    void store16(RegisterID src, const void* address)
+    {
+        store<16>(src, address);
+    }
+
+    void store16(TrustedImm32 imm, const void* address)
+    {
+        if (!imm.m_value) {
+            store16(ARM64Registers::zr, address);
+            return;
+        }
+
+        moveToCachedReg(imm, dataMemoryTempRegister());
+        store16(dataTempRegister, address);
     }
 
     void storeZero16(ImplicitAddress address)
