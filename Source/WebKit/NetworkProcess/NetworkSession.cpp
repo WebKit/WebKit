@@ -108,6 +108,8 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
             SandboxExtension::consumePermanently(parameters.resourceLoadStatisticsDirectoryExtensionHandle);
     }
 
+    m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
+
     m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;

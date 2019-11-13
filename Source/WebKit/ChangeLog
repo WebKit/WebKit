@@ -1,3 +1,63 @@
+2019-11-13  Rob Buis  <rbuis@igalia.com>
+
+        Support stale-while-revalidate cache strategy
+        https://bugs.webkit.org/show_bug.cgi?id=201461
+
+        Reviewed by Youenn Fablet.
+
+        Add a new UseDecision value AsyncRevalidate for async revalidation. This is used
+        when the retrieved cache entry is a stale-while-revalidate response [1].
+        In case of AsyncRevalidate, a check is made to see if there is a
+        current async revalidation ongoing for the entry, if not one is
+        started. Regardless, the stale entry is returned, until either the
+        async revalidation ends successfully or at the moment when the
+        response expires for real.
+
+        [1] https://fetch.spec.whatwg.org/#concept-stale-while-revalidate-response
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::isStaleWhileRevalidateEnabled const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cache/AsyncRevalidation.cpp: Added.
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::AsyncRevalidation::staleWhileRevalidateEnding):
+        (WebKit::NetworkCache::AsyncRevalidation::AsyncRevalidation):
+        * NetworkProcess/cache/AsyncRevalidation.h: Added.
+        (WebKit::NetworkCache::AsyncRevalidation::load const):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+        (WebKit::NetworkCache::makeUseDecision):
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::Cache::startAsyncRevalidationIfNeeded):
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::responseHasExpired): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::dumpHTTPHeadersDiff):
+        (WebKit::NetworkCache::requestsHeadersMatch):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::dumpHTTPHeadersDiff): Deleted.
+        (WebKit::NetworkCache::requestsHeadersMatch): Deleted.
+        * Sources.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationGetStaleWhileRevalidateEnabled):
+        (WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::staleWhileRevalidateEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setStaleWhileRevalidateEnabled):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Convert CSSPrimitiveValue::UnitType to an enum class, and cleanup

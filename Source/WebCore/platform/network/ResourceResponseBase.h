@@ -137,6 +137,7 @@ public:
     WEBCORE_EXPORT bool cacheControlContainsImmutable() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
     WEBCORE_EXPORT Optional<Seconds> cacheControlMaxAge() const;
+    WEBCORE_EXPORT Optional<Seconds> cacheControlStaleWhileRevalidate() const;
     WEBCORE_EXPORT Optional<WallTime> date() const;
     WEBCORE_EXPORT Optional<Seconds> age() const;
     WEBCORE_EXPORT Optional<WallTime> expires() const;

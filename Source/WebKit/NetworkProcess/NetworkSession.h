@@ -124,6 +124,8 @@ public:
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
 
+    bool isStaleWhileRevalidateEnabled() const { return m_isStaleWhileRevalidateEnabled; }
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -144,6 +146,7 @@ protected:
     bool m_downgradeReferrer { true };
     bool m_thirdPartyCookieBlockingEnabled { false };
 #endif
+    bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;

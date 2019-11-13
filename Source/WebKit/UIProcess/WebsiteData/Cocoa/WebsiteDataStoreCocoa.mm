@@ -150,6 +150,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->fastServerTrustEvaluationEnabled(),
         m_configuration->networkCacheSpeculativeValidationEnabled(),
         m_configuration->testingSessionEnabled(),
+        m_configuration->staleWhileRevalidateEnabled(),
         m_configuration->testSpeedMultiplier(),
         m_configuration->suppressesConnectionTerminationOnSystemChange(),
     };

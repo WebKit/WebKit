@@ -1,3 +1,15 @@
+2019-11-13  Rob Buis  <rbuis@igalia.com>
+
+        Support stale-while-revalidate cache strategy
+        https://bugs.webkit.org/show_bug.cgi?id=201461
+
+        Reviewed by Youenn Fablet.
+
+        Skip newly imported tests for WK1.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2019-11-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening for WinCairo

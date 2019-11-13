@@ -96,6 +96,7 @@ struct NetworkSessionCreationParameters {
     bool fastServerTrustEvaluationEnabled { false };
     bool networkCacheSpeculativeValidationEnabled { false };
     bool shouldUseTestingNetworkSession { false };
+    bool staleWhileRevalidateEnabled { false };
     unsigned testSpeedMultiplier { 1 };
     bool suppressesConnectionTerminationOnSystemChange { false };
 };

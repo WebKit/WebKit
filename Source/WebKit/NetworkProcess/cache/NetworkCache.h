@@ -50,6 +50,7 @@ class NetworkProcess;
 
 namespace NetworkCache {
 
+class AsyncRevalidation;
 class Cache;
 class SpeculativeLoadManager;
 
@@ -82,6 +83,7 @@ enum class StoreDecision {
 enum class UseDecision {
     Use,
     Validate,
+    AsyncRevalidate,
     NoDueToVaryingHeaderMismatch,
     NoDueToMissingValidatorFields,
     NoDueToDecodeFailure,
@@ -167,6 +169,8 @@ public:
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
+
+    void startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest&, const NetworkCache::Key&, std::unique_ptr<Entry>&&, const GlobalFrameID&);
 #endif
 
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
@@ -193,6 +197,8 @@ private:
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
+
+    HashMap<Key, std::unique_ptr<AsyncRevalidation>> m_pendingAsyncRevalidations;
 #endif
 
     unsigned m_traverseCount { 0 };

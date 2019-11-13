@@ -2006,3 +2006,6 @@ webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-
 
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
+
+# Stale-while-revalidate is not supported on WK1
+imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]

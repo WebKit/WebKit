@@ -78,6 +78,8 @@ private:
     bool m_didComplete { false };
 };
 
+bool requestsHeadersMatch(const WebCore::ResourceRequest& speculativeValidationRequest, const WebCore::ResourceRequest& actualRequest);
+
 } // namespace NetworkCache
 } // namespace WebKit
 

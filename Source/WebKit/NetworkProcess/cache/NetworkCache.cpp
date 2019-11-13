@@ -26,10 +26,13 @@
 #include "config.h"
 #include "NetworkCache.h"
 
+#include "AsyncRevalidation.h"
 #include "Logging.h"
+#include "NetworkCacheSpeculativeLoad.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStorage.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include <WebCore/CacheValidation.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/LowPowerModeNotifier.h>
@@ -152,35 +155,46 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static bool responseHasExpired(const WebCore::ResourceResponse& response, WallTime timestamp, Optional<Seconds> maxStale)
+static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, WallTime timestamp, Optional<Seconds> maxStale)
 {
     if (response.cacheControlContainsNoCache())
-        return true;
+        return UseDecision::Validate;
 
     auto age = WebCore::computeCurrentAge(response, timestamp);
     auto lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, timestamp);
 
     auto maximumStaleness = maxStale ? maxStale.value() : 0_ms;
     bool hasExpired = age - lifetime > maximumStaleness;
-
-#ifndef LOG_DISABLED
-    if (hasExpired)
-        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f max-stale=%g", age, lifetime, maxStale);
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    if (hasExpired && !maxStale && networkSession.isStaleWhileRevalidateEnabled()) {
+        auto responseMaxStaleness = response.cacheControlStaleWhileRevalidate();
+        maximumStaleness += responseMaxStaleness ? responseMaxStaleness.value() : 0_ms;
+        bool inResponseStaleness = age - lifetime < maximumStaleness;
+        if (inResponseStaleness)
+            return UseDecision::AsyncRevalidate;
+    }
 #endif
 
-    return hasExpired;
+    if (hasExpired) {
+#ifndef LOG_DISABLED
+        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f max-staleness=%f", age, lifetime, maximumStaleness);
+#endif
+        return UseDecision::Validate;
+    }
+
+    return UseDecision::Use;
 }
 
-static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WallTime timestamp)
+static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WallTime timestamp)
 {
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
-        return true;
+        return UseDecision::Validate;
     // For requests we ignore max-age values other than zero.
     if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
-        return true;
+        return UseDecision::Validate;
 
-    return responseHasExpired(response, timestamp, requestDirectives.maxStale);
+    return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives.maxStale);
 }
 
 static UseDecision makeUseDecision(NetworkProcess& networkProcess, const PAL::SessionID& sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
@@ -197,8 +211,9 @@ static UseDecision makeUseDecision(NetworkProcess& networkProcess, const PAL::Se
     if (cachePolicyAllowsExpired(request.cachePolicy()))
         return UseDecision::Use;
 
-    if (!responseNeedsRevalidation(entry.response(), request, entry.timeStamp()))
-        return UseDecision::Use;
+    auto decision = responseNeedsRevalidation(*networkProcess.networkSession(sessionID), entry.response(), request, entry.timeStamp());
+    if (decision != UseDecision::Validate)
+        return decision;
 
     if (!entry.response().hasCacheValidatorFields())
         return UseDecision::NoDueToMissingValidatorFields;
@@ -251,8 +266,12 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto now = WallTime::now();
-        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
-
+        Seconds allowedStale { 0_ms };
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+        if (auto value = response.cacheControlStaleWhileRevalidate())
+            allowedStale = value.value();
+#endif
+        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && (WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms || allowedStale > 0_ms);
         bool possiblyReusable = response.hasCacheValidatorFields() || hasNonZeroLifetime;
         if (!possiblyReusable)
             return StoreDecision::NoDueToUnlikelyToReuse;
@@ -296,6 +315,18 @@ static bool inline canRequestUseSpeculativeRevalidation(const WebCore::ResourceR
 }
 #endif
 
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& request, const NetworkCache::Key& key, std::unique_ptr<Entry>&& entry, const GlobalFrameID& frameID)
+{
+    m_pendingAsyncRevalidations.ensure(key, [&] {
+        return makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), [this, key](AsyncRevalidation::Result result) {
+            m_pendingAsyncRevalidations.remove(key);
+            LOG(NetworkCache, "(NetworkProcess) Async revalidation completed for '%s' with result %d", key.identifier().utf8().data(), static_cast<int>(result));
+        });
+    });
+}
+#endif
+
 void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
@@ -334,12 +365,11 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = makeRef(networkProcess()), sessionID = m_sessionID](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = makeRef(networkProcess()), sessionID = m_sessionID, frameID](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
-
             completeRetrieve(WTFMove(completionHandler), nullptr, info);
             return false;
         }
@@ -350,6 +380,14 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
         auto useDecision = entry ? makeUseDecision(networkProcess, sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
+        case UseDecision::AsyncRevalidate: {
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+            auto entryCopy = makeUnique<Entry>(*entry);
+            entryCopy->setNeedsValidation(true);
+            startAsyncRevalidationIfNeeded(request, storageKey, WTFMove(entryCopy), frameID);
+#endif
+            FALLTHROUGH;
+        }
         case UseDecision::Use:
             break;
         case UseDecision::Validate:

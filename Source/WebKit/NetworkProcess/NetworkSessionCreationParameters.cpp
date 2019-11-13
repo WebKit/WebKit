@@ -78,6 +78,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << fastServerTrustEvaluationEnabled;
     encoder << networkCacheSpeculativeValidationEnabled;
     encoder << shouldUseTestingNetworkSession;
+    encoder << staleWhileRevalidateEnabled;
     encoder << testSpeedMultiplier;
     encoder << suppressesConnectionTerminationOnSystemChange;
 }
@@ -243,7 +244,12 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     decoder >> shouldUseTestingNetworkSession;
     if (!shouldUseTestingNetworkSession)
         return WTF::nullopt;
-    
+
+    Optional<bool> staleWhileRevalidateEnabled;
+    decoder >> staleWhileRevalidateEnabled;
+    if (!staleWhileRevalidateEnabled)
+        return WTF::nullopt;
+
     Optional<unsigned> testSpeedMultiplier;
     decoder >> testSpeedMultiplier;
     if (!testSpeedMultiplier)
@@ -292,6 +298,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*fastServerTrustEvaluationEnabled)
         , WTFMove(*networkCacheSpeculativeValidationEnabled)
         , WTFMove(*shouldUseTestingNetworkSession)
+        , WTFMove(*staleWhileRevalidateEnabled)
         , WTFMove(*testSpeedMultiplier)
         , WTFMove(*suppressesConnectionTerminationOnSystemChange)
     }};

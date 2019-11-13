@@ -78,6 +78,7 @@ NetworkProcess/cache/CacheStorageEngine.cpp
 NetworkProcess/cache/CacheStorageEngineCache.cpp
 NetworkProcess/cache/CacheStorageEngineCaches.cpp
 NetworkProcess/cache/CacheStorageEngineConnection.cpp
+NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cache/NetworkCache.cpp
 NetworkProcess/cache/NetworkCacheBlobStorage.cpp
 NetworkProcess/cache/NetworkCacheCoders.cpp

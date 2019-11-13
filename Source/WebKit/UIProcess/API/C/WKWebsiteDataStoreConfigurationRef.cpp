@@ -139,3 +139,13 @@ void WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(WKWebsiteDataStoreC
 {
     WebKit::toImpl(configuration)->setTestingSessionEnabled(enabled);
 }
+
+bool WKWebsiteDataStoreConfigurationGetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toImpl(configuration)->staleWhileRevalidateEnabled();
+}
+
+void WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled)
+{
+    WebKit::toImpl(configuration)->setStaleWhileRevalidateEnabled(enabled);
+}

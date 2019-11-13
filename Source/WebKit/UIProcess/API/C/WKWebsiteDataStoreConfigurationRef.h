@@ -66,6 +66,9 @@ WK_EXPORT void WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidati
 WK_EXPORT bool WKWebsiteDataStoreConfigurationGetTestingSessionEnabled(WKWebsiteDataStoreConfigurationRef configuration);
 WK_EXPORT void WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled);
 
+WK_EXPORT bool WKWebsiteDataStoreConfigurationGetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration);
+WK_EXPORT void WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

@@ -84,10 +84,13 @@ public:
 
     bool testingSessionEnabled() const { return m_testingSessionEnabled; }
     void setTestingSessionEnabled(bool enabled) { m_testingSessionEnabled = enabled; }
-    
+
+    bool staleWhileRevalidateEnabled() const { return m_staleWhileRevalidateEnabled; }
+    void setStaleWhileRevalidateEnabled(bool enabled) { m_staleWhileRevalidateEnabled = enabled; }
+
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
     void setTestSpeedMultiplier(unsigned multiplier) { m_testSpeedMultiplier = multiplier; }
-    
+
 #if PLATFORM(COCOA)
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
     void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
@@ -159,6 +162,7 @@ private:
 #else
     bool m_networkCacheSpeculativeValidationEnabled { false };
 #endif
+    bool m_staleWhileRevalidateEnabled { false };
     String m_localStorageDirectory;
     String m_mediaKeysStorageDirectory;
     String m_deviceIdHashSaltsStorageDirectory;

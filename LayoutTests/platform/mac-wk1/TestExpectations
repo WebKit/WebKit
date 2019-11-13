@@ -822,3 +822,6 @@ webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation
 webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
 
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
+
+# Stale-while-revalidate is not supported on WK1
+imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]

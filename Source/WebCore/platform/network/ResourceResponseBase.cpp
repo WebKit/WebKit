@@ -657,6 +657,13 @@ Optional<Seconds> ResourceResponseBase::cacheControlMaxAge() const
     return m_cacheControlDirectives.maxAge;
 }
 
+Optional<Seconds> ResourceResponseBase::cacheControlStaleWhileRevalidate() const
+{
+    if (!m_haveParsedCacheControlHeader)
+        parseCacheControlDirectives();
+    return m_cacheControlDirectives.staleWhileRevalidate;
+}
+
 static Optional<WallTime> parseDateValueInHeader(const HTTPHeaderMap& headers, HTTPHeaderName headerName)
 {
     String headerValue = headers.get(headerName);
