@@ -1,5 +1,13 @@
 2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardening. Add expectations for tests using strictFileInteractability
+
+        File upload is not yet supported.
+
+        * TestExpectations.json:
+
+2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed gardening. Update expectations of fullscreen tests.
 
         They are failing in the bots, but passing locally and with wpt.

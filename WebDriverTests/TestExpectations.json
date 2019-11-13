@@ -763,6 +763,36 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/new_session/create_alwaysMatch.py": {
+        "subtests": {
+            "test_valid[strictFileInteractability-True]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            },
+            "test_valid[strictFileInteractability-False]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/new_session/create_firstMatch.py": {
+        "subtests": {
+            "test_valid[strictFileInteractability-True]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            },
+            "test_valid[strictFileInteractability-False]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/new_session/response.py": {
+        "subtests": {
+            "test_capability_type[strictFileInteractability-bool]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            },
+            "test_capability_default_value[strictFileInteractability-False]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/new_session/default_values.py": {
         "subtests": {
             "test_valid_but_unmatchable_key": {
@@ -855,16 +885,6 @@
     "imported/w3c/webdriver/tests/minimize_window/minimize.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/new_session/response.py": {
-        "subtests": {
-            "test_resp_capabilites": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_resp_data": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
