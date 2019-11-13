@@ -1,3 +1,15 @@
+2019-11-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI should convert IsCellWithType to constant when Structure set is finite
+        https://bugs.webkit.org/show_bug.cgi?id=204141
+
+        Reviewed by Saam Barati.
+
+        We should fold IsCellWithType if Structure set is finite since we have a chance to know what JSType is.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put more things in IsoSubspace
