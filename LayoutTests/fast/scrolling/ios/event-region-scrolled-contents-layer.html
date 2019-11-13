@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.scroll {
+    overflow:scroll;
+    width:300px;
+    height:300px;
+}
+.contents {
+    position:relative;
+    background-color:blue;
+    width:200px;
+    height:200px;
+}
+.offset {
+    left: 200px;
+}
+
+</style>
+<script>
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<body>
+<div class=scroll>
+    <div class="contents">
+    </div>
+    <div class="contents offset">
+    </div>
+</div>
+<pre id="results"></pre>
+</body>
+</html>
+

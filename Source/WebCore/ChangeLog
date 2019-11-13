@@ -1,3 +1,26 @@
+2019-11-13  Antti Koivisto  <antti@apple.com>
+
+        Google Docs spreadsheet tiles render very slowly (because of event region painting)
+        https://bugs.webkit.org/show_bug.cgi?id=204160
+        <rdar://problem/57073401>
+
+        Reviewed by Simon Fraser.
+
+        Content of a overflow:scroll area on this page doesn't cover the entire scrollable area and we end
+        up generating a complex shape for the event region. This is unnecessary as touches within scrollers
+        always scroll the content.
+
+        Test: fast/scrolling/ios/event-region-scrolled-contents-layer.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
+        Initialize event region for scrolled contents layer with layer-sized event region. This optimizes away
+        event region mutations. We still need to to do the event region paint to capture touch-action regions.
+
+        In future we should also improve Region type to not have pathological worst-case performance with complex
+        shapes.
+
 2019-11-13  Andres Gonzalez  <andresg_22@apple.com>
 
         AXObjectCache::rootObject should generate the isolated tree.

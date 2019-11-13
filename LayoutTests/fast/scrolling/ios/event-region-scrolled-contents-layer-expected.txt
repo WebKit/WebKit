@@ -1,0 +1,35 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+          (event region
+            (rect (0,0) width=300 height=300)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 300.00 300.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 400.00 400.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=400 height=400)
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
