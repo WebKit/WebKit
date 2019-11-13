@@ -4456,3 +4456,16 @@ webkit.org/b/202951 fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-
 webkit.org/b/202952 http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 
 webkit.org/b/202953 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Timeout ]
+
+webkit.org/b/204153 fast/scrolling/momentum-scroll-with-borders.html [ Failure ]
+webkit.org/b/204153 fast/scrolling/overflow-scroll-past-max.html [ Failure ]
+webkit.org/b/204153 http/tests/navigation/page-cache-mediakeysession.html [ Failure ]
+webkit.org/b/204153 http/tests/xmlhttprequest/access-control-and-redirects-async.html [ Failure ]
+webkit.org/b/204153 ietestcenter/Javascript/15.4.4.14-3-28.html [ Failure ]
+webkit.org/b/204153 ietestcenter/Javascript/15.4.4.14-3-29.html [ Failure ]
+webkit.org/b/204153 ietestcenter/Javascript/15.4.4.15-3-28.html [ Failure ]
+
+webkit.org/b/204153 fast/scrolling/iframe-scrollable-after-back.html [ Timeout ]
+webkit.org/b/204153 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
+webkit.org/b/204153 http/tests/navigation/page-cache-mediastream.html [ Timeout ]
+webkit.org/b/204153 ietestcenter/Javascript/15.4.4.15-3-29.html [ Timeout ]
