@@ -1,3 +1,26 @@
+2019-11-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Parse jsc_results.json for JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=204090
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunJavaScriptCoreTests):
+        (RunJavaScriptCoreTests.start): Initialize log_observer for json.
+        (RunJavaScriptCoreTests.commandComplete): Parse jsc_results.json and set properties accordingly.
+        (RunJavaScriptCoreTests.getResultSummary): Update the build-step summary string.
+        (ReRunJavaScriptCoreTests):
+        (RunJSCTestsWithoutPatch):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunJavaScriptCoreTests.setUp): Added sample json files for testing.
+        (TestRunJavaScriptCoreTests.configureStep):
+        (TestRunJavaScriptCoreTests.test_single_stress_test_failure): Added unit-tests.
+        (TestRunJavaScriptCoreTests.test_lot_of_stress_test_failure): Ditto.
+        (TestRunJavaScriptCoreTests.test_masm_failure): Ditto.
+        (TestRunJavaScriptCoreTests.test_b3_and_stress_test_failure): Ditto.
+        (TestRunJavaScriptCoreTests.test_dfg_air_and_stress_test_failure): Ditto.
+
 2019-11-13  Youenn Fablet  <youenn@apple.com>
 
         Take service worker assertions based on client processes assertion states

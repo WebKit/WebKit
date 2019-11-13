@@ -999,6 +999,11 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'jsc_results.json'
+        self.jsc_masm_failure = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":false,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":[],"allApiTestsPassed":true}\n'''
+        self.jsc_b3_and_stress_test_failure = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":false,"allAirTestsPassed":true,"allApiTestsPassed":true,"stressTestFailures":["stress/weakset-gc.js"]}\n'''
+        self.jsc_dfg_air_and_stress_test_failure = '''{"allDFGTestsPassed":false,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":false,"allApiTestsPassed":true,"stressTestFailures":["stress/weakset-gc.js"]}\n'''
+        self.jsc_single_stress_test_failure = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager"],"allApiTestsPassed":true}\n'''
+        self.jsc_multiple_stress_test_failures = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager","stress/switch-on-char-llint-rope.js.dfg-eager-no-cjit-validate","stress/switch-on-char-llint-rope.js.eager-jettison-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit-b3o1","stress/switch-on-char-llint-rope.js.ftl-no-cjit-b3o0","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-inline-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-put-stack-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-small-pool","stress/switch-on-char-llint-rope.js.ftl-no-cjit-validate-sampling-profiler","stress/switch-on-char-llint-rope.js.no-cjit-collect-continuously","stress/switch-on-char-llint-rope.js.no-cjit-validate-phases","stress/switch-on-char-llint-rope.js.no-ftl"],"allApiTestsPassed":true}\n'''
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -1006,6 +1011,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(RunJavaScriptCoreTests())
+        self.prefix = RunJavaScriptCoreTests.prefix
         if platform:
             self.setProperty('platform', platform)
         if fullPlatform:
@@ -1054,10 +1060,96 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
         return self.runStep()
 
+    def test_single_stress_test_failure(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.jsc_single_stress_test_failure),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 1 jsc stress test failure: stress/switch-on-char-llint-rope.js.dfg-eager')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), ['stress/switch-on-char-llint-rope.js.dfg-eager'])
+        self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), None)
+        return rc
+
+    def test_lot_of_stress_test_failure(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.jsc_multiple_stress_test_failures),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 14 jsc stress test failures: stress/switch-on-char-llint-rope.js.dfg-eager, stress/switch-on-char-llint-rope.js.dfg-eager-no-cjit-validate, stress/switch-on-char-llint-rope.js.eager-jettison-no-cjit, stress/switch-on-char-llint-rope.js.ftl-eager, stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit ...')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), ["stress/switch-on-char-llint-rope.js.dfg-eager", "stress/switch-on-char-llint-rope.js.dfg-eager-no-cjit-validate", "stress/switch-on-char-llint-rope.js.eager-jettison-no-cjit", "stress/switch-on-char-llint-rope.js.ftl-eager", "stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit", "stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit-b3o1", "stress/switch-on-char-llint-rope.js.ftl-no-cjit-b3o0", "stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-inline-validate", "stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-put-stack-validate", "stress/switch-on-char-llint-rope.js.ftl-no-cjit-small-pool", "stress/switch-on-char-llint-rope.js.ftl-no-cjit-validate-sampling-profiler", "stress/switch-on-char-llint-rope.js.no-cjit-collect-continuously", "stress/switch-on-char-llint-rope.js.no-cjit-validate-phases", "stress/switch-on-char-llint-rope.js.no-ftl"])
+        self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), None)
+        return rc
+
+    def test_masm_failure(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.jsc_masm_failure),
+        )
+        self.expectOutcome(result=FAILURE, state_string='JSC test binary failure: testmasm')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), None)
+        self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), ['testmasm'])
+        return rc
+
+    def test_b3_and_stress_test_failure(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.jsc_b3_and_stress_test_failure),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 1 jsc stress test failure: stress/weakset-gc.js, JSC test binary failure: testb3')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), ['stress/weakset-gc.js'])
+        self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), ['testb3'])
+        return rc
+
+    def test_dfg_air_and_stress_test_failure(self):
+        self.configureStep(platform='jsc-only', fullPlatform='jsc-only', configuration='release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--jsc-only'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.jsc_dfg_air_and_stress_test_failure),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 1 jsc stress test failure: stress/weakset-gc.js, JSC test binary failures: testair, testdfg')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.prefix + 'stress_test_failures'), ['stress/weakset-gc.js'])
+        self.assertEqual(self.getProperty(self.prefix + 'binary_failures'), ['testair', 'testdfg'])
+        return rc
+
 
 class TestReRunJavaScriptCoreTests(TestRunJavaScriptCoreTests):
     def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(ReRunJavaScriptCoreTests())
+        self.prefix = ReRunJavaScriptCoreTests.prefix
         if platform:
             self.setProperty('platform', platform)
         if fullPlatform:

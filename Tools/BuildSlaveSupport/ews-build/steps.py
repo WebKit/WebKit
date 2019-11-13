@@ -946,11 +946,18 @@ class RunJavaScriptCoreTests(shell.Test):
     jsonFileName = 'jsc_results.json'
     logfiles = {'json': jsonFileName}
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
+    prefix = 'jsc_'
+    NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
     def __init__(self, **kwargs):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
+        self.binaryFailures = []
+        self.stressTestFailures = []
 
     def start(self):
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+
         # add remotes configuration file path to the command line if needed
         remotesfile = self.getProperty('remotes', False)
         if remotesfile:
@@ -970,9 +977,65 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.addStepsAfterCurrentStep([ReRunJavaScriptCoreTests()])
         return rc
 
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        logLines = self.log_observer_json.getStdout()
+        json_text = ''.join([line for line in logLines.splitlines()])
+        try:
+            jsc_results = json.loads(json_text)
+        except Exception as ex:
+            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
+            return
+
+        if jsc_results.get('allMasmTestsPassed') == False:
+            self.binaryFailures.append('testmasm')
+        if jsc_results.get('allAirTestsPassed') == False:
+            self.binaryFailures.append('testair')
+        if jsc_results.get('allB3TestsPassed') == False:
+            self.binaryFailures.append('testb3')
+        if jsc_results.get('allDFGTestsPassed') == False:
+            self.binaryFailures.append('testdfg')
+        if jsc_results.get('allApiTestsPassed') == False:
+            self.binaryFailures.append('testapi')
+
+        self.stressTestFailures = jsc_results.get('stressTestFailures')
+        if self.stressTestFailures:
+            self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
+        if self.binaryFailures:
+            self.setProperty(self.prefix + 'binary_failures', self.binaryFailures)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS and (self.stressTestFailures or self.binaryFailures):
+            status = ''
+            if self.stressTestFailures:
+                num_failures = len(self.stressTestFailures)
+                pluralSuffix = 's' if num_failures > 1 else ''
+                failures_to_display = self.stressTestFailures[:self.NUM_FAILURES_TO_DISPLAY_IN_STATUS]
+                status = 'Found {} jsc stress test failure{}: '.format(num_failures, pluralSuffix) + ', '.join(failures_to_display)
+                if num_failures > self.NUM_FAILURES_TO_DISPLAY_IN_STATUS:
+                    status += ' ...'
+            if self.binaryFailures:
+                if status:
+                    status += ', '
+                pluralSuffix = 's' if len(self.binaryFailures) > 1 else ''
+                status += 'JSC test binary failure{}: {}'.format(pluralSuffix, ', '.join(self.binaryFailures))
+
+            return {u'step': unicode(status)}
+
+        return shell.Test.getResultSummary(self)
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
 
 class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
     name = 'jscore-test-rerun'
+    prefix = 'jsc_rerun_'
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
@@ -989,7 +1052,7 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
 
 class RunJSCTestsWithoutPatch(RunJavaScriptCoreTests):
     name = 'jscore-test-without-patch'
-    jsonFileName = 'jsc_results.json'
+    prefix = 'jsc_clean_tree_'
 
     def evaluateCommand(self, cmd):
         return shell.Test.evaluateCommand(self, cmd)
