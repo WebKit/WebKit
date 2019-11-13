@@ -178,43 +178,6 @@ static inline bool isStringType(CSSUnitType type)
 
 #endif // !ASSERT_DISABLED
 
-CSSUnitCategory unitCategory(CSSUnitType type)
-{
-    switch (type) {
-    case CSSUnitType::CSS_NUMBER:
-        return CSSUnitCategory::Number;
-    case CSSUnitType::CSS_PERCENTAGE:
-        return CSSUnitCategory::Percent;
-    case CSSUnitType::CSS_PX:
-    case CSSUnitType::CSS_CM:
-    case CSSUnitType::CSS_MM:
-    case CSSUnitType::CSS_IN:
-    case CSSUnitType::CSS_PT:
-    case CSSUnitType::CSS_PC:
-    case CSSUnitType::CSS_Q:
-        return CSSUnitCategory::Length;
-    case CSSUnitType::CSS_MS:
-    case CSSUnitType::CSS_S:
-        return CSSUnitCategory::Time;
-    case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_RAD:
-    case CSSUnitType::CSS_GRAD:
-    case CSSUnitType::CSS_TURN:
-        return CSSUnitCategory::Angle;
-    case CSSUnitType::CSS_HZ:
-    case CSSUnitType::CSS_KHZ:
-        return CSSUnitCategory::Frequency;
-#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
-    case CSSUnitType::CSS_DPPX:
-    case CSSUnitType::CSS_DPI:
-    case CSSUnitType::CSS_DPCM:
-        return CSSUnitCategory::Resolution;
-#endif
-    default:
-        return CSSUnitCategory::Other;
-    }
-}
-
 typedef HashMap<const CSSPrimitiveValue*, String> CSSTextCache;
 static CSSTextCache& cssTextCache()
 {

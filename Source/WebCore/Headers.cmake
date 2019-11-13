@@ -314,6 +314,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSStyleRule.h
     css/CSSStyleSheet.h
     css/CSSToLengthConversionData.h
+    css/CSSUnits.h
     css/CSSUnknownRule.h
     css/CSSValue.h
     css/CSSValueList.h

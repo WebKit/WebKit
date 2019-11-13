@@ -1,5 +1,25 @@
 2019-11-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Move CSSUnitType enum to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=204139
+
+        Reviewed by Antti Koivisto.
+
+        Pull CSSUnitType and CSSUnitCategory enums into their own file, since more future
+        code will use them and not CSSPrimitiveValue.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::unitCategory): Deleted.
+        * css/CSSPrimitiveValue.h:
+        * css/CSSUnits.cpp: Added.
+        (WebCore::unitCategory):
+        * css/CSSUnits.h: Added.
+
+2019-11-12  Simon Fraser  <simon.fraser@apple.com>
+
         Convert CSSPrimitiveValue::UnitType to an enum class, and cleanup
         https://bugs.webkit.org/show_bug.cgi?id=204101
 
