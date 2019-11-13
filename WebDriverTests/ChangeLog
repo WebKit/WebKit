@@ -1,3 +1,11 @@
+2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed gardening. Update expectations of fullscreen tests.
+
+        They are failing in the bots, but passing locally and with wpt.
+
+        * TestExpectations.json:
+
 2019-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

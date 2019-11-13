@@ -838,7 +838,7 @@
     "imported/w3c/webdriver/tests/set_window_rect/set.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
@@ -848,14 +848,14 @@
     "imported/w3c/webdriver/tests/maximize_window/maximize.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/minimize_window/minimize.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -870,21 +870,41 @@
         }
     },
     "imported/w3c/webdriver/tests/is_element_selected/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
     },
     "imported/w3c/webdriver/tests/element_send_keys/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
     },
-    "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
-        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+    "imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}},
+        "subtests": {
+            "test_no_browsing_context": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/fullscreen_window/stress.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
     },
     "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
         "subtests": {
-            "test_fullscreen": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+            "test_accept[capabilities0-alert-None]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
             },
-            "test_payload": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+            "test_accept[capabilities0-confirm-True]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
+            },
+            "test_accept[capabilities0-prompt-]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
+            },
+            "test_dismiss[capabilities0-alert-None]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
+            },
+            "test_dismiss[capabilities0-confirm-False]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
+            },
+            "test_dismiss[capabilities0-prompt-None]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}}
             }
         }
     },
