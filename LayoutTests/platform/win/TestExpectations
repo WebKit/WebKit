@@ -1305,6 +1305,7 @@ editing/spelling/spellcheck-paste.html [ Skip ]
 editing/spelling/spellcheck-paste-disabled.html [ Skip ]
 editing/spelling/spelling-unified-emulation.html [ Skip ]
 editing/spelling/grammar-markers.html [ Skip ]
+editing/spelling/toggle-spellchecking.html [ Skip ]
 
 # No concept of secure text input
 editing/secure-input [ Skip ]

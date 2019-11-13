@@ -78,6 +78,7 @@ interface UIScriptController {
 
     void keyDown(DOMString character, object modifierArray);
     void toggleCapsLock(object callback);
+    void setContinuousSpellCheckingEnabled(boolean enabled);
 
     void rawKeyDown(DOMString key);
     void rawKeyUp(DOMString key);

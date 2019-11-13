@@ -143,16 +143,17 @@ bool TextChecker::isContinuousSpellCheckingAllowed()
     return allowContinuousSpellChecking;
 }
 
-void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
+bool TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
 {
     if (state().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
-        return;
+        return false;
                                                                                       
     mutableState().isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
 
     // FIXME: preflight the spell checker.
+    return true;
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)

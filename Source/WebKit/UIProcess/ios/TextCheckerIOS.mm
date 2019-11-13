@@ -64,9 +64,13 @@ bool TextChecker::isContinuousSpellCheckingAllowed()
 #endif
 }
 
-void TextChecker::setContinuousSpellCheckingEnabled(bool enabled)
+bool TextChecker::setContinuousSpellCheckingEnabled(bool enabled)
 {
+    if (state().isContinuousSpellCheckingEnabled == enabled)
+        return false;
+
     mutableState().isContinuousSpellCheckingEnabled = enabled;
+    return true;
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool)

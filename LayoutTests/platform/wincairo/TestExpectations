@@ -725,6 +725,9 @@ editing/spelling/spelling-attribute-at-child.html [ Timeout ]
 editing/spelling/spelling-attribute-change.html [ Timeout ]
 editing/spelling/spellcheck-attribute.html [ Timeout ]
 
+# UIScriptController.setContinuousSpellCheckingEnabled is not implemented.
+editing/spelling/toggle-spellchecking.html [ Skip ]
+
 # LayoutTest/fast/loader tests that fail or time out.
 fast/loader/local-CSS-from-local.html [ Failure Timeout ]
 fast/loader/local-JavaScript-from-local.html [ Failure Timeout ]

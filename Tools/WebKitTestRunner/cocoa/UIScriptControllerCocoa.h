@@ -54,6 +54,8 @@ public:
     void dismissMenu() override;
     bool isShowingMenu() const override;
 
+    void setContinuousSpellCheckingEnabled(bool) override;
+
 protected:
     explicit UIScriptControllerCocoa(UIScriptContext&);
     TestRunnerWKWebView *webView() const;

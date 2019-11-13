@@ -85,16 +85,17 @@ bool TextChecker::isContinuousSpellCheckingAllowed()
 #endif
 }
 
-void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
+bool TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
 {
 #if ENABLE(SPELLCHECK)
     if (checkerState().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
-        return;
+        return false;
     checkerState().isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
     updateStateForAllProcessPools();
 #else
     UNUSED_PARAM(isContinuousSpellCheckingEnabled);
 #endif
+    return true;
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)

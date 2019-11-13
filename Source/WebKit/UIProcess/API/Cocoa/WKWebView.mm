@@ -49,6 +49,8 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "SafeBrowsingWarning.h"
+#import "TextChecker.h"
+#import "TextCheckerState.h"
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
@@ -6896,6 +6898,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #undef FORWARD_ACTION_TO_WKCONTENTVIEW
 
 @implementation WKWebView (WKTesting)
+
+- (void)_setContinuousSpellCheckingEnabledForTesting:(BOOL)enabled
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView setContinuousSpellCheckingEnabled:enabled];
+#else
+    _impl->setContinuousSpellCheckingEnabled(enabled);
+#endif
+}
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
 {

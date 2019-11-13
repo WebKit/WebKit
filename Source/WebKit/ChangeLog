@@ -1,3 +1,50 @@
+2019-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView does not respect system spellchecking preference
+        https://bugs.webkit.org/show_bug.cgi?id=204100
+        <rdar://problem/56653808>
+
+        Reviewed by Tim Horton.
+
+        Implements a platform hook on iOS (-setContinuousSpellCheckingEnabled:) to allow UIKit to inform us when the
+        system spellchecking preference changes, and adds logic to propagate these changes to the web process. See below
+        for more details.
+
+        Test: editing/spelling/toggle-spellchecking.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setContinuousSpellCheckingEnabledForTesting:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add testing SPI to enable or disable continuous spellchecking, for both iOS and macOS.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setContinuousSpellCheckingEnabled):
+        * UIProcess/TextChecker.h:
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView setContinuousSpellCheckingEnabled:]):
+
+        Implement this method to handle changes to the system spellchecking preference. This hook is also used by legacy
+        WebKit on iOS to turn spellchecking on or off. If the value of the preference changed, we additionally notify
+        the web process. In the future, we should consider refactoring TextCheckerState to be per-web view and per-page,
+        since Cocoa platform APIs would allow for different WKWebViews to have different spell checking preferences.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        * UIProcess/wpe/TextCheckerWPE.cpp:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+
+        Adjusted setContinuousSpellCheckingEnabled to return whether or not the continuous spellchecking state changed.
+
 2019-11-12  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r252351.

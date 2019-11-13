@@ -557,6 +557,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) BOOL _shouldUseLegacySelectPopoverDismissalBehavior;
 
 - (void)_didChangeLinkPreviewAvailability;
+- (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 
 @end
 

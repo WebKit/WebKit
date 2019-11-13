@@ -1,3 +1,25 @@
+2019-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView does not respect system spellchecking preference
+        https://bugs.webkit.org/show_bug.cgi?id=204100
+        <rdar://problem/56653808>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that the changes to platform spellchecking preferences are reflected in editable
+        content. See other changelogs for more information.
+
+        * editing/spelling/toggle-spellchecking-expected.txt: Added.
+        * editing/spelling/toggle-spellchecking.html: Added.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.async.setContinuousSpellCheckingEnabled):
+
+        Also, add a new UIHelper method to enable or disable continuous spellchecking during a layout test.
+
+        (window.UIHelper):
+
 2019-11-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Support Pointer Events

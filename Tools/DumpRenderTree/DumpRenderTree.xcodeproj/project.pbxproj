@@ -159,6 +159,7 @@
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
 		F44A531D21B89A4D00DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531E21B89A5000DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */; };
+		F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F484C222237B27D600BF77D0 /* UIScriptControllerCocoa.mm */; };
 		F4C3578D20E8444E00FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */; };
 		F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */; };
 		F4FED32023582158003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED31F23582158003C139C /* NSPasteboardAdditions.mm */; };
@@ -430,6 +431,8 @@
 		F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A531B21B89A4400DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
+		F484C221237B27D600BF77D0 /* UIScriptControllerCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIScriptControllerCocoa.h; path = cocoa/UIScriptControllerCocoa.h; sourceTree = "<group>"; };
+		F484C222237B27D600BF77D0 /* UIScriptControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = UIScriptControllerCocoa.mm; path = cocoa/UIScriptControllerCocoa.mm; sourceTree = "<group>"; };
 		F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
 		F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTestSpellChecker.h; sourceTree = "<group>"; };
 		F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputControllerIOS.m; path = ios/TextInputControllerIOS.m; sourceTree = "<group>"; };
@@ -523,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				0F18E6EE1D6B9C0C0027E547 /* Bindings */,
+				F484C220237B27A800BF77D0 /* cocoa */,
 				0F18E6EF1D6B9C120027E547 /* Derived Sources */,
 				0F6A0DFF1D6E0F8600F1C9A8 /* ios */,
 				0F6A0E001D6E0F8A00F1C9A8 /* mac */,
@@ -848,6 +852,15 @@
 				BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */,
 			);
 			name = PixelDump;
+			sourceTree = "<group>";
+		};
+		F484C220237B27A800BF77D0 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F484C221237B27D600BF77D0 /* UIScriptControllerCocoa.h */,
+				F484C222237B27D600BF77D0 /* UIScriptControllerCocoa.mm */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		F4B6C31820E84382008AC225 /* cocoa */ = {
@@ -1216,6 +1229,7 @@
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */,
 				0F18E6ED1D6B9C070027E547 /* UIScriptController.cpp in Sources */,
+				F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */,
 				0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */,
 				0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,

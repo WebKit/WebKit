@@ -156,6 +156,7 @@ public:
 
     virtual void keyDown(JSStringRef character, JSValueRef modifierArray) { notImplemented(); }
     virtual void toggleCapsLock(JSValueRef callback) { notImplemented(); }
+    virtual void setContinuousSpellCheckingEnabled(bool) { notImplemented(); }
 
     virtual void rawKeyDown(JSStringRef) { notImplemented(); }
     virtual void rawKeyUp(JSStringRef) { notImplemented(); }

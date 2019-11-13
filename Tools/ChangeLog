@@ -1,3 +1,44 @@
+2019-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView does not respect system spellchecking preference
+        https://bugs.webkit.org/show_bug.cgi?id=204100
+        <rdar://problem/56653808>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/cocoa/UIScriptControllerCocoa.h:
+        * DumpRenderTree/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::UIScriptControllerCocoa):
+        (WTR::UIScriptControllerCocoa::setContinuousSpellCheckingEnabled):
+
+        Add a new UIScriptControllerCocoa subclass for DumpRenderTree. For now, this will just contain the cross-
+        platform implementation of setContinuousSpellCheckingEnabled.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.h:
+        (WTR::UIScriptControllerIOS::UIScriptControllerIOS):
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        (WTR::UIScriptControllerMac::UIScriptControllerMac):
+
+        Make both -IOS and -Mac subclasses inherit from UIScriptControllerCocoa.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setContinuousSpellCheckingEnabled):
+
+        Add a new script controller method to change the platform spell checking preference during a layout test.
+
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+
+        Adjust this to explicitly turn continuous spellchecking on or off based on the `shouldShowSpellCheckingDots`
+        test option flag, instead of toggling it on and then off when resetting state before and after the layout test.
+
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setContinuousSpellCheckingEnabled):
+
 2019-11-12  Aakash Jain  <aakash_jain@apple.com>
 
         Update unit-tests for JSC EWS

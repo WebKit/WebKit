@@ -23,36 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#import "config.h"
 #import "UIScriptControllerCocoa.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
+
+#import "DumpRenderTree.h"
+#import "UIScriptContext.h"
+#import <WebKit/WebViewPrivate.h>
 
 namespace WTR {
 
-class UIScriptControllerMac : public UIScriptControllerCocoa {
-public:
-    explicit UIScriptControllerMac(UIScriptContext& context)
-        : UIScriptControllerCocoa(context)
-    {
-    }
-
-    void doAsyncTask(JSValueRef) override;
-    void replaceTextAtRange(JSStringRef, int, int) override;
-    void zoomToScale(double, JSValueRef) override;
-    double zoomScale() const override;
-    JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const override;
-    void overridePreference(JSStringRef, JSStringRef) override;
-    void removeViewFromWindow(JSValueRef) override;
-    void addViewToWindow(JSValueRef) override;
-    void toggleCapsLock(JSValueRef) override;
-    void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
-    NSUndoManager *platformUndoManager() const override;
-    void copyText(JSStringRef) override;
-    void activateDataListSuggestion(long, JSValueRef) override;
-};
-
+UIScriptControllerCocoa::UIScriptControllerCocoa(UIScriptContext& context)
+    : UIScriptController(context)
+{
 }
 
-#endif // PLATFORM(MAC)
+void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
+{
+    mainFrame.webView.continuousSpellCheckingEnabled = enabled;
+}
+
+} // namespace WTR
+
+#endif // PLATFORM(COCOA)

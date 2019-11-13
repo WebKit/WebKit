@@ -3117,6 +3117,15 @@ void WebViewImpl::changeSpelling(id sender)
     m_page->changeSpellingToWord(word);
 }
 
+void WebViewImpl::setContinuousSpellCheckingEnabled(bool enabled)
+{
+    if (TextChecker::state().isContinuousSpellCheckingEnabled == enabled)
+        return;
+
+    TextChecker::setContinuousSpellCheckingEnabled(enabled);
+    m_page->process().updateTextCheckerState();
+}
+
 void WebViewImpl::toggleContinuousSpellChecking()
 {
     bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;

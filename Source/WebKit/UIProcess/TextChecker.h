@@ -41,7 +41,7 @@ public:
     static const TextCheckerState& state();
     static bool isContinuousSpellCheckingAllowed();
 
-    static void setContinuousSpellCheckingEnabled(bool);
+    static bool setContinuousSpellCheckingEnabled(bool);
     static void setGrammarCheckingEnabled(bool);
     
     static void setTestingMode(bool);

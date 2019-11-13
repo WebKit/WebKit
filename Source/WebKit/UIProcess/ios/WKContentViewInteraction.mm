@@ -40,6 +40,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "SmartMagnificationController.h"
+#import "TextChecker.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
 #import "VersionChecks.h"
@@ -859,6 +860,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     _textCheckingController = makeUnique<WebKit::TextCheckingController>(*_page);
 #endif
+
+    _page->process().updateTextCheckerState();
 
     _hasSetUpInteractions = YES;
 }
@@ -7817,6 +7820,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     return _drawingCoordinator.get();
 }
 #endif // HAVE(PENCILKIT)
+
+- (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
+{
+    if (WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled))
+        _page->process().updateTextCheckerState();
+}
 
 @end
 

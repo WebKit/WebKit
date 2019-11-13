@@ -196,4 +196,9 @@ bool UIScriptControllerCocoa::isShowingMenu() const
     return webView().showingMenu;
 }
 
+void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
+{
+    [webView() _setContinuousSpellCheckingEnabledForTesting:enabled];
+}
+
 } // namespace WTR
