@@ -1,5 +1,20 @@
 2019-11-13  Aakash Jain  <aakash_jain@apple.com>
 
+        Make webkitperl EWS robust against flakiness in webkitperl tests
+        https://bugs.webkit.org/show_bug.cgi?id=204155
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPerlTests): Set haltOnFailure and flunkOnFailure to false.
+        (RunWebKitPerlTests.evaluateCommand): Add re-run step in case of failure.
+        (ReRunWebKitPerlTests):
+        (ReRunWebKitPerlTests.evaluateCommand): Overrided this to avoid running this step again.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestReRunJavaScriptCoreTests): Added unit-tests.
+
+2019-11-13  Aakash Jain  <aakash_jain@apple.com>
+
         Flaky API Test TestWebKitAPI.ServiceWorkers.ThrottleCrash
         https://bugs.webkit.org/show_bug.cgi?id=203734
         <rdar://problem/56814638>

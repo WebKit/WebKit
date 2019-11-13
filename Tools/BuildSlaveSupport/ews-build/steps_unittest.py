@@ -38,7 +38,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeL
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSC, CompileJSCToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
+                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests,
                    RunWebKitPerlTests, RunWebKitPyTests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
                    UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
@@ -380,8 +380,11 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_success(self):
+    def configureStep(self):
         self.setupStep(RunWebKitPerlTests())
+
+    def test_success(self):
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -394,7 +397,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunWebKitPerlTests())
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -409,6 +412,11 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         )
         self.expectOutcome(result=FAILURE, state_string='Failed webkitperl tests')
         return self.runStep()
+
+
+class TestReRunJavaScriptCoreTests(TestRunWebKitPerlTests):
+    def configureStep(self):
+        self.setupStep(ReRunWebKitPerlTests())
 
 
 class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
