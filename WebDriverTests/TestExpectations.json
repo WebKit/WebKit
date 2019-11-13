@@ -906,6 +906,13 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/send_alert_text/send.py": {
+        "subtests": {
+            "test_alert_unsupported_operation": {
+                "expected": {"all": {"status": ["SKIP"]}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/permissions/set.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/192978"}}
     },

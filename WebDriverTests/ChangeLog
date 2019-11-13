@@ -1,5 +1,13 @@
 2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardening. Skip imported/w3c/webdriver/tests/send_alert_text/send.py::test_alert_unsupported_operation.
+
+        The test looks specific to firefox.
+
+        * TestExpectations.json:
+
+2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed gardening. Add expectations for execute script tests.
 
         The ones checking the use of promises are failing.
