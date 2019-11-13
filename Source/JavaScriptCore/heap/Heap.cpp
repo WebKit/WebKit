@@ -1054,7 +1054,7 @@ void Heap::sweepSynchronously()
         dataLog("Full sweep: ", capacity() / 1024, "kb ");
         before = MonotonicTime::now();
     }
-    m_objectSpace.sweep();
+    m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
     if (Options::logGC()) {
         MonotonicTime after = MonotonicTime::now();
@@ -2154,7 +2154,11 @@ void Heap::waitForCollection(Ticket ticket)
 void Heap::sweepInFinalize()
 {
     m_objectSpace.sweepPreciseAllocations();
-    vm().eagerlySweptDestructibleObjectSpace.sweep();
+#if ENABLE(WEBASSEMBLY)
+    // We hold onto a lot of memory, so it makes a lot of sense to be swept eagerly.
+    if (vm().m_webAssemblyMemorySpace)
+        vm().m_webAssemblyMemorySpace->sweep();
+#endif
 }
 
 void Heap::suspendCompilerThreads()

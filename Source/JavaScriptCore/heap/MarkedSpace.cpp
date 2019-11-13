@@ -232,7 +232,7 @@ void MarkedSpace::lastChanceToFinalize()
     // We do not call lastChanceToFinalize for lower-tier swept cells since we need nothing to do.
 }
 
-void MarkedSpace::sweep()
+void MarkedSpace::sweepBlocks()
 {
     m_heap->sweeper().stopSweeping();
     forEachDirectory(

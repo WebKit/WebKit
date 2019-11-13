@@ -37,7 +37,7 @@ class IsoCellSet;
 
 class IsoSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, HeapCellType*, size_t size);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, HeapCellType*, size_t size, uint8_t numberOfLowerTierCells);
     JS_EXPORT_PRIVATE ~IsoSubspace();
 
     size_t size() const { return m_size; }
@@ -49,9 +49,12 @@ public:
     void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
     void sweepLowerTierCell(PreciseAllocation*);
+    void clearIsoCellSetBit(PreciseAllocation*);
 
     void* tryAllocateFromLowerTier();
     void destroyLowerTierFreeList();
+
+    void sweep();
 
 private:
     friend class IsoCellSet;
@@ -66,7 +69,7 @@ private:
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
-    uint8_t m_lowerTierCellCount { 0 };
+    uint8_t m_remainingLowerTierCellCount { 0 };
 };
 
 ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
@@ -75,7 +78,7 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, Allocat
     return Allocator(&m_localAllocator);
 }
 
-#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type))
+#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type), type::numberOfLowerTierCells)
 
 template<typename T>
 struct isAllocatedFromIsoSubspace {

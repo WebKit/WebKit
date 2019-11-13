@@ -78,8 +78,8 @@ public:
 
     static constexpr size_t atomsPerBlock = blockSize / atomSize;
 
-    static constexpr size_t numberOfLowerTierCells = 8;
-    static_assert(numberOfLowerTierCells <= 256);
+    static constexpr size_t maxNumberOfLowerTierCells = 8;
+    static_assert(maxNumberOfLowerTierCells <= 256);
     
     static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
     static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");

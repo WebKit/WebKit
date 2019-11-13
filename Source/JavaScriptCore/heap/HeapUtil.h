@@ -67,7 +67,7 @@ public:
                     [] (PreciseAllocation** ptr) -> PreciseAllocation* { return *ptr; });
                 if (result) {
                     auto attemptLarge = [&] (PreciseAllocation* allocation) {
-                        if (allocation->contains(pointer))
+                        if (allocation->contains(pointer) && allocation->hasValidCell())
                             func(allocation->cell(), allocation->attributes().cellKind);
                     };
                     

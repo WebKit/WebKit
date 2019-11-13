@@ -116,6 +116,8 @@ public:
 
     template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM&) { return nullptr; }
+    // GC strongly assumes CodeBlock is not a PreciseAllocation for now.
+    static constexpr uint8_t numberOfLowerTierCells = 0;
 
     DECLARE_INFO;
 

@@ -140,7 +140,7 @@ public:
     void endMarking();
     void snapshotUnswept();
     void clearNewlyAllocated();
-    void sweep();
+    void sweepBlocks();
     void sweepPreciseAllocations();
     void assertNoUnswept();
     size_t objectCount();

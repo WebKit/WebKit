@@ -35,5 +35,24 @@ ALWAYS_INLINE void* IsoSubspace::allocateNonVirtual(VM&, size_t size, GCDeferral
     return result;
 }
 
+inline void IsoSubspace::clearIsoCellSetBit(PreciseAllocation* preciseAllocation)
+{
+    unsigned lowerTierIndex = preciseAllocation->lowerTierIndex();
+    m_cellSets.forEach(
+        [&](IsoCellSet* set) {
+            set->clearLowerTierCell(lowerTierIndex);
+        });
+}
+
+inline void IsoSubspace::sweep()
+{
+    Subspace::sweepBlocks();
+    // We sweep precise-allocations eagerly, but we do not free it immediately.
+    // This part should be done by MarkedSpace::sweepPreciseAllocations.
+    m_preciseAllocations.forEach([&](PreciseAllocation* allocation) {
+        allocation->sweep();
+    });
+}
+
 } // namespace JSC
 

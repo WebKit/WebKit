@@ -1,3 +1,78 @@
+2019-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSC GC relies on CodeBlock is not PreciseAllocation
+        https://bugs.webkit.org/show_bug.cgi?id=204124
+
+        Reviewed by Saam Barati.
+
+        This is a follow-up patch after r252298. This patch fixes several GC issues.
+
+        1. We found that CodeBlock heavily relies on the fact that this is never getting PreciseAllocation.
+           For example, in our GC, we scan conservative roots to collect currently-executing CodeBlocks.
+           But if this is done in an Eden cycle, this can only find PreciseAllocation CodeBlocks allocated
+           in this current Eden cycle, since we only use Eden PreciseAllocation vector to find these cells.
+           This means some CodeBlocks that are PreciseAllocation and allocated in the past Eden cycle can
+           be missed in this currently-executing set. But we do not want to sort all the PreciseAllocation
+           vector every time Eden cycle happens. So, for now, we make # of lower-tier cells of CodeBlocks 0
+           so that CodeBlocks are always allocated as non PreciseAllocation.
+
+        2. We had an pre-existing PreciseAllocation bug: when Weak<> is pointing PreciseAllocation, we keep
+           PreciseAllocation in m_preciseAllocations vector while the cell inside it is destroyed. This is OK.
+           But HeapUtil::findGCObjectPointersForMarking can populate this PreciseAllocation when performing
+           conservative root scanning. This means that HeapUtil::findGCObjectPointersForMarking can populate
+           destroyed cells. We insert hasValidCell check to avoid this issue.
+
+        3. Subspace::sweep only sweeps non PreciseAllocation blocks despite of this name. This is a problem
+           since we are explicitly calling Subspace::sweep to sweep ScriptExecutables, CodeBlocks, and JIT
+           stubs in a defined order. We rename Subspace::sweep to Subspace::sweepBlocks, and introduce
+           IsoSubspace::sweep which also sweeps PreciseAllocations for lower-tier cells correctly.
+           We are calling PreciseAllocation::sweep, but we still leave PreciseAllocation in m_preciseAllocations.
+           This is OK since PreciseAllocation::sweep can be called multiple times. Destroying / Reusing PreciseAllocations
+           are done by MarkedSpace::sweepPreciseAllocations.
+
+        4. We clear IsoCellSet's bit as soon as PreciseAllocation's cell is destroyed. This is aligned to the
+           behavior of MarkedBlocks.
+
+        * bytecode/CodeBlock.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::mark):
+        * heap/Heap.cpp:
+        (JSC::Heap::sweepSynchronously):
+        (JSC::Heap::sweepInFinalize):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::clearLowerTierCell):
+        (JSC::IsoCellSet::sweepLowerTierCell): Deleted.
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::tryAllocateFromLowerTier):
+        (JSC::IsoSubspace::sweepLowerTierCell):
+        * heap/IsoSubspace.h:
+        * heap/IsoSubspaceInlines.h:
+        (JSC::IsoSubspace::clearIsoCellSetBit):
+        (JSC::IsoSubspace::sweep):
+        * heap/IsoSubspacePerVM.cpp:
+        (JSC::IsoSubspacePerVM::AutoremovingIsoSubspace::AutoremovingIsoSubspace):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweepBlocks):
+        (JSC::MarkedSpace::sweep): Deleted.
+        * heap/MarkedSpace.h:
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::PreciseAllocation):
+        (JSC::PreciseAllocation::sweep):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::sweepBlocks):
+        (JSC::Subspace::sweep): Deleted.
+        * heap/Subspace.h:
+        * runtime/JSCell.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+
 2019-11-12  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExpBuiltinExec should create "groups" property unconditionally

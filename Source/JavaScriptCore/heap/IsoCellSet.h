@@ -72,9 +72,9 @@ private:
     void didResizeBits(size_t newSize);
     void didRemoveBlock(size_t blockIndex);
     void sweepToFreeList(MarkedBlock::Handle*);
-    void sweepLowerTierCell(unsigned);
+    void clearLowerTierCell(unsigned);
     
-    Bitmap<MarkedBlock::numberOfLowerTierCells> m_lowerTierBits;
+    Bitmap<MarkedBlock::maxNumberOfLowerTierCells> m_lowerTierBits;
 
     IsoSubspace& m_subspace;
     

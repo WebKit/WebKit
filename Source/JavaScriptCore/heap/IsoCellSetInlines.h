@@ -167,7 +167,7 @@ void IsoCellSet::forEachLiveCell(const Func& func)
         });
 }
 
-inline void IsoCellSet::sweepLowerTierCell(unsigned index)
+inline void IsoCellSet::clearLowerTierCell(unsigned index)
 {
     m_lowerTierBits.concurrentTestAndClear(index);
 }

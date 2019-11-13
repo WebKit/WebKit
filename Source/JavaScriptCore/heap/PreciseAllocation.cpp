@@ -28,6 +28,7 @@
 
 #include "AlignedMemoryAllocator.h"
 #include "Heap.h"
+#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
 #include "Operations.h"
 #include "SubspaceInlines.h"
@@ -178,6 +179,7 @@ PreciseAllocation::PreciseAllocation(Heap& heap, size_t size, Subspace* subspace
     , m_weakSet(heap.vm())
 {
     m_isMarked.store(0);
+    ASSERT(cell()->isPreciseAllocation());
 }
 
 PreciseAllocation::~PreciseAllocation()
@@ -227,6 +229,10 @@ void PreciseAllocation::sweep()
     if (m_hasValidCell && !isLive()) {
         if (m_attributes.destruction == NeedsDestruction)
             m_subspace->destroy(vm(), static_cast<JSCell*>(cell()));
+        // We should clear IsoCellSet's bit before actually destroying PreciseAllocation
+        // since PreciseAllocation's destruction can be delayed until its WeakSet is cleared.
+        if (isLowerTier())
+            static_cast<IsoSubspace*>(m_subspace)->clearIsoCellSetBit(this);
         m_hasValidCell = false;
     }
 }

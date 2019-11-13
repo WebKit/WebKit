@@ -1,3 +1,14 @@
+2019-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSC GC relies on CodeBlock is not PreciseAllocation
+        https://bugs.webkit.org/show_bug.cgi?id=204124
+
+        Reviewed by Saam Barati.
+
+        * stress/ensure-code-block-is-not-precise-allocation.js: Added.
+        (foo):
+        (get for):
+
 2019-11-12  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExpBuiltinExec should create "groups" property unconditionally

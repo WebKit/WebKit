@@ -124,7 +124,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlockSou
         });
 }
 
-void Subspace::sweep()
+void Subspace::sweepBlocks()
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) {

@@ -38,6 +38,10 @@ inline void CodeBlockSet::mark(const AbstractLocker&, CodeBlock* codeBlock)
     if (!codeBlock)
         return;
 
+    // Conservative root scanning in Eden collection can only find PreciseAllocation that is allocated in this Eden cycle.
+    // Since CodeBlockSet::m_currentlyExecuting is strongly assuming that this catches all the currently executing CodeBlock,
+    // we now have a restriction that all CodeBlock needs to be a non-precise-allocation.
+    ASSERT(!codeBlock->isPreciseAllocation());
     m_currentlyExecuting.add(codeBlock);
 }
 
