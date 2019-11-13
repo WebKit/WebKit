@@ -1,3 +1,17 @@
+2019-11-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r252402.
+        https://bugs.webkit.org/show_bug.cgi?id=204157
+
+        This change broke the iOS and macOS build (Requested by
+        aakashja_ on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed, fix GTK/WPE builds after enabling POINTER_EVENTS
+        support."
+        https://trac.webkit.org/changeset/252402
+
 2019-11-13  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Unreviewed, fix GTK/WPE builds after enabling POINTER_EVENTS support.
