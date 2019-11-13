@@ -4360,6 +4360,12 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
 
         self.assert_multi_line_lint(
+            '    for (foo *bar in [foo bar:baz])\n'
+            '        process(bar);\n',
+            '',
+            'foo.mm')
+
+        self.assert_multi_line_lint(
             '    for (const Vector& vector: vectors)\n'
             '        process(vector);\n',
             'Missing space around : in range-based for statement  [whitespace/colon] [4]')

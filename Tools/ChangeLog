@@ -1,3 +1,19 @@
+2019-11-13  Megan Gardner  <megan_gardner@apple.com>
+
+        check-webkit-style: fix false errors for obj-c method calls in range-based for statements using colon syntax
+        https://bugs.webkit.org/show_bug.cgi?id=204142
+
+        Reviewed by Jonathan Bedard.
+
+        Allow for the existance of an obj-c method call in a range-based for statement that also uses colons.
+        Do not allow colons between square brackets to trigger the error.
+        Also add a test for this specific case.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_spacing):
+
 2019-11-13  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Parse jsc_results.json for JSC tests

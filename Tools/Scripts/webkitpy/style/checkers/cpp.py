@@ -1978,13 +1978,14 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # there should either be zero or one spaces inside the parens.
     # We don't want: "if ( foo)" or "if ( foo   )".
     # Exception: "for ( ; foo; bar)" and "for (foo; bar; )" are allowed.
+    # Exception: "for (foo n in [foo bar:baz])" is allowed because of obj-c method calls
     matched = search(r'\b(?P<statement>if|for|while|switch)\s*\((?P<remainder>.*)$', line)
     if matched:
         statement = matched.group('statement')
         condition, rest = up_to_unmatched_closing_paren(matched.group('remainder'))
         if condition is not None:
-            if statement == 'for' and search(r'(?:[^ :]:[^:]|[^:]:[^ :])', condition):
-                error(line_number, 'whitespace/colon', 4, 'Missing space around : in range-based for statement')
+            if statement == 'for' and search(r'(?:[^ :]:[^:]|[^:]:[^ :])', condition) and not search(r'\[[^\]]+:[^\]]*\]', condition):
+                    error(line_number, 'whitespace/colon', 4, 'Missing space around : in range-based for statement')
             condition_match = search(r'(?P<leading>[ ]*)(?P<separator>.).*[^ ]+(?P<trailing>[ ]*)', condition)
             if condition_match:
                 n_leading = len(condition_match.group('leading'))
