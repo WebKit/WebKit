@@ -1,3 +1,14 @@
+2019-11-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add punctuation rules for C++ lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=204021
+
+        Reviewed by Zalan Bujtas.
+
+        Added rules for not putting spaces between [] and () and omitting () whenever possible for C++ lambdas.
+
+        * code-style.md:
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

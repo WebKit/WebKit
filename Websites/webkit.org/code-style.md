@@ -234,6 +234,22 @@ f (a, b);
 f( a, b );
 ```
 
+[](#spacing-lambda-paren) Do not place spaces between square brackets and parentheses of a lambda function but do place a space before braces.
+
+###### Right:
+
+```cpp
+[](int x) { return x; }
+[this] { return m_member; }
+```
+
+###### Wrong:
+
+```cpp
+[] (int x) { return x; }
+[this]{ return m_member; }
+```
+
 [](#spacing-braced-init) When initializing an object, place a space before the leading brace as well as between the braces and their content.
 
 ###### Right:
@@ -879,6 +895,22 @@ for (unsigned i = 0; i < frameViewsCount; ++i)
 const Vector<RefPtr<FrameView> >::iterator end = frameViews.end();
 for (Vector<RefPtr<FrameView> >::iterator it = frameViews.begin(); it != end; ++it)
     (*it)->updateLayoutAndStyleIfNeededRecursive();
+```
+
+[](#punctuation-omit-lambda-paren) Omit parentheses for a C++ lambda whenever possible.
+
+###### Right:
+
+```cpp
+[this] { return m_member; }
+[this]() mutable { return doWork(WTFMove(m_object)); }
+```
+
+###### Wrong:
+
+```cpp
+[this]() { return m_member; }
+[]() { return static_cast<unsigned>(-1); }
 ```
 
 ### Pointers and References
