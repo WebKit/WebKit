@@ -1,3 +1,19 @@
+2019-11-13  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM.highlightSelector should work for "a:visited"
+        https://bugs.webkit.org/show_bug.cgi?id=146161
+        <rdar://problem/21467303>
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        Rather than use `document.querySelectorAll`, which doesn't match pseudo-selectors, attempt
+        to mimic how CSS actually matches nodes.
+
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::PseudoIdSet::remove): Added.
+
 2019-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Fix build

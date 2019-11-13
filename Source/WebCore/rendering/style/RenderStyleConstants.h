@@ -141,6 +141,12 @@ public:
         m_data |= (1U << static_cast<unsigned>(pseudoId));
     }
 
+    void remove(PseudoId pseudoId)
+    {
+        ASSERT((sizeof(m_data) * 8) > static_cast<unsigned>(pseudoId));
+        m_data &= ~(1U << static_cast<unsigned>(pseudoId));
+    }
+
     void merge(PseudoIdSet source)
     {
         m_data |= source.m_data;

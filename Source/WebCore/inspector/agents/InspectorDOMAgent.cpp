@@ -35,14 +35,18 @@
 #include "AccessibilityNodeObject.h"
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
+#include "CSSSelector.h"
+#include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CharacterData.h"
 #include "CommandLineAPIHost.h"
+#include "ComposedTreeIterator.h"
 #include "ContainerNode.h"
 #include "Cookie.h"
 #include "CookieJar.h"
@@ -92,6 +96,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptState.h"
+#include "SelectorChecker.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "StyleProperties.h"
@@ -109,6 +114,7 @@
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Function.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -1222,6 +1228,10 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, cons
 
 void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::Object& highlightInspectorObject, const String& selectorString, const String* frameId)
 {
+    auto highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
+    if (!highlightConfig)
+        return;
+
     RefPtr<Document> document;
 
     if (frameId) {
@@ -1244,18 +1254,61 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
         return;
     }
 
-    auto queryResult = document->querySelectorAll(selectorString);
-    // FIXME: <https://webkit.org/b/146161> Web Inspector: DOM.highlightSelector should work for "a:visited"
-    if (queryResult.hasException()) {
-        errorString = "DOM Error while querying with given selectorString"_s;
-        return;
+    CSSParser parser(*document);
+    CSSSelectorList selectorList;
+    parser.parseSelector(selectorString, selectorList);
+
+    SelectorChecker selectorChecker(*document);
+
+    Vector<Ref<Node>> nodes;
+
+    for (auto& descendant : composedTreeDescendants(*document)) {
+        if (!is<Element>(descendant))
+            continue;
+
+        auto& descendantElement = downcast<Element>(descendant);
+
+        auto isInUserAgentShadowTree = descendantElement.isInUserAgentShadowTree();
+        auto pseudoId = descendantElement.pseudoId();
+        auto& pseudo = descendantElement.pseudo();
+
+        for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::PseudoElement || selector->value() != pseudo))
+                continue;
+
+            SelectorChecker::CheckingContext context(SelectorChecker::Mode::ResolvingStyle);
+            context.pseudoId = pseudoId;
+
+            unsigned ignoredSpecificity;
+            if (selectorChecker.match(*selector, descendantElement, context, ignoredSpecificity)) {
+                nodes.append(descendantElement);
+                break;
+            }
+
+            if (context.pseudoIDSet) {
+                auto pseudoIDs = PseudoIdSet::fromMask(context.pseudoIDSet.data());
+
+                if (pseudoIDs.has(PseudoId::Before)) {
+                    pseudoIDs.remove(PseudoId::Before);
+                    if (auto* beforePseudoElement = descendantElement.beforePseudoElement())
+                        nodes.append(*beforePseudoElement);
+                }
+
+                if (pseudoIDs.has(PseudoId::After)) {
+                    pseudoIDs.remove(PseudoId::After);
+                    if (auto* afterPseudoElement = descendantElement.afterPseudoElement())
+                        nodes.append(*afterPseudoElement);
+                }
+
+                if (pseudoIDs) {
+                    nodes.append(descendantElement);
+                    break;
+                }
+            }
+        }
     }
 
-    auto highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
-    if (!highlightConfig)
-        return;
-
-    m_overlay->highlightNodeList(queryResult.releaseReturnValue(), *highlightConfig);
+    m_overlay->highlightNodeList(StaticNodeList::create(WTFMove(nodes)), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const JSON::Object& highlightInspectorObject, const int* nodeId, const String* objectId)
