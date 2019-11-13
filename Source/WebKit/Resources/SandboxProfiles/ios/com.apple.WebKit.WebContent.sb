@@ -627,6 +627,9 @@
     (global-name "com.apple.aggregated")
     (global-name "com.apple.cfprefsd.daemon"))
 
+(allow mach-lookup
+    (global-name "com.apple.tccd"))
+
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))
  

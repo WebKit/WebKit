@@ -1,3 +1,15 @@
+2019-11-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Cannot open camera from websites
+        https://bugs.webkit.org/show_bug.cgi?id=204168
+        <rdar://problem/57138788>
+
+        Reviewed by Jer Noble.
+
+        The sandbox is blocking a required service.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-13  Benjamin Nham  <nham@apple.com>
 
         VeryHigh priority loads are actually loading at VeryLow priority
