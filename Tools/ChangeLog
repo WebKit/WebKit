@@ -1,5 +1,15 @@
 2019-11-13  Aakash Jain  <aakash_jain@apple.com>
 
+        Flaky API Test TestWebKitAPI.ServiceWorkers.ThrottleCrash
+        https://bugs.webkit.org/show_bug.cgi?id=203734
+        <rdar://problem/56814638>
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm: Disabled the flaky test for now.
+
+2019-11-13  Aakash Jain  <aakash_jain@apple.com>
+
         Flaky API Test TestWebKitAPI.WebKit.ApplicationCacheDirectories
         https://bugs.webkit.org/show_bug.cgi?id=203732
         <rdar://problem/56814641>

@@ -1614,7 +1614,7 @@ TEST(ServiceWorkers, OutOfAndInProcessServiceWorker)
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
 }
 
-TEST(ServiceWorkers, ThrottleCrash)
+TEST(ServiceWorkers, DISABLED_ThrottleCrash)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
