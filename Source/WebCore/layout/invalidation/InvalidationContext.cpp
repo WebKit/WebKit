@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "InvalidationContext.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/IsoMalloc.h>
+#include "InvalidationState.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-class Box;
-class BlockFormattingState;
-class LayoutContext;
-struct InvalidationResult;
-enum class StyleDiff;
+WTF_MAKE_ISO_ALLOCATED_IMPL(InvalidationContext);
 
-// This class implements box invalidation for block formatting context.
-class BlockInvalidation {
-    WTF_MAKE_ISO_ALLOCATED(BlockInvalidation);
-public:
-    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutContext&, BlockFormattingState&);
-};
+InvalidationContext::InvalidationContext(InvalidationState& invalidationState)
+    : m_invalidationState(invalidationState)
+{
+}
+
+void InvalidationContext::styleChanged(const Box& layoutBox, StyleDifference)
+{
+    m_invalidationState.markNeedsUpdate(layoutBox);
+}
+
+void InvalidationContext::contentChanged(const Box&)
+{
+}
+
+void InvalidationContext::subtreeChanged(const Box&)
+{
+}
 
 }
 }

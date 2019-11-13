@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InlineInvalidation.h"
+#pragma once
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineFormattingState.h"
-#include "Invalidation.h"
 #include "LayoutBox.h"
-#include "LayoutContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include "LayoutContainer.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineInvalidation);
+class InvalidationState {
+    WTF_MAKE_ISO_ALLOCATED(InvalidationState);
+public:
+    InvalidationState();
 
-InvalidationResult InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, InlineFormattingState&)
-{
-    layoutContext.markNeedsUpdate(layoutBox);
-    return { nullptr };
-}
+    void markNeedsUpdate(const Box&);
+
+    using FormattingContextRoots = WeakHashSet<const Container>;
+    // FIXME: We currently do full formatting context layouts (no partial layout within a formatting context).
+    const FormattingContextRoots& formattingContextRoots() const { return m_formattingContextRoots; }
+
+private:
+    FormattingContextRoots m_formattingContextRoots;
+};
 
 }
 }

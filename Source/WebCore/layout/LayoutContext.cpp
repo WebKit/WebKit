@@ -30,17 +30,17 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
-#include "BlockInvalidation.h"
 #include "DisplayBox.h"
 #include "DisplayPainter.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
-#include "InlineInvalidation.h"
-#include "Invalidation.h"
+#include "InvalidationContext.h"
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutPhase.h"
 #include "LayoutTreeBuilder.h"
+#include "RenderStyleConstants.h"
 #include "RenderView.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
@@ -56,44 +56,22 @@ LayoutContext::LayoutContext(LayoutState& layoutState)
 {
 }
 
-void LayoutContext::layout()
+void LayoutContext::layout(const InvalidationState& invalidationState)
 {
     PhaseScope scope(Phase::Type::Layout);
 
-    ASSERT(!m_formattingContextRootListForLayout.computesEmpty());
-    for (auto& layoutRoot : m_formattingContextRootListForLayout)
-        layoutFormattingContextSubtree(layoutRoot);
-    m_formattingContextRootListForLayout.clear();
+    auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
+    ASSERT(!formattingContextRootsForLayout.computesEmpty());
+    for (auto& formattingContextRoot : formattingContextRootsForLayout)
+        layoutFormattingContextSubtree(formattingContextRoot);
 }
 
-void LayoutContext::layoutFormattingContextSubtree(const Container& layoutRoot)
+void LayoutContext::layoutFormattingContextSubtree(const Container& formattingContextRoot)
 {
-    RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
-    auto formattingContext = createFormattingContext(layoutRoot, layoutState());
+    RELEASE_ASSERT(formattingContextRoot.establishesFormattingContext());
+    auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
     formattingContext->layoutInFlowContent();
     formattingContext->layoutOutOfFlowContent();
-}
-
-void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
-{
-    PhaseScope scope(Phase::Type::Invalidation);
-
-    auto& formattingState = layoutState().formattingStateForBox(layoutBox);
-    const Container* invalidationRoot = nullptr;
-    if (is<BlockFormattingState>(formattingState))
-        invalidationRoot = BlockInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<BlockFormattingState>(formattingState)).root;
-    else if (is<InlineFormattingState>(formattingState))
-        invalidationRoot = InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState)).root;
-    else
-        ASSERT_NOT_IMPLEMENTED_YET();
-    ASSERT(invalidationRoot);
-    m_formattingContextRootListForLayout.add(invalidationRoot);
-}
-
-void LayoutContext::markNeedsUpdate(const Box& layoutBox, OptionSet<UpdateType>)
-{
-    // FIXME: This should trigger proper invalidation instead of just adding the formatting context root to the dirty list. 
-    m_formattingContextRootListForLayout.add(&(layoutBox.isInitialContainingBlock() ? downcast<Container>(layoutBox) : layoutBox.formattingContextRoot()));
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const Container& formattingContextRoot, LayoutState& layoutState)
@@ -156,9 +134,11 @@ void LayoutContext::runLayout(LayoutState& layoutState)
     displayBox.setContentBoxHeight(LayoutUnit(layoutRoot.style().logicalHeight().value()));
     displayBox.setContentBoxWidth(LayoutUnit(layoutRoot.style().logicalWidth().value()));
 
-    auto layoutContext = LayoutContext(layoutState);
-    layoutContext.markNeedsUpdate(layoutRoot);
-    layoutContext.layout();
+    auto invalidationState = InvalidationState { };
+    auto invalidationContext = InvalidationContext { invalidationState };
+    invalidationContext.styleChanged(*layoutRoot.firstChild(), StyleDifference::Layout);
+
+    LayoutContext(layoutState).layout(invalidationState);
 }
 
 std::unique_ptr<LayoutState> LayoutContext::runLayoutAndVerify(const RenderView& renderView)

@@ -34,6 +34,8 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableColElement.h"
 #include "InlineFormattingState.h"
+#include "InvalidationContext.h"
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
@@ -403,8 +405,14 @@ void printLayoutTreeForLiveDocuments()
         auto& renderView = *document->renderView();
         auto layoutState = LayoutState { TreeBuilder::createLayoutTree(renderView) };
         layoutState.setQuirksMode(renderView.document().inLimitedQuirksMode() ? LayoutState::QuirksMode::Limited : (renderView.document().inQuirksMode() ? LayoutState::QuirksMode::Yes : LayoutState::QuirksMode::No));
-        LayoutContext(layoutState).layout();
-        showLayoutTree(layoutState.root(), &layoutState);
+
+        auto& layoutRoot = layoutState.root();
+        auto invalidationState = InvalidationState { };
+        auto invalidationContext = InvalidationContext { invalidationState };
+        invalidationContext.styleChanged(*layoutRoot.firstChild(), StyleDifference::Layout);
+
+        LayoutContext(layoutState).layout(invalidationState);
+        showLayoutTree(layoutRoot, &layoutState);
     }
 }
 #endif

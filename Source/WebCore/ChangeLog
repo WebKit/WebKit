@@ -1,3 +1,41 @@
+2019-11-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Invalidation] Introduce InvalidationState and Context
+        https://bugs.webkit.org/show_bug.cgi?id=204140
+        <rdar://problem/57142106>
+
+        Reviewed by Antti Koivisto.
+
+        InvalidationContext take style/content changes and turn them into "dirty layout boxes" (stored in InvalidationState).
+        InvalidationState is the input to the (partial)subsequent layout.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/Invalidation.h: Removed.
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutContext::runLayout):
+        (WebCore::Layout::LayoutContext::styleChanged): Deleted.
+        (WebCore::Layout::LayoutContext::markNeedsUpdate): Deleted.
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::updateAll): Deleted.
+        * layout/blockformatting/BlockInvalidation.cpp: Removed.
+        * layout/blockformatting/BlockInvalidation.h: Removed.
+        * layout/invalidation/InvalidationContext.cpp: Renamed from Source/WebCore/layout/inlineformatting/InlineInvalidation.cpp.
+        (WebCore::Layout::InvalidationContext::InvalidationContext):
+        (WebCore::Layout::InvalidationContext::styleChanged):
+        (WebCore::Layout::InvalidationContext::contentChanged):
+        (WebCore::Layout::InvalidationContext::subtreeChanged):
+        * layout/invalidation/InvalidationContext.h: Renamed from Source/WebCore/layout/inlineformatting/InlineInvalidation.h.
+        * layout/invalidation/InvalidationState.cpp: Renamed from Source/WebCore/layout/tableformatting/TableInvalidation.cpp.
+        (WebCore::Layout::InvalidationState::InvalidationState):
+        (WebCore::Layout::InvalidationState::markNeedsUpdate):
+        * layout/invalidation/InvalidationState.h: Renamed from Source/WebCore/layout/tableformatting/TableInvalidation.h.
+        (WebCore::Layout::InvalidationState::formattingContextRoots const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+
 2019-11-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r252402.

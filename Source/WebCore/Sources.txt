@@ -1435,7 +1435,6 @@ layout/blockformatting/BlockFormattingContextGeometry.cpp
 layout/blockformatting/BlockFormattingContextQuirks.cpp
 layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
-layout/blockformatting/BlockInvalidation.cpp
 layout/displaytree/DisplayBox.cpp
 layout/displaytree/DisplayPainter.cpp
 layout/floats/FloatAvoider.cpp
@@ -1446,13 +1445,14 @@ layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingContextGeometry.cpp
 layout/inlineformatting/InlineFormattingContextQuirks.cpp
 layout/inlineformatting/InlineFormattingState.cpp
-layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineItem.cpp
 layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineLineLayout.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp
+layout/invalidation/InvalidationContext.cpp
+layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp
 layout/layouttree/LayoutReplaced.cpp
@@ -1461,7 +1461,6 @@ layout/tableformatting/TableFormattingContext.cpp
 layout/tableformatting/TableFormattingContextGeometry.cpp
 layout/tableformatting/TableFormattingState.cpp
 layout/tableformatting/TableGrid.cpp
-layout/tableformatting/TableInvalidation.cpp
 
 loader/AdClickAttribution.cpp
 loader/CanvasActivityRecord.cpp

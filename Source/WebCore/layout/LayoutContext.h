@@ -29,7 +29,6 @@
 
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -39,9 +38,8 @@ class RenderView;
 
 namespace Layout {
 
-enum class StyleDiff;
-class Box;
 class Container;
+class InvalidationState;
 class LayoutState;
 class FormattingContext;
 
@@ -59,18 +57,7 @@ public:
     static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 
     LayoutContext(LayoutState&);
-    void layout();
-
-    enum class UpdateType {
-        Overflow = 1 << 0,
-        Position = 1 << 1,
-        Size     = 1 << 2
-    };
-    static constexpr OptionSet<UpdateType> updateAll() { return { UpdateType::Overflow, UpdateType::Position, UpdateType::Size }; }
-    void markNeedsUpdate(const Box&, OptionSet<UpdateType> = updateAll());
-    bool needsUpdate(const Box&) const;
-
-    void styleChanged(const Box&, StyleDiff);
+    void layout(const InvalidationState&);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 
@@ -83,7 +70,6 @@ private:
     static void runLayout(LayoutState&);
 
     LayoutState& m_layoutState;
-    WeakHashSet<const Container> m_formattingContextRootListForLayout;
 };
 
 }

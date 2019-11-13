@@ -30,19 +30,25 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
+enum class StyleDifference;
+
 namespace Layout {
-
 class Box;
-class TableFormattingState;
-class LayoutContext;
-struct InvalidationResult;
-enum class StyleDiff;
+class InvalidationState;
 
-// This class implements box invalidation for table formatting context.
-class TableInvalidation {
-    WTF_MAKE_ISO_ALLOCATED(TableInvalidation);
+class InvalidationContext {
+    WTF_MAKE_ISO_ALLOCATED(InvalidationContext);
 public:
-    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutContext&, TableFormattingState&);
+    InvalidationContext(InvalidationState&);
+
+    void styleChanged(const Box&, StyleDifference);
+    // FIXME: We might just merge this with subtreeChanged.
+    void contentChanged(const Box&);
+    // FIXME: This is just a placeholder for tree changes like gaining and losing descendants. 
+    void subtreeChanged(const Box&);
+
+private:
+    InvalidationState& m_invalidationState;
 };
 
 }
