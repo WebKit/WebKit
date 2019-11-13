@@ -1176,6 +1176,32 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
         return;
     }
 
+    switch (frameID->type()) {
+    case JSON::Value::Type::Null:
+        break;
+    case JSON::Value::Type::Double:
+    case JSON::Value::Type::Integer:
+        if (!valueAsNumberInRange(*frameID, 0, std::numeric_limits<unsigned short>::max())) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            return;
+        }
+        break;
+    case JSON::Value::Type::Object: {
+        RefPtr<JSON::Object> frameIDObject;
+        frameID->asObject(frameIDObject);
+        if (frameIDObject->find(Session::webElementIdentifier()) == frameIDObject->end()) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            return;
+        }
+        break;
+    }
+    case JSON::Value::Type::Boolean:
+    case JSON::Value::Type::String:
+    case JSON::Value::Type::Array:
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
     m_session->waitForNavigationToComplete([this, frameID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));

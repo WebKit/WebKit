@@ -652,23 +652,12 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
 
         int frameIndex;
         if (frameID->asInteger(frameIndex)) {
-            if (frameIndex < 0 || frameIndex > USHRT_MAX) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchFrame));
-                return;
-            }
+            ASSERT(frameIndex >= 0 && frameIndex < std::numeric_limits<unsigned short>::max());
             parameters->setInteger("ordinal"_s, frameIndex);
         } else {
             String frameElementID = extractElementID(*frameID);
-            if (!frameElementID.isEmpty())
-                parameters->setString("nodeHandle"_s, frameElementID);
-            else {
-                String frameName;
-                if (!frameID->asString(frameName)) {
-                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchFrame));
-                    return;
-                }
-                parameters->setString("name"_s, frameName);
-            }
+            ASSERT(!frameElementID.isEmpty());
+            parameters->setString("nodeHandle"_s, frameElementID);
         }
 
         m_host->sendCommandToBackend("resolveChildFrameHandle"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
