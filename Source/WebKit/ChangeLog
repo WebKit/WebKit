@@ -1,3 +1,31 @@
+2019-11-13  Youenn Fablet  <youenn@apple.com>
+
+        [ iOS ]: Layout Test http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=203275
+        <rdar://problem/56516249>
+
+        Reviewed by Alex Christensen.
+
+        Fix flakiness by clearing the storage of each cache when the cache is being cleared.
+        This ensures that the storage salt gets recreated if needed.
+
+        To further improve repeatability, make sure that initialize based tasks happen after clear tasks are complete.
+        For that purpose, add a clear task counter and append initialize callbacks to a Vector if counter is not zero.
+        Increment counter at clear task creation and decrement counter at completion time.
+        If counter is back to 0, we can safely process the pending clear tasks.
+
+        Covered by unflaked test.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::~Engine):
+        (WebKit::CacheStorage::Engine::initialize):
+        (WebKit::CacheStorage::CompletionHandler<void):
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+
 2019-11-13  Chris Dumez  <cdumez@apple.com>
 
         Rollout(r251358) Causes load hangs

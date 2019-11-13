@@ -132,6 +132,8 @@ private:
     using CacheCallback = Function<void(CacheOrError&&)>;
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
 
+    CompletionHandler<void()> createClearTask(CompletionHandler<void()>&&);
+
     Cache* cache(uint64_t cacheIdentifier);
 
     PAL::SessionID m_sessionID;
@@ -146,6 +148,8 @@ private:
     HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_pendingWriteCallbacks;
     HashMap<uint64_t, CompletionHandler<void(const NetworkCache::Data&, int error)>> m_pendingReadCallbacks;
     uint64_t m_pendingCallbacksCounter { 0 };
+    Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingClearCallbacks;
+    uint64_t m_clearTaskCounter { 0 };
 };
 
 } // namespace CacheStorage

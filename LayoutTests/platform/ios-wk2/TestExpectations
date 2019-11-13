@@ -1351,9 +1351,6 @@ webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-002.htm
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-003.html [ Pass Failure ]
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
 
-# <rdar://problem/56516249> REGRESSION (r250936?) [ iOS ]: Layout Test http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure (203275)
-webkit.org/b/203275 http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
-
 # <rdar://problem/56590026> [iOS] fast/forms/contenteditable- font-optical-size.html landed flaky (203371)
 webkit.org/b/203371 fast/forms/contenteditable-font-optical-size.html [ Pass Failure ]
 

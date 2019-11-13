@@ -62,6 +62,10 @@ Engine::~Engine()
     for (auto& caches : m_caches.values())
         caches->detach();
 
+    auto pendingClearCallbacks = WTFMove(m_pendingClearCallbacks);
+    for (auto& callback : pendingClearCallbacks)
+        callback(Error::Internal);
+
     auto initializationCallbacks = WTFMove(m_initializationCallbacks);
     for (auto& callback : initializationCallbacks)
         callback(Error::Internal);
@@ -289,6 +293,11 @@ void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRe
 
 void Engine::initialize(CompletionCallback&& callback)
 {
+    if (m_clearTaskCounter || !m_pendingClearCallbacks.isEmpty()) {
+        m_pendingClearCallbacks.append(WTFMove(callback));
+        return;
+    }
+
     if (m_salt) {
         callback(WTF::nullopt);
         return;
@@ -596,11 +605,24 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
     }
 }
 
+CompletionHandler<void()> Engine::createClearTask(CompletionHandler<void()>&& completionHandler)
+{
+    ++m_clearTaskCounter;
+    return [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+        if (!--m_clearTaskCounter) {
+            auto callbacks = WTFMove(m_pendingClearCallbacks);
+            for (auto& callback : callbacks)
+                initialize(WTFMove(callback));
+        }
+    };
+}
+
 void Engine::clearAllCaches(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto callbackAggregator = CallbackAggregator::create([this, completionHandler = createClearTask(WTFMove(completionHandler))]() mutable {
         if (!this->shouldPersist())
             return completionHandler();
         
@@ -629,7 +651,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), origin, completionHandler = WTFMove(completionHandler)]() mutable {
+    auto callbackAggregator = CallbackAggregator::create([this, origin, completionHandler = createClearTask(WTFMove(completionHandler))]() mutable {
         if (!this->shouldPersist())
             return completionHandler();
 

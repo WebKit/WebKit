@@ -1,3 +1,13 @@
+2019-11-13  Youenn Fablet  <youenn@apple.com>
+
+        [ iOS ]: Layout Test http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=203275
+        <rdar://problem/56516249>
+
+        Reviewed by Alex Christensen.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION: some layout test are failing on Win EWS
