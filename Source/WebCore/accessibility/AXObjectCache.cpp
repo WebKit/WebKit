@@ -101,6 +101,11 @@
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
+#include <pal/spi/mac/HIServicesSPI.h>
+#endif
+
 #include <wtf/DataLog.h>
 #include <wtf/SetForScope.h>
 
@@ -123,7 +128,7 @@ const AXID InvalidAXID = 0;
 static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
 static const Seconds accessibilityLiveRegionChangedNotificationInterval { 20_ms };
 static const Seconds accessibilityFocusModalNodeNotificationInterval { 50_ms };
-    
+
 static bool rendererNeedsDeferredUpdate(const RenderObject& renderer)
 {
     ASSERT(!renderer.beingDestroyed());
@@ -648,14 +653,57 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     
     return newObj.get();
 }
-    
-AccessibilityObject* AXObjectCache::rootObject()
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AXObjectCache::clientSupportsIsolatedTree()
+{
+    AXClientType type = _AXGetClientForCurrentRequestUntrusted();
+    // FIXME: Remove unknown client before enabling ACCESSIBILITY_ISOLATED_TREE.
+    return type == kAXClientTypeVoiceOver
+        || type == kAXClientTypeUnknown
+        || type == kAXClientTypeNoActiveRequestFound; // For LayoutTests.
+}
+#endif
+
+AXCoreObject* AXObjectCache::rootObject()
 {
     if (!gAccessibilityEnabled)
         return nullptr;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (clientSupportsIsolatedTree())
+        return isolatedTreeRootObject();
+#endif
+
     return getOrCreate(m_document.view());
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+AXCoreObject* AXObjectCache::isolatedTreeRootObject()
+{
+    auto pageID = m_document.pageID();
+    if (!pageID)
+        return nullptr;
+
+    auto tree = AXIsolatedTree::treeForPageID(*pageID);
+    if (!tree && isMainThread()) {
+        tree = generateIsolatedTree(*pageID);
+        // Now that we have created our tree, initialize the secondary thread,
+        // so future requests come in on the other thread.
+        _AXUIElementUseSecondaryAXThread(true);
+        return tree->rootNode().get();
+    }
+
+    if (tree && !isMainThread()) {
+        tree->applyPendingChanges();
+        return tree->rootNode().get();
+    }
+
+    // Should not get here, couldn't create or update the IsolatedTree.
+    ASSERT(false);
+    return nullptr;
+}
+#endif
 
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
 {
@@ -2943,7 +2991,7 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedObject> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(AXCoreObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
+Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
 {
     auto isolatedTreeNode = AXIsolatedObject::create(object);
     nodeChanges.append(isolatedTreeNode.copyRef());
@@ -2953,24 +3001,25 @@ Ref<AXIsolatedObject> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(AX
     attachWrapper(&isolatedTreeNode.get());
 
     for (const auto& child : object.children()) {
-        auto staticChild = createIsolatedAccessibilityTreeHierarchy(*child, isolatedTreeNode->objectID(), tree, nodeChanges);
+        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), tree, nodeChanges);
         isolatedTreeNode->appendChild(staticChild->objectID());
     }
 
     return isolatedTreeNode;
 }
     
-Ref<AXIsolatedTree> AXObjectCache::generateIsolatedAccessibilityTree()
+Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID)
 {
     RELEASE_ASSERT(isMainThread());
 
-    auto tree = AXIsolatedTree::treeForPageID(*m_document.pageID());
+    auto tree = AXIsolatedTree::treeForPageID(pageID);
     if (!tree)
-        tree = AXIsolatedTree::createTreeForPageID(*m_document.pageID());
+        tree = AXIsolatedTree::createTreeForPageID(pageID);
     
     Vector<Ref<AXIsolatedObject>> nodeChanges;
-    auto root = createIsolatedAccessibilityTreeHierarchy(*rootObject(), InvalidAXID, *tree, nodeChanges);
-    tree->setRoot(root);
+    AccessibilityObject* axRoot = getOrCreate(m_document.view());
+    auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, *tree, nodeChanges);
+    tree->setRoot(isolatedRoot);
     tree->appendNodeChanges(nodeChanges);
 
     return makeRef(*tree);
@@ -3064,7 +3113,7 @@ bool isNodeAriaVisible(Node* node)
 
 AccessibilityObject* AXObjectCache::rootWebArea()
 {
-    AccessibilityObject* rootObject = this->rootObject();
+    AXCoreObject* rootObject = this->rootObject();
     if (!rootObject || !rootObject->isAccessibilityScrollView())
         return nullptr;
     return downcast<AccessibilityScrollView>(*rootObject).webAreaObject();

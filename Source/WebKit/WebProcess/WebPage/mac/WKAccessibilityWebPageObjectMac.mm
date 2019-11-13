@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ApplicationServicesSPI.h"
 #import "PluginView.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -253,7 +254,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
         // Isolated tree frames have the offset encoded into them so we don't need to undo here.
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        bool queryingIsolatedTree = [self clientSupportsIsolatedTree] && _AXUIElementRequestServicedBySecondaryAXThread();
+        bool queryingIsolatedTree = WebCore::AXObjectCache::clientSupportsIsolatedTree() && _AXUIElementRequestServicedBySecondaryAXThread();
         applyContentOffset = !queryingIsolatedTree;
 #endif
         if (auto pluginView = WebKit::WebPage::pluginViewForFrame(m_page->mainFrame()))

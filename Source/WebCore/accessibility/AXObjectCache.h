@@ -151,7 +151,7 @@ public:
     WEBCORE_EXPORT static AXCoreObject* focusedUIElementForPage(const Page*);
 
     // Returns the root object for the entire document.
-    WEBCORE_EXPORT AccessibilityObject* rootObject();
+    WEBCORE_EXPORT AXCoreObject* rootObject();
     // Returns the root object for a specific frame.
     WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(Frame*);
     
@@ -192,11 +192,14 @@ public:
     void recomputeIsIgnored(RenderObject* renderer);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WEBCORE_EXPORT Ref<AXIsolatedTree> generateIsolatedAccessibilityTree();
-
-    Ref<AXIsolatedObject> createIsolatedAccessibilityTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
+    WEBCORE_EXPORT static bool clientSupportsIsolatedTree();
+private:
+    AXCoreObject* isolatedTreeRootObject();
+    Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier);
+    Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
 #endif
-    
+
+public:
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();

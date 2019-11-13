@@ -53,7 +53,7 @@ static void coreRootObjectWrapperDetachedCallback(AtkObject* wrapper, const char
     g_signal_emit_by_name(atkObject, "children-changed::remove", 0, wrapper);
 }
 
-static AccessibilityObjectWrapper* rootWebAreaWrapper(AccessibilityObject& rootObject)
+static AccessibilityObjectWrapper* rootWebAreaWrapper(AXCoreObject& rootObject)
 {
     if (!rootObject.isAccessibilityScrollView())
         return nullptr;
@@ -85,7 +85,7 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
     if (!cache)
         return nullptr;
 
-    AccessibilityObject* coreRootObject = cache->rootObject();
+    AXCoreObject* coreRootObject = cache->rootObject();
     if (!coreRootObject)
         return nullptr;
 
