@@ -84,6 +84,8 @@ public:
     void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
     void readFile(const String& filename, CompletionHandler<void(const NetworkCache::Data&, int error)>&&);
     void removeFile(const String& filename);
+    void writeSizeFile(const String&, uint64_t size);
+    static Optional<uint64_t> readSizeFile(const String&);
 
     const String& rootPath() const { return m_rootPath; }
     const NetworkCache::Salt& salt() const { return m_salt.value(); }

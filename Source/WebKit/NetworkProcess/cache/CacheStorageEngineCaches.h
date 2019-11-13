@@ -44,6 +44,7 @@ class Engine;
 
 class Caches final : public RefCounted<Caches>, private WebCore::StorageQuotaUser {
 public:
+    static String cachesSizeFilename(const String&);
     static Ref<Caches> create(Engine&, WebCore::ClientOrigin&&, String&& rootPath, WebCore::StorageQuotaManager&);
     ~Caches();
 
@@ -104,6 +105,8 @@ private:
     bool isDirty(uint64_t updateCounter) const;
 
     bool hasActiveCache() const;
+
+    void updateSizeFile();
 
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };
