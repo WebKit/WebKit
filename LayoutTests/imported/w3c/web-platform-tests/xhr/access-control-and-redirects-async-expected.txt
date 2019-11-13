@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py denied by Cross-Origin Resource Sharing policy: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/redirect-cors.py?location=http://127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py& due to access control checks.
-CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py denied by Cross-Origin Resource Sharing policy: redirection URL http://username:password@127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py has credentials
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/redirect-cors.py?location=http://username:password@127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py&allow_origin=true due to access control checks.
-CONSOLE MESSAGE: Cross-origin redirection to foo://bar.cgi denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/redirect-cors.py?location=foo://bar.cgi&allow_origin=true due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/redirect-cors.py?location=http://127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py&allow_origin=true&redirect_preflight=true due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/redirect-cors.py?location=http://127.0.0.1:8800/xhr/resources/access-control-basic-allow-star.py&allow_origin=true&allow_header=x-test&redirect_preflight=true due to access control checks.
 
 PASS Request is redirected without CORS headers to a response with Access-Control-Allow-Origin=* 
 PASS Request is redirected to a response with Access-Control-Allow-Origin=* 

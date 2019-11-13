@@ -1,3 +1,13 @@
+2019-11-13  Youenn Fablet  <youenn@apple.com>
+
+        Several XHR and CORS tests are flaky due to inconsistent order of console messages
+        https://bugs.webkit.org/show_bug.cgi?id=179607
+
+        Reviewed by Alex Christensen.
+
+        Use DumpJSConsoleLogInStdErr to remove console lines.
+        * TestExpectations:
+
 2019-11-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: inspector/model/remote-object-weak-collection.html is failing
