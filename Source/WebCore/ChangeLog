@@ -1,3 +1,18 @@
+2019-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] InlineFormattingState::addInlineRun should take a unique_ptr<Display::Run>
+        https://bugs.webkit.org/show_bug.cgi?id=204099
+        <rdar://problem/57102586>
+
+        Reviewed by Antti Koivisto.
+
+        It's rather wasteful to create a Display::Run just to pass it in to InlineFormattingState::addInlineRun.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::addInlineRun):
+
 2019-11-12  Antti Koivisto  <antti@apple.com>
 
         Skip matched declarations cache only for length resolution affecting font properties

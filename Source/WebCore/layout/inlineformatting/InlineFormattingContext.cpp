@@ -438,7 +438,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         // Completely collapsed line runs don't generate display runs either.
         if (lineRun.isCollapsedToVisuallyEmpty())
             continue;
-        formattingState.addInlineRun({ lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext() }, currentLine);
+        formattingState.addInlineRun(makeUnique<Display::Run>(lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext()), currentLine);
     }
 
     // Compute box final geometry.
