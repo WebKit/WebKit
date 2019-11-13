@@ -1,5 +1,19 @@
 2019-11-13  Youenn Fablet  <youenn@apple.com>
 
+        Remove timer to stop service worker process
+        https://bugs.webkit.org/show_bug.cgi?id=204118
+
+        Reviewed by Alex Christensen.
+
+        Removal of a timer that is never get activated.
+        No change of behavior.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+
+2019-11-13  Youenn Fablet  <youenn@apple.com>
+
         Take service worker assertions based on client processes assertion states
         https://bugs.webkit.org/show_bug.cgi?id=204119
 

@@ -756,7 +756,6 @@ private:
     Paths m_resolvedPaths;
 
     HashMap<PAL::SessionID, HashSet<WebPageProxyIdentifier>> m_sessionToPageIDsMap;
-    RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessesTerminationTimer;
 
     ForegroundWebProcessCounter m_foregroundWebProcessCounter;
     BackgroundWebProcessCounter m_backgroundWebProcessCounter;
