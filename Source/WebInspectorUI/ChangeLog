@@ -1,5 +1,19 @@
 2019-11-12  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Local Overrides: drop zone overlay doesn't take up the full content area
+        https://bugs.webkit.org/show_bug.cgi?id=204093
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FontResourceContentView.css:
+        (.content-view.resource.font > :matches(.local-resource-override-label-view, .local-resource-override-warning-view):not([hidden]) ~ .drop-zone): Added.
+        (.content-view.resource.font > .drop-zone): Deleted.
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image > :matches(.local-resource-override-label-view, .local-resource-override-warning-view):not([hidden]) ~ .drop-zone): Added.
+        (.content-view.resource.image > .drop-zone): Deleted.
+
+2019-11-12  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: create/update local override drop zone shown in image collection view
         https://bugs.webkit.org/show_bug.cgi?id=204097
 
