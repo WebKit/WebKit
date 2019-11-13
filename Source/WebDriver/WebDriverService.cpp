@@ -1760,10 +1760,8 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
 static bool processPauseAction(JSON::Object& actionItem, Action& action, Optional<String>& errorMessage)
 {
     RefPtr<JSON::Value> durationValue;
-    if (!actionItem.getValue("duration"_s, durationValue)) {
-        errorMessage = String("The parameter 'duration' is missing in pause action");
-        return false;
-    }
+    if (!actionItem.getValue("duration"_s, durationValue))
+        return true;
 
     auto duration = unsignedValue(*durationValue);
     if (!duration) {

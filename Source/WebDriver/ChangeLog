@@ -1,5 +1,23 @@
 2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: duration can be undefined in pause actions
+        https://bugs.webkit.org/show_bug.cgi?id=204152
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Make duration optional in pause actions.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/validity.py::test_pause_without_duration[none]
+               imported/w3c/webdriver/tests/perform_actions/validity.py::test_pause_without_duration[key]
+               imported/w3c/webdriver/tests/perform_actions/validity.py::test_pause_without_duration[pointer]
+
+        * Session.cpp:
+        (WebDriver::Session::performActions):
+        * WebDriverService.cpp:
+        (WebDriver::processPauseAction):
+
+2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: check the frameID parameter before running switch to frame command
         https://bugs.webkit.org/show_bug.cgi?id=204150
 

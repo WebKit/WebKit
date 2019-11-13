@@ -2344,7 +2344,8 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                 state->setString("sourceId"_s, action.id);
                 switch (action.type) {
                 case Action::Type::None:
-                    state->setDouble("duration"_s, action.duration.value());
+                    if (action.duration)
+                        state->setDouble("duration"_s, action.duration.value());
                     break;
                 case Action::Type::Pointer: {
                     switch (action.subtype) {
