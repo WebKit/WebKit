@@ -25,7 +25,7 @@
 
 WI.ImageResourceContentView = class ImageResourceContentView extends WI.ResourceContentView
 {
-    constructor(resource)
+    constructor(resource, {disableDropZone} = {})
     {
         console.assert(resource instanceof WI.Resource);
 
@@ -33,6 +33,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
         this._imageElement = null;
         this._draggingInternalImageElement = false;
+        this._disableDropZone = disableDropZone || false;
 
         const toolTip = WI.UIString("Show transparency grid");
         const activatedToolTip = WI.UIString("Hide transparency grid");
@@ -86,7 +87,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             this._draggingInternalImageElement = false;
         });
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsLocalResourceOverrides() && !this._disableDropZone) {
             let dropZoneView = new WI.DropZoneView(this);
             dropZoneView.targetElement = imageContainer;
             this.addSubview(dropZoneView);

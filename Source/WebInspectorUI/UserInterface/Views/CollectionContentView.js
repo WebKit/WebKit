@@ -28,6 +28,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
     constructor(collection, contentViewConstructor, contentPlaceholder)
     {
         console.assert(collection instanceof WI.Collection);
+        console.assert(contentViewConstructor instanceof WI.ContentView);
 
         super(collection);
 
@@ -99,6 +100,12 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
     // Protected
 
+    get contentViewConstructorOptions()
+    {
+        // Implemented by subclasses.
+        return {};
+    }
+
     addContentViewForItem(item)
     {
         if (!this._contentViewConstructor)
@@ -111,7 +118,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         this.hideContentPlaceholder();
 
-        let contentView = new this._contentViewConstructor(item);
+        let contentView = new this._contentViewConstructor(item, this.contentViewConstructorOptions);
         console.assert(contentView instanceof WI.ContentView);
 
         let handleClick = (event) => {

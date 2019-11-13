@@ -1,3 +1,22 @@
+2019-11-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: create/update local override drop zone shown in image collection view
+        https://bugs.webkit.org/show_bug.cgi?id=204097
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.prototype.get contentViewConstructorOptions): Added.
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView.prototype.get contentViewConstructorOptions): Added.
+        Provide a way to pass options when instantiating the content view from the constructor.
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        Support an optional object parameter that can be used to disable the `WI.DropZone`.
+
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r251958): console prompt is automatically focused when page is reloaded

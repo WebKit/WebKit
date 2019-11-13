@@ -98,6 +98,14 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
         super.detached();
     }
 
+    get contentViewConstructorOptions()
+    {
+        let contentViewConstructorOptions = super.contentViewConstructorOptions;
+        if (this.representedObject.resourceType === WI.Resource.Type.Image)
+            contentViewConstructorOptions.disableDropZone = true;
+        return contentViewConstructorOptions;
+    }
+
     contentViewAdded(contentView)
     {
         console.assert(contentView instanceof WI.ResourceContentView);
