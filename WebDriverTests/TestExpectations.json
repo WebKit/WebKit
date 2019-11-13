@@ -576,41 +576,19 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/execute_script/user_prompts.py": {
+    "imported/w3c/webdriver/tests/execute_async_script/promise.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204151"}},
         "subtests": {
-            "test_handle_prompt_dismiss_and_notify": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_accept_and_notify": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_ignore": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_default": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_twice": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
+            "test_await_promise_reject": {
+                "expected": {"all": {"status": ["PASS"]}}
             }
         }
     },
-    "imported/w3c/webdriver/tests/execute_async_script/user_prompts.py": {
+    "imported/w3c/webdriver/tests/execute_script/promise.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204151"}},
         "subtests": {
-            "test_handle_prompt_dismiss_and_notify": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_accept_and_notify": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_ignore": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_default": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
-            },
-            "test_handle_prompt_twice": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184965"}}
+            "test_await_promise_reject": {
+                "expected": {"all": {"status": ["PASS"]}}
             }
         }
     },
