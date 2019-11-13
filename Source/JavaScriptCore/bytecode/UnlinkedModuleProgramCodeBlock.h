@@ -37,6 +37,12 @@ public:
     typedef UnlinkedGlobalCodeBlock Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.unlinkedModuleProgramCodeBlockSpace<mode>();
+    }
+
     static UnlinkedModuleProgramCodeBlock* create(VM& vm, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     {
         UnlinkedModuleProgramCodeBlock* instance = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(vm.heap)) UnlinkedModuleProgramCodeBlock(vm, vm.unlinkedModuleProgramCodeBlockStructure.get(), info, codeGenerationMode);

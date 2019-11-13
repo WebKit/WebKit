@@ -112,6 +112,13 @@ public:
 
     static constexpr bool needsDestruction = true;
 
+    template<typename, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM&)
+    {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     enum { CallFunction, ApplyFunction };
 
     bool isConstructor() const { return m_isConstructor; }

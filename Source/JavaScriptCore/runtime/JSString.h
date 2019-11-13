@@ -97,7 +97,7 @@ public:
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
     // necessary if JSString didn't have a destructor.
     template<typename, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.stringSpace;
     }
@@ -255,6 +255,12 @@ private:
 class JSRopeString final : public JSString {
     friend class JSString;
 public:
+    template<typename, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.ropeStringSpace;
+    }
+
     // We use lower 3bits of fiber0 for flags. These bits are usable due to alignment, and it is OK even in 32bit architecture.
     static constexpr uintptr_t is8BitInPointer = static_cast<uintptr_t>(StringImpl::flagIs8Bit());
     static constexpr uintptr_t isSubstringInPointer = 0x2;

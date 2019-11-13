@@ -40,6 +40,12 @@ public:
 
     static constexpr bool needsDestruction = true;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.symbolSpace<mode>();
+    }
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(SymbolType, StructureFlags), info());
