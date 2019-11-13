@@ -1,3 +1,17 @@
+2019-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Rollout(r251358) Causes load hangs
+        https://bugs.webkit.org/show_bug.cgi?id=204158
+        <rdar://problem/57120002>
+
+        Unreviewed, revert r251358 because it causes load hangs.
+
+        * Platform/spi/Cocoa/SecItemSPI.h: Removed.
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemRequestData.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-11-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix build for ServiceWorkers disabled

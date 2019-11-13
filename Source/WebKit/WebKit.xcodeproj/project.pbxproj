@@ -1184,7 +1184,6 @@
 		7A8A9D581EF119B0009801AE /* APIInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */; };
 		7A8A9D5A1EF13029009801AE /* APIInjectedBundleBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8A9D591EF13020009801AE /* APIInjectedBundleBundleClient.h */; };
 		7A8A9D5C1EF14598009801AE /* APIInjectedBundlePageResourceLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8A9D5B1EF1458E009801AE /* APIInjectedBundlePageResourceLoadClient.h */; };
-		7AA746D523593D8100095050 /* SecItemSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA746D42359308400095050 /* SecItemSPI.h */; };
 		7AB6EA451EEAAE3800037B2B /* APIIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */; };
 		7AB6EA471EEAB6B800037B2B /* APIGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */; };
 		7AF236211E79A40800438A05 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF2361F1E79A3D800438A05 /* WebErrors.h */; };
@@ -3790,7 +3789,6 @@
 		7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleClient.h; sourceTree = "<group>"; };
 		7A8A9D591EF13020009801AE /* APIInjectedBundleBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleBundleClient.h; sourceTree = "<group>"; };
 		7A8A9D5B1EF1458E009801AE /* APIInjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
-		7AA746D42359308400095050 /* SecItemSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemSPI.h; sourceTree = "<group>"; };
 		7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionCocoa.mm; sourceTree = "<group>"; };
 		7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxInitialiationParametersCocoa.mm; sourceTree = "<group>"; };
 		7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxUtilities.mm; sourceTree = "<group>"; };
@@ -6296,7 +6294,6 @@
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				37B47E2C1D64DB76005F4EFF /* objcSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
-				7AA746D42359308400095050 /* SecItemSPI.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
