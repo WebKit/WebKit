@@ -570,7 +570,7 @@ TEST(WebKit, NetworkCacheDirectory)
     EXPECT_FALSE(error);
 }
 
-TEST(WebKit, ApplicationCacheDirectories)
+TEST(WebKit, DISABLED_ApplicationCacheDirectories)
 {
     using namespace TestWebKitAPI;
     TCPServer server([] (int socket) {
