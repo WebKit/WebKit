@@ -28,11 +28,12 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "AudioNode.h"
 
 namespace WebCore {
 
-class AudioScheduledSourceNode : public AudioNode {
+class AudioScheduledSourceNode : public AudioNode, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(AudioScheduledSourceNode);
 public:
     // These are the possible states an AudioScheduledSourceNode can be in:
@@ -54,8 +55,10 @@ public:
     
     AudioScheduledSourceNode(AudioContext&, float sampleRate);
 
-    ExceptionOr<void> start(double when);
-    ExceptionOr<void> stop(double when);
+    ExceptionOr<void> startLater(double when);
+    ExceptionOr<void> stopLater(double when);
+
+    void didBecomeMarkedForDeletion() override;
 
     unsigned short playbackState() const { return static_cast<unsigned short>(m_playbackState); }
     bool isPlayingOrScheduled() const { return m_playbackState == PLAYING_STATE || m_playbackState == SCHEDULED_STATE; }
@@ -75,6 +78,7 @@ protected:
 
     PlaybackState m_playbackState { UNSCHEDULED_STATE };
 
+    RefPtr<PendingActivity<AudioScheduledSourceNode>> m_pendingActivity;
     // m_startTime is the time to start playing based on the context's timeline (0 or a time less than the context's current time means "now").
     double m_startTime { 0 }; // in seconds
 
@@ -83,14 +87,7 @@ protected:
     // has been reached.
     double m_endTime; // in seconds
 
-    bool m_hasEndedListener { false };
-
     static const double UnknownTime;
-
-private:
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
-    void removeAllEventListeners() override;
 };
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2019-11-12  Keith Miller  <keith_miller@apple.com>
+
+        AudioScheduledSourceNodes leak if they have an attached onended EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=204087
+
+        Reviewed by Jer Noble.
+
+        * webaudio/audiobuffersource-not-gced-until-ended-expected.txt: Added.
+        * webaudio/audiobuffersource-not-gced-until-ended.html: Added.
+        * webaudio/finished-audio-buffer-source-nodes-should-be-collectable-expected.txt: Added.
+        * webaudio/finished-audio-buffer-source-nodes-should-be-collectable.html: Added.
+
 2019-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView does not respect system spellchecking preference

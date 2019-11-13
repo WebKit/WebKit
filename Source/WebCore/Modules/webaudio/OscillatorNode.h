@@ -49,6 +49,8 @@ public:
 
     virtual ~OscillatorNode();
 
+    const char* activeDOMObjectName() const override { return "OscillatorNode"; }
+
     Type type() const { return m_type; }
     ExceptionOr<void> setType(Type);
 

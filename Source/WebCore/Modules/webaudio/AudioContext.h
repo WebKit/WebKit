@@ -291,6 +291,9 @@ public:
     const SecurityOrigin* origin() const;
     void addConsoleMessage(MessageSource, MessageLevel, const String& message);
 
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final;
+
 protected:
     explicit AudioContext(Document&);
     AudioContext(Document&, AudioBuffer* renderTarget);
@@ -320,7 +323,6 @@ private:
     void mediaCanStart(Document&) override;
 
     // EventTarget
-    ScriptExecutionContext* scriptExecutionContext() const final;
     void dispatchEvent(Event&) final;
 
     // MediaProducer

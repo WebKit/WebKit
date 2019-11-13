@@ -51,6 +51,7 @@ Ref<ScriptProcessorNode> ScriptProcessorNode::create(AudioContext& context, floa
 
 ScriptProcessorNode::ScriptProcessorNode(AudioContext& context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
     : AudioNode(context, sampleRate)
+    , ActiveDOMObject(context.scriptExecutionContext())
     , m_doubleBufferIndex(0)
     , m_doubleBufferIndexForEvent(0)
     , m_bufferSize(bufferSize)
@@ -59,7 +60,6 @@ ScriptProcessorNode::ScriptProcessorNode(AudioContext& context, float sampleRate
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_numberOfOutputChannels(numberOfOutputChannels)
     , m_internalInputBus(AudioBus::create(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false))
-    , m_hasAudioProcessListener(false)
 {
     // Regardless of the allowed buffer sizes, we still need to process at the granularity of the AudioNode.
     if (m_bufferSize < AudioNode::ProcessingSizeInFrames)
@@ -72,10 +72,13 @@ ScriptProcessorNode::ScriptProcessorNode(AudioContext& context, float sampleRate
     addOutput(makeUnique<AudioNodeOutput>(this, numberOfOutputChannels));
 
     initialize();
+    suspendIfNeeded();
+    m_pendingActivity = makePendingActivity(*this);
 }
 
 ScriptProcessorNode::~ScriptProcessorNode()
 {
+    ASSERT(!hasPendingActivity());
     uninitialize();
 }
 
@@ -110,6 +113,13 @@ void ScriptProcessorNode::uninitialize()
     AudioNode::uninitialize();
 }
 
+void ScriptProcessorNode::didBecomeMarkedForDeletion()
+{
+    ASSERT(context().isGraphOwner());
+    m_pendingActivity = nullptr;
+    ASSERT(!hasPendingActivity());
+}
+
 void ScriptProcessorNode::process(size_t framesToProcess)
 {
     // Discussion about inputs and outputs:
@@ -117,10 +127,6 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // Additionally, there is a double-buffering for input and output which is exposed directly to JavaScript (see inputBuffer and outputBuffer below).
     // This node is the producer for inputBuffer and the consumer for outputBuffer.
     // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer.
-
-    // Check if audioprocess listener is set.
-    if (!m_hasAudioProcessListener)
-        return;
 
     // Get input and output busses.
     AudioBus* inputBus = this->input(0)->bus();
@@ -192,9 +198,6 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             m_isRequestOutstanding = true;
 
             callOnMainThread([this] {
-                if (!m_hasAudioProcessListener)
-                    return;
-
                 fireProcessEvent();
 
                 // De-reference to match the ref() call in process().
@@ -254,28 +257,6 @@ double ScriptProcessorNode::tailTime() const
 double ScriptProcessorNode::latencyTime() const
 {
     return std::numeric_limits<double>::infinity();
-}
-
-bool ScriptProcessorNode::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
-{
-    bool success = AudioNode::addEventListener(eventType, WTFMove(listener), options);
-    if (success && eventType == eventNames().audioprocessEvent)
-        m_hasAudioProcessListener = hasEventListeners(eventNames().audioprocessEvent);
-    return success;
-}
-
-bool ScriptProcessorNode::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
-{
-    bool success = AudioNode::removeEventListener(eventType, listener, options);
-    if (success && eventType == eventNames().audioprocessEvent)
-        m_hasAudioProcessListener = hasEventListeners(eventNames().audioprocessEvent);
-    return success;
-}
-
-void ScriptProcessorNode::removeAllEventListeners()
-{
-    m_hasAudioProcessListener = false;
-    AudioNode::removeAllEventListeners();
 }
 
 } // namespace WebCore

@@ -34,6 +34,7 @@ enum OscillatorType {
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
+    ActiveDOMObject,
 ] interface OscillatorNode : AudioNode {
     attribute OscillatorType type;
 
@@ -48,8 +49,8 @@ enum OscillatorType {
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    [MayThrowException] void start(optional unrestricted double when = 0);
-    [MayThrowException] void stop(optional unrestricted double when = 0);
+    [MayThrowException, ImplementedAs=startLater] void start(optional unrestricted double when = 0);
+    [MayThrowException, ImplementedAs=stopLater] void stop(optional unrestricted double when = 0);
 
     void setPeriodicWave(PeriodicWave? wave); // FIXME: The parameter should not be nullable.
 

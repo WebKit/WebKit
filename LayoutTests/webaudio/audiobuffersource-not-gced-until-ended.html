@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+    <script>
+        var context;
+
+        function runTest() 
+        {
+            jsTestIsAsync = true;
+
+            var sampleRate = 44100.0;
+            var numberOfFrames = 32;
+            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            var source = context.createBufferSource();
+            source.buffer = createTestBuffer(context, numberOfFrames);
+            source.connect(context.destination);
+            source.onended = function() 
+            {
+                testPassed("source.onended called.");
+                finishJSTest();
+            }
+            source.start(0);
+            context.startRendering();
+            // trigger a GC in the next micro task to try and collect source.
+            Promise.resolve().then(gc);
+        }
+    </script>
+
+</head>
+<body onload="runTest()">
+    <div>Tests that AudioBufferSourceNode calls its onended EventListener, even after a GC.</div>
+    <div id="console"></div>
+</body>

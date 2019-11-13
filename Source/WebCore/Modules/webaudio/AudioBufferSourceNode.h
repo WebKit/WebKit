@@ -57,7 +57,7 @@ public:
     unsigned numberOfChannels();
 
     // Play-state
-    ExceptionOr<void> start(double when, double grainOffset, Optional<double> grainDuration);
+    ExceptionOr<void> startLater(double when, double grainOffset, Optional<double> grainDuration);
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop
@@ -87,6 +87,8 @@ public:
 
     // AudioScheduledSourceNode
     void finish() final;
+
+    const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
 private:
     AudioBufferSourceNode(AudioContext&, float sampleRate);

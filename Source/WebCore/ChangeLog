@@ -1,3 +1,62 @@
+2019-11-12  Keith Miller  <keith_miller@apple.com>
+
+        AudioScheduledSourceNodes leak if they have an attached onended EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=204087
+        <rdar://problem/56772102>
+
+        Reviewed by Jer Noble.
+
+        Previously, if an AudioNode had any attributes that were event
+        targets we would leak the node as long as the AudioContext was
+        alive. This patch makes all the AudioNodes with EventTarget
+        attributes subclasses of ActiveDOMObject. For,
+        AudioScheduledSourceNodes we will mark the node as non-active when
+        either the node becomes eligible for deletion from the graph or
+        the onended event fires. For, ScriptProcessorNodes we mark the
+        node as non-active when the node becomes eligible for deletion.
+
+        Tests: webaudio/finished-audio-buffer-source-nodes-should-be-collectable.html
+               webaudio/audiobuffersource-not-gced-until-ended.html
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::startLater):
+        (WebCore::AudioBufferSourceNode::start): Deleted.
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::deref):
+        (WebCore::AudioNode::finishDeref):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::didBecomeMarkedForDeletion):
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::startLater):
+        (WebCore::AudioScheduledSourceNode::stopLater):
+        (WebCore::AudioScheduledSourceNode::didBecomeMarkedForDeletion):
+        (WebCore::AudioScheduledSourceNode::finish):
+        (WebCore::AudioScheduledSourceNode::start): Deleted.
+        (WebCore::AudioScheduledSourceNode::stop): Deleted.
+        (WebCore::AudioScheduledSourceNode::addEventListener): Deleted.
+        (WebCore::AudioScheduledSourceNode::removeEventListener): Deleted.
+        (WebCore::AudioScheduledSourceNode::removeAllEventListeners): Deleted.
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::~ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::didBecomeMarkedForDeletion):
+        (WebCore::ScriptProcessorNode::process):
+        (WebCore::ScriptProcessorNode::addEventListener): Deleted.
+        (WebCore::ScriptProcessorNode::removeEventListener): Deleted.
+        (WebCore::ScriptProcessorNode::removeAllEventListeners): Deleted.
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/ScriptProcessorNode.idl:
+        * Sources.txt:
+        * bindings/js/JSAudioNodeCustom.cpp: Removed.
+
 2019-11-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] InlineFormattingState::addInlineRun should take a unique_ptr<Display::Run>
