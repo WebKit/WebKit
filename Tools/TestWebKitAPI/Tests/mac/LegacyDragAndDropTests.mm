@@ -32,6 +32,7 @@
 #import <AppKit/NSDragging.h>
 #import <WebKit/WebView.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Compiler.h>
 #import <wtf/RetainPtr.h>
 
 @interface FrameLoadCompletionListener : NSObject<WebFrameLoadDelegate> {
@@ -131,7 +132,9 @@
     return NSMakePoint(_lastMousePosition.x + _offset.width, _lastMousePosition.y + _offset.height);
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSImage *)draggedImage
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _image.get();
 }

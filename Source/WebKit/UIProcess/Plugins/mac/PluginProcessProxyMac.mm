@@ -293,8 +293,10 @@ void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const V
     for (size_t i = 0; i < arguments.size(); ++i)
         [argumentsArray addObject:(NSString *)arguments[i]];
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary *configuration = [NSDictionary dictionaryWithObject:argumentsArray.get() forKey:NSWorkspaceLaunchConfigurationArguments];
     [[NSWorkspace sharedWorkspace] launchApplicationAtURL:[NSURL URLWithString:urlString] options:NSWorkspaceLaunchAsync configuration:configuration error:nullptr];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     completionHandler(true);
 }
 
@@ -344,7 +346,9 @@ void PluginProcessProxy::openFile(const String& fullPath, CompletionHandler<void
     if (!shouldOpenFile(m_pluginProcessAttributes, fullPath))
         return completionHandler(false);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSWorkspace sharedWorkspace] openFile:fullPath];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     completionHandler(true);
 }
 

@@ -230,10 +230,12 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
         ASSERT([innerView isKindOfClass:[NSScrollView class]]);
         NSScrollView *scrollView = static_cast<NSScrollView *>(innerView);
         // -copiesOnScroll will return NO whenever the content view is not fully opaque.
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([scrollView drawsBackground] && ![[scrollView contentView] copiesOnScroll])
             [scrollView setDrawsBackground:NO];
         else
             scrollView = 0;
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     CGContextRef cgContext = p.platformContext();

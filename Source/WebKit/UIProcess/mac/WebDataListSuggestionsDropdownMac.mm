@@ -199,7 +199,9 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
 {
     [super setBackgroundStyle:backgroundStyle];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.textField.textColor = backgroundStyle == NSBackgroundStyleLight ? [NSColor textColor] : [NSColor alternateSelectedControlTextColor];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)acceptsFirstResponder

@@ -1888,7 +1888,9 @@ static BOOL isQuickLookEvent(NSEvent *event)
 
 #if PLATFORM(MAC)
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return [[_private->toolTip copy] autorelease];
 }
@@ -1994,12 +1996,16 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     return [NSArray arrayWithObjects:WebArchivePboardType, WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), nil];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self setPromisedDragTIFFDataSource:nullptr];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if ([type isEqualToString:WebCore::legacyRTFDPasteboardType()] && [[pasteboard types] containsObject:WebArchivePboardType]) {
         auto archive = adoptNS([[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]]);
@@ -5306,7 +5312,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:NO];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)changeFont:(id)sender
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     COMMAND_PROLOGUE
 
@@ -5369,7 +5377,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:) inRange:[self _documentRange]];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)changeColor:(id)sender
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     COMMAND_PROLOGUE
 

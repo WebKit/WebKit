@@ -310,7 +310,9 @@ WEBCORE_COMMAND(yankAndSelect)
     return _data->_impl->readSelectionFromPasteboard(pasteboard);
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)changeFont:(id)sender
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _data->_impl->changeFontFromFontManager();
 }
@@ -869,17 +871,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _data->_impl->removeTrackingRects(tags, count);
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     return _data->_impl->stringForToolTip(tag);
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _data->_impl->pasteboardChangedOwner(pasteboard);
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _data->_impl->provideDataForPasteboard(pasteboard, type);
 }

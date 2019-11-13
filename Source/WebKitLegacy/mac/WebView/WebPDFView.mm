@@ -1274,10 +1274,12 @@ IGNORE_WARNINGS_END
             written = YES;
         }
         
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (![[NSWorkspace sharedWorkspace] openFile:opath]) {
             // NSWorkspace couldn't open file.  Do we need an alert
             // here?  We ignore the error elsewhere.
         }
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 

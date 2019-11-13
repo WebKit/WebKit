@@ -1,3 +1,35 @@
+2019-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Fix build
+        https://bugs.webkit.org/show_bug.cgi?id=204136
+
+        Reviewed by Alex Christensen.
+
+        Remove deprecation warnings.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::replacedNSWorkspace_launchApplicationAtURL_options_configuration_error):
+        (WebKit::initializeCocoaOverrides):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView changeFont:]):
+        (-[WKWebView changeColor:]):
+        (-[WKWebView view:stringForToolTip:point:userData:]):
+        (-[WKWebView pasteboardChangedOwner:]):
+        (-[WKWebView pasteboard:provideDataForType:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView changeFont:]):
+        (-[WKView view:stringForToolTip:point:userData:]):
+        (-[WKView pasteboardChangedOwner:]):
+        (-[WKView pasteboard:provideDataForType:]):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::launchApplicationAtURL):
+        (WebKit::PluginProcessProxy::openFile):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionView setBackgroundStyle:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication):
+
 2019-11-13  Megan Gardner  <megan_gardner@apple.com>
 
         Cleanup old UIKit Staging

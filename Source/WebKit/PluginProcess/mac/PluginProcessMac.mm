@@ -272,6 +272,7 @@ static NSRunningApplication *(*NSWorkspace_launchApplicationAtURL_options_config
 static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_configuration_error(NSWorkspace *self, SEL _cmd, NSURL *url, NSWorkspaceLaunchOptions options, NSDictionary *configuration, NSError **error)
 {
     Vector<String> arguments;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (NSArray *argumentsArray = [configuration objectForKey:NSWorkspaceLaunchConfigurationArguments]) {
         if ([argumentsArray isKindOfClass:[NSArray array]]) {
             for (NSString *argument in argumentsArray) {
@@ -280,6 +281,7 @@ static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_
             }
         }
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (PluginProcess::singleton().launchApplicationAtURL(URL(url).string(), arguments)) {
         if (error)
@@ -307,6 +309,7 @@ static void initializeCocoaOverrides()
     NSConcreteTask_launch = reinterpret_cast<void (*)(NSTask *, SEL)>(method_setImplementation(launchMethod, reinterpret_cast<IMP>(replacedNSConcreteTask_launch)));
 
     // Override -[NSWorkspace launchApplicationAtURL:options:configuration:error:]
+    // FIXME: Are these deprecation allowances necessary?
     Method launchApplicationAtURLOptionsConfigurationErrorMethod = class_getInstanceMethod(objc_getClass("NSWorkspace"), @selector(launchApplicationAtURL:options:configuration:error:));
     NSWorkspace_launchApplicationAtURL_options_configuration_error = reinterpret_cast<NSRunningApplication *(*)(NSWorkspace *, SEL, NSURL *, NSWorkspaceLaunchOptions, NSDictionary *, NSError **)>(method_setImplementation(launchApplicationAtURLOptionsConfigurationErrorMethod, reinterpret_cast<IMP>(replacedNSWorkspace_launchApplicationAtURL_options_configuration_error)));
 

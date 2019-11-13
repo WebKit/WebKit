@@ -525,7 +525,9 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 
     m_temporaryPDFFiles.add(pdfUUID, nsPath);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSWorkspace sharedWorkspace] openFile:nsPath];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID)
@@ -535,7 +537,9 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
     if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(PDFKIT_PLUGIN)

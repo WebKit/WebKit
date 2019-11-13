@@ -276,7 +276,9 @@ void WebFrameLoaderClient::forceLayoutForNonHTML()
 
 void WebFrameLoaderClient::setCopiesOnScroll()
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[[m_webFrame->_private->webFrameView _scrollView] contentView] setCopiesOnScroll:YES];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void WebFrameLoaderClient::detachedFromParent2()

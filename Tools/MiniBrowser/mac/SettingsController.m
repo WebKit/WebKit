@@ -240,7 +240,10 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Subpixel CSSOM Metrics" action:@selector(toggleEnableSubPixelCSSOMMetrics:) indented:YES];
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-implementations"
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+#pragma GCC diagnostic pop
 {
     SEL action = [menuItem action];
 

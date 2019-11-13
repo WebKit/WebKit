@@ -89,13 +89,17 @@ void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode
 void ScrollView::platformSetCanBlitOnScroll(bool canBlitOnScroll)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[scrollView() contentView] setCopiesOnScroll:canBlitOnScroll];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool ScrollView::platformCanBlitOnScroll() const
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[scrollView() contentView] copiesOnScroll];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) const

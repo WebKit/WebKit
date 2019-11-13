@@ -396,7 +396,9 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
     return colorFromNSColor([NSColor unemphasizedSelectedTextBackgroundColor]);
 #else
     UNUSED_PARAM(options);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return colorFromNSColor([NSColor secondarySelectedControlColor]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -446,7 +448,9 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<St
     return colorFromNSColor([NSColor selectedContentBackgroundColor]);
 #else
     UNUSED_PARAM(options);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return colorFromNSColor([NSColor alternateSelectedControlColor]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -457,7 +461,9 @@ Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<
     return colorFromNSColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 #else
     UNUSED_PARAM(options);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return colorFromNSColor([NSColor secondarySelectedControlColor]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -634,7 +640,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #if HAVE(OS_DARK_MODE_SUPPORT)
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
 #else
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
         case CSSValueAppleSystemSelectedContentBackground:
@@ -726,7 +734,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedContentBackgroundColor);
 #else
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return @selector(secondarySelectedControlColor);
+                ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             case CSSValueAppleSystemSelectedText:
                 return @selector(selectedTextColor);
@@ -740,7 +750,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextBackgroundColor);
 #else
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return @selector(secondarySelectedControlColor);
+                ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             case CSSValueAppleSystemPlaceholderText:
                 return @selector(placeholderTextColor);
@@ -2803,9 +2815,11 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
         backgroundRects.append(layout.lines[i].backgroundRect);
 
     Color backgroundColor;
-    if (attachment.frame().selection().isFocusedAndActive())
+    if (attachment.frame().selection().isFocusedAndActive()) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         backgroundColor = colorFromNSColor([NSColor alternateSelectedControlColor]);
-    else
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    } else
         backgroundColor = attachmentTitleInactiveBackgroundColor();
 
     backgroundColor = attachment.style().colorByApplyingColorFilter(backgroundColor);
