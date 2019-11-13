@@ -1,3 +1,10 @@
+2019-11-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix build for ServiceWorkers disabled
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+
 2019-11-13  Rob Buis  <rbuis@igalia.com>
 
         Support stale-while-revalidate cache strategy

@@ -1628,7 +1628,9 @@ void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerI
         },
         nullptr,
     };
+#if ENABLE(SERVICE_WORKER)
     updateServiceWorkerProcessAssertion();
+#endif
 }
 
 } // namespace WebKit
