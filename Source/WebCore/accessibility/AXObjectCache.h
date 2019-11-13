@@ -513,7 +513,7 @@ inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectC
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
 inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired), m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired), m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired), m_focusModalNodeTimer(*this, &AXObjectCache::focusModalNodeTimerFired), m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired) { }
 inline AXObjectCache::~AXObjectCache() { }
-inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
+inline AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
@@ -529,7 +529,7 @@ inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return nullptr; }
 inline Node* AXObjectCache::modalNode() { return nullptr; }
-inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
+inline void AXObjectCache::attachWrapper(AXCoreObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(AXCoreObject*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
@@ -560,10 +560,10 @@ inline void AXObjectCache::notificationPostTimerFired() { }
 inline void AXObjectCache::passwordNotificationPostTimerFired() { }
 inline void AXObjectCache::performDeferredCacheUpdate() { }
 inline void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject*) { }
-inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget, PostType) { }
+inline void AXObjectCache::postNotification(AXCoreObject*, Document*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postNotification(Node*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, PostTarget, PostType) { }
-inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
+inline void AXObjectCache::postPlatformNotification(AXCoreObject*, AXNotification) { }
 inline void AXObjectCache::postTextReplacementNotification(Node*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&) { }
 inline void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String&, const String&) { }
 inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&) { }
@@ -583,7 +583,7 @@ inline void AXObjectCache::setIsSynchronizingSelection(bool) { }
 inline void AXObjectCache::setTextSelectionIntent(const AXTextStateChangeIntent&) { }
 inline RefPtr<Range> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&) { return nullptr; }
 inline IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset&) { return IntRect(); }
-inline CharacterOffset AXObjectCache::characterOffsetForIndex(int, const AccessibilityObject*) { return CharacterOffset(); }
+inline CharacterOffset AXObjectCache::characterOffsetForIndex(int, const AXCoreObject*) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range>, bool, bool) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::endCharacterOffsetOfLine(const CharacterOffset&) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset&, bool) { return CharacterOffset(); }

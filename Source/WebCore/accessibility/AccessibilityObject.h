@@ -715,6 +715,7 @@ public:
     void setWrapper(AccessibilityObjectWrapper* wrapper) override { m_wrapper = wrapper; }
 #else
     AccessibilityObjectWrapper* wrapper() const override { return nullptr; }
+    void setWrapper(AccessibilityObjectWrapper*) override { }
 #endif
 
 #if PLATFORM(COCOA)
@@ -823,10 +824,10 @@ protected:
 };
 
 #if !ENABLE(ACCESSIBILITY)
-inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) override { return m_children; }
+inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
 inline const String& AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
-inline void AccessibilityObject::updateBackingStore() override { }
+inline void AccessibilityObject::updateBackingStore() { }
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible);

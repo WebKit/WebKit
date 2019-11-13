@@ -1,3 +1,17 @@
+2019-11-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix build for accessibility disabled.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::characterOffsetForIndex):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::children):
+        (WebCore::AccessibilityObject::updateBackingStore):
+
 2019-11-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Several issues while trying to play a video on NextCloud
