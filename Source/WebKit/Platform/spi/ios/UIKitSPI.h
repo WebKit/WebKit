@@ -32,7 +32,10 @@
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIBlurEffect_Private.h>
 #import <UIKit/UICalloutBar.h>
+#import <UIKit/UIClickInteraction_Private.h>
+#import <UIKit/UIClickPresentationInteraction_Private.h>
 #import <UIKit/UIColorEffect.h>
+#import <UIKit/UIContextMenuConfiguration.h>
 #import <UIKit/UIDatePicker_Private.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIDocumentMenuViewController_Private.h>
@@ -92,6 +95,7 @@
 #if USE(UICONTEXTMENU)
 #import <UIKit/UIContextMenuInteraction_ForSpringBoardOnly.h>
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
+#import <UIKit/UIContextMenuInteraction_Private.h>
 #endif
 #endif
 
@@ -379,6 +383,10 @@ typedef enum {
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font minFontSize:(CGFloat)minFontSize actualFontSize:(CGFloat *)actualFontSize forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;
 @end
 
+@interface UIGestureRecognizer ()
+@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+@end
+
 @interface UITapGestureRecognizer ()
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
@@ -441,9 +449,11 @@ typedef enum {
 @interface UITextInteractionAssistant ()
 - (void)activateSelection;
 - (void)deactivateSelection;
+- (void)didEndScrollingOrZooming;
 - (void)didEndScrollingOverflow;
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
+- (void)willStartScrollingOrZooming;
 - (void)willStartScrollingOverflow;
 @end
 
@@ -588,9 +598,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
     UIWKGesturePhraseBoundary = 14,
 };
 
-@interface UIWebSelectionAssistant : NSObject
-@end
-
 @interface UIWKAutocorrectionRects : NSObject
 @end
 
@@ -680,6 +687,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface UIWebFormAccessory ()
 - (void)hideAutoFillButton;
 - (void)setClearVisible:(BOOL)flag;
+- (void)setNextPreviousItemsVisible:(BOOL)visible;
 - (void)showAutoFillButtonWithTitle:(NSString *)title;
 @property (nonatomic, retain) UIBarButtonItem *_autofill;
 @property (nonatomic, assign) id <UIWebFormAccessoryDelegate> delegate;
@@ -701,6 +709,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @interface UIWebGeolocationPolicyDecider ()
 + (instancetype)sharedPolicyDecider;
+- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 - (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id)listener;
 @end
 
@@ -1084,16 +1093,47 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @interface _UIContextMenuStyle : NSObject <NSCopying>
 @end
 
+#if USE(UICONTEXTMENU)
+@interface UITargetedPreview ()
+@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
+@end
+#endif // USE(UICONTEXTMENU)
+
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+@interface _UIClickInteraction : NSObject <UIInteraction>
+@end
+
+@interface _UIClickPresentationInteraction : NSObject <UIInteraction>
+@end
+#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
-@interface UITextInteractionAssistant (Staging_55645619)
-- (void)didEndScrollingOrZooming;
-- (void)willStartScrollingOrZooming;
+#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+@interface UIContextMenuConfiguration (IPI)
+@property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
+@property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
 @end
 
-@interface UIGestureRecognizer (Staging_45970040)
-@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+@protocol _UIClickInteractionDriverDelegate;
+@protocol _UIClickInteractionDriving <NSObject>
+@property (nonatomic, weak) id <_UIClickInteractionDriverDelegate> delegate;
 @end
+
+@interface _UIClickPresentationInteraction (IPI)
+@property (nonatomic, strong) _UIClickInteraction *previewClickInteraction;
+@end
+
+@interface _UIClickInteraction (IPI)
+@property (nonatomic, strong) id<_UIClickInteractionDriving> driver;
+@end
+
+@interface UIContextMenuInteraction (IPI)
+@property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
+@end
+
+#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 
 @interface UIPhysicalKeyboardEvent : UIPressesEvent
 @end
@@ -1105,10 +1145,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 @property (nonatomic, readonly) CFIndex _keyCode;
 @property (nonatomic, readonly) NSInteger _gsModifierFlags;
-@end
-
-@interface UIWebGeolocationPolicyDecider (Staging_25963823)
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 @end
 
 @interface UIColor (IPI)
@@ -1127,6 +1163,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (BOOL)_paused;
 @property (nonatomic) UIView *view;
 @property (nonatomic, assign, getter=_acceptsFailureRequirements, setter=_setAcceptsFailureRequiments:) BOOL _acceptsFailureRequirements;
+@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
 @end
 
 @interface UIHoverEvent : UIEvent
@@ -1187,12 +1224,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @end
 #endif
 
-#if USE(UICONTEXTMENU)
-@interface UITargetedPreview (Radar54086338)
-@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
-@end
-#endif // USE(UICONTEXTMENU)
-
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
 - (void)pasteAndMatchStyle:(id)sender;
@@ -1227,42 +1258,6 @@ static inline bool currentUserInterfaceIdiomIsPad()
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
 #endif
 }
-
-@interface UIWebFormAccessory (Staging_49666643)
-- (void)setNextPreviousItemsVisible:(BOOL)visible;
-@end
-
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-@interface UIContextMenuConfiguration (Radar52295535)
-@property (nonatomic, copy) id <NSCopying> identifier;
-@property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;
-@property (nonatomic, copy) UIContextMenuActionProvider actionProvider;
-@end
-
-@protocol _UIClickInteractionDriverDelegate;
-@protocol _UIClickInteractionDriving <NSObject>
-@property (nonatomic, weak) id <_UIClickInteractionDriverDelegate> delegate;
-@end
-
-@class _UIClickPresentationInteraction;
-@interface UIContextMenuInteraction (Radar52298310)
-@property (nonatomic, strong) _UIClickPresentationInteraction *presentationInteraction;
-@end
-
-@interface _UIClickInteraction : NSObject <UIInteraction>
-@end
-
-@interface _UIClickPresentationInteraction : NSObject <UIInteraction>
-@end
-@interface _UIClickPresentationInteraction (Radar52298310)
-@property (nonatomic, strong) _UIClickInteraction *previewClickInteraction;
-@end
-
-@interface _UIClickInteraction (Radar52298310)
-@property (nonatomic, strong) id<_UIClickInteractionDriving> driver;
-@end
-
-#endif
 
 WTF_EXTERN_C_BEGIN
 

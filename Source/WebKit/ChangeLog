@@ -1,3 +1,16 @@
+2019-11-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Cleanup old UIKit Staging
+        https://bugs.webkit.org/show_bug.cgi?id=204130
+
+        Reviewed by Wenson Hsieh.
+
+        Not new tests - linking only.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Removing old staging code that should be unnecessary now. 
+
 2019-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Cannot open camera from websites
