@@ -53,6 +53,13 @@ public:
     static FunctionRareData* create(VM&, JSFunction*);
 
     static constexpr bool needsDestruction = true;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.functionRareDataSpace<mode>();
+    }
+
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);

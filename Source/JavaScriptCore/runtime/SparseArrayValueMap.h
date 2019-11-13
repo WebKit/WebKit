@@ -29,6 +29,7 @@
 #include "JSTypeInfo.h"
 #include "PropertyDescriptor.h"
 #include "PutDirectIndexMode.h"
+#include "VM.h"
 #include "WriteBarrier.h"
 #include <wtf/HashMap.h>
 
@@ -105,6 +106,12 @@ public:
     
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.sparseArrayValueMapSpace;
+    }
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 

@@ -36,6 +36,12 @@ public:
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | ProhibitsPropertyCaching;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.proxyObjectSpace<mode>();
+    }
+
     static ProxyObject* create(JSGlobalObject* globalObject, JSValue target, JSValue handler)
     {
         VM& vm = getVM(globalObject);
