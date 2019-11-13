@@ -54,9 +54,13 @@ function test()
 
         // Run the expression, and then run a garbage collection on a different
         // event loop so no objects are kept alive by the stack.
-        WI.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
-            WI.runtimeManager.evaluateInInspectedWindow("GCController.collect()", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function() {
-                InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
+        WI.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function(remoteObject, wasThrown) {
+            InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
+            InspectorTest.assert(!wasThrown);
+
+            HeapAgent.gc(function(error) {
+                InspectorTest.assert(!error, error);
+
                 remoteObject.getCollectionEntries(function(entries) {
                     InspectorTest.log("ENTRIES:");
                     entries.sort((a, b) => a.value.value - b.value.value);
