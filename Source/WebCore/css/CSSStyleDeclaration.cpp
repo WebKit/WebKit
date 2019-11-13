@@ -279,7 +279,7 @@ Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomStrin
         // Call this version of the getter so that, e.g., pixelTop returns top as a number
         // in pixel units and posTop should does the same _if_ this is a positioned element.
         // FIXME: If not a positioned element, MSIE documentation says posTop should return 0; this rule is not implemented.
-        return Variant<String, double> { downcast<CSSPrimitiveValue>(*value).floatValue(CSSPrimitiveValue::CSS_PX) };
+        return Variant<String, double> { downcast<CSSPrimitiveValue>(*value).floatValue(CSSUnitType::CSS_PX) };
     }
 
     return Variant<String, double> { value->cssText() };

@@ -51,7 +51,7 @@ RefPtr<TypedOMCSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* valu
         return nullptr;
 
     // FIXME: Properly reify all length values.
-    if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSPrimitiveValue::CSS_PX)
+    if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSUnitType::CSS_PX)
         return TypedOMCSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px");
 
     if (is<CSSImageValue>(*value))

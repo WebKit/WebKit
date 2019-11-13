@@ -46,22 +46,22 @@ private:
     {
         // Red
         unsigned value = (m_rgbColor >> 16) & 0xFF;
-        auto result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
+        auto result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
         m_red = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
         
         // Green
         value = (m_rgbColor >> 8) & 0xFF;
-        result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
+        result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
         m_green = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
 
         // Blue
         value = m_rgbColor & 0xFF;
-        result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
+        result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
         m_blue = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
         
         // Alpha
         float alphaValue = static_cast<float>((m_rgbColor >> 24) & 0xFF) / 0xFF;
-        result = CSSPrimitiveValue::create(alphaValue, CSSPrimitiveValue::CSS_NUMBER);
+        result = CSSPrimitiveValue::create(alphaValue, CSSUnitType::CSS_NUMBER);
         m_alpha = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
     }
     

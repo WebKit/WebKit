@@ -1,3 +1,21 @@
+2019-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert CSSPrimitiveValue::UnitType to an enum class, and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=204101
+
+        Reviewed by Antti Koivisto.
+
+        Move CSSPrimitiveValue::UnitType to a standalone enum class CSSUnitType, and
+        CSSPrimitiveVallue::UnitCategory to CSSUnitCategory; these are going to more extensive
+        use in calc() and in the CSS OM.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::updateGeometry):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::updateGeometry):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::updateGeometry):
+
 2019-11-12  Sihui Liu  <sihui_liu@apple.com>
 
         Add size file for CacheStorage

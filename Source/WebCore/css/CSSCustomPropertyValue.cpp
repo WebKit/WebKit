@@ -58,7 +58,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const Ref<CSSVariableData>& value) {
             m_stringValue = value->tokenRange().serialize();
         }, [&](const Length& value) {
-            m_stringValue = CSSPrimitiveValue::create(value.value(), CSSPrimitiveValue::CSS_PX)->cssText();
+            m_stringValue = CSSPrimitiveValue::create(value.value(), CSSUnitType::CSS_PX)->cssText();
         }, [&](const Ref<StyleImage>& value) {
             m_stringValue = value->cssValue()->cssText();
         });

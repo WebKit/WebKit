@@ -101,11 +101,11 @@ void PDFPluginAnnotation::updateGeometry()
     NSRect annotationRect = NSRectFromCGRect([m_pdfLayerController boundsForAnnotation:m_annotation.get()]);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSPrimitiveValue::CSS_PX);
-    styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSPrimitiveValue::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSUnitType::CSS_PX);
     IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
-    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSPrimitiveValue::CSS_PX);
-    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSPrimitiveValue::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSUnitType::CSS_PX);
 }
 
 bool PDFPluginAnnotation::handleEvent(Event& event)

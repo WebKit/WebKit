@@ -114,7 +114,7 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 
 void HTMLElement::applyBorderAttributeToStyle(const AtomString& value, MutableStyleProperties& style)
 {
-    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSPrimitiveValue::CSS_PX);
+    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
     addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 

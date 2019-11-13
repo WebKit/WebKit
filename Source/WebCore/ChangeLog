@@ -1,3 +1,282 @@
+2019-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert CSSPrimitiveValue::UnitType to an enum class, and cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=204101
+
+        Reviewed by Antti Koivisto.
+        
+        Move CSSPrimitiveValue::UnitType to a standalone enum class CSSUnitType, and
+        CSSPrimitiveVallue::UnitCategory to CSSUnitCategory; these are going to more extensive
+        use in calc() and in the CSS OM.
+        
+        Remove some comments about quirky units behavior which is now the standard behavior.
+        
+        The compiler warned about some units not handled in CSSPrimitiveValue::formatNumberForCustomCSSText()
+        and CSSPrimitiveValue::equals() which may reveal bugs; assert for now.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::calcUnitCategory):
+        (WebCore::hasDoubleValue):
+        (WebCore::CSSCalcOperation::createSimplified):
+        (WebCore::CSSCalcOperation::primitiveType const):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::createBlendHalf):
+        (WebCore::createCSS):
+        (WebCore::unitCategory): Deleted.
+        * css/CSSCalculationValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForImageSliceSide):
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::zoomAdjustedPixelValue):
+        (WebCore::zoomAdjustedNumberValue):
+        (WebCore::valueForReflection):
+        (WebCore::percentageOrZoomAdjustedValue):
+        (WebCore::matrixTransformValue):
+        (WebCore::adjustLengthForZoom):
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::specifiedValueForGridTrackBreadth):
+        (WebCore::specifiedValueForGridTrackSize):
+        (WebCore::OrderedNamedLinesCollector::appendLines const):
+        (WebCore::valueForGridPosition):
+        (WebCore::createTransitionPropertyValue):
+        (WebCore::delayValue):
+        (WebCore::durationValue):
+        (WebCore::textUnderlineOffsetToCSSValue):
+        (WebCore::textDecorationThicknessToCSSValue):
+        (WebCore::altTextToCSSValue):
+        (WebCore::contentToCSSValue):
+        (WebCore::counterToCSSValue):
+        (WebCore::ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue):
+        (WebCore::ComputedStyleExtractor::fontNonKeywordStretchFromStyleValue):
+        (WebCore::ComputedStyleExtractor::fontNonKeywordStyleFromStyleValue):
+        (WebCore::fontShorthandValueForSelectionProperties):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::blend const):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::customCSSText const):
+        * css/CSSFontFace.cpp:
+        (WebCore::calculateItalicRange):
+        * css/CSSFontStyleValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::compareStops):
+        (WebCore::CSSGradientValue::computeStops):
+        (WebCore::appendGradientStops):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSConicGradientValue::createGradient):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::createDeprecatedCSSOMWrapper const):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::unitCategory):
+        (WebCore::CSSPrimitiveValue::primitiveType const):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::computeDegrees const):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble const):
+        (WebCore::CSSPrimitiveValue::computeNonCalcLengthDouble):
+        (WebCore::CSSPrimitiveValue::setFloatValue):
+        (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor):
+        (WebCore::CSSPrimitiveValue::getFloatValue const):
+        (WebCore::CSSPrimitiveValue::doubleValue const):
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory):
+        (WebCore::CSSPrimitiveValue::doubleValueInternal const):
+        (WebCore::CSSPrimitiveValue::setStringValue):
+        (WebCore::CSSPrimitiveValue::getStringValue const):
+        (WebCore::CSSPrimitiveValue::stringValue const):
+        (WebCore:: const):
+        (WebCore::CSSPrimitiveValue::getRGBColorValue const):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        (WebCore::CSSPrimitiveValue::equals const):
+        (WebCore::CSSPrimitiveValue::collectDirectComputationalDependencies const):
+        (WebCore::CSSPrimitiveValue::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSPrimitiveValue::unitCategory): Deleted.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isAngle const):
+        (WebCore::CSSPrimitiveValue::isFontRelativeLength):
+        (WebCore::CSSPrimitiveValue::isLength):
+        (WebCore::CSSPrimitiveValue::isResolution):
+        (WebCore::CSSPrimitiveValue::createAllowingMarginQuirk):
+        (WebCore::CSSPrimitiveValue::computeTime const):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator short const):
+        (WebCore::CSSPrimitiveValue::operator unsigned short const):
+        (WebCore::CSSPrimitiveValue::operator int const):
+        (WebCore::CSSPrimitiveValue::operator unsigned const):
+        (WebCore::CSSPrimitiveValue::operator float const):
+        (WebCore::CSSPrimitiveValue::operator LineClampValue const):
+        (WebCore::CSSPrimitiveValue::operator ColumnFill const):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan const):
+        (WebCore::CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle const):
+        (WebCore::CSSPrimitiveValue::operator ImageOrientation const):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::namedItem):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapNinePieceImageSlice):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        * css/CSSValue.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createValue):
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue):
+        * css/DeprecatedCSSOMPrimitiveValue.cpp:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType const):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setFloatValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue const):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setStringValue):
+        * css/DeprecatedCSSOMPrimitiveValue.h:
+        * css/DeprecatedCSSOMRGBColor.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::doubleValue):
+        (WebCore::evaluateResolution):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::glyphOrientationToCSSPrimitiveValue):
+        (WebCore::ComputedStyleExtractor::adjustSVGPaintForCurrentColor const):
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::asText const):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseSimpleLength):
+        (WebCore::parseSimpleAngle):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::parseColorIntOrPercentage):
+        (WebCore::fastParseColorInternal):
+        (WebCore::parseTransformTranslateArguments):
+        (WebCore::parseTransformAngleArgument):
+        (WebCore::parseTransformNumberArguments):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::cssPrimitiveValueUnitFromTrie):
+        (WebCore::stringToUnitType):
+        (WebCore::CSSParserToken::CSSParserToken):
+        (WebCore::CSSParserToken::convertToPercentage):
+        * css/parser/CSSParserToken.h:
+        (WebCore::CSSParserToken::unitType const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+        (WebCore::consumeFontStyle):
+        (WebCore::consumeFontStyleRange):
+        (WebCore::consumeCounter):
+        (WebCore::consumeAnimationName):
+        (WebCore::consumePerspective):
+        (WebCore::consumePositionLonghand):
+        (WebCore::consumeAttr):
+        (WebCore::consumeCounterContent):
+        (WebCore::consumeReflect):
+        (WebCore::consumeGridBreadth):
+        (WebCore::CSSPropertyParser::consumeSystemFont):
+        (WebCore::CSSPropertyParser::consumeFlex):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        (WebCore::CSSPropertyParserHelpers::consumeResolution):
+        (WebCore::CSSPropertyParserHelpers::consumeCustomIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeString):
+        (WebCore::CSSPropertyParserHelpers::consumeUrl):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientPoint):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientColorStop):
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::readFeatureValue):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::computeLength):
+        (WebCore::SizesAttributeParser::effectiveSizeDefaultValue):
+        * css/parser/SizesAttributeParser.h:
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        (WebCore::StylePropertyMapReadOnly::reifyValue):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        * editing/EditingStyle.cpp:
+        (WebCore::legacyFontSizeFromCSSValue):
+        * editing/FontAttributeChanges.cpp:
+        (WebCore::FontChanges::createStyleProperties const):
+        (WebCore::cssValueListForShadow):
+        * editing/cocoa/HTMLConverter.mm:
+        (stringFromCSSValue):
+        (floatValueFromPrimitiveValue):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectStyleForPresentationAttribute):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::autoFillStrongPasswordMaskImage):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didElementStateChange):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute):
+        (WebCore::HTMLTableElement::createSharedCellStyle):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        (WebCore::MediaControlTextTrackContainerElement::updateTextStrokeStyle):
+        (WebCore::MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentation):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressValueElement::setWidthPercentage):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::tryCreate):
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        (WebCore::TextTrackCueGeneric::setFontSize):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        (WebCore::VTTCue::getDisplayTree):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        (WebCore::VTTRegion::willRemoveTextTrackCueBox):
+        (WebCore::VTTRegion::prepareRegionDisplayTree):
+        * page/DragController.cpp:
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computedPageMargin):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::crossfadeBlend):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::applyCommonButtonPaddingToStyle):
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertNumber):
+        (WebCore::Style::BuilderConverter::convertWebkitHyphenateLimitLines):
+        (WebCore::Style::BuilderConverter::convertClipPath):
+        (WebCore::Style::BuilderConverter::convertTextStrokeWidth):
+        (WebCore::Style::BuilderConverter::convertFontStyleFromValue):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::mmLength):
+        (WebCore::Style::BuilderCustom::inchLength):
+        (WebCore::Style::BuilderCustom::applyValueImageResolution):
+        * svg/SVGLengthValue.cpp:
+        (WebCore::primitiveTypeToLengthType):
+        (WebCore::lengthTypeToPrimitiveType):
+
 2019-11-12  Keith Miller  <keith_miller@apple.com>
 
         AudioScheduledSourceNodes leak if they have an attached onended EventTarget

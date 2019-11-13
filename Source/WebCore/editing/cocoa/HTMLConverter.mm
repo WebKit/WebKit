@@ -569,9 +569,10 @@ RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& ele
 static bool stringFromCSSValue(CSSValue& value, String& result)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        unsigned short primitiveType = downcast<CSSPrimitiveValue>(value).primitiveType();
-        if (primitiveType == CSSPrimitiveValue::CSS_STRING || primitiveType == CSSPrimitiveValue::CSS_URI ||
-            primitiveType == CSSPrimitiveValue::CSS_IDENT || primitiveType == CSSPrimitiveValue::CSS_ATTR) {
+        // FIXME: Use isStringType(CSSUnitType)?
+        CSSUnitType primitiveType = downcast<CSSPrimitiveValue>(value).primitiveType();
+        if (primitiveType == CSSUnitType::CSS_STRING || primitiveType == CSSUnitType::CSS_URI
+            || primitiveType == CSSUnitType::CSS_IDENT || primitiveType == CSSUnitType::CSS_ATTR) {
             String stringValue = value.cssText();
             if (stringValue.length()) {
                 result = stringValue;
@@ -707,26 +708,26 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
 {
     // FIXME: Use CSSPrimitiveValue::computeValue.
     switch (primitiveValue.primitiveType()) {
-    case CSSPrimitiveValue::CSS_PX:
-        result = primitiveValue.floatValue(CSSPrimitiveValue::CSS_PX);
+    case CSSUnitType::CSS_PX:
+        result = primitiveValue.floatValue(CSSUnitType::CSS_PX);
         return true;
-    case CSSPrimitiveValue::CSS_PT:
-        result = 4 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PT) / 3;
+    case CSSUnitType::CSS_PT:
+        result = 4 * primitiveValue.floatValue(CSSUnitType::CSS_PT) / 3;
         return true;
-    case CSSPrimitiveValue::CSS_PC:
-        result = 16 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC);
+    case CSSUnitType::CSS_PC:
+        result = 16 * primitiveValue.floatValue(CSSUnitType::CSS_PC);
         return true;
-    case CSSPrimitiveValue::CSS_CM:
-        result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC) / 2.54;
+    case CSSUnitType::CSS_CM:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 2.54;
         return true;
-    case CSSPrimitiveValue::CSS_MM:
-        result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC) / 25.4;
+    case CSSUnitType::CSS_MM:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 25.4;
         return true;
-    case CSSPrimitiveValue::CSS_Q:
-        result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC) / (25.4 * 4.0);
+    case CSSUnitType::CSS_Q:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / (25.4 * 4.0);
         return true;
-    case CSSPrimitiveValue::CSS_IN:
-        result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_IN);
+    case CSSUnitType::CSS_IN:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_IN);
         return true;
     default:
         return false;

@@ -86,7 +86,7 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName
         // a presentational hint that the border should be off if set to zero.
         if (!value.toInt()) {
             // Add a rule that nulls out our border width.
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
         }
     } else
         HTMLFrameElementBase::collectStyleForPresentationAttribute(name, value, style);

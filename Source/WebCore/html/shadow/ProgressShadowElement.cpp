@@ -86,7 +86,7 @@ ProgressValueElement::ProgressValueElement(Document& document)
 
 void ProgressValueElement::setWidthPercentage(double width)
 {
-    setInlineStyleProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::CSS_PERCENTAGE);
 }
 
 }

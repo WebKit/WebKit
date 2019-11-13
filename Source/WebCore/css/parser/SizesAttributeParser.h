@@ -46,7 +46,7 @@ public:
     float length();
 
     static float defaultLength(const Document&);
-    static float computeLength(double value, CSSPrimitiveValue::UnitType, const Document&);
+    static float computeLength(double value, CSSUnitType, const Document&);
 
 private:
     bool parse(CSSParserTokenRange);

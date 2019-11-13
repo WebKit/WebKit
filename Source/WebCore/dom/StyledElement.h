@@ -49,7 +49,7 @@ public:
     
     bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
     bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
-    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSPrimitiveValue::UnitType, bool important = false);
+    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, bool important = false);
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false);
     bool removeInlineStyleProperty(CSSPropertyID);
     void removeAllInlineStyleProperties();
@@ -76,7 +76,7 @@ protected:
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 
     void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, CSSValueID identifier);
-    void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSPrimitiveValue::UnitType);
+    void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSUnitType);
     void addPropertyToPresentationAttributeStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;

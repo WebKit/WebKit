@@ -427,7 +427,7 @@ inline OptionSet<TextDecoration> BuilderConverter::convertTextDecoration(Builder
 template<typename T>
 inline T BuilderConverter::convertNumber(BuilderState&, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).value<T>(CSSPrimitiveValue::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(value).value<T>(CSSUnitType::CSS_NUMBER);
 }
 
 template<typename T>
@@ -443,7 +443,7 @@ inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState&, c
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNoLimit)
         return -1;
-    return primitiveValue.value<short>(CSSPrimitiveValue::CSS_NUMBER);
+    return primitiveValue.value<short>(CSSUnitType::CSS_NUMBER);
 }
 
 template<CSSPropertyID property>
@@ -588,7 +588,7 @@ inline RefPtr<ClipPathOperation> BuilderConverter::convertClipPath(BuilderState&
 {
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
+        if (primitiveValue.primitiveType() == CSSUnitType::CSS_URI) {
             String cssURLValue = primitiveValue.stringValue();
             String fragment = SVGURIReference::fragmentIdentifierFromIRIString(cssURLValue, builderState.document());
             // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
@@ -788,7 +788,7 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
             result *= 3;
         else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
-        Ref<CSSPrimitiveValue> emsValue(CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS));
+        Ref<CSSPrimitiveValue> emsValue(CSSPrimitiveValue::create(result, CSSUnitType::CSS_EMS));
         width = convertComputedLength<float>(builderState, emsValue);
         break;
     }
@@ -1320,7 +1320,7 @@ inline Optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(
         return italicValue();
     ASSERT(valueID == CSSValueOblique);
     if (auto* obliqueValue = fontStyleValue.obliqueValue.get())
-        return FontSelectionValue(obliqueValue->value<float>(CSSPrimitiveValue::CSS_DEG));
+        return FontSelectionValue(obliqueValue->value<float>(CSSUnitType::CSS_DEG));
     return italicValue();
 }
 

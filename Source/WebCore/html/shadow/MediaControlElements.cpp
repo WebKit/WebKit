@@ -194,10 +194,10 @@ void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 
     // Set the left and top to control the panel's position; this depends on it being absolute positioned.
     // Set the margin to zero since the position passed in will already include the effect of the margin.
-    setInlineStyleProperty(CSSPropertyLeft, left, CSSPrimitiveValue::CSS_PX);
-    setInlineStyleProperty(CSSPropertyTop, top, CSSPrimitiveValue::CSS_PX);
-    setInlineStyleProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
-    setInlineStyleProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_PX);
+    setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_PX);
+    setInlineStyleProperty(CSSPropertyMarginLeft, 0.0, CSSUnitType::CSS_PX);
+    setInlineStyleProperty(CSSPropertyMarginTop, 0.0, CSSUnitType::CSS_PX);
 
     classList().add("dragged");
 }
@@ -223,8 +223,8 @@ void MediaControlPanelElement::makeOpaque()
     double duration = RenderTheme::singleton().mediaControlsFadeInDuration();
 
     setInlineStyleProperty(CSSPropertyTransitionProperty, CSSPropertyOpacity);
-    setInlineStyleProperty(CSSPropertyTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
-    setInlineStyleProperty(CSSPropertyOpacity, 1.0, CSSPrimitiveValue::CSS_NUMBER);
+    setInlineStyleProperty(CSSPropertyTransitionDuration, duration, CSSUnitType::CSS_S);
+    setInlineStyleProperty(CSSPropertyOpacity, 1.0, CSSUnitType::CSS_NUMBER);
 
     m_opaque = true;
 
@@ -240,8 +240,8 @@ void MediaControlPanelElement::makeTransparent()
     Seconds duration = RenderTheme::singleton().mediaControlsFadeOutDuration();
 
     setInlineStyleProperty(CSSPropertyTransitionProperty, CSSPropertyOpacity);
-    setInlineStyleProperty(CSSPropertyTransitionDuration, duration.value(), CSSPrimitiveValue::CSS_S);
-    setInlineStyleProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
+    setInlineStyleProperty(CSSPropertyTransitionDuration, duration.value(), CSSUnitType::CSS_S);
+    setInlineStyleProperty(CSSPropertyOpacity, 0.0, CSSUnitType::CSS_NUMBER);
 
     m_opaque = false;
     startTimer();
@@ -1289,7 +1289,7 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
 
     // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
     if (document().page()->group().captionPreferences().captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
-        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSPrimitiveValue::CSS_PX, important);
+        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::CSS_PX, important);
 }
 
 void MediaControlTextTrackContainerElement::updateTimerFired()
@@ -1359,11 +1359,11 @@ void MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentatio
     m_updateTextTrackRepresentationStyle = false;
 
     if (m_textTrackRepresentation) {
-        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSPrimitiveValue::CSS_PX);
-        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSUnitType::CSS_PX);
         setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
-        setInlineStyleProperty(CSSPropertyLeft, 0, CSSPrimitiveValue::CSS_PX);
-        setInlineStyleProperty(CSSPropertyTop, 0, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyLeft, 0, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyTop, 0, CSSUnitType::CSS_PX);
         return;
     }
 

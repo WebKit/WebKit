@@ -1884,7 +1884,7 @@ static bool isCSSValueLength(CSSPrimitiveValue* value)
 int legacyFontSizeFromCSSValue(Document& document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
 {
     if (isCSSValueLength(value)) {
-        int pixelFontSize = value->intValue(CSSPrimitiveValue::CSS_PX);
+        int pixelFontSize = value->intValue(CSSUnitType::CSS_PX);
         int legacyFontSize = Style::legacyFontSizeForPixelSize(pixelFontSize, shouldUseFixedFontDefaultSize, document);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;

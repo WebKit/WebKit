@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitType type, const Document& document)
+float SizesAttributeParser::computeLength(double value, CSSUnitType type, const Document& document)
 {
     auto* renderer = document.renderView();
     if (!renderer)
@@ -58,7 +58,7 @@ float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitT
     // the pointer to it for the duration of the unit evaluation. This is acceptible because the style always comes from the
     // RenderView, which has its font information hardcoded in resolveForDocument() to be -webkit-standard, whose operations
     // don't require a font selector.
-    if (type == CSSPrimitiveValue::CSS_EXS || type == CSSPrimitiveValue::CSS_CHS) {
+    if (type == CSSUnitType::CSS_EXS || type == CSSUnitType::CSS_CHS) {
         RefPtr<FontSelector> fontSelector = style.fontCascade().fontSelector();
         style.fontCascade().update(nullptr);
         float result = CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value);
@@ -160,7 +160,7 @@ unsigned SizesAttributeParser::effectiveSizeDefaultValue()
     if (!renderer)
         return 0;
     auto& style = renderer->style();
-    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ &style, &style, renderer }, CSSPrimitiveValue::CSS_VW, 100.0));
+    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ &style, &style, renderer }, CSSUnitType::CSS_VW, 100.0));
 }
 
 } // namespace WebCore

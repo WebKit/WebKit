@@ -238,7 +238,7 @@ protected:
     // to maximize struct packing.
 
     // CSSPrimitiveValue bits:
-    unsigned m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitType
+    unsigned m_primitiveUnitType : 7; // CSSUnitType
     mutable unsigned m_hasCachedCSSText : 1;
     unsigned m_isQuirkValue : 1;
 

@@ -209,7 +209,7 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
 
 void HTMLMeterElement::didElementStateChange()
 {
-    m_value->setInlineStyleProperty(CSSPropertyWidth, valueRatio()*100, CSSPrimitiveValue::CSS_PERCENTAGE);
+    m_value->setInlineStyleProperty(CSSPropertyWidth, valueRatio()*100, CSSUnitType::CSS_PERCENTAGE);
     setValueClass(*m_value, gaugeRegion());
 
     if (RenderMeter* render = renderMeter())

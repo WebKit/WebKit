@@ -70,8 +70,8 @@ RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& 
 // Should only ever be called for deprecated gradients.
 static inline bool compareStops(const CSSGradientColorStop& a, const CSSGradientColorStop& b)
 {
-    double aVal = a.m_position->doubleValue(CSSPrimitiveValue::CSS_NUMBER);
-    double bVal = b.m_position->doubleValue(CSSPrimitiveValue::CSS_NUMBER);
+    double aVal = a.m_position->doubleValue(CSSUnitType::CSS_NUMBER);
+    double bVal = b.m_position->doubleValue(CSSUnitType::CSS_NUMBER);
 
     return aVal < bVal;
 }
@@ -334,9 +334,9 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         for (auto& stop : m_stops) {
             float offset;
             if (stop.m_position->isPercentage())
-                offset = stop.m_position->floatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100;
+                offset = stop.m_position->floatValue(CSSUnitType::CSS_PERCENTAGE) / 100;
             else
-                offset = stop.m_position->floatValue(CSSPrimitiveValue::CSS_NUMBER);
+                offset = stop.m_position->floatValue(CSSUnitType::CSS_NUMBER);
 
             Color color = stop.m_resolvedColor;
             if (style.hasAppleColorFilter())
@@ -366,7 +366,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         if (stop.m_position) {
             auto& positionValue = *stop.m_position;
             if (positionValue.isPercentage())
-                stops[i].offset = positionValue.floatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100;
+                stops[i].offset = positionValue.floatValue(CSSUnitType::CSS_PERCENTAGE) / 100;
             else if (positionValue.isLength() || positionValue.isViewportPercentageLength() || positionValue.isCalculatedPercentageWithLength()) {
                 float length;
                 if (positionValue.isLength())
@@ -377,7 +377,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
                 }
                 stops[i].offset = (gradientLength > 0) ? length / gradientLength : 0;
             } else if (positionValue.isAngle())
-                stops[i].offset = positionValue.floatValue(CSSPrimitiveValue::CSS_DEG) / 360;
+                stops[i].offset = positionValue.floatValue(CSSUnitType::CSS_DEG) / 360;
             else {
                 ASSERT_NOT_REACHED();
                 stops[i].offset = 0;
@@ -694,7 +694,7 @@ bool CSSGradientValue::knownToBeOpaque(const RenderElement& renderer) const
 static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
 {
     for (auto& stop : stops) {
-        double position = stop.m_position->doubleValue(CSSPrimitiveValue::CSS_NUMBER);
+        double position = stop.m_position->doubleValue(CSSUnitType::CSS_NUMBER);
         if (!position)
             builder.append(", from(", stop.m_color->cssText(), ')');
         else if (position == 1)
@@ -858,7 +858,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     FloatPoint firstPoint;
     FloatPoint secondPoint;
     if (m_angle) {
-        float angle = m_angle->floatValue(CSSPrimitiveValue::CSS_DEG);
+        float angle = m_angle->floatValue(CSSUnitType::CSS_DEG);
         endPointsFromAngle(angle, size, firstPoint, secondPoint, m_gradientType);
     } else {
         switch (m_gradientType) {
@@ -1376,7 +1376,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
 
     float angleRadians = 0;
     if (m_angle)
-        angleRadians = m_angle->floatValue(CSSPrimitiveValue::CSS_RAD);
+        angleRadians = m_angle->floatValue(CSSUnitType::CSS_RAD);
 
     Gradient::ConicData data { centerPoint, angleRadians };
     ConicGradientAdapter adapter;

@@ -100,7 +100,7 @@ String CSSImageValue::customCSSText() const
 Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
     // NOTE: We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.
-    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI), styleDeclaration);
+    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url, CSSUnitType::CSS_URI), styleDeclaration);
 }
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement& renderer) const

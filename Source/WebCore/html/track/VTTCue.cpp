@@ -164,11 +164,11 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     auto position = cue->getCSSPosition();
 
     // the 'top' property must be set to top,
-    setInlineStyleProperty(CSSPropertyTop, position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyTop, position.second, CSSUnitType::CSS_PERCENTAGE);
 
     // the 'left' property must be set to left
     if (cue->vertical() == horizontalKeyword())
-        setInlineStyleProperty(CSSPropertyLeft, position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyLeft, position.first, CSSUnitType::CSS_PERCENTAGE);
     else if (cue->vertical() == verticalGrowingRightKeyword())
         setInlineStyleProperty(CSSPropertyLeft, makeString("calc(-", FormattedNumber::fixedWidth(videoSize.width(), 2), "px - ", FormattedNumber::fixedWidth(cue->getCSSSize(), 2), "px)"));
 
@@ -188,19 +188,19 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     double newCueSize = std::min(cue->getCSSSize() * multiplier, 100.0);
     // the 'width' property must be set to width, and the 'height' property  must be set to height
     if (cue->vertical() == horizontalKeyword()) {
-        setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSUnitType::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
-        setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSUnitType::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
-        setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
@@ -895,7 +895,7 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     }
 
     if (m_fontSize)
-        displayTree->setInlineStyleProperty(CSSPropertyFontSize, m_fontSize, CSSPrimitiveValue::CSS_PX, m_fontSizeIsImportant);
+        displayTree->setInlineStyleProperty(CSSPropertyFontSize, m_fontSize, CSSUnitType::CSS_PX, m_fontSizeIsImportant);
 
     m_displayTreeShouldChange = false;
 

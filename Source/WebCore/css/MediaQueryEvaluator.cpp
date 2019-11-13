@@ -261,7 +261,7 @@ static Optional<double> doubleValue(CSSValue* value)
 {
     if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
         return WTF::nullopt;
-    return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSPrimitiveValue::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSUnitType::CSS_NUMBER);
 }
 
 static bool zeroEvaluate(CSSValue* value, MediaFeaturePrefix op)
@@ -427,7 +427,7 @@ static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix
         return false;
 
     auto& resolution = downcast<CSSPrimitiveValue>(*value);
-    float resolutionValue = resolution.isNumber() ? resolution.floatValue() : resolution.floatValue(CSSPrimitiveValue::CSS_DPPX);
+    float resolutionValue = resolution.isNumber() ? resolution.floatValue() : resolution.floatValue(CSSUnitType::CSS_DPPX);
     bool result = compareValue(deviceScaleFactor, resolutionValue, op);
     LOG_WITH_STREAM(MediaQueries, stream << "  evaluateResolution: " << op << " " << resolutionValue << " device scale factor " << deviceScaleFactor << ": " << result);
     return result;

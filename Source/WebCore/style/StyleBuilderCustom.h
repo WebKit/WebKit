@@ -234,12 +234,12 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
 }
 inline Length BuilderCustom::mmLength(double mm)
 {
-    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));
+    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM));
     return value.get().computeLength<Length>(CSSToLengthConversionData());
 }
 inline Length BuilderCustom::inchLength(double inch)
 {
-    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN));
+    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN));
     return value.get().computeLength<Length>(CSSToLengthConversionData());
 }
 bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
@@ -353,7 +353,7 @@ inline void BuilderCustom::applyValueImageResolution(BuilderState& builderState,
         else if (primitiveValue.valueID() == CSSValueSnap)
             snap = ImageResolutionSnap::Pixels;
         else
-            resolution = primitiveValue.doubleValue(CSSPrimitiveValue::CSS_DPPX);
+            resolution = primitiveValue.doubleValue(CSSUnitType::CSS_DPPX);
     }
     builderState.style().setImageResolutionSource(source);
     builderState.style().setImageResolutionSnap(snap);

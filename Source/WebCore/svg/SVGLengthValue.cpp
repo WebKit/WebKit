@@ -96,65 +96,67 @@ static inline SVGLengthType parseLengthType(const UChar* ptr, const UChar* end)
     return SVGLengthType::Unknown;
 }
 
-static inline SVGLengthType primitiveTypeToLengthType(unsigned short primitiveType)
+static inline SVGLengthType primitiveTypeToLengthType(CSSUnitType primitiveType)
 {
     switch (primitiveType) {
-    case CSSPrimitiveValue::CSS_UNKNOWN:
+    case CSSUnitType::CSS_UNKNOWN:
         return SVGLengthType::Unknown;
-    case CSSPrimitiveValue::CSS_NUMBER:
+    case CSSUnitType::CSS_NUMBER:
         return SVGLengthType::Number;
-    case CSSPrimitiveValue::CSS_PERCENTAGE:
+    case CSSUnitType::CSS_PERCENTAGE:
         return SVGLengthType::Percentage;
-    case CSSPrimitiveValue::CSS_EMS:
+    case CSSUnitType::CSS_EMS:
         return SVGLengthType::Ems;
-    case CSSPrimitiveValue::CSS_EXS:
+    case CSSUnitType::CSS_EXS:
         return SVGLengthType::Exs;
-    case CSSPrimitiveValue::CSS_PX:
+    case CSSUnitType::CSS_PX:
         return SVGLengthType::Pixels;
-    case CSSPrimitiveValue::CSS_CM:
+    case CSSUnitType::CSS_CM:
         return SVGLengthType::Centimeters;
-    case CSSPrimitiveValue::CSS_MM:
+    case CSSUnitType::CSS_MM:
         return SVGLengthType::Millimeters;
-    case CSSPrimitiveValue::CSS_IN:
+    case CSSUnitType::CSS_IN:
         return SVGLengthType::Inches;
-    case CSSPrimitiveValue::CSS_PT:
+    case CSSUnitType::CSS_PT:
         return SVGLengthType::Points;
-    case CSSPrimitiveValue::CSS_PC:
+    case CSSUnitType::CSS_PC:
         return SVGLengthType::Picas;
+    default:
+        return SVGLengthType::Unknown;
     }
 
     return SVGLengthType::Unknown;
 }
 
-static inline CSSPrimitiveValue::UnitType lengthTypeToPrimitiveType(SVGLengthType lengthType)
+static inline CSSUnitType lengthTypeToPrimitiveType(SVGLengthType lengthType)
 {
     switch (lengthType) {
     case SVGLengthType::Unknown:
-        return CSSPrimitiveValue::CSS_UNKNOWN;
+        return CSSUnitType::CSS_UNKNOWN;
     case SVGLengthType::Number:
-        return CSSPrimitiveValue::CSS_NUMBER;
+        return CSSUnitType::CSS_NUMBER;
     case SVGLengthType::Percentage:
-        return CSSPrimitiveValue::CSS_PERCENTAGE;
+        return CSSUnitType::CSS_PERCENTAGE;
     case SVGLengthType::Ems:
-        return CSSPrimitiveValue::CSS_EMS;
+        return CSSUnitType::CSS_EMS;
     case SVGLengthType::Exs:
-        return CSSPrimitiveValue::CSS_EXS;
+        return CSSUnitType::CSS_EXS;
     case SVGLengthType::Pixels:
-        return CSSPrimitiveValue::CSS_PX;
+        return CSSUnitType::CSS_PX;
     case SVGLengthType::Centimeters:
-        return CSSPrimitiveValue::CSS_CM;
+        return CSSUnitType::CSS_CM;
     case SVGLengthType::Millimeters:
-        return CSSPrimitiveValue::CSS_MM;
+        return CSSUnitType::CSS_MM;
     case SVGLengthType::Inches:
-        return CSSPrimitiveValue::CSS_IN;
+        return CSSUnitType::CSS_IN;
     case SVGLengthType::Points:
-        return CSSPrimitiveValue::CSS_PT;
+        return CSSUnitType::CSS_PT;
     case SVGLengthType::Picas:
-        return CSSPrimitiveValue::CSS_PC;
+        return CSSUnitType::CSS_PC;
     }
 
     ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::CSS_UNKNOWN;
+    return CSSUnitType::CSS_UNKNOWN;
 }
 
 SVGLengthValue::SVGLengthValue(SVGLengthMode lengthMode, const String& valueAsString)

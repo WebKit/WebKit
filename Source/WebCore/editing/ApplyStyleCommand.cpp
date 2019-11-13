@@ -418,7 +418,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             currentFontSize = computedFontSize(node);
         }
         if (currentFontSize != desiredFontSize) {
-            inlineStyle->setProperty(CSSPropertyFontSize, CSSValuePool::singleton().createValue(desiredFontSize, CSSPrimitiveValue::CSS_PX), false);
+            inlineStyle->setProperty(CSSPropertyFontSize, CSSValuePool::singleton().createValue(desiredFontSize, CSSUnitType::CSS_PX), false);
             setNodeAttribute(*element, styleAttr, inlineStyle->asText());
         }
         if (inlineStyle->isEmpty()) {
@@ -1497,7 +1497,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
         return 0;
 
     auto value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
-    return downcast<CSSPrimitiveValue>(*value).floatValue(CSSPrimitiveValue::CSS_PX);
+    return downcast<CSSPrimitiveValue>(*value).floatValue(CSSUnitType::CSS_PX);
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)

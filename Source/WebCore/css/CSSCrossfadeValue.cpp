@@ -218,7 +218,7 @@ RefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& from
     double toPercentage = m_percentageValue->doubleValue();
     if (m_percentageValue->isPercentage())
         toPercentage /= 100.0;
-    auto percentageValue = CSSPrimitiveValue::create(blendFunc(fromPercentage, toPercentage, progress), CSSPrimitiveValue::CSS_NUMBER);
+    auto percentageValue = CSSPrimitiveValue::create(blendFunc(fromPercentage, toPercentage, progress), CSSUnitType::CSS_NUMBER);
 
     return CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), WTFMove(percentageValue), from.isPrefixed() && isPrefixed());
 }

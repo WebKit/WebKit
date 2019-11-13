@@ -224,14 +224,14 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
     auto length = rangeValue.obliqueValues->length();
     if (length == 1) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
-        FontSelectionValue result(primitiveValue.value<float>(CSSPrimitiveValue::CSS_DEG));
+        FontSelectionValue result(primitiveValue.value<float>(CSSUnitType::CSS_DEG));
         return { result, result };
     }
     ASSERT(length == 2);
     auto& primitiveValue1 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(0));
     auto& primitiveValue2 = downcast<CSSPrimitiveValue>(*rangeValue.obliqueValues->item(1));
-    FontSelectionValue result1(primitiveValue1.value<float>(CSSPrimitiveValue::CSS_DEG));
-    FontSelectionValue result2(primitiveValue2.value<float>(CSSPrimitiveValue::CSS_DEG));
+    FontSelectionValue result1(primitiveValue1.value<float>(CSSUnitType::CSS_DEG));
+    FontSelectionValue result2(primitiveValue2.value<float>(CSSUnitType::CSS_DEG));
     return { result1, result2 };
 }
 

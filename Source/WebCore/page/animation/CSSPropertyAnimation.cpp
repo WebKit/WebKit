@@ -322,7 +322,7 @@ static inline RefPtr<StyleImage> crossfadeBlend(const CSSPropertyBlendingClient*
 
     auto fromImageValue = CSSImageValue::create(*fromStyleImage->cachedImage());
     auto toImageValue = CSSImageValue::create(*toStyleImage->cachedImage());
-    auto percentageValue = CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER);
+    auto percentageValue = CSSPrimitiveValue::create(progress, CSSUnitType::CSS_NUMBER);
 
     auto crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), WTFMove(percentageValue));
     return StyleGeneratedImage::create(WTFMove(crossfadeValue));

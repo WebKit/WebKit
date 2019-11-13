@@ -84,11 +84,11 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     CSSValueID alignment = cue->getCSSAlignment();
     float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {
-        setInlineStyleProperty(CSSPropertyBottom, 0, CSSPrimitiveValue::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginBottom, 1.0, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyBottom, 0, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginBottom, 1.0, CSSUnitType::CSS_PERCENTAGE);
     } else {
-        setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(textPosition), CSSPrimitiveValue::CSS_PERCENTAGE);
-        setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(textPosition), CSSUnitType::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSUnitType::CSS_PERCENTAGE);
 
         double authorFontSize = videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100.0;
         if (!authorFontSize)
@@ -100,13 +100,13 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         double multiplier = fontSizeFromCaptionUserPrefs() / authorFontSize;
         double newCueSize = std::min(size * multiplier, 100.0);
         if (cue->getWritingDirection() == VTTCue::Horizontal) {
-            setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSUnitType::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(textPosition - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(textPosition - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
         } else {
-            setInlineStyleProperty(CSSPropertyHeight, newCueSize,  CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyHeight, newCueSize,  CSSUnitType::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-                setInlineStyleProperty(CSSPropertyTop, static_cast<double>(cue->line() - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+                setInlineStyleProperty(CSSPropertyTop, static_cast<double>(cue->line() - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
         }
     }
 
@@ -119,10 +119,10 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 
     if (cue->getWritingDirection() == VTTCue::Horizontal) {
         setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
-        setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
-        setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
     }
 
     if (cue->foregroundColor().isValid())
@@ -196,7 +196,7 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
-    displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSPrimitiveValue::CSS_PX);
+    displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSUnitType::CSS_PX);
 }
 
 bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& cue) const

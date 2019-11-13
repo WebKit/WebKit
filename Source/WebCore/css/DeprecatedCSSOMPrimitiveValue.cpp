@@ -39,22 +39,22 @@ namespace WebCore {
 
 unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
-    return m_value->primitiveType();
+    return static_cast<unsigned short>(m_value->primitiveType());
 }
 
 ExceptionOr<void> DeprecatedCSSOMPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue)
 {
-    return m_value->setFloatValue(unitType, floatValue);
+    return m_value->setFloatValue(static_cast<CSSUnitType>(unitType), floatValue);
 }
 
 ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short unitType) const
 {
-    return m_value->getFloatValue(unitType);
+    return m_value->getFloatValue(static_cast<CSSUnitType>(unitType));
 }
 
 ExceptionOr<void> DeprecatedCSSOMPrimitiveValue::setStringValue(unsigned short stringType, const String& stringValue)
 {
-    return m_value->setStringValue(stringType, stringValue);
+    return m_value->setStringValue(static_cast<CSSUnitType>(stringType), stringValue);
 }
 
 ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const

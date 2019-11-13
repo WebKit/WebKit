@@ -79,8 +79,6 @@ public:
     unsigned cssValueType() const { return m_value->cssValueType(); }
     String cssText() const { return m_value->cssText(); }
     
-    // FIXME: Eventually these will contain more code and not just call through to
-    // CSSPrimitiveValue.
     WEBCORE_EXPORT unsigned short primitiveType() const;
     WEBCORE_EXPORT ExceptionOr<void> setFloatValue(unsigned short unitType, double);
     WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;

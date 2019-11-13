@@ -67,7 +67,7 @@ public:
     virtual String customCSSText() const = 0;
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
     virtual Type type() const = 0;
-    virtual CSSPrimitiveValue::UnitType primitiveType() const = 0;
+    virtual CSSUnitType primitiveType() const = 0;
 
     virtual void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
     virtual void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
@@ -99,7 +99,7 @@ public:
     bool isPositive() const { return m_expression->doubleValue() > 0; }
     bool isNegative() const { return m_expression->doubleValue() < 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
-    unsigned short primitiveType() const { return m_expression->primitiveType(); }
+    CSSUnitType primitiveType() const { return m_expression->primitiveType(); }
 
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
     void setPermittedValueRange(ValueRange);

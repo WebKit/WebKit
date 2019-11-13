@@ -52,7 +52,7 @@ public:
             auto valueID = fontStyleValue->valueID();
             return valueID == CSSValueItalic || valueID == CSSValueOblique;
         }
-        return obliqueValue->value<float>(CSSPrimitiveValue::CSS_DEG) >= static_cast<float>(italicValue());
+        return obliqueValue->value<float>(CSSUnitType::CSS_DEG) >= static_cast<float>(italicValue());
     }
 
     Ref<CSSPrimitiveValue> fontStyleValue;

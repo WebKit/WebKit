@@ -98,14 +98,14 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
 }
 
 template <typename CharacterType>
-static inline bool parseSimpleLength(const CharacterType* characters, unsigned length, CSSPrimitiveValue::UnitType& unit, double& number)
+static inline bool parseSimpleLength(const CharacterType* characters, unsigned length, CSSUnitType& unit, double& number)
 {
     if (length > 2 && (characters[length - 2] | 0x20) == 'p' && (characters[length - 1] | 0x20) == 'x') {
         length -= 2;
-        unit = CSSPrimitiveValue::UnitType::CSS_PX;
+        unit = CSSUnitType::CSS_PX;
     } else if (length > 1 && characters[length - 1] == '%') {
         length -= 1;
-        unit = CSSPrimitiveValue::UnitType::CSS_PERCENTAGE;
+        unit = CSSUnitType::CSS_PERCENTAGE;
     }
 
     // We rely on charactersToDouble for validation as well. The function
@@ -119,7 +119,7 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned l
 }
 
 template <typename CharacterType>
-static inline bool parseSimpleAngle(const CharacterType* characters, unsigned length, CSSPrimitiveValue::UnitType& unit, double& number)
+static inline bool parseSimpleAngle(const CharacterType* characters, unsigned length, CSSUnitType& unit, double& number)
 {
     // Just support deg and rad for now.
     if (length < 4)
@@ -127,10 +127,10 @@ static inline bool parseSimpleAngle(const CharacterType* characters, unsigned le
 
     if ((characters[length - 3] | 0x20) == 'd' && (characters[length - 2] | 0x20) == 'e' && (characters[length - 1] | 0x20) == 'g') {
         length -= 3;
-        unit = CSSPrimitiveValue::UnitType::CSS_DEG;
+        unit = CSSUnitType::CSS_DEG;
     } else if ((characters[length - 3] | 0x20) == 'r' && (characters[length - 2] | 0x20) == 'a' && (characters[length - 1] | 0x20) == 'd') {
         length -= 3;
-        unit = CSSPrimitiveValue::UnitType::CSS_RAD;
+        unit = CSSUnitType::CSS_RAD;
     } else
         return false;
 
@@ -155,7 +155,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const S
 
     unsigned length = string.length();
     double number;
-    CSSPrimitiveValue::UnitType unit = CSSPrimitiveValue::UnitType::CSS_NUMBER;
+    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.characters8(), length, unit, number))
@@ -165,10 +165,10 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const S
             return nullptr;
     }
 
-    if (unit == CSSPrimitiveValue::UnitType::CSS_NUMBER) {
+    if (unit == CSSUnitType::CSS_NUMBER) {
         if (number && cssParserMode != SVGAttributeMode)
             return nullptr;
-        unit = CSSPrimitiveValue::UnitType::CSS_PX;
+        unit = CSSUnitType::CSS_PX;
     }
 
     if (number < 0 && !acceptsNegativeNumbers)
@@ -280,7 +280,7 @@ static int parseDouble(const CharacterType* string, const CharacterType* end, co
 }
 
 template <typename CharacterType>
-static bool parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSPrimitiveValue::UnitType& expect, int& value)
+static bool parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSUnitType& expect, int& value)
 {
     const CharacterType* current = string;
     double localValue = 0;
@@ -308,7 +308,7 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
     if (current == end)
         return false;
 
-    if (expect == CSSPrimitiveValue::UnitType::CSS_NUMBER && (*current == '.' || *current == '%'))
+    if (expect == CSSUnitType::CSS_NUMBER && (*current == '.' || *current == '%'))
         return false;
 
     if (*current == '.') {
@@ -324,18 +324,18 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
         localValue += percentage;
     }
 
-    if (expect == CSSPrimitiveValue::UnitType::CSS_PERCENTAGE && *current != '%')
+    if (expect == CSSUnitType::CSS_PERCENTAGE && *current != '%')
         return false;
 
     if (*current == '%') {
-        expect = CSSPrimitiveValue::UnitType::CSS_PERCENTAGE;
+        expect = CSSUnitType::CSS_PERCENTAGE;
         localValue = localValue / 100.0 * 256.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
         current++;
     } else {
-        expect = CSSPrimitiveValue::UnitType::CSS_NUMBER;
+        expect = CSSUnitType::CSS_NUMBER;
     }
 
     while (current != end && isHTMLSpace<CharacterType>(*current))
@@ -440,7 +440,7 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
 template <typename CharacterType>
 static Color fastParseColorInternal(const CharacterType* characters, unsigned length, bool quirksMode)
 {
-    CSSPrimitiveValue::UnitType expect = CSSPrimitiveValue::UnitType::CSS_UNKNOWN;
+    CSSUnitType expect = CSSUnitType::CSS_UNKNOWN;
 
     if (length >= 4 && characters[0] == '#') {
         RGBA32 rgb;
@@ -1037,13 +1037,13 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
-        CSSPrimitiveValue::UnitType unit = CSSPrimitiveValue::UnitType::CSS_NUMBER;
+        CSSUnitType unit = CSSUnitType::CSS_NUMBER;
         double number;
         if (!parseSimpleLength(pos, argumentLength, unit, number))
             return false;
-        if (!number && unit == CSSPrimitiveValue::CSS_NUMBER)
-            unit = CSSPrimitiveValue::UnitType::CSS_PX;
-        if (unit == CSSPrimitiveValue::UnitType::CSS_NUMBER || (unit == CSSPrimitiveValue::UnitType::CSS_PERCENTAGE && (transformValue->name() == CSSValueTranslateZ || (transformValue->name() == CSSValueTranslate3d && expectedCount == 1))))
+        if (!number && unit == CSSUnitType::CSS_NUMBER)
+            unit = CSSUnitType::CSS_PX;
+        if (unit == CSSUnitType::CSS_NUMBER || (unit == CSSUnitType::CSS_PERCENTAGE && (transformValue->name() == CSSValueTranslateZ || (transformValue->name() == CSSValueTranslate3d && expectedCount == 1))))
             return false;
         transformValue->append(CSSPrimitiveValue::create(number, unit));
         pos += argumentLength + 1;
@@ -1060,12 +1060,12 @@ static bool parseTransformAngleArgument(CharType*& pos, CharType* end, CSSFuncti
         return false;
 
     unsigned argumentLength = static_cast<unsigned>(delimiter);
-    CSSPrimitiveValue::UnitType unit = CSSPrimitiveValue::UnitType::CSS_NUMBER;
+    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
     double number;
     if (!parseSimpleAngle(pos, argumentLength, unit, number))
         return false;
-    if (!number && unit == CSSPrimitiveValue::CSS_NUMBER)
-        unit = CSSPrimitiveValue::UnitType::CSS_DEG;
+    if (!number && unit == CSSUnitType::CSS_NUMBER)
+        unit = CSSUnitType::CSS_DEG;
 
     transformValue->append(CSSPrimitiveValue::create(number, unit));
     pos += argumentLength + 1;
@@ -1085,7 +1085,7 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
         double number = charactersToDouble(pos, argumentLength, &ok);
         if (!ok)
             return false;
-        transformValue->append(CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitType::CSS_NUMBER));
+        transformValue->append(CSSPrimitiveValue::create(number, CSSUnitType::CSS_NUMBER));
         pos += argumentLength + 1;
         --expectedCount;
     }

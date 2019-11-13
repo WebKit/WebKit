@@ -40,7 +40,7 @@ namespace WebCore {
 
 static inline bool featureWithValidIdent(const AtomString& mediaFeature, const CSSPrimitiveValue& value, const MediaQueryParserContext& context)
 {
-    if (value.primitiveType() != CSSPrimitiveValue::UnitType::CSS_IDENT)
+    if (value.primitiveType() != CSSUnitType::CSS_IDENT)
         return false;
 
     return mediaFeature == MediaFeatureNames::orientation

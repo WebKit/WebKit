@@ -55,9 +55,9 @@ CSSValuePool::CSSValuePool()
         m_identifierValues[i].construct(static_cast<CSSValueID>(i));
 
     for (unsigned i = 0; i < (maximumCacheableIntegerValue + 1); ++i) {
-        m_pixelValues[i].construct(i, CSSPrimitiveValue::CSS_PX);
-        m_percentValues[i].construct(i, CSSPrimitiveValue::CSS_PERCENTAGE);
-        m_numberValues[i].construct(i, CSSPrimitiveValue::CSS_NUMBER);
+        m_pixelValues[i].construct(i, CSSUnitType::CSS_PX);
+        m_percentValues[i].construct(i, CSSUnitType::CSS_PERCENTAGE);
+        m_numberValues[i].construct(i, CSSUnitType::CSS_NUMBER);
     }
 }
 
@@ -94,7 +94,7 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
     }).iterator->value;
 }
 
-Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitType type)
+Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSUnitType type)
 {
     ASSERT(std::isfinite(value));
 
@@ -106,11 +106,11 @@ Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue
         return CSSPrimitiveValue::create(value, type);
 
     switch (type) {
-    case CSSPrimitiveValue::CSS_PX:
+    case CSSUnitType::CSS_PX:
         return m_pixelValues[intValue].get();
-    case CSSPrimitiveValue::CSS_PERCENTAGE:
+    case CSSUnitType::CSS_PERCENTAGE:
         return m_percentValues[intValue].get();
-    case CSSPrimitiveValue::CSS_NUMBER:
+    case CSSUnitType::CSS_NUMBER:
         return m_numberValues[intValue].get();
     default:
         return CSSPrimitiveValue::create(value, type);
