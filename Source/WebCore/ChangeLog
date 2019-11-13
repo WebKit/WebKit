@@ -1,3 +1,22 @@
+2019-11-13  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Unreviewed, fix GTK/WPE builds after enabling POINTER_EVENTS support.
+
+        Our g++ 8.3.0 yields "error: call to non-constexpr function
+        WTFReportAssertionFailure" when compiling rendering/EventRegion.cpp
+        since r252366.
+
+        Simply remove the ASSERT_NOT_REACHED() from toIndex(): a missing value
+        in the switch statement will be caught by compiler warnings. Remove the
+        constexpr flag from toTouchAction(): in this case, the
+        ASSERT_NOT_REACHED() is useful and should stay.
+
+        Rubber-stamped by Philippe Normand.
+
+        * rendering/EventRegion.cpp:
+        (WebCore::toIndex): Remove call to ASSERT_NOT_REACHED().
+        (WebCore::toTouchAction): Keep ASSERT_NOT_REACHED(), removed constexpr.
+
 2019-11-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix build for accessibility disabled.

@@ -144,11 +144,10 @@ constexpr unsigned toIndex(TouchAction touchAction)
     case TouchAction::Auto:
         break;
     }
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
-constexpr TouchAction toTouchAction(unsigned index)
+TouchAction toTouchAction(unsigned index)
 {
     switch (index) {
     case 0:
