@@ -91,6 +91,9 @@ void WebGPUBuffer::rejectOrRegisterPromiseCallback(BufferMappingPromise&& promis
         if (arrayBuffer)
             promise.resolve(*arrayBuffer);
         else {
+            // FIXME: It's possible to hit this code path in response to an unmap call, where
+            // the ArrayBuffer will definitely be null, and thus an out of memory error makes no sense.
+            // https://bugs.webkit.org/show_bug.cgi?id=204166
             protectedErrorScopes->generateError("", GPUErrorFilter::OutOfMemory);
             promise.reject();
         }

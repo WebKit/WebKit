@@ -206,6 +206,9 @@
             scene.render();
             divFps.innerHTML = engine.getFps().toFixed() + " fps";
         });
+        setTimeout(() => {
+            engine.stopRenderLoop();
+        }, 2000);
     })();
     </script>
 </body>

@@ -1,3 +1,19 @@
+2019-11-13  Dean Jackson  <dino@apple.com>
+
+        Fix some WebGPU demos
+        https://bugs.webkit.org/show_bug.cgi?id=204167
+        <rdar://problem/57160316>
+
+        Reviewed by Myles C. Maxfield.
+
+        Add a note referencing a bug I detected while fixing this demo.
+        And a drive-by typo.
+
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::rejectOrRegisterPromiseCallback):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+
 2019-11-13  Antti Koivisto  <antti@apple.com>
 
         Google Docs spreadsheet tiles render very slowly (because of event region painting)

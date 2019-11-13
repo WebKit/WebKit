@@ -135,7 +135,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffs
 void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTextureCopyView&& dstTexture, const GPUExtent3D& size)
 {
     if (isEncodingPass() || !srcBuffer.buffer->isCopySource() || !dstTexture.texture->isCopyDestination()) {
-        LOG(WebGPU, "GPUComandBuffer::copyBufferToTexture(): Invalid operation!");
+        LOG(WebGPU, "GPUCommandBuffer::copyBufferToTexture(): Invalid operation!");
         return;
     }
 

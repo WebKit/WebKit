@@ -205,8 +205,8 @@ function appendMessage(msg) {
 
 async function init() {
     if (!isChrome) {
-        GPUBufferUsage.COPY_DST = GPUBufferUsage.TRANSFER_DST;
-        GPUBufferUsage.COPY_SRC = GPUBufferUsage.TRANSFER_SRC;
+        GPUBufferUsage.COPY_DST = GPUBufferUsage.COPY_DST;
+        GPUBufferUsage.COPY_SRC = GPUBufferUsage.COPY_SRC;
     }
 
     const adapter = await navigator.gpu.requestAdapter();

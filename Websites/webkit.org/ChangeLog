@@ -1,3 +1,20 @@
+2019-11-13  Dean Jackson  <dino@apple.com>
+
+        Fix some WebGPU demos
+        https://bugs.webkit.org/show_bug.cgi?id=204167
+
+        Reviewed by Myles C. Maxfield.
+
+        Use COPY_ rather than TRANSFER_.
+
+        * demos/webgpu/babylon/babylonWebGpu.max.js:
+        * demos/webgpu/babylon/oneSphereWebGPU.html:
+        * demos/webgpu/hello-cube.html:
+        * demos/webgpu/scripts/compute-boids-compile.js:
+        * demos/webgpu/scripts/compute-boids-utils.js:
+        (async.createTextureFromImage):
+        * demos/webgpu/textured-cube.html:
+
 2019-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add punctuation rules for C++ lambdas

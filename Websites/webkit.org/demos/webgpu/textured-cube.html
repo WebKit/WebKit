@@ -80,6 +80,8 @@ fragment float4 fragment_main(
 }
 `;
 
+//console.log(`Shader is: ${shader}`);
+
 let device, swapChain, verticesBuffer, bindGroupLayout, pipeline, renderPassDescriptor, queue, textureViewBinding, samplerBinding;
 let projectionMatrix = mat4.create();
 
@@ -133,6 +135,10 @@ const verticesArray = new Float32Array([
 async function init() {
     const adapter = await navigator.gpu.requestAdapter();
     device = await adapter.requestDevice();
+
+    device.onuncapturederror = function (e) {
+        console.log(`ERROR:`, e);
+    };
 
     const canvas = document.querySelector('canvas');
 
@@ -204,7 +210,7 @@ async function init() {
         sampleCount: 1,
         dimension: "2d",
         format: "rgba8unorm",
-        usage: GPUTextureUsage.TRANSFER_DST | GPUTextureUsage.SAMPLED
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.SAMPLED
     };
     const texture = device.createTexture(textureDescriptor);
 

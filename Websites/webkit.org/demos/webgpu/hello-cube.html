@@ -147,7 +147,7 @@ async function init() {
 
     const verticesBufferDescriptor = { 
         size: verticesArray.byteLength, 
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
     };
     let verticesArrayBuffer;
     [verticesBuffer, verticesArrayBuffer] = device.createBufferMapped(verticesBufferDescriptor);
