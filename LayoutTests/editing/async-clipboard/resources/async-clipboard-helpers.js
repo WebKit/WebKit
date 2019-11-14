@@ -84,3 +84,12 @@ async function triggerProgrammaticPaste(locationOrElement, options = []) {
             })()`, resolve);
     });
 }
+
+async function checkClipboardItemString(item, type, expectedString)
+{
+    const observedString = await loadText(await item.getType(type));
+    if (observedString === expectedString)
+        testPassed(`getType("${type}") resolved to "${expectedString}"`);
+    else
+        testFailed(`getType("${type}") resolved to "${observedString}; expected "${expectedString}"`);
+}

@@ -1,3 +1,40 @@
+2019-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.write()
+        https://bugs.webkit.org/show_bug.cgi?id=204078
+        <rdar://problem/57087756>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds several new layout tests to exercise the write method on Clipboard.
+
+        * editing/async-clipboard/clipboard-change-data-while-writing-expected.txt: Added.
+        * editing/async-clipboard/clipboard-change-data-while-writing.html: Added.
+
+        Verify that if the platform pasteboard contents change while the page attempts to write to the clipboard, we
+        will reject the promise for writing.
+
+        * editing/async-clipboard/clipboard-write-basic-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-basic.html: Added.
+
+        Verify that writing multiple ClipboardItems to the clipboard using write() works. Among these items, one of them
+        contains no types, and another only contains types that resolve to empty strings. The page should be able to
+        read all four items back using Clipboard.read().
+
+        * editing/async-clipboard/clipboard-write-items-twice-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-items-twice.html: Added.
+
+        Verify that attempting to write a clipboard item that resolves on a long delay, and then attempting to write
+        another item that resolves on a short delay before the previous clipboard item has finished writing does not
+        cause the latter call to Clipboard.write() to fail. Additionally, the clipboard should contain the contents of
+        the second set of clipboard items, rather than the first.
+
+        * editing/async-clipboard/resources/async-clipboard-helpers.js:
+        (async.checkClipboardItemString):
+
+        Add a helper method to read a string for the given type, out of the given clipboard item, and compare it against
+        an expected result.
+
 2019-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] Add the 'orient' property of the interface SVGMarkerElement

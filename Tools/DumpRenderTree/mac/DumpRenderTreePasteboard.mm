@@ -45,6 +45,7 @@
 @interface LocalPasteboard : NSPasteboard {
     RetainPtr<id> _owner;
     RetainPtr<NSString> _pasteboardName;
+    RetainPtr<NSMutableArray<NSPasteboardItem *>> _writtenPasteboardItems;
     NSInteger _changeCount;
 
     ListHashSet<RetainPtr<CFStringRef>, WTF::RetainPtrObjectHash<CFStringRef>> _types;
@@ -120,8 +121,7 @@ static NSMutableDictionary *localPasteboards;
 
 - (NSInteger)declareTypes:(NSArray *)newTypes owner:(id)newOwner
 {
-    _types.clear();
-    _data.clear();
+    [self _clearContentsWithoutUpdatingChangeCount];
 
     [self _addTypesWithoutUpdatingChangeCount:newTypes owner:newOwner];
     return ++_changeCount;
@@ -140,6 +140,19 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
     }
 
     return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)type, nullptr));
+}
+
+- (void)_clearContentsWithoutUpdatingChangeCount
+{
+    _writtenPasteboardItems = nil;
+    _types.clear();
+    _data.clear();
+}
+
+- (NSInteger)clearContents
+{
+    [self _clearContentsWithoutUpdatingChangeCount];
+    return ++_changeCount;
 }
 
 - (NSInteger)addTypes:(NSArray<NSPasteboardType> *)newTypes owner:(id)newOwner
@@ -226,10 +239,11 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
 
 - (BOOL)writeObjects:(NSArray<id <NSPasteboardWriting>> *)objects
 {
+    _writtenPasteboardItems = adoptNS([[NSMutableArray<NSPasteboardItem *> alloc] initWithCapacity:objects.count]);
     for (id <NSPasteboardWriting> object in objects) {
+        ASSERT([object isKindOfClass:NSPasteboardItem.class]);
+        [_writtenPasteboardItems addObject:(NSPasteboardItem *)object];
         for (NSString *type in [object writableTypesForPasteboard:self]) {
-            ASSERT(UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type));
-
             [self addTypes:@[ type ] owner:self];
 
             id propertyList = [object pasteboardPropertyListForType:type];
@@ -245,6 +259,9 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
 
 - (NSArray<NSPasteboardItem *> *)pasteboardItems
 {
+    if (_writtenPasteboardItems)
+        return _writtenPasteboardItems.get();
+
     auto item = adoptNS([[NSPasteboardItem alloc] init]);
     for (const auto& typeAndData : _data) {
         NSData *data = (__bridge NSData *)typeAndData.value.get();

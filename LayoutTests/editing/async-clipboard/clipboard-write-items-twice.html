@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100px;
+                display: block;
+                padding: 1em;
+                margin: 50px auto;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        doneWritingSecondItem = false;
+
+        description("This test verifies that when writing items to the clipboard while a previous call to write items is ongoing, we will end up writing the latter set of items to the clipboard. To manually test, click the 'Copy' button, followed by the 'Copy Again' button, followed by 'Paste'");
+
+        addEventListener("load", async function() {
+            const copyButton = document.getElementById("copy");
+            const copyAgainButton = document.getElementById("copy-again");
+            const pasteButton = document.getElementById("paste");
+
+            copyButton.addEventListener("click", async () => {
+                const item = new ClipboardItem({
+                    "text/plain" : new Promise(resolve => setTimeout(() => resolve("This is the first item."), 100)),
+                    "text/html" : new Promise(resolve => setTimeout(() => resolve("<strong>This is the first item.</strong>"), 100))
+                });
+                try {
+                    await navigator.clipboard.write([item]);
+                } catch (e) { }
+            });
+
+            copyAgainButton.addEventListener("click", async () => {
+                const item = new ClipboardItem({
+                    "text/plain" : Promise.resolve("This is the second item."),
+                    "text/uri-list" : Promise.resolve(textBlob("https://www.example.com/"))
+                });
+                await navigator.clipboard.write([item]);
+                doneWritingSecondItem = true;
+            });
+
+            pasteButton.addEventListener("click", async () => {
+                item = (await navigator.clipboard.read())[0]
+                shouldBe("item.types", "['text/plain', 'text/uri-list']");
+                await checkClipboardItemString(item, "text/plain", "This is the second item.");
+                await checkClipboardItemString(item, "text/uri-list", "https://www.example.com/");
+                [copyButton, copyAgainButton, pasteButton].map(e => e.remove());
+                finishJSTest();
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(copyButton);
+            await UIHelper.activateElement(copyAgainButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWritingSecondItem", "true", resolve));
+            await UIHelper.delayFor(100);
+            await UIHelper.activateElement(pasteButton);
+        });
+    </script>
+    <body>
+        <button id="copy">Copy</button>
+        <button id="copy-again">Copy Again</button>
+        <button id="paste">Paste</button>
+    </body>
+</html>

@@ -226,7 +226,9 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 {
     NSMutableArray *types = [NSMutableArray array];
     data.forEachType([&] (auto& type) {
-        [types addObject:platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type)];
+        NSString *platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type);
+        if (platformType.length)
+            [types addObject:platformType];
     });
 
     bool hasSameOriginCustomData = data.hasSameOriginCustomData();

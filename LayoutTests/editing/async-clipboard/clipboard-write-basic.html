@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100px;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        doneWritingItems = false;
+
+        description("This test verifies that multiple clipboard items, each with multiple types, can be written to and read from the clipboard. To run the test manually, click the Copy button and then click the Paste button.");
+
+        addEventListener("load", async function() {
+            const copyButton = document.getElementById("copy");
+            const pasteButton = document.getElementById("paste");
+
+            copyButton.addEventListener("click", async () => {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        "text/plain" : Promise.resolve(textBlob("The quick brown fox jumped over the lazy dog.")),
+                        "text/uri-list" : Promise.resolve("https://www.apple.com/")
+                    }), new ClipboardItem({
+                        "text/uri-list" : Promise.resolve(textBlob("https://webkit.org/")),
+                        "text/html" : Promise.resolve(textBlob("<a href='https://webkit.org/'>WebKit</a>", "text/html"))
+                    }), new ClipboardItem({
+                        "text/uri-list" : Promise.resolve(""),
+                        "text/plain" : Promise.resolve(textBlob(""))
+                    }), new ClipboardItem({ })
+                ]);
+                doneWritingItems = true;
+            });
+
+            pasteButton.addEventListener("click", async () => {
+                [firstItem, secondItem, thirdItem, fourthItem] = await navigator.clipboard.read();
+
+                debug("Testing firstItem:");
+                shouldBe("firstItem.types", "['text/plain', 'text/uri-list']");
+                await checkClipboardItemString(firstItem, "text/plain", "The quick brown fox jumped over the lazy dog.");
+                await checkClipboardItemString(firstItem, "text/uri-list", "https://www.apple.com/");
+
+                debug("Testing secondItem:");
+                shouldBe("secondItem.types", "['text/uri-list', 'text/html']");
+                await checkClipboardItemString(secondItem, "text/uri-list", "https://webkit.org/");
+                fragment = await loadDocument(await secondItem.getType("text/html"));
+                shouldBeEqualToString("fragment.querySelector('a').href", "https://webkit.org/");
+
+                debug("Testing thirdItem:");
+                shouldBe("thirdItem.types", "['text/uri-list', 'text/plain']");
+                await checkClipboardItemString(thirdItem, "text/uri-list", "");
+                await checkClipboardItemString(thirdItem, "text/plain", "");
+
+                debug("Testing fourthItem:");
+                shouldBe("fourthItem.types", "[]");
+
+                copyButton.remove();
+                pasteButton.remove();
+                finishJSTest();
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(copyButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWritingItems", "true", resolve));
+            await UIHelper.activateElement(pasteButton);
+        });
+    </script>
+    <body>
+        <button id="copy">Copy</button>
+        <button id="paste">Paste</button>
+    </body>
+</html>

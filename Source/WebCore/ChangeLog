@@ -1,3 +1,52 @@
+2019-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.write()
+        https://bugs.webkit.org/show_bug.cgi?id=204078
+        <rdar://problem/57087756>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds support for the write() method on Clipboard, forgoing sanitization for now (this will be added
+        in the next patch). See below for more details.
+
+        Tests: editing/async-clipboard/clipboard-change-data-while-writing.html
+               editing/async-clipboard/clipboard-write-basic.html
+               editing/async-clipboard/clipboard-write-items-twice.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::~Clipboard):
+        (WebCore::shouldProceedWithClipboardWrite):
+        (WebCore::Clipboard::write):
+
+        Implement this method by creating a new ItemWriter and loading data from all the ClipboardItems that are being
+        written. If the previous writer is still in progress, make sure that we invalidate it first (rejecting the
+        promise) before proceeding.
+
+        (WebCore::Clipboard::didResolveOrReject):
+        (WebCore::Clipboard::ItemWriter::ItemWriter):
+        (WebCore::Clipboard::ItemWriter::write):
+        (WebCore::Clipboard::ItemWriter::invalidate):
+        (WebCore::Clipboard::ItemWriter::setData):
+        (WebCore::Clipboard::ItemWriter::didSetAllData):
+        (WebCore::Clipboard::ItemWriter::reject):
+
+        Introduce a private helper class to collect clipboard data for writing from a list of ClipboardItems, and
+        resolve or reject the given promise when finished.
+
+        * Modules/async-clipboard/Clipboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::createItemProviderRegistrationList):
+
+        Fix a stray bug where the empty string could not be read back as plain text or URLs from the platform pasteboard
+        on iOS. This is exercised by the new layout test clipboard-write-basic.html.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::write):
+
+        Address another issue where we would sometimes try and declare the empty string as a pasteboard type when
+        writing to the platform pasteboard. While benign in a real NSPasteboard, there's no reason to include it in this
+        list of declared pasteboard types.
+
 2019-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] Add the 'orient' property of the interface SVGMarkerElement

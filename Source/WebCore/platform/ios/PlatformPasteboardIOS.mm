@@ -599,10 +599,10 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
     }
 
     data.forEachPlatformString([&] (auto& type, auto& value) {
-        NSString *stringValue = value;
-        if (!stringValue.length)
+        if (!value)
             return;
 
+        NSString *stringValue = value;
         auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type).createCFString();
         if (UTTypeConformsTo(cocoaType.get(), kUTTypeURL))
             [representationsToRegister addRepresentingObject:[NSURL URLWithString:stringValue]];
