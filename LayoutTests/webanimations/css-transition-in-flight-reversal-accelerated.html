@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Reversal of accelerated in-flight CSS Transitions</title>
+<style type="text/css" media="screen">
+
+.target.opacity {
+    transition: opacity 2s linear;
+}
+
+.target.opacity.in-flight {
+    opacity: 0;
+}
+
+.target.transform {
+    transition: transform 2s linear;
+}
+
+.target.transform.in-flight {
+    transform: scale(0);
+}
+
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+function targetTest(propertyName)
+{
+    async_test(test => {
+        const target = document.body.appendChild(document.createElement("div"));
+        target.classList.add("target");
+        target.classList.add(propertyName);
+
+        let initialTransition;
+        let reversedTransition;
+
+        // Start the initial transition.
+        requestAnimationFrame(() => {
+            target.classList.add("in-flight");
+            const animations = target.getAnimations();
+            assert_equals(animations.length, 1, "There is one animation applied to the target after starting the initial transition.");
+
+            initialTransition = animations[0];
+            assert_true(initialTransition instanceof CSSTransition, "There is one animation applied to the target after starting the initial transition.");
+
+            // Wait for the initial transition to start and then another frame before reversing the transition.
+            target.addEventListener("transitionstart", event => {
+                requestAnimationFrame(() => {
+                    target.classList.remove("in-flight");
+                    const animations = target.getAnimations();
+                    assert_equals(animations.length, 1, "There is one animation applied to the target after reversing the initial transition.");
+
+                    reversedTransition = animations[0];
+                    assert_true(reversedTransition instanceof CSSTransition, "There is one animation applied to the target after reversing the initial transition.");
+                    assert_not_equals(initialTransition, reversedTransition, "The animation applied to the target after reversing the initial transition is different than the original transition.");
+
+                    target.remove();
+                    test.done();
+                });
+            });
+        });
+    }, `A CSS transition targeting ${propertyName} can be reversed in-flight.`);
+}
+
+targetTest("opacity");
+targetTest("transform");
+
+</script>
+</body>

@@ -1,3 +1,17 @@
+2019-11-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Retargeted transitions targeting accelerated properties do not stop the original transition
+        https://bugs.webkit.org/show_bug.cgi?id=204116
+        <rdar://problem/57116961>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that reversing an in-flight transition for "opacity" and "transform" correctly reverses the transition.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements-expected.txt: Added.
+        * webanimations/css-transition-in-flight-reversal-accelerated-expected.txt: Added.
+        * webanimations/css-transition-in-flight-reversal-accelerated.html: Added.
+
 2019-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.write()

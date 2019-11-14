@@ -1,3 +1,44 @@
+2019-11-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Retargeted transitions targeting accelerated properties do not stop the original transition
+        https://bugs.webkit.org/show_bug.cgi?id=204116
+        <rdar://problem/57116961>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/css-transition-in-flight-reversal-accelerated.html
+
+        There were two problems with the reversal of in-flight transitions targeting accelerated properties. The first issue
+        was that the animated value for the accelerated property would be missing from the before-change style since animating
+        acceelerated properties do not update RenderStyle while running. As such, we would not detect the need to reverse a
+        transition, but rather simply cancel the initial transition with no new transition to reverse its effect, since the
+        value in the before-change and after-change styles were the same. We now fix this by figuring out whether the running
+        transition for that property is accelerated in AnimationTimeline::updateCSSTransitionsForElementAndProperty() and
+        applying the animated value to the before-change style.
+
+        The second issue was that canceling an accelerated transition had no visible effect since the accelerated animation
+        was not stopped. We now have a new AnimationEffect::animationWasCanceled() virtual method which KeyframeEffect overrides
+        to add AcceleratedAction::Stop to the list of pending acceleration actions for this effect. We also ensure that the document
+        timeline knows to run DocumentTimeline::updateAnimationsAndSendEvents() if there are pending accelerated actions, even if
+        there aren't any animations waiting to be resolved, since a single canceled transition would prevent this method from
+        completing.
+
+        * animation/AnimationEffect.h:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::removeAnimation):
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        (WebCore::DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState const):
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement):
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::animationWasCanceled):
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::cancel):
+
 2019-11-13  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Fix GTK/WPE builds after enabling POINTER_EVENTS support
