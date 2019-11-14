@@ -5361,6 +5361,17 @@ bool Document::videoPlaybackRequiresUserGesture() const
     return settings().videoPlaybackRequiresUserGesture();
 }
 
+bool Document::mediaDataLoadsAutomatically() const
+{
+    if (auto* loader = this->loader()) {
+        AutoplayPolicy policy = loader->autoplayPolicy();
+        if (policy != AutoplayPolicy::Default)
+            return policy != AutoplayPolicy::Deny;
+    }
+
+    return settings().mediaDataLoadsAutomatically();
+}
+
 void Document::storageBlockingStateDidChange()
 {
     securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());

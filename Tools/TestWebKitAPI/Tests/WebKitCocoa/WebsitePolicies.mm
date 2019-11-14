@@ -174,7 +174,7 @@ TEST(WebKit, WebsitePoliciesContentBlockersEnabled)
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 }
 
-@interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
+@interface AutoplayPoliciesDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
 @property (nonatomic, copy) _WKWebsiteAutoplayPolicy(^autoplayPolicyForURL)(NSURL *);
 @property (nonatomic, copy) _WKWebsiteAutoplayQuirk(^allowedAutoplayQuirksForURL)(NSURL *);
 @end
@@ -535,6 +535,46 @@ TEST(WebKit, WebsitePoliciesUserInterferenceWithPlaying)
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+}
+
+TEST(WebKit, WebsitePoliciesPerDocumentAutoplayBehaviorMediaLoading)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool receivedLoadedEvent = false;
+    __block bool receivedSuspendEvent = false;
+
+    [webView performAfterReceivingMessage:@"loadeddata" action:^{ receivedLoadedEvent = true; }];
+    [webView performAfterReceivingMessage:@"suspend" action:^{ receivedSuspendEvent = true; }];
+
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+
+    [webView loadTestPageNamed:@"media-loading"];
+
+    TestWebKitAPI::Util::run(&receivedSuspendEvent);
+    EXPECT_FALSE(receivedLoadedEvent);
+
+    [webView loadHTMLString:@"" baseURL:nil];
+    [delegate waitForDidFinishNavigation];
+
+    [webView setNavigationDelegate:delegate.get()];
+
+    receivedLoadedEvent = false;
+    receivedSuspendEvent = false;
+
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyAllow;
+    }];
+
+    [webView loadTestPageNamed:@"media-loading"];
+
+    TestWebKitAPI::Util::run(&receivedLoadedEvent);
 }
 
 TEST(WebKit, WebsitePoliciesWithBridgingCast)

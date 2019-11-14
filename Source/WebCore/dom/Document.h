@@ -1094,6 +1094,7 @@ public:
 
     bool audioPlaybackRequiresUserGesture() const;
     bool videoPlaybackRequiresUserGesture() const;
+    bool mediaDataLoadsAutomatically() const;
 
 #if ENABLE(MEDIA_SESSION)
     MediaSession& defaultMediaSession();

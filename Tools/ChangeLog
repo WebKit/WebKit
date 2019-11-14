@@ -1,3 +1,16 @@
+2019-11-13  Jer Noble  <jer.noble@apple.com>
+
+        Link mediaDataLoadsAutomatically setting to AutoplayPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=201738
+        <rdar://problem/55315194>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/media-loading.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+
 2019-11-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         test262-runner: use NUMBER_OF_PROCESSORS and stop multiplying the number of cores.
