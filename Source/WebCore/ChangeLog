@@ -713,6 +713,27 @@
         * Modules/modern-media-controls/media/pip-support.js:
         (PiPSupport.prototype.buttonWasPressed):
 
+2019-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r249434): flashy menus on wellsfargo.com
+        https://bugs.webkit.org/show_bug.cgi?id=204175
+        <rdar://problem/56654512>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: compositing/backing/backing-for-clipping.html
+        
+        r249434 made overflow an "indirect compositing reason" (i.e. we composite for overflow:hidden
+        when necessary to clip a composited descendant). However this made a clause in RenderLayerCompositor::requiresOwnBackingStore()
+        return early when this reason is set, skipping the bounds check, so we need to do the bound check first.
+        This is similar to the fix in r252070.
+
+        The change to the perspective test relates to the "FIXME"; we don't use the correct ancestor for the
+        bounds check, so sometimes layers can have backing store when they don't need it until that's fixed.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+
 2019-11-11  Per Arne Vollan  <pvollan@apple.com>
 
         Many legacy animation tests are timing out with VS2019

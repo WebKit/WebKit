@@ -187,6 +187,19 @@
         and fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html as
         Failure.
 
+2019-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r249434): flashy menus on wellsfargo.com
+        https://bugs.webkit.org/show_bug.cgi?id=204175
+        <rdar://problem/56654512>
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/backing/backing-for-clipping-expected.html: Added.
+        * compositing/backing/backing-for-clipping.html: Added.
+        * compositing/backing/no-backing-for-perspective-expected.txt:
+        * platform/ios-wk2/compositing/backing/no-backing-for-perspective-expected.txt:
+
 2019-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: fast/scrolling/ios/scrollTo-at-page-load.html is flaky
