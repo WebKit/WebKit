@@ -542,7 +542,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-    Ref<ProcessTaskStateObserver> m_taskStateObserver;
+    RefPtr<ProcessTaskStateObserver> m_taskStateObserver;
     Lock m_processWasResumedUIAssertionLock;
     RetainPtr<BKSProcessAssertion> m_processWasResumedUIAssertion;
 #endif

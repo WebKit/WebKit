@@ -194,7 +194,6 @@ WebProcess::WebProcess()
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
-    , m_taskStateObserver(ProcessTaskStateObserver::create(*this))
 #endif
 {
     // Initialize our platform strategies.
@@ -222,9 +221,7 @@ WebProcess::WebProcess()
 
 WebProcess::~WebProcess()
 {
-#if PLATFORM(IOS_FAMILY)
-    m_taskStateObserver->invalidate();
-#endif
+    ASSERT_NOT_REACHED();
 }
 
 void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
@@ -267,6 +264,12 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 
     m_webConnection = WebConnectionToUIProcess::create(this);
+
+#if PLATFORM(IOS_FAMILY)
+    // Make sure we have an IPC::Connection before creating the ProcessTaskStateObserver since it may call
+    // WebProcess::processTaskStateDidChange() on a background thread and deference the IPC connection.
+    m_taskStateObserver = ProcessTaskStateObserver::create(*this);
+#endif
 }
 
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
