@@ -5,8 +5,11 @@ import subprocess
 
 
 def test_popen(proc):
-    p = subprocess.Popen(proc, stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
+    p = subprocess.Popen(
+        proc,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
     tmp1 = p.poll
     tmp2 = p.returncode
     tmp3 = p.stdin

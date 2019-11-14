@@ -25,7 +25,7 @@
 """Checks WebKit style for .messages.in files."""
 
 import re
-from common import TabChecker
+from webkitpy.style.checkers.common import TabChecker
 
 
 class MessagesInChecker(object):

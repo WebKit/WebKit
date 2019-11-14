@@ -40,9 +40,10 @@ import os
 import random
 import re
 import unittest
-import cpp as cpp_style
-from cpp import CppChecker
-from ..filter import FilterConfiguration
+from webkitpy.common.unicode_compatibility import decode_if_necessary
+from webkitpy.style.checkers import cpp as cpp_style
+from webkitpy.style.checkers.cpp import CppChecker
+from webkitpy.style.filter import FilterConfiguration
 
 
 # This class works as an error collector and replaces cpp_style.Error
@@ -2447,7 +2448,7 @@ class CppStyleTest(CppStyleTestBase):
         def do_test(self, raw_bytes, has_invalid_utf8):
             error_collector = ErrorCollector(self.assertTrue)
             self.process_file_data('foo.cpp', 'cpp',
-                                   unicode(raw_bytes, 'utf8', 'replace').split('\n'),
+                                   decode_if_necessary(raw_bytes, encoding='utf8', errors='replace').split('\n'),
                                    error_collector)
             # The warning appears only once.
             self.assertEqual(
@@ -2457,12 +2458,12 @@ class CppStyleTest(CppStyleTestBase):
                     ' (or Unicode replacement character).'
                     '  [readability/utf8] [5]'))
 
-        do_test(self, 'Hello world\n', False)
-        do_test(self, '\xe9\x8e\xbd\n', False)
-        do_test(self, '\xe9x\x8e\xbd\n', True)
+        do_test(self, b'Hello world\n', False)
+        do_test(self, b'\xe9\x8e\xbd\n', False)
+        do_test(self, b'\xe9x\x8e\xbd\n', True)
         # This is the encoding of the replacement character itself (which
         # you can see by evaluating codecs.getencoder('utf8')(u'\ufffd')).
-        do_test(self, '\xef\xbf\xbd\n', True)
+        do_test(self, b'\xef\xbf\xbd\n', True)
 
     def test_is_blank_line(self):
         self.assertTrue(cpp_style.is_blank_line(''))
@@ -2786,7 +2787,7 @@ class CppStyleTest(CppStyleTestBase):
             other_decl_specs = [random.choice(qualifiers), random.choice(signs),
                                 random.choice(types)]
             # remove None
-            other_decl_specs = filter(lambda x: x is not None, other_decl_specs)
+            other_decl_specs = list(filter(lambda x: x is not None, other_decl_specs))
 
             # shuffle
             random.shuffle(other_decl_specs)

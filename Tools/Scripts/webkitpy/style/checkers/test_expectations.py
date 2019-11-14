@@ -34,9 +34,9 @@ import os
 import re
 import sys
 
-from common import TabChecker
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.style.checkers.common import TabChecker
 from webkitpy.style.error_handlers import DefaultStyleErrorHandler
 
 

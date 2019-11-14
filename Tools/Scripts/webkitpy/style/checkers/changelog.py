@@ -23,9 +23,9 @@
 
 """Checks WebKit style for ChangeLog files."""
 
-from common import TabChecker, match, search, searchIgnorecase
 from sys import maxsize
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
+from webkitpy.style.checkers.common import TabChecker, match, search, searchIgnorecase
 
 
 class ChangeLogChecker(object):

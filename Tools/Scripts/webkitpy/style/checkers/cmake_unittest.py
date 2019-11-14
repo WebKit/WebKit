@@ -24,7 +24,7 @@
 
 import unittest
 
-from cmake import CMakeChecker
+from webkitpy.style.checkers.cmake import CMakeChecker
 
 
 class CMakeCheckerTest(unittest.TestCase):

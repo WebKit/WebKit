@@ -152,8 +152,8 @@ class AutoinstallImportHook(object):
                              "keyring-7.3.1/keyring")
 
     def _install_pep8(self):
-        self._install("https://files.pythonhosted.org/packages/source/p/pep8/pep8-0.5.0.tar.gz",
-                             "pep8-0.5.0/pep8.py")
+        self._install("https://files.pythonhosted.org/packages/01/a0/64ba19519db49e4094d82599412a9660dee8c26a7addbbb1bf17927ceefe/pep8-1.7.1.tar.gz",
+                             "pep8-1.7.1/pep8.py")
     def _install_pycodestyle(self):
         self._install("https://files.pythonhosted.org/packages/source/p/pycodestyle/pycodestyle-2.5.0.tar.gz",
                              "pycodestyle-2.5.0/pycodestyle.py")

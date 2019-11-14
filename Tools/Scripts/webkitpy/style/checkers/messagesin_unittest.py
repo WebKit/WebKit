@@ -26,7 +26,7 @@
 
 import unittest
 
-from messagesin import MessagesInChecker
+from webkitpy.style.checkers.messagesin import MessagesInChecker
 
 
 class MessagesInCheckerStyleTestCase(unittest.TestCase):

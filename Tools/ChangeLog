@@ -1,3 +1,57 @@
+2019-11-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.style.checkers
+        https://bugs.webkit.org/show_bug.cgi?id=203761
+
+        Rubber-stamped by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.style.checkers.
+        * Scripts/webkitpy/port/builders.py:
+        (all_port_names): Convert map to a list before concatenating.
+        * Scripts/webkitpy/style/checkers/changelog.py: Use explicit imports.
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/cmake.py: Ditto.
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/common_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/contributors.py: Ditto.
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (Position): Add rich comparison functions.
+        (check_for_copyright): Use range instead of xrange.
+        (detect_functions): Ditto.
+        (check_language): Use r-string.
+        (check_for_include_what_you_use): Use range instead of xrange.
+        (_process_lines): Convert iterator to list, use range instead of xrange.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest): Be explicit about bytes vs strings.
+        * Scripts/webkitpy/style/checkers/js.py: Use explicit imports.
+        * Scripts/webkitpy/style/checkers/js_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/jsonchecker.py: Ditto.
+        (JSONFeaturesChecker.check):
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py: Ditto.
+        (JSONCheckerTest.test_conflict_marker): Differentiate between Python 2 and 3
+        json parsers.
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py: Use explicit imports.
+        * Scripts/webkitpy/style/checkers/messagesin.py: Ditto.
+        * Scripts/webkitpy/style/checkers/messagesin_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/png_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/python.py:
+        (PythonChecker.check): Only run pylint in Python 2.
+        (PythonChecker._check_pylint): Use r string.
+        (Pylinter.run): Surpress logging from Pylint.
+        * Scripts/webkitpy/style/checkers/python_unittest.py: Use explicit imports.
+        (PythonCheckerTest.test_check): Add FIXME for running pylint in Python 3.
+        * Scripts/webkitpy/style/checkers/python_unittest_falsepositives.py:
+        * Scripts/webkitpy/style/checkers/python_unittest_input.py:
+        * Scripts/webkitpy/style/checkers/test_expectations.py: Use explicit imports.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/text.py: Ditto.
+        * Scripts/webkitpy/style/checkers/text_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/watchlist_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/xcodeproj_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/xml_unittest.py: Ditto.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pep8): Update pep8 version.
+
 2019-11-13  Jer Noble  <jer.noble@apple.com>
 
         Link mediaDataLoadsAutomatically setting to AutoplayPolicy

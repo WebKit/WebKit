@@ -24,8 +24,8 @@
 
 import unittest
 
-from common import CarriageReturnChecker
-from common import TabChecker
+from webkitpy.style.checkers.common import CarriageReturnChecker
+from webkitpy.style.checkers.common import TabChecker
 
 
 # FIXME: The unit tests for the cpp, text, and common checkers should

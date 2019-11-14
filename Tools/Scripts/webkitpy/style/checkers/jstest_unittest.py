@@ -25,7 +25,7 @@
 
 import unittest
 
-from jstest import map_functions_to_dict
+from webkitpy.style.checkers.jstest import map_functions_to_dict
 
 
 class JSTestCheckerTestCase(unittest.TestCase):

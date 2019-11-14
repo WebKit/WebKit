@@ -23,9 +23,10 @@
 """Unit tests for python.py."""
 
 import os
+import sys
 import unittest
 
-from python import PythonChecker
+from webkitpy.style.checkers.python import PythonChecker
 
 
 class PythonCheckerTest(unittest.TestCase):
@@ -46,8 +47,7 @@ class PythonCheckerTest(unittest.TestCase):
         """Test check() method."""
         errors = []
 
-        def _mock_handle_style_error(line_number, category, confidence,
-                                     message):
+        def _mock_handle_style_error(line_number, category, confidence, message):
             error = (line_number, category, confidence, message)
             errors.append(error)
 
@@ -57,10 +57,12 @@ class PythonCheckerTest(unittest.TestCase):
         checker = PythonChecker(file_path, _mock_handle_style_error)
         checker.check(lines=[])
 
-        self.assertEqual(errors, [
-            (4, "pep8/W291", 5, "trailing whitespace"),
-            (4, "pylint/E0602", 5, "Undefined variable 'error'"),
-            ])
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
+        expected_errors = [(4, "pep8/W291", 5, "trailing whitespace")]
+        if sys.version_info < (3, 0):
+            expected_errors.append((4, "pylint/E0602", 5, "Undefined variable 'error'"))
+
+        self.assertEqual(errors, expected_errors)
 
     def test_pylint_false_positives(self):
         """Test that pylint false positives are suppressed."""

@@ -33,8 +33,7 @@
 
 import unittest
 
-
-import watchlist
+from webkitpy.style.checkers import watchlist
 
 
 class MockErrorHandler(object):

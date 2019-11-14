@@ -30,8 +30,8 @@ Supports checking WebKit style in JavaScript files.
 This checker is only used to check WebInspector JavaScript files.
 """
 
-from common import TabChecker
 import re
+from webkitpy.style.checkers.common import TabChecker
 
 
 class JSChecker(object):

@@ -31,7 +31,7 @@
 
 import unittest
 
-from js import JSChecker
+from webkitpy.style.checkers.js import JSChecker
 
 
 class JSTestCase(unittest.TestCase):

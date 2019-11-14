@@ -23,8 +23,9 @@
 
 """Unit test for changelog.py."""
 
-import changelog
 import unittest
+
+from webkitpy.style.checkers import changelog
 
 
 class ChangeLogCheckerTest(unittest.TestCase):

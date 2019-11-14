@@ -30,8 +30,8 @@ import os
 import sys
 import unittest
 
-from test_expectations import TestExpectationsChecker
 from webkitpy.common.host_mock import MockHost
+from webkitpy.style.checkers.test_expectations import TestExpectationsChecker
 
 
 class ErrorCollector(object):

@@ -102,7 +102,7 @@ def all_builder_names():
 
 
 def all_port_names():
-    return sorted(set(map(lambda x: x["port_name"], _exact_matches.values()) + _ports_without_builders))
+    return sorted(set(list(map(lambda x: x["port_name"], _exact_matches.values())) + _ports_without_builders))
 
 
 def rebaseline_override_dir(builder_name):

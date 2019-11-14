@@ -24,13 +24,13 @@
 """Supports checking WebKit style in Python files."""
 
 import re
-from StringIO import StringIO
+import sys
 
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.unicode_compatibility import StringIO
+from webkitpy.common.system.outputcapture import OutputCaptureScope
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.autoinstalled import pep8
-from webkitpy.thirdparty.autoinstalled.pylint import lint
-from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
 
 
 class PythonChecker(object):
@@ -41,7 +41,10 @@ class PythonChecker(object):
 
     def check(self, lines):
         self._check_pep8(lines)
-        self._check_pylint(lines)
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
+        # Pylint can't live happily in python 2 and 3 world, we need to pick one
+        if sys.version_info < (3, 0):
+            self._check_pylint(lines)
 
     def _check_pep8(self, lines):
         # Initialize pep8.options, which is necessary for
@@ -71,10 +74,11 @@ class PythonChecker(object):
         # filtering warnings using the rules in style/checker.py instead.
         output = pylinter.run(['-E', self._file_path])
 
-        lint_regex = re.compile('([^:]+):([^:]+): \[([^]]+)\] (.*)')
+        lint_regex = re.compile(r'([^:]+):([^:]+): \[([^]]+)\] (.*)')
         for error in output.getvalue().splitlines():
             match_obj = lint_regex.match(error)
-            assert(match_obj)
+            if not match_obj:
+                continue
             line_number = int(match_obj.group(2))
             category_and_method = match_obj.group(3).split(', ')
             category = 'pylint/' + (category_and_method[0])
@@ -104,7 +108,10 @@ class Pylinter(object):
 
     def run(self, argv):
         output = _FilteredStringIO(self.FALSE_POSITIVES)
-        lint.Run(['--rcfile', self._pylintrc] + argv, reporter=ParseableTextReporter(output=output), exit=False)
+        with OutputCaptureScope():
+            from webkitpy.thirdparty.autoinstalled.pylint import lint
+            from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
+            lint.Run(['--rcfile', self._pylintrc] + argv, reporter=ParseableTextReporter(output=output), exit=False)
         return output
 
 

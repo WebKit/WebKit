@@ -25,7 +25,7 @@
 
 """Supports checking WebKit style in cmake files.(.cmake, CMakeLists.txt)"""
 
-from common import TabChecker, match, search, searchIgnorecase
+from webkitpy.style.checkers.common import TabChecker, match, search, searchIgnorecase
 
 
 class CMakeChecker(object):

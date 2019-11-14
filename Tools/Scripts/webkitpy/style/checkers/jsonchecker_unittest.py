@@ -22,9 +22,10 @@
 
 """Unit test for jsonchecker.py."""
 
+import sys
 import unittest
 
-import jsonchecker
+from webkitpy.style.checkers import jsonchecker
 
 
 class MockErrorHandler(object):
@@ -81,7 +82,8 @@ class JSONCheckerTest(unittest.TestCase):
         pass
 
     def test_conflict_marker(self):
-        self.assert_error(0, 'json/syntax', '<<<<<<< HEAD\n{\n}\n')
+        # Python 2 0 indexes json parser errors, Python 3 1 indexes them
+        self.assert_error(1 if sys.version_info > (3, 0) else 0, 'json/syntax', '<<<<<<< HEAD\n{\n}\n')
 
     def test_single_quote(self):
         self.assert_error(2, 'json/syntax', "{\n'slaves': []\n}\n")

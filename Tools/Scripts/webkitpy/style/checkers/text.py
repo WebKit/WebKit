@@ -29,7 +29,7 @@
 
 """Checks WebKit style for text files."""
 
-from common import TabChecker
+from webkitpy.style.checkers.common import TabChecker
 
 
 class TextChecker(object):

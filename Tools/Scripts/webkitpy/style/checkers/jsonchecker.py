@@ -24,7 +24,6 @@
 
 import json
 import re
-from sets import Set
 
 
 class JSONChecker(object):
@@ -70,7 +69,7 @@ class JSONFeaturesChecker(JSONChecker):
                 self._handle_style_error(0, 'json/syntax', 5, '"features" key not found, the key is mandatory.')
                 return
 
-            specification_name_set = Set()
+            specification_name_set = set()
             if 'specification' in features_definition:
                 previous_specification_name = ''
                 for specification_object in features_definition['specification']:

@@ -24,7 +24,7 @@
 """Unit test for xcodeproj.py."""
 
 import unittest
-import xcodeproj
+from webkitpy.style.checkers import xcodeproj
 
 
 class TestErrorHandler(object):
