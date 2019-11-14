@@ -378,18 +378,18 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         console.assert(breakpoint instanceof WI.EventBreakpoint, breakpoint);
         if (!breakpoint)
-            return;
+            return false;
 
         if (this.isBreakpointSpecial(breakpoint)) {
             this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointAdded, {breakpoint});
-            return;
+            return true;
         }
 
         console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener, breakpoint);
         console.assert(breakpoint.eventName, breakpoint);
 
         if (this._listenerBreakpoints.find((existing) => existing.eventName === breakpoint.eventName))
-            return;
+            return false;
 
         this._listenerBreakpoints.push(breakpoint);
 
@@ -402,6 +402,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         if (!this._restoringBreakpoints)
             WI.objectStores.eventBreakpoints.putObject(breakpoint);
+
+        return true;
     }
 
     removeEventBreakpoint(breakpoint)
@@ -453,19 +455,19 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         console.assert(breakpoint instanceof WI.URLBreakpoint);
         if (!breakpoint)
-            return;
+            return false;
 
         if (this.isBreakpointSpecial(breakpoint)) {
             this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.URLBreakpointAdded, {breakpoint});
-            return;
+            return true;
         }
 
         console.assert(!this._urlBreakpoints.includes(breakpoint), "Already added URL breakpoint.", breakpoint);
         if (this._urlBreakpoints.includes(breakpoint))
-            return;
+            return false;
 
         if (this._urlBreakpoints.some((entry) => entry.type === breakpoint.type && entry.url === breakpoint.url))
-            return;
+            return false;
 
         this._urlBreakpoints.push(breakpoint);
 
@@ -478,6 +480,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         if (!this._restoringBreakpoints)
             WI.objectStores.urlBreakpoints.putObject(breakpoint);
+
+        return true;
     }
 
     removeURLBreakpoint(breakpoint)

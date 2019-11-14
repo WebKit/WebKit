@@ -691,19 +691,25 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _willDismissEventBreakpointPopover(popover)
     {
         let breakpoint = popover.breakpoint;
-        if (!breakpoint)
+        if (!breakpoint) {
+            InspectorFrontendHost.beep();
             return;
+        }
 
-        WI.domDebuggerManager.addEventBreakpoint(breakpoint);
+        if (!WI.domDebuggerManager.addEventBreakpoint(breakpoint))
+            InspectorFrontendHost.beep();
     }
 
     _willDismissURLBreakpointPopover(popover)
     {
         let breakpoint = popover.breakpoint;
-        if (!breakpoint)
+        if (!breakpoint) {
+            InspectorFrontendHost.beep();
             return;
+        }
 
-        WI.domDebuggerManager.addURLBreakpoint(breakpoint);
+        if (!WI.domDebuggerManager.addURLBreakpoint(breakpoint))
+            InspectorFrontendHost.beep();
     }
 
     _filterByResourcesWithIssues(treeElement)

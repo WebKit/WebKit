@@ -1,3 +1,23 @@
+2019-11-13  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: Invalid type of argument 'eventName' for command 'DOMDebugger.setEventBreakpoint' call. It must be 'string' but it is 'object'.
+        https://bugs.webkit.org/show_bug.cgi?id=204176
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype.dismiss):
+        Only create the `WI.EventBreakpoint` if the <input> has a value.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addURLBreakpoint):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissEventBreakpointPopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissURLBreakpointPopover):
+        Drive-by: if the configuration isn't valid (e.g. no breakpoint) or the breakpoint already
+                  exists, beep.
+
 2019-11-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Local Overrides: drop zone overlay doesn't take up the full content area

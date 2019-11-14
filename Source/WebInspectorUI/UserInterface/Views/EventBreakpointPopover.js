@@ -105,11 +105,13 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
     dismiss()
     {
-        this._breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: this._domEventNameInputElement.value});
-
-        super.dismiss();
+        let eventName = this._domEventNameInputElement.value;
+        if (eventName)
+            this._breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName});
 
         this._suggestionsView.hide();
+
+        super.dismiss();
     }
 
     // CompletionSuggestionsView delegate
