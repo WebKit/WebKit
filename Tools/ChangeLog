@@ -1,3 +1,16 @@
+2019-11-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Enable JSC queue on new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=204179
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Enabled the scheduler for JSC queue.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Enabled JSC queue bubble on new EWS.
+        * QueueStatusServer/config/queues.py: Removed JSC queue from old EWS.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Removed JSC queue from bot-watcher's dashboard.
+
 2019-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.write()
