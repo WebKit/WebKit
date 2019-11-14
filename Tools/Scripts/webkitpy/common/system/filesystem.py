@@ -39,7 +39,7 @@ import sys
 import tempfile
 import time
 
-from webkitpy.common.unicode_compatibility import decode_if_necessary
+from webkitpy.common.unicode_compatibility import decode_if_necessary, encode_for
 
 
 class FileSystem(object):
@@ -227,7 +227,7 @@ class FileSystem(object):
 
     def write_binary_file(self, path, contents):
         with open(path, 'wb') as f:
-            f.write(contents)
+            f.write(encode_for(contents, bytes))
 
     def open_text_file_for_reading(self, path, errors='strict'):
         # Note: There appears to be an issue with the returned file objects

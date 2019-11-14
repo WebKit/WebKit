@@ -500,7 +500,7 @@ class Port(object):
             baseline_path = self.expected_filename(test_name, '.webarchive', device_type=device_type)
             if not self._filesystem.exists(baseline_path):
                 return None
-        text = self._filesystem.read_binary_file(baseline_path)
+        text = decode_for(self._filesystem.read_binary_file(baseline_path), str)
         return text.replace("\r\n", "\n")
 
     def _get_reftest_list(self, test_name):

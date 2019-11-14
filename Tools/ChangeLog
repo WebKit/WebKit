@@ -1,3 +1,40 @@
+2019-11-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.layout_tests.controllers
+        https://bugs.webkit.org/show_bug.cgi?id=204180
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.layout_tests.controllers.
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool.__init__): Use Python 3 queue syntax.
+        (_MessagePool._can_pickle): Use Python 3 pickle syntax.
+        (_MessagePool._loop): Use Python 3 queue syntax.
+        (_Worker.run): Use Python 3 queue syntax.
+        (_Worker._raise): Python 2 and Python 3 have different semantics for raising an exception
+        With a stack trace. However, 'raise' will raise the exception we are in the process of capturing,
+        Which is exactly what we want in this case.
+        * Scripts/webkitpy/common/read_checksum_from_png.py:
+        (read_checksum): Standardize checksum as a string.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.write_binary_file): Binary files should be written with bytes, not strings.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.write_binary_file): Binary files should be written with bytes, not strings.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py: assertItemsEqual is not
+        Defined in Python 3.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._do_post_tests_work): Use compatible iteritems.
+        (Sharder._shard_by_directory): Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Use compatible itervalues.
+        (Manager._look_for_new_crash_logs): Use Python 3 item iteration.
+        (Manager._results_to_upload_json_trie): Use compatible itervalues.
+        (Manager._stats_trie): Use compatible iteritems.
+        * Scripts/webkitpy/port/base.py:
+        (Port.expected_text): Be explicit about decoding text expectations.
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockDRT.write_test_output):
+
 2019-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION: WKWebView navigation fails when navigating from about:blank

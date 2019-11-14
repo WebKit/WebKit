@@ -40,16 +40,20 @@ intead.
 
 """
 
-import cPickle
 import logging
 import multiprocessing
 import os
-import Queue
 import signal
 import sys
 import time
 import traceback
 
+if sys.version_info > (3, 0):
+    import pickle
+    import queue
+else:
+    import cPickle as pickle
+    import Queue as queue
 
 from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
@@ -76,8 +80,8 @@ class _MessagePool(object):
         self._running_inline = (self._num_workers == 1)
         self._timeout = timeout
         if self._running_inline:
-            self._messages_to_worker = Queue.Queue()
-            self._messages_to_manager = Queue.Queue()
+            self._messages_to_worker = queue.Queue()
+            self._messages_to_manager = queue.Queue()
         else:
             self._messages_to_worker = multiprocessing.Queue()
             self._messages_to_manager = multiprocessing.Queue()
@@ -175,7 +179,7 @@ class _MessagePool(object):
 
     def _can_pickle(self, host):
         try:
-            cPickle.dumps(host)
+            pickle.dumps(host)
             return True
         except TypeError:
             return False
@@ -193,7 +197,7 @@ class _MessagePool(object):
                 method = getattr(self, '_handle_' + message.name)
                 assert method, 'bad message %s' % repr(message)
                 method(message.src, *message.args)
-        except Queue.Empty:
+        except queue.Empty:
             pass
 
 
@@ -272,7 +276,7 @@ class _Worker(multiprocessing.Process):
                     break
 
             _log.debug("%s exiting" % self.name)
-        except Queue.Empty:
+        except queue.Empty:
             assert False, '%s: ran out of messages in worker queue.' % self.name
         except KeyboardInterrupt as e:
             self._raise(sys.exc_info())
@@ -302,7 +306,7 @@ class _Worker(multiprocessing.Process):
     def _raise(self, exc_info):
         exception_type, exception_value, exception_traceback = exc_info
         if self._running_inline:
-            raise exception_type, exception_value, exception_traceback
+            raise
 
         if exception_type == KeyboardInterrupt:
             _log.debug("%s: interrupted, exiting" % self.name)

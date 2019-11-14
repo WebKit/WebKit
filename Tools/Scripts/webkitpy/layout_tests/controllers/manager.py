@@ -44,6 +44,7 @@ from collections import defaultdict, OrderedDict
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
+from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -218,13 +219,13 @@ class Manager(object):
         start_time = time.time()
 
         # Check to make sure we're not skipping every test.
-        if not sum([len(tests) for tests in tests_to_run_by_device.itervalues()]):
+        if not sum([len(tests) for tests in itervalues(tests_to_run_by_device)]):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for tests in tests_to_run_by_device.itervalues() for test in tests)
-        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for tests in tests_to_run_by_device.itervalues() for test in tests)
-        needs_websockets = any(self._is_websocket_test(test) for tests in tests_to_run_by_device.itervalues() for test in tests)
+        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_websockets = any(self._is_websocket_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
                                         needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
 
@@ -427,7 +428,7 @@ class Manager(object):
                logs after that time.
         """
         crashed_processes = []
-        for test, result in run_results.unexpected_results_by_name.iteritems():
+        for test, result in run_results.unexpected_results_by_name.items():
             if (result.type != test_expectations.CRASH):
                 continue
             for failure in result.failures:
@@ -437,13 +438,13 @@ class Manager(object):
 
         sample_files = self._port.look_for_new_samples(crashed_processes, start_time)
         if sample_files:
-            for test, sample_file in sample_files.iteritems():
+            for test, sample_file in sample_files.items():
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
                 writer.copy_sample_file(sample_file)
 
         crash_logs = self._port.look_for_new_crash_logs(crashed_processes, start_time)
         if crash_logs:
-            for test, crash_log in crash_logs.iteritems():
+            for test, crash_log in crash_logs.items():
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
                 writer.write_crash_log(crash_log)
 
@@ -491,7 +492,7 @@ class Manager(object):
         }
 
         results_trie = {}
-        for result in results.results_by_name.itervalues():
+        for result in itervalues(results.results_by_name):
             if result.type == test_expectations.SKIP:
                 continue
 
@@ -645,7 +646,7 @@ class Manager(object):
             if result.type != test_expectations.SKIP:
                 stats[result.test_name] = {'results': (_worker_number(result.worker_name), result.test_number, result.pid, int(result.test_run_time * 1000), int(result.total_run_time * 1000))}
         stats_trie = {}
-        for name, value in stats.iteritems():
+        for name, value in iteritems(stats):
             json_results_generator.add_path_to_trie(name, value, stats_trie)
         return stats_trie
 

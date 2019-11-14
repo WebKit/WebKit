@@ -33,6 +33,7 @@ import threading
 import time
 
 from webkitpy.common import message_pool
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
@@ -331,7 +332,7 @@ class Worker(object):
 
         post_test_output = driver.do_post_tests_work()
         if post_test_output:
-            for test_name, doc_list in post_test_output.world_leaks_dict.iteritems():
+            for test_name, doc_list in iteritems(post_test_output.world_leaks_dict):
                 additional_results.append(test_results.TestResult(test_name, [test_failures.FailureDocumentLeak(doc_list)]))
         return additional_results
 
@@ -536,7 +537,7 @@ class Sharder(object):
             tests_by_dir.setdefault(directory, [])
             tests_by_dir[directory].append(test_input)
 
-        for directory, test_inputs in tests_by_dir.iteritems():
+        for directory, test_inputs in iteritems(tests_by_dir):
             shard = TestShard(directory, test_inputs)
             shards.append(shard)
 

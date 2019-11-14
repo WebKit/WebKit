@@ -27,13 +27,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
+
 def read_checksum(filehandle):
     # We expect the comment to be at the beginning of the file.
-    data = filehandle.read(2048)
-    comment_key = 'tEXtchecksum\x00'
+    data = encode_if_necessary(filehandle.read(2048))
+    comment_key = b'tEXtchecksum\x00'
     comment_pos = data.find(comment_key)
     if comment_pos == -1:
         return
 
     checksum_pos = comment_pos + len(comment_key)
-    return data[checksum_pos:checksum_pos + 32]
+    return decode_for(data[checksum_pos:checksum_pos + 32], str)

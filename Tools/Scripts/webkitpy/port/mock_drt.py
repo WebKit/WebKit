@@ -48,6 +48,7 @@ script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
+from webkitpy.common.unicode_compatibility import decode_for
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.driver import DriverInput, DriverOutput, DriverProxy
 from webkitpy.port.factory import PortFactory
@@ -230,7 +231,7 @@ class MockDRT(object):
             if output.image_hash != test_input.image_hash:
                 self._stdout.write('Content-Type: image/png\n')
                 self._stdout.write('Content-Length: %s\n' % len(output.image))
-                self._stdout.write(output.image)
+                self._stdout.write(decode_for(output.image, str))
         self._stdout.write('#EOF\n')
         self._stdout.flush()
         self._stderr.write('#EOF\n')

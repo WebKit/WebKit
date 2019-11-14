@@ -55,28 +55,28 @@ class LayoutTestFinderTests(unittest.TestCase):
     def test_touched_test(self):
         paths = ['LayoutTests/test.html', 'LayoutTests/test', 'test2.html', 'Source/test1.html']
         fs, touched_tests = self.touched_files(paths)
-        self.assertItemsEqual(touched_tests, ['test.html'])
+        self.assertEqual(touched_tests, ['test.html'])
 
     def test_expected_touched_test(self):
         paths = ['LayoutTests/test-expected.txt', 'LayoutTests/no-test-expected.txt']
         fs = MockFileSystem()
         fs.write_text_file('/test.checkout/LayoutTests/test.html', 'This is a test')
         fs, touched_tests = self.touched_files(paths, fs)
-        self.assertItemsEqual(touched_tests, ['test.html'])
+        self.assertEqual(touched_tests, ['test.html'])
 
     def test_platform_expected_touched_test(self):
         paths = ['LayoutTests/platform/mock/test-expected.txt', 'LayoutTests/platform/mock/no-test-expected.txt']
         fs = MockFileSystem()
         fs.write_text_file('/test.checkout/LayoutTests/test.html', 'This is a test')
         fs, touched_tests = self.touched_files(paths, fs)
-        self.assertItemsEqual(touched_tests, ['test.html'])
+        self.assertEqual(touched_tests, ['test.html'])
 
     def test_platform_duplicate_touched_test(self):
         paths = ['LayoutTests/test1.html', 'LayoutTests/test1.html', 'LayoutTests/platform/mock1/test2-expected.txt', 'LayoutTests/platform/mock2/test2-expected.txt']
         fs = MockFileSystem()
         fs.write_text_file('/test.checkout/LayoutTests/test2.html', 'This is a test')
         fs, touched_tests = self.touched_files(paths, fs)
-        self.assertItemsEqual(touched_tests, ['test1.html', 'test2.html'])
+        self.assertEqual(sorted(touched_tests), sorted(['test1.html', 'test2.html']))
 
     def test_touched_but_skipped_test(self):
         host = MockHost()
@@ -92,4 +92,4 @@ class LayoutTestFinderTests(unittest.TestCase):
         host.filesystem.write_text_file('/test.checkout/LayoutTests/test3.html', 'This is a test to be skipped')
 
         touched_tests = LayoutTestFinder(port, optparse.Values({'skipped': 'always', 'skip_failing_tests': False, 'http': True})).find_touched_tests(paths)
-        self.assertItemsEqual(touched_tests, ['test0.html', 'test2.html'])
+        self.assertEqual(sorted(touched_tests), sorted(['test0.html', 'test2.html']))

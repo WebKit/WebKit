@@ -329,8 +329,8 @@ class MockFileSystem(object):
     def write_binary_file(self, path, contents):
         # FIXME: should this assert if dirname(path) doesn't exist?
         self.maybe_make_directory(self.dirname(path))
-        self.files[path] = contents
-        self.written_files[path] = contents
+        self.files[path] = unicode_compatibility.encode_for(contents, bytes)
+        self.written_files[path] = unicode_compatibility.encode_for(contents, bytes)
 
     def open_text_file_for_reading(self, path, errors='strict'):
         if self.files[path] is None:
