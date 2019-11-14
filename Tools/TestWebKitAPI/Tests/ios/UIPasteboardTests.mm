@@ -151,7 +151,7 @@ TEST(UIPasteboardTests, PasteWithCompletionHandler)
     [UIPasteboard generalPasteboard].URL = [NSURL URLWithString:@"https://www.apple.com/"];
 
     bool done = false;
-    [(id <UIWKInteractionViewProtocol_Staging_49236384>)[webView textInputContentView] pasteWithCompletionHandler:[webView, &done] {
+    [(id <UIWKInteractionViewProtocol>)[webView textInputContentView] pasteWithCompletionHandler:[webView, &done] {
         [UIPasteboard generalPasteboard].items = @[ ];
         done = true;
     }];

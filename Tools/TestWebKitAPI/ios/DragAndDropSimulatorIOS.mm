@@ -496,7 +496,7 @@ IGNORE_WARNINGS_END
                 defaultPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:_webView.get()]);
             }
 
-            id <UIDropInteractionDelegate_Staging_31075005> delegate = (id <UIDropInteractionDelegate_Staging_31075005>)[_webView dropInteractionDelegate];
+            id <UIDropInteractionDelegate_Private> delegate = (id <UIDropInteractionDelegate_Private>)[_webView dropInteractionDelegate];
             UIDropInteraction *interaction = [_webView dropInteraction];
             [_dropPreviews addObject:[delegate dropInteraction:interaction previewForDroppingItem:item withDefault:defaultPreview.get()] ?: NSNull.null];
             [_delayedDropPreviews addObject:NSNull.null];

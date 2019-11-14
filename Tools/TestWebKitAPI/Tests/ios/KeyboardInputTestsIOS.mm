@@ -565,7 +565,7 @@ TEST(KeyboardInputTests, SupportsImagePaste)
     }];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
-    auto contentView = (id <UITextInputPrivate_Staging_54140418>)[webView textInputContentView];
+    auto contentView = (id <UITextInputPrivate>)[webView textInputContentView];
     [webView synchronouslyLoadHTMLString:@"<input id='input'></input><div contenteditable id='editor'></div><textarea id='textarea'></textarea>"];
     [webView _setInputDelegate:inputDelegate.get()];
 
