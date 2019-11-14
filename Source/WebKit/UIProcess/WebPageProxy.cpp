@@ -7418,6 +7418,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.needsFontAttributes = m_needsFontAttributes;
     parameters.backgroundColor = m_backgroundColor;
 
+    parameters.overriddenMediaType = m_overriddenMediaType;
+
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 
     return parameters;
@@ -9496,6 +9498,12 @@ void WebPageProxy::completeTextManipulation(WebCore::TextManipulationController:
         return;
     }
     m_process->connection()->sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(itemID, tokens), WTFMove(completionHandler), m_webPageID);
+}
+
+void WebPageProxy::setOverriddenMediaType(const String& mediaType)
+{
+    m_overriddenMediaType = mediaType;
+    m_process->send(Messages::WebPage::SetOverriddenMediaType(mediaType), m_webPageID);
 }
 
 } // namespace WebKit

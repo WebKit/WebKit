@@ -320,6 +320,14 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  */
 + (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+
+/* @abstract The media type for the WKWebView
+@discussion The value of mediaType will override the normal value of the CSS media property.
+ Setting the value to nil will restore the normal value.
+ The default value is nil.
+*/
+@property (nonatomic, null_resettable, copy) NSString *mediaType;
+
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
 @param printInfo The print info object used to configure the resulting print operation.

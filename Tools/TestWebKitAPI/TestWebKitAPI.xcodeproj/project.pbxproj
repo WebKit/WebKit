@@ -290,6 +290,7 @@
 		51B1EE971C80FAEF0064FB98 /* IndexedDBPersistence-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51B1EE951C80FADD0064FB98 /* IndexedDBPersistence-2.html */; };
 		51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */; };
 		51BCEE4F1C84F53B0042C82E /* IndexedDBMultiProcess-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */; };
+		51BE9E662376089F00B4E117 /* MediaType.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51BE9E652376089500B4E117 /* MediaType.mm */; };
 		51C683DE1EA134E800650183 /* WKURLSchemeHandler-1.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */; };
 		51C8E1A51F26AF4C00BF731B /* ResourceLoadStatistics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C8E1A41F26AC5400BF731B /* ResourceLoadStatistics.mm */; };
 		51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */; };
@@ -1836,6 +1837,7 @@
 		51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBMultiProcess.mm; sourceTree = "<group>"; };
 		51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-1.html"; sourceTree = "<group>"; };
 		51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-2.html"; sourceTree = "<group>"; };
+		51BE9E652376089500B4E117 /* MediaType.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaType.mm; sourceTree = "<group>"; };
 		51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKURLSchemeHandler-1.mm"; sourceTree = "<group>"; };
 		51C8E1A41F26AC5400BF731B /* ResourceLoadStatistics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoadStatistics.mm; sourceTree = "<group>"; };
 		51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = EmptyGrandfatheredResourceLoadStatistics.plist; sourceTree = "<group>"; };
@@ -2907,6 +2909,7 @@
 				8C10AF96206467770018FD90 /* LocalStoragePersistence.mm */,
 				7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */,
 				07CC7DFD2266330800E39181 /* MediaBufferingPolicy.mm */,
+				51BE9E652376089500B4E117 /* MediaType.mm */,
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
 				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
@@ -4722,6 +4725,7 @@
 				07CC7DFE2266330900E39181 /* MediaBufferingPolicy.mm in Sources */,
 				CDA315981ED53651009F60D3 /* MediaPlaybackSleepAssertion.mm in Sources */,
 				CDC9442E1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm in Sources */,
+				51BE9E662376089F00B4E117 /* MediaType.mm in Sources */,
 				7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
 				7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
 				5C0BF88D1DD5964D00B00328 /* MemoryPressureHandler.mm in Sources */,

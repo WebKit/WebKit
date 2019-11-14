@@ -1621,6 +1621,9 @@ public:
     void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&,
         WTF::Function<void (WebCore::TextManipulationController::ManipulationResult)>&&);
 
+    const String& overriddenMediaType() const { return m_overriddenMediaType; }
+    void setOverriddenMediaType(const String&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2617,6 +2620,8 @@ private:
     COMPtr<ID3D11Device1> m_device;
 #endif
     bool m_isQuotaIncreaseDenied { false };
+    
+    String m_overriddenMediaType;
 };
 
 } // namespace WebKit

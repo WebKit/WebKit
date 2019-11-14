@@ -432,6 +432,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutoSizingAdjustmentTimer(*this, &WebPage::textAutoSizingAdjustmentTimerFired)
 #endif
+    , m_overriddenMediaType(parameters.overriddenMediaType)
 {
     ASSERT(m_identifier);
 
@@ -6824,6 +6825,15 @@ void WebPage::textAutoSizingAdjustmentTimerFired()
     m_page->recomputeTextAutoSizingInAllFrames();
 }
 #endif
+
+void WebPage::setOverriddenMediaType(const String& mediaType)
+{
+    if (mediaType == m_overriddenMediaType)
+        return;
+
+    m_overriddenMediaType = mediaType;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
 
 } // namespace WebKit
 

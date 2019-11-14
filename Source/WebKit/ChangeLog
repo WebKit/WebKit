@@ -1,5 +1,38 @@
 2019-11-14  Brady Eidson  <beidson@apple.com>
 
+        Summary: WKWebView is missing an equivalent to WebKit 1's API to set the media style.
+        <rdar://problem/49862107> and https://bugs.webkit.org/show_bug.cgi?id=203974
+
+        Reviewed by Alex Christensen.
+
+        Covered by new API test.
+
+        This is basically:
+        - Expose a read/write property on WKWebView.
+        - Pipe the new media type to the WebProcess.
+        - Force a style recalc.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setMediaType:]):
+        (-[WKWebView mediaType]):
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setOverriddenMediaType):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::overriddenMediaType const):
+        
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::overrideMediaType const):
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setOverriddenMediaType):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::overriddenMediaType const):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2019-11-14  Brady Eidson  <beidson@apple.com>
+
         pageZoom/setPageZoom: should not be in a Mac-only part of WKWebView.mm
         https://bugs.webkit.org/show_bug.cgi?id=204128
 

@@ -129,6 +129,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << backgroundColor;
     encoder << oldPageID;
+    encoder << overriddenMediaType;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -392,6 +393,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!oldPageID)
         return WTF::nullopt;
     parameters.oldPageID = WTFMove(*oldPageID);
+
+    if (!decoder.decode(parameters.overriddenMediaType))
+        return WTF::nullopt;
 
     return parameters;
 }

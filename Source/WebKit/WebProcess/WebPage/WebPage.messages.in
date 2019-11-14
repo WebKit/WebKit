@@ -581,4 +581,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> () Async
     CompleteTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID, Vector<WebCore::TextManipulationController::ManipulationToken> tokens) -> (enum:uint8_t WebCore::TextManipulationController::ManipulationResult result) Async
+    
+    SetOverriddenMediaType(String mediaType)
 }

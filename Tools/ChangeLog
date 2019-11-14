@@ -1,5 +1,17 @@
 2019-11-14  Brady Eidson  <beidson@apple.com>
 
+        Summary: WKWebView is missing an equivalent to WebKit 1's API to set the media style.
+        <rdar://problem/49862107> and https://bugs.webkit.org/show_bug.cgi?id=203974
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaType.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2019-11-14  Brady Eidson  <beidson@apple.com>
+
         pageZoom/setPageZoom: should not be in a Mac-only part of WKWebView.mm
         https://bugs.webkit.org/show_bug.cgi?id=204128
 

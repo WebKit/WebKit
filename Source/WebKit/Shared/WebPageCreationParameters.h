@@ -200,6 +200,8 @@ struct WebPageCreationParameters {
     Optional<WebCore::Color> backgroundColor;
 
     Optional<WebCore::PageIdentifier> oldPageID;
+
+    String overriddenMediaType;
 };
 
 } // namespace WebKit

@@ -3008,6 +3008,75 @@ TEST(ProcessSwap, PageZoomLevelAfterSwap)
 
 #endif // PLATFORM(MAC)
 
+static const char* mediaTypeBytes = R"PSONRESOURCE(
+<style>
+@media screen {
+.print{
+    visibility: hidden;
+}
+}
+
+@media print {
+.screen{
+    visibility: hidden;
+}
+}
+</style>
+<body>
+<div class="screen">Screen</div>
+<div class="print">Print</div>
+</body>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, MediaTypeAfterSwap)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:mediaTypeBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:mediaTypeBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    NSString *innerText = [[webView stringByEvaluatingJavaScript:@"document.body.innerText"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    EXPECT_TRUE([innerText isEqualToString:@"Screen"]);
+
+    webView.get().mediaType = @"print";
+
+    innerText = [[webView stringByEvaluatingJavaScript:@"document.body.innerText"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    EXPECT_TRUE([innerText isEqualToString:@"Print"]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    innerText = [[webView stringByEvaluatingJavaScript:@"document.body.innerText"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    EXPECT_TRUE([innerText isEqualToString:@"Print"]);
+
+    // Kill the WebProcess, the page should reload automatically and the media type should be maintained.
+    kill([webView _webProcessIdentifier], 9);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    innerText = [[webView stringByEvaluatingJavaScript:@"document.body.innerText"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    EXPECT_TRUE([innerText isEqualToString:@"Print"]);
+}
+
 static const char* navigateBeforePageLoadEndBytes = R"PSONRESOURCE(
 <body>
 <a id="testLink" href="pson://www.apple.com/main.html">Link</a>

@@ -1240,6 +1240,9 @@ public:
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
 
+    const String& overriddenMediaType() const { return m_overriddenMediaType; }
+    void setOverriddenMediaType(const String&);
+    
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1998,6 +2001,8 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
 #endif
+
+    String m_overriddenMediaType;
 };
 
 #if !PLATFORM(IOS_FAMILY)

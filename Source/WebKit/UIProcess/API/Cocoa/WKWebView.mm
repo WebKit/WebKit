@@ -4776,6 +4776,16 @@ inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
     });
 }
 
+- (void)setMediaType:(NSString *)mediaStyle
+{
+    _page->setOverriddenMediaType(mediaStyle);
+}
+
+- (NSString *)mediaType
+{
+    return _page->overriddenMediaType().isNull() ? nil : (NSString *)_page->overriddenMediaType();
+}
+
 @end
 
 @implementation WKWebView (WKPrivate)
