@@ -370,16 +370,16 @@ public:
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid()) {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
             load16(addressTempRegister, dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
             store16(dataTempRegister, addressTempRegister);
         } else {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
             load16(addressTempRegister, dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
             store16(dataTempRegister, addressTempRegister);
         }
     }

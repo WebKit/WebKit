@@ -1,3 +1,21 @@
+2019-11-14  Caio Lima  <ticaiolima@gmail.com>
+
+        Support or16(TrustedImm32, AbsoluteAddress) in the MIPS MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=204126
+
+        Reviewed by Mark Lam.
+
+        This is adjusting the implementation of `or16` for MIPS. This required
+        the addition of `load16` and `store16` for this macro assembler as
+        well. This is also fixing build issue on ARMv7 `or16` implementation.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or16):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or16):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::store16):
+
 2019-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BlockDirectory's bits should be compact

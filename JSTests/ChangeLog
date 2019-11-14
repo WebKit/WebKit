@@ -1,3 +1,15 @@
+2019-11-14  Caio Lima  <ticaiolima@gmail.com>
+
+        Support or16(TrustedImm32, AbsoluteAddress) in the MIPS MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=204126
+
+        Reviewed by Mark Lam.
+
+        Decreasing the number of iterations of test to avoid timeout into slow
+        ports.
+
+        * stress/regress-57020338.js:
+
 2019-11-13  Robin Morisset  <rmorisset@apple.com>
 
         Split ArithProfile into a Unary and a Binary version
