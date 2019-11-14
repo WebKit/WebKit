@@ -742,6 +742,7 @@ WI.Color.FunctionNames = new Set([
 WI.Color.Keywords = {
     "aliceblue": [240, 248, 255, 1],
     "antiquewhite": [250, 235, 215, 1],
+    "aqua": [0, 255, 255, 1],
     "aquamarine": [127, 255, 212, 1],
     "azure": [240, 255, 255, 1],
     "beige": [245, 245, 220, 1],
@@ -787,6 +788,7 @@ WI.Color.Keywords = {
     "firebrick": [178, 34, 34, 1],
     "floralwhite": [255, 250, 240, 1],
     "forestgreen": [34, 139, 34, 1],
+    "fuchsia": [255, 0, 255, 1],
     "gainsboro": [220, 220, 220, 1],
     "ghostwhite": [248, 248, 255, 1],
     "gold": [255, 215, 0, 1],
