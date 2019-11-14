@@ -1,3 +1,14 @@
+2019-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree][WebKitTestRunner] eventSender.keyDown should support function keys
+        https://bugs.webkit.org/show_bug.cgi?id=204146
+
+        Reviewed by Ross Kirsling.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Unskipped fast/events/keydown-function-keys.html and fast/events/keydown-leftright-keys.html.
+
 2019-11-13  youenn fablet  <youenn@apple.com>
 
         Layout Tests in imported/w3c/web-platform-tests/websockets/ are flakey failures after r246406

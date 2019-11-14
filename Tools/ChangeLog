@@ -1,3 +1,28 @@
+2019-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree][WebKitTestRunner] eventSender.keyDown should support function keys
+        https://bugs.webkit.org/show_bug.cgi?id=204146
+
+        Reviewed by Ross Kirsling.
+
+        Changed eventSender.keyDown of DRT and WTR to support sending
+        function keys.
+
+        In addition to that, this change set correct scan code to LPARAM
+        for all key events. Unfortunately, there is no API to get a
+        correct extended scan code from a virtual key because
+        MapVirtualKey and MapVirtualKeyEx doesn't work as expected.
+        makeKeyDataForScanCode turns on KF_EXTENDED flag for some keys
+        explicitly for the workaround.
+        <http://www.setnode.com/blog/mapvirtualkey-getkeynametext-and-a-story-of-how-to/>
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (makeKeyDataForScanCode):
+        (keyDownCallback):
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::makeKeyDataForScanCode):
+        (WTR::EventSenderProxy::keyDown):
+
 2019-11-13  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.style.checkers

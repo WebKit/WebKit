@@ -441,14 +441,39 @@ void replaySavedEvents(HRESULT* oleDragAndDropReturnValue)
     replayingSavedEvents = false;
 }
 
-static int makeKeyDataForScanCode(int virtualKeyCode)
+static unsigned makeKeyDataForScanCode(int virtualKeyCode)
 {
     unsigned scancode = MapVirtualKey(virtualKeyCode, MAPVK_VK_TO_VSC);
     int keyData = scancode & 0xFF;
+
+    bool forceExtended = false;
+    switch (virtualKeyCode) {
+    case VK_LEFT:
+    case VK_UP:
+    case VK_RIGHT:
+    case VK_DOWN:
+    case VK_PRIOR:
+    case VK_NEXT:
+    case VK_END:
+    case VK_HOME:
+    case VK_INSERT:
+    case VK_DELETE:
+    case VK_DIVIDE:
+    case VK_NUMLOCK:
+    case VK_RCONTROL:
+    case VK_RMENU:
+        // Some keys need to turn on KF_EXTENDED explicitly
+        forceExtended = true;
+        break;
+    default:
+        break;
+    }
+
     scancode = scancode >> 8;
-    if (scancode == 0xe0 || scancode == 0xe1)
+    if (scancode == 0xe0 || scancode == 0xe1 || forceExtended)
         keyData += KF_EXTENDED;
-    return keyData << 16;
+    unsigned repeat = 1;
+    return keyData << 16 | repeat;
 }
 
 static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -464,23 +489,18 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
     ASSERT(!*exception);
-    int virtualKeyCode;
+    int virtualKeyCode = 0;
     int charCode = 0;
-    int keyData = 1;
     bool needsShiftKeyModifier = false;
-    if (JSStringIsEqualToUTF8CString(character, "leftArrow")) {
+    if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
         virtualKeyCode = VK_LEFT;
-        keyData += KF_EXTENDED << 16; // In this case, extended means "not keypad".
-    } else if (JSStringIsEqualToUTF8CString(character, "rightArrow")) {
+    else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
         virtualKeyCode = VK_RIGHT;
-        keyData += KF_EXTENDED << 16;
-    } else if (JSStringIsEqualToUTF8CString(character, "upArrow")) {
+    else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
         virtualKeyCode = VK_UP;
-        keyData += KF_EXTENDED << 16;
-    } else if (JSStringIsEqualToUTF8CString(character, "downArrow")) {
+    else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
         virtualKeyCode = VK_DOWN;
-        keyData += KF_EXTENDED << 16;
-    } else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
+    else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
         virtualKeyCode = VK_PRIOR;
     else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
         virtualKeyCode = VK_NEXT;
@@ -496,32 +516,54 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_SNAPSHOT;
     else if (JSStringIsEqualToUTF8CString(character, "menu"))
         virtualKeyCode = VK_APPS;
-    else if (JSStringIsEqualToUTF8CString(character, "leftControl")) {
-        virtualKeyCode = VK_CONTROL;
-        keyData += makeKeyDataForScanCode(VK_LCONTROL);
-    } else if (JSStringIsEqualToUTF8CString(character, "leftShift")) {
-        virtualKeyCode = VK_SHIFT;
-        keyData += makeKeyDataForScanCode(VK_LSHIFT);
-    } else if (JSStringIsEqualToUTF8CString(character, "leftAlt")) {
-        virtualKeyCode = VK_MENU;
-        keyData += makeKeyDataForScanCode(VK_LMENU);
-    } else if (JSStringIsEqualToUTF8CString(character, "rightControl")) {
-        virtualKeyCode = VK_CONTROL;
-        keyData += makeKeyDataForScanCode(VK_RCONTROL);
-    } else if (JSStringIsEqualToUTF8CString(character, "rightShift")) {
-        virtualKeyCode = VK_SHIFT;
-        keyData += makeKeyDataForScanCode(VK_RSHIFT);
-    } else if (JSStringIsEqualToUTF8CString(character, "rightAlt")) {
-        virtualKeyCode = VK_MENU;
-        keyData += makeKeyDataForScanCode(VK_RMENU);
-    } else {
+    else if (JSStringIsEqualToUTF8CString(character, "leftControl"))
+        virtualKeyCode = VK_LCONTROL;
+    else if (JSStringIsEqualToUTF8CString(character, "leftShift"))
+        virtualKeyCode = VK_LSHIFT;
+    else if (JSStringIsEqualToUTF8CString(character, "leftAlt"))
+        virtualKeyCode = VK_LMENU;
+    else if (JSStringIsEqualToUTF8CString(character, "rightControl"))
+        virtualKeyCode = VK_RCONTROL;
+    else if (JSStringIsEqualToUTF8CString(character, "rightShift"))
+        virtualKeyCode = VK_RSHIFT;
+    else if (JSStringIsEqualToUTF8CString(character, "rightAlt"))
+        virtualKeyCode = VK_RMENU;
+    else {
+        size_t characterLength = JSStringGetLength(character);
         static const char shiftedUSCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()_+{}|:\"<>?";
-        charCode = JSStringGetCharactersPtr(character)[0];
-        virtualKeyCode = LOBYTE(VkKeyScan(charCode));
-        if (strchr(shiftedUSCharacters, charCode))
-            needsShiftKeyModifier = true;
+        const wchar_t* characterPtr = JSStringGetCharactersPtr(character);
+        if (characterLength == 1) {
+            charCode = characterPtr[0];
+            virtualKeyCode = LOBYTE(VkKeyScan(charCode));
+            if (strchr(shiftedUSCharacters, charCode))
+                needsShiftKeyModifier = true;
+        } else if (characterPtr[0] == 'F') {
+            if (characterLength == 2 && isASCIIDigit(characterPtr[1]))
+                virtualKeyCode = VK_F1 + characterPtr[1] - '1';
+            else if (characterLength == 3 && characterPtr[1] == '1' && isASCIIDigit(characterPtr[2]))
+                virtualKeyCode = VK_F10 + characterPtr[2] - '0';
+        }
     }
     JSStringRelease(character);
+
+    unsigned keyData = makeKeyDataForScanCode(virtualKeyCode);
+
+    switch (virtualKeyCode) {
+    case VK_LCONTROL:
+    case VK_RCONTROL:
+        virtualKeyCode = VK_CONTROL;
+        break;
+    case VK_LSHIFT:
+    case VK_RSHIFT:
+        virtualKeyCode = VK_SHIFT;
+        break;
+    case VK_LMENU:
+    case VK_RMENU:
+        virtualKeyCode = VK_MENU;
+        break;
+    default:
+        break;
+    }
 
     BYTE keyState[256];
     if (argumentCount > 1 || needsShiftKeyModifier) {
