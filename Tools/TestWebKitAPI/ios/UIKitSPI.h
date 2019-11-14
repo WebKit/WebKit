@@ -36,6 +36,7 @@
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScreen_Private.h>
+#import <UIKit/UITextAutofillSuggestion.h>
 #import <UIKit/UITextInputMultiDocument.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
@@ -54,7 +55,6 @@ IGNORE_WARNINGS_END
 @class UIDragItem;
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #import <UIKit/UIDragInteraction_Private.h>
-#import <UIKit/UITextAutofillSuggestion.h>
 #endif // PLATFORM(IOS)
 
 #else // USE(APPLE_INTERNAL_SDK)
