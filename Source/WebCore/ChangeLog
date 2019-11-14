@@ -1,3 +1,15 @@
+2019-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Invalidation] Skip non-dirty out-of-flow boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=204196
+
+        Reviewed by Antti Koivisto.
+
+        Use the InvalidationState to decide whether the current out-of-flow box needs layout.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+
 2019-11-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Accelerated transitions do not always remove their backing accelerated animation

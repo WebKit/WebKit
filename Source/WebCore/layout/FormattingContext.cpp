@@ -30,6 +30,7 @@
 
 #include "DisplayBox.h"
 #include "FormattingState.h"
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
@@ -155,6 +156,8 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
+        if (!invalidationState.needsLayout(*outOfFlowBox))
+            continue;
 
         computeBorderAndPadding(*outOfFlowBox);
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
