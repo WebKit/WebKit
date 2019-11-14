@@ -237,13 +237,16 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
             RETURN_IF_EXCEPTION(scope, );
             if (isArrayReplacer) {
                 m_usingArrayReplacer = true;
-                JSValue lengthValue = replacerObject->get(globalObject, vm.propertyNames->length);
+                unsigned length = toLength(globalObject, replacerObject);
                 RETURN_IF_EXCEPTION(scope, );
-                unsigned length = lengthValue.toUInt32(globalObject);
-                RETURN_IF_EXCEPTION(scope, );
-                for (unsigned i = 0; i < length; ++i) {
-                    JSValue name = replacerObject->get(globalObject, i);
-                    RETURN_IF_EXCEPTION(scope, );
+                for (unsigned index = 0; index < length; ++index) {
+                    JSValue name;
+                    if (isJSArray(replacerObject) && replacerObject->canGetIndexQuickly(index))
+                        name = replacerObject->getIndexQuickly(index);
+                    else {
+                        name = replacerObject->get(globalObject, index);
+                        RETURN_IF_EXCEPTION(scope, );
+                    }
                     if (name.isObject()) {
                         auto* nameObject = jsCast<JSObject*>(name);
                         if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
@@ -486,14 +489,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     // First time through, initialize.
     if (!m_index) {
         if (m_isArray) {
-            if (m_isJSArray)
-                m_size = asArray(m_object)->length();
-            else {
-                JSValue value = m_object->get(globalObject, vm.propertyNames->length);
-                RETURN_IF_EXCEPTION(scope, false);
-                m_size = value.toUInt32(globalObject);
-                RETURN_IF_EXCEPTION(scope, false);
-            }
+            m_size = toLength(globalObject, m_object);
+            RETURN_IF_EXCEPTION(scope, false);
             builder.append('[');
         } else {
             if (stringifier.m_usingArrayReplacer)
@@ -528,8 +525,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     if (m_isArray) {
         // Get the value.
         JSValue value;
-        if (m_isJSArray && asArray(m_object)->canGetIndexQuickly(index))
-            value = asArray(m_object)->getIndexQuickly(index);
+        if (m_isJSArray && m_object->canGetIndexQuickly(index))
+            value = m_object->getIndexQuickly(index);
         else {
             PropertySlot slot(m_object, PropertySlot::InternalMethodType::Get);
             bool hasProperty = m_object->getPropertySlot(globalObject, index, slot);

@@ -1,3 +1,13 @@
+2019-11-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use toLength() and getIndexQuickly() in JSON.stringify
+        https://bugs.webkit.org/show_bug.cgi?id=204122
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/json-stringify-array-replacer.js: Added.
+        * microbenchmarks/json-stringify-empty-array.js: Added.
+
 2019-11-14  Caio Lima  <ticaiolima@gmail.com>
 
         Support or16(TrustedImm32, AbsoluteAddress) in the MIPS MacroAssembler
