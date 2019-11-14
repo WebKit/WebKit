@@ -1,3 +1,34 @@
+2019-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update Babylon WebGPU demos to work on ToT
+        https://bugs.webkit.org/show_bug.cgi?id=204182
+
+        Reviewed by Dean Jackson.
+
+        3 things were wrong:
+
+        - There seemed to be a bug in the loader script. I fixed the bug and added a local copy
+          here so we don't have to keep hotlinking to the Babylon one.
+        - I had updated the helmet shaders in
+          https://github.com/litherum/Website/commit/f7768ed43012fb06345768211ea90815d81f41b4
+          but I didn't update the sphere shaders.
+        - r252423 turned off the sphere rendering after 2 seconds. This patch removes that.
+
+        * demos/webgpu/babylon/babylonjs.loaders.min.js: Added.
+        (return):
+        (return.n.d):
+        (return.get n.r):
+        (return.n.t):
+        (return.):
+        (return.n.n):
+        (return.n.o):
+        * demos/webgpu/babylon/oneHelmetWebGPU.html:
+        * demos/webgpu/babylon/oneSphereWebGPU.html:
+        * demos/webgpu/babylon/oneSphereWebGPUWSLShaders.js:
+        (sampler.reflectionSamplerSampler.register):
+        (float3.normal.attribute): Deleted.
+        * demos/webgpu/babylon/vertexShaderGLSL1.glsl: Removed. Unnecessary.
+
 2019-11-13  Dean Jackson  <dino@apple.com>
 
         Fix some WebGPU demos

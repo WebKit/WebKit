@@ -11,12 +11,6 @@ struct Scene {
     float4x4 view;
 }
 
-struct BindGroupA {
-    constant Scene[] scene : register(b0, space0);
-    Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0);
-    sampler environmentBrdfSamplerSampler : register(s2, space0);
-}
-
 struct Material {
     float2 vAlbedoInfos;
     float4 vAmbientInfos;
@@ -98,16 +92,6 @@ struct Material {
 struct Mesh {
     float4x4 world;
     float visibility;
-}
-
-struct BindGroupB {
-    constant Material[] material : register(b0, space1);
-    constant Mesh[] mesh : register(b1, space1);
-}
-
-struct BindGroupC {
-    Texture2D<float4> reflectionSamplerTexture : register(t0, space2);
-    sampler reflectionSamplerSampler : register(s1, space2);
 }
 
 float3x3 transposeMat3(float3x3 inMatrix) {
@@ -192,12 +176,19 @@ float3 computeEnvironmentIrradiance(float3 normal, constant Material* material) 
         + material->vSphericalL22 * (normal.x * normal.x - (normal.y * normal.y));
 }
 
-vertex Output main(float3 position : attribute(0), float3 normal : attribute(1), BindGroupA bindGroupA, BindGroupB bindGroupB, BindGroupC bindGroupC) {
+vertex Output main(float3 position : attribute(0), float3 normal : attribute(1),
+        constant Scene[] scene : register(b0, space0),
+        Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0),
+        sampler environmentBrdfSamplerSampler : register(s2, space0),
+        constant Material[] material : register(b0, space1),
+        constant Mesh[] mesh : register(b1, space1),
+        Texture2D<float4> reflectionSamplerTexture : register(t0, space2),
+        sampler reflectionSamplerSampler : register(s1, space2)) {
     Output output;
     float3 positionUpdated = position;
     float3 normalUpdated = normal;
-    float4x4 finalWorld = bindGroupB.mesh[0].world;
-    output.position = mul(mul(bindGroupA.scene[0].viewProjection, finalWorld), float4(positionUpdated, 1.0));
+    float4x4 finalWorld = mesh[0].world;
+    output.position = mul(mul(scene[0].viewProjection, finalWorld), float4(positionUpdated, 1.0));
     float4 worldPos = mul(finalWorld, float4(positionUpdated, 1.0));
     output.vPositionW = worldPos.xyz;
     float3x3 normalWorld;
@@ -205,8 +196,8 @@ vertex Output main(float3 position : attribute(0), float3 normal : attribute(1),
     normalWorld[1] = finalWorld[1].xyz;
     normalWorld[2] = finalWorld[2].xyz;
     output.vNormalW = normalize(mul(normalWorld, normalUpdated));
-    float3 reflectionVector = mul(bindGroupB.material[0].reflectionMatrix, float4(output.vNormalW, 0)).xyz;
-    output.vEnvironmentIrradiance = computeEnvironmentIrradiance(reflectionVector, &bindGroupB.material[0]);
+    float3 reflectionVector = mul(material[0].reflectionMatrix, float4(output.vNormalW, 0)).xyz;
+    output.vEnvironmentIrradiance = computeEnvironmentIrradiance(reflectionVector, &material[0]);
     float2 uvUpdated;
     float2 uv2;
     //output.position *= -1.;
@@ -218,12 +209,6 @@ const fragmentShaderWSL1 = `
 struct Scene {
     float4x4 viewProjection;
     float4x4 view;
-}
-
-struct BindGroupA {
-    constant Scene[] scene : register(b0, space0);
-    Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0);
-    sampler environmentBrdfSamplerSampler : register(s2, space0);
 }
 
 struct Material {
@@ -307,16 +292,6 @@ struct Material {
 struct Mesh {
     float4x4 world;
     float visibility;
-}
-
-struct BindGroupB {
-    constant Material[] material : register(b0, space1);
-    constant Mesh[] mesh : register(b1, space1);
-}
-
-struct BindGroupC {
-    Texture2D<float4> reflectionSamplerTexture : register(t0, space2);
-    sampler reflectionSamplerSampler : register(s1, space2);
 }
 
 float3x3 transposeMat3(float3x3 inMatrix) {
@@ -691,15 +666,22 @@ float3 computeReflectionCoords(float4 worldPos, float3 worldNormal, float4 vEyeP
     return computeCubicCoords(worldPos, worldNormal, vEyePosition.xyz, reflectionMatrix);
 }
 
-fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribute(1), float3 vEnvironmentIrradiance : attribute(2), BindGroupA bindGroupA, BindGroupB bindGroupB, BindGroupC bindGroupC) : SV_Target 0 {
-    float3 viewDirectionW = normalize(bindGroupB.material[0].vEyePosition.xyz - vPositionW);
+fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribute(1), float3 vEnvironmentIrradiance : attribute(2),
+        constant Scene[] scene : register(b0, space0),
+        Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0),
+        sampler environmentBrdfSamplerSampler : register(s2, space0),
+        constant Material[] material : register(b0, space1),
+        constant Mesh[] mesh : register(b1, space1),
+        Texture2D<float4> reflectionSamplerTexture : register(t0, space2),
+        sampler reflectionSamplerSampler : register(s1, space2)) : SV_Target 0 {
+    float3 viewDirectionW = normalize(material[0].vEyePosition.xyz - vPositionW);
     float3 normalW = normalize(vNormalW);
     float2 uvOffset = float2(0.0, 0.0);
-    float3 surfaceAlbedo = bindGroupB.material[0].vAlbedoColor.xyz;
-    float alpha = bindGroupB.material[0].vAlbedoColor.w;
+    float3 surfaceAlbedo = material[0].vAlbedoColor.xyz;
+    float alpha = material[0].vAlbedoColor.w;
     float3 ambientOcclusionColor = float3(1., 1., 1.);
-    float microSurface = bindGroupB.material[0].vReflectivityColor.w;
-    float3 surfaceReflectivityColor = bindGroupB.material[0].vReflectivityColor.xyz;
+    float microSurface = material[0].vReflectivityColor.w;
+    float3 surfaceReflectivityColor = material[0].vReflectivityColor.xyz;
     float2 metallicRoughness = surfaceReflectivityColor.xy;
     microSurface = 1.0 - metallicRoughness.y;
     float3 baseColor = surfaceAlbedo;
@@ -714,22 +696,22 @@ fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribu
     float2 AARoughnessFactors = getAARoughnessFactors(normalW);
     float4 environmentRadiance = float4(0., 0., 0., 0.);
     float3 environmentIrradiance = float3(0., 0., 0.);
-    float3 reflectionVector = computeReflectionCoords(float4(vPositionW, 1.0), normalW, bindGroupB.material[0].vEyePosition, bindGroupB.material[0].reflectionMatrix);
+    float3 reflectionVector = computeReflectionCoords(float4(vPositionW, 1.0), normalW, material[0].vEyePosition, material[0].reflectionMatrix);
     float3 reflectionCoords = reflectionVector;
-    float reflectionLOD = getLodFromAlphaG(bindGroupB.material[0].vReflectionMicrosurfaceInfos.x, alphaG);
-    reflectionLOD = reflectionLOD * bindGroupB.material[0].vReflectionMicrosurfaceInfos.y + bindGroupB.material[0].vReflectionMicrosurfaceInfos.z;
+    float reflectionLOD = getLodFromAlphaG(material[0].vReflectionMicrosurfaceInfos.x, alphaG);
+    reflectionLOD = reflectionLOD * material[0].vReflectionMicrosurfaceInfos.y + material[0].vReflectionMicrosurfaceInfos.z;
     float requestedReflectionLOD = reflectionLOD;
-    environmentRadiance = Sample(bindGroupC.reflectionSamplerTexture, bindGroupC.reflectionSamplerSampler, reflectionCoords.xy); //SampleLevel(bindGroupC.reflectionSamplerTexture, bindGroupC.reflectionSamplerSampler, reflectionCoords, requestedReflectionLOD);
+    environmentRadiance = Sample(reflectionSamplerTexture, reflectionSamplerSampler, reflectionCoords.xy); //SampleLevel(reflectionSamplerTexture, reflectionSamplerSampler, reflectionCoords, requestedReflectionLOD);
     environmentRadiance.xyz = fromRGBD(environmentRadiance);
     environmentIrradiance = vEnvironmentIrradiance;
-    environmentRadiance.xyz *= bindGroupB.material[0].vReflectionInfos.x;
-    environmentRadiance.xyz *= bindGroupB.material[0].vReflectionColor.xyz;
-    environmentIrradiance *= bindGroupB.material[0].vReflectionColor.xyz;
+    environmentRadiance.xyz *= material[0].vReflectionInfos.x;
+    environmentRadiance.xyz *= material[0].vReflectionColor.xyz;
+    environmentIrradiance *= material[0].vReflectionColor.xyz;
     float reflectance = max(max(surfaceReflectivityColor.x, surfaceReflectivityColor.y), surfaceReflectivityColor.z);
     float reflectance90 = fresnelGrazingReflectance(reflectance);
     float3 specularEnvironmentR0 = surfaceReflectivityColor.xyz;
     float3 specularEnvironmentR90 = float3(1.0, 1.0, 1.0) * reflectance90;
-    float3 environmentBrdf = getBRDFLookup(NdotV, roughness, bindGroupA.environmentBrdfSamplerTexture, bindGroupA.environmentBrdfSamplerSampler);
+    float3 environmentBrdf = getBRDFLookup(NdotV, roughness, environmentBrdfSamplerTexture, environmentBrdfSamplerSampler);
     float3 energyConservationFactor = getEnergyConservationFactor(specularEnvironmentR0, environmentBrdf);
     float3 diffuseBase = float3(0., 0., 0.);
     PreLightingInfo preInfo;
@@ -743,25 +725,25 @@ fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribu
     finalIrradiance *= surfaceAlbedo.xyz;
     float3 finalRadiance = environmentRadiance.xyz;
     finalRadiance *= specularEnvironmentReflectance;
-    float3 finalRadianceScaled = finalRadiance * bindGroupB.material[0].vLightingIntensity.z;
+    float3 finalRadianceScaled = finalRadiance * material[0].vLightingIntensity.z;
     finalRadianceScaled *= energyConservationFactor;
     float3 finalDiffuse = diffuseBase;
     finalDiffuse *= surfaceAlbedo.xyz;
     finalDiffuse = max(finalDiffuse, float3(0.0, 0.0, 0.0));
-    float3 finalAmbient = bindGroupB.material[0].vAmbientColor;
+    float3 finalAmbient = material[0].vAmbientColor;
     finalAmbient *= surfaceAlbedo.xyz;
-    float3 finalEmissive = bindGroupB.material[0].vEmissiveColor;
+    float3 finalEmissive = material[0].vEmissiveColor;
     float3 ambientOcclusionForDirectDiffuse = ambientOcclusionColor;
     float4 finalColor = float4(
         finalAmbient * ambientOcclusionColor +
-        finalDiffuse * ambientOcclusionForDirectDiffuse * bindGroupB.material[0].vLightingIntensity.x +
-        finalIrradiance * ambientOcclusionColor * bindGroupB.material[0].vLightingIntensity.z +
+        finalDiffuse * ambientOcclusionForDirectDiffuse * material[0].vLightingIntensity.x +
+        finalIrradiance * ambientOcclusionColor * material[0].vLightingIntensity.z +
         finalRadianceScaled +
-        finalEmissive * bindGroupB.material[0].vLightingIntensity.y,
+        finalEmissive * material[0].vLightingIntensity.y,
         alpha);
     finalColor = max(finalColor, float4(0.0, 0.0, 0.0, 0.0));
     finalColor = applyImageProcessing(finalColor);
-    finalColor.w *= bindGroupB.mesh[0].visibility;
+    finalColor.w *= mesh[0].visibility;
     return finalColor;
 }
 `;
@@ -777,12 +759,6 @@ struct Output {
 struct Scene {
     float4x4 viewProjection;
     float4x4 view;
-}
-
-struct BindGroupA {
-    constant Scene[] scene : register(b0, space0);
-    Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0);
-    sampler environmentBrdfSamplerSampler : register(s2, space0);
 }
 
 struct Material {
@@ -866,16 +842,6 @@ struct Material {
 struct Mesh {
     float4x4 world;
     float visibility;
-}
-
-struct BindGroupB {
-    constant Material[] material : register(b0, space1);
-    constant Mesh[] mesh : register(b1, space1);
-}
-
-struct BindGroupC {
-    Texture2D<float4> reflectionSamplerTexture : register(t0, space2);
-    sampler reflectionSamplerSampler : register(s1, space2);
 }
 
 float3x3 transposeMat3(float3x3 inMatrix) {
@@ -948,13 +914,20 @@ float3 fromRGBD(float4 rgbd) {
     return rgbd.xyz / rgbd.w;
 }
 
-vertex Output main(float3 position : attribute(0), float3 normal : attribute(1), BindGroupA bindGroupA, BindGroupB bindGroupB, BindGroupC bindGroupC) {
+vertex Output main(float3 position : attribute(0), float3 normal : attribute(1),
+        constant Scene[] scene : register(b0, space0),
+        Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0),
+        sampler environmentBrdfSamplerSampler : register(s2, space0),
+        constant Material[] material : register(b0, space1),
+        constant Mesh[] mesh : register(b1, space1),
+        Texture2D<float4> reflectionSamplerTexture : register(t0, space2),
+        sampler reflectionSamplerSampler : register(s1, space2)) {
     Output output;
     float3 positionUpdated = position;
     float3 normalUpdated = normal;
     output.vPositionUVW = positionUpdated;
-    float4x4 finalWorld = bindGroupB.mesh[0].world;
-    output.position = mul(mul(bindGroupA.scene[0].viewProjection, finalWorld), float4(positionUpdated, 1.0));
+    float4x4 finalWorld = mesh[0].world;
+    output.position = mul(mul(scene[0].viewProjection, finalWorld), float4(positionUpdated, 1.0));
     float4 worldPos = mul(finalWorld, float4(positionUpdated, 1.0));
     output.vPositionW = worldPos.xyz;
     float3x3 normalWorld;
@@ -973,12 +946,6 @@ const fragmentShaderWSL2 = `
 struct Scene {
     float4x4 viewProjection;
     float4x4 view;
-}
-
-struct BindGroupA {
-    constant Scene[] scene : register(b0, space0);
-    Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0);
-    sampler environmentBrdfSamplerSampler : register(s2, space0);
 }
 
 struct Material {
@@ -1062,16 +1029,6 @@ struct Material {
 struct Mesh {
     float4x4 world;
     float visibility;
-}
-
-struct BindGroupB {
-    constant Material[] material : register(b0, space1);
-    constant Mesh[] mesh : register(b1, space1);
-}
-
-struct BindGroupC {
-    Texture2D<float4> reflectionSamplerTexture : register(t0, space2);
-    sampler reflectionSamplerSampler : register(s1, space2);
 }
 
 float3x3 transposeMat3(float3x3 inMatrix) {
@@ -1442,16 +1399,24 @@ float3 computeReflectionCoords(float4 worldPos, float3 worldNormal, float3 vPosi
     return float3(gamma / 3.1415926535897932384626433832795 + 0.5, theta / 3.1415926535897932384626433832795, r);
 }
 
-fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribute(1), float3 vPositionUVW : attribute(2), BindGroupA bindGroupA, BindGroupB bindGroupB, BindGroupC bindGroupC, bool frontFace : SV_IsFrontFace) : SV_Target 0 {
-    float3 viewDirectionW = normalize(bindGroupB.material[0].vEyePosition.xyz - vPositionW);
+fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribute(1), float3 vPositionUVW : attribute(2),
+        constant Scene[] scene : register(b0, space0),
+        Texture2D<float4> environmentBrdfSamplerTexture : register(t1, space0),
+        sampler environmentBrdfSamplerSampler : register(s2, space0),
+        constant Material[] material : register(b0, space1),
+        constant Mesh[] mesh : register(b1, space1),
+        Texture2D<float4> reflectionSamplerTexture : register(t0, space2),
+        sampler reflectionSamplerSampler : register(s1, space2),
+        bool frontFace : SV_IsFrontFace) : SV_Target 0 {
+    float3 viewDirectionW = normalize(material[0].vEyePosition.xyz - vPositionW);
     float3 normalW = normalize(vNormalW);
     float2 uvOffset = float2(0.0, 0.0);
     normalW = frontFace ? normalW : -normalW;
-    float3 surfaceAlbedo = bindGroupB.material[0].vAlbedoColor.xyz;
-    float alpha = bindGroupB.material[0].vAlbedoColor.w;
+    float3 surfaceAlbedo = material[0].vAlbedoColor.xyz;
+    float alpha = material[0].vAlbedoColor.w;
     float3 ambientOcclusionColor = float3(1., 1., 1.);
-    float microSurface = bindGroupB.material[0].vReflectivityColor.w;
-    float3 surfaceReflectivityColor = bindGroupB.material[0].vReflectivityColor.xyz;
+    float microSurface = material[0].vReflectivityColor.w;
+    float3 surfaceReflectivityColor = material[0].vReflectivityColor.xyz;
     microSurface = clamp(microSurface, 0.0, 1.0);
     float roughness = 1. - microSurface;
     float NdotVUnclamped = dot(normalW, viewDirectionW);
@@ -1460,21 +1425,21 @@ fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribu
     float2 AARoughnessFactors = getAARoughnessFactors(normalW);
     float4 environmentRadiance = float4(0., 0., 0., 0.);
     float3 environmentIrradiance = float3(0., 0., 0.);
-    float3 reflectionVector = computeReflectionCoords(float4(vPositionW, 1.0), normalW, vPositionUVW, bindGroupB.material[0].reflectionMatrix);
+    float3 reflectionVector = computeReflectionCoords(float4(vPositionW, 1.0), normalW, vPositionUVW, material[0].reflectionMatrix);
     float3 reflectionCoords = reflectionVector;
-    float reflectionLOD = getLodFromAlphaG(bindGroupB.material[0].vReflectionMicrosurfaceInfos.x, alphaG);
-    reflectionLOD = reflectionLOD * bindGroupB.material[0].vReflectionMicrosurfaceInfos.y + bindGroupB.material[0].vReflectionMicrosurfaceInfos.z;
+    float reflectionLOD = getLodFromAlphaG(material[0].vReflectionMicrosurfaceInfos.x, alphaG);
+    reflectionLOD = reflectionLOD * material[0].vReflectionMicrosurfaceInfos.y + material[0].vReflectionMicrosurfaceInfos.z;
     float requestedReflectionLOD = reflectionLOD;
-    environmentRadiance = Sample(bindGroupC.reflectionSamplerTexture, bindGroupC.reflectionSamplerSampler, reflectionCoords.xy); //SampleLevel(bindGroupC.reflectionSamplerTexture, bindGroupC.reflectionSamplerSampler, reflectionCoords, requestedReflectionLOD);
+    environmentRadiance = Sample(reflectionSamplerTexture, reflectionSamplerSampler, reflectionCoords.xy); //SampleLevel(reflectionSamplerTexture, reflectionSamplerSampler, reflectionCoords, requestedReflectionLOD);
     environmentRadiance.xyz = fromRGBD(environmentRadiance);
-    environmentRadiance.xyz *= bindGroupB.material[0].vReflectionInfos.x;
-    environmentRadiance.xyz *= bindGroupB.material[0].vReflectionColor.xyz;
-    environmentIrradiance *= bindGroupB.material[0].vReflectionColor.xyz;
+    environmentRadiance.xyz *= material[0].vReflectionInfos.x;
+    environmentRadiance.xyz *= material[0].vReflectionColor.xyz;
+    environmentIrradiance *= material[0].vReflectionColor.xyz;
     float reflectance = max(max(surfaceReflectivityColor.x, surfaceReflectivityColor.y), surfaceReflectivityColor.z);
     float reflectance90 = fresnelGrazingReflectance(reflectance);
     float3 specularEnvironmentR0 = surfaceReflectivityColor.xyz;
     float3 specularEnvironmentR90 = float3(1.0, 1.0, 1.0) * reflectance90;
-    float3 environmentBrdf = getBRDFLookup(NdotV, roughness, bindGroupA.environmentBrdfSamplerTexture, bindGroupA.environmentBrdfSamplerSampler);
+    float3 environmentBrdf = getBRDFLookup(NdotV, roughness, environmentBrdfSamplerTexture, environmentBrdfSamplerSampler);
     float3 energyConservationFactor = getEnergyConservationFactor(specularEnvironmentR0, environmentBrdf);
     float3 diffuseBase = float3(0., 0., 0.);
     PreLightingInfo preInfo;
@@ -1486,25 +1451,25 @@ fragment float4 main(float3 vPositionW : attribute(0), float3 vNormalW : attribu
     finalIrradiance *= surfaceAlbedo.xyz;
     float3 finalRadiance = environmentRadiance.xyz;
     finalRadiance *= specularEnvironmentReflectance;
-    float3 finalRadianceScaled = finalRadiance * bindGroupB.material[0].vLightingIntensity.z;
+    float3 finalRadianceScaled = finalRadiance * material[0].vLightingIntensity.z;
     finalRadianceScaled *= energyConservationFactor;
     float3 finalDiffuse = diffuseBase;
     finalDiffuse *= surfaceAlbedo.xyz;
     finalDiffuse = max(finalDiffuse, float3(0.0, 0.0, 0.0));
-    float3 finalAmbient = bindGroupB.material[0].vAmbientColor;
+    float3 finalAmbient = material[0].vAmbientColor;
     finalAmbient *= surfaceAlbedo.xyz;
-    float3 finalEmissive = bindGroupB.material[0].vEmissiveColor;
+    float3 finalEmissive = material[0].vEmissiveColor;
     float3 ambientOcclusionForDirectDiffuse = ambientOcclusionColor;
     float4 finalColor = float4(
         finalAmbient * ambientOcclusionColor +
-        finalDiffuse * ambientOcclusionForDirectDiffuse * bindGroupB.material[0].vLightingIntensity.x +
-        finalIrradiance * ambientOcclusionColor * bindGroupB.material[0].vLightingIntensity.z +
+        finalDiffuse * ambientOcclusionForDirectDiffuse * material[0].vLightingIntensity.x +
+        finalIrradiance * ambientOcclusionColor * material[0].vLightingIntensity.z +
         finalRadianceScaled +
-        finalEmissive * bindGroupB.material[0].vLightingIntensity.y,
+        finalEmissive * material[0].vLightingIntensity.y,
         alpha);
     finalColor = max(finalColor, float4(0.0, 0.0, 0.0, 0.0));
     finalColor = applyImageProcessing(finalColor);
-    finalColor.w *= bindGroupB.mesh[0].visibility;
+    finalColor.w *= mesh[0].visibility;
     return finalColor;
 }
 `;
