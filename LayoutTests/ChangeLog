@@ -1,5 +1,19 @@
 2019-11-14  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Accelerated transitions do not always remove their backing accelerated animation
+        https://bugs.webkit.org/show_bug.cgi?id=204198
+        <rdar://problem/45847205>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that a CSS Transition targeting the transform property which requires a layer correctly clears the
+        accelerated animation upon completion.
+
+        * webanimations/accelerated-animation-removal-upon-transition-completion-expected.txt: Added.
+        * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+
+2019-11-14  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Retargeted transitions targeting accelerated properties do not stop the original transition
         https://bugs.webkit.org/show_bug.cgi?id=204116
         <rdar://problem/57116961>

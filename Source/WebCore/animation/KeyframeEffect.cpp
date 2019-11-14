@@ -1305,13 +1305,7 @@ void KeyframeEffect::updateAcceleratedAnimationState()
     }
 
     if (playState == WebAnimation::PlayState::Finished) {
-        if (isRunningAccelerated())
-            addPendingAcceleratedAction(AcceleratedAction::Stop);
-        else {
-            m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
-            m_pendingAcceleratedActions.clear();
-            animation()->acceleratedStateDidChange();
-        }
+        addPendingAcceleratedAction(AcceleratedAction::Stop);
         return;
     }
 

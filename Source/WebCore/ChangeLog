@@ -1,3 +1,29 @@
+2019-11-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Accelerated transitions do not always remove their backing accelerated animation
+        https://bugs.webkit.org/show_bug.cgi?id=204198
+        <rdar://problem/45847205>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accelerated-animation-removal-upon-transition-completion.html
+
+        There could be several calls to KeyframeEffect::updateAcceleratedAnimationState() made after an animation had completed but
+        before any pending accelerated actions would be processed during the next animation frame. In the first call, we would correctly
+        set add Accelerated::Stop to the list of pending accelerated actions, but on a further call, wrongly assuming that the fact that
+        we'd already recorded an Accelerated::Stop action meant that it had been committed, we would clear that action and the animation
+        would never be explicitly removed.
+
+        Additionally, we would schedule animation resolution on the DocumentTimeline in the wrong function, we now do that in the function
+        where animations with an effect pending accelerated actions is added rather than in the function where we track which elements have
+        accelerated animations.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animationAcceleratedRunningStateDidChange):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::updateAcceleratedAnimationState):
+
 2019-11-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Invalidation] Use InvalidationState to populate LayoutQueue

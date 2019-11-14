@@ -640,6 +640,11 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
         if (auto* target = downcast<KeyframeEffect>(animation.effect())->target())
             updateListOfElementsWithRunningAcceleratedAnimationsForElement(*target);
     }
+
+    if (shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+        scheduleAnimationResolution();
+    else
+        unscheduleAnimationResolution();
 }
 
 void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
@@ -659,11 +664,6 @@ void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForEl
     }
 
     m_elementsWithRunningAcceleratedAnimations.add(&element);
-
-    if (shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        scheduleAnimationResolution();
-    else
-        unscheduleAnimationResolution();
 }
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
