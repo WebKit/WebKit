@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,13 +34,15 @@ interface SVGMarkerElement : SVGElement {
     const unsigned short SVG_MARKER_ORIENT_AUTO         = 1;
     const unsigned short SVG_MARKER_ORIENT_ANGLE        = 2;
 
-    readonly attribute SVGAnimatedLength      refX;
-    readonly attribute SVGAnimatedLength      refY;
-    readonly attribute SVGAnimatedEnumeration markerUnits;
-    readonly attribute SVGAnimatedLength      markerWidth;
-    readonly attribute SVGAnimatedLength      markerHeight;
-    readonly attribute SVGAnimatedEnumeration orientType;
-    readonly attribute SVGAnimatedAngle       orientAngle;
+    [SameObject] readonly attribute SVGAnimatedLength      refX;
+    [SameObject] readonly attribute SVGAnimatedLength      refY;
+    [SameObject] readonly attribute SVGAnimatedEnumeration markerUnits;
+    [SameObject] readonly attribute SVGAnimatedLength      markerWidth;
+    [SameObject] readonly attribute SVGAnimatedLength      markerHeight;
+    [SameObject] readonly attribute SVGAnimatedEnumeration orientType;
+    [SameObject] readonly attribute SVGAnimatedAngle       orientAngle;
+
+    attribute DOMString orient;
 
     void setOrientToAuto();
     void setOrientToAngle(SVGAngle angle);

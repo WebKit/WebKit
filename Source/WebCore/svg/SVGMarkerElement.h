@@ -40,16 +40,12 @@ public:
     enum {
         SVG_MARKER_ORIENT_UNKNOWN = SVGMarkerOrientUnknown,
         SVG_MARKER_ORIENT_AUTO = SVGMarkerOrientAuto,
-        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle,
-        SVG_MARKER_ORIENT_AUTOSTARTREVERSE = SVGMarkerOrientAutoStartReverse
+        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle
     };
 
     static Ref<SVGMarkerElement> create(const QualifiedName&, Document&);
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
-
-    void setOrientToAuto();
-    void setOrientToAngle(SVGAngle&);
 
     const SVGLengthValue& refX() const { return m_refX->currentValue(); }
     const SVGLengthValue& refY() const { return m_refY->currentValue(); }
@@ -67,6 +63,12 @@ public:
     SVGAnimatedAngle& orientAngleAnimated() { return m_orientAngle; }
     Ref<SVGAnimatedEnumeration> orientTypeAnimated() { return m_orientType.copyRef(); }
 
+    String orient() const;
+    void setOrient(const String&);
+
+    void setOrientToAuto();
+    void setOrientToAngle(const SVGAngle&);
+
 private:
     SVGMarkerElement(const QualifiedName&, Document&);
 
@@ -83,8 +85,6 @@ private:
     bool needsPendingResourceHandling() const override { return false; }
 
     bool selfHasRelativeLengths() const override;
-
-    void setOrient(SVGMarkerOrientType, const SVGAngleValue&);
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_refX { SVGAnimatedLength::create(this, SVGLengthMode::Width) };

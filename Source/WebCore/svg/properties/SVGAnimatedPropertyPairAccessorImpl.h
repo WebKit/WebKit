@@ -39,6 +39,8 @@ class SVGAnimatedAngleOrientAccessor final : public SVGAnimatedPropertyPairAcces
     using Base = SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedAngleAccessor<OwnerType>, SVGAnimatedOrientTypeAccessor<OwnerType>>;
     using Base::property1;
     using Base::property2;
+    using Base::m_accessor1;
+    using Base::m_accessor2;
 
 public:
     using Base::Base;
@@ -46,6 +48,16 @@ public:
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleOrientAccessor, property1, property2>(); }
 
 private:
+    void setDirty(const OwnerType& owner, SVGAnimatedProperty& animatedProperty) const final
+    {
+        auto type = property2(owner)->baseVal();
+        if (m_accessor1.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
+            property2(owner)->setBaseValInternal(SVGMarkerOrientAngle);
+        else if (m_accessor2.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
+            property1(owner)->setBaseValInternal({ });
+        animatedProperty.setDirty();
+    }
+
     Optional<String> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = property1(owner)->isDirty();

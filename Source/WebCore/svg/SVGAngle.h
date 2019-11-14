@@ -54,7 +54,7 @@ public:
         return adoptRef(*new SVGAngle(value.releaseReturnValue()));
     }
 
-    SVGAngleValue::Type unitType()
+    SVGAngleValue::Type unitType() const
     {
         return m_value.unitType();
     }
@@ -69,7 +69,7 @@ public:
         return { };
     }
     
-    float valueForBindings()
+    float valueForBindings() const
     {
         return m_value.value();
     }
@@ -84,7 +84,7 @@ public:
         return { };
     }
     
-    float valueInSpecifiedUnits()
+    float valueInSpecifiedUnits() const
     {
         return m_value.valueInSpecifiedUnits();
     }

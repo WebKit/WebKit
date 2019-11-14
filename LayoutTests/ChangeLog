@@ -1,3 +1,18 @@
+2019-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Add the 'orient' property of the interface SVGMarkerElement
+        https://bugs.webkit.org/show_bug.cgi?id=203646
+
+        Reviewed by Simon Fraser.
+
+        The pair properties <orientAngle, orientType> are now in sync. Fix the
+        tests which were assuming that these properties can change independently.
+
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.txt:
+        * svg/dynamic-updates/SVGMarkerElement-dom-orient-attr.html:
+
 2019-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][DumpRenderTree][WebKitTestRunner] eventSender.keyDown should support function keys

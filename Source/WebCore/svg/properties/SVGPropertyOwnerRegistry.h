@@ -202,6 +202,16 @@ public:
         return attributeName;
     }
 
+    void setAnimatedPropertDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
+    {
+        enumerateRecursively([&](const auto& entry) -> bool {
+            if (!entry.key.matches(attributeName))
+                return true;
+            entry.value->setDirty(m_owner, animatedProperty);
+            return false;
+        });
+    }
+
     // Detach all the properties recursively from their OwnerTypes.
     void detachAllProperties() const override
     {

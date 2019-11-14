@@ -1,3 +1,13 @@
+2019-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Add the 'orient' property of the interface SVGMarkerElement
+        https://bugs.webkit.org/show_bug.cgi?id=203646
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/idlharness.window-expected.txt:
+        * web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+
 2019-11-13  youenn fablet  <youenn@apple.com>
 
         Layout Tests in imported/w3c/web-platform-tests/websockets/ are flakey failures after r246406

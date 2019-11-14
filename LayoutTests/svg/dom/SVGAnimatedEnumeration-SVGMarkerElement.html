@@ -102,14 +102,15 @@ shouldBeEqualToString("markerElement.getAttribute('orient')", "10deg");
 debug("");
 debug("Switch to 'auto' value - by modifying orientType, this shouldn't change the orientAngle, but change the 'orient' attribute");
 shouldBe("markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
-shouldBe("markerElement.orientAngle.baseVal.value", "10");
-shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
 
 debug("");
 debug("Switch to '10deg' value - by modifying orientType to be angle again, the 10deg should be preserved in the orientAngle, and the 'orient' attribute should change");
 shouldBe("markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBeUndefined("markerElement.orientAngle.baseVal.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 10)");
 shouldBe("markerElement.orientAngle.baseVal.value", "10");
 shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
@@ -152,8 +153,8 @@ debug("Switch to '100grad' value - only touch orientAngle, shouldn't change orie
 shouldBeUndefined("markerElement.orientAngle.baseVal.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD, 100)");
 shouldBe("markerElement.orientAngle.baseVal.value", "90");
 shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
-shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
-shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "100grad");
 
 debug("");
 debug("Finish switching to '100grad' value - by modifying the orientType to angle");

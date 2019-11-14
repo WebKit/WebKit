@@ -44,10 +44,90 @@ pathElement.setAttribute("marker-end", "url(#marker)");
 pathElement.setAttribute("d", "M 130 135 L 180 135 L 180 185");
 rootSVGElement.appendChild(pathElement);
 
+var angle = createSVGElement("svg").createSVGAngle();
+angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, (Math.PI / 2).toFixed(2));
+
+debug("");
+debug("Test initial state");
+shouldBeEqualToString("markerElement.orient", "45");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("markerElement.orientAngle.baseVal.value", "45");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "45");
 
+debug("");
+debug("Test the 'orient' property");
+shouldBeEqualToString("markerElement.orient = 'auto'", "auto");
+shouldBeEqualToString("markerElement.orient", "auto");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
+
+debug("");
+shouldBeEqualToString("markerElement.orient = 'auto-start-reverse'", "auto-start-reverse");
+shouldBeEqualToString("markerElement.orient", "auto-start-reverse");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "auto-start-reverse");
+
+debug("");
+shouldBeEqualToString("markerElement.orient = '45deg'", "45deg");
+shouldBeEqualToString("markerElement.orient", "45deg");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+shouldBe("markerElement.orientAngle.baseVal.value", "45");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "45deg");
+
+debug("");
+debug("Test the method setOrientToAngle()");
+shouldBeUndefined("markerElement.setOrientToAngle(angle)");
+shouldBeEqualToString("markerElement.orient", (Math.PI / 2).toFixed(2) + "rad");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
+shouldBeEqualToString("markerElement.orientAngle.baseVal.value.toFixed(1)", "90.0");
+shouldBeEqualToString("markerElement.getAttribute('orient')", (Math.PI / 2).toFixed(2) + "rad");
+
+debug("");
+debug("Test the method setOrientToAuto()");
+shouldBeUndefined("markerElement.setOrientToAuto()");
+shouldBeEqualToString("markerElement.orient", "auto");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
+
+debug("");
+debug("Test the animated property 'orientAngle'");
+shouldBe("markerElement.orientAngle.baseVal.value = 45", "45");
+shouldBeEqualToString("markerElement.orient", "45");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("markerElement.orientAngle.baseVal.value", "45");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "45");
+
+debug("");
+debug("Test the animated property 'orientType'");
+shouldBe("markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
+shouldBeEqualToString("markerElement.orient", "auto");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
+
+debug("");
+shouldBe("markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.value = -45", "-45");
+shouldBeEqualToString("markerElement.orient", "-45");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("markerElement.orientAngle.baseVal.value", "-45");
+shouldBeEqualToString("markerElement.getAttribute('orient')", "-45");
+
 function repaintTest() {
-    markerElement.setAttribute("orient", "0");
+	debug("");
+	debug("Test the 'orient' attribute");
+    shouldBeUndefined("markerElement.setAttribute('orient', '0')");
+    shouldBeEqualToString("markerElement.orient", "0");
+    shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+    shouldBe("markerElement.orientAngle.baseVal.value", "0");
     shouldBeEqualToString("markerElement.getAttribute('orient')", "0");
 
     completeTest();

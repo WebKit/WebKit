@@ -1375,7 +1375,7 @@ PASS SVGMarkerElement interface: attribute markerWidth
 PASS SVGMarkerElement interface: attribute markerHeight 
 PASS SVGMarkerElement interface: attribute orientType 
 PASS SVGMarkerElement interface: attribute orientAngle 
-FAIL SVGMarkerElement interface: attribute orient assert_true: The prototype object must have a property "orient" expected true got false
+PASS SVGMarkerElement interface: attribute orient 
 PASS SVGMarkerElement interface: operation setOrientToAuto() 
 PASS SVGMarkerElement interface: operation setOrientToAngle(SVGAngle) 
 PASS SVGMarkerElement interface: attribute viewBox 
@@ -1395,7 +1395,7 @@ PASS SVGMarkerElement interface: objects.marker must inherit property "markerWid
 PASS SVGMarkerElement interface: objects.marker must inherit property "markerHeight" with the proper type 
 PASS SVGMarkerElement interface: objects.marker must inherit property "orientType" with the proper type 
 PASS SVGMarkerElement interface: objects.marker must inherit property "orientAngle" with the proper type 
-FAIL SVGMarkerElement interface: objects.marker must inherit property "orient" with the proper type assert_inherits: property "orient" not found in prototype chain
+PASS SVGMarkerElement interface: objects.marker must inherit property "orient" with the proper type 
 PASS SVGMarkerElement interface: objects.marker must inherit property "setOrientToAuto()" with the proper type 
 PASS SVGMarkerElement interface: objects.marker must inherit property "setOrientToAngle(SVGAngle)" with the proper type 
 PASS SVGMarkerElement interface: calling setOrientToAngle(SVGAngle) on objects.marker with too few arguments must throw TypeError 

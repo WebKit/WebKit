@@ -40,10 +40,10 @@ enum SVGMarkerOrientType {
     SVGMarkerOrientUnknown = 0,
     SVGMarkerOrientAuto,
     SVGMarkerOrientAngle,
-    SVGMarkerOrientAutoStartReverse,
-    
-    // Add new elements before here.
-    SVGMarkerOrientMax
+
+    // The DOM can't set the property 'orientType' to this value. It is used only
+    // internally when setting the 'orient' attribute to "auto-start-reverse".
+    SVGMarkerOrientAutoStartReverse = SVGMarkerOrientUnknown
 };
     
 template<>
@@ -85,7 +85,7 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
         static const NeverDestroyed<String> autoStartReverseString = MAKE_STATIC_STRING_IMPL("auto-start-reverse");
         return autoStartReverseString;
     }
-    static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
+    static unsigned highestEnumValue() { return SVGMarkerOrientAngle; }
     static SVGMarkerOrientType fromString(const String& string)
     {
         if (string == autoString())
@@ -103,9 +103,6 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
         return emptyString();
     }
 };
-
-template<>
-inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue() { return SVGMarkerOrientAngle; }
 
 template<>
 struct SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>> {

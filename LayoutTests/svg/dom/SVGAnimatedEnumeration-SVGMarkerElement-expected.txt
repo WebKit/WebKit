@@ -76,13 +76,14 @@ PASS markerElement.getAttribute('orient') is "10deg"
 
 Switch to 'auto' value - by modifying orientType, this shouldn't change the orientAngle, but change the 'orient' attribute
 PASS markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
-PASS markerElement.orientAngle.baseVal.value is 10
-PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS markerElement.orientAngle.baseVal.value is 0
+PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
 PASS markerElement.getAttribute('orient') is "auto"
 
 Switch to '10deg' value - by modifying orientType to be angle again, the 10deg should be preserved in the orientAngle, and the 'orient' attribute should change
 PASS markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
+PASS markerElement.orientAngle.baseVal.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 10) is undefined.
 PASS markerElement.orientAngle.baseVal.value is 10
 PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_DEG
 PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
@@ -118,8 +119,8 @@ Switch to '100grad' value - only touch orientAngle, shouldn't change orientType 
 PASS markerElement.orientAngle.baseVal.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD, 100) is undefined.
 PASS markerElement.orientAngle.baseVal.value is 90
 PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
-PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
-PASS markerElement.getAttribute('orient') is "auto"
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
+PASS markerElement.getAttribute('orient') is "100grad"
 
 Finish switching to '100grad' value - by modifying the orientType to angle
 PASS markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE

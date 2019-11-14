@@ -550,7 +550,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
     // A change in a style property, e.g SVGRectElement::x should be serialized to
     // the attribute immediately. Otherwise it is okay to be lazy in this regard.
     if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
-        animatedProperty.setDirty();
+        propertyRegistry().setAnimatedPropertDirty(attributeName, animatedProperty);
     else
         setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
 
