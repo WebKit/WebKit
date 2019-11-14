@@ -1,3 +1,14 @@
+2019-11-14  Brady Eidson  <beidson@apple.com>
+
+        pageZoom/setPageZoom: should not be in a Mac-only part of WKWebView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=204128
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setPageZoom:]):
+        (-[WKWebView pageZoom]):
+
 2019-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION: WKWebView navigation fails when navigating from about:blank

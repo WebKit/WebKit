@@ -63,6 +63,7 @@
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
+- (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
 @end
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>

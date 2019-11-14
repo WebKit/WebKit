@@ -183,6 +183,23 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
     return [NSString stringWithFormat:@"%@", [self objectByEvaluatingJavaScript:script]];
 }
 
+- (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth
+{
+    int timeout = 10;
+    unsigned clientWidth = 0;
+    do {
+        if (timeout != 10)
+            TestWebKitAPI::Util::sleep(0.1);
+
+        id result = [self objectByEvaluatingJavaScript:@"function ___forceLayoutAndGetClientWidth___() { document.body.offsetTop; return document.body.clientWidth; }; ___forceLayoutAndGetClientWidth___();"];
+        clientWidth = [result integerValue];
+
+        --timeout;
+    } while (clientWidth != expectedClientWidth && timeout >= 0);
+
+    return clientWidth;
+}
+
 @end
 
 @implementation TestMessageHandler {

@@ -4441,16 +4441,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 #endif
 
-- (void)setPageZoom:(CGFloat)pageZoom
-{
-    _page->setPageZoomFactor(pageZoom);
-}
-
-- (CGFloat)pageZoom
-{
-    return _page->pageZoomFactor();
-}
-
 - (BOOL)_usePlatformFindUI
 {
     return _usePlatformFindUI;
@@ -5698,6 +5688,16 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_setTextZoomFactor:(double)zoomFactor
 {
     _page->setTextZoomFactor(zoomFactor);
+}
+
+- (void)setPageZoom:(CGFloat)pageZoom
+{
+    _page->setPageZoomFactor(pageZoom);
+}
+
+- (CGFloat)pageZoom
+{
+    return _page->pageZoomFactor();
 }
 
 - (double)_pageZoomFactor

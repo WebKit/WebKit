@@ -1,3 +1,17 @@
+2019-11-14  Brady Eidson  <beidson@apple.com>
+
+        pageZoom/setPageZoom: should not be in a Mac-only part of WKWebView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=204128
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PageZoom.mm: Added.
+        (TestWebKitAPI::getClientWidth):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView waitUntilClientWidthIs:]):
+
 2019-11-14  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Clarify webkitpy/style/optparser_unittest.py by removing parse variables
