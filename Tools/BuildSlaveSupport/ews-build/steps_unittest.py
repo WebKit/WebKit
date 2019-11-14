@@ -34,7 +34,7 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
+from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSC, CompileJSCToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
@@ -1196,6 +1196,110 @@ class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
+        return self.runStep()
+
+
+class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(AnalyzeJSCTestsResults())
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_binary_failures', [])
+        self.setProperty('jsc_rerun_stress_test_failures', [])
+        self.setProperty('jsc_rerun_binary_failures', [])
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_binary_failures', [])
+
+    def test_single_new_stress_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: stress/force-error.js.bytecode-cache (failure)')
+        return self.runStep()
+
+    def test_single_new_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testmasm'])
+        self.setProperty('jsc_rerun_binary_failures', ['testmasm'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC binary failure: testmasm (failure)')
+        return self.runStep()
+
+    def test_multiple_new_stress_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('jsc_rerun_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8 ... (failure)')
+        return self.runStep()
+
+    def test_multiple_new_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
+        self.setProperty('jsc_rerun_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
+        self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testb3, testmasm, testapi, testdfg, testair (failure)')
+        return self.runStep()
+
+    def test_new_stress_and_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_binary_failures', ['testmasm'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_rerun_binary_failures', ['testmasm'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC binary failure: testmasm, Found 1 new JSC stress test failure: es6.yaml/es6/Set_iterator_closing.js.default (failure)')
+        return self.runStep()
+
+    def test_stress_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.default'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['stress/force-error.js.default'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['stress/force-error.js.default'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
+    def test_binary_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testdfg'])
+        self.setProperty('jsc_rerun_binary_failures', ['testdfg'])
+        self.setProperty('jsc_clean_tree_binary_failures', ['testdfg'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
+    def test_stress_and_binary_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_binary_failures', ['testair'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_rerun_binary_failures', ['testair'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_clean_tree_binary_failures', ['testair'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
+    def test_flaky_stress_and_binary_failures(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.default'])
+        self.setProperty('jsc_binary_failures', ['testapi'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
+    def test_flaky_and_consistent_stress_failures(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['test2'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: test2 (failure)')
+        return self.runStep()
+
+    def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
+        self.setProperty('jsc_rerun_stress_test_failures', ['test1'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['test1', 'test2'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
 
 

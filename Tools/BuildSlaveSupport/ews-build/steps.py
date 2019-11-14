@@ -1046,7 +1046,7 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJSCTestsWithoutPatch()])
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJSCTestsWithoutPatch(), AnalyzeJSCTestsResults()])
         return rc
 
 
@@ -1056,6 +1056,82 @@ class RunJSCTestsWithoutPatch(RunJavaScriptCoreTests):
 
     def evaluateCommand(self, cmd):
         return shell.Test.evaluateCommand(self, cmd)
+
+
+class AnalyzeJSCTestsResults(buildstep.BuildStep):
+    name = 'analyze-jsc-tests-results'
+    description = ['analyze-jsc-test-results']
+    descriptionDone = ['analyze-jsc-tests-results']
+    NUM_FAILURES_TO_DISPLAY = 10
+
+    def start(self):
+        first_run_stress_failures = set(self.getProperty('jsc_stress_test_failures', []))
+        first_run_binary_failures = set(self.getProperty('jsc_binary_failures', []))
+        second_run_stress_failures = set(self.getProperty('jsc_rerun_stress_test_failures', []))
+        second_run_binary_failures = set(self.getProperty('jsc_rerun_binary_failures', []))
+        clean_tree_stress_failures = set(self.getProperty('jsc_clean_tree_stress_test_failures', []))
+        clean_tree_binary_failures = set(self.getProperty('jsc_clean_tree_binary_failures', []))
+        clean_tree_failures = list(clean_tree_binary_failures) + list(clean_tree_stress_failures)
+        clean_tree_failures_string = ', '.join(clean_tree_failures)
+
+        stress_failures_with_patch = first_run_stress_failures.intersection(second_run_stress_failures)
+        binary_failures_with_patch = first_run_binary_failures.intersection(second_run_binary_failures)
+
+        flaky_stress_failures = first_run_stress_failures.union(second_run_stress_failures) - first_run_stress_failures.intersection(second_run_stress_failures)
+        flaky_binary_failures = first_run_binary_failures.union(second_run_binary_failures) - first_run_binary_failures.intersection(second_run_binary_failures)
+        flaky_failures = list(flaky_binary_failures) + list(flaky_stress_failures)
+        flaky_failures_string = ', '.join(flaky_failures)
+
+        new_stress_failures = stress_failures_with_patch - clean_tree_stress_failures
+        new_binary_failures = binary_failures_with_patch - clean_tree_binary_failures
+        new_stress_failures_to_display = ', '.join(list(new_stress_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+        new_binary_failures_to_display = ', '.join(list(new_binary_failures)[:self.NUM_FAILURES_TO_DISPLAY])
+
+        self._addToLog('stderr', '\nFailures in first run: {}'.format(list(first_run_binary_failures) + list(first_run_stress_failures)))
+        self._addToLog('stderr', '\nFailures in second run: {}'.format(list(second_run_binary_failures) + list(second_run_stress_failures)))
+        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
+        self._addToLog('stderr', '\nFailures on clean tree: {}'.format(list(clean_tree_stress_failures) + list(clean_tree_binary_failures)))
+
+        if new_stress_failures or new_binary_failures:
+            self._addToLog('stderr', '\nNew failures: {}\n'.format(list(new_binary_failures) + list(new_stress_failures)))
+            self.finished(FAILURE)
+            self.build.results = FAILURE
+            message = ''
+            if new_binary_failures:
+                pluralSuffix = 's' if len(new_binary_failures) > 1 else ''
+                message = 'Found {} new JSC binary failure{}: {}'.format(len(new_binary_failures), pluralSuffix, new_binary_failures_to_display)
+            if new_stress_failures:
+                if message:
+                    message += ', '
+                pluralSuffix = 's' if len(new_stress_failures) > 1 else ''
+                message += 'Found {} new JSC stress test failure{}: {}'.format(len(new_stress_failures), pluralSuffix, new_stress_failures_to_display)
+                if len(new_stress_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                    message += ' ...'
+            self.descriptionDone = message
+            self.build.buildFinished([message], FAILURE)
+        else:
+            self._addToLog('stderr', '\nNo new failures\n')
+            self.finished(SUCCESS)
+            self.build.results = SUCCESS
+            self.descriptionDone = 'Passed JSC tests'
+            pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
+            message = ''
+            if clean_tree_failures:
+                message = 'Found {} pre-existing JSC test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+            if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+            if flaky_failures:
+                message += ' Found flaky tests: {}'.format(flaky_failures_string)
+            self.build.buildFinished([message], SUCCESS)
+        return defer.succeed(None)
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
 
 
 class CleanBuild(shell.Compile):

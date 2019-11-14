@@ -1,3 +1,27 @@
+2019-11-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build step to Analyze JSC Tests Results
+        https://bugs.webkit.org/show_bug.cgi?id=204174
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ReRunJavaScriptCoreTests.evaluateCommand): invoke AnalyzeJSCTestsResults step.
+        (AnalyzeJSCTestsResults): Build step to analyze layout-test results.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeJSCTestsResults):
+        (TestAnalyzeJSCTestsResults.test_single_new_stress_failure): Added unit-test.
+        (TestAnalyzeJSCTestsResults.test_single_new_binary_failure): Ditto.
+        (TestAnalyzeJSCTestsResults.test_multiple_new_stress_failure): Ditto.
+        (TestAnalyzeJSCTestsResults.test_multiple_new_binary_failure): Ditto.
+        (TestAnalyzeJSCTestsResults.test_new_stress_and_binary_failure): Ditto.
+        (TestAnalyzeJSCTestsResults.test_stress_failure_on_clean_tree): Ditto.
+        (TestAnalyzeJSCTestsResults.test_binary_failure_on_clean_tree): Ditto.
+        (TestAnalyzeJSCTestsResults.test_stress_and_binary_failure_on_clean_tree): Ditto.
+        (TestAnalyzeJSCTestsResults.test_flaky_stress_and_binary_failures): Ditto.
+        (TestAnalyzeJSCTestsResults.test_flaky_and_consistent_stress_failures): Ditto.
+        (TestAnalyzeJSCTestsResults.test_flaky_and_consistent_failures_with_clean_tree_failures): Ditto.
+
 2019-11-13  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.layout_tests.controllers
