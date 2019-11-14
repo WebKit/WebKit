@@ -47,7 +47,7 @@ class AXIsolatedTree;
 
 class AXIsolatedObject final : public AXCoreObject {
 public:
-    static Ref<AXIsolatedObject> create(const AXCoreObject&);
+    static Ref<AXIsolatedObject> create(AXCoreObject&);
     ~AXIsolatedObject();
 
     void setObjectID(AXID id) override { m_id = id; }
@@ -550,45 +550,45 @@ private:
 
     void notifyIfIgnoredValueChanged() override { }
 
-    bool isMathElement() const override { return false; }
-    bool isMathFraction() const override { return false; }
-    bool isMathFenced() const override { return false; }
-    bool isMathSubscriptSuperscript() const override { return false; }
-    bool isMathRow() const override { return false; }
-    bool isMathUnderOver() const override { return false; }
-    bool isMathRoot() const override { return false; }
-    bool isMathSquareRoot() const override { return false; }
-    bool isMathText() const override { return false; }
-    bool isMathNumber() const override { return false; }
-    bool isMathOperator() const override { return false; }
-    bool isMathFenceOperator() const override { return false; }
-    bool isMathSeparatorOperator() const override { return false; }
-    bool isMathIdentifier() const override { return false; }
-    bool isMathTable() const override { return false; }
-    bool isMathTableRow() const override { return false; }
-    bool isMathTableCell() const override { return false; }
-    bool isMathMultiscript() const override { return false; }
-    bool isMathToken() const override { return false; }
+    bool isMathElement() const override { return boolAttributeValue(AXPropertyName::IsMathElement); }
+    bool isMathFraction() const override { return boolAttributeValue(AXPropertyName::IsMathFraction); }
+    bool isMathFenced() const override { return boolAttributeValue(AXPropertyName::IsMathFenced); }
+    bool isMathSubscriptSuperscript() const override { return boolAttributeValue(AXPropertyName::IsMathSubscriptSuperscript); }
+    bool isMathRow() const override { return boolAttributeValue(AXPropertyName::IsMathRow); }
+    bool isMathUnderOver() const override { return boolAttributeValue(AXPropertyName::IsMathUnderOver); }
+    bool isMathRoot() const override { return boolAttributeValue(AXPropertyName::IsMathRoot); }
+    bool isMathSquareRoot() const override { return boolAttributeValue(AXPropertyName::IsMathSquareRoot); }
+    bool isMathText() const override { return boolAttributeValue(AXPropertyName::IsMathText); }
+    bool isMathNumber() const override { return boolAttributeValue(AXPropertyName::IsMathNumber); }
+    bool isMathOperator() const override { return boolAttributeValue(AXPropertyName::IsMathOperator); }
+    bool isMathFenceOperator() const override { return boolAttributeValue(AXPropertyName::IsMathFenceOperator); }
+    bool isMathSeparatorOperator() const override { return boolAttributeValue(AXPropertyName::IsMathSeparatorOperator); }
+    bool isMathIdentifier() const override { return boolAttributeValue(AXPropertyName::IsMathIdentifier); }
+    bool isMathTable() const override { return boolAttributeValue(AXPropertyName::IsMathTable); }
+    bool isMathTableRow() const override { return boolAttributeValue(AXPropertyName::IsMathTableRow); }
+    bool isMathTableCell() const override { return boolAttributeValue(AXPropertyName::IsMathTableCell); }
+    bool isMathMultiscript() const override { return boolAttributeValue(AXPropertyName::IsMathMultiscript); }
+    bool isMathToken() const override { return boolAttributeValue(AXPropertyName::IsMathToken); }
     bool isMathScriptObject(AccessibilityMathScriptObjectType) const override { return false; }
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override { return false; }
 
-    AXCoreObject* mathRadicandObject() override { return nullptr; }
-    AXCoreObject* mathRootIndexObject() override { return nullptr; }
+    AXCoreObject* mathRadicandObject() override { return objectAttributeValue(AXPropertyName::MathRadicandObject); }
+    AXCoreObject* mathRootIndexObject() override { return objectAttributeValue(AXPropertyName::MathRootIndexObject); }
 
-    AXCoreObject* mathUnderObject() override { return nullptr; }
-    AXCoreObject* mathOverObject() override { return nullptr; }
+    AXCoreObject* mathUnderObject() override { return objectAttributeValue(AXPropertyName::MathUnderObject); }
+    AXCoreObject* mathOverObject() override { return objectAttributeValue(AXPropertyName::MathOverObject); }
 
-    AXCoreObject* mathNumeratorObject() override { return nullptr; }
-    AXCoreObject* mathDenominatorObject() override { return nullptr; }
+    AXCoreObject* mathNumeratorObject() override { return objectAttributeValue(AXPropertyName::MathNumeratorObject); }
+    AXCoreObject* mathDenominatorObject() override { return objectAttributeValue(AXPropertyName::MathDenominatorObject); }
 
-    AXCoreObject* mathBaseObject() override { return nullptr; }
-    AXCoreObject* mathSubscriptObject() override { return nullptr; }
-    AXCoreObject* mathSuperscriptObject() override { return nullptr; }
+    AXCoreObject* mathBaseObject() override { return objectAttributeValue(AXPropertyName::MathBaseObject); }
+    AXCoreObject* mathSubscriptObject() override { return objectAttributeValue(AXPropertyName::MathSubscriptObject); }
+    AXCoreObject* mathSuperscriptObject() override { return objectAttributeValue(AXPropertyName::MathSuperscriptObject); }
 
-    String mathFencedOpenString() const override { return String(); }
-    String mathFencedCloseString() const override { return String(); }
-    int mathLineThickness() const override { return 0; }
-    bool isAnonymousMathOperator() const override { return false; }
+    String mathFencedOpenString() const override { return stringAttributeValue(AXPropertyName::MathFencedOpenString); }
+    String mathFencedCloseString() const override { return stringAttributeValue(AXPropertyName::MathFencedCloseString); }
+    int mathLineThickness() const override { return intAttributeValue(AXPropertyName::MathLineThickness); }
+    bool isAnonymousMathOperator() const override { return boolAttributeValue(AXPropertyName::IsAnonymousMathOperator); }
 
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override { }
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) override { }
@@ -639,18 +639,51 @@ private:
 
     enum class AXPropertyName : uint8_t {
         None = 0,
+        Description,
         HelpText,
         IsAccessibilityIgnored,
+        IsAnonymousMathOperator,
         IsAttachment,
         IsFileUploadButton,
         IsImage,
         IsImageMapLink,
         IsLink,
+        IsMathElement,
+        IsMathFraction,
+        IsMathFenced,
+        IsMathSubscriptSuperscript,
+        IsMathRow,
+        IsMathUnderOver,
+        IsMathRoot,
+        IsMathSquareRoot,
+        IsMathText,
+        IsMathNumber,
+        IsMathOperator,
+        IsMathFenceOperator,
+        IsMathSeparatorOperator,
+        IsMathIdentifier,
+        IsMathTable,
+        IsMathTableRow,
+        IsMathTableCell,
+        IsMathMultiscript,
+        IsMathToken,
+        IsMathScriptObject,
         IsMediaControlLabel,
         IsScrollbar,
         IsTree,
         IsTreeItem,
-        Description,
+        MathFencedOpenString,
+        MathFencedCloseString,
+        MathLineThickness,
+        MathRadicandObject,
+        MathRootIndexObject,
+        MathUnderObject,
+        MathOverObject,
+        MathNumeratorObject,
+        MathDenominatorObject,
+        MathBaseObject,
+        MathSubscriptObject,
+        MathSuperscriptObject,
         RelativeFrame,
         RoleValue,
         RolePlatformString,
@@ -666,18 +699,20 @@ private:
     AXIsolatedTree* tree() const;
 
     AXIsolatedObject() = default;
-    AXIsolatedObject(const AXCoreObject&);
-    void initializeAttributeData(const AXCoreObject&);
+    AXIsolatedObject(AXCoreObject&);
+    void initializeAttributeData(AXCoreObject&);
 
-    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, Optional<FloatRect>>;
+    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, Optional<FloatRect>, AXID>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);
-
+    void setObjectProperty(AXPropertyName, AXCoreObject*);
+    
     bool boolAttributeValue(AXPropertyName) const;
     const String stringAttributeValue(AXPropertyName) const;
     int intAttributeValue(AXPropertyName) const;
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
     FloatRect rectAttributeValue(AXPropertyName) const;
+    AXCoreObject* objectAttributeValue(AXPropertyName) const;
 
     AXID m_parent;
     AXID m_id;

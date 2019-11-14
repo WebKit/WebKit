@@ -1,3 +1,22 @@
+2019-11-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement isolated tree support for math objects
+        https://bugs.webkit.org/show_bug.cgi?id=204056
+        <rdar://problem/57054644>
+
+        Reviewed by Zalan Bujtas.
+
+        Implement isolated tree support for math objects.
+        Add a method for setting and getting objects.
+
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::create):
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::setObjectProperty):
+        (WebCore::AXIsolatedObject::objectAttributeValue const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+
 2019-11-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Retargeted transitions targeting accelerated properties do not stop the original transition

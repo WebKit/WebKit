@@ -34,7 +34,7 @@ extern "C" bool _AXUIElementRequestServicedBySecondaryAXThread(void);
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(const AXCoreObject& object)
+AXIsolatedObject::AXIsolatedObject(AXCoreObject& object)
     : m_id(object.objectID())
 {
     ASSERT(isMainThread());
@@ -44,14 +44,14 @@ AXIsolatedObject::AXIsolatedObject(const AXCoreObject& object)
 #endif
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(const AXCoreObject& object)
+Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object)
 {
     return adoptRef(*new AXIsolatedObject(object));
 }
 
 AXIsolatedObject::~AXIsolatedObject() = default;
 
-void AXIsolatedObject::initializeAttributeData(const AXCoreObject& object)
+void AXIsolatedObject::initializeAttributeData(AXCoreObject& object)
 {
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
@@ -71,6 +71,49 @@ void AXIsolatedObject::initializeAttributeData(const AXCoreObject& object)
     setProperty(AXPropertyName::Title, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
+
+    if (bool isMathElement = object.isMathElement()) {
+        setProperty(AXPropertyName::IsMathElement, isMathElement);
+        setProperty(AXPropertyName::IsAnonymousMathOperator, object.isAnonymousMathOperator());
+        setProperty(AXPropertyName::IsMathFraction, object.isMathFraction());
+        setProperty(AXPropertyName::IsMathFenced, object.isMathFenced());
+        setProperty(AXPropertyName::IsMathSubscriptSuperscript, object.isMathSubscriptSuperscript());
+        setProperty(AXPropertyName::IsMathRow, object.isMathRow());
+        setProperty(AXPropertyName::IsMathUnderOver, object.isMathUnderOver());
+        setProperty(AXPropertyName::IsMathRoot, object.isMathRoot());
+        setProperty(AXPropertyName::IsMathSquareRoot, object.isMathSquareRoot());
+        setProperty(AXPropertyName::IsMathText, object.isMathText());
+        setProperty(AXPropertyName::IsMathNumber, object.isMathNumber());
+        setProperty(AXPropertyName::IsMathOperator, object.isMathOperator());
+        setProperty(AXPropertyName::IsMathFenceOperator, object.isMathFenceOperator());
+        setProperty(AXPropertyName::IsMathSeparatorOperator, object.isMathSeparatorOperator());
+        setProperty(AXPropertyName::IsMathIdentifier, object.isMathIdentifier());
+        setProperty(AXPropertyName::IsMathTable, object.isMathTable());
+        setProperty(AXPropertyName::IsMathTableRow, object.isMathTableRow());
+        setProperty(AXPropertyName::IsMathTableCell, object.isMathTableCell());
+        setProperty(AXPropertyName::IsMathMultiscript, object.isMathMultiscript());
+        setProperty(AXPropertyName::IsMathToken, object.isMathToken());
+        setProperty(AXPropertyName::MathFencedOpenString, object.mathFencedOpenString());
+        setProperty(AXPropertyName::MathFencedCloseString, object.mathFencedCloseString());
+        setProperty(AXPropertyName::MathLineThickness, object.mathLineThickness());åß
+        setObjectProperty(AXPropertyName::MathRadicandObject, object.mathRadicandObject());
+        setObjectProperty(AXPropertyName::MathRootIndexObject, object.mathRootIndexObject());
+        setObjectProperty(AXPropertyName::MathUnderObject, object.mathUnderObject());
+        setObjectProperty(AXPropertyName::MathOverObject, object.mathOverObject());
+        setObjectProperty(AXPropertyName::MathNumeratorObject, object.mathNumeratorObject());
+        setObjectProperty(AXPropertyName::MathDenominatorObject, object.mathDenominatorObject());
+        setObjectProperty(AXPropertyName::MathBaseObject, object.mathBaseObject());
+        setObjectProperty(AXPropertyName::MathSubscriptObject, object.mathSubscriptObject());
+        setObjectProperty(AXPropertyName::MathSuperscriptObject, object.mathSuperscriptObject());
+    }
+}
+
+void AXIsolatedObject::setObjectProperty(AXPropertyName propertyName, AXCoreObject* object)
+{
+    if (object)
+        setProperty(propertyName, object->objectID());
+    else
+        setProperty(propertyName, nullptr, true);
 }
 
 void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
@@ -144,6 +187,22 @@ AXIsolatedTree* AXIsolatedObject::tree() const
 {
     return m_cachedTree.get();
 }
+
+AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName) const
+{
+    auto value = m_attributeMap.get(propertyName);
+    AXID nodeID = WTF::switchOn(value,
+        [&] (Optional<AXID> typedValue) {
+            if (!typedValue)
+                return InvalidAXID;
+        return typedValue.value();
+        },
+        [] (auto&) { return InvalidAXID; }
+    );
+    
+    return tree()->nodeForID(nodeID).get();
+}
+
 
 FloatRect AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) const
 {
