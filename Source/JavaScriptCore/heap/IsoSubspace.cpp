@@ -32,17 +32,18 @@
 #include "IsoCellSetInlines.h"
 #include "IsoSubspaceInlines.h"
 #include "LocalAllocatorInlines.h"
+#include "MarkedSpaceInlines.h"
 
 namespace JSC {
 
 IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, size_t size, uint8_t numberOfLowerTierCells)
     : Subspace(name, heap)
-    , m_size(size)
-    , m_directory(&heap, WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
+    , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_localAllocator(&m_directory)
     , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>())
-    , m_remainingLowerTierCellCount(numberOfLowerTierCells)
 {
+    m_remainingLowerTierCellCount = numberOfLowerTierCells;
+    ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     ASSERT(numberOfLowerTierCells <= MarkedBlock::maxNumberOfLowerTierCells);
     m_isIsoSubspace = true;
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
@@ -50,7 +51,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     auto locker = holdLock(m_space.directoryLock());
     m_directory.setSubspace(this);
     m_space.addBlockDirectory(locker, &m_directory);
-    m_alignedMemoryAllocator->registerDirectory(&m_directory);
+    m_alignedMemoryAllocator->registerDirectory(heap, &m_directory);
     m_firstDirectory = &m_directory;
 }
 
@@ -111,8 +112,7 @@ void* IsoSubspace::tryAllocateFromLowerTier()
         return revive(allocation);
     }
     if (m_remainingLowerTierCellCount) {
-        size_t size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(m_size);
-        PreciseAllocation* allocation = PreciseAllocation::createForLowerTier(*m_space.heap(), size, this, --m_remainingLowerTierCellCount);
+        PreciseAllocation* allocation = PreciseAllocation::createForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
         return revive(allocation);
     }
     return nullptr;

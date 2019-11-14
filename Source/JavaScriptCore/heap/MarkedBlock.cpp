@@ -377,8 +377,8 @@ void MarkedBlock::Handle::dumpState(PrintStream& out)
     CommaPrinter comma;
     directory()->forEachBitVectorWithName(
         holdLock(directory()->bitvectorLock()),
-        [&] (FastBitVector& bitvector, const char* name) {
-            out.print(comma, name, ":", bitvector[index()] ? "YES" : "no");
+        [&](auto vectorRef, const char* name) {
+            out.print(comma, name, ":", vectorRef[index()] ? "YES" : "no");
         });
 }
 

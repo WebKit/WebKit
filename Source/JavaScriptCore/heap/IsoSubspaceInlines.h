@@ -27,11 +27,11 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void* IsoSubspace::allocateNonVirtual(VM&, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+ALWAYS_INLINE void* IsoSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    RELEASE_ASSERT(size == this->size());
+    RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::MustAlreadyHaveAllocator);
-    void* result = allocator.allocate(deferralContext, failureMode);
+    void* result = allocator.allocate(vm.heap, deferralContext, failureMode);
     return result;
 }
 

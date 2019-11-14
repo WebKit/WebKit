@@ -569,6 +569,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/AllocatorInlines.h
     heap/AllocatorForMode.h
     heap/BlockDirectory.h
+    heap/BlockDirectoryBits.h
     heap/BlockDirectoryInlines.h
     heap/CellAttributes.h
     heap/CellContainer.h

@@ -1,3 +1,116 @@
+2019-11-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BlockDirectory's bits should be compact
+        https://bugs.webkit.org/show_bug.cgi?id=204149
+
+        Reviewed by Robin Morisset.
+
+        We start applying IsoSubspace to all JSCells. This means that IsoSubspace should be small enough,
+        so that we can hold many IsoSubspaces without considering about memory regression.
+
+        In this patch, we introduce several things to shrink sizeof(IsoSubspace) from 528 to 384.
+
+        1. Adjusting members to remove some paddings.
+        2. Remove m_heap field since this can be got from the caller easily.
+        3. Make MarkedSpace::heap() efficient: just doing pointer arithmetic.
+        4. Remove m_size field from IsoSubspace since BlockDirectory knows cellSize.
+        5. Introduce BlockDirectoryBits, which repalces 9 FastBitVector in BlockDirectory to this one class.
+           Since all FastBitVector has the same size, we should not have a size field for each FastBitVector.
+           We reuse FastBitVector's View mechanism to keep the same ergonomics while making BlockDirectoryBits
+           much smaller. We put 9 uint32_t as Segment, and manage Vector<Segment> in this data structure. Since
+           we touch several bits at the same time for the same block-index, this data structure is compact and
+           efficient.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/AlignedMemoryAllocator.cpp:
+        (JSC::AlignedMemoryAllocator::registerDirectory):
+        * heap/AlignedMemoryAllocator.h:
+        * heap/Allocator.h:
+        * heap/AllocatorInlines.h:
+        (JSC::Allocator::allocate const):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::BlockDirectory):
+        (JSC::BlockDirectory::findEmptyBlockToSteal):
+        (JSC::BlockDirectory::findBlockForAllocation):
+        (JSC::BlockDirectory::tryAllocateBlock):
+        (JSC::BlockDirectory::addBlock):
+        (JSC::BlockDirectory::removeBlock):
+        (JSC::BlockDirectory::prepareForAllocation):
+        (JSC::BlockDirectory::beginMarkingForFullCollection):
+        (JSC::BlockDirectory::endMarking):
+        (JSC::BlockDirectory::snapshotUnsweptForEdenCollection):
+        (JSC::BlockDirectory::snapshotUnsweptForFullCollection):
+        (JSC::BlockDirectory::findBlockToSweep):
+        (JSC::BlockDirectory::sweep):
+        (JSC::BlockDirectory::shrink):
+        (JSC::BlockDirectory::assertNoUnswept):
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        (JSC::BlockDirectory::dumpBits):
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::cellKind const):
+        (JSC::BlockDirectory::forEachBitVector):
+        (JSC::BlockDirectory::forEachBitVectorWithName):
+        (JSC::BlockDirectory::heap): Deleted.
+        * heap/BlockDirectoryBits.h: Added.
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::BlockDirectoryBitVectorWordView):
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::numBits const):
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::word const):
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::word):
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::clearAll):
+        (JSC::BlockDirectoryBits::BlockDirectoryBitVectorWordView::view const):
+        (JSC::BlockDirectoryBits::numBits const):
+        (JSC::BlockDirectoryBits::resize):
+        (JSC::BlockDirectoryBits::forEachSegment):
+        * heap/BlockDirectoryInlines.h:
+        (JSC::BlockDirectory::forEachBlock):
+        (JSC::BlockDirectory::forEachNotEmptyBlock):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::tryAllocateFromLowerTier):
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::cellSize):
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        (JSC::IsoSubspace::size const): Deleted.
+        (): Deleted.
+        * heap/IsoSubspaceInlines.h:
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * heap/IsoSubspacePerVM.cpp:
+        (JSC::IsoSubspacePerVM::AutoremovingIsoSubspace::~AutoremovingIsoSubspace):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::doTestCollectionsIfNeeded):
+        * heap/LocalAllocator.h:
+        * heap/LocalAllocatorInlines.h:
+        (JSC::LocalAllocator::allocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::dumpState):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::sweepBlocks):
+        (JSC::MarkedSpace::prepareForAllocation):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::prepareForMarking):
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::snapshotUnswept):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::heap const): Deleted.
+        * heap/MarkedSpaceInlines.h:
+        (JSC::MarkedSpace::heap const):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::initialize):
+        * heap/Subspace.h:
+
 2019-11-13  Robin Morisset  <rmorisset@apple.com>
 
         Split ArithProfile into a Unary and a Binary version

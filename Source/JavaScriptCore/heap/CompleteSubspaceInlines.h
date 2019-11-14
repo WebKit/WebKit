@@ -36,7 +36,7 @@ ALWAYS_INLINE void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GC
         RELEASE_ASSERT(vm.heap.expectDoesGC());
 
     if (Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists))
-        return allocator.allocate(deferralContext, failureMode);
+        return allocator.allocate(vm.heap, deferralContext, failureMode);
     return allocateSlow(vm, size, deferralContext, failureMode);
 }
 

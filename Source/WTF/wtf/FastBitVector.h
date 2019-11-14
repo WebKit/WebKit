@@ -35,7 +35,7 @@ namespace WTF {
 
 class PrintStream;
 
-inline size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
+inline constexpr size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
 class FastBitVectorWordView {
     WTF_MAKE_FAST_ALLOCATED;
@@ -421,6 +421,9 @@ public:
     }
     
     typename Words::ViewType wordView() const { return m_words.view(); }
+
+    Words& unsafeWords() { return m_words; }
+    const Words& unsafeWords() const { return m_words; }
     
 private:
     // You'd think that we could remove this friend if we used protected, but you'd be wrong,
@@ -435,6 +438,38 @@ private:
     
     Words m_words;
 };
+
+class FastBitReference {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FastBitReference() = default;
+
+    FastBitReference(uint32_t* word, uint32_t mask)
+        : m_word(word)
+        , m_mask(mask)
+    {
+    }
+
+    explicit operator bool() const
+    {
+        return !!(*m_word & m_mask);
+    }
+
+    FastBitReference& operator=(bool value)
+    {
+        if (value)
+            *m_word |= m_mask;
+        else
+            *m_word &= ~m_mask;
+        return *this;
+    }
+
+private:
+    uint32_t* m_word { nullptr };
+    uint32_t m_mask { 0 };
+};
+
+
 
 class FastBitVector : public FastBitVectorImpl<FastBitVectorWordOwner> {
 public:
@@ -518,42 +553,13 @@ public:
         return atImpl(index);
     }
     
-    class BitReference {
-    public:
-        BitReference() { }
-        
-        BitReference(uint32_t* word, uint32_t mask)
-            : m_word(word)
-            , m_mask(mask)
-        {
-        }
-        
-        explicit operator bool() const
-        {
-            return !!(*m_word & m_mask);
-        }
-        
-        BitReference& operator=(bool value)
-        {
-            if (value)
-                *m_word |= m_mask;
-            else
-                *m_word &= ~m_mask;
-            return *this;
-        }
-        
-    private:
-        uint32_t* m_word { nullptr };
-        uint32_t m_mask { 0 };
-    };
-    
-    BitReference at(size_t index)
+    FastBitReference at(size_t index)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < numBits());
-        return BitReference(&m_words.word(index >> 5), 1 << (index & 31));
+        return FastBitReference(&m_words.word(index >> 5), 1 << (index & 31));
     }
     
-    BitReference operator[](size_t index)
+    FastBitReference operator[](size_t index)
     {
         return at(index);
     }

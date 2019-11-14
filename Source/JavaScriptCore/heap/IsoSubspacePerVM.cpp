@@ -41,7 +41,7 @@ public:
     ~AutoremovingIsoSubspace()
     {
         auto locker = holdLock(m_perVM.m_lock);
-        m_perVM.m_subspacePerVM.remove(&space().heap()->vm());
+        m_perVM.m_subspacePerVM.remove(&space().heap().vm());
     }
 
 private:

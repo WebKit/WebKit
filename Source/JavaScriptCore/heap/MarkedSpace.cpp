@@ -27,6 +27,7 @@
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
+#include "MarkedSpaceInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -195,8 +196,8 @@ void MarkedSpace::initializeSizeClassForStepSize()
 }
 
 MarkedSpace::MarkedSpace(Heap* heap)
-    : m_heap(heap)
 {
+    ASSERT_UNUSED(heap, heap == &this->heap());
     initializeSizeClassForStepSize();
 }
 
@@ -234,7 +235,7 @@ void MarkedSpace::lastChanceToFinalize()
 
 void MarkedSpace::sweepBlocks()
 {
-    m_heap->sweeper().stopSweeping();
+    heap().sweeper().stopSweeping();
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
             directory.sweep();
@@ -270,13 +271,13 @@ void MarkedSpace::sweepPreciseAllocations()
 
 void MarkedSpace::prepareForAllocation()
 {
-    ASSERT(!Thread::mayBeGCThread() || m_heap->worldIsStopped());
+    ASSERT(!Thread::mayBeGCThread() || heap().worldIsStopped());
     for (Subspace* subspace : m_subspaces)
         subspace->prepareForAllocation();
 
     m_activeWeakSets.takeFrom(m_newActiveWeakSets);
     
-    if (m_heap->collectionScope() == CollectionScope::Eden)
+    if (heap().collectionScope() == CollectionScope::Eden)
         m_preciseAllocationsNurseryOffsetForSweep = m_preciseAllocationsNurseryOffset;
     else
         m_preciseAllocationsNurseryOffsetForSweep = 0;
@@ -298,7 +299,7 @@ void MarkedSpace::visitWeakSets(SlotVisitor& visitor)
     
     m_newActiveWeakSets.forEach(visit);
     
-    if (m_heap->collectionScope() == CollectionScope::Full)
+    if (heap().collectionScope() == CollectionScope::Full)
         m_activeWeakSets.forEach(visit);
 }
 
@@ -310,7 +311,7 @@ void MarkedSpace::reapWeakSets()
     
     m_newActiveWeakSets.forEach(visit);
     
-    if (m_heap->collectionScope() == CollectionScope::Full)
+    if (heap().collectionScope() == CollectionScope::Full)
         m_activeWeakSets.forEach(visit);
 }
 
@@ -356,7 +357,7 @@ void MarkedSpace::prepareForConservativeScan()
 
 void MarkedSpace::prepareForMarking()
 {
-    if (m_heap->collectionScope() == CollectionScope::Eden)
+    if (heap().collectionScope() == CollectionScope::Eden)
         m_preciseAllocationsOffsetForThisCollection = m_preciseAllocationsNurseryOffset;
     else
         m_preciseAllocationsOffsetForThisCollection = 0;
@@ -416,7 +417,7 @@ void MarkedSpace::shrink()
 
 void MarkedSpace::beginMarking()
 {
-    if (m_heap->collectionScope() == CollectionScope::Full) {
+    if (heap().collectionScope() == CollectionScope::Full) {
         forEachDirectory(
             [&] (BlockDirectory& directory) -> IterationStatus {
                 directory.beginMarkingForFullCollection();
@@ -551,7 +552,7 @@ void MarkedSpace::didAllocateInBlock(MarkedBlock::Handle* block)
 
 void MarkedSpace::snapshotUnswept()
 {
-    if (m_heap->collectionScope() == CollectionScope::Eden) {
+    if (heap().collectionScope() == CollectionScope::Eden) {
         forEachDirectory(
             [&] (BlockDirectory& directory) -> IterationStatus {
                 directory.snapshotUnsweptForEdenCollection();

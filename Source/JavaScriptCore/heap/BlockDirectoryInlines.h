@@ -33,7 +33,7 @@ namespace JSC {
 
 template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
 {
-    m_live.forEachSetBit(
+    m_bits.live().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index]);
         });
@@ -41,7 +41,7 @@ template <typename Functor> inline void BlockDirectory::forEachBlock(const Funct
 
 template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
 {
-    m_markingNotEmpty.forEachSetBit(
+    m_bits.markingNotEmpty().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index]);
         });

@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "LocalAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
+#include "MarkedSpaceInlines.h"
 #include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
 
@@ -79,7 +80,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     if (false)
         dataLog("Creating BlockDirectory/LocalAllocator for ", m_name, ", ", attributes(), ", ", sizeClass, ".\n");
     
-    std::unique_ptr<BlockDirectory> uniqueDirectory = makeUnique<BlockDirectory>(m_space.heap(), sizeClass);
+    std::unique_ptr<BlockDirectory> uniqueDirectory = makeUnique<BlockDirectory>(sizeClass);
     BlockDirectory* directory = uniqueDirectory.get();
     m_directories.append(WTFMove(uniqueDirectory));
     
@@ -105,7 +106,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     }
     
     directory->setNextDirectoryInSubspace(m_firstDirectory);
-    m_alignedMemoryAllocator->registerDirectory(directory);
+    m_alignedMemoryAllocator->registerDirectory(m_space.heap(), directory);
     WTF::storeStoreFence();
     m_firstDirectory = directory;
     return allocator;
@@ -127,7 +128,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     sanitizeStackForVM(vm);
     
     if (Allocator allocator = allocatorFor(size, AllocatorForMode::EnsureAllocator))
-        return allocator.allocate(deferralContext, AllocationFailureMode::ReturnNull);
+        return allocator.allocate(vm.heap, deferralContext, AllocationFailureMode::ReturnNull);
     
     if (size <= Options::preciseAllocationCutoff()
         && size <= MarkedSpace::largeCutoff) {

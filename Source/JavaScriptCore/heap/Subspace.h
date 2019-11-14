@@ -119,6 +119,8 @@ protected:
     CString m_name;
 
     bool m_isIsoSubspace { false };
+protected:
+    uint8_t m_remainingLowerTierCellCount { 0 };
 };
 
 } // namespace JSC

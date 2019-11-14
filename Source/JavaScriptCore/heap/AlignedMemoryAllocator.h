@@ -31,6 +31,7 @@
 namespace JSC {
 
 class BlockDirectory;
+class Heap;
 class Subspace;
 
 class AlignedMemoryAllocator {
@@ -45,7 +46,7 @@ public:
     
     virtual void dump(PrintStream&) const = 0;
 
-    void registerDirectory(BlockDirectory*);
+    void registerDirectory(Heap&, BlockDirectory*);
     BlockDirectory* firstDirectory() const { return m_directories.first(); }
 
     void registerSubspace(Subspace*);

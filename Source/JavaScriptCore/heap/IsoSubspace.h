@@ -40,7 +40,7 @@ public:
     JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, HeapCellType*, size_t size, uint8_t numberOfLowerTierCells);
     JS_EXPORT_PRIVATE ~IsoSubspace();
 
-    size_t size() const { return m_size; }
+    size_t cellSize() { return m_directory.cellSize(); }
 
     Allocator allocatorFor(size_t, AllocatorForMode) override;
     Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
@@ -63,18 +63,16 @@ private:
     void didRemoveBlock(size_t blockIndex) override;
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
     
-    size_t m_size;
     BlockDirectory m_directory;
     LocalAllocator m_localAllocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
-    uint8_t m_remainingLowerTierCellCount { 0 };
 };
 
 ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
 {
-    RELEASE_ASSERT(size == this->size());
+    RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     return Allocator(&m_localAllocator);
 }
 

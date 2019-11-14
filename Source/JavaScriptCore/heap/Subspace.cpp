@@ -31,6 +31,7 @@
 #include "HeapCellType.h"
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
+#include "MarkedSpaceInlines.h"
 #include "ParallelSourceAdapter.h"
 #include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
@@ -49,7 +50,7 @@ void Subspace::initialize(HeapCellType* heapCellType, AlignedMemoryAllocator* al
     m_alignedMemoryAllocator = alignedMemoryAllocator;
     m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 
-    Heap& heap = *m_space.heap();
+    Heap& heap = m_space.heap();
     heap.objectSpace().m_subspaces.append(this);
     m_alignedMemoryAllocator->registerSubspace(this);
 }

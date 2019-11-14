@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void* Allocator::allocate(GCDeferralContext* context, AllocationFailureMode mode) const
+ALWAYS_INLINE void* Allocator::allocate(Heap& heap, GCDeferralContext* context, AllocationFailureMode mode) const
 {
-    return m_localAllocator->allocate(context, mode);
+    return m_localAllocator->allocate(heap, context, mode);
 }
 
 } // namespace JSC

@@ -95,7 +95,7 @@ public:
     MarkedSpace(Heap*);
     ~MarkedSpace();
     
-    Heap* heap() const { return m_heap; }
+    Heap& heap() const;
     
     void lastChanceToFinalize(); // Must call stopAllocatingForGood first.
     void freeMemory();
@@ -213,7 +213,6 @@ private:
     PreciseAllocation** m_preciseAllocationsForThisCollectionBegin { nullptr };
     PreciseAllocation** m_preciseAllocationsForThisCollectionEnd { nullptr };
 
-    Heap* m_heap;
     size_t m_capacity { 0 };
     HeapVersion m_markingVersion { initialVersion };
     HeapVersion m_newlyAllocatedVersion { initialVersion };

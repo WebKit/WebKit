@@ -31,6 +31,7 @@
 namespace JSC {
 
 class GCDeferralContext;
+class Heap;
 class LocalAllocator;
 
 // This abstracts how we refer to LocalAllocator so that we could eventually support thread-local
@@ -45,7 +46,7 @@ public:
     {
     }
     
-    void* allocate(GCDeferralContext*, AllocationFailureMode) const;
+    void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode) const;
     
     unsigned cellSize() const;
     

@@ -34,6 +34,7 @@ namespace JSC {
 
 class BlockDirectory;
 class GCDeferralContext;
+class Heap;
 
 class LocalAllocator : public BasicRawSentinelNode<LocalAllocator> {
     WTF_MAKE_NONCOPYABLE(LocalAllocator);
@@ -42,7 +43,7 @@ public:
     LocalAllocator(BlockDirectory*);
     ~LocalAllocator();
     
-    void* allocate(GCDeferralContext*, AllocationFailureMode);
+    void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode);
     
     unsigned cellSize() const { return m_freeList.cellSize(); }
 
@@ -60,12 +61,12 @@ private:
     friend class BlockDirectory;
     
     void reset();
-    JS_EXPORT_PRIVATE void* allocateSlowCase(GCDeferralContext*, AllocationFailureMode failureMode);
+    JS_EXPORT_PRIVATE void* allocateSlowCase(Heap&, GCDeferralContext*, AllocationFailureMode);
     void didConsumeFreeList();
     void* tryAllocateWithoutCollecting();
     void* tryAllocateIn(MarkedBlock::Handle*);
     void* allocateIn(MarkedBlock::Handle*);
-    ALWAYS_INLINE void doTestCollectionsIfNeeded(GCDeferralContext*);
+    ALWAYS_INLINE void doTestCollectionsIfNeeded(Heap&, GCDeferralContext*);
 
     BlockDirectory* m_directory;
     FreeList m_freeList;

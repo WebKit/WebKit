@@ -70,7 +70,7 @@ template<typename Func>
 void IsoCellSet::forEachMarkedCell(const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
-    (directory.m_markingNotEmpty & m_blocksWithBits).forEachSetBit(
+    (directory.m_bits.markingNotEmpty() & m_blocksWithBits).forEachSetBit(
         [&] (size_t blockIndex) {
             MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
