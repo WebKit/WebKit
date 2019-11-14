@@ -1,3 +1,31 @@
+2019-11-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        test262-runner: use NUMBER_OF_PROCESSORS and stop multiplying the number of cores.
+        https://bugs.webkit.org/show_bug.cgi?id=204154
+
+        Reviewed by Ross Kirsling.
+
+        We have enabled running test262 on GTK and WPE test bots on r252362
+        But it seems this test262 runner is not respecting the environment
+        variable NUMBER_OF_PROCESSORS. We set that on the bot environments
+        to tell each worker how much parallelism it should use.
+
+        Instead this runner was using all the system cores (which on some
+        cases is 256) and that was causing issues on other containers/workloads
+        running on the same system at the same time.
+
+        This environment variable is understood by all webkit-related test scripts.
+        It should be accepted also by this test262 runner script.
+
+        On top of that, this patch removes the multiplication that is done
+        when the number of parallel jobs is not specified and its calculated
+        from the available cores of the system. On one hand there is no
+        written motivation for this multiplication behaviour, and on the other
+        hand there is evidence that it doesn't improve performance.
+
+        * Scripts/test262/Runner.pm:
+        (getProcesses):
+
 2019-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Fix build

@@ -553,6 +553,8 @@ sub loadImportFile {
 }
 
 sub getProcesses {
+    return $ENV{NUMBER_OF_PROCESSORS} if (defined($ENV{NUMBER_OF_PROCESSORS}));
+
     my $cores;
     my $uname = qx(which uname >> /dev/null && uname);
     chomp $uname;
@@ -573,12 +575,7 @@ sub getProcesses {
         $cores = 1;
     }
 
-    if ($cores <= 8) {
-        return $cores * 4;
-    }
-    else {
-        return $cores * 2;
-    }
+    return $cores;
 }
 
 sub parseError {
