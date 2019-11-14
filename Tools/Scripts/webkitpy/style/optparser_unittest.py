@@ -97,50 +97,44 @@ class ArgumentParserTest(LoggingTestCase):
                               usage="test usage")
 
     def test_parse_documentation(self):
-        parse = self._parse
-
         # FIXME: Test both the printing of the usage string and the
         #        filter categories help.
 
         # Request the usage string.
-        self.assertRaises(SystemExit, parse, ['--help'])
+        self.assertRaises(SystemExit, self._parse, ['--help'])
         # Request default filter rules and available style categories.
-        self.assertRaises(SystemExit, parse, ['--filter='])
+        self.assertRaises(SystemExit, self._parse, ['--filter='])
 
     def test_parse_bad_values(self):
-        parse = self._parse
-
         # Pass an unsupported argument.
-        self.assertRaises(SystemExit, parse, ['--bad'])
+        self.assertRaises(SystemExit, self._parse, ['--bad'])
         self.assertLog(['ERROR: no such option: --bad\n'])
 
-        self.assertRaises(SystemExit, parse, ['--min-confidence=bad'])
+        self.assertRaises(SystemExit, self._parse, ['--min-confidence=bad'])
         self.assertLog(['ERROR: option --min-confidence: '
                         "invalid integer value: 'bad'\n"])
-        self.assertRaises(SystemExit, parse, ['--min-confidence=0'])
+        self.assertRaises(SystemExit, self._parse, ['--min-confidence=0'])
         self.assertLog(['ERROR: option --min-confidence: invalid integer: 0: '
                         'value must be between 1 and 5\n'])
-        self.assertRaises(SystemExit, parse, ['--min-confidence=6'])
+        self.assertRaises(SystemExit, self._parse, ['--min-confidence=6'])
         self.assertLog(['ERROR: option --min-confidence: invalid integer: 6: '
                         'value must be between 1 and 5\n'])
-        parse(['--min-confidence=1'])  # works
-        parse(['--min-confidence=5'])  # works
+        self._parse(['--min-confidence=1'])  # works
+        self._parse(['--min-confidence=5'])  # works
 
-        self.assertRaises(SystemExit, parse, ['--output=bad'])
+        self.assertRaises(SystemExit, self._parse, ['--output=bad'])
         self.assertLog(['ERROR: option --output-format: invalid choice: '
                         "'bad' (choose from 'emacs', 'vs7')\n"])
-        parse(['--output=vs7'])  # works
+        self._parse(['--output=vs7'])  # works
 
         # Pass a filter rule not beginning with + or -.
-        self.assertRaises(SystemExit, parse, ['--filter=build'])
+        self.assertRaises(SystemExit, self._parse, ['--filter=build'])
         self.assertLog(['ERROR: Invalid filter rule "build": '
                         'every rule must start with + or -.\n'])
-        parse(['--filter=+build'])  # works
+        self._parse(['--filter=+build'])  # works
 
     def test_parse_default_arguments(self):
-        parse = self._parse
-
-        (files, options) = parse([])
+        (files, options) = self._parse([])
 
         self.assertEqual(files, [])
 
@@ -152,42 +146,38 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertEqual(options.output_format, 'vs7')
 
     def test_parse_explicit_arguments(self):
-        parse = self._parse
-
         # Pass non-default explicit values.
-        (files, options) = parse(['--min-confidence=4'])
+        (files, options) = self._parse(['--min-confidence=4'])
         self.assertEqual(options.min_confidence, 4)
-        (files, options) = parse(['--output=emacs'])
+        (files, options) = self._parse(['--output=emacs'])
         self.assertEqual(options.output_format, 'emacs')
-        (files, options) = parse(['-g', 'commit'])
+        (files, options) = self._parse(['-g', 'commit'])
         self.assertEqual(options.git_commit, 'commit')
-        (files, options) = parse(['--git-commit=commit'])
+        (files, options) = self._parse(['--git-commit=commit'])
         self.assertEqual(options.git_commit, 'commit')
-        (files, options) = parse(['--git-diff=commit'])
+        (files, options) = self._parse(['--git-diff=commit'])
         self.assertEqual(options.git_commit, 'commit')
-        (files, options) = parse(['--verbose'])
+        (files, options) = self._parse(['--verbose'])
         self.assertTrue(options.is_verbose)
-        (files, options) = parse(['--diff-files', 'file.txt'])
+        (files, options) = self._parse(['--diff-files', 'file.txt'])
         self.assertTrue(options.diff_files)
 
         # Pass user_rules.
-        (files, options) = parse(['--filter=+build,-whitespace'])
+        (files, options) = self._parse(['--filter=+build,-whitespace'])
         self.assertEqual(options.filter_rules,
                           ["+build", "-whitespace"])
 
         # Pass spurious white space in user rules.
-        (files, options) = parse(['--filter=+build, -whitespace'])
+        (files, options) = self._parse(['--filter=+build, -whitespace'])
         self.assertEqual(options.filter_rules,
                           ["+build", "-whitespace"])
 
     def test_parse_files(self):
-        parse = self._parse
-
-        (files, options) = parse(['foo.cpp'])
+        (files, options) = self._parse(['foo.cpp'])
         self.assertEqual(files, ['foo.cpp'])
 
         # Pass multiple files.
-        (files, options) = parse(['--output=emacs', 'foo.cpp', 'bar.cpp'])
+        (files, options) = self._parse(['--output=emacs', 'foo.cpp', 'bar.cpp'])
         self.assertEqual(files, ['foo.cpp', 'bar.cpp'])
 
 

@@ -1,3 +1,17 @@
+2019-11-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Clarify webkitpy/style/optparser_unittest.py by removing parse variables
+        https://bugs.webkit.org/show_bug.cgi?id=204183
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+        (ArgumentParserTest.test_parse_documentation): Remove parse variable.
+        (ArgumentParserTest.test_parse_bad_values): Ditto.
+        (ArgumentParserTest.test_parse_default_arguments): Ditto.
+        (ArgumentParserTest.test_parse_explicit_arguments): Ditto.
+        (ArgumentParserTest.test_parse_files): Ditto.
+
 2019-11-14  Aakash Jain  <aakash_jain@apple.com>
 
         Add support for remotes file for EWS builders (follow-up fix)
