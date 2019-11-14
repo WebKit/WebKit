@@ -1,7 +1,7 @@
 
-FAIL e.style['r'] = "10" should not set the property value assert_equals: expected "" but got "10px"
+PASS e.style['r'] = "10" should not set the property value 
 PASS e.style['r'] = "auto" should not set the property value 
 PASS e.style['r'] = "10px 20px" should not set the property value 
-FAIL e.style['r'] = "-1px" should not set the property value assert_equals: expected "" but got "-1px"
-FAIL e.style['r'] = "-10%" should not set the property value assert_equals: expected "" but got "-10%"
+PASS e.style['r'] = "-1px" should not set the property value 
+PASS e.style['r'] = "-10%" should not set the property value 
 

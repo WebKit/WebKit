@@ -2140,11 +2140,11 @@ static RefPtr<CSSPrimitiveValue> consumeBaselineShift(CSSParserTokenRange& range
     return consumeLengthOrPercent(range, SVGAttributeMode, ValueRangeAll);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeRxOrRy(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeRxOrRy(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeLengthOrPercent(range, SVGAttributeMode, ValueRangeAll, UnitlessQuirk::Forbid);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
 }
 
 static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context, bool inQuirksMode)
@@ -4110,11 +4110,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyCy:
     case CSSPropertyX:
     case CSSPropertyY:
-    case CSSPropertyR:
         return consumeLengthOrPercent(m_range, SVGAttributeMode, ValueRangeAll, UnitlessQuirk::Forbid);
+    case CSSPropertyR:
+        return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
     case CSSPropertyRx:
     case CSSPropertyRy:
-        return consumeRxOrRy(m_range);
+        return consumeRxOrRy(m_range, m_context.mode);
     case CSSPropertyCursor:
         return consumeCursor(m_range, m_context, inQuirksMode());
     case CSSPropertyContent:

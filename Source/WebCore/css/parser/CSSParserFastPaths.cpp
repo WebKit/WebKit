@@ -64,6 +64,9 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyPaddingBlockStart:
     case CSSPropertyPaddingInlineEnd:
     case CSSPropertyPaddingInlineStart:
+    case CSSPropertyR:
+    case CSSPropertyRx:
+    case CSSPropertyRy:
     case CSSPropertyShapeMargin:
         acceptsNegativeNumbers = false;
         return true;
@@ -87,9 +90,6 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyMarginInlineStart:
     case CSSPropertyX:
     case CSSPropertyY:
-    case CSSPropertyR:
-    case CSSPropertyRx:
-    case CSSPropertyRy:
         acceptsNegativeNumbers = true;
         return true;
     default:

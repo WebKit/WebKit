@@ -57,7 +57,7 @@ testComputed("r", "100px", "100px");
 testComputed("r", "1em", "16px");
 testComputed("r", "1ex", "12.800000190734863px");
 testComputed("r", "20%", "20%");
-testComputed("r", "-200px", "-200px");
+testComputed("r", "-200px", "0px");
 
 // Test 'rx'.
 testComputed("rx", "  100", "100px");
@@ -66,7 +66,7 @@ testComputed("rx", "100px", "100px");
 testComputed("rx", "1em", "16px");
 testComputed("rx", "1ex", "12.800000190734863px");
 testComputed("rx", "20%", "20%");
-testComputed("rx", "-200px", "-200px");
+testComputed("rx", "-200px", "auto");
 
 // Test 'ry'.
 testComputed("ry", "  100", "100px");
@@ -75,7 +75,7 @@ testComputed("ry", "100px", "100px");
 testComputed("ry", "1em", "16px");
 testComputed("ry", "1ex", "12.800000190734863px");
 testComputed("ry", "20%", "20%");
-testComputed("ry", "-200px", "-200px");
+testComputed("ry", "-200px", "auto");
 
 // Test 'width'.
 testComputed("width", "auto", "auto");

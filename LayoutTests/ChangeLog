@@ -1,3 +1,13 @@
+2019-11-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The CSSParser should not consume negative or unit-less lengths for the SVG properties 'r', 'rx' and 'ry'
+        https://bugs.webkit.org/show_bug.cgi?id=204200
+
+        Reviewed by Simon Fraser.
+
+        * svg/css/parse-length-expected.txt:
+        * svg/css/parse-length.html:
+
 2019-11-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Accelerated transitions do not always remove their backing accelerated animation
