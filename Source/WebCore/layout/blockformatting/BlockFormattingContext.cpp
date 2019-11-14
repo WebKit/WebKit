@@ -31,6 +31,7 @@
 #include "BlockFormattingState.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
@@ -49,21 +50,48 @@ BlockFormattingContext::BlockFormattingContext(const Container& formattingContex
 {
 }
 
-void BlockFormattingContext::layoutInFlowContent()
+enum class LayoutDirection { Child, Sibling };
+void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState)
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
-
     auto& formattingRoot = root();
-    LayoutQueue layoutQueue;
     auto floatingContext = FloatingContext { formattingRoot, *this, formattingState().floatingState() };
+
+    LayoutQueue layoutQueue;
+    auto appendNextToLayoutQueue = [&] (const auto& layoutBox, auto direction) {
+        if (direction == LayoutDirection::Child) {
+            if (!is<Container>(layoutBox))
+                return false;
+            for (auto* child = downcast<Container>(layoutBox).firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
+                if (!invalidationState.needsLayout(*child))
+                    continue;
+                layoutQueue.append(child);
+                return true;
+            }
+            return false;
+        }
+
+        if (direction == LayoutDirection::Sibling) {
+            for (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling(); nextSibling; nextSibling = nextSibling->nextInFlowOrFloatingSibling()) {
+                if (!invalidationState.needsLayout(*nextSibling))
+                    continue;
+                layoutQueue.append(nextSibling);
+                return true;
+            }
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
+
+
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-    if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
-        layoutQueue.append(firstChild);
+    appendNextToLayoutQueue(formattingRoot, LayoutDirection::Child);
     // 1. Go all the way down to the leaf node
     // 2. Compute static position and width as we traverse down
     // 3. As we climb back on the tree, compute height and finialize position
@@ -74,40 +102,33 @@ void BlockFormattingContext::layoutInFlowContent()
             auto& layoutBox = *layoutQueue.last();
 
             if (layoutBox.establishesFormattingContext()) {
-                layoutFormattingContextRoot(floatingContext, layoutBox);
+                // layoutFormattingContextRoot() takes care of the layoutBox itself and its descendants.
+                layoutFormattingContextRoot(floatingContext, layoutBox, invalidationState);
                 layoutQueue.removeLast();
-                // Since this box is a formatting context root, it takes care of its entire subtree.
-                // Continue with next sibling if exists.
-                if (!layoutBox.nextInFlowOrFloatingSibling())
+                if (!appendNextToLayoutQueue(layoutBox, LayoutDirection::Sibling))
                     break;
-                layoutQueue.append(layoutBox.nextInFlowOrFloatingSibling());
                 continue;
             }
 
-            LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
             computeBorderAndPadding(layoutBox);
             computeWidthAndMargin(layoutBox);
             computeStaticPosition(floatingContext, layoutBox);
-            if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+
+            if (!appendNextToLayoutQueue(layoutBox, LayoutDirection::Child))
                 break;
-            layoutQueue.append(downcast<Container>(layoutBox).firstInFlowOrFloatingChild());
         }
 
         // Climb back on the ancestors and compute height/final position.
         while (!layoutQueue.isEmpty()) {
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
             auto& layoutBox = *layoutQueue.takeLast();
-
-            LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
             // Formatting root boxes are special-cased and they don't come here.
             ASSERT(!layoutBox.establishesFormattingContext());
             computeHeightAndMargin(layoutBox);
             // Move in-flow positioned children to their final position.
             placeInFlowPositionedChildren(layoutBox);
-            if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
-                layoutQueue.append(nextSibling);
+            if (appendNextToLayoutQueue(layoutBox, LayoutDirection::Sibling))
                 break;
-            }
         }
     }
     // Place the inflow positioned children.
@@ -149,7 +170,7 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     return availableWidth;
 }
 
-void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floatingContext, const Box& layoutBox)
+void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floatingContext, const Box& layoutBox, InvalidationState& invalidationState)
 {
     ASSERT(layoutBox.establishesFormattingContext());
     // Start laying out this formatting root in the formatting contenxt it lives in.
@@ -167,11 +188,11 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
         // Swich over to the new formatting context (the one that the root creates).
         auto& rootContainer = downcast<Container>(layoutBox);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent();
+        formattingContext->layoutInFlowContent(invalidationState);
         // Come back and finalize the root's geometry.
         computeHeightAndMargin(rootContainer);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-        formattingContext->layoutOutOfFlowContent();
+        formattingContext->layoutOutOfFlowContent(invalidationState);
     } else
         computeHeightAndMargin(layoutBox);
     // Float related final positioning.

@@ -1,3 +1,37 @@
+2019-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Invalidation] Use InvalidationState to populate LayoutQueue
+        https://bugs.webkit.org/show_bug.cgi?id=204191
+        <rdar://problem/57179614>
+
+        Reviewed by Antti Koivisto.
+
+        Start using the InvalidationState in BlockFormattingContext::layoutInFlowContent() to filter out
+        non-dirty boxes (currently InvalidationState returns true for every box).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/FormattingContext.h: InvalidationState should not be const as we keep adding additional dirty boxes during layout.
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/invalidation/InvalidationState.cpp:
+        (WebCore::Layout::InvalidationState::needsLayout const):
+        * layout/invalidation/InvalidationState.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox):
+        * layout/tableformatting/TableFormattingContext.h:
+
 2019-11-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement isolated tree support for math objects

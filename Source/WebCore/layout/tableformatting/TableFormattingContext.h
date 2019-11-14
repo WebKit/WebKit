@@ -34,6 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
+class InvalidationState;
 class TableFormattingState;
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
@@ -41,7 +42,7 @@ class TableFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
     TableFormattingContext(const Container& formattingContextRoot, TableFormattingState&);
-    void layoutInFlowContent() override;
+    void layoutInFlowContent(InvalidationState&) override;
 
 private:
     class Geometry : public FormattingContext::Geometry {
@@ -58,7 +59,7 @@ private:
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column&);
+    void layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column&, InvalidationState&);
     void positionTableCells();
     void setComputedGeometryForRows();
     void setComputedGeometryForSections();

@@ -57,12 +57,12 @@ public:
     static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 
     LayoutContext(LayoutState&);
-    void layout(const InvalidationState&);
+    void layout(InvalidationState&);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 
 private:
-    void layoutFormattingContextSubtree(const Container&);
+    void layoutFormattingContextSubtree(const Container&, InvalidationState&);
     LayoutState& layoutState() { return m_layoutState; }
 
     // For testing purposes only

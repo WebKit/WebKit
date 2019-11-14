@@ -47,6 +47,11 @@ void InvalidationState::markNeedsUpdate(const Box& layoutBox)
     m_formattingContextRoots.add(&layoutBox.formattingContextRoot());
 }
 
+bool InvalidationState::needsLayout(const Box&) const
+{
+    return true;
+}
+
 }
 }
 #endif

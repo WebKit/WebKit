@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "TableFormattingState.h"
@@ -57,7 +58,7 @@ TableFormattingContext::TableFormattingContext(const Container& formattingContex
 {
 }
 
-void TableFormattingContext::layoutInFlowContent()
+void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState)
 {
     auto& grid = formattingState().tableGrid();
     auto& columnsContext = grid.columnsContext();
@@ -78,7 +79,7 @@ void TableFormattingContext::layoutInFlowContent()
     ASSERT(!cellList.isEmpty());
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
-        layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()));
+        layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()), invalidationState);
         // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
         auto& row = grid.rows().at(cell->position.y());
         row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellLayoutBox).marginBoxHeight()));
@@ -96,7 +97,7 @@ void TableFormattingContext::layoutInFlowContent()
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column)
+void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState)
 {
     auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
     computeBorderAndPadding(cellLayoutBox);
@@ -109,7 +110,7 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
     if (is<Container>(cellLayoutBox))
-        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent();
+        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState);
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.

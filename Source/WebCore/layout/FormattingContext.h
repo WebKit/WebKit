@@ -43,19 +43,20 @@ struct Length;
 
 namespace Layout {
 
-class Container;
 class Box;
-class FormattingState;
-class LayoutState;
 struct ComputedHorizontalMargin;
 struct ComputedVerticalMargin;
-struct Edges;
+class Container;
 struct ContentHeightAndMargin;
+struct ContentWidthAndMargin;
+struct Edges;
+class FormattingState;
 struct HorizontalGeometry;
+class InvalidationState;
+class LayoutState;
 struct UsedHorizontalValues;
 struct UsedVerticalValues;
 struct VerticalGeometry;
-struct ContentWidthAndMargin;
 
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
@@ -63,8 +64,8 @@ public:
     FormattingContext(const Container& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent() = 0;
-    void layoutOutOfFlowContent();
+    virtual void layoutInFlowContent(InvalidationState&) = 0;
+    void layoutOutOfFlowContent(InvalidationState&);
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);

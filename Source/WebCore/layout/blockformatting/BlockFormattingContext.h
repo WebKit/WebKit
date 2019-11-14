@@ -48,10 +48,10 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent() override;
+    void layoutInFlowContent(InvalidationState&) override;
 
 private:
-    void layoutFormattingContextRoot(FloatingContext&, const Box&);
+    void layoutFormattingContextRoot(FloatingContext&, const Box&, InvalidationState&);
     void placeInFlowPositionedChildren(const Box&);
 
     void computeWidthAndMargin(const Box&, Optional<LayoutUnit> usedAvailableWidth = { });

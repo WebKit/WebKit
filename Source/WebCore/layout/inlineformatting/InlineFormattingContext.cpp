@@ -30,6 +30,7 @@
 
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
+#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
@@ -62,7 +63,7 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent()
+void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState)
 {
     if (!root().hasInFlowOrFloatingChild())
         return;
@@ -76,7 +77,7 @@ void InlineFormattingContext::layoutInFlowContent()
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext())
-            layoutFormattingContextRoot(*layoutBox, usedHorizontalValues, usedVerticalValues);
+            layoutFormattingContextRoot(*layoutBox, invalidationState, usedHorizontalValues, usedVerticalValues);
         else
             computeHorizontalAndVerticalGeometry(*layoutBox, usedHorizontalValues, usedVerticalValues);
         layoutBox = nextInPreOrder(*layoutBox, root());
@@ -132,7 +133,7 @@ void InlineFormattingContext::lineLayout(UsedHorizontalValues usedHorizontalValu
     }
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingContextRoot, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingContextRoot, InvalidationState& invalidationState, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
 {
     ASSERT(formattingContextRoot.isFloatingPositioned() || formattingContextRoot.isInlineBlockBox());
 
@@ -142,11 +143,11 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
     if (is<Container>(formattingContextRoot)) {
         auto& rootContainer = downcast<Container>(formattingContextRoot);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent();
+        formattingContext->layoutInFlowContent(invalidationState);
         // Come back and finalize the root's height and margin.
         computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-        formattingContext->layoutOutOfFlowContent();
+        formattingContext->layoutOutOfFlowContent(invalidationState);
     } else
         computeHeightAndMargin(formattingContextRoot, usedHorizontalValues, usedVerticalValues);
 }

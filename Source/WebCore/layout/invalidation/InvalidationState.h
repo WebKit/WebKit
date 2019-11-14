@@ -41,6 +41,7 @@ public:
     InvalidationState();
 
     void markNeedsUpdate(const Box&);
+    bool needsLayout(const Box&) const;
 
     using FormattingContextRoots = WeakHashSet<const Container>;
     // FIXME: We currently do full formatting context layouts (no partial layout within a formatting context).

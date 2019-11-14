@@ -149,7 +149,7 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<U
     displayBox.setPadding(geometry().computedPadding(layoutBox, *usedHorizontalValues));
 }
 
-void FormattingContext::layoutOutOfFlowContent()
+void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
@@ -161,9 +161,9 @@ void FormattingContext::layoutOutOfFlowContent()
         if (is<Container>(*outOfFlowBox)) {
             auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
             auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
-            formattingContext->layoutInFlowContent();
+            formattingContext->layoutInFlowContent(invalidationState);
             computeOutOfFlowVerticalGeometry(outOfFlowRootContainer);
-            formattingContext->layoutOutOfFlowContent();            
+            formattingContext->layoutOutOfFlowContent(invalidationState);
         } else
             computeOutOfFlowVerticalGeometry(*outOfFlowBox);
     }

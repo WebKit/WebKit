@@ -56,22 +56,22 @@ LayoutContext::LayoutContext(LayoutState& layoutState)
 {
 }
 
-void LayoutContext::layout(const InvalidationState& invalidationState)
+void LayoutContext::layout(InvalidationState& invalidationState)
 {
     PhaseScope scope(Phase::Type::Layout);
 
     auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
     ASSERT(!formattingContextRootsForLayout.computesEmpty());
     for (auto& formattingContextRoot : formattingContextRootsForLayout)
-        layoutFormattingContextSubtree(formattingContextRoot);
+        layoutFormattingContextSubtree(formattingContextRoot, invalidationState);
 }
 
-void LayoutContext::layoutFormattingContextSubtree(const Container& formattingContextRoot)
+void LayoutContext::layoutFormattingContextSubtree(const Container& formattingContextRoot, InvalidationState& invalidationState)
 {
     RELEASE_ASSERT(formattingContextRoot.establishesFormattingContext());
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
-    formattingContext->layoutInFlowContent();
-    formattingContext->layoutOutOfFlowContent();
+    formattingContext->layoutInFlowContent(invalidationState);
+    formattingContext->layoutOutOfFlowContent(invalidationState);
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const Container& formattingContextRoot, LayoutState& layoutState)
