@@ -1,3 +1,34 @@
+2019-11-13  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION: WKWebView navigation fails when navigating from about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=203852
+        <rdar://problem/56973112>
+
+        Reviewed by Brent Fulgham.
+
+        Previously, WebPageProxy::loadFile would unconditionally create a sandbox extension for the resource directory URL. Currently,
+        this method is calling WebPageProxy::maybeInitializeSandboxExtension to create a sandbox extension if needed. The sandbox
+        extension for the resource URL is not created if the WebContent process already has assumed access to the resource URL, which
+        is the case when loading the same file for the second time. The sandbox extension still needs to be issued in this case, since
+        the WebContent process is revoking its extension when the load is done. This patch restore the original behaviour by adding a
+        flag to WebPageProxy::maybeInitializeSandboxExtension to indicate whether the method should check if the process already has
+        assumed access.
+
+        API test: WKWebView.LoadRelativeFileURL
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shouldSendPendingMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequestWaitingForProcessLaunch):
+        (WebKit::WebPage::loadRequestWaitingForPID): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Fix build
