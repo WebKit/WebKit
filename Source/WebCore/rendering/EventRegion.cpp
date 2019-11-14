@@ -128,7 +128,7 @@ void EventRegion::translate(const IntSize& offset)
 
 #if ENABLE(POINTER_EVENTS)
 
-constexpr unsigned toIndex(TouchAction touchAction)
+static inline unsigned toIndex(TouchAction touchAction)
 {
     switch (touchAction) {
     case TouchAction::None:
@@ -148,7 +148,7 @@ constexpr unsigned toIndex(TouchAction touchAction)
     return 0;
 }
 
-constexpr TouchAction toTouchAction(unsigned index)
+static inline TouchAction toTouchAction(unsigned index)
 {
     switch (index) {
     case 0:

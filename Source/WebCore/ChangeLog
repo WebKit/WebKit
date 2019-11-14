@@ -1,3 +1,21 @@
+2019-11-13  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Fix GTK/WPE builds after enabling POINTER_EVENTS support
+        https://bugs.webkit.org/show_bug.cgi?id=204164
+
+        Reviewed by Žan Doberšek.
+
+        Our g++ 8.3.0 yields "error: call to non-constexpr function
+        WTFReportAssertionFailure" when compiling rendering/EventRegion.cpp
+        since r252366.
+
+        Turn both toTouchAction() / toIndex() into static inline instead of
+        constexpr functions to appease g++ 8.3.0.
+
+        * rendering/EventRegion.cpp:
+        (WebCore::toIndex):
+        (WebCore::toTouchAction):
+
 2019-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.write()
