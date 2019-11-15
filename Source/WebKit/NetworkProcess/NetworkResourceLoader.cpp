@@ -530,13 +530,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return;
     }
 
-    if (m_isKeptAlive) {
-        m_responseCompletionHandler = WTFMove(completionHandler);
-        RunLoop::main().dispatch([protectedThis = makeRef(*this)] {
-            protectedThis->didFinishLoading(NetworkLoadMetrics { });
-        });
-        return;
-    }
+    if (m_isKeptAlive)
+        return completionHandler(PolicyAction::Ignore);
 
     completionHandler(PolicyAction::Use);
 }
