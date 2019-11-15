@@ -134,7 +134,7 @@ WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)
 
 WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)
 {
-    return toAPI(&API::FrameInfo::create(*toImpl(frameRef), WebCore::SecurityOrigin::createFromString(toImpl(frameRef)->url())).leakRef());
+    return toAPI(&API::FrameInfo::create(*toImpl(frameRef), WebCore::SecurityOriginData { WebCore::SecurityOrigin::createFromString(toImpl(frameRef)->url())->data() }).leakRef());
 }
 
 void WKFrameGetMainResourceData(WKFrameRef frameRef, WKFrameGetResourceDataFunction callback, void* context)

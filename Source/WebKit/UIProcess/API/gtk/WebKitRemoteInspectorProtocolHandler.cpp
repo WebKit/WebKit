@@ -42,7 +42,7 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
         String message = serializedScriptValue.toString();
         Vector<String> tokens = message.split(':');

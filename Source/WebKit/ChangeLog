@@ -1,3 +1,75 @@
+2019-11-15  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce structure copies when creating an API::FrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=204199
+
+        Reviewed by Brady Eidson.
+
+        Use WTFMove and references where possible.  This is cleanup needed for a future patch.
+
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::decode):
+        * Shared/FrameInfoData.h:
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::create):
+        (API::FrameInfo::FrameInfo):
+        (API::FrameInfo::~FrameInfo): Deleted.
+        (API::FrameInfo::clearPage): Deleted.
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didFailProvisionalLoadInSubframeWithError):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runJavaScriptAlert):
+        (API::UIClient::runJavaScriptConfirm):
+        (API::UIClient::runJavaScriptPrompt):
+        (API::UIClient::runBeforeUnloadConfirmPanel):
+        (API::UIClient::runOpenPanel):
+        (API::UIClient::runWebAuthenticationPanel):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCreateFrameInfo):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo webView]):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        (WebKit::UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::UIDelegate::UIClient::runBeforeUnloadConfirmPanel):
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        (WebKit::UIDelegate::UIClient::runWebAuthenticationPanel):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::runPanel):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::runOpenPanel):
+        * UIProcess/WebPageProxy.h:
+
 2019-11-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r244361) iOS: Layout test http/tests/quicklook/rtf-document-domain-is-empty-string.html is crashing

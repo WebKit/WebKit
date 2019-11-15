@@ -29,7 +29,7 @@
 #include <WebCore/ResourceRequest.h>
 
 namespace WebCore {
-class SecurityOrigin;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -45,8 +45,8 @@ class SecurityOrigin;
 
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
-    static Ref<FrameInfo> create(const WebKit::FrameInfoData&, WebKit::WebPageProxy*);
-    static Ref<FrameInfo> create(const WebKit::WebFrameProxy&, const WebCore::SecurityOrigin&);
+    static Ref<FrameInfo> create(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
+    static Ref<FrameInfo> create(const WebKit::WebFrameProxy&, WebCore::SecurityOriginData&&);
     virtual ~FrameInfo();
 
     bool isMainFrame() const { return m_isMainFrame; }
@@ -54,8 +54,6 @@ public:
     SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
     API::FrameHandle& handle() { return m_handle.get(); }
     WebKit::WebPageProxy* page() { return m_page.get(); }
-
-    void clearPage();
 
 private:
     FrameInfo(const WebKit::FrameInfoData&, WebKit::WebPageProxy*);
