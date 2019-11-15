@@ -198,10 +198,6 @@ IGNORE_WARNINGS_END
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
 @end
 
-@protocol UIDropInteractionDelegate_Private <UIDropInteractionDelegate>
-- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
-@end
-
 @interface NSURL (UIKitSPI)
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
@@ -216,6 +212,10 @@ IGNORE_WARNINGS_END
 @end
 
 #if PLATFORM(IOS)
+
+@protocol UIDropInteractionDelegate_Private <UIDropInteractionDelegate>
+- (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
+@end
 
 typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
     _UIClickInteractionEventBegan = 0,
