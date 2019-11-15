@@ -1,3 +1,17 @@
+2019-11-14  Saam Barati  <sbarati@apple.com>
+
+        Make gcSafeMemcpy/gcSafeMemmove/gcSafeZeroMemory work properly on arm64_32
+        https://bugs.webkit.org/show_bug.cgi?id=204217
+
+        Reviewed by Mark Lam.
+
+        We need to be explicit in the code about using 64-bit types and pointer types.
+
+        * heap/GCMemoryOperations.h:
+        (JSC::gcSafeMemcpy):
+        (JSC::gcSafeMemmove):
+        (JSC::gcSafeZeroMemory):
+
 2019-11-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use toLength() and getIndexQuickly() in JSON.stringify

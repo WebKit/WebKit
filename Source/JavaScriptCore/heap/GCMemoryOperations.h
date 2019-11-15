@@ -92,29 +92,32 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
             : "xmm0", "xmm1", "xmm2", "xmm3", "memory", "cc"
         );
 #elif CPU(ARM64)
-        size_t alignedBytes = (bytes / 16) * 16;
+        uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 16) * 16;
         size_t offset = 0;
+
+        uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst));
+        uint64_t srcPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(src));
 
         asm volatile(
             "1:\t\n"
             "cmp %x[offset], %x[alignedBytes]\t\n"
             "b.eq 2f\t\n"
-            "ldr q0, [%x[src], %x[offset]]\t\n"
-            "str q0, [%x[dst], %x[offset]]\t\n"
+            "ldr q0, [%x[srcPtr], %x[offset]]\t\n"
+            "str q0, [%x[dstPtr], %x[offset]]\t\n"
             "add %x[offset], %x[offset], #0x10\t\n"
             "b 1b\t\n"
 
             "2:\t\n"
             "cmp %x[offset], %x[bytes]\t\n"
             "b.eq 3f\t\n"
-            "ldr d0, [%x[src], %x[offset]]\t\n"
-            "str d0, [%x[dst], %x[offset]]\t\n"
+            "ldr d0, [%x[srcPtr], %x[offset]]\t\n"
+            "str d0, [%x[dstPtr], %x[offset]]\t\n"
             "add %x[offset], %x[offset], #0x8\t\n"
             "b 2b\t\n"
 
             "3:\t\n"
 
-            : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [offset] "+r" (offset), [dst] "+r" (dst), [src] "+r" (src)
+            : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [offset] "+r" (offset), [dstPtr] "+r" (dstPtr), [srcPtr] "+r" (srcPtr)
             :
             : "d0", "d1", "memory"
         );
@@ -154,7 +157,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
         return;
     }
 
-    if ((bitwise_cast<uintptr_t>(src) + bytes) <= bitwise_cast<uintptr_t>(dst)) {
+    if ((static_cast<uint64_t>(bitwise_cast<uintptr_t>(src)) + static_cast<uint64_t>(bytes)) <= static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst))) {
         gcSafeMemcpy(dst, src, bytes);
         return;
     }
@@ -208,27 +211,29 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
             : "xmm0", "xmm1", "xmm2", "xmm3", "memory", "cc"
         );
 #elif CPU(ARM64)
-        size_t alignedBytes = (bytes / 16) * 16;
+        uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 16) * 16;
+        uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst));
+        uint64_t srcPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(src));
 
         asm volatile(
             "1:\t\n"
             "cmp %x[alignedBytes], %x[bytes]\t\n"
             "b.eq 2f\t\n"
             "sub %x[bytes], %x[bytes], #0x8\t\n"
-            "ldr d0, [%x[src], %x[bytes]]\t\n"
-            "str d0, [%x[dst], %x[bytes]]\t\n"
+            "ldr d0, [%x[srcPtr], %x[bytes]]\t\n"
+            "str d0, [%x[dstPtr], %x[bytes]]\t\n"
             "b 1b\t\n"
 
             "2:\t\n"
             "cbz %x[alignedBytes], 3f\t\n"
             "sub %x[alignedBytes], %x[alignedBytes], #0x10\t\n"
-            "ldr q0, [%x[src], %x[alignedBytes]]\t\n"
-            "str q0, [%x[dst], %x[alignedBytes]]\t\n"
+            "ldr q0, [%x[srcPtr], %x[alignedBytes]]\t\n"
+            "str q0, [%x[dstPtr], %x[alignedBytes]]\t\n"
             "b 2b\t\n"
 
             "3:\t\n"
 
-            : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [dst] "+r" (dst), [src] "+r" (src)
+            : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [dstPtr] "+r" (dstPtr), [srcPtr] "+r" (srcPtr)
             :
             : "d0", "d1", "memory"
         );
@@ -261,31 +266,32 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
         : "memory"
     );
 #elif CPU(ARM64)
-    size_t alignedBytes = (bytes / 64) * 64;
-    char* end = bitwise_cast<char*>(dst) + bytes;
-    char* alignedEnd = bitwise_cast<char*>(dst) + alignedBytes;
+    uint64_t alignedBytes = (static_cast<uint64_t>(bytes) / 64) * 64;
+    uint64_t dstPtr = static_cast<uint64_t>(bitwise_cast<uintptr_t>(dst));
+    uint64_t end = dstPtr + bytes;
+    uint64_t alignedEnd = dstPtr + alignedBytes;
     asm volatile(
         "movi d0, #0\t\n"
         "movi d1, #0\t\n"
 
         ".p2align 4\t\n"
         "2:\t\n"
-        "cmp %x[dst], %x[alignedEnd]\t\n"
+        "cmp %x[dstPtr], %x[alignedEnd]\t\n"
         "b.eq 4f\t\n"
-        "stnp q0, q0, [%x[dst]]\t\n"
-        "stnp q0, q0, [%x[dst], #0x20]\t\n"
-        "add %x[dst], %x[dst], #0x40\t\n"
+        "stnp q0, q0, [%x[dstPtr]]\t\n"
+        "stnp q0, q0, [%x[dstPtr], #0x20]\t\n"
+        "add %x[dstPtr], %x[dstPtr], #0x40\t\n"
         "b 2b\t\n"
 
         "4:\t\n"
-        "cmp %x[dst], %x[end]\t\n"
+        "cmp %x[dstPtr], %x[end]\t\n"
         "b.eq 5f\t\n"
-        "str d0, [%x[dst]], #0x8\t\n"
+        "str d0, [%x[dstPtr]], #0x8\t\n"
         "b 4b\t\n"
 
         "5:\t\n"
 
-        : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [dst] "+r" (dst), [end] "+r" (end), [alignedEnd] "+r" (alignedEnd)
+        : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [dstPtr] "+r" (dstPtr), [end] "+r" (end), [alignedEnd] "+r" (alignedEnd)
         :
         : "d0", "d1", "memory"
     );
