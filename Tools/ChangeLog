@@ -1,3 +1,20 @@
+2019-11-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.layout_tests.layout_package
+        https://bugs.webkit.org/show_bug.cgi?id=204212
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.layout_tests.layout_package.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (convert_trie_to_flat_paths): Use compatible iteritems.
+        (JSONResultsGenerator._insert_failure_summaries): Use compatible iterkeys.
+        (JSONResultsGenerator._convert_json_to_current_version): Use compatible iteritems.
+        (JSONResultsGenerator._convert_tests_to_trie): Use compatible iterkeys.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        (JSONGeneratorTest._verify_json_results): Use items instead of iteritems.
+        (JSONGeneratorTest.test_test_timings_trie): Python 3's json decoder is sensitive to ordering.
+
 2019-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Flaky API Test TestWebKitAPI.ServiceWorkers.ThrottleCrash

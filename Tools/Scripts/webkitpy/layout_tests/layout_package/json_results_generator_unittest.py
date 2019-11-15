@@ -132,7 +132,7 @@ class JSONGeneratorTest(unittest.TestCase):
         if tests_set or DISABLED_count:
             fixable = {}
             for fixable_items in buildinfo[JRG.FIXABLE]:
-                for (type, count) in fixable_items.iteritems():
+                for (type, count) in fixable_items.items():
                     if type in fixable:
                         fixable[type] = fixable[type] + count
                     else:
@@ -156,7 +156,7 @@ class JSONGeneratorTest(unittest.TestCase):
 
         if failed_count_map:
             tests = buildinfo[JRG.TESTS]
-            for test_name in failed_count_map.iterkeys():
+            for test_name in failed_count_map.keys():
                 test = self._find_test_in_trie(test_name, tests)
 
                 failed = 0
@@ -217,12 +217,12 @@ class JSONGeneratorTest(unittest.TestCase):
         trie = json_results_generator.test_timings_trie(test_port, individual_test_timings)
 
         expected_trie = {
-          'bar.html': 0,
           'foo': {
               'bar': {
                   'baz.html': 1200,
               }
-          }
+          },
+          'bar.html': 0,
         }
 
         self.assertEqual(json.dumps(trie), json.dumps(expected_trie))

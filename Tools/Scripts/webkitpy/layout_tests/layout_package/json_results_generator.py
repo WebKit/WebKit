@@ -33,15 +33,16 @@ import sys
 import time
 import xml.dom.minidom
 
+from webkitpy.common.checkout.scm.detection import SCMDetector
+from webkitpy.common.iteration_compatibility import iteritems, iterkeys
+from webkitpy.common.net.file_uploader import FileUploader
+
 if sys.version_info > (3, 0):
     from urllib.error import HTTPError, URLError
     from urllib.parse import quote
     from urllib.request import urlopen
 else:
     from urllib2 import HTTPError, quote, URLError, urlopen
-
-from webkitpy.common.checkout.scm.detection import SCMDetector
-from webkitpy.common.net.file_uploader import FileUploader
 
 # A JSON results generator for generic tests.
 # FIXME: move this code out of the layout_package directory.
@@ -80,7 +81,7 @@ def write_json(filesystem, json_object, file_path, callback=None):
 def convert_trie_to_flat_paths(trie, prefix=None):
     """Converts the directory structure in the given trie to flat paths, prepending a prefix to each."""
     result = {}
-    for name, data in trie.iteritems():
+    for name, data in iteritems(trie):
         if prefix:
             name = prefix + "/" + name
 
@@ -522,7 +523,7 @@ class JSONResultsGenerator(object):
 
         # Create a test modifiers (FAILS, FLAKY etc) summary dictionary.
         entry = {}
-        for test_name in self._test_results_map.iterkeys():
+        for test_name in iterkeys(self._test_results_map):
             result_char = self._get_modifier_char(test_name)
             entry[result_char] = entry.get(result_char, 0) + 1
 
@@ -631,7 +632,7 @@ class JSONResultsGenerator(object):
         # version 3->4
         if archive_version == 3:
             num_results = len(results_json.values())
-            for builder, results in results_json.iteritems():
+            for builder, results in iteritems(results_json):
                 self._convert_tests_to_trie(results)
 
         results_json[self.VERSION_KEY] = self.VERSION
@@ -642,7 +643,7 @@ class JSONResultsGenerator(object):
 
         test_results = results[self.TESTS]
         test_results_trie = {}
-        for test in test_results.iterkeys():
+        for test in iterkeys(test_results):
             single_test_result = test_results[test]
             add_path_to_trie(test, single_test_result, test_results_trie)
 
