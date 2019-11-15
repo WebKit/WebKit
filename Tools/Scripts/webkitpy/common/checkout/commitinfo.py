@@ -33,13 +33,13 @@ from webkitpy.common.config.committers import CommitterList
 
 
 class CommitInfo(object):
-    def __init__(self, revision, committer_email, changelog_data, committer_list=CommitterList()):
+    def __init__(self, revision, committer_email, changelog_data, committer_list=None):
         self._revision = revision
         self._committer_email = committer_email
         self._changelog_data = changelog_data
 
         # Derived values:
-        self._committer = committer_list.committer_by_email(committer_email)
+        self._committer = (committer_list or CommitterList()).committer_by_email(committer_email)
 
     def revision(self):
         return self._revision
