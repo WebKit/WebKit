@@ -74,6 +74,8 @@ public:
 
     const Container& root() const { return *m_layoutTreeContent.rootLayoutBox; }
 
+    Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_layoutTreeContent.renderObjectToLayoutBox.get(&renderer); }
+
 private:
     HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
 #ifndef NDEBUG

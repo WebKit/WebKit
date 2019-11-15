@@ -1,5 +1,23 @@
 2019-11-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Invalidation] Introduce LayoutBox::updateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=204224
+        <rdar://problem/57226354>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for being able to do incremental layouts on partial style change (currently we re-build the tree on each layout frame).
+
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::layoutBoxForRenderer const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::updateStyle):
+        * layout/layouttree/LayoutBox.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle):
+
+2019-11-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Invalidation] Add a temporary RenderObject to Layout::Box map
         https://bugs.webkit.org/show_bug.cgi?id=204218
         <rdar://problem/57215201>

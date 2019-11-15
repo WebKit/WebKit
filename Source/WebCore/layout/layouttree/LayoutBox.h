@@ -136,6 +136,7 @@ public:
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
 
+    void updateStyle(const RenderStyle& newStyle);
     const RenderStyle& style() const { return m_style; }
 
     const Replaced* replaced() const;

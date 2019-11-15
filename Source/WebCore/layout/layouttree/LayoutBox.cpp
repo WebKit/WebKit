@@ -65,6 +65,11 @@ Box::~Box()
     removeRareData();
 }
 
+void Box::updateStyle(const RenderStyle& newStyle)
+{
+    m_style = RenderStyle::clone(newStyle);
+}
+
 bool Box::establishesFormattingContext() const
 {
     // We need the final tree structure to tell whether a box establishes a certain formatting context. 
