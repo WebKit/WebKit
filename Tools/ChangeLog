@@ -1,5 +1,14 @@
 2019-11-15  Aakash Jain  <aakash_jain@apple.com>
 
+        [EWS] Update windows bots in config.json
+        https://bugs.webkit.org/show_bug.cgi?id=204245
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2019-11-15  Aakash Jain  <aakash_jain@apple.com>
+
         Windows EWS should not upload archives
         https://bugs.webkit.org/show_bug.cgi?id=204229
 

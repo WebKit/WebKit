@@ -243,39 +243,27 @@
       "platform": "*"
     },
     {
-      "name": "ews200",
+      "name": "ews210",
       "platform": "win"
     },
     {
-      "name": "ews201",
+      "name": "ews211",
       "platform": "win"
     },
     {
-      "name": "ews202",
+      "name": "ews212",
       "platform": "win"
     },
     {
-      "name": "ews203",
+      "name": "ews213",
       "platform": "win"
     },
     {
-      "name": "ews204",
+      "name": "ews214",
       "platform": "win"
     },
     {
-      "name": "ews205",
-      "platform": "win"
-    },
-    {
-      "name": "ews206",
-      "platform": "win"
-    },
-    {
-      "name": "ews207",
-      "platform": "win"
-    },
-    {
-      "name": "ews208",
+      "name": "ews215",
       "platform": "win"
     }
   ],
@@ -396,7 +384,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "platform": "win",
-      "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204", "ews205", "ews206", "ews207", "ews208"]
+      "workernames": ["ews210", "ews211", "ews212", "ews213", "ews214", "ews215"]
     },
     {
       "name": "WinCairo-EWS",
