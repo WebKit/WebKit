@@ -1,3 +1,12 @@
+2019-11-15  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE][GTK] Gardening after r252487
+        https://bugs.webkit.org/show_bug.cgi?id=204235
+
+        Unreviewed WPE and GTK+ gardening after r252487.
+
+        * platform/gtk/TestExpectations:
+
 2019-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Two layout tests in editing/selection/ios time out when waiting for selection views to appear

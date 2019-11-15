@@ -2812,6 +2812,8 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
 
+webkit.org/b/204230 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
+
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 
 # This test is out-dated since r95899.
@@ -3623,7 +3625,6 @@ webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
 
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker.html [ Failure ]
@@ -3848,7 +3849,6 @@ webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-dispos
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
-webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html [ Failure ]
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
@@ -3890,10 +3890,14 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
