@@ -151,7 +151,7 @@ class WindowsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
-        self.addStep(CompileWebKit())
+        self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(RunWebKit1Tests())
 
 
