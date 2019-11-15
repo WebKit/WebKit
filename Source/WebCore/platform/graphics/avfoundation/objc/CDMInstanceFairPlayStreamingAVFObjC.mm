@@ -365,7 +365,15 @@ static Keys keyIDsForRequest(const Request& requests)
 
 static AtomString initTypeForRequest(AVContentKeyRequest* request)
 {
+    if (![request respondsToSelector:@selector(options)]) {
+        // AVContentKeyRequest.options was added in 10.14.4; if we are running on a previous version
+        // we don't have support for 'cenc' anyway, so just assume 'sinf'.
+        return CDMPrivateFairPlayStreaming::sinfName();
+    }
+
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto nsInitType = (NSString*)[request.options valueForKey:InitializationDataTypeKey];
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (![nsInitType isKindOfClass:NSString.class])
         return emptyAtom();
 
@@ -751,7 +759,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
     if (requests.isEmpty())
         return;
 
-    auto initDataType = AtomString((NSString *)[requests.first().get().options valueForKey:InitializationDataTypeKey]);
+    auto initDataType = initTypeForRequest(requests.first().get());
     if (initDataType != InitDataRegistry::cencName()) {
         didProvideRequest(requests.first().get());
         requests.remove(0);
