@@ -181,6 +181,7 @@
         "com.apple.corevideo"
         "com.apple.itunesstored" ; Needed by MediaPlayer framework
         "com.apple.mobileipod" ; Ditto
+        "com.apple.audio.virtualaudio" ; <rdar://problem/57170333>
     )
 
     ;; Required by the MediaPlayer framework.

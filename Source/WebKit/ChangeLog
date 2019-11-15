@@ -1,3 +1,15 @@
+2019-11-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix sandbox violation in the WebContent process related to WebRTC audio captures
+        https://bugs.webkit.org/show_bug.cgi?id=204240
+        <rdar://problem/57170333>
+
+        Reviewed by Brent Fulgham.
+
+        The WebContent process needs access to read a new audio related preference domain.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-15  Alex Christensen  <achristensen@webkit.org>
 
         Reduce structure copies when creating an API::FrameInfo
