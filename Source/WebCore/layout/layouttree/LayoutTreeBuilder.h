@@ -40,14 +40,29 @@ class Box;
 class Container;
 class LayoutState;
 
+struct LayoutTreeContent {
+    LayoutTreeContent(const RenderBox&, std::unique_ptr<Container>);
+
+    const RenderBox& rootRenderer;
+    std::unique_ptr<Container> rootLayoutBox;
+
+    using RenderObjectToLayoutBoxMap = HashMap<const RenderObject*, Box*>;
+    RenderObjectToLayoutBoxMap renderObjectToLayoutBox;
+};
+
 class TreeBuilder {
 public:
-    static std::unique_ptr<Container> createLayoutTree(const RenderView&);
+    static LayoutTreeContent buildLayoutTree(const RenderView&);
 
 private:
-    static void createSubTree(const RenderElement& rootRenderer, Container& rootContainer);
-    static void createTableStructure(const RenderTable& tableRenderer, Container& tableWrapperBox);
-    static std::unique_ptr<Box> createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer);
+    TreeBuilder(LayoutTreeContent&);
+
+    void buildTree();
+    void buildSubTree(const RenderElement& rootRenderer, Container& rootContainer);
+    void buildTableStructure(const RenderTable& tableRenderer, Container& tableWrapperBox);
+    std::unique_ptr<Box> createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer);
+
+    LayoutTreeContent& m_layoutTreeContent;
 };
 
 #if ENABLE(TREE_DEBUGGING)

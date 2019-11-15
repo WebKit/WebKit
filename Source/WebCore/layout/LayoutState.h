@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutContainer.h"
+#include "LayoutTreeBuilder.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
@@ -48,7 +49,7 @@ class FormattingState;
 class LayoutState {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(std::unique_ptr<Container> root);
+    LayoutState(LayoutTreeContent&&);
     ~LayoutState();
 
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot);
@@ -71,17 +72,18 @@ public:
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inNoQuirksMode() const { return m_quirksMode == QuirksMode::No; }
 
-    const Container& root() const { return *m_root; }
+    const Container& root() const { return *m_layoutTreeContent.rootLayoutBox; }
 
 private:
-    // FIXME: Figure out the ownership model for the layout tree.
-    std::unique_ptr<Container> m_root;
     HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
     QuirksMode m_quirksMode { QuirksMode::No };
+
+    // FIXME: Figure out the ownership model for the layout tree.
+    LayoutTreeContent m_layoutTreeContent;
 };
 
 #ifndef NDEBUG

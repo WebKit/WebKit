@@ -143,7 +143,7 @@ void LayoutContext::runLayout(LayoutState& layoutState)
 
 std::unique_ptr<LayoutState> LayoutContext::runLayoutAndVerify(const RenderView& renderView)
 {
-    auto layoutState = makeUnique<LayoutState>(TreeBuilder::createLayoutTree(renderView));
+    auto layoutState = makeUnique<LayoutState>(TreeBuilder::buildLayoutTree(renderView));
     initializeLayoutState(*layoutState, renderView);
     runLayout(*layoutState);
     LayoutContext::verifyAndOutputMismatchingLayoutTree(*layoutState, renderView);

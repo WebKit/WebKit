@@ -38,11 +38,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(std::unique_ptr<Container> root)
-    : m_root(WTFMove(root))
+LayoutState::LayoutState(LayoutTreeContent&& layoutTreeContent)
+    : m_layoutTreeContent(WTFMove(layoutTreeContent))
 {
-    // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (it would be a no-op).
-    ASSERT(m_root->establishesFormattingContext());
+    // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
+    ASSERT(m_layoutTreeContent.rootLayoutBox->establishesFormattingContext());
 }
 
 LayoutState::~LayoutState() = default;
