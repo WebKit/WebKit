@@ -4150,7 +4150,11 @@ void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url, S
 {
     auto* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
-    MESSAGE_CHECK_URL(m_process, url);
+
+    if (!checkURLReceivedFromCurrentOrPreviousWebProcess(m_process, url)) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring WebPageProxy::DidExplicitOpenForFrame() IPC from the WebContent process because the file URL is outside the sandbox");
+        return;
+    }
 
     auto transaction = m_pageLoadState.transaction();
 

@@ -1,3 +1,21 @@
+2019-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r244361) iOS: Layout test http/tests/quicklook/rtf-document-domain-is-empty-string.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=204205
+        <rdar://problem/51864314>
+
+        Reviewed by Alex Christensen.
+
+        In this test, NSHTMLWriter ends up creating a WebArchive providing file:///index.html as URL. The page's script
+        then calls document.open(), which triggers a DidExplicitOpenForFrame() IPC to the UIProcess with this URL.
+        This trips our MESSAGE_CHECK_URL() check in the UIProcess when this path is not within the WebContent process'
+        sandbox, and we kill the WebContent process. To address the issue, this patch replaces the MESSAGE_CHECK_URL()
+        with an if check and an early return so that we ignore the IPC if the URL does not make sense, without actually
+        terminating the WebContent process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didExplicitOpenForFrame):
+
 2019-11-12  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc to M78
