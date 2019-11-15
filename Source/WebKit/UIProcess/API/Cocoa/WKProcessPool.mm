@@ -469,6 +469,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->syncNetworkProcessCookies();
 }
 
+- (void)_clearWebProcessCache
+{
+    _processPool->webProcessCache().clear();
+}
+
 - (size_t)_webProcessCount
 {
     return _processPool->processes().size();

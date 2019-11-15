@@ -111,6 +111,7 @@
 - (NSUInteger)_maximumSuspendedPageCount WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (NSUInteger)_processCacheCapacity WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (NSUInteger)_processCacheSize WK_API_AVAILABLE(macos(10.15), ios(13.0));
+- (void)_clearWebProcessCache WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_setUseSeparateServiceWorkerProcess:(BOOL)forceServiceWorkerProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)

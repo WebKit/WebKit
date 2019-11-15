@@ -1,3 +1,18 @@
+2019-11-15  Benjamin Nham  <nham@apple.com>
+
+        Add SPI to clear web process cache
+        https://bugs.webkit.org/show_bug.cgi?id=204210
+
+        Reviewed by Chris Dumez.
+
+        This adds an SPI to clear cached web processes. The intended use case is to add a lukewarm mode to
+        Mac PLT5 in which web pages load in a new WebProcess and load resources from the disk cache.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _clearWebProcessCache]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        (-[WKProcessPool _clearWebProcessCache]):
+
 2019-11-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violation in the WebContent process related to WebRTC audio captures
