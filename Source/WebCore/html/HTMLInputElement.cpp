@@ -1550,7 +1550,7 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
 void HTMLInputElement::didFinishInsertingNode()
 {
     HTMLTextFormControlElement::didFinishInsertingNode();
-    if (isConnected() && !form())
+    if (isInTreeScope() && !form())
         addToRadioButtonGroup();
 }
 

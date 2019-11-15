@@ -1,3 +1,26 @@
+2019-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Crash when setting HTMLInputElement.checked for a disconnected radio button in a shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=204208
+        <rdar://problem/57045830>
+
+        Reviewed by Tim Horton.
+
+        r251110 refactored logic in RadioButtonGroup::updateCheckedState, such that it assumes that m_nameToGroupMap
+        always contains an entry for the given input element's name. Prior to r251110, it would bail if m_nameToGroupMap
+        didn't exist. In this particular case, a named input element is added to a shadow root that is disconnected from
+        the document. This means that in HTMLInputElement::didFinishInsertingNode(), we will avoid adding the element to
+        the radio button group, even though it has a tree scope due to the `isConnected()` check.
+
+        Later, when we try to set the `checked` attribute, we invoke updateCheckedState which sees that we have a tree
+        scope and assumes that we must have previously added the input element to the radio button map; this leads to a
+        nullptr deref, as the map is empty. Thus, to fix this, we change the `isConnected()` check to `isInTreeScope()`.
+
+        Test: fast/forms/radio-input-in-shadow-root-crash.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didFinishInsertingNode):
+
 2019-11-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update the feature status of WebAuthn

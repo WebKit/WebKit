@@ -1,3 +1,16 @@
+2019-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Crash when setting HTMLInputElement.checked for a disconnected radio button in a shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=204208
+        <rdar://problem/57045830>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test to verify that we don't crash in this scenario.
+
+        * fast/forms/radio-input-in-shadow-root-crash-expected.txt: Added.
+        * fast/forms/radio-input-in-shadow-root-crash.html: Added.
+
  2019-11-07  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc to M78
