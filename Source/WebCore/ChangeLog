@@ -1,3 +1,35 @@
+2019-11-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Audio capture fails when a track is unmuted
+        https://bugs.webkit.org/show_bug.cgi?id=204202
+        <rdar://problem/57005820>
+
+        Reviewed by Youenn Fablet.
+
+        Tested manually.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::canProduceAudioChanged): Remove unused "client" parameter.
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionCanProduceAudioChanged): Ditto.
+        * platform/audio/PlatformMediaSessionManager.h:
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (MediaSessionManagerCocoa::sessionCanProduceAudioChanged): Ditto.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted): Change m_muted before calling start/stop so the
+        muted method will return the correct value.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::startInternal): Call sessionCanProduceAudioChanged before
+        starting the audio unit so the audio session category is set correctly. ASSERT if the
+        audio session category is incorrect.
+        
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::startProducingData): Ditto.
+
 2019-11-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The CSSParser should not consume negative or unit-less lengths for the SVG properties 'r', 'rx' and 'ry'

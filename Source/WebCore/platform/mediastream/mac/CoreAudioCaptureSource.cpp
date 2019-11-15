@@ -34,6 +34,7 @@
 #include "CoreAudioCaptureDevice.h"
 #include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
+#include "PlatformMediaSessionManager.h"
 #include "Timer.h"
 #include "WebAudioSourceProviderAVFObjC.h"
 #include <AudioToolbox/AudioConverter.h>
@@ -664,6 +665,11 @@ OSStatus CoreAudioSharedUnit::startInternal()
     }
 
     unduck();
+
+#if PLATFORM(IOS_FAMILY)
+    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
+    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+#endif
 
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {

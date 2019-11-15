@@ -117,7 +117,7 @@ public:
     virtual void sessionStateChanged(PlatformMediaSession&);
     virtual void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) { };
     virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }
-    virtual void sessionCanProduceAudioChanged(PlatformMediaSession&);
+    virtual void sessionCanProduceAudioChanged();
 
 #if PLATFORM(IOS_FAMILY)
     virtual void configureWireLessTargetMonitoring() { }

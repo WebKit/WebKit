@@ -56,7 +56,7 @@ protected:
     void sessionWillEndPlayback(PlatformMediaSession&) override;
     void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) override;
     void clientCharacteristicsChanged(PlatformMediaSession&) override;
-    void sessionCanProduceAudioChanged(PlatformMediaSession&) override;
+    void sessionCanProduceAudioChanged() override;
 
     virtual void providePresentingApplicationPIDIfNecessary() { }
 

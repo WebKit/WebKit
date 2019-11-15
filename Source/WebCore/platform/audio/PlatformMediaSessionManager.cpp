@@ -407,7 +407,7 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
         session.beginInterruption(PlatformMediaSession::EnteringBackground);
 }
 
-void PlatformMediaSessionManager::sessionCanProduceAudioChanged(PlatformMediaSession&)
+void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
 {
     updateSessionState();
 }

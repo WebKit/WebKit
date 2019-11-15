@@ -173,9 +173,9 @@ void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession
     scheduleUpdateNowPlayingInfo();
 }
 
-void MediaSessionManagerCocoa::sessionCanProduceAudioChanged(PlatformMediaSession& session)
+void MediaSessionManagerCocoa::sessionCanProduceAudioChanged()
 {
-    PlatformMediaSessionManager::sessionCanProduceAudioChanged(session);
+    PlatformMediaSessionManager::sessionCanProduceAudioChanged();
     scheduleUpdateNowPlayingInfo();
 }
 

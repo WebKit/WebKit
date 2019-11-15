@@ -358,7 +358,7 @@ bool PlatformMediaSession::canProduceAudio() const
 
 void PlatformMediaSession::canProduceAudioChanged()
 {
-    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged(*this);
+    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
 }
 
 #if ENABLE(VIDEO)
