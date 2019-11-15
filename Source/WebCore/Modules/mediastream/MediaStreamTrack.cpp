@@ -62,7 +62,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
 {
-    return adoptRef(*new MediaStreamTrack(context, WTFMove(privateTrack)));
+    auto track = adoptRef(*new MediaStreamTrack(context, WTFMove(privateTrack)));
+    track->suspendIfNeeded();
+    return track;
 }
 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
@@ -73,7 +75,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     , m_mediaSession(PlatformMediaSession::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    suspendIfNeeded();
 
     m_private->addObserver(*this);
 

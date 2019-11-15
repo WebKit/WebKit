@@ -231,47 +231,49 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
 
-    auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
-        auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler();
-        });
-        if (isContextStopped())
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+            auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
+            if (isContextStopped())
+                return;
+
+            if (!privateStream) {
+                RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
+                deny(MediaAccessDenialReason::HardwareError);
+                return;
+            }
+
+            auto& document = downcast<Document>(*m_scriptExecutionContext);
+            privateStream->monitorOrientation(document.orientationNotifier());
+
+            auto stream = MediaStream::create(document, privateStream.releaseNonNull());
+            stream->startProducingData();
+
+            if (!isMediaStreamCorrectlyStarted(stream)) {
+                deny(MediaAccessDenialReason::HardwareError);
+                return;
+            }
+
+            ASSERT(document.isCapturing());
+            stream->document()->setHasCaptureMediaStreamTrack();
+            m_promise->resolve(WTFMove(stream));
+        };
+
+        auto& document = downcast<Document>(*scriptExecutionContext());
+        document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
+
+        RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
+
+        if (!m_scriptExecutionContext)
             return;
-
-        if (!privateStream) {
-            RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
-            deny(MediaAccessDenialReason::HardwareError);
-            return;
-        }
-
-        auto& document = downcast<Document>(*m_scriptExecutionContext);
-        privateStream->monitorOrientation(document.orientationNotifier());
-
-        auto stream = MediaStream::create(document, privateStream.releaseNonNull());
-        stream->startProducingData();
-
-        if (!isMediaStreamCorrectlyStarted(stream)) {
-            deny(MediaAccessDenialReason::HardwareError);
-            return;
-        }
-
-        ASSERT(document.isCapturing());
-        stream->document()->setHasCaptureMediaStreamTrack();
-        m_promise->resolve(WTFMove(stream));
-    };
-
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
-
-    RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
-
-    if (!m_scriptExecutionContext)
-        return;
 
 #if ENABLE(WEB_RTC)
-    if (auto* page = document.page())
-        page->rtcController().disableICECandidateFilteringForDocument(document);
+        if (auto* page = document.page())
+            page->rtcController().disableICECandidateFilteringForDocument(document);
 #endif
+    });
 }
 
 void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)

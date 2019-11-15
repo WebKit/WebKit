@@ -1,3 +1,25 @@
+2019-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression: http/tests/navigation/page-cache-getUserMedia-pending-promise.html is crashing in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=204232
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by http/tests/navigation/page-cache-getUserMedia-pending-promise.html.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        Call suspendIfNeeded() in the factory and not in the constructor. It is never safe to call
+        suspendIfNeeded() from inside the constructor because it may call the suspend() method, which
+        may ref |this|.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        Queue a task on the HTML event loop when the user media request is approved. This way, if the
+        page is suspended when this happens, we delay constructing the media stream (among other things)
+        until the page actually resumes.
+
 2019-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Invalidation] Reuse FrameViewLayoutContext::m_layoutState for incremental layout
