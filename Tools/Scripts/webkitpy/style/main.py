@@ -102,6 +102,10 @@ def change_directory(filesystem, checkout_root, paths):
 
 class CheckWebKitStyle(object):
     def _engage_awesome_stderr_hacks(self):
+        # Python 3 strings are unicode, we don't need to encode stderr
+        if sys.version_info > (3, 0):
+            return sys.stderr
+
         # Change stderr to write with replacement characters so we don't die
         # if we try to print something containing non-ASCII characters.
         stderr = codecs.StreamReaderWriter(sys.stderr,

@@ -25,10 +25,10 @@
 
 import unittest
 
-from checker import StyleProcessorConfiguration
-from error_handlers import DefaultStyleErrorHandler
-from filter import FilterConfiguration
 from webkitpy.common.system.logtesting import LoggingTestCase
+from webkitpy.style.checker import StyleProcessorConfiguration
+from webkitpy.style.error_handlers import DefaultStyleErrorHandler
+from webkitpy.style.filter import FilterConfiguration
 
 
 class DefaultStyleErrorHandlerTest(LoggingTestCase):

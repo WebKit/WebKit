@@ -37,33 +37,32 @@ import logging
 import os
 import unittest
 
-import checker as style
-from webkitpy.common.system.logtesting import LogTesting, TestLogStream
-from checker import _BASE_FILTER_RULES
-from checker import _MAX_REPORTS_PER_CATEGORY
-from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
-from checker import _all_categories
-from checker import check_webkit_style_configuration
-from checker import check_webkit_style_parser
-from checker import configure_logging
-from checker import CheckerDispatcher
-from checker import ProcessorBase
-from checker import StyleProcessor
-from checker import StyleProcessorConfiguration
-from checkers.changelog import ChangeLogChecker
-from checkers.cpp import CppChecker
-from checkers.js import JSChecker
-from checkers.jsonchecker import JSONChecker
-from checkers.python import PythonChecker
-from checkers.text import TextChecker
-from checkers.xml import XMLChecker
-from error_handlers import DefaultStyleErrorHandler
-from filter import validate_filter_rules
-from filter import FilterConfiguration
-from optparser import ArgumentParser
-from optparser import CommandOptionValues
-from webkitpy.common.system.logtesting import LoggingTestCase
+from webkitpy.common.system.logtesting import LogTesting, TestLogStream, LoggingTestCase
+from webkitpy.style import checker as style
+from webkitpy.style.checker import _BASE_FILTER_RULES
+from webkitpy.style.checker import _MAX_REPORTS_PER_CATEGORY
+from webkitpy.style.checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
+from webkitpy.style.checker import _all_categories
+from webkitpy.style.checker import check_webkit_style_configuration
+from webkitpy.style.checker import check_webkit_style_parser
+from webkitpy.style.checker import configure_logging
+from webkitpy.style.checker import CheckerDispatcher
+from webkitpy.style.checker import ProcessorBase
+from webkitpy.style.checker import StyleProcessor
+from webkitpy.style.checker import StyleProcessorConfiguration
+from webkitpy.style.checkers.changelog import ChangeLogChecker
+from webkitpy.style.checkers.cpp import CppChecker
+from webkitpy.style.checkers.js import JSChecker
+from webkitpy.style.checkers.jsonchecker import JSONChecker
+from webkitpy.style.checkers.python import PythonChecker
+from webkitpy.style.checkers.text import TextChecker
+from webkitpy.style.checkers.xml import XMLChecker
+from webkitpy.style.error_handlers import DefaultStyleErrorHandler
+from webkitpy.style.optparser import CommandOptionValues
 from webkitpy.style.filereader import TextFileReader
+from webkitpy.style.filter import validate_filter_rules
+from webkitpy.style.filter import FilterConfiguration
+from webkitpy.style.optparser import ArgumentParser
 
 
 class ConfigureLoggingTestBase(unittest.TestCase):
@@ -262,7 +261,7 @@ class GlobalVariablesTest(unittest.TestCase):
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()
-        for category in _MAX_REPORTS_PER_CATEGORY.iterkeys():
+        for category in _MAX_REPORTS_PER_CATEGORY.keys():
             self.assertIn(category, all_categories,
                           'Key "%s" is not a category' % category)
 

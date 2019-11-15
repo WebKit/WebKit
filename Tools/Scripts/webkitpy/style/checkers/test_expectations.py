@@ -35,6 +35,7 @@ import re
 import sys
 
 from webkitpy.common.host import Host
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.style.checkers.common import TabChecker
 from webkitpy.style.error_handlers import DefaultStyleErrorHandler
@@ -106,7 +107,7 @@ class TestExpectationsChecker(object):
         if abs_filename in files and files[abs_filename] and warning.line_number in files[abs_filename]:
             return True
 
-        for file, lines in warning.related_files.iteritems():
+        for file, lines in iteritems(warning.related_files):
             abs_filename = host.filesystem.join(cwd, file)
             if abs_filename in files:
                 # Case 2, a file associated with the warning is in our patch

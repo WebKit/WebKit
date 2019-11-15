@@ -35,6 +35,7 @@ from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.checkout.scm.detection import SCMDetector
+from webkitpy.common.unicode_compatibility import decode_for
 
 
 _log = logging.getLogger(__name__)
@@ -55,12 +56,13 @@ class PatchReader(object):
     def check(self, patch_string, fs=None):
         """Check style in the given patch."""
         fs = fs or FileSystem()
+        patch_string = decode_for(patch_string, str)
         patch_files = DiffParser(patch_string.splitlines()).files
 
         # If the user uses git, checking subversion config file only once is enough.
         call_only_once = True
 
-        for path, diff_file in patch_files.iteritems():
+        for path, diff_file in patch_files.items():
             line_numbers = diff_file.added_or_modified_line_numbers()
             _log.debug('Found %s new or modified lines in: %s' % (len(line_numbers), path))
 

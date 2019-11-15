@@ -1,3 +1,30 @@
+2019-11-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.style
+        https://bugs.webkit.org/show_bug.cgi?id=203762
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/check-webkit-style: Remove Python 2 version check.
+        * Scripts/test-webkitpy-python3: Add webkitpy.style.
+        * Scripts/webkitpy/style/checker.py: Use explicit imports.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_max_reports_per_category): Use keys() over iterkeys.
+        * Scripts/webkitpy/style/checkers/contributors.py: Use explicit imports.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._should_log_linter_warning): Use compatible iteritems.
+        * Scripts/webkitpy/style/error_handlers_unittest.py: Use explicit imports.
+        * Scripts/webkitpy/style/filter.py:
+        (FilterConfiguration._get_path_specific_lower): Return list instead of iterator.
+        (FilterConfiguration._filter_from_path): Avoid confusion with filter builtin.
+        * Scripts/webkitpy/style/filter_unittest.py: Use explicit imports.
+        * Scripts/webkitpy/style/main.py:
+        (CheckWebKitStyle._engage_awesome_stderr_hacks): No reason to apply encoding to stderr
+        in Python 3.
+        * Scripts/webkitpy/style/main_unittest.py: Use explicit imports.
+        * Scripts/webkitpy/style/patchreader.py:
+        (PatchReader.check): Ensure that the provided patch is a string, use items over iteritems.
+
 2019-11-14  Megan Gardner  <megan_gardner@apple.com>
 
         Fix build error from r252449

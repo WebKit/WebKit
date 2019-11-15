@@ -39,8 +39,6 @@ find is legitimately a problem."""
 
 import sys
 
-import webkitpy.common.version_check
-
 from webkitpy.style.main import CheckWebKitStyle
 
 

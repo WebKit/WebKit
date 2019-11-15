@@ -197,7 +197,7 @@ class FilterConfiguration(object):
         if self._path_specific_lower is None:
             self._path_specific_lower = []
             for (sub_paths, path_rules) in self._path_specific:
-                sub_paths = map(str.lower, sub_paths)
+                sub_paths = list(map(str.lower, sub_paths))
                 self._path_specific_lower.append((sub_paths, path_rules))
         return self._path_specific_lower
 
@@ -238,8 +238,7 @@ class FilterConfiguration(object):
         """Return the CategoryFilter associated to a path."""
         if path not in self._path_to_filter:
             path_rules = self._path_rules_from_path(path)
-            filter = self._filter_from_path_rules(path_rules)
-            self._path_to_filter[path] = filter
+            self._path_to_filter[path] = self._filter_from_path_rules(path_rules)
 
         return self._path_to_filter[path]
 

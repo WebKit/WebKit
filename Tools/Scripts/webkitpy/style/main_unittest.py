@@ -26,13 +26,13 @@ import unittest
 
 import webkitpy.style.checker as checker
 
-from main import change_directory
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture, OutputCaptureScope
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
+from webkitpy.style.main import change_directory
 
 
 class ChangeDirectoryTest(unittest.TestCase):

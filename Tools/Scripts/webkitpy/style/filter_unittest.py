@@ -24,9 +24,9 @@
 
 import unittest
 
-from filter import _CategoryFilter as CategoryFilter
-from filter import validate_filter_rules
-from filter import FilterConfiguration
+from webkitpy.style.filter import _CategoryFilter as CategoryFilter
+from webkitpy.style.filter import validate_filter_rules
+from webkitpy.style.filter import FilterConfiguration
 
 # On Testing __eq__() and __ne__():
 #
