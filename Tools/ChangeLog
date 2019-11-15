@@ -1,5 +1,28 @@
 2019-11-15  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Report JSC tests to the results database
+        https://bugs.webkit.org/show_bug.cgi?id=204091
+        <rdar://problem/49778900>
+
+        Reviewed by Aakash Jain.
+
+        Upload results to the specified results database.
+
+        DEMONSTRATION OF FAILURE IN EWS BEHAVIOR, DO NOT LAND!
+
+        * Scripts/run-javascriptcore-tests:
+        (runTest): Parse binary output to mark individual tests as passing
+        or failing.
+        (uploadConfiguration): Return a hash map representing the configuration
+        For this specific test run.
+        (uploadResults): If a report URL is defined, upload test results to that URL.
+        * Scripts/webkitdirs.pm:
+        (splitVersionString): splitVersionString is supposed to be a generally used
+        function, so should not set a global variable.
+        (determineOSXVersion): Remove newline from version number.
+
+2019-11-15  Jonathan Bedard  <jbedard@apple.com>
+
         run-webkit-tests loads committers.py 4 times, taking about 40ms
         https://bugs.webkit.org/show_bug.cgi?id=204211
 
