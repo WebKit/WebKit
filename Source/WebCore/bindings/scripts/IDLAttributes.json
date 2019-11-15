@@ -372,13 +372,6 @@
             "contextsAllowed": ["interface"],
             "notes" : "Should only be used by elements that forward to Netscape plug-ins"
         },
-        "PrimaryGlobal": {
-            "contextsAllowed": ["interface"],
-            "values": ["*"],
-            "standard": {
-                "url": "https://heycam.github.io/webidl/#Global"
-            }
-        },
         "PrivateIdentifier": {
             "contextsAllowed": ["interface", "attribute", "operation"]
         },

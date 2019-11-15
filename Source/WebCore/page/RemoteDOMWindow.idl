@@ -41,7 +41,8 @@
     JSLegacyParent=JSRemoteDOMWindowBase,
     LegacyUnenumerableNamedProperties,
     NoInterfaceObject,
-    PrimaryGlobal,
+    Global=Window,
+    Exposed=Window,
 ] interface RemoteDOMWindow {
     [Unforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;

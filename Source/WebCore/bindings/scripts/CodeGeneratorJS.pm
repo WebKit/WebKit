@@ -1152,9 +1152,9 @@ sub GenerateDefineOwnProperty
         }
     }
     
-    # 2. If O supports named properties, O does not implement an interface with the [Global] or [PrimaryGlobal]
+    # 2. If O supports named properties, O does not implement an interface with the [Global]
     #    extended attribute and P is not an unforgeable property name of O, then:
-    if (GetNamedGetterOperation($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
+    if (GetNamedGetterOperation($interface) && !IsGlobalInterface($interface)) {
         # FIMXE: We need a more comprehensive story for Symbols.
         push(@$outputArray, "    if (!propertyName.isSymbol()) {\n");
         
@@ -1215,9 +1215,9 @@ sub GenerateDefineOwnProperty
     
     push(@$outputArray, "    PropertyDescriptor newPropertyDescriptor = propertyDescriptor;\n");
         
-    # 3. If O does not implement an interface with the [Global] or [PrimaryGlobal] extended attribute,
+    # 3. If O does not implement an interface with the [Global] extended attribute,
     #    then set Desc.[[Configurable]] to true.
-    if (!IsGlobalOrPrimaryGlobalInterface($interface)) {
+    if (!IsGlobalInterface($interface)) {
         push(@$outputArray, "    newPropertyDescriptor.setConfigurable(true);\n");
     }
     
@@ -1236,11 +1236,10 @@ sub GenerateDeletePropertyCommon
     # so it can be shared between the generation of deleteProperty and deletePropertyByIndex.
 
     # 2. If O supports named properties, O does not implement an interface with the
-    #    [Global] or [PrimaryGlobal] extended attribute and the result of calling the
-    #    named property visibility algorithm with property name P and object O is true,
-    #    then:
+    #    [Global] extended attribute and the result of calling the named
+    #    property visibility algorithm with property name P and object O is true, then:
     assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
-    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalOrPrimaryGlobalInterface($interface);
+    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalInterface($interface);
 
     AddToImplIncludes("JSDOMAbstractOperations.h", $conditional);
     my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins") ? "OverrideBuiltins::Yes" : "OverrideBuiltins::No";
@@ -1383,7 +1382,7 @@ sub GenerateNamedDeleterDefinition
     # the deleteProperty and deletePropertyByIndex override hooks.
 
     assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
-    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalOrPrimaryGlobalInterface($interface);
+    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalInterface($interface);
 
     my $conditional = $namedDeleterOperation->extendedAttributes->{Conditional};
     if ($conditional) {
@@ -1655,11 +1654,11 @@ sub GetSpecialAccessorOperationForType
     return 0;
 }
 
-sub IsGlobalOrPrimaryGlobalInterface
+sub IsGlobalInterface
 {
     my $interface = shift;
 
-    return $interface->extendedAttributes->{Global} || $interface->extendedAttributes->{PrimaryGlobal};
+    return $interface->extendedAttributes->{Global};
 }
 
 sub AttributeShouldBeOnInstance
@@ -1667,7 +1666,7 @@ sub AttributeShouldBeOnInstance
     my $interface = shift;
     my $attribute = shift;
 
-    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
+    return 1 if IsGlobalInterface($interface);
     return 1 if $codeGenerator->IsConstructorType($attribute->type);
 
     # [Unforgeable] attributes should be on the instance.
@@ -1732,7 +1731,7 @@ sub OperationShouldBeOnInstance
 {
     my ($interface, $operation) = @_;
 
-    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
+    return 1 if IsGlobalInterface($interface);
 
     # [Unforgeable] operations should be on the instance. https://heycam.github.io/webidl/#Unforgeable
     if (IsUnforgeable($interface, $operation)) {
@@ -4264,7 +4263,7 @@ sub GenerateImplementation
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
-    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
+    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface)) {
         push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
@@ -7148,7 +7147,7 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    }\n");
 
     if (PrototypeHasStaticPropertyTable($interface)) {
-        if (IsGlobalOrPrimaryGlobalInterface($interface)) {
+        if (IsGlobalInterface($interface)) {
             $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
         } else {
             push(@$outputArray, "\n");
