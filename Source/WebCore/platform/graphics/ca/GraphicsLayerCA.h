@@ -306,6 +306,7 @@ private:
         FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
 
     TransformationMatrix layerTransform(const FloatPoint& position, const TransformationMatrix* customTransform = 0) const;
+    TransformationMatrix transformByApplyingAnchorPoint(const TransformationMatrix&) const;
 
     enum ComputeVisibleRectFlag { RespectAnimatingTransforms = 1 << 0 };
     typedef unsigned ComputeVisibleRectFlags;

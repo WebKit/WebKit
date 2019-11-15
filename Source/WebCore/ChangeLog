@@ -1,3 +1,24 @@
+2019-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        The image is flashing if falls out and has an animation transform: rotate
+        https://bugs.webkit.org/show_bug.cgi?id=203613
+
+        Reviewed by Antti Koivisto.
+        
+        Code added in r218735 that maps the animation extent through the current animating transform
+        worked for translations, but not rotation where anchor point matters. This matrix
+        needs to take anchor point into account.
+
+        Shared some code that applies anchor point to a matrix.
+
+        Test: compositing/backing/backing-store-attachment-with-rotation.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::layerTransform const):
+        (WebCore::GraphicsLayerCA::transformByApplyingAnchorPoint const):
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2019-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Invalidation] Introduce LayoutBox::updateStyle

@@ -1,3 +1,13 @@
+2019-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        The image is flashing if falls out and has an animation transform: rotate
+        https://bugs.webkit.org/show_bug.cgi?id=203613
+
+        Reviewed by Antti Koivisto.
+
+        * compositing/backing/backing-store-attachment-with-rotation-expected.txt: Added.
+        * compositing/backing/backing-store-attachment-with-rotation.html: Added.
+
 2019-11-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Crash when setting HTMLInputElement.checked for a disconnected radio button in a shadow root
