@@ -1,3 +1,14 @@
+2019-11-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Perform validation of patch before retrying JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=204222
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunJavaScriptCoreTests.evaluateCommand): Add a ValidatePatch step before retrying.
+        (ReRunJavaScriptCoreTests.evaluateCommand): Ditto.
+
 2019-11-14  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.layout_tests.layout_package

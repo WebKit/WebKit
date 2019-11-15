@@ -974,7 +974,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ReRunJavaScriptCoreTests()])
+            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunJavaScriptCoreTests()])
         return rc
 
     def commandComplete(self, cmd):
@@ -1046,7 +1046,12 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJSCTestsWithoutPatch(), AnalyzeJSCTestsResults()])
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                CompileJSCToT(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                RunJSCTestsWithoutPatch(),
+                                                AnalyzeJSCTestsResults()])
         return rc
 
 
