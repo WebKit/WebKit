@@ -11,6 +11,7 @@
 #ifndef MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
 #define MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
 
+#include <memory>
 #include <vector>
 
 #include "modules/pacing/paced_sender.h"
@@ -23,21 +24,12 @@ class MockPacedSender : public PacedSender {
  public:
   MockPacedSender()
       : PacedSender(Clock::GetRealTimeClock(), nullptr, nullptr) {}
-  MOCK_METHOD6(SendPacket,
-               bool(Priority priority,
-                    uint32_t ssrc,
-                    uint16_t sequence_number,
-                    int64_t capture_time_ms,
-                    size_t bytes,
-                    bool retransmission));
-  MOCK_METHOD1(CreateProbeCluster, void(int));
-  MOCK_METHOD1(SetEstimatedBitrate, void(uint32_t));
-  MOCK_METHOD2(SetPacingRates, void(uint32_t, uint32_t));
-  MOCK_CONST_METHOD0(QueueInMs, int64_t());
-  MOCK_CONST_METHOD0(QueueInPackets, int());
-  MOCK_CONST_METHOD0(ExpectedQueueTimeMs, int64_t());
-  MOCK_CONST_METHOD0(GetApplicationLimitedRegionStartTime,
-                     absl::optional<int64_t>());
+  MOCK_METHOD1(EnqueuePacket, void(std::unique_ptr<RtpPacketToSend> packet));
+  MOCK_METHOD2(CreateProbeCluster, void(DataRate, int));
+  MOCK_METHOD2(SetPacingRates, void(DataRate, DataRate));
+  MOCK_CONST_METHOD0(OldestPacketWaitTime, TimeDelta());
+  MOCK_CONST_METHOD0(QueueSizePackets, size_t());
+  MOCK_CONST_METHOD0(ExpectedQueueTime, TimeDelta());
   MOCK_METHOD0(Process, void());
 };
 

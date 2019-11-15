@@ -11,6 +11,7 @@
 #include "modules/audio_device/dummy/file_audio_device_factory.h"
 
 #include <stdio.h>
+
 #include <cstdlib>
 
 #include "modules/audio_device/dummy/file_audio_device.h"

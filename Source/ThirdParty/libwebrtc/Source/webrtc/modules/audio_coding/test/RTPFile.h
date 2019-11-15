@@ -12,9 +12,11 @@
 #define MODULES_AUDIO_CODING_TEST_RTPFILE_H_
 
 #include <stdio.h>
+
 #include <queue>
 
 #include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/include/module_common_types.h"
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
 
 namespace webrtc {
@@ -32,7 +34,7 @@ class RTPStream {
 
   // Returns the packet's payload size. Zero should be treated as an
   // end-of-stream (in the case that EndOfFile() is true) or an error.
-  virtual size_t Read(WebRtcRTPHeader* rtpInfo,
+  virtual size_t Read(RTPHeader* rtp_Header,
                       uint8_t* payloadData,
                       size_t payloadSize,
                       uint32_t* offset) = 0;
@@ -45,7 +47,7 @@ class RTPStream {
                      uint32_t timeStamp,
                      uint32_t ssrc);
 
-  void ParseRTPHeader(WebRtcRTPHeader* rtpInfo, const uint8_t* rtpHeader);
+  void ParseRTPHeader(RTPHeader* rtp_header, const uint8_t* rtpHeader);
 };
 
 class RTPPacket {
@@ -80,7 +82,7 @@ class RTPBuffer : public RTPStream {
              const size_t payloadSize,
              uint32_t frequency) override;
 
-  size_t Read(WebRtcRTPHeader* rtpInfo,
+  size_t Read(RTPHeader* rtp_header,
               uint8_t* payloadData,
               size_t payloadSize,
               uint32_t* offset) override;
@@ -113,7 +115,7 @@ class RTPFile : public RTPStream {
              const size_t payloadSize,
              uint32_t frequency) override;
 
-  size_t Read(WebRtcRTPHeader* rtpInfo,
+  size_t Read(RTPHeader* rtp_header,
               uint8_t* payloadData,
               size_t payloadSize,
               uint32_t* offset) override;

@@ -14,8 +14,9 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace test {
@@ -43,19 +44,18 @@ class ColumnPrinter {
 
 class StatesPrinter {
  public:
-  StatesPrinter(std::string filename, std::vector<ColumnPrinter> printers);
-  explicit StatesPrinter(std::vector<ColumnPrinter> printers);
+  StatesPrinter(std::unique_ptr<RtcEventLogOutput> writer,
+                std::vector<ColumnPrinter> printers);
   RTC_DISALLOW_COPY_AND_ASSIGN(StatesPrinter);
   ~StatesPrinter();
   void PrintHeaders();
   void PrintRow();
 
  private:
+  const std::unique_ptr<RtcEventLogOutput> writer_;
   const std::vector<ColumnPrinter> printers_;
   size_t buffer_size_ = 0;
   std::vector<char> buffer_;
-  FILE* output_file_ = nullptr;
-  FILE* output_ = nullptr;
 };
 }  // namespace test
 }  // namespace webrtc

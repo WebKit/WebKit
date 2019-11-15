@@ -38,7 +38,7 @@ rtc_static_library("vad") {
     "../../../audio/utility:audio_frame_operations",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
-    "../../../common_audio/third_party/fft4g:fft4g",
+    "../../../common_audio/third_party/fft4g",
     "../../../rtc_base:checks",
     "../../audio_coding:isac_vad",
   ]

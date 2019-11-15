@@ -11,11 +11,13 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_PCC_BITRATE_CONTROLLER_H_
 #define MODULES_CONGESTION_CONTROLLER_PCC_BITRATE_CONTROLLER_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <vector>
 
-#include "api/transport/network_control.h"
-#include "api/transport/network_types.h"
+#include "absl/types/optional.h"
+#include "api/units/data_rate.h"
 #include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "modules/congestion_controller/pcc/utility_function.h"
 

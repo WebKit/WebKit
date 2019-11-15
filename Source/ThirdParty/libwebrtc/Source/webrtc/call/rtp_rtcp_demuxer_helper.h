@@ -11,9 +11,8 @@
 #ifndef CALL_RTP_RTCP_DEMUXER_HELPER_H_
 #define CALL_RTP_RTCP_DEMUXER_HELPER_H_
 
-#include <algorithm>
-#include <map>
-#include <utility>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"

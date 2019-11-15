@@ -90,7 +90,7 @@ class RTPStatistics(object):
     """Queries user for SSRC."""
 
     if len(self.ssrc_frequencies) == 1:
-      chosen_ssrc = self.ssrc_frequencies[0][-1]
+      chosen_ssrc = self.ssrc_frequencies.keys()[0]
       self.PrintSsrcInfo("", chosen_ssrc)
       return chosen_ssrc
 

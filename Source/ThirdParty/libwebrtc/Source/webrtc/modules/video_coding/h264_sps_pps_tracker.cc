@@ -46,7 +46,7 @@ H264SpsPpsTracker::SpsInfo::~SpsInfo() = default;
 
 H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
     VCMPacket* packet) {
-  RTC_DCHECK(packet->codec == kVideoCodecH264);
+  RTC_DCHECK(packet->codec() == kVideoCodecH264);
 
   const uint8_t* data = packet->dataPtr;
   const size_t data_size = packet->sizeBytes;
@@ -62,8 +62,8 @@ H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
     const NaluInfo& nalu = h264_header.nalus[i];
     switch (nalu.type) {
       case H264::NaluType::kSps: {
-        sps_data_[nalu.sps_id].width = packet->width;
-        sps_data_[nalu.sps_id].height = packet->height;
+        sps_data_[nalu.sps_id].width = packet->width();
+        sps_data_[nalu.sps_id].height = packet->height();
         break;
       }
       case H264::NaluType::kPps: {
@@ -97,8 +97,8 @@ H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
           // Since the first packet of every keyframe should have its width and
           // height set we set it here in the case of it being supplied out of
           // band.
-          packet->width = sps->second.width;
-          packet->height = sps->second.height;
+          packet->video_header.width = sps->second.width;
+          packet->video_header.height = sps->second.height;
 
           // If the SPS/PPS was supplied out of band then we will have saved
           // the actual bitstream in |data|.
@@ -140,8 +140,9 @@ H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
       nalu_ptr += segment_length;
     }
   } else {
-    if (video_header.is_first_packet_in_frame)
+    if (h264_header.nalus_length > 0) {
       required_size += sizeof(start_code_h264);
+    }
     required_size += data_size;
   }
 
@@ -202,7 +203,7 @@ H264SpsPpsTracker::PacketAction H264SpsPpsTracker::CopyAndFixBitstream(
       nalu_ptr += segment_length;
     }
   } else {
-    if (video_header.is_first_packet_in_frame) {
+    if (h264_header.nalus_length > 0) {
       memcpy(insert_at, start_code_h264, sizeof(start_code_h264));
       insert_at += sizeof(start_code_h264);
     }

@@ -11,12 +11,12 @@
 #include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 
 #include <libproc.h>
+
 #include <string>
 
 #include "modules/desktop_capture/mac/window_list_utils.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/macutils.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -24,55 +24,13 @@ namespace {
 
 const int64_t kUpdateIntervalMs = 500;
 
-std::string GetWindowTitle(CGWindowID id) {
-  CFArrayRef window_id_array =
-      CFArrayCreate(NULL, reinterpret_cast<const void**>(&id), 1, NULL);
-  CFArrayRef window_array =
-      CGWindowListCreateDescriptionFromArray(window_id_array);
-  std::string title;
-
-  if (window_array && CFArrayGetCount(window_array)) {
-    CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
-        CFArrayGetValueAtIndex(window_array, 0));
-    CFStringRef title_ref = reinterpret_cast<CFStringRef>(
-        CFDictionaryGetValue(window, kCGWindowName));
-
-    if (title_ref)
-      rtc::ToUtf8(title_ref, &title);
-  }
-  CFRelease(window_id_array);
-  CFRelease(window_array);
-
-  return title;
-}
-
-int GetWindowOwnerPid(CGWindowID id) {
-  CFArrayRef window_id_array =
-      CFArrayCreate(NULL, reinterpret_cast<const void**>(&id), 1, NULL);
-  CFArrayRef window_array =
-      CGWindowListCreateDescriptionFromArray(window_id_array);
-  int pid = 0;
-
-  if (window_array && CFArrayGetCount(window_array)) {
-    CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
-        CFArrayGetValueAtIndex(window_array, 0));
-    CFNumberRef pid_ref = reinterpret_cast<CFNumberRef>(
-        CFDictionaryGetValue(window, kCGWindowOwnerPID));
-
-    if (pid_ref)
-      CFNumberGetValue(pid_ref, kCFNumberIntType, &pid);
-  }
-  CFRelease(window_id_array);
-  CFRelease(window_array);
-
-  return pid;
-}
-
 // Returns the window that is full-screen and has the same title and owner pid
 // as the input window.
 CGWindowID FindFullScreenWindowWithSamePidAndTitle(CGWindowID id) {
-  int pid = GetWindowOwnerPid(id);
+  const int pid = GetWindowOwnerPid(id);
   std::string title = GetWindowTitle(id);
+  if (title.empty())
+    return kCGNullWindowID;
 
   // Only get on screen, non-desktop windows.
   CFArrayRef window_array = CGWindowListCopyWindowInfo(
@@ -92,29 +50,18 @@ CGWindowID FindFullScreenWindowWithSamePidAndTitle(CGWindowID id) {
   for (CFIndex i = 0; i < count; ++i) {
     CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
         CFArrayGetValueAtIndex(window_array, i));
-    CFStringRef window_title_ref = reinterpret_cast<CFStringRef>(
-        CFDictionaryGetValue(window, kCGWindowName));
-    CFNumberRef window_id_ref = reinterpret_cast<CFNumberRef>(
-        CFDictionaryGetValue(window, kCGWindowNumber));
-    CFNumberRef window_pid_ref = reinterpret_cast<CFNumberRef>(
-        CFDictionaryGetValue(window, kCGWindowOwnerPID));
 
-    if (!window_title_ref || !window_id_ref || !window_pid_ref)
+    CGWindowID window_id = GetWindowId(window);
+    if (window_id == kNullWindowId)
       continue;
 
-    int window_pid = 0;
-    CFNumberGetValue(window_pid_ref, kCFNumberIntType, &window_pid);
-    if (window_pid != pid)
+    if (GetWindowOwnerPid(window) != pid)
       continue;
 
-    std::string window_title;
-    if (!rtc::ToUtf8(window_title_ref, &window_title) ||
-        window_title != title) {
+    std::string window_title = GetWindowTitle(window);
+    if (window_title != title)
       continue;
-    }
 
-    CGWindowID window_id;
-    CFNumberGetValue(window_id_ref, kCFNumberIntType, &window_id);
     if (IsWindowFullScreen(desktop_config, window)) {
       full_screen_window = window_id;
       break;

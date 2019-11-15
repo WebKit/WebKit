@@ -9,6 +9,7 @@
  */
 
 #include "common_audio/signal_processing/include/real_fft.h"
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "test/gtest.h"
 
@@ -31,19 +32,14 @@ const int16_t kRefData[kTimeDataLength] = {
     1173,   6848,  -8688,  31980, -30295, 2522,  27085,  19410,
     -2629,  5607,  -3,     1178,  -23819, 1498,  -25772, 10076};
 
-class RealFFTTest : public ::testing::Test {
- protected:
-  RealFFTTest() { WebRtcSpl_Init(); }
-};
-
-TEST_F(RealFFTTest, CreateFailsOnBadInput) {
+TEST(RealFFTTest, CreateFailsOnBadInput) {
   RealFFT* fft = WebRtcSpl_CreateRealFFT(11);
   EXPECT_TRUE(fft == nullptr);
   fft = WebRtcSpl_CreateRealFFT(-1);
   EXPECT_TRUE(fft == nullptr);
 }
 
-TEST_F(RealFFTTest, RealAndComplexMatch) {
+TEST(RealFFTTest, RealAndComplexMatch) {
   int i = 0;
   int j = 0;
   int16_t real_fft_time[kTimeDataLength] = {0};

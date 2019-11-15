@@ -8,7 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "rtc_base/checks.h"
+#include <stdint.h>
+#include <stdio.h>
+
+#include <string>
+
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {

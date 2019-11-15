@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_MIXER_GAIN_CHANGE_CALCULATOR_H_
 #define MODULES_AUDIO_MIXER_GAIN_CHANGE_CALCULATOR_H_
 
+#include <stdint.h>
+
 #include "api/array_view.h"
 
 namespace webrtc {

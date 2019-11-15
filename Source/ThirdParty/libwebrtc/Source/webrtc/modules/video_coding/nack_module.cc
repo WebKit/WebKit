@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/nack_module.h"
+
 #include <algorithm>
 #include <limits>
-
-#include "modules/video_coding/nack_module.h"
 
 #include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
@@ -138,8 +138,11 @@ int NackModule::OnReceivedPacket(uint16_t seq_num,
 
   // Are there any nacks that are waiting for this seq_num.
   std::vector<uint16_t> nack_batch = GetNackBatch(kSeqNumOnly);
-  if (!nack_batch.empty())
-    nack_sender_->SendNack(nack_batch);
+  if (!nack_batch.empty()) {
+    // This batch of NACKs is triggered externally; the initiator can
+    // batch them with other feedback messages.
+    nack_sender_->SendNack(nack_batch, /*buffering_allowed=*/true);
+  }
 
   return 0;
 }
@@ -178,8 +181,11 @@ void NackModule::Process() {
       nack_batch = GetNackBatch(kTimeOnly);
     }
 
-    if (!nack_batch.empty())
-      nack_sender_->SendNack(nack_batch);
+    if (!nack_batch.empty()) {
+      // This batch of NACKs is triggered externally; there is no external
+      // initiator who can batch them with other feedback messages.
+      nack_sender_->SendNack(nack_batch, /*buffering_allowed=*/false);
+    }
   }
 
   // Update the next_process_time_ms_ in intervals to achieve

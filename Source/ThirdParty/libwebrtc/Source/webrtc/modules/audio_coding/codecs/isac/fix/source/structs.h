@@ -167,12 +167,10 @@ typedef struct {
   uint32_t prevSendTime;    /* Send time for previous packet, from RTP header */
   uint32_t prevArrivalTime; /* Arrival time for previous packet (in ms using
                                timeGetTime()) */
-  uint16_t
-      prevRtpRate; /* rate of previous packet, derived from RTP timestamps (in
-                      bits/s) */
-  uint32_t
-      lastUpdate;         /* Time since the last update of the Bottle Neck estimate (in
-                             samples) */
+  uint16_t prevRtpRate; /* rate of previous packet, derived from RTP timestamps
+                           (in bits/s) */
+  uint32_t lastUpdate; /* Time since the last update of the Bottle Neck estimate
+                          (in samples) */
   uint32_t lastReduction; /* Time sinse the last reduction (in samples) */
   int32_t countUpdates;   /* How many times the estimate was update in the
                              beginning */
@@ -197,9 +195,8 @@ typedef struct {
 
   uint32_t sendBwAvg; /* The estimated bottle neck rate from here to there (in
                          bits/s) */
-  int32_t
-      sendMaxDelayAvg; /* The estimated mean absolute jitter value, as seen on
-                          the other siee (in ms)  */
+  int32_t sendMaxDelayAvg; /* The estimated mean absolute jitter value, as seen
+                              on the other siee (in ms)  */
 
   int16_t countRecPkts; /* number of packets received since last update */
   int16_t highSpeedRec; /* flag for marking that a high speed network has been
@@ -308,8 +305,8 @@ typedef struct {
                                   packet */
   int16_t payloadLimitBytes60; /* Maximum allowed number of bits for a 30 msec
                                   packet */
-  int16_t maxPayloadBytes;     /* Maximum allowed number of bits for both 30 and 60
-                                  msec packet */
+  int16_t maxPayloadBytes; /* Maximum allowed number of bits for both 30 and 60
+                              msec packet */
   int16_t maxRateInBytes; /* Maximum allowed rate in bytes per 30 msec packet */
   int16_t enforceFrameSize; /* If set iSAC will never change packet size */
 
@@ -339,8 +336,8 @@ typedef struct {
 } ISACFIX_SubStruct;
 
 typedef struct {
-  int32_t lpcGains
-      [12]; /* 6 lower-band & 6 upper-band we may need to double it for 60*/
+  int32_t lpcGains[12]; /* 6 lower-band & 6 upper-band we may need to double it
+                           for 60*/
   /* */
   uint32_t W_upper; /* Upper boundary of interval W */
   uint32_t streamval;

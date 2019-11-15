@@ -13,12 +13,6 @@
 #ifndef RTC_BASE_PROTOBUF_UTILS_H_
 #define RTC_BASE_PROTOBUF_UTILS_H_
 
-namespace webrtc {
-
-using ProtoString = std::string;
-
-}  // namespace webrtc
-
 #if WEBRTC_ENABLE_PROTOBUF
 
 #include "third_party/protobuf/src/google/protobuf/message_lite.h"

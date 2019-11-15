@@ -10,10 +10,12 @@
 
 #include "common_audio/smoothing_filter.h"
 
+#include <math.h>
+
 #include <cmath>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -71,7 +73,7 @@ bool SmoothingFilterImpl::SetTimeConstantMs(int time_constant_ms) {
 }
 
 void SmoothingFilterImpl::UpdateAlpha(int time_constant_ms) {
-  alpha_ = time_constant_ms == 0 ? 0.0f : exp(-1.0f / time_constant_ms);
+  alpha_ = time_constant_ms == 0 ? 0.0f : std::exp(-1.0f / time_constant_ms);
 }
 
 void SmoothingFilterImpl::ExtrapolateLastSample(int64_t time_ms) {
@@ -93,12 +95,12 @@ void SmoothingFilterImpl::ExtrapolateLastSample(int64_t time_ms) {
       multiplier = 0.0f;
     } else if (init_time_ms_ == 1) {
       // This means |init_factor_| = 1.
-      multiplier = exp(last_state_time_ms_ - time_ms);
+      multiplier = std::exp(last_state_time_ms_ - time_ms);
     } else {
-      multiplier =
-          exp(-(powf(init_factor_, last_state_time_ms_ - *init_end_time_ms_) -
-                powf(init_factor_, time_ms - *init_end_time_ms_)) /
-              init_const_);
+      multiplier = std::exp(
+          -(powf(init_factor_, last_state_time_ms_ - *init_end_time_ms_) -
+            powf(init_factor_, time_ms - *init_end_time_ms_)) /
+          init_const_);
     }
   } else {
     if (last_state_time_ms_ < *init_end_time_ms_) {

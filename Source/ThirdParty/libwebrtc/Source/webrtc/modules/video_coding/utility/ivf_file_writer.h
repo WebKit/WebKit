@@ -11,14 +11,15 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_IVF_FILE_WRITER_H_
 #define MODULES_VIDEO_CODING_UTILITY_IVF_FILE_WRITER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
-#include <string>
 
 #include "api/video/encoded_image.h"
-#include "modules/include/module_common_types.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/file.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/system/file_wrapper.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -28,14 +29,15 @@ class IvfFileWriter {
   // Close or ~IvfFileWriter. If writing a frame would take the file above the
   // |byte_limit| the file will be closed, the write (and all future writes)
   // will fail. A |byte_limit| of 0 is equivalent to no limit.
-  static std::unique_ptr<IvfFileWriter> Wrap(rtc::File file, size_t byte_limit);
+  static std::unique_ptr<IvfFileWriter> Wrap(FileWrapper file,
+                                             size_t byte_limit);
   ~IvfFileWriter();
 
   bool WriteFrame(const EncodedImage& encoded_image, VideoCodecType codec_type);
   bool Close();
 
  private:
-  explicit IvfFileWriter(rtc::File file, size_t byte_limit);
+  explicit IvfFileWriter(FileWrapper file, size_t byte_limit);
 
   bool WriteHeader();
   bool InitFromFirstFrame(const EncodedImage& encoded_image,
@@ -50,7 +52,7 @@ class IvfFileWriter {
   int64_t last_timestamp_;
   bool using_capture_timestamps_;
   rtc::TimestampWrapAroundHandler wrap_handler_;
-  rtc::File file_;
+  FileWrapper file_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(IvfFileWriter);
 };

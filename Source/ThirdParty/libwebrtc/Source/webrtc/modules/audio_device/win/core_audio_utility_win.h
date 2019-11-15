@@ -11,11 +11,11 @@
 #ifndef MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_UTILITY_WIN_H_
 #define MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_UTILITY_WIN_H_
 
-#include <Audioclient.h>
-#include <Audiopolicy.h>
-#include <Mmdeviceapi.h>
+#include <audioclient.h>
+#include <audiopolicy.h>
 #include <avrt.h>
 #include <comdef.h>
+#include <mmdeviceapi.h>
 #include <objbase.h>
 #include <propidl.h>
 #include <wrl/client.h>
@@ -26,6 +26,7 @@
 #include "modules/audio_device/audio_device_name.h"
 #include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/string_utils.h"
 
 #pragma comment(lib, "Avrt.lib")
 
@@ -81,11 +82,11 @@ class ScopedMMCSSRegistration {
     }
   }
 
-  explicit ScopedMMCSSRegistration(const TCHAR* task_name) {
+  explicit ScopedMMCSSRegistration(const wchar_t* task_name) {
     RTC_DLOG(INFO) << "ScopedMMCSSRegistration: " << rtc::ToUtf8(task_name);
     // Register the calling thread with MMCSS for the supplied |task_name|.
     DWORD mmcss_task_index = 0;
-    mmcss_handle_ = AvSetMmThreadCharacteristics(task_name, &mmcss_task_index);
+    mmcss_handle_ = AvSetMmThreadCharacteristicsW(task_name, &mmcss_task_index);
     if (mmcss_handle_ == nullptr) {
       RTC_LOG(LS_ERROR) << "Failed to enable MMCSS on this thread: "
                         << GetLastError();

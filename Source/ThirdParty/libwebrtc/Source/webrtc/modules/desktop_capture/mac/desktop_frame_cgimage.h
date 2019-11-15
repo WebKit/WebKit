@@ -27,9 +27,18 @@ class DesktopFrameCGImage final : public DesktopFrame {
   static std::unique_ptr<DesktopFrameCGImage> CreateForDisplay(
       CGDirectDisplayID display_id);
 
+  // Create an image containing a snaphot of the given window at the time this
+  // is being called. This also works when the window is overlapped or in
+  // another workspace.
+  static std::unique_ptr<DesktopFrameCGImage> CreateForWindow(
+      CGWindowID window_id);
+
   ~DesktopFrameCGImage() override;
 
  private:
+  static std::unique_ptr<DesktopFrameCGImage> CreateFromCGImage(
+      rtc::ScopedCFTypeRef<CGImageRef> cg_image);
+
   // This constructor expects |cg_image| to hold a non-null CGImageRef.
   DesktopFrameCGImage(DesktopSize size,
                       int stride,

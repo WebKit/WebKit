@@ -14,8 +14,8 @@
 
 #include <list>
 
+#include "modules/include/module_common_types.h"
 #include "modules/video_coding/packet.h"
-#include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -30,7 +30,7 @@ void StreamGenerator::Init(uint16_t start_seq_num, int64_t current_time) {
   memset(packet_buffer_, 0, sizeof(packet_buffer_));
 }
 
-void StreamGenerator::GenerateFrame(FrameType type,
+void StreamGenerator::GenerateFrame(VideoFrameType type,
                                     int num_media_packets,
                                     int num_empty_packets,
                                     int64_t time_ms) {
@@ -45,7 +45,7 @@ void StreamGenerator::GenerateFrame(FrameType type,
   }
   for (int i = 0; i < num_empty_packets; ++i) {
     packets_.push_back(GeneratePacket(sequence_number_, timestamp, 0, false,
-                                      false, kEmptyFrame));
+                                      false, VideoFrameType::kEmptyFrame));
     ++sequence_number_;
   }
 }
@@ -55,17 +55,17 @@ VCMPacket StreamGenerator::GeneratePacket(uint16_t sequence_number,
                                           unsigned int size,
                                           bool first_packet,
                                           bool marker_bit,
-                                          FrameType type) {
+                                          VideoFrameType type) {
   EXPECT_LT(size, kMaxPacketSize);
   VCMPacket packet;
   packet.seqNum = sequence_number;
   packet.timestamp = timestamp;
-  packet.frameType = type;
-  packet.is_first_packet_in_frame = first_packet;
+  packet.video_header.frame_type = type;
+  packet.video_header.is_first_packet_in_frame = first_packet;
   packet.markerBit = marker_bit;
   packet.sizeBytes = size;
   packet.dataPtr = packet_buffer_;
-  if (packet.is_first_packet_in_frame)
+  if (packet.is_first_packet_in_frame())
     packet.completeNALU = kNaluStart;
   else if (packet.markerBit)
     packet.completeNALU = kNaluEnd;

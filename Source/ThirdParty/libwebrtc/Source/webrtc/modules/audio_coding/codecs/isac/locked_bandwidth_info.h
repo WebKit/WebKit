@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_CODING_CODECS_ISAC_LOCKED_BANDWIDTH_INFO_H_
 
 #include "modules/audio_coding/codecs/isac/bandwidth_info.h"
-#include "rtc_base/atomicops.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/atomic_ops.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {

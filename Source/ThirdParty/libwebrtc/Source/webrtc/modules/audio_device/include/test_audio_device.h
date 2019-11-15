@@ -12,16 +12,17 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 #include <string>
 
 #include "api/array_view.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/event.h"
-#include "rtc_base/platform_file.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -64,12 +65,12 @@ class TestAudioDeviceModule : public AudioDeviceModule {
   // -max_amplitude and +max_amplitude.
   class PulsedNoiseCapturer : public Capturer {
    public:
-    virtual ~PulsedNoiseCapturer() {}
+    ~PulsedNoiseCapturer() override {}
 
     virtual void SetMaxAmplitude(int16_t amplitude) = 0;
   };
 
-  virtual ~TestAudioDeviceModule() {}
+  ~TestAudioDeviceModule() override {}
 
   // Creates a new TestAudioDeviceModule. When capturing or playing, 10 ms audio
   // frames will be processed every 10ms / |speed|.
@@ -78,7 +79,8 @@ class TestAudioDeviceModule : public AudioDeviceModule {
   // |renderer| is an object that receives audio data that would have been
   // played out. Can be nullptr if this device is never used for playing.
   // Use one of the Create... functions to get these instances.
-  static rtc::scoped_refptr<TestAudioDeviceModule> CreateTestAudioDeviceModule(
+  static rtc::scoped_refptr<TestAudioDeviceModule> Create(
+      TaskQueueFactory* task_queue_factory,
       std::unique_ptr<Capturer> capturer,
       std::unique_ptr<Renderer> renderer,
       float speed = 1);
@@ -107,7 +109,10 @@ class TestAudioDeviceModule : public AudioDeviceModule {
 
   // Returns a Capturer instance that gets its data from a file.
   // Automatically detects sample rate and num of channels.
-  static std::unique_ptr<Capturer> CreateWavFileReader(std::string filename);
+  // |repeat| - if true, the file will be replayed from the start when we reach
+  // the end of file.
+  static std::unique_ptr<Capturer> CreateWavFileReader(std::string filename,
+                                                       bool repeat = false);
 
   // Returns a Renderer instance that writes its data to a file.
   static std::unique_ptr<Renderer> CreateWavFileWriter(
@@ -123,43 +128,16 @@ class TestAudioDeviceModule : public AudioDeviceModule {
       int sampling_frequency_in_hz,
       int num_channels = 1);
 
-  // WavReader and WavWriter creation based on rtc::PlatformFile.
+  int32_t Init() override = 0;
+  int32_t RegisterAudioCallback(AudioTransport* callback) override = 0;
 
-  // Returns a Capturer instance that gets its data from a file. The sample rate
-  // and channels will be checked against the Wav file.
-  static std::unique_ptr<Capturer> CreateWavFileReader(
-      rtc::PlatformFile file,
-      int sampling_frequency_in_hz,
-      int num_channels = 1);
+  int32_t StartPlayout() override = 0;
+  int32_t StopPlayout() override = 0;
+  int32_t StartRecording() override = 0;
+  int32_t StopRecording() override = 0;
 
-  // Returns a Capturer instance that gets its data from a file.
-  // Automatically detects sample rate and num of channels.
-  static std::unique_ptr<Capturer> CreateWavFileReader(rtc::PlatformFile file);
-
-  // Returns a Renderer instance that writes its data to a file.
-  static std::unique_ptr<Renderer> CreateWavFileWriter(
-      rtc::PlatformFile file,
-      int sampling_frequency_in_hz,
-      int num_channels = 1);
-
-  // Returns a Renderer instance that writes its data to a WAV file, cutting
-  // off silence at the beginning (not necessarily perfect silence, see
-  // kAmplitudeThreshold) and at the end (only actual 0 samples in this case).
-  static std::unique_ptr<Renderer> CreateBoundedWavFileWriter(
-      rtc::PlatformFile file,
-      int sampling_frequency_in_hz,
-      int num_channels = 1);
-
-  virtual int32_t Init() = 0;
-  virtual int32_t RegisterAudioCallback(AudioTransport* callback) = 0;
-
-  virtual int32_t StartPlayout() = 0;
-  virtual int32_t StopPlayout() = 0;
-  virtual int32_t StartRecording() = 0;
-  virtual int32_t StopRecording() = 0;
-
-  virtual bool Playing() const = 0;
-  virtual bool Recording() const = 0;
+  bool Playing() const override = 0;
+  bool Recording() const override = 0;
 
   // Blocks until the Renderer refuses to receive data.
   // Returns false if |timeout_ms| passes before that happens.

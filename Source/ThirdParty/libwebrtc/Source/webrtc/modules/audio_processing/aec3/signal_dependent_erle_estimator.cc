@@ -14,7 +14,7 @@
 #include <functional>
 #include <numeric>
 
-#include "modules/audio_processing/aec3/vector_buffer.h"
+#include "modules/audio_processing/aec3/spectrum_buffer.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -122,7 +122,7 @@ SignalDependentErleEstimator::SignalDependentErleEstimator(
     : min_erle_(config.erle.min),
       num_sections_(config.erle.num_sections),
       num_blocks_(config.filter.main.length_blocks),
-      delay_headroom_blocks_(config.delay.delay_headroom_blocks),
+      delay_headroom_blocks_(config.delay.delay_headroom_samples / kBlockSize),
       band_to_subband_(FormSubbandMap()),
       max_erle_(SetMaxErleSubbands(config.erle.max_l,
                                    config.erle.max_h,
@@ -201,7 +201,6 @@ void SignalDependentErleEstimator::Dump(
   for (auto& factor : correction_factors_) {
     data_dumper->DumpRaw("aec3_erle_correction_factor", factor);
   }
-  data_dumper->DumpRaw("aec3_erle", erle_);
 }
 
 // Estimates for each band the smallest number of sections in the filter that
@@ -315,7 +314,7 @@ void SignalDependentErleEstimator::ComputeEchoEstimatePerFilterSection(
     const RenderBuffer& render_buffer,
     const std::vector<std::array<float, kFftLengthBy2Plus1>>&
         filter_frequency_response) {
-  const VectorBuffer& spectrum_render_buffer =
+  const SpectrumBuffer& spectrum_render_buffer =
       render_buffer.GetSpectrumBuffer();
 
   RTC_DCHECK_EQ(S2_section_accum_.size() + 1,
@@ -329,11 +328,14 @@ void SignalDependentErleEstimator::ComputeEchoEstimatePerFilterSection(
     std::array<float, kFftLengthBy2Plus1> H2_section;
     X2_section.fill(0.f);
     H2_section.fill(0.f);
+    const size_t block_limit = std::min(section_boundaries_blocks_[section + 1],
+                                        filter_frequency_response.size());
     for (size_t block = section_boundaries_blocks_[section];
-         block < section_boundaries_blocks_[section + 1]; ++block) {
-      std::transform(X2_section.begin(), X2_section.end(),
-                     spectrum_render_buffer.buffer[idx_render].begin(),
-                     X2_section.begin(), std::plus<float>());
+         block < block_limit; ++block) {
+      std::transform(
+          X2_section.begin(), X2_section.end(),
+          spectrum_render_buffer.buffer[idx_render][/*channel=*/0].begin(),
+          X2_section.begin(), std::plus<float>());
       std::transform(H2_section.begin(), H2_section.end(),
                      filter_frequency_response[block].begin(),
                      H2_section.begin(), std::plus<float>());

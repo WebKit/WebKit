@@ -14,7 +14,7 @@
 #include <string>
 
 #include "rtc_base/checks.h"
-#include "sdk/android/generated_native_api_jni/jni/WebRtcClassLoader_jni.h"
+#include "sdk/android/generated_native_api_jni/WebRtcClassLoader_jni.h"
 #include "sdk/android/native_api/jni/java_types.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
 

@@ -9,9 +9,9 @@
  */
 
 #include "modules/audio_processing/aec3/render_delay_controller_metrics.h"
+
 #include "absl/types/optional.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-
 #include "test/gtest.h"
 
 namespace webrtc {

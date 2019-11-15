@@ -24,6 +24,7 @@
 
 #if defined(WEBRTC_WIN)
 #include <iphlpapi.h>
+
 #include "rtc_base/win32.h"
 #elif !defined(__native_client__)
 #include "rtc_base/ifaddrs_converter.h"
@@ -31,16 +32,18 @@
 
 #include <stdio.h>
 
-#include <algorithm>
 #include <memory>
 
+#include "absl/algorithm/container.h"
+#include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/networkmonitor.h"
+#include "rtc_base/network_monitor.h"
 #include "rtc_base/socket.h"  // includes something that makes windows happy
-#include "rtc_base/stringencode.h"
+#include "rtc_base/string_encode.h"
+#include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/thread.h"
 
 namespace rtc {
@@ -187,14 +190,13 @@ std::string MakeNetworkKey(const std::string& name,
 }
 // Test if the network name matches the type<number> pattern, e.g. eth0. The
 // matching is case-sensitive.
-bool MatchTypeNameWithIndexPattern(const std::string& network_name,
-                                   const std::string& type_name) {
-  if (network_name.find(type_name) != 0) {
+bool MatchTypeNameWithIndexPattern(absl::string_view network_name,
+                                   absl::string_view type_name) {
+  if (!absl::StartsWith(network_name, type_name)) {
     return false;
   }
-  return std::find_if(network_name.begin() + type_name.size(),
-                      network_name.end(),
-                      [](char c) { return !isdigit(c); }) == network_name.end();
+  return absl::c_none_of(network_name.substr(type_name.size()),
+                         [](char c) { return !isdigit(c); });
 }
 
 // A cautious note that this method may not provide an accurate adapter type
@@ -235,7 +237,8 @@ AdapterType GetAdapterTypeFromName(const char* network_name) {
   if (MatchTypeNameWithIndexPattern(network_name, "rmnet") ||
       MatchTypeNameWithIndexPattern(network_name, "rmnet_data") ||
       MatchTypeNameWithIndexPattern(network_name, "v4-rmnet") ||
-      MatchTypeNameWithIndexPattern(network_name, "v4-rmnet_data")) {
+      MatchTypeNameWithIndexPattern(network_name, "v4-rmnet_data") ||
+      MatchTypeNameWithIndexPattern(network_name, "clat")) {
     return ADAPTER_TYPE_CELLULAR;
   }
   if (MatchTypeNameWithIndexPattern(network_name, "wlan")) {
@@ -264,8 +267,7 @@ webrtc::MdnsResponderInterface* NetworkManager::GetMdnsResponder() const {
 }
 
 NetworkManagerBase::NetworkManagerBase()
-    : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED),
-      ipv6_enabled_(true) {}
+    : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED) {}
 
 NetworkManagerBase::~NetworkManagerBase() {
   for (const auto& kv : networks_map_) {
@@ -284,22 +286,20 @@ void NetworkManagerBase::GetAnyAddressNetworks(NetworkList* networks) {
     ipv4_any_address_network_.reset(
         new rtc::Network("any", "any", ipv4_any_address, 0, ADAPTER_TYPE_ANY));
     ipv4_any_address_network_->set_default_local_address_provider(this);
+    ipv4_any_address_network_->set_mdns_responder_provider(this);
     ipv4_any_address_network_->AddIP(ipv4_any_address);
-    ipv4_any_address_network_->SetMdnsResponder(GetMdnsResponder());
   }
   networks->push_back(ipv4_any_address_network_.get());
 
-  if (ipv6_enabled()) {
-    if (!ipv6_any_address_network_) {
-      const rtc::IPAddress ipv6_any_address(in6addr_any);
-      ipv6_any_address_network_.reset(new rtc::Network(
-          "any", "any", ipv6_any_address, 0, ADAPTER_TYPE_ANY));
-      ipv6_any_address_network_->set_default_local_address_provider(this);
-      ipv6_any_address_network_->AddIP(ipv6_any_address);
-      ipv6_any_address_network_->SetMdnsResponder(GetMdnsResponder());
-    }
-    networks->push_back(ipv6_any_address_network_.get());
+  if (!ipv6_any_address_network_) {
+    const rtc::IPAddress ipv6_any_address(in6addr_any);
+    ipv6_any_address_network_.reset(
+        new rtc::Network("any", "any", ipv6_any_address, 0, ADAPTER_TYPE_ANY));
+    ipv6_any_address_network_->set_default_local_address_provider(this);
+    ipv6_any_address_network_->set_mdns_responder_provider(this);
+    ipv6_any_address_network_->AddIP(ipv6_any_address);
   }
+  networks->push_back(ipv6_any_address_network_.get());
 }
 
 void NetworkManagerBase::GetNetworks(NetworkList* result) const {
@@ -321,7 +321,7 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
   // with the same key.
   std::map<std::string, AddressList> consolidated_address_list;
   NetworkList list(new_networks);
-  std::sort(list.begin(), list.end(), CompareNetworks);
+  absl::c_sort(list, CompareNetworks);
   // First, build a set of network-keys to the ipaddresses.
   for (Network* network : list) {
     bool might_add_to_merged_list = false;
@@ -386,7 +386,7 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
         delete net;
       }
     }
-    networks_map_[key]->SetMdnsResponder(GetMdnsResponder());
+    networks_map_[key]->set_mdns_responder_provider(this);
   }
   // It may still happen that the merged list is a subset of |networks_|.
   // To detect this change, we compare their sizes.
@@ -402,11 +402,10 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
     for (const auto& kv : networks_map_) {
       Network* network = kv.second;
       // If |network| is in the newly generated |networks_|, it is active.
-      bool found = std::find(networks_.begin(), networks_.end(), network) !=
-                   networks_.end();
+      bool found = absl::c_linear_search(networks_, network);
       network->set_active(found);
     }
-    std::sort(networks_.begin(), networks_.end(), SortNetworks);
+    absl::c_sort(networks_, SortNetworks);
     // Now network interfaces are sorted, we should set the preference value
     // for each of the interfaces we are planning to use.
     // Preference order of network interfaces might have changed from previous
@@ -461,10 +460,9 @@ Network* NetworkManagerBase::GetNetworkFromAddress(
     const rtc::IPAddress& ip) const {
   for (Network* network : networks_) {
     const auto& ips = network->GetIPs();
-    if (std::find_if(ips.begin(), ips.end(),
-                     [ip](const InterfaceAddress& existing_ip) {
-                       return ip == static_cast<rtc::IPAddress>(existing_ip);
-                     }) != ips.end()) {
+    if (absl::c_any_of(ips, [&](const InterfaceAddress& existing_ip) {
+          return ip == static_cast<rtc::IPAddress>(existing_ip);
+        })) {
       return network;
     }
   }
@@ -518,10 +516,6 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
     // Skip unknown family.
     if (cursor->ifa_addr->sa_family != AF_INET &&
         cursor->ifa_addr->sa_family != AF_INET6) {
-      continue;
-    }
-    // Skip IPv6 if not enabled.
-    if (cursor->ifa_addr->sa_family == AF_INET6 && !ipv6_enabled()) {
       continue;
     }
     // Convert to InterfaceAddress.
@@ -699,22 +693,20 @@ bool BasicNetworkManager::CreateNetworks(bool include_ignored,
             break;
           }
           case AF_INET6: {
-            if (ipv6_enabled()) {
-              sockaddr_in6* v6_addr =
-                  reinterpret_cast<sockaddr_in6*>(address->Address.lpSockaddr);
-              scope_id = v6_addr->sin6_scope_id;
-              ip = IPAddress(v6_addr->sin6_addr);
+            sockaddr_in6* v6_addr =
+                reinterpret_cast<sockaddr_in6*>(address->Address.lpSockaddr);
+            scope_id = v6_addr->sin6_scope_id;
+            ip = IPAddress(v6_addr->sin6_addr);
 
-              if (IsIgnoredIPv6(InterfaceAddress(ip))) {
-                continue;
-              }
-
-              break;
-            } else {
+            if (IsIgnoredIPv6(InterfaceAddress(ip))) {
               continue;
             }
+
+            break;
           }
-          default: { continue; }
+          default: {
+            continue;
+          }
         }
 
         IPAddress prefix;
@@ -750,6 +742,7 @@ bool BasicNetworkManager::CreateNetworks(bool include_ignored,
           std::unique_ptr<Network> network(new Network(
               name, description, prefix, prefix_length, adapter_type));
           network->set_default_local_address_provider(this);
+          network->set_mdns_responder_provider(this);
           network->set_scope_id(scope_id);
           network->AddIP(ip);
           bool ignored = IsIgnoredNetwork(*network);
@@ -1011,7 +1004,7 @@ bool Network::SetIPs(const std::vector<InterfaceAddress>& ips, bool changed) {
   changed = changed || ips.size() != ips_.size();
   if (!changed) {
     for (const InterfaceAddress& ip : ips) {
-      if (std::find(ips_.begin(), ips_.end(), ip) == ips_.end()) {
+      if (!absl::c_linear_search(ips_, ip)) {
         changed = true;
         break;
       }
@@ -1058,6 +1051,13 @@ IPAddress Network::GetBestIP() const {
   }
 
   return static_cast<IPAddress>(selected_ip);
+}
+
+webrtc::MdnsResponderInterface* Network::GetMdnsResponder() const {
+  if (mdns_responder_provider_ == nullptr) {
+    return nullptr;
+  }
+  return mdns_responder_provider_->GetMdnsResponder();
 }
 
 uint16_t Network::GetCost() const {

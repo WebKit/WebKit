@@ -37,6 +37,13 @@
     <ignore path="**/org/chromium/**/*.java" />
   </issue>
 
+  <issue id="UsesMinSdkAttributes">
+    <!-- TODO(oprypin): find a way to disable this warning just for Chromium's
+         code, not globally. Due to https://cs.chromium.org/lint_manifest_path
+         it is impossible to discern paths of AndroidManifest.xml files.-->
+    <ignore path="AndroidManifest.xml" />
+  </issue>
+
   <issue id="NewApi">
     <!-- This is rewritten by desugar after lint runs. -->
     <ignore regexp="Call requires API level 19.*`java.util.Objects#requireNonNull`"/>

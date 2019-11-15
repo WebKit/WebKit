@@ -10,13 +10,18 @@
 
 #include "test/vcm_capturer.h"
 
-#include "call/video_send_stream.h"
+#include <stdint.h>
+
+#include <memory>
+
 #include "modules/video_capture/video_capture_factory.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+
 namespace webrtc {
 namespace test {
 
-VcmCapturer::VcmCapturer() : started_(false), sink_(nullptr), vcm_(nullptr) {}
+VcmCapturer::VcmCapturer() : vcm_(nullptr) {}
 
 bool VcmCapturer::Init(size_t width,
                        size_t height,
@@ -35,6 +40,9 @@ bool VcmCapturer::Init(size_t width,
   }
 
   vcm_ = webrtc::VideoCaptureFactory::Create(unique_name);
+  if (!vcm_) {
+    return false;
+  }
   vcm_->RegisterCaptureDataCallback(this);
 
   device_info->GetCapability(vcm_->CurrentDeviceName(), 0, capability_);
@@ -68,30 +76,6 @@ VcmCapturer* VcmCapturer::Create(size_t width,
   return vcm_capturer.release();
 }
 
-void VcmCapturer::Start() {
-  rtc::CritScope lock(&crit_);
-  started_ = true;
-}
-
-void VcmCapturer::Stop() {
-  rtc::CritScope lock(&crit_);
-  started_ = false;
-}
-
-void VcmCapturer::AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                                  const rtc::VideoSinkWants& wants) {
-  rtc::CritScope lock(&crit_);
-  RTC_CHECK(!sink_ || sink_ == sink);
-  sink_ = sink;
-  TestVideoCapturer::AddOrUpdateSink(sink, wants);
-}
-
-void VcmCapturer::RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
-  rtc::CritScope lock(&crit_);
-  RTC_CHECK(sink_ == sink);
-  sink_ = nullptr;
-}
-
 void VcmCapturer::Destroy() {
   if (!vcm_)
     return;
@@ -107,12 +91,7 @@ VcmCapturer::~VcmCapturer() {
 }
 
 void VcmCapturer::OnFrame(const VideoFrame& frame) {
-  rtc::CritScope lock(&crit_);
-  if (started_ && sink_) {
-    absl::optional<VideoFrame> out_frame = AdaptFrame(frame);
-    if (out_frame)
-      sink_->OnFrame(*out_frame);
-  }
+  TestVideoCapturer::OnFrame(frame);
 }
 
 }  // namespace test

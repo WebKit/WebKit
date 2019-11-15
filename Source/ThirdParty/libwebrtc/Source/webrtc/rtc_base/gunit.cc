@@ -12,17 +12,18 @@
 
 #include <string>
 
-#include "rtc_base/stringutils.h"
+#include "absl/strings/match.h"
 
-::testing::AssertionResult AssertStartsWith(const char* str_expr,
+::testing::AssertionResult AssertStartsWith(const char* text_expr,
                                             const char* prefix_expr,
-                                            const std::string& str,
-                                            const std::string& prefix) {
-  if (rtc::starts_with(str.c_str(), prefix.c_str())) {
+                                            absl::string_view text,
+                                            absl::string_view prefix) {
+  if (absl::StartsWith(text, prefix)) {
     return ::testing::AssertionSuccess();
   } else {
     return ::testing::AssertionFailure()
-           << str_expr << "\nwhich is\n\"" << str << "\"\ndoes not start with\n"
+           << text_expr << "\nwhich is\n\"" << text
+           << "\"\ndoes not start with\n"
            << prefix_expr << "\nwhich is\n\"" << prefix << "\"";
   }
 }

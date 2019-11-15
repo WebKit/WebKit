@@ -32,8 +32,12 @@ struct RTC_EXPORT SdpVideoFormat {
 
   ~SdpVideoFormat();
 
-  friend bool operator==(const SdpVideoFormat& a, const SdpVideoFormat& b);
-  friend bool operator!=(const SdpVideoFormat& a, const SdpVideoFormat& b) {
+  std::string ToString() const;
+
+  friend RTC_EXPORT bool operator==(const SdpVideoFormat& a,
+                                    const SdpVideoFormat& b);
+  friend RTC_EXPORT bool operator!=(const SdpVideoFormat& a,
+                                    const SdpVideoFormat& b) {
     return !(a == b);
   }
 

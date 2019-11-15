@@ -11,9 +11,12 @@
 #include "audio/utility/audio_frame_operations.h"
 
 #include <string.h>
+
 #include <algorithm>
 #include <cstdint>
+#include <utility>
 
+#include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -69,60 +72,20 @@ void AudioFrameOperations::Add(const AudioFrame& frame_to_add,
   }
 }
 
-void AudioFrameOperations::MonoToStereo(const int16_t* src_audio,
-                                        size_t samples_per_channel,
-                                        int16_t* dst_audio) {
-  for (size_t i = 0; i < samples_per_channel; i++) {
-    dst_audio[2 * i] = src_audio[i];
-    dst_audio[2 * i + 1] = src_audio[i];
-  }
-}
-
 int AudioFrameOperations::MonoToStereo(AudioFrame* frame) {
   if (frame->num_channels_ != 1) {
     return -1;
   }
-  if ((frame->samples_per_channel_ * 2) >= AudioFrame::kMaxDataSizeSamples) {
-    // Not enough memory to expand from mono to stereo.
-    return -1;
-  }
-
-  if (!frame->muted()) {
-    // TODO(yujo): this operation can be done in place.
-    int16_t data_copy[AudioFrame::kMaxDataSizeSamples];
-    memcpy(data_copy, frame->data(),
-           sizeof(int16_t) * frame->samples_per_channel_);
-    MonoToStereo(data_copy, frame->samples_per_channel_, frame->mutable_data());
-  }
-  frame->num_channels_ = 2;
-
+  UpmixChannels(2, frame);
   return 0;
-}
-
-void AudioFrameOperations::StereoToMono(const int16_t* src_audio,
-                                        size_t samples_per_channel,
-                                        int16_t* dst_audio) {
-  for (size_t i = 0; i < samples_per_channel; i++) {
-    dst_audio[i] =
-        (static_cast<int32_t>(src_audio[2 * i]) + src_audio[2 * i + 1]) >> 1;
-  }
 }
 
 int AudioFrameOperations::StereoToMono(AudioFrame* frame) {
   if (frame->num_channels_ != 2) {
     return -1;
   }
-
-  RTC_DCHECK_LE(frame->samples_per_channel_ * 2,
-                AudioFrame::kMaxDataSizeSamples);
-
-  if (!frame->muted()) {
-    StereoToMono(frame->data(), frame->samples_per_channel_,
-                 frame->mutable_data());
-  }
-  frame->num_channels_ = 1;
-
-  return 0;
+  DownmixChannels(1, frame);
+  return frame->num_channels_ == 1 ? 0 : -1;
 }
 
 void AudioFrameOperations::QuadToStereo(const int16_t* src_audio,
@@ -154,47 +117,17 @@ int AudioFrameOperations::QuadToStereo(AudioFrame* frame) {
   return 0;
 }
 
-void AudioFrameOperations::QuadToMono(const int16_t* src_audio,
-                                      size_t samples_per_channel,
-                                      int16_t* dst_audio) {
-  for (size_t i = 0; i < samples_per_channel; i++) {
-    dst_audio[i] =
-        (static_cast<int32_t>(src_audio[4 * i]) + src_audio[4 * i + 1] +
-         src_audio[4 * i + 2] + src_audio[4 * i + 3]) >>
-        2;
-  }
-}
-
-int AudioFrameOperations::QuadToMono(AudioFrame* frame) {
-  if (frame->num_channels_ != 4) {
-    return -1;
-  }
-
-  RTC_DCHECK_LE(frame->samples_per_channel_ * 4,
-                AudioFrame::kMaxDataSizeSamples);
-
-  if (!frame->muted()) {
-    QuadToMono(frame->data(), frame->samples_per_channel_,
-               frame->mutable_data());
-  }
-  frame->num_channels_ = 1;
-
-  return 0;
-}
-
 void AudioFrameOperations::DownmixChannels(const int16_t* src_audio,
                                            size_t src_channels,
                                            size_t samples_per_channel,
                                            size_t dst_channels,
                                            int16_t* dst_audio) {
-  if (src_channels == 2 && dst_channels == 1) {
-    StereoToMono(src_audio, samples_per_channel, dst_audio);
+  if (src_channels > 1 && dst_channels == 1) {
+    DownmixInterleavedToMono(src_audio, samples_per_channel, src_channels,
+                             dst_audio);
     return;
   } else if (src_channels == 4 && dst_channels == 2) {
     QuadToStereo(src_audio, samples_per_channel, dst_audio);
-    return;
-  } else if (src_channels == 4 && dst_channels == 1) {
-    QuadToMono(src_audio, samples_per_channel, dst_audio);
     return;
   }
 
@@ -202,17 +135,48 @@ void AudioFrameOperations::DownmixChannels(const int16_t* src_audio,
                    << ", dst_channels: " << dst_channels;
 }
 
-int AudioFrameOperations::DownmixChannels(size_t dst_channels,
-                                          AudioFrame* frame) {
-  if (frame->num_channels_ == 2 && dst_channels == 1) {
-    return StereoToMono(frame);
+void AudioFrameOperations::DownmixChannels(size_t dst_channels,
+                                           AudioFrame* frame) {
+  RTC_DCHECK_LE(frame->samples_per_channel_ * frame->num_channels_,
+                AudioFrame::kMaxDataSizeSamples);
+  if (frame->num_channels_ > 1 && dst_channels == 1) {
+    if (!frame->muted()) {
+      DownmixInterleavedToMono(frame->data(), frame->samples_per_channel_,
+                               frame->num_channels_, frame->mutable_data());
+    }
+    frame->num_channels_ = 1;
   } else if (frame->num_channels_ == 4 && dst_channels == 2) {
-    return QuadToStereo(frame);
-  } else if (frame->num_channels_ == 4 && dst_channels == 1) {
-    return QuadToMono(frame);
+    int err = QuadToStereo(frame);
+    RTC_DCHECK_EQ(err, 0);
+  } else {
+    RTC_NOTREACHED() << "src_channels: " << frame->num_channels_
+                     << ", dst_channels: " << dst_channels;
+  }
+}
+
+void AudioFrameOperations::UpmixChannels(size_t target_number_of_channels,
+                                         AudioFrame* frame) {
+  RTC_DCHECK_EQ(frame->num_channels_, 1);
+  RTC_DCHECK_LE(frame->samples_per_channel_ * target_number_of_channels,
+                AudioFrame::kMaxDataSizeSamples);
+
+  if (frame->num_channels_ != 1 ||
+      frame->samples_per_channel_ * target_number_of_channels >
+          AudioFrame::kMaxDataSizeSamples) {
+    return;
   }
 
-  return -1;
+  if (!frame->muted()) {
+    // Up-mixing done in place. Going backwards through the frame ensure nothing
+    // is irrevocably overwritten.
+    for (int i = frame->samples_per_channel_ - 1; i >= 0; i--) {
+      for (size_t j = 0; j < target_number_of_channels; ++j) {
+        frame->mutable_data()[target_number_of_channels * i + j] =
+            frame->data()[i];
+      }
+    }
+  }
+  frame->num_channels_ = target_number_of_channels;
 }
 
 void AudioFrameOperations::SwapStereoChannels(AudioFrame* frame) {
@@ -223,9 +187,7 @@ void AudioFrameOperations::SwapStereoChannels(AudioFrame* frame) {
 
   int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_ * 2; i += 2) {
-    int16_t temp_data = frame_data[i];
-    frame_data[i] = frame_data[i + 1];
-    frame_data[i + 1] = temp_data;
+    std::swap(frame_data[i], frame_data[i + 1]);
   }
 }
 

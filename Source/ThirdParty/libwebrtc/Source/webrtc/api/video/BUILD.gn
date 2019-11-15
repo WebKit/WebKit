@@ -8,34 +8,57 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("video_frame") {
+rtc_source_set("video_rtp_headers") {
   visibility = [ "*" ]
   sources = [
     "color_space.cc",
     "color_space.h",
     "hdr_metadata.cc",
     "hdr_metadata.h",
-    "video_codec_type.h",
     "video_content_type.cc",
     "video_content_type.h",
-    "video_frame.cc",
-    "video_frame.h",
-    "video_frame_buffer.cc",
-    "video_frame_buffer.h",
     "video_frame_marking.h",
     "video_rotation.h",
-    "video_sink_interface.h",
-    "video_source_interface.cc",
-    "video_source_interface.h",
     "video_timing.cc",
     "video_timing.h",
   ]
 
   deps = [
+    "..:array_view",
+    "../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("video_frame") {
+  visibility = [ "*" ]
+  sources = [
+    "video_codec_type.h",
+    "video_frame.cc",
+    "video_frame.h",
+    "video_frame_buffer.cc",
+    "video_frame_buffer.h",
+    "video_sink_interface.h",
+    "video_source_interface.cc",
+    "video_source_interface.h",
+  ]
+
+  deps = [
+    ":video_rtp_headers",
+    "..:array_view",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("video_frame_type") {
+  visibility = [ "*" ]
+  sources = [
+    "video_frame_type.h",
   ]
 }
 
@@ -47,8 +70,10 @@ rtc_source_set("video_frame_i420") {
   ]
   deps = [
     ":video_frame",
+    ":video_rtp_headers",
+    "..:scoped_refptr",
+    "../../rtc_base",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base",
     "../../rtc_base/memory:aligned_malloc",
     "../../rtc_base/system:rtc_export",
     "//third_party/libyuv",
@@ -64,24 +89,30 @@ rtc_source_set("video_frame_i010") {
   deps = [
     ":video_frame",
     ":video_frame_i420",
+    ":video_rtp_headers",
+    "..:scoped_refptr",
+    "../../rtc_base",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base",
     "../../rtc_base/memory:aligned_malloc",
     "//third_party/libyuv",
   ]
 }
 
 rtc_source_set("encoded_image") {
+  visibility = [ "*" ]
   sources = [
     "encoded_image.cc",
     "encoded_image.h",
   ]
   deps = [
+    ":video_codec_constants",
     ":video_frame",
+    ":video_frame_type",
+    ":video_rtp_headers",
+    "..:refcountedbase",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
     "../..:webrtc_common",
-
-    # TODO(bugs.webrtc.org/8311) Cleanup when kMaxSpatialLayers is moved to proper include.
-    "../../api/video:video_bitrate_allocation",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
@@ -101,6 +132,14 @@ rtc_source_set("encoded_frame") {
   ]
 }
 
+rtc_source_set("video_codec_constants") {
+  visibility = [ "*" ]
+  sources = [
+    "video_codec_constants.h",
+  ]
+  deps = []
+}
+
 rtc_source_set("video_bitrate_allocation") {
   visibility = [ "*" ]
   sources = [
@@ -108,9 +147,11 @@ rtc_source_set("video_bitrate_allocation") {
     "video_bitrate_allocation.h",
   ]
   deps = [
+    ":video_codec_constants",
     "../../rtc_base:checks",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -118,10 +159,12 @@ rtc_source_set("video_bitrate_allocation") {
 rtc_source_set("video_bitrate_allocator") {
   visibility = [ "*" ]
   sources = [
+    "video_bitrate_allocator.cc",
     "video_bitrate_allocator.h",
   ]
   deps = [
     ":video_bitrate_allocation",
+    "../units:data_rate",
   ]
 }
 
@@ -132,6 +175,7 @@ rtc_source_set("video_bitrate_allocator_factory") {
   ]
   deps = [
     ":video_bitrate_allocator",
+    "../../rtc_base:rtc_base_approved",
     "../video_codecs:video_codecs_api",
   ]
 }
@@ -145,6 +189,8 @@ rtc_source_set("video_stream_decoder") {
   deps = [
     ":encoded_frame",
     ":video_frame",
+    "../task_queue",
+    "../units:time_delta",
     "../video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -161,6 +207,8 @@ rtc_source_set("video_stream_decoder_create") {
     ":video_stream_decoder",
     "../../rtc_base:rtc_base_approved",
     "../../video:video_stream_decoder_impl",
+    "../task_queue",
+    "../video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
@@ -175,11 +223,13 @@ rtc_source_set("video_stream_encoder") {
   ]
 
   deps = [
+    ":video_bitrate_allocator",
     ":video_bitrate_allocator_factory",
     ":video_frame",
-
-    # For rtpparameters.h
-    "..:libjingle_peerconnection_api",
+    "..:rtp_parameters",
+    "../:fec_controller_api",
+    "../:rtp_parameters",
+    "../units:data_rate",
     "../video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -187,21 +237,17 @@ rtc_source_set("video_stream_encoder") {
 
 rtc_source_set("video_stream_encoder_create") {
   visibility = [ "*" ]
-  allow_poison = [ "software_video_codecs" ]  # TODO(bugs.webrtc.org/7925): Remove.
   sources = [
     "video_stream_encoder_create.cc",
     "video_stream_encoder_create.h",
   ]
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
+    ":video_frame",
     ":video_stream_encoder",
-    "../../rtc_base:ptr_util",
+    "../../api:scoped_refptr",
     "../../video:video_stream_encoder_impl",
+    "../task_queue",
     "../video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/memory",
   ]
@@ -216,12 +262,30 @@ rtc_static_library("builtin_video_bitrate_allocator_factory") {
 
   deps = [
     ":video_bitrate_allocation",
+    ":video_bitrate_allocator",
     ":video_bitrate_allocator_factory",
+    "../../:webrtc_common",
+    "../../api:scoped_refptr",
     "../../media:rtc_media_base",
     "../../modules/video_coding:video_coding_utility",
     "../../modules/video_coding:webrtc_vp9_helpers",
-    "../../rtc_base:ptr_util",
     "../../rtc_base/system:fallthrough",
+    "../video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/memory",
   ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("video_unittests") {
+    testonly = true
+    sources = [
+      "video_stream_decoder_create_unittest.cc",
+    ]
+    deps = [
+      ":video_stream_decoder_create",
+      "../../test:test_support",
+      "../task_queue:default_task_queue_factory",
+      "../video_codecs:builtin_video_decoder_factory",
+    ]
+  }
 }

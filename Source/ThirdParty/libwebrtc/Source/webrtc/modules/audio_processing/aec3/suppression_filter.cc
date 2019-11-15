@@ -79,7 +79,7 @@ void SuppressionFilter::ApplyGain(
     const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
     float high_bands_gain,
     const FftData& E_lowest_band,
-    std::vector<std::vector<float>>* e) {
+    std::vector<std::vector<std::vector<float>>>* e) {
   RTC_DCHECK(e);
   RTC_DCHECK_EQ(e->size(), NumBandsForRate(sample_rate_hz_));
   FftData E;
@@ -111,14 +111,14 @@ void SuppressionFilter::ApplyGain(
 
   fft_.Ifft(E, &e_extended);
   std::transform(e_output_old_[0].begin(), e_output_old_[0].end(),
-                 std::begin(kSqrtHanning) + kFftLengthBy2, (*e)[0].begin(),
+                 std::begin(kSqrtHanning) + kFftLengthBy2, (*e)[0][0].begin(),
                  [&](float a, float b) { return kIfftNormalization * a * b; });
   std::transform(e_extended.begin(), e_extended.begin() + kFftLengthBy2,
                  std::begin(kSqrtHanning), e_extended.begin(),
                  [&](float a, float b) { return kIfftNormalization * a * b; });
-  std::transform((*e)[0].begin(), (*e)[0].end(), e_extended.begin(),
-                 (*e)[0].begin(), std::plus<float>());
-  std::for_each((*e)[0].begin(), (*e)[0].end(), [](float& x_k) {
+  std::transform((*e)[0][0].begin(), (*e)[0][0].end(), e_extended.begin(),
+                 (*e)[0][0].begin(), std::plus<float>());
+  std::for_each((*e)[0][0].begin(), (*e)[0][0].end(), [](float& x_k) {
     x_k = rtc::SafeClamp(x_k, -32768.f, 32767.f);
   });
   std::copy(e_extended.begin() + kFftLengthBy2, e_extended.begin() + kFftLength,
@@ -140,8 +140,9 @@ void SuppressionFilter::ApplyGain(
         0.4f * std::sqrt(1.f - high_bands_gain * high_bands_gain);
 
     std::transform(
-        (*e)[1].begin(), (*e)[1].end(), time_domain_high_band_noise.begin(),
-        (*e)[1].begin(), [&](float a, float b) {
+        (*e)[1][0].begin(), (*e)[1][0].end(),
+        time_domain_high_band_noise.begin(), (*e)[1][0].begin(),
+        [&](float a, float b) {
           return std::max(
               std::min(b * high_bands_noise_scaling + high_bands_gain * a,
                        32767.0f),
@@ -150,16 +151,16 @@ void SuppressionFilter::ApplyGain(
 
     if (e->size() > 2) {
       RTC_DCHECK_EQ(3, e->size());
-      std::for_each((*e)[2].begin(), (*e)[2].end(), [&](float& a) {
+      std::for_each((*e)[2][0].begin(), (*e)[2][0].end(), [&](float& a) {
         a = rtc::SafeClamp(a * high_bands_gain, -32768.f, 32767.f);
       });
     }
 
     std::array<float, kFftLengthBy2> tmp;
     for (size_t k = 1; k < e->size(); ++k) {
-      std::copy((*e)[k].begin(), (*e)[k].end(), tmp.begin());
+      std::copy((*e)[k][0].begin(), (*e)[k][0].end(), tmp.begin());
       std::copy(e_output_old_[k].begin(), e_output_old_[k].end(),
-                (*e)[k].begin());
+                (*e)[k][0].begin());
       std::copy(tmp.begin(), tmp.end(), e_output_old_[k].begin());
     }
   }

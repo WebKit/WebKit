@@ -14,8 +14,8 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
-using testing::ElementsAreArray;
-using testing::make_tuple;
+using ::testing::ElementsAreArray;
+using ::testing::make_tuple;
 using webrtc::rtcp::RapidResyncRequest;
 
 namespace webrtc {

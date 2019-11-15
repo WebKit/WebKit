@@ -13,7 +13,7 @@
 
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/reverb_model.h"
-#include "modules/audio_processing/aec3/vector_buffer.h"
+#include "modules/audio_processing/aec3/spectrum_buffer.h"
 
 namespace webrtc {
 
@@ -29,7 +29,7 @@ class RenderReverbModel {
 
   // Applies the reverberation model over the render spectrum. It also returns
   // the reverberation render power spectrum in the array reverb_power_spectrum.
-  void Apply(const VectorBuffer& spectrum_buffer,
+  void Apply(const SpectrumBuffer& spectrum_buffer,
              int delay_blocks,
              float reverb_decay,
              rtc::ArrayView<float> reverb_power_spectrum);

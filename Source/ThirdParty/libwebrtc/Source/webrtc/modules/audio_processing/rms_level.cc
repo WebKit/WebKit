@@ -10,8 +10,8 @@
 
 #include "modules/audio_processing/rms_level.h"
 
-#include <math.h>
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 
 #include "rtc_base/checks.h"
@@ -36,7 +36,7 @@ int ComputeRms(float mean_square) {
   const float mean_square_norm = mean_square / kMaxSquaredLevel;
   RTC_DCHECK_GT(mean_square_norm, kMinLevel);
   // 20log_10(x^0.5) = 10log_10(x)
-  const float rms = 10.f * log10(mean_square_norm);
+  const float rms = 10.f * std::log10(mean_square_norm);
   RTC_DCHECK_LE(rms, 0.f);
   RTC_DCHECK_GT(rms, -RmsLevel::kMinLevelDb);
   // Return the negated value.
@@ -67,6 +67,27 @@ void RmsLevel::Analyze(rtc::ArrayView<const int16_t> data) {
   const float sum_square =
       std::accumulate(data.begin(), data.end(), 0.f,
                       [](float a, int16_t b) { return a + b * b; });
+  RTC_DCHECK_GE(sum_square, 0.f);
+  sum_square_ += sum_square;
+  sample_count_ += data.size();
+
+  max_sum_square_ = std::max(max_sum_square_, sum_square);
+}
+
+void RmsLevel::Analyze(rtc::ArrayView<const float> data) {
+  if (data.empty()) {
+    return;
+  }
+
+  CheckBlockSize(data.size());
+
+  float sum_square = 0.f;
+
+  for (float data_k : data) {
+    int16_t tmp =
+        static_cast<int16_t>(std::min(std::max(data_k, -32768.f), 32767.f));
+    sum_square += tmp * tmp;
+  }
   RTC_DCHECK_GE(sum_square, 0.f);
   sum_square_ += sum_square;
   sample_count_ += data.size();

@@ -14,8 +14,7 @@
 
 #include "modules/include/module.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/task_queue.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -47,7 +46,7 @@ ProcessThreadImpl::ProcessThreadImpl(const char* thread_name)
     : stop_(false), thread_name_(thread_name) {}
 
 ProcessThreadImpl::~ProcessThreadImpl() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!thread_.get());
   RTC_DCHECK(!stop_);
 
@@ -58,7 +57,7 @@ ProcessThreadImpl::~ProcessThreadImpl() {
 }
 
 void ProcessThreadImpl::Start() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!thread_.get());
   if (thread_.get())
     return;
@@ -74,7 +73,7 @@ void ProcessThreadImpl::Start() {
 }
 
 void ProcessThreadImpl::Stop() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (!thread_.get())
     return;
 
@@ -105,7 +104,7 @@ void ProcessThreadImpl::WakeUp(Module* module) {
   wake_up_.Set();
 }
 
-void ProcessThreadImpl::PostTask(std::unique_ptr<rtc::QueuedTask> task) {
+void ProcessThreadImpl::PostTask(std::unique_ptr<QueuedTask> task) {
   // Allowed to be called on any thread.
   {
     rtc::CritScope lock(&lock_);
@@ -116,7 +115,7 @@ void ProcessThreadImpl::PostTask(std::unique_ptr<rtc::QueuedTask> task) {
 
 void ProcessThreadImpl::RegisterModule(Module* module,
                                        const rtc::Location& from) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(module) << from.ToString();
 
 #if RTC_DCHECK_IS_ON
@@ -149,7 +148,7 @@ void ProcessThreadImpl::RegisterModule(Module* module,
 }
 
 void ProcessThreadImpl::DeRegisterModule(Module* module) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(module);
 
   {
@@ -163,8 +162,10 @@ void ProcessThreadImpl::DeRegisterModule(Module* module) {
 }
 
 // static
-bool ProcessThreadImpl::Run(void* obj) {
-  return static_cast<ProcessThreadImpl*>(obj)->Process();
+void ProcessThreadImpl::Run(void* obj) {
+  ProcessThreadImpl* impl = static_cast<ProcessThreadImpl*>(obj);
+  while (impl->Process()) {
+  }
 }
 
 bool ProcessThreadImpl::Process() {
@@ -204,7 +205,7 @@ bool ProcessThreadImpl::Process() {
     }
 
     while (!queue_.empty()) {
-      rtc::QueuedTask* task = queue_.front();
+      QueuedTask* task = queue_.front();
       queue_.pop();
       lock_.Leave();
       task->Run();

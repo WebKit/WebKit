@@ -28,7 +28,7 @@ AAudioPlayer::AAudioPlayer(const AudioParameters& audio_parameters)
     : main_thread_(rtc::Thread::Current()),
       aaudio_(audio_parameters, AAUDIO_DIRECTION_OUTPUT, this) {
   RTC_LOG(INFO) << "ctor";
-  thread_checker_aaudio_.DetachFromThread();
+  thread_checker_aaudio_.Detach();
 }
 
 AAudioPlayer::~AAudioPlayer() {
@@ -102,7 +102,7 @@ int AAudioPlayer::StopPlayout() {
     RTC_LOG(LS_ERROR) << "StopPlayout failed";
     return -1;
   }
-  thread_checker_aaudio_.DetachFromThread();
+  thread_checker_aaudio_.Detach();
   initialized_ = false;
   playing_ = false;
   return 0;

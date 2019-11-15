@@ -26,7 +26,7 @@ size_t TimeToBytes(int bitrate_kbps, int time_ms) {
 
 TEST(IntervalBudgetTest, InitailState) {
   IntervalBudget interval_budget(kBitrateKbps);
-  EXPECT_EQ(interval_budget.budget_level_percent(), 0);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(), 0.0);
   EXPECT_EQ(interval_budget.bytes_remaining(), 0u);
 }
 
@@ -34,7 +34,8 @@ TEST(IntervalBudgetTest, Underuse) {
   IntervalBudget interval_budget(kBitrateKbps);
   int delta_time_ms = 50;
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(), kWindowMs / delta_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   kWindowMs / static_cast<double>(100 * delta_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, delta_time_ms));
 }
@@ -43,7 +44,7 @@ TEST(IntervalBudgetTest, DontUnderuseMoreThanMaxWindow) {
   IntervalBudget interval_budget(kBitrateKbps);
   int delta_time_ms = 1000;
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(), 100);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(), 1.0);
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, kWindowMs));
 }
@@ -53,7 +54,7 @@ TEST(IntervalBudgetTest, DontUnderuseMoreThanMaxWindowWhenChangeBitrate) {
   int delta_time_ms = kWindowMs / 2;
   interval_budget.IncreaseBudget(delta_time_ms);
   interval_budget.set_target_rate_kbps(kBitrateKbps / 10);
-  EXPECT_EQ(interval_budget.budget_level_percent(), 100);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(), 1.0);
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps / 10, kWindowMs));
 }
@@ -63,7 +64,7 @@ TEST(IntervalBudgetTest, BalanceChangeOnBitrateChange) {
   int delta_time_ms = kWindowMs;
   interval_budget.IncreaseBudget(delta_time_ms);
   interval_budget.set_target_rate_kbps(kBitrateKbps * 2);
-  EXPECT_EQ(interval_budget.budget_level_percent(), 50);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(), 0.5);
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, kWindowMs));
 }
@@ -73,8 +74,8 @@ TEST(IntervalBudgetTest, Overuse) {
   int overuse_time_ms = 50;
   int used_bytes = TimeToBytes(kBitrateKbps, overuse_time_ms);
   interval_budget.UseBudget(used_bytes);
-  EXPECT_EQ(interval_budget.budget_level_percent(),
-            -kWindowMs / overuse_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   -kWindowMs / static_cast<double>(100 * overuse_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(), 0u);
 }
 
@@ -83,7 +84,7 @@ TEST(IntervalBudgetTest, DontOveruseMoreThanMaxWindow) {
   int overuse_time_ms = 1000;
   int used_bytes = TimeToBytes(kBitrateKbps, overuse_time_ms);
   interval_budget.UseBudget(used_bytes);
-  EXPECT_EQ(interval_budget.budget_level_percent(), -100);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(), -1.0);
   EXPECT_EQ(interval_budget.bytes_remaining(), 0u);
 }
 
@@ -91,13 +92,14 @@ TEST(IntervalBudgetTest, CanBuildUpUnderuseWhenConfigured) {
   IntervalBudget interval_budget(kBitrateKbps, kCanBuildUpUnderuse);
   int delta_time_ms = 50;
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(), kWindowMs / delta_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   kWindowMs / static_cast<double>(100 * delta_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, delta_time_ms));
 
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(),
-            2 * kWindowMs / delta_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   2 * kWindowMs / static_cast<double>(100 * delta_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, 2 * delta_time_ms));
 }
@@ -106,12 +108,14 @@ TEST(IntervalBudgetTest, CanNotBuildUpUnderuseWhenConfigured) {
   IntervalBudget interval_budget(kBitrateKbps, kCanNotBuildUpUnderuse);
   int delta_time_ms = 50;
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(), kWindowMs / delta_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   kWindowMs / static_cast<double>(100 * delta_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, delta_time_ms));
 
   interval_budget.IncreaseBudget(delta_time_ms);
-  EXPECT_EQ(interval_budget.budget_level_percent(), kWindowMs / delta_time_ms);
+  EXPECT_DOUBLE_EQ(interval_budget.budget_ratio(),
+                   kWindowMs / static_cast<double>(100 * delta_time_ms));
   EXPECT_EQ(interval_budget.bytes_remaining(),
             TimeToBytes(kBitrateKbps, delta_time_ms));
 }

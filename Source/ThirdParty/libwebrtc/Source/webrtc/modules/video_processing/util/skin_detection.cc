@@ -8,9 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <limits.h>
-#include <math.h>
-
 #include "modules/video_processing/util/skin_detection.h"
 
 namespace webrtc {

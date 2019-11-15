@@ -13,11 +13,12 @@
 
 #include <stdint.h>
 
+#include "absl/types/optional.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -33,47 +34,39 @@ namespace webrtc {
 // The application specifies a minimum and maximum limit for the playout delay
 // which are both communicated to the receiver and the receiver can adapt
 // the playout delay within this range based on observed network jitter.
-class PlayoutDelayOracle {
+class PlayoutDelayOracle : public RtcpAckObserver {
  public:
   PlayoutDelayOracle();
-  ~PlayoutDelayOracle();
+  ~PlayoutDelayOracle() override;
 
-  // Returns true if the current frame should include the playout delay
-  // extension
-  bool send_playout_delay() const {
-    rtc::CritScope lock(&crit_sect_);
-    return send_playout_delay_;
-  }
+  // The playout delay to be added to a packet. The input delays are provided by
+  // the application, with -1 meaning unchanged/unspecified. The output delay
+  // are the values to be attached to packets on the wire. Presence and value
+  // depends on the current input, previous inputs, and received acks from the
+  // remote end.
+  absl::optional<PlayoutDelay> PlayoutDelayToSend(
+      PlayoutDelay requested_delay) const;
 
-  // Returns current playout delay.
-  PlayoutDelay playout_delay() const {
-    rtc::CritScope lock(&crit_sect_);
-    return playout_delay_;
-  }
+  void OnSentPacket(uint16_t sequence_number,
+                    absl::optional<PlayoutDelay> playout_delay);
 
-  // Updates the application requested playout delay, current ssrc
-  // and the current sequence number.
-  void UpdateRequest(uint32_t ssrc,
-                     PlayoutDelay playout_delay,
-                     uint16_t seq_num);
-
-  void OnReceivedRtcpReportBlocks(const ReportBlockList& report_blocks);
+  void OnReceivedAck(int64_t extended_highest_sequence_number) override;
 
  private:
   // The playout delay information is updated from the encoder thread(s).
   // The sequence number feedback is updated from the worker thread.
   // Guards access to data across multiple threads.
   rtc::CriticalSection crit_sect_;
-  // The current highest sequence number on which playout delay has been sent.
-  int64_t high_sequence_number_ RTC_GUARDED_BY(crit_sect_);
-  // Indicates whether the playout delay should go on the next frame.
-  bool send_playout_delay_ RTC_GUARDED_BY(crit_sect_);
-  // Sender ssrc.
-  uint32_t ssrc_ RTC_GUARDED_BY(crit_sect_);
-  // Sequence number unwrapper.
+  // The oldest sequence number on which the current playout delay values have
+  // been sent. When set, it means we need to attach extension to sent packets.
+  absl::optional<int64_t> unacked_sequence_number_ RTC_GUARDED_BY(crit_sect_);
+  // Sequence number unwrapper for sent packets.
+
+  // TODO(nisse): Could potentially get out of sync with the unwrapper used by
+  // the caller of OnReceivedAck.
   SequenceNumberUnwrapper unwrapper_ RTC_GUARDED_BY(crit_sect_);
   // Playout delay values on the next frame if |send_playout_delay_| is set.
-  PlayoutDelay playout_delay_ RTC_GUARDED_BY(crit_sect_);
+  PlayoutDelay latest_delay_ RTC_GUARDED_BY(crit_sect_) = {-1, -1};
 
   RTC_DISALLOW_COPY_AND_ASSIGN(PlayoutDelayOracle);
 };

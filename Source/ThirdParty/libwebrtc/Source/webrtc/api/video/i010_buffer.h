@@ -11,8 +11,11 @@
 #ifndef API_VIDEO_I010_BUFFER_H_
 #define API_VIDEO_I010_BUFFER_H_
 
+#include <stdint.h>
+
 #include <memory>
 
+#include "api/scoped_refptr.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
 #include "rtc_base/memory/aligned_malloc.h"
@@ -62,6 +65,12 @@ class I010Buffer : public I010BufferInterface {
 
   // Scale all of |src| to the size of |this| buffer, with no cropping.
   void ScaleFrom(const I010BufferInterface& src);
+
+  // Pastes whole picture to canvas at (offset_row, offset_col).
+  // Offsets and picture dimensions must be even.
+  void PasteFrom(const I010BufferInterface& picture,
+                 int offset_col,
+                 int offset_row);
 
  protected:
   I010Buffer(int width, int height, int stride_y, int stride_u, int stride_v);

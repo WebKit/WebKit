@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/numerics/safe_minmax.h"
+
 #include <algorithm>
 #include <limits>
 
-#include "rtc_base/numerics/safe_minmax.h"
 #include "test/gtest.h"
 
 namespace rtc {

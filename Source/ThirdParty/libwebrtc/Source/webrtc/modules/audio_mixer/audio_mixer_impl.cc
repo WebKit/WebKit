@@ -10,15 +10,18 @@
 
 #include "modules/audio_mixer/audio_mixer_impl.h"
 
+#include <stdint.h>
+
 #include <algorithm>
-#include <functional>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 
 #include "modules/audio_mixer/audio_frame_manipulator.h"
 #include "modules/audio_mixer/default_output_rate_calculator.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/refcountedobject.h"
+#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 namespace {
@@ -117,7 +120,7 @@ rtc::scoped_refptr<AudioMixerImpl> AudioMixerImpl::Create(
 
 void AudioMixerImpl::Mix(size_t number_of_channels,
                          AudioFrame* audio_frame_for_mixing) {
-  RTC_DCHECK(number_of_channels == 1 || number_of_channels == 2);
+  RTC_DCHECK(number_of_channels >= 1);
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
 
   CalculateOutputFrequency();

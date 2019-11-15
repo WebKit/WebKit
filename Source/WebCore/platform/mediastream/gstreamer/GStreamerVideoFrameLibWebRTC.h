@@ -27,7 +27,7 @@
 #include "webrtc/api/video/video_frame.h"
 #include "webrtc/common_video/include/i420_buffer_pool.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
-#include "webrtc/rtc_base/refcountedobject.h"
+#include "webrtc/rtc_base/ref_counted_object.h"
 
 namespace WebCore {
 

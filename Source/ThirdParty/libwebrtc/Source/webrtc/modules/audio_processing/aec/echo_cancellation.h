@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC_ECHO_CANCELLATION_H_
 #define MODULES_AUDIO_PROCESSING_AEC_ECHO_CANCELLATION_H_
 
-#include <memory>
-
 #include <stddef.h>
+
+#include <memory>
 
 extern "C" {
 #include "common_audio/ring_buffer.h"

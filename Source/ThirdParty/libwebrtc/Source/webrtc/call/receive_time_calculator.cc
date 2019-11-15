@@ -11,10 +11,10 @@
 #include "call/receive_time_calculator.h"
 
 #include <string>
+#include <type_traits>
 
 #include "absl/memory/memory.h"
 #include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "system_wrappers/include/field_trial.h"
 

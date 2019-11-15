@@ -11,11 +11,11 @@
 #ifndef AUDIO_DEVICE_AUDIO_MIXER_MANAGER_ALSA_LINUX_H_
 #define AUDIO_DEVICE_AUDIO_MIXER_MANAGER_ALSA_LINUX_H_
 
+#include <alsa/asoundlib.h>
+
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/linux/alsasymboltable_linux.h"
-#include "rtc_base/criticalsection.h"
-
-#include <alsa/asoundlib.h>
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 

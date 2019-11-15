@@ -18,7 +18,7 @@
 
 #include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
 #include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
-#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/task_queue.h"
 
 namespace webrtc {
@@ -79,6 +79,8 @@ class RtcpTransceiver : public RtcpFeedbackSenderInterface {
   // Returns ssrc to put as sender ssrc into rtcp::TransportFeedback.
   uint32_t SSRC() const override;
   bool SendFeedbackPacket(const rtcp::TransportFeedback& packet) override;
+  bool SendNetworkStateEstimatePacket(
+      const rtcp::RemoteEstimate& packet) override;
 
   // Reports missing packets, https://tools.ietf.org/html/rfc4585#section-6.2.1
   void SendNack(uint32_t ssrc, std::vector<uint16_t> sequence_numbers);

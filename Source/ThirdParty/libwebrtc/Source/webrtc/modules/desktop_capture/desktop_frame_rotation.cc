@@ -10,8 +10,6 @@
 
 #include "modules/desktop_capture/desktop_frame_rotation.h"
 
-#include <string.h>
-
 #include "rtc_base/checks.h"
 #include "third_party/libyuv/include/libyuv/rotate_argb.h"
 

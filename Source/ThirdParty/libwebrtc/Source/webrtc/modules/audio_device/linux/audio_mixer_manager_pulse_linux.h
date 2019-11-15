@@ -103,9 +103,9 @@ class AudioMixerManagerLinuxPulse {
   bool _paObjectsSet;
 
   // Stores thread ID in constructor.
-  // We can then use ThreadChecker::CalledOnValidThread() to ensure that
+  // We can then use ThreadChecker::IsCurrent() to ensure that
   // other methods are called from the same thread.
-  // Currently only does RTC_DCHECK(thread_checker_.CalledOnValidThread()).
+  // Currently only does RTC_DCHECK(thread_checker_.IsCurrent()).
   rtc::ThreadChecker thread_checker_;
 };
 

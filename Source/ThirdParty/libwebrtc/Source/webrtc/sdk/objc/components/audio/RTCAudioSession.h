@@ -182,6 +182,15 @@ RTC_OBJC_EXPORT
 @property(readonly) NSTimeInterval IOBufferDuration;
 @property(readonly) NSTimeInterval preferredIOBufferDuration;
 
+/**
+ When YES, calls to -setConfiguration:error: and -setConfiguration:active:error: ignore errors in
+ configuring the audio session's "preferred" attributes (e.g. preferredInputNumberOfChannels).
+ Typically, configurations to preferred attributes are optimizations, and ignoring this type of
+ configuration error allows code flow to continue along the happy path when these optimization are
+ not available. The default value of this property is NO.
+ */
+@property(nonatomic) BOOL ignoresPreferredAttributeConfigurationErrors;
+
 /** Default constructor. */
 + (instancetype)sharedInstance;
 - (instancetype)init NS_UNAVAILABLE;

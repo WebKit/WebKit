@@ -107,17 +107,27 @@ public class YuvConverter {
       new GlTextureFrameBuffer(GLES20.GL_RGBA);
   private final ShaderCallbacks shaderCallbacks = new ShaderCallbacks();
   private final GlGenericDrawer drawer = new GlGenericDrawer(FRAGMENT_SHADER, shaderCallbacks);
+  private final VideoFrameDrawer videoFrameDrawer;
 
   /**
    * This class should be constructed on a thread that has an active EGL context.
    */
   public YuvConverter() {
+    this(new VideoFrameDrawer());
+  }
+
+  public YuvConverter(VideoFrameDrawer videoFrameDrawer) {
+    this.videoFrameDrawer = videoFrameDrawer;
     threadChecker.detachThread();
   }
 
   /** Converts the texture buffer to I420. */
   public I420Buffer convert(TextureBuffer inputTextureBuffer) {
     threadChecker.checkIsOnValidThread();
+
+    TextureBuffer preparedBuffer = (TextureBuffer) videoFrameDrawer.prepareBufferForViewportSize(
+        inputTextureBuffer, inputTextureBuffer.getWidth(), inputTextureBuffer.getHeight());
+
     // We draw into a buffer laid out like
     //
     //    +---------+
@@ -146,8 +156,8 @@ public class YuvConverter {
     // Since the V data needs to start on a boundary of such a
     // larger pixel, it is not sufficient that |stride| is even, it
     // has to be a multiple of 8 pixels.
-    final int frameWidth = inputTextureBuffer.getWidth();
-    final int frameHeight = inputTextureBuffer.getHeight();
+    final int frameWidth = preparedBuffer.getWidth();
+    final int frameHeight = preparedBuffer.getHeight();
     final int stride = ((frameWidth + 7) / 8) * 8;
     final int uvHeight = (frameHeight + 1) / 2;
     // Total height of the combined memory layout.
@@ -171,19 +181,19 @@ public class YuvConverter {
 
     // Draw Y.
     shaderCallbacks.setPlaneY();
-    VideoFrameDrawer.drawTexture(drawer, inputTextureBuffer, renderMatrix, frameWidth, frameHeight,
+    VideoFrameDrawer.drawTexture(drawer, preparedBuffer, renderMatrix, frameWidth, frameHeight,
         /* viewportX= */ 0, /* viewportY= */ 0, viewportWidth,
         /* viewportHeight= */ frameHeight);
 
     // Draw U.
     shaderCallbacks.setPlaneU();
-    VideoFrameDrawer.drawTexture(drawer, inputTextureBuffer, renderMatrix, frameWidth, frameHeight,
+    VideoFrameDrawer.drawTexture(drawer, preparedBuffer, renderMatrix, frameWidth, frameHeight,
         /* viewportX= */ 0, /* viewportY= */ frameHeight, viewportWidth / 2,
         /* viewportHeight= */ uvHeight);
 
     // Draw V.
     shaderCallbacks.setPlaneV();
-    VideoFrameDrawer.drawTexture(drawer, inputTextureBuffer, renderMatrix, frameWidth, frameHeight,
+    VideoFrameDrawer.drawTexture(drawer, preparedBuffer, renderMatrix, frameWidth, frameHeight,
         /* viewportX= */ viewportWidth / 2, /* viewportY= */ frameHeight, viewportWidth / 2,
         /* viewportHeight= */ uvHeight);
 
@@ -215,6 +225,8 @@ public class YuvConverter {
     i420ByteBuffer.limit(vPos + uvSize);
     final ByteBuffer dataV = i420ByteBuffer.slice();
 
+    preparedBuffer.release();
+
     return JavaI420Buffer.wrap(frameWidth, frameHeight, dataY, stride, dataU, stride, dataV, stride,
         () -> { JniCommon.nativeFreeByteBuffer(i420ByteBuffer); });
   }
@@ -223,6 +235,7 @@ public class YuvConverter {
     threadChecker.checkIsOnValidThread();
     drawer.release();
     i420TextureFrameBuffer.release();
+    videoFrameDrawer.release();
     // Allow this class to be reused.
     threadChecker.detachThread();
   }

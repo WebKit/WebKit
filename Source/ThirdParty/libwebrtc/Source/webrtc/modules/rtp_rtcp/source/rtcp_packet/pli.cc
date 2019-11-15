@@ -33,6 +33,12 @@ constexpr uint8_t Pli::kFeedbackMessageType;
 //  :            Feedback Control Information (FCI)                 :
 //  :                                                               :
 
+Pli::Pli() = default;
+
+Pli::Pli(const Pli& pli) = default;
+
+Pli::~Pli() = default;
+
 //
 // Picture loss indication (PLI) (RFC 4585).
 // FCI: no feedback control information.

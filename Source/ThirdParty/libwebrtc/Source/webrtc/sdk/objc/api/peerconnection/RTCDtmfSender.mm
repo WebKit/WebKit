@@ -13,7 +13,7 @@
 #import "base/RTCLogging.h"
 #import "helpers/NSString+StdString.h"
 
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 @implementation RTCDtmfSender {
   rtc::scoped_refptr<webrtc::DtmfSenderInterface> _nativeDtmfSender;

@@ -12,18 +12,21 @@
 #define MODULES_VIDEO_CODING_CODECS_VP8_LIBVPX_VP8_ENCODER_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
+#include "api/fec_controller_override.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_encoder.h"
-#include "api/video_codecs/vp8_temporal_layers.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
+#include "api/video_codecs/vp8_frame_config.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp8/libvpx_interface.h"
 #include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/utility/framerate_controller.h"
 #include "rtc_base/experiments/cpu_speed_experiment.h"
-
+#include "rtc_base/experiments/rate_control_settings.h"
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_encoder.h"
 
@@ -32,32 +35,40 @@ namespace webrtc {
 class LibvpxVp8Encoder : public VideoEncoder {
  public:
   LibvpxVp8Encoder();
+  explicit LibvpxVp8Encoder(std::unique_ptr<Vp8FrameBufferControllerFactory>
+                                frame_buffer_controller_factory);
   explicit LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface);
+  LibvpxVp8Encoder(std::unique_ptr<Vp8FrameBufferControllerFactory>
+                       frame_buffer_controller_factory,
+                   std::unique_ptr<LibvpxInterface> interface);
   ~LibvpxVp8Encoder() override;
 
   int Release() override;
 
+  void SetFecControllerOverride(
+      FecControllerOverride* fec_controller_override) override;
+
   int InitEncode(const VideoCodec* codec_settings,
-                 int number_of_cores,
-                 size_t max_payload_size) override;
+                 const VideoEncoder::Settings& settings) override;
 
   int Encode(const VideoFrame& input_image,
-             const CodecSpecificInfo* codec_specific_info,
-             const std::vector<FrameType>* frame_types) override;
+             const std::vector<VideoFrameType>* frame_types) override;
 
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
 
-  int SetRateAllocation(const VideoBitrateAllocation& bitrate,
-                        uint32_t new_framerate) override;
+  void SetRates(const RateControlParameters& parameters) override;
+
+  void OnPacketLossRateUpdate(float packet_loss_rate) override;
+
+  void OnRttUpdate(int64_t rtt_ms) override;
+
+  void OnLossNotification(const LossNotification& loss_notification) override;
 
   EncoderInfo GetEncoderInfo() const override;
 
-  static vpx_enc_frame_flags_t EncodeFlags(
-      const Vp8TemporalLayers::FrameConfig& references);
+  static vpx_enc_frame_flags_t EncodeFlags(const Vp8FrameConfig& references);
 
  private:
-  void SetupTemporalLayers(const VideoCodec& codec);
-
   // Get the cpu_speed setting for encoder based on resolution and/or platform.
   int GetCpuSpeed(int width, int height);
 
@@ -73,7 +84,8 @@ class LibvpxVp8Encoder : public VideoEncoder {
                              int encoder_idx,
                              uint32_t timestamp);
 
-  int GetEncodedPartitions(const VideoFrame& input_image);
+  int GetEncodedPartitions(const VideoFrame& input_image,
+                           bool retransmission_allowed);
 
   // Set the stream state for stream |stream_idx|.
   void SetStreamState(bool send_stream, int stream_idx);
@@ -82,11 +94,16 @@ class LibvpxVp8Encoder : public VideoEncoder {
 
   uint32_t FrameDropThreshold(size_t spatial_idx) const;
 
+  size_t SteadyStateSize(int sid, int tid);
+
+  bool UpdateVpxConfiguration(size_t stream_index);
+
   const std::unique_ptr<LibvpxInterface> libvpx_;
 
   const absl::optional<std::vector<CpuSpeedExperiment::Config>>
       experimental_cpu_speed_config_arm_;
-  const bool trusted_rate_controller_;
+  const RateControlSettings rate_control_settings_;
+  const absl::optional<int> screenshare_max_qp_;
 
   EncodedImageCallback* encoded_complete_callback_;
   VideoCodec codec_;
@@ -96,15 +113,36 @@ class LibvpxVp8Encoder : public VideoEncoder {
   int cpu_speed_default_;
   int number_of_cores_;
   uint32_t rc_max_intra_target_;
-  std::vector<std::unique_ptr<Vp8TemporalLayers>> temporal_layers_;
+  const std::unique_ptr<Vp8FrameBufferControllerFactory>
+      frame_buffer_controller_factory_;
+  std::unique_ptr<Vp8FrameBufferController> frame_buffer_controller_;
   std::vector<bool> key_frame_request_;
   std::vector<bool> send_stream_;
   std::vector<int> cpu_speed_;
   std::vector<vpx_image_t> raw_images_;
   std::vector<EncodedImage> encoded_images_;
   std::vector<vpx_codec_ctx_t> encoders_;
-  std::vector<vpx_codec_enc_cfg_t> configurations_;
+  std::vector<vpx_codec_enc_cfg_t> vpx_configs_;
+  std::vector<Vp8EncoderConfig> config_overrides_;
   std::vector<vpx_rational_t> downsampling_factors_;
+
+  // Variable frame-rate screencast related fields and methods.
+  const struct VariableFramerateExperiment {
+    bool enabled = false;
+    // Framerate is limited to this value in steady state.
+    float framerate_limit = 5.0;
+    // This qp or below is considered a steady state.
+    int steady_state_qp = 15;
+    // Frames of at least this percentage below ideal for configured bitrate are
+    // considered in a steady state.
+    int steady_state_undershoot_percentage = 30;
+  } variable_framerate_experiment_;
+  static VariableFramerateExperiment ParseVariableFramerateConfig(
+      std::string group_name);
+  FramerateController framerate_controller_;
+  int num_steady_state_frames_;
+
+  FecControllerOverride* fec_controller_override_;
 };
 
 }  // namespace webrtc

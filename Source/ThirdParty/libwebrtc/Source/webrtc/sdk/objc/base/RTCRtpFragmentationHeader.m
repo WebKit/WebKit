@@ -18,4 +18,3 @@
 @synthesize fragmentationPlType = _fragmentationPlType;
 
 @end
-

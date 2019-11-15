@@ -15,7 +15,7 @@
 #include <string>
 
 #include "modules/audio_processing/include/aec_dump.h"
-#include "rtc_base/platform_file.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
@@ -32,7 +32,7 @@ class RTC_EXPORT AecDumpFactory {
   // responsibility for |handle| and closes it in the destructor. A
   // non-null return value indicates that the file has been
   // sucessfully opened.
-  static std::unique_ptr<AecDump> Create(rtc::PlatformFile file,
+  static std::unique_ptr<AecDump> Create(webrtc::FileWrapper file,
                                          int64_t max_log_size_bytes,
                                          rtc::TaskQueue* worker_queue);
   static std::unique_ptr<AecDump> Create(std::string file_name,

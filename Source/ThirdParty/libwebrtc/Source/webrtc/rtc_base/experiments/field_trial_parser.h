@@ -11,10 +11,13 @@
 #define RTC_BASE_EXPERIMENTS_FIELD_TRIAL_PARSER_H_
 
 #include <stdint.h>
+
 #include <initializer_list>
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
+
 #include "absl/types/optional.h"
 
 // Field trial parser functionality. Provides funcitonality to parse field trial
@@ -24,7 +27,7 @@
 // ignored. Parameters are declared with a given type for which an
 // implementation of ParseTypedParameter should be provided. The
 // ParseTypedParameter implementation is given whatever is between the : and the
-// ,. FieldTrialOptional will use nullopt if the key is provided without :.
+// ,. If the key is provided without : a FieldTrialOptional will use nullopt.
 
 // Example string: "my_optional,my_int:3,my_string:hello"
 
@@ -35,6 +38,7 @@ namespace webrtc {
 class FieldTrialParameterInterface {
  public:
   virtual ~FieldTrialParameterInterface();
+  std::string key() const { return key_; }
 
  protected:
   // Protected to allow implementations to provide assignment and copy.
@@ -47,7 +51,10 @@ class FieldTrialParameterInterface {
       std::string raw_string);
   void MarkAsUsed() { used_ = true; }
   virtual bool Parse(absl::optional<std::string> str_value) = 0;
-  std::string Key() const;
+
+  virtual void ParseDone() {}
+
+  std::vector<FieldTrialParameterInterface*> sub_parameters_;
 
  private:
   std::string key_;
@@ -55,7 +62,7 @@ class FieldTrialParameterInterface {
 };
 
 // ParseFieldTrial function parses the given string and fills the given fields
-// with extrated values if available.
+// with extracted values if available.
 void ParseFieldTrial(
     std::initializer_list<FieldTrialParameterInterface*> fields,
     std::string raw_string);
@@ -75,6 +82,8 @@ class FieldTrialParameter : public FieldTrialParameterInterface {
   T Get() const { return value_; }
   operator T() const { return Get(); }
   const T* operator->() const { return &value_; }
+
+  void SetForTest(T value) { value_ = value; }
 
  protected:
   bool Parse(absl::optional<std::string> str_value) override {
@@ -183,7 +192,7 @@ class FieldTrialOptional : public FieldTrialParameterInterface {
   const T& Value() const { return value_.value(); }
   const T& operator*() const { return value_.value(); }
   const T* operator->() const { return &value_.value(); }
-  operator bool() const { return value_.has_value(); }
+  explicit operator bool() const { return value_.has_value(); }
 
  protected:
   bool Parse(absl::optional<std::string> str_value) override {
@@ -219,22 +228,55 @@ class FieldTrialFlag : public FieldTrialParameterInterface {
   bool value_;
 };
 
+template <typename T>
+absl::optional<absl::optional<T>> ParseOptionalParameter(std::string str) {
+  if (str.empty())
+    return absl::optional<T>();
+  auto parsed = ParseTypedParameter<T>(str);
+  if (parsed.has_value())
+    return parsed;
+  return absl::nullopt;
+}
+
+template <>
+absl::optional<bool> ParseTypedParameter<bool>(std::string str);
+template <>
+absl::optional<double> ParseTypedParameter<double>(std::string str);
+template <>
+absl::optional<int> ParseTypedParameter<int>(std::string str);
+
+template <>
+absl::optional<unsigned> ParseTypedParameter<unsigned>(std::string str);
+template <>
+absl::optional<absl::optional<bool>> ParseTypedParameter<absl::optional<bool>>(
+    std::string str);
+template <>
+absl::optional<absl::optional<int>> ParseTypedParameter<absl::optional<int>>(
+    std::string str);
+template <>
+absl::optional<absl::optional<unsigned>>
+ParseTypedParameter<absl::optional<unsigned>>(std::string str);
+template <>
+absl::optional<absl::optional<double>>
+ParseTypedParameter<absl::optional<double>>(std::string str);
+
 // Accepts true, false, else parsed with sscanf %i, true if != 0.
 extern template class FieldTrialParameter<bool>;
 // Interpreted using sscanf %lf.
 extern template class FieldTrialParameter<double>;
 // Interpreted using sscanf %i.
 extern template class FieldTrialParameter<int>;
-// Using the given value as is.
-extern template class FieldTrialParameter<std::string>;
+// Interpreted using sscanf %u.
+extern template class FieldTrialParameter<unsigned>;
 
 extern template class FieldTrialConstrained<double>;
 extern template class FieldTrialConstrained<int>;
+extern template class FieldTrialConstrained<unsigned>;
 
 extern template class FieldTrialOptional<double>;
 extern template class FieldTrialOptional<int>;
+extern template class FieldTrialOptional<unsigned>;
 extern template class FieldTrialOptional<bool>;
-extern template class FieldTrialOptional<std::string>;
 
 }  // namespace webrtc
 

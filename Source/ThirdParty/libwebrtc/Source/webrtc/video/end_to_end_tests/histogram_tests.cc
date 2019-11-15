@@ -16,8 +16,22 @@
 #include "test/gtest.h"
 
 namespace webrtc {
+namespace {
+enum : int {  // The first valid value is 1.
+  kTransportSequenceNumberExtensionId = 1,
+  kVideoContentTypeExtensionId,
+};
+}  // namespace
 
 class HistogramTest : public test::CallTest {
+ public:
+  HistogramTest() {
+    RegisterRtpExtension(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
+                                      kTransportSequenceNumberExtensionId));
+    RegisterRtpExtension(RtpExtension(RtpExtension::kVideoContentTypeUri,
+                                      kVideoContentTypeExtensionId));
+  }
+
  protected:
   void VerifyHistogramStats(bool use_rtx, bool use_fec, bool screenshare);
 };

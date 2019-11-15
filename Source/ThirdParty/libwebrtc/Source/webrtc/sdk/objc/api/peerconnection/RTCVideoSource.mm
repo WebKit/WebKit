@@ -10,7 +10,7 @@
 
 #import "RTCVideoSource+Private.h"
 
-#include "api/videosourceproxy.h"
+#include "api/video_track_source_proxy.h"
 #include "rtc_base/checks.h"
 #include "sdk/objc/native/src/objc_video_track_source.h"
 

@@ -11,7 +11,7 @@
 #ifndef API_VIDEO_VIDEO_SINK_INTERFACE_H_
 #define API_VIDEO_VIDEO_SINK_INTERFACE_H_
 
-#include <rtc_base/checks.h>
+#include "rtc_base/checks.h"
 
 namespace rtc {
 

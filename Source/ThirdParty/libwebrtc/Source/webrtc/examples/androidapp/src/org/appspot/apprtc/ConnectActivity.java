@@ -10,12 +10,17 @@
 
 package org.appspot.apprtc;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -44,6 +49,7 @@ import org.json.JSONException;
 public class ConnectActivity extends Activity {
   private static final String TAG = "ConnectActivity";
   private static final int CONNECTION_REQUEST = 1;
+  private static final int PERMISSION_REQUEST = 2;
   private static final int REMOVE_FAVORITE_INDEX = 0;
   private static boolean commandLineRun;
 
@@ -104,16 +110,7 @@ public class ConnectActivity extends Activity {
     addFavoriteButton = findViewById(R.id.add_favorite_button);
     addFavoriteButton.setOnClickListener(addFavoriteListener);
 
-    // If an implicit VIEW intent is launching the app, go directly to that URL.
-    final Intent intent = getIntent();
-    if ("android.intent.action.VIEW".equals(intent.getAction()) && !commandLineRun) {
-      boolean loopback = intent.getBooleanExtra(CallActivity.EXTRA_LOOPBACK, false);
-      int runTimeMs = intent.getIntExtra(CallActivity.EXTRA_RUNTIME, 0);
-      boolean useValuesFromIntent =
-          intent.getBooleanExtra(CallActivity.EXTRA_USE_VALUES_FROM_INTENT, false);
-      String room = sharedPref.getString(keyprefRoom, "");
-      connectToRoom(room, true, loopback, useValuesFromIntent, runTimeMs);
-    }
+    requestPermissions();
   }
 
   @Override
@@ -208,6 +205,95 @@ public class ConnectActivity extends Activity {
       commandLineRun = false;
       finish();
     }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(
+      int requestCode, String[] permissions, int[] grantResults) {
+    if (requestCode == PERMISSION_REQUEST) {
+      String[] missingPermissions = getMissingPermissions();
+      if (missingPermissions.length != 0) {
+        // User didn't grant all the permissions. Warn that the application might not work
+        // correctly.
+        new AlertDialog.Builder(this)
+            .setMessage(R.string.missing_permissions_try_again)
+            .setPositiveButton(R.string.yes,
+                (dialog, id) -> {
+                  // User wants to try giving the permissions again.
+                  dialog.cancel();
+                  requestPermissions();
+                })
+            .setNegativeButton(R.string.no,
+                (dialog, id) -> {
+                  // User doesn't want to give the permissions.
+                  dialog.cancel();
+                  onPermissionsGranted();
+                })
+            .show();
+      } else {
+        // All permissions granted.
+        onPermissionsGranted();
+      }
+    }
+  }
+
+  private void onPermissionsGranted() {
+    // If an implicit VIEW intent is launching the app, go directly to that URL.
+    final Intent intent = getIntent();
+    if ("android.intent.action.VIEW".equals(intent.getAction()) && !commandLineRun) {
+      boolean loopback = intent.getBooleanExtra(CallActivity.EXTRA_LOOPBACK, false);
+      int runTimeMs = intent.getIntExtra(CallActivity.EXTRA_RUNTIME, 0);
+      boolean useValuesFromIntent =
+          intent.getBooleanExtra(CallActivity.EXTRA_USE_VALUES_FROM_INTENT, false);
+      String room = sharedPref.getString(keyprefRoom, "");
+      connectToRoom(room, true, loopback, useValuesFromIntent, runTimeMs);
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.M)
+  private void requestPermissions() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      // Dynamic permissions are not required before Android M.
+      onPermissionsGranted();
+      return;
+    }
+
+    String[] missingPermissions = getMissingPermissions();
+    if (missingPermissions.length != 0) {
+      requestPermissions(missingPermissions, PERMISSION_REQUEST);
+    } else {
+      onPermissionsGranted();
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.M)
+  private String[] getMissingPermissions() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      return new String[0];
+    }
+
+    PackageInfo info;
+    try {
+      info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.w(TAG, "Failed to retrieve permissions.");
+      return new String[0];
+    }
+
+    if (info.requestedPermissions == null) {
+      Log.w(TAG, "No requested permissions.");
+      return new String[0];
+    }
+
+    ArrayList<String> missingPermissions = new ArrayList<>();
+    for (int i = 0; i < info.requestedPermissions.length; i++) {
+      if ((info.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) == 0) {
+        missingPermissions.add(info.requestedPermissions[i]);
+      }
+    }
+    Log.d(TAG, "Missing permissions: " + missingPermissions);
+
+    return missingPermissions.toArray(new String[missingPermissions.size()]);
   }
 
   /**
@@ -434,10 +520,6 @@ public class ConnectActivity extends Activity {
         CallActivity.EXTRA_ENABLE_RTCEVENTLOG, R.string.pref_enable_rtceventlog_default,
         useValuesFromIntent);
 
-    boolean useLegacyAudioDevice = sharedPrefGetBoolean(R.string.pref_use_legacy_audio_device_key,
-        CallActivity.EXTRA_USE_LEGACY_AUDIO_DEVICE, R.string.pref_use_legacy_audio_device_default,
-        useValuesFromIntent);
-
     // Get datachannel options
     boolean dataChannelEnabled = sharedPrefGetBoolean(R.string.pref_enable_datachannel_key,
         CallActivity.EXTRA_DATA_CHANNEL_ENABLED, R.string.pref_enable_datachannel_default,
@@ -492,8 +574,6 @@ public class ConnectActivity extends Activity {
       intent.putExtra(CallActivity.EXTRA_ENABLE_RTCEVENTLOG, rtcEventLogEnabled);
       intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
       intent.putExtra(CallActivity.EXTRA_RUNTIME, runTimeMs);
-      intent.putExtra(CallActivity.EXTRA_USE_LEGACY_AUDIO_DEVICE, useLegacyAudioDevice);
-
       intent.putExtra(CallActivity.EXTRA_DATA_CHANNEL_ENABLED, dataChannelEnabled);
 
       if (dataChannelEnabled) {

@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "modules/video_coding/codec_timer.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -61,6 +61,9 @@ class VCMTiming {
 
   // Stops the decoder timer, should be called when the decoder returns a frame
   // or when the decoded frame callback is called.
+  void StopDecodeTimer(int32_t decode_time_ms, int64_t now_ms);
+  // TODO(kron): Remove once downstream projects has been changed to use the
+  // above function.
   void StopDecodeTimer(uint32_t time_stamp,
                        int32_t decode_time_ms,
                        int64_t now_ms,
@@ -85,8 +88,7 @@ class VCMTiming {
 
   // Return current timing information. Returns true if the first frame has been
   // decoded, false otherwise.
-  virtual bool GetTimings(int* decode_ms,
-                          int* max_decode_ms,
+  virtual bool GetTimings(int* max_decode_ms,
                           int* current_delay_ms,
                           int* target_delay_ms,
                           int* jitter_buffer_ms,
@@ -121,7 +123,6 @@ class VCMTiming {
   int max_playout_delay_ms_ RTC_GUARDED_BY(crit_sect_);
   int jitter_delay_ms_ RTC_GUARDED_BY(crit_sect_);
   int current_delay_ms_ RTC_GUARDED_BY(crit_sect_);
-  int last_decode_ms_ RTC_GUARDED_BY(crit_sect_);
   uint32_t prev_frame_timestamp_ RTC_GUARDED_BY(crit_sect_);
   absl::optional<TimingFrameInfo> timing_frame_info_ RTC_GUARDED_BY(crit_sect_);
   size_t num_decoded_frames_ RTC_GUARDED_BY(crit_sect_);

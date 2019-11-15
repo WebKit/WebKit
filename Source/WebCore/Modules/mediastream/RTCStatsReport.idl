@@ -208,7 +208,6 @@ dictionary RTCCodecStats : RTCStats {
     unsigned long clockRate;
     unsigned long channels;
     DOMString sdpFmtpLine;
-    DOMString implementation;
 };
 
 [ JSGenerateToJSObject ]

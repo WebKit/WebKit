@@ -19,11 +19,12 @@
 #include <string>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/exp_filter.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/field_trial.h"
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
@@ -82,7 +83,7 @@ class SendProcessingUsage1 : public OveruseFrameDetector::ProcessingUsage {
         filtered_frame_diff_ms_(new rtc::ExpFilter(kWeightFactorFrameDiff)) {
     Reset();
   }
-  virtual ~SendProcessingUsage1() {}
+  ~SendProcessingUsage1() override {}
 
   void Reset() override {
     frame_timing_.clear();
@@ -225,7 +226,7 @@ class SendProcessingUsage2 : public OveruseFrameDetector::ProcessingUsage {
       : options_(options) {
     Reset();
   }
-  virtual ~SendProcessingUsage2() = default;
+  ~SendProcessingUsage2() override = default;
 
   void Reset() override {
     prev_time_us_ = -1;
@@ -517,43 +518,9 @@ OveruseFrameDetector::CreateProcessingUsage(const CpuOveruseOptions& options) {
   return instance;
 }
 
-class OveruseFrameDetector::CheckOveruseTask : public rtc::QueuedTask {
- public:
-  CheckOveruseTask(OveruseFrameDetector* overuse_detector,
-                   AdaptationObserverInterface* observer)
-      : overuse_detector_(overuse_detector), observer_(observer) {
-    rtc::TaskQueue::Current()->PostDelayedTask(
-        std::unique_ptr<rtc::QueuedTask>(this), kTimeToFirstCheckForOveruseMs);
-  }
-
-  void Stop() {
-    RTC_CHECK(task_checker_.CalledSequentially());
-    overuse_detector_ = nullptr;
-  }
-
- private:
-  bool Run() override {
-    RTC_CHECK(task_checker_.CalledSequentially());
-    if (!overuse_detector_)
-      return true;  // This will make the task queue delete this task.
-    overuse_detector_->CheckForOveruse(observer_);
-
-    rtc::TaskQueue::Current()->PostDelayedTask(
-        std::unique_ptr<rtc::QueuedTask>(this), kCheckForOveruseIntervalMs);
-    // Return false to prevent this task from being deleted. Ownership has been
-    // transferred to the task queue when PostDelayedTask was called.
-    return false;
-  }
-  rtc::SequencedTaskChecker task_checker_;
-  OveruseFrameDetector* overuse_detector_;
-  // Observer getting overuse reports.
-  AdaptationObserverInterface* observer_;
-};
-
 OveruseFrameDetector::OveruseFrameDetector(
     CpuOveruseMetricsObserver* metrics_observer)
-    : check_overuse_task_(nullptr),
-      metrics_observer_(metrics_observer),
+    : metrics_observer_(metrics_observer),
       num_process_times_(0),
       // TODO(nisse): Use absl::optional
       last_capture_time_us_(-1),
@@ -566,32 +533,35 @@ OveruseFrameDetector::OveruseFrameDetector(
       in_quick_rampup_(false),
       current_rampup_delay_ms_(kStandardRampUpDelayMs) {
   task_checker_.Detach();
+  ParseFieldTrial({&filter_time_constant_},
+                  field_trial::FindFullName("WebRTC-CpuLoadEstimator"));
 }
 
-OveruseFrameDetector::~OveruseFrameDetector() {
-  RTC_DCHECK(!check_overuse_task_) << "StopCheckForOverUse must be called.";
-}
+OveruseFrameDetector::~OveruseFrameDetector() {}
 
 void OveruseFrameDetector::StartCheckForOveruse(
+    rtc::TaskQueue* task_queue,
     const CpuOveruseOptions& options,
     AdaptationObserverInterface* overuse_observer) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
-  RTC_DCHECK(!check_overuse_task_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
+  RTC_DCHECK(!check_overuse_task_.Running());
   RTC_DCHECK(overuse_observer != nullptr);
 
   SetOptions(options);
-  check_overuse_task_ = new CheckOveruseTask(this, overuse_observer);
+  check_overuse_task_ = RepeatingTaskHandle::DelayedStart(
+      task_queue->Get(), TimeDelta::ms(kTimeToFirstCheckForOveruseMs),
+      [this, overuse_observer] {
+        CheckForOveruse(overuse_observer);
+        return TimeDelta::ms(kCheckForOveruseIntervalMs);
+      });
 }
 void OveruseFrameDetector::StopCheckForOveruse() {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
-  if (check_overuse_task_) {
-    check_overuse_task_->Stop();
-    check_overuse_task_ = nullptr;
-  }
+  RTC_DCHECK_RUN_ON(&task_checker_);
+  check_overuse_task_.Stop();
 }
 
 void OveruseFrameDetector::EncodedFrameTimeMeasured(int encode_duration_ms) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   encode_usage_percent_ = usage_->Value();
 
   metrics_observer_->OnEncodedFrameTimeMeasured(encode_duration_ms,
@@ -599,7 +569,7 @@ void OveruseFrameDetector::EncodedFrameTimeMeasured(int encode_duration_ms) {
 }
 
 bool OveruseFrameDetector::FrameSizeChanged(int num_pixels) const {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   if (num_pixels != num_pixels_) {
     return true;
   }
@@ -607,7 +577,7 @@ bool OveruseFrameDetector::FrameSizeChanged(int num_pixels) const {
 }
 
 bool OveruseFrameDetector::FrameTimeoutDetected(int64_t now_us) const {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   if (last_capture_time_us_ == -1)
     return false;
   return (now_us - last_capture_time_us_) >
@@ -617,7 +587,7 @@ bool OveruseFrameDetector::FrameTimeoutDetected(int64_t now_us) const {
 void OveruseFrameDetector::ResetAll(int num_pixels) {
   // Reset state, as a result resolution being changed. Do not however change
   // the current frame rate back to the default.
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   num_pixels_ = num_pixels;
   usage_->Reset();
   last_capture_time_us_ = -1;
@@ -627,7 +597,7 @@ void OveruseFrameDetector::ResetAll(int num_pixels) {
 }
 
 void OveruseFrameDetector::OnTargetFramerateUpdated(int framerate_fps) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   RTC_DCHECK_GE(framerate_fps, 0);
   max_framerate_ = std::min(kMaxFramerate, framerate_fps);
   usage_->SetMaxSampleDiffMs((1000 / std::max(kMinFramerate, max_framerate_)) *
@@ -636,7 +606,7 @@ void OveruseFrameDetector::OnTargetFramerateUpdated(int framerate_fps) {
 
 void OveruseFrameDetector::FrameCaptured(const VideoFrame& frame,
                                          int64_t time_when_first_seen_us) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
 
   if (FrameSizeChanged(frame.width() * frame.height()) ||
       FrameTimeoutDetected(time_when_first_seen_us)) {
@@ -651,7 +621,7 @@ void OveruseFrameDetector::FrameSent(uint32_t timestamp,
                                      int64_t time_sent_in_us,
                                      int64_t capture_time_us,
                                      absl::optional<int> encode_duration_us) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   encode_duration_us = usage_->FrameSent(timestamp, time_sent_in_us,
                                          capture_time_us, encode_duration_us);
 
@@ -663,7 +633,7 @@ void OveruseFrameDetector::FrameSent(uint32_t timestamp,
 
 void OveruseFrameDetector::CheckForOveruse(
     AdaptationObserverInterface* observer) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   RTC_DCHECK(observer);
   ++num_process_times_;
   if (num_process_times_ <= options_.min_process_count ||
@@ -713,15 +683,20 @@ void OveruseFrameDetector::CheckForOveruse(
 }
 
 void OveruseFrameDetector::SetOptions(const CpuOveruseOptions& options) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   options_ = options;
+
+  // Time constant config overridable by field trial.
+  if (filter_time_constant_) {
+    options_.filter_time_ms = filter_time_constant_->ms();
+  }
   // Force reset with next frame.
   num_pixels_ = 0;
   usage_ = CreateProcessingUsage(options);
 }
 
 bool OveruseFrameDetector::IsOverusing(int usage_percent) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
 
   if (usage_percent >= options_.high_encode_usage_threshold_percent) {
     ++checks_above_threshold_;
@@ -732,7 +707,7 @@ bool OveruseFrameDetector::IsOverusing(int usage_percent) {
 }
 
 bool OveruseFrameDetector::IsUnderusing(int usage_percent, int64_t time_now) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_RUN_ON(&task_checker_);
   int delay = in_quick_rampup_ ? kQuickRampUpDelayMs : current_rampup_delay_ms_;
   if (time_now < last_rampup_time_ms_ + delay)
     return false;

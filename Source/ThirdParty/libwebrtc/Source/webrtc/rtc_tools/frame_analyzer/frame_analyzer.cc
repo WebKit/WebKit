@@ -11,20 +11,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <map>
+#include <cstddef>
 #include <string>
 #include <vector>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/strings/match.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_tools/frame_analyzer/video_color_aligner.h"
 #include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/frame_analyzer/video_temporal_aligner.h"
-#include "rtc_tools/simple_command_line_parser.h"
 #include "rtc_tools/video_file_reader.h"
 #include "rtc_tools/video_file_writer.h"
 #include "test/testsupport/perf_test.h"
+
+ABSL_FLAG(int32_t, width, -1, "The width of the reference and test files");
+ABSL_FLAG(int32_t, height, -1, "The height of the reference and test files");
+ABSL_FLAG(std::string,
+          label,
+          "MY_TEST",
+          "The label to use for the perf output");
+ABSL_FLAG(std::string,
+          reference_file,
+          "ref.yuv",
+          "The reference YUV file to run the analysis against");
+ABSL_FLAG(std::string,
+          test_file,
+          "test.yuv",
+          "The test YUV file to run the analysis for");
+ABSL_FLAG(std::string,
+          aligned_output_file,
+          "",
+          "Where to write aligned YUV/Y4M output file, f not present, no files "
+          "will be written");
+ABSL_FLAG(std::string,
+          yuv_directory,
+          "",
+          "Where to write aligned YUV ref+test output files, if not present, "
+          "no files will be written");
+ABSL_FLAG(std::string,
+          chartjson_result_file,
+          "",
+          "Where to store perf result in chartjson format, if not present, no "
+          "perf result will be stored");
 
 namespace {
 
@@ -56,64 +88,16 @@ std::string JoinFilename(std::string directory, std::string filename) {
  * --test_file_ref=<name_of_file> --width=<frame_width> --height=<frame_height>
  */
 int main(int argc, char* argv[]) {
-  std::string program_name = argv[0];
-  std::string usage =
-      "Compares the output video with the initially sent video."
-      "\nExample usage:\n" +
-      program_name +
-      " --reference_file=ref.yuv --test_file=test.yuv --width=320 "
-      "--height=240\n"
-      "Command line flags:\n"
-      "  - width(int): The width of the reference and test files. Default: -1\n"
-      "  - height(int): The height of the reference and test files. "
-      " Default: -1\n"
-      "  - label(string): The label to use for the perf output."
-      " Default: MY_TEST\n"
-      " Default: ref.yuv\n"
-      "  - test_file(string): The test YUV file to run the analysis for."
-      " Default: test_file.yuv\n"
-      "  - chartjson_result_file: Where to store perf result in chartjson"
-      " format. If not present, no perf result will be stored."
-      " Default: None\n"
-      "  - aligned_output_file: Where to write aligned YUV/Y4M output file."
-      " If not present, no file will be written."
-      " Default: None\n"
-      "  - yuv_directory: Where to write aligned YUV ref+test output files."
-      " If not present, no files will be written."
-      " Default: None\n";
+  absl::ParseCommandLine(argc, argv);
 
-  webrtc::test::CommandLineParser parser;
-
-  // Init the parser and set the usage message
-  parser.Init(argc, argv);
-  parser.SetUsageMessage(usage);
-
-  parser.SetFlag("width", "-1");
-  parser.SetFlag("height", "-1");
-  parser.SetFlag("label", "MY_TEST");
-  parser.SetFlag("reference_file", "ref.yuv");
-  parser.SetFlag("test_file", "test.yuv");
-  parser.SetFlag("aligned_output_file", "");
-  parser.SetFlag("yuv_directory", "");
-  parser.SetFlag("chartjson_result_file", "");
-  parser.SetFlag("help", "false");
-
-  parser.ProcessFlags();
-  if (parser.GetFlag("help") == "true") {
-    parser.PrintUsageMessage();
-    exit(EXIT_SUCCESS);
-  }
-  parser.PrintEnteredFlags();
-
-  int width = strtol((parser.GetFlag("width")).c_str(), nullptr, 10);
-  int height = strtol((parser.GetFlag("height")).c_str(), nullptr, 10);
-
-  const std::string reference_file_name = parser.GetFlag("reference_file");
-  const std::string test_file_name = parser.GetFlag("test_file");
+  int width = absl::GetFlag(FLAGS_width);
+  int height = absl::GetFlag(FLAGS_height);
+  const std::string reference_file_name = absl::GetFlag(FLAGS_reference_file);
+  const std::string test_file_name = absl::GetFlag(FLAGS_test_file);
 
   // .yuv files require explicit resolution.
-  if ((rtc::ends_with(reference_file_name.c_str(), ".yuv") ||
-       rtc::ends_with(test_file_name.c_str(), ".yuv")) &&
+  if ((absl::EndsWith(reference_file_name, ".yuv") ||
+       absl::EndsWith(test_file_name, ".yuv")) &&
       (width <= 0 || height <= 0)) {
     fprintf(stderr,
             "Error: You need to specify width and height when using .yuv "
@@ -130,7 +114,7 @@ int main(int argc, char* argv[]) {
 
   if (!reference_video || !test_video) {
     fprintf(stderr, "Error opening video files\n");
-    return 0;
+    return 1;
   }
 
   const std::vector<size_t> matching_indices =
@@ -175,18 +159,19 @@ int main(int argc, char* argv[]) {
   results.decode_errors_ref = 0;
   results.decode_errors_test = 0;
 
-  webrtc::test::PrintAnalysisResults(parser.GetFlag("label"), &results);
+  webrtc::test::PrintAnalysisResults(absl::GetFlag(FLAGS_label), &results);
 
-  std::string chartjson_result_file = parser.GetFlag("chartjson_result_file");
+  std::string chartjson_result_file =
+      absl::GetFlag(FLAGS_chartjson_result_file);
   if (!chartjson_result_file.empty()) {
     webrtc::test::WritePerfResults(chartjson_result_file);
   }
-  std::string aligned_output_file = parser.GetFlag("aligned_output_file");
+  std::string aligned_output_file = absl::GetFlag(FLAGS_aligned_output_file);
   if (!aligned_output_file.empty()) {
     webrtc::test::WriteVideoToFile(aligned_reference_video, aligned_output_file,
                                    /*fps=*/30);
   }
-  std::string yuv_directory = parser.GetFlag("yuv_directory");
+  std::string yuv_directory = absl::GetFlag(FLAGS_yuv_directory);
   if (!yuv_directory.empty()) {
     webrtc::test::WriteVideoToFile(aligned_reference_video,
                                    JoinFilename(yuv_directory, "ref.yuv"),

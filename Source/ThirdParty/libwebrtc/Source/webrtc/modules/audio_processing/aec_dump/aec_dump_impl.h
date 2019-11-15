@@ -20,7 +20,6 @@
 #include "modules/audio_processing/aec_dump/write_to_file_task.h"
 #include "modules/audio_processing/include/aec_dump.h"
 #include "rtc_base/ignore_wundef.h"
-#include "rtc_base/platform_file.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/task_queue.h"
@@ -46,7 +45,7 @@ namespace webrtc {
 class AecDumpImpl : public AecDump {
  public:
   // Does member variables initialization shared across all c-tors.
-  AecDumpImpl(std::unique_ptr<FileWrapper> debug_file,
+  AecDumpImpl(FileWrapper debug_file,
               int64_t max_log_size_bytes,
               rtc::TaskQueue* worker_queue);
 
@@ -73,7 +72,7 @@ class AecDumpImpl : public AecDump {
  private:
   std::unique_ptr<WriteToFileTask> CreateWriteToFileTask();
 
-  std::unique_ptr<FileWrapper> debug_file_;
+  FileWrapper debug_file_;
   int64_t num_bytes_left_for_log_ = 0;
   rtc::RaceChecker race_checker_;
   rtc::TaskQueue* worker_queue_;

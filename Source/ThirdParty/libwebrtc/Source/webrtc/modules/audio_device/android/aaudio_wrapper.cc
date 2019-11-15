@@ -13,7 +13,7 @@
 #include "modules/audio_device/android/audio_manager.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 #define LOG_ON_ERROR(op)                                                      \
   do {                                                                        \
@@ -139,19 +139,19 @@ AAudioWrapper::AAudioWrapper(AudioManager* audio_manager,
   direction_ == AAUDIO_DIRECTION_OUTPUT
       ? audio_parameters_ = audio_manager->GetPlayoutAudioParameters()
       : audio_parameters_ = audio_manager->GetRecordAudioParameters();
-  aaudio_thread_checker_.DetachFromThread();
+  aaudio_thread_checker_.Detach();
   RTC_LOG(INFO) << audio_parameters_.ToString();
 }
 
 AAudioWrapper::~AAudioWrapper() {
   RTC_LOG(INFO) << "dtor";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!stream_);
 }
 
 bool AAudioWrapper::Init() {
   RTC_LOG(INFO) << "Init";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   // Creates a stream builder which can be used to open an audio stream.
   ScopedStreamBuilder builder;
   // Configures the stream builder using audio parameters given at construction.
@@ -175,7 +175,7 @@ bool AAudioWrapper::Init() {
 
 bool AAudioWrapper::Start() {
   RTC_LOG(INFO) << "Start";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   // TODO(henrika): this state check might not be needed.
   aaudio_stream_state_t current_state = AAudioStream_getState(stream_);
   if (current_state != AAUDIO_STREAM_STATE_OPEN) {
@@ -191,11 +191,11 @@ bool AAudioWrapper::Start() {
 
 bool AAudioWrapper::Stop() {
   RTC_LOG(INFO) << "Stop: " << DirectionToString(direction());
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   // Asynchronous request for the stream to stop.
   RETURN_ON_ERROR(AAudioStream_requestStop(stream_), false);
   CloseStream();
-  aaudio_thread_checker_.DetachFromThread();
+  aaudio_thread_checker_.Detach();
   return true;
 }
 
@@ -242,7 +242,7 @@ double AAudioWrapper::EstimateLatencyMillis() const {
 bool AAudioWrapper::IncreaseOutputBufferSize() {
   RTC_LOG(INFO) << "IncreaseBufferSize";
   RTC_DCHECK(stream_);
-  RTC_DCHECK(aaudio_thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(aaudio_thread_checker_.IsCurrent());
   RTC_DCHECK_EQ(direction(), AAUDIO_DIRECTION_OUTPUT);
   aaudio_result_t buffer_size = AAudioStream_getBufferSizeInFrames(stream_);
   // Try to increase size of buffer with one burst to reduce risk of underrun.
@@ -270,7 +270,7 @@ bool AAudioWrapper::IncreaseOutputBufferSize() {
 void AAudioWrapper::ClearInputStream(void* audio_data, int32_t num_frames) {
   RTC_LOG(INFO) << "ClearInputStream";
   RTC_DCHECK(stream_);
-  RTC_DCHECK(aaudio_thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(aaudio_thread_checker_.IsCurrent());
   RTC_DCHECK_EQ(direction(), AAUDIO_DIRECTION_INPUT);
   aaudio_result_t cleared_frames = 0;
   do {
@@ -359,7 +359,7 @@ int64_t AAudioWrapper::frames_read() const {
 void AAudioWrapper::SetStreamConfiguration(AAudioStreamBuilder* builder) {
   RTC_LOG(INFO) << "SetStreamConfiguration";
   RTC_DCHECK(builder);
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   // Request usage of default primary output/input device.
   // TODO(henrika): verify that default device follows Java APIs.
   // https://developer.android.com/reference/android/media/AudioDeviceInfo.html.

@@ -8,12 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
+#include "rtc_base/numerics/percentile_filter.h"
+
+#include <stdlib.h>
+
+#include <array>
 #include <climits>
+#include <cstdint>
 #include <random>
 
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/numerics/percentile_filter.h"
+#include "absl/algorithm/container.h"
+#include "rtc_base/constructor_magic.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -32,9 +37,9 @@ class PercentileFilterTest : public ::testing::TestWithParam<float> {
   RTC_DISALLOW_COPY_AND_ASSIGN(PercentileFilterTest);
 };
 
-INSTANTIATE_TEST_CASE_P(PercentileFilterTests,
-                        PercentileFilterTest,
-                        ::testing::Values(0.0f, 0.1f, 0.5f, 0.9f, 1.0f));
+INSTANTIATE_TEST_SUITE_P(PercentileFilterTests,
+                         PercentileFilterTest,
+                         ::testing::Values(0.0f, 0.1f, 0.5f, 0.9f, 1.0f));
 
 TEST(PercentileFilterTest, MinFilter) {
   PercentileFilter<int64_t> filter(0.0f);
@@ -108,14 +113,13 @@ TEST_P(PercentileFilterTest, DuplicateElements) {
 }
 
 TEST_P(PercentileFilterTest, InsertAndEraseTenValuesInRandomOrder) {
-  int64_t zero_to_nine[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::array<int64_t, 10> zero_to_nine = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
   // The percentile value of the ten values above.
   const int64_t expected_value = static_cast<int64_t>(GetParam() * 9);
 
   // Insert two sets of |zero_to_nine| in random order.
   for (int i = 0; i < 2; ++i) {
-    std::shuffle(zero_to_nine, zero_to_nine + 10,
-                 std::mt19937(std::random_device()()));
+    absl::c_shuffle(zero_to_nine, std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Insert(value);
     // After inserting a full set of |zero_to_nine|, the percentile should
@@ -125,13 +129,11 @@ TEST_P(PercentileFilterTest, InsertAndEraseTenValuesInRandomOrder) {
 
   // Insert and erase sets of |zero_to_nine| in random order a few times.
   for (int i = 0; i < 3; ++i) {
-    std::shuffle(zero_to_nine, zero_to_nine + 10,
-                 std::mt19937(std::random_device()()));
+    absl::c_shuffle(zero_to_nine, std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Erase(value);
     EXPECT_EQ(expected_value, filter_.GetPercentileValue());
-    std::shuffle(zero_to_nine, zero_to_nine + 10,
-                 std::mt19937(std::random_device()()));
+    absl::c_shuffle(zero_to_nine, std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Insert(value);
     EXPECT_EQ(expected_value, filter_.GetPercentileValue());

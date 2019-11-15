@@ -10,9 +10,12 @@
 
 #include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 
+#include <stddef.h>
+
 #include <utility>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -61,7 +64,7 @@ SharedMemoryFactoryProxy::~SharedMemoryFactoryProxy() = default;
 
 std::unique_ptr<SharedMemory> SharedMemoryFactoryProxy::CreateSharedMemory(
     size_t size) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   return factory_->CreateSharedMemory(size);
 }
 
@@ -78,6 +81,7 @@ FallbackDesktopCapturerWrapper::~FallbackDesktopCapturerWrapper() = default;
 
 void FallbackDesktopCapturerWrapper::Start(
     DesktopCapturer::Callback* callback) {
+  callback_ = callback;
   // FallbackDesktopCapturerWrapper catchs the callback of the main capturer,
   // and checks its return value to decide whether the secondary capturer should
   // be involved.
@@ -86,7 +90,6 @@ void FallbackDesktopCapturerWrapper::Start(
   // FallbackDesktopCapturerWrapper won't check its return value any more. It
   // will directly return to the input |callback|.
   secondary_capturer_->Start(callback);
-  callback_ = callback;
 }
 
 void FallbackDesktopCapturerWrapper::SetSharedMemoryFactory(

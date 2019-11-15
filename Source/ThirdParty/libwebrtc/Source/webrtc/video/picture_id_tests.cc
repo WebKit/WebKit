@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
-#include "media/engine/internalencoderfactory.h"
+#include "media/engine/internal_encoder_factory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
@@ -71,7 +72,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
     int16_t picture_id;
     int16_t tl0_pic_idx;
     uint8_t temporal_idx;
-    FrameType frame_type;
+    VideoFrameType frame_type;
   };
 
   bool ParsePayload(const uint8_t* packet,
@@ -121,7 +122,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
         break;
     }
 
-    parsed->frame_type = parsed_payload.frame_type;
+    parsed->frame_type = parsed_payload.video_header().frame_type;
     return true;
   }
 
@@ -145,7 +146,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
     if (diff > 1) {
       // If the VideoSendStream is destroyed, any frames still in queue is lost.
       // Gaps only possible for first frame after a recreation, i.e. key frames.
-      EXPECT_EQ(kVideoFrameKey, current.frame_type);
+      EXPECT_EQ(VideoFrameType::kVideoFrameKey, current.frame_type);
       EXPECT_LE(diff - 1, max_expected_picture_id_gap_);
     }
   }
@@ -171,7 +172,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
     if (diff > 1) {
       // If the VideoSendStream is destroyed, any frames still in queue is lost.
       // Gaps only possible for first frame after a recreation, i.e. key frames.
-      EXPECT_EQ(kVideoFrameKey, current.frame_type);
+      EXPECT_EQ(VideoFrameType::kVideoFrameKey, current.frame_type);
       EXPECT_LE(diff - 1, max_expected_tl0_idx_gap_);
     }
   }
@@ -229,6 +230,7 @@ class PictureIdTest : public test::CallTest,
 
   void SetupEncoder(VideoEncoderFactory* encoder_factory,
                     const std::string& payload_name);
+  void SetVideoEncoderConfig(int num_streams);
   void TestPictureIdContinuousAfterReconfigure(
       const std::vector<int>& ssrc_counts);
   void TestPictureIdIncreaseAfterRecreateStreams(
@@ -239,52 +241,9 @@ class PictureIdTest : public test::CallTest,
   std::unique_ptr<PictureIdObserver> observer_;
 };
 
-INSTANTIATE_TEST_CASE_P(TemporalLayers,
-                        PictureIdTest,
-                        ::testing::ValuesIn(kNumTemporalLayers));
-
-// Use a special stream factory to ensure that all simulcast streams are being
-// sent.
-class VideoStreamFactory
-    : public VideoEncoderConfig::VideoStreamFactoryInterface {
- public:
-  explicit VideoStreamFactory(size_t num_temporal_layers)
-      : num_of_temporal_layers_(num_temporal_layers) {}
-
- private:
-  std::vector<VideoStream> CreateEncoderStreams(
-      int width,
-      int height,
-      const VideoEncoderConfig& encoder_config) override {
-    std::vector<VideoStream> streams =
-        test::CreateVideoStreams(width, height, encoder_config);
-
-    // Use the same total bitrates when sending a single stream to avoid
-    // lowering the bitrate estimate and requiring a subsequent rampup.
-    const int encoder_stream_bps =
-        kEncoderBitrateBps /
-        rtc::checked_cast<int>(encoder_config.number_of_streams);
-
-    for (size_t i = 0; i < encoder_config.number_of_streams; ++i) {
-      streams[i].min_bitrate_bps = encoder_stream_bps;
-      streams[i].target_bitrate_bps = encoder_stream_bps;
-      streams[i].max_bitrate_bps = encoder_stream_bps;
-      streams[i].num_temporal_layers = num_of_temporal_layers_;
-      // test::CreateVideoStreams does not return frame sizes for the lower
-      // streams that are accepted by VP8Impl::InitEncode.
-      // TODO(brandtr): Fix the problem in test::CreateVideoStreams, rather
-      // than overriding the values here.
-      streams[i].width =
-          width / (1 << (encoder_config.number_of_streams - 1 - i));
-      streams[i].height =
-          height / (1 << (encoder_config.number_of_streams - 1 - i));
-    }
-
-    return streams;
-  }
-
-  const size_t num_of_temporal_layers_;
-};
+INSTANTIATE_TEST_SUITE_P(TemporalLayers,
+                         PictureIdTest,
+                         ::testing::ValuesIn(kNumTemporalLayers));
 
 void PictureIdTest::SetupEncoder(VideoEncoderFactory* encoder_factory,
                                  const std::string& payload_name) {
@@ -306,10 +265,30 @@ void PictureIdTest::SetupEncoder(VideoEncoderFactory* encoder_factory,
     GetVideoSendConfig()->rtp.payload_name = payload_name;
     GetVideoEncoderConfig()->codec_type =
         PayloadStringToCodecType(payload_name);
-    GetVideoEncoderConfig()->video_stream_factory =
-        new rtc::RefCountedObject<VideoStreamFactory>(num_temporal_layers_);
-    GetVideoEncoderConfig()->number_of_streams = 1;
+    SetVideoEncoderConfig(/* number_of_streams */ 1);
   });
+}
+
+void PictureIdTest::SetVideoEncoderConfig(int num_streams) {
+  GetVideoEncoderConfig()->number_of_streams = num_streams;
+  GetVideoEncoderConfig()->max_bitrate_bps = kEncoderBitrateBps;
+
+  // Always divide the same total bitrate across all streams so that sending a
+  // single stream avoids lowering the bitrate estimate and requiring a
+  // subsequent rampup.
+  const int encoder_stream_bps = kEncoderBitrateBps / num_streams;
+  double scale_factor = 1.0;
+  for (int i = num_streams - 1; i >= 0; --i) {
+    VideoStream& stream = GetVideoEncoderConfig()->simulcast_layers[i];
+    // Reduce the min bitrate by 10% to account for overhead that might
+    // otherwise cause streams to not be enabled.
+    stream.min_bitrate_bps = static_cast<int>(encoder_stream_bps * 0.9);
+    stream.target_bitrate_bps = encoder_stream_bps;
+    stream.max_bitrate_bps = encoder_stream_bps;
+    stream.num_temporal_layers = num_temporal_layers_;
+    stream.scale_resolution_down_by = scale_factor;
+    scale_factor *= 2.0;
+  }
 }
 
 void PictureIdTest::TestPictureIdContinuousAfterReconfigure(
@@ -328,7 +307,7 @@ void PictureIdTest::TestPictureIdContinuousAfterReconfigure(
   // Expect continuously increasing picture id, equivalent to no gaps.
   observer_->SetMaxExpectedPictureIdGap(0);
   for (int ssrc_count : ssrc_counts) {
-    GetVideoEncoderConfig()->number_of_streams = ssrc_count;
+    SetVideoEncoderConfig(ssrc_count);
     observer_->SetExpectedSsrcs(ssrc_count);
     observer_->ResetObservedSsrcs();
     // Make sure the picture_id sequence is continuous on reinit and recreate.
@@ -363,17 +342,15 @@ void PictureIdTest::TestPictureIdIncreaseAfterRecreateStreams(
   observer_->SetMaxExpectedPictureIdGap(kMaxFramesLost);
   for (int ssrc_count : ssrc_counts) {
     task_queue_.SendTask([this, &ssrc_count]() {
-      frame_generator_capturer_->Stop();
       DestroyVideoSendStreams();
 
-      GetVideoEncoderConfig()->number_of_streams = ssrc_count;
+      SetVideoEncoderConfig(ssrc_count);
       observer_->SetExpectedSsrcs(ssrc_count);
       observer_->ResetObservedSsrcs();
 
       CreateVideoSendStreams();
       GetVideoSendStream()->Start();
       CreateFrameGeneratorCapturer(kFrameRate, kFrameMaxWidth, kFrameMaxHeight);
-      frame_generator_capturer_->Start();
     });
 
     EXPECT_TRUE(observer_->Wait()) << "Timed out waiting for packets.";

@@ -11,6 +11,7 @@
 #define RTC_BASE_UNITS_UNIT_BASE_H_
 
 #include <stdint.h>
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -23,7 +24,7 @@ namespace webrtc {
 namespace rtc_units_impl {
 
 // UnitBase is a base class for implementing custom value types with a specific
-// unit. It provides type safety and sommonly useful operations. The undelying
+// unit. It provides type safety and commonly useful operations. The underlying
 // storage is always an int64_t, it's up to the unit implementation to choose
 // what scale it represents.
 //
@@ -66,6 +67,26 @@ class UnitBase {
   }
   constexpr bool operator<(const Unit_T& other) const {
     return value_ < other.value_;
+  }
+  Unit_T RoundTo(const Unit_T& resolution) const {
+    RTC_DCHECK(IsFinite());
+    RTC_DCHECK(resolution.IsFinite());
+    RTC_DCHECK_GT(resolution.value_, 0);
+    return Unit_T((value_ + resolution.value_ / 2) / resolution.value_) *
+           resolution.value_;
+  }
+  Unit_T RoundUpTo(const Unit_T& resolution) const {
+    RTC_DCHECK(IsFinite());
+    RTC_DCHECK(resolution.IsFinite());
+    RTC_DCHECK_GT(resolution.value_, 0);
+    return Unit_T((value_ + resolution.value_ - 1) / resolution.value_) *
+           resolution.value_;
+  }
+  Unit_T RoundDownTo(const Unit_T& resolution) const {
+    RTC_DCHECK(IsFinite());
+    RTC_DCHECK(resolution.IsFinite());
+    RTC_DCHECK_GT(resolution.value_, 0);
+    return Unit_T(value_ / resolution.value_) * resolution.value_;
   }
 
  protected:

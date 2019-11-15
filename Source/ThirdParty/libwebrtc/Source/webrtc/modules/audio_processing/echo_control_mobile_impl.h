@@ -13,6 +13,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 #include <vector>
 
@@ -29,9 +30,6 @@ class EchoControlMobileImpl {
   EchoControlMobileImpl();
 
   ~EchoControlMobileImpl();
-
-  int Enable(bool enable);
-  bool is_enabled() const;
 
   // Recommended settings for particular audio routes. In general, the louder
   // the echo is expected to be, the higher this value should be set. The
@@ -56,6 +54,7 @@ class EchoControlMobileImpl {
 
   void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
   int ProcessCaptureAudio(AudioBuffer* audio, int stream_delay_ms);
+  void CopyLowPassReference(AudioBuffer* audio);
 
   void Initialize(int sample_rate_hz,
                   size_t num_reverse_channels,
@@ -75,13 +74,13 @@ class EchoControlMobileImpl {
 
   int Configure();
 
-  bool enabled_ = false;
-
   RoutingMode routing_mode_;
   bool comfort_noise_enabled_;
 
   std::vector<std::unique_ptr<Canceller>> cancellers_;
   std::unique_ptr<StreamProperties> stream_properties_;
+  std::array<std::array<int16_t, 160>, 2> low_pass_reference_;
+  bool reference_copied_ = false;
 };
 }  // namespace webrtc
 

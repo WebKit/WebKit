@@ -11,7 +11,10 @@
 #ifndef MODULES_DESKTOP_CAPTURE_CROPPED_DESKTOP_FRAME_H_
 #define MODULES_DESKTOP_CAPTURE_CROPPED_DESKTOP_FRAME_H_
 
+#include <memory>
+
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {

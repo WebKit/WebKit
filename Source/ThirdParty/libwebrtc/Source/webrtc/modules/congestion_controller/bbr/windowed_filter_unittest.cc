@@ -10,10 +10,14 @@
 
 #include "modules/congestion_controller/bbr/windowed_filter.h"
 
+#include <stdint.h>
+
+#include <string>
+#include <type_traits>
+
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
-
-#include "modules/congestion_controller/bbr/rtt_stats.h"
+#include "rtc_base/logging.h"
 #include "test/gtest.h"
 
 namespace webrtc {

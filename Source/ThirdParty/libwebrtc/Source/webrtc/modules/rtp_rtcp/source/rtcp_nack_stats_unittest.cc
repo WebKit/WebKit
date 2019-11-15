@@ -9,6 +9,7 @@
  */
 
 #include "modules/rtp_rtcp/source/rtcp_nack_stats.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -26,6 +26,7 @@ class SampleCounter {
   void Add(int sample);
   absl::optional<int> Avg(int64_t min_required_samples) const;
   absl::optional<int> Max() const;
+  absl::optional<int64_t> Sum(int64_t min_required_samples) const;
   int64_t NumSamples() const;
   void Reset();
   // Adds all the samples from the |other| SampleCounter as if they were all

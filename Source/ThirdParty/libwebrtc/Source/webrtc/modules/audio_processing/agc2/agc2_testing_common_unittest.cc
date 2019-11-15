@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
+
 #include "rtc_base/gunit.h"
 
 namespace webrtc {

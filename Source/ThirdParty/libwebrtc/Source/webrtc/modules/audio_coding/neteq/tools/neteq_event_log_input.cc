@@ -11,6 +11,7 @@
 #include "modules/audio_coding/neteq/tools/neteq_event_log_input.h"
 
 #include <limits>
+#include <memory>
 
 #include "modules/audio_coding/neteq/tools/rtc_event_log_source.h"
 #include "rtc_base/checks.h"
@@ -18,11 +19,26 @@
 namespace webrtc {
 namespace test {
 
-NetEqEventLogInput::NetEqEventLogInput(const std::string& file_name,
-                                       absl::optional<uint32_t> ssrc_filter)
-    : source_(RtcEventLogSource::Create(file_name, ssrc_filter)) {
-  LoadNextPacket();
-  AdvanceOutputEvent();
+NetEqEventLogInput* NetEqEventLogInput::CreateFromFile(
+    const std::string& file_name,
+    absl::optional<uint32_t> ssrc_filter) {
+  auto event_log_src =
+      RtcEventLogSource::CreateFromFile(file_name, ssrc_filter);
+  if (!event_log_src) {
+    return nullptr;
+  }
+  return new NetEqEventLogInput(std::move(event_log_src));
+}
+
+NetEqEventLogInput* NetEqEventLogInput::CreateFromString(
+    const std::string& file_contents,
+    absl::optional<uint32_t> ssrc_filter) {
+  auto event_log_src =
+      RtcEventLogSource::CreateFromString(file_contents, ssrc_filter);
+  if (!event_log_src) {
+    return nullptr;
+  }
+  return new NetEqEventLogInput(std::move(event_log_src));
 }
 
 absl::optional<int64_t> NetEqEventLogInput::NextOutputEventTime() const {
@@ -38,6 +54,13 @@ void NetEqEventLogInput::AdvanceOutputEvent() {
 
 PacketSource* NetEqEventLogInput::source() {
   return source_.get();
+}
+
+NetEqEventLogInput::NetEqEventLogInput(
+    std::unique_ptr<RtcEventLogSource> source)
+    : source_(std::move(source)) {
+  LoadNextPacket();
+  AdvanceOutputEvent();
 }
 
 }  // namespace test

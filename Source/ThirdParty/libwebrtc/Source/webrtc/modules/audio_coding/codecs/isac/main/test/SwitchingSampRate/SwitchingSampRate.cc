@@ -23,8 +23,6 @@
 
 #define NUM_CLIENTS 2
 
-using namespace std;
-
 int main(int argc, char* argv[]) {
   char fileNameWB[MAX_FILE_NAME];
   char fileNameSWB[MAX_FILE_NAME];
@@ -306,7 +304,7 @@ int main(int argc, char* argv[]) {
           //    &rateIndexLB, &rateIndexUB);
           // printf(" (%2d, %2d) ", rateIndexLB, rateIndexUB);
 
-          cout << flush;
+          std::cout << std::flush;
           lenEncodedInBytesTmp[senderIdx] = 0;
           lenAudioIn10msTmp[senderIdx] = 0;
           // if(senderIdx == (NUM_CLIENTS - 1))

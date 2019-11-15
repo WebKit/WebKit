@@ -10,7 +10,7 @@
 
 #include "sdk/android/src/jni/wrapped_native_i420_buffer.h"
 
-#include "sdk/android/generated_video_jni/jni/WrappedNativeI420Buffer_jni.h"
+#include "sdk/android/generated_video_jni/WrappedNativeI420Buffer_jni.h"
 #include "sdk/android/src/jni/jni_helpers.h"
 
 namespace webrtc {

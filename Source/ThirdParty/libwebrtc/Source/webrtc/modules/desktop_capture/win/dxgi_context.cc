@@ -9,6 +9,7 @@
  */
 
 #include "modules/desktop_capture/win/dxgi_context.h"
+
 #include "modules/desktop_capture/win/dxgi_duplicator_controller.h"
 
 namespace webrtc {

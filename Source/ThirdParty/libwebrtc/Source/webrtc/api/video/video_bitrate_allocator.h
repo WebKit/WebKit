@@ -11,9 +11,24 @@
 #ifndef API_VIDEO_VIDEO_BITRATE_ALLOCATOR_H_
 #define API_VIDEO_VIDEO_BITRATE_ALLOCATOR_H_
 
+#include "api/units/data_rate.h"
 #include "api/video/video_bitrate_allocation.h"
 
 namespace webrtc {
+
+struct VideoBitrateAllocationParameters {
+  VideoBitrateAllocationParameters(uint32_t total_bitrate_bps,
+                                   uint32_t framerate);
+  VideoBitrateAllocationParameters(DataRate total_bitrate, double framerate);
+  VideoBitrateAllocationParameters(DataRate total_bitrate,
+                                   DataRate stable_bitrate,
+                                   double framerate);
+  ~VideoBitrateAllocationParameters();
+
+  DataRate total_bitrate;
+  DataRate stable_bitrate;
+  double framerate;
+};
 
 class VideoBitrateAllocator {
  public:
@@ -21,7 +36,10 @@ class VideoBitrateAllocator {
   virtual ~VideoBitrateAllocator() {}
 
   virtual VideoBitrateAllocation GetAllocation(uint32_t total_bitrate_bps,
-                                               uint32_t framerate) = 0;
+                                               uint32_t framerate);
+
+  virtual VideoBitrateAllocation Allocate(
+      VideoBitrateAllocationParameters parameters);
 };
 
 class VideoBitrateAllocationObserver {

@@ -12,11 +12,12 @@
 #define LOGGING_RTC_EVENT_LOG_RTC_STREAM_CONFIG_H_
 
 #include <stdint.h>
+
 #include <string>
 #include <vector>
 
 #include "api/rtp_headers.h"
-#include "api/rtpparameters.h"
+#include "api/rtp_parameters.h"
 
 namespace webrtc {
 namespace rtclog {

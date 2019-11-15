@@ -10,8 +10,6 @@
 
 #include "modules/congestion_controller/bbr/packet_number_indexed_queue.h"
 
-#include <limits>
-#include <map>
 #include <string>
 
 #include "test/gtest.h"

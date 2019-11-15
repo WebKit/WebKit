@@ -11,9 +11,11 @@
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "api/video_codecs/sdp_video_format.h"
-#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

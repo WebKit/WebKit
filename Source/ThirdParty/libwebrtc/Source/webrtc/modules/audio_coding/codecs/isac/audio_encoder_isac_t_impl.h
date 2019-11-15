@@ -11,26 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_IMPL_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_IMPL_H_
 
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/checks.h"
 
 namespace webrtc {
-
-template <typename T>
-typename AudioEncoderIsacT<T>::Config CreateIsacConfig(
-    const CodecInst& codec_inst,
-    const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo) {
-  typename AudioEncoderIsacT<T>::Config config;
-  config.bwinfo = bwinfo;
-  config.payload_type = codec_inst.pltype;
-  config.sample_rate_hz = codec_inst.plfreq;
-  config.frame_size_ms =
-      rtc::CheckedDivExact(1000 * codec_inst.pacsize, config.sample_rate_hz);
-  config.adaptive_mode = (codec_inst.rate == -1);
-  if (codec_inst.rate != -1)
-    config.bit_rate = codec_inst.rate;
-  return config;
-}
 
 template <typename T>
 bool AudioEncoderIsacT<T>::Config::IsOk() const {
@@ -65,12 +48,6 @@ template <typename T>
 AudioEncoderIsacT<T>::AudioEncoderIsacT(const Config& config) {
   RecreateEncoderInstance(config);
 }
-
-template <typename T>
-AudioEncoderIsacT<T>::AudioEncoderIsacT(
-    const CodecInst& codec_inst,
-    const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo)
-    : AudioEncoderIsacT(CreateIsacConfig<T>(codec_inst, bwinfo)) {}
 
 template <typename T>
 AudioEncoderIsacT<T>::~AudioEncoderIsacT() {

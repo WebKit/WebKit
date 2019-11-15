@@ -10,7 +10,7 @@
 
 #include "sdk/objc/native/src/objc_video_frame.h"
 
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "sdk/objc/native/src/objc_frame_buffer.h"
 
 namespace webrtc {

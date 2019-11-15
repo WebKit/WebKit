@@ -77,6 +77,7 @@ class CoreAudioBase : public IAudioSessionEvents {
 
  protected:
   explicit CoreAudioBase(Direction direction,
+                         bool automatic_restart,
                          OnDataCallback data_callback,
                          OnErrorCallback error_callback);
   ~CoreAudioBase();
@@ -97,6 +98,7 @@ class CoreAudioBase : public IAudioSessionEvents {
   bool Restart();
 
   Direction direction() const { return direction_; }
+  bool automatic_restart() const { return automatic_restart_; }
 
   // Releases all allocated COM resources in the base class.
   void ReleaseCOMObjects();
@@ -141,6 +143,7 @@ class CoreAudioBase : public IAudioSessionEvents {
 
  private:
   const Direction direction_;
+  const bool automatic_restart_;
   const OnDataCallback on_data_callback_;
   const OnErrorCallback on_error_callback_;
   ScopedHandle audio_samples_event_;

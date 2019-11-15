@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {
@@ -22,6 +23,10 @@ namespace webrtc {
 class VP8Encoder {
  public:
   static std::unique_ptr<VideoEncoder> Create();
+
+  static std::unique_ptr<VideoEncoder> Create(
+      std::unique_ptr<Vp8FrameBufferControllerFactory>
+          frame_buffer_controller_factory);
 };  // end of VP8Encoder class
 
 class VP8Decoder {

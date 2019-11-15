@@ -12,6 +12,7 @@
 #define API_VIDEO_VIDEO_BITRATE_ALLOCATOR_FACTORY_H_
 
 #include <memory>
+
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video_codecs/video_codec.h"
 

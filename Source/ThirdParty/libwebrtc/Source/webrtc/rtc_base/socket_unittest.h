@@ -19,7 +19,7 @@ namespace rtc {
 // Generic socket tests, to be used when testing individual socketservers.
 // Derive your specific test class from SocketTest, install your
 // socketserver, and call the SocketTest test methods.
-class SocketTest : public testing::Test {
+class SocketTest : public ::testing::Test {
  protected:
   SocketTest()
       : kIPv4Loopback(INADDR_LOOPBACK),

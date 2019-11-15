@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_H_
 
 #include <stddef.h>
+
 #include <memory>
 #include <vector>
 
@@ -26,30 +27,22 @@ namespace webrtc {
 // Class for performing echo cancellation on 64 sample blocks of audio data.
 class BlockProcessor {
  public:
-  // Create a block processor with the legacy render buffering.
   static BlockProcessor* Create(const EchoCanceller3Config& config,
-                                int sample_rate_hz);
-  // Create a block processor with the new render buffering.
-  static BlockProcessor* Create2(const EchoCanceller3Config& config,
-                                 int sample_rate_hz);
+                                int sample_rate_hz,
+                                size_t num_render_channels,
+                                size_t num_capture_channels);
   // Only used for testing purposes.
   static BlockProcessor* Create(
       const EchoCanceller3Config& config,
       int sample_rate_hz,
-      std::unique_ptr<RenderDelayBuffer> render_buffer);
-  static BlockProcessor* Create2(
-      const EchoCanceller3Config& config,
-      int sample_rate_hz,
+      size_t num_render_channels,
+      size_t num_capture_channels,
       std::unique_ptr<RenderDelayBuffer> render_buffer);
   static BlockProcessor* Create(
       const EchoCanceller3Config& config,
       int sample_rate_hz,
-      std::unique_ptr<RenderDelayBuffer> render_buffer,
-      std::unique_ptr<RenderDelayController> delay_controller,
-      std::unique_ptr<EchoRemover> echo_remover);
-  static BlockProcessor* Create2(
-      const EchoCanceller3Config& config,
-      int sample_rate_hz,
+      size_t num_render_channels,
+      size_t num_capture_channels,
       std::unique_ptr<RenderDelayBuffer> render_buffer,
       std::unique_ptr<RenderDelayController> delay_controller,
       std::unique_ptr<EchoRemover> echo_remover);
@@ -66,11 +59,11 @@ class BlockProcessor {
   virtual void ProcessCapture(
       bool echo_path_gain_change,
       bool capture_signal_saturation,
-      std::vector<std::vector<float>>* capture_block) = 0;
+      std::vector<std::vector<std::vector<float>>>* capture_block) = 0;
 
   // Buffers a block of render data supplied by a FrameBlocker object.
   virtual void BufferRender(
-      const std::vector<std::vector<float>>& render_block) = 0;
+      const std::vector<std::vector<std::vector<float>>>& render_block) = 0;
 
   // Reports whether echo leakage has been detected in the echo canceller
   // output.

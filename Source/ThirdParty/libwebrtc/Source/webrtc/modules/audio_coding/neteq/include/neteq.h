@@ -13,24 +13,25 @@
 
 #include <string.h>  // Provide access to size_t.
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/rtp_headers.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/neteq/defines.h"
-#include "modules/audio_coding/neteq/neteq_decoder_enum.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
 // Forward declarations.
 class AudioFrame;
 class AudioDecoderFactory;
+class Clock;
 
 struct NetEqNetworkStatistics {
   uint16_t current_buffer_size_ms;    // Current jitter buffer size in ms.
@@ -50,8 +51,6 @@ struct NetEqNetworkStatistics {
                                       // decoding (in Q14).
   uint16_t secondary_discarded_rate;  // Fraction of discarded FEC/RED data (in
                                       // Q14).
-  int32_t clockdrift_ppm;     // Average clock-drift in parts-per-million
-                              // (positive or negative).
   size_t added_zero_samples;  // Number of zero samples added in "off" mode.
   // Statistics for packet waiting times, i.e., the time between a packet
   // arrives until it is decoded.
@@ -70,9 +69,28 @@ struct NetEqLifetimeStatistics {
   uint64_t concealed_samples = 0;
   uint64_t concealment_events = 0;
   uint64_t jitter_buffer_delay_ms = 0;
-  // Below stat is not part of the spec.
-  uint64_t voice_concealed_samples = 0;
+  uint64_t jitter_buffer_emitted_count = 0;
+  uint64_t inserted_samples_for_deceleration = 0;
+  uint64_t removed_samples_for_acceleration = 0;
+  uint64_t silent_concealed_samples = 0;
+  uint64_t fec_packets_received = 0;
+  uint64_t fec_packets_discarded = 0;
+  // Below stats are not part of the spec.
   uint64_t delayed_packet_outage_samples = 0;
+  // This is sum of relative packet arrival delays of received packets so far.
+  // Since end-to-end delay of a packet is difficult to measure and is not
+  // necessarily useful for measuring jitter buffer performance, we report a
+  // relative packet arrival delay. The relative packet arrival delay of a
+  // packet is defined as the arrival delay compared to the first packet
+  // received, given that it had zero delay. To avoid clock drift, the "first"
+  // packet can be made dynamic.
+  uint64_t relative_packet_arrival_delay_ms = 0;
+  uint64_t jitter_buffer_packets_received = 0;
+  // An interruption is a loss-concealment event lasting at least 150 ms. The
+  // two stats below count the number os such events and the total duration of
+  // these events.
+  int32_t interruption_count = 0;
+  int32_t total_interruption_duration_ms = 0;
 };
 
 // Metrics that describe the operations performed in NetEq, and the internal
@@ -85,6 +103,8 @@ struct NetEqOperationsAndState {
   uint64_t accelerate_samples = 0;
   // Count of the number of buffer flushes.
   uint64_t packet_buffer_flushes = 0;
+  // The number of primary packets that were discarded.
+  uint64_t discarded_primary_packets = 0;
   // The statistics below are not cumulative.
   // The waiting time of the last decoded packet.
   uint64_t last_waiting_time_ms = 0;
@@ -111,11 +131,12 @@ class NetEq {
 
     int sample_rate_hz = 16000;  // Initial value. Will change with input data.
     bool enable_post_decode_vad = false;
-    size_t max_packets_in_buffer = 50;
-    int max_delay_ms = 2000;
+    size_t max_packets_in_buffer = 200;
+    int max_delay_ms = 0;
     int min_delay_ms = 0;
     bool enable_fast_accelerate = false;
     bool enable_muted_state = false;
+    bool enable_rtx_handling = false;
     absl::optional<AudioCodecPairId> codec_pair_id;
     bool for_test_no_time_stretching = false;  // Use only for testing.
   };
@@ -127,6 +148,7 @@ class NetEq {
   // method.
   static NetEq* Create(
       const NetEq::Config& config,
+      Clock* clock,
       const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory);
 
   virtual ~NetEq() {}
@@ -165,25 +187,6 @@ class NetEq {
   // Replaces the current set of decoders with the given one.
   virtual void SetCodecs(const std::map<int, SdpAudioFormat>& codecs) = 0;
 
-  // Associates |rtp_payload_type| with |codec| and |codec_name|, and stores the
-  // information in the codec database. Returns 0 on success, -1 on failure.
-  // The name is only used to provide information back to the caller about the
-  // decoders. Hence, the name is arbitrary, and may be empty.
-  virtual int RegisterPayloadType(NetEqDecoder codec,
-                                  const std::string& codec_name,
-                                  uint8_t rtp_payload_type) = 0;
-
-  // Provides an externally created decoder object |decoder| to insert in the
-  // decoder database. The decoder implements a decoder of type |codec| and
-  // associates it with |rtp_payload_type| and |codec_name|. Returns kOK on
-  // success, kFail on failure. The name is only used to provide information
-  // back to the caller about the decoders. Hence, the name is arbitrary, and
-  // may be empty.
-  virtual int RegisterExternalDecoder(AudioDecoder* decoder,
-                                      NetEqDecoder codec,
-                                      const std::string& codec_name,
-                                      uint8_t rtp_payload_type) = 0;
-
   // Associates |rtp_payload_type| with the given codec, which NetEq will
   // instantiate when it needs it. Returns true iff successful.
   virtual bool RegisterPayloadType(int rtp_payload_type,
@@ -209,12 +212,19 @@ class NetEq {
   // the |max_delay_ms| value in the NetEq::Config struct.
   virtual bool SetMaximumDelay(int delay_ms) = 0;
 
+  // Sets a base minimum delay in milliseconds for packet buffer. The minimum
+  // delay which is set via |SetMinimumDelay| can't be lower than base minimum
+  // delay. Calling this method is similar to setting the |min_delay_ms| value
+  // in the NetEq::Config struct. Returns true if the base minimum is
+  // successfully applied, otherwise false is returned.
+  virtual bool SetBaseMinimumDelayMs(int delay_ms) = 0;
+
+  // Returns current value of base minimum delay in milliseconds.
+  virtual int GetBaseMinimumDelayMs() const = 0;
+
   // Returns the current target delay in ms. This includes any extra delay
   // requested through SetMinimumDelay.
   virtual int TargetDelayMs() const = 0;
-
-  // Returns the current total delay (packet buffer and sync buffer) in ms.
-  virtual int CurrentDelayMs() const = 0;
 
   // Returns the current total delay (packet buffer and sync buffer) in ms,
   // with smoothing applied to even out short-time fluctuations due to jitter.
@@ -249,11 +259,7 @@ class NetEq {
   // (Config::sample_rate_hz) is returned.
   virtual int last_output_sample_rate_hz() const = 0;
 
-  // Returns info about the decoder for the given payload type, or an empty
-  // value if we have no decoder for that payload type.
-  virtual absl::optional<CodecInst> GetDecoder(int payload_type) const = 0;
-
-  // Returns the decoder format for the given payload type. Returns empty if no
+  // Returns the decoder info for the given payload type. Returns empty if no
   // such payload type was registered.
   virtual absl::optional<SdpAudioFormat> GetDecoderFormat(
       int payload_type) const = 0;

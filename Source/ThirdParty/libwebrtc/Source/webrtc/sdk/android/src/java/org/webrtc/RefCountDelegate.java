@@ -10,8 +10,8 @@
 
 package org.webrtc;
 
+import android.support.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.annotation.Nullable;
 
 /**
  * Implementation of RefCounted that executes a Runnable once the ref count reaches zero.
@@ -29,12 +29,19 @@ class RefCountDelegate implements RefCounted {
 
   @Override
   public void retain() {
-    refCount.incrementAndGet();
+    int updated_count = refCount.incrementAndGet();
+    if (updated_count < 2) {
+      throw new IllegalStateException("retain() called on an object with refcount < 1");
+    }
   }
 
   @Override
   public void release() {
-    if (refCount.decrementAndGet() == 0 && releaseCallback != null) {
+    int updated_count = refCount.decrementAndGet();
+    if (updated_count < 0) {
+      throw new IllegalStateException("release() called on an object with refcount < 1");
+    }
+    if (updated_count == 0 && releaseCallback != null) {
       releaseCallback.run();
     }
   }

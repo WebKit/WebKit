@@ -17,6 +17,10 @@
 
 namespace webrtc {
 
+std::string LntfConfig::ToString() const {
+  return enabled ? "{enabled: true}" : "{enabled: false}";
+}
+
 std::string NackConfig::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
@@ -72,10 +76,12 @@ std::string RtpConfig::ToString() const {
   }
   ss << ']';
 
+  ss << ", lntf: " << lntf.ToString();
   ss << ", nack: {rtp_history_ms: " << nack.rtp_history_ms << '}';
   ss << ", ulpfec: " << ulpfec.ToString();
   ss << ", payload_name: " << payload_name;
   ss << ", payload_type: " << payload_type;
+  ss << ", raw_payload: " << (raw_payload ? "true" : "false");
 
   ss << ", flexfec: {payload_type: " << flexfec.payload_type;
   ss << ", ssrc: " << flexfec.ssrc;

@@ -8,13 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
+#include "rtc_base/rate_limiter.h"
+
 #include <memory>
 
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/rate_limiter.h"
-#include "rtc_base/task_queue.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 

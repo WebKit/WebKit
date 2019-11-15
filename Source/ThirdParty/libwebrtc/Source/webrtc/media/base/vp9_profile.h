@@ -11,16 +11,16 @@
 #ifndef MEDIA_BASE_VP9_PROFILE_H_
 #define MEDIA_BASE_VP9_PROFILE_H_
 
-#include <map>
 #include <string>
 
 #include "absl/types/optional.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Profile information for VP9 video.
-extern const char kVP9FmtpProfileId[];
+extern RTC_EXPORT const char kVP9FmtpProfileId[];
 
 enum class VP9Profile {
   kProfile0,
@@ -29,7 +29,7 @@ enum class VP9Profile {
 
 // Helper functions to convert VP9Profile to std::string. Returns "0" by
 // default.
-std::string VP9ProfileToString(VP9Profile profile);
+RTC_EXPORT std::string VP9ProfileToString(VP9Profile profile);
 
 // Helper functions to convert std::string to VP9Profile. Returns null if given
 // an invalid profile string.
@@ -39,7 +39,7 @@ absl::optional<VP9Profile> StringToVP9Profile(const std::string& str);
 // SDP key-value map. A default profile(kProfile0) will be returned if the
 // profile key is missing. Nothing will be returned if the key is present but
 // the string is invalid.
-absl::optional<VP9Profile> ParseSdpForVP9Profile(
+RTC_EXPORT absl::optional<VP9Profile> ParseSdpForVP9Profile(
     const SdpVideoFormat::Parameters& params);
 
 // Returns true if the parameters have the same VP9 profile, or neither contains

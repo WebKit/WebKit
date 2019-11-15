@@ -8,12 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
 #include "modules/desktop_capture/cropped_desktop_frame.h"
 
+#include <memory>
+#include <utility>
+
+#include "modules/desktop_capture/desktop_region.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

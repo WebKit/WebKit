@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_MESSAGE_BUFFER_READER_H_
 #define RTC_BASE_MESSAGE_BUFFER_READER_H_
 
-#include "rtc_base/bytebuffer.h"
+#include "rtc_base/byte_buffer.h"
 
 namespace webrtc {
 

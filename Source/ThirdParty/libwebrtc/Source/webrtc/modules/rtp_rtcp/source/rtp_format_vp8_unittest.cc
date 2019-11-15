@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/rtp_format_vp8.h"
+
 #include <memory>
 
-#include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8_test_helper.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "test/gmock.h"
@@ -198,7 +199,8 @@ TEST_F(RtpDepacketizerVp8Test, BasicHeader) {
   ExpectPacket(&payload, packet + kHeaderLength,
                sizeof(packet) - kHeaderLength);
 
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 0, 1, 4);
   VerifyExtensions(&payload.video_header(), kNoPictureId, kNoTl0PicIdx,
@@ -218,7 +220,8 @@ TEST_F(RtpDepacketizerVp8Test, PictureID) {
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet + kHeaderLength1,
                sizeof(packet) - kHeaderLength1);
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 1, 0, 0);
   VerifyExtensions(&payload.video_header(), kPictureId, kNoTl0PicIdx,
@@ -249,7 +252,7 @@ TEST_F(RtpDepacketizerVp8Test, Tl0PicIdx) {
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet + kHeaderLength,
                sizeof(packet) - kHeaderLength);
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 0, 1, 0);
   VerifyExtensions(&payload.video_header(), kNoPictureId, kTl0PicIdx,
@@ -267,7 +270,8 @@ TEST_F(RtpDepacketizerVp8Test, TIDAndLayerSync) {
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet + kHeaderLength,
                sizeof(packet) - kHeaderLength);
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 0, 0, 8);
   VerifyExtensions(&payload.video_header(), kNoPictureId, kNoTl0PicIdx, 2,
@@ -289,7 +293,8 @@ TEST_F(RtpDepacketizerVp8Test, KeyIdx) {
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet + kHeaderLength,
                sizeof(packet) - kHeaderLength);
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 0, 0, 8);
   VerifyExtensions(&payload.video_header(), kNoPictureId, kNoTl0PicIdx,
@@ -310,7 +315,8 @@ TEST_F(RtpDepacketizerVp8Test, MultipleExtensions) {
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet + kHeaderLength,
                sizeof(packet) - kHeaderLength);
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 0, 0, 8);
   VerifyExtensions(&payload.video_header(), (17 << 8) + 17, 42, 1, 17);
@@ -351,7 +357,7 @@ TEST_F(RtpDepacketizerVp8Test, TestWithPacketizer) {
       depacketizer_->Parse(&payload, rtp_payload.data(), rtp_payload.size()));
   auto vp8_payload = rtp_payload.subview(kHeaderLength);
   ExpectPacket(&payload, vp8_payload.data(), vp8_payload.size());
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecVP8, payload.video_header().codec);
   VerifyBasicHeader(&payload.video_header(), 1, 1, 0);
   VerifyExtensions(&payload.video_header(), input_header.pictureId,

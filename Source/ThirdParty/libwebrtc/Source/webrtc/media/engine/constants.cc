@@ -16,4 +16,5 @@ const int kMinVideoBitrateBps = 30000;
 const int kVideoMtu = 1200;
 const int kVideoRtpSendBufferSize = 65536;
 const int kVideoRtpRecvBufferSize = 262144;
+const char kMinVideoBitrateExperiment[] = "WebRTC-Video-MinVideoBitrate";
 }  // namespace cricket

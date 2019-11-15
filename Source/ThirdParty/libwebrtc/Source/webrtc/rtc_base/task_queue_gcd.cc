@@ -12,231 +12,141 @@
 // The implementation uses Grand Central Dispatch queues (GCD) to
 // do the actual task queuing.
 
-#include "rtc_base/task_queue.h"
-
-#include <string.h>
+#include "rtc_base/task_queue_gcd.h"
 
 #include <dispatch/dispatch.h>
+#include <string.h>
 
+#include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
+#include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/refcount.h"
-#include "rtc_base/refcountedobject.h"
-#include "rtc_base/task_queue_posix.h"
 
-namespace rtc {
+namespace webrtc {
 namespace {
 
-using Priority = TaskQueue::Priority;
-
-int TaskQueuePriorityToGCD(Priority priority) {
+int TaskQueuePriorityToGCD(TaskQueueFactory::Priority priority) {
   switch (priority) {
-    case Priority::NORMAL:
+    case TaskQueueFactory::Priority::NORMAL:
       return DISPATCH_QUEUE_PRIORITY_DEFAULT;
-    case Priority::HIGH:
+    case TaskQueueFactory::Priority::HIGH:
       return DISPATCH_QUEUE_PRIORITY_HIGH;
-    case Priority::LOW:
+    case TaskQueueFactory::Priority::LOW:
       return DISPATCH_QUEUE_PRIORITY_LOW;
   }
 }
-}  // namespace
 
-using internal::GetQueuePtrTls;
-using internal::AutoSetCurrentQueuePtr;
-
-class TaskQueue::Impl : public RefCountInterface {
+class TaskQueueGcd : public TaskQueueBase {
  public:
-  Impl(const char* queue_name, TaskQueue* task_queue, Priority priority);
-  ~Impl() override;
+  TaskQueueGcd(absl::string_view queue_name, int gcd_priority);
 
-  static TaskQueue* Current();
-
-  // Used for DCHECKing the current queue.
-  bool IsCurrent() const;
-
-  void PostTask(std::unique_ptr<QueuedTask> task);
-  void PostTaskAndReply(std::unique_ptr<QueuedTask> task,
-                        std::unique_ptr<QueuedTask> reply,
-                        TaskQueue::Impl* reply_queue);
-
-  void PostDelayedTask(std::unique_ptr<QueuedTask> task, uint32_t milliseconds);
+  void Delete() override;
+  void PostTask(std::unique_ptr<QueuedTask> task) override;
+  void PostDelayedTask(std::unique_ptr<QueuedTask> task,
+                       uint32_t milliseconds) override;
 
  private:
-  struct QueueContext {
-    explicit QueueContext(TaskQueue* q) : queue(q), is_active(true) {}
-
-    static void SetNotActive(void* context) {
-      QueueContext* qc = static_cast<QueueContext*>(context);
-      qc->is_active = false;
-    }
-
-    static void DeleteContext(void* context) {
-      QueueContext* qc = static_cast<QueueContext*>(context);
-      delete qc;
-    }
-
-    TaskQueue* const queue;
-    bool is_active;
-  };
-
   struct TaskContext {
-    TaskContext(QueueContext* queue_ctx, std::unique_ptr<QueuedTask> task)
-        : queue_ctx(queue_ctx), task(std::move(task)) {}
-    virtual ~TaskContext() {}
+    TaskContext(TaskQueueGcd* queue, std::unique_ptr<QueuedTask> task)
+        : queue(queue), task(std::move(task)) {}
 
-    static void RunTask(void* context) {
-      std::unique_ptr<TaskContext> tc(static_cast<TaskContext*>(context));
-      if (tc->queue_ctx->is_active) {
-        AutoSetCurrentQueuePtr set_current(tc->queue_ctx->queue);
-        if (!tc->task->Run())
-          tc->task.release();
-      }
-    }
-
-    QueueContext* const queue_ctx;
+    TaskQueueGcd* const queue;
     std::unique_ptr<QueuedTask> task;
   };
 
-  // Special case context for holding two tasks, a |first_task| + the task
-  // that's owned by the parent struct, TaskContext, that then becomes the
-  // second (i.e. 'reply') task.
-  struct PostTaskAndReplyContext : public TaskContext {
-    explicit PostTaskAndReplyContext(QueueContext* first_queue_ctx,
-                                     std::unique_ptr<QueuedTask> first_task,
-                                     QueueContext* second_queue_ctx,
-                                     std::unique_ptr<QueuedTask> second_task)
-        : TaskContext(second_queue_ctx, std::move(second_task)),
-          first_queue_ctx(first_queue_ctx),
-          first_task(std::move(first_task)),
-          reply_queue_(second_queue_ctx->queue->impl_->queue_) {
-      // Retain the reply queue for as long as this object lives.
-      // If we don't, we may have memory leaks and/or failures.
-      dispatch_retain(reply_queue_);
-    }
-    ~PostTaskAndReplyContext() override { dispatch_release(reply_queue_); }
-
-    static void RunTask(void* context) {
-      auto* rc = static_cast<PostTaskAndReplyContext*>(context);
-      if (rc->first_queue_ctx->is_active) {
-        AutoSetCurrentQueuePtr set_current(rc->first_queue_ctx->queue);
-        if (!rc->first_task->Run())
-          rc->first_task.release();
-      }
-      // Post the reply task.  This hands the work over to the parent struct.
-      // This task will eventually delete |this|.
-      dispatch_async_f(rc->reply_queue_, rc, &TaskContext::RunTask);
-    }
-
-    QueueContext* const first_queue_ctx;
-    std::unique_ptr<QueuedTask> first_task;
-    dispatch_queue_t reply_queue_;
-  };
+  ~TaskQueueGcd() override;
+  static void RunTask(void* task_context);
+  static void SetNotActive(void* task_queue);
+  static void DeleteQueue(void* task_queue);
 
   dispatch_queue_t queue_;
-  QueueContext* const context_;
+  bool is_active_;
 };
 
-TaskQueue::Impl::Impl(const char* queue_name,
-                      TaskQueue* task_queue,
-                      Priority priority)
-    : queue_(dispatch_queue_create(queue_name, DISPATCH_QUEUE_SERIAL)),
-      context_(new QueueContext(task_queue)) {
-  RTC_DCHECK(queue_name);
+TaskQueueGcd::TaskQueueGcd(absl::string_view queue_name, int gcd_priority)
+    : queue_(dispatch_queue_create(std::string(queue_name).c_str(),
+                                   DISPATCH_QUEUE_SERIAL)),
+      is_active_(true) {
   RTC_CHECK(queue_);
-  dispatch_set_context(queue_, context_);
-  // Assign a finalizer that will delete the context when the last reference
-  // to the queue is released.  This may run after the TaskQueue object has
-  // been deleted.
-  dispatch_set_finalizer_f(queue_, &QueueContext::DeleteContext);
+  dispatch_set_context(queue_, this);
+  // Assign a finalizer that will delete the queue when the last reference
+  // is released. This may run after the TaskQueue::Delete.
+  dispatch_set_finalizer_f(queue_, &DeleteQueue);
 
-  dispatch_set_target_queue(
-      queue_, dispatch_get_global_queue(TaskQueuePriorityToGCD(priority), 0));
+  dispatch_set_target_queue(queue_, dispatch_get_global_queue(gcd_priority, 0));
 }
 
-TaskQueue::Impl::~Impl() {
+TaskQueueGcd::~TaskQueueGcd() = default;
+
+void TaskQueueGcd::Delete() {
   RTC_DCHECK(!IsCurrent());
   // Implementation/behavioral note:
   // Dispatch queues are reference counted via calls to dispatch_retain and
   // dispatch_release. Pending blocks submitted to a queue also hold a
   // reference to the queue until they have finished. Once all references to a
   // queue have been released, the queue will be deallocated by the system.
-  // This is why we check the context before running tasks.
+  // This is why we check the is_active_ before running tasks.
 
-  // Use dispatch_sync to set the context to null to guarantee that there's not
-  // a race between checking the context and using it from a task.
-  dispatch_sync_f(queue_, context_, &QueueContext::SetNotActive);
+  // Use dispatch_sync to set the is_active_ to guarantee that there's not a
+  // race with checking it from a task.
+  dispatch_sync_f(queue_, this, &SetNotActive);
   dispatch_release(queue_);
 }
 
-// static
-TaskQueue* TaskQueue::Impl::Current() {
-  return static_cast<TaskQueue*>(pthread_getspecific(GetQueuePtrTls()));
+void TaskQueueGcd::PostTask(std::unique_ptr<QueuedTask> task) {
+  auto* context = new TaskContext(this, std::move(task));
+  dispatch_async_f(queue_, context, &RunTask);
 }
 
-bool TaskQueue::Impl::IsCurrent() const {
-  RTC_DCHECK(queue_);
-  const TaskQueue* current = Current();
-  return current && this == current->impl_.get();
-}
-
-void TaskQueue::Impl::PostTask(std::unique_ptr<QueuedTask> task) {
-  auto* context = new TaskContext(context_, std::move(task));
-  dispatch_async_f(queue_, context, &TaskContext::RunTask);
-}
-
-void TaskQueue::Impl::PostDelayedTask(std::unique_ptr<QueuedTask> task,
-                                      uint32_t milliseconds) {
-  auto* context = new TaskContext(context_, std::move(task));
+void TaskQueueGcd::PostDelayedTask(std::unique_ptr<QueuedTask> task,
+                                   uint32_t milliseconds) {
+  auto* context = new TaskContext(this, std::move(task));
   dispatch_after_f(
       dispatch_time(DISPATCH_TIME_NOW, milliseconds * NSEC_PER_MSEC), queue_,
-      context, &TaskContext::RunTask);
+      context, &RunTask);
 }
-
-void TaskQueue::Impl::PostTaskAndReply(std::unique_ptr<QueuedTask> task,
-                                       std::unique_ptr<QueuedTask> reply,
-                                       TaskQueue::Impl* reply_queue) {
-  auto* context = new PostTaskAndReplyContext(
-      context_, std::move(task), reply_queue->context_, std::move(reply));
-  dispatch_async_f(queue_, context, &PostTaskAndReplyContext::RunTask);
-}
-
-// Boilerplate for the PIMPL pattern.
-TaskQueue::TaskQueue(const char* queue_name, Priority priority)
-    : impl_(new RefCountedObject<TaskQueue::Impl>(queue_name, this, priority)) {
-}
-
-TaskQueue::~TaskQueue() {}
 
 // static
-TaskQueue* TaskQueue::Current() {
-  return TaskQueue::Impl::Current();
+void TaskQueueGcd::RunTask(void* task_context) {
+  std::unique_ptr<TaskContext> tc(static_cast<TaskContext*>(task_context));
+  if (!tc->queue->is_active_)
+    return;
+
+  CurrentTaskQueueSetter set_current(tc->queue);
+  auto* task = tc->task.release();
+  if (task->Run()) {
+    // Delete the task before CurrentTaskQueueSetter clears state that this code
+    // is running on the task queue.
+    delete task;
+  }
 }
 
-// Used for DCHECKing the current queue.
-bool TaskQueue::IsCurrent() const {
-  return impl_->IsCurrent();
+// static
+void TaskQueueGcd::SetNotActive(void* task_queue) {
+  static_cast<TaskQueueGcd*>(task_queue)->is_active_ = false;
 }
 
-void TaskQueue::PostTask(std::unique_ptr<QueuedTask> task) {
-  return TaskQueue::impl_->PostTask(std::move(task));
+// static
+void TaskQueueGcd::DeleteQueue(void* task_queue) {
+  delete static_cast<TaskQueueGcd*>(task_queue);
 }
 
-void TaskQueue::PostTaskAndReply(std::unique_ptr<QueuedTask> task,
-                                 std::unique_ptr<QueuedTask> reply,
-                                 TaskQueue* reply_queue) {
-  return TaskQueue::impl_->PostTaskAndReply(std::move(task), std::move(reply),
-                                            reply_queue->impl_.get());
+class TaskQueueGcdFactory final : public TaskQueueFactory {
+ public:
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
+      absl::string_view name,
+      Priority priority) const override {
+    return std::unique_ptr<TaskQueueBase, TaskQueueDeleter>(
+        new TaskQueueGcd(name, TaskQueuePriorityToGCD(priority)));
+  }
+};
+
+}  // namespace
+
+std::unique_ptr<TaskQueueFactory> CreateTaskQueueGcdFactory() {
+  return absl::make_unique<TaskQueueGcdFactory>();
 }
 
-void TaskQueue::PostTaskAndReply(std::unique_ptr<QueuedTask> task,
-                                 std::unique_ptr<QueuedTask> reply) {
-  return TaskQueue::impl_->PostTaskAndReply(std::move(task), std::move(reply),
-                                            impl_.get());
-}
-
-void TaskQueue::PostDelayedTask(std::unique_ptr<QueuedTask> task,
-                                uint32_t milliseconds) {
-  return TaskQueue::impl_->PostDelayedTask(std::move(task), milliseconds);
-}
-
-}  // namespace rtc
+}  // namespace webrtc

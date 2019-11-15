@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_device/include/audio_device.h"
+
 #include <algorithm>
 #include <limits>
 #include <list>
@@ -16,22 +18,23 @@
 #include <string>
 #include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/android/audio_common.h"
 #include "modules/audio_device/android/audio_manager.h"
 #include "modules/audio_device/android/build_info.h"
 #include "modules/audio_device/android/ensure_initialized.h"
 #include "modules/audio_device/audio_device_impl.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/format_macros.h"
-#include "rtc_base/scoped_ref_ptr.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 using std::cout;
 using std::endl;
@@ -184,7 +187,7 @@ class FifoAudioStream : public AudioStreamInterface {
     const size_t size = fifo_->size();
     if (size > largest_size_) {
       largest_size_ = size;
-      PRINTD("(%" PRIuS ")", largest_size_);
+      PRINTD("(%" RTC_PRIuS ")", largest_size_);
     }
     total_written_elements_ += size;
   }
@@ -460,7 +463,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
 // AudioDeviceTest test fixture.
 class AudioDeviceTest : public ::testing::Test {
  protected:
-  AudioDeviceTest() {
+  AudioDeviceTest() : task_queue_factory_(CreateDefaultTaskQueueFactory()) {
     // One-time initialization of JVM and application context. Ensures that we
     // can do calls between C++ and Java. Initializes both Java and OpenSL ES
     // implementations.
@@ -514,7 +517,7 @@ class AudioDeviceTest : public ::testing::Test {
   rtc::scoped_refptr<AudioDeviceModule> CreateAudioDevice(
       AudioDeviceModule::AudioLayer audio_layer) {
     rtc::scoped_refptr<AudioDeviceModule> module(
-        AudioDeviceModule::Create(0, audio_layer));
+        AudioDeviceModule::Create(audio_layer, task_queue_factory_.get()));
     return module;
   }
 
@@ -529,12 +532,12 @@ class AudioDeviceTest : public ::testing::Test {
 #ifdef ENABLE_PRINTF
     PRINT("file name: %s\n", file_name.c_str());
     const size_t bytes = test::GetFileSize(file_name);
-    PRINT("file size: %" PRIuS " [bytes]\n", bytes);
-    PRINT("file size: %" PRIuS " [samples]\n", bytes / kBytesPerSample);
+    PRINT("file size: %" RTC_PRIuS " [bytes]\n", bytes);
+    PRINT("file size: %" RTC_PRIuS " [samples]\n", bytes / kBytesPerSample);
     const int seconds =
         static_cast<int>(bytes / (sample_rate * kBytesPerSample));
     PRINT("file size: %d [secs]\n", seconds);
-    PRINT("file size: %" PRIuS " [callbacks]\n",
+    PRINT("file size: %" RTC_PRIuS " [callbacks]\n",
           seconds * kNumCallbacksPerSecond);
 #endif
     return file_name;
@@ -639,6 +642,7 @@ class AudioDeviceTest : public ::testing::Test {
   }
 
   rtc::Event test_is_done_;
+  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   rtc::scoped_refptr<AudioDeviceModule> audio_device_;
   AudioParameters playout_parameters_;
   AudioParameters record_parameters_;
@@ -701,7 +705,7 @@ TEST_F(AudioDeviceTest, CorrectAudioLayerIsUsedForOpenSLInBothDirections) {
 }
 
 // TODO(bugs.webrtc.org/8914)
-#if !defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+#if !defined(WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
 #define MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections \
   DISABLED_CorrectAudioLayerIsUsedForAAudioInBothDirections
 #else
@@ -718,7 +722,7 @@ TEST_F(AudioDeviceTest,
 }
 
 // TODO(bugs.webrtc.org/8914)
-#if !defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+#if !defined(WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
 #define MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo \
   DISABLED_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo
 #else

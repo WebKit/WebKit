@@ -10,6 +10,7 @@
 
 #include "rtc_base/numerics/histogram_percentile_counter.h"
 
+#include <cstdint>
 #include <utility>
 #include <vector>
 

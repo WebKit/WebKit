@@ -13,8 +13,8 @@
 #import "base/RTCLogging.h"
 
 #include "rtc_base/logging.h"
-#include "rtc_base/rtccertificategenerator.h"
-#include "rtc_base/sslidentity.h"
+#include "rtc_base/rtc_certificate_generator.h"
+#include "rtc_base/ssl_identity.h"
 
 @implementation RTCCertificate
 

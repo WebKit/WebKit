@@ -15,11 +15,11 @@
 #include <memory>
 #include <string>
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 #include "api/video/video_frame.h"
 #include "examples/peerconnection/client/peer_connection_client.h"
-#include "media/base/mediachannel.h"
-#include "media/base/videocommon.h"
+#include "media/base/media_channel.h"
+#include "media/base/video_common.h"
 #if defined(WEBRTC_WIN)
 #include "rtc_base/win32.h"
 #endif  // WEBRTC_WIN

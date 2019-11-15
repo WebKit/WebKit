@@ -26,7 +26,9 @@ namespace webrtc {
 // CreateAudioDecoderFactory<...>().
 struct RTC_EXPORT AudioDecoderOpus {
   struct Config {
-    int num_channels;
+    bool IsOk() const;  // Checks if the values are currently OK.
+    int sample_rate_hz = 48000;
+    int num_channels = 1;
   };
   static absl::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);
   static void AppendSupportedDecoders(std::vector<AudioCodecSpec>* specs);

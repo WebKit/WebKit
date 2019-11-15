@@ -11,6 +11,7 @@
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 
 #include <string.h>
+
 #include <list>
 #include <utility>
 
@@ -126,6 +127,8 @@ std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
   for (const auto* fec_packet : ulpfec_generator_.generated_fec_packets_) {
     std::unique_ptr<RtpPacketToSend> fec_packet_to_send(
         new RtpPacketToSend(&rtp_header_extension_map_));
+    fec_packet_to_send->set_packet_type(
+        RtpPacketToSend::Type::kForwardErrorCorrection);
 
     // RTP header.
     fec_packet_to_send->SetMarker(false);

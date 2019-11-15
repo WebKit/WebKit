@@ -27,7 +27,7 @@ TEST(ResidualEchoEstimator, NullResidualEchoPowerOutput) {
   EchoCanceller3Config config;
   AecState aec_state(config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, 48000, 1));
   std::vector<std::array<float, kFftLengthBy2Plus1>> H2;
   std::array<float, kFftLengthBy2Plus1> S2_linear;
   std::array<float, kFftLengthBy2Plus1> Y2;
@@ -42,13 +42,16 @@ TEST(ResidualEchoEstimator, NullResidualEchoPowerOutput) {
 // TODO(peah): This test is broken in the sense that it not at all tests what it
 // seems to test. Enable the test once that is adressed.
 TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   EchoCanceller3Config config;
   config.ep_strength.default_len = 0.f;
-  config.delay.min_echo_path_delay_blocks = 0;
   ResidualEchoEstimator estimator(config);
   AecState aec_state(config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
 
   std::array<float, kFftLengthBy2Plus1> E2_main;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
@@ -58,7 +61,9 @@ TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
   std::array<float, kFftLengthBy2Plus1> R2;
   EchoPathVariability echo_path_variability(
       false, EchoPathVariability::DelayAdjustment::kNone, false);
-  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> x(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
   std::vector<std::array<float, kFftLengthBy2Plus1>> H2(10);
   Random random_generator(42U);
   SubtractorOutput output;
@@ -87,8 +92,8 @@ TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
   Y2.fill(kLevel);
 
   for (int k = 0; k < 1993; ++k) {
-    RandomizeSampleVector(&random_generator, x[0]);
-    std::for_each(x[0].begin(), x[0].end(), [](float& a) { a /= 30.f; });
+    RandomizeSampleVector(&random_generator, x[0][0]);
+    std::for_each(x[0][0].begin(), x[0][0].end(), [](float& a) { a /= 30.f; });
     render_delay_buffer->Insert(x);
     if (k == 0) {
       render_delay_buffer->Reset();

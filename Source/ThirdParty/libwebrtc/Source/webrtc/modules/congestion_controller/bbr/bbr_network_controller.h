@@ -19,14 +19,13 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "modules/congestion_controller/bbr/bandwidth_sampler.h"
 #include "modules/congestion_controller/bbr/loss_rate_filter.h"
 #include "modules/congestion_controller/bbr/rtt_stats.h"
 #include "modules/congestion_controller/bbr/windowed_filter.h"
-
-#include "absl/types/optional.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/experiments/field_trial_units.h"
 #include "rtc_base/random.h"
@@ -164,6 +163,9 @@ class BbrNetworkController : public NetworkControllerInterface {
   NetworkControlUpdate OnRemoteBitrateReport(RemoteBitrateReport msg) override;
   NetworkControlUpdate OnRoundTripTimeUpdate(RoundTripTimeUpdate msg) override;
   NetworkControlUpdate OnTransportLossReport(TransportLossReport msg) override;
+  NetworkControlUpdate OnReceivedPacket(ReceivedPacket msg) override;
+  NetworkControlUpdate OnNetworkStateEstimate(
+      NetworkStateEstimate msg) override;
 
   NetworkControlUpdate CreateRateUpdate(Timestamp at_time) const;
 

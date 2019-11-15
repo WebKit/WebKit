@@ -11,18 +11,20 @@
 #ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_H_
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_H_
 
-#include <memory>
+#include <stdint.h>
 
-#include "modules/desktop_capture/desktop_capture_types.h"
+#include <memory>
+#include <vector>
+
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/shared_memory.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-const int kStandardDPI = 96;
+const float kStandardDPI = 96.0f;
 
 // DesktopFrame represents a video frame captured from the screen.
 class RTC_EXPORT DesktopFrame {
@@ -83,6 +85,16 @@ class RTC_EXPORT DesktopFrame {
                       const DesktopVector& src_pos,
                       const DesktopRect& dest_rect);
 
+  // Copies pixels from another frame, with the copied & overwritten regions
+  // representing the intersection between the two frames. Returns true if
+  // pixels were copied, or false if there's no intersection. The scale factors
+  // represent the ratios between pixel space & offset coordinate space (e.g.
+  // 2.0 would indicate the frames are scaled down by 50% for display, so any
+  // offset between their origins should be doubled).
+  bool CopyIntersectingPixelsFrom(const DesktopFrame& src_frame,
+                                  double horizontal_scale,
+                                  double vertical_scale);
+
   // A helper to return the data pointer of a frame at the specified position.
   uint8_t* GetFrameDataAtPos(const DesktopVector& pos) const;
 
@@ -110,6 +122,15 @@ class RTC_EXPORT DesktopFrame {
   // DesktopFrameWithCursor.
   void MoveFrameInfoFrom(DesktopFrame* other);
 
+  // Set and get the ICC profile of the frame data pixels. Useful to build the
+  // a ColorSpace object from clients of webrtc library like chromium. The
+  // format of an ICC profile is defined in the following specification
+  // http://www.color.org/specification/ICC1v43_2010-12.pdf.
+  const std::vector<uint8_t>& icc_profile() const { return icc_profile_; }
+  void set_icc_profile(const std::vector<uint8_t>& icc_profile) {
+    icc_profile_ = icc_profile;
+  }
+
  protected:
   DesktopFrame(DesktopSize size,
                int stride,
@@ -131,6 +152,7 @@ class RTC_EXPORT DesktopFrame {
   DesktopVector dpi_;
   int64_t capture_time_ms_;
   uint32_t capturer_id_;
+  std::vector<uint8_t> icc_profile_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrame);
 };
@@ -138,6 +160,7 @@ class RTC_EXPORT DesktopFrame {
 // A DesktopFrame that stores data in the heap.
 class RTC_EXPORT BasicDesktopFrame : public DesktopFrame {
  public:
+  // The entire data buffer used for the frame is initialized with zeros.
   explicit BasicDesktopFrame(DesktopSize size);
 
   ~BasicDesktopFrame() override;

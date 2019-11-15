@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
-#include <vector>
+#include "modules/bitrate_controller/send_side_bandwidth_estimation.h"
 
+#include "logging/rtc_event_log/events/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "modules/bitrate_controller/send_side_bandwidth_estimation.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,7 +35,7 @@ MATCHER(LossBasedBweUpdateWithBitrateAndLossFraction, "") {
 }
 
 void TestProbing(bool use_delay_based) {
-  testing::NiceMock<MockRtcEventLog> event_log;
+  ::testing::NiceMock<MockRtcEventLog> event_log;
   SendSideBandwidthEstimation bwe(&event_log);
   int64_t now_ms = 0;
   bwe.SetMinMaxBitrate(DataRate::bps(100000), DataRate::bps(1500000));

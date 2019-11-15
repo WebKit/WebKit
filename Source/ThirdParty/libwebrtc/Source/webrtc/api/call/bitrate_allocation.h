@@ -27,12 +27,14 @@ struct BitrateAllocationUpdate {
   // the target as it is based on the underlying link capacity estimate. This
   // should be used to change encoder configuration when the cost of change is
   // high.
-  DataRate link_capacity = DataRate::Zero();
+  DataRate stable_target_bitrate = DataRate::Zero();
   // Predicted packet loss ratio.
   double packet_loss_ratio = 0;
   // Predicted round trip time.
   TimeDelta round_trip_time = TimeDelta::PlusInfinity();
-  // |bwe_period| is deprecated, use the link capacity allocation instead.
+  // |link_capacity| is deprecated, use |stable_target_bitrate| instead.
+  DataRate link_capacity = DataRate::Zero();
+  // |bwe_period| is deprecated, use |stable_target_bitrate| allocation instead.
   TimeDelta bwe_period = TimeDelta::PlusInfinity();
 };
 

@@ -11,50 +11,63 @@
 #ifndef TEST_FAKE_VP8_ENCODER_H_
 #define TEST_FAKE_VP8_ENCODER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
-#include <vector>
 
+#include "api/fec_controller_override.h"
+#include "api/video/encoded_image.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_temporal_layers.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 #include "test/fake_encoder.h"
-
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/sequenced_task_checker.h"
 
 namespace webrtc {
 namespace test {
 
-class FakeVP8Encoder : public FakeEncoder, public EncodedImageCallback {
+class FakeVP8Encoder : public FakeEncoder {
  public:
   explicit FakeVP8Encoder(Clock* clock);
   virtual ~FakeVP8Encoder() = default;
 
-  int32_t RegisterEncodeCompleteCallback(
-      EncodedImageCallback* callback) override;
-
   int32_t InitEncode(const VideoCodec* config,
-                     int32_t number_of_cores,
-                     size_t max_payload_size) override;
+                     const Settings& settings) override;
 
   int32_t Release() override;
-
-  Result OnEncodedImage(const EncodedImage& encodedImage,
-                        const CodecSpecificInfo* codecSpecificInfo,
-                        const RTPFragmentationHeader* fragments) override;
 
   EncoderInfo GetEncoderInfo() const override;
 
  private:
-  void SetupTemporalLayers(const VideoCodec& codec);
   void PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
                              size_t size_bytes,
-                             FrameType frame_type,
+                             VideoFrameType frame_type,
                              int stream_idx,
                              uint32_t timestamp);
 
-  rtc::SequencedTaskChecker sequence_checker_;
-  EncodedImageCallback* callback_ RTC_GUARDED_BY(sequence_checker_);
+  std::unique_ptr<RTPFragmentationHeader> EncodeHook(
+      EncodedImage* encoded_image,
+      CodecSpecificInfo* codec_specific) override;
 
-  std::vector<std::unique_ptr<Vp8TemporalLayers>> temporal_layers_
+  SequenceChecker sequence_checker_;
+
+  class FakeFecControllerOverride : public FecControllerOverride {
+   public:
+    ~FakeFecControllerOverride() override = default;
+
+    void SetFecAllowed(bool fec_allowed) override {}
+  };
+
+  FakeFecControllerOverride fec_controller_override_
+      RTC_GUARDED_BY(sequence_checker_);
+
+  std::unique_ptr<Vp8FrameBufferController> frame_buffer_controller_
       RTC_GUARDED_BY(sequence_checker_);
 };
 

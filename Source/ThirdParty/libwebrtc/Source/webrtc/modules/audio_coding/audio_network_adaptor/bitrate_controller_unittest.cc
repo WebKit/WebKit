@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_coding/audio_network_adaptor/bitrate_controller.h"
+
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"

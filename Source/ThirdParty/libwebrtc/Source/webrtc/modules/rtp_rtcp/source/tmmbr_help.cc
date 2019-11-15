@@ -11,9 +11,10 @@
 #include "modules/rtp_rtcp/source/tmmbr_help.h"
 
 #include <stddef.h>
-#include <algorithm>
+
 #include <limits>
 
+#include "absl/algorithm/container.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -33,10 +34,10 @@ std::vector<rtcp::TmmbItem> TMMBRHelp::FindBoundingSet(
   size_t num_candidates = candidates.size();
 
   // 1. Sort by increasing packet overhead.
-  std::sort(candidates.begin(), candidates.end(),
-            [](const rtcp::TmmbItem& lhs, const rtcp::TmmbItem& rhs) {
-              return lhs.packet_overhead() < rhs.packet_overhead();
-            });
+  absl::c_sort(candidates,
+               [](const rtcp::TmmbItem& lhs, const rtcp::TmmbItem& rhs) {
+                 return lhs.packet_overhead() < rhs.packet_overhead();
+               });
 
   // 2. For tuples with same overhead, keep the one with the lowest bitrate.
   for (auto it = candidates.begin(); it != candidates.end();) {

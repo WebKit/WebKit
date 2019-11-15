@@ -24,13 +24,13 @@ WeakReference::Flag::Flag() : is_valid_(true) {
 }
 
 void WeakReference::Flag::Invalidate() {
-  RTC_DCHECK(checker_.CalledSequentially())
+  RTC_DCHECK(checker_.IsCurrent())
       << "WeakPtrs must be invalidated on the same sequence.";
   is_valid_ = false;
 }
 
 bool WeakReference::Flag::IsValid() const {
-  RTC_DCHECK(checker_.CalledSequentially())
+  RTC_DCHECK(checker_.IsCurrent())
       << "WeakPtrs must be checked on the same sequence.";
   return is_valid_;
 }

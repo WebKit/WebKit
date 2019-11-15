@@ -38,12 +38,20 @@ class FrameCombiner {
                size_t number_of_streams,
                AudioFrame* audio_frame_for_mixing);
 
+  // Stereo, 48 kHz, 10 ms.
+  static constexpr size_t kMaximumNumberOfChannels = 8;
+  static constexpr size_t kMaximumChannelSize = 48 * 10;
+
+  using MixingBuffer = std::array<std::array<float, kMaximumChannelSize>,
+                                  kMaximumNumberOfChannels>;
+
  private:
   void LogMixingStats(const std::vector<AudioFrame*>& mix_list,
                       int sample_rate,
                       size_t number_of_streams) const;
 
   std::unique_ptr<ApmDataDumper> data_dumper_;
+  std::unique_ptr<MixingBuffer> mixing_buffer_;
   Limiter limiter_;
   const bool use_limiter_;
   mutable int uma_logging_counter_ = 0;

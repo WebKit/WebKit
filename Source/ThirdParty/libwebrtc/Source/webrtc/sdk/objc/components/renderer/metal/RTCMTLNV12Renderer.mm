@@ -34,10 +34,10 @@ static NSString *const shaderSource = MTL_STRINGIFY(
       float2 texcoord;
     } Varyings;
 
-    vertex Varyings vertexPassthrough(device Vertex * verticies[[buffer(0)]],
+    vertex Varyings vertexPassthrough(constant Vertex *verticies[[buffer(0)]],
                                       unsigned int vid[[vertex_id]]) {
       Varyings out;
-      device Vertex &v = verticies[vid];
+      constant Vertex &v = verticies[vid];
       out.position = float4(float2(v.position), 0.0, 1.0);
       out.texcoord = v.texcoord;
       return out;
@@ -45,7 +45,8 @@ static NSString *const shaderSource = MTL_STRINGIFY(
 
     // Receiving YCrCb textures.
     fragment half4 fragmentColorConversion(
-        Varyings in[[stage_in]], texture2d<float, access::sample> textureY[[texture(0)]],
+        Varyings in[[stage_in]],
+        texture2d<float, access::sample> textureY[[texture(0)]],
         texture2d<float, access::sample> textureCbCr[[texture(1)]]) {
       constexpr sampler s(address::clamp_to_edge, filter::linear);
       float y;

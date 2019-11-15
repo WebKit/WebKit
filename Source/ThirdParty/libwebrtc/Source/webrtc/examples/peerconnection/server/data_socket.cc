@@ -193,7 +193,9 @@ bool DataSocket::ParseMethodAndPath(const char* begin, size_t len) {
     size_t method_name_len;
     RequestMethod id;
   } supported_methods[] = {
-      {"GET", 3, GET}, {"POST", 4, POST}, {"OPTIONS", 7, OPTIONS},
+      {"GET", 3, GET},
+      {"POST", 4, POST},
+      {"OPTIONS", 7, OPTIONS},
   };
 
   const char* path = NULL;

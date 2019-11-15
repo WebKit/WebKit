@@ -8,21 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
+
 #include <memory>
 #include <vector>
 
-#include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 
-using ::testing::Return;
 using ::testing::_;
-using ::testing::SetArgPointee;
 using ::testing::InSequence;
 using ::testing::Invoke;
 using ::testing::MockFunction;
+using ::testing::Return;
+using ::testing::SetArgPointee;
 
 namespace webrtc {
 

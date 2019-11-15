@@ -8,17 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "p2p/base/stun.h"
+
+#include <string.h>
+
 #include <string>
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "p2p/base/stun.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/bytebuffer.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/messagedigest.h"
-#include "rtc_base/socketaddress.h"
+#include "rtc_base/byte_buffer.h"
+#include "rtc_base/byte_order.h"
+#include "rtc_base/socket_address.h"
+#include "test/gtest.h"
 
 namespace cricket {
 
@@ -1559,6 +1561,14 @@ TEST_F(StunTest, CopyAttribute) {
                                 STUN_ADDRESS_IPV6, kTestMessagePort2, test_ip);
     }
   }
+}
+
+TEST_F(StunTest, ReduceTransactionIdIsHostOrderIndependent) {
+  std::string transaction_id = "abcdefghijkl";
+  StunMessage message;
+  ASSERT_TRUE(message.SetTransactionID(transaction_id));
+  uint32_t reduced_transaction_id = message.reduced_transaction_id();
+  EXPECT_EQ(reduced_transaction_id, 1835954016u);
 }
 
 }  // namespace cricket

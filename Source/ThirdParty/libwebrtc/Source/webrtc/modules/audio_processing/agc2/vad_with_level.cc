@@ -34,7 +34,7 @@ float ProcessForRms(AudioFrameView<const float> frame) {
   for (const auto& x : frame.channel(0)) {
     rms += x * x;
   }
-  return sqrt(rms / frame.samples_per_channel());
+  return std::sqrt(rms / frame.samples_per_channel());
 }
 }  // namespace
 

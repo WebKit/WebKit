@@ -26,9 +26,10 @@
 #pragma once
 
 #include "api/video/video_frame_buffer.h"
-#include "rtc_base/scoped_ref_ptr.h"
-#include "webrtc/media/engine/webrtcvideodecoderfactory.h"
-#include "webrtc/media/engine/webrtcvideoencoderfactory.h"
+#include "api/scoped_refptr.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "media/engine/encoder_simulcast_proxy.h"
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
@@ -50,5 +51,22 @@ bool isH264HardwareEncoderAllowed();
 
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
+
+class VideoEncoderFactoryWithSimulcast final : public VideoEncoderFactory {
+public:
+    explicit VideoEncoderFactoryWithSimulcast(std::unique_ptr<VideoEncoderFactory>&& factory)
+        : m_internalEncoderFactory(std::move(factory))
+    {
+    }
+
+    VideoEncoderFactory::CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const final { return m_internalEncoderFactory->QueryVideoEncoder(format); }
+
+    std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format) final { return std::make_unique<EncoderSimulcastProxy>(m_internalEncoderFactory.get(), format); }
+
+    std::vector<SdpVideoFormat> GetSupportedFormats() const final { return m_internalEncoderFactory->GetSupportedFormats(); }
+
+private:
+    const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
+};
 
 }

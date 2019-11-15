@@ -24,7 +24,7 @@
 
         <!-- TODO(crbug.com/900912): Fix and remove lint ignore -->
         <EditText
-            tools:ignore="LabelFor"
+            tools:ignore="LabelFor,Autofill"
             android:id="@+id/room_edittext"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

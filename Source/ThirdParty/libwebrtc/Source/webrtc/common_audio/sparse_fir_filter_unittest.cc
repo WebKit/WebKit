@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
 #include "common_audio/sparse_fir_filter.h"
+
+#include <memory>
 
 #include "common_audio/fir_filter.h"
 #include "common_audio/fir_filter_factory.h"

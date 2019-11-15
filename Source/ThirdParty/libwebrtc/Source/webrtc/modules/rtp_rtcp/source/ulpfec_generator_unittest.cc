@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/ulpfec_generator.h"
+
 #include <list>
 #include <memory>
 #include <utility>
@@ -16,7 +18,6 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
-#include "modules/rtp_rtcp/source/ulpfec_generator.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -118,7 +119,7 @@ TEST_F(UlpfecGeneratorTest, OneFrameFec) {
         packet_generator_.NextPacket(i, 10);
     EXPECT_EQ(0, ulpfec_generator_.AddRtpPacketAndGenerateFec(
                      packet->data, packet->length, kRtpHeaderSize));
-    last_timestamp = packet->header.header.timestamp;
+    last_timestamp = packet->header.timestamp;
   }
   EXPECT_TRUE(ulpfec_generator_.FecAvailable());
   const uint16_t seq_num = packet_generator_.NextPacketSeqNum();
@@ -152,7 +153,7 @@ TEST_F(UlpfecGeneratorTest, TwoFrameFec) {
           packet_generator_.NextPacket(i * kNumPackets + j, 10);
       EXPECT_EQ(0, ulpfec_generator_.AddRtpPacketAndGenerateFec(
                        packet->data, packet->length, kRtpHeaderSize));
-      last_timestamp = packet->header.header.timestamp;
+      last_timestamp = packet->header.timestamp;
     }
   }
   EXPECT_TRUE(ulpfec_generator_.FecAvailable());

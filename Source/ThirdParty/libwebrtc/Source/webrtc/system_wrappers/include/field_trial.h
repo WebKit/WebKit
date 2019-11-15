@@ -33,7 +33,7 @@
 //
 // 1 - Develop the feature with default behaviour off:
 //
-//   if (FieldTrial::FindFullName("WebRTCExperimenMethod2") == "Enabled")
+//   if (FieldTrial::FindFullName("WebRTCExperimentMethod2") == "Enabled")
 //     method2();
 //   else
 //     method1();

@@ -12,7 +12,7 @@
 
 #import "base/RTCVideoRenderer.h"
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

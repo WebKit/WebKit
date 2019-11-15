@@ -13,6 +13,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 
 #include "modules/audio_processing/vad/common.h"  // AudioFeatures, kSampleR...

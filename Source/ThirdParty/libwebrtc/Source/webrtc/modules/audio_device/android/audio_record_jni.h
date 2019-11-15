@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_DEVICE_ANDROID_AUDIO_RECORD_JNI_H_
 #define MODULES_AUDIO_DEVICE_ANDROID_AUDIO_RECORD_JNI_H_
 
-#include <memory>
-
 #include <jni.h>
+
+#include <memory>
 
 #include "modules/audio_device/android/audio_manager.h"
 #include "modules/audio_device/audio_device_generic.h"
@@ -39,7 +39,7 @@ namespace webrtc {
 // All public methods must also be called on the same thread. A thread checker
 // will RTC_DCHECK if any method is called on an invalid thread.
 //
-// This class uses AttachCurrentThreadIfNeeded to attach to a Java VM if needed
+// This class uses JvmThreadConnector to attach to a Java VM if needed
 // and detach when the object goes out of scope. Additional thread checking
 // guarantees that no other (possibly non attached) thread is used.
 class AudioRecordJni {
@@ -116,9 +116,10 @@ class AudioRecordJni {
   // thread in Java. Detached during construction of this object.
   rtc::ThreadChecker thread_checker_java_;
 
-  // Calls AttachCurrentThread() if this thread is not attached at construction.
+  // Calls JavaVM::AttachCurrentThread() if this thread is not attached at
+  // construction.
   // Also ensures that DetachCurrentThread() is called at destruction.
-  AttachCurrentThreadIfNeeded attach_thread_if_needed_;
+  JvmThreadConnector attach_thread_if_needed_;
 
   // Wraps the JNI interface pointer and methods associated with it.
   std::unique_ptr<JNIEnvironment> j_environment_;

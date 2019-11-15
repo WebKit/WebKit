@@ -13,8 +13,8 @@
 
 #import "base/RTCVideoFrameBuffer.h"
 
+#include "api/scoped_refptr.h"
 #include "common_video/include/video_frame_buffer.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 

@@ -424,7 +424,7 @@ int main(int argc, char* argv[]) {
   printf("\n");
   printf("Measured bit-rate........... %0.3f kbps\n", rate);
   printf("Measured RCU bit-ratre...... %0.3f kbps\n", rateRCU);
-  printf("Maximum bit-rate/payloadsize %0.3f / %" PRIuS "\n",
+  printf("Maximum bit-rate/payloadsize %0.3f / %" RTC_PRIuS "\n",
          maxStreamLen * 8 / 0.03, maxStreamLen);
   printf("Measured packet-loss........ %0.1f%% \n",
          100.0f * (float)lostPacketCntr / (float)packetCntr);

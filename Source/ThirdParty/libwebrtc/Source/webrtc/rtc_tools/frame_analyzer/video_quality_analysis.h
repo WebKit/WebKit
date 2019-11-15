@@ -11,11 +11,13 @@
 #ifndef RTC_TOOLS_FRAME_ANALYZER_VIDEO_QUALITY_ANALYSIS_H_
 #define RTC_TOOLS_FRAME_ANALYZER_VIDEO_QUALITY_ANALYSIS_H_
 
+#include <stdio.h>
+
 #include <string>
-#include <utility>
 #include <vector>
 
-#include "api/video/i420_buffer.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_tools/video_file_reader.h"
 
 namespace webrtc {

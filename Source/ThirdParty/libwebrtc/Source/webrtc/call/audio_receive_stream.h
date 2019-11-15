@@ -19,16 +19,16 @@
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/call/transport.h"
-#include "api/crypto/cryptooptions.h"
-#include "api/media_transport_interface.h"
-#include "api/rtpparameters.h"
-#include "api/rtpreceiverinterface.h"
+#include "api/crypto/crypto_options.h"
+#include "api/crypto/frame_decryptor_interface.h"
+#include "api/media_transport_config.h"
+#include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
+#include "api/transport/rtp/rtp_source.h"
 #include "call/rtp_config.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 class AudioSinkInterface;
-class FrameDecryptorInterface;
 
 class AudioReceiveStream {
  public:
@@ -38,11 +38,11 @@ class AudioReceiveStream {
     uint32_t remote_ssrc = 0;
     int64_t bytes_rcvd = 0;
     uint32_t packets_rcvd = 0;
+    uint64_t fec_packets_received = 0;
+    uint64_t fec_packets_discarded = 0;
     uint32_t packets_lost = 0;
-    float fraction_lost = 0.0f;
     std::string codec_name;
     absl::optional<int> codec_payload_type;
-    uint32_t ext_seqnum = 0;
     uint32_t jitter_ms = 0;
     uint32_t jitter_buffer_ms = 0;
     uint32_t jitter_buffer_preferred_ms = 0;
@@ -54,8 +54,12 @@ class AudioReceiveStream {
     uint64_t total_samples_received = 0;
     double total_output_duration = 0.0;
     uint64_t concealed_samples = 0;
+    uint64_t silent_concealed_samples = 0;
     uint64_t concealment_events = 0;
     double jitter_buffer_delay_seconds = 0.0;
+    uint64_t jitter_buffer_emitted_count = 0;
+    uint64_t inserted_samples_for_deceleration = 0;
+    uint64_t removed_samples_for_acceleration = 0;
     // Stats below DO NOT correspond directly to anything in the WebRTC stats
     float expand_rate = 0.0f;
     float speech_expand_rate = 0.0f;
@@ -67,12 +71,21 @@ class AudioReceiveStream {
     int32_t decoding_calls_to_silence_generator = 0;
     int32_t decoding_calls_to_neteq = 0;
     int32_t decoding_normal = 0;
+    // TODO(alexnarest): Consider decoding_neteq_plc for consistency
     int32_t decoding_plc = 0;
+    int32_t decoding_codec_plc = 0;
     int32_t decoding_cng = 0;
     int32_t decoding_plc_cng = 0;
     int32_t decoding_muted_output = 0;
     int64_t capture_start_ntp_time_ms = 0;
+    // The timestamp at which the last packet was received, i.e. the time of the
+    // local clock when it was received - not the RTP timestamp of that packet.
+    // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-lastpacketreceivedtimestamp
+    absl::optional<int64_t> last_packet_received_timestamp_ms;
     uint64_t jitter_buffer_flushes = 0;
+    double relative_packet_arrival_delay_seconds = 0.0;
+    int32_t interruption_count = 0;
+    int32_t total_interruption_duration_ms = 0;
   };
 
   struct Config {
@@ -109,12 +122,13 @@ class AudioReceiveStream {
 
     Transport* rtcp_send_transport = nullptr;
 
-    MediaTransportInterface* media_transport = nullptr;
+    MediaTransportConfig media_transport_config;
 
     // NetEq settings.
-    size_t jitter_buffer_max_packets = 50;
+    size_t jitter_buffer_max_packets = 200;
     bool jitter_buffer_fast_accelerate = false;
     int jitter_buffer_min_delay_ms = 0;
+    bool jitter_buffer_enable_rtx_handling = false;
 
     // Identifier for an A/V synchronization group. Empty string to disable.
     // TODO(pbos): Synchronize streams in a sync group, not just one video
@@ -161,6 +175,15 @@ class AudioReceiveStream {
   // Sets playback gain of the stream, applied when mixing, and thus after it
   // is potentially forwarded to any attached AudioSinkInterface implementation.
   virtual void SetGain(float gain) = 0;
+
+  // Sets a base minimum for the playout delay. Base minimum delay sets lower
+  // bound on minimum delay value determining lower bound on playout delay.
+  //
+  // Returns true if value was successfully set, false overwise.
+  virtual bool SetBaseMinimumPlayoutDelayMs(int delay_ms) = 0;
+
+  // Returns current value of base minimum delay in milliseconds.
+  virtual int GetBaseMinimumPlayoutDelayMs() const = 0;
 
   virtual std::vector<RtpSource> GetSources() const = 0;
 

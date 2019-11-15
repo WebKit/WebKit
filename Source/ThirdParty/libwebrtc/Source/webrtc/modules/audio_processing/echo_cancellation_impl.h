@@ -12,15 +12,13 @@
 #define MODULES_AUDIO_PROCESSING_ECHO_CANCELLATION_IMPL_H_
 
 #include <stddef.h>
+
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "api/array_view.h"
-#include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/thread_annotations.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -37,9 +35,6 @@ class EchoCancellationImpl {
 
   void ProcessRenderAudio(rtc::ArrayView<const float> packed_render_audio);
   int ProcessCaptureAudio(AudioBuffer* audio, int stream_delay_ms);
-
-  int Enable(bool enable);
-  bool is_enabled() const;
 
   // Differences in clock speed on the primary and reverse streams can impact
   // the AEC performance. On the client-side, this could be seen when different
@@ -136,7 +131,9 @@ class EchoCancellationImpl {
                   size_t num_reverse_channels_,
                   size_t num_output_channels_,
                   size_t num_proc_channels_);
-  void SetExtraOptions(const webrtc::Config& config);
+  void SetExtraOptions(bool use_extended_filter,
+                       bool use_delay_agnostic,
+                       bool use_refined_adaptive_filter);
   bool is_delay_agnostic_enabled() const;
   bool is_extended_filter_enabled() const;
   std::string GetExperimentsDescription();
@@ -159,7 +156,6 @@ class EchoCancellationImpl {
   void AllocateRenderQueue();
   int Configure();
 
-  bool enabled_ = false;
   bool drift_compensation_enabled_;
   bool metrics_enabled_;
   SuppressionLevel suppression_level_;

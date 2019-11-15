@@ -15,7 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "modules/audio_processing/aec3/clockdrift_detector.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

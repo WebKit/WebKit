@@ -25,21 +25,21 @@ using rnnoise::kWeightsScale;
 
 using rnnoise::kInputLayerInputSize;
 static_assert(kFeatureVectorSize == kInputLayerInputSize, "");
-using rnnoise::kInputDenseWeights;
 using rnnoise::kInputDenseBias;
+using rnnoise::kInputDenseWeights;
 using rnnoise::kInputLayerOutputSize;
 static_assert(kInputLayerOutputSize <= kFullyConnectedLayersMaxUnits,
               "Increase kFullyConnectedLayersMaxUnits.");
 
+using rnnoise::kHiddenGruBias;
 using rnnoise::kHiddenGruRecurrentWeights;
 using rnnoise::kHiddenGruWeights;
-using rnnoise::kHiddenGruBias;
 using rnnoise::kHiddenLayerOutputSize;
 static_assert(kHiddenLayerOutputSize <= kRecurrentLayersMaxUnits,
               "Increase kRecurrentLayersMaxUnits.");
 
-using rnnoise::kOutputDenseWeights;
 using rnnoise::kOutputDenseBias;
+using rnnoise::kOutputDenseWeights;
 using rnnoise::kOutputLayerOutputSize;
 static_assert(kOutputLayerOutputSize <= kFullyConnectedLayersMaxUnits,
               "Increase kFullyConnectedLayersMaxUnits.");

@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
 
 #include <stddef.h>
+
 #include <memory>
 
 #include "api/audio_codecs/audio_encoder.h"

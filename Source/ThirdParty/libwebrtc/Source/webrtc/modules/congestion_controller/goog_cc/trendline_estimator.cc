@@ -13,15 +13,61 @@
 #include <math.h>
 
 #include <algorithm>
+#include <string>
 
 #include "absl/types/optional.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
+constexpr char BweIgnoreSmallPacketsSettings::kKey[];
+
+BweIgnoreSmallPacketsSettings::BweIgnoreSmallPacketsSettings(
+    const WebRtcKeyValueConfig* key_value_config) {
+  Parser()->Parse(
+      key_value_config->Lookup(BweIgnoreSmallPacketsSettings::kKey));
+}
+
+std::unique_ptr<StructParametersParser>
+BweIgnoreSmallPacketsSettings::Parser() {
+  return StructParametersParser::Create(
+      "smoothing_factor", &smoothing_factor,                      //
+      "min_fraction_large_packets", &min_fraction_large_packets,  //
+      "large_packet_size", &large_packet_size,                    //
+      "ignored_size", &ignored_size);
+}
+
 namespace {
+
+// Parameters for linear least squares fit of regression line to noisy data.
+constexpr size_t kDefaultTrendlineWindowSize = 20;
+constexpr double kDefaultTrendlineSmoothingCoeff = 0.9;
+constexpr double kDefaultTrendlineThresholdGain = 4.0;
+const char kBweWindowSizeInPacketsExperiment[] =
+    "WebRTC-BweWindowSizeInPackets";
+
+size_t ReadTrendlineFilterWindowSize(
+    const WebRtcKeyValueConfig* key_value_config) {
+  std::string experiment_string =
+      key_value_config->Lookup(kBweWindowSizeInPacketsExperiment);
+  size_t window_size;
+  int parsed_values =
+      sscanf(experiment_string.c_str(), "Enabled-%zu", &window_size);
+  if (parsed_values == 1) {
+    if (window_size > 1)
+      return window_size;
+    RTC_LOG(WARNING) << "Window size must be greater than 1.";
+  }
+  RTC_LOG(LS_WARNING) << "Failed to parse parameters for BweWindowSizeInPackets"
+                         " experiment from field trial string. Using default.";
+  return kDefaultTrendlineWindowSize;
+}
+
 absl::optional<double> LinearFitSlope(
     const std::deque<std::pair<double, double>>& points) {
   RTC_DCHECK(points.size() >= 2);
@@ -53,12 +99,17 @@ constexpr int kDeltaCounterMax = 1000;
 
 }  // namespace
 
-TrendlineEstimator::TrendlineEstimator(size_t window_size,
-                                       double smoothing_coef,
-                                       double threshold_gain)
-    : window_size_(window_size),
-      smoothing_coef_(smoothing_coef),
-      threshold_gain_(threshold_gain),
+TrendlineEstimator::TrendlineEstimator(
+    const WebRtcKeyValueConfig* key_value_config,
+    NetworkStatePredictor* network_state_predictor)
+    : ignore_small_packets_(key_value_config),
+      fraction_large_packets_(0.5),
+      window_size_(key_value_config->Lookup(kBweWindowSizeInPacketsExperiment)
+                               .find("Enabled") == 0
+                       ? ReadTrendlineFilterWindowSize(key_value_config)
+                       : kDefaultTrendlineWindowSize),
+      smoothing_coef_(kDefaultTrendlineSmoothingCoeff),
+      threshold_gain_(kDefaultTrendlineThresholdGain),
       num_of_deltas_(0),
       first_arrival_time_ms_(-1),
       accumulated_delay_(0),
@@ -73,13 +124,39 @@ TrendlineEstimator::TrendlineEstimator(size_t window_size,
       prev_trend_(0.0),
       time_over_using_(-1),
       overuse_counter_(0),
-      hypothesis_(BandwidthUsage::kBwNormal) {}
+      hypothesis_(BandwidthUsage::kBwNormal),
+      hypothesis_predicted_(BandwidthUsage::kBwNormal),
+      network_state_predictor_(network_state_predictor) {
+  RTC_LOG(LS_INFO)
+      << "Using Trendline filter for delay change estimation with window size "
+      << window_size_ << " and field trial "
+      << ignore_small_packets_.Parser()->Encode();
+}
 
 TrendlineEstimator::~TrendlineEstimator() {}
 
-void TrendlineEstimator::Update(double recv_delta_ms,
-                                double send_delta_ms,
-                                int64_t arrival_time_ms) {
+void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
+                                         double send_delta_ms,
+                                         int64_t send_time_ms,
+                                         int64_t arrival_time_ms,
+                                         size_t packet_size) {
+  if (ignore_small_packets_.ignored_size > 0) {
+    // Process the packet if it is "large" or if all packets in the call are
+    // "small". The packet size may have a significant effect on the propagation
+    // delay, especially at low bandwidths. Variations in packet size will then
+    // show up as noise in the delay measurement.
+    // By default, we include all packets.
+    fraction_large_packets_ =
+        (1 - ignore_small_packets_.smoothing_factor) * fraction_large_packets_ +
+        ignore_small_packets_.smoothing_factor *
+            (packet_size >= ignore_small_packets_.large_packet_size);
+    if (packet_size <= ignore_small_packets_.ignored_size &&
+        fraction_large_packets_ >=
+            ignore_small_packets_.min_fraction_large_packets) {
+      return;
+    }
+  }
+
   const double delta_ms = recv_delta_ms - send_delta_ms;
   ++num_of_deltas_;
   num_of_deltas_ = std::min(num_of_deltas_, kDeltaCounterMax);
@@ -110,14 +187,29 @@ void TrendlineEstimator::Update(double recv_delta_ms,
     //   trend < 0     ->  the delay decreases, queues are being emptied
     trend = LinearFitSlope(delay_hist_).value_or(trend);
   }
-
   BWE_TEST_LOGGING_PLOT(1, "trendline_slope", arrival_time_ms, trend);
 
   Detect(trend, send_delta_ms, arrival_time_ms);
 }
 
+void TrendlineEstimator::Update(double recv_delta_ms,
+                                double send_delta_ms,
+                                int64_t send_time_ms,
+                                int64_t arrival_time_ms,
+                                size_t packet_size,
+                                bool calculated_deltas) {
+  if (calculated_deltas) {
+    UpdateTrendline(recv_delta_ms, send_delta_ms, send_time_ms, arrival_time_ms,
+                    packet_size);
+  }
+  if (network_state_predictor_) {
+    hypothesis_predicted_ = network_state_predictor_->Update(
+        send_time_ms, arrival_time_ms, hypothesis_);
+  }
+}
+
 BandwidthUsage TrendlineEstimator::State() const {
-  return hypothesis_;
+  return network_state_predictor_ ? hypothesis_predicted_ : hypothesis_;
 }
 
 void TrendlineEstimator::Detect(double trend, double ts_delta, int64_t now_ms) {

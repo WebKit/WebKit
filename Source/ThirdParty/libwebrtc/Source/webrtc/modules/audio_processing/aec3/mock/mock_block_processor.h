@@ -24,12 +24,13 @@ class MockBlockProcessor : public BlockProcessor {
   MockBlockProcessor();
   virtual ~MockBlockProcessor();
 
-  MOCK_METHOD3(ProcessCapture,
-               void(bool level_change,
-                    bool saturated_microphone_signal,
-                    std::vector<std::vector<float>>* capture_block));
+  MOCK_METHOD3(
+      ProcessCapture,
+      void(bool level_change,
+           bool saturated_microphone_signal,
+           std::vector<std::vector<std::vector<float>>>* capture_block));
   MOCK_METHOD1(BufferRender,
-               void(const std::vector<std::vector<float>>& block));
+               void(const std::vector<std::vector<std::vector<float>>>& block));
   MOCK_METHOD1(UpdateEchoLeakageStatus, void(bool leakage_detected));
   MOCK_CONST_METHOD1(GetMetrics, void(EchoControl::Metrics* metrics));
   MOCK_METHOD1(SetAudioBufferDelay, void(size_t delay_ms));

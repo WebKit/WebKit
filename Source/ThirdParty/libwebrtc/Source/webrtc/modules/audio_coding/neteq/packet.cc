@@ -28,6 +28,7 @@ Packet Packet::Clone() const {
   clone.payload_type = payload_type;
   clone.payload.SetData(payload.data(), payload.size());
   clone.priority = priority;
+  clone.packet_info = packet_info;
 
   return clone;
 }

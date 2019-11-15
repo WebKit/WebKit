@@ -10,12 +10,12 @@
 
 #include "modules/video_capture/windows/video_capture_ds.h"
 
+#include <dvdmedia.h>  // VIDEOINFOHEADER2
+
 #include "modules/video_capture/video_capture_config.h"
 #include "modules/video_capture/windows/help_functions_ds.h"
 #include "modules/video_capture/windows/sink_filter_ds.h"
 #include "rtc_base/logging.h"
-
-#include <dvdmedia.h>  // VIDEOINFOHEADER2
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -23,7 +23,6 @@ VideoCaptureDS::VideoCaptureDS()
     : _captureFilter(NULL),
       _graphBuilder(NULL),
       _mediaControl(NULL),
-      _sinkFilter(NULL),
       _inputSendPin(NULL),
       _outputCapturePin(NULL),
       _dvFilter(NULL),
@@ -35,8 +34,8 @@ VideoCaptureDS::~VideoCaptureDS() {
     _mediaControl->Stop();
   }
   if (_graphBuilder) {
-    if (_sinkFilter)
-      _graphBuilder->RemoveFilter(_sinkFilter);
+    if (sink_filter_)
+      _graphBuilder->RemoveFilter(sink_filter_);
     if (_captureFilter)
       _graphBuilder->RemoveFilter(_captureFilter);
     if (_dvFilter)
@@ -46,7 +45,6 @@ VideoCaptureDS::~VideoCaptureDS() {
   RELEASE_AND_CLEAR(_outputCapturePin);
 
   RELEASE_AND_CLEAR(_captureFilter);  // release the capture device
-  RELEASE_AND_CLEAR(_sinkFilter);
   RELEASE_AND_CLEAR(_dvFilter);
 
   RELEASE_AND_CLEAR(_mediaControl);
@@ -101,20 +99,15 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
   }
 
   // Create the sink filte used for receiving Captured frames.
-  _sinkFilter = new CaptureSinkFilter(SINK_FILTER_NAME, NULL, &hr, *this);
-  if (hr != S_OK) {
-    RTC_LOG(LS_INFO) << "Failed to create send filter";
-    return -1;
-  }
-  _sinkFilter->AddRef();
+  sink_filter_ = new ComRefCount<CaptureSinkFilter>(this);
 
-  hr = _graphBuilder->AddFilter(_sinkFilter, SINK_FILTER_NAME);
+  hr = _graphBuilder->AddFilter(sink_filter_, SINK_FILTER_NAME);
   if (FAILED(hr)) {
     RTC_LOG(LS_INFO) << "Failed to add the send filter to the graph.";
     return -1;
   }
 
-  _inputSendPin = GetInputPin(_sinkFilter);
+  _inputSendPin = GetInputPin(sink_filter_);
   if (!_inputSendPin) {
     RTC_LOG(LS_INFO) << "Failed to get input send pin";
     return -1;
@@ -164,6 +157,7 @@ int32_t VideoCaptureDS::StopCapture() {
   }
   return 0;
 }
+
 bool VideoCaptureDS::CaptureStarted() {
   OAFilterState state = 0;
   HRESULT hr = _mediaControl->GetState(1000, &state);
@@ -173,6 +167,7 @@ bool VideoCaptureDS::CaptureStarted() {
   RTC_LOG(LS_INFO) << "CaptureStarted " << state;
   return state == State_Running;
 }
+
 int32_t VideoCaptureDS::CaptureSettings(VideoCaptureCapability& settings) {
   settings = _requestedCapability;
   return 0;
@@ -220,7 +215,7 @@ int32_t VideoCaptureDS::SetCameraOutput(
   bool isDVCamera = false;
   hr = streamConfig->GetStreamCaps(windowsCapability.directShowCapabilityIndex,
                                    &pmt, reinterpret_cast<BYTE*>(&caps));
-  if (!FAILED(hr)) {
+  if (hr == S_OK) {
     if (pmt->formattype == FORMAT_VideoInfo2) {
       VIDEOINFOHEADER2* h = reinterpret_cast<VIDEOINFOHEADER2*>(pmt->pbFormat);
       if (capability.maxFPS > 0 && windowsCapability.supportFrameRateControl) {
@@ -234,7 +229,7 @@ int32_t VideoCaptureDS::SetCameraOutput(
     }
 
     // Set the sink filter to request this capability
-    _sinkFilter->SetMatchingMediaType(capability);
+    sink_filter_->SetRequestedCapability(capability);
     // Order the capture device to use this capability
     hr += streamConfig->SetFormat(pmt);
 
@@ -279,6 +274,7 @@ int32_t VideoCaptureDS::DisconnectGraph() {
   }
   return 0;
 }
+
 HRESULT VideoCaptureDS::ConnectDVCamera() {
   HRESULT hr = S_OK;
 
@@ -320,7 +316,6 @@ HRESULT VideoCaptureDS::ConnectDVCamera() {
       RTC_LOG(LS_INFO) << "Failed to connect capture device to the send graph: "
                        << hr;
     }
-    return hr;
   }
   return hr;
 }

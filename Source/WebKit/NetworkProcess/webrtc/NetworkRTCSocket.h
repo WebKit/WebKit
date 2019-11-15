@@ -31,7 +31,7 @@
 
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <webrtc/rtc_base/asyncpacketsocket.h>
+#include <webrtc/rtc_base/async_packet_socket.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 
 namespace IPC {

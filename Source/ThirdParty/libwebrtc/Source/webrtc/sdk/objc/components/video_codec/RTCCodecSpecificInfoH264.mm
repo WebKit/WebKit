@@ -20,7 +20,6 @@
 - (webrtc::CodecSpecificInfo)nativeCodecSpecificInfo {
   webrtc::CodecSpecificInfo codecSpecificInfo;
   codecSpecificInfo.codecType = webrtc::kVideoCodecH264;
-  codecSpecificInfo.codec_name = [kRTCVideoCodecH264Name cStringUsingEncoding:NSUTF8StringEncoding];
   codecSpecificInfo.codecSpecific.H264.packetization_mode =
       (webrtc::H264PacketizationMode)_packetizationMode;
 

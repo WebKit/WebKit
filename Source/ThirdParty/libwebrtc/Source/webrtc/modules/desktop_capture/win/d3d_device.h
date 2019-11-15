@@ -11,9 +11,9 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_D3D_DEVICE_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_D3D_DEVICE_H_
 
-#include <D3D11.h>
-#include <DXGI.h>
 #include <comdef.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include <wrl/client.h>
 
 #include <vector>

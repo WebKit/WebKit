@@ -9,9 +9,10 @@
  */
 
 #include "rtc_base/crc32.h"
-#include "rtc_base/gunit.h"
 
 #include <string>
+
+#include "test/gtest.h"
 
 namespace rtc {
 

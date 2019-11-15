@@ -17,6 +17,53 @@
 namespace webrtc {
 namespace test {
 
+namespace {
+
+class FakeEncodedFrame : public AudioDecoder::EncodedAudioFrame {
+ public:
+  FakeEncodedFrame(AudioDecoder* decoder, rtc::Buffer&& payload)
+      : decoder_(decoder), payload_(std::move(payload)) {}
+
+  size_t Duration() const override {
+    const int ret = decoder_->PacketDuration(payload_.data(), payload_.size());
+    return ret < 0 ? 0 : static_cast<size_t>(ret);
+  }
+
+  absl::optional<DecodeResult> Decode(
+      rtc::ArrayView<int16_t> decoded) const override {
+    auto speech_type = AudioDecoder::kSpeech;
+    const int ret = decoder_->Decode(
+        payload_.data(), payload_.size(), decoder_->SampleRateHz(),
+        decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
+    return ret < 0 ? absl::nullopt
+                   : absl::optional<DecodeResult>(
+                         {static_cast<size_t>(ret), speech_type});
+  }
+
+  // This is to mimic OpusFrame.
+  bool IsDtxPacket() const override {
+    uint32_t original_payload_size_bytes =
+        ByteReader<uint32_t>::ReadLittleEndian(&payload_.data()[8]);
+    return original_payload_size_bytes <= 2;
+  }
+
+ private:
+  AudioDecoder* const decoder_;
+  const rtc::Buffer payload_;
+};
+
+}  // namespace
+
+std::vector<AudioDecoder::ParseResult> FakeDecodeFromFile::ParsePayload(
+    rtc::Buffer&& payload,
+    uint32_t timestamp) {
+  std::vector<ParseResult> results;
+  std::unique_ptr<EncodedAudioFrame> frame(
+      new FakeEncodedFrame(this, std::move(payload)));
+  results.emplace_back(timestamp, 0, std::move(frame));
+  return results;
+}
+
 int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
                                        size_t encoded_len,
                                        int sample_rate_hz,

@@ -10,17 +10,25 @@
 
 #include "api/test/fake_frame_decryptor.h"
 #include "api/test/fake_frame_encryptor.h"
-#include "media/engine/internaldecoderfactory.h"
+#include "media/engine/internal_decoder_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 
 namespace webrtc {
+namespace {
+enum : int {  // The first valid value is 1.
+  kGenericDescriptorExtensionId = 1,
+};
+}  // namespace
 
 class FrameEncryptionEndToEndTest : public test::CallTest {
  public:
-  FrameEncryptionEndToEndTest() = default;
+  FrameEncryptionEndToEndTest() {
+    RegisterRtpExtension(RtpExtension(RtpExtension::kGenericFrameDescriptorUri,
+                                      kGenericDescriptorExtensionId));
+  }
 
  private:
   // GenericDescriptor is required for FrameEncryption to work.

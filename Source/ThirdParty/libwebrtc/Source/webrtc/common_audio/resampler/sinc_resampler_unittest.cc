@@ -14,22 +14,23 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
+#include "common_audio/resampler/sinc_resampler.h"
+
 #include <math.h>
 
 #include <algorithm>
 #include <memory>
 #include <tuple>
 
-#include "common_audio/resampler/sinc_resampler.h"
 #include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
 #include "rtc_base/stringize_macros.h"
 #include "rtc_base/system/arch.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-using testing::_;
+using ::testing::_;
 
 namespace webrtc {
 
@@ -72,7 +73,7 @@ TEST(SincResamplerTest, ChunkedResample) {
   resampler.Resample(resampler.ChunkSize(), resampled_destination.get());
 
   // Verify requesting kChunks * ChunkSize() frames causes kChunks callbacks.
-  testing::Mock::VerifyAndClear(&mock_source);
+  ::testing::Mock::VerifyAndClear(&mock_source);
   EXPECT_CALL(mock_source, Run(_, _))
       .Times(kChunks)
       .WillRepeatedly(ClearBuffer());
@@ -94,7 +95,7 @@ TEST(SincResamplerTest, Flush) {
 
   // Flush and request more data, which should all be zeros now.
   resampler.Flush();
-  testing::Mock::VerifyAndClear(&mock_source);
+  ::testing::Mock::VerifyAndClear(&mock_source);
   EXPECT_CALL(mock_source, Run(_, _)).Times(1).WillOnce(ClearBuffer());
   resampler.Resample(resampler.ChunkSize() / 2, resampled_destination.get());
   for (size_t i = 0; i < resampler.ChunkSize() / 2; ++i)
@@ -230,7 +231,8 @@ TEST(SincResamplerTest, ConvolveBenchmark) {
 #undef CONVOLVE_FUNC
 
 typedef std::tuple<int, int, double, double> SincResamplerTestData;
-class SincResamplerTest : public testing::TestWithParam<SincResamplerTestData> {
+class SincResamplerTest
+    : public ::testing::TestWithParam<SincResamplerTestData> {
  public:
   SincResamplerTest()
       : input_rate_(std::get<0>(GetParam())),
@@ -340,10 +342,10 @@ static const double kResamplingRMSError = -14.58;
 
 // Thresholds chosen arbitrarily based on what each resampling reported during
 // testing.  All thresholds are in dbFS, http://en.wikipedia.org/wiki/DBFS.
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SincResamplerTest,
     SincResamplerTest,
-    testing::Values(
+    ::testing::Values(
         // To 44.1kHz
         std::make_tuple(8000, 44100, kResamplingRMSError, -62.73),
         std::make_tuple(11025, 44100, kResamplingRMSError, -72.19),

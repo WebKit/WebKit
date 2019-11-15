@@ -9,7 +9,6 @@
  */
 
 #include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
-
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 #include "modules/audio_coding/codecs/isac/fix/source/structs.h"
@@ -55,7 +54,8 @@ void WebRtcIsacfix_PitchFilter(int16_t* indatQQ, // Q10 if type is 1 or 4,
   const int16_t Gain = 21299;     // 1.3 in Q14
   int16_t oldLagQ7;
   int16_t oldGainQ12, lagdeltaQ7, curLagQ7, gaindeltaQ12, curGainQ12;
-  size_t indW32 = 0, frcQQ = 0;
+  size_t frcQQ = 0;
+  int32_t indW32 = 0;
   const int16_t* fracoeffQQ = NULL;
 
   // Assumptions in ARM assembly for WebRtcIsacfix_PitchFilterCoreARM().

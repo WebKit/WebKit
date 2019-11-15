@@ -26,7 +26,6 @@ class MockAudioDeviceModule : public AudioDeviceModule {
   MOCK_CONST_METHOD0(Release, rtc::RefCountReleaseStatus());
   // AudioDeviceModule.
   MOCK_CONST_METHOD1(ActiveAudioLayer, int32_t(AudioLayer* audioLayer));
-  MOCK_CONST_METHOD0(LastError, ErrorCode());
   MOCK_METHOD1(RegisterAudioCallback, int32_t(AudioTransport* audioCallback));
   MOCK_METHOD0(Init, int32_t());
   MOCK_METHOD0(Terminate, int32_t());
@@ -92,6 +91,7 @@ class MockAudioDeviceModule : public AudioDeviceModule {
   MOCK_METHOD1(EnableBuiltInAEC, int32_t(bool enable));
   MOCK_METHOD1(EnableBuiltInAGC, int32_t(bool enable));
   MOCK_METHOD1(EnableBuiltInNS, int32_t(bool enable));
+  MOCK_CONST_METHOD0(GetPlayoutUnderrunCount, int32_t());
 #if defined(WEBRTC_IOS)
   MOCK_CONST_METHOD1(GetPlayoutAudioParameters, int(AudioParameters* params));
   MOCK_CONST_METHOD1(GetRecordAudioParameters, int(AudioParameters* params));

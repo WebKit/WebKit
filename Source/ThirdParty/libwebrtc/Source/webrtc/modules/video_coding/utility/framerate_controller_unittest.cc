@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/utility/framerate_controller.h"
 
+#include <stddef.h>
+
 #include "test/gtest.h"
 
 namespace webrtc {

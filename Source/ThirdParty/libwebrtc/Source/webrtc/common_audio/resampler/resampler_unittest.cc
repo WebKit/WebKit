@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "common_audio/resampler/include/resampler.h"
+
 #include <array>
 
-#include "common_audio/resampler/include/resampler.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
@@ -40,7 +41,7 @@ bool ValidRates(int in_rate, int out_rate) {
   return true;
 }
 
-class ResamplerTest : public testing::Test {
+class ResamplerTest : public ::testing::Test {
  protected:
   ResamplerTest();
   void SetUp() override;

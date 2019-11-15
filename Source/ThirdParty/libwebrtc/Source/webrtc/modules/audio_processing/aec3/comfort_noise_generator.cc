@@ -31,17 +31,15 @@ namespace webrtc {
 
 namespace {
 
-// Creates an array of uniformly distributed variables.
-void TableRandomValue(int16_t* vector, int16_t vector_length, uint32_t* seed) {
-  for (int i = 0; i < vector_length; i++) {
-    seed[0] = (seed[0] * ((int32_t)69069) + 1) & (0x80000000 - 1);
-    vector[i] = (int16_t)(seed[0] >> 16);
-  }
-}
-
-}  // namespace
-
-namespace {
+// Table of sqrt(2) * sin(2*pi*i/32).
+constexpr float kSqrt2Sin[32] = {
+    +0.0000000f, +0.2758994f, +0.5411961f, +0.7856950f, +1.0000000f,
+    +1.1758756f, +1.3065630f, +1.3870398f, +1.4142136f, +1.3870398f,
+    +1.3065630f, +1.1758756f, +1.0000000f, +0.7856950f, +0.5411961f,
+    +0.2758994f, +0.0000000f, -0.2758994f, -0.5411961f, -0.7856950f,
+    -1.0000000f, -1.1758756f, -1.3065630f, -1.3870398f, -1.4142136f,
+    -1.3870398f, -1.3065630f, -1.1758756f, -1.0000000f, -0.7856950f,
+    -0.5411961f, -0.2758994f};
 
 void GenerateComfortNoise(Aec3Optimization optimization,
                           const std::array<float, kFftLengthBy2Plus1>& N2,
@@ -63,39 +61,33 @@ void GenerateComfortNoise(Aec3Optimization optimization,
       std::accumulate(N.begin() + kFftLengthBy2Plus1By2, N.end(), 0.f) *
       kOneByNumBands;
 
-  // Generate complex noise.
-  std::array<int16_t, kFftLengthBy2 - 1> random_values_int;
-  TableRandomValue(random_values_int.data(), random_values_int.size(), seed);
-
   // The analysis and synthesis windowing cause loss of power when
   // cross-fading the noise where frames are completely uncorrelated
   // (generated with random phase), hence the factor sqrt(2).
   // This is not the case for the speech signal where the input is overlapping
   // (strong correlation).
-  std::array<float, kFftLengthBy2 - 1> sin;
-  std::array<float, kFftLengthBy2 - 1> cos;
-  constexpr float kScale = 6.28318530717959f / 32768.0f;
-  constexpr float kSqrt2 = 1.4142135623f;
-  std::transform(random_values_int.begin(), random_values_int.end(),
-                 sin.begin(),
-                 [&](int16_t a) { return -sinf(kScale * a) * kSqrt2; });
-  std::transform(random_values_int.begin(), random_values_int.end(),
-                 cos.begin(),
-                 [&](int16_t a) { return cosf(kScale * a) * kSqrt2; });
-
-  // Form low-frequency noise via spectral shaping.
   N_low->re[0] = N_low->re[kFftLengthBy2] = N_high->re[0] =
       N_high->re[kFftLengthBy2] = 0.f;
-  std::transform(cos.begin(), cos.end(), N.begin() + 1, N_low->re.begin() + 1,
-                 std::multiplies<float>());
-  std::transform(sin.begin(), sin.end(), N.begin() + 1, N_low->im.begin() + 1,
-                 std::multiplies<float>());
+  for (size_t k = 1; k < kFftLengthBy2; k++) {
+    constexpr int kIndexMask = 32 - 1;
+    // Generate a random 31-bit integer.
+    seed[0] = (seed[0] * 69069 + 1) & (0x80000000 - 1);
+    // Convert to a 5-bit index.
+    int i = seed[0] >> 26;
 
-  // Form the high-frequency noise via simple levelling.
-  std::transform(cos.begin(), cos.end(), N_high->re.begin() + 1,
-                 [&](float a) { return high_band_noise_level * a; });
-  std::transform(sin.begin(), sin.end(), N_high->im.begin() + 1,
-                 [&](float a) { return high_band_noise_level * a; });
+    // y = sqrt(2) * sin(a)
+    const float x = kSqrt2Sin[i];
+    // x = sqrt(2) * cos(a) = sqrt(2) * sin(a + pi/2)
+    const float y = kSqrt2Sin[(i + 8) & kIndexMask];
+
+    // Form low-frequency noise via spectral shaping.
+    N_low->re[k] = N[k] * x;
+    N_low->im[k] = N[k] * y;
+
+    // Form the high-frequency noise via simple levelling.
+    N_high->re[k] = high_band_noise_level * x;
+    N_high->im[k] = high_band_noise_level * y;
+  }
 }
 
 }  // namespace
@@ -147,8 +139,9 @@ void ComfortNoiseGenerator::Compute(
     }
   }
 
-  // Limit the noise to a floor of -96 dBFS.
-  constexpr float kNoiseFloor = 440.f;
+  // Limit the noise to a floor matching a WGN input of -96 dBFS.
+  constexpr float kNoiseFloor = 17.1267f;
+
   for (auto& n : N2_) {
     n = std::max(n, kNoiseFloor);
   }

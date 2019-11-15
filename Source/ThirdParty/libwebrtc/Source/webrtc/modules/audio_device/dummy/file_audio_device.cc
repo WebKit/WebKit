@@ -15,7 +15,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/sleep.h"
 
 namespace webrtc {
@@ -43,15 +43,10 @@ FileAudioDevice::FileAudioDevice(const char* inputFilename,
       _recording(false),
       _lastCallPlayoutMillis(0),
       _lastCallRecordMillis(0),
-      _outputFile(*FileWrapper::Create()),
-      _inputFile(*FileWrapper::Create()),
       _outputFilename(outputFilename),
       _inputFilename(inputFilename) {}
 
-FileAudioDevice::~FileAudioDevice() {
-  delete &_outputFile;
-  delete &_inputFile;
-}
+FileAudioDevice::~FileAudioDevice() {}
 
 int32_t FileAudioDevice::ActiveAudioLayer(
     AudioDeviceModule::AudioLayer& audioLayer) const {
@@ -210,19 +205,21 @@ int32_t FileAudioDevice::StartPlayout() {
   }
 
   // PLAYOUT
-  if (!_outputFilename.empty() &&
-      !_outputFile.OpenFile(_outputFilename.c_str(), false)) {
-    RTC_LOG(LS_ERROR) << "Failed to open playout file: " << _outputFilename;
-    _playing = false;
-    delete[] _playoutBuffer;
-    _playoutBuffer = NULL;
-    return -1;
+  if (!_outputFilename.empty()) {
+    _outputFile = FileWrapper::OpenWriteOnly(_outputFilename.c_str());
+    if (!_outputFile.is_open()) {
+      RTC_LOG(LS_ERROR) << "Failed to open playout file: " << _outputFilename;
+      _playing = false;
+      delete[] _playoutBuffer;
+      _playoutBuffer = NULL;
+      return -1;
+    }
   }
 
   _ptrThreadPlay.reset(new rtc::PlatformThread(
-      PlayThreadFunc, this, "webrtc_audio_module_play_thread"));
+      PlayThreadFunc, this, "webrtc_audio_module_play_thread",
+      rtc::kRealtimePriority));
   _ptrThreadPlay->Start();
-  _ptrThreadPlay->SetPriority(rtc::kRealtimePriority);
 
   RTC_LOG(LS_INFO) << "Started playout capture to output file: "
                    << _outputFilename;
@@ -246,7 +243,7 @@ int32_t FileAudioDevice::StopPlayout() {
   _playoutFramesLeft = 0;
   delete[] _playoutBuffer;
   _playoutBuffer = NULL;
-  _outputFile.CloseFile();
+  _outputFile.Close();
 
   RTC_LOG(LS_INFO) << "Stopped playout capture to output file: "
                    << _outputFilename;
@@ -267,20 +264,23 @@ int32_t FileAudioDevice::StartRecording() {
     _recordingBuffer = new int8_t[_recordingBufferSizeIn10MS];
   }
 
-  if (!_inputFilename.empty() &&
-      !_inputFile.OpenFile(_inputFilename.c_str(), true)) {
-    RTC_LOG(LS_ERROR) << "Failed to open audio input file: " << _inputFilename;
-    _recording = false;
-    delete[] _recordingBuffer;
-    _recordingBuffer = NULL;
-    return -1;
+  if (!_inputFilename.empty()) {
+    _inputFile = FileWrapper::OpenReadOnly(_inputFilename.c_str());
+    if (!_inputFile.is_open()) {
+      RTC_LOG(LS_ERROR) << "Failed to open audio input file: "
+                        << _inputFilename;
+      _recording = false;
+      delete[] _recordingBuffer;
+      _recordingBuffer = NULL;
+      return -1;
+    }
   }
 
   _ptrThreadRec.reset(new rtc::PlatformThread(
-      RecThreadFunc, this, "webrtc_audio_module_capture_thread"));
+      RecThreadFunc, this, "webrtc_audio_module_capture_thread",
+      rtc::kRealtimePriority));
 
   _ptrThreadRec->Start();
-  _ptrThreadRec->SetPriority(rtc::kRealtimePriority);
 
   RTC_LOG(LS_INFO) << "Started recording from input file: " << _inputFilename;
 
@@ -304,7 +304,7 @@ int32_t FileAudioDevice::StopRecording() {
     delete[] _recordingBuffer;
     _recordingBuffer = NULL;
   }
-  _inputFile.CloseFile();
+  _inputFile.Close();
 
   RTC_LOG(LS_INFO) << "Stopped recording from input file: " << _inputFilename;
   return 0;
@@ -439,12 +439,16 @@ void FileAudioDevice::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
   _ptrAudioBuffer->SetPlayoutChannels(0);
 }
 
-bool FileAudioDevice::PlayThreadFunc(void* pThis) {
-  return (static_cast<FileAudioDevice*>(pThis)->PlayThreadProcess());
+void FileAudioDevice::PlayThreadFunc(void* pThis) {
+  FileAudioDevice* device = static_cast<FileAudioDevice*>(pThis);
+  while (device->PlayThreadProcess()) {
+  }
 }
 
-bool FileAudioDevice::RecThreadFunc(void* pThis) {
-  return (static_cast<FileAudioDevice*>(pThis)->RecThreadProcess());
+void FileAudioDevice::RecThreadFunc(void* pThis) {
+  FileAudioDevice* device = static_cast<FileAudioDevice*>(pThis);
+  while (device->RecThreadProcess()) {
+  }
 }
 
 bool FileAudioDevice::PlayThreadProcess() {

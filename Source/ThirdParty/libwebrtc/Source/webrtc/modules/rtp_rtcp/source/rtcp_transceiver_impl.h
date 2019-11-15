@@ -24,7 +24,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 #include "modules/rtp_rtcp/source/rtcp_transceiver_config.h"
-#include "rtc_base/cancelable_task_handle.h"
+#include "rtc_base/task_utils/repeating_task.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
@@ -38,6 +38,8 @@ class RtcpTransceiverImpl {
   RtcpTransceiverImpl(const RtcpTransceiverImpl&) = delete;
   RtcpTransceiverImpl& operator=(const RtcpTransceiverImpl&) = delete;
   ~RtcpTransceiverImpl();
+
+  void StopPeriodicTask() { periodic_task_handle_.Stop(); }
 
   void AddMediaReceiverRtcpObserver(uint32_t remote_ssrc,
                                     MediaReceiverRtcpObserver* observer);
@@ -96,7 +98,7 @@ class RtcpTransceiverImpl {
   // TODO(danilchap): Remove entries from remote_senders_ that are no longer
   // needed.
   std::map<uint32_t, RemoteSenderState> remote_senders_;
-  rtc::CancelableTaskHandle periodic_task_handle_;
+  RepeatingTaskHandle periodic_task_handle_;
 };
 
 }  // namespace webrtc

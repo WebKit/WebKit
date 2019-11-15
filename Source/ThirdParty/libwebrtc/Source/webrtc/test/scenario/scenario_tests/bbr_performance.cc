@@ -7,10 +7,10 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "rtc_base/random.h"
-
+#include "modules/congestion_controller/bbr/bbr_factory.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/experiments/field_trial_units.h"
+#include "rtc_base/random.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
@@ -20,10 +20,10 @@ namespace test {
 namespace {
 constexpr int64_t kRunTimeMs = 60000;
 
-using ::testing::Values;
 using ::testing::Combine;
-using ::testing::tuple;
 using ::testing::make_tuple;
+using ::testing::tuple;
+using ::testing::Values;
 
 using Codec = VideoStreamConfig::Encoder::Codec;
 using CodecImpl = VideoStreamConfig::Encoder::Implementation;
@@ -65,7 +65,9 @@ struct CallTestConfig {
     void Parse(std::string config_str) {
       ParseFieldTrial(
           {
-              &use_bbr, &bbr_no_target_rate, &bbr_initial_window,
+              &use_bbr,
+              &bbr_no_target_rate,
+              &bbr_initial_window,
               &bbr_encoder_gain,
           },
           config_str);
@@ -96,11 +98,10 @@ struct CallTestConfig {
     return trial.str();
   }
   std::string FieldTrials() const {
-    std::string trials = "WebRTC-TaskQueueCongestionControl/Enabled/";
+    std::string trials;
     if (tuning.use_bbr) {
       trials +=
           "WebRTC-BweCongestionController/Enabled,BBR/"
-          "WebRTC-PacerPushbackExperiment/Enabled/"
           "WebRTC-Pacer-DrainQueue/Disabled/"
           "WebRTC-Pacer-PadInSilence/Enabled/"
           "WebRTC-Pacer-BlockAudio/Disabled/"
@@ -131,7 +132,7 @@ struct CallTestConfig {
 }  // namespace
 class BbrScenarioTest
     : public ::testing::Test,
-      public testing::WithParamInterface<tuple<std::string, std::string>> {
+      public ::testing::WithParamInterface<tuple<std::string, std::string>> {
  public:
   BbrScenarioTest() {
     conf_.Parse(::testing::get<0>(GetParam()), ::testing::get<1>(GetParam()));
@@ -144,30 +145,26 @@ class BbrScenarioTest
 };
 
 TEST_P(BbrScenarioTest, ReceivesVideo) {
+  BbrNetworkControllerFactory bbr_factory;
   Scenario s("bbr_test_gen/bbr__" + conf_.Name());
+  CallClientConfig call_config;
+  if (conf_.tuning.use_bbr) {
+    call_config.transport.cc_factory = &bbr_factory;
+  }
+  call_config.transport.rates.min_rate = DataRate::kbps(30);
+  call_config.transport.rates.max_rate = DataRate::kbps(1800);
 
-  CallClient* alice = s.CreateClient("send", [&](CallClientConfig* c) {
-    if (conf_.tuning.use_bbr)
-      c->transport.cc = TransportControllerConfig::CongestionController::kBbr;
-    c->transport.state_log_interval = TimeDelta::ms(100);
-    c->transport.rates.min_rate = DataRate::kbps(30);
-    c->transport.rates.max_rate = DataRate::kbps(1800);
-  });
-  CallClient* bob = s.CreateClient("return", [&](CallClientConfig* c) {
-    if (conf_.tuning.use_bbr && conf_.scenario.return_traffic)
-      c->transport.cc = TransportControllerConfig::CongestionController::kBbr;
-    c->transport.state_log_interval = TimeDelta::ms(100);
-    c->transport.rates.min_rate = DataRate::kbps(30);
-    c->transport.rates.max_rate = DataRate::kbps(1800);
-  });
-  NetworkNodeConfig net_conf;
-  net_conf.simulation.bandwidth = conf_.scenario.capacity;
-  net_conf.simulation.delay = conf_.scenario.propagation_delay;
-  net_conf.simulation.loss_rate = conf_.scenario.loss_rate;
-  net_conf.simulation.delay_std_dev = conf_.scenario.delay_noise;
-  SimulationNode* send_net = s.CreateSimulationNode(net_conf);
-  SimulationNode* ret_net = s.CreateSimulationNode(net_conf);
-  auto route = s.CreateRoutes(alice, {send_net}, bob, {ret_net});
+  CallClient* alice = s.CreateClient("send", call_config);
+  CallClient* bob = s.CreateClient("return", call_config);
+  NetworkSimulationConfig net_conf;
+  net_conf.bandwidth = conf_.scenario.capacity;
+  net_conf.delay = conf_.scenario.propagation_delay;
+  net_conf.loss_rate = conf_.scenario.loss_rate;
+  net_conf.delay_std_dev = conf_.scenario.delay_noise;
+  auto* send_net = s.CreateMutableSimulationNode(net_conf);
+  auto* ret_net = s.CreateMutableSimulationNode(net_conf);
+  auto route =
+      s.CreateRoutes(alice, {send_net->node()}, bob, {ret_net->node()});
 
   VideoStreamPair* alice_video =
       s.CreateVideoStream(route->forward(), [&](VideoStreamConfig* c) {
@@ -193,11 +190,11 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
       }
     });
   }
-  CrossTrafficConfig cross_config;
+  RandomWalkConfig cross_config;
   cross_config.peak_rate = conf_.scenario.cross_traffic;
   cross_config.random_seed = conf_.scenario.random_seed;
-  CrossTrafficSource* cross_traffic =
-      s.CreateCrossTraffic({send_net}, cross_config);
+  auto* cross_traffic = s.net()->CreateRandomWalkCrossTraffic(
+      s.net()->CreateTrafficRoute({send_net->node()}), cross_config);
 
   s.CreatePrinter("send.stats.txt", TimeDelta::ms(100),
                   {alice->StatsPrinter(), alice_video->send()->StatsPrinter(),
@@ -213,11 +210,12 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
   s.RunFor(TimeDelta::ms(kRunTimeMs));
 }
 
-INSTANTIATE_TEST_CASE_P(Selected,
-                        BbrScenarioTest,
-                        Values(make_tuple("rs:1,bw:150,dl:100,ct:100", "bbr")));
+INSTANTIATE_TEST_SUITE_P(Selected,
+                         BbrScenarioTest,
+                         Values(make_tuple("rs:1,bw:150,dl:100,ct:100",
+                                           "bbr")));
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     OneWayTuning,
     BbrScenarioTest,
     Values(make_tuple("bw:150,dl:100", "bbr,iw:,eg:100%,notr"),
@@ -225,34 +223,34 @@ INSTANTIATE_TEST_CASE_P(
            make_tuple("bw:150,dl:100", "bbr,iw:8000,eg:100%"),
            make_tuple("bw:150,dl:100", "bbr,iw:8000,eg:80%")));
 
-INSTANTIATE_TEST_CASE_P(OneWayTuned,
-                        BbrScenarioTest,
-                        Values(make_tuple("bw:150,dl:100", "bbr"),
-                               make_tuple("bw:150,dl:100", ""),
-                               make_tuple("bw:800,dl:100", "bbr"),
-                               make_tuple("bw:800,dl:100", "")));
+INSTANTIATE_TEST_SUITE_P(OneWayTuned,
+                         BbrScenarioTest,
+                         Values(make_tuple("bw:150,dl:100", "bbr"),
+                                make_tuple("bw:150,dl:100", ""),
+                                make_tuple("bw:800,dl:100", "bbr"),
+                                make_tuple("bw:800,dl:100", "")));
 
-INSTANTIATE_TEST_CASE_P(OneWayDegraded,
-                        BbrScenarioTest,
-                        Values(make_tuple("bw:150,dl:100,dn:30,pl:5%", "bbr"),
-                               make_tuple("bw:150,dl:100,dn:30,pl:5%", ""),
+INSTANTIATE_TEST_SUITE_P(OneWayDegraded,
+                         BbrScenarioTest,
+                         Values(make_tuple("bw:150,dl:100,dn:30,pl:5%", "bbr"),
+                                make_tuple("bw:150,dl:100,dn:30,pl:5%", ""),
 
-                               make_tuple("bw:150,ct:100,dl:100", "bbr"),
-                               make_tuple("bw:150,ct:100,dl:100", ""),
+                                make_tuple("bw:150,ct:100,dl:100", "bbr"),
+                                make_tuple("bw:150,ct:100,dl:100", ""),
 
-                               make_tuple("bw:800,dl:100,dn:30,pl:5%", "bbr"),
-                               make_tuple("bw:800,dl:100,dn:30,pl:5%", ""),
+                                make_tuple("bw:800,dl:100,dn:30,pl:5%", "bbr"),
+                                make_tuple("bw:800,dl:100,dn:30,pl:5%", ""),
 
-                               make_tuple("bw:800,ct:600,dl:100", "bbr"),
-                               make_tuple("bw:800,ct:600,dl:100", "")));
+                                make_tuple("bw:800,ct:600,dl:100", "bbr"),
+                                make_tuple("bw:800,ct:600,dl:100", "")));
 
-INSTANTIATE_TEST_CASE_P(TwoWay,
-                        BbrScenarioTest,
-                        Values(make_tuple("ret,bw:150,dl:100", "bbr"),
-                               make_tuple("ret,bw:150,dl:100", ""),
-                               make_tuple("ret,bw:800,dl:100", "bbr"),
-                               make_tuple("ret,bw:800,dl:100", ""),
-                               make_tuple("ret,bw:150,dl:50", "bbr"),
-                               make_tuple("ret,bw:150,dl:50", "")));
+INSTANTIATE_TEST_SUITE_P(TwoWay,
+                         BbrScenarioTest,
+                         Values(make_tuple("ret,bw:150,dl:100", "bbr"),
+                                make_tuple("ret,bw:150,dl:100", ""),
+                                make_tuple("ret,bw:800,dl:100", "bbr"),
+                                make_tuple("ret,bw:800,dl:100", ""),
+                                make_tuple("ret,bw:150,dl:50", "bbr"),
+                                make_tuple("ret,bw:150,dl:50", "")));
 }  // namespace test
 }  // namespace webrtc

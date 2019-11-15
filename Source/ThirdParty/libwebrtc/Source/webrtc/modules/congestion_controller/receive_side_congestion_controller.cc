@@ -11,6 +11,7 @@
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
 #include "modules/pacing/packet_router.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
 #include "rtc_base/logging.h"
@@ -22,8 +23,7 @@ static const uint32_t kTimeOffsetSwitchThreshold = 30;
 }  // namespace
 
 ReceiveSideCongestionController::WrappingBitrateEstimator::
-    WrappingBitrateEstimator(RemoteBitrateObserver* observer,
-                             const Clock* clock)
+    WrappingBitrateEstimator(RemoteBitrateObserver* observer, Clock* clock)
     : observer_(observer),
       clock_(clock),
       rbe_(new RemoteBitrateEstimatorSingleStream(observer_, clock_)),
@@ -119,10 +119,10 @@ void ReceiveSideCongestionController::WrappingBitrateEstimator::
 }
 
 ReceiveSideCongestionController::ReceiveSideCongestionController(
-    const Clock* clock,
+    Clock* clock,
     PacketRouter* packet_router)
     : remote_bitrate_estimator_(packet_router, clock),
-      remote_estimator_proxy_(clock, packet_router) {}
+      remote_estimator_proxy_(clock, packet_router, &field_trial_config_) {}
 
 void ReceiveSideCongestionController::OnReceivedPacket(
     int64_t arrival_time_ms,
@@ -137,6 +137,11 @@ void ReceiveSideCongestionController::OnReceivedPacket(
     remote_bitrate_estimator_.IncomingPacket(arrival_time_ms, payload_size,
                                              header);
   }
+}
+
+void ReceiveSideCongestionController::SetSendPeriodicFeedback(
+    bool send_periodic_feedback) {
+  remote_estimator_proxy_.SetSendPeriodicFeedback(send_periodic_feedback);
 }
 
 RemoteBitrateEstimator*

@@ -12,13 +12,14 @@
 
 #include <math.h>
 #include <stddef.h>
+
 #include <algorithm>
 #include <numeric>
 
 #include "modules/audio_processing/aec3/moving_average.h"
 #include "modules/audio_processing/aec3/vector_math.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/atomicops.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -107,7 +108,7 @@ float SuppressionGain::UpperBandsGain(
     const std::array<float, kFftLengthBy2Plus1>& comfort_noise_spectrum,
     const absl::optional<int>& narrow_peak_band,
     bool saturated_echo,
-    const std::vector<std::vector<float>>& render,
+    const std::vector<std::vector<std::vector<float>>>& render,
     const std::array<float, kFftLengthBy2Plus1>& low_band_gain) const {
   RTC_DCHECK_LT(0, render.size());
   if (render.size() == 1) {
@@ -130,12 +131,12 @@ float SuppressionGain::UpperBandsGain(
 
   // Compute the upper and lower band energies.
   const auto sum_of_squares = [](float a, float b) { return a + b * b; };
-  const float low_band_energy =
-      std::accumulate(render[0].begin(), render[0].end(), 0.f, sum_of_squares);
+  const float low_band_energy = std::accumulate(
+      render[0][0].begin(), render[0][0].end(), 0.f, sum_of_squares);
   float high_band_energy = 0.f;
   for (size_t k = 1; k < render.size(); ++k) {
-    const float energy = std::accumulate(render[k].begin(), render[k].end(),
-                                         0.f, sum_of_squares);
+    const float energy = std::accumulate(
+        render[k][0].begin(), render[k][0].end(), 0.f, sum_of_squares);
     high_band_energy = std::max(high_band_energy, energy);
   }
 
@@ -197,7 +198,6 @@ void SuppressionGain::GainToNoAudibleEcho(
 // Compute the minimum gain as the attenuating gain to put the signal just
 // above the zero sample values.
 void SuppressionGain::GetMinGain(
-    rtc::ArrayView<const float> suppressor_input,
     rtc::ArrayView<const float> weighted_residual_echo,
     bool low_noise_render,
     bool saturated_echo,
@@ -207,10 +207,10 @@ void SuppressionGain::GetMinGain(
         low_noise_render ? config_.echo_audibility.low_render_limit
                          : config_.echo_audibility.normal_render_limit;
 
-    for (size_t k = 0; k < suppressor_input.size(); ++k) {
-      const float denom =
-          std::min(suppressor_input[k], weighted_residual_echo[k]);
-      min_gain[k] = denom > 0.f ? min_echo_power / denom : 1.f;
+    for (size_t k = 0; k < min_gain.size(); ++k) {
+      min_gain[k] = weighted_residual_echo[k] > 0.f
+                        ? min_echo_power / weighted_residual_echo[k]
+                        : 1.f;
       min_gain[k] = std::min(min_gain[k], 1.f);
     }
     for (size_t k = 0; k < 6; ++k) {
@@ -259,15 +259,15 @@ void SuppressionGain::LowerBandGain(
   WeightEchoForAudibility(config_, residual_echo, weighted_residual_echo);
 
   std::array<float, kFftLengthBy2Plus1> min_gain;
-  GetMinGain(suppressor_input, weighted_residual_echo, low_noise_render,
-             saturated_echo, min_gain);
+  GetMinGain(weighted_residual_echo, low_noise_render, saturated_echo,
+             min_gain);
 
   std::array<float, kFftLengthBy2Plus1> max_gain;
   GetMaxGain(max_gain);
 
-    GainToNoAudibleEcho(nearend, weighted_residual_echo, comfort_noise,
-                        min_gain, max_gain, gain);
-    AdjustForExternalFilters(gain);
+  GainToNoAudibleEcho(nearend, weighted_residual_echo, comfort_noise, min_gain,
+                      max_gain, gain);
+  AdjustForExternalFilters(gain);
 
   // Adjust the gain for frequencies which have not yet converged.
   AdjustNonConvergedFrequencies(gain);
@@ -311,16 +311,13 @@ SuppressionGain::SuppressionGain(const EchoCanceller3Config& config,
 SuppressionGain::~SuppressionGain() = default;
 
 void SuppressionGain::GetGain(
-    const std::array<float, kFftLengthBy2Plus1>& suppressor_input_spectrum,
     const std::array<float, kFftLengthBy2Plus1>& nearend_spectrum,
     const std::array<float, kFftLengthBy2Plus1>& echo_spectrum,
     const std::array<float, kFftLengthBy2Plus1>& residual_echo_spectrum,
     const std::array<float, kFftLengthBy2Plus1>& comfort_noise_spectrum,
-    const FftData& linear_aec_fft,
-    const FftData& capture_fft,
     const RenderSignalAnalyzer& render_signal_analyzer,
     const AecState& aec_state,
-    const std::vector<std::vector<float>>& render,
+    const std::vector<std::vector<std::vector<float>>>& render,
     float* high_bands_gain,
     std::array<float, kFftLengthBy2Plus1>* low_band_gain) {
   RTC_DCHECK(high_bands_gain);
@@ -342,17 +339,8 @@ void SuppressionGain::GetGain(
 
   // Compute gain for the lower band.
   bool low_noise_render = low_render_detector_.Detect(render);
-  LowerBandGain(low_noise_render, aec_state, suppressor_input_spectrum,
-                nearend_average, residual_echo_spectrum, comfort_noise_spectrum,
-                low_band_gain);
-
-  // Limit the gain of the lower bands during start up and after resets.
-  const float gain_upper_bound = aec_state.SuppressionGainLimit();
-  if (gain_upper_bound < 1.f) {
-    for (size_t k = 0; k < low_band_gain->size(); ++k) {
-      (*low_band_gain)[k] = std::min((*low_band_gain)[k], gain_upper_bound);
-    }
-  }
+  LowerBandGain(low_noise_render, aec_state, nearend_spectrum, nearend_average,
+                residual_echo_spectrum, comfort_noise_spectrum, low_band_gain);
 
   // Compute the gain for the upper bands.
   const absl::optional<int> narrow_peak_band =
@@ -378,10 +366,10 @@ void SuppressionGain::SetInitialState(bool state) {
 // Detects when the render signal can be considered to have low power and
 // consist of stationary noise.
 bool SuppressionGain::LowNoiseRenderDetector::Detect(
-    const std::vector<std::vector<float>>& render) {
+    const std::vector<std::vector<std::vector<float>>>& render) {
   float x2_sum = 0.f;
   float x2_max = 0.f;
-  for (auto x_k : render[0]) {
+  for (auto x_k : render[0][0]) {
     const float x2 = x_k * x_k;
     x2_sum += x2;
     x2_max = std::max(x2_max, x2);

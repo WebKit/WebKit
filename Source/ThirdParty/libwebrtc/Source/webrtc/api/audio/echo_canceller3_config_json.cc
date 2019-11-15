@@ -9,9 +9,12 @@
  */
 #include "api/audio/echo_canceller3_config_json.h"
 
+#include <stddef.h>
+
 #include <string>
 #include <vector>
 
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/json.h"
 #include "rtc_base/strings/string_builder.h"
@@ -135,9 +138,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
   }
 
   Json::Value section;
-  if (rtc::GetValueFromJsonObject(root, "buffering", &section)) {
-    ReadParam(section, "use_new_render_buffering",
-              &cfg.buffering.use_new_render_buffering);
+  if (rtc::GetValueFromJsonObject(aec3_root, "buffering", &section)) {
     ReadParam(section, "excess_render_detection_interval_blocks",
               &cfg.buffering.excess_render_detection_interval_blocks);
     ReadParam(section, "max_allowed_excess_render_blocks",
@@ -148,18 +149,10 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "default_delay", &cfg.delay.default_delay);
     ReadParam(section, "down_sampling_factor", &cfg.delay.down_sampling_factor);
     ReadParam(section, "num_filters", &cfg.delay.num_filters);
-    ReadParam(section, "api_call_jitter_blocks",
-              &cfg.delay.api_call_jitter_blocks);
-    ReadParam(section, "min_echo_path_delay_blocks",
-              &cfg.delay.min_echo_path_delay_blocks);
-    ReadParam(section, "delay_headroom_blocks",
-              &cfg.delay.delay_headroom_blocks);
-    ReadParam(section, "hysteresis_limit_1_blocks",
-              &cfg.delay.hysteresis_limit_1_blocks);
-    ReadParam(section, "hysteresis_limit_2_blocks",
-              &cfg.delay.hysteresis_limit_2_blocks);
-    ReadParam(section, "skew_hysteresis_blocks",
-              &cfg.delay.skew_hysteresis_blocks);
+    ReadParam(section, "delay_headroom_samples",
+              &cfg.delay.delay_headroom_samples);
+    ReadParam(section, "hysteresis_limit_blocks",
+              &cfg.delay.hysteresis_limit_blocks);
     ReadParam(section, "fixed_capture_delay_samples",
               &cfg.delay.fixed_capture_delay_samples);
     ReadParam(section, "delay_estimate_smoothing",
@@ -175,6 +168,9 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
       ReadParam(subsection, "converged",
                 &cfg.delay.delay_selection_thresholds.converged);
     }
+
+    ReadParam(section, "use_external_delay_estimator",
+              &cfg.delay.use_external_delay_estimator);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "filter", &section)) {
@@ -190,6 +186,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.filter.conservative_initial_phase);
     ReadParam(section, "enable_shadow_filter_output_usage",
               &cfg.filter.enable_shadow_filter_output_usage);
+    ReadParam(section, "use_linear_filter", &cfg.filter.use_linear_filter);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "erle", &section)) {
@@ -201,12 +198,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "ep_strength", &section)) {
-    ReadParam(section, "lf", &cfg.ep_strength.lf);
-    ReadParam(section, "mf", &cfg.ep_strength.mf);
-    ReadParam(section, "hf", &cfg.ep_strength.hf);
+    ReadParam(section, "default_gain", &cfg.ep_strength.default_gain);
     ReadParam(section, "default_len", &cfg.ep_strength.default_len);
-    ReadParam(section, "reverb_based_on_render",
-              &cfg.ep_strength.reverb_based_on_render);
     ReadParam(section, "echo_can_saturate", &cfg.ep_strength.echo_can_saturate);
     ReadParam(section, "bounded_erl", &cfg.ep_strength.bounded_erl);
   }
@@ -224,8 +217,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.echo_audibility.audibility_threshold_mf);
     ReadParam(section, "audibility_threshold_hf",
               &cfg.echo_audibility.audibility_threshold_hf);
-    ReadParam(section, "use_stationary_properties",
-              &cfg.echo_audibility.use_stationary_properties);
+    ReadParam(section, "use_stationarity_properties",
+              &cfg.echo_audibility.use_stationarity_properties);
     ReadParam(section, "use_stationarity_properties_at_init",
               &cfg.echo_audibility.use_stationarity_properties_at_init);
   }
@@ -241,17 +234,6 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
 
   if (rtc::GetValueFromJsonObject(aec3_root, "echo_removal_control",
                                   &section)) {
-    Json::Value subsection;
-    if (rtc::GetValueFromJsonObject(section, "gain_rampup", &subsection)) {
-      ReadParam(subsection, "initial_gain",
-                &cfg.echo_removal_control.gain_rampup.initial_gain);
-      ReadParam(subsection, "first_non_zero_gain",
-                &cfg.echo_removal_control.gain_rampup.first_non_zero_gain);
-      ReadParam(subsection, "non_zero_gain_blocks",
-                &cfg.echo_removal_control.gain_rampup.non_zero_gain_blocks);
-      ReadParam(subsection, "full_gain_blocks",
-                &cfg.echo_removal_control.gain_rampup.full_gain_blocks);
-    }
     ReadParam(section, "has_clock_drift",
               &cfg.echo_removal_control.has_clock_drift);
     ReadParam(section, "linear_and_stable_echo_path",
@@ -271,12 +253,6 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.echo_model.render_pre_window_size);
     ReadParam(section, "render_post_window_size",
               &cfg.echo_model.render_post_window_size);
-    ReadParam(section, "render_pre_window_size_init",
-              &cfg.echo_model.render_pre_window_size_init);
-    ReadParam(section, "render_post_window_size_init",
-              &cfg.echo_model.render_post_window_size_init);
-    ReadParam(section, "nonlinear_hold", &cfg.echo_model.nonlinear_hold);
-    ReadParam(section, "nonlinear_release", &cfg.echo_model.nonlinear_release);
   }
 
   Json::Value subsection;
@@ -347,22 +323,21 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   rtc::StringBuilder ost;
   ost << "{";
   ost << "\"aec3\": {";
+  ost << "\"buffering\": {";
+  ost << "\"excess_render_detection_interval_blocks\": "
+      << config.buffering.excess_render_detection_interval_blocks << ",";
+  ost << "\"max_allowed_excess_render_blocks\": "
+      << config.buffering.max_allowed_excess_render_blocks;
+  ost << "},";
+
   ost << "\"delay\": {";
   ost << "\"default_delay\": " << config.delay.default_delay << ",";
   ost << "\"down_sampling_factor\": " << config.delay.down_sampling_factor
       << ",";
   ost << "\"num_filters\": " << config.delay.num_filters << ",";
-  ost << "\"api_call_jitter_blocks\": " << config.delay.api_call_jitter_blocks
+  ost << "\"delay_headroom_samples\": " << config.delay.delay_headroom_samples
       << ",";
-  ost << "\"min_echo_path_delay_blocks\": "
-      << config.delay.min_echo_path_delay_blocks << ",";
-  ost << "\"delay_headroom_blocks\": " << config.delay.delay_headroom_blocks
-      << ",";
-  ost << "\"hysteresis_limit_1_blocks\": "
-      << config.delay.hysteresis_limit_1_blocks << ",";
-  ost << "\"hysteresis_limit_2_blocks\": "
-      << config.delay.hysteresis_limit_2_blocks << ",";
-  ost << "\"skew_hysteresis_blocks\": " << config.delay.skew_hysteresis_blocks
+  ost << "\"hysteresis_limit_blocks\": " << config.delay.hysteresis_limit_blocks
       << ",";
   ost << "\"fixed_capture_delay_samples\": "
       << config.delay.fixed_capture_delay_samples << ",";
@@ -431,12 +406,8 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "},";
 
   ost << "\"ep_strength\": {";
-  ost << "\"lf\": " << config.ep_strength.lf << ",";
-  ost << "\"mf\": " << config.ep_strength.mf << ",";
-  ost << "\"hf\": " << config.ep_strength.hf << ",";
+  ost << "\"default_gain\": " << config.ep_strength.default_gain << ",";
   ost << "\"default_len\": " << config.ep_strength.default_len << ",";
-  ost << "\"reverb_based_on_render\": "
-      << (config.ep_strength.reverb_based_on_render ? "true" : "false") << ",";
   ost << "\"echo_can_saturate\": "
       << (config.ep_strength.echo_can_saturate ? "true" : "false") << ",";
   ost << "\"bounded_erl\": "
@@ -456,8 +427,8 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
       << config.echo_audibility.audibility_threshold_mf << ",";
   ost << "\"audibility_threshold_hf\": "
       << config.echo_audibility.audibility_threshold_hf << ",";
-  ost << "\"use_stationary_properties\": "
-      << (config.echo_audibility.use_stationary_properties ? "true" : "false")
+  ost << "\"use_stationarity_properties\": "
+      << (config.echo_audibility.use_stationarity_properties ? "true" : "false")
       << ",";
   ost << "\"use_stationarity_properties_at_init\": "
       << (config.echo_audibility.use_stationarity_properties_at_init ? "true"
@@ -474,16 +445,6 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "},";
 
   ost << "\"echo_removal_control\": {";
-  ost << "\"gain_rampup\": {";
-  ost << "\"initial_gain\": "
-      << config.echo_removal_control.gain_rampup.initial_gain << ",";
-  ost << "\"first_non_zero_gain\": "
-      << config.echo_removal_control.gain_rampup.first_non_zero_gain << ",";
-  ost << "\"non_zero_gain_blocks\": "
-      << config.echo_removal_control.gain_rampup.non_zero_gain_blocks << ",";
-  ost << "\"full_gain_blocks\": "
-      << config.echo_removal_control.gain_rampup.full_gain_blocks;
-  ost << "},";
   ost << "\"has_clock_drift\": "
       << (config.echo_removal_control.has_clock_drift ? "true" : "false")
       << ",";
@@ -504,13 +465,7 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"render_pre_window_size\": "
       << config.echo_model.render_pre_window_size << ",";
   ost << "\"render_post_window_size\": "
-      << config.echo_model.render_post_window_size << ",";
-  ost << "\"render_pre_window_size_init\": "
-      << config.echo_model.render_pre_window_size_init << ",";
-  ost << "\"render_post_window_size_init\": "
-      << config.echo_model.render_post_window_size_init << ",";
-  ost << "\"nonlinear_hold\": " << config.echo_model.nonlinear_hold << ",";
-  ost << "\"nonlinear_release\": " << config.echo_model.nonlinear_release;
+      << config.echo_model.render_post_window_size;
   ost << "},";
 
   ost << "\"suppressor\": {";

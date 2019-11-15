@@ -11,11 +11,13 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WINDOW_LIST_UTILS_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WINDOW_LIST_UTILS_H_
 
+#include <X11/X.h>
 #include <X11/Xlib.h>
+#include <stdint.h>
 
+#include "api/function_view.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/linux/x_atom_cache.h"
-#include "rtc_base/function_view.h"
 
 namespace webrtc {
 

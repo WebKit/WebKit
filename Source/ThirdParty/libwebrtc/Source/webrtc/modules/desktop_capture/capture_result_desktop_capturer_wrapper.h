@@ -15,6 +15,7 @@
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_capturer_wrapper.h"
+#include "modules/desktop_capture/desktop_frame.h"
 
 namespace webrtc {
 

@@ -8,8 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
+#include "api/video/video_bitrate_allocation.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -24,6 +26,11 @@
 #include "test/video_encoder_proxy_factory.h"
 
 namespace webrtc {
+namespace {
+enum : int {  // The first valid value is 1.
+  kAbsSendTimeExtensionId = 1,
+};
+}  // namespace
 
 class BandwidthEndToEndTest : public test::CallTest {
  public:
@@ -40,8 +47,8 @@ TEST_F(BandwidthEndToEndTest, ReceiveStreamSendsRemb) {
         std::vector<VideoReceiveStream::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       send_config->rtp.extensions.clear();
-      send_config->rtp.extensions.push_back(RtpExtension(
-          RtpExtension::kAbsSendTimeUri, test::kAbsSendTimeExtensionId));
+      send_config->rtp.extensions.push_back(
+          RtpExtension(RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId));
       (*receive_configs)[0].rtp.remb = true;
       (*receive_configs)[0].rtp.transport_cc = false;
     }
@@ -72,12 +79,15 @@ TEST_F(BandwidthEndToEndTest, ReceiveStreamSendsRemb) {
 
 class BandwidthStatsTest : public test::EndToEndTest {
  public:
-  explicit BandwidthStatsTest(bool send_side_bwe)
+  BandwidthStatsTest(
+      bool send_side_bwe,
+      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
       : EndToEndTest(test::CallTest::kDefaultTimeoutMs),
         sender_call_(nullptr),
         receiver_call_(nullptr),
         has_seen_pacer_delay_(false),
-        send_side_bwe_(send_side_bwe) {}
+        send_side_bwe_(send_side_bwe),
+        task_queue_(task_queue) {}
 
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
@@ -85,22 +95,29 @@ class BandwidthStatsTest : public test::EndToEndTest {
       VideoEncoderConfig* encoder_config) override {
     if (!send_side_bwe_) {
       send_config->rtp.extensions.clear();
-      send_config->rtp.extensions.push_back(RtpExtension(
-          RtpExtension::kAbsSendTimeUri, test::kAbsSendTimeExtensionId));
+      send_config->rtp.extensions.push_back(
+          RtpExtension(RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId));
       (*receive_configs)[0].rtp.remb = true;
       (*receive_configs)[0].rtp.transport_cc = false;
     }
   }
 
+  // Called on the pacer thread.
   Action OnSendRtp(const uint8_t* packet, size_t length) override {
-    Call::Stats sender_stats = sender_call_->GetStats();
-    Call::Stats receiver_stats = receiver_call_->GetStats();
-    if (!has_seen_pacer_delay_)
-      has_seen_pacer_delay_ = sender_stats.pacer_delay_ms > 0;
-    if (sender_stats.send_bandwidth_bps > 0 && has_seen_pacer_delay_) {
-      if (send_side_bwe_ || receiver_stats.recv_bandwidth_bps > 0)
-        observation_complete_.Set();
-    }
+    // Stats need to be fetched on the thread where the caller objects were
+    // constructed.
+    task_queue_->PostTask([this]() {
+      Call::Stats sender_stats = sender_call_->GetStats();
+      if (!has_seen_pacer_delay_)
+        has_seen_pacer_delay_ = sender_stats.pacer_delay_ms > 0;
+
+      if (sender_stats.send_bandwidth_bps > 0 && has_seen_pacer_delay_) {
+        Call::Stats receiver_stats = receiver_call_->GetStats();
+        if (send_side_bwe_ || receiver_stats.recv_bandwidth_bps > 0)
+          observation_complete_.Set();
+      }
+    });
+
     return SEND_PACKET;
   }
 
@@ -119,15 +136,16 @@ class BandwidthStatsTest : public test::EndToEndTest {
   Call* receiver_call_;
   bool has_seen_pacer_delay_;
   const bool send_side_bwe_;
+  test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
 };
 
 TEST_F(BandwidthEndToEndTest, VerifySendSideBweStats) {
-  BandwidthStatsTest test(true);
+  BandwidthStatsTest test(true, &task_queue_);
   RunBaseTest(&test);
 }
 
 TEST_F(BandwidthEndToEndTest, VerifyRecvSideBweStats) {
-  BandwidthStatsTest test(false);
+  BandwidthStatsTest test(false, &task_queue_);
   RunBaseTest(&test);
 }
 
@@ -139,23 +157,23 @@ TEST_F(BandwidthEndToEndTest, VerifyRecvSideBweStats) {
 TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
   class BweObserver : public test::EndToEndTest {
    public:
-    BweObserver()
+    explicit BweObserver(
+        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
         : EndToEndTest(kDefaultTimeoutMs),
           sender_call_(nullptr),
           clock_(Clock::GetRealTimeClock()),
           sender_ssrc_(0),
           remb_bitrate_bps_(1000000),
           receive_transport_(nullptr),
-          poller_thread_(&BitrateStatsPollingThread,
-                         this,
-                         "BitrateStatsPollingThread"),
           state_(kWaitForFirstRampUp),
-          retransmission_rate_limiter_(clock_, 1000) {}
+          retransmission_rate_limiter_(clock_, 1000),
+          task_queue_(task_queue) {}
 
     ~BweObserver() {}
 
     test::PacketTransport* CreateReceiveTransport(
-        test::SingleThreadedTaskQueueForTesting* task_queue) override {
+        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
+        override {
       receive_transport_ = new test::PacketTransport(
           task_queue, nullptr, this, test::PacketTransport::kReceiver,
           payload_type_map_,
@@ -186,63 +204,59 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
       config.clock = clock_;
       config.outgoing_transport = receive_transport_;
       config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-      rtp_rtcp_.reset(RtpRtcp::CreateRtpRtcp(config));
+      config.local_media_ssrc = (*receive_configs)[0].rtp.local_ssrc;
+      rtp_rtcp_ = RtpRtcp::Create(config);
       rtp_rtcp_->SetRemoteSSRC((*receive_configs)[0].rtp.remote_ssrc);
-      rtp_rtcp_->SetSSRC((*receive_configs)[0].rtp.local_ssrc);
       rtp_rtcp_->SetRTCPStatus(RtcpMode::kReducedSize);
     }
 
     void OnCallsCreated(Call* sender_call, Call* receiver_call) override {
+      RTC_DCHECK(sender_call);
       sender_call_ = sender_call;
-    }
-
-    static void BitrateStatsPollingThread(void* obj) {
-      static_cast<BweObserver*>(obj)->PollStats();
+      pending_task_ = task_queue_->PostTask([this]() { PollStats(); });
     }
 
     void PollStats() {
-      do {
-        if (sender_call_) {
-          Call::Stats stats = sender_call_->GetStats();
-          switch (state_) {
-            case kWaitForFirstRampUp:
-              if (stats.send_bandwidth_bps >= remb_bitrate_bps_) {
-                state_ = kWaitForRemb;
-                remb_bitrate_bps_ /= 2;
-                rtp_rtcp_->SetRemb(
-                    remb_bitrate_bps_,
-                    std::vector<uint32_t>(&sender_ssrc_, &sender_ssrc_ + 1));
-                rtp_rtcp_->SendRTCP(kRtcpRr);
-              }
-              break;
-
-            case kWaitForRemb:
-              if (stats.send_bandwidth_bps == remb_bitrate_bps_) {
-                state_ = kWaitForSecondRampUp;
-                remb_bitrate_bps_ *= 2;
-                rtp_rtcp_->SetRemb(
-                    remb_bitrate_bps_,
-                    std::vector<uint32_t>(&sender_ssrc_, &sender_ssrc_ + 1));
-                rtp_rtcp_->SendRTCP(kRtcpRr);
-              }
-              break;
-
-            case kWaitForSecondRampUp:
-              if (stats.send_bandwidth_bps == remb_bitrate_bps_) {
-                observation_complete_.Set();
-              }
-              break;
+      pending_task_ = ~0;  // for debugging purposes indicate no pending task.
+      Call::Stats stats = sender_call_->GetStats();
+      switch (state_) {
+        case kWaitForFirstRampUp:
+          if (stats.send_bandwidth_bps >= remb_bitrate_bps_) {
+            state_ = kWaitForRemb;
+            remb_bitrate_bps_ /= 2;
+            rtp_rtcp_->SetRemb(
+                remb_bitrate_bps_,
+                std::vector<uint32_t>(&sender_ssrc_, &sender_ssrc_ + 1));
+            rtp_rtcp_->SendRTCP(kRtcpRr);
           }
-        }
-      } while (!stop_event_.Wait(1000));
+          break;
+
+        case kWaitForRemb:
+          if (stats.send_bandwidth_bps == remb_bitrate_bps_) {
+            state_ = kWaitForSecondRampUp;
+            remb_bitrate_bps_ *= 2;
+            rtp_rtcp_->SetRemb(
+                remb_bitrate_bps_,
+                std::vector<uint32_t>(&sender_ssrc_, &sender_ssrc_ + 1));
+            rtp_rtcp_->SendRTCP(kRtcpRr);
+          }
+          break;
+
+        case kWaitForSecondRampUp:
+          if (stats.send_bandwidth_bps == remb_bitrate_bps_) {
+            observation_complete_.Set();
+            return;
+          }
+          break;
+      }
+
+      pending_task_ =
+          task_queue_->PostDelayedTask([this]() { PollStats(); }, 1000);
     }
 
     void PerformTest() override {
-      poller_thread_.Start();
       EXPECT_TRUE(Wait())
           << "Timed out while waiting for bitrate to change according to REMB.";
-      stop_event_.Set();
-      poller_thread_.Stop();
     }
 
    private:
@@ -254,21 +268,28 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
     int remb_bitrate_bps_;
     std::unique_ptr<RtpRtcp> rtp_rtcp_;
     test::PacketTransport* receive_transport_;
-    rtc::Event stop_event_;
-    rtc::PlatformThread poller_thread_;
     TestState state_;
     RateLimiter retransmission_rate_limiter_;
-  } test;
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting::TaskId pending_task_ =
+        ~0;
+  } test(&task_queue_);
 
   RunBaseTest(&test);
 }
 
 TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
+  // If these fields trial are on, we get lower bitrates than expected by this
+  // test, due to the packetization overhead and encoder pushback.
+  webrtc::test::ScopedFieldTrials field_trials(
+      std::string(field_trial::GetFieldTrialString()) +
+      "WebRTC-SubtractPacketizationOverhead/Disabled/"
+      "WebRTC-VideoRateControl/bitrate_adjuster:false/");
   class EncoderRateStatsTest : public test::EndToEndTest,
                                public test::FakeEncoder {
    public:
     explicit EncoderRateStatsTest(
-        test::SingleThreadedTaskQueueForTesting* task_queue)
+        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
         : EndToEndTest(kDefaultTimeoutMs),
           FakeEncoder(Clock::GetRealTimeClock()),
           task_queue_(task_queue),
@@ -294,15 +315,13 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
       RTC_DCHECK_EQ(1, encoder_config->number_of_streams);
     }
 
-    int32_t SetRateAllocation(const VideoBitrateAllocation& rate_allocation,
-                              uint32_t framerate) override {
+    void SetRates(const RateControlParameters& parameters) override {
       // Make sure not to trigger on any default zero bitrates.
-      if (rate_allocation.get_sum_bps() == 0)
-        return 0;
+      if (parameters.bitrate.get_sum_bps() == 0)
+        return;
       rtc::CritScope lock(&crit_);
-      bitrate_kbps_ = rate_allocation.get_sum_kbps();
+      bitrate_kbps_ = parameters.bitrate.get_sum_kbps();
       observation_complete_.Set();
-      return 0;
     }
 
     void PerformTest() override {
@@ -345,7 +364,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
     }
 
    private:
-    test::SingleThreadedTaskQueueForTesting* const task_queue_;
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
     rtc::CriticalSection crit_;
     VideoSendStream* send_stream_;
     test::VideoEncoderProxyFactory encoder_factory_;

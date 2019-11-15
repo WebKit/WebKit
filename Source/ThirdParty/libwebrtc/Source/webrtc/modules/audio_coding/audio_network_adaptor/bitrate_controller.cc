@@ -43,8 +43,10 @@ void BitrateController::UpdateNetworkMetrics(
     const NetworkMetrics& network_metrics) {
   if (network_metrics.target_audio_bitrate_bps)
     target_audio_bitrate_bps_ = network_metrics.target_audio_bitrate_bps;
-  if (network_metrics.overhead_bytes_per_packet)
+  if (network_metrics.overhead_bytes_per_packet) {
+    RTC_DCHECK_GT(*network_metrics.overhead_bytes_per_packet, 0);
     overhead_bytes_per_packet_ = network_metrics.overhead_bytes_per_packet;
+  }
 }
 
 void BitrateController::MakeDecision(AudioEncoderRuntimeConfig* config) {

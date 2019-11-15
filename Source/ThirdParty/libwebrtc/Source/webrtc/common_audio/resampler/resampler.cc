@@ -12,11 +12,12 @@
  * A wrapper for resampling a numerous amount of sampling combinations.
  */
 
+#include "common_audio/resampler/include/resampler.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "common_audio/resampler/include/resampler.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/logging.h"
 

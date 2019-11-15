@@ -16,20 +16,22 @@
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 using Microsoft::WRL::ComPtr;
 
 namespace webrtc {
 namespace webrtc_win {
 
-CoreAudioOutput::CoreAudioOutput()
-    : CoreAudioBase(CoreAudioBase::Direction::kOutput,
-                    [this](uint64_t freq) { return OnDataCallback(freq); },
-                    [this](ErrorType err) { return OnErrorCallback(err); }) {
+CoreAudioOutput::CoreAudioOutput(bool automatic_restart)
+    : CoreAudioBase(
+          CoreAudioBase::Direction::kOutput,
+          automatic_restart,
+          [this](uint64_t freq) { return OnDataCallback(freq); },
+          [this](ErrorType err) { return OnErrorCallback(err); }) {
   RTC_DLOG(INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  thread_checker_audio_.DetachFromThread();
+  thread_checker_audio_.Detach();
 }
 
 CoreAudioOutput::~CoreAudioOutput() {
@@ -146,12 +148,16 @@ int CoreAudioOutput::InitPlayout() {
 int CoreAudioOutput::StartPlayout() {
   RTC_DLOG(INFO) << __FUNCTION__ << ": " << IsRestarting();
   RTC_DCHECK(!Playing());
+  RTC_DCHECK(fine_audio_buffer_);
+  RTC_DCHECK(audio_device_buffer_);
   if (!initialized_) {
     RTC_DLOG(LS_WARNING)
         << "Playout can not start since InitPlayout must succeed first";
   }
-  if (fine_audio_buffer_) {
-    fine_audio_buffer_->ResetPlayout();
+
+  fine_audio_buffer_->ResetPlayout();
+  if (!IsRestarting()) {
+    audio_device_buffer_->StartPlayout();
   }
 
   if (!core_audio_utility::FillRenderEndpointBufferWithSilence(
@@ -187,6 +193,11 @@ int CoreAudioOutput::StopPlayout() {
   if (!Stop()) {
     RTC_LOG(LS_ERROR) << "StopPlayout failed";
     return -1;
+  }
+
+  if (!IsRestarting()) {
+    RTC_DCHECK(audio_device_buffer_);
+    audio_device_buffer_->StopPlayout();
   }
 
   // Release all allocated resources to allow for a restart without
@@ -381,6 +392,7 @@ int CoreAudioOutput::EstimateOutputLatencyMillis(uint64_t device_frequency) {
 bool CoreAudioOutput::HandleStreamDisconnected() {
   RTC_DLOG(INFO) << "<<<--- " << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_audio_);
+  RTC_DCHECK(automatic_restart());
 
   if (StopPlayout() != 0) {
     return false;

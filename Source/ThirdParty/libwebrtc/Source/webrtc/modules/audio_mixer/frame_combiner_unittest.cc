@@ -10,14 +10,19 @@
 
 #include "modules/audio_mixer/frame_combiner.h"
 
+#include <cstdint>
+#include <initializer_list>
 #include <numeric>
 #include <string>
+#include <type_traits>
 
+#include "api/array_view.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "modules/audio_mixer/gain_change_calculator.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -67,7 +72,7 @@ void SetUpFrames(int sample_rate_hz, int number_of_channels) {
 TEST(FrameCombiner, BasicApiCallsLimiter) {
   FrameCombiner combiner(true);
   for (const int rate : {8000, 18000, 34000, 48000}) {
-    for (const int number_of_channels : {1, 2}) {
+    for (const int number_of_channels : {1, 2, 4, 8}) {
       const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
       SetUpFrames(rate, number_of_channels);
 
@@ -83,12 +88,71 @@ TEST(FrameCombiner, BasicApiCallsLimiter) {
   }
 }
 
+// There are DCHECKs in place to check for invalid parameters.
+TEST(FrameCombiner, DebugBuildCrashesWithManyChannels) {
+  FrameCombiner combiner(true);
+  for (const int rate : {8000, 18000, 34000, 48000}) {
+    for (const int number_of_channels : {10, 20, 21}) {
+      if (static_cast<size_t>(rate / 100 * number_of_channels) >
+          AudioFrame::kMaxDataSizeSamples) {
+        continue;
+      }
+      const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
+      SetUpFrames(rate, number_of_channels);
+
+      const int number_of_frames = 2;
+      SCOPED_TRACE(
+          ProduceDebugText(rate, number_of_channels, number_of_frames));
+      const std::vector<AudioFrame*> frames_to_combine(
+          all_frames.begin(), all_frames.begin() + number_of_frames);
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+      EXPECT_DEATH(
+          combiner.Combine(frames_to_combine, number_of_channels, rate,
+                           frames_to_combine.size(), &audio_frame_for_mixing),
+          "");
+#elif !RTC_DCHECK_IS_ON
+      combiner.Combine(frames_to_combine, number_of_channels, rate,
+                       frames_to_combine.size(), &audio_frame_for_mixing);
+#endif
+    }
+  }
+}
+
+TEST(FrameCombiner, DebugBuildCrashesWithHighRate) {
+  FrameCombiner combiner(true);
+  for (const int rate : {50000, 96000, 128000, 196000}) {
+    for (const int number_of_channels : {1, 2, 3}) {
+      if (static_cast<size_t>(rate / 100 * number_of_channels) >
+          AudioFrame::kMaxDataSizeSamples) {
+        continue;
+      }
+      const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
+      SetUpFrames(rate, number_of_channels);
+
+      const int number_of_frames = 2;
+      SCOPED_TRACE(
+          ProduceDebugText(rate, number_of_channels, number_of_frames));
+      const std::vector<AudioFrame*> frames_to_combine(
+          all_frames.begin(), all_frames.begin() + number_of_frames);
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+      EXPECT_DEATH(
+          combiner.Combine(frames_to_combine, number_of_channels, rate,
+                           frames_to_combine.size(), &audio_frame_for_mixing),
+          "");
+#elif !RTC_DCHECK_IS_ON
+      combiner.Combine(frames_to_combine, number_of_channels, rate,
+                       frames_to_combine.size(), &audio_frame_for_mixing);
+#endif
+    }
+  }
+}
+
 // With no limiter, the rate has to be divisible by 100 since we use
 // 10 ms frames.
 TEST(FrameCombiner, BasicApiCallsNoLimiter) {
   FrameCombiner combiner(false);
   for (const int rate : {8000, 10000, 11000, 32000, 44100}) {
-    for (const int number_of_channels : {1, 2}) {
+    for (const int number_of_channels : {1, 2, 4, 8}) {
       const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
       SetUpFrames(rate, number_of_channels);
 
@@ -129,7 +193,7 @@ TEST(FrameCombiner, CombiningZeroFramesShouldProduceSilence) {
 TEST(FrameCombiner, CombiningOneFrameShouldNotChangeFrame) {
   FrameCombiner combiner(false);
   for (const int rate : {8000, 10000, 11000, 32000, 44100}) {
-    for (const int number_of_channels : {1, 2}) {
+    for (const int number_of_channels : {1, 2, 4, 8, 10}) {
       SCOPED_TRACE(ProduceDebugText(rate, number_of_channels, 1));
 
       SetUpFrames(rate, number_of_channels);
@@ -161,7 +225,7 @@ TEST(FrameCombiner, GainCurveIsSmoothForAlternatingNumberOfStreams) {
   std::vector<FrameCombinerConfig> configs = {
       {false, 30100, 2, 50.f},  {false, 16500, 1, 3200.f},
       {true, 8000, 1, 3200.f},  {true, 16000, 1, 50.f},
-      {true, 18000, 2, 3200.f}, {true, 10000, 2, 50.f},
+      {true, 18000, 8, 3200.f}, {true, 10000, 2, 50.f},
   };
 
   for (const auto& config : configs) {

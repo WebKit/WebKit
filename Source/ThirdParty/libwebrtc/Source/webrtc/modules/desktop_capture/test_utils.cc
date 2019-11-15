@@ -10,8 +10,10 @@
 
 #include "modules/desktop_capture/test_utils.h"
 
+#include <stdint.h>
 #include <string.h>
 
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

@@ -33,6 +33,7 @@ constexpr int AudioEncoderOpusConfig::kMaxBitrateBps;
 
 AudioEncoderOpusConfig::AudioEncoderOpusConfig()
     : frame_size_ms(kDefaultFrameSizeMs),
+      sample_rate_hz(48000),
       num_channels(1),
       application(ApplicationMode::kVoip),
       bitrate_bps(32000),
@@ -55,8 +56,14 @@ AudioEncoderOpusConfig& AudioEncoderOpusConfig::operator=(
 bool AudioEncoderOpusConfig::IsOk() const {
   if (frame_size_ms <= 0 || frame_size_ms % 10 != 0)
     return false;
-  if (num_channels != 1 && num_channels != 2)
+  if (sample_rate_hz != 16000 && sample_rate_hz != 48000) {
+    // Unsupported input sample rate. (libopus supports a few other rates as
+    // well; we can add support for them when needed.)
     return false;
+  }
+  if (num_channels >= 255) {
+    return false;
+  }
   if (!bitrate_bps)
     return false;
   if (*bitrate_bps < kMinBitrateBps || *bitrate_bps > kMaxBitrateBps)

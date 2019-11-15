@@ -11,6 +11,9 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
 #define MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
 
+#include <stdint.h>
+
+#include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video_codecs/video_codec.h"
 
@@ -21,8 +24,8 @@ class DefaultVideoBitrateAllocator : public VideoBitrateAllocator {
   explicit DefaultVideoBitrateAllocator(const VideoCodec& codec);
   ~DefaultVideoBitrateAllocator() override;
 
-  VideoBitrateAllocation GetAllocation(uint32_t total_bitrate,
-                                       uint32_t framerate) override;
+  VideoBitrateAllocation Allocate(
+      VideoBitrateAllocationParameters parameters) override;
 
  private:
   const VideoCodec codec_;

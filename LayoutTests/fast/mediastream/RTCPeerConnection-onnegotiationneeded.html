@@ -8,8 +8,17 @@
             description("Tests RTCPeerConnection onnegotiationneeded.");
 
             let stream;
-            let pc;
+            let pc, remotePC;
             let audioSender;
+
+            async function negotiate()
+            {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                await remotePC.setRemoteDescription(offer);
+                const answer = await remotePC.createAnswer();
+                await pc.setRemoteDescription(answer);
+            }
 
             function error()
             {
@@ -17,15 +26,17 @@
                 finishJSTest();
             }
 
-            function onNegotiationNeeded(event)
+            async function onNegotiationNeeded(event)
             {
                 testPassed('onNegotiationNeeded was called when a track was added.');
+                await negotiate();
                 removeTrack();
             }
 
-            function onNegotiationNeeded2(event)
+            async function onNegotiationNeeded2(event)
             {
                 testPassed('onNegotiationNeeded2 was called when a track was removed.');
+                await negotiate();
                 addTrack();
             }
 
@@ -35,12 +46,13 @@
                 finishJSTest();
             }
 
-            function gotStream(s)
+            async function gotStream(s)
             {
                 testPassed('Got a stream.');
                 stream = s;
 
                 pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+                remotePC = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 pc.onnegotiationneeded = onNegotiationNeeded;
 
                 audioSender = pc.addTrack(stream.getAudioTracks()[0], stream);

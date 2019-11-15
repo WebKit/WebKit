@@ -13,7 +13,7 @@
 
 #include <stddef.h>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -24,20 +24,20 @@ class BufferLevelFilter {
   virtual void Reset();
 
   // Updates the filter. Current buffer size is |buffer_size_packets| (Q0).
-  // If |time_stretched_samples| is non-zero, the value is converted to the
-  // corresponding number of packets, and is subtracted from the filtered
-  // value (thus bypassing the filter operation). |packet_len_samples| is the
-  // number of audio samples carried in each incoming packet.
-  virtual void Update(size_t buffer_size_packets,
-                      int time_stretched_samples,
-                      size_t packet_len_samples);
+  // |time_stretched_samples| is subtracted from the filtered value (thus
+  // bypassing the filter operation).
+  virtual void Update(size_t buffer_size_samples, int time_stretched_samples);
 
-  // Set the current target buffer level (obtained from
+  // Set the current target buffer level in number of packets (obtained from
   // DelayManager::base_target_level()). Used to select the appropriate
   // filter coefficient.
-  virtual void SetTargetBufferLevel(int target_buffer_level);
+  virtual void SetTargetBufferLevel(int target_buffer_level_packets);
 
-  virtual int filtered_current_level() const;
+  // Returns filtered current level in number of samples.
+  virtual int filtered_current_level() const {
+    // Round to nearest whole sample.
+    return (filtered_current_level_ + (1 << 7)) >> 8;
+  }
 
  private:
   int level_factor_;  // Filter factor for the buffer level filter in Q8.

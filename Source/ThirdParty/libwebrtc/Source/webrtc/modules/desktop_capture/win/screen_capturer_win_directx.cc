@@ -20,7 +20,7 @@
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -172,6 +172,10 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
       frame->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
                                  rtc::kNumNanosecsPerMillisec);
       frame->set_capturer_id(DesktopCapturerId::kScreenCapturerWinDirectx);
+
+      // TODO(julien.isorce): http://crbug.com/945468. Set the icc profile on
+      // the frame, see WindowCapturerMac::CaptureFrame.
+
       callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
       break;
     }

@@ -10,7 +10,7 @@
 
 #import "RTCRtpSender.h"
 
-#include "api/rtpsenderinterface.h"
+#include "api/rtp_sender_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

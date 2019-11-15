@@ -9,58 +9,40 @@
  */
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtp_packet.h"
 
 #include <ctype.h>
 #include <string.h>
-#include <algorithm>
+
 #include <type_traits>
 
+#include "absl/algorithm/container.h"
 #include "api/array_view.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 
 namespace webrtc {
 
-StreamDataCounters::StreamDataCounters() : first_packet_time_ms(-1) {}
-
-constexpr size_t StreamId::kMaxSize;
+namespace {
+constexpr size_t kMidRsidMaxSize = 16;
 
 // Check if passed character is a "token-char" from RFC 4566.
-static bool IsTokenChar(char ch) {
+bool IsTokenChar(char ch) {
   return ch == 0x21 || (ch >= 0x23 && ch <= 0x27) || ch == 0x2a || ch == 0x2b ||
          ch == 0x2d || ch == 0x2e || (ch >= 0x30 && ch <= 0x39) ||
          (ch >= 0x41 && ch <= 0x5a) || (ch >= 0x5e && ch <= 0x7e);
 }
+}  // namespace
 
-bool StreamId::IsLegalMidName(rtc::ArrayView<const char> name) {
-  return (name.size() <= kMaxSize && name.size() > 0 &&
-          std::all_of(name.data(), name.data() + name.size(), IsTokenChar));
+bool IsLegalMidName(absl::string_view name) {
+  return (name.size() <= kMidRsidMaxSize && !name.empty() &&
+          absl::c_all_of(name, IsTokenChar));
 }
 
-bool StreamId::IsLegalRsidName(rtc::ArrayView<const char> name) {
-  return (name.size() <= kMaxSize && name.size() > 0 &&
-          std::all_of(name.data(), name.data() + name.size(), isalnum));
+bool IsLegalRsidName(absl::string_view name) {
+  return (name.size() <= kMidRsidMaxSize && !name.empty() &&
+          absl::c_all_of(name, isalnum));
 }
 
-void StreamId::Set(const char* data, size_t size) {
-  // If |data| contains \0, the stream id size might become less than |size|.
-  RTC_CHECK_LE(size, kMaxSize);
-  memcpy(value_, data, size);
-  if (size < kMaxSize)
-    value_[size] = 0;
-}
-
-// StreamId is used as member of RTPHeader that is sometimes copied with memcpy
-// and thus assume trivial destructibility.
-static_assert(std::is_trivially_destructible<StreamId>::value, "");
-
-PayloadUnion::PayloadUnion(const AudioPayload& payload) : payload_(payload) {}
-PayloadUnion::PayloadUnion(const VideoPayload& payload) : payload_(payload) {}
-PayloadUnion::PayloadUnion(const PayloadUnion&) = default;
-PayloadUnion::PayloadUnion(PayloadUnion&&) = default;
-PayloadUnion::~PayloadUnion() = default;
-
-PayloadUnion& PayloadUnion::operator=(const PayloadUnion&) = default;
-PayloadUnion& PayloadUnion::operator=(PayloadUnion&&) = default;
+StreamDataCounters::StreamDataCounters() : first_packet_time_ms(-1) {}
 
 PacketFeedback::PacketFeedback(int64_t arrival_time_ms,
                                uint16_t sequence_number)
@@ -114,11 +96,14 @@ PacketFeedback::PacketFeedback(int64_t creation_time_ms,
       arrival_time_ms(arrival_time_ms),
       send_time_ms(send_time_ms),
       sequence_number(sequence_number),
+      long_sequence_number(0),
       payload_size(payload_size),
       unacknowledged_data(0),
       local_net_id(local_net_id),
       remote_net_id(remote_net_id),
-      pacing_info(pacing_info) {}
+      pacing_info(pacing_info),
+      ssrc(0),
+      rtp_sequence_number(0) {}
 
 PacketFeedback::PacketFeedback(const PacketFeedback&) = default;
 PacketFeedback& PacketFeedback::operator=(const PacketFeedback&) = default;

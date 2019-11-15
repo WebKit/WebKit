@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/include/flexfec_sender.h"
+
 #include <vector>
 
-#include "api/rtpparameters.h"
-#include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"

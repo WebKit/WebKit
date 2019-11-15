@@ -10,5 +10,5 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface APPRTCAppDelegate : NSObject<NSApplicationDelegate>
+@interface APPRTCAppDelegate : NSObject <NSApplicationDelegate>
 @end

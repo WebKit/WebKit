@@ -7,14 +7,16 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include "rtc_tools/converter/converter.h"
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/stat.h>
 
 #include <iomanip>
 #include <sstream>
 
-#include "rtc_tools/converter/converter.h"
+#include "third_party/libyuv/include/libyuv/compare.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
 
 #ifdef WIN32
 #define SEPARATOR '\\'

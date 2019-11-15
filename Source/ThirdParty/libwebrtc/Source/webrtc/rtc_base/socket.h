@@ -25,9 +25,8 @@
 #include "rtc_base/win32.h"
 #endif
 
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/network/sent_packet.h"
-#include "rtc_base/socketaddress.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/socket_address.h"
 
 // Rather than converting errors into a private namespace,
 // Reuse the POSIX socket api errors. Note this depends on

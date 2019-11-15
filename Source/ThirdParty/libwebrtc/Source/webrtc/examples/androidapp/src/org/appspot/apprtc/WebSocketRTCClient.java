@@ -10,17 +10,15 @@
 
 package org.appspot.apprtc;
 
-import javax.annotation.Nullable;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import org.appspot.apprtc.RoomParametersFetcher.RoomParametersFetcherEvents;
 import org.appspot.apprtc.WebSocketChannelClient.WebSocketChannelEvents;
 import org.appspot.apprtc.WebSocketChannelClient.WebSocketConnectionState;
 import org.appspot.apprtc.util.AsyncHttpURLConnection;
 import org.appspot.apprtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
-
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

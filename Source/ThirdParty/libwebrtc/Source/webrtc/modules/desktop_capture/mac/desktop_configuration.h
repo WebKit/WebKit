@@ -12,6 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_H_
 
 #include <ApplicationServices/ApplicationServices.h>
+
 #include <vector>
 
 #include "modules/desktop_capture/desktop_geometry.h"

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
+
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -17,7 +19,6 @@
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
-#include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -25,11 +26,10 @@
 namespace webrtc {
 namespace {
 
+using ::testing::Contains;
 using ::testing::Each;
 using ::testing::ElementsAreArray;
 using ::testing::Le;
-using ::testing::SizeIs;
-using ::testing::Contains;
 
 constexpr RtpPacketizer::PayloadSizeLimits kNoSizeLimits;
 
@@ -49,7 +49,7 @@ TEST(RtpPacketizerVideoGeneric, RespectsMaxPayloadSize) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
   RtpPacketizerGeneric packetizer(kPayload, limits, RTPVideoHeader(),
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   std::vector<int> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
 
@@ -63,7 +63,7 @@ TEST(RtpPacketizerVideoGeneric, UsesMaxPayloadSize) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 6;
   RtpPacketizerGeneric packetizer(kPayload, limits, RTPVideoHeader(),
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   std::vector<int> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
 
@@ -79,7 +79,7 @@ TEST(RtpPacketizerVideoGeneric, WritesExtendedHeaderWhenPictureIdIsSet) {
   RTPVideoHeader rtp_video_header;
   rtp_video_header.generic.emplace().frame_id = 37;
   RtpPacketizerGeneric packetizer(kPayload, kNoSizeLimits, rtp_video_header,
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   RtpPacketToSend packet(nullptr);
   ASSERT_TRUE(packetizer.NextPacket(&packet));
@@ -101,7 +101,7 @@ TEST(RtpPacketizerVideoGeneric, RespectsMaxPayloadSizeWithExtendedHeader) {
   RTPVideoHeader rtp_video_header;
   rtp_video_header.generic.emplace().frame_id = 37;
   RtpPacketizerGeneric packetizer(kPayload, limits, rtp_video_header,
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   std::vector<int> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
 
@@ -117,7 +117,7 @@ TEST(RtpPacketizerVideoGeneric, UsesMaxPayloadSizeWithExtendedHeader) {
   RTPVideoHeader rtp_video_header;
   rtp_video_header.generic.emplace().frame_id = 37;
   RtpPacketizerGeneric packetizer(kPayload, limits, rtp_video_header,
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
   std::vector<int> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
 
   // With kPayloadSize > max_payload_len^2, there should be packets that use
@@ -132,7 +132,7 @@ TEST(RtpPacketizerVideoGeneric, FrameIdOver15bitsWrapsAround) {
   RTPVideoHeader rtp_video_header;
   rtp_video_header.generic.emplace().frame_id = 0x8137;
   RtpPacketizerGeneric packetizer(kPayload, kNoSizeLimits, rtp_video_header,
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   RtpPacketToSend packet(nullptr);
   ASSERT_TRUE(packetizer.NextPacket(&packet));
@@ -149,7 +149,7 @@ TEST(RtpPacketizerVideoGeneric, NoFrameIdDoesNotWriteExtendedHeader) {
   const uint8_t kPayload[kPayloadSize] = {};
 
   RtpPacketizerGeneric packetizer(kPayload, kNoSizeLimits, RTPVideoHeader(),
-                                  kVideoFrameKey);
+                                  VideoFrameType::kVideoFrameKey);
 
   RtpPacketToSend packet(nullptr);
   ASSERT_TRUE(packetizer.NextPacket(&packet));
@@ -158,11 +158,23 @@ TEST(RtpPacketizerVideoGeneric, NoFrameIdDoesNotWriteExtendedHeader) {
   EXPECT_FALSE(payload[0] & 0x04);
 }
 
+TEST(RtpPacketizerVideoGeneric, DoesNotWriteHeaderForRawPayload) {
+  const uint8_t kPayload[] = {0x05, 0x25, 0x52};
+
+  RtpPacketizerGeneric packetizer(kPayload, kNoSizeLimits);
+
+  RtpPacketToSend packet(nullptr);
+  ASSERT_TRUE(packetizer.NextPacket(&packet));
+
+  rtc::ArrayView<const uint8_t> payload = packet.payload();
+  EXPECT_THAT(payload, ElementsAreArray(kPayload));
+}
+
 TEST(RtpDepacketizerVideoGeneric, NonExtendedHeaderNoFrameId) {
   const size_t kPayloadLen = 1;
   uint8_t payload[kPayloadLen] = {0x01};
 
-  RtpDepacketizerGeneric depacketizer;
+  RtpDepacketizerGeneric depacketizer(/*generic_header_enabled=*/true);
   RtpDepacketizer::ParsedPayload parsed_payload;
   depacketizer.Parse(&parsed_payload, payload, kPayloadLen);
 
@@ -173,12 +185,26 @@ TEST(RtpDepacketizerVideoGeneric, ExtendedHeaderParsesFrameId) {
   const size_t kPayloadLen = 3;
   uint8_t payload[kPayloadLen] = {0x05, 0x13, 0x37};
 
-  RtpDepacketizerGeneric depacketizer;
+  RtpDepacketizerGeneric depacketizer(/*generic_header_enabled=*/true);
   RtpDepacketizer::ParsedPayload parsed_payload;
   depacketizer.Parse(&parsed_payload, payload, kPayloadLen);
 
   ASSERT_TRUE(parsed_payload.video_header().generic);
   EXPECT_EQ(0x1337, parsed_payload.video_header().generic->frame_id);
+}
+
+TEST(RtpDepacketizerVideoGeneric, DoesNotParseHeaderForRawPayload) {
+  const uint8_t kPayload[] = {0x05, 0x25, 0x52};
+  const size_t kPayloadLen = sizeof(kPayload);
+
+  RtpDepacketizerGeneric depacketizer(/*generic_header_enabled=*/false);
+  RtpDepacketizer::ParsedPayload parsed_payload;
+  depacketizer.Parse(&parsed_payload, kPayload, kPayloadLen);
+
+  EXPECT_FALSE(parsed_payload.video_header().generic);
+  EXPECT_THAT(rtc::MakeArrayView<const uint8_t>(parsed_payload.payload,
+                                                parsed_payload.payload_length),
+              ElementsAreArray(kPayload));
 }
 
 }  // namespace

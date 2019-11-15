@@ -10,7 +10,7 @@
 
 package org.webrtc;
 
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;

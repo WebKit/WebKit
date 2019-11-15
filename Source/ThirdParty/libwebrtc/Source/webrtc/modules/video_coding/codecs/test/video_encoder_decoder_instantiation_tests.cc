@@ -16,7 +16,6 @@
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
 #if defined(WEBRTC_ANDROID)
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 #elif defined(WEBRTC_IOS)
@@ -29,6 +28,7 @@ namespace webrtc {
 namespace test {
 
 namespace {
+const VideoEncoder::Capabilities kCapabilities(false);
 
 int32_t InitEncoder(VideoCodecType codec_type, VideoEncoder* encoder) {
   VideoCodec codec;
@@ -37,8 +37,9 @@ int32_t InitEncoder(VideoCodecType codec_type, VideoEncoder* encoder) {
   codec.height = 480;
   codec.maxFramerate = 30;
   RTC_CHECK(encoder);
-  return encoder->InitEncode(&codec, 1 /* number_of_cores */,
-                             1200 /* max_payload_size */);
+  return encoder->InitEncode(
+      &codec, VideoEncoder::Settings(kCapabilities, 1 /* number_of_cores */,
+                                     1200 /* max_payload_size */));
 }
 
 int32_t InitDecoder(VideoCodecType codec_type, VideoDecoder* decoder) {
@@ -96,20 +97,20 @@ class VideoEncoderDecoderInstantiationTest
   std::vector<std::unique_ptr<VideoDecoder>> decoders_;
 };
 
-INSTANTIATE_TEST_CASE_P(MultipleEncoders,
-                        VideoEncoderDecoderInstantiationTest,
-                        ::testing::Combine(::testing::Range(1, 4),
-                                           ::testing::Range(1, 2)));
+INSTANTIATE_TEST_SUITE_P(MultipleEncoders,
+                         VideoEncoderDecoderInstantiationTest,
+                         ::testing::Combine(::testing::Range(1, 4),
+                                            ::testing::Range(1, 2)));
 
-INSTANTIATE_TEST_CASE_P(MultipleDecoders,
-                        VideoEncoderDecoderInstantiationTest,
-                        ::testing::Combine(::testing::Range(1, 2),
-                                           ::testing::Range(1, 9)));
+INSTANTIATE_TEST_SUITE_P(MultipleDecoders,
+                         VideoEncoderDecoderInstantiationTest,
+                         ::testing::Combine(::testing::Range(1, 2),
+                                            ::testing::Range(1, 9)));
 
-INSTANTIATE_TEST_CASE_P(MultipleEncodersDecoders,
-                        VideoEncoderDecoderInstantiationTest,
-                        ::testing::Combine(::testing::Range(1, 4),
-                                           ::testing::Range(1, 9)));
+INSTANTIATE_TEST_SUITE_P(MultipleEncodersDecoders,
+                         VideoEncoderDecoderInstantiationTest,
+                         ::testing::Combine(::testing::Range(1, 4),
+                                            ::testing::Range(1, 9)));
 
 // TODO(brandtr): Check that the factories actually support the codecs before
 // trying to instantiate. Currently, we will just crash with a Java exception

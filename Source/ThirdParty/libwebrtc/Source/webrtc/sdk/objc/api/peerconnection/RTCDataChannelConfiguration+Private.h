@@ -10,7 +10,7 @@
 
 #import "RTCDataChannelConfiguration.h"
 
-#include "api/datachannelinterface.h"
+#include "api/data_channel_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

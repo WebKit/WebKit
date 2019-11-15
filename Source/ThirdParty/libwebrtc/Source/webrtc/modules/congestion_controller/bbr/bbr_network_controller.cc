@@ -323,8 +323,6 @@ NetworkControlUpdate BbrNetworkController::OnProcessInterval(
 }
 
 NetworkControlUpdate BbrNetworkController::OnStreamsConfig(StreamsConfig msg) {
-  // TODO(srte): Handle unacknowledged rate allocation.
-  RTC_DCHECK(msg.unacknowledged_rate_allocation.IsZero());
   return NetworkControlUpdate();
 }
 
@@ -497,6 +495,16 @@ NetworkControlUpdate BbrNetworkController::OnRoundTripTimeUpdate(
 }
 NetworkControlUpdate BbrNetworkController::OnTransportLossReport(
     TransportLossReport msg) {
+  return NetworkControlUpdate();
+}
+
+NetworkControlUpdate BbrNetworkController::OnReceivedPacket(
+    ReceivedPacket msg) {
+  return NetworkControlUpdate();
+}
+
+NetworkControlUpdate BbrNetworkController::OnNetworkStateEstimate(
+    NetworkStateEstimate msg) {
   return NetworkControlUpdate();
 }
 

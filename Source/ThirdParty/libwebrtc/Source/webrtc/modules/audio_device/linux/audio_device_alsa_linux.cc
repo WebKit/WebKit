@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_device/linux/audio_device_alsa_linux.h"
+
 #include <assert.h>
 
 #include "modules/audio_device/audio_device_config.h"
-#include "modules/audio_device/linux/audio_device_alsa_linux.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/arch.h"
-#include "system_wrappers/include/event_wrapper.h"
 #include "system_wrappers/include/sleep.h"
 
 WebRTCAlsaSymbolTable* GetAlsaSymbolTable() {
@@ -51,7 +51,7 @@ void WebrtcAlsaErrorHandler(const char* file,
                             const char* function,
                             int err,
                             const char* fmt,
-                            ...){};
+                            ...) {}
 
 namespace webrtc {
 static const unsigned int ALSA_PLAYOUT_FREQ = 48000;
@@ -1028,10 +1028,10 @@ int32_t AudioDeviceLinuxALSA::StartRecording() {
   }
   // RECORDING
   _ptrThreadRec.reset(new rtc::PlatformThread(
-      RecThreadFunc, this, "webrtc_audio_module_capture_thread"));
+      RecThreadFunc, this, "webrtc_audio_module_capture_thread",
+      rtc::kRealtimePriority));
 
   _ptrThreadRec->Start();
-  _ptrThreadRec->SetPriority(rtc::kRealtimePriority);
 
   errVal = LATE(snd_pcm_prepare)(_handleRecord);
   if (errVal < 0) {
@@ -1146,9 +1146,9 @@ int32_t AudioDeviceLinuxALSA::StartPlayout() {
 
   // PLAYOUT
   _ptrThreadPlay.reset(new rtc::PlatformThread(
-      PlayThreadFunc, this, "webrtc_audio_module_play_thread"));
+      PlayThreadFunc, this, "webrtc_audio_module_play_thread",
+      rtc::kRealtimePriority));
   _ptrThreadPlay->Start();
-  _ptrThreadPlay->SetPriority(rtc::kRealtimePriority);
 
   int errVal = LATE(snd_pcm_prepare)(_handlePlayout);
   if (errVal < 0) {
@@ -1457,12 +1457,16 @@ int32_t AudioDeviceLinuxALSA::ErrorRecovery(int32_t error,
 //                                  Thread Methods
 // ============================================================================
 
-bool AudioDeviceLinuxALSA::PlayThreadFunc(void* pThis) {
-  return (static_cast<AudioDeviceLinuxALSA*>(pThis)->PlayThreadProcess());
+void AudioDeviceLinuxALSA::PlayThreadFunc(void* pThis) {
+  AudioDeviceLinuxALSA* device = static_cast<AudioDeviceLinuxALSA*>(pThis);
+  while (device->PlayThreadProcess()) {
+  }
 }
 
-bool AudioDeviceLinuxALSA::RecThreadFunc(void* pThis) {
-  return (static_cast<AudioDeviceLinuxALSA*>(pThis)->RecThreadProcess());
+void AudioDeviceLinuxALSA::RecThreadFunc(void* pThis) {
+  AudioDeviceLinuxALSA* device = static_cast<AudioDeviceLinuxALSA*>(pThis);
+  while (device->RecThreadProcess()) {
+  }
 }
 
 bool AudioDeviceLinuxALSA::PlayThreadProcess() {

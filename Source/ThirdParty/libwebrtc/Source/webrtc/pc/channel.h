@@ -20,26 +20,28 @@
 
 #include "api/call/audio_sink.h"
 #include "api/jsep.h"
-#include "api/rtpreceiverinterface.h"
+#include "api/media_transport_config.h"
+#include "api/rtp_receiver_interface.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "call/rtp_packet_sink_interface.h"
-#include "media/base/mediachannel.h"
-#include "media/base/mediaengine.h"
-#include "media/base/streamparams.h"
-#include "p2p/base/dtlstransportinternal.h"
-#include "p2p/base/packettransportinternal.h"
-#include "pc/channelinterface.h"
-#include "pc/dtlssrtptransport.h"
-#include "pc/mediasession.h"
-#include "pc/rtptransport.h"
-#include "pc/srtpfilter.h"
-#include "pc/srtptransport.h"
-#include "rtc_base/asyncinvoker.h"
-#include "rtc_base/asyncudpsocket.h"
-#include "rtc_base/criticalsection.h"
+#include "media/base/media_channel.h"
+#include "media/base/media_engine.h"
+#include "media/base/stream_params.h"
+#include "p2p/base/dtls_transport_internal.h"
+#include "p2p/base/packet_transport_internal.h"
+#include "pc/channel_interface.h"
+#include "pc/dtls_srtp_transport.h"
+#include "pc/media_session.h"
+#include "pc/rtp_transport.h"
+#include "pc/srtp_filter.h"
+#include "pc/srtp_transport.h"
+#include "rtc_base/async_invoker.h"
+#include "rtc_base/async_udp_socket.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/network.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/unique_id_generator.h"
 
 namespace webrtc {
 class AudioSinkInterface;
@@ -77,6 +79,8 @@ class BaseChannel : public ChannelInterface,
  public:
   // If |srtp_required| is true, the channel will not send or receive any
   // RTP/RTCP packets without using SRTP (either using SDES or DTLS-SRTP).
+  // The BaseChannel does not own the UniqueRandomIdGenerator so it is the
+  // responsibility of the user to ensure it outlives this object.
   // TODO(zhihuang:) Create a BaseChannel::Config struct for the parameter lists
   // which will make it easier to change the constructor.
   BaseChannel(rtc::Thread* worker_thread,
@@ -85,10 +89,12 @@ class BaseChannel : public ChannelInterface,
               std::unique_ptr<MediaChannel> media_channel,
               const std::string& content_name,
               bool srtp_required,
-              webrtc::CryptoOptions crypto_options);
+              webrtc::CryptoOptions crypto_options,
+              rtc::UniqueRandomIdGenerator* ssrc_generator);
   virtual ~BaseChannel();
-  void Init_w(webrtc::RtpTransportInternal* rtp_transport,
-              webrtc::MediaTransportInterface* media_transport);
+  virtual void Init_w(
+      webrtc::RtpTransportInternal* rtp_transport,
+      const webrtc::MediaTransportConfig& media_transport_config);
 
   // Deinit may be called multiple times and is simply ignored if it's already
   // done.
@@ -114,6 +120,8 @@ class BaseChannel : public ChannelInterface,
   // internally. It would replace the |SetTransports| and its variants.
   bool SetRtpTransport(webrtc::RtpTransportInternal* rtp_transport) override;
 
+  webrtc::RtpTransportInternal* rtp_transport() const { return rtp_transport_; }
+
   // Channel control
   bool SetLocalContent(const MediaContentDescription* content,
                        webrtc::SdpType type,
@@ -124,16 +132,10 @@ class BaseChannel : public ChannelInterface,
 
   bool Enable(bool enable) override;
 
-  // TODO(zhihuang): These methods are used for testing and can be removed.
-  bool AddRecvStream(const StreamParams& sp);
-  bool RemoveRecvStream(uint32_t ssrc);
-  bool AddSendStream(const StreamParams& sp);
-  bool RemoveSendStream(uint32_t ssrc);
-
-  const std::vector<StreamParams>& local_streams() const {
+  const std::vector<StreamParams>& local_streams() const override {
     return local_streams_;
   }
-  const std::vector<StreamParams>& remote_streams() const {
+  const std::vector<StreamParams>& remote_streams() const override {
     return remote_streams_;
   }
 
@@ -154,23 +156,9 @@ class BaseChannel : public ChannelInterface,
   // Fired on the network thread.
   sigslot::signal1<const std::string&> SignalRtcpMuxFullyActive;
 
-  rtc::PacketTransportInternal* rtp_packet_transport() {
-    if (rtp_transport_) {
-      return rtp_transport_->rtp_packet_transport();
-    }
-    return nullptr;
-  }
-
-  rtc::PacketTransportInternal* rtcp_packet_transport() {
-    if (rtp_transport_) {
-      return rtp_transport_->rtcp_packet_transport();
-    }
-    return nullptr;
-  }
-
   // Returns media transport, can be null if media transport is not available.
   webrtc::MediaTransportInterface* media_transport() {
-    return media_transport_;
+    return media_transport_config_.media_transport;
   }
 
   // From RtpTransport - public for testing only
@@ -298,6 +286,8 @@ class BaseChannel : public ChannelInterface,
 
   bool RegisterRtpDemuxerSink();
 
+  bool has_received_packet_ = false;
+
  private:
   bool ConnectToRtpTransport();
   void DisconnectFromRtpTransport();
@@ -307,6 +297,7 @@ class BaseChannel : public ChannelInterface,
 
   // MediaTransportNetworkChangeCallback override.
   void OnNetworkRouteChanged(const rtc::NetworkRoute& network_route) override;
+
   rtc::Thread* const worker_thread_;
   rtc::Thread* const network_thread_;
   rtc::Thread* const signaling_thread_;
@@ -320,16 +311,13 @@ class BaseChannel : public ChannelInterface,
 
   webrtc::RtpTransportInternal* rtp_transport_ = nullptr;
 
-  // Optional media transport (experimental).
-  // If provided, audio and video will be sent through media_transport instead
-  // of RTP/RTCP. Currently media_transport can co-exist with rtp_transport.
-  webrtc::MediaTransportInterface* media_transport_ = nullptr;
+  // Optional media transport configuration (experimental).
+  webrtc::MediaTransportConfig media_transport_config_;
 
   std::vector<std::pair<rtc::Socket::Option, int> > socket_options_;
   std::vector<std::pair<rtc::Socket::Option, int> > rtcp_socket_options_;
   bool writable_ = false;
   bool was_ever_writable_ = false;
-  bool has_received_packet_ = false;
   const bool srtp_required_ = true;
   webrtc::CryptoOptions crypto_options_;
 
@@ -348,20 +336,26 @@ class BaseChannel : public ChannelInterface,
       webrtc::RtpTransceiverDirection::kInactive;
 
   webrtc::RtpDemuxerCriteria demuxer_criteria_;
+  // This generator is used to generate SSRCs for local streams.
+  // This is needed in cases where SSRCs are not negotiated or set explicitly
+  // like in Simulcast.
+  // This object is not owned by the channel so it must outlive it.
+  rtc::UniqueRandomIdGenerator* const ssrc_generator_;
 };
 
 // VoiceChannel is a specialization that adds support for early media, DTMF,
 // and input/output level monitoring.
-class VoiceChannel : public BaseChannel {
+class VoiceChannel : public BaseChannel,
+                     public webrtc::AudioPacketReceivedObserver {
  public:
   VoiceChannel(rtc::Thread* worker_thread,
                rtc::Thread* network_thread,
                rtc::Thread* signaling_thread,
-               MediaEngineInterface* media_engine,
                std::unique_ptr<VoiceMediaChannel> channel,
                const std::string& content_name,
                bool srtp_required,
-               webrtc::CryptoOptions crypto_options);
+               webrtc::CryptoOptions crypto_options,
+               rtc::UniqueRandomIdGenerator* ssrc_generator);
   ~VoiceChannel();
 
   // downcasts a MediaChannel
@@ -372,6 +366,9 @@ class VoiceChannel : public BaseChannel {
   cricket::MediaType media_type() const override {
     return cricket::MEDIA_TYPE_AUDIO;
   }
+  void Init_w(
+      webrtc::RtpTransportInternal* rtp_transport,
+      const webrtc::MediaTransportConfig& media_transport_config) override;
 
  private:
   // overrides from BaseChannel
@@ -382,6 +379,8 @@ class VoiceChannel : public BaseChannel {
   bool SetRemoteContent_w(const MediaContentDescription* content,
                           webrtc::SdpType type,
                           std::string* error_desc) override;
+
+  void OnFirstAudioPacketReceived(int64_t channel_id) override;
 
   // Last AudioSendParameters sent down to the media_channel() via
   // SetSendParameters.
@@ -400,7 +399,8 @@ class VideoChannel : public BaseChannel {
                std::unique_ptr<VideoMediaChannel> media_channel,
                const std::string& content_name,
                bool srtp_required,
-               webrtc::CryptoOptions crypto_options);
+               webrtc::CryptoOptions crypto_options,
+               rtc::UniqueRandomIdGenerator* ssrc_generator);
   ~VideoChannel();
 
   // downcasts a MediaChannel
@@ -441,7 +441,8 @@ class RtpDataChannel : public BaseChannel {
                  std::unique_ptr<DataMediaChannel> channel,
                  const std::string& content_name,
                  bool srtp_required,
-                 webrtc::CryptoOptions crypto_options);
+                 webrtc::CryptoOptions crypto_options,
+                 rtc::UniqueRandomIdGenerator* ssrc_generator);
   ~RtpDataChannel();
   // TODO(zhihuang): Remove this once the RtpTransport can be shared between
   // BaseChannels.
@@ -449,7 +450,9 @@ class RtpDataChannel : public BaseChannel {
               DtlsTransportInternal* rtcp_dtls_transport,
               rtc::PacketTransportInternal* rtp_packet_transport,
               rtc::PacketTransportInternal* rtcp_packet_transport);
-  void Init_w(webrtc::RtpTransportInternal* rtp_transport);
+  void Init_w(
+      webrtc::RtpTransportInternal* rtp_transport,
+      const webrtc::MediaTransportConfig& media_transport_config) override;
 
   virtual bool SendData(const SendDataParams& params,
                         const rtc::CopyOnWriteBuffer& payload,
@@ -503,7 +506,7 @@ class RtpDataChannel : public BaseChannel {
 
   // overrides from BaseChannel
   // Checks that data channel type is RTP.
-  bool CheckDataChannelTypeFromContent(const DataContentDescription* content,
+  bool CheckDataChannelTypeFromContent(const RtpDataContentDescription* content,
                                        std::string* error_desc);
   bool SetLocalContent_w(const MediaContentDescription* content,
                          webrtc::SdpType type,

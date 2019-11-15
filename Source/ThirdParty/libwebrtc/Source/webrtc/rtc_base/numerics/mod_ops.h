@@ -12,7 +12,6 @@
 #define RTC_BASE_NUMERICS_MOD_OPS_H_
 
 #include <algorithm>
-#include <limits>
 #include <type_traits>
 
 #include "rtc_base/checks.h"

@@ -10,9 +10,17 @@
 
 #include <memory>
 
+#include "absl/debugging/failure_signal_handler.h"
+#include "absl/debugging/symbolize.h"
 #include "test/test_main_lib.h"
 
 int main(int argc, char* argv[]) {
+  // Initialize the symbolizer to get a human-readable stack trace
+  absl::InitializeSymbolizer(argv[0]);
+
+  absl::FailureSignalHandlerOptions options;
+  absl::InstallFailureSignalHandler(options);
+
   std::unique_ptr<webrtc::TestMain> main = webrtc::TestMain::Create();
   int err_code = main->Init(&argc, argv);
   if (err_code != 0) {

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/algorithm/container.h"
+#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
@@ -23,7 +25,19 @@
 #include "test/rtcp_packet_parser.h"
 
 namespace webrtc {
-class StatsEndToEndTest : public test::CallTest {};
+namespace {
+enum : int {  // The first valid value is 1.
+  kVideoContentTypeExtensionId = 1,
+};
+}  // namespace
+
+class StatsEndToEndTest : public test::CallTest {
+ public:
+  StatsEndToEndTest() {
+    RegisterRtpExtension(RtpExtension(RtpExtension::kVideoContentTypeUri,
+                                      kVideoContentTypeExtensionId));
+  }
+};
 
 TEST_F(StatsEndToEndTest, GetStats) {
   static const int kStartBitrateBps = 3000000;
@@ -37,8 +51,7 @@ TEST_F(StatsEndToEndTest, GetStats) {
     void OnFrame(const VideoFrame& video_frame) override {}
   };
 
-  class StatsObserver : public test::EndToEndTest,
-                        public rtc::VideoSinkInterface<VideoFrame> {
+  class StatsObserver : public test::EndToEndTest {
    public:
     StatsObserver()
         : EndToEndTest(kLongTimeoutMs),
@@ -80,11 +93,6 @@ TEST_F(StatsEndToEndTest, GetStats) {
       return SEND_PACKET;
     }
 
-    void OnFrame(const VideoFrame& video_frame) override {
-      // Ensure that we have at least 5ms send side delay.
-      SleepMs(5);
-    }
-
     bool CheckReceiveStats() {
       for (size_t i = 0; i < receive_streams_.size(); ++i) {
         VideoReceiveStream::Stats stats = receive_streams_[i]->GetStats();
@@ -107,20 +115,15 @@ TEST_F(StatsEndToEndTest, GetStats) {
         receive_stats_filled_["FrameRendered"] |= stats.render_frame_rate != 0;
 
         receive_stats_filled_["StatisticsUpdated"] |=
-            stats.rtcp_stats.packets_lost != 0 ||
-            stats.rtcp_stats.extended_highest_sequence_number != 0 ||
-            stats.rtcp_stats.fraction_lost != 0 || stats.rtcp_stats.jitter != 0;
+            stats.rtp_stats.packets_lost != 0 || stats.rtp_stats.jitter != 0;
 
         receive_stats_filled_["DataCountersUpdated"] |=
-            stats.rtp_stats.transmitted.payload_bytes != 0 ||
-            stats.rtp_stats.fec.packets != 0 ||
-            stats.rtp_stats.transmitted.header_bytes != 0 ||
-            stats.rtp_stats.transmitted.packets != 0 ||
-            stats.rtp_stats.transmitted.padding_bytes != 0 ||
-            stats.rtp_stats.retransmitted.packets != 0;
+            stats.rtp_stats.packet_counter.payload_bytes != 0 ||
+            stats.rtp_stats.packet_counter.header_bytes != 0 ||
+            stats.rtp_stats.packet_counter.packets != 0 ||
+            stats.rtp_stats.packet_counter.padding_bytes != 0;
 
-        receive_stats_filled_["CodecStats"] |=
-            stats.target_delay_ms != 0 || stats.discarded_packets != 0;
+        receive_stats_filled_["CodecStats"] |= stats.target_delay_ms != 0;
 
         receive_stats_filled_["FrameCounts"] |=
             stats.frame_counts.key_frames != 0 ||
@@ -154,7 +157,8 @@ TEST_F(StatsEndToEndTest, GetStats) {
           stats.substreams.size() == expected_num_streams;
 
       send_stats_filled_["CpuOveruseMetrics"] |=
-          stats.avg_encode_time_ms != 0 && stats.encode_usage_percent != 0;
+          stats.avg_encode_time_ms != 0 && stats.encode_usage_percent != 0 &&
+          stats.total_encode_time_ms != 0;
 
       send_stats_filled_["EncoderImplementationName"] |=
           stats.encoder_implementation_name ==
@@ -228,7 +232,7 @@ TEST_F(StatsEndToEndTest, GetStats) {
     }
 
     test::PacketTransport* CreateSendTransport(
-        test::SingleThreadedTaskQueueForTesting* task_queue,
+        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
         Call* sender_call) override {
       BuiltInNetworkBehaviorConfig network_config;
       network_config.loss_percent = 5;
@@ -250,7 +254,7 @@ TEST_F(StatsEndToEndTest, GetStats) {
     // in ModifyVideoConfigs.
     class VideoStreamFactory
         : public VideoEncoderConfig::VideoStreamFactoryInterface {
-     public:
+     public:  // NOLINT(whitespace/blank_line)
       VideoStreamFactory() {}
 
      private:
@@ -276,7 +280,6 @@ TEST_F(StatsEndToEndTest, GetStats) {
         VideoEncoderConfig* encoder_config) override {
       encoder_config->video_stream_factory =
           new rtc::RefCountedObject<VideoStreamFactory>();
-      send_config->pre_encode_callback = this;  // Used to inject delay.
       expected_cname_ = send_config->rtp.c_name = "SomeCName";
 
       send_config->rtp.nack.rtp_history_ms = kNackRtpHistoryMs;
@@ -438,7 +441,7 @@ TEST_F(StatsEndToEndTest, TestReceivedRtpPacketStats) {
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
       if (sent_rtp_ >= kNumRtpPacketsToSend) {
         VideoReceiveStream::Stats stats = receive_stream_->GetStats();
-        if (kNumRtpPacketsToSend == stats.rtp_stats.transmitted.packets) {
+        if (kNumRtpPacketsToSend == stats.rtp_stats.packet_counter.packets) {
           observation_complete_.Set();
         }
         return DROP_PACKET;
@@ -608,7 +611,8 @@ TEST_F(StatsEndToEndTest, VerifyNackStats) {
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
       rtc::CritScope lock(&crit_);
       if (++sent_rtp_packets_ == kPacketNumberToDrop) {
-        std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::Create());
+        std::unique_ptr<RtpHeaderParser> parser(
+            RtpHeaderParser::CreateForTest());
         RTPHeader header;
         EXPECT_TRUE(parser->Parse(packet, length, &header));
         dropped_rtp_packet_ = header.sequenceNumber;
@@ -623,8 +627,7 @@ TEST_F(StatsEndToEndTest, VerifyNackStats) {
       test::RtcpPacketParser rtcp_parser;
       rtcp_parser.Parse(packet, length);
       const std::vector<uint16_t>& nacks = rtcp_parser.nack()->packet_ids();
-      if (!nacks.empty() && std::find(nacks.begin(), nacks.end(),
-                                      dropped_rtp_packet_) != nacks.end()) {
+      if (!nacks.empty() && absl::c_linear_search(nacks, dropped_rtp_packet_)) {
         dropped_rtp_packet_requested_ = true;
       }
       return SEND_PACKET;
@@ -743,7 +746,9 @@ TEST_F(StatsEndToEndTest, CallReportsRttForSender) {
 
   int64_t start_time_ms = clock_->TimeInMilliseconds();
   while (true) {
-    Call::Stats stats = sender_call_->GetStats();
+    Call::Stats stats;
+    task_queue_.SendTask(
+        [this, &stats]() { stats = sender_call_->GetStats(); });
     ASSERT_GE(start_time_ms + kDefaultTimeoutMs, clock_->TimeInMilliseconds())
         << "No RTT stats before timeout!";
     if (stats.rtt_ms != -1) {

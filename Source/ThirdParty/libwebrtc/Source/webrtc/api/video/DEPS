@@ -5,9 +5,30 @@ specific_include_rules = {
   "encoded_frame.h": [
     "+modules/video_coding/encoded_frame.h",
   ],
+
+  "encoded_image\.h" : [
+    "+rtc_base/ref_count.h",
+  ],
+
+  "i010_buffer\.h": [
+    "+rtc_base/memory/aligned_malloc.h",
+  ],
+
+  "i420_buffer\.h": [
+    "+rtc_base/memory/aligned_malloc.h",
+  ],
+
+  "video_frame\.h": [
+  ],
+
+  "video_frame_buffer\.h": [
+    "+rtc_base/ref_count.h",
+  ],
+
   "video_stream_decoder_create.cc": [
     "+video/video_stream_decoder_impl.h",
   ],
+
   "video_stream_encoder_create.cc": [
     "+video/video_stream_encoder.h",
   ],

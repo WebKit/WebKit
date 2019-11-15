@@ -26,18 +26,20 @@ namespace webrtc {
 // TestPacketization callback which writes the encoded payloads to file
 class TestPacketization : public AudioPacketizationCallback {
  public:
-  TestPacketization(RTPStream *rtpStream, uint16_t frequency);
+  TestPacketization(RTPStream* rtpStream, uint16_t frequency);
   ~TestPacketization();
-  int32_t SendData(const FrameType frameType,
+  int32_t SendData(const AudioFrameType frameType,
                    const uint8_t payloadType,
                    const uint32_t timeStamp,
                    const uint8_t* payloadData,
-                   const size_t payloadSize,
-                   const RTPFragmentationHeader* fragmentation) override;
+                   const size_t payloadSize) override;
 
  private:
-  static void MakeRTPheader(uint8_t* rtpHeader, uint8_t payloadType,
-                            int16_t seqNo, uint32_t timeStamp, uint32_t ssrc);
+  static void MakeRTPheader(uint8_t* rtpHeader,
+                            uint8_t payloadType,
+                            int16_t seqNo,
+                            uint32_t timeStamp,
+                            uint32_t ssrc);
   RTPStream* _rtpStream;
   int32_t _frequency;
   int16_t _seqNo;
@@ -46,13 +48,15 @@ class TestPacketization : public AudioPacketizationCallback {
 class Sender {
  public:
   Sender();
-  void Setup(AudioCodingModule *acm, RTPStream *rtpStream,
-             std::string in_file_name, int sample_rate, size_t channels);
+  void Setup(AudioCodingModule* acm,
+             RTPStream* rtpStream,
+             std::string in_file_name,
+             int in_sample_rate,
+             int payload_type,
+             SdpAudioFormat format);
   void Teardown();
   void Run();
   bool Add10MsData();
-
-  uint8_t codeId;
 
  protected:
   AudioCodingModule* _acm;
@@ -66,16 +70,16 @@ class Sender {
 class Receiver {
  public:
   Receiver();
-  virtual ~Receiver() {};
-  void Setup(AudioCodingModule *acm, RTPStream *rtpStream,
-             std::string out_file_name, size_t channels);
+  virtual ~Receiver() {}
+  void Setup(AudioCodingModule* acm,
+             RTPStream* rtpStream,
+             std::string out_file_name,
+             size_t channels,
+             int file_num);
   void Teardown();
   void Run();
   virtual bool IncomingPacket();
   bool PlayoutData();
-
-  //for auto_test and logging
-  uint8_t codeId;
 
  private:
   PCMFile _pcmFile;
@@ -88,7 +92,7 @@ class Receiver {
   AudioCodingModule* _acm;
   uint8_t _incomingPayload[MAX_INCOMING_PAYLOAD];
   RTPStream* _rtpStream;
-  WebRtcRTPHeader _rtpInfo;
+  RTPHeader _rtpHeader;
   size_t _realPayloadSizeBytes;
   size_t _payloadSizeBytes;
   uint32_t _nextTime;
@@ -96,17 +100,8 @@ class Receiver {
 
 class EncodeDecodeTest {
  public:
-  explicit EncodeDecodeTest(int test_mode);
+  EncodeDecodeTest();
   void Perform();
-
-  uint16_t _playoutFreq;
-
- private:
-  std::string EncodeToFile(int fileType, int codeId, int* codePars);
-
- protected:
-  Sender _sender;
-  Receiver _receiver;
 };
 
 }  // namespace webrtc

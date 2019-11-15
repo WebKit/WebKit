@@ -17,14 +17,12 @@
 #include <string>
 
 #include "absl/types/optional.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructormagic.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
-
-class RtpHeaderParser;
 
 namespace test {
 
@@ -59,8 +57,8 @@ class RtpFileSource : public PacketSource {
   bool OpenFile(const std::string& file_name);
 
   std::unique_ptr<RtpFileReader> rtp_reader_;
-  std::unique_ptr<RtpHeaderParser> parser_;
   const absl::optional<uint32_t> ssrc_filter_;
+  RtpHeaderExtensionMap rtp_header_extension_map_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpFileSource);
 };

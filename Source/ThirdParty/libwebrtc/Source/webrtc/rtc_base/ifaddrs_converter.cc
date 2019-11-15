@@ -40,7 +40,9 @@ bool IfAddrsConverter::ConvertIfAddrsToIPAddress(
           reinterpret_cast<sockaddr_in6*>(interface->ifa_netmask)->sin6_addr);
       return true;
     }
-    default: { return false; }
+    default: {
+      return false;
+    }
   }
 }
 

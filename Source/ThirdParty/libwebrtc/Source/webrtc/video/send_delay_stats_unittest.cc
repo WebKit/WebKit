@@ -10,6 +10,10 @@
 
 #include "video/send_delay_stats.h"
 
+#include <cstdint>
+#include <vector>
+
+#include "call/rtp_config.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 

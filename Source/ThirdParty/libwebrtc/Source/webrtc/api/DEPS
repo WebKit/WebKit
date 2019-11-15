@@ -44,6 +44,7 @@ specific_include_rules = {
     "+rtc_base/checks.h",
     "+rtc_base/system/rtc_export.h",
     "+rtc_base/units/unit_base.h",
+    "+rtc_base/deprecation.h",
   ],
 
   "array_view\.h": [
@@ -57,170 +58,184 @@ specific_include_rules = {
     "+modules/audio_coding/codecs/opus/audio_encoder_opus.h",
   ],
 
-  "asyncresolverfactory\.h": [
-    "+rtc_base/asyncresolverinterface.h",
+  "async_resolver_factory\.h": [
+    "+rtc_base/async_resolver_interface.h",
   ],
 
   "candidate\.h": [
     "+rtc_base/network_constants.h",
-    "+rtc_base/socketaddress.h",
+    "+rtc_base/socket_address.h",
   ],
 
-  "create_peerconnection_factory\.h": [
-    "+rtc_base/scoped_ref_ptr.h",
+  "data_channel_interface\.h": [
+    "+rtc_base/copy_on_write_buffer.h",
+    "+rtc_base/ref_count.h",
   ],
 
-  "datachannelinterface\.h": [
-    "+rtc_base/copyonwritebuffer.h",
-    "+rtc_base/refcount.h",
+  "data_channel_transport_interface\.h": [
+    "+rtc_base/copy_on_write_buffer.h",
   ],
 
-  "dtmfsenderinterface\.h": [
-    "+rtc_base/refcount.h",
+  "dtls_transport_interface\.h": [
+    "+rtc_base/ref_count.h",
+    "+rtc_base/ssl_certificate.h",
+  ],
+
+  "dtmf_sender_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
   "fec_controller\.h": [
     "+modules/include/module_fec_types.h",
   ],
 
+  "ice_transport_interface\.h": [
+    "+rtc_base/ref_count.h",
+  ],
+
   "jsep\.h": [
-    "+rtc_base/refcount.h",
+    "+rtc_base/ref_count.h",
   ],
 
-  "jsepicecandidate\.h": [
-    "+rtc_base/constructormagic.h",
+  "jsep_ice_candidate\.h": [
+    "+rtc_base/constructor_magic.h",
   ],
 
-  "jsepsessiondescription\.h": [
-    "+rtc_base/constructormagic.h",
+  "jsep_session_description\.h": [
+    "+rtc_base/constructor_magic.h",
   ],
 
-  "mediastreaminterface\.h": [
+  "media_stream_interface\.h": [
     "+modules/audio_processing/include/audio_processing_statistics.h",
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
+    "+rtc_base/ref_count.h",
   ],
 
   "media_transport_interface\.h": [
-    "+rtc_base/copyonwritebuffer.h",  # As used by datachannelinterface.h
-    "+rtc_base/networkroute.h"
+    "+rtc_base/copy_on_write_buffer.h",  # As used by datachannelinterface.h
+    "+rtc_base/network_route.h",
   ],
 
-  "peerconnectionfactoryproxy\.h": [
+  "packet_socket_factory\.h": [
+    "+rtc_base/proxy_info.h",
+    "+rtc_base/async_packet_socket.h",
+  ],
+
+  "peer_connection_factory_proxy\.h": [
     "+rtc_base/bind.h",
   ],
 
-  "refcountedbase\.h": [
-    "+rtc_base/constructormagic.h",
-    "+rtc_base/refcount.h",
-    "+rtc_base/refcounter.h",
+  "peer_connection_interface\.h": [
+    "+media/base/media_config.h",
+    "+media/base/media_engine.h",
+    "+p2p/base/port_allocator.h",
+    "+rtc_base/network.h",
+    "+rtc_base/rtc_certificate.h",
+    "+rtc_base/rtc_certificate_generator.h",
+    "+rtc_base/socket_address.h",
+    "+rtc_base/ssl_certificate.h",
+    "+rtc_base/ssl_stream_adapter.h",
   ],
 
-  "rtcerror\.h": [
+  "proxy\.h": [
+    "+rtc_base/event.h",
+    "+rtc_base/message_handler.h",  # Inherits from it.
+    "+rtc_base/message_queue.h",    # Inherits from MessageData.
+    "+rtc_base/ref_counted_object.h",
+    "+rtc_base/thread.h",
+  ],
+
+  "ref_counted_base\.h": [
+    "+rtc_base/constructor_magic.h",
+    "+rtc_base/ref_count.h",
+    "+rtc_base/ref_counter.h",
+  ],
+
+  "rtc_error\.h": [
     "+rtc_base/logging.h",
   ],
-
-  "rtpreceiverinterface\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
+  "rtc_event_log_output_file.h": [
+    # For private member and constructor.
+    "+rtc_base/system/file_wrapper.h",
+  ],
+  "rtp_receiver_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "rtpsenderinterface\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
+  "rtp_sender_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "rtptransceiverinterface\.h": [
-    "+rtc_base/refcount.h",
+  "rtp_transceiver_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "setremotedescriptionobserverinterface\.h": [
-    "+rtc_base/refcount.h",
+  "sctp_transport_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "statstypes\.h": [
-    "+rtc_base/constructormagic.h",
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
-    "+rtc_base/stringencode.h",
+  "set_remote_description_observer_interface\.h": [
+    "+rtc_base/ref_count.h",
+  ],
+
+  "stats_types\.h": [
+    "+rtc_base/constructor_magic.h",
+    "+rtc_base/ref_count.h",
+    "+rtc_base/string_encode.h",
     "+rtc_base/thread_checker.h",
   ],
 
-  "umametrics\.h": [
-    "+rtc_base/refcount.h",
+  "uma_metrics\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
   "audio_frame\.h": [
-    "+rtc_base/constructormagic.h",
+    "+rtc_base/constructor_magic.h",
   ],
 
   "audio_mixer\.h": [
-    "+rtc_base/refcount.h",
+    "+rtc_base/ref_count.h",
   ],
 
   "audio_decoder\.h": [
     "+rtc_base/buffer.h",
-    "+rtc_base/constructormagic.h",
+    "+rtc_base/constructor_magic.h",
   ],
 
   "audio_decoder_factory\.h": [
-    "+rtc_base/refcount.h",
+    "+rtc_base/ref_count.h",
   ],
 
   "audio_decoder_factory_template\.h": [
-    "+rtc_base/refcountedobject.h",
-    "+rtc_base/scoped_ref_ptr.h",
+    "+rtc_base/ref_counted_object.h",
   ],
 
   "audio_encoder\.h": [
     "+rtc_base/buffer.h",
-    "+rtc_base/deprecation.h",
   ],
 
   "audio_encoder_factory\.h": [
-    "+rtc_base/refcount.h",
+    "+rtc_base/ref_count.h",
   ],
 
   "audio_encoder_factory_template\.h": [
-    "+rtc_base/refcountedobject.h",
-    "+rtc_base/scoped_ref_ptr.h",
+    "+rtc_base/ref_counted_object.h",
   ],
 
-  "builtin_audio_decoder_factory\.h": [
-    "+rtc_base/scoped_ref_ptr.h",
+  "frame_decryptor_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "builtin_audio_encoder_factory\.h": [
-    "+rtc_base/scoped_ref_ptr.h",
+  "frame_encryptor_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "framedecryptorinterface\.h": [
-    "+rtc_base/refcount.h",
+  "rtc_stats_collector_callback\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
-  "frameencryptorinterface\.h": [
-    "+rtc_base/refcount.h",
-  ],
-
-  "ortcfactoryinterface\.h": [
-    "+rtc_base/network.h",
-    "+rtc_base/scoped_ref_ptr.h",
-    "+rtc_base/thread.h",
-  ],
-
-  "udptransportinterface\.h": [
-    "+rtc_base/socketaddress.h",
-  ],
-
-  "rtcstatscollectorcallback\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
-  ],
-
-  "rtcstatsreport\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/refcountedobject.h",
-    "+rtc_base/scoped_ref_ptr.h",
+  "rtc_stats_report\.h": [
+    "+rtc_base/ref_count.h",
+    "+rtc_base/ref_counted_object.h",
   ],
 
   "audioproc_float\.h": [
@@ -228,15 +243,11 @@ specific_include_rules = {
   ],
 
   "fake_frame_decryptor\.h": [
-    "+rtc_base/refcountedobject.h",
+    "+rtc_base/ref_counted_object.h",
   ],
 
   "fake_frame_encryptor\.h": [
-    "+rtc_base/refcountedobject.h",
-  ],
-
-  "fakeconstraints\.h": [
-    "+rtc_base/stringencode.h",
+    "+rtc_base/ref_counted_object.h",
   ],
 
   "mock.*\.h": [
@@ -244,7 +255,7 @@ specific_include_rules = {
   ],
 
   "simulated_network\.h": [
-    "+rtc_base/criticalsection.h",
+    "+rtc_base/critical_section.h",
     "+rtc_base/random.h",
     "+rtc_base/thread_annotations.h",
   ],
@@ -257,26 +268,8 @@ specific_include_rules = {
     "+modules/video_coding/include/video_codec_interface.h"
   ],
 
-  "i010_buffer\.h": [
-    "+rtc_base/memory/aligned_malloc.h"
-  ],
-
-  "i420_buffer\.h": [
-    "+rtc_base/memory/aligned_malloc.h",
-  ],
-
-  "video_frame_buffer\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
-  ],
-
-  "video_timing\.h": [
-    "+rtc_base/numerics/safe_conversions.h",
-  ],
-
   "video_encoder_config\.h": [
-    "+rtc_base/refcount.h",
-    "+rtc_base/scoped_ref_ptr.h",
+    "+rtc_base/ref_count.h",
   ],
 
   # .cc files in api/ should not be restricted in what they can #include,

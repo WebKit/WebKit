@@ -10,7 +10,13 @@
 
 #include "rtc_tools/frame_analyzer/linear_least_squares.h"
 
+#include <math.h>
+
+#include <cstdint>
+#include <cstdlib>
+#include <functional>
 #include <numeric>
+#include <type_traits>
 #include <utility>
 
 #include "rtc_base/checks.h"

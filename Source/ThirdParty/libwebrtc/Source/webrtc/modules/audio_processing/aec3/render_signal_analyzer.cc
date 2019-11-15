@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 
 #include <math.h>
+
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -33,7 +34,8 @@ void IdentifySmallNarrowBandRegions(
     return;
   }
 
-  rtc::ArrayView<const float> X2 = render_buffer.Spectrum(*delay_partitions);
+  rtc::ArrayView<const float> X2 =
+      render_buffer.Spectrum(*delay_partitions, /*channel=*/0);
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, X2.size());
 
   for (size_t k = 1; k < (X2.size() - 1); ++k) {
@@ -48,7 +50,7 @@ void IdentifyStrongNarrowBandComponent(const RenderBuffer& render_buffer,
                                        int strong_peak_freeze_duration,
                                        absl::optional<int>* narrow_peak_band,
                                        size_t* narrow_peak_counter) {
-  const auto X2_latest = render_buffer.Spectrum(0);
+  const auto X2_latest = render_buffer.Spectrum(0, /*channel=*/0);
 
   // Identify the spectral peak.
   const int peak_bin = static_cast<int>(
@@ -65,13 +67,15 @@ void IdentifyStrongNarrowBandComponent(const RenderBuffer& render_buffer,
   }
 
   // Assess the render signal strength.
-  const std::vector<std::vector<float>>& x_latest = render_buffer.Block(0);
-  auto result0 = std::minmax_element(x_latest[0].begin(), x_latest[0].end());
+  const std::vector<std::vector<std::vector<float>>>& x_latest =
+      render_buffer.Block(0);
+  auto result0 =
+      std::minmax_element(x_latest[0][0].begin(), x_latest[0][0].end());
   float max_abs = std::max(fabs(*result0.first), fabs(*result0.second));
 
   if (x_latest.size() > 1) {
     const auto result1 =
-        std::minmax_element(x_latest[1].begin(), x_latest[1].end());
+        std::minmax_element(x_latest[1][0].begin(), x_latest[1][0].end());
     max_abs =
         std::max(max_abs, static_cast<float>(std::max(fabs(*result1.first),
                                                       fabs(*result1.second))));

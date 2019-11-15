@@ -11,7 +11,6 @@
 #include "video/quality_threshold.h"
 
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 

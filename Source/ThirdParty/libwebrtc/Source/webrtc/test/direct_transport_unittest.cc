@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include "test/direct_transport.h"
+
+#include <string.h>
+
 #include "test/gtest.h"
 
 namespace webrtc {

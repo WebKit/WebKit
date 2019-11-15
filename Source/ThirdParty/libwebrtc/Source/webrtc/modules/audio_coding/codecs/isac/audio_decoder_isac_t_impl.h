@@ -16,16 +16,15 @@
 namespace webrtc {
 
 template <typename T>
-AudioDecoderIsacT<T>::AudioDecoderIsacT(int sample_rate_hz)
-    : AudioDecoderIsacT(sample_rate_hz, nullptr) {}
+bool AudioDecoderIsacT<T>::Config::IsOk() const {
+  return (sample_rate_hz == 16000 || sample_rate_hz == 32000);
+}
 
 template <typename T>
-AudioDecoderIsacT<T>::AudioDecoderIsacT(
-    int sample_rate_hz,
-    const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo)
-    : sample_rate_hz_(sample_rate_hz), bwinfo_(bwinfo) {
-  RTC_CHECK(sample_rate_hz == 16000 || sample_rate_hz == 32000)
-      << "Unsupported sample rate " << sample_rate_hz;
+AudioDecoderIsacT<T>::AudioDecoderIsacT(const Config& config)
+    : sample_rate_hz_(config.sample_rate_hz), bwinfo_(config.bwinfo) {
+  RTC_CHECK(config.IsOk()) << "Unsupported sample rate "
+                           << config.sample_rate_hz;
   RTC_CHECK_EQ(0, T::Create(&isac_state_));
   T::DecoderInit(isac_state_);
   if (bwinfo_) {

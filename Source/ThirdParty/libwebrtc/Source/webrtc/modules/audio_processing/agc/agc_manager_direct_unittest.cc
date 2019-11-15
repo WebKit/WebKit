@@ -10,7 +10,6 @@
 
 #include "modules/audio_processing/agc/agc_manager_direct.h"
 
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_processing/agc/mock_agc.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "test/gmock.h"
@@ -684,7 +683,7 @@ TEST_F(AgcManagerDirectTest, TakesNoActionOnZeroMicVolume) {
 }
 
 TEST(AgcManagerDirectStandaloneTest, DisableDigitalDisablesDigital) {
-  auto agc = std::unique_ptr<Agc>(new testing::NiceMock<MockAgc>());
+  auto agc = std::unique_ptr<Agc>(new ::testing::NiceMock<MockAgc>());
   test::MockGainControl gctrl;
   TestVolumeCallbacks volume;
 

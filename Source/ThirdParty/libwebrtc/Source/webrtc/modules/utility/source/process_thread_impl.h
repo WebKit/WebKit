@@ -12,17 +12,18 @@
 #define MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
 
 #include <stdint.h>
+
 #include <list>
 #include <memory>
 #include <queue>
 
+#include "api/task_queue/queued_task.h"
 #include "modules/include/module.h"
 #include "modules/utility/include/process_thread.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/location.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
@@ -36,13 +37,13 @@ class ProcessThreadImpl : public ProcessThread {
   void Stop() override;
 
   void WakeUp(Module* module) override;
-  void PostTask(std::unique_ptr<rtc::QueuedTask> task) override;
+  void PostTask(std::unique_ptr<QueuedTask> task) override;
 
   void RegisterModule(Module* module, const rtc::Location& from) override;
   void DeRegisterModule(Module* module) override;
 
  protected:
-  static bool Run(void* obj);
+  static void Run(void* obj);
   bool Process();
 
  private:
@@ -80,7 +81,7 @@ class ProcessThreadImpl : public ProcessThread {
   std::unique_ptr<rtc::PlatformThread> thread_;
 
   ModuleList modules_;
-  std::queue<rtc::QueuedTask*> queue_;
+  std::queue<QueuedTask*> queue_;
   bool stop_;
   const char* thread_name_;
 };

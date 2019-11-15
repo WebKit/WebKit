@@ -20,7 +20,7 @@
 
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -136,6 +136,24 @@ class RtpFrameReferenceFinder {
   void UnwrapPictureIds(RtpFrameObject* frame)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
+  // Find references for H264 frames
+  FrameDecision ManageFrameH264(RtpFrameObject* frame)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  // Update "last-picture-id-with-padding" sequence number for H264.
+  void UpdateLastPictureIdWithPaddingH264() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  // Update H264 layer info state used to determine frame references.
+  void UpdateLayerInfoH264(RtpFrameObject* frame,
+                           int64_t unwrapped_tl0,
+                           uint8_t temporal_idx)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  // Update H264 state for decodeable frames.
+  void UpdateDataH264(RtpFrameObject* frame,
+                      int64_t unwrapped_tl0,
+                      uint8_t temporal_idx) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
   // For every group of pictures, hold two sequence numbers. The first being
   // the sequence number of the last packet of the last completed frame, and
   // the second being the sequence number of the last packet of the last
@@ -159,6 +177,11 @@ class RtpFrameReferenceFinder {
   std::set<uint16_t, DescendingSeqNumComp<uint16_t, kPicIdLength>>
       not_yet_received_frames_ RTC_GUARDED_BY(crit_);
 
+  // Sequence numbers of frames earlier than the last received frame that
+  // have not yet been fully received.
+  std::set<uint16_t, DescendingSeqNumComp<uint16_t>> not_yet_received_seq_num_
+      RTC_GUARDED_BY(crit_);
+
   // Frames that have been fully received but didn't have all the information
   // needed to determine their references.
   std::deque<std::unique_ptr<RtpFrameObject>> stashed_frames_
@@ -166,7 +189,7 @@ class RtpFrameReferenceFinder {
 
   // Holds the information about the last completed frame for a given temporal
   // layer given an unwrapped Tl0 picture index.
-  std::map<int64_t, std::array<int16_t, kMaxTemporalLayers>> layer_info_
+  std::map<int64_t, std::array<int64_t, kMaxTemporalLayers>> layer_info_
       RTC_GUARDED_BY(crit_);
 
   // Where the current scalability structure is in the

@@ -12,6 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
 
 #include <vector>
+
 #include "modules/desktop_capture/desktop_region.h"
 
 namespace webrtc {

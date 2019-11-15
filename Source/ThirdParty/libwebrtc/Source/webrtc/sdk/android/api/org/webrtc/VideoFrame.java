@@ -13,8 +13,8 @@ package org.webrtc;
 import android.graphics.Matrix;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.support.annotation.Nullable;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
 
 /**
  * Java version of webrtc::VideoFrame and webrtc::VideoFrameBuffer. A difference from the C++

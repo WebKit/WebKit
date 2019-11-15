@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_DTMF_TONE_GENERATOR_H_
 
 #include "modules/audio_coding/neteq/dtmf_tone_generator.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

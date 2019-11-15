@@ -18,7 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  Corresponds to webrtc::CodecSpecificInfo.
  */
 RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfo")))
 @protocol RTCCodecSpecificInfo <NSObject>
 @end
 

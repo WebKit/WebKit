@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_TEST_AUDIO_BUFFER_TOOLS_H_
 
 #include <vector>
+
 #include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"

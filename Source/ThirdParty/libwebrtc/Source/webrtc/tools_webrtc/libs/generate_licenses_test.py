@@ -12,8 +12,8 @@
 import os
 import sys
 
-SRC = os.path.abspath(os.path.join(
-                      os.path.dirname((__file__)), os.pardir, os.pardir))
+SRC = os.path.abspath(
+    os.path.join(os.path.dirname((__file__)), os.pardir, os.pardir))
 sys.path.append(os.path.join(SRC, 'third_party', 'pymock'))
 
 import unittest
@@ -23,6 +23,7 @@ from generate_licenses import LicenseBuilder
 
 
 class TestLicenseBuilder(unittest.TestCase):
+
   @staticmethod
   def _FakeRunGN(buildfile_dir, target):
     return """
@@ -38,24 +39,90 @@ class TestLicenseBuilder(unittest.TestCase):
     }
     """
 
-  def testParseLibrary(self):
-    self.assertEquals(LicenseBuilder._ParseLibrary(
-            '//a/b/third_party/libname1:c').group(1),
+  def testParseLibraryName(self):
+    self.assertEquals(
+        LicenseBuilder._ParseLibraryName('//a/b/third_party/libname1:c'),
         'libname1')
-    self.assertEquals(LicenseBuilder._ParseLibrary(
-            '//a/b/third_party/libname2:c(d)').group(1),
+    self.assertEquals(
+        LicenseBuilder._ParseLibraryName('//a/b/third_party/libname2:c(d)'),
         'libname2')
-    self.assertEquals(LicenseBuilder._ParseLibrary(
-            '//a/b/third_party/libname3/c:d(e)').group(1),
+    self.assertEquals(
+        LicenseBuilder._ParseLibraryName('//a/b/third_party/libname3/c:d(e)'),
         'libname3')
-    self.assertEquals(LicenseBuilder._ParseLibrary('//a/b/not_third_party/c'),
-        None)
+    self.assertEquals(
+        LicenseBuilder._ParseLibraryName('//a/b/not_third_party/c'), None)
+
+  def testParseLibrarySimpleMatch(self):
+    builder = LicenseBuilder([], [], {}, {})
+    self.assertEquals(
+        builder._ParseLibrary('//a/b/third_party/libname:c'), 'libname')
+
+  def testParseLibraryRegExNoMatchFallbacksToDefaultLibname(self):
+    lib_dict = {
+        'libname:foo.*': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder([], [], lib_dict, {})
+    self.assertEquals(
+        builder._ParseLibrary('//a/b/third_party/libname:bar_java'), 'libname')
+
+  def testParseLibraryRegExMatch(self):
+    lib_regex_dict = {
+        'libname:foo.*': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder([], [], {}, lib_regex_dict)
+    self.assertEquals(
+        builder._ParseLibrary('//a/b/third_party/libname:foo_bar_java'),
+        'libname:foo.*')
+
+  def testParseLibraryRegExMatchWithSubDirectory(self):
+    lib_regex_dict = {
+        'libname/foo:bar.*': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder([], [], {}, lib_regex_dict)
+    self.assertEquals(
+        builder._ParseLibrary('//a/b/third_party/libname/foo:bar_java'),
+        'libname/foo:bar.*')
+
+  def testParseLibraryRegExMatchWithStarInside(self):
+    lib_regex_dict = {
+        'libname/foo.*bar.*': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder([], [], {}, lib_regex_dict)
+    self.assertEquals(
+        builder._ParseLibrary('//a/b/third_party/libname/fooHAHA:bar_java'),
+        'libname/foo.*bar.*')
 
   @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
-  def testGetThirdPartyLibraries(self):
-    self.assertEquals(LicenseBuilder._GetThirdPartyLibraries(
-            'out/arm', 'target1'),
+  def testGetThirdPartyLibrariesWithoutRegex(self):
+    builder = LicenseBuilder([], [], {}, {})
+    self.assertEquals(
+        builder._GetThirdPartyLibraries('out/arm', 'target1'),
         set(['libname1', 'libname2', 'libname3']))
+
+  @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
+  def testGetThirdPartyLibrariesWithRegex(self):
+    lib_regex_dict = {
+        'libname2:c.*': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder([], [], {}, lib_regex_dict)
+    self.assertEquals(
+        builder._GetThirdPartyLibraries('out/arm', 'target1'),
+        set(['libname1', 'libname2:c.*', 'libname3']))
+
+  @mock.patch('generate_licenses.LicenseBuilder._RunGN', _FakeRunGN)
+  def testGenerateLicenseTextFailIfUnknownLibrary(self):
+    lib_dict = {
+        'simple_library': ['path/to/LICENSE'],
+    }
+    builder = LicenseBuilder(['dummy_dir'], ['dummy_target'], lib_dict, {})
+
+    with self.assertRaises(Exception) as context:
+      builder.GenerateLicenseText('dummy/dir')
+
+    self.assertEquals(
+        context.exception.message,
+        'Missing licenses for following third_party targets: '
+        'libname1, libname2, libname3')
 
 
 if __name__ == '__main__':

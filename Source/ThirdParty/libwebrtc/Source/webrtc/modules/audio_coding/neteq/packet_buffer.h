@@ -15,7 +15,7 @@
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "modules/include/module_common_types_public.h"  // IsNewerTimestamp
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -120,6 +120,12 @@ class PacketBuffer {
   // Returns the number of samples in the buffer, including samples carried in
   // duplicate and redundant packets.
   virtual size_t NumSamplesInBuffer(size_t last_decoded_length) const;
+
+  // Returns the total duration in samples that the packets in the buffer spans
+  // across.
+  virtual size_t GetSpanSamples(size_t last_decoded_length,
+                                size_t sample_rate,
+                                bool count_dtx_waiting_time) const;
 
   // Returns true if the packet buffer contains any DTX or CNG packets.
   virtual bool ContainsDtxOrCngPacket(

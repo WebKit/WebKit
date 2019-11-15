@@ -8,6 +8,7 @@
  */
 
 #include "modules/audio_coding/neteq/expand_uma_logger.h"
+
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/metrics.h"
 

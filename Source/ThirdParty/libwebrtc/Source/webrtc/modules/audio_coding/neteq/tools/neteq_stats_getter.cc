@@ -16,7 +16,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace test {
@@ -57,16 +57,16 @@ void NetEqStatsGetter::AfterGetAudio(int64_t time_now_ms,
     last_stats_query_time_ms_ = time_now_ms;
   }
 
+  const auto voice_concealed_samples =
+      lifetime_stat.concealed_samples - lifetime_stat.silent_concealed_samples;
   if (current_concealment_event_ != lifetime_stat.concealment_events &&
-      voice_concealed_samples_until_last_event_ <
-          lifetime_stat.voice_concealed_samples) {
+      voice_concealed_samples_until_last_event_ < voice_concealed_samples) {
     if (last_event_end_time_ms_ > 0) {
       // Do not account for the first event to avoid start of the call
       // skewing.
       ConcealmentEvent concealment_event;
       uint64_t last_event_voice_concealed_samples =
-          lifetime_stat.voice_concealed_samples -
-          voice_concealed_samples_until_last_event_;
+          voice_concealed_samples - voice_concealed_samples_until_last_event_;
       RTC_CHECK_GT(last_event_voice_concealed_samples, 0);
       concealment_event.duration_ms = last_event_voice_concealed_samples /
                                       (audio_frame.sample_rate_hz_ / 1000);
@@ -74,12 +74,10 @@ void NetEqStatsGetter::AfterGetAudio(int64_t time_now_ms,
       concealment_event.time_from_previous_event_end_ms =
           time_now_ms - last_event_end_time_ms_;
       concealment_events_.emplace_back(concealment_event);
-      voice_concealed_samples_until_last_event_ =
-          lifetime_stat.voice_concealed_samples;
+      voice_concealed_samples_until_last_event_ = voice_concealed_samples;
     }
     last_event_end_time_ms_ = time_now_ms;
-    voice_concealed_samples_until_last_event_ =
-        lifetime_stat.voice_concealed_samples;
+    voice_concealed_samples_until_last_event_ = voice_concealed_samples;
     current_concealment_event_ = lifetime_stat.concealment_events;
   }
 
@@ -112,7 +110,6 @@ NetEqStatsGetter::Stats NetEqStatsGetter::AverageStats() const {
         a.accelerate_rate += b.accelerate_rate / 16384.0;
         a.secondary_decoded_rate += b.secondary_decoded_rate / 16384.0;
         a.secondary_discarded_rate += b.secondary_discarded_rate / 16384.0;
-        a.clockdrift_ppm += b.clockdrift_ppm;
         a.added_zero_samples += b.added_zero_samples;
         a.mean_waiting_time_ms += b.mean_waiting_time_ms;
         a.median_waiting_time_ms += b.median_waiting_time_ms;
@@ -133,7 +130,6 @@ NetEqStatsGetter::Stats NetEqStatsGetter::AverageStats() const {
   sum_stats.accelerate_rate /= stats_.size();
   sum_stats.secondary_decoded_rate /= stats_.size();
   sum_stats.secondary_discarded_rate /= stats_.size();
-  sum_stats.clockdrift_ppm /= stats_.size();
   sum_stats.added_zero_samples /= stats_.size();
   sum_stats.mean_waiting_time_ms /= stats_.size();
   sum_stats.median_waiting_time_ms /= stats_.size();

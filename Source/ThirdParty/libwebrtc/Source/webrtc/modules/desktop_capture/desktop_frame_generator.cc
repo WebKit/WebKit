@@ -16,8 +16,9 @@
 #include <memory>
 
 #include "modules/desktop_capture/rgba_color.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/random.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 

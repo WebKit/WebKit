@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
 #include "modules/audio_coding/codecs/opus/test/audio_ring_buffer.h"
+
+#include <memory>
 
 #include "common_audio/channel_buffer.h"
 #include "test/gtest.h"
@@ -29,7 +29,7 @@ void ReadAndWriteTest(const ChannelBuffer<float>& input,
   const size_t num_channels = input.num_channels();
   const size_t total_frames = input.num_frames();
   AudioRingBuffer buf(num_channels, buffer_frames);
-  std::unique_ptr<float* []> slice(new float*[num_channels]);
+  std::unique_ptr<float*[]> slice(new float*[num_channels]);
 
   size_t input_pos = 0;
   size_t output_pos = 0;
@@ -82,7 +82,7 @@ TEST_P(AudioRingBufferTest, ReadDataMatchesWrittenData) {
       EXPECT_EQ(input.channels()[i][j], output.channels()[i][j]);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     AudioRingBufferTest,
     AudioRingBufferTest,
     ::testing::Combine(::testing::Values(10, 20, 42),  // num_write_chunk_frames

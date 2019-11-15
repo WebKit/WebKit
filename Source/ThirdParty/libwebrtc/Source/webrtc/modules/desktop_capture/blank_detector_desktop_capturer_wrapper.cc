@@ -10,10 +10,12 @@
 
 #include "modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
 
-#include <algorithm>
+#include <stdint.h>
+
 #include <utility>
 
 #include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -31,8 +33,8 @@ BlankDetectorDesktopCapturerWrapper::~BlankDetectorDesktopCapturerWrapper() =
 
 void BlankDetectorDesktopCapturerWrapper::Start(
     DesktopCapturer::Callback* callback) {
-  capturer_->Start(this);
   callback_ = callback;
+  capturer_->Start(this);
 }
 
 void BlankDetectorDesktopCapturerWrapper::SetSharedMemoryFactory(

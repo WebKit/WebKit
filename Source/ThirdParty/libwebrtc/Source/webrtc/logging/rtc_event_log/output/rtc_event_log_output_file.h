@@ -11,47 +11,9 @@
 #ifndef LOGGING_RTC_EVENT_LOG_OUTPUT_RTC_EVENT_LOG_OUTPUT_FILE_H_
 #define LOGGING_RTC_EVENT_LOG_OUTPUT_RTC_EVENT_LOG_OUTPUT_FILE_H_
 
-#include <stddef.h>
-#include <stdio.h>
+// TODO(bugs.webrtc.org/6463): For backwards compatibility; delete as soon as
+// downstream dependencies are updated.
 
-#include <memory>
-#include <string>
-
-#include "api/rtceventlogoutput.h"
-#include "rtc_base/platform_file.h"  // Can't neatly forward PlatformFile.
-
-namespace webrtc {
-
-class RtcEventLogOutputFile final : public RtcEventLogOutput {
- public:
-  static const size_t kMaxReasonableFileSize;  // Explanation at declaration.
-
-  // Unlimited/limited-size output file (by filename).
-  explicit RtcEventLogOutputFile(const std::string& file_name);
-  RtcEventLogOutputFile(const std::string& file_name, size_t max_size_bytes);
-
-  // Unlimited/limited-size output file (by file handle).
-  explicit RtcEventLogOutputFile(rtc::PlatformFile file);
-  RtcEventLogOutputFile(rtc::PlatformFile file, size_t max_size_bytes);
-
-  ~RtcEventLogOutputFile() override;
-
-  bool IsActive() const override;
-
-  bool Write(const std::string& output) override;
-
- private:
-  // IsActive() can be called either from outside or from inside, but we don't
-  // want to incur the overhead of a virtual function call if called from inside
-  // some other function of this class.
-  inline bool IsActiveInternal() const;
-
-  // Maximum size, or zero for no limit.
-  const size_t max_size_bytes_;
-  size_t written_bytes_{0};
-  FILE* file_{nullptr};
-};
-
-}  // namespace webrtc
+#include "api/rtc_event_log_output_file.h"
 
 #endif  // LOGGING_RTC_EVENT_LOG_OUTPUT_RTC_EVENT_LOG_OUTPUT_FILE_H_

@@ -9,6 +9,7 @@
  */
 
 #include "api/test/fake_frame_encryptor.h"
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

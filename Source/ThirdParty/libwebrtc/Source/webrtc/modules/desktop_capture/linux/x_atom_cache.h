@@ -11,7 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_X_ATOM_CACHE_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_X_ATOM_CACHE_H_
 
-#include <X11/Xatom.h>
+#include <X11/X.h>
 #include <X11/Xlib.h>
 
 namespace webrtc {
@@ -27,6 +27,7 @@ class XAtomCache final {
   Atom WmState();
   Atom WindowType();
   Atom WindowTypeNormal();
+  Atom IccProfile();
 
  private:
   // If |*atom| is None, this function uses XInternAtom() to retrieve an Atom.
@@ -36,6 +37,7 @@ class XAtomCache final {
   Atom wm_state_ = None;
   Atom window_type_ = None;
   Atom window_type_normal_ = None;
+  Atom icc_profile_ = None;
 };
 
 }  // namespace webrtc

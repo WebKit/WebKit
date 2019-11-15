@@ -14,7 +14,7 @@
 #include <jni.h>
 #include <memory>
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 #include "api/video/video_frame.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
 

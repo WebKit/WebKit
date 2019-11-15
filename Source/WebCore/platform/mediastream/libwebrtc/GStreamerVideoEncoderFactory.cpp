@@ -73,19 +73,17 @@ public:
     {
     }
 
-    int SetRates(uint32_t newBitrate, uint32_t frameRate) override
+    void SetRates(const webrtc::VideoEncoder::RateControlParameters& parameters) override
     {
-        GST_INFO_OBJECT(m_pipeline.get(), "New bitrate: %d - framerate is %d",
-            newBitrate, frameRate);
+        GST_INFO_OBJECT(m_pipeline.get(), "New bitrate: %d - framerate is %f",
+            parameters.bitrate.get_sum_bps(), parameters.framerate_fps);
 
         auto caps = adoptGRef(gst_caps_copy(m_restrictionCaps.get()));
 
         SetRestrictionCaps(WTFMove(caps));
 
         if (m_encoder)
-            g_object_set(m_encoder, "bitrate", newBitrate, nullptr);
-
-        return WEBRTC_VIDEO_CODEC_OK;
+            g_object_set(m_encoder, "bitrate", parameters.bitrate.get_sum_bps(), nullptr);
     }
 
     GstElement* pipeline()
@@ -113,13 +111,12 @@ public:
             return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
         }
 
-        m_encodedFrame._size = codecSettings->width * codecSettings->height * 3;
-        m_encodedFrame._buffer = new uint8_t[m_encodedFrame._size];
-        m_encodedImageBuffer.reset(m_encodedFrame._buffer);
+        auto size = codecSettings->width * codecSettings->height * 3;
+        m_encodedFrame.set_buffer(new uint8_t[size], size);
+        m_encodedImageBuffer.reset(m_encodedFrame.data());
         m_encodedFrame._completeFrame = true;
         m_encodedFrame._encodedWidth = 0;
         m_encodedFrame._encodedHeight = 0;
-        m_encodedFrame._length = 0;
 
         m_pipeline = makeElement("pipeline");
 
@@ -153,11 +150,6 @@ public:
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    bool SupportsNativeHandle() const final
-    {
-        return true;
-    }
-
     int32_t RegisterEncodeCompleteCallback(webrtc::EncodedImageCallback* callback) final
     {
         m_imageReadyCb = callback;
@@ -167,7 +159,7 @@ public:
 
     int32_t Release() final
     {
-        m_encodedFrame._buffer = nullptr;
+        m_encodedFrame.set_buffer(nullptr, 0);
         m_encodedImageBuffer.reset();
         if (m_pipeline) {
             GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -196,9 +188,18 @@ public:
         }
     }
 
+    VideoEncoder::EncoderInfo GetEncoderInfo() const {
+        EncoderInfo info;
+        info.supports_native_handle = false;
+        info.implementation_name = "GStreamer";
+        info.has_trusted_rate_controller = true;
+        info.is_hardware_accelerated = true;
+        info.has_internal_source = false;
+        return info;
+    }
+
     int32_t Encode(const webrtc::VideoFrame& frame,
-        const webrtc::CodecSpecificInfo*,
-        const std::vector<webrtc::FrameType>* frameTypes) final
+        const std::vector<webrtc::VideoFrameType>* frameTypes) final
     {
         int32_t res;
 
@@ -224,7 +225,7 @@ public:
         }
 
         for (auto frame_type : *frameTypes) {
-            if (frame_type == webrtc::kVideoFrameKey) {
+            if (frame_type == webrtc::VideoFrameType::kVideoFrameKey) {
                 auto pad = adoptGRef(gst_element_get_static_pad(m_src, "src"));
                 auto forceKeyUnit = gst_video_event_new_downstream_force_key_unit(GST_CLOCK_TIME_NONE,
                     GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE, FALSE, 1);
@@ -253,7 +254,7 @@ public:
         webrtc::RTPFragmentationHeader fragmentationInfo;
 
         Fragmentize(&m_encodedFrame, &m_encodedImageBuffer, &m_encodedImageBufferSize, encodedBuffer, &fragmentationInfo);
-        if (!m_encodedFrame._size)
+        if (!m_encodedFrame.size())
             return WEBRTC_VIDEO_CODEC_OK;
 
         gst_structure_get(gst_caps_get_structure(encodedCaps, 0),
@@ -261,7 +262,7 @@ public:
             "height", G_TYPE_INT, &m_encodedFrame._encodedHeight,
             nullptr);
 
-        m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(encodedBuffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::kVideoFrameDelta : webrtc::kVideoFrameKey;
+        m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(encodedBuffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::VideoFrameType::kVideoFrameDelta : webrtc::VideoFrameType::kVideoFrameKey;
         m_encodedFrame._completeFrame = true;
         m_encodedFrame.capture_time_ms_ = frame.render_time_ms();
         m_encodedFrame.SetTimestamp(frame.timestamp());
@@ -325,31 +326,18 @@ public:
         auto map = GstMappedBuffer::create(buffer, GST_MAP_READ);
 
         if (*bufferSize < map->size()) {
-            encodedImage->_size = map->size();
-            encodedImage->_buffer = new uint8_t[encodedImage->_size];
-            encodedImageBuffer->reset(encodedImage->_buffer);
+            encodedImage->set_size(map->size());
+            encodedImage->set_buffer(new uint8_t[map->size()], map->size());
+            encodedImageBuffer->reset(encodedImage->data());
             *bufferSize = map->size();
         }
 
-        memcpy(encodedImage->_buffer, map->data(), map->size());
-        encodedImage->_length = map->size();
-        encodedImage->_size = map->size();
+        memcpy(encodedImage->data(), map->data(), map->size());
+        encodedImage->set_size(map->size());
 
         fragmentationInfo->VerifyAndAllocateFragmentationHeader(1);
         fragmentationInfo->fragmentationOffset[0] = 0;
         fragmentationInfo->fragmentationLength[0] = map->size();
-        fragmentationInfo->fragmentationPlType[0] = 0;
-        fragmentationInfo->fragmentationTimeDiff[0] = 0;
-    }
-
-    const char* ImplementationName() const
-    {
-        GRefPtr<GstElement> encoderImplementation;
-        g_return_val_if_fail(m_encoder, nullptr);
-
-        g_object_get(m_encoder, "encoder", &encoderImplementation.outPtr(), nullptr);
-
-        return GST_OBJECT_NAME(gst_element_get_factory(encoderImplementation.get()));
     }
 
     virtual const gchar* Name() = 0;
@@ -426,17 +414,17 @@ public:
             offset = nalu.offset + nalu.size;
         }
 
-        if (encodedImage->_size < requiredSize) {
-            encodedImage->_size = requiredSize;
-            encodedImage->_buffer = new uint8_t[encodedImage->_size];
-            encodedImageBuffer->reset(encodedImage->_buffer);
+        if (encodedImage->size() < requiredSize) {
+            encodedImage->set_size(requiredSize);
+            encodedImage->set_buffer(new uint8_t[requiredSize], requiredSize);
+            encodedImageBuffer->reset(encodedImage->data());
             *bufferSize = map->size();
         }
 
         // Iterate nal units and fill the Fragmentation info.
         fragmentationHeader->VerifyAndAllocateFragmentationHeader(nals.size());
         size_t fragmentIndex = 0;
-        encodedImage->_length = 0;
+        encodedImage->set_size(0);
         for (std::vector<GstH264NalUnit>::iterator nal = nals.begin(); nal != nals.end(); ++nal, fragmentIndex++) {
 
             ASSERT(map->data()[nal->sc_offset + 0] == startCode[0]);
@@ -447,9 +435,9 @@ public:
             fragmentationHeader->fragmentationOffset[fragmentIndex] = nal->offset;
             fragmentationHeader->fragmentationLength[fragmentIndex] = nal->size;
 
-            memcpy(encodedImage->_buffer + encodedImage->_length, &map->data()[nal->sc_offset],
+            memcpy(encodedImage->data() + encodedImage->size(), &map->data()[nal->sc_offset],
                 sizeof(startCode) + nal->size);
-            encodedImage->_length += nal->size + sizeof(startCode);
+            encodedImage->set_size(nal->size + sizeof(startCode));
         }
     }
 
@@ -470,7 +458,6 @@ public:
     void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecificInfos, GstBuffer*) final
     {
         codecSpecificInfos->codecType = CodecType();
-        codecSpecificInfos->codec_name = ImplementationName();
         webrtc::CodecSpecificInfoH264* h264Info = &(codecSpecificInfos->codecSpecific.H264);
         h264Info->packetization_mode = packetizationMode;
     }
@@ -494,7 +481,6 @@ public:
     void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecificInfos, GstBuffer* buffer) final
     {
         codecSpecificInfos->codecType = webrtc::kVideoCodecVP8;
-        codecSpecificInfos->codec_name = ImplementationName();
         webrtc::CodecSpecificInfoVP8* vp8Info = &(codecSpecificInfos->codecSpecific.VP8);
         vp8Info->temporalIdx = 0;
 

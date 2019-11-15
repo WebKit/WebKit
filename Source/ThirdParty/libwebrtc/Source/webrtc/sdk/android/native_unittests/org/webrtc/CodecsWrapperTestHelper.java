@@ -23,4 +23,9 @@ public class CodecsWrapperTestHelper {
     VideoCodecInfo codec_info = new VideoCodecInfo("H264", params);
     return codec_info;
   }
+
+  @CalledByNative
+  public static VideoEncoder createFakeVideoEncoder() {
+    return new FakeVideoEncoder();
+  }
 }

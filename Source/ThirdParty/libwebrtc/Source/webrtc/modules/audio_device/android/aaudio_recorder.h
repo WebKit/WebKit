@@ -12,11 +12,12 @@
 #define MODULES_AUDIO_DEVICE_ANDROID_AAUDIO_RECORDER_H_
 
 #include <aaudio/AAudio.h>
+
 #include <memory>
 
 #include "modules/audio_device/android/aaudio_wrapper.h"
 #include "modules/audio_device/include/audio_device_defines.h"
-#include "rtc_base/messagehandler.h"
+#include "rtc_base/message_handler.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_checker.h"
 

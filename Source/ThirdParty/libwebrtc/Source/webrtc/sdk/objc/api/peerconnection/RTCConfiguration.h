@@ -140,6 +140,18 @@ RTC_OBJC_EXPORT
  */
 @property(nonatomic, assign) BOOL shouldPresumeWritableWhenFullyRelayed;
 
+/* This flag is only effective when |continualGatheringPolicy| is
+ * RTCContinualGatheringPolicyGatherContinually.
+ *
+ * If YES, after the ICE transport type is changed such that new types of
+ * ICE candidates are allowed by the new transport type, e.g. from
+ * RTCIceTransportPolicyRelay to RTCIceTransportPolicyAll, candidates that
+ * have been gathered by the ICE transport but not matching the previous
+ * transport type and as a result not observed by PeerConnectionDelegateAdapter,
+ * will be surfaced to the delegate.
+ */
+@property(nonatomic, assign) BOOL shouldSurfaceIceCandidatesOnIceTransportTypeChanged;
+
 /** If set to non-nil, controls the minimal interval between consecutive ICE
  *  check packets.
  */

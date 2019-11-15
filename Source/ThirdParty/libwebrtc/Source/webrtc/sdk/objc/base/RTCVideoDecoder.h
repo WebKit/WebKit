@@ -23,23 +23,16 @@ typedef void (^RTCVideoDecoderCallback)(RTCVideoFrame *frame);
 
 /** Protocol for decoder implementations. */
 RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoDecoder")))
 @protocol RTCVideoDecoder <NSObject>
 
 - (void)setCallback:(RTCVideoDecoderCallback)callback;
-- (NSInteger)startDecodeWithSettings:(RTCVideoEncoderSettings *)settings
-                       numberOfCores:(int)numberOfCores
-    DEPRECATED_MSG_ATTRIBUTE("use startDecodeWithNumberOfCores: instead");
+- (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores;
 - (NSInteger)releaseDecoder;
 - (NSInteger)decode:(RTCEncodedImage *)encodedImage
         missingFrames:(BOOL)missingFrames
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
          renderTimeMs:(int64_t)renderTimeMs;
 - (NSString *)implementationName;
-
-// TODO(andersc): Make non-optional when `startDecodeWithSettings:numberOfCores:` is removed.
-@optional
-- (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores;
 
 @end
 

@@ -43,18 +43,5 @@ AudioStreamConfig::Stream::Stream() = default;
 AudioStreamConfig::Stream::Stream(const AudioStreamConfig::Stream&) = default;
 AudioStreamConfig::Stream::~Stream() = default;
 
-NetworkNodeConfig::NetworkNodeConfig() = default;
-NetworkNodeConfig::NetworkNodeConfig(const NetworkNodeConfig&) = default;
-NetworkNodeConfig::~NetworkNodeConfig() = default;
-
-NetworkNodeConfig::Simulation::Simulation() = default;
-NetworkNodeConfig::Simulation::Simulation(
-    const NetworkNodeConfig::Simulation&) = default;
-NetworkNodeConfig::Simulation::~Simulation() = default;
-
-CrossTrafficConfig::CrossTrafficConfig() = default;
-CrossTrafficConfig::CrossTrafficConfig(const CrossTrafficConfig&) = default;
-CrossTrafficConfig::~CrossTrafficConfig() = default;
-
 }  // namespace test
 }  // namespace webrtc

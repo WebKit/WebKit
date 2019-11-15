@@ -10,12 +10,26 @@
 
 #include "examples/peerconnection/client/linux/main_wnd.h"
 
+#include <cairo.h>
+#include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib-object.h>
+#include <glib.h>
+#include <gobject/gclosure.h>
 #include <gtk/gtk.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <cstdint>
+#include <map>
+#include <utility>
 
 #include "api/video/i420_buffer.h"
-#include "examples/peerconnection/client/defaults.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_source_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"

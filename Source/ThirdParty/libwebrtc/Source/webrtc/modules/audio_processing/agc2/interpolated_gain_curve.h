@@ -15,8 +15,7 @@
 #include <string>
 
 #include "modules/audio_processing/agc2/agc2_common.h"
-
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/gtest_prod_util.h"
 #include "system_wrappers/include/metrics.h"
 

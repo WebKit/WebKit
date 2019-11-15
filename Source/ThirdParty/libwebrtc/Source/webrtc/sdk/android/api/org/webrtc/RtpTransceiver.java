@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.webrtc.MediaStreamTrack;
+import org.webrtc.RtpParameters;
 
 /**
  * Java wrapper for a C++ RtpTransceiverInterface.
@@ -71,18 +72,25 @@ public class RtpTransceiver {
   public static final class RtpTransceiverInit {
     private final RtpTransceiverDirection direction;
     private final List<String> streamIds;
+    private final List<RtpParameters.Encoding> sendEncodings;
 
     public RtpTransceiverInit() {
       this(RtpTransceiverDirection.SEND_RECV);
     }
 
     public RtpTransceiverInit(RtpTransceiverDirection direction) {
-      this(direction, Collections.emptyList());
+      this(direction, Collections.emptyList(), Collections.emptyList());
     }
 
     public RtpTransceiverInit(RtpTransceiverDirection direction, List<String> streamIds) {
+      this(direction, streamIds, Collections.emptyList());
+    }
+
+    public RtpTransceiverInit(RtpTransceiverDirection direction, List<String> streamIds,
+        List<RtpParameters.Encoding> sendEncodings) {
       this.direction = direction;
       this.streamIds = new ArrayList<String>(streamIds);
+      this.sendEncodings = new ArrayList<RtpParameters.Encoding>(sendEncodings);
     }
 
     @CalledByNative("RtpTransceiverInit")
@@ -93,6 +101,11 @@ public class RtpTransceiver {
     @CalledByNative("RtpTransceiverInit")
     List<String> getStreamIds() {
       return new ArrayList<String>(this.streamIds);
+    }
+
+    @CalledByNative("RtpTransceiverInit")
+    List<RtpParameters.Encoding> getSendEncodings() {
+      return new ArrayList<RtpParameters.Encoding>(this.sendEncodings);
     }
   }
 

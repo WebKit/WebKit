@@ -8,23 +8,38 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <string.h>
+
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/asynctcpsocket.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/async_socket.h"
+#include "rtc_base/async_tcp_socket.h"
+#include "rtc_base/async_udp_socket.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/natserver.h"
-#include "rtc_base/natsocketfactory.h"
-#include "rtc_base/nethelpers.h"
+#include "rtc_base/nat_server.h"
+#include "rtc_base/nat_socket_factory.h"
+#include "rtc_base/nat_types.h"
+#include "rtc_base/net_helpers.h"
 #include "rtc_base/network.h"
-#include "rtc_base/physicalsocketserver.h"
-#include "rtc_base/testclient.h"
-#include "rtc_base/virtualsocketserver.h"
+#include "rtc_base/physical_socket_server.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
+#include "rtc_base/socket_server.h"
+#include "rtc_base/test_client.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtual_socket_server.h"
+#include "test/gtest.h"
 
-using namespace rtc;
+namespace rtc {
+namespace {
 
 bool CheckReceive(TestClient* client,
                   bool should_receive,
@@ -207,7 +222,6 @@ bool TestConnectivity(const SocketAddress& src, const IPAddress& dst) {
 
 void TestPhysicalInternal(const SocketAddress& int_addr) {
   BasicNetworkManager network_manager;
-  network_manager.set_ipv6_enabled(true);
   network_manager.StartUpdating();
   // Process pending messages so the network list is updated.
   Thread::Current()->ProcessMessages(0);
@@ -308,7 +322,7 @@ TEST(NatTest, TestVirtualIPv6) {
   }
 }
 
-class NatTcpTest : public testing::Test, public sigslot::has_slots<> {
+class NatTcpTest : public ::testing::Test, public sigslot::has_slots<> {
  public:
   NatTcpTest()
       : int_addr_("192.168.0.1", 0),
@@ -387,4 +401,6 @@ TEST_F(NatTcpTest, DISABLED_TestConnectOut) {
   out->Send(buf, len);
   EXPECT_TRUE(in->CheckNextPacket(buf, len, &trans_addr));
 }
-// #endif
+
+}  // namespace
+}  // namespace rtc

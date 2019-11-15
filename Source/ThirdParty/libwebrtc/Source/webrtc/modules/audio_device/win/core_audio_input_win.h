@@ -30,7 +30,7 @@ namespace webrtc_win {
 // and streaming of captured audio to a WebRTC client.
 class CoreAudioInput final : public CoreAudioBase, public AudioInput {
  public:
-  CoreAudioInput();
+  CoreAudioInput(bool automatic_restart);
   ~CoreAudioInput() override;
 
   // AudioInput implementation.

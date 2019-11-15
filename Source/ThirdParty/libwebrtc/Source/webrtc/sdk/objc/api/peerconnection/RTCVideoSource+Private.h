@@ -12,7 +12,7 @@
 
 #import "RTCMediaSource+Private.h"
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 #include "rtc_base/thread.h"
 
 NS_ASSUME_NONNULL_BEGIN

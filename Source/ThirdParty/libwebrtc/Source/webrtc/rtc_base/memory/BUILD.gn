@@ -27,7 +27,25 @@ rtc_source_set("aligned_malloc") {
     "aligned_malloc.cc",
     "aligned_malloc.h",
   ]
-  deps = []
+  deps = [
+    "..:checks",
+  ]
+}
+
+rtc_source_set("fifo_buffer") {
+  visibility = [
+    "../../p2p:rtc_p2p",
+    "..:rtc_base_tests_utils",
+    "..:rtc_base_unittests",
+    ":unittests",
+  ]
+  sources = [
+    "fifo_buffer.cc",
+    "fifo_buffer.h",
+  ]
+  deps = [
+    "..:rtc_base",
+  ]
 }
 
 rtc_source_set("unittests") {
@@ -35,10 +53,12 @@ rtc_source_set("unittests") {
   sources = [
     "aligned_array_unittest.cc",
     "aligned_malloc_unittest.cc",
+    "fifo_buffer_unittest.cc",
   ]
   deps = [
     ":aligned_array",
     ":aligned_malloc",
+    ":fifo_buffer",
     "../../test:test_support",
   ]
 }

@@ -8,17 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_device/audio_device_buffer.h"
+
 #include <string.h>
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "modules/audio_device/audio_device_buffer.h"
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -39,8 +41,10 @@ static const size_t kMinValidCallTimeTimeInMilliseconds =
 static const double k2Pi = 6.28318530717959;
 #endif
 
-AudioDeviceBuffer::AudioDeviceBuffer()
-    : task_queue_(kTimerQueueName),
+AudioDeviceBuffer::AudioDeviceBuffer(TaskQueueFactory* task_queue_factory)
+    : task_queue_(task_queue_factory->CreateTaskQueue(
+          kTimerQueueName,
+          TaskQueueFactory::Priority::NORMAL)),
       audio_transport_cb_(nullptr),
       rec_sample_rate_(0),
       play_sample_rate_(0),
@@ -63,7 +67,6 @@ AudioDeviceBuffer::AudioDeviceBuffer()
   phase_ = 0.0;
   RTC_LOG(WARNING) << "AUDIO_DEVICE_PLAYS_SINUS_TONE is defined!";
 #endif
-  WebRtcSpl_Init();
 }
 
 AudioDeviceBuffer::~AudioDeviceBuffer() {

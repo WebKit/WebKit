@@ -60,8 +60,10 @@
       kCFAllocatorDefault, _textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, pixelFormat, width,
       height, pixelFormat, GL_UNSIGNED_BYTE, planeIndex, textureOut);
   if (ret != kCVReturnSuccess) {
-    CFRelease(*textureOut);
-    *textureOut = nil;
+    if (*textureOut) {
+      CFRelease(*textureOut);
+      *textureOut = nil;
+    }
     return NO;
   }
   NSAssert(CVOpenGLESTextureGetTarget(*textureOut) == GL_TEXTURE_2D,

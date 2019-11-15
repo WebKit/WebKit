@@ -25,10 +25,7 @@ namespace webrtc {
 class RenderDelayController {
  public:
   static RenderDelayController* Create(const EchoCanceller3Config& config,
-                                       int non_causal_offset,
                                        int sample_rate_hz);
-  static RenderDelayController* Create2(const EchoCanceller3Config& config,
-                                        int sample_rate_hz);
   virtual ~RenderDelayController() = default;
 
   // Resets the delay controller. If the delay confidence is reset, the reset
@@ -42,7 +39,6 @@ class RenderDelayController {
   virtual absl::optional<DelayEstimate> GetDelay(
       const DownsampledRenderBuffer& render_buffer,
       size_t render_delay_buffer_delay,
-      const absl::optional<int>& echo_remover_delay,
       rtc::ArrayView<const float> capture) = 0;
 
   // Returns true if clockdrift has been detected.

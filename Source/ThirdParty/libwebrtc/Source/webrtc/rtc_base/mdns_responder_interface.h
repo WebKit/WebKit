@@ -14,7 +14,7 @@
 #include <functional>
 #include <string>
 
-#include "rtc_base/ipaddress.h"
+#include "rtc_base/ip_address.h"
 
 namespace webrtc {
 

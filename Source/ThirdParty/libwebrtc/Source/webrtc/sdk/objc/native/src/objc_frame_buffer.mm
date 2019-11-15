@@ -22,7 +22,7 @@ class ObjCI420FrameBuffer : public I420BufferInterface {
  public:
   explicit ObjCI420FrameBuffer(id<RTCI420Buffer> frame_buffer)
       : frame_buffer_(frame_buffer), width_(frame_buffer.width), height_(frame_buffer.height) {}
-  ~ObjCI420FrameBuffer() override{};
+  ~ObjCI420FrameBuffer() override {}
 
   int width() const override { return width_; }
 

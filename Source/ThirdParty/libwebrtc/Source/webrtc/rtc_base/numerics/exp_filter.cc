@@ -10,7 +10,7 @@
 
 #include "rtc_base/numerics/exp_filter.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace rtc {
 
@@ -28,7 +28,7 @@ float ExpFilter::Apply(float exp, float sample) {
   } else if (exp == 1.0) {
     filtered_ = alpha_ * filtered_ + (1 - alpha_) * sample;
   } else {
-    float alpha = pow(alpha_, exp);
+    float alpha = std::pow(alpha_, exp);
     filtered_ = alpha * filtered_ + (1 - alpha) * sample;
   }
   if (max_ != kValueUndefined && filtered_ > max_) {

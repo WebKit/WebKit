@@ -13,15 +13,18 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <list>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "api/transport/network_types.h"
-#include "modules/pacing/paced_sender.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -36,9 +39,7 @@ class TransportFeedback;
 // module if possible (sender report), otherwise on receive module
 // (receiver report). For the latter case, we also keep track of the
 // receive modules.
-class PacketRouter : public PacedSender::PacketSender,
-                     public TransportSequenceNumberAllocator,
-                     public RemoteBitrateObserver,
+class PacketRouter : public RemoteBitrateObserver,
                      public TransportFeedbackSenderInterface {
  public:
   PacketRouter();
@@ -51,18 +52,14 @@ class PacketRouter : public PacedSender::PacketSender,
                            bool remb_candidate);
   void RemoveReceiveRtpModule(RtcpFeedbackSenderInterface* rtcp_sender);
 
-  // Implements PacedSender::Callback.
-  bool TimeToSendPacket(uint32_t ssrc,
-                        uint16_t sequence_number,
-                        int64_t capture_timestamp,
-                        bool retransmission,
-                        const PacedPacketInfo& packet_info) override;
+  virtual void SendPacket(std::unique_ptr<RtpPacketToSend> packet,
+                          const PacedPacketInfo& cluster_info);
 
-  size_t TimeToSendPadding(size_t bytes,
-                           const PacedPacketInfo& packet_info) override;
+  virtual std::vector<std::unique_ptr<RtpPacketToSend>> GeneratePadding(
+      size_t target_size_bytes);
 
   void SetTransportWideSequenceNumber(uint16_t sequence_number);
-  uint16_t AllocateSequenceNumber() override;
+  uint16_t AllocateSequenceNumber();
 
   // Called every time there is a new bitrate estimate for a receive channel
   // group. This call will trigger a new RTCP REMB packet if the bitrate
@@ -83,6 +80,9 @@ class PacketRouter : public PacedSender::PacketSender,
   bool SendTransportFeedback(rtcp::TransportFeedback* packet) override;
 
  private:
+  RtpRtcp* FindRtpModule(uint32_t ssrc)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
+
   void AddRembModuleCandidate(RtcpFeedbackSenderInterface* candidate_module,
                               bool media_sender)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
@@ -91,10 +91,17 @@ class PacketRouter : public PacedSender::PacketSender,
       bool media_sender) RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
   void UnsetActiveRembModule() RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
   void DetermineActiveRembModule() RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
+  bool TrySendPacket(RtpPacketToSend* packet,
+                     const PacedPacketInfo& cluster_info,
+                     RtpRtcp* rtp_module)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
 
   rtc::CriticalSection modules_crit_;
   // Rtp and Rtcp modules of the rtp senders.
   std::list<RtpRtcp*> rtp_send_modules_ RTC_GUARDED_BY(modules_crit_);
+  // Ssrc to RtpRtcp module cache.
+  std::unordered_map<uint32_t, RtpRtcp*> rtp_module_cache_map_
+      RTC_GUARDED_BY(modules_crit_);
   // The last module used to send media.
   RtpRtcp* last_send_module_ RTC_GUARDED_BY(modules_crit_);
   // Rtcp modules of the rtp receivers.

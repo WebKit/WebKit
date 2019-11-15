@@ -10,6 +10,7 @@
 #include "rtc_base/experiments/field_trial_units.h"
 
 #include <stdio.h>
+
 #include <limits>
 #include <string>
 
@@ -81,6 +82,22 @@ absl::optional<TimeDelta> ParseTypedParameter<TimeDelta>(std::string str) {
     }
   }
   return absl::nullopt;
+}
+
+template <>
+absl::optional<absl::optional<DataRate>>
+ParseTypedParameter<absl::optional<DataRate>>(std::string str) {
+  return ParseOptionalParameter<DataRate>(str);
+}
+template <>
+absl::optional<absl::optional<DataSize>>
+ParseTypedParameter<absl::optional<DataSize>>(std::string str) {
+  return ParseOptionalParameter<DataSize>(str);
+}
+template <>
+absl::optional<absl::optional<TimeDelta>>
+ParseTypedParameter<absl::optional<TimeDelta>>(std::string str) {
+  return ParseOptionalParameter<TimeDelta>(str);
 }
 
 template class FieldTrialParameter<DataRate>;

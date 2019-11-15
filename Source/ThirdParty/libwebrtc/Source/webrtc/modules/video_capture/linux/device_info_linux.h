@@ -11,8 +11,9 @@
 #ifndef MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_DEVICE_INFO_LINUX_H_
 #define MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_DEVICE_INFO_LINUX_H_
 
+#include <stdint.h>
+
 #include "modules/video_capture/device_info_impl.h"
-#include "modules/video_capture/video_capture_impl.h"
 
 namespace webrtc {
 namespace videocapturemodule {

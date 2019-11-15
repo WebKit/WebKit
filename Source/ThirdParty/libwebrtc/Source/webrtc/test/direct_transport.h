@@ -16,13 +16,12 @@
 #include "api/test/simulated_network.h"
 #include "call/call.h"
 #include "call/simulated_packet_receiver.h"
-#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 #include "test/single_threaded_task_queue.h"
 
 namespace webrtc {
 
-class Clock;
 class PacketReceiver;
 
 namespace test {
@@ -40,7 +39,7 @@ class Demuxer {
 // same task-queue - the one that's passed in via the constructor.
 class DirectTransport : public Transport {
  public:
-  DirectTransport(SingleThreadedTaskQueueForTesting* task_queue,
+  DirectTransport(DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
                   std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
                   Call* send_call,
                   const std::map<uint8_t, MediaType>& payload_type_map);
@@ -60,21 +59,20 @@ class DirectTransport : public Transport {
   int GetAverageDelayMs();
 
  private:
-  void SendPackets();
+  void ProcessPackets() RTC_EXCLUSIVE_LOCKS_REQUIRED(&process_lock_);
   void SendPacket(const uint8_t* data, size_t length);
   void Start();
 
   Call* const send_call_;
-  Clock* const clock_;
 
-  SingleThreadedTaskQueueForTesting* const task_queue_;
-  SingleThreadedTaskQueueForTesting::TaskId next_scheduled_task_
-      RTC_GUARDED_BY(&sequence_checker_);
+  DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+
+  rtc::CriticalSection process_lock_;
+  absl::optional<DEPRECATED_SingleThreadedTaskQueueForTesting::TaskId>
+      next_process_task_ RTC_GUARDED_BY(&process_lock_);
 
   const Demuxer demuxer_;
   const std::unique_ptr<SimulatedPacketReceiverInterface> fake_network_;
-
-  rtc::SequencedTaskChecker sequence_checker_;
 };
 }  // namespace test
 }  // namespace webrtc

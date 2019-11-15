@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_RENDER_DELAY_BUFFER_H_
 
 #include <stddef.h>
+
 #include <vector>
 
 #include "api/audio/echo_canceller3_config.h"
@@ -32,9 +33,8 @@ class RenderDelayBuffer {
   };
 
   static RenderDelayBuffer* Create(const EchoCanceller3Config& config,
-                                   size_t num_bands);
-  static RenderDelayBuffer* Create2(const EchoCanceller3Config& config,
-                                    size_t num_bands);
+                                   int sample_rate_hz,
+                                   size_t num_render_channels);
   virtual ~RenderDelayBuffer() = default;
 
   // Resets the buffer alignment.
@@ -42,7 +42,7 @@ class RenderDelayBuffer {
 
   // Inserts a block into the buffer.
   virtual BufferingEvent Insert(
-      const std::vector<std::vector<float>>& block) = 0;
+      const std::vector<std::vector<std::vector<float>>>& block) = 0;
 
   // Updates the buffers one step based on the specified buffer delay. Returns
   // an enum indicating whether there was a special event that occurred.
@@ -50,7 +50,10 @@ class RenderDelayBuffer {
 
   // Sets the buffer delay and returns a bool indicating whether the delay
   // changed.
-  virtual bool SetDelay(size_t delay) = 0;
+  virtual bool AlignFromDelay(size_t delay) = 0;
+
+  // Sets the buffer delay from the most recently reported external delay.
+  virtual void AlignFromExternalDelay() = 0;
 
   // Gets the buffer delay.
   virtual size_t Delay() const = 0;
@@ -64,14 +67,15 @@ class RenderDelayBuffer {
   // Returns the downsampled render buffer.
   virtual const DownsampledRenderBuffer& GetDownsampledRenderBuffer() const = 0;
 
-  // Returns whether the current delay is noncausal.
-  virtual bool CausalDelay(size_t delay) const = 0;
-
   // Returns the maximum non calusal offset that can occur in the delay buffer.
   static int DelayEstimatorOffset(const EchoCanceller3Config& config);
 
   // Provides an optional external estimate of the audio buffer delay.
   virtual void SetAudioBufferDelay(size_t delay_ms) = 0;
+
+  // Returns whether an external delay estimate has been reported via
+  // SetAudioBufferDelay.
+  virtual bool HasReceivedBufferDelay() = 0;
 };
 
 }  // namespace webrtc

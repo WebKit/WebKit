@@ -14,9 +14,11 @@
 #include <memory>
 #include <vector>
 
+#include "api/transport/field_trial_based_config.h"
+#include "modules/include/module.h"
 #include "modules/remote_bitrate_estimator/remote_estimator_proxy.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 class RemoteBitrateEstimator;
@@ -30,8 +32,7 @@ class RemoteBitrateObserver;
 class ReceiveSideCongestionController : public CallStatsObserver,
                                         public Module {
  public:
-  ReceiveSideCongestionController(const Clock* clock,
-                                  PacketRouter* packet_router);
+  ReceiveSideCongestionController(Clock* clock, PacketRouter* packet_router);
 
   ~ReceiveSideCongestionController() override {}
 
@@ -39,6 +40,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
                                 size_t payload_size,
                                 const RTPHeader& header);
 
+  void SetSendPeriodicFeedback(bool send_periodic_feedback);
   // TODO(nisse): Delete these methods, design a more specific interface.
   virtual RemoteBitrateEstimator* GetRemoteBitrateEstimator(bool send_side_bwe);
   virtual const RemoteBitrateEstimator* GetRemoteBitrateEstimator(
@@ -57,8 +59,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
  private:
   class WrappingBitrateEstimator : public RemoteBitrateEstimator {
    public:
-    WrappingBitrateEstimator(RemoteBitrateObserver* observer,
-                             const Clock* clock);
+    WrappingBitrateEstimator(RemoteBitrateObserver* observer, Clock* clock);
 
     ~WrappingBitrateEstimator() override;
 
@@ -84,7 +85,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
         RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
     void PickEstimator() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
     RemoteBitrateObserver* observer_;
-    const Clock* const clock_;
+    Clock* const clock_;
     rtc::CriticalSection crit_sect_;
     std::unique_ptr<RemoteBitrateEstimator> rbe_;
     bool using_absolute_send_time_;
@@ -94,6 +95,7 @@ class ReceiveSideCongestionController : public CallStatsObserver,
     RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(WrappingBitrateEstimator);
   };
 
+  const FieldTrialBasedConfig field_trial_config_;
   WrappingBitrateEstimator remote_bitrate_estimator_;
   RemoteEstimatorProxy remote_estimator_proxy_;
 };

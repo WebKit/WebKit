@@ -11,31 +11,27 @@
 #ifndef API_VIDEO_VIDEO_STREAM_ENCODER_CREATE_H_
 #define API_VIDEO_VIDEO_STREAM_ENCODER_CREATE_H_
 
-#include <map>
-#include <memory>
-#include <utility>
+#include <stdint.h>
 
+#include <memory>
+
+#include "api/task_queue/task_queue_factory.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_sink_interface.h"
 #include "api/video/video_stream_encoder_interface.h"
 #include "api/video/video_stream_encoder_observer.h"
 #include "api/video/video_stream_encoder_settings.h"
 
 namespace webrtc {
+// TODO(srte): Find a way to avoid this forward declaration.
+class Clock;
 
 std::unique_ptr<VideoStreamEncoderInterface> CreateVideoStreamEncoder(
+    Clock* clock,
+    TaskQueueFactory* task_queue_factory,
     uint32_t number_of_cores,
     VideoStreamEncoderObserver* encoder_stats_observer,
-    const VideoStreamEncoderSettings& settings,
-    // Deprecated, used for tests only.
-    rtc::VideoSinkInterface<VideoFrame>* pre_encode_callback);
-
-inline std::unique_ptr<VideoStreamEncoderInterface> CreateVideoStreamEncoder(
-    uint32_t number_of_cores,
-    VideoStreamEncoderObserver* encoder_stats_observer,
-    const VideoStreamEncoderSettings& settings) {
-  return CreateVideoStreamEncoder(number_of_cores, encoder_stats_observer,
-                                  settings, nullptr);
-}
-
+    const VideoStreamEncoderSettings& settings);
 }  // namespace webrtc
 
 #endif  // API_VIDEO_VIDEO_STREAM_ENCODER_CREATE_H_

@@ -22,7 +22,7 @@ JNI_FUNCTION_DECLARATION(void,
                          JNIEnv* jni,
                          jclass,
                          jint nativeSeverity) {
-  if (nativeSeverity >= rtc::LS_SENSITIVE && nativeSeverity <= rtc::LS_NONE) {
+  if (nativeSeverity >= rtc::LS_VERBOSE && nativeSeverity <= rtc::LS_NONE) {
     rtc::LogMessage::LogToDebug(
         static_cast<rtc::LoggingSeverity>(nativeSeverity));
   }

@@ -8,11 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <memory>
 #include <string>
 
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
@@ -28,7 +32,7 @@ const std::string kFileHeader = "YUV4MPEG2 W50 H20 F30:1 C420\n";
 const std::string kFrameHeader = "FRAME\n";
 }  // namespace
 
-class Y4mFrameWriterTest : public testing::Test {
+class Y4mFrameWriterTest : public ::testing::Test {
  protected:
   Y4mFrameWriterTest() = default;
   ~Y4mFrameWriterTest() override = default;

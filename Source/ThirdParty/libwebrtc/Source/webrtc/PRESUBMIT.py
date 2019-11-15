@@ -19,10 +19,9 @@ CPPLINT_BLACKLIST = [
   'common_types.cc',
   'common_types.h',
   'examples/objc',
-  'media/base/streamparams.h',
-  'media/base/videocommon.h',
-  'media/engine/fakewebrtcdeviceinfo.h',
-  'media/sctp/sctptransport.cc',
+  'media/base/stream_params.h',
+  'media/base/video_common.h',
+  'media/sctp/sctp_transport.cc',
   'modules/audio_coding',
   'modules/audio_device',
   'modules/audio_processing',
@@ -30,8 +29,8 @@ CPPLINT_BLACKLIST = [
   'modules/include/module_common_types.h',
   'modules/utility',
   'modules/video_capture',
-  'p2p/base/pseudotcp.cc',
-  'p2p/base/pseudotcp.h',
+  'p2p/base/pseudo_tcp.cc',
+  'p2p/base/pseudo_tcp.h',
   'rtc_base',
   'sdk/android/src/jni',
   'sdk/objc',
@@ -76,7 +75,6 @@ LEGACY_API_DIRS = (
   'common_audio/include',
   'modules/audio_coding/include',
   'modules/audio_processing/include',
-  'modules/bitrate_controller/include',
   'modules/congestion_controller/include',
   'modules/include',
   'modules/remote_bitrate_estimator/include',
@@ -84,7 +82,6 @@ LEGACY_API_DIRS = (
   'modules/rtp_rtcp/source',
   'modules/utility/include',
   'modules/video_coding/codecs/h264/include',
-  'modules/video_coding/codecs/i420/include',
   'modules/video_coding/codecs/vp8/include',
   'modules/video_coding/codecs/vp9/include',
   'modules/video_coding/include',
@@ -178,11 +175,11 @@ def CheckNativeApiHeaderChanges(input_api, output_api):
       if path == 'api':
         # Special case: Subdirectories included.
         if dn == 'api' or dn.startswith('api/'):
-          files.append(f)
+          files.append(f.LocalPath())
       else:
         # Normal case: Subdirectories not included.
         if dn == path:
-          files.append(f)
+          files.append(f.LocalPath())
 
   if files:
     return [output_api.PresubmitNotifyResult(API_CHANGE_MSG, files)]
@@ -451,6 +448,26 @@ def CheckNoWarningSuppressionFlagsAreAdded(gn_files, input_api, output_api,
     return [output_api.PresubmitError(msg, errors)]
   return []
 
+
+def CheckNoTestCaseUsageIsAdded(input_api, output_api, source_file_filter,
+                                error_formatter=_ReportFileAndLine):
+  error_msg = ('Usage of legacy GoogleTest API detected!\nPlease use the '
+               'new API: https://github.com/google/googletest/blob/master/'
+               'googletest/docs/primer.md#beware-of-the-nomenclature.\n'
+               'Affected files:\n')
+  errors = []  # 2-element tuples with (file, line number)
+  test_case_re = input_api.re.compile(r'TEST_CASE')
+  file_filter = lambda f: (source_file_filter(f)
+                           and f.LocalPath().endswith('.cc'))
+  for f in input_api.AffectedSourceFiles(file_filter):
+    for line_num, line in f.ChangedContents():
+      if test_case_re.search(line):
+        errors.append(error_formatter(f.LocalPath(), line_num))
+  if errors:
+    return [output_api.PresubmitError(error_msg, errors)]
+  return []
+
+
 def CheckNoStreamUsageIsAdded(input_api, output_api,
                               source_file_filter,
                               error_formatter=_ReportFileAndLine):
@@ -480,9 +497,16 @@ def CheckNoStreamUsageIsAdded(input_api, output_api,
       r'// no-presubmit-check TODO\(webrtc:8982\)')
   file_filter = lambda x: (input_api.FilterSourceFile(x)
                            and source_file_filter(x))
+
+  def _IsException(file_path):
+    is_test = any(file_path.endswith(x) for x in ['_test.cc', '_tests.cc',
+                                                  '_unittest.cc',
+                                                  '_unittests.cc'])
+    return file_path.startswith('examples') or is_test
+
   for f in input_api.AffectedSourceFiles(file_filter):
-    # Usage of stringstream is allowed under examples/.
-    if f.LocalPath() == 'PRESUBMIT.py' or f.LocalPath().startswith('examples'):
+    # Usage of stringstream is allowed under examples/ and in tests.
+    if f.LocalPath() == 'PRESUBMIT.py' or _IsException(f.LocalPath()):
       continue
     for line_num, line in f.ChangedContents():
       if ((include_re.search(line) or usage_re.search(line))
@@ -562,7 +586,7 @@ def CheckGnGen(input_api, output_api):
   """
   with _AddToPath(input_api.os_path.join(
       input_api.PresubmitLocalPath(), 'tools_webrtc', 'presubmit_checks_lib')):
-    from gn_check import RunGnCheck
+    from build_helpers import RunGnCheck
   errors = RunGnCheck(FindSrcDirPath(input_api.PresubmitLocalPath()))[:5]
   if errors:
     return [output_api.PresubmitPromptWarning(
@@ -712,7 +736,6 @@ def RunPythonTests(input_api, output_api):
   test_directories = [
       input_api.PresubmitLocalPath(),
       Join('rtc_tools', 'py_event_log_analyzer'),
-      Join('rtc_tools'),
       Join('audio', 'test', 'unittests'),
   ] + [
       root for root, _, files in os.walk(Join('tools_webrtc'))
@@ -862,6 +885,8 @@ def CommonChecks(input_api, output_api):
       input_api, output_api, source_file_filter=non_third_party_sources))
   results.extend(CheckNoStreamUsageIsAdded(
       input_api, output_api, non_third_party_sources))
+  results.extend(CheckNoTestCaseUsageIsAdded(
+      input_api, output_api, non_third_party_sources))
   results.extend(CheckAddedDepsHaveTargetApprovals(input_api, output_api))
   results.extend(CheckApiDepsFileIsUpToDate(input_api, output_api))
   results.extend(CheckAbslMemoryInclude(
@@ -935,15 +960,16 @@ def CheckAbslMemoryInclude(input_api, output_api, source_file_filter):
     if pattern.search(contents):
       continue
     for _, line in f.ChangedContents():
-      if 'absl::make_unique' in line:
+      if 'absl::make_unique' in line or 'absl::WrapUnique' in line:
         files.append(f)
         break
 
   if len(files):
     return [output_api.PresubmitError(
         'Please include "absl/memory/memory.h" header for'
-        ' absl::make_unique.\nThis header may or may not be included'
-        ' transitively depends on the C++ standard version.',
+        ' absl::make_unique or absl::WrapUnique.\nThis header may or'
+        ' may not be included transitively depending on the C++ standard'
+        ' version.',
         files)]
   return []
 

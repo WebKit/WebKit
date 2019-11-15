@@ -309,7 +309,7 @@ public class PeerConnectionClientTest implements PeerConnectionEvents {
         false, /* saveInputAudioToFile */
         false /* useOpenSLES */, false /* disableBuiltInAEC */, false /* disableBuiltInAGC */,
         false /* disableBuiltInNS */, false /* disableWebRtcAGC */, false /* enableRtcEventLog */,
-        false /* useLegacyAudioDevice */, null /* dataChannelParameters */);
+        null /* dataChannelParameters */);
   }
 
   private VideoCapturer createCameraCapturer(boolean captureToTexture) {
@@ -346,7 +346,7 @@ public class PeerConnectionClientTest implements PeerConnectionEvents {
         false, /* saveInputAudioToFile */
         false /* useOpenSLES */, false /* disableBuiltInAEC */, false /* disableBuiltInAGC */,
         false /* disableBuiltInNS */, false /* disableWebRtcAGC */, false /* enableRtcEventLog */,
-        false /* useLegacyAudioDevice */, null /* dataChannelParameters */);
+        null /* dataChannelParameters */);
   }
 
   @Before

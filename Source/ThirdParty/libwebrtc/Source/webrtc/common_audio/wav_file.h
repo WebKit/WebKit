@@ -11,14 +11,13 @@
 #ifndef COMMON_AUDIO_WAV_FILE_H_
 #define COMMON_AUDIO_WAV_FILE_H_
 
-#ifdef __cplusplus
-
 #include <stdint.h>
+
 #include <cstddef>
 #include <string>
 
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/platform_file.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
 
@@ -40,7 +39,7 @@ class WavWriter final : public WavFile {
   WavWriter(const std::string& filename, int sample_rate, size_t num_channels);
 
   // Open a new WAV file for writing.
-  WavWriter(rtc::PlatformFile file, int sample_rate, size_t num_channels);
+  WavWriter(FileWrapper file, int sample_rate, size_t num_channels);
 
   // Close the WAV file, after writing its header.
   ~WavWriter() override;
@@ -60,7 +59,7 @@ class WavWriter final : public WavFile {
   const int sample_rate_;
   const size_t num_channels_;
   size_t num_samples_;  // Total number of samples written to file.
-  FILE* file_handle_;   // Output file, owned by this class
+  FileWrapper file_;    // Output file, owned by this class
 
   RTC_DISALLOW_COPY_AND_ASSIGN(WavWriter);
 };
@@ -71,11 +70,14 @@ class WavReader final : public WavFile {
   // Opens an existing WAV file for reading.
   explicit WavReader(const std::string& filename);
 
-  // Opens an existing WAV file for reading.
-  explicit WavReader(rtc::PlatformFile file);
+  // Use an existing WAV file for reading.
+  explicit WavReader(FileWrapper file);
 
   // Close the WAV file.
   ~WavReader() override;
+
+  // Resets position to the beginning of the file.
+  void Reset();
 
   // Returns the number of samples read. If this is less than requested,
   // verifies that the end of the file was reached.
@@ -92,31 +94,13 @@ class WavReader final : public WavFile {
   size_t num_channels_;
   size_t num_samples_;  // Total number of samples in the file.
   size_t num_samples_remaining_;
-  FILE* file_handle_;  // Input file, owned by this class.
+  FileWrapper file_;  // Input file, owned by this class.
+  int64_t
+      data_start_pos_;  // Position in the file immediately after WAV header.
 
   RTC_DISALLOW_COPY_AND_ASSIGN(WavReader);
 };
 
 }  // namespace webrtc
-
-extern "C" {
-#endif  // __cplusplus
-
-// C wrappers for the WavWriter class.
-typedef struct rtc_WavWriter rtc_WavWriter;
-rtc_WavWriter* rtc_WavOpen(const char* filename,
-                           int sample_rate,
-                           size_t num_channels);
-void rtc_WavClose(rtc_WavWriter* wf);
-void rtc_WavWriteSamples(rtc_WavWriter* wf,
-                         const float* samples,
-                         size_t num_samples);
-int rtc_WavSampleRate(const rtc_WavWriter* wf);
-size_t rtc_WavNumChannels(const rtc_WavWriter* wf);
-size_t rtc_WavNumSamples(const rtc_WavWriter* wf);
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif
 
 #endif  // COMMON_AUDIO_WAV_FILE_H_

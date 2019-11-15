@@ -128,9 +128,8 @@
 #include <stack>
 #include <string>
 
-#include "common_types.h"  // NOLINT(build/include)
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 
 #define BWE_TEST_LOGGING_GLOBAL_CONTEXT(name)                             \
   do {                                                                    \

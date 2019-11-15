@@ -16,25 +16,28 @@
 
 #include "api/units/data_size.h"
 #include "modules/include/module_common_types.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
-class Clock;
 struct PacketFeedback;
 
 class SendTimeHistory {
  public:
-  SendTimeHistory(const Clock* clock, int64_t packet_age_limit_ms);
+  enum class Status { kNotAdded, kOk, kDuplicate };
+
+  explicit SendTimeHistory(int64_t packet_age_limit_ms);
   ~SendTimeHistory();
 
   // Cleanup old entries, then add new packet info with provided parameters.
-  void AddAndRemoveOld(const PacketFeedback& packet);
+  void RemoveOld(int64_t at_time_ms);
+  void AddNewPacket(PacketFeedback packet);
 
   void AddUntracked(size_t packet_size, int64_t send_time_ms);
 
   // Updates packet info identified by |sequence_number| with |send_time_ms|.
-  // Return false if not found.
-  bool OnSentPacket(uint16_t sequence_number, int64_t send_time_ms);
+  // Returns a PacketSendState indicating if the packet was not found, sent,
+  // or if it was previously already marked as sent.
+  Status OnSentPacket(uint16_t sequence_number, int64_t send_time_ms);
 
   // Retrieves packet info identified by |sequence_number|.
   absl::optional<PacketFeedback> GetPacket(uint16_t sequence_number) const;
@@ -47,13 +50,14 @@ class SendTimeHistory {
   DataSize GetOutstandingData(uint16_t local_net_id,
                               uint16_t remote_net_id) const;
 
+  absl::optional<int64_t> GetFirstUnackedSendTime() const;
+
  private:
   using RemoteAndLocalNetworkId = std::pair<uint16_t, uint16_t>;
 
   void AddPacketBytes(const PacketFeedback& packet);
   void RemovePacketBytes(const PacketFeedback& packet);
   void UpdateAckedSeqNum(int64_t acked_seq_num);
-  const Clock* const clock_;
   const int64_t packet_age_limit_ms_;
   size_t pending_untracked_size_ = 0;
   int64_t last_send_time_ms_ = -1;

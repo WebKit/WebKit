@@ -12,9 +12,10 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_DESKTOP_H_
 
 #include <windows.h>
+
 #include <string>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

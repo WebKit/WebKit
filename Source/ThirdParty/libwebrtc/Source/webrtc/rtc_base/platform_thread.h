@@ -16,16 +16,14 @@
 #endif
 #include <string>
 
-#include "rtc_base/constructormagic.h"
+#include "absl/strings/string_view.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/thread_checker.h"
 
 namespace rtc {
 
 // Callback function that the spawned thread will enter once spawned.
-// A return value of false is interpreted as that the function has no
-// more work to do and that the thread can be released.
-typedef bool (*ThreadRunFunctionDeprecated)(void*);
 typedef void (*ThreadRunFunction)(void*);
 
 enum ThreadPriority {
@@ -49,12 +47,9 @@ enum ThreadPriority {
 // called from the same thread, including instantiation.
 class PlatformThread {
  public:
-  PlatformThread(ThreadRunFunctionDeprecated func,
-                 void* obj,
-                 const char* thread_name);
   PlatformThread(ThreadRunFunction func,
                  void* obj,
-                 const char* thread_name,
+                 absl::string_view thread_name,
                  ThreadPriority priority = kNormalPriority);
   virtual ~PlatformThread();
 
@@ -73,10 +68,6 @@ class PlatformThread {
   // Stops (joins) the spawned thread.
   void Stop();
 
-  // Set the priority of the thread. Must be called when thread is running.
-  // TODO(tommi): Make private and only allow public support via ctor.
-  bool SetPriority(ThreadPriority priority);
-
  protected:
 #if defined(WEBRTC_WIN)
   // Exposed to derived classes to allow for special cases specific to Windows.
@@ -85,8 +76,8 @@ class PlatformThread {
 
  private:
   void Run();
+  bool SetPriority(ThreadPriority priority);
 
-  ThreadRunFunctionDeprecated const run_function_deprecated_ = nullptr;
   ThreadRunFunction const run_function_ = nullptr;
   const ThreadPriority priority_ = kNormalPriority;
   void* const obj_;
@@ -98,15 +89,11 @@ class PlatformThread {
 #if defined(WEBRTC_WIN)
   static DWORD WINAPI StartThread(void* param);
 
-  bool stop_ = false;
   HANDLE thread_ = nullptr;
   DWORD thread_id_ = 0;
 #else
   static void* StartThread(void* param);
 
-  // An atomic flag that we use to stop the thread. Only modified on the
-  // controlling thread and checked on the worker thread.
-  volatile int stop_flag_ = 0;
   pthread_t thread_ = 0;
 #endif  // defined(WEBRTC_WIN)
   RTC_DISALLOW_COPY_AND_ASSIGN(PlatformThread);

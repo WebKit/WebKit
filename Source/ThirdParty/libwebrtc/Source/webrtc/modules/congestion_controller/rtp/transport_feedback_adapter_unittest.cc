@@ -8,18 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
+
 #include <limits>
 #include <memory>
 #include <vector>
 
-#include "modules/bitrate_controller/include/mock/mock_bitrate_controller.h"
 #include "modules/congestion_controller/rtp/congestion_controller_unittests_helper.h"
-#include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/clock.h"
+#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -52,9 +53,7 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
 
   virtual ~TransportFeedbackAdapterTest() {}
 
-  virtual void SetUp() {
-    adapter_.reset(new TransportFeedbackAdapter(&clock_));
-  }
+  virtual void SetUp() { adapter_.reset(new TransportFeedbackAdapter()); }
 
   virtual void TearDown() { adapter_.reset(); }
 
@@ -66,9 +65,15 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
                                     int64_t now_ms) {}
 
   void OnSentPacket(const PacketFeedback& packet_feedback) {
-    adapter_->AddPacket(kSsrc, packet_feedback.sequence_number,
-                        packet_feedback.payload_size,
-                        packet_feedback.pacing_info);
+    RtpPacketSendInfo packet_info;
+    packet_info.ssrc = kSsrc;
+    packet_info.transport_sequence_number = packet_feedback.sequence_number;
+    packet_info.rtp_sequence_number = 0;
+    packet_info.has_rtp_sequence_number = true;
+    packet_info.length = packet_feedback.payload_size;
+    packet_info.pacing_info = packet_feedback.pacing_info;
+    adapter_->AddPacket(RtpPacketSendInfo(packet_info), 0u,
+                        Timestamp::ms(clock_.TimeInMilliseconds()));
     adapter_->ProcessSentPacket(rtc::SentPacket(packet_feedback.sequence_number,
                                                 packet_feedback.send_time_ms,
                                                 rtc::PacketInfo()));
@@ -101,7 +106,8 @@ TEST_F(TransportFeedbackAdapterTest, ObserverSanity) {
   }
 
   EXPECT_CALL(mock, OnPacketFeedbackVector(_)).Times(1);
-  adapter_->ProcessTransportFeedback(feedback);
+  adapter_->ProcessTransportFeedback(
+      feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
 
   adapter_->DeRegisterPacketFeedbackObserver(&mock);
 
@@ -116,7 +122,8 @@ TEST_F(TransportFeedbackAdapterTest, ObserverSanity) {
   EXPECT_TRUE(feedback.AddReceivedPacket(new_packet.sequence_number,
                                          new_packet.arrival_time_ms * 1000));
   EXPECT_CALL(mock, OnPacketFeedbackVector(_)).Times(0);
-  adapter_->ProcessTransportFeedback(second_feedback);
+  adapter_->ProcessTransportFeedback(
+      second_feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
@@ -157,7 +164,8 @@ TEST_F(TransportFeedbackAdapterTest, AdaptsFeedbackAndPopulatesSendTimes) {
 
   feedback.Build();
 
-  adapter_->ProcessTransportFeedback(feedback);
+  adapter_->ProcessTransportFeedback(
+      feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
   ComparePacketFeedbackVectors(packets, adapter_->GetTransportFeedbackVector());
 }
 
@@ -190,7 +198,8 @@ TEST_F(TransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
 
   feedback.Build();
 
-  adapter_->ProcessTransportFeedback(feedback);
+  adapter_->ProcessTransportFeedback(
+      feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
   ComparePacketFeedbackVectors(sent_packets,
                                adapter_->GetTransportFeedbackVector());
 }
@@ -234,7 +243,8 @@ TEST_F(TransportFeedbackAdapterTest, HandlesDroppedPackets) {
     expected_packets[i].pacing_info = PacedPacketInfo();
   }
 
-  adapter_->ProcessTransportFeedback(feedback);
+  adapter_->ProcessTransportFeedback(
+      feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
   ComparePacketFeedbackVectors(expected_packets,
                                adapter_->GetTransportFeedbackVector());
 }
@@ -270,7 +280,8 @@ TEST_F(TransportFeedbackAdapterTest, SendTimeWrapsBothWays) {
     std::vector<PacketFeedback> expected_packets;
     expected_packets.push_back(packets[i]);
 
-    adapter_->ProcessTransportFeedback(*feedback.get());
+    adapter_->ProcessTransportFeedback(
+        *feedback.get(), Timestamp::ms(clock_.TimeInMilliseconds()));
     ComparePacketFeedbackVectors(expected_packets,
                                  adapter_->GetTransportFeedbackVector());
   }
@@ -299,7 +310,8 @@ TEST_F(TransportFeedbackAdapterTest, HandlesArrivalReordering) {
   // Adapter keeps the packets ordered by sequence number (which is itself
   // assigned by the order of transmission). Reordering by some other criteria,
   // eg. arrival time, is up to the observers.
-  adapter_->ProcessTransportFeedback(feedback);
+  adapter_->ProcessTransportFeedback(
+      feedback, Timestamp::ms(clock_.TimeInMilliseconds()));
   ComparePacketFeedbackVectors(packets, adapter_->GetTransportFeedbackVector());
 }
 
@@ -363,7 +375,8 @@ TEST_F(TransportFeedbackAdapterTest, TimestampDeltas) {
   std::vector<PacketFeedback> received_feedback;
 
   EXPECT_TRUE(feedback.get() != nullptr);
-  adapter_->ProcessTransportFeedback(*feedback.get());
+  adapter_->ProcessTransportFeedback(
+      *feedback.get(), Timestamp::ms(clock_.TimeInMilliseconds()));
   ComparePacketFeedbackVectors(sent_packets,
                                adapter_->GetTransportFeedbackVector());
 
@@ -378,7 +391,8 @@ TEST_F(TransportFeedbackAdapterTest, TimestampDeltas) {
       rtcp::TransportFeedback::ParseFrom(raw_packet.data(), raw_packet.size());
 
   EXPECT_TRUE(feedback.get() != nullptr);
-  adapter_->ProcessTransportFeedback(*feedback.get());
+  adapter_->ProcessTransportFeedback(
+      *feedback.get(), Timestamp::ms(clock_.TimeInMilliseconds()));
   {
     std::vector<PacketFeedback> expected_packets;
     expected_packets.push_back(packet_feedback);
@@ -386,6 +400,61 @@ TEST_F(TransportFeedbackAdapterTest, TimestampDeltas) {
                                  adapter_->GetTransportFeedbackVector());
   }
 }
+
+TEST_F(TransportFeedbackAdapterTest, IgnoreDuplicatePacketSentCalls) {
+  const PacketFeedback packet(100, 200, 0, 1500, kPacingInfo0);
+
+  // Add a packet and then mark it as sent.
+  RtpPacketSendInfo packet_info;
+  packet_info.ssrc = kSsrc;
+  packet_info.transport_sequence_number = packet.sequence_number;
+  packet_info.length = packet.payload_size;
+  packet_info.pacing_info = packet.pacing_info;
+  adapter_->AddPacket(packet_info, 0u,
+                      Timestamp::ms(clock_.TimeInMilliseconds()));
+  absl::optional<SentPacket> sent_packet =
+      adapter_->ProcessSentPacket(rtc::SentPacket(
+          packet.sequence_number, packet.send_time_ms, rtc::PacketInfo()));
+  EXPECT_TRUE(sent_packet.has_value());
+
+  // Call ProcessSentPacket() again with the same sequence number. This packet
+  // has already been marked as sent and the call should be ignored.
+  absl::optional<SentPacket> duplicate_packet =
+      adapter_->ProcessSentPacket(rtc::SentPacket(
+          packet.sequence_number, packet.send_time_ms, rtc::PacketInfo()));
+  EXPECT_FALSE(duplicate_packet.has_value());
+}
+
+TEST_F(TransportFeedbackAdapterTest, AllowDuplicatePacketSentCallsWithTrial) {
+  // Allow duplicates if this field trial kill-switch is enabled.
+  webrtc::test::ScopedFieldTrials field_trial(
+      "WebRTC-TransportFeedbackAdapter-AllowDuplicates/Enabled/");
+  // Re-run setup so the flags goes into effect.
+  SetUp();
+
+  const PacketFeedback packet(100, 200, 0, 1500, kPacingInfo0);
+
+  // Add a packet and then mark it as sent.
+  RtpPacketSendInfo packet_info;
+  packet_info.ssrc = kSsrc;
+  packet_info.transport_sequence_number = packet.sequence_number;
+  packet_info.length = packet.payload_size;
+  packet_info.pacing_info = packet.pacing_info;
+  adapter_->AddPacket(packet_info, 0u,
+                      Timestamp::ms(clock_.TimeInMilliseconds()));
+  absl::optional<SentPacket> sent_packet =
+      adapter_->ProcessSentPacket(rtc::SentPacket(
+          packet.sequence_number, packet.send_time_ms, rtc::PacketInfo()));
+  EXPECT_TRUE(sent_packet.has_value());
+
+  // Call ProcessSentPacket() again with the same sequence number. This packet
+  // should still be allowed due to the field trial/
+  absl::optional<SentPacket> duplicate_packet =
+      adapter_->ProcessSentPacket(rtc::SentPacket(
+          packet.sequence_number, packet.send_time_ms, rtc::PacketInfo()));
+  EXPECT_TRUE(duplicate_packet.has_value());
+}
+
 }  // namespace test
 }  // namespace webrtc_cc
 }  // namespace webrtc

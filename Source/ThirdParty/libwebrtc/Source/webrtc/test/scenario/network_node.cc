@@ -12,165 +12,59 @@
 #include <algorithm>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 namespace test {
 namespace {
-SimulatedNetwork::Config CreateSimulationConfig(NetworkNodeConfig config) {
+constexpr char kDummyTransportName[] = "dummy";
+SimulatedNetwork::Config CreateSimulationConfig(
+    NetworkSimulationConfig config) {
   SimulatedNetwork::Config sim_config;
-  sim_config.link_capacity_kbps = config.simulation.bandwidth.kbps_or(0);
-  sim_config.loss_percent = config.simulation.loss_rate * 100;
-  sim_config.queue_delay_ms = config.simulation.delay.ms();
-  sim_config.delay_standard_deviation_ms = config.simulation.delay_std_dev.ms();
+  sim_config.link_capacity_kbps = config.bandwidth.kbps_or(0);
+  sim_config.loss_percent = config.loss_rate * 100;
+  sim_config.queue_delay_ms = config.delay.ms();
+  sim_config.delay_standard_deviation_ms = config.delay_std_dev.ms();
+  sim_config.packet_overhead = config.packet_overhead.bytes<int>();
+  sim_config.codel_active_queue_management =
+      config.codel_active_queue_management;
   return sim_config;
 }
 }  // namespace
 
-bool NullReceiver::TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                    uint64_t receiver,
-                                    Timestamp at_time) {
-  return true;
-}
+SimulationNode::SimulationNode(NetworkSimulationConfig config,
+                               SimulatedNetwork* behavior,
+                               EmulatedNetworkNode* network_node)
+    : config_(config), simulation_(behavior), network_node_(network_node) {}
 
-ActionReceiver::ActionReceiver(std::function<void()> action)
-    : action_(action) {}
-
-bool ActionReceiver::TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                      uint64_t receiver,
-                                      Timestamp at_time) {
-  action_();
-  return true;
-}
-
-NetworkNode::~NetworkNode() = default;
-
-NetworkNode::NetworkNode(NetworkNodeConfig config,
-                         std::unique_ptr<NetworkBehaviorInterface> behavior)
-    : packet_overhead_(config.packet_overhead.bytes()),
-      behavior_(std::move(behavior)) {}
-
-void NetworkNode::SetRoute(uint64_t receiver, NetworkReceiverInterface* node) {
-  rtc::CritScope crit(&crit_sect_);
-  routing_[receiver] = node;
-}
-
-void NetworkNode::ClearRoute(uint64_t receiver_id) {
-  rtc::CritScope crit(&crit_sect_);
-  auto it = routing_.find(receiver_id);
-  routing_.erase(it);
-}
-
-bool NetworkNode::TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                   uint64_t receiver,
-                                   Timestamp at_time) {
-  rtc::CritScope crit(&crit_sect_);
-  if (routing_.find(receiver) == routing_.end())
-    return false;
-  uint64_t packet_id = next_packet_id_++;
-  bool sent = behavior_->EnqueuePacket(PacketInFlightInfo(
-      packet.size() + packet_overhead_, at_time.us(), packet_id));
-  if (sent) {
-    packets_.emplace_back(StoredPacket{packet, receiver, packet_id, false});
-  }
-  return sent;
-}
-
-void NetworkNode::Process(Timestamp at_time) {
-  std::vector<PacketDeliveryInfo> delivery_infos;
-  {
-    rtc::CritScope crit(&crit_sect_);
-    absl::optional<int64_t> delivery_us = behavior_->NextDeliveryTimeUs();
-    if (delivery_us && *delivery_us > at_time.us())
-      return;
-
-    delivery_infos = behavior_->DequeueDeliverablePackets(at_time.us());
-  }
-  for (PacketDeliveryInfo& delivery_info : delivery_infos) {
-    StoredPacket* packet = nullptr;
-    NetworkReceiverInterface* receiver = nullptr;
-    {
-      rtc::CritScope crit(&crit_sect_);
-      for (StoredPacket& stored_packet : packets_) {
-        if (stored_packet.id == delivery_info.packet_id) {
-          packet = &stored_packet;
-          break;
-        }
-      }
-      RTC_CHECK(packet);
-      RTC_DCHECK(!packet->removed);
-      receiver = routing_[packet->receiver_id];
-      packet->removed = true;
-    }
-    // We don't want to keep the lock here. Otherwise we would get a deadlock if
-    // the receiver tries to push a new packet.
-    receiver->TryDeliverPacket(packet->packet_data, packet->receiver_id,
-                               at_time);
-    {
-      rtc::CritScope crit(&crit_sect_);
-      while (!packets_.empty() && packets_.front().removed) {
-        packets_.pop_front();
-      }
-    }
-  }
-}
-
-void NetworkNode::Route(int64_t receiver_id,
-                        std::vector<NetworkNode*> nodes,
-                        NetworkReceiverInterface* receiver) {
-  RTC_CHECK(!nodes.empty());
-  for (size_t i = 0; i + 1 < nodes.size(); ++i)
-    nodes[i]->SetRoute(receiver_id, nodes[i + 1]);
-  nodes.back()->SetRoute(receiver_id, receiver);
-}
-
-void NetworkNode::ClearRoute(int64_t receiver_id,
-                             std::vector<NetworkNode*> nodes) {
-  for (NetworkNode* node : nodes)
-    node->ClearRoute(receiver_id);
-}
-
-std::unique_ptr<SimulationNode> SimulationNode::Create(
-    NetworkNodeConfig config) {
-  RTC_DCHECK(config.mode == NetworkNodeConfig::TrafficMode::kSimulation);
+std::unique_ptr<SimulatedNetwork> SimulationNode::CreateBehavior(
+    NetworkSimulationConfig config) {
   SimulatedNetwork::Config sim_config = CreateSimulationConfig(config);
-  auto network = absl::make_unique<SimulatedNetwork>(sim_config);
-  SimulatedNetwork* simulation_ptr = network.get();
-  return std::unique_ptr<SimulationNode>(
-      new SimulationNode(config, std::move(network), simulation_ptr));
+  return absl::make_unique<SimulatedNetwork>(sim_config);
 }
 
 void SimulationNode::UpdateConfig(
-    std::function<void(NetworkNodeConfig*)> modifier) {
+    std::function<void(NetworkSimulationConfig*)> modifier) {
   modifier(&config_);
   SimulatedNetwork::Config sim_config = CreateSimulationConfig(config_);
-  simulated_network_->SetConfig(sim_config);
+  simulation_->SetConfig(sim_config);
 }
 
 void SimulationNode::PauseTransmissionUntil(Timestamp until) {
-  simulated_network_->PauseTransmissionUntil(until.us());
+  simulation_->PauseTransmissionUntil(until.us());
 }
 
 ColumnPrinter SimulationNode::ConfigPrinter() const {
-  return ColumnPrinter::Lambda("propagation_delay capacity loss_rate",
-                               [this](rtc::SimpleStringBuilder& sb) {
-                                 sb.AppendFormat(
-                                     "%.3lf %.0lf %.2lf",
-                                     config_.simulation.delay.seconds<double>(),
-                                     config_.simulation.bandwidth.bps() / 8.0,
-                                     config_.simulation.loss_rate);
-                               });
+  return ColumnPrinter::Lambda(
+      "propagation_delay capacity loss_rate",
+      [this](rtc::SimpleStringBuilder& sb) {
+        sb.AppendFormat("%.3lf %.0lf %.2lf", config_.delay.seconds<double>(),
+                        config_.bandwidth.bps() / 8.0, config_.loss_rate);
+      });
 }
 
-SimulationNode::SimulationNode(
-    NetworkNodeConfig config,
-    std::unique_ptr<NetworkBehaviorInterface> behavior,
-    SimulatedNetwork* simulation)
-    : NetworkNode(config, std::move(behavior)),
-      simulated_network_(simulation),
-      config_(config) {}
-
-NetworkNodeTransport::NetworkNodeTransport(const Clock* sender_clock,
+NetworkNodeTransport::NetworkNodeTransport(Clock* sender_clock,
                                            Call* sender_call)
     : sender_clock_(sender_clock), sender_call_(sender_call) {}
 
@@ -196,85 +90,57 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
   rtc::CopyOnWriteBuffer buffer(packet, length,
                                 length + packet_overhead_.bytes());
   buffer.SetSize(length + packet_overhead_.bytes());
-  return send_net_->TryDeliverPacket(buffer, receiver_id_, send_time);
+  send_net_->OnPacketReceived(
+      EmulatedIpPacket(local_address_, receiver_address_, buffer, send_time));
+  return true;
 }
 
 bool NetworkNodeTransport::SendRtcp(const uint8_t* packet, size_t length) {
   rtc::CopyOnWriteBuffer buffer(packet, length);
-  Timestamp send_time = Timestamp::ms(sender_clock_->TimeInMilliseconds());
+  Timestamp send_time = sender_clock_->CurrentTime();
   rtc::CritScope crit(&crit_sect_);
   buffer.SetSize(length + packet_overhead_.bytes());
   if (!send_net_)
     return false;
-  return send_net_->TryDeliverPacket(buffer, receiver_id_, send_time);
+  send_net_->OnPacketReceived(
+      EmulatedIpPacket(local_address_, receiver_address_, buffer, send_time));
+  return true;
 }
 
-void NetworkNodeTransport::Connect(NetworkNode* send_node,
-                                   uint64_t receiver_id,
+void NetworkNodeTransport::Connect(EmulatedNetworkNode* send_node,
+                                   rtc::IPAddress receiver_ip,
                                    DataSize packet_overhead) {
-  rtc::CritScope crit(&crit_sect_);
-  send_net_ = send_node;
-  receiver_id_ = receiver_id;
-  packet_overhead_ = packet_overhead;
-
   rtc::NetworkRoute route;
   route.connected = true;
-  route.local_network_id = receiver_id;
-  route.remote_network_id = receiver_id;
-  std::string transport_name = "dummy";
+  route.local_network_id =
+      static_cast<uint16_t>(receiver_ip.v4AddressAsHostOrderInteger());
+  route.remote_network_id =
+      static_cast<uint16_t>(receiver_ip.v4AddressAsHostOrderInteger());
+  {
+    // Only IPv4 address is supported. We don't use full range of IPs in
+    // scenario framework and also we need a simple way to convert IP into
+    // network_id to signal network route.
+    RTC_CHECK_EQ(receiver_ip.family(), AF_INET);
+    RTC_CHECK_LE(receiver_ip.v4AddressAsHostOrderInteger(),
+                 std::numeric_limits<uint16_t>::max());
+    rtc::CritScope crit(&crit_sect_);
+    send_net_ = send_node;
+    receiver_address_ = rtc::SocketAddress(receiver_ip, 0);
+    packet_overhead_ = packet_overhead;
+    current_network_route_ = route;
+  }
+
   sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
-      transport_name, route);
+      kDummyTransportName, route);
 }
 
-CrossTrafficSource::CrossTrafficSource(NetworkReceiverInterface* target,
-                                       uint64_t receiver_id,
-                                       CrossTrafficConfig config)
-    : target_(target),
-      receiver_id_(receiver_id),
-      config_(config),
-      random_(config.random_seed) {}
-
-CrossTrafficSource::~CrossTrafficSource() = default;
-
-DataRate CrossTrafficSource::TrafficRate() const {
-  return config_.peak_rate * intensity_;
-}
-
-void CrossTrafficSource::Process(Timestamp at_time, TimeDelta delta) {
-  time_since_update_ += delta;
-  if (config_.mode == CrossTrafficConfig::Mode::kRandomWalk) {
-    if (time_since_update_ >= config_.random_walk.update_interval) {
-      intensity_ += random_.Gaussian(config_.random_walk.bias,
-                                     config_.random_walk.variance) *
-                    time_since_update_.seconds<double>();
-      intensity_ = rtc::SafeClamp(intensity_, 0.0, 1.0);
-      time_since_update_ = TimeDelta::Zero();
-    }
-  } else if (config_.mode == CrossTrafficConfig::Mode::kPulsedPeaks) {
-    if (intensity_ == 0 && time_since_update_ >= config_.pulsed.hold_duration) {
-      intensity_ = 1;
-      time_since_update_ = TimeDelta::Zero();
-    } else if (intensity_ == 1 &&
-               time_since_update_ >= config_.pulsed.send_duration) {
-      intensity_ = 0;
-      time_since_update_ = TimeDelta::Zero();
-    }
-  }
-  pending_size_ += TrafficRate() * delta;
-  if (pending_size_ > config_.min_packet_size) {
-    target_->TryDeliverPacket(rtc::CopyOnWriteBuffer(pending_size_.bytes()),
-                              receiver_id_, at_time);
-    pending_size_ = DataSize::Zero();
-  }
-}
-
-ColumnPrinter CrossTrafficSource::StatsPrinter() {
-  return ColumnPrinter::Lambda("cross_traffic_rate",
-                               [this](rtc::SimpleStringBuilder& sb) {
-                                 sb.AppendFormat("%.0lf",
-                                                 TrafficRate().bps() / 8.0);
-                               },
-                               32);
+void NetworkNodeTransport::Disconnect() {
+  rtc::CritScope crit(&crit_sect_);
+  current_network_route_.connected = false;
+  sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
+      kDummyTransportName, current_network_route_);
+  current_network_route_ = {};
+  send_net_ = nullptr;
 }
 
 }  // namespace test

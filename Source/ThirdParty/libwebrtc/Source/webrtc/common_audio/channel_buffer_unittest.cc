@@ -9,6 +9,7 @@
  */
 
 #include "common_audio/channel_buffer.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -12,11 +12,11 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_CONSTANT_PCM_PACKET_SOURCE_H_
 
 #include <stdio.h>
+
 #include <string>
 
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/tools/packet_source.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {

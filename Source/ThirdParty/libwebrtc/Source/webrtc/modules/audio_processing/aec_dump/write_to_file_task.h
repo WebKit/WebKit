@@ -15,12 +15,11 @@
 #include <string>
 #include <utility>
 
+#include "api/task_queue/queued_task.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/ignore_wundef.h"
-#include "rtc_base/platform_file.h"
 #include "rtc_base/system/file_wrapper.h"
-#include "rtc_base/task_queue.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
@@ -33,7 +32,7 @@ RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 
-class WriteToFileTask : public rtc::QueuedTask {
+class WriteToFileTask : public QueuedTask {
  public:
   WriteToFileTask(webrtc::FileWrapper* debug_file,
                   int64_t* num_bytes_left_for_log);
@@ -48,9 +47,9 @@ class WriteToFileTask : public rtc::QueuedTask {
 
   bool Run() override;
 
-  webrtc::FileWrapper* debug_file_;
+  webrtc::FileWrapper* const debug_file_;
   audioproc::Event event_;
-  int64_t* num_bytes_left_for_log_;
+  int64_t* const num_bytes_left_for_log_;
 };
 
 }  // namespace webrtc

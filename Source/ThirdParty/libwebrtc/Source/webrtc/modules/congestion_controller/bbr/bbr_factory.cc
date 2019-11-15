@@ -9,6 +9,7 @@
  */
 
 #include "modules/congestion_controller/bbr/bbr_factory.h"
+
 #include <memory>
 
 #include "absl/memory/memory.h"

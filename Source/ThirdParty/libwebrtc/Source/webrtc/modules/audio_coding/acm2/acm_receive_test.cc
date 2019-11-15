@@ -14,9 +14,7 @@
 
 #include <memory>
 
-#include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
@@ -28,89 +26,6 @@ namespace webrtc {
 namespace test {
 
 namespace {
-// Returns true if the codec should be registered, otherwise false. Changes
-// the number of channels for the Opus codec to always be 1.
-bool ModifyAndUseThisCodec(CodecInst* codec_param) {
-  if (absl::EqualsIgnoreCase(codec_param->plname, "CN") &&
-      codec_param->plfreq == 48000)
-    return false;  // Skip 48 kHz comfort noise.
-
-  if (absl::EqualsIgnoreCase(codec_param->plname, "telephone-event"))
-    return false;  // Skip DTFM.
-
-  return true;
-}
-
-// Remaps payload types from ACM's default to those used in the resource file
-// neteq_universal_new.rtp. Returns true if the codec should be registered,
-// otherwise false. The payload types are set as follows (all are mono codecs):
-// PCMu = 0;
-// PCMa = 8;
-// Comfort noise 8 kHz = 13
-// Comfort noise 16 kHz = 98
-// Comfort noise 32 kHz = 99
-// iLBC = 102
-// iSAC wideband = 103
-// iSAC super-wideband = 104
-// AVT/DTMF = 106
-// RED = 117
-// PCM16b 8 kHz = 93
-// PCM16b 16 kHz = 94
-// PCM16b 32 kHz = 95
-// G.722 = 94
-bool RemapPltypeAndUseThisCodec(const char* plname,
-                                int plfreq,
-                                size_t channels,
-                                int* pltype) {
-  if (channels != 1)
-    return false;  // Don't use non-mono codecs.
-
-  // Re-map pltypes to those used in the NetEq test files.
-  if (absl::EqualsIgnoreCase(plname, "PCMU") && plfreq == 8000) {
-    *pltype = 0;
-  } else if (absl::EqualsIgnoreCase(plname, "PCMA") && plfreq == 8000) {
-    *pltype = 8;
-  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 8000) {
-    *pltype = 13;
-  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 16000) {
-    *pltype = 98;
-  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 32000) {
-    *pltype = 99;
-  } else if (absl::EqualsIgnoreCase(plname, "ILBC")) {
-    *pltype = 102;
-  } else if (absl::EqualsIgnoreCase(plname, "ISAC") && plfreq == 16000) {
-    *pltype = 103;
-  } else if (absl::EqualsIgnoreCase(plname, "ISAC") && plfreq == 32000) {
-    *pltype = 104;
-  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
-             plfreq == 8000) {
-    *pltype = 106;
-  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
-             plfreq == 16000) {
-    *pltype = 114;
-  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
-             plfreq == 32000) {
-    *pltype = 115;
-  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
-             plfreq == 48000) {
-    *pltype = 116;
-  } else if (absl::EqualsIgnoreCase(plname, "red")) {
-    *pltype = 117;
-  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 8000) {
-    *pltype = 93;
-  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 16000) {
-    *pltype = 94;
-  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 32000) {
-    *pltype = 95;
-  } else if (absl::EqualsIgnoreCase(plname, "G722")) {
-    *pltype = 9;
-  } else {
-    // Don't use any other codecs.
-    return false;
-  }
-  return true;
-}
-
 AudioCodingModule::Config MakeAcmConfig(
     Clock* clock,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory) {
@@ -119,7 +34,6 @@ AudioCodingModule::Config MakeAcmConfig(
   config.decoder_factory = std::move(decoder_factory);
   return config;
 }
-
 }  // namespace
 
 AcmReceiveTestOldApi::AcmReceiveTestOldApi(
@@ -139,36 +53,43 @@ AcmReceiveTestOldApi::AcmReceiveTestOldApi(
 AcmReceiveTestOldApi::~AcmReceiveTestOldApi() = default;
 
 void AcmReceiveTestOldApi::RegisterDefaultCodecs() {
-  CodecInst my_codec_param;
-  for (int n = 0; n < acm_->NumberOfCodecs(); n++) {
-    ASSERT_EQ(0, acm_->Codec(n, &my_codec_param)) << "Failed to get codec.";
-    if (ModifyAndUseThisCodec(&my_codec_param)) {
-      ASSERT_EQ(true,
-                acm_->RegisterReceiveCodec(my_codec_param.pltype,
-                                           CodecInstToSdp(my_codec_param)))
-          << "Couldn't register receive codec.\n";
-    }
-  }
+  acm_->SetReceiveCodecs({{103, {"ISAC", 16000, 1}},
+                          {104, {"ISAC", 32000, 1}},
+                          {107, {"L16", 8000, 1}},
+                          {108, {"L16", 16000, 1}},
+                          {109, {"L16", 32000, 1}},
+                          {111, {"L16", 8000, 2}},
+                          {112, {"L16", 16000, 2}},
+                          {113, {"L16", 32000, 2}},
+                          {0, {"PCMU", 8000, 1}},
+                          {110, {"PCMU", 8000, 2}},
+                          {8, {"PCMA", 8000, 1}},
+                          {118, {"PCMA", 8000, 2}},
+                          {102, {"ILBC", 8000, 1}},
+                          {9, {"G722", 8000, 1}},
+                          {119, {"G722", 8000, 2}},
+                          {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
+                          {13, {"CN", 8000, 1}},
+                          {98, {"CN", 16000, 1}},
+                          {99, {"CN", 32000, 1}}});
 }
 
+// Remaps payload types from ACM's default to those used in the resource file
+// neteq_universal_new.rtp.
 void AcmReceiveTestOldApi::RegisterNetEqTestCodecs() {
-  CodecInst my_codec_param;
-  for (int n = 0; n < acm_->NumberOfCodecs(); n++) {
-    ASSERT_EQ(0, acm_->Codec(n, &my_codec_param)) << "Failed to get codec.";
-    if (!ModifyAndUseThisCodec(&my_codec_param)) {
-      // Skip this codec.
-      continue;
-    }
-
-    if (RemapPltypeAndUseThisCodec(my_codec_param.plname, my_codec_param.plfreq,
-                                   my_codec_param.channels,
-                                   &my_codec_param.pltype)) {
-      ASSERT_EQ(true,
-                acm_->RegisterReceiveCodec(my_codec_param.pltype,
-                                           CodecInstToSdp(my_codec_param)))
-          << "Couldn't register receive codec.\n";
-    }
-  }
+  acm_->SetReceiveCodecs({{103, {"ISAC", 16000, 1}},
+                          {104, {"ISAC", 32000, 1}},
+                          {93, {"L16", 8000, 1}},
+                          {94, {"L16", 16000, 1}},
+                          {95, {"L16", 32000, 1}},
+                          {0, {"PCMU", 8000, 1}},
+                          {8, {"PCMA", 8000, 1}},
+                          {102, {"ILBC", 8000, 1}},
+                          {9, {"G722", 8000, 1}},
+                          {120, {"OPUS", 48000, 2}},
+                          {13, {"CN", 8000, 1}},
+                          {98, {"CN", 16000, 1}},
+                          {99, {"CN", 32000, 1}}});
 }
 
 void AcmReceiveTestOldApi::Run() {
@@ -199,18 +120,15 @@ void AcmReceiveTestOldApi::Run() {
       AfterGetAudio();
     }
 
-    // Insert packet after converting from RTPHeader to WebRtcRTPHeader.
-    WebRtcRTPHeader header;
-    header.header = packet->header();
-    header.frameType = kAudioFrameSpeech;
-    EXPECT_EQ(0,
-              acm_->IncomingPacket(
-                  packet->payload(),
-                  static_cast<int32_t>(packet->payload_length_bytes()), header))
+    EXPECT_EQ(0, acm_->IncomingPacket(
+                     packet->payload(),
+                     static_cast<int32_t>(packet->payload_length_bytes()),
+                     packet->header()))
         << "Failure when inserting packet:" << std::endl
-        << "  PT = " << static_cast<int>(header.header.payloadType) << std::endl
-        << "  TS = " << header.header.timestamp << std::endl
-        << "  SN = " << header.header.sequenceNumber;
+        << "  PT = " << static_cast<int>(packet->header().payloadType)
+        << std::endl
+        << "  TS = " << packet->header().timestamp << std::endl
+        << "  SN = " << packet->header().sequenceNumber;
   }
 }
 

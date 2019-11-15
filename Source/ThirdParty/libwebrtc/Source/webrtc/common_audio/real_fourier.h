@@ -12,6 +12,7 @@
 #define COMMON_AUDIO_REAL_FOURIER_H_
 
 #include <stddef.h>
+
 #include <complex>
 #include <memory>
 

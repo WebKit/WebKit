@@ -13,17 +13,13 @@
 
 #include "modules/audio_processing/echo_control_mobile_impl.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 TEST(EchoControlMobileTest, InterfaceConfiguration) {
   EchoControlMobileImpl aecm;
   aecm.Initialize(AudioProcessing::kSampleRate16kHz, 2, 2);
-
-  // Turn AECM on
-  EXPECT_EQ(0, aecm.Enable(true));
-  EXPECT_TRUE(aecm.is_enabled());
 
   // Toggle routing modes
   std::array<EchoControlMobileImpl::RoutingMode, 5> routing_modes = {
@@ -43,10 +39,6 @@ TEST(EchoControlMobileTest, InterfaceConfiguration) {
   EXPECT_FALSE(aecm.is_comfort_noise_enabled());
   EXPECT_EQ(0, aecm.enable_comfort_noise(true));
   EXPECT_TRUE(aecm.is_comfort_noise_enabled());
-
-  // Turn AECM off
-  EXPECT_EQ(0, aecm.Enable(false));
-  EXPECT_FALSE(aecm.is_enabled());
 }
 
 }  // namespace webrtc

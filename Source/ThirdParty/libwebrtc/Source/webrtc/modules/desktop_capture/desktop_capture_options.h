@@ -10,8 +10,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_OPTIONS_H_
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_OPTIONS_H_
 
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/system/rtc_export.h"
 
 #if defined(USE_X11)
@@ -113,6 +112,22 @@ class RTC_EXPORT DesktopCaptureOptions {
   void set_allow_directx_capturer(bool enabled) {
     allow_directx_capturer_ = enabled;
   }
+
+  // Flag that may be set to allow use of the cropping window capturer (which
+  // captures the screen & crops that to the window region in some cases). An
+  // advantage of using this is significantly higher capture frame rates than
+  // capturing the window directly. A disadvantage of using this is the
+  // possibility of capturing unrelated content (e.g. overlapping windows that
+  // aren't detected properly, or neighboring regions when moving/resizing the
+  // captured window). Note: this flag influences the behavior of calls to
+  // DesktopCapturer::CreateWindowCapturer; calls to
+  // CroppingWindowCapturer::CreateCapturer ignore the flag (treat it as true).
+  bool allow_cropping_window_capturer() const {
+    return allow_cropping_window_capturer_;
+  }
+  void set_allow_cropping_window_capturer(bool allow) {
+    allow_cropping_window_capturer_ = allow;
+  }
 #endif
 
 #if defined(WEBRTC_USE_PIPEWIRE)
@@ -135,6 +150,7 @@ class RTC_EXPORT DesktopCaptureOptions {
 #if defined(WEBRTC_WIN)
   bool allow_use_magnification_api_ = false;
   bool allow_directx_capturer_ = false;
+  bool allow_cropping_window_capturer_ = false;
 #endif
 #if defined(USE_X11)
   bool use_update_notifications_ = false;

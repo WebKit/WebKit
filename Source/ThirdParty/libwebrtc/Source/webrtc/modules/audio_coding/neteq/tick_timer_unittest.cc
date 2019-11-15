@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
 #include "modules/audio_coding/neteq/tick_timer.h"
+
+#include <memory>
 
 #include "test/gmock.h"
 #include "test/gtest.h"

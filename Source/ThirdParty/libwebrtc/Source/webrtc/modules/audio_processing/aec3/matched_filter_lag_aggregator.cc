@@ -57,6 +57,7 @@ absl::optional<DelayEstimate> MatchedFilterLagAggregator::Aggregate(
   // TODO(peah): Remove this logging once all development is done.
   data_dumper_->DumpRaw("aec3_echo_path_delay_estimator_best_index",
                         best_lag_estimate_index);
+  data_dumper_->DumpRaw("aec3_echo_path_delay_estimator_histogram", histogram_);
 
   if (best_lag_estimate_index != -1) {
     RTC_DCHECK_GT(histogram_.size(), histogram_data_[histogram_data_index_]);

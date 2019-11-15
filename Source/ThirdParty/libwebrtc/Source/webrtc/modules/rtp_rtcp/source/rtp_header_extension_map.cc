@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 
+#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/arraysize.h"
@@ -33,8 +34,10 @@ constexpr ExtensionInfo kExtensions[] = {
     CreateExtensionInfo<TransmissionOffset>(),
     CreateExtensionInfo<AudioLevel>(),
     CreateExtensionInfo<AbsoluteSendTime>(),
+    CreateExtensionInfo<AbsoluteCaptureTimeExtension>(),
     CreateExtensionInfo<VideoOrientation>(),
     CreateExtensionInfo<TransportSequenceNumber>(),
+    CreateExtensionInfo<TransportSequenceNumberV2>(),
     CreateExtensionInfo<PlayoutDelayLimits>(),
     CreateExtensionInfo<VideoContentTypeExtension>(),
     CreateExtensionInfo<VideoTimingExtension>(),
@@ -42,8 +45,10 @@ constexpr ExtensionInfo kExtensions[] = {
     CreateExtensionInfo<RtpStreamId>(),
     CreateExtensionInfo<RepairedRtpStreamId>(),
     CreateExtensionInfo<RtpMid>(),
-    CreateExtensionInfo<RtpGenericFrameDescriptorExtension>(),
-    CreateExtensionInfo<HdrMetadataExtension>(),
+    CreateExtensionInfo<RtpGenericFrameDescriptorExtension00>(),
+    CreateExtensionInfo<RtpGenericFrameDescriptorExtension01>(),
+    CreateExtensionInfo<RtpDependencyDescriptorExtension>(),
+    CreateExtensionInfo<ColorSpaceExtension>(),
 };
 
 // Because of kRtpExtensionNone, NumberOfExtension is 1 bigger than the actual

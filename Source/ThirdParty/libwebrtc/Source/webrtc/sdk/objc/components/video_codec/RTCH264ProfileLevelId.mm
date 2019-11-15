@@ -17,16 +17,16 @@
 #endif
 
 #include "media/base/h264_profile_level_id.h"
-#include "media/base/mediaconstants.h"
+#include "media/base/media_constants.h"
 
-#if !defined(WEBRTC_WEBKIT_BUILD)
 namespace {
 
+#if !defined(WEBRTC_WEBKIT_BUILD)
 NSString *MaxSupportedProfileLevelConstrainedHigh();
 NSString *MaxSupportedProfileLevelConstrainedBaseline();
+#endif
 
 }  // namespace
-#endif
 
 NSString *const kRTCVideoCodecH264Name = @"H264";
 NSString *const kRTCLevel31ConstrainedHigh = @"640c1f";

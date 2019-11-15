@@ -11,15 +11,14 @@
 #include <utility>
 
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
-
-#include "rtc_base/task_queue.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 TEST(AecDumper, APICallsDoNotCrash) {
   // Note order of initialization: Task queue has to be initialized
   // before AecDump.
-  rtc::TaskQueue file_writer_queue("file_writer_queue");
+  webrtc::TaskQueueForTest file_writer_queue("file_writer_queue");
 
   const std::string filename =
       webrtc::test::TempFilename(webrtc::test::OutputPath(), "aec_dump");
@@ -48,7 +47,7 @@ TEST(AecDumper, APICallsDoNotCrash) {
 }
 
 TEST(AecDumper, WriteToFile) {
-  rtc::TaskQueue file_writer_queue("file_writer_queue");
+  webrtc::TaskQueueForTest file_writer_queue("file_writer_queue");
 
   const std::string filename =
       webrtc::test::TempFilename(webrtc::test::OutputPath(), "aec_dump");

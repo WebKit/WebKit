@@ -10,6 +10,8 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_VP9_SVC_CONFIG_H_
 #define MODULES_VIDEO_CODING_CODECS_VP9_SVC_CONFIG_H_
 
+#include <stddef.h>
+
 #include <vector>
 
 #include "common_types.h"  // NOLINT(build/include)

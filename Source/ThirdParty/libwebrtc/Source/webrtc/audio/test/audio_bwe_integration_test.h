@@ -40,10 +40,10 @@ class AudioBweTest : public test::EndToEndTest {
       TestAudioDeviceModule* recv_audio_device) override;
 
   test::PacketTransport* CreateSendTransport(
-      SingleThreadedTaskQueueForTesting* task_queue,
+      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
       Call* sender_call) override;
   test::PacketTransport* CreateReceiveTransport(
-      SingleThreadedTaskQueueForTesting* task_queue) override;
+      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue) override;
 
   void PerformTest() override;
 

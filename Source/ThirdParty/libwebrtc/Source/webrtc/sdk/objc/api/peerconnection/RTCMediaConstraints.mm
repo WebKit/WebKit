@@ -14,62 +14,19 @@
 
 #include <memory>
 
-NSString * const kRTCMediaConstraintsMinAspectRatio =
-    @(webrtc::MediaConstraintsInterface::kMinAspectRatio);
-NSString * const kRTCMediaConstraintsMaxAspectRatio =
-    @(webrtc::MediaConstraintsInterface::kMaxAspectRatio);
-NSString * const kRTCMediaConstraintsMinWidth =
-    @(webrtc::MediaConstraintsInterface::kMinWidth);
-NSString * const kRTCMediaConstraintsMaxWidth =
-    @(webrtc::MediaConstraintsInterface::kMaxWidth);
-NSString * const kRTCMediaConstraintsMinHeight =
-    @(webrtc::MediaConstraintsInterface::kMinHeight);
-NSString * const kRTCMediaConstraintsMaxHeight =
-    @(webrtc::MediaConstraintsInterface::kMaxHeight);
-NSString * const kRTCMediaConstraintsMinFrameRate =
-    @(webrtc::MediaConstraintsInterface::kMinFrameRate);
-NSString * const kRTCMediaConstraintsMaxFrameRate =
-    @(webrtc::MediaConstraintsInterface::kMaxFrameRate);
-NSString * const kRTCMediaConstraintsAudioNetworkAdaptorConfig =
-    @(webrtc::MediaConstraintsInterface::kAudioNetworkAdaptorConfig);
+NSString *const kRTCMediaConstraintsAudioNetworkAdaptorConfig =
+    @(webrtc::MediaConstraints::kAudioNetworkAdaptorConfig);
 
-NSString * const kRTCMediaConstraintsIceRestart =
-    @(webrtc::MediaConstraintsInterface::kIceRestart);
-NSString * const kRTCMediaConstraintsOfferToReceiveAudio =
-    @(webrtc::MediaConstraintsInterface::kOfferToReceiveAudio);
-NSString * const kRTCMediaConstraintsOfferToReceiveVideo =
-    @(webrtc::MediaConstraintsInterface::kOfferToReceiveVideo);
-NSString * const kRTCMediaConstraintsVoiceActivityDetection =
-    @(webrtc::MediaConstraintsInterface::kVoiceActivityDetection);
+NSString *const kRTCMediaConstraintsIceRestart = @(webrtc::MediaConstraints::kIceRestart);
+NSString *const kRTCMediaConstraintsOfferToReceiveAudio =
+    @(webrtc::MediaConstraints::kOfferToReceiveAudio);
+NSString *const kRTCMediaConstraintsOfferToReceiveVideo =
+    @(webrtc::MediaConstraints::kOfferToReceiveVideo);
+NSString *const kRTCMediaConstraintsVoiceActivityDetection =
+    @(webrtc::MediaConstraints::kVoiceActivityDetection);
 
-NSString * const kRTCMediaConstraintsValueTrue =
-    @(webrtc::MediaConstraintsInterface::kValueTrue);
-NSString * const kRTCMediaConstraintsValueFalse =
-    @(webrtc::MediaConstraintsInterface::kValueFalse);
-
-namespace webrtc {
-
-MediaConstraints::~MediaConstraints() {}
-
-MediaConstraints::MediaConstraints() {}
-
-MediaConstraints::MediaConstraints(
-    const MediaConstraintsInterface::Constraints& mandatory,
-    const MediaConstraintsInterface::Constraints& optional)
-    : mandatory_(mandatory), optional_(optional) {}
-
-const MediaConstraintsInterface::Constraints&
-MediaConstraints::GetMandatory() const {
-  return mandatory_;
-}
-
-const MediaConstraintsInterface::Constraints&
-MediaConstraints::GetOptional() const {
-  return optional_;
-}
-
-}  // namespace webrtc
-
+NSString *const kRTCMediaConstraintsValueTrue = @(webrtc::MediaConstraints::kValueTrue);
+NSString *const kRTCMediaConstraintsValueFalse = @(webrtc::MediaConstraints::kValueFalse);
 
 @implementation RTCMediaConstraints {
   NSDictionary<NSString *, NSString *> *_mandatory;
@@ -98,9 +55,9 @@ MediaConstraints::GetOptional() const {
 #pragma mark - Private
 
 - (std::unique_ptr<webrtc::MediaConstraints>)nativeConstraints {
-  webrtc::MediaConstraintsInterface::Constraints mandatory =
+  webrtc::MediaConstraints::Constraints mandatory =
       [[self class] nativeConstraintsForConstraints:_mandatory];
-  webrtc::MediaConstraintsInterface::Constraints optional =
+  webrtc::MediaConstraints::Constraints optional =
       [[self class] nativeConstraintsForConstraints:_optional];
 
   webrtc::MediaConstraints *nativeConstraints =
@@ -108,10 +65,9 @@ MediaConstraints::GetOptional() const {
   return std::unique_ptr<webrtc::MediaConstraints>(nativeConstraints);
 }
 
-+ (webrtc::MediaConstraintsInterface::Constraints)
-    nativeConstraintsForConstraints:
-        (NSDictionary<NSString *, NSString *> *)constraints {
-  webrtc::MediaConstraintsInterface::Constraints nativeConstraints;
++ (webrtc::MediaConstraints::Constraints)nativeConstraintsForConstraints:
+    (NSDictionary<NSString *, NSString *> *)constraints {
+  webrtc::MediaConstraints::Constraints nativeConstraints;
   for (NSString *key in constraints) {
     NSAssert([key isKindOfClass:[NSString class]],
              @"%@ is not an NSString.", key);
@@ -123,11 +79,10 @@ MediaConstraints::GetOptional() const {
       NSData *charData = [[NSData alloc] initWithBase64EncodedString:value options:0];
       std::string configValue =
           std::string(reinterpret_cast<const char *>(charData.bytes), charData.length);
-      nativeConstraints.push_back(webrtc::MediaConstraintsInterface::Constraint(
-          key.stdString, configValue));
+      nativeConstraints.push_back(webrtc::MediaConstraints::Constraint(key.stdString, configValue));
     } else {
-      nativeConstraints.push_back(webrtc::MediaConstraintsInterface::Constraint(
-          key.stdString, value.stdString));
+      nativeConstraints.push_back(
+          webrtc::MediaConstraints::Constraint(key.stdString, value.stdString));
     }
   }
   return nativeConstraints;

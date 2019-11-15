@@ -11,22 +11,22 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
+#include "common_audio/wav_file.h"
+
 #include <cmath>
 #include <limits>
 
-#include "common_audio/wav_file.h"
 #include "common_audio/wav_header.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
-// WavWriterTest.CPPFileDescriptor and WavWriterTest.CPP flaky on Mac.
-// See webrtc:9247.
+// WavWriterTest.CPP flaky on Mac. See webrtc:9247.
 #if defined(WEBRTC_MAC)
 #define MAYBE_CPP DISABLED_CPP
-#define MAYBE_CPPFileDescriptor DISABLED_CPPFileDescriptor
+#define MAYBE_CPPReset DISABLED_CPPReset
 #else
 #define MAYBE_CPP CPP
-#define MAYBE_CPPFileDescriptor CPPFileDescriptor
+#define MAYBE_CPPReset CPPReset
 #endif
 
 namespace webrtc {
@@ -101,53 +101,6 @@ TEST(WavWriterTest, MAYBE_CPP) {
   }
 }
 
-// Write a tiny WAV file with the C interface and verify the result.
-TEST(WavWriterTest, C) {
-  const std::string outfile = test::OutputPath() + "wavtest2.wav";
-  rtc_WavWriter* w = rtc_WavOpen(outfile.c_str(), 11904, 2);
-  EXPECT_EQ(11904, rtc_WavSampleRate(w));
-  EXPECT_EQ(2u, rtc_WavNumChannels(w));
-  EXPECT_EQ(0u, rtc_WavNumSamples(w));
-  static const size_t kNumSamples = 4;
-  rtc_WavWriteSamples(w, &kSamples[0], 2);
-  EXPECT_EQ(2u, rtc_WavNumSamples(w));
-  rtc_WavWriteSamples(w, &kSamples[2], kNumSamples - 2);
-  EXPECT_EQ(kNumSamples, rtc_WavNumSamples(w));
-  rtc_WavClose(w);
-  static const uint8_t kExpectedContents[] = {
-      // clang-format off
-      // clang formatting doesn't respect inline comments.
-    'R', 'I', 'F', 'F',
-    44, 0, 0, 0,  // size of whole file - 8: 8 + 44 - 8
-    'W', 'A', 'V', 'E',
-    'f', 'm', 't', ' ',
-    16, 0, 0, 0,  // size of fmt block - 8: 24 - 8
-    1, 0,  // format: PCM (1)
-    2, 0,  // channels: 2
-    0x80, 0x2e, 0, 0,  // sample rate: 11904
-    0, 0xba, 0, 0,  // byte rate: 2 * 2 * 11904
-    4, 0,  // block align: NumChannels * BytesPerSample
-    16, 0,  // bits per sample: 2 * 8
-    'd', 'a', 't', 'a',
-    8, 0, 0, 0,  // size of payload: 8
-    0, 0,  // first sample: 0.0
-    10, 0,  // second sample: 10.0
-    0xff, 0x7f,  // third sample: 4e4 (saturated)
-    0, 0x80,  // fourth sample: -1e9 (saturated)
-      // clang-format on
-  };
-  static const size_t kContentSize =
-      kWavHeaderSize + kNumSamples * sizeof(int16_t);
-  static_assert(sizeof(kExpectedContents) == kContentSize, "content size");
-  EXPECT_EQ(kContentSize, test::GetFileSize(outfile));
-  FILE* f = fopen(outfile.c_str(), "rb");
-  ASSERT_TRUE(f);
-  uint8_t contents[kContentSize];
-  ASSERT_EQ(1u, fread(contents, kContentSize, 1, f));
-  EXPECT_EQ(0, fclose(f));
-  EXPECT_EQ(0, memcmp(kExpectedContents, contents, kContentSize));
-}
-
 // Write a larger WAV file. You can listen to this file to sanity-check it.
 TEST(WavWriterTest, LargeFile) {
   std::string outfile = test::OutputPath() + "wavtest3.wav";
@@ -190,13 +143,12 @@ TEST(WavWriterTest, LargeFile) {
   }
 }
 
-// Write a tiny WAV file with the the std::FILE interface and verify the
-// result.
-TEST(WavWriterTest, MAYBE_CPPFileDescriptor) {
-  const std::string outfile = test::OutputPath() + "wavtest1.wav";
-  static constexpr size_t kNumSamples = 3;
+// Write a tiny WAV file with the C++ interface then read-reset-read.
+TEST(WavReaderTest, MAYBE_CPPReset) {
+  const std::string outfile = test::OutputPath() + "wavtest4.wav";
+  static const size_t kNumSamples = 3;
   {
-    WavWriter w(rtc::CreatePlatformFile(outfile), 14099, 1);
+    WavWriter w(outfile, 14099, 1);
     EXPECT_EQ(14099, w.sample_rate());
     EXPECT_EQ(1u, w.num_channels());
     EXPECT_EQ(0u, w.num_samples());
@@ -206,7 +158,7 @@ TEST(WavWriterTest, MAYBE_CPPFileDescriptor) {
   // Write some extra "metadata" to the file that should be silently ignored
   // by WavReader. We don't use WavWriter directly for this because it doesn't
   // support metadata.
-  static constexpr uint8_t kMetadata[] = {101, 202};
+  static const uint8_t kMetadata[] = {101, 202};
   {
     FILE* f = fopen(outfile.c_str(), "ab");
     ASSERT_TRUE(f);
@@ -217,27 +169,27 @@ TEST(WavWriterTest, MAYBE_CPPFileDescriptor) {
       // clang-format off
       // clang formatting doesn't respect inline comments.
     'R', 'I', 'F', 'F',
-    42, 0, 0, 0,       // size of whole file - 8: 6 + 44 - 8
+    42, 0, 0, 0,  // size of whole file - 8: 6 + 44 - 8
     'W', 'A', 'V', 'E',
     'f', 'm', 't', ' ',
-    16, 0, 0, 0,       // size of fmt block - 8: 24 - 8
-    1, 0,              // format: PCM (1)
-    1, 0,              // channels: 1
+    16, 0, 0, 0,  // size of fmt block - 8: 24 - 8
+    1, 0,  // format: PCM (1)
+    1, 0,  // channels: 1
     0x13, 0x37, 0, 0,  // sample rate: 14099
     0x26, 0x6e, 0, 0,  // byte rate: 2 * 14099
-    2, 0,              // block align: NumChannels * BytesPerSample
-    16, 0,             // bits per sample: 2 * 8
+    2, 0,  // block align: NumChannels * BytesPerSample
+    16, 0,  // bits per sample: 2 * 8
     'd', 'a', 't', 'a',
-    6, 0, 0, 0,        // size of payload: 6
-    0, 0,              // first sample: 0.0
-    10, 0,             // second sample: 10.0
-    0xff, 0x7f,        // third sample: 4e4 (saturated)
+    6, 0, 0, 0,  // size of payload: 6
+    0, 0,  // first sample: 0.0
+    10, 0,  // second sample: 10.0
+    0xff, 0x7f,  // third sample: 4e4 (saturated)
     kMetadata[0], kMetadata[1],
       // clang-format on
   };
-  static constexpr size_t kContentSize =
+  static const size_t kContentSize =
       kWavHeaderSize + kNumSamples * sizeof(int16_t) + sizeof(kMetadata);
-  static_assert(sizeof(kExpectedContents) == kContentSize, "");
+  static_assert(sizeof(kExpectedContents) == kContentSize, "content size");
   EXPECT_EQ(kContentSize, test::GetFileSize(outfile));
   FILE* f = fopen(outfile.c_str(), "rb");
   ASSERT_TRUE(f);
@@ -247,12 +199,17 @@ TEST(WavWriterTest, MAYBE_CPPFileDescriptor) {
   EXPECT_EQ(0, memcmp(kExpectedContents, contents, kContentSize));
 
   {
-    WavReader r(rtc::OpenPlatformFileReadOnly(outfile));
+    WavReader r(outfile);
     EXPECT_EQ(14099, r.sample_rate());
     EXPECT_EQ(1u, r.num_channels());
     EXPECT_EQ(kNumSamples, r.num_samples());
-    static constexpr float kTruncatedSamples[] = {0.0, 10.0, 32767.0};
+    static const float kTruncatedSamples[] = {0.0, 10.0, 32767.0};
     float samples[kNumSamples];
+    EXPECT_EQ(kNumSamples, r.ReadSamples(kNumSamples, samples));
+    EXPECT_EQ(0, memcmp(kTruncatedSamples, samples, sizeof(samples)));
+    EXPECT_EQ(0u, r.ReadSamples(kNumSamples, samples));
+
+    r.Reset();
     EXPECT_EQ(kNumSamples, r.ReadSamples(kNumSamples, samples));
     EXPECT_EQ(0, memcmp(kTruncatedSamples, samples, sizeof(samples)));
     EXPECT_EQ(0u, r.ReadSamples(kNumSamples, samples));

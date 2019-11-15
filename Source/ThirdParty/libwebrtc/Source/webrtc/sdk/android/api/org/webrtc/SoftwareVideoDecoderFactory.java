@@ -10,10 +10,10 @@
 
 package org.webrtc;
 
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.annotation.Nullable;
 
 public class SoftwareVideoDecoderFactory implements VideoDecoderFactory {
   @Deprecated

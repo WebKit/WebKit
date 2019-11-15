@@ -13,7 +13,9 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import <WebRTC/RTCEAGLVideoView.h>
+#if defined(RTC_SUPPORTS_METAL)
 #import <WebRTC/RTCMTLVideoView.h>
+#endif
 
 #import "UIImage+ARDUtilities.h"
 

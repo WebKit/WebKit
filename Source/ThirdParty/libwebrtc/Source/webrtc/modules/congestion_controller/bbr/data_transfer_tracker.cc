@@ -11,7 +11,6 @@
 #include "modules/congestion_controller/bbr/data_transfer_tracker.h"
 
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace bbr {

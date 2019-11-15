@@ -10,6 +10,14 @@
 
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_legacy.h"
 
+#include <string.h>
+
+#include <vector>
+
+#include "absl/types/optional.h"
+#include "api/rtp_headers.h"
+#include "api/rtp_parameters.h"
+#include "api/transport/network_types.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
@@ -46,7 +54,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/logging.h"
-
 
 // *.pb.h files are generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
@@ -290,6 +297,14 @@ std::string RtcEventLogEncoderLegacy::Encode(const RtcEvent& event) {
       return EncodeBweUpdateLossBased(rtc_event);
     }
 
+    case RtcEvent::Type::DtlsTransportState: {
+      return "";
+    }
+
+    case RtcEvent::Type::DtlsWritableState: {
+      return "";
+    }
+
     case RtcEvent::Type::IceCandidatePairConfig: {
       auto& rtc_event =
           static_cast<const RtcEventIceCandidatePairConfig&>(event);
@@ -347,6 +362,12 @@ std::string RtcEventLogEncoderLegacy::Encode(const RtcEvent& event) {
           static_cast<const RtcEventVideoSendStreamConfig&>(event);
       return EncodeVideoSendStreamConfig(rtc_event);
     }
+    case RtcEvent::Type::RouteChangeEvent:
+    case RtcEvent::Type::GenericPacketReceived:
+    case RtcEvent::Type::GenericPacketSent:
+    case RtcEvent::Type::GenericAckReceived:
+      // These are unsupported in the old format, but shouldn't crash.
+      return "";
   }
 
   int event_type = static_cast<int>(event.GetType());

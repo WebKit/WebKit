@@ -35,10 +35,10 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/peerconnectioninterface.h>
+#include <webrtc/api/peer_connection_interface.h>
 #include <webrtc/api/video_codecs/video_encoder_factory.h>
 #include <webrtc/api/video_codecs/video_decoder_factory.h>
-#include <webrtc/rtc_base/scoped_ref_ptr.h>
+#include <webrtc/api/scoped_refptr.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

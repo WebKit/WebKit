@@ -11,10 +11,9 @@
 #ifndef RTC_TOOLS_CONVERTER_CONVERTER_H_
 #define RTC_TOOLS_CONVERTER_CONVERTER_H_
 
-#include <string>
+#include <stdio.h>
 
-#include "third_party/libyuv/include/libyuv/compare.h"
-#include "third_party/libyuv/include/libyuv/convert.h"
+#include <string>
 
 namespace webrtc {
 namespace test {

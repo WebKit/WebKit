@@ -8,12 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
 #include <memory>
 #include <string>
 
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/video_frame_buffer.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
 
 namespace webrtc {
@@ -27,7 +32,7 @@ const size_t kFrameHeight = 2;
 const size_t kFrameLength = 3 * kFrameWidth * kFrameHeight / 2;  // I420.
 }  // namespace
 
-class YuvFrameReaderTest : public testing::Test {
+class YuvFrameReaderTest : public ::testing::Test {
  protected:
   YuvFrameReaderTest() = default;
   ~YuvFrameReaderTest() override = default;

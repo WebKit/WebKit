@@ -17,11 +17,31 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 RtpDemuxerCriteria::RtpDemuxerCriteria() = default;
 RtpDemuxerCriteria::~RtpDemuxerCriteria() = default;
+
+// static
+std::string RtpDemuxer::DescribePacket(const RtpPacketReceived& packet) {
+  rtc::StringBuilder sb;
+  sb << "PT=" << packet.PayloadType() << " SSRC=" << packet.Ssrc();
+  std::string mid;
+  if (packet.GetExtension<RtpMid>(&mid)) {
+    sb << " MID=" << mid;
+  }
+  std::string rsid;
+  if (packet.GetExtension<RtpStreamId>(&rsid)) {
+    sb << " RSID=" << rsid;
+  }
+  std::string rrsid;
+  if (packet.GetExtension<RepairedRtpStreamId>(&rrsid)) {
+    sb << " RRSID=" << rrsid;
+  }
+  return sb.Release();
+}
 
 RtpDemuxer::RtpDemuxer() = default;
 
@@ -38,8 +58,8 @@ bool RtpDemuxer::AddSink(const RtpDemuxerCriteria& criteria,
                          RtpPacketSinkInterface* sink) {
   RTC_DCHECK(!criteria.payload_types.empty() || !criteria.ssrcs.empty() ||
              !criteria.mid.empty() || !criteria.rsid.empty());
-  RTC_DCHECK(criteria.mid.empty() || Mid::IsLegalMidName(criteria.mid));
-  RTC_DCHECK(criteria.rsid.empty() || StreamId::IsLegalRsidName(criteria.rsid));
+  RTC_DCHECK(criteria.mid.empty() || IsLegalMidName(criteria.mid));
+  RTC_DCHECK(criteria.rsid.empty() || IsLegalRsidName(criteria.rsid));
   RTC_DCHECK(sink);
 
   // We return false instead of DCHECKing for logical conflicts with the new

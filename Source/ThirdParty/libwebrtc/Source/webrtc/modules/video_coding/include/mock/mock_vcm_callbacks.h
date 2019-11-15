@@ -16,11 +16,6 @@
 
 namespace webrtc {
 
-class MockVCMFrameTypeCallback : public VCMFrameTypeCallback {
- public:
-  MOCK_METHOD0(RequestKeyFrame, int32_t());
-};
-
 class MockPacketRequestCallback : public VCMPacketRequestCallback {
  public:
   MOCK_METHOD2(ResendPackets,
@@ -32,9 +27,9 @@ class MockVCMReceiveCallback : public VCMReceiveCallback {
   MockVCMReceiveCallback() {}
   virtual ~MockVCMReceiveCallback() {}
 
-  MOCK_METHOD3(FrameToRender,
-               int32_t(VideoFrame&, absl::optional<uint8_t>, VideoContentType));
-  MOCK_METHOD1(ReceivedDecodedReferenceFrame, int32_t(const uint64_t));
+  MOCK_METHOD4(
+      FrameToRender,
+      int32_t(VideoFrame&, absl::optional<uint8_t>, int32_t, VideoContentType));
   MOCK_METHOD1(OnIncomingPayloadType, void(int));
   MOCK_METHOD1(OnDecoderImplementationName, void(const char*));
 };

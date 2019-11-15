@@ -12,41 +12,19 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_SPECTRAL_FEATURES_H_
 
 #include <array>
-#include <complex>
 #include <cstddef>
+#include <memory>
 #include <vector>
 
 #include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
-#include "modules/audio_processing/agc2/rnn_vad/fft_util.h"
 #include "modules/audio_processing/agc2/rnn_vad/ring_buffer.h"
+#include "modules/audio_processing/agc2/rnn_vad/spectral_features_internal.h"
 #include "modules/audio_processing/agc2/rnn_vad/symmetric_matrix_buffer.h"
+#include "modules/audio_processing/utility/pffft_wrapper.h"
 
 namespace webrtc {
 namespace rnn_vad {
-
-// View on spectral features.
-class SpectralFeaturesView {
- public:
-  SpectralFeaturesView(rtc::ArrayView<float, kNumBands - kNumLowerBands> coeffs,
-                       rtc::ArrayView<float, kNumLowerBands> average,
-                       rtc::ArrayView<float, kNumLowerBands> first_derivative,
-                       rtc::ArrayView<float, kNumLowerBands> second_derivative,
-                       rtc::ArrayView<float, kNumLowerBands> cross_correlations,
-                       float* variability);
-  SpectralFeaturesView(const SpectralFeaturesView&);
-  ~SpectralFeaturesView();
-  // Higher bands spectral coefficients.
-  const rtc::ArrayView<float, kNumBands - kNumLowerBands> coeffs;
-  // Average and first and second derivative over time for the lower bands.
-  const rtc::ArrayView<float, kNumLowerBands> average;
-  const rtc::ArrayView<float, kNumLowerBands> first_derivative;
-  const rtc::ArrayView<float, kNumLowerBands> second_derivative;
-  // Spectral cross-correlation for the lower bands.
-  const rtc::ArrayView<float, kNumLowerBands> cross_correlations;
-  // Spectral variability score.
-  float* const variability;
-};
 
 // Class to compute spectral features.
 class SpectralFeaturesExtractor {
@@ -64,27 +42,35 @@ class SpectralFeaturesExtractor {
   bool CheckSilenceComputeFeatures(
       rtc::ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
       rtc::ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
-      SpectralFeaturesView spectral_features);
+      rtc::ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
+      rtc::ArrayView<float, kNumLowerBands> average,
+      rtc::ArrayView<float, kNumLowerBands> first_derivative,
+      rtc::ArrayView<float, kNumLowerBands> second_derivative,
+      rtc::ArrayView<float, kNumLowerBands> bands_cross_corr,
+      float* variability);
 
  private:
   void ComputeAvgAndDerivatives(
       rtc::ArrayView<float, kNumLowerBands> average,
       rtc::ArrayView<float, kNumLowerBands> first_derivative,
-      rtc::ArrayView<float, kNumLowerBands> second_derivative);
-  void ComputeCrossCorrelation(
-      rtc::ArrayView<float, kNumLowerBands> cross_correlations);
-  float ComputeVariability();
+      rtc::ArrayView<float, kNumLowerBands> second_derivative) const;
+  void ComputeNormalizedCepstralCorrelation(
+      rtc::ArrayView<float, kNumLowerBands> bands_cross_corr);
+  float ComputeVariability() const;
 
-  BandAnalysisFft fft_;
-  std::vector<std::complex<float>> reference_frame_fft_;
-  std::vector<std::complex<float>> lagged_frame_fft_;
-  std::array<float, kNumBands> reference_frame_energy_coeffs_{};
-  std::array<float, kNumBands> lagged_frame_energy_coeffs_{};
-  const std::array<size_t, kNumBands> band_boundaries_;
+  const std::array<float, kFrameSize20ms24kHz / 2> half_window_;
+  Pffft fft_;
+  std::unique_ptr<Pffft::FloatBuffer> fft_buffer_;
+  std::unique_ptr<Pffft::FloatBuffer> reference_frame_fft_;
+  std::unique_ptr<Pffft::FloatBuffer> lagged_frame_fft_;
+  SpectralCorrelator spectral_correlator_;
+  std::array<float, kOpusBands24kHz> reference_frame_bands_energy_;
+  std::array<float, kOpusBands24kHz> lagged_frame_bands_energy_;
+  std::array<float, kOpusBands24kHz> bands_cross_corr_;
   const std::array<float, kNumBands * kNumBands> dct_table_;
-  RingBuffer<float, kNumBands, kSpectralCoeffsHistorySize>
-      spectral_coeffs_ring_buf_;
-  SymmetricMatrixBuffer<float, kSpectralCoeffsHistorySize> spectral_diffs_buf_;
+  RingBuffer<float, kNumBands, kCepstralCoeffsHistorySize>
+      cepstral_coeffs_ring_buf_;
+  SymmetricMatrixBuffer<float, kCepstralCoeffsHistorySize> cepstral_diffs_buf_;
 };
 
 }  // namespace rnn_vad

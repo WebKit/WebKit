@@ -9,6 +9,7 @@
  */
 
 #include "api/audio/echo_canceller3_config_json.h"
+
 #include "api/audio/echo_canceller3_config.h"
 #include "test/gtest.h"
 

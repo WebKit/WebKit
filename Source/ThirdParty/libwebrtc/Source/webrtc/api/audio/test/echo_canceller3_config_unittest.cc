@@ -8,9 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <string>
-
 #include "api/audio/echo_canceller3_config.h"
+
 #include "api/audio/echo_canceller3_config_json.h"
 #include "test/gtest.h"
 

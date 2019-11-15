@@ -17,11 +17,11 @@ import static org.webrtc.MediaCodecUtils.QCOM_PREFIX;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /** Factory for android hardware video encoders. */
 @SuppressWarnings("deprecation") // API 16 requires the use of deprecated methods.
@@ -42,9 +42,34 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
   @Nullable private final EglBase14.Context sharedContext;
   private final boolean enableIntelVp8Encoder;
   private final boolean enableH264HighProfile;
+  @Nullable private final Predicate<MediaCodecInfo> codecAllowedPredicate;
 
+  /**
+   * Creates a HardwareVideoEncoderFactory that supports surface texture encoding.
+   *
+   * @param sharedContext The textures generated will be accessible from this context. May be null,
+   *                      this disables texture support.
+   * @param enableIntelVp8Encoder true if Intel's VP8 encoder enabled.
+   * @param enableH264HighProfile true if H264 High Profile enabled.
+   */
   public HardwareVideoEncoderFactory(
       EglBase.Context sharedContext, boolean enableIntelVp8Encoder, boolean enableH264HighProfile) {
+    this(sharedContext, enableIntelVp8Encoder, enableH264HighProfile,
+        /* codecAllowedPredicate= */ null);
+  }
+
+  /**
+   * Creates a HardwareVideoEncoderFactory that supports surface texture encoding.
+   *
+   * @param sharedContext The textures generated will be accessible from this context. May be null,
+   *                      this disables texture support.
+   * @param enableIntelVp8Encoder true if Intel's VP8 encoder enabled.
+   * @param enableH264HighProfile true if H264 High Profile enabled.
+   * @param codecAllowedPredicate optional predicate to filter codecs. All codecs are allowed
+   *                              when predicate is not provided.
+   */
+  public HardwareVideoEncoderFactory(EglBase.Context sharedContext, boolean enableIntelVp8Encoder,
+      boolean enableH264HighProfile, @Nullable Predicate<MediaCodecInfo> codecAllowedPredicate) {
     // Texture mode requires EglBase14.
     if (sharedContext instanceof EglBase14.Context) {
       this.sharedContext = (EglBase14.Context) sharedContext;
@@ -54,6 +79,7 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
     }
     this.enableIntelVp8Encoder = enableIntelVp8Encoder;
     this.enableH264HighProfile = enableH264HighProfile;
+    this.codecAllowedPredicate = codecAllowedPredicate;
   }
 
   @Deprecated
@@ -164,7 +190,7 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
         == null) {
       return false;
     }
-    return isHardwareSupportedInCurrentSdk(info, type);
+    return isHardwareSupportedInCurrentSdk(info, type) && isMediaCodecAllowed(info);
   }
 
   // Returns true if the given MediaCodecInfo indicates a hardware module that is supported on the
@@ -210,6 +236,13 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
         // Exynos H264 encoder is supported in LOLLIPOP or later.
         || (name.startsWith(EXYNOS_PREFIX)
                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+  }
+
+  private boolean isMediaCodecAllowed(MediaCodecInfo info) {
+    if (codecAllowedPredicate == null) {
+      return true;
+    }
+    return codecAllowedPredicate.test(info);
   }
 
   private int getKeyFrameIntervalSec(VideoCodecType type) {

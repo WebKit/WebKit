@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_processing/aec3/moving_average.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -8,17 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
+
 #include <utility>
 
 #include "common_audio/mocks/mock_smoothing_filter.h"
-#include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
+using ::testing::_;
 using ::testing::NiceMock;
 using ::testing::Return;
-using ::testing::_;
 
 namespace {
 
@@ -422,7 +423,7 @@ TEST(FecControllerPlrBasedTest, SingleThresholdCurveForEnablingAndDisabling) {
 
   // Test that FEC is turned on whenever we're on the curve or above it,
   // independent of the starting FEC state.
-  for (std::vector<NetworkState> states_list : {on, above}) {
+  for (const std::vector<NetworkState>& states_list : {on, above}) {
     for (NetworkState net_state : states_list) {
       for (bool initial_fec_enabled : {false, true}) {
         auto states =

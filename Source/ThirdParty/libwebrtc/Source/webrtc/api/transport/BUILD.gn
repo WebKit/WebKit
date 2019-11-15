@@ -15,6 +15,7 @@ rtc_source_set("bitrate_settings") {
     "bitrate_settings.h",
   ]
   deps = [
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -35,11 +36,36 @@ rtc_static_library("network_control") {
   ]
 
   deps = [
+    ":webrtc_key_value_config",
+    "../../rtc_base:deprecation",
     "../units:data_rate",
     "../units:data_size",
     "../units:time_delta",
     "../units:timestamp",
     "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("webrtc_key_value_config") {
+  visibility = [ "*" ]
+  sources = [
+    "webrtc_key_value_config.h",
+  ]
+  deps = [
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_source_set("field_trial_based_config") {
+  visibility = [ "*" ]
+  sources = [
+    "field_trial_based_config.cc",
+    "field_trial_based_config.h",
+  ]
+  deps = [
+    ":webrtc_key_value_config",
+    "../../system_wrappers:field_trial",
+    "//third_party/abseil-cpp/absl/strings",
   ]
 }
 
@@ -51,25 +77,36 @@ rtc_static_library("goog_cc") {
   ]
   deps = [
     ":network_control",
+    ":webrtc_key_value_config",
+    "..:network_state_predictor_api",
     "../../modules/congestion_controller/goog_cc",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("network_control_test") {
+  rtc_source_set("test_feedback_generator_interface") {
     testonly = true
     sources = [
-      "test/mock_network_control.h",
-      "test/network_control_tester.cc",
-      "test/network_control_tester.h",
+      "test/feedback_generator_interface.h",
     ]
     deps = [
       ":network_control",
-      "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
-      "../../test:test_support",
-      "//third_party/abseil-cpp/absl/types:optional",
+      "..:simulated_network_api",
+    ]
+  }
+  rtc_source_set("test_feedback_generator") {
+    testonly = true
+    sources = [
+      "test/create_feedback_generator.cc",
+      "test/create_feedback_generator.h",
+    ]
+    visibility = [ "*" ]
+    deps = [
+      ":network_control",
+      ":test_feedback_generator_interface",
+      "../../test/network:feedback_generator",
+      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

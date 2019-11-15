@@ -11,17 +11,18 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_DELAY_BASED_BWE_UNITTEST_HELPER_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_DELAY_BASED_BWE_UNITTEST_HELPER_H_
 
-#include <list>
-#include <map>
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
+#include "api/transport/field_trial_based_config.h"
+#include "api/transport/network_types.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
-#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "system_wrappers/include/clock.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -29,13 +30,12 @@
 namespace webrtc {
 namespace test {
 
-class TestBitrateObserver : public RemoteBitrateObserver {
+class TestBitrateObserver {
  public:
   TestBitrateObserver() : updated_(false), latest_bitrate_(0) {}
-  ~TestBitrateObserver() override {}
+  ~TestBitrateObserver() {}
 
-  void OnReceiveBitrateChanged(const std::vector<uint32_t>& ssrcs,
-                               uint32_t bitrate) override;
+  void OnReceiveBitrateChanged(uint32_t bitrate);
 
   void Reset() { updated_ = false; }
 
@@ -58,7 +58,7 @@ class RtpStream {
   // previous frame, no frame will be generated. The frame is split into
   // packets.
   int64_t GenerateFrame(int64_t time_now_us,
-                        std::vector<PacketFeedback>* packets);
+                        std::vector<PacketResult>* packets);
 
   // The send-side time when the next frame can be generated.
   int64_t next_rtp_time() const;
@@ -74,7 +74,6 @@ class RtpStream {
   int fps_;
   int bitrate_bps_;
   int64_t next_rtp_time_;
-  uint16_t sequence_number_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpStream);
 };
@@ -99,7 +98,7 @@ class StreamGenerator {
 
   // TODO(holmer): Break out the channel simulation part from this class to make
   // it possible to simulate different types of channels.
-  int64_t GenerateFrame(std::vector<PacketFeedback>* packets,
+  int64_t GenerateFrame(std::vector<PacketResult>* packets,
                         int64_t time_now_us);
 
  private:
@@ -126,11 +125,9 @@ class DelayBasedBweTest : public ::testing::Test {
   // Helpers to insert a single packet into the delay-based BWE.
   void IncomingFeedback(int64_t arrival_time_ms,
                         int64_t send_time_ms,
-                        uint16_t sequence_number,
                         size_t payload_size);
   void IncomingFeedback(int64_t arrival_time_ms,
                         int64_t send_time_ms,
-                        uint16_t sequence_number,
                         size_t payload_size,
                         const PacedPacketInfo& pacing_info);
 
@@ -166,6 +163,7 @@ class DelayBasedBweTest : public ::testing::Test {
                               int64_t receiver_clock_offset_change_ms);
 
   static const uint32_t kDefaultSsrc;
+  FieldTrialBasedConfig field_trial_config_;
 
   std::unique_ptr<test::ScopedFieldTrials>
       field_trial;        // Must be initialized first.

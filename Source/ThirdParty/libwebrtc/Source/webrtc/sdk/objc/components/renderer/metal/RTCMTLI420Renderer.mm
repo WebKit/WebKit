@@ -33,10 +33,10 @@ static NSString *const shaderSource = MTL_STRINGIFY(
       float2 texcoord;
     } Varyings;
 
-    vertex Varyings vertexPassthrough(device Vertex * verticies[[buffer(0)]],
+    vertex Varyings vertexPassthrough(constant Vertex *verticies[[buffer(0)]],
                                       unsigned int vid[[vertex_id]]) {
       Varyings out;
-      device Vertex &v = verticies[vid];
+      constant Vertex &v = verticies[vid];
       out.position = float4(float2(v.position), 0.0, 1.0);
       out.texcoord = v.texcoord;
 
@@ -44,7 +44,8 @@ static NSString *const shaderSource = MTL_STRINGIFY(
     }
 
     fragment half4 fragmentColorConversion(
-        Varyings in[[stage_in]], texture2d<float, access::sample> textureY[[texture(0)]],
+        Varyings in[[stage_in]],
+        texture2d<float, access::sample> textureY[[texture(0)]],
         texture2d<float, access::sample> textureU[[texture(1)]],
         texture2d<float, access::sample> textureV[[texture(2)]]) {
       constexpr sampler s(address::clamp_to_edge, filter::linear);
@@ -118,7 +119,7 @@ static NSString *const shaderSource = MTL_STRINGIFY(
   id<RTCI420Buffer> buffer = [frame.buffer toI420];
 
   // Luma (y) texture.
-  if (!_descriptor || (_width != frame.width && _height != frame.height)) {
+  if (!_descriptor || _width != frame.width || _height != frame.height) {
     _width = frame.width;
     _height = frame.height;
     _descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatR8Unorm
@@ -135,8 +136,7 @@ static NSString *const shaderSource = MTL_STRINGIFY(
                  withBytes:buffer.dataY
                bytesPerRow:buffer.strideY];
 
-  if (!_chromaDescriptor ||
-      (_chromaWidth != frame.width / 2 && _chromaHeight != frame.height / 2)) {
+  if (!_chromaDescriptor || _chromaWidth != frame.width / 2 || _chromaHeight != frame.height / 2) {
     _chromaWidth = frame.width / 2;
     _chromaHeight = frame.height / 2;
     _chromaDescriptor =

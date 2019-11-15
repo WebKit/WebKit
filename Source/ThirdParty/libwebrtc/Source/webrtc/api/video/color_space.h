@@ -35,9 +35,8 @@ class ColorSpace {
  public:
   enum class PrimaryID : uint8_t {
     // The indices are equal to the values specified in T-REC H.273 Table 2.
-    kInvalid = 0,
     kBT709 = 1,
-    kUNSPECIFIED = 2,
+    kUnspecified = 2,
     kBT470M = 4,
     kBT470BG = 5,
     kSMPTE170M = 6,  // Identical to BT601
@@ -54,9 +53,8 @@ class ColorSpace {
 
   enum class TransferID : uint8_t {
     // The indices are equal to the values specified in T-REC H.273 Table 3.
-    kInvalid = 0,
     kBT709 = 1,
-    kUNSPECIFIED = 2,
+    kUnspecified = 2,
     kGAMMA22 = 4,
     kGAMMA28 = 5,
     kSMPTE170M = 6,
@@ -80,7 +78,7 @@ class ColorSpace {
     // The indices are equal to the values specified in T-REC H.273 Table 4.
     kRGB = 0,
     kBT709 = 1,
-    kUNSPECIFIED = 2,
+    kUnspecified = 2,
     kFCC = 4,
     kBT470BG = 5,
     kSMPTE170M = 6,
@@ -92,7 +90,6 @@ class ColorSpace {
     kCDNCLS = 12,
     kCDCLS = 13,
     kBT2100_ICTCP = 14,
-    kInvalid = 63,
     // When adding/removing entries here, please make sure to do the
     // corresponding change to kMatrixIds.
   };
@@ -111,6 +108,19 @@ class ColorSpace {
     // corresponding change to kRangeIds.
   };
 
+  enum class ChromaSiting {
+    // Chroma siting specifies how chroma is subsampled relative to the luma
+    // samples in a YUV video frame.
+    // The indices are equal to the values specified at
+    // https://www.webmproject.org/docs/container/#colour for the element
+    // ChromaSitingVert and ChromaSitingHorz.
+    kUnspecified = 0,
+    kCollocated = 1,
+    kHalf = 2,
+    // When adding/removing entries here, please make sure to do the
+    // corresponding change to kChromaSitings.
+  };
+
   ColorSpace();
   ColorSpace(const ColorSpace& other);
   ColorSpace(ColorSpace&& other);
@@ -118,40 +128,50 @@ class ColorSpace {
   ColorSpace(PrimaryID primaries,
              TransferID transfer,
              MatrixID matrix,
-             RangeID full_range);
+             RangeID range);
   ColorSpace(PrimaryID primaries,
              TransferID transfer,
              MatrixID matrix,
              RangeID range,
+             ChromaSiting chroma_siting_horizontal,
+             ChromaSiting chroma_siting_vertical,
              const HdrMetadata* hdr_metadata);
-  bool operator==(const ColorSpace& other) const {
-    return primaries_ == other.primaries() && transfer_ == other.transfer() &&
-           matrix_ == other.matrix() && range_ == other.range() &&
-           ((hdr_metadata_.has_value() && other.hdr_metadata() &&
-             *hdr_metadata_ == *other.hdr_metadata()) ||
-            (!hdr_metadata_.has_value() && other.hdr_metadata() == nullptr));
+  friend bool operator==(const ColorSpace& lhs, const ColorSpace& rhs) {
+    return lhs.primaries_ == rhs.primaries_ && lhs.transfer_ == rhs.transfer_ &&
+           lhs.matrix_ == rhs.matrix_ && lhs.range_ == rhs.range_ &&
+           lhs.chroma_siting_horizontal_ == rhs.chroma_siting_horizontal_ &&
+           lhs.chroma_siting_vertical_ == rhs.chroma_siting_vertical_ &&
+           lhs.hdr_metadata_ == rhs.hdr_metadata_;
+  }
+  friend bool operator!=(const ColorSpace& lhs, const ColorSpace& rhs) {
+    return !(lhs == rhs);
   }
 
   PrimaryID primaries() const;
   TransferID transfer() const;
   MatrixID matrix() const;
   RangeID range() const;
+  ChromaSiting chroma_siting_horizontal() const;
+  ChromaSiting chroma_siting_vertical() const;
   const HdrMetadata* hdr_metadata() const;
 
   bool set_primaries_from_uint8(uint8_t enum_value);
   bool set_transfer_from_uint8(uint8_t enum_value);
   bool set_matrix_from_uint8(uint8_t enum_value);
   bool set_range_from_uint8(uint8_t enum_value);
+  bool set_chroma_siting_horizontal_from_uint8(uint8_t enum_value);
+  bool set_chroma_siting_vertical_from_uint8(uint8_t enum_value);
   void set_hdr_metadata(const HdrMetadata* hdr_metadata);
 
  private:
-  PrimaryID primaries_ = PrimaryID::kInvalid;
-  TransferID transfer_ = TransferID::kInvalid;
-  MatrixID matrix_ = MatrixID::kInvalid;
+  PrimaryID primaries_ = PrimaryID::kUnspecified;
+  TransferID transfer_ = TransferID::kUnspecified;
+  MatrixID matrix_ = MatrixID::kUnspecified;
   RangeID range_ = RangeID::kInvalid;
+  ChromaSiting chroma_siting_horizontal_ = ChromaSiting::kUnspecified;
+  ChromaSiting chroma_siting_vertical_ = ChromaSiting::kUnspecified;
   absl::optional<HdrMetadata> hdr_metadata_;
 };
 
 }  // namespace webrtc
-
 #endif  // API_VIDEO_COLOR_SPACE_H_

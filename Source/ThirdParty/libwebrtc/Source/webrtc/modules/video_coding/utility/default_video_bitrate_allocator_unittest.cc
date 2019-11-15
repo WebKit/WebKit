@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/utility/default_video_bitrate_allocator.h"
+
 #include <limits>
 #include <memory>
 
-#include "modules/video_coding/utility/default_video_bitrate_allocator.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -41,7 +42,7 @@ class DefaultVideoBitrateAllocatorTest : public ::testing::Test {
 
 TEST_F(DefaultVideoBitrateAllocatorTest, ZeroIsOff) {
   VideoBitrateAllocation allocation =
-      allocator_->GetAllocation(0, kMaxFramerate);
+      allocator_->Allocate(VideoBitrateAllocationParameters(0, kMaxFramerate));
   EXPECT_EQ(0u, allocation.get_sum_bps());
 }
 
@@ -49,41 +50,45 @@ TEST_F(DefaultVideoBitrateAllocatorTest, Inactive) {
   codec_.active = false;
   allocator_.reset(new DefaultVideoBitrateAllocator(codec_));
   VideoBitrateAllocation allocation =
-      allocator_->GetAllocation(1, kMaxFramerate);
+      allocator_->Allocate(VideoBitrateAllocationParameters(1, kMaxFramerate));
   EXPECT_EQ(0u, allocation.get_sum_bps());
 }
 
 TEST_F(DefaultVideoBitrateAllocatorTest, CapsToMin) {
   VideoBitrateAllocation allocation =
-      allocator_->GetAllocation(1, kMaxFramerate);
+      allocator_->Allocate(VideoBitrateAllocationParameters(1, kMaxFramerate));
   EXPECT_EQ(kMinBitrateBps, allocation.get_sum_bps());
 
-  allocation = allocator_->GetAllocation(kMinBitrateBps - 1, kMaxFramerate);
+  allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMinBitrateBps - 1, kMaxFramerate));
   EXPECT_EQ(kMinBitrateBps, allocation.get_sum_bps());
 
-  allocation = allocator_->GetAllocation(kMinBitrateBps, kMaxFramerate);
+  allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMinBitrateBps, kMaxFramerate));
   EXPECT_EQ(kMinBitrateBps, allocation.get_sum_bps());
 }
 
 TEST_F(DefaultVideoBitrateAllocatorTest, CapsToMax) {
-  VideoBitrateAllocation allocation =
-      allocator_->GetAllocation(kMaxBitrateBps, kMaxFramerate);
+  VideoBitrateAllocation allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMaxBitrateBps, kMaxFramerate));
   EXPECT_EQ(kMaxBitrateBps, allocation.get_sum_bps());
 
-  allocation = allocator_->GetAllocation(kMaxBitrateBps + 1, kMaxFramerate);
+  allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMaxBitrateBps + 1, kMaxFramerate));
   EXPECT_EQ(kMaxBitrateBps, allocation.get_sum_bps());
 
-  allocation = allocator_->GetAllocation(std::numeric_limits<uint32_t>::max(),
-                                         kMaxFramerate);
+  allocation = allocator_->Allocate(VideoBitrateAllocationParameters(
+      std::numeric_limits<uint32_t>::max(), kMaxFramerate));
   EXPECT_EQ(kMaxBitrateBps, allocation.get_sum_bps());
 }
 
 TEST_F(DefaultVideoBitrateAllocatorTest, GoodInBetween) {
-  VideoBitrateAllocation allocation =
-      allocator_->GetAllocation(kMinBitrateBps + 1, kMaxFramerate);
+  VideoBitrateAllocation allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMinBitrateBps + 1, kMaxFramerate));
   EXPECT_EQ(kMinBitrateBps + 1, allocation.get_sum_bps());
 
-  allocation = allocator_->GetAllocation(kMaxBitrateBps - 1, kMaxFramerate);
+  allocation = allocator_->Allocate(
+      VideoBitrateAllocationParameters(kMaxBitrateBps - 1, kMaxFramerate));
   EXPECT_EQ(kMaxBitrateBps - 1, allocation.get_sum_bps());
 }
 }  // namespace webrtc

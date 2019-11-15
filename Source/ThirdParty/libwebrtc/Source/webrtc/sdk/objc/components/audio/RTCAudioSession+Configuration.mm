@@ -97,7 +97,9 @@
                                 error:&sampleRateError]) {
       RTCLogError(@"Failed to set preferred sample rate: %@",
                   sampleRateError.localizedDescription);
-      error = sampleRateError;
+      if (!self.ignoresPreferredAttributeConfigurationErrors) {
+        error = sampleRateError;
+      }
     } else {
       RTCLog(@"Set preferred sample rate to: %.2f",
              configuration.sampleRate);
@@ -110,7 +112,9 @@
                                       error:&bufferDurationError]) {
       RTCLogError(@"Failed to set preferred IO buffer duration: %@",
                   bufferDurationError.localizedDescription);
-      error = bufferDurationError;
+      if (!self.ignoresPreferredAttributeConfigurationErrors) {
+        error = bufferDurationError;
+      }
     } else {
       RTCLog(@"Set preferred IO buffer duration to: %f",
              configuration.ioBufferDuration);
@@ -139,7 +143,9 @@
                                              error:&inputChannelsError]) {
        RTCLogError(@"Failed to set preferred input number of channels: %@",
                    inputChannelsError.localizedDescription);
-       error = inputChannelsError;
+       if (!self.ignoresPreferredAttributeConfigurationErrors) {
+         error = inputChannelsError;
+       }
       } else {
         RTCLog(@"Set input number of channels to: %ld",
                (long)inputNumberOfChannels);
@@ -152,7 +158,9 @@
                                               error:&outputChannelsError]) {
         RTCLogError(@"Failed to set preferred output number of channels: %@",
                     outputChannelsError.localizedDescription);
-        error = outputChannelsError;
+        if (!self.ignoresPreferredAttributeConfigurationErrors) {
+          error = outputChannelsError;
+        }
       } else {
         RTCLog(@"Set output number of channels to: %ld",
                (long)outputNumberOfChannels);

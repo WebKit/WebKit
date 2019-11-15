@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
+
 #include <stddef.h>
 
 #include "modules/audio_device/linux/audio_device_pulse_linux.h"
-#include "modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
 #include "modules/audio_device/linux/latebindingsymboltable_linux.h"
 #include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
 #include "rtc_base/checks.h"
@@ -57,7 +58,7 @@ AudioMixerManagerLinuxPulse::AudioMixerManagerLinuxPulse()
 }
 
 AudioMixerManagerLinuxPulse::~AudioMixerManagerLinuxPulse() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_INFO) << __FUNCTION__ << " destroyed";
 
   Close();
@@ -70,7 +71,7 @@ AudioMixerManagerLinuxPulse::~AudioMixerManagerLinuxPulse() {
 int32_t AudioMixerManagerLinuxPulse::SetPulseAudioObjects(
     pa_threaded_mainloop* mainloop,
     pa_context* context) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << __FUNCTION__;
 
   if (!mainloop || !context) {
@@ -88,7 +89,7 @@ int32_t AudioMixerManagerLinuxPulse::SetPulseAudioObjects(
 }
 
 int32_t AudioMixerManagerLinuxPulse::Close() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << __FUNCTION__;
 
   CloseSpeaker();
@@ -102,7 +103,7 @@ int32_t AudioMixerManagerLinuxPulse::Close() {
 }
 
 int32_t AudioMixerManagerLinuxPulse::CloseSpeaker() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << __FUNCTION__;
 
   // Reset the index to -1
@@ -113,7 +114,7 @@ int32_t AudioMixerManagerLinuxPulse::CloseSpeaker() {
 }
 
 int32_t AudioMixerManagerLinuxPulse::CloseMicrophone() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << __FUNCTION__;
 
   // Reset the index to -1
@@ -124,7 +125,7 @@ int32_t AudioMixerManagerLinuxPulse::CloseMicrophone() {
 }
 
 int32_t AudioMixerManagerLinuxPulse::SetPlayStream(pa_stream* playStream) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE)
       << "AudioMixerManagerLinuxPulse::SetPlayStream(playStream)";
 
@@ -133,7 +134,7 @@ int32_t AudioMixerManagerLinuxPulse::SetPlayStream(pa_stream* playStream) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::SetRecStream(pa_stream* recStream) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << "AudioMixerManagerLinuxPulse::SetRecStream(recStream)";
 
   _paRecStream = recStream;
@@ -141,7 +142,7 @@ int32_t AudioMixerManagerLinuxPulse::SetRecStream(pa_stream* recStream) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::OpenSpeaker(uint16_t deviceIndex) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << "AudioMixerManagerLinuxPulse::OpenSpeaker(deviceIndex="
                       << deviceIndex << ")";
 
@@ -162,7 +163,7 @@ int32_t AudioMixerManagerLinuxPulse::OpenSpeaker(uint16_t deviceIndex) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::OpenMicrophone(uint16_t deviceIndex) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE)
       << "AudioMixerManagerLinuxPulse::OpenMicrophone(deviceIndex="
       << deviceIndex << ")";
@@ -184,21 +185,21 @@ int32_t AudioMixerManagerLinuxPulse::OpenMicrophone(uint16_t deviceIndex) {
 }
 
 bool AudioMixerManagerLinuxPulse::SpeakerIsInitialized() const {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_INFO) << __FUNCTION__;
 
   return (_paOutputDeviceIndex != -1);
 }
 
 bool AudioMixerManagerLinuxPulse::MicrophoneIsInitialized() const {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_INFO) << __FUNCTION__;
 
   return (_paInputDeviceIndex != -1);
 }
 
 int32_t AudioMixerManagerLinuxPulse::SetSpeakerVolume(uint32_t volume) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << "AudioMixerManagerLinuxPulse::SetSpeakerVolume(volume="
                       << volume << ")";
 
@@ -303,7 +304,7 @@ int32_t AudioMixerManagerLinuxPulse::MinSpeakerVolume(
 }
 
 int32_t AudioMixerManagerLinuxPulse::SpeakerVolumeIsAvailable(bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paOutputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "output device index has not been set";
     return -1;
@@ -316,7 +317,7 @@ int32_t AudioMixerManagerLinuxPulse::SpeakerVolumeIsAvailable(bool& available) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::SpeakerMuteIsAvailable(bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paOutputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "output device index has not been set";
     return -1;
@@ -329,7 +330,7 @@ int32_t AudioMixerManagerLinuxPulse::SpeakerMuteIsAvailable(bool& available) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::SetSpeakerMute(bool enable) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE) << "AudioMixerManagerLinuxPulse::SetSpeakerMute(enable="
                       << enable << ")";
 
@@ -393,7 +394,7 @@ int32_t AudioMixerManagerLinuxPulse::SpeakerMute(bool& enabled) const {
 }
 
 int32_t AudioMixerManagerLinuxPulse::StereoPlayoutIsAvailable(bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paOutputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "output device index has not been set";
     return -1;
@@ -423,7 +424,7 @@ int32_t AudioMixerManagerLinuxPulse::StereoPlayoutIsAvailable(bool& available) {
 
 int32_t AudioMixerManagerLinuxPulse::StereoRecordingIsAvailable(
     bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paInputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "input device index has not been set";
     return -1;
@@ -461,7 +462,7 @@ int32_t AudioMixerManagerLinuxPulse::StereoRecordingIsAvailable(
 
 int32_t AudioMixerManagerLinuxPulse::MicrophoneMuteIsAvailable(
     bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paInputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "input device index has not been set";
     return -1;
@@ -474,7 +475,7 @@ int32_t AudioMixerManagerLinuxPulse::MicrophoneMuteIsAvailable(
 }
 
 int32_t AudioMixerManagerLinuxPulse::SetMicrophoneMute(bool enable) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_LOG(LS_VERBOSE)
       << "AudioMixerManagerLinuxPulse::SetMicrophoneMute(enable=" << enable
       << ")";
@@ -520,7 +521,7 @@ int32_t AudioMixerManagerLinuxPulse::SetMicrophoneMute(bool enable) {
 }
 
 int32_t AudioMixerManagerLinuxPulse::MicrophoneMute(bool& enabled) const {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paInputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "input device index has not been set";
     return -1;
@@ -552,7 +553,7 @@ int32_t AudioMixerManagerLinuxPulse::MicrophoneMute(bool& enabled) const {
 
 int32_t AudioMixerManagerLinuxPulse::MicrophoneVolumeIsAvailable(
     bool& available) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (_paInputDeviceIndex == -1) {
     RTC_LOG(LS_WARNING) << "input device index has not been set";
     return -1;

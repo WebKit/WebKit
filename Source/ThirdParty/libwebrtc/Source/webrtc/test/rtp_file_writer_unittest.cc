@@ -8,14 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "test/rtp_file_writer.h"
+
+#include <stdint.h>
 #include <string.h>
 
 #include <memory>
 
 #include "test/gtest.h"
 #include "test/rtp_file_reader.h"
-#include "test/rtp_file_writer.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 

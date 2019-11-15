@@ -16,7 +16,7 @@
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
-class FilterBanksTest : public testing::Test {
+class FilterBanksTest : public ::testing::Test {
  protected:
   // Pass a function pointer to the Tester function.
   void RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/5513

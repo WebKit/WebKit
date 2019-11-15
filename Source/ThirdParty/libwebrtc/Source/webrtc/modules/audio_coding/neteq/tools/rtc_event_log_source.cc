@@ -11,10 +11,13 @@
 #include "modules/audio_coding/neteq/tools/rtc_event_log_source.h"
 
 #include <string.h>
+
 #include <iostream>
 #include <limits>
+#include <set>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "rtc_base/checks.h"
@@ -23,10 +26,10 @@ namespace webrtc {
 namespace test {
 
 namespace {
-bool ShouldSkipStream(ParsedRtcEventLogNew::MediaType media_type,
+bool ShouldSkipStream(ParsedRtcEventLog::MediaType media_type,
                       uint32_t ssrc,
                       absl::optional<uint32_t> ssrc_filter) {
-  if (media_type != ParsedRtcEventLogNew::MediaType::AUDIO)
+  if (media_type != ParsedRtcEventLog::MediaType::AUDIO)
     return true;
   if (ssrc_filter.has_value() && ssrc != *ssrc_filter)
     return true;
@@ -34,11 +37,29 @@ bool ShouldSkipStream(ParsedRtcEventLogNew::MediaType media_type,
 }
 }  // namespace
 
-RtcEventLogSource* RtcEventLogSource::Create(
+std::unique_ptr<RtcEventLogSource> RtcEventLogSource::CreateFromFile(
     const std::string& file_name,
     absl::optional<uint32_t> ssrc_filter) {
-  RtcEventLogSource* source = new RtcEventLogSource();
-  RTC_CHECK(source->OpenFile(file_name, ssrc_filter));
+  auto source = std::unique_ptr<RtcEventLogSource>(new RtcEventLogSource());
+  ParsedRtcEventLog parsed_log;
+  if (!parsed_log.ParseFile(file_name) ||
+      !source->Initialize(parsed_log, ssrc_filter)) {
+    std::cerr << "Error while parsing event log, skipping." << std::endl;
+    return nullptr;
+  }
+  return source;
+}
+
+std::unique_ptr<RtcEventLogSource> RtcEventLogSource::CreateFromString(
+    const std::string& file_contents,
+    absl::optional<uint32_t> ssrc_filter) {
+  auto source = std::unique_ptr<RtcEventLogSource>(new RtcEventLogSource());
+  ParsedRtcEventLog parsed_log;
+  if (!parsed_log.ParseString(file_contents) ||
+      !source->Initialize(parsed_log, ssrc_filter)) {
+    std::cerr << "Error while parsing event log, skipping." << std::endl;
+    return nullptr;
+  }
   return source;
 }
 
@@ -62,64 +83,65 @@ int64_t RtcEventLogSource::NextAudioOutputEventMs() {
 
 RtcEventLogSource::RtcEventLogSource() : PacketSource() {}
 
-bool RtcEventLogSource::OpenFile(const std::string& file_name,
-                                 absl::optional<uint32_t> ssrc_filter) {
-  ParsedRtcEventLogNew parsed_log;
-  if (!parsed_log.ParseFile(file_name))
-    return false;
-
+bool RtcEventLogSource::Initialize(const ParsedRtcEventLog& parsed_log,
+                                   absl::optional<uint32_t> ssrc_filter) {
   const auto first_log_end_time_us =
       parsed_log.stop_log_events().empty()
           ? std::numeric_limits<int64_t>::max()
           : parsed_log.stop_log_events().front().log_time_us();
 
+  std::set<uint32_t> packet_ssrcs;
   auto handle_rtp_packet =
-      [this,
-       first_log_end_time_us](const webrtc::LoggedRtpPacketIncoming& incoming) {
+      [this, first_log_end_time_us,
+       &packet_ssrcs](const webrtc::LoggedRtpPacketIncoming& incoming) {
         if (!filter_.test(incoming.rtp.header.payloadType) &&
             incoming.log_time_us() < first_log_end_time_us) {
           rtp_packets_.emplace_back(absl::make_unique<Packet>(
               incoming.rtp.header, incoming.rtp.total_length,
               incoming.rtp.total_length - incoming.rtp.header_length,
               static_cast<double>(incoming.log_time_ms())));
+          packet_ssrcs.insert(rtp_packets_.back()->header().ssrc);
         }
       };
 
+  std::set<uint32_t> ignored_ssrcs;
   auto handle_audio_playout =
-      [this, first_log_end_time_us](
-          const webrtc::LoggedAudioPlayoutEvent& audio_playout) {
+      [this, first_log_end_time_us, &packet_ssrcs,
+       &ignored_ssrcs](const webrtc::LoggedAudioPlayoutEvent& audio_playout) {
         if (audio_playout.log_time_us() < first_log_end_time_us) {
-          audio_outputs_.emplace_back(audio_playout.log_time_ms());
+          if (packet_ssrcs.count(audio_playout.ssrc) > 0) {
+            audio_outputs_.emplace_back(audio_playout.log_time_ms());
+          } else {
+            ignored_ssrcs.insert(audio_playout.ssrc);
+          }
         }
       };
 
   // This wouldn't be needed if we knew that there was at most one audio stream.
   webrtc::RtcEventProcessor event_processor;
   for (const auto& rtp_packets : parsed_log.incoming_rtp_packets_by_ssrc()) {
-    ParsedRtcEventLogNew::MediaType media_type =
+    ParsedRtcEventLog::MediaType media_type =
         parsed_log.GetMediaType(rtp_packets.ssrc, webrtc::kIncomingPacket);
     if (ShouldSkipStream(media_type, rtp_packets.ssrc, ssrc_filter)) {
       continue;
     }
-    auto rtp_view = absl::make_unique<
-        webrtc::ProcessableEventList<webrtc::LoggedRtpPacketIncoming>>(
-        rtp_packets.incoming_packets.begin(),
-        rtp_packets.incoming_packets.end(), handle_rtp_packet);
-    event_processor.AddEvents(std::move(rtp_view));
+    event_processor.AddEvents(rtp_packets.incoming_packets, handle_rtp_packet);
   }
 
   for (const auto& audio_playouts : parsed_log.audio_playout_events()) {
     if (ssrc_filter.has_value() && audio_playouts.first != *ssrc_filter)
       continue;
-    auto audio_view = absl::make_unique<
-        webrtc::ProcessableEventList<webrtc::LoggedAudioPlayoutEvent>>(
-        audio_playouts.second.begin(), audio_playouts.second.end(),
-        handle_audio_playout);
-    event_processor.AddEvents(std::move(audio_view));
+    event_processor.AddEvents(audio_playouts.second, handle_audio_playout);
   }
 
   // Fills in rtp_packets_ and audio_outputs_.
   event_processor.ProcessEventsInOrder();
+
+  for (const auto& ssrc : ignored_ssrcs) {
+    std::cout << "Ignoring GetAudio events from SSRC 0x" << std::hex << ssrc
+              << " because no packets were found with a matching SSRC."
+              << std::endl;
+  }
 
   return true;
 }

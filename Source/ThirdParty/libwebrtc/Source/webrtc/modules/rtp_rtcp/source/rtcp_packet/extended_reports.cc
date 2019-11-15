@@ -44,7 +44,8 @@ constexpr size_t ExtendedReports::kMaxNumberOfDlrrItems;
 //  :             type-specific block contents                      :
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ExtendedReports::ExtendedReports() : sender_ssrc_(0) {}
-ExtendedReports::~ExtendedReports() {}
+ExtendedReports::ExtendedReports(const ExtendedReports& xr) = default;
+ExtendedReports::~ExtendedReports() = default;
 
 bool ExtendedReports::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);

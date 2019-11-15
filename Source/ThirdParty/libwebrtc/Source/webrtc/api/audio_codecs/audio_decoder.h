@@ -13,13 +13,14 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -89,6 +90,10 @@ class AudioDecoder {
   // the start of the payload.
   virtual std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
                                                 uint32_t timestamp);
+
+  // TODO(bugs.webrtc.org/10098): The Decode and DecodeRedundant methods are
+  // obsolete; callers should call ParsePayload instead. For now, subclasses
+  // must still implement DecodeInternal.
 
   // Decodes |encode_len| bytes from |encoded| and writes the result in
   // |decoded|. The maximum bytes allowed to be written into |decoded| is

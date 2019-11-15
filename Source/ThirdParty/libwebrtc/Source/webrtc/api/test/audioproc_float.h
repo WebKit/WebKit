@@ -12,6 +12,7 @@
 #define API_TEST_AUDIOPROC_FLOAT_H_
 
 #include <memory>
+#include <vector>
 
 #include "modules/audio_processing/include/audio_processing.h"
 
@@ -36,6 +37,18 @@ int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
                    int argc,
                    char* argv[]);
 
+// Interface for the audio processing simulation utility, which is similar to
+// the one above, but which adds the option of receiving the input as a string
+// and returning the output as an array. The first three arguments fulfill the
+// same purpose as above. Pass the |input_aecdump| to provide the content of an
+// AEC dump file as a string. After the simulation is completed,
+// |processed_capture_samples| will contain the the samples processed on the
+// capture side.
+int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
+                   int argc,
+                   char* argv[],
+                   absl::string_view input_aecdump,
+                   std::vector<float>* processed_capture_samples);
 }  // namespace test
 }  // namespace webrtc
 

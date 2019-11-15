@@ -125,6 +125,9 @@ class AudioDeviceGeneric {
   virtual int32_t EnableBuiltInAGC(bool enable);
   virtual int32_t EnableBuiltInNS(bool enable);
 
+  // Play underrun count.
+  virtual int32_t GetPlayoutUnderrunCount() const;
+
 // iOS only.
 // TODO(henrika): add Android support.
 #if defined(WEBRTC_IOS)

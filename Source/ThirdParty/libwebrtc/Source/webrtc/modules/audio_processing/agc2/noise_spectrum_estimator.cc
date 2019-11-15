@@ -11,6 +11,7 @@
 #include "modules/audio_processing/agc2/noise_spectrum_estimator.h"
 
 #include <string.h>
+
 #include <algorithm>
 
 #include "api/array_view.h"

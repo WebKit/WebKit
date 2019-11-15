@@ -9,6 +9,9 @@
  */
 
 #include "rtc_base/system/file_wrapper.h"
+#include "rtc_base/numerics/safe_conversions.h"
+
+#include <cerrno>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -20,7 +23,7 @@
 
 namespace webrtc {
 namespace {
-FILE* FileOpen(const char* file_name_utf8, bool read_only) {
+FILE* FileOpen(const char* file_name_utf8, bool read_only, int* error) {
 #if defined(_WIN32)
   int len = MultiByteToWideChar(CP_UTF8, 0, file_name_utf8, -1, nullptr, 0);
   std::wstring wstr(len, 0);
@@ -29,27 +32,40 @@ FILE* FileOpen(const char* file_name_utf8, bool read_only) {
 #else
   FILE* file = fopen(file_name_utf8, read_only ? "rb" : "wb");
 #endif
+  if (!file && error) {
+    *error = errno;
+  }
   return file;
+}
+
+const char* GetCstrCheckNoEmbeddedNul(const std::string& s) {
+  const char* p = s.c_str();
+  RTC_CHECK_EQ(strlen(p), s.size())
+      << "Invalid filename, containing NUL character";
+  return p;
 }
 }  // namespace
 
 // static
-FileWrapper* FileWrapper::Create() {
-  return new FileWrapper();
+FileWrapper FileWrapper::OpenReadOnly(const char* file_name_utf8) {
+  return FileWrapper(FileOpen(file_name_utf8, true, nullptr));
 }
 
 // static
-FileWrapper FileWrapper::Open(const char* file_name_utf8, bool read_only) {
-  return FileWrapper(FileOpen(file_name_utf8, read_only), 0);
+FileWrapper FileWrapper::OpenReadOnly(const std::string& file_name_utf8) {
+  return OpenReadOnly(GetCstrCheckNoEmbeddedNul(file_name_utf8));
 }
 
-FileWrapper::FileWrapper() {}
+// static
+FileWrapper FileWrapper::OpenWriteOnly(const char* file_name_utf8,
+                                       int* error /*=nullptr*/) {
+  return FileWrapper(FileOpen(file_name_utf8, false, error));
+}
 
-FileWrapper::FileWrapper(FILE* file, size_t max_size)
-    : file_(file), max_size_in_bytes_(max_size) {}
-
-FileWrapper::~FileWrapper() {
-  CloseFileImpl();
+// static
+FileWrapper FileWrapper::OpenWriteOnly(const std::string& file_name_utf8,
+                                       int* error /*=nullptr*/) {
+  return OpenWriteOnly(GetCstrCheckNoEmbeddedNul(file_name_utf8), error);
 }
 
 FileWrapper::FileWrapper(FileWrapper&& other) {
@@ -57,95 +73,49 @@ FileWrapper::FileWrapper(FileWrapper&& other) {
 }
 
 FileWrapper& FileWrapper::operator=(FileWrapper&& other) {
+  Close();
   file_ = other.file_;
-  max_size_in_bytes_ = other.max_size_in_bytes_;
-  position_ = other.position_;
   other.file_ = nullptr;
   return *this;
 }
 
-void FileWrapper::CloseFile() {
-  rtc::CritScope lock(&lock_);
-  CloseFileImpl();
+bool FileWrapper::SeekRelative(int64_t offset) {
+  RTC_DCHECK(file_);
+  return fseek(file_, rtc::checked_cast<long>(offset), SEEK_CUR) == 0;
 }
 
-int FileWrapper::Rewind() {
-  rtc::CritScope lock(&lock_);
-  if (file_ != nullptr) {
-    position_ = 0;
-    return fseek(file_, 0, SEEK_SET);
-  }
-  return -1;
+bool FileWrapper::SeekTo(int64_t position) {
+  RTC_DCHECK(file_);
+  return fseek(file_, rtc::checked_cast<long>(position), SEEK_SET) == 0;
 }
 
-void FileWrapper::SetMaxFileSize(size_t bytes) {
-  rtc::CritScope lock(&lock_);
-  max_size_in_bytes_ = bytes;
+bool FileWrapper::Flush() {
+  RTC_DCHECK(file_);
+  return fflush(file_) == 0;
 }
 
-int FileWrapper::Flush() {
-  rtc::CritScope lock(&lock_);
-  return FlushImpl();
+size_t FileWrapper::Read(void* buf, size_t length) {
+  RTC_DCHECK(file_);
+  return fread(buf, 1, length, file_);
 }
 
-bool FileWrapper::OpenFile(const char* file_name_utf8, bool read_only) {
-  size_t length = strlen(file_name_utf8);
-  if (length > kMaxFileNameSize - 1)
-    return false;
-
-  rtc::CritScope lock(&lock_);
-  if (file_ != nullptr)
-    return false;
-
-  file_ = FileOpen(file_name_utf8, read_only);
-  return file_ != nullptr;
-}
-
-bool FileWrapper::OpenFromFileHandle(FILE* handle) {
-  if (!handle)
-    return false;
-  rtc::CritScope lock(&lock_);
-  CloseFileImpl();
-  file_ = handle;
-  return true;
-}
-
-int FileWrapper::Read(void* buf, size_t length) {
-  rtc::CritScope lock(&lock_);
-  if (file_ == nullptr)
-    return -1;
-
-  size_t bytes_read = fread(buf, 1, length, file_);
-  return static_cast<int>(bytes_read);
+bool FileWrapper::ReadEof() const {
+  RTC_DCHECK(file_);
+  return feof(file_);
 }
 
 bool FileWrapper::Write(const void* buf, size_t length) {
-  if (buf == nullptr)
-    return false;
+  RTC_DCHECK(file_);
+  return fwrite(buf, 1, length, file_) == length;
+}
 
-  rtc::CritScope lock(&lock_);
-
+bool FileWrapper::Close() {
   if (file_ == nullptr)
-    return false;
+    return true;
 
-  // Check if it's time to stop writing.
-  if (max_size_in_bytes_ > 0 && (position_ + length) > max_size_in_bytes_)
-    return false;
-
-  size_t num_bytes = fwrite(buf, 1, length, file_);
-  position_ += num_bytes;
-
-  return num_bytes == length;
-}
-
-void FileWrapper::CloseFileImpl() {
-  if (file_ != nullptr)
-    fclose(file_);
+  bool success = fclose(file_) == 0;
   file_ = nullptr;
-}
-
-int FileWrapper::FlushImpl() {
-  return (file_ != nullptr) ? fflush(file_) : -1;
+  return success;
 }
 
 }  // namespace webrtc

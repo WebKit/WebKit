@@ -28,6 +28,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -35,7 +36,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Borrowed from Chromium's

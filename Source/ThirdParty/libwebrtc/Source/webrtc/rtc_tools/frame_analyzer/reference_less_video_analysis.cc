@@ -9,36 +9,33 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
+#include <string>
+
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/usage.h"
 #include "rtc_tools/frame_analyzer/reference_less_video_analysis_lib.h"
-#include "rtc_tools/simple_command_line_parser.h"
+
+ABSL_FLAG(std::string,
+          video_file,
+          "",
+          "Path of the video file to be analyzed, only y4m file format is "
+          "supported");
 
 int main(int argc, char* argv[]) {
-  // This captures the freezing metrics for reference less video analysis.
-  std::string program_name = argv[0];
-  std::string usage =
-      "Outputs the freezing score by comparing current frame "
-      "with the previous frame.\nExample usage:\n" +
-      program_name +
-      " --video_file=video_file.y4m\n"
-      "Command line flags:\n"
-      "  - video_file(string): Path of the video "
-      "file to be analyzed. Only y4m file format is supported.\n";
+  absl::SetProgramUsageMessage(
+      "Outputs the freezing score by comparing "
+      "current frame with the previous frame.\n"
+      "Example usage:\n"
+      "./reference_less_video_analysis "
+      "--video_file=video_file.y4m\n");
+  absl::ParseCommandLine(argc, argv);
 
-  webrtc::test::CommandLineParser parser;
-
-  // Init the parser and set the usage message.
-  parser.Init(argc, argv);
-  parser.SetUsageMessage(usage);
-
-  parser.SetFlag("video_file", "");
-  parser.ProcessFlags();
-  if (parser.GetFlag("video_file").empty()) {
-    parser.PrintUsageMessage();
-    exit(EXIT_SUCCESS);
+  std::string video_file = absl::GetFlag(FLAGS_video_file);
+  if (video_file.empty()) {
+    exit(EXIT_FAILURE);
   }
-  std::string video_file = parser.GetFlag("video_file");
 
   return run_analysis(video_file);
 }

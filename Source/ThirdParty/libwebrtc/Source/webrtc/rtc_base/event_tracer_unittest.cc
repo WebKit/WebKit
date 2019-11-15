@@ -10,6 +10,8 @@
 
 #include "rtc_base/event_tracer.h"
 
+#include "rtc_base/critical_section.h"
+#include "rtc_base/thread_annotations.h"
 #include "rtc_base/trace_event.h"
 #include "test/gtest.h"
 
@@ -17,38 +19,45 @@ namespace {
 
 class TestStatistics {
  public:
-  TestStatistics() : events_logged_(0) {}
+  void Reset() {
+    rtc::CritScope cs(&crit_);
+    events_logged_ = 0;
+  }
 
-  void Reset() { events_logged_ = 0; }
+  void Increment() {
+    rtc::CritScope cs(&crit_);
+    ++events_logged_;
+  }
 
-  void Increment() { ++events_logged_; }
-
-  int Count() const { return events_logged_; }
+  int Count() const {
+    rtc::CritScope cs(&crit_);
+    return events_logged_;
+  }
 
   static TestStatistics* Get() {
-    static TestStatistics* test_stats = nullptr;
-    if (!test_stats)
-      test_stats = new TestStatistics();
-    return test_stats;
+    // google.github.io/styleguide/cppguide.html#Static_and_Global_Variables
+    static auto& test_stats = *new TestStatistics();
+    return &test_stats;
   }
 
  private:
-  int events_logged_;
+  rtc::CriticalSection crit_;
+  int events_logged_ RTC_GUARDED_BY(crit_) = 0;
 };
 
-static const unsigned char* GetCategoryEnabledHandler(const char* name) {
+const unsigned char* GetCategoryEnabledHandler(const char* /*name*/) {
   return reinterpret_cast<const unsigned char*>("test");
 }
 
-static void AddTraceEventHandler(char phase,
-                                 const unsigned char* category_enabled,
-                                 const char* name,
-                                 unsigned long long id,
-                                 int num_args,
-                                 const char** arg_names,
-                                 const unsigned char* arg_types,
-                                 const unsigned long long* arg_values,
-                                 unsigned char flags) {
+void TraceEventHandler(char /*phase*/,
+                       const unsigned char* /*category_enabled*/,
+                       const char* /*name*/,
+                       unsigned long long /*id*/,
+                       int /*num_args*/,
+                       const char** /*arg_names*/,
+                       const unsigned char* /*arg_types*/,
+                       const unsigned long long* /*arg_values*/,
+                       unsigned char /*flags*/) {
   TestStatistics::Get()->Increment();
 }
 
@@ -63,7 +72,7 @@ TEST(EventTracerTest, EventTracerDisabled) {
 }
 
 TEST(EventTracerTest, ScopedTraceEvent) {
-  SetupEventTracer(&GetCategoryEnabledHandler, &AddTraceEventHandler);
+  SetupEventTracer(&GetCategoryEnabledHandler, &TraceEventHandler);
   { TRACE_EVENT0("test", "ScopedTraceEvent"); }
   EXPECT_EQ(2, TestStatistics::Get()->Count());
   TestStatistics::Get()->Reset();

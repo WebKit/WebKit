@@ -19,7 +19,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"
-#include "rtc_base/socketaddress.h"
+#include "rtc_base/socket_address.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {

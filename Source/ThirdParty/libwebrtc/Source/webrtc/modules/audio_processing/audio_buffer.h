@@ -13,150 +13,163 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "api/audio/audio_frame.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/gtest_prod_util.h"
 
 namespace webrtc {
 
-class IFChannelBuffer;
 class PushSincResampler;
 class SplittingFilter;
 
 enum Band { kBand0To8kHz = 0, kBand8To16kHz = 1, kBand16To24kHz = 2 };
 
+// Stores any audio data in a way that allows the audio processing module to
+// operate on it in a controlled manner.
 class AudioBuffer {
  public:
-  // TODO(ajm): Switch to take ChannelLayouts.
+  static const int kSplitBandSize = 160;
+  static const size_t kMaxSampleRate = 384000;
+  AudioBuffer(size_t input_rate,
+              size_t input_num_channels,
+              size_t buffer_rate,
+              size_t buffer_num_channels,
+              size_t output_rate,
+              size_t output_num_channels);
+
+  // The constructor below will be deprecated.
   AudioBuffer(size_t input_num_frames,
-              size_t num_input_channels,
-              size_t process_num_frames,
-              size_t num_process_channels,
+              size_t input_num_channels,
+              size_t buffer_num_frames,
+              size_t buffer_num_channels,
               size_t output_num_frames);
   virtual ~AudioBuffer();
 
-  size_t num_channels() const;
-  void set_num_channels(size_t num_channels);
-  size_t num_frames() const;
-  size_t num_frames_per_band() const;
-  size_t num_keyboard_frames() const;
-  size_t num_bands() const;
+  AudioBuffer(const AudioBuffer&) = delete;
+  AudioBuffer& operator=(const AudioBuffer&) = delete;
 
-  // Returns a pointer array to the full-band channels.
+  // Specify that downmixing should be done by selecting a single channel.
+  void set_downmixing_to_specific_channel(size_t channel);
+
+  // Specify that downmixing should be done by averaging all channels,.
+  void set_downmixing_by_averaging();
+
+  // Set the number of channels in the buffer. The specified number of channels
+  // cannot be larger than the specified buffer_num_channels. The number is also
+  // reset at each call to CopyFrom or InterleaveFrom.
+  void set_num_channels(size_t num_channels);
+
+  size_t num_channels() const { return num_channels_; }
+  size_t num_frames() const { return buffer_num_frames_; }
+  size_t num_frames_per_band() const { return num_split_frames_; }
+  size_t num_bands() const { return num_bands_; }
+
+  // Returns pointer arrays to the full-band channels.
   // Usage:
   // channels()[channel][sample].
   // Where:
-  // 0 <= channel < |num_proc_channels_|
-  // 0 <= sample < |proc_num_frames_|
-  int16_t* const* channels();
-  const int16_t* const* channels_const() const;
-  float* const* channels_f();
-  const float* const* channels_const_f() const;
+  // 0 <= channel < |buffer_num_channels_|
+  // 0 <= sample < |buffer_num_frames_|
+  float* const* channels() { return data_->channels(); }
+  const float* const* channels_const() const { return data_->channels(); }
 
-  // Returns a pointer array to the bands for a specific channel.
+  // Returns pointer arrays to the bands for a specific channel.
   // Usage:
   // split_bands(channel)[band][sample].
   // Where:
-  // 0 <= channel < |num_proc_channels_|
+  // 0 <= channel < |buffer_num_channels_|
   // 0 <= band < |num_bands_|
   // 0 <= sample < |num_split_frames_|
-  int16_t* const* split_bands(size_t channel);
-  const int16_t* const* split_bands_const(size_t channel) const;
-  float* const* split_bands_f(size_t channel);
-  const float* const* split_bands_const_f(size_t channel) const;
+  const float* const* split_bands_const(size_t channel) const {
+    return split_data_.get() ? split_data_->bands(channel)
+                             : data_->bands(channel);
+  }
+  float* const* split_bands(size_t channel) {
+    return split_data_.get() ? split_data_->bands(channel)
+                             : data_->bands(channel);
+  }
 
   // Returns a pointer array to the channels for a specific band.
   // Usage:
   // split_channels(band)[channel][sample].
   // Where:
   // 0 <= band < |num_bands_|
-  // 0 <= channel < |num_proc_channels_|
+  // 0 <= channel < |buffer_num_channels_|
   // 0 <= sample < |num_split_frames_|
-  int16_t* const* split_channels(Band band);
-  const int16_t* const* split_channels_const(Band band) const;
-  float* const* split_channels_f(Band band);
-  const float* const* split_channels_const_f(Band band) const;
+  const float* const* split_channels_const(Band band) const {
+    if (split_data_.get()) {
+      return split_data_->channels(band);
+    } else {
+      return band == kBand0To8kHz ? data_->channels() : nullptr;
+    }
+  }
 
-  // Returns a pointer to the ChannelBuffer that encapsulates the full-band
-  // data.
-  ChannelBuffer<int16_t>* data();
-  const ChannelBuffer<int16_t>* data() const;
-  ChannelBuffer<float>* data_f();
-  const ChannelBuffer<float>* data_f() const;
-
-  // Returns a pointer to the ChannelBuffer that encapsulates the split data.
-  ChannelBuffer<int16_t>* split_data();
-  const ChannelBuffer<int16_t>* split_data() const;
-  ChannelBuffer<float>* split_data_f();
-  const ChannelBuffer<float>* split_data_f() const;
-
-  // Returns a pointer to the low-pass data downmixed to mono. If this data
-  // isn't already available it re-calculates it.
-  const int16_t* mixed_low_pass_data();
-  const int16_t* low_pass_reference(int channel) const;
-
-  const float* keyboard_data() const;
-
-  void set_activity(AudioFrame::VADActivity activity);
-  AudioFrame::VADActivity activity() const;
-
-  // Use for int16 interleaved data.
-  void DeinterleaveFrom(AudioFrame* audioFrame);
-  // If |data_changed| is false, only the non-audio data members will be copied
-  // to |frame|.
-  void InterleaveTo(AudioFrame* frame, bool data_changed) const;
-
-  // Use for float deinterleaved data.
+  // Copies data into the buffer.
+  void CopyFrom(const AudioFrame* frame);
   void CopyFrom(const float* const* data, const StreamConfig& stream_config);
-  void CopyTo(const StreamConfig& stream_config, float* const* data);
-  void CopyLowPassToReference();
 
-  // Splits the signal into different bands.
+  // Copies data from the buffer.
+  void CopyTo(AudioFrame* frame) const;
+  void CopyTo(const StreamConfig& stream_config, float* const* data);
+
+  // Splits the buffer data into frequency bands.
   void SplitIntoFrequencyBands();
-  // Recombine the different bands into one signal.
+
+  // Recombines the frequency bands into a full-band signal.
   void MergeFrequencyBands();
+
+  // Copies the split bands data into the integer two-dimensional array.
+  void ExportSplitChannelData(size_t channel, int16_t* const* split_band_data);
+
+  // Copies the data in the integer two-dimensional array into the split_bands
+  // data.
+  void ImportSplitChannelData(size_t channel,
+                              const int16_t* const* split_band_data);
+
+  static const size_t kMaxSplitFrameLength = 160;
+  static const size_t kMaxNumBands = 3;
+
+  // Deprecated methods, will be removed soon.
+  float* const* channels_f() { return channels(); }
+  const float* const* channels_const_f() const { return channels_const(); }
+  const float* const* split_bands_const_f(size_t channel) const {
+    return split_bands_const(channel);
+  }
+  float* const* split_bands_f(size_t channel) { return split_bands(channel); }
+  const float* const* split_channels_const_f(Band band) const {
+    return split_channels_const(band);
+  }
+  void DeinterleaveFrom(const AudioFrame* frame) { CopyFrom(frame); }
+  void InterleaveTo(AudioFrame* frame) const { CopyTo(frame); }
 
  private:
   FRIEND_TEST_ALL_PREFIXES(AudioBufferTest,
                            SetNumChannelsSetsChannelBuffersNumChannels);
-  // Called from DeinterleaveFrom() and CopyFrom().
-  void InitForNewData();
+  void RestoreNumChannels();
 
-  // The audio is passed into DeinterleaveFrom() or CopyFrom() with input
-  // format (samples per channel and number of channels).
   const size_t input_num_frames_;
-  const size_t num_input_channels_;
-  // The audio is stored by DeinterleaveFrom() or CopyFrom() with processing
-  // format.
-  const size_t proc_num_frames_;
-  const size_t num_proc_channels_;
-  // The audio is returned by InterleaveTo() and CopyTo() with output samples
-  // per channels and the current number of channels. This last one can be
-  // changed at any time using set_num_channels().
+  const size_t input_num_channels_;
+  const size_t buffer_num_frames_;
+  const size_t buffer_num_channels_;
   const size_t output_num_frames_;
-  size_t num_channels_;
+  const size_t output_num_channels_;
 
+  size_t num_channels_;
   size_t num_bands_;
   size_t num_split_frames_;
-  bool mixed_low_pass_valid_;
-  bool reference_copied_;
-  AudioFrame::VADActivity activity_;
 
-  const float* keyboard_data_;
-  std::unique_ptr<IFChannelBuffer> data_;
-  std::unique_ptr<IFChannelBuffer> split_data_;
+  std::unique_ptr<ChannelBuffer<float>> data_;
+  std::unique_ptr<ChannelBuffer<float>> split_data_;
   std::unique_ptr<SplittingFilter> splitting_filter_;
-  std::unique_ptr<ChannelBuffer<int16_t>> mixed_low_pass_channels_;
-  std::unique_ptr<ChannelBuffer<int16_t>> low_pass_reference_channels_;
-  std::unique_ptr<IFChannelBuffer> input_buffer_;
-  std::unique_ptr<IFChannelBuffer> output_buffer_;
-  std::unique_ptr<ChannelBuffer<float>> process_buffer_;
+  std::unique_ptr<ChannelBuffer<float>> output_buffer_;
   std::vector<std::unique_ptr<PushSincResampler>> input_resamplers_;
   std::vector<std::unique_ptr<PushSincResampler>> output_resamplers_;
+  bool downmix_by_averaging_ = true;
+  size_t channel_for_downmixing_ = 0;
 };
 
 }  // namespace webrtc

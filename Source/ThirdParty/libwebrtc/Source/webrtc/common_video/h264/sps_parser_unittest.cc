@@ -12,7 +12,7 @@
 
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/bitbuffer.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
 #include "test/gtest.h"
 

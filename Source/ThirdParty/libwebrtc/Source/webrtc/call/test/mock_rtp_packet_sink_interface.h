@@ -11,7 +11,6 @@
 #define CALL_TEST_MOCK_RTP_PACKET_SINK_INTERFACE_H_
 
 #include "call/rtp_packet_sink_interface.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

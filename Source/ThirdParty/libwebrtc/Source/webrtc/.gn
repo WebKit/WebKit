@@ -32,7 +32,6 @@ check_targets = [
   "//logging/*",
   "//media/*",
   "//modules/*",
-  "//ortc/*",
   "//p2p/*",
   "//pc/*",
   "//rtc_base/*",
@@ -63,8 +62,7 @@ default_args = {
 
   mac_sdk_min = "10.12"
 
-  # http://bugs.webrtc.org/8570
-  ios_deployment_target = "9.0"
+  ios_deployment_target = "10.0"
 
   # The SDK API level, in contrast, is set by build/android/AndroidManifest.xml.
   android32_ndk_api_level = 16

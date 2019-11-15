@@ -11,24 +11,20 @@
 #ifndef MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 #define MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 
-#include "modules/video_coding/include/video_coding.h"
-
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "modules/video_coding/decoder_database.h"
-#include "modules/video_coding/encoder_database.h"
 #include "modules/video_coding/frame_buffer.h"
 #include "modules/video_coding/generic_decoder.h"
-#include "modules/video_coding/generic_encoder.h"
+#include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/jitter_buffer.h"
-#include "modules/video_coding/media_optimization.h"
 #include "modules/video_coding/receiver.h"
 #include "modules/video_coding/timing.h"
-#include "rtc_base/onetimeevent.h"
-#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/one_time_event.h"
+#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/clock.h"
@@ -58,91 +54,9 @@ class VCMProcessTimer {
   int64_t _latestMs;
 };
 
-class VideoSender {
- public:
-  typedef VideoCodingModule::SenderNackMode SenderNackMode;
-
-  VideoSender(Clock* clock, EncodedImageCallback* post_encode_callback);
-
-  ~VideoSender();
-
-  // Register the send codec to be used.
-  // This method must be called on the construction thread.
-  int32_t RegisterSendCodec(const VideoCodec* sendCodec,
-                            uint32_t numberOfCores,
-                            uint32_t maxPayloadSize);
-
-  void RegisterExternalEncoder(VideoEncoder* externalEncoder,
-                               bool internalSource);
-
-  // Update the channel parameters based on new rates and rtt. This will also
-  // cause an immediate call to VideoEncoder::SetRateAllocation().
-  int32_t SetChannelParameters(
-      uint32_t target_bitrate_bps,
-      uint8_t loss_rate,
-      int64_t rtt,
-      VideoBitrateAllocator* bitrate_allocator,
-      VideoBitrateAllocationObserver* bitrate_updated_callback);
-
-  // Updates the channel parameters with a new bitrate allocation, but using the
-  // current targit_bitrate, loss rate and rtt. That is, the distribution or
-  // caps may be updated to a change to a new VideoCodec or allocation mode.
-  // The new parameters will be stored as pending EncoderParameters, and the
-  // encoder will only be updated on the next frame.
-  void UpdateChannelParameters(
-      VideoBitrateAllocator* bitrate_allocator,
-      VideoBitrateAllocationObserver* bitrate_updated_callback);
-
-  int32_t AddVideoFrame(const VideoFrame& videoFrame,
-                        const CodecSpecificInfo* codecSpecificInfo,
-                        absl::optional<VideoEncoder::EncoderInfo> encoder_info);
-
-  int32_t IntraFrameRequest(size_t stream_index);
-  int32_t EnableFrameDropper(bool enable);
-
- private:
-  EncoderParameters UpdateEncoderParameters(
-      const EncoderParameters& params,
-      VideoBitrateAllocator* bitrate_allocator,
-      uint32_t target_bitrate_bps);
-  void SetEncoderParameters(EncoderParameters params, bool has_internal_source)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(encoder_crit_);
-
-  rtc::CriticalSection encoder_crit_;
-  VCMGenericEncoder* _encoder;
-  media_optimization::MediaOptimization _mediaOpt;
-  VCMEncodedFrameCallback _encodedFrameCallback RTC_GUARDED_BY(encoder_crit_);
-  EncodedImageCallback* const post_encode_callback_;
-  VCMEncoderDataBase _codecDataBase RTC_GUARDED_BY(encoder_crit_);
-
-  // |frame_dropper_requested_| specifies if the user of this class has
-  // requested frame dropping to be enabled, via EnableFrameDropper().
-  // Depending on video encoder configuration, this setting may be overridden
-  // and the frame dropper be force disabled. If so,
-  // |force_disable_frame_dropper_| will be set to true.
-  // If frame dropper is requested, and is not force disabled, frame dropping
-  // might still be disabled if VideoEncoder::GetEncoderInfo() indicates that
-  // the encoder has a trusted rate controller. This is determined on a
-  // per-frame basis, as the encoder behavior might dynamically change.
-  bool frame_dropper_requested_ RTC_GUARDED_BY(encoder_crit_);
-  bool force_disable_frame_dropper_ RTC_GUARDED_BY(encoder_crit_);
-
-  // Must be accessed on the construction thread of VideoSender.
-  VideoCodec current_codec_;
-  rtc::SequencedTaskChecker sequenced_checker_;
-
-  rtc::CriticalSection params_crit_;
-  EncoderParameters encoder_params_ RTC_GUARDED_BY(params_crit_);
-  bool encoder_has_internal_source_ RTC_GUARDED_BY(params_crit_);
-  std::vector<FrameType> next_frame_types_ RTC_GUARDED_BY(params_crit_);
-};
-
 class VideoReceiver : public Module {
  public:
-  VideoReceiver(Clock* clock,
-                VCMTiming* timing,
-                NackSender* nack_sender = nullptr,
-                KeyFrameRequestSender* keyframe_request_sender = nullptr);
+  VideoReceiver(Clock* clock, VCMTiming* timing);
   ~VideoReceiver() override;
 
   int32_t RegisterReceiveCodec(const VideoCodec* receiveCodec,
@@ -152,8 +66,6 @@ class VideoReceiver : public Module {
   void RegisterExternalDecoder(VideoDecoder* externalDecoder,
                                uint8_t payloadType);
   int32_t RegisterReceiveCallback(VCMReceiveCallback* receiveCallback);
-  int32_t RegisterReceiveStatisticsCallback(
-      VCMReceiveStatisticsCallback* receiveStats);
   int32_t RegisterFrameTypeCallback(VCMFrameTypeCallback* frameTypeCallback);
   int32_t RegisterPacketRequestCallback(VCMPacketRequestCallback* callback);
 
@@ -163,24 +75,12 @@ class VideoReceiver : public Module {
 
   int32_t IncomingPacket(const uint8_t* incomingPayload,
                          size_t payloadLength,
-                         const WebRtcRTPHeader& rtpInfo);
-  int32_t SetMinimumPlayoutDelay(uint32_t minPlayoutDelayMs);
-  int32_t SetRenderDelay(uint32_t timeMS);
-  int32_t Delay() const;
-
-  // DEPRECATED.
-  int SetReceiverRobustnessMode(
-      VideoCodingModule::ReceiverRobustness robustnessMode,
-      VCMDecodeErrorMode errorMode);
+                         const RTPHeader& rtp_header,
+                         const RTPVideoHeader& video_header);
 
   void SetNackSettings(size_t max_nack_list_size,
                        int max_packet_age_to_nack,
                        int max_incomplete_time_ms);
-
-  void SetDecodeErrorMode(VCMDecodeErrorMode decode_error_mode);
-
-  int32_t SetReceiveChannelParameters(int64_t rtt);
-  int32_t SetVideoProtection(VCMVideoProtection videoProtection, bool enable);
 
   int64_t TimeUntilNextProcess() override;
   void Process() override;
@@ -218,7 +118,6 @@ class VideoReceiver : public Module {
   // These callbacks are set on the construction thread before being attached
   // to the module thread or decoding started, so a lock is not required.
   VCMFrameTypeCallback* _frameTypeCallback;
-  VCMReceiveStatisticsCallback* _receiveStatsCallback;
   VCMPacketRequestCallback* _packetRequestCallback;
 
   // Used on both the module and decoder thread.

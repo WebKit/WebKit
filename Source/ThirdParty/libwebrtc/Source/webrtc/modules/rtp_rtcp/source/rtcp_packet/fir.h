@@ -30,6 +30,7 @@ class Fir : public Psfb {
   };
 
   Fir();
+  Fir(const Fir& fir);
   ~Fir() override;
 
   // Parse assumes header is already parsed and validated.

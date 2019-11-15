@@ -14,7 +14,6 @@
 #include <string>
 
 #include "modules/audio_coding/neteq/decoder_database.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -29,17 +28,8 @@ class MockDecoderDatabase : public DecoderDatabase {
   MOCK_CONST_METHOD0(Empty, bool());
   MOCK_CONST_METHOD0(Size, int());
   MOCK_METHOD0(Reset, void());
-  MOCK_METHOD3(RegisterPayload,
-               int(uint8_t rtp_payload_type,
-                   NetEqDecoder codec_type,
-                   const std::string& name));
   MOCK_METHOD2(RegisterPayload,
                int(int rtp_payload_type, const SdpAudioFormat& audio_format));
-  MOCK_METHOD4(InsertExternal,
-               int(uint8_t rtp_payload_type,
-                   NetEqDecoder codec_type,
-                   const std::string& codec_name,
-                   AudioDecoder* decoder));
   MOCK_METHOD1(Remove, int(uint8_t rtp_payload_type));
   MOCK_METHOD0(RemoveAll, void());
   MOCK_CONST_METHOD1(GetDecoderInfo,

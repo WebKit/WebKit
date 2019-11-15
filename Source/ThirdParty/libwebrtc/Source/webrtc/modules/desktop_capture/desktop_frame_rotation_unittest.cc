@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/desktop_frame_rotation.h"
 
+#include <stdint.h>
+
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/test_utils.h"

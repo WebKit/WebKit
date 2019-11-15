@@ -20,14 +20,19 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaFormat;
 import android.os.Handler;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import org.chromium.testing.local.LocalRobolectricTestRunner;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -160,6 +165,25 @@ public class AndroidVideoDecoderTest {
     }
   }
 
+  private static class FakeDecoderCallback implements VideoDecoder.Callback {
+    public final List<VideoFrame> decodedFrames;
+
+    public FakeDecoderCallback() {
+      decodedFrames = new ArrayList<>();
+    }
+
+    @Override
+    public void onDecodedFrame(VideoFrame frame, Integer decodeTimeMs, Integer qp) {
+      frame.retain();
+      decodedFrames.add(frame);
+    }
+
+    public void release() {
+      for (VideoFrame frame : decodedFrames) frame.release();
+      decodedFrames.clear();
+    }
+  }
+
   private EncodedImage createTestEncodedImage() {
     return EncodedImage.builder()
         .setBuffer(ByteBuffer.wrap(ENCODED_TEST_DATA))
@@ -172,13 +196,22 @@ public class AndroidVideoDecoderTest {
   @Mock private SurfaceTextureHelper mockSurfaceTextureHelper;
   @Mock private VideoDecoder.Callback mockDecoderCallback;
   private FakeMediaCodecWrapper fakeMediaCodecWrapper;
+  private FakeDecoderCallback fakeDecoderCallback;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
+    when(mockSurfaceTextureHelper.getSurfaceTexture())
+        .thenReturn(new SurfaceTexture(/*texName=*/0));
     MediaFormat outputFormat = new MediaFormat();
     // TODO(sakal): Add more details to output format as needed.
     fakeMediaCodecWrapper = spy(new FakeMediaCodecWrapper(outputFormat));
+    fakeDecoderCallback = new FakeDecoderCallback();
+  }
+
+  @After
+  public void cleanUp() {
+    fakeDecoderCallback.release();
   }
 
   @Test
@@ -264,7 +297,7 @@ public class AndroidVideoDecoderTest {
 
     // Set-up.
     TestDecoder decoder = new TestDecoderBuilder().setUseSurface(/* useSurface = */ false).build();
-    decoder.initDecode(TEST_DECODER_SETTINGS, mockDecoderCallback);
+    decoder.initDecode(TEST_DECODER_SETTINGS, fakeDecoderCallback);
     decoder.decode(createTestEncodedImage(),
         new DecodeInfo(/* isMissingFrames= */ false, /* renderTimeMs= */ 0));
     fakeMediaCodecWrapper.addOutputData(
@@ -274,13 +307,8 @@ public class AndroidVideoDecoderTest {
     decoder.waitDeliverDecodedFrame();
 
     // Verify.
-    ArgumentCaptor<VideoFrame> videoFrameCaptor = ArgumentCaptor.forClass(VideoFrame.class);
-    verify(mockDecoderCallback)
-        .onDecodedFrame(videoFrameCaptor.capture(),
-            /* decodeTimeMs= */ any(Integer.class),
-            /* qp= */ any());
-
-    VideoFrame videoFrame = videoFrameCaptor.getValue();
+    assertThat(fakeDecoderCallback.decodedFrames).hasSize(1);
+    VideoFrame videoFrame = fakeDecoderCallback.decodedFrames.get(0);
     assertThat(videoFrame).isNotNull();
     assertThat(videoFrame.getRotatedWidth()).isEqualTo(TEST_DECODER_SETTINGS.width);
     assertThat(videoFrame.getRotatedHeight()).isEqualTo(TEST_DECODER_SETTINGS.height);
@@ -342,7 +370,7 @@ public class AndroidVideoDecoderTest {
   public void testDeliversRenderedBuffers() throws InterruptedException {
     // Set-up.
     TestDecoder decoder = new TestDecoderBuilder().build();
-    decoder.initDecode(TEST_DECODER_SETTINGS, mockDecoderCallback);
+    decoder.initDecode(TEST_DECODER_SETTINGS, fakeDecoderCallback);
     decoder.decode(createTestEncodedImage(),
         new DecodeInfo(/* isMissingFrames= */ false, /* renderTimeMs= */ 0));
     fakeMediaCodecWrapper.addOutputTexture(/* presentationTimestampUs= */ 0, /* flags= */ 0);
@@ -366,15 +394,12 @@ public class AndroidVideoDecoderTest {
     outputVideoFrame.release();
 
     // Verify.
-    ArgumentCaptor<VideoFrame> videoFrameCaptor = ArgumentCaptor.forClass(VideoFrame.class);
-    verify(mockDecoderCallback)
-        .onDecodedFrame(videoFrameCaptor.capture(),
-            /* decodeTimeMs= */ any(Integer.class),
-            /* qp= */ any());
-
-    VideoFrame videoFrame = videoFrameCaptor.getValue();
+    assertThat(fakeDecoderCallback.decodedFrames).hasSize(1);
+    VideoFrame videoFrame = fakeDecoderCallback.decodedFrames.get(0);
     assertThat(videoFrame).isNotNull();
     assertThat(videoFrame.getBuffer()).isEqualTo(outputTextureBuffer);
+
+    fakeDecoderCallback.release();
 
     verify(releaseCallback).run();
   }

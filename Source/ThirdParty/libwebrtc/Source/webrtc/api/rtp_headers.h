@@ -13,11 +13,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
+
+#include <string>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/video/hdr_metadata.h"
+#include "api/units/timestamp.h"
+#include "api/video/color_space.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_marking.h"
 #include "api/video/video_rotation.h"
@@ -26,76 +28,94 @@
 
 namespace webrtc {
 
-// Class to represent the value of RTP header extensions that are
-// variable-length strings (e.g., RtpStreamId and RtpMid).
-// Unlike std::string, it can be copied with memcpy and cleared with memset.
-//
-// Empty value represents unset header extension (use empty() to query).
-class StringRtpHeaderExtension {
- public:
-  // String RTP header extensions are limited to 16 bytes because it is the
-  // maximum length that can be encoded with one-byte header extensions.
-  static constexpr size_t kMaxSize = 16;
-
-  static bool IsLegalMidName(rtc::ArrayView<const char> name);
-  static bool IsLegalRsidName(rtc::ArrayView<const char> name);
-
-  // TODO(bugs.webrtc.org/9537): Deprecate and remove when third parties have
-  // migrated to "IsLegalRsidName".
-  static bool IsLegalName(rtc::ArrayView<const char> name) {
-    return IsLegalRsidName(name);
-  }
-
-  StringRtpHeaderExtension() { value_[0] = 0; }
-  explicit StringRtpHeaderExtension(rtc::ArrayView<const char> value) {
-    Set(value.data(), value.size());
-  }
-  StringRtpHeaderExtension(const StringRtpHeaderExtension&) = default;
-  StringRtpHeaderExtension& operator=(const StringRtpHeaderExtension&) =
-      default;
-
-  bool empty() const { return value_[0] == 0; }
-  const char* data() const { return value_; }
-  size_t size() const { return strnlen(value_, kMaxSize); }
-
-  void Set(rtc::ArrayView<const uint8_t> value) {
-    Set(reinterpret_cast<const char*>(value.data()), value.size());
-  }
-  void Set(const char* data, size_t size);
-
-  friend bool operator==(const StringRtpHeaderExtension& lhs,
-                         const StringRtpHeaderExtension& rhs) {
-    return strncmp(lhs.value_, rhs.value_, kMaxSize) == 0;
-  }
-  friend bool operator!=(const StringRtpHeaderExtension& lhs,
-                         const StringRtpHeaderExtension& rhs) {
-    return !(lhs == rhs);
-  }
-
- private:
-  char value_[kMaxSize];
+struct FeedbackRequest {
+  // Determines whether the recv delta as specified in
+  // https://tools.ietf.org/html/draft-holmer-rmcat-transport-wide-cc-extensions-01
+  // should be included.
+  bool include_timestamps;
+  // Include feedback of received packets in the range [sequence_number -
+  // sequence_count + 1, sequence_number]. That is, no feedback will be sent if
+  // sequence_count is zero.
+  int sequence_count;
 };
 
-// StreamId represents RtpStreamId which is a string.
-typedef StringRtpHeaderExtension StreamId;
+// The Absolute Capture Time extension is used to stamp RTP packets with a NTP
+// timestamp showing when the first audio or video frame in a packet was
+// originally captured. The intent of this extension is to provide a way to
+// accomplish audio-to-video synchronization when RTCP-terminating intermediate
+// systems (e.g. mixers) are involved. See:
+// http://www.webrtc.org/experiments/rtp-hdrext/abs-capture-time
+struct AbsoluteCaptureTime {
+  // Absolute capture timestamp is the NTP timestamp of when the first frame in
+  // a packet was originally captured. This timestamp MUST be based on the same
+  // clock as the clock used to generate NTP timestamps for RTCP sender reports
+  // on the capture system.
+  //
+  // It’s not always possible to do an NTP clock readout at the exact moment of
+  // when a media frame is captured. A capture system MAY postpone the readout
+  // until a more convenient time. A capture system SHOULD have known delays
+  // (e.g. from hardware buffers) subtracted from the readout to make the final
+  // timestamp as close to the actual capture time as possible.
+  //
+  // This field is encoded as a 64-bit unsigned fixed-point number with the high
+  // 32 bits for the timestamp in seconds and low 32 bits for the fractional
+  // part. This is also known as the UQ32.32 format and is what the RTP
+  // specification defines as the canonical format to represent NTP timestamps.
+  uint64_t absolute_capture_timestamp;
 
-// Mid represents RtpMid which is a string.
-typedef StringRtpHeaderExtension Mid;
+  // Estimated capture clock offset is the sender’s estimate of the offset
+  // between its own NTP clock and the capture system’s NTP clock. The sender is
+  // here defined as the system that owns the NTP clock used to generate the NTP
+  // timestamps for the RTCP sender reports on this stream. The sender system is
+  // typically either the capture system or a mixer.
+  //
+  // This field is encoded as a 64-bit two’s complement signed fixed-point
+  // number with the high 32 bits for the seconds and low 32 bits for the
+  // fractional part. It’s intended to make it easy for a receiver, that knows
+  // how to estimate the sender system’s NTP clock, to also estimate the capture
+  // system’s NTP clock:
+  //
+  //   Capture NTP Clock = Sender NTP Clock + Capture Clock Offset
+  absl::optional<int64_t> estimated_capture_clock_offset;
+};
+
+inline bool operator==(const AbsoluteCaptureTime& lhs,
+                       const AbsoluteCaptureTime& rhs) {
+  return (lhs.absolute_capture_timestamp == rhs.absolute_capture_timestamp) &&
+         (lhs.estimated_capture_clock_offset ==
+          rhs.estimated_capture_clock_offset);
+}
+
+inline bool operator!=(const AbsoluteCaptureTime& lhs,
+                       const AbsoluteCaptureTime& rhs) {
+  return !(lhs == rhs);
+}
 
 struct RTPHeaderExtension {
   RTPHeaderExtension();
   RTPHeaderExtension(const RTPHeaderExtension& other);
   RTPHeaderExtension& operator=(const RTPHeaderExtension& other);
 
+  static constexpr int kAbsSendTimeFraction = 18;
+
+  Timestamp GetAbsoluteSendTimestamp() const {
+    RTC_DCHECK(hasAbsoluteSendTime);
+    RTC_DCHECK(absoluteSendTime < (1ul << 24));
+    return Timestamp::us((absoluteSendTime * 1000000L) /
+                         (1 << kAbsSendTimeFraction));
+  }
+
   bool hasTransmissionTimeOffset;
   int32_t transmissionTimeOffset;
   bool hasAbsoluteSendTime;
   uint32_t absoluteSendTime;
+  absl::optional<AbsoluteCaptureTime> absolute_capture_time;
   bool hasTransportSequenceNumber;
   uint16_t transportSequenceNumber;
+  absl::optional<FeedbackRequest> feedback_request;
 
   // Audio Level includes both level in dBov and voiced/unvoiced bit. See:
-  // https://datatracker.ietf.org/doc/draft-lennox-avt-rtp-audio-level-exthdr/
+  // https://tools.ietf.org/html/rfc6464#section-3
   bool hasAudioLevel;
   bool voiceActivity;
   uint8_t audioLevel;
@@ -122,15 +142,17 @@ struct RTPHeaderExtension {
   // For identification of a stream when ssrc is not signaled. See
   // https://tools.ietf.org/html/draft-ietf-avtext-rid-09
   // TODO(danilchap): Update url from draft to release version.
-  StreamId stream_id;
-  StreamId repaired_stream_id;
+  std::string stream_id;
+  std::string repaired_stream_id;
 
   // For identifying the media section used to interpret this RTP packet. See
   // https://tools.ietf.org/html/draft-ietf-mmusic-sdp-bundle-negotiation-38
-  Mid mid;
+  std::string mid;
 
-  absl::optional<HdrMetadata> hdr_metadata;
+  absl::optional<ColorSpace> color_space;
 };
+
+enum { kRtpCsrcSize = 15 };  // RFC 3550 page 13
 
 struct RTPHeader {
   RTPHeader();
@@ -157,23 +179,6 @@ enum class RtcpMode { kOff, kCompound, kReducedSize };
 enum NetworkState {
   kNetworkUp,
   kNetworkDown,
-};
-
-struct RtpKeepAliveConfig final {
-  // If no packet has been sent for |timeout_interval_ms|, send a keep-alive
-  // packet. The keep-alive packet is an empty (no payload) RTP packet with a
-  // payload type of 20 as long as the other end has not negotiated the use of
-  // this value. If this value has already been negotiated, then some other
-  // unused static payload type from table 5 of RFC 3551 shall be used and set
-  // in |payload_type|.
-  int64_t timeout_interval_ms = -1;
-  uint8_t payload_type = 20;
-
-  bool operator==(const RtpKeepAliveConfig& o) const {
-    return timeout_interval_ms == o.timeout_interval_ms &&
-           payload_type == o.payload_type;
-  }
-  bool operator!=(const RtpKeepAliveConfig& o) const { return !(*this == o); }
 };
 
 }  // namespace webrtc

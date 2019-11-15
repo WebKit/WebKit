@@ -10,11 +10,15 @@
 
 #include "video/send_statistics_proxy.h"
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "absl/algorithm/container.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/fake_clock.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -288,18 +292,26 @@ TEST_F(SendStatisticsProxyTest, SendSideDelay) {
     // stream.
     int avg_delay_ms = ssrc;
     int max_delay_ms = ssrc + 1;
-    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms, ssrc);
+    uint64_t total_packet_send_delay_ms = ssrc + 2;
+    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
+                                   total_packet_send_delay_ms, ssrc);
     expected_.substreams[ssrc].avg_delay_ms = avg_delay_ms;
     expected_.substreams[ssrc].max_delay_ms = max_delay_ms;
+    expected_.substreams[ssrc].total_packet_send_delay_ms =
+        total_packet_send_delay_ms;
   }
   for (const auto& ssrc : config_.rtp.rtx.ssrcs) {
     // Use ssrc as avg_delay_ms and max_delay_ms to get a unique value for each
     // stream.
     int avg_delay_ms = ssrc;
     int max_delay_ms = ssrc + 1;
-    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms, ssrc);
+    uint64_t total_packet_send_delay_ms = ssrc + 2;
+    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
+                                   total_packet_send_delay_ms, ssrc);
     expected_.substreams[ssrc].avg_delay_ms = avg_delay_ms;
     expected_.substreams[ssrc].max_delay_ms = max_delay_ms;
+    expected_.substreams[ssrc].total_packet_send_delay_ms =
+        total_packet_send_delay_ms;
   }
   VideoSendStream::Stats stats = statistics_proxy_->GetStats();
   ExpectEqual(expected_, stats);
@@ -314,6 +326,15 @@ TEST_F(SendStatisticsProxyTest, OnEncodedFrameTimeMeasured) {
   VideoSendStream::Stats stats = statistics_proxy_->GetStats();
   EXPECT_EQ(kEncodeTimeMs, stats.avg_encode_time_ms);
   EXPECT_EQ(encode_usage_percent, stats.encode_usage_percent);
+}
+
+TEST_F(SendStatisticsProxyTest, TotalEncodeTimeIncreasesPerFrameMeasured) {
+  const int kEncodeUsagePercent = 0;  // Don't care for this test.
+  EXPECT_EQ(0u, statistics_proxy_->GetStats().total_encode_time_ms);
+  statistics_proxy_->OnEncodedFrameTimeMeasured(10, kEncodeUsagePercent);
+  EXPECT_EQ(10u, statistics_proxy_->GetStats().total_encode_time_ms);
+  statistics_proxy_->OnEncodedFrameTimeMeasured(20, kEncodeUsagePercent);
+  EXPECT_EQ(30u, statistics_proxy_->GetStats().total_encode_time_ms);
 }
 
 TEST_F(SendStatisticsProxyTest, OnSendEncodedImageIncreasesFramesEncoded) {
@@ -345,6 +366,56 @@ TEST_F(SendStatisticsProxyTest, OnSendEncodedImageWithoutQpQpSumWontExist) {
   EXPECT_EQ(absl::nullopt, statistics_proxy_->GetStats().qp_sum);
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
   EXPECT_EQ(absl::nullopt, statistics_proxy_->GetStats().qp_sum);
+}
+
+TEST_F(SendStatisticsProxyTest, TotalEncodedBytesTargetFirstFrame) {
+  const uint32_t kTargetBytesPerSecond = 100000;
+  statistics_proxy_->OnSetEncoderTargetRate(kTargetBytesPerSecond * 8);
+  EXPECT_EQ(0u, statistics_proxy_->GetStats().total_encoded_bytes_target);
+
+  EncodedImage encoded_image;
+  statistics_proxy_->OnSendEncodedImage(encoded_image, nullptr);
+  // On the first frame we don't know the frame rate yet, calculation yields
+  // zero. Our estimate assumes at least 1 FPS, so we expect the frame size to
+  // increment by a full |kTargetBytesPerSecond|.
+  EXPECT_EQ(kTargetBytesPerSecond,
+            statistics_proxy_->GetStats().total_encoded_bytes_target);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       TotalEncodedBytesTargetIncrementsBasedOnFrameRate) {
+  const uint32_t kTargetBytesPerSecond = 100000;
+  const int kInterframeDelayMs = 100;
+
+  // SendStatisticsProxy uses a RateTracker internally. SendStatisticsProxy uses
+  // |fake_clock_| for testing, but the RateTracker relies on a global clock.
+  // This test relies on rtc::ScopedFakeClock to synchronize these two clocks.
+  // TODO(https://crbug.com/webrtc/10640): When the RateTracker uses a Clock
+  // this test can stop relying on rtc::ScopedFakeClock.
+  rtc::ScopedFakeClock fake_global_clock;
+  fake_global_clock.SetTime(Timestamp::ms(fake_clock_.TimeInMilliseconds()));
+
+  statistics_proxy_->OnSetEncoderTargetRate(kTargetBytesPerSecond * 8);
+  EncodedImage encoded_image;
+
+  // First frame
+  statistics_proxy_->OnSendEncodedImage(encoded_image, nullptr);
+  uint64_t first_total_encoded_bytes_target =
+      statistics_proxy_->GetStats().total_encoded_bytes_target;
+  // Second frame
+  fake_clock_.AdvanceTimeMilliseconds(kInterframeDelayMs);
+  fake_global_clock.SetTime(Timestamp::ms(fake_clock_.TimeInMilliseconds()));
+  encoded_image.SetTimestamp(encoded_image.Timestamp() +
+                             90 * kInterframeDelayMs);
+  statistics_proxy_->OnSendEncodedImage(encoded_image, nullptr);
+
+  auto stats = statistics_proxy_->GetStats();
+  // By the time the second frame arrives, one frame has previously arrived
+  // during a |kInterframeDelayMs| interval. The estimated encode frame rate at
+  // the second frame's arrival should be 10 FPS.
+  uint64_t delta_encoded_bytes_target =
+      stats.total_encoded_bytes_target - first_total_encoded_bytes_target;
+  EXPECT_EQ(kTargetBytesPerSecond / 10, delta_encoded_bytes_target);
 }
 
 TEST_F(SendStatisticsProxyTest, GetCpuAdaptationStats) {
@@ -994,6 +1065,145 @@ TEST_F(SendStatisticsProxyTest, AdaptChangesReportedAfterContentSwitch) {
                    "WebRTC.Video.Screenshare.AdaptChangesPerMinute.Cpu", 2));
   EXPECT_EQ(0, metrics::NumSamples(
                    "WebRTC.Video.Screenshare.AdaptChangesPerMinute.Quality"));
+}
+
+TEST_F(SendStatisticsProxyTest,
+       QualityLimitationReasonIsCpuWhenCpuIsResolutionLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  cpu_counts.num_resolution_reductions = 1;
+
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kCpu,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       QualityLimitationReasonIsCpuWhenCpuIsFramerateLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  cpu_counts.num_framerate_reductions = 1;
+
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kCpu,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       QualityLimitationReasonIsBandwidthWhenQualityIsResolutionLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  quality_counts.num_resolution_reductions = 1;
+
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kQuality, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kBandwidth,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       QualityLimitationReasonIsBandwidthWhenQualityIsFramerateLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  quality_counts.num_framerate_reductions = 1;
+
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kQuality, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kBandwidth,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       QualityLimitationReasonIsBandwidthWhenBothCpuAndQualityIsLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  cpu_counts.num_resolution_reductions = 1;
+  quality_counts.num_resolution_reductions = 1;
+
+  // Even if the last adaptation reason is kCpu, if the counters indicate being
+  // both CPU and quality (=bandwidth) limited, kBandwidth takes precedence.
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kBandwidth,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest, QualityLimitationReasonIsNoneWhenNotLimited) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  // Observe a limitation due to CPU. This makes sure the test doesn't pass
+  // due to "none" being the default value.
+  cpu_counts.num_resolution_reductions = 1;
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+  // Go back to not being limited.
+  cpu_counts.num_resolution_reductions = 0;
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kNone, cpu_counts,
+      quality_counts);
+
+  EXPECT_EQ(QualityLimitationReason::kNone,
+            statistics_proxy_->GetStats().quality_limitation_reason);
+}
+
+TEST_F(SendStatisticsProxyTest, QualityLimitationDurationIncreasesWithTime) {
+  SendStatisticsProxy::AdaptationSteps cpu_counts;
+  SendStatisticsProxy::AdaptationSteps quality_counts;
+
+  // Not limited for 3000 ms
+  fake_clock_.AdvanceTimeMilliseconds(3000);
+  // CPU limited for 2000 ms
+  cpu_counts.num_resolution_reductions = 1;
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+  fake_clock_.AdvanceTimeMilliseconds(2000);
+  // Bandwidth limited for 1000 ms
+  cpu_counts.num_resolution_reductions = 0;
+  quality_counts.num_resolution_reductions = 1;
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kQuality, cpu_counts,
+      quality_counts);
+  fake_clock_.AdvanceTimeMilliseconds(1000);
+  // CPU limited for another 2000 ms
+  cpu_counts.num_resolution_reductions = 1;
+  quality_counts.num_resolution_reductions = 0;
+  statistics_proxy_->OnAdaptationChanged(
+      VideoStreamEncoderObserver::AdaptationReason::kCpu, cpu_counts,
+      quality_counts);
+  fake_clock_.AdvanceTimeMilliseconds(2000);
+
+  auto quality_limitation_durations_ms =
+      statistics_proxy_->GetStats().quality_limitation_durations_ms;
+
+  EXPECT_EQ(3000,
+            quality_limitation_durations_ms[QualityLimitationReason::kNone]);
+  EXPECT_EQ(4000,
+            quality_limitation_durations_ms[QualityLimitationReason::kCpu]);
+  EXPECT_EQ(
+      1000,
+      quality_limitation_durations_ms[QualityLimitationReason::kBandwidth]);
+  EXPECT_EQ(0,
+            quality_limitation_durations_ms[QualityLimitationReason::kOther]);
 }
 
 TEST_F(SendStatisticsProxyTest, SwitchContentTypeUpdatesHistograms) {
@@ -1685,10 +1895,8 @@ TEST_F(SendStatisticsProxyTest, GetStatsReportsTargetMediaBitrate) {
 
 TEST_F(SendStatisticsProxyTest, NoSubstreams) {
   uint32_t excluded_ssrc =
-      std::max(
-          *std::max_element(config_.rtp.ssrcs.begin(), config_.rtp.ssrcs.end()),
-          *std::max_element(config_.rtp.rtx.ssrcs.begin(),
-                            config_.rtp.rtx.ssrcs.end())) +
+      std::max(*absl::c_max_element(config_.rtp.ssrcs),
+               *absl::c_max_element(config_.rtp.rtx.ssrcs)) +
       1;
   // From RtcpStatisticsCallback.
   RtcpStatistics rtcp_stats;

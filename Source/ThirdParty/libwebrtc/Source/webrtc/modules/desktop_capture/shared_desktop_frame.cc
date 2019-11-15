@@ -11,10 +11,8 @@
 #include "modules/desktop_capture/shared_desktop_frame.h"
 
 #include <memory>
+#include <type_traits>
 #include <utility>
-
-#include "absl/memory/memory.h"
-#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 

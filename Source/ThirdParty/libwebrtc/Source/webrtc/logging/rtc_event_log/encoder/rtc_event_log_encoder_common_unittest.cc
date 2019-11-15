@@ -10,6 +10,7 @@
 
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_common.h"
 
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 #include <vector>
@@ -20,13 +21,13 @@ namespace webrtc_event_logging {
 namespace {
 
 template <typename T>
-class SignednessConversionTest : public testing::Test {
+class SignednessConversionTest : public ::testing::Test {
  public:
   static_assert(std::is_integral<T>::value, "");
   static_assert(std::is_signed<T>::value, "");
 };
 
-TYPED_TEST_CASE_P(SignednessConversionTest);
+TYPED_TEST_SUITE_P(SignednessConversionTest);
 
 TYPED_TEST_P(SignednessConversionTest, CorrectlyConvertsLegalValues) {
   using T = TypeParam;
@@ -71,13 +72,13 @@ TYPED_TEST_P(SignednessConversionTest, FailsOnConvertingIllegalValues) {
   }
 }
 
-REGISTER_TYPED_TEST_CASE_P(SignednessConversionTest,
-                           CorrectlyConvertsLegalValues,
-                           FailsOnConvertingIllegalValues);
+REGISTER_TYPED_TEST_SUITE_P(SignednessConversionTest,
+                            CorrectlyConvertsLegalValues,
+                            FailsOnConvertingIllegalValues);
 
 using Types = ::testing::Types<int8_t, int16_t, int32_t, int64_t>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(_, SignednessConversionTest, Types);
+INSTANTIATE_TYPED_TEST_SUITE_P(_, SignednessConversionTest, Types);
 
 }  // namespace
 }  // namespace webrtc_event_logging

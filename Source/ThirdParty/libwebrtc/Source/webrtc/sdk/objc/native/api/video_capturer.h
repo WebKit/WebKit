@@ -13,8 +13,8 @@
 
 #import "base/RTCVideoCapturer.h"
 
-#include "api/mediastreaminterface.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {

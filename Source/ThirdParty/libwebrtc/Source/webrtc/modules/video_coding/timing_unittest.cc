@@ -9,6 +9,7 @@
  */
 
 #include "modules/video_coding/timing.h"
+
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
@@ -75,9 +76,7 @@ TEST(ReceiverTiming, Tests) {
   const uint32_t kDecodeTimeMs = 10;
   for (int i = 0; i < kFps; i++) {
     clock.AdvanceTimeMilliseconds(kDecodeTimeMs);
-    timing.StopDecodeTimer(
-        timestamp, kDecodeTimeMs, clock.TimeInMilliseconds(),
-        timing.RenderTimeMs(timestamp, clock.TimeInMilliseconds()));
+    timing.StopDecodeTimer(kDecodeTimeMs, clock.TimeInMilliseconds());
     timestamp += 90000 / kFps;
     clock.AdvanceTimeMilliseconds(1000 / kFps - kDecodeTimeMs);
     timing.IncomingTimestamp(timestamp, clock.TimeInMilliseconds());

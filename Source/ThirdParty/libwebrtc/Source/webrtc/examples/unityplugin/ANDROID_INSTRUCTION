@@ -1,7 +1,7 @@
 Instruction of running webrtc_unity_plugin on Android Unity
 
 1. On Linux machine, compile target webrtc_unity_plugin.
-   Checkout WebRTC codebase: fetch --no-hooks webrtc_android
+   Checkout WebRTC codebase: fetch --nohooks webrtc_android
    If you already have a checkout for linux, add target_os=”android” into .gclient file.
       Run gclient sync
       Run gn args out/Android, and again set target_os=”android” in the args.gn

@@ -11,18 +11,25 @@
 #include "audio/test/audio_bwe_integration_test.h"
 
 #include "absl/memory/memory.h"
+#include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "common_audio/wav_file.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {
 
 namespace {
+enum : int {  // The first valid value is 1.
+  kTransportSequenceNumberExtensionId = 1,
+};
+
 // Wait a second between stopping sending and stopping receiving audio.
 constexpr int kExtraProcessTimeMs = 1000;
 }  // namespace
@@ -51,7 +58,7 @@ void AudioBweTest::OnFakeAudioDevicesCreated(
 }
 
 test::PacketTransport* AudioBweTest::CreateSendTransport(
-    SingleThreadedTaskQueueForTesting* task_queue,
+    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
     Call* sender_call) {
   return new test::PacketTransport(
       task_queue, sender_call, this, test::PacketTransport::kSender,
@@ -62,7 +69,7 @@ test::PacketTransport* AudioBweTest::CreateSendTransport(
 }
 
 test::PacketTransport* AudioBweTest::CreateReceiveTransport(
-    SingleThreadedTaskQueueForTesting* task_queue) {
+    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue) {
   return new test::PacketTransport(
       task_queue, nullptr, this, test::PacketTransport::kReceiver,
       test::CallTest::payload_type_map_,
@@ -76,7 +83,7 @@ void AudioBweTest::PerformTest() {
   SleepMs(GetNetworkPipeConfig().queue_delay_ms + kExtraProcessTimeMs);
 }
 
-class StatsPollTask : public rtc::QueuedTask {
+class StatsPollTask : public QueuedTask {
  public:
   explicit StatsPollTask(Call* sender_call) : sender_call_(sender_call) {}
 
@@ -85,8 +92,8 @@ class StatsPollTask : public rtc::QueuedTask {
     RTC_CHECK(sender_call_);
     Call::Stats call_stats = sender_call_->GetStats();
     EXPECT_GT(call_stats.send_bandwidth_bps, 25000);
-    rtc::TaskQueue::Current()->PostDelayedTask(
-        std::unique_ptr<QueuedTask>(this), 100);
+    TaskQueueBase::Current()->PostDelayedTask(std::unique_ptr<QueuedTask>(this),
+                                              100);
     return false;
   }
   Call* sender_call_;
@@ -137,14 +144,14 @@ class NoBandwidthDropAfterDtx : public AudioBweTest {
 
   void PerformTest() override {
     stats_poller_.PostDelayedTask(
-        std::unique_ptr<rtc::QueuedTask>(new StatsPollTask(sender_call_)), 100);
+        absl::make_unique<StatsPollTask>(sender_call_), 100);
     sender_call_->OnAudioTransportOverheadChanged(0);
     AudioBweTest::PerformTest();
   }
 
  private:
   Call* sender_call_;
-  rtc::TaskQueue stats_poller_;
+  TaskQueueForTest stats_poller_;
 };
 
 using AudioBweIntegrationTest = CallTest;

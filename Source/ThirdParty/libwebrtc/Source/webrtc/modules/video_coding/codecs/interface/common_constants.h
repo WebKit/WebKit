@@ -14,6 +14,8 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
 #define MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
 
+#include <stdint.h>
+
 namespace webrtc {
 
 const int16_t kNoPictureId = -1;

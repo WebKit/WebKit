@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AGC_LOUDNESS_HISTOGRAM_H_
 
 #include <stdint.h>
+
 #include <memory>
 
 namespace webrtc {

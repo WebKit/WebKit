@@ -22,10 +22,6 @@
 
 namespace webrtc {
 
-// TODO(pbos): Expose these through a public (root) header or change these APIs.
-struct CodecSpecificInfo;
-class VideoCodec;
-
 class RTC_EXPORT DecodedImageCallback {
  public:
   virtual ~DecodedImageCallback() {}
@@ -42,10 +38,6 @@ class RTC_EXPORT DecodedImageCallback {
   virtual void Decoded(VideoFrame& decodedImage,
                        absl::optional<int32_t> decode_time_ms,
                        absl::optional<uint8_t> qp);
-
-  virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId);
-
-  virtual int32_t ReceivedDecodedFrame(const uint64_t pictureId);
 };
 
 class RTC_EXPORT VideoDecoder {
@@ -57,7 +49,6 @@ class RTC_EXPORT VideoDecoder {
 
   virtual int32_t Decode(const EncodedImage& input_image,
                          bool missing_frames,
-                         const CodecSpecificInfo* codec_specific_info,
                          int64_t render_time_ms) = 0;
 
   virtual int32_t RegisterDecodeCompleteCallback(

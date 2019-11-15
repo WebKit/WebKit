@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_MEMORY_ALIGNED_ARRAY_H_
 #define RTC_BASE_MEMORY_ALIGNED_ARRAY_H_
 
+#include <stddef.h>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/memory/aligned_malloc.h"
 

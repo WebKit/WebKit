@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
@@ -65,7 +66,7 @@ class LogObserver {
         num_popped++;
         EXPECT_TRUE(a.find(b) != std::string::npos) << a << " != " << b;
       }
-      if (expected_log_lines_.size() <= 0) {
+      if (expected_log_lines_.empty()) {
         if (num_popped > 0) {
           done_.Set();
         }
@@ -177,13 +178,16 @@ class BitrateEstimatorTest : public test::CallTest {
           test_->GetVideoSendConfig()->Copy(),
           test_->GetVideoEncoderConfig()->Copy());
       RTC_DCHECK_EQ(1, test_->GetVideoEncoderConfig()->number_of_streams);
-      frame_generator_capturer_.reset(test::FrameGeneratorCapturer::Create(
-          kDefaultWidth, kDefaultHeight, absl::nullopt, absl::nullopt,
-          kDefaultFramerate, Clock::GetRealTimeClock()));
+      frame_generator_capturer_ =
+          absl::make_unique<test::FrameGeneratorCapturer>(
+              test->clock_,
+              test::FrameGenerator::CreateSquareGenerator(
+                  kDefaultWidth, kDefaultHeight, absl::nullopt, absl::nullopt),
+              kDefaultFramerate, *test->task_queue_factory_);
+      frame_generator_capturer_->Init();
       send_stream_->SetSource(frame_generator_capturer_.get(),
                               DegradationPreference::MAINTAIN_FRAMERATE);
       send_stream_->Start();
-      frame_generator_capturer_->Start();
 
       VideoReceiveStream::Decoder decoder;
       decoder.decoder_factory = &decoder_factory_;
@@ -215,7 +219,6 @@ class BitrateEstimatorTest : public test::CallTest {
 
     void StopSending() {
       if (is_sending_receiving_) {
-        frame_generator_capturer_->Stop();
         send_stream_->Stop();
         if (video_receive_stream_) {
           video_receive_stream_->Stop();

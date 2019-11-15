@@ -14,10 +14,11 @@
 #include <memory>
 #include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
+
 namespace webrtc {
 
 class VideoEncoder;
-struct SdpVideoFormat;
 
 // A factory that creates VideoEncoders.
 // NOTE: This class is still under development and may change without notice.
@@ -39,6 +40,14 @@ class VideoEncoderFactory {
   // Returns a list of supported video formats in order of preference, to use
   // for signaling etc.
   virtual std::vector<SdpVideoFormat> GetSupportedFormats() const = 0;
+
+  // Returns a list of supported video formats in order of preference, that can
+  // also be tagged with additional information to allow the VideoEncoderFactory
+  // to separate between different implementations when CreateVideoEncoder is
+  // called.
+  virtual std::vector<SdpVideoFormat> GetImplementations() const {
+    return GetSupportedFormats();
+  }
 
   // Returns information about how this format will be encoded. The specified
   // format must be one of the supported formats by this factory.

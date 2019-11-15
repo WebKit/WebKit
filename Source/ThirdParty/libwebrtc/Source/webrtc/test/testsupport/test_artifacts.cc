@@ -12,10 +12,11 @@
 
 #include <string.h>
 
-#include "rtc_base/file.h"
-#include "rtc_base/flags.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "rtc_base/logging.h"
-#include "test/testsupport/fileutils.h"
+#include "rtc_base/system/file_wrapper.h"
+#include "test/testsupport/file_utils.h"
 
 namespace {
 const std::string& DefaultArtifactPath() {
@@ -24,26 +25,27 @@ const std::string& DefaultArtifactPath() {
 }
 }  // namespace
 
-WEBRTC_DEFINE_string(test_artifacts_dir,
-                     DefaultArtifactPath().c_str(),
-                     "The output folder where test output should be saved.");
+ABSL_FLAG(std::string,
+          test_artifacts_dir,
+          DefaultArtifactPath().c_str(),
+          "The output folder where test output should be saved.");
 
 namespace webrtc {
 namespace test {
 
 bool GetTestArtifactsDir(std::string* out_dir) {
-  if (strlen(FLAG_test_artifacts_dir) == 0) {
+  if (absl::GetFlag(FLAGS_test_artifacts_dir).empty()) {
     RTC_LOG(LS_WARNING) << "No test_out_dir defined.";
     return false;
   }
-  *out_dir = FLAG_test_artifacts_dir;
+  *out_dir = absl::GetFlag(FLAGS_test_artifacts_dir);
   return true;
 }
 
 bool WriteToTestArtifactsDir(const char* filename,
                              const uint8_t* buffer,
                              size_t length) {
-  if (strlen(FLAG_test_artifacts_dir) == 0) {
+  if (absl::GetFlag(FLAGS_test_artifacts_dir).empty()) {
     RTC_LOG(LS_WARNING) << "No test_out_dir defined.";
     return false;
   }
@@ -53,10 +55,10 @@ bool WriteToTestArtifactsDir(const char* filename,
     return false;
   }
 
-  rtc::File output =
-      rtc::File::Create(JoinFilename(FLAG_test_artifacts_dir, filename));
+  FileWrapper output = FileWrapper::OpenWriteOnly(
+      JoinFilename(absl::GetFlag(FLAGS_test_artifacts_dir), filename));
 
-  return output.IsOpen() && output.Write(buffer, length) == length;
+  return output.is_open() && output.Write(buffer, length);
 }
 
 bool WriteToTestArtifactsDir(const char* filename, const std::string& content) {

@@ -33,7 +33,6 @@ class AudioAnnotationsExtractor(object):
   """Extracts annotations from audio files.
   """
 
-  # TODO(aleloi): change to enum.IntEnum when py 3.6 is available.
   class VadType(object):
     ENERGY_THRESHOLD = 1  # TODO(alessiob): Consider switching to P56 standard.
     WEBRTC_COMMON_AUDIO = 2  # common_audio/vad/include/vad.h

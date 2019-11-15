@@ -9,8 +9,9 @@
  */
 
 #include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/sigslotrepeater.h"
+
+#include "rtc_base/sigslot_repeater.h"
+#include "test/gtest.h"
 
 // This function, when passed a has_slots or signalx, will break the build if
 // its threading requirement is not single threaded
@@ -23,7 +24,7 @@ static bool TemplateIsMT(const sigslot::multi_threaded_local* p) {
   return true;
 }
 
-class SigslotDefault : public testing::Test, public sigslot::has_slots<> {
+class SigslotDefault : public ::testing::Test, public sigslot::has_slots<> {
  protected:
   sigslot::signal0<> signal_;
 };
@@ -63,7 +64,7 @@ class SigslotReceiver : public sigslot::has_slots<slot_policy> {
 
 template <class slot_policy = sigslot::single_threaded,
           class mt_signal_policy = sigslot::multi_threaded_local>
-class SigslotSlotTest : public testing::Test {
+class SigslotSlotTest : public ::testing::Test {
  protected:
   SigslotSlotTest() {
     mt_signal_policy mt_policy;

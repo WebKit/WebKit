@@ -9,17 +9,19 @@
  */
 
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
+
 #include "modules/pacing/packet_router.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scenario/scenario.h"
 
-using testing::_;
-using testing::AtLeast;
-using testing::NiceMock;
-using testing::Return;
-using testing::SaveArg;
-using testing::StrictMock;
+using ::testing::_;
+using ::testing::AtLeast;
+using ::testing::NiceMock;
+using ::testing::Return;
+using ::testing::SaveArg;
+using ::testing::StrictMock;
 
 namespace webrtc {
 
@@ -71,5 +73,47 @@ TEST(ReceiveSideCongestionControllerTest, OnReceivedPacketWithAbsSendTime) {
   EXPECT_EQ(header.ssrc, ssrcs[0]);
 }
 
+TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {
+  Scenario s("recieve_cc_unit/converge");
+  NetworkSimulationConfig net_conf;
+  net_conf.bandwidth = DataRate::kbps(1000);
+  net_conf.delay = TimeDelta::ms(50);
+  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
+    c->transport.rates.start_rate = DataRate::kbps(300);
+  });
+
+  auto* route = s.CreateRoutes(client, {s.CreateSimulationNode(net_conf)},
+                               s.CreateClient("return", CallClientConfig()),
+                               {s.CreateSimulationNode(net_conf)});
+  VideoStreamConfig video;
+  video.stream.packet_feedback = false;
+  s.CreateVideoStream(route->forward(), video);
+  s.RunFor(TimeDelta::seconds(30));
+  EXPECT_NEAR(client->send_bandwidth().kbps(), 900, 150);
+}
+
+TEST(ReceiveSideCongestionControllerTest, IsFairToTCP) {
+  Scenario s("recieve_cc_unit/tcp_fairness");
+  NetworkSimulationConfig net_conf;
+  net_conf.bandwidth = DataRate::kbps(1000);
+  net_conf.delay = TimeDelta::ms(50);
+  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
+    c->transport.rates.start_rate = DataRate::kbps(1000);
+  });
+  auto send_net = {s.CreateSimulationNode(net_conf)};
+  auto ret_net = {s.CreateSimulationNode(net_conf)};
+  auto* route = s.CreateRoutes(
+      client, send_net, s.CreateClient("return", CallClientConfig()), ret_net);
+  VideoStreamConfig video;
+  video.stream.packet_feedback = false;
+  s.CreateVideoStream(route->forward(), video);
+  s.net()->StartFakeTcpCrossTraffic(s.net()->CreateRoute(send_net),
+                                    s.net()->CreateRoute(ret_net),
+                                    FakeTcpConfig());
+  s.RunFor(TimeDelta::seconds(30));
+  // For some reason we get outcompeted by TCP here, this should probably be
+  // fixed and a lower bound should be added to the test.
+  EXPECT_LT(client->send_bandwidth().kbps(), 750);
+}
 }  // namespace test
 }  // namespace webrtc

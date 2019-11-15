@@ -10,10 +10,10 @@
 """
 
 import array
-import enum
 import logging
 import os
 import sys
+import enum
 
 try:
   import numpy as np

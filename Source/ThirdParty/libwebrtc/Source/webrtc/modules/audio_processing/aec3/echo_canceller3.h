@@ -12,21 +12,21 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 
 #include <stddef.h>
+
 #include <memory>
 #include <vector>
 
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "modules/audio_processing/aec3/api_call_jitter_metrics.h"
 #include "modules/audio_processing/aec3/block_delay_buffer.h"
 #include "modules/audio_processing/aec3/block_framer.h"
 #include "modules/audio_processing/aec3/block_processor.h"
-#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
 #include "modules/audio_processing/aec3/frame_blocker.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/swap_queue.h"
 #include "rtc_base/thread_annotations.h"
@@ -37,16 +37,25 @@ namespace webrtc {
 // queue.
 class Aec3RenderQueueItemVerifier {
  public:
-  explicit Aec3RenderQueueItemVerifier(size_t num_bands, size_t frame_length)
-      : num_bands_(num_bands), frame_length_(frame_length) {}
+  Aec3RenderQueueItemVerifier(size_t num_bands,
+                              size_t num_channels,
+                              size_t frame_length)
+      : num_bands_(num_bands),
+        num_channels_(num_channels),
+        frame_length_(frame_length) {}
 
-  bool operator()(const std::vector<std::vector<float>>& v) const {
+  bool operator()(const std::vector<std::vector<std::vector<float>>>& v) const {
     if (v.size() != num_bands_) {
       return false;
     }
-    for (const auto& v_k : v) {
-      if (v_k.size() != frame_length_) {
+    for (const auto& band : v) {
+      if (band.size() != num_channels_) {
         return false;
+      }
+      for (const auto& channel : band) {
+        if (channel.size() != frame_length_) {
+          return false;
+        }
       }
     }
     return true;
@@ -54,6 +63,7 @@ class Aec3RenderQueueItemVerifier {
 
  private:
   const size_t num_bands_;
+  const size_t num_channels_;
   const size_t frame_length_;
 };
 
@@ -74,18 +84,25 @@ class EchoCanceller3 : public EchoControl {
   // Normal c-tor to use.
   EchoCanceller3(const EchoCanceller3Config& config,
                  int sample_rate_hz,
-                 bool use_highpass_filter);
+                 size_t num_render_channels,
+                 size_t num_capture_channels);
   // Testing c-tor that is used only for testing purposes.
   EchoCanceller3(const EchoCanceller3Config& config,
                  int sample_rate_hz,
-                 bool use_highpass_filter,
+                 size_t num_render_channels,
+                 size_t num_capture_channels,
                  std::unique_ptr<BlockProcessor> block_processor);
   ~EchoCanceller3() override;
+  EchoCanceller3(const EchoCanceller3&) = delete;
+  EchoCanceller3& operator=(const EchoCanceller3&) = delete;
+
   // Analyzes and stores an internal copy of the split-band domain render
   // signal.
-  void AnalyzeRender(AudioBuffer* farend) override;
+  void AnalyzeRender(AudioBuffer* render) override { AnalyzeRender(*render); }
   // Analyzes the full-band domain capture signal to detect signal saturation.
-  void AnalyzeCapture(AudioBuffer* capture) override;
+  void AnalyzeCapture(AudioBuffer* capture) override {
+    AnalyzeCapture(*capture);
+  }
   // Processes the split-band domain capture signal in order to remove any echo
   // present in the signal.
   void ProcessCapture(AudioBuffer* capture, bool level_change) override;
@@ -109,6 +126,12 @@ class EchoCanceller3 : public EchoControl {
   // Empties the render SwapQueue.
   void EmptyRenderQueue();
 
+  // Analyzes and stores an internal copy of the split-band domain render
+  // signal.
+  void AnalyzeRender(const AudioBuffer& render);
+  // Analyzes the full-band domain capture signal to detect signal saturation.
+  void AnalyzeCapture(const AudioBuffer& capture);
+
   rtc::RaceChecker capture_race_checker_;
   rtc::RaceChecker render_race_checker_;
 
@@ -122,26 +145,30 @@ class EchoCanceller3 : public EchoControl {
   const EchoCanceller3Config config_;
   const int sample_rate_hz_;
   const int num_bands_;
-  const size_t frame_length_;
+  const size_t num_render_channels_;
+  const size_t num_capture_channels_;
   BlockFramer output_framer_ RTC_GUARDED_BY(capture_race_checker_);
   FrameBlocker capture_blocker_ RTC_GUARDED_BY(capture_race_checker_);
   FrameBlocker render_blocker_ RTC_GUARDED_BY(capture_race_checker_);
-  SwapQueue<std::vector<std::vector<float>>, Aec3RenderQueueItemVerifier>
+  SwapQueue<std::vector<std::vector<std::vector<float>>>,
+            Aec3RenderQueueItemVerifier>
       render_transfer_queue_;
   std::unique_ptr<BlockProcessor> block_processor_
       RTC_GUARDED_BY(capture_race_checker_);
-  std::vector<std::vector<float>> render_queue_output_frame_
-      RTC_GUARDED_BY(capture_race_checker_);
-  std::unique_ptr<CascadedBiQuadFilter> capture_highpass_filter_
+  std::vector<std::vector<std::vector<float>>> render_queue_output_frame_
       RTC_GUARDED_BY(capture_race_checker_);
   bool saturated_microphone_signal_ RTC_GUARDED_BY(capture_race_checker_) =
       false;
-  std::vector<std::vector<float>> block_ RTC_GUARDED_BY(capture_race_checker_);
-  std::vector<rtc::ArrayView<float>> sub_frame_view_
+  std::vector<std::vector<std::vector<float>>> render_block_
+      RTC_GUARDED_BY(capture_race_checker_);
+  std::vector<std::vector<std::vector<float>>> capture_block_
+      RTC_GUARDED_BY(capture_race_checker_);
+  std::vector<std::vector<rtc::ArrayView<float>>> render_sub_frame_view_
+      RTC_GUARDED_BY(capture_race_checker_);
+  std::vector<std::vector<rtc::ArrayView<float>>> capture_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
   BlockDelayBuffer block_delay_buffer_ RTC_GUARDED_BY(capture_race_checker_);
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(EchoCanceller3);
+  ApiCallJitterMetrics api_call_metrics_ RTC_GUARDED_BY(capture_race_checker_);
 };
 }  // namespace webrtc
 

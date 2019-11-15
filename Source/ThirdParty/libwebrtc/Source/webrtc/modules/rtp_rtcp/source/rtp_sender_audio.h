@@ -14,14 +14,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <memory>
+
 #include "absl/strings/string_view.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/rtp_rtcp/source/dtmf_queue.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
-#include "modules/rtp_rtcp/source/rtp_utility.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/onetimeevent.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
+#include "rtc_base/one_time_event.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
@@ -36,10 +37,9 @@ class RTPSenderAudio {
                                int8_t payload_type,
                                uint32_t frequency,
                                size_t channels,
-                               uint32_t rate,
-                               RtpUtility::Payload** payload);
+                               uint32_t rate);
 
-  bool SendAudio(FrameType frame_type,
+  bool SendAudio(AudioFrameType frame_type,
                  int8_t payload_type,
                  uint32_t capture_timestamp,
                  const uint8_t* payload_data,
@@ -60,9 +60,11 @@ class RTPSenderAudio {
       uint16_t duration,
       bool marker_bit);  // set on first packet in talk burst
 
-  bool MarkerBit(FrameType frame_type, int8_t payload_type);
+  bool MarkerBit(AudioFrameType frame_type, int8_t payload_type);
 
  private:
+  bool LogAndSendToNetwork(std::unique_ptr<RtpPacketToSend> packet);
+
   Clock* const clock_ = nullptr;
   RTPSender* const rtp_sender_ = nullptr;
 

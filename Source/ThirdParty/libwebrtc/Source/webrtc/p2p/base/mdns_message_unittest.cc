@@ -8,15 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "p2p/base/mdns_message.h"
+
 #include <map>
 #include <set>
 #include <string>
 
-#include "p2p/base/mdns_message.h"
-#include "rtc_base/bytebuffer.h"
+#include "rtc_base/byte_buffer.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ipaddress.h"
-#include "rtc_base/socketaddress.h"
+#include "rtc_base/ip_address.h"
+#include "rtc_base/socket_address.h"
 #include "test/gmock.h"
 
 #define ReadMdnsMessage(X, Y) ReadMdnsMessageTestCase(X, Y, sizeof(Y))

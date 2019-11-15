@@ -434,6 +434,14 @@ static int const kKbpsMultiplier = 1000;
 }
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection
+     didChangeLocalCandidate:(RTCIceCandidate *)local
+    didChangeRemoteCandidate:(RTCIceCandidate *)remote
+              lastReceivedMs:(int)lastDataReceivedMs
+               didHaveReason:(NSString *)reason {
+  RTCLog(@"ICE candidate pair changed because: %@", reason);
+}
+
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
     didOpenDataChannel:(RTCDataChannel *)dataChannel {
 }
 

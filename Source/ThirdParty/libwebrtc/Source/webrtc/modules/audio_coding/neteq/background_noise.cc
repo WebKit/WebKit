@@ -21,9 +21,14 @@
 #include "modules/audio_coding/neteq/post_decode_vad.h"
 
 namespace webrtc {
+namespace {
+
+constexpr size_t kMaxSampleRate = 48000;
+
+}  // namespace
 
 // static
-const size_t BackgroundNoise::kMaxLpcOrder;
+constexpr size_t BackgroundNoise::kMaxLpcOrder;
 
 BackgroundNoise::BackgroundNoise(size_t num_channels)
     : num_channels_(num_channels),
@@ -40,12 +45,13 @@ void BackgroundNoise::Reset() {
   }
 }
 
-void BackgroundNoise::Update(const AudioMultiVector& input,
+bool BackgroundNoise::Update(const AudioMultiVector& input,
                              const PostDecodeVad& vad) {
+  bool filter_params_saved = false;
   if (vad.running() && vad.active_speech()) {
     // Do not update the background noise parameters if we know that the signal
     // is active speech.
-    return;
+    return filter_params_saved;
   }
 
   int32_t auto_correlation[kMaxLpcOrder + 1];
@@ -57,6 +63,7 @@ void BackgroundNoise::Update(const AudioMultiVector& input,
     ChannelParameters& parameters = channel_parameters_[channel_ix];
     int16_t temp_signal_array[kVecLen + kMaxLpcOrder] = {0};
     int16_t* temp_signal = &temp_signal_array[kMaxLpcOrder];
+    RTC_DCHECK_GE(input.Size(), kVecLen);
     input[channel_ix].CopyTo(kVecLen, input.Size() - kVecLen, temp_signal);
     int32_t sample_energy =
         CalculateAutoCorrelation(temp_signal, kVecLen, auto_correlation);
@@ -65,26 +72,26 @@ void BackgroundNoise::Update(const AudioMultiVector& input,
          sample_energy < parameters.energy_update_threshold) ||
         (vad.running() && !vad.active_speech())) {
       // Generate LPC coefficients.
-      if (auto_correlation[0] > 0) {
-        // Regardless of whether the filter is actually updated or not,
-        // update energy threshold levels, since we have in fact observed
-        // a low energy signal.
-        if (sample_energy < parameters.energy_update_threshold) {
-          // Never go under 1.0 in average sample energy.
-          parameters.energy_update_threshold = std::max(sample_energy, 1);
-          parameters.low_energy_update_threshold = 0;
-        }
-
-        // Only update BGN if filter is stable, i.e., if return value from
-        // Levinson-Durbin function is 1.
-        if (WebRtcSpl_LevinsonDurbin(auto_correlation, lpc_coefficients,
-                                     reflection_coefficients,
-                                     kMaxLpcOrder) != 1) {
-          return;
-        }
-      } else {
+      if (auto_correlation[0] <= 0) {
         // Center value in auto-correlation is not positive. Do not update.
-        return;
+        return filter_params_saved;
+      }
+
+      // Regardless of whether the filter is actually updated or not,
+      // update energy threshold levels, since we have in fact observed
+      // a low energy signal.
+      if (sample_energy < parameters.energy_update_threshold) {
+        // Never go under 1.0 in average sample energy.
+        parameters.energy_update_threshold = std::max(sample_energy, 1);
+        parameters.low_energy_update_threshold = 0;
+      }
+
+      // Only update BGN if filter is stable, i.e., if return value from
+      // Levinson-Durbin function is 1.
+      if (WebRtcSpl_LevinsonDurbin(auto_correlation, lpc_coefficients,
+                                   reflection_coefficients,
+                                   kMaxLpcOrder) != 1) {
+        return filter_params_saved;
       }
 
       // Generate the CNG gain factor by looking at the energy of the residual.
@@ -108,6 +115,7 @@ void BackgroundNoise::Update(const AudioMultiVector& input,
         SaveParameters(channel_ix, lpc_coefficients,
                        temp_signal + kVecLen - kMaxLpcOrder, sample_energy,
                        residual_energy);
+        filter_params_saved = true;
       }
     } else {
       // Will only happen if post-decode VAD is disabled and |sample_energy| is
@@ -116,7 +124,57 @@ void BackgroundNoise::Update(const AudioMultiVector& input,
       IncrementEnergyThreshold(channel_ix, sample_energy);
     }
   }
-  return;
+  return filter_params_saved;
+}
+
+void BackgroundNoise::GenerateBackgroundNoise(
+    rtc::ArrayView<const int16_t> random_vector,
+    size_t channel,
+    int mute_slope,
+    bool too_many_expands,
+    size_t num_noise_samples,
+    int16_t* buffer) {
+  constexpr size_t kNoiseLpcOrder = kMaxLpcOrder;
+  int16_t scaled_random_vector[kMaxSampleRate / 8000 * 125];
+  assert(num_noise_samples <= (kMaxSampleRate / 8000 * 125));
+  RTC_DCHECK_GE(random_vector.size(), num_noise_samples);
+  int16_t* noise_samples = &buffer[kNoiseLpcOrder];
+  if (initialized()) {
+    // Use background noise parameters.
+    memcpy(noise_samples - kNoiseLpcOrder, FilterState(channel),
+           sizeof(int16_t) * kNoiseLpcOrder);
+
+    int dc_offset = 0;
+    if (ScaleShift(channel) > 1) {
+      dc_offset = 1 << (ScaleShift(channel) - 1);
+    }
+
+    // Scale random vector to correct energy level.
+    WebRtcSpl_AffineTransformVector(scaled_random_vector, random_vector.data(),
+                                    Scale(channel), dc_offset,
+                                    ScaleShift(channel), num_noise_samples);
+
+    WebRtcSpl_FilterARFastQ12(scaled_random_vector, noise_samples,
+                              Filter(channel), kNoiseLpcOrder + 1,
+                              num_noise_samples);
+
+    SetFilterState(
+        channel,
+        {&(noise_samples[num_noise_samples - kNoiseLpcOrder]), kNoiseLpcOrder});
+
+    // Unmute the background noise.
+    int16_t bgn_mute_factor = MuteFactor(channel);
+    if (bgn_mute_factor < 16384) {
+      WebRtcSpl_AffineTransformVector(noise_samples, noise_samples,
+                                      bgn_mute_factor, 8192, 14,
+                                      num_noise_samples);
+    }
+    // Update mute_factor in BackgroundNoise class.
+    SetMuteFactor(channel, bgn_mute_factor);
+  } else {
+    // BGN parameters have not been initialized; use zero noise.
+    memset(noise_samples, 0, sizeof(int16_t) * num_noise_samples);
+  }
 }
 
 int32_t BackgroundNoise::Energy(size_t channel) const {
@@ -145,11 +203,10 @@ const int16_t* BackgroundNoise::FilterState(size_t channel) const {
 }
 
 void BackgroundNoise::SetFilterState(size_t channel,
-                                     const int16_t* input,
-                                     size_t length) {
+                                     rtc::ArrayView<const int16_t> input) {
   assert(channel < num_channels_);
-  length = std::min(length, kMaxLpcOrder);
-  memcpy(channel_parameters_[channel].filter_state, input,
+  size_t length = std::min(input.size(), kMaxLpcOrder);
+  memcpy(channel_parameters_[channel].filter_state, input.data(),
          length * sizeof(int16_t));
 }
 

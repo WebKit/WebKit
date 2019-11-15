@@ -12,12 +12,13 @@
 #define CALL_FLEXFEC_RECEIVE_STREAM_H_
 
 #include <stdint.h>
+
 #include <string>
 #include <vector>
 
 #include "api/call/transport.h"
 #include "api/rtp_headers.h"
-#include "api/rtpparameters.h"
+#include "api/rtp_parameters.h"
 #include "call/rtp_packet_sink_interface.h"
 
 namespace webrtc {

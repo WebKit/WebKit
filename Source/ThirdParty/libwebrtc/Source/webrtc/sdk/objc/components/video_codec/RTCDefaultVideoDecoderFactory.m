@@ -15,7 +15,7 @@
 #import "api/video_codec/RTCVideoCodecConstants.h"
 #import "api/video_codec/RTCVideoDecoderVP8.h"
 #import "base/RTCVideoCodecInfo.h"
-#if !defined(RTC_DISABLE_VP9)
+#if defined(RTC_ENABLE_VP9)
 #import "api/video_codec/RTCVideoDecoderVP9.h"
 #endif
 
@@ -26,7 +26,7 @@
     return [[RTCVideoDecoderH264 alloc] init];
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoDecoderVP8 vp8Decoder];
-#if !defined(RTC_DISABLE_VP9)
+#if defined(RTC_ENABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
     return [RTCVideoDecoderVP9 vp9Decoder];
 #endif
@@ -39,7 +39,7 @@
   return @[
     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH264Name],
     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name],
-#if !defined(RTC_DISABLE_VP9)
+#if defined(RTC_ENABLE_VP9)
     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name],
 #endif
   ];

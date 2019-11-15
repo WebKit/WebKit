@@ -18,7 +18,6 @@
 #include "absl/types/optional.h"
 #include "api/video/video_stream_decoder.h"
 #include "modules/video_coding/frame_buffer2.h"
-#include "modules/video_coding/jitter_estimator.h"
 #include "modules/video_coding/timing.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/task_queue.h"
@@ -27,17 +26,21 @@
 
 namespace webrtc {
 
-class VideoStreamDecoderImpl : public VideoStreamDecoder,
+class VideoStreamDecoderImpl : public VideoStreamDecoderInterface,
                                private DecodedImageCallback {
  public:
   VideoStreamDecoderImpl(
-      VideoStreamDecoder::Callbacks* callbacks,
+      VideoStreamDecoderInterface::Callbacks* callbacks,
       VideoDecoderFactory* decoder_factory,
+      TaskQueueFactory* task_queue_factory,
       std::map<int, std::pair<SdpVideoFormat, int>> decoder_settings);
 
   ~VideoStreamDecoderImpl() override;
 
   void OnFrame(std::unique_ptr<video_coding::EncodedFrame> frame) override;
+
+  void SetMinPlayoutDelay(TimeDelta min_delay) override;
+  void SetMaxPlayoutDelay(TimeDelta max_delay) override;
 
  private:
   enum DecodeResult {
@@ -67,7 +70,7 @@ class VideoStreamDecoderImpl : public VideoStreamDecoder,
                absl::optional<int32_t> decode_time_ms,
                absl::optional<uint8_t> qp) override;
 
-  VideoStreamDecoder::Callbacks* const callbacks_
+  VideoStreamDecoderInterface::Callbacks* const callbacks_
       RTC_PT_GUARDED_BY(bookkeeping_queue_);
   VideoDecoderFactory* const decoder_factory_;
   std::map<int, std::pair<SdpVideoFormat, int>> decoder_settings_;
@@ -79,7 +82,6 @@ class VideoStreamDecoderImpl : public VideoStreamDecoder,
   rtc::TaskQueue bookkeeping_queue_;
 
   rtc::PlatformThread decode_thread_;
-  VCMJitterEstimator jitter_estimator_;
   VCMTiming timing_;
   video_coding::FrameBuffer frame_buffer_;
   video_coding::VideoLayerFrameId last_continuous_id_;

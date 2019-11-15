@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/rtp_format_h264.h"
+
 #include <memory>
 #include <vector>
 
@@ -16,7 +18,6 @@
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
-#include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -202,7 +203,7 @@ TEST_P(RtpPacketizerH264ModeTest,
   EXPECT_THAT(packets, SizeIs(1));
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     PacketMode,
     RtpPacketizerH264ModeTest,
     ::testing::Values(H264PacketizationMode::SingleNalUnit,
@@ -379,6 +380,28 @@ TEST(RtpPacketizerH264Test, MixedStapAFUA) {
               ElementsAreArray(next_fragment, kStapANaluSize));
 }
 
+TEST(RtpPacketizerH264Test, LastFragmentFitsInSingleButNotLastPacket) {
+  RtpPacketizer::PayloadSizeLimits limits;
+  limits.max_payload_len = 1178;
+  limits.first_packet_reduction_len = 0;
+  limits.last_packet_reduction_len = 20;
+  limits.single_packet_reduction_len = 20;
+  // Actual sizes, which triggered this bug.
+  size_t fragments[] = {20, 8, 18, 1161};
+  RTPFragmentationHeader fragmentation = CreateFragmentation(fragments);
+  rtc::Buffer frame = CreateFrame(fragmentation);
+
+  RtpPacketizerH264 packetizer(
+      frame, limits, H264PacketizationMode::NonInterleaved, fragmentation);
+  std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
+
+  // Last packet has to be of correct size.
+  // Incorrect implementation might miss this constraint and not split the last
+  // fragment in two packets.
+  EXPECT_LE(static_cast<int>(packets.back().payload_size()),
+            limits.max_payload_len - limits.last_packet_reduction_len);
+}
+
 // Splits frame with payload size |frame_payload_size| without fragmentation,
 // Returns sizes of the payloads excluding fua headers.
 std::vector<int> TestFua(size_t frame_payload_size,
@@ -475,86 +498,12 @@ TEST(RtpPacketizerH264Test, RejectsOverlongDataInPacketizationMode0) {
   EXPECT_THAT(packets, IsEmpty());
 }
 
-const uint8_t kStartSequence[] = {0x00, 0x00, 0x00, 0x01};
 const uint8_t kOriginalSps[] = {kSps, 0x00, 0x00, 0x03, 0x03,
                                 0xF4, 0x05, 0x03, 0xC7, 0xC0};
 const uint8_t kRewrittenSps[] = {kSps, 0x00, 0x00, 0x03, 0x03, 0xF4, 0x05, 0x03,
                                  0xC7, 0xE0, 0x1B, 0x41, 0x10, 0x8D, 0x00};
 const uint8_t kIdrOne[] = {kIdr, 0xFF, 0x00, 0x00, 0x04};
 const uint8_t kIdrTwo[] = {kIdr, 0xFF, 0x00, 0x11};
-
-class RtpPacketizerH264TestSpsRewriting : public ::testing::Test {
- public:
-  void SetUp() override {
-    fragmentation_header_.VerifyAndAllocateFragmentationHeader(3);
-    fragmentation_header_.fragmentationVectorSize = 3;
-    in_buffer_.AppendData(kStartSequence);
-
-    fragmentation_header_.fragmentationOffset[0] = in_buffer_.size();
-    fragmentation_header_.fragmentationLength[0] = sizeof(kOriginalSps);
-    in_buffer_.AppendData(kOriginalSps);
-
-    fragmentation_header_.fragmentationOffset[1] = in_buffer_.size();
-    fragmentation_header_.fragmentationLength[1] = sizeof(kIdrOne);
-    in_buffer_.AppendData(kIdrOne);
-
-    fragmentation_header_.fragmentationOffset[2] = in_buffer_.size();
-    fragmentation_header_.fragmentationLength[2] = sizeof(kIdrTwo);
-    in_buffer_.AppendData(kIdrTwo);
-  }
-
- protected:
-  rtc::Buffer in_buffer_;
-  RTPFragmentationHeader fragmentation_header_;
-};
-
-TEST_F(RtpPacketizerH264TestSpsRewriting, FuASps) {
-  const size_t kHeaderOverhead = kFuAHeaderSize + 1;
-
-  // Set size to fragment SPS into two FU-A packets.
-  RtpPacketizer::PayloadSizeLimits limits;
-  limits.max_payload_len = sizeof(kOriginalSps) - 2 + kHeaderOverhead;
-  RtpPacketizerH264 packetizer(in_buffer_, limits,
-                               H264PacketizationMode::NonInterleaved,
-                               fragmentation_header_);
-  std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
-
-  size_t offset = H264::kNaluTypeSize;
-  size_t length = packets[0].payload_size() - kFuAHeaderSize;
-  EXPECT_THAT(packets[0].payload().subview(kFuAHeaderSize),
-              ElementsAreArray(&kRewrittenSps[offset], length));
-  offset += length;
-
-  length = packets[1].payload_size() - kFuAHeaderSize;
-  EXPECT_THAT(packets[1].payload().subview(kFuAHeaderSize),
-              ElementsAreArray(&kRewrittenSps[offset], length));
-  offset += length;
-
-  EXPECT_EQ(offset, sizeof(kRewrittenSps));
-}
-
-TEST_F(RtpPacketizerH264TestSpsRewriting, StapASps) {
-  const size_t kHeaderOverhead = kFuAHeaderSize + 1;
-  const size_t kExpectedTotalSize = H264::kNaluTypeSize +  // Stap-A type.
-                                    sizeof(kRewrittenSps) + sizeof(kIdrOne) +
-                                    sizeof(kIdrTwo) + (kLengthFieldLength * 3);
-
-  // Set size to include SPS and the rest of the packets in a Stap-A package.
-  RtpPacketizer::PayloadSizeLimits limits;
-  limits.max_payload_len = kExpectedTotalSize + kHeaderOverhead;
-
-  RtpPacketizerH264 packetizer(in_buffer_, limits,
-                               H264PacketizationMode::NonInterleaved,
-                               fragmentation_header_);
-  std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
-
-  ASSERT_THAT(packets, SizeIs(1));
-  EXPECT_EQ(packets[0].payload_size(), kExpectedTotalSize);
-  EXPECT_THAT(
-      packets[0].payload().subview(H264::kNaluTypeSize + kLengthFieldLength,
-                                   sizeof(kRewrittenSps)),
-      ElementsAreArray(kRewrittenSps));
-}
 
 struct H264ParsedPayload : public RtpDepacketizer::ParsedPayload {
   RTPVideoHeaderH264& h264() {
@@ -586,7 +535,7 @@ TEST_F(RtpDepacketizerH264Test, TestSingleNalu) {
 
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet, sizeof(packet));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   EXPECT_EQ(kH264SingleNalu, payload.h264().packetization_type);
@@ -601,7 +550,7 @@ TEST_F(RtpDepacketizerH264Test, TestSingleNaluSpsWithResolution) {
 
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet, sizeof(packet));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   EXPECT_EQ(kH264SingleNalu, payload.h264().packetization_type);
@@ -630,7 +579,7 @@ TEST_F(RtpDepacketizerH264Test, TestStapAKey) {
   H264ParsedPayload payload;
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet, sizeof(packet));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   const RTPVideoHeaderH264& h264 = payload.h264();
@@ -661,7 +610,7 @@ TEST_F(RtpDepacketizerH264Test, TestStapANaluSpsWithResolution) {
 
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet, sizeof(packet));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   EXPECT_EQ(kH264StapA, payload.h264().packetization_type);
@@ -788,7 +737,8 @@ TEST_F(RtpDepacketizerH264Test, TestStapADelta) {
 
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet, sizeof(packet)));
   ExpectPacket(&payload, packet, sizeof(packet));
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   EXPECT_EQ(kH264StapA, payload.h264().packetization_type);
@@ -827,7 +777,7 @@ TEST_F(RtpDepacketizerH264Test, TestFuA) {
   // has been replaced by the original nal header.
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet1, sizeof(packet1)));
   ExpectPacket(&payload, kExpected1, sizeof(kExpected1));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_TRUE(payload.video_header().is_first_packet_in_frame);
   const RTPVideoHeaderH264& h264 = payload.h264();
@@ -843,7 +793,7 @@ TEST_F(RtpDepacketizerH264Test, TestFuA) {
   payload = H264ParsedPayload();
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet2, sizeof(packet2)));
   ExpectPacket(&payload, kExpected2, sizeof(kExpected2));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_FALSE(payload.video_header().is_first_packet_in_frame);
   {
@@ -857,7 +807,7 @@ TEST_F(RtpDepacketizerH264Test, TestFuA) {
   payload = H264ParsedPayload();
   ASSERT_TRUE(depacketizer_->Parse(&payload, packet3, sizeof(packet3)));
   ExpectPacket(&payload, kExpected3, sizeof(kExpected3));
-  EXPECT_EQ(kVideoFrameKey, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, payload.video_header().frame_type);
   EXPECT_EQ(kVideoCodecH264, payload.video_header().codec);
   EXPECT_FALSE(payload.video_header().is_first_packet_in_frame);
   {
@@ -914,7 +864,8 @@ TEST_F(RtpDepacketizerH264Test, TestSeiPacket) {
   H264ParsedPayload payload;
   ASSERT_TRUE(depacketizer_->Parse(&payload, kPayload, sizeof(kPayload)));
   const RTPVideoHeaderH264& h264 = payload.h264();
-  EXPECT_EQ(kVideoFrameDelta, payload.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta,
+            payload.video_header().frame_type);
   EXPECT_EQ(kH264SingleNalu, h264.packetization_type);
   EXPECT_EQ(kSei, h264.nalu_type);
   ASSERT_EQ(1u, h264.nalus_length);

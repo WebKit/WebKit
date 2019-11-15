@@ -41,20 +41,22 @@ bool DxgiFrame::Prepare(DesktopSize size, DesktopCapturer::SourceId source_id) {
     std::unique_ptr<DesktopFrame> frame;
     if (factory_) {
       frame = SharedMemoryDesktopFrame::Create(size, factory_);
+
+      if (!frame) {
+        RTC_LOG(LS_WARNING) << "DxgiFrame cannot create a new DesktopFrame.";
+        return false;
+      }
+
+      // DirectX capturer won't paint each pixel in the frame due to its one
+      // capturer per monitor design. So once the new frame is created, we
+      // should clear it to avoid the legacy image to be remained on it. See
+      // http://crbug.com/708766.
+      RTC_DCHECK_EQ(frame->stride(),
+                    frame->size().width() * DesktopFrame::kBytesPerPixel);
+      memset(frame->data(), 0, frame->stride() * frame->size().height());
     } else {
       frame.reset(new BasicDesktopFrame(size));
     }
-    if (!frame) {
-      RTC_LOG(LS_WARNING) << "DxgiFrame cannot create a new DesktopFrame.";
-      return false;
-    }
-    // DirectX capturer won't paint each pixel in the frame due to its one
-    // capturer per monitor design. So once the new frame is created, we should
-    // clear it to avoid the legacy image to be remained on it. See
-    // http://crbug.com/708766.
-    RTC_DCHECK_EQ(frame->stride(),
-                  frame->size().width() * DesktopFrame::kBytesPerPixel);
-    memset(frame->data(), 0, frame->stride() * frame->size().height());
 
     frame_ = SharedDesktopFrame::Wrap(std::move(frame));
   }

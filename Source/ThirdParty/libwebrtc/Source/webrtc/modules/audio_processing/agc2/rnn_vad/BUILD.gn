@@ -9,12 +9,13 @@
 import("../../../../webrtc.gni")
 
 rtc_source_set("rnn_vad") {
+  visibility = [ "../*" ]
   sources = [
+    "auto_correlation.cc",
+    "auto_correlation.h",
     "common.h",
     "features_extraction.cc",
     "features_extraction.h",
-    "fft_util.cc",
-    "fft_util.h",
     "lp_residual.cc",
     "lp_residual.h",
     "pitch_info.h",
@@ -35,10 +36,9 @@ rtc_source_set("rnn_vad") {
   deps = [
     "..:biquad_filter",
     "../../../../api:array_view",
-    "../../../../common_audio/",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:rtc_base_approved",
-    "//third_party/rnnoise:kiss_fft",
+    "../../utility:pffft_wrapper",
     "//third_party/rnnoise:rnn_vad",
   ]
 }
@@ -51,9 +51,10 @@ if (rtc_include_tests) {
       "test_utils.h",
     ]
     deps = [
+      ":rnn_vad",
       "../../../../api:array_view",
+      "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
-      "../../../../rtc_base:ptr_util",
       "../../../../test:fileutils",
       "../../../../test:test_support",
       "//third_party/abseil-cpp/absl/memory",
@@ -62,12 +63,10 @@ if (rtc_include_tests) {
 
   unittest_resources = [
     "../../../../resources/audio_processing/agc2/rnn_vad/band_energies.dat",
-    "../../../../resources/audio_processing/agc2/rnn_vad/fft.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_buf_24k.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_search_int.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_lp_res.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/samples.pcm",
-    "../../../../resources/audio_processing/agc2/rnn_vad/sil_features.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/vad_prob.dat",
   ]
 
@@ -84,8 +83,8 @@ if (rtc_include_tests) {
   rtc_source_set("unittests") {
     testonly = true
     sources = [
+      "auto_correlation_unittest.cc",
       "features_extraction_unittest.cc",
-      "fft_util_unittest.cc",
       "lp_residual_unittest.cc",
       "pitch_search_internal_unittest.cc",
       "pitch_search_unittest.cc",
@@ -106,6 +105,7 @@ if (rtc_include_tests) {
       "../../../../rtc_base:checks",
       "../../../../rtc_base:logging",
       "../../../../test:test_support",
+      "../../utility:pffft_wrapper",
       "//third_party/rnnoise:rnn_vad",
     ]
     data = unittest_resources
@@ -122,9 +122,11 @@ if (rtc_include_tests) {
     deps = [
       ":rnn_vad",
       "../../../../api:array_view",
-      "../../../../common_audio:common_audio",
+      "../../../../common_audio",
       "../../../../rtc_base:rtc_base_approved",
       "../../../../test:test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
     ]
   }
 }

@@ -24,7 +24,7 @@
 #include "modules/audio_processing/aec3/moving_average.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -35,16 +35,13 @@ class SuppressionGain {
                   int sample_rate_hz);
   ~SuppressionGain();
   void GetGain(
-      const std::array<float, kFftLengthBy2Plus1>& suppressor_input_spectrum,
       const std::array<float, kFftLengthBy2Plus1>& nearend_spectrum,
       const std::array<float, kFftLengthBy2Plus1>& echo_spectrum,
       const std::array<float, kFftLengthBy2Plus1>& residual_echo_spectrum,
       const std::array<float, kFftLengthBy2Plus1>& comfort_noise_spectrum,
-      const FftData& linear_aec_fft,
-      const FftData& capture_fft,
       const RenderSignalAnalyzer& render_signal_analyzer,
       const AecState& aec_state,
-      const std::vector<std::vector<float>>& render,
+      const std::vector<std::vector<std::vector<float>>>& render,
       float* high_bands_gain,
       std::array<float, kFftLengthBy2Plus1>* low_band_gain);
 
@@ -58,7 +55,7 @@ class SuppressionGain {
       const std::array<float, kFftLengthBy2Plus1>& comfort_noise_spectrum,
       const absl::optional<int>& narrow_peak_band,
       bool saturated_echo,
-      const std::vector<std::vector<float>>& render,
+      const std::vector<std::vector<std::vector<float>>>& render,
       const std::array<float, kFftLengthBy2Plus1>& low_band_gain) const;
 
   void GainToNoAudibleEcho(
@@ -78,8 +75,7 @@ class SuppressionGain {
       const std::array<float, kFftLengthBy2Plus1>& comfort_noise,
       std::array<float, kFftLengthBy2Plus1>* gain);
 
-  void GetMinGain(rtc::ArrayView<const float> suppressor_input,
-                  rtc::ArrayView<const float> weighted_residual_echo,
+  void GetMinGain(rtc::ArrayView<const float> weighted_residual_echo,
                   bool low_noise_render,
                   bool saturated_echo,
                   rtc::ArrayView<float> min_gain) const;
@@ -88,7 +84,7 @@ class SuppressionGain {
 
   class LowNoiseRenderDetector {
    public:
-    bool Detect(const std::vector<std::vector<float>>& render);
+    bool Detect(const std::vector<std::vector<std::vector<float>>>& render);
 
    private:
     float average_power_ = 32768.f * 32768.f;

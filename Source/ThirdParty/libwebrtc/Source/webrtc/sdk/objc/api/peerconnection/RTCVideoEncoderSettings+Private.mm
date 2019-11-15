@@ -12,23 +12,6 @@
 
 #import "helpers/NSString+StdString.h"
 
-@implementation RTCVideoEncoderSettings {
-  webrtc::VideoCodec _nativeVideoCodec;
-}
-
-@synthesize name = _name;
-@synthesize width = _width;
-@synthesize height = _height;
-@synthesize startBitrate = _startBitrate;
-@synthesize maxBitrate = _maxBitrate;
-@synthesize minBitrate = _minBitrate;
-@synthesize targetBitrate = _targetBitrate;
-@synthesize maxFramerate = _maxFramerate;
-@synthesize qpMax = _qpMax;
-@synthesize mode = _mode;
-
-@end
-
 @implementation RTCVideoEncoderSettings (Private)
 
 - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *)videoCodec {
@@ -37,13 +20,11 @@
       const char *codecName = CodecTypeToPayloadString(videoCodec->codecType);
       self.name = [NSString stringWithUTF8String:codecName];
 
-      _nativeVideoCodec = *videoCodec;
       self.width = videoCodec->width;
       self.height = videoCodec->height;
       self.startBitrate = videoCodec->startBitrate;
       self.maxBitrate = videoCodec->maxBitrate;
       self.minBitrate = videoCodec->minBitrate;
-      self.targetBitrate = videoCodec->targetBitrate;
       self.maxFramerate = videoCodec->maxFramerate;
       self.qpMax = videoCodec->qpMax;
       self.mode = (RTCVideoCodecMode)videoCodec->mode;
@@ -54,28 +35,17 @@
 }
 
 - (webrtc::VideoCodec)nativeVideoCodec {
-  return _nativeVideoCodec;
-}
+  webrtc::VideoCodec videoCodec;
+  videoCodec.width = self.width;
+  videoCodec.height = self.height;
+  videoCodec.startBitrate = self.startBitrate;
+  videoCodec.maxBitrate = self.maxBitrate;
+  videoCodec.minBitrate = self.minBitrate;
+  videoCodec.maxBitrate = self.maxBitrate;
+  videoCodec.qpMax = self.qpMax;
+  videoCodec.mode = (webrtc::VideoCodecMode)self.mode;
 
-@end
-
-@implementation RTCVideoBitrateAllocation {
-  webrtc::VideoBitrateAllocation _nativeVideoBitrateAllocation;
-}
-
-@end
-
-@implementation RTCVideoBitrateAllocation (Private)
-
-- (instancetype)initWithNativeVideoBitrateAllocation:(const webrtc::VideoBitrateAllocation *)videoBitrateAllocation {
-  if (self = [super init]) {
-    _nativeVideoBitrateAllocation = *videoBitrateAllocation;
-  }
-  return self;
-}
-
-- (webrtc::VideoBitrateAllocation)nativeVideoBitrateAllocation {
-  return _nativeVideoBitrateAllocation;
+  return videoCodec;
 }
 
 @end

@@ -21,7 +21,7 @@
 // This is not very useful as it does not expand defined symbols if
 // called directly. Use its counterpart without the _NO_EXPANSION
 // suffix, below.
-#define STRINGIZE_NO_EXPANSION(x) #x
+#define RTC_STRINGIZE_NO_EXPANSION(x) #x
 
 // Use this to quote the provided parameter, first expanding it if it
 // is a preprocessor symbol.
@@ -33,6 +33,6 @@
 // Then:
 //   STRINGIZE(A) produces "FOO"
 //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
-#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
+#define RTC_STRINGIZE(x) RTC_STRINGIZE_NO_EXPANSION(x)
 
 #endif  // RTC_BASE_STRINGIZE_MACROS_H_

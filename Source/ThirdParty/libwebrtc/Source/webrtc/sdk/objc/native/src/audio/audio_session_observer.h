@@ -11,7 +11,6 @@
 #ifndef SDK_OBJC_NATIVE_SRC_AUDIO_AUDIO_SESSION_OBSERVER_H_
 #define SDK_OBJC_NATIVE_SRC_AUDIO_AUDIO_SESSION_OBSERVER_H_
 
-#include "rtc_base/asyncinvoker.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {

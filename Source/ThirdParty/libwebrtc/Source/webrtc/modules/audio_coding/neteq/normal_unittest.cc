@@ -55,7 +55,6 @@ TEST(Normal, CreateAndDestroy) {
 }
 
 TEST(Normal, AvoidDivideByZero) {
-  WebRtcSpl_Init();
   MockDecoderDatabase db;
   int fs = 8000;
   size_t channels = 1;
@@ -91,7 +90,6 @@ TEST(Normal, AvoidDivideByZero) {
 }
 
 TEST(Normal, InputLengthAndChannelsDoNotMatch) {
-  WebRtcSpl_Init();
   MockDecoderDatabase db;
   int fs = 8000;
   size_t channels = 2;
@@ -116,7 +114,6 @@ TEST(Normal, InputLengthAndChannelsDoNotMatch) {
 }
 
 TEST(Normal, LastModeExpand120msPacket) {
-  WebRtcSpl_Init();
   MockDecoderDatabase db;
   const int kFs = 48000;
   const size_t kPacketsizeBytes = 11520u;

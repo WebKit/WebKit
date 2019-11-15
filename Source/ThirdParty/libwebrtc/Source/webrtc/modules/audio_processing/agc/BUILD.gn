@@ -19,7 +19,8 @@ rtc_source_set("agc") {
     ":level_estimation",
     "..:apm_logging",
     "..:gain_control_interface",
-    "../../..:webrtc_common",
+    "../../../common_audio",
+    "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
@@ -41,7 +42,6 @@ rtc_source_set("level_estimation") {
     "utility.h",
   ]
   deps = [
-    "../../..:webrtc_common",
     "../../../rtc_base:checks",
     "../../../rtc_base:macromagic",
     "../vad",
@@ -65,7 +65,6 @@ rtc_source_set("agc_legacy_c") {
   ]
 
   deps = [
-    "../../..:webrtc_common",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../common_audio/third_party/fft4g",
@@ -79,15 +78,6 @@ rtc_source_set("agc_legacy_c") {
       # Enable compilation for the NEON instruction set.
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags = [ "-mfpu=neon" ]
-    }
-
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
-      ]
     }
   }
 }
@@ -108,16 +98,10 @@ if (rtc_include_tests) {
     ]
     configs += [ "..:apm_debug_dump" ]
 
-    if ((!build_with_chromium || is_win) && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
       ":agc",
       ":level_estimation",
       "..:mocks",
-      "../../..:webrtc_common",
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",

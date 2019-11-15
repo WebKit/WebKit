@@ -11,7 +11,7 @@
 # This script counts net line count contributions by author. Besides
 # amusement, the value of these stats are of course questionable.
 
-git log "$@" --pretty=format:%ae --shortstat \
+git log --pretty=format:%ae --shortstat "$@" \
   | sed '/^ /s/,/\n/g' \
   | gawk '
 /^[^ ]/ {

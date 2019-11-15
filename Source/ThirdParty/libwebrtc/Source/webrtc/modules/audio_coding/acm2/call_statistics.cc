@@ -28,7 +28,11 @@ void CallStatistics::DecodedByNetEq(AudioFrame::SpeechType speech_type,
       break;
     }
     case AudioFrame::kPLC: {
-      ++decoding_stat_.decoded_plc;
+      ++decoding_stat_.decoded_neteq_plc;
+      break;
+    }
+    case AudioFrame::kCodecPLC: {
+      ++decoding_stat_.decoded_codec_plc;
       break;
     }
     case AudioFrame::kCNG: {

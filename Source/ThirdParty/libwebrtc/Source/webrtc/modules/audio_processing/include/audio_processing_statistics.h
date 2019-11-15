@@ -32,6 +32,12 @@ struct RTC_EXPORT AudioProcessingStats {
   // Only reported if level estimation is enabled in AudioProcessing::Config.
   absl::optional<int> output_rms_dbfs;
 
+  // True if voice is detected in the last capture frame, after processing.
+  // It is conservative in flagging audio as speech, with low likelihood of
+  // incorrectly flagging a frame as voice.
+  // Only reported if voice detection is enabled in AudioProcessing::Config.
+  absl::optional<bool> voice_detected;
+
   // AEC Statistics.
   // ERL = 10log_10(P_far / P_echo)
   absl::optional<double> echo_return_loss;

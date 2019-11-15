@@ -69,7 +69,6 @@ class NoLossTest : public AudioEndToEndTest {
     EXPECT_PRED2(IsNear, kBytesSent, recv_stats.bytes_rcvd);
     EXPECT_PRED2(IsNear, kPacketsSent, recv_stats.packets_rcvd);
     EXPECT_EQ(0u, recv_stats.packets_lost);
-    EXPECT_EQ(0.0f, recv_stats.fraction_lost);
     EXPECT_EQ("opus", send_stats.codec_name);
     // recv_stats.jitter_ms
     // recv_stats.jitter_buffer_ms
@@ -101,7 +100,6 @@ class NoLossTest : public AudioEndToEndTest {
     // Match these stats between caller and receiver.
     EXPECT_EQ(send_stats.local_ssrc, recv_stats.remote_ssrc);
     EXPECT_EQ(*send_stats.codec_payload_type, *recv_stats.codec_payload_type);
-    EXPECT_TRUE(rtc::SafeEq(send_stats.ext_seqnum, recv_stats.ext_seqnum));
   }
 };
 }  // namespace

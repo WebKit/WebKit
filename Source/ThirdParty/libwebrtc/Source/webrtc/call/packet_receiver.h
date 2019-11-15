@@ -15,8 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "api/mediatypes.h"
-#include "rtc_base/copyonwritebuffer.h"
+#include "api/media_types.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
 

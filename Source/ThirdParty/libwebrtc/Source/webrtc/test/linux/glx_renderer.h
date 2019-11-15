@@ -12,8 +12,11 @@
 #define TEST_LINUX_GLX_RENDERER_H_
 
 #include <GL/glx.h>
+#include <X11/X.h>
 #include <X11/Xlib.h>
+#include <stddef.h>
 
+#include "api/video/video_frame.h"
 #include "test/gl/gl_renderer.h"
 
 namespace webrtc {

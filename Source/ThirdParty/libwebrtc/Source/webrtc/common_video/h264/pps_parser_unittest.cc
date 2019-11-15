@@ -10,12 +10,10 @@
 
 #include "common_video/h264/pps_parser.h"
 
-#include <limits>
-#include <memory>
-
 #include "common_video/h264/h264_common.h"
-#include "rtc_base/bitbuffer.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {

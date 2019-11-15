@@ -27,6 +27,10 @@ rtc_static_library("video_processing") {
   deps = [
     ":denoiser_filter",
     "..:module_api",
+    "../../api:scoped_refptr",
+    "../../api/video:video_frame",
+    "../../api/video:video_frame_i420",
+    "../../api/video:video_rtp_headers",
     "../../common_audio",
     "../../common_video",
     "../../modules/utility",
@@ -41,11 +45,6 @@ rtc_static_library("video_processing") {
   }
   if (rtc_build_with_neon) {
     deps += [ ":video_processing_neon" ]
-  }
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 }
 
@@ -72,11 +71,6 @@ if (build_video_processing_sse2) {
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
     ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
 
     if (is_posix || is_fuchsia) {
       cflags = [ "-msse2" ]
@@ -110,15 +104,16 @@ if (rtc_include_tests) {
       "test/denoiser_test.cc",
     ]
     deps = [
+      ":denoiser_filter",
       ":video_processing",
-      "../../common_video:common_video",
+      "../../api:scoped_refptr",
+      "../../api/video:video_frame",
+      "../../api/video:video_frame_i420",
+      "../../api/video:video_rtp_headers",
+      "../../common_video",
       "../../test:fileutils",
       "../../test:test_support",
       "../../test:video_test_common",
     ]
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 }

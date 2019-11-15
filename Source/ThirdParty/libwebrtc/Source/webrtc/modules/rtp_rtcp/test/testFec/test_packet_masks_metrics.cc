@@ -43,14 +43,13 @@
  * parameters: average loss rate and average burst length.
  */
 
-#include <math.h>
-
+#include <cmath>
 #include <memory>
 
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/test/testFec/average_residual_loss_xor_codes.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -392,7 +391,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
     std::unique_ptr<uint8_t[]> state(new uint8_t[tot_num_packets]);
     memset(state.get(), 0, tot_num_packets);
 
-    int num_loss_configurations = static_cast<int>(pow(2.0f, tot_num_packets));
+    int num_loss_configurations = 1 << tot_num_packets;
     // Loop over all loss configurations for the symbol sequence of length
     // |tot_num_packets|. In this version we process up to (k=12, m=12) codes,
     // and get exact expressions for the residual loss.
@@ -496,7 +495,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
       assert(metrics_code.variance_residual_loss[k] >= 0.0);
       assert(metrics_code.average_residual_loss[k] > 0.0);
       metrics_code.variance_residual_loss[k] =
-          sqrt(metrics_code.variance_residual_loss[k]) /
+          std::sqrt(metrics_code.variance_residual_loss[k]) /
           metrics_code.average_residual_loss[k];
     }
 

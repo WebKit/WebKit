@@ -11,15 +11,19 @@
 #ifndef MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
 #define MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
 
+#include <stddef.h>
+
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_mixer/frame_combiner.h"
 #include "modules/audio_mixer/output_rate_calculator.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/race_checker.h"
-#include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -80,13 +84,6 @@ class AudioMixerImpl : public AudioMixer {
   // in and out. Update mixed status. Mixes up to
   // kMaximumAmountOfMixedAudioSources audio sources.
   AudioFrameList GetAudioFromSources() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Add/remove the MixerAudioSource to the specified
-  // MixerAudioSource list.
-  bool AddAudioSourceToList(Source* audio_source,
-                            SourceStatusList* audio_source_list) const;
-  bool RemoveAudioSourceFromList(Source* remove_audio_source,
-                                 SourceStatusList* audio_source_list) const;
 
   // The critical section lock guards audio source insertion and
   // removal, which can be done from any thread. The race checker

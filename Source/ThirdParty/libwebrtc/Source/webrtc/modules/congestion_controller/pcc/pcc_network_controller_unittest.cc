@@ -8,24 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
-#include "api/transport/test/network_control_tester.h"
-#include "modules/congestion_controller/pcc/pcc_factory.h"
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
+#include <memory>
+
+#include "modules/congestion_controller/pcc/pcc_factory.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scenario/scenario.h"
 
-using testing::Field;
-using testing::Matcher;
-using testing::AllOf;
-using testing::Ge;
-using testing::Le;
-using testing::Property;
+using ::testing::AllOf;
+using ::testing::Field;
+using ::testing::Ge;
+using ::testing::Le;
+using ::testing::Matcher;
+using ::testing::Property;
 
 namespace webrtc {
-namespace pcc {
 namespace test {
 namespace {
 
@@ -64,7 +63,7 @@ ProcessInterval InitialProcessInterval() {
 
 TEST(PccNetworkControllerTest, SendsConfigurationOnFirstProcess) {
   std::unique_ptr<NetworkControllerInterface> controller_;
-  controller_.reset(new PccNetworkController(InitialConfig()));
+  controller_.reset(new pcc::PccNetworkController(InitialConfig()));
 
   NetworkControlUpdate update =
       controller_->OnProcessInterval(InitialProcessInterval());
@@ -75,41 +74,41 @@ TEST(PccNetworkControllerTest, SendsConfigurationOnFirstProcess) {
 
 TEST(PccNetworkControllerTest, UpdatesTargetSendRate) {
   PccNetworkControllerFactory factory;
-  webrtc::test::NetworkControllerTester tester(&factory,
-                                               InitialConfig(60, 0, 600));
-  auto packet_producer = &webrtc::test::SimpleTargetRateProducer::ProduceNext;
+  Scenario s("pcc_unit/updates_rate", false);
+  CallClientConfig config;
+  config.transport.cc_factory = &factory;
+  config.transport.rates.min_rate = DataRate::kbps(10);
+  config.transport.rates.max_rate = DataRate::kbps(1500);
+  config.transport.rates.start_rate = DataRate::kbps(300);
+  auto send_net = s.CreateMutableSimulationNode([](NetworkSimulationConfig* c) {
+    c->bandwidth = DataRate::kbps(500);
+    c->delay = TimeDelta::ms(100);
+  });
+  auto ret_net = s.CreateMutableSimulationNode(
+      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::ms(100); });
 
-  tester.RunSimulation(TimeDelta::seconds(10), TimeDelta::ms(10),
-                       DataRate::kbps(300), TimeDelta::ms(100),
-                       packet_producer);
-  EXPECT_GE(tester.GetState().target_rate->target_rate.kbps(),
-            300 * kMinDataRateFactor);
-  EXPECT_LE(tester.GetState().target_rate->target_rate.kbps(),
-            300 * kMaxDataRateFactor);
-
-  tester.RunSimulation(TimeDelta::seconds(30), TimeDelta::ms(10),
-                       DataRate::kbps(500), TimeDelta::ms(100),
-                       packet_producer);
-  EXPECT_GE(tester.GetState().target_rate->target_rate.kbps(),
-            500 * kMinDataRateFactor);
-  EXPECT_LE(tester.GetState().target_rate->target_rate.kbps(),
-            500 * kMaxDataRateFactor);
-
-  tester.RunSimulation(TimeDelta::seconds(2), TimeDelta::ms(10),
-                       DataRate::kbps(200), TimeDelta::ms(200),
-                       packet_producer);
-  EXPECT_LE(tester.GetState().target_rate->target_rate.kbps(),
-            200 * kMaxDataRateFactor);
-
-  tester.RunSimulation(TimeDelta::seconds(18), TimeDelta::ms(10),
-                       DataRate::kbps(200), TimeDelta::ms(200),
-                       packet_producer);
-  EXPECT_GE(tester.GetState().target_rate->target_rate.kbps(),
-            200 * kMinDataRateFactor);
-  EXPECT_LE(tester.GetState().target_rate->target_rate.kbps(),
-            200 * kMaxDataRateFactor);
+  auto* client = s.CreateClient("send", config);
+  auto* route = s.CreateRoutes(client, {send_net->node()},
+                               s.CreateClient("return", CallClientConfig()),
+                               {ret_net->node()});
+  s.CreateVideoStream(route->forward(), VideoStreamConfig());
+  s.RunFor(TimeDelta::seconds(30));
+  EXPECT_NEAR(client->target_rate().kbps(), 450, 100);
+  send_net->UpdateConfig([](NetworkSimulationConfig* c) {
+    c->bandwidth = DataRate::kbps(800);
+    c->delay = TimeDelta::ms(100);
+  });
+  s.RunFor(TimeDelta::seconds(20));
+  EXPECT_NEAR(client->target_rate().kbps(), 750, 150);
+  send_net->UpdateConfig([](NetworkSimulationConfig* c) {
+    c->bandwidth = DataRate::kbps(200);
+    c->delay = TimeDelta::ms(200);
+  });
+  ret_net->UpdateConfig(
+      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::ms(200); });
+  s.RunFor(TimeDelta::seconds(35));
+  EXPECT_NEAR(client->target_rate().kbps(), 180, 40);
 }
 
 }  // namespace test
-}  // namespace pcc
 }  // namespace webrtc

@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_MIXER_SINE_WAVE_GENERATOR_H_
 #define MODULES_AUDIO_MIXER_SINE_WAVE_GENERATOR_H_
 
+#include <stdint.h>
+
 #include "api/audio/audio_frame.h"
 #include "rtc_base/checks.h"
 

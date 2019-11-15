@@ -22,4 +22,4 @@ void WebRtc_rdft(size_t n, int isgn, float* a, size_t* ip, float* w);
 }
 #endif
 
-#endif  /* COMMON_AUDIO_THIRD_PARTY_FFT4G_FFT4G_H_ */
+#endif /* COMMON_AUDIO_THIRD_PARTY_FFT4G_FFT4G_H_ */

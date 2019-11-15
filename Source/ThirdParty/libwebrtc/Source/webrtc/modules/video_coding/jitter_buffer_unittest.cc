@@ -8,15 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <string>
+#include "modules/video_coding/jitter_buffer.h"
 
 #include <list>
 #include <memory>
+#include <string>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "common_video/h264/h264_common.h"
 #include "modules/video_coding/frame_buffer.h"
-#include "modules/video_coding/jitter_buffer.h"
 #include "modules/video_coding/media_opt_util.h"
 #include "modules/video_coding/packet.h"
 #include "modules/video_coding/test/stream_generator.h"
@@ -30,196 +31,13 @@
 
 namespace webrtc {
 
-namespace {
-const uint32_t kProcessIntervalSec = 60;
-}  // namespace
-
-class Vp9SsMapTest : public ::testing::Test {
- protected:
-  Vp9SsMapTest() : packet_() {}
-
-  virtual void SetUp() {
-    auto& vp9_header =
-        packet_.video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
-    packet_.is_first_packet_in_frame = true;
-    packet_.dataPtr = data_;
-    packet_.sizeBytes = 1400;
-    packet_.seqNum = 1234;
-    packet_.timestamp = 1;
-    packet_.markerBit = true;
-    packet_.frameType = kVideoFrameKey;
-    packet_.codec = kVideoCodecVP9;
-    packet_.video_header.codec = kVideoCodecVP9;
-    vp9_header.flexible_mode = false;
-    vp9_header.gof_idx = 0;
-    vp9_header.temporal_idx = kNoTemporalIdx;
-    vp9_header.temporal_up_switch = false;
-    vp9_header.ss_data_available = true;
-    vp9_header.gof.SetGofInfoVP9(
-        kTemporalStructureMode3);  // kTemporalStructureMode3: 0-2-1-2..
-  }
-
-  Vp9SsMap map_;
-  uint8_t data_[1500];
-  VCMPacket packet_;
-};
-
-TEST_F(Vp9SsMapTest, Insert) {
-  EXPECT_TRUE(map_.Insert(packet_));
-}
-
-TEST_F(Vp9SsMapTest, Insert_NoSsData) {
-  absl::get<RTPVideoHeaderVP9>(packet_.video_header.video_type_header)
-      .ss_data_available = false;
-  EXPECT_FALSE(map_.Insert(packet_));
-}
-
-TEST_F(Vp9SsMapTest, Find) {
-  EXPECT_TRUE(map_.Insert(packet_));
-  Vp9SsMap::SsMap::iterator it;
-  EXPECT_TRUE(map_.Find(packet_.timestamp, &it));
-  EXPECT_EQ(packet_.timestamp, it->first);
-}
-
-TEST_F(Vp9SsMapTest, Find_WithWrap) {
-  const uint32_t kSsTimestamp1 = 0xFFFFFFFF;
-  const uint32_t kSsTimestamp2 = 100;
-  packet_.timestamp = kSsTimestamp1;
-  EXPECT_TRUE(map_.Insert(packet_));
-  packet_.timestamp = kSsTimestamp2;
-  EXPECT_TRUE(map_.Insert(packet_));
-  Vp9SsMap::SsMap::iterator it;
-  EXPECT_FALSE(map_.Find(kSsTimestamp1 - 1, &it));
-  EXPECT_TRUE(map_.Find(kSsTimestamp1, &it));
-  EXPECT_EQ(kSsTimestamp1, it->first);
-  EXPECT_TRUE(map_.Find(0, &it));
-  EXPECT_EQ(kSsTimestamp1, it->first);
-  EXPECT_TRUE(map_.Find(kSsTimestamp2 - 1, &it));
-  EXPECT_EQ(kSsTimestamp1, it->first);
-  EXPECT_TRUE(map_.Find(kSsTimestamp2, &it));
-  EXPECT_EQ(kSsTimestamp2, it->first);
-  EXPECT_TRUE(map_.Find(kSsTimestamp2 + 1, &it));
-  EXPECT_EQ(kSsTimestamp2, it->first);
-}
-
-TEST_F(Vp9SsMapTest, Reset) {
-  EXPECT_TRUE(map_.Insert(packet_));
-  Vp9SsMap::SsMap::iterator it;
-  EXPECT_TRUE(map_.Find(packet_.timestamp, &it));
-  EXPECT_EQ(packet_.timestamp, it->first);
-
-  map_.Reset();
-  EXPECT_FALSE(map_.Find(packet_.timestamp, &it));
-}
-
-TEST_F(Vp9SsMapTest, RemoveOld) {
-  Vp9SsMap::SsMap::iterator it;
-  const uint32_t kSsTimestamp1 = 10000;
-  packet_.timestamp = kSsTimestamp1;
-  EXPECT_TRUE(map_.Insert(packet_));
-
-  const uint32_t kTimestamp = kSsTimestamp1 + kProcessIntervalSec * 90000;
-  map_.RemoveOld(kTimestamp - 1);              // Interval not passed.
-  EXPECT_TRUE(map_.Find(kSsTimestamp1, &it));  // Should not been removed.
-
-  map_.RemoveOld(kTimestamp);
-  EXPECT_FALSE(map_.Find(kSsTimestamp1, &it));
-  EXPECT_TRUE(map_.Find(kTimestamp, &it));
-  EXPECT_EQ(kTimestamp, it->first);
-}
-
-TEST_F(Vp9SsMapTest, RemoveOld_WithWrap) {
-  Vp9SsMap::SsMap::iterator it;
-  const uint32_t kSsTimestamp1 = 0xFFFFFFFF - kProcessIntervalSec * 90000;
-  const uint32_t kSsTimestamp2 = 10;
-  const uint32_t kSsTimestamp3 = 1000;
-  packet_.timestamp = kSsTimestamp1;
-  EXPECT_TRUE(map_.Insert(packet_));
-  packet_.timestamp = kSsTimestamp2;
-  EXPECT_TRUE(map_.Insert(packet_));
-  packet_.timestamp = kSsTimestamp3;
-  EXPECT_TRUE(map_.Insert(packet_));
-
-  map_.RemoveOld(kSsTimestamp3);
-  EXPECT_FALSE(map_.Find(kSsTimestamp1, &it));
-  EXPECT_FALSE(map_.Find(kSsTimestamp2, &it));
-  EXPECT_TRUE(map_.Find(kSsTimestamp3, &it));
-}
-
-TEST_F(Vp9SsMapTest, UpdatePacket_NoSsData) {
-  absl::get<RTPVideoHeaderVP9>(packet_.video_header.video_type_header).gof_idx =
-      0;
-  EXPECT_FALSE(map_.UpdatePacket(&packet_));
-}
-
-TEST_F(Vp9SsMapTest, UpdatePacket_NoGofIdx) {
-  EXPECT_TRUE(map_.Insert(packet_));
-  absl::get<RTPVideoHeaderVP9>(packet_.video_header.video_type_header).gof_idx =
-      kNoGofIdx;
-  EXPECT_FALSE(map_.UpdatePacket(&packet_));
-}
-
-TEST_F(Vp9SsMapTest, UpdatePacket_InvalidGofIdx) {
-  EXPECT_TRUE(map_.Insert(packet_));
-  absl::get<RTPVideoHeaderVP9>(packet_.video_header.video_type_header).gof_idx =
-      4;
-  EXPECT_FALSE(map_.UpdatePacket(&packet_));
-}
-
-TEST_F(Vp9SsMapTest, UpdatePacket) {
-  auto& vp9_header =
-      absl::get<RTPVideoHeaderVP9>(packet_.video_header.video_type_header);
-  EXPECT_TRUE(map_.Insert(packet_));  // kTemporalStructureMode3: 0-2-1-2..
-
-  vp9_header.gof_idx = 0;
-  EXPECT_TRUE(map_.UpdatePacket(&packet_));
-  EXPECT_EQ(0, vp9_header.temporal_idx);
-  EXPECT_FALSE(vp9_header.temporal_up_switch);
-  EXPECT_EQ(1U, vp9_header.num_ref_pics);
-  EXPECT_EQ(4, vp9_header.pid_diff[0]);
-
-  vp9_header.gof_idx = 1;
-  EXPECT_TRUE(map_.UpdatePacket(&packet_));
-  EXPECT_EQ(2, vp9_header.temporal_idx);
-  EXPECT_TRUE(vp9_header.temporal_up_switch);
-  EXPECT_EQ(1U, vp9_header.num_ref_pics);
-  EXPECT_EQ(1, vp9_header.pid_diff[0]);
-
-  vp9_header.gof_idx = 2;
-  EXPECT_TRUE(map_.UpdatePacket(&packet_));
-  EXPECT_EQ(1, vp9_header.temporal_idx);
-  EXPECT_TRUE(vp9_header.temporal_up_switch);
-  EXPECT_EQ(1U, vp9_header.num_ref_pics);
-  EXPECT_EQ(2, vp9_header.pid_diff[0]);
-
-  vp9_header.gof_idx = 3;
-  EXPECT_TRUE(map_.UpdatePacket(&packet_));
-  EXPECT_EQ(2, vp9_header.temporal_idx);
-  EXPECT_TRUE(vp9_header.temporal_up_switch);
-  EXPECT_EQ(1U, vp9_header.num_ref_pics);
-  EXPECT_EQ(1, vp9_header.pid_diff[0]);
-}
-
-class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
-                              public NackSender,
-                              public KeyFrameRequestSender {
- public:
-  void SendNack(const std::vector<uint16_t>& sequence_numbers) override {
-    nack_sent_.insert(nack_sent_.end(), sequence_numbers.begin(),
-                      sequence_numbers.end());
-  }
-
-  void RequestKeyFrame() override { ++keyframe_requests_; }
-
-  std::vector<uint16_t> nack_sent_;
-  int keyframe_requests_;
-
+class TestBasicJitterBuffer : public ::testing::Test {
  protected:
   TestBasicJitterBuffer() {}
   void SetUp() override {
     clock_.reset(new SimulatedClock(0));
     jitter_buffer_.reset(new VCMJitterBuffer(
-        clock_.get(), absl::WrapUnique(EventWrapper::Create()), this, this));
+        clock_.get(), absl::WrapUnique(EventWrapper::Create())));
     jitter_buffer_->Start();
     seq_num_ = 1234;
     timestamp_ = 0;
@@ -240,15 +58,17 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
         i += 3;
       }
     }
-    WebRtcRTPHeader rtpHeader;
-    memset(&rtpHeader, 0, sizeof(rtpHeader));
-    rtpHeader.header.sequenceNumber = seq_num_;
-    rtpHeader.header.timestamp = timestamp_;
-    rtpHeader.header.markerBit = true;
-    rtpHeader.frameType = kVideoFrameDelta;
-    rtpHeader.video_header().codec = kVideoCodecGeneric;
-    rtpHeader.video_header().is_first_packet_in_frame = true;
-    packet_.reset(new VCMPacket(data_, size_, rtpHeader));
+    RTPHeader rtp_header;
+    RTPVideoHeader video_header;
+    rtp_header.sequenceNumber = seq_num_;
+    rtp_header.timestamp = timestamp_;
+    rtp_header.markerBit = true;
+    video_header.codec = kVideoCodecGeneric;
+    video_header.is_first_packet_in_frame = true;
+    video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+    packet_.reset(new VCMPacket(data_, size_, rtp_header, video_header,
+                                /*ntp_time_ms=*/0,
+                                clock_->TimeInMilliseconds()));
   }
 
   VCMEncodedFrame* DecodeCompleteFrame() {
@@ -258,21 +78,12 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
     return jitter_buffer_->ExtractAndSetDecode(found_frame->Timestamp());
   }
 
-  VCMEncodedFrame* DecodeIncompleteFrame() {
-    uint32_t timestamp = 0;
-    bool found_frame = jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp);
-    if (!found_frame)
-      return NULL;
-    VCMEncodedFrame* frame = jitter_buffer_->ExtractAndSetDecode(timestamp);
-    return frame;
-  }
-
   void CheckOutFrame(VCMEncodedFrame* frame_out,
                      unsigned int size,
                      bool startCode) {
     ASSERT_TRUE(frame_out);
 
-    const uint8_t* outData = frame_out->Buffer();
+    const uint8_t* outData = frame_out->data();
     unsigned int i = 0;
 
     if (startCode) {
@@ -283,7 +94,7 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
       i += 4;
     }
 
-    EXPECT_EQ(size, frame_out->Length());
+    EXPECT_EQ(size, frame_out->size());
     int count = 3;
     for (; i < size; i++) {
       if (outData[i] == 0 && outData[i + 1] == 0 && outData[i + 2] == 0x80) {
@@ -313,20 +124,7 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
   std::unique_ptr<VCMJitterBuffer> jitter_buffer_;
 };
 
-class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
-                                public NackSender,
-                                public KeyFrameRequestSender {
- public:
-  void SendNack(const std::vector<uint16_t>& sequence_numbers) {
-    nack_sent_.insert(nack_sent_.end(), sequence_numbers.begin(),
-                      sequence_numbers.end());
-  }
-
-  void RequestKeyFrame() { ++keyframe_requests_; }
-
-  std::vector<uint16_t> nack_sent_;
-  int keyframe_requests_;
-
+class TestRunningJitterBuffer : public ::testing::Test {
  protected:
   enum { kDataBufferSize = 10 };
 
@@ -335,7 +133,7 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
     max_nack_list_size_ = 150;
     oldest_packet_to_nack_ = 250;
     jitter_buffer_ = new VCMJitterBuffer(
-        clock_.get(), absl::WrapUnique(EventWrapper::Create()), this, this);
+        clock_.get(), absl::WrapUnique(EventWrapper::Create()));
     stream_generator_ = new StreamGenerator(0, clock_->TimeInMilliseconds());
     jitter_buffer_->Start();
     jitter_buffer_->SetNackSettings(max_nack_list_size_, oldest_packet_to_nack_,
@@ -371,16 +169,17 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
     return jitter_buffer_->InsertPacket(packet, &retransmitted);
   }
 
-  VCMFrameBufferEnum InsertFrame(FrameType frame_type) {
+  VCMFrameBufferEnum InsertFrame(VideoFrameType frame_type) {
     stream_generator_->GenerateFrame(
-        frame_type, (frame_type != kEmptyFrame) ? 1 : 0,
-        (frame_type == kEmptyFrame) ? 1 : 0, clock_->TimeInMilliseconds());
+        frame_type, (frame_type != VideoFrameType::kEmptyFrame) ? 1 : 0,
+        (frame_type == VideoFrameType::kEmptyFrame) ? 1 : 0,
+        clock_->TimeInMilliseconds());
     VCMFrameBufferEnum ret = InsertPacketAndPop(0);
     clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
     return ret;
   }
 
-  VCMFrameBufferEnum InsertFrames(int num_frames, FrameType frame_type) {
+  VCMFrameBufferEnum InsertFrames(int num_frames, VideoFrameType frame_type) {
     VCMFrameBufferEnum ret_for_all = kNoError;
     for (int i = 0; i < num_frames; ++i) {
       VCMFrameBufferEnum ret = InsertFrame(frame_type);
@@ -394,7 +193,8 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
   }
 
   void DropFrame(int num_packets) {
-    stream_generator_->GenerateFrame(kVideoFrameDelta, num_packets, 0,
+    stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta,
+                                     num_packets, 0,
                                      clock_->TimeInMilliseconds());
     for (int i = 0; i < num_packets; ++i)
       stream_generator_->DropLastPacket();
@@ -413,17 +213,6 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
     return ret;
   }
 
-  bool DecodeIncompleteFrame() {
-    uint32_t timestamp = 0;
-    bool found_frame = jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp);
-    if (!found_frame)
-      return false;
-    VCMEncodedFrame* frame = jitter_buffer_->ExtractAndSetDecode(timestamp);
-    bool ret = (frame != NULL);
-    jitter_buffer_->ReleaseFrame(frame);
-    return ret;
-  }
-
   VCMJitterBuffer* jitter_buffer_;
   StreamGenerator* stream_generator_;
   std::unique_ptr<SimulatedClock> clock_;
@@ -435,10 +224,7 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
 class TestJitterBufferNack : public TestRunningJitterBuffer {
  protected:
   TestJitterBufferNack() {}
-  virtual void SetUp() {
-    TestRunningJitterBuffer::SetUp();
-    jitter_buffer_->SetNackMode(kNack, -1, -1);
-  }
+  virtual void SetUp() { TestRunningJitterBuffer::SetUp(); }
 
   virtual void TearDown() { TestRunningJitterBuffer::TearDown(); }
 };
@@ -446,28 +232,16 @@ class TestJitterBufferNack : public TestRunningJitterBuffer {
 TEST_F(TestBasicJitterBuffer, StopRunning) {
   jitter_buffer_->Stop();
   EXPECT_TRUE(NULL == DecodeCompleteFrame());
-  EXPECT_TRUE(NULL == DecodeIncompleteFrame());
   jitter_buffer_->Start();
-  // Allow selective errors.
-  jitter_buffer_->SetDecodeErrorMode(kSelectiveErrors);
 
   // No packets inserted.
   EXPECT_TRUE(NULL == DecodeCompleteFrame());
-  EXPECT_TRUE(NULL == DecodeIncompleteFrame());
-
-  // Allow decoding with errors.
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
-
-  // No packets inserted.
-  EXPECT_TRUE(NULL == DecodeCompleteFrame());
-  EXPECT_TRUE(NULL == DecodeIncompleteFrame());
 }
 
 TEST_F(TestBasicJitterBuffer, SinglePacketFrame) {
   // Always start with a complete key frame when not allowing errors.
-  jitter_buffer_->SetDecodeErrorMode(kNoErrors);
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->timestamp += 123 * 90;
 
@@ -477,51 +251,13 @@ TEST_F(TestBasicJitterBuffer, SinglePacketFrame) {
             jitter_buffer_->InsertPacket(*packet_, &retransmitted));
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
-}
-
-TEST_F(TestBasicJitterBuffer, VerifyHistogramStats) {
-  metrics::Reset();
-  // Always start with a complete key frame when not allowing errors.
-  jitter_buffer_->SetDecodeErrorMode(kNoErrors);
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = true;
-  packet_->timestamp += 123 * 90;
-
-  // Insert single packet frame to the jitter buffer and get a frame.
-  bool retransmitted = false;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  VCMEncodedFrame* frame_out = DecodeCompleteFrame();
-  CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // Verify that histograms are updated when the jitter buffer is stopped.
-  clock_->AdvanceTimeMilliseconds(metrics::kMinRunTimeInSeconds * 1000);
-  jitter_buffer_->Stop();
-  EXPECT_EQ(1, metrics::NumEvents("WebRTC.Video.DiscardedPacketsInPercent", 0));
-  EXPECT_EQ(1,
-            metrics::NumEvents("WebRTC.Video.DuplicatedPacketsInPercent", 0));
-  EXPECT_EQ(
-      1, metrics::NumSamples("WebRTC.Video.CompleteFramesReceivedPerSecond"));
-  EXPECT_EQ(
-      1, metrics::NumEvents("WebRTC.Video.KeyFramesReceivedInPermille", 1000));
-
-  // Verify that histograms are not updated if stop is called again.
-  jitter_buffer_->Stop();
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.DiscardedPacketsInPercent"));
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.DuplicatedPacketsInPercent"));
-  EXPECT_EQ(
-      1, metrics::NumSamples("WebRTC.Video.CompleteFramesReceivedPerSecond"));
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.KeyFramesReceivedInPermille"));
 }
 
 TEST_F(TestBasicJitterBuffer, DualPacketFrame) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
 
   bool retransmitted = false;
@@ -532,7 +268,7 @@ TEST_F(TestBasicJitterBuffer, DualPacketFrame) {
   EXPECT_TRUE(frame_out == NULL);
 
   ++seq_num_;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -542,13 +278,13 @@ TEST_F(TestBasicJitterBuffer, DualPacketFrame) {
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, 2 * size_, false);
 
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, 100PacketKeyFrame) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
 
   bool retransmitted = false;
@@ -564,7 +300,7 @@ TEST_F(TestBasicJitterBuffer, 100PacketKeyFrame) {
   int loop = 0;
   do {
     seq_num_++;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
 
@@ -575,7 +311,7 @@ TEST_F(TestBasicJitterBuffer, 100PacketKeyFrame) {
 
   // Insert last packet.
   ++seq_num_;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -585,14 +321,14 @@ TEST_F(TestBasicJitterBuffer, 100PacketKeyFrame) {
   frame_out = DecodeCompleteFrame();
 
   CheckOutFrame(frame_out, 100 * size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, 100PacketDeltaFrame) {
   // Always start with a complete key frame.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
 
   bool retransmitted = false;
@@ -605,7 +341,7 @@ TEST_F(TestBasicJitterBuffer, 100PacketDeltaFrame) {
   ++seq_num_;
   packet_->seqNum = seq_num_;
   packet_->markerBit = false;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   packet_->timestamp += 33 * 90;
 
   EXPECT_EQ(kIncomplete,
@@ -616,7 +352,7 @@ TEST_F(TestBasicJitterBuffer, 100PacketDeltaFrame) {
   // Frame should not be complete.
   EXPECT_TRUE(frame_out == NULL);
 
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   // Insert 98 frames.
   int loop = 0;
   do {
@@ -631,7 +367,7 @@ TEST_F(TestBasicJitterBuffer, 100PacketDeltaFrame) {
 
   // Insert the last packet.
   ++seq_num_;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -641,15 +377,15 @@ TEST_F(TestBasicJitterBuffer, 100PacketDeltaFrame) {
   frame_out = DecodeCompleteFrame();
 
   CheckOutFrame(frame_out, 100 * size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, PacketReorderingReverseOrder) {
   // Insert the "first" packet last.
   seq_num_ += 100;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -666,7 +402,7 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseOrder) {
   int loop = 0;
   do {
     seq_num_--;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
 
@@ -677,7 +413,7 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseOrder) {
 
   // Insert the last packet.
   seq_num_--;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
 
@@ -688,13 +424,13 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseOrder) {
 
   CheckOutFrame(frame_out, 100 * size_, false);
 
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, FrameReordering2Frames2PacketsEach) {
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
 
   bool retransmitted = false;
@@ -706,7 +442,7 @@ TEST_F(TestBasicJitterBuffer, FrameReordering2Frames2PacketsEach) {
   EXPECT_TRUE(frame_out == NULL);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -719,8 +455,8 @@ TEST_F(TestBasicJitterBuffer, FrameReordering2Frames2PacketsEach) {
 
   seq_num_ -= 3;
   timestamp_ -= 33 * 90;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -734,7 +470,7 @@ TEST_F(TestBasicJitterBuffer, FrameReordering2Frames2PacketsEach) {
   EXPECT_TRUE(frame_out == NULL);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -743,18 +479,19 @@ TEST_F(TestBasicJitterBuffer, FrameReordering2Frames2PacketsEach) {
 
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, 2 * size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, 2 * size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, TestReorderingWithPadding) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  jitter_buffer_->SetNackSettings(kMaxNumberOfFrames, kMaxNumberOfFrames, 0);
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
 
   // Send in an initial good packet/frame (Frame A) to start things off.
@@ -767,7 +504,7 @@ TEST_F(TestBasicJitterBuffer, TestReorderingWithPadding) {
 
   // Now send in a complete delta frame (Frame C), but with a sequence number
   // gap. No pic index either, so no temporal scalability cheating :)
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   // Leave a gap of 2 sequence numbers and two frames.
   packet_->seqNum = seq_num_ + 3;
   packet_->timestamp = timestamp_ + (66 * 90);
@@ -796,13 +533,15 @@ TEST_F(TestBasicJitterBuffer, TestReorderingWithPadding) {
 
   // Add in the padding. These are empty packets (data length is 0) with no
   // marker bit and matching the timestamp of Frame B.
-  WebRtcRTPHeader rtpHeader;
-  memset(&rtpHeader, 0, sizeof(rtpHeader));
-  rtpHeader.header.sequenceNumber = seq_num_ + 2;
-  rtpHeader.header.timestamp = timestamp_ + (33 * 90);
-  rtpHeader.header.markerBit = false;
-  rtpHeader.video_header().codec = kVideoCodecGeneric;
-  VCMPacket empty_packet(data_, 0, rtpHeader);
+  RTPHeader rtp_header;
+  RTPVideoHeader video_header;
+  rtp_header.sequenceNumber = seq_num_ + 2;
+  rtp_header.timestamp = timestamp_ + (33 * 90);
+  rtp_header.markerBit = false;
+  video_header.codec = kVideoCodecGeneric;
+  video_header.frame_type = VideoFrameType::kEmptyFrame;
+  VCMPacket empty_packet(data_, 0, rtp_header, video_header,
+                         /*ntp_time_ms=*/0, clock_->TimeInMilliseconds());
   EXPECT_EQ(kOldPacket,
             jitter_buffer_->InsertPacket(empty_packet, &retransmitted));
   empty_packet.seqNum += 1;
@@ -816,8 +555,8 @@ TEST_F(TestBasicJitterBuffer, TestReorderingWithPadding) {
 }
 
 TEST_F(TestBasicJitterBuffer, DuplicatePackets) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -843,7 +582,7 @@ TEST_F(TestBasicJitterBuffer, DuplicatePackets) {
   seq_num_++;
   packet_->seqNum = seq_num_;
   packet_->markerBit = true;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
 
   EXPECT_EQ(kCompleteSession,
             jitter_buffer_->InsertPacket(*packet_, &retransmitted));
@@ -852,19 +591,18 @@ TEST_F(TestBasicJitterBuffer, DuplicatePackets) {
   ASSERT_TRUE(frame_out != NULL);
   CheckOutFrame(frame_out, 2 * size_, false);
 
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   EXPECT_EQ(3, jitter_buffer_->num_packets());
   EXPECT_EQ(1, jitter_buffer_->num_duplicated_packets());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, DuplicatePreviousDeltaFramePacket) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
-  jitter_buffer_->SetDecodeErrorMode(kNoErrors);
   EXPECT_EQ(0, jitter_buffer_->num_packets());
   EXPECT_EQ(0, jitter_buffer_->num_duplicated_packets());
 
@@ -876,14 +614,14 @@ TEST_F(TestBasicJitterBuffer, DuplicatePreviousDeltaFramePacket) {
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   ASSERT_TRUE(frame_out != NULL);
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   // Insert 3 delta frames.
   for (uint16_t i = 1; i <= 3; ++i) {
     packet_->seqNum = seq_num_ + i;
     packet_->timestamp = timestamp_ + (i * 33) * 90;
-    packet_->frameType = kVideoFrameDelta;
+    packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
     EXPECT_EQ(kCompleteSession,
               jitter_buffer_->InsertPacket(*packet_, &retransmitted));
     EXPECT_EQ(i + 1, jitter_buffer_->num_packets());
@@ -905,7 +643,7 @@ TEST_F(TestBasicJitterBuffer, DuplicatePreviousDeltaFramePacket) {
     frame_out = DecodeCompleteFrame();
     ASSERT_TRUE(frame_out != NULL);
     CheckOutFrame(frame_out, size_, false);
-    EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+    EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
     jitter_buffer_->ReleaseFrame(frame_out);
   }
 }
@@ -920,13 +658,13 @@ TEST_F(TestBasicJitterBuffer, TestSkipForwardVp9) {
   //  -------------------------------------------------
   // |<----------tl0idx:200--------->|<---tl0idx:201---
 
+  jitter_buffer_->SetNackSettings(kMaxNumberOfFrames, kMaxNumberOfFrames, 0);
   auto& vp9_header =
       packet_->video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
 
   bool re = false;
-  packet_->codec = kVideoCodecVP9;
   packet_->video_header.codec = kVideoCodecVP9;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   vp9_header.flexible_mode = false;
   vp9_header.spatial_idx = 0;
@@ -936,7 +674,7 @@ TEST_F(TestBasicJitterBuffer, TestSkipForwardVp9) {
 
   packet_->seqNum = 65485;
   packet_->timestamp = 1000;
-  packet_->frameType = kVideoFrameKey;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
   vp9_header.picture_id = 5;
   vp9_header.tl0_pic_idx = 200;
   vp9_header.temporal_idx = 0;
@@ -948,7 +686,7 @@ TEST_F(TestBasicJitterBuffer, TestSkipForwardVp9) {
   // Insert next temporal layer 0.
   packet_->seqNum = 65489;
   packet_->timestamp = 13000;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   vp9_header.picture_id = 9;
   vp9_header.tl0_pic_idx = 201;
   vp9_header.temporal_idx = 0;
@@ -957,12 +695,12 @@ TEST_F(TestBasicJitterBuffer, TestSkipForwardVp9) {
 
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(1000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   frame_out = DecodeCompleteFrame();
   EXPECT_EQ(13000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
@@ -980,9 +718,8 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
       packet_->video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
 
   bool re = false;
-  packet_->codec = kVideoCodecVP9;
   packet_->video_header.codec = kVideoCodecVP9;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   vp9_header.flexible_mode = false;
   vp9_header.spatial_idx = 0;
@@ -992,7 +729,7 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
 
   packet_->seqNum = 65486;
   packet_->timestamp = 6000;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   vp9_header.picture_id = 6;
   vp9_header.temporal_idx = 2;
   vp9_header.temporal_up_switch = true;
@@ -1000,7 +737,7 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
 
   packet_->seqNum = 65487;
   packet_->timestamp = 9000;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   vp9_header.picture_id = 7;
   vp9_header.temporal_idx = 1;
   vp9_header.temporal_up_switch = true;
@@ -1009,9 +746,9 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
   // Insert first frame with SS data.
   packet_->seqNum = 65485;
   packet_->timestamp = 3000;
-  packet_->frameType = kVideoFrameKey;
-  packet_->width = 352;
-  packet_->height = 288;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.width = 352;
+  packet_->video_header.height = 288;
   vp9_header.picture_id = 5;
   vp9_header.temporal_idx = 0;
   vp9_header.temporal_up_switch = false;
@@ -1022,7 +759,7 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
 
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(3000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   EXPECT_EQ(0, frame_out->CodecSpecific()->codecSpecific.VP9.temporal_idx);
   EXPECT_FALSE(
       frame_out->CodecSpecific()->codecSpecific.VP9.temporal_up_switch);
@@ -1030,14 +767,14 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_3TlLayers) {
 
   frame_out = DecodeCompleteFrame();
   EXPECT_EQ(6000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   EXPECT_EQ(2, frame_out->CodecSpecific()->codecSpecific.VP9.temporal_idx);
   EXPECT_TRUE(frame_out->CodecSpecific()->codecSpecific.VP9.temporal_up_switch);
   jitter_buffer_->ReleaseFrame(frame_out);
 
   frame_out = DecodeCompleteFrame();
   EXPECT_EQ(9000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   EXPECT_EQ(1, frame_out->CodecSpecific()->codecSpecific.VP9.temporal_idx);
   EXPECT_TRUE(frame_out->CodecSpecific()->codecSpecific.VP9.temporal_up_switch);
   jitter_buffer_->ReleaseFrame(frame_out);
@@ -1059,39 +796,38 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_2Tl2SLayers) {
       packet_->video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
 
   bool re = false;
-  packet_->codec = kVideoCodecVP9;
   packet_->video_header.codec = kVideoCodecVP9;
   vp9_header.flexible_mode = false;
   vp9_header.beginning_of_frame = true;
   vp9_header.end_of_frame = true;
   vp9_header.tl0_pic_idx = 200;
 
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = 65486;
   packet_->timestamp = 6000;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   vp9_header.spatial_idx = 0;
   vp9_header.picture_id = 6;
   vp9_header.temporal_idx = 1;
   vp9_header.temporal_up_switch = true;
   EXPECT_EQ(kIncomplete, jitter_buffer_->InsertPacket(*packet_, &re));
 
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = 65487;
-  packet_->frameType = kVideoFrameDelta;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   vp9_header.spatial_idx = 1;
   vp9_header.picture_id = 6;
   vp9_header.temporal_idx = 1;
   vp9_header.temporal_up_switch = true;
   EXPECT_EQ(kCompleteSession, jitter_buffer_->InsertPacket(*packet_, &re));
 
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = 65485;
   packet_->timestamp = 3000;
-  packet_->frameType = kVideoFrameKey;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
   vp9_header.spatial_idx = 1;
   vp9_header.picture_id = 5;
   vp9_header.temporal_idx = 0;
@@ -1099,12 +835,12 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_2Tl2SLayers) {
   EXPECT_EQ(kIncomplete, jitter_buffer_->InsertPacket(*packet_, &re));
 
   // Insert first frame with SS data.
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = 65484;
-  packet_->frameType = kVideoFrameKey;
-  packet_->width = 352;
-  packet_->height = 288;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.width = 352;
+  packet_->video_header.height = 288;
   vp9_header.spatial_idx = 0;
   vp9_header.picture_id = 5;
   vp9_header.temporal_idx = 0;
@@ -1116,7 +852,7 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_2Tl2SLayers) {
 
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(3000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   EXPECT_EQ(0, frame_out->CodecSpecific()->codecSpecific.VP9.temporal_idx);
   EXPECT_FALSE(
       frame_out->CodecSpecific()->codecSpecific.VP9.temporal_up_switch);
@@ -1124,15 +860,15 @@ TEST_F(TestBasicJitterBuffer, ReorderedVp9SsData_2Tl2SLayers) {
 
   frame_out = DecodeCompleteFrame();
   EXPECT_EQ(6000U, frame_out->Timestamp());
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   EXPECT_EQ(1, frame_out->CodecSpecific()->codecSpecific.VP9.temporal_idx);
   EXPECT_TRUE(frame_out->CodecSpecific()->codecSpecific.VP9.temporal_up_switch);
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, H264InsertStartCode) {
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1148,7 +884,7 @@ TEST_F(TestBasicJitterBuffer, H264InsertStartCode) {
   EXPECT_TRUE(frame_out == NULL);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1157,20 +893,17 @@ TEST_F(TestBasicJitterBuffer, H264InsertStartCode) {
 
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, size_ * 2 + 4 * 2, true);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, SpsAndPpsHandling) {
-  jitter_buffer_->SetDecodeErrorMode(kNoErrors);
-
   auto& h264_header =
       packet_->video_header.video_type_header.emplace<RTPVideoHeaderH264>();
   packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
-  packet_->codec = kVideoCodecH264;
   packet_->video_header.codec = kVideoCodecH264;
   h264_header.nalu_type = H264::NaluType::kIdr;
   h264_header.nalus[0].type = H264::NaluType::kIdr;
@@ -1187,10 +920,9 @@ TEST_F(TestBasicJitterBuffer, SpsAndPpsHandling) {
   packet_->timestamp = timestamp_;
   ++seq_num_;
   packet_->seqNum = seq_num_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
-  packet_->codec = kVideoCodecH264;
   packet_->video_header.codec = kVideoCodecH264;
   h264_header.nalu_type = H264::NaluType::kStapA;
   h264_header.nalus[0].type = H264::NaluType::kSps;
@@ -1206,10 +938,9 @@ TEST_F(TestBasicJitterBuffer, SpsAndPpsHandling) {
 
   ++seq_num_;
   packet_->seqNum = seq_num_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
-  packet_->codec = kVideoCodecH264;
   packet_->video_header.codec = kVideoCodecH264;
   h264_header.nalu_type = H264::NaluType::kIdr;
   h264_header.nalus[0].type = H264::NaluType::kIdr;
@@ -1228,10 +959,9 @@ TEST_F(TestBasicJitterBuffer, SpsAndPpsHandling) {
   packet_->timestamp = timestamp_;
   ++seq_num_;
   packet_->seqNum = seq_num_;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
-  packet_->codec = kVideoCodecH264;
   packet_->video_header.codec = kVideoCodecH264;
   h264_header.nalu_type = H264::NaluType::kSlice;
   h264_header.nalus[0].type = H264::NaluType::kSlice;
@@ -1246,368 +976,10 @@ TEST_F(TestBasicJitterBuffer, SpsAndPpsHandling) {
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
-// Test threshold conditions of decodable state.
-TEST_F(TestBasicJitterBuffer, PacketLossWithSelectiveErrorsThresholdCheck) {
-  jitter_buffer_->SetDecodeErrorMode(kSelectiveErrors);
-  // Always start with a key frame. Use 10 packets to test Decodable State
-  // boundaries.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = false;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-
-  bool retransmitted = false;
-  EXPECT_EQ(kIncomplete,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  uint32_t timestamp = 0;
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  packet_->is_first_packet_in_frame = false;
-  for (int i = 1; i < 9; ++i) {
-    packet_->seqNum++;
-    EXPECT_EQ(kIncomplete,
-              jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-    EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-    EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-  }
-
-  // last packet
-  packet_->markerBit = true;
-  packet_->seqNum++;
-
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  VCMEncodedFrame* frame_out = DecodeCompleteFrame();
-  CheckOutFrame(frame_out, 10 * size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // An incomplete frame can only be decoded once a subsequent frame has begun
-  // to arrive. Insert packet in distant frame for this purpose.
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = false;
-  packet_->seqNum += 100;
-  packet_->timestamp += 33 * 90 * 8;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  // Insert second frame
-  packet_->seqNum -= 99;
-  packet_->timestamp -= 33 * 90 * 7;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_TRUE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  packet_->is_first_packet_in_frame = false;
-  for (int i = 1; i < 8; ++i) {
-    packet_->seqNum++;
-    EXPECT_EQ(kDecodableSession,
-              jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-    EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-    EXPECT_TRUE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-  }
-
-  packet_->seqNum++;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_TRUE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  frame_out = DecodeIncompleteFrame();
-  ASSERT_FALSE(NULL == frame_out);
-  CheckOutFrame(frame_out, 9 * size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  packet_->markerBit = true;
-  packet_->seqNum++;
-  EXPECT_EQ(kOldPacket, jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-}
-
-// Make sure first packet is present before a frame can be decoded.
-TEST_F(TestBasicJitterBuffer, PacketLossWithSelectiveErrorsIncompleteKey) {
-  jitter_buffer_->SetDecodeErrorMode(kSelectiveErrors);
-  // Always start with a key frame.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = true;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-
-  bool retransmitted = false;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  VCMEncodedFrame* frame_out = DecodeCompleteFrame();
-  CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // An incomplete frame can only be decoded once a subsequent frame has begun
-  // to arrive. Insert packet in distant frame for this purpose.
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = false;
-  packet_->markerBit = false;
-  packet_->seqNum += 100;
-  packet_->timestamp += 33 * 90 * 8;
-  EXPECT_EQ(kIncomplete,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  uint32_t timestamp;
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  // Insert second frame - an incomplete key frame.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->seqNum -= 99;
-  packet_->timestamp -= 33 * 90 * 7;
-
-  EXPECT_EQ(kIncomplete,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  // Insert a few more packets. Make sure we're waiting for the key frame to be
-  // complete.
-  packet_->is_first_packet_in_frame = false;
-  for (int i = 1; i < 5; ++i) {
-    packet_->seqNum++;
-    EXPECT_EQ(kIncomplete,
-              jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-    EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-    EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-  }
-
-  // Complete key frame.
-  packet_->markerBit = true;
-  packet_->seqNum++;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  frame_out = DecodeCompleteFrame();
-  CheckOutFrame(frame_out, 6 * size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-}
-
-// Make sure first packet is present before a frame can be decoded.
-TEST_F(TestBasicJitterBuffer, PacketLossWithSelectiveErrorsMissingFirstPacket) {
-  jitter_buffer_->SetDecodeErrorMode(kSelectiveErrors);
-  // Always start with a key frame.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = true;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-
-  bool retransmitted = false;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  VCMEncodedFrame* frame_out = DecodeCompleteFrame();
-  CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // An incomplete frame can only be decoded once a subsequent frame has begun
-  // to arrive. Insert packet in distant frame for this purpose.
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = false;
-  packet_->markerBit = false;
-  packet_->seqNum += 100;
-  packet_->timestamp += 33 * 90 * 8;
-  EXPECT_EQ(kIncomplete,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  uint32_t timestamp;
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  // Insert second frame with the first packet missing. Make sure we're waiting
-  // for the key frame to be complete.
-  packet_->seqNum -= 98;
-  packet_->timestamp -= 33 * 90 * 7;
-
-  EXPECT_EQ(kIncomplete,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  for (int i = 0; i < 5; ++i) {
-    packet_->seqNum++;
-    EXPECT_EQ(kIncomplete,
-              jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-    EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-    EXPECT_FALSE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-  }
-
-  // Add first packet. Frame should now be decodable, but incomplete.
-  packet_->is_first_packet_in_frame = true;
-  packet_->seqNum -= 6;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_TRUE(jitter_buffer_->NextMaybeIncompleteTimestamp(&timestamp));
-
-  frame_out = DecodeIncompleteFrame();
-  CheckOutFrame(frame_out, 7 * size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
-  jitter_buffer_->ReleaseFrame(frame_out);
-}
-
-TEST_F(TestBasicJitterBuffer, DiscontinuousStreamWhenDecodingWithErrors) {
-  // Will use one packet per frame.
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = true;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  bool retransmitted = false;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  uint32_t next_timestamp;
-  VCMEncodedFrame* frame = jitter_buffer_->NextCompleteFrame(0);
-  EXPECT_NE(frame, nullptr);
-  EXPECT_EQ(packet_->timestamp, frame->Timestamp());
-  frame = jitter_buffer_->ExtractAndSetDecode(frame->Timestamp());
-  EXPECT_TRUE(frame != NULL);
-  jitter_buffer_->ReleaseFrame(frame);
-
-  // Drop a complete frame.
-  timestamp_ += 2 * 33 * 90;
-  seq_num_ += 2;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = false;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  // Insert a packet (so the previous one will be released).
-  timestamp_ += 33 * 90;
-  seq_num_ += 2;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = false;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  EXPECT_EQ(jitter_buffer_->NextCompleteFrame(0), nullptr);
-  EXPECT_TRUE(jitter_buffer_->NextMaybeIncompleteTimestamp(&next_timestamp));
-  EXPECT_EQ(packet_->timestamp - 33 * 90, next_timestamp);
-}
-
-TEST_F(TestBasicJitterBuffer, PacketLoss) {
-  // Verify missing packets statistics and not decodable packets statistics.
-  // Insert 10 frames consisting of 4 packets and remove one from all of them.
-  // The last packet is an empty (non-media) packet.
-
-  // Select a start seqNum which triggers a difficult wrap situation
-  // The JB will only output (incomplete)frames if the next one has started
-  // to arrive. Start by inserting one frame (key).
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
-  seq_num_ = 0xffff - 4;
-  seq_num_++;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->markerBit = false;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->completeNALU = kNaluStart;
-
-  bool retransmitted = false;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  for (int i = 0; i < 11; ++i) {
-    webrtc::FrameType frametype = kVideoFrameDelta;
-    seq_num_++;
-    timestamp_ += 33 * 90;
-    packet_->frameType = frametype;
-    packet_->is_first_packet_in_frame = true;
-    packet_->markerBit = false;
-    packet_->seqNum = seq_num_;
-    packet_->timestamp = timestamp_;
-    packet_->completeNALU = kNaluStart;
-
-    EXPECT_EQ(kDecodableSession,
-              jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-    VCMEncodedFrame* frame_out = DecodeCompleteFrame();
-
-    // Should not be complete.
-    EXPECT_TRUE(frame_out == NULL);
-
-    seq_num_ += 2;
-    packet_->is_first_packet_in_frame = false;
-    packet_->markerBit = true;
-    packet_->seqNum = seq_num_;
-    packet_->completeNALU = kNaluEnd;
-
-    EXPECT_EQ(jitter_buffer_->InsertPacket(*packet_, &retransmitted),
-              kDecodableSession);
-
-    // Insert an empty (non-media) packet.
-    seq_num_++;
-    packet_->is_first_packet_in_frame = false;
-    packet_->markerBit = false;
-    packet_->seqNum = seq_num_;
-    packet_->completeNALU = kNaluEnd;
-    packet_->frameType = kEmptyFrame;
-
-    EXPECT_EQ(jitter_buffer_->InsertPacket(*packet_, &retransmitted),
-              kDecodableSession);
-    frame_out = DecodeIncompleteFrame();
-
-    // One of the packets has been discarded by the jitter buffer.
-    // Last frame can't be extracted yet.
-    if (i < 10) {
-      CheckOutFrame(frame_out, size_, false);
-
-      if (i == 0) {
-        EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
-      } else {
-        EXPECT_EQ(frametype, frame_out->FrameType());
-      }
-      EXPECT_FALSE(frame_out->Complete());
-      EXPECT_FALSE(frame_out->MissingFrame());
-    }
-
-    jitter_buffer_->ReleaseFrame(frame_out);
-  }
-
-  // Insert 3 old packets and verify that we have 3 discarded packets
-  // Match value to actual latest timestamp decoded.
-  timestamp_ -= 33 * 90;
-  packet_->timestamp = timestamp_ - 1000;
-
-  EXPECT_EQ(kOldPacket, jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  packet_->timestamp = timestamp_ - 500;
-
-  EXPECT_EQ(kOldPacket, jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  packet_->timestamp = timestamp_ - 100;
-
-  EXPECT_EQ(kOldPacket, jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  EXPECT_EQ(3, jitter_buffer_->num_discarded_packets());
-
-  jitter_buffer_->Flush();
-
-  // This statistic shouldn't be reset by a flush.
-  EXPECT_EQ(3, jitter_buffer_->num_discarded_packets());
-}
-
 TEST_F(TestBasicJitterBuffer, DeltaFrame100PacketsWithSeqNumWrap) {
   seq_num_ = 0xfff0;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1623,7 +995,7 @@ TEST_F(TestBasicJitterBuffer, DeltaFrame100PacketsWithSeqNumWrap) {
   int loop = 0;
   do {
     seq_num_++;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
 
@@ -1638,7 +1010,7 @@ TEST_F(TestBasicJitterBuffer, DeltaFrame100PacketsWithSeqNumWrap) {
   } while (loop < 98);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1649,15 +1021,15 @@ TEST_F(TestBasicJitterBuffer, DeltaFrame100PacketsWithSeqNumWrap) {
 
   CheckOutFrame(frame_out, 100 * size_, false);
 
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, PacketReorderingReverseWithNegSeqNumWrap) {
   // Insert "first" packet last seqnum.
   seq_num_ = 10;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1673,7 +1045,7 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseWithNegSeqNumWrap) {
   int loop = 0;
   do {
     seq_num_--;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
 
@@ -1689,7 +1061,7 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseWithNegSeqNumWrap) {
 
   // Insert last packet.
   seq_num_--;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
 
@@ -1698,7 +1070,7 @@ TEST_F(TestBasicJitterBuffer, PacketReorderingReverseWithNegSeqNumWrap) {
 
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, 100 * size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
@@ -1709,8 +1081,8 @@ TEST_F(TestBasicJitterBuffer, TestInsertOldFrame) {
   //  t = 3000     t = 2000
   seq_num_ = 2;
   timestamp_ = 3000;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->timestamp = timestamp_;
   packet_->seqNum = seq_num_;
@@ -1722,13 +1094,13 @@ TEST_F(TestBasicJitterBuffer, TestInsertOldFrame) {
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(3000u, frame_out->Timestamp());
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   seq_num_--;
   timestamp_ = 2000;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1744,8 +1116,8 @@ TEST_F(TestBasicJitterBuffer, TestInsertOldFrameWithSeqNumWrap) {
 
   seq_num_ = 2;
   timestamp_ = 3000;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1759,14 +1131,14 @@ TEST_F(TestBasicJitterBuffer, TestInsertOldFrameWithSeqNumWrap) {
 
   CheckOutFrame(frame_out, size_, false);
 
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
 
   jitter_buffer_->ReleaseFrame(frame_out);
 
   seq_num_--;
   timestamp_ = 0xffffff00;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1782,8 +1154,8 @@ TEST_F(TestBasicJitterBuffer, TimestampWrap) {
   //  t = 0xffffff00        t = 33*90
 
   timestamp_ = 0xffffff00;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1796,7 +1168,7 @@ TEST_F(TestBasicJitterBuffer, TimestampWrap) {
   EXPECT_TRUE(frame_out == NULL);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1809,8 +1181,8 @@ TEST_F(TestBasicJitterBuffer, TimestampWrap) {
 
   seq_num_++;
   timestamp_ += 33 * 90;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = false;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1822,7 +1194,7 @@ TEST_F(TestBasicJitterBuffer, TimestampWrap) {
   EXPECT_TRUE(frame_out == NULL);
 
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1831,7 +1203,7 @@ TEST_F(TestBasicJitterBuffer, TimestampWrap) {
 
   frame_out = DecodeCompleteFrame();
   CheckOutFrame(frame_out, 2 * size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
@@ -1842,8 +1214,8 @@ TEST_F(TestBasicJitterBuffer, 2FrameWithTimestampWrap) {
   // t = 0xffffff00    t = 2700
 
   timestamp_ = 0xffffff00;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->timestamp = timestamp_;
 
@@ -1855,8 +1227,8 @@ TEST_F(TestBasicJitterBuffer, 2FrameWithTimestampWrap) {
   // Insert next frame.
   seq_num_++;
   timestamp_ = 2700;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1867,13 +1239,13 @@ TEST_F(TestBasicJitterBuffer, 2FrameWithTimestampWrap) {
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(0xffffff00, frame_out->Timestamp());
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   VCMEncodedFrame* frame_out2 = DecodeCompleteFrame();
   EXPECT_EQ(2700u, frame_out2->Timestamp());
   CheckOutFrame(frame_out2, size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out2->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out2->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out2);
 }
 
@@ -1885,8 +1257,8 @@ TEST_F(TestBasicJitterBuffer, Insert2FramesReOrderedWithTimestampWrap) {
 
   seq_num_ = 2;
   timestamp_ = 2700;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1898,8 +1270,8 @@ TEST_F(TestBasicJitterBuffer, Insert2FramesReOrderedWithTimestampWrap) {
   // Insert second frame
   seq_num_--;
   timestamp_ = 0xffffff00;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -1910,13 +1282,13 @@ TEST_F(TestBasicJitterBuffer, Insert2FramesReOrderedWithTimestampWrap) {
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(0xffffff00, frame_out->Timestamp());
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 
   VCMEncodedFrame* frame_out2 = DecodeCompleteFrame();
   EXPECT_EQ(2700u, frame_out2->Timestamp());
   CheckOutFrame(frame_out2, size_, false);
-  EXPECT_EQ(kVideoFrameDelta, frame_out2->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, frame_out2->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out2);
 }
 
@@ -1927,7 +1299,7 @@ TEST_F(TestBasicJitterBuffer, DeltaFrameWithMoreThanMaxNumberOfPackets) {
   // Insert kMaxPacketsInJitterBuffer into frame.
   do {
     seq_num_++;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
 
@@ -1946,7 +1318,7 @@ TEST_F(TestBasicJitterBuffer, DeltaFrameWithMoreThanMaxNumberOfPackets) {
   // Max number of packets inserted.
   // Insert one more packet.
   seq_num_++;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
 
@@ -1966,7 +1338,6 @@ TEST_F(TestBasicJitterBuffer, ExceedNumOfFrameWithSeqNumWrap) {
 
   // Make sure the jitter doesn't request a keyframe after too much non-
   // decodable frames.
-  jitter_buffer_->SetNackMode(kNack, -1, -1);
   jitter_buffer_->SetNackSettings(kMaxNumberOfFrames, kMaxNumberOfFrames, 0);
 
   int loop = 0;
@@ -1977,14 +1348,14 @@ TEST_F(TestBasicJitterBuffer, ExceedNumOfFrameWithSeqNumWrap) {
   do {
     timestamp_ += 33 * 90;
     seq_num_++;
-    packet_->is_first_packet_in_frame = true;
+    packet_->video_header.is_first_packet_in_frame = true;
     packet_->markerBit = true;
     packet_->seqNum = seq_num_;
     packet_->timestamp = timestamp_;
 
     if (loop == 50) {
       first_key_frame_timestamp = packet_->timestamp;
-      packet_->frameType = kVideoFrameKey;
+      packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
     }
 
     // Insert frame.
@@ -1999,7 +1370,7 @@ TEST_F(TestBasicJitterBuffer, ExceedNumOfFrameWithSeqNumWrap) {
   // Insert one more frame.
   timestamp_ += 33 * 90;
   seq_num_++;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   packet_->seqNum = seq_num_;
   packet_->timestamp = timestamp_;
@@ -2011,12 +1382,11 @@ TEST_F(TestBasicJitterBuffer, ExceedNumOfFrameWithSeqNumWrap) {
   VCMEncodedFrame* frame_out = DecodeCompleteFrame();
   EXPECT_EQ(first_key_frame_timestamp, frame_out->Timestamp());
   CheckOutFrame(frame_out, size_, false);
-  EXPECT_EQ(kVideoFrameKey, frame_out->FrameType());
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, frame_out->FrameType());
   jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, EmptyLastFrame) {
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
   seq_num_ = 3;
   // Insert one empty packet per frame, should never return the last timestamp
   // inserted. Only return empty frames in the presence of subsequent frames.
@@ -2025,214 +1395,24 @@ TEST_F(TestBasicJitterBuffer, EmptyLastFrame) {
   for (int i = 0; i < maxSize + 10; i++) {
     timestamp_ += 33 * 90;
     seq_num_++;
-    packet_->is_first_packet_in_frame = false;
+    packet_->video_header.is_first_packet_in_frame = false;
     packet_->markerBit = false;
     packet_->seqNum = seq_num_;
     packet_->timestamp = timestamp_;
-    packet_->frameType = kEmptyFrame;
+    packet_->video_header.frame_type = VideoFrameType::kEmptyFrame;
 
     EXPECT_EQ(kNoError, jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-    VCMEncodedFrame* testFrame = DecodeIncompleteFrame();
-    // Timestamp should never be the last TS inserted.
-    if (testFrame != NULL) {
-      EXPECT_TRUE(testFrame->Timestamp() < timestamp_);
-      jitter_buffer_->ReleaseFrame(testFrame);
-    }
   }
-}
-
-TEST_F(TestBasicJitterBuffer, H264IncompleteNalu) {
-  jitter_buffer_->SetNackMode(kNoNack, -1, -1);
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
-  ++seq_num_;
-  timestamp_ += 33 * 90;
-  int insertedLength = 0;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->completeNALU = kNaluStart;
-  packet_->markerBit = false;
-  bool retransmitted = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  seq_num_ += 2;  // Skip one packet.
-  packet_->seqNum = seq_num_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluIncomplete;
-  packet_->markerBit = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  seq_num_++;
-  packet_->seqNum = seq_num_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluEnd;
-  packet_->markerBit = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  seq_num_++;
-  packet_->seqNum = seq_num_;
-  packet_->completeNALU = kNaluComplete;
-  packet_->markerBit = true;  // Last packet.
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  // The JB will only output (incomplete) frames if a packet belonging to a
-  // subsequent frame was already inserted. Insert one packet of a subsequent
-  // frame. place high timestamp so the JB would always have a next frame
-  // (otherwise, for every inserted frame we need to take care of the next
-  // frame as well).
-  packet_->seqNum = 1;
-  packet_->timestamp = timestamp_ + 33 * 90 * 10;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluStart;
-  packet_->markerBit = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  VCMEncodedFrame* frame_out = DecodeIncompleteFrame();
-
-  // We can decode everything from a NALU until a packet has been lost.
-  // Thus we can decode the first packet of the first NALU and the second NALU
-  // which consists of one packet.
-  CheckOutFrame(frame_out, packet_->sizeBytes * 2, false);
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // Test reordered start frame + 1 lost.
-  seq_num_ += 2;  // Re-order 1 frame.
-  timestamp_ += 33 * 90;
-  insertedLength = 0;
-
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluEnd;
-  packet_->markerBit = false;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  insertedLength += packet_->sizeBytes;  // This packet should be decoded.
-  seq_num_--;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->completeNALU = kNaluStart;
-  packet_->markerBit = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  insertedLength += packet_->sizeBytes;  // This packet should be decoded.
-
-  seq_num_ += 3;  // One packet drop.
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluComplete;
-  packet_->markerBit = false;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  insertedLength += packet_->sizeBytes;  // This packet should be decoded.
-  seq_num_++;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluStart;
-  packet_->markerBit = false;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  // This packet should be decoded since it's the beginning of a NAL.
-  insertedLength += packet_->sizeBytes;
-
-  seq_num_ += 2;
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = false;
-  packet_->completeNALU = kNaluEnd;
-  packet_->markerBit = true;
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-  // This packet should not be decoded because it is an incomplete NAL if it
-  // is the last.
-  frame_out = DecodeIncompleteFrame();
-  // Only last NALU is complete.
-  CheckOutFrame(frame_out, insertedLength, false);
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // Test to insert empty packet.
-  seq_num_++;
-  timestamp_ += 33 * 90;
-  WebRtcRTPHeader rtpHeader;
-  memset(&rtpHeader, 0, sizeof(rtpHeader));
-  rtpHeader.video_header().codec = kVideoCodecGeneric;
-  VCMPacket emptypacket(data_, 0, rtpHeader);
-  emptypacket.seqNum = seq_num_;
-  emptypacket.timestamp = timestamp_;
-  emptypacket.frameType = kVideoFrameKey;
-  emptypacket.is_first_packet_in_frame = true;
-  emptypacket.completeNALU = kNaluComplete;
-  emptypacket.markerBit = true;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(emptypacket, &retransmitted));
-  // This packet should not be decoded because it is an incomplete NAL if it
-  // is the last.
-
-  // Will be sent to the decoder, as a packet belonging to a subsequent frame
-  // has arrived.
-  frame_out = DecodeIncompleteFrame();
-  EXPECT_TRUE(frame_out != NULL);
-  jitter_buffer_->ReleaseFrame(frame_out);
-
-  // Test that a frame can include an empty packet.
-  seq_num_++;
-  timestamp_ += 33 * 90;
-
-  packet_->seqNum = seq_num_;
-  packet_->timestamp = timestamp_;
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
-  packet_->completeNALU = kNaluComplete;
-  packet_->markerBit = false;
-
-  EXPECT_EQ(kDecodableSession,
-            jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  seq_num_++;
-  emptypacket.seqNum = seq_num_;
-  emptypacket.timestamp = timestamp_;
-  emptypacket.frameType = kVideoFrameKey;
-  emptypacket.is_first_packet_in_frame = true;
-  emptypacket.completeNALU = kNaluComplete;
-  emptypacket.markerBit = true;
-  EXPECT_EQ(kCompleteSession,
-            jitter_buffer_->InsertPacket(emptypacket, &retransmitted));
-
-  frame_out = DecodeCompleteFrame();
-  // Only last NALU is complete
-  CheckOutFrame(frame_out, packet_->sizeBytes, false);
-  jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestBasicJitterBuffer, NextFrameWhenIncomplete) {
   // Test that a we cannot get incomplete frames from the JB if we haven't
   // received the marker bit, unless we have received a packet from a later
   // timestamp.
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
   // Start with a complete key frame - insert and decode.
-  packet_->frameType = kVideoFrameKey;
-  packet_->is_first_packet_in_frame = true;
+  jitter_buffer_->SetNackSettings(kMaxNumberOfFrames, kMaxNumberOfFrames, 0);
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  packet_->video_header.is_first_packet_in_frame = true;
   packet_->markerBit = true;
   bool retransmitted = false;
 
@@ -2244,51 +1424,44 @@ TEST_F(TestBasicJitterBuffer, NextFrameWhenIncomplete) {
 
   packet_->seqNum += 2;
   packet_->timestamp += 33 * 90;
-  packet_->frameType = kVideoFrameDelta;
-  packet_->is_first_packet_in_frame = false;
+  packet_->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+  packet_->video_header.is_first_packet_in_frame = false;
   packet_->markerBit = false;
 
-  EXPECT_EQ(kDecodableSession,
+  EXPECT_EQ(kIncomplete,
             jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  frame_out = DecodeIncompleteFrame();
-  EXPECT_TRUE(frame_out == NULL);
 
   packet_->seqNum += 2;
   packet_->timestamp += 33 * 90;
-  packet_->is_first_packet_in_frame = true;
+  packet_->video_header.is_first_packet_in_frame = true;
 
-  EXPECT_EQ(kDecodableSession,
+  EXPECT_EQ(kIncomplete,
             jitter_buffer_->InsertPacket(*packet_, &retransmitted));
-
-  frame_out = DecodeIncompleteFrame();
-  CheckOutFrame(frame_out, packet_->sizeBytes, false);
-  jitter_buffer_->ReleaseFrame(frame_out);
 }
 
 TEST_F(TestRunningJitterBuffer, Full) {
   // Make sure the jitter doesn't request a keyframe after too much non-
   // decodable frames.
-  jitter_buffer_->SetNackMode(kNack, -1, -1);
   jitter_buffer_->SetNackSettings(kMaxNumberOfFrames, kMaxNumberOfFrames, 0);
   // Insert a key frame and decode it.
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
   DropFrame(1);
   // Fill the jitter buffer.
-  EXPECT_GE(InsertFrames(kMaxNumberOfFrames, kVideoFrameDelta), kNoError);
+  EXPECT_GE(InsertFrames(kMaxNumberOfFrames, VideoFrameType::kVideoFrameDelta),
+            kNoError);
   // Make sure we can't decode these frames.
   EXPECT_FALSE(DecodeCompleteFrame());
   // This frame will make the jitter buffer recycle frames until a key frame.
   // Since none is found it will have to wait until the next key frame before
   // decoding.
-  EXPECT_EQ(kFlushIndicator, InsertFrame(kVideoFrameDelta));
+  EXPECT_EQ(kFlushIndicator, InsertFrame(VideoFrameType::kVideoFrameDelta));
   EXPECT_FALSE(DecodeCompleteFrame());
 }
 
 TEST_F(TestRunningJitterBuffer, EmptyPackets) {
   // Make sure a frame can get complete even though empty packets are missing.
-  stream_generator_->GenerateFrame(kVideoFrameKey, 3, 3,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameKey, 3, 3,
                                    clock_->TimeInMilliseconds());
   bool request_key_frame = false;
   // Insert empty packet.
@@ -2306,93 +1479,50 @@ TEST_F(TestRunningJitterBuffer, EmptyPackets) {
   EXPECT_FALSE(request_key_frame);
 }
 
-TEST_F(TestRunningJitterBuffer, StatisticsTest) {
-  FrameCounts frame_stats(jitter_buffer_->FrameStatistics());
-  EXPECT_EQ(0, frame_stats.delta_frames);
-  EXPECT_EQ(0, frame_stats.key_frames);
-
-  uint32_t framerate = 0;
-  uint32_t bitrate = 0;
-  jitter_buffer_->IncomingRateStatistics(&framerate, &bitrate);
-  EXPECT_EQ(0u, framerate);
-  EXPECT_EQ(0u, bitrate);
-
-  // Insert a couple of key and delta frames.
-  InsertFrame(kVideoFrameKey);
-  InsertFrame(kVideoFrameDelta);
-  InsertFrame(kVideoFrameDelta);
-  InsertFrame(kVideoFrameKey);
-  InsertFrame(kVideoFrameDelta);
-  // Decode some of them to make sure the statistics doesn't depend on frames
-  // being decoded.
-  EXPECT_TRUE(DecodeCompleteFrame());
-  EXPECT_TRUE(DecodeCompleteFrame());
-  frame_stats = jitter_buffer_->FrameStatistics();
-  EXPECT_EQ(3, frame_stats.delta_frames);
-  EXPECT_EQ(2, frame_stats.key_frames);
-
-  // Insert 20 more frames to get estimates of bitrate and framerate over
-  // 1 second.
-  for (int i = 0; i < 20; ++i) {
-    InsertFrame(kVideoFrameDelta);
-  }
-  jitter_buffer_->IncomingRateStatistics(&framerate, &bitrate);
-  // TODO(holmer): The current implementation returns the average of the last
-  // two framerate calculations, which is why it takes two calls to reach the
-  // actual framerate. This should be fixed.
-  EXPECT_EQ(kDefaultFrameRate / 2u, framerate);
-  EXPECT_EQ(kDefaultBitrateKbps, bitrate);
-  // Insert 25 more frames to get estimates of bitrate and framerate over
-  // 2 seconds.
-  for (int i = 0; i < 25; ++i) {
-    InsertFrame(kVideoFrameDelta);
-  }
-  jitter_buffer_->IncomingRateStatistics(&framerate, &bitrate);
-  EXPECT_EQ(kDefaultFrameRate, framerate);
-  EXPECT_EQ(kDefaultBitrateKbps, bitrate);
-}
-
 TEST_F(TestRunningJitterBuffer, SkipToKeyFrame) {
   // Insert delta frames.
-  EXPECT_GE(InsertFrames(5, kVideoFrameDelta), kNoError);
+  EXPECT_GE(InsertFrames(5, VideoFrameType::kVideoFrameDelta), kNoError);
   // Can't decode without a key frame.
   EXPECT_FALSE(DecodeCompleteFrame());
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   // Skip to the next key frame.
   EXPECT_TRUE(DecodeCompleteFrame());
 }
 
 TEST_F(TestRunningJitterBuffer, DontSkipToKeyFrameIfDecodable) {
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
   const int kNumDeltaFrames = 5;
-  EXPECT_GE(InsertFrames(kNumDeltaFrames, kVideoFrameDelta), kNoError);
-  InsertFrame(kVideoFrameKey);
+  EXPECT_GE(InsertFrames(kNumDeltaFrames, VideoFrameType::kVideoFrameDelta),
+            kNoError);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   for (int i = 0; i < kNumDeltaFrames + 1; ++i) {
     EXPECT_TRUE(DecodeCompleteFrame());
   }
 }
 
 TEST_F(TestRunningJitterBuffer, KeyDeltaKeyDelta) {
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
   const int kNumDeltaFrames = 5;
-  EXPECT_GE(InsertFrames(kNumDeltaFrames, kVideoFrameDelta), kNoError);
-  InsertFrame(kVideoFrameKey);
-  EXPECT_GE(InsertFrames(kNumDeltaFrames, kVideoFrameDelta), kNoError);
-  InsertFrame(kVideoFrameKey);
+  EXPECT_GE(InsertFrames(kNumDeltaFrames, VideoFrameType::kVideoFrameDelta),
+            kNoError);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
+  EXPECT_GE(InsertFrames(kNumDeltaFrames, VideoFrameType::kVideoFrameDelta),
+            kNoError);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   for (int i = 0; i < 2 * (kNumDeltaFrames + 1); ++i) {
     EXPECT_TRUE(DecodeCompleteFrame());
   }
 }
 
 TEST_F(TestRunningJitterBuffer, TwoPacketsNonContinuous) {
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 1, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 1, 0,
                                    clock_->TimeInMilliseconds());
   clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 2, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 2, 0,
                                    clock_->TimeInMilliseconds());
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(1));
   EXPECT_EQ(kCompleteSession, InsertPacketAndPop(1));
@@ -2404,23 +1534,23 @@ TEST_F(TestRunningJitterBuffer, TwoPacketsNonContinuous) {
 
 TEST_F(TestJitterBufferNack, EmptyPackets) {
   // Make sure empty packets doesn't clog the jitter buffer.
-  jitter_buffer_->SetNackMode(kNack, media_optimization::kLowRttNackMs, -1);
-  EXPECT_GE(InsertFrames(kMaxNumberOfFrames, kEmptyFrame), kNoError);
-  InsertFrame(kVideoFrameKey);
+  EXPECT_GE(InsertFrames(kMaxNumberOfFrames, VideoFrameType::kEmptyFrame),
+            kNoError);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
 }
 
 TEST_F(TestJitterBufferNack, NackTooOldPackets) {
   // Insert a key frame and decode it.
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
 
   // Drop one frame and insert |kNackHistoryLength| to trigger NACKing a too
   // old packet.
   DropFrame(1);
   // Insert a frame which should trigger a recycle until the next key frame.
-  EXPECT_EQ(kFlushIndicator,
-            InsertFrames(oldest_packet_to_nack_ + 1, kVideoFrameDelta));
+  EXPECT_EQ(kFlushIndicator, InsertFrames(oldest_packet_to_nack_ + 1,
+                                          VideoFrameType::kVideoFrameDelta));
   EXPECT_FALSE(DecodeCompleteFrame());
 
   bool request_key_frame = false;
@@ -2430,26 +1560,27 @@ TEST_F(TestJitterBufferNack, NackTooOldPackets) {
   EXPECT_FALSE(request_key_frame);
   EXPECT_EQ(0u, nack_list.size());
 
-  EXPECT_GE(InsertFrame(kVideoFrameDelta), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameDelta), kNoError);
   // Waiting for a key frame.
   EXPECT_FALSE(DecodeCompleteFrame());
-  EXPECT_FALSE(DecodeIncompleteFrame());
 
   // The next complete continuous frame isn't a key frame, but we're waiting
   // for one.
   EXPECT_FALSE(DecodeCompleteFrame());
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   // Skipping ahead to the key frame.
   EXPECT_TRUE(DecodeCompleteFrame());
 }
 
 TEST_F(TestJitterBufferNack, NackLargeJitterBuffer) {
   // Insert a key frame and decode it.
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
 
   // Insert a frame which should trigger a recycle until the next key frame.
-  EXPECT_GE(InsertFrames(oldest_packet_to_nack_, kVideoFrameDelta), kNoError);
+  EXPECT_GE(
+      InsertFrames(oldest_packet_to_nack_, VideoFrameType::kVideoFrameDelta),
+      kNoError);
 
   bool request_key_frame = false;
   std::vector<uint16_t> nack_list =
@@ -2464,13 +1595,13 @@ TEST_F(TestJitterBufferNack, NackLargeJitterBuffer) {
 
 TEST_F(TestJitterBufferNack, NackListFull) {
   // Insert a key frame and decode it.
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   EXPECT_TRUE(DecodeCompleteFrame());
 
   // Generate and drop |kNackHistoryLength| packets to fill the NACK list.
   DropFrame(max_nack_list_size_ + 1);
   // Insert a frame which should trigger a recycle until the next key frame.
-  EXPECT_EQ(kFlushIndicator, InsertFrame(kVideoFrameDelta));
+  EXPECT_EQ(kFlushIndicator, InsertFrame(VideoFrameType::kVideoFrameDelta));
   EXPECT_FALSE(DecodeCompleteFrame());
 
   bool request_key_frame = false;
@@ -2479,7 +1610,7 @@ TEST_F(TestJitterBufferNack, NackListFull) {
   // packet.
   EXPECT_FALSE(request_key_frame);
 
-  EXPECT_GE(InsertFrame(kVideoFrameDelta), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameDelta), kNoError);
   // Now we have a packet in the jitter buffer, a key frame will be requested
   // since it's not a key frame.
   jitter_buffer_->GetNackList(&request_key_frame);
@@ -2489,8 +1620,7 @@ TEST_F(TestJitterBufferNack, NackListFull) {
   // The next complete continuous frame isn't a key frame, but we're waiting
   // for one.
   EXPECT_FALSE(DecodeCompleteFrame());
-  EXPECT_FALSE(DecodeIncompleteFrame());
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
   // Skipping ahead to the key frame.
   EXPECT_TRUE(DecodeCompleteFrame());
 }
@@ -2498,7 +1628,7 @@ TEST_F(TestJitterBufferNack, NackListFull) {
 TEST_F(TestJitterBufferNack, NoNackListReturnedBeforeFirstDecode) {
   DropFrame(10);
   // Insert a frame and try to generate a NACK list. Shouldn't get one.
-  EXPECT_GE(InsertFrame(kVideoFrameDelta), kNoError);
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameDelta), kNoError);
   bool request_key_frame = false;
   std::vector<uint16_t> nack_list =
       jitter_buffer_->GetNackList(&request_key_frame);
@@ -2509,8 +1639,8 @@ TEST_F(TestJitterBufferNack, NoNackListReturnedBeforeFirstDecode) {
 
 TEST_F(TestJitterBufferNack, NackListBuiltBeforeFirstDecode) {
   stream_generator_->Init(0, clock_->TimeInMilliseconds());
-  InsertFrame(kVideoFrameKey);
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 2, 0,
+  InsertFrame(VideoFrameType::kVideoFrameKey);
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 2, 0,
                                    clock_->TimeInMilliseconds());
   stream_generator_->NextPacket(NULL);  // Drop packet.
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
@@ -2522,7 +1652,7 @@ TEST_F(TestJitterBufferNack, NackListBuiltBeforeFirstDecode) {
 
 TEST_F(TestJitterBufferNack, VerifyRetransmittedFlag) {
   stream_generator_->Init(0, clock_->TimeInMilliseconds());
-  stream_generator_->GenerateFrame(kVideoFrameKey, 3, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameKey, 3, 0,
                                    clock_->TimeInMilliseconds());
   VCMPacket packet;
   stream_generator_->PopPacket(&packet, 0);
@@ -2549,7 +1679,7 @@ TEST_F(TestJitterBufferNack, VerifyRetransmittedFlag) {
 
 TEST_F(TestJitterBufferNack, UseNackToRecoverFirstKeyFrame) {
   stream_generator_->Init(0, clock_->TimeInMilliseconds());
-  stream_generator_->GenerateFrame(kVideoFrameKey, 3, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameKey, 3, 0,
                                    clock_->TimeInMilliseconds());
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   // Drop second packet.
@@ -2569,14 +1699,14 @@ TEST_F(TestJitterBufferNack, UseNackToRecoverFirstKeyFrameSecondInQueue) {
   VCMPacket packet;
   stream_generator_->Init(0, clock_->TimeInMilliseconds());
   // First frame is delta.
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 3, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 3, 0,
                                    clock_->TimeInMilliseconds());
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   // Drop second packet in frame.
   ASSERT_TRUE(stream_generator_->PopPacket(&packet, 0));
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   // Second frame is key.
-  stream_generator_->GenerateFrame(kVideoFrameKey, 3, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameKey, 3, 0,
                                    clock_->TimeInMilliseconds() + 10);
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   // Drop second packet in frame.
@@ -2592,32 +1722,28 @@ TEST_F(TestJitterBufferNack, UseNackToRecoverFirstKeyFrameSecondInQueue) {
 }
 
 TEST_F(TestJitterBufferNack, NormalOperation) {
-  EXPECT_EQ(kNack, jitter_buffer_->nack_mode());
-  jitter_buffer_->SetDecodeErrorMode(kWithErrors);
-
-  EXPECT_GE(InsertFrame(kVideoFrameKey), kNoError);
-  EXPECT_TRUE(DecodeIncompleteFrame());
+  EXPECT_GE(InsertFrame(VideoFrameType::kVideoFrameKey), kNoError);
+  EXPECT_TRUE(DecodeCompleteFrame());
 
   //  ----------------------------------------------------------------
   // | 1 | 2 | .. | 8 | 9 | x | 11 | 12 | .. | 19 | x | 21 | .. | 100 |
   //  ----------------------------------------------------------------
-  stream_generator_->GenerateFrame(kVideoFrameKey, 100, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameKey, 100, 0,
                                    clock_->TimeInMilliseconds());
   clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
-  EXPECT_EQ(kDecodableSession, InsertPacketAndPop(0));
+  EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   // Verify that the frame is incomplete.
   EXPECT_FALSE(DecodeCompleteFrame());
   while (stream_generator_->PacketsRemaining() > 1) {
     if (stream_generator_->NextSequenceNumber() % 10 != 0) {
-      EXPECT_EQ(kDecodableSession, InsertPacketAndPop(0));
+      EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
     } else {
       stream_generator_->NextPacket(NULL);  // Drop packet
     }
   }
-  EXPECT_EQ(kDecodableSession, InsertPacketAndPop(0));
+  EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   EXPECT_EQ(0, stream_generator_->PacketsRemaining());
   EXPECT_FALSE(DecodeCompleteFrame());
-  EXPECT_FALSE(DecodeIncompleteFrame());
   bool request_key_frame = false;
 
   // Verify the NACK list.
@@ -2635,10 +1761,10 @@ TEST_F(TestJitterBufferNack, NormalOperationWrap) {
   // | 65532 | | 65533 | 65534 | 65535 | x | 1 | .. | 9 | x | 11 |.....| 96 |
   //  -------   ------------------------------------------------------------
   stream_generator_->Init(65532, clock_->TimeInMilliseconds());
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_FALSE(request_key_frame);
   EXPECT_TRUE(DecodeCompleteFrame());
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 100, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 100, 0,
                                    clock_->TimeInMilliseconds());
   EXPECT_EQ(kIncomplete, InsertPacketAndPop(0));
   while (stream_generator_->PacketsRemaining() > 1) {
@@ -2669,10 +1795,10 @@ TEST_F(TestJitterBufferNack, NormalOperationWrap2) {
   // | 65532 | 65533 | 65534 | x | 0 | 1 |
   //  -----------------------------------
   stream_generator_->Init(65532, clock_->TimeInMilliseconds());
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_FALSE(request_key_frame);
   EXPECT_TRUE(DecodeCompleteFrame());
-  stream_generator_->GenerateFrame(kVideoFrameDelta, 1, 0,
+  stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 1, 0,
                                    clock_->TimeInMilliseconds());
   clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
   for (int i = 0; i < 5; ++i) {
@@ -2682,7 +1808,7 @@ TEST_F(TestJitterBufferNack, NormalOperationWrap2) {
     } else {
       stream_generator_->NextPacket(NULL);  // Drop packet
     }
-    stream_generator_->GenerateFrame(kVideoFrameDelta, 1, 0,
+    stream_generator_->GenerateFrame(VideoFrameType::kVideoFrameDelta, 1, 0,
                                      clock_->TimeInMilliseconds());
     clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
   }
@@ -2697,7 +1823,7 @@ TEST_F(TestJitterBufferNack, NormalOperationWrap2) {
 
 TEST_F(TestJitterBufferNack, ResetByFutureKeyFrameDoesntError) {
   stream_generator_->Init(0, clock_->TimeInMilliseconds());
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
   bool extended = false;
   std::vector<uint16_t> nack_list = jitter_buffer_->GetNackList(&extended);
@@ -2708,14 +1834,14 @@ TEST_F(TestJitterBufferNack, ResetByFutureKeyFrameDoesntError) {
   // a keyframe, even if all of the nack list needs to be flushed.
   stream_generator_->Init(10000, clock_->TimeInMilliseconds());
   clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
-  InsertFrame(kVideoFrameKey);
+  InsertFrame(VideoFrameType::kVideoFrameKey);
   EXPECT_TRUE(DecodeCompleteFrame());
   nack_list = jitter_buffer_->GetNackList(&extended);
   EXPECT_EQ(0u, nack_list.size());
 
   // Stream should be decodable from this point.
   clock_->AdvanceTimeMilliseconds(kDefaultFramePeriodMs);
-  InsertFrame(kVideoFrameDelta);
+  InsertFrame(VideoFrameType::kVideoFrameDelta);
   EXPECT_TRUE(DecodeCompleteFrame());
   nack_list = jitter_buffer_->GetNackList(&extended);
   EXPECT_EQ(0u, nack_list.size());

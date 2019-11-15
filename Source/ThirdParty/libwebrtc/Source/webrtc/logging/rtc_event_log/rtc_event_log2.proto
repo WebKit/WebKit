@@ -32,6 +32,12 @@ message EventStream {
   repeated AlrState alr_states = 24;
   repeated IceCandidatePairConfig ice_candidate_configs = 25;
   repeated IceCandidatePairEvent ice_candidate_events = 26;
+  repeated DtlsTransportStateEvent dtls_transport_state_events = 27;
+  repeated DtlsWritableState dtls_writable_states = 28;
+  repeated GenericPacketSent generic_packets_sent = 29;
+  repeated GenericPacketReceived generic_packets_received = 30;
+  repeated GenericAckReceived generic_acks_received = 31;
+  repeated RouteChange route_changes = 32;
 
   repeated AudioRecvStreamConfig audio_recv_stream_configs = 101;
   repeated AudioSendStreamConfig audio_send_stream_configs = 102;
@@ -42,6 +48,56 @@ message EventStream {
 // DEPRECATED.
 message Event {
   // TODO(terelius): Do we want to preserve the old Event definition here?
+}
+
+message GenericPacketReceived {
+  // All fields are required.
+  optional int64 timestamp_ms = 1;
+  optional int64 packet_number = 2;
+  // Length of the packet in bytes.
+  optional int32 packet_length = 3;
+
+  // Provided if there are deltas in the batch.
+  optional uint32 number_of_deltas = 16;
+  optional bytes timestamp_ms_deltas = 17;
+  optional bytes packet_number_deltas = 18;
+  optional bytes packet_length_deltas = 19;
+}
+
+message GenericPacketSent {
+  // All fields are required. All lengths in bytes.
+  optional int64 timestamp_ms = 1;
+  optional int64 packet_number = 2;
+  // overhead+payload+padding length = packet_length in bytes.
+  optional int32 overhead_length = 3;
+  optional int32 payload_length = 4;
+  optional int32 padding_length = 5;
+
+  optional uint32 number_of_deltas = 16;
+  optional bytes timestamp_ms_deltas = 17;
+  optional bytes packet_number_deltas = 18;
+  optional bytes overhead_length_deltas = 19;
+  optional bytes payload_length_deltas = 20;
+  optional bytes padding_length_deltas = 21;
+}
+
+message GenericAckReceived {
+  optional int64 timestamp_ms = 1;
+
+  // ID of the received packet.
+  optional int64 packet_number = 2;
+
+  // ID of the packet that was acked.
+  optional int64 acked_packet_number = 3;
+
+  // Timestamp in ms when the packet was received by the other side.
+  optional int64 receive_acked_packet_time_ms = 4;
+
+  optional uint32 number_of_deltas = 16;
+  optional bytes timestamp_ms_deltas = 17;
+  optional bytes packet_number_deltas = 18;
+  optional bytes acked_packet_number_deltas = 19;
+  optional bytes receive_acked_packet_time_ms_deltas = 20;
 }
 
 message IncomingRtpPackets {
@@ -570,4 +626,41 @@ message IceCandidatePairEvent {
 
   // required
   optional uint32 candidate_pair_id = 3;
+
+  // required
+  optional uint32 transaction_id = 4;
+}
+
+message DtlsTransportStateEvent {
+  enum DtlsTransportState {
+    UNKNOWN_DTLS_TRANSPORT_STATE = 0;
+    DTLS_TRANSPORT_NEW = 1;
+    DTLS_TRANSPORT_CONNECTING = 2;
+    DTLS_TRANSPORT_CONNECTED = 3;
+    DTLS_TRANSPORT_CLOSED = 4;
+    DTLS_TRANSPORT_FAILED = 5;
+  }
+
+  // required
+  optional int64 timestamp_ms = 1;
+
+  // required
+  optional DtlsTransportState dtls_transport_state = 2;
+}
+
+message DtlsWritableState {
+  // required
+  optional int64 timestamp_ms = 1;
+
+  // required
+  optional bool writable = 2;
+}
+
+message RouteChange {
+  // required
+  optional int64 timestamp_ms = 1;
+  // required - True if the route is ready for sending packets.
+  optional bool connected = 2;
+  // required - The per packet data overhead for this route.
+  optional uint32 overhead = 3;
 }

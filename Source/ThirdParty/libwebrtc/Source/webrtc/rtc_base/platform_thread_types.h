@@ -25,6 +25,9 @@
 #elif defined(WEBRTC_POSIX)
 #include <pthread.h>
 #include <unistd.h>
+#if defined(WEBRTC_MAC)
+#include <pthread_spis.h>
+#endif
 #endif
 // clang-format on
 

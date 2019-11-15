@@ -6,14 +6,19 @@
 // in the file PATENTS.  All contributing project authors may
 // be found in the AUTHORS file in the root of the source tree.
 
+#include "common_audio/vad/include/vad.h"
+
 #include <array>
 #include <fstream>
 #include <memory>
 
-#include "common_audio/vad/include/vad.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "common_audio/wav_file.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
+
+ABSL_FLAG(std::string, i, "", "Input wav file");
+ABSL_FLAG(std::string, o, "", "VAD output file");
 
 namespace webrtc {
 namespace test {
@@ -27,15 +32,12 @@ constexpr size_t kMaxFrameLen =
 
 constexpr uint8_t kBitmaskBuffSize = 8;
 
-WEBRTC_DEFINE_string(i, "", "Input wav file");
-WEBRTC_DEFINE_string(o, "", "VAD output file");
-
 int main(int argc, char* argv[]) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true))
-    return 1;
-
+  absl::ParseCommandLine(argc, argv);
+  const std::string input_file = absl::GetFlag(FLAGS_i);
+  const std::string output_file = absl::GetFlag(FLAGS_o);
   // Open wav input file and check properties.
-  WavReader wav_reader(FLAG_i);
+  WavReader wav_reader(input_file);
   if (wav_reader.num_channels() != 1) {
     RTC_LOG(LS_ERROR) << "Only mono wav files supported";
     return 1;
@@ -53,7 +55,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Create output file and write header.
-  std::ofstream out_file(FLAG_o, std::ofstream::binary);
+  std::ofstream out_file(output_file, std::ofstream::binary);
   const char audio_frame_length_ms = kAudioFrameLengthMilliseconds;
   out_file.write(&audio_frame_length_ms, 1);  // Header.
 

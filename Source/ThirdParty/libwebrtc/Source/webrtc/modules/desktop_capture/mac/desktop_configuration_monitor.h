@@ -16,10 +16,10 @@
 #include <memory>
 #include <set>
 
-#include "api/refcountedbase.h"
+#include "api/ref_counted_base.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 

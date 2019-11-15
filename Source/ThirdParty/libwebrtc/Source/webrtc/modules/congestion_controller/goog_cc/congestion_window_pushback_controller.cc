@@ -8,52 +8,43 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
+
+#include <inttypes.h>
+#include <stdio.h>
+
 #include <algorithm>
 #include <string>
 
-#include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/format_macros.h"
-#include "system_wrappers/include/field_trial.h"
+#include "rtc_base/experiments/rate_control_settings.h"
 
 namespace webrtc {
 
-// When CongestionWindowPushback is enabled, the pacer is oblivious to
-// the congestion window. The relation between outstanding data and
-// the congestion window affects encoder allocations directly.
-// This experiment is build on top of congestion window experiment.
-const char kCongestionPushbackExperiment[] = "WebRTC-CongestionWindowPushback";
-const uint32_t kDefaultMinPushbackTargetBitrateBps = 30000;
-
-bool ReadCongestionWindowPushbackExperimentParameter(
-    uint32_t* min_pushback_target_bitrate_bps) {
-  RTC_DCHECK(min_pushback_target_bitrate_bps);
-  std::string experiment_string =
-      webrtc::field_trial::FindFullName(kCongestionPushbackExperiment);
-  int parsed_values = sscanf(experiment_string.c_str(), "Enabled-%" PRIu32,
-                             min_pushback_target_bitrate_bps);
-  if (parsed_values == 1) {
-    RTC_CHECK_GE(*min_pushback_target_bitrate_bps, 0)
-        << "Min pushback target bitrate must be greater than or equal to 0.";
-    return true;
-  }
-  return false;
-}
-
-CongestionWindowPushbackController::CongestionWindowPushbackController() {
-  if (!ReadCongestionWindowPushbackExperimentParameter(
-          &min_pushback_target_bitrate_bps_)) {
-    min_pushback_target_bitrate_bps_ = kDefaultMinPushbackTargetBitrateBps;
-  }
-}
+CongestionWindowPushbackController::CongestionWindowPushbackController(
+    const WebRtcKeyValueConfig* key_value_config)
+    : add_pacing_(
+          key_value_config->Lookup("WebRTC-AddPacingToCongestionWindowPushback")
+              .find("Enabled") == 0),
+      min_pushback_target_bitrate_bps_(
+          RateControlSettings::ParseFromKeyValueConfig(key_value_config)
+              .CongestionWindowMinPushbackTargetBitrateBps()) {}
 
 CongestionWindowPushbackController::CongestionWindowPushbackController(
+    const WebRtcKeyValueConfig* key_value_config,
     uint32_t min_pushback_target_bitrate_bps)
-    : min_pushback_target_bitrate_bps_(min_pushback_target_bitrate_bps) {}
+    : add_pacing_(
+          key_value_config->Lookup("WebRTC-AddPacingToCongestionWindowPushback")
+              .find("Enabled") == 0),
+      min_pushback_target_bitrate_bps_(min_pushback_target_bitrate_bps) {}
 
 void CongestionWindowPushbackController::UpdateOutstandingData(
-    size_t outstanding_bytes) {
+    int64_t outstanding_bytes) {
   outstanding_bytes_ = outstanding_bytes;
+}
+void CongestionWindowPushbackController::UpdatePacingQueue(
+    int64_t pacing_bytes) {
+  pacing_bytes_ = pacing_bytes;
 }
 
 void CongestionWindowPushbackController::UpdateMaxOutstandingData(
@@ -73,8 +64,11 @@ uint32_t CongestionWindowPushbackController::UpdateTargetBitrate(
     uint32_t bitrate_bps) {
   if (!current_data_window_ || current_data_window_->IsZero())
     return bitrate_bps;
+  int64_t total_bytes = outstanding_bytes_;
+  if (add_pacing_)
+    total_bytes += pacing_bytes_;
   double fill_ratio =
-      outstanding_bytes_ / static_cast<double>(current_data_window_->bytes());
+      total_bytes / static_cast<double>(current_data_window_->bytes());
   if (fill_ratio > 1.5) {
     encoding_rate_ratio_ *= 0.9;
   } else if (fill_ratio > 1) {

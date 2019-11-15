@@ -10,8 +10,10 @@
 
 #include "modules/audio_coding/test/TestRedFec.h"
 
-#include <assert.h>
+#include <utility>
 
+#include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 #include "api/audio_codecs/L16/audio_encoder_L16.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
@@ -24,13 +26,12 @@
 #include "api/audio_codecs/isac/audio_encoder_isac_float.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "modules/audio_coding/test/utility.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/testsupport/fileutils.h"
+#include "test/gtest.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -60,8 +61,8 @@ TestRedFec::~TestRedFec() {
 }
 
 void TestRedFec::Perform() {
-  const std::string file_name = webrtc::test::ResourcePath(
-      "audio_coding/testfile32kHz", "pcm");
+  const std::string file_name =
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   _inFileA.Open(file_name, 32000, "rb");
 
   ASSERT_EQ(0, _acmA->InitializeReceiver());
@@ -173,6 +174,7 @@ void TestRedFec::RegisterSendCodec(
   auto encoder = encoder_factory_->MakeAudioEncoder(payload_type, codec_format,
                                                     absl::nullopt);
   EXPECT_NE(encoder, nullptr);
+  std::map<int, SdpAudioFormat> receive_codecs = {{payload_type, codec_format}};
   if (!absl::EqualsIgnoreCase(codec_format.name, "opus")) {
     if (vad_mode.has_value()) {
       AudioEncoderCngConfig config;
@@ -181,22 +183,21 @@ void TestRedFec::RegisterSendCodec(
       config.payload_type = cn_payload_type;
       config.vad_mode = vad_mode.value();
       encoder = CreateComfortNoiseEncoder(std::move(config));
-      EXPECT_EQ(true,
-                other_acm->RegisterReceiveCodec(
-                    cn_payload_type, {"CN", codec_format.clockrate_hz, 1}));
+      receive_codecs.emplace(std::make_pair(
+          cn_payload_type, SdpAudioFormat("CN", codec_format.clockrate_hz, 1)));
     }
     if (use_red) {
       AudioEncoderCopyRed::Config config;
       config.payload_type = red_payload_type;
       config.speech_encoder = std::move(encoder);
       encoder = absl::make_unique<AudioEncoderCopyRed>(std::move(config));
-      EXPECT_EQ(true,
-                other_acm->RegisterReceiveCodec(
-                    red_payload_type, {"red", codec_format.clockrate_hz, 1}));
+      receive_codecs.emplace(
+          std::make_pair(red_payload_type,
+                         SdpAudioFormat("red", codec_format.clockrate_hz, 1)));
     }
   }
   acm->SetEncoder(std::move(encoder));
-  EXPECT_EQ(true, other_acm->RegisterReceiveCodec(payload_type, codec_format));
+  other_acm->SetReceiveCodecs(receive_codecs);
 }
 
 void TestRedFec::Run() {

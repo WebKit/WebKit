@@ -12,6 +12,7 @@
 #define MODULES_RTP_RTCP_SOURCE_TMMBR_HELP_H_
 
 #include <stdint.h>
+
 #include <vector>
 
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"

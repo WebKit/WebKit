@@ -10,10 +10,9 @@
 #ifndef MODULES_DESKTOP_CAPTURE_MOCK_DESKTOP_CAPTURER_CALLBACK_H_
 #define MODULES_DESKTOP_CAPTURE_MOCK_DESKTOP_CAPTURER_CALLBACK_H_
 
-#include "modules/desktop_capture/desktop_capturer.h"
-
 #include <memory>
 
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "test/gmock.h"
 
 namespace webrtc {

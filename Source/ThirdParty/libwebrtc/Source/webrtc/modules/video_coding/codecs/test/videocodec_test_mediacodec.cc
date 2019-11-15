@@ -14,12 +14,11 @@
 
 #include "absl/memory/memory.h"
 #include "api/test/create_videocodec_test_fixture.h"
-#include "common_types.h"  // NOLINT(build/include)
-#include "media/base/mediaconstants.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {
@@ -54,8 +53,7 @@ TEST(VideoCodecTestMediaCodec, ForemanCif500kbpsVp8) {
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
-  std::vector<RateProfile> rate_profiles = {
-      {500, kForemanFramerateFps, kForemanNumFrames}};
+  std::vector<RateProfile> rate_profiles = {{500, kForemanFramerateFps, 0}};
 
   // The thresholds below may have to be tweaked to let even poor MediaCodec
   // implementations pass. If this test fails on the bots, disable it and
@@ -77,8 +75,7 @@ TEST(VideoCodecTestMediaCodec, ForemanCif500kbpsH264CBP) {
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
-  std::vector<RateProfile> rate_profiles = {
-      {500, kForemanFramerateFps, kForemanNumFrames}};
+  std::vector<RateProfile> rate_profiles = {{500, kForemanFramerateFps, 0}};
 
   // The thresholds below may have to be tweaked to let even poor MediaCodec
   // implementations pass. If this test fails on the bots, disable it and
@@ -104,8 +101,7 @@ TEST(VideoCodecTestMediaCodec, DISABLED_ForemanCif500kbpsH264CHP) {
                           352, 288);
   auto fixture = CreateTestFixtureWithConfig(config);
 
-  std::vector<RateProfile> rate_profiles = {
-      {500, kForemanFramerateFps, kForemanNumFrames}};
+  std::vector<RateProfile> rate_profiles = {{500, kForemanFramerateFps, 0}};
 
   // The thresholds below may have to be tweaked to let even poor MediaCodec
   // implementations pass. If this test fails on the bots, disable it and
@@ -126,7 +122,7 @@ TEST(VideoCodecTestMediaCodec, ForemanMixedRes100kbpsVp8H264) {
   const std::vector<std::tuple<int, int>> resolutions = {
       {128, 96}, {160, 120}, {176, 144}, {240, 136}, {320, 240}, {480, 272}};
   const std::vector<RateProfile> rate_profiles = {
-      {100, kForemanFramerateFps, kNumFrames}};
+      {100, kForemanFramerateFps, 0}};
   const std::vector<QualityThresholds> quality_thresholds = {
       {29, 26, 0.8, 0.75}};
 

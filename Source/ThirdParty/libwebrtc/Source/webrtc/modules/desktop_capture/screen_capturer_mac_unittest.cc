@@ -28,7 +28,7 @@ using ::testing::Return;
 
 namespace webrtc {
 
-class ScreenCapturerMacTest : public testing::Test {
+class ScreenCapturerMacTest : public ::testing::Test {
  public:
   // Verifies that the whole screen is initially dirty.
   void CaptureDoneCallback1(DesktopCapturer::Result result,

@@ -18,13 +18,14 @@ rtc_static_library("rtc_stats") {
   visibility = [ "*" ]
   cflags = []
   sources = [
-    "rtcstats.cc",
+    "rtc_stats.cc",
+    "rtc_stats_report.cc",
     "rtcstats_objects.cc",
-    "rtcstatsreport.cc",
   ]
 
   deps = [
     "../api:rtc_stats_api",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
   ]
 }
@@ -33,13 +34,14 @@ rtc_source_set("rtc_stats_test_utils") {
   visibility = [ "*" ]
   cflags = []
   sources = [
-    "test/rtcteststats.cc",
-    "test/rtcteststats.h",
+    "test/rtc_test_stats.cc",
+    "test/rtc_test_stats.h",
   ]
 
   deps = [
     ":rtc_stats",
     "../api:rtc_stats_api",
+    "../rtc_base:checks",
     "../rtc_base/system:rtc_export",
   ]
 }
@@ -48,8 +50,8 @@ if (rtc_include_tests) {
   rtc_test("rtc_stats_unittests") {
     testonly = true
     sources = [
-      "rtcstats_unittest.cc",
-      "rtcstatsreport_unittest.cc",
+      "rtc_stats_report_unittest.cc",
+      "rtc_stats_unittest.cc",
     ]
 
     deps = [
@@ -59,8 +61,9 @@ if (rtc_include_tests) {
       "../rtc_base:checks",
       "../rtc_base:gunit_helpers",
       "../rtc_base:rtc_base_approved",
-      "../rtc_base:rtc_base_tests_main",
       "../rtc_base:rtc_json",
+      "../test:test_main",
+      "../test:test_support",
     ]
 
     if (is_android) {

@@ -10,14 +10,16 @@
 
 #include "call/rtcp_demuxer.h"
 
-#include <memory>
+#include <stddef.h>
+
 #include <set>
 
-#include "absl/memory/memory.h"
 #include "api/rtp_headers.h"
 #include "call/rtcp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/arraysize.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -38,7 +40,7 @@ class MockRtcpPacketSink : public RtcpPacketSinkInterface {
   MOCK_METHOD1(OnRtcpPacket, void(rtc::ArrayView<const uint8_t>));
 };
 
-class RtcpDemuxerTest : public testing::Test {
+class RtcpDemuxerTest : public ::testing::Test {
  protected:
   ~RtcpDemuxerTest() {
     for (auto* sink : sinks_to_tear_down_) {
@@ -494,7 +496,7 @@ TEST_F(RtcpDemuxerTest, RsidMustBeAlphaNumeric) {
 
 TEST_F(RtcpDemuxerTest, RsidMustNotExceedMaximumLength) {
   MockRtcpPacketSink sink;
-  std::string rsid(StreamId::kMaxSize + 1, 'a');
+  std::string rsid(BaseRtpStringExtension::kMaxValueSizeBytes + 1, 'a');
   EXPECT_DEATH(AddRsidSink(rsid, &sink), "");
 }
 

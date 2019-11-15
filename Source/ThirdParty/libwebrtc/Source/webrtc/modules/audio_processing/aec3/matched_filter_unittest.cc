@@ -140,11 +140,16 @@ TEST(MatchedFilter, TestSse2Optimizations) {
 // delayed signals.
 TEST(MatchedFilter, LagEstimation) {
   Random random_generator(42U);
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   for (auto down_sampling_factor : kDownSamplingFactors) {
     const size_t sub_block_size = kBlockSize / down_sampling_factor;
 
-    std::vector<std::vector<float>> render(3,
-                                           std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> render(
+        kNumBands, std::vector<std::vector<float>>(
+                       kNumChannels, std::vector<float>(kBlockSize, 0.f)));
     std::array<float, kBlockSize> capture;
     capture.fill(0.f);
     ApmDataDumper data_dumper(0);
@@ -153,8 +158,6 @@ TEST(MatchedFilter, LagEstimation) {
       EchoCanceller3Config config;
       config.delay.down_sampling_factor = down_sampling_factor;
       config.delay.num_filters = kNumMatchedFilters;
-      config.delay.min_echo_path_delay_blocks = 0;
-      config.delay.api_call_jitter_blocks = 0;
       Decimator capture_decimator(down_sampling_factor);
       DelayBuffer<float> signal_delay_buffer(down_sampling_factor *
                                              delay_samples);
@@ -165,12 +168,16 @@ TEST(MatchedFilter, LagEstimation) {
                            config.delay.delay_candidate_detection_threshold);
 
       std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-          RenderDelayBuffer::Create2(config, 3));
+          RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
 
       // Analyze the correlation between render and capture.
       for (size_t k = 0; k < (600 + delay_samples / sub_block_size); ++k) {
-        RandomizeSampleVector(&random_generator, render[0]);
-        signal_delay_buffer.Delay(render[0], capture);
+        for (size_t band = 0; band < kNumBands; ++band) {
+          for (size_t channel = 0; channel < kNumChannels; ++channel) {
+            RandomizeSampleVector(&random_generator, render[band][channel]);
+          }
+        }
+        signal_delay_buffer.Delay(render[0][0], capture);
         render_delay_buffer->Insert(render);
 
         if (k == 0) {
@@ -247,6 +254,9 @@ TEST(MatchedFilter, LagEstimation) {
 // Verifies that the matched filter does not produce reliable and accurate
 // estimates for uncorrelated render and capture signals.
 TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
   Random random_generator(42U);
   for (auto down_sampling_factor : kDownSamplingFactors) {
     EchoCanceller3Config config;
@@ -254,14 +264,15 @@ TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
     config.delay.num_filters = kNumMatchedFilters;
     const size_t sub_block_size = kBlockSize / down_sampling_factor;
 
-    std::vector<std::vector<float>> render(3,
-                                           std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> render(
+        kNumBands, std::vector<std::vector<float>>(
+                       kNumChannels, std::vector<float>(kBlockSize, 0.f)));
     std::array<float, kBlockSize> capture_data;
     rtc::ArrayView<float> capture(capture_data.data(), sub_block_size);
     std::fill(capture.begin(), capture.end(), 0.f);
     ApmDataDumper data_dumper(0);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create2(config, 3));
+        RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
     MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
                          kWindowSizeSubBlocks, kNumMatchedFilters,
                          kAlignmentShiftSubBlocks, 150,
@@ -270,7 +281,7 @@ TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
 
     // Analyze the correlation between render and capture.
     for (size_t k = 0; k < 100; ++k) {
-      RandomizeSampleVector(&random_generator, render[0]);
+      RandomizeSampleVector(&random_generator, render[0][0]);
       RandomizeSampleVector(&random_generator, capture);
       render_delay_buffer->Insert(render);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(), capture);
@@ -291,11 +302,16 @@ TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
 // render signals of low level.
 TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
   Random random_generator(42U);
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   for (auto down_sampling_factor : kDownSamplingFactors) {
     const size_t sub_block_size = kBlockSize / down_sampling_factor;
 
-    std::vector<std::vector<float>> render(3,
-                                           std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> render(
+        kNumBands, std::vector<std::vector<float>>(
+                       kNumChannels, std::vector<float>(kBlockSize, 0.f)));
     std::array<float, kBlockSize> capture;
     capture.fill(0.f);
     ApmDataDumper data_dumper(0);
@@ -306,16 +322,17 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
                          config.delay.delay_estimate_smoothing,
                          config.delay.delay_candidate_detection_threshold);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create2(EchoCanceller3Config(), 3));
+        RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
+                                  kNumChannels));
     Decimator capture_decimator(down_sampling_factor);
 
     // Analyze the correlation between render and capture.
     for (size_t k = 0; k < 100; ++k) {
-      RandomizeSampleVector(&random_generator, render[0]);
-      for (auto& render_k : render[0]) {
+      RandomizeSampleVector(&random_generator, render[0][0]);
+      for (auto& render_k : render[0][0]) {
         render_k *= 149.f / 32767.f;
       }
-      std::copy(render[0].begin(), render[0].end(), capture.begin());
+      std::copy(render[0][0].begin(), render[0][0].end(), capture.begin());
       std::array<float, kBlockSize> downsampled_capture_data;
       rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
                                                 sub_block_size);

@@ -14,7 +14,7 @@
 #include <string>
 
 #include "rtc_base/gunit.h"
-#include "rtc_base/refcount.h"
+#include "rtc_base/ref_count.h"
 #include "test/gmock.h"
 
 using ::testing::_;
@@ -87,7 +87,7 @@ PROXY_METHOD2(std::string, Method2, std::string, std::string)
 END_PROXY_MAP()
 #undef FakeProxy
 
-class SignalingProxyTest : public testing::Test {
+class SignalingProxyTest : public ::testing::Test {
  public:
   // Checks that the functions are called on the right thread.
   void CheckSignalingThread() { EXPECT_TRUE(signaling_thread_->IsCurrent()); }
@@ -173,7 +173,7 @@ TEST_F(SignalingProxyTest, Method2) {
   EXPECT_EQ("Method2", fake_signaling_proxy_->Method2(arg1, arg2));
 }
 
-class ProxyTest : public testing::Test {
+class ProxyTest : public ::testing::Test {
  public:
   // Checks that the functions are called on the right thread.
   void CheckSignalingThread() { EXPECT_TRUE(signaling_thread_->IsCurrent()); }
@@ -274,7 +274,7 @@ PROXY_SIGNALING_THREAD_DESTRUCTOR()
 PROXY_METHOD0(void, Bar)
 END_PROXY_MAP()
 
-class OwnedProxyTest : public testing::Test {
+class OwnedProxyTest : public ::testing::Test {
  public:
   OwnedProxyTest()
       : signaling_thread_(rtc::Thread::Create()),

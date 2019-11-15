@@ -8,19 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "common_video/h264/sps_vui_rewriter.h"
+
+#include <cstdint>
 #include <vector>
 
+#include "api/video/color_space.h"
 #include "common_video/h264/h264_common.h"
-#include "common_video/h264/sps_vui_rewriter.h"
-#include "rtc_base/bitbuffer.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/logging.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
+namespace {
 enum SpsMode {
-  kNoRewriteRequired_PocCorrect,
   kNoRewriteRequired_VuiOptimal,
   kRewriteRequired_NoVui,
   kRewriteRequired_NoBitstreamRestriction,
@@ -31,13 +35,164 @@ static const size_t kSpsBufferMaxSize = 256;
 static const size_t kWidth = 640;
 static const size_t kHeight = 480;
 
+static const uint8_t kStartSequence[] = {0x00, 0x00, 0x00, 0x01};
+static const uint8_t kSpsNaluType[] = {H264::NaluType::kSps};
+static const uint8_t kIdr1[] = {H264::NaluType::kIdr, 0xFF, 0x00, 0x00, 0x04};
+static const uint8_t kIdr2[] = {H264::NaluType::kIdr, 0xFF, 0x00, 0x11};
+
+struct VuiHeader {
+  uint32_t vui_parameters_present_flag;
+  uint32_t bitstream_restriction_flag;
+  uint32_t max_num_reorder_frames;
+  uint32_t max_dec_frame_buffering;
+  uint32_t video_signal_type_present_flag;
+  uint32_t video_full_range_flag;
+  uint32_t colour_description_present_flag;
+  uint8_t colour_primaries;
+  uint8_t transfer_characteristics;
+  uint8_t matrix_coefficients;
+};
+
+static const VuiHeader kVuiNotPresent = {
+    /* vui_parameters_present_flag= */ 0,
+    /* bitstream_restriction_flag= */ 0,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 0,
+    /* video_signal_type_present_flag= */ 0,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiNoBitstreamRestriction = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 0,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 0,
+    /* video_signal_type_present_flag= */ 0,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiNoFrameBuffering = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 1,
+    /* video_signal_type_present_flag= */ 0,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiFrameBuffering = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 3,
+    /* max_dec_frame_buffering= */ 3,
+    /* video_signal_type_present_flag= */ 0,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiNoVideoSignalType = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 1,
+    /* video_signal_type_present_flag= */ 0,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiLimitedRangeNoColourDescription = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 1,
+    /* video_signal_type_present_flag= */ 1,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiFullRangeNoColourDescription = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 1,
+    /* video_signal_type_present_flag= */ 1,
+    /* video_full_range_flag= */ 1,
+    /* colour_description_present_flag= */ 0,
+    /* colour_primaries= */ 0,
+    /* transfer_characteristics= */ 0,
+    /* matrix_coefficients= */ 0};
+
+static const VuiHeader kVuiLimitedRangeBt709Color = {
+    /* vui_parameters_present_flag= */ 1,
+    /* bitstream_restriction_flag= */ 1,
+    /* max_num_reorder_frames= */ 0,
+    /* max_dec_frame_buffering= */ 1,
+    /* video_signal_type_present_flag= */ 1,
+    /* video_full_range_flag= */ 0,
+    /* colour_description_present_flag= */ 1,
+    /* colour_primaries= */ 1,
+    /* transfer_characteristics= */ 1,
+    /* matrix_coefficients= */ 1};
+
+static const webrtc::ColorSpace kColorSpaceH264Default(
+    ColorSpace::PrimaryID::kUnspecified,
+    ColorSpace::TransferID::kUnspecified,
+    ColorSpace::MatrixID::kUnspecified,
+    ColorSpace::RangeID::kLimited);
+
+static const webrtc::ColorSpace kColorSpacePrimariesBt709(
+    ColorSpace::PrimaryID::kBT709,
+    ColorSpace::TransferID::kUnspecified,
+    ColorSpace::MatrixID::kUnspecified,
+    ColorSpace::RangeID::kLimited);
+
+static const webrtc::ColorSpace kColorSpaceTransferBt709(
+    ColorSpace::PrimaryID::kUnspecified,
+    ColorSpace::TransferID::kBT709,
+    ColorSpace::MatrixID::kUnspecified,
+    ColorSpace::RangeID::kLimited);
+
+static const webrtc::ColorSpace kColorSpaceMatrixBt709(
+    ColorSpace::PrimaryID::kUnspecified,
+    ColorSpace::TransferID::kUnspecified,
+    ColorSpace::MatrixID::kBT709,
+    ColorSpace::RangeID::kLimited);
+
+static const webrtc::ColorSpace kColorSpaceFullRange(
+    ColorSpace::PrimaryID::kBT709,
+    ColorSpace::TransferID::kUnspecified,
+    ColorSpace::MatrixID::kUnspecified,
+    ColorSpace::RangeID::kFull);
+
+static const webrtc::ColorSpace kColorSpaceBt709LimitedRange(
+    ColorSpace::PrimaryID::kBT709,
+    ColorSpace::TransferID::kBT709,
+    ColorSpace::MatrixID::kBT709,
+    ColorSpace::RangeID::kLimited);
+}  // namespace
+
 // Generates a fake SPS with basically everything empty and with characteristics
 // based off SpsMode.
 // Pass in a buffer of at least kSpsBufferMaxSize.
 // The fake SPS that this generates also always has at least one emulation byte
 // at offset 2, since the first two bytes are always 0, and has a 0x3 as the
 // level_idc, to make sure the parser doesn't eat all 0x3 bytes.
-void GenerateFakeSps(SpsMode mode, rtc::Buffer* out_buffer) {
+void GenerateFakeSps(const VuiHeader& vui, rtc::Buffer* out_buffer) {
   uint8_t rbsp[kSpsBufferMaxSize] = {0};
   rtc::BitBufferWriter writer(rbsp, kSpsBufferMaxSize);
   // Profile byte.
@@ -54,14 +209,10 @@ void GenerateFakeSps(SpsMode mode, rtc::Buffer* out_buffer) {
   // log2_max_frame_num_minus4: ue(v). 0 is fine.
   writer.WriteExponentialGolomb(0);
   // pic_order_cnt_type: ue(v).
-  // POC type 2 is the one that doesn't need to be rewritten.
-  if (mode == kNoRewriteRequired_PocCorrect) {
-    writer.WriteExponentialGolomb(2);
-  } else {
-    writer.WriteExponentialGolomb(0);
-    // log2_max_pic_order_cnt_lsb_minus4: ue(v). 0 is fine.
-    writer.WriteExponentialGolomb(0);
-  }
+  writer.WriteExponentialGolomb(0);
+  // log2_max_pic_order_cnt_lsb_minus4: ue(v). 0 is fine.
+  writer.WriteExponentialGolomb(0);
+
   // max_num_ref_frames: ue(v). Use 1, to make optimal/suboptimal more obvious.
   writer.WriteExponentialGolomb(1);
   // gaps_in_frame_num_value_allowed_flag: u(1).
@@ -95,16 +246,31 @@ void GenerateFakeSps(SpsMode mode, rtc::Buffer* out_buffer) {
 
   // Finally! The VUI.
   // vui_parameters_present_flag: u(1)
-  if (mode == kNoRewriteRequired_PocCorrect || mode == kRewriteRequired_NoVui) {
-    writer.WriteBits(0, 1);
-  } else {
-    writer.WriteBits(1, 1);
-    // VUI time. 8 flags to ignore followed by the bitstream restriction flag.
-    writer.WriteBits(0, 8);
-    if (mode == kRewriteRequired_NoBitstreamRestriction) {
-      writer.WriteBits(0, 1);
-    } else {
-      writer.WriteBits(1, 1);
+  writer.WriteBits(vui.vui_parameters_present_flag, 1);
+  if (vui.vui_parameters_present_flag) {
+    // aspect_ratio_info_present_flag, overscan_info_present_flag. Both u(1).
+    writer.WriteBits(0, 2);
+
+    writer.WriteBits(vui.video_signal_type_present_flag, 1);
+    if (vui.video_signal_type_present_flag) {
+      // video_format: u(3). 5 = Unspecified
+      writer.WriteBits(5, 3);
+      writer.WriteBits(vui.video_full_range_flag, 1);
+      writer.WriteBits(vui.colour_description_present_flag, 1);
+      if (vui.colour_description_present_flag) {
+        writer.WriteUInt8(vui.colour_primaries);
+        writer.WriteUInt8(vui.transfer_characteristics);
+        writer.WriteUInt8(vui.matrix_coefficients);
+      }
+    }
+
+    // chroma_loc_info_present_flag, timing_info_present_flag,
+    // nal_hrd_parameters_present_flag, vcl_hrd_parameters_present_flag,
+    // pic_struct_present_flag, All u(1)
+    writer.WriteBits(0, 5);
+
+    writer.WriteBits(vui.bitstream_restriction_flag, 1);
+    if (vui.bitstream_restriction_flag) {
       // Write some defaults. Shouldn't matter for parsing, though.
       // motion_vectors_over_pic_boundaries_flag: u(1)
       writer.WriteBits(1, 1);
@@ -118,15 +284,8 @@ void GenerateFakeSps(SpsMode mode, rtc::Buffer* out_buffer) {
       writer.WriteExponentialGolomb(16);
 
       // Next are the limits we care about.
-      // max_num_reorder_frames: ue(v)
-      // max_dec_frame_buffering: ue(v)
-      if (mode == kRewriteRequired_VuiSuboptimal) {
-        writer.WriteExponentialGolomb(4);
-        writer.WriteExponentialGolomb(4);
-      } else if (kNoRewriteRequired_VuiOptimal) {
-        writer.WriteExponentialGolomb(0);
-        writer.WriteExponentialGolomb(1);
-      }
+      writer.WriteExponentialGolomb(vui.max_num_reorder_frames);
+      writer.WriteExponentialGolomb(vui.max_dec_frame_buffering);
     }
   }
 
@@ -137,53 +296,200 @@ void GenerateFakeSps(SpsMode mode, rtc::Buffer* out_buffer) {
     byte_count++;
   }
 
-  // Write the NALU header and type; {0 0 0 1} and 7 for the SPS header type.
-  uint8_t header[] = {0, 0, 0, 1, 7};
-  out_buffer->AppendData(header, sizeof(header));
-
   H264::WriteRbsp(rbsp, byte_count, out_buffer);
 }
 
-void TestSps(SpsMode mode, SpsVuiRewriter::ParseResult expected_parse_result) {
+void TestSps(const VuiHeader& vui,
+             const ColorSpace* color_space,
+             SpsVuiRewriter::ParseResult expected_parse_result) {
   rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
-  rtc::Buffer buffer;
-  GenerateFakeSps(mode, &buffer);
-  std::vector<H264::NaluIndex> start_offsets =
-      H264::FindNaluIndices(buffer.data(), buffer.size());
-  EXPECT_EQ(1u, start_offsets.size());
-  H264::NaluIndex index = start_offsets[0];
-
-  H264::NaluType nal_type =
-      H264::ParseNaluType(buffer[index.payload_start_offset]);
-  EXPECT_EQ(H264::kSps, nal_type);
-  index.payload_start_offset += H264::kNaluTypeSize;
-  index.payload_size -= H264::kNaluTypeSize;
+  rtc::Buffer original_sps;
+  GenerateFakeSps(vui, &original_sps);
 
   absl::optional<SpsParser::SpsState> sps;
-  rtc::Buffer out_buffer;
-  SpsVuiRewriter::ParseResult result =
-      SpsVuiRewriter::ParseAndRewriteSps(&buffer[index.payload_start_offset],
-                                         index.payload_size, &sps, &out_buffer);
+  rtc::Buffer rewritten_sps;
+  SpsVuiRewriter::ParseResult result = SpsVuiRewriter::ParseAndRewriteSps(
+      original_sps.data(), original_sps.size(), &sps, color_space,
+      &rewritten_sps, SpsVuiRewriter::Direction::kIncoming);
   EXPECT_EQ(expected_parse_result, result);
+  ASSERT_TRUE(sps);
+  EXPECT_EQ(sps->width, kWidth);
+  EXPECT_EQ(sps->height, kHeight);
+  if (vui.vui_parameters_present_flag) {
+    EXPECT_EQ(sps->vui_params_present, 1u);
+  }
+
+  if (result == SpsVuiRewriter::ParseResult::kVuiRewritten) {
+    // Ensure that added/rewritten SPS is parsable.
+    rtc::Buffer tmp;
+    result = SpsVuiRewriter::ParseAndRewriteSps(
+        rewritten_sps.data(), rewritten_sps.size(), &sps, nullptr, &tmp,
+        SpsVuiRewriter::Direction::kIncoming);
+    EXPECT_EQ(SpsVuiRewriter::ParseResult::kVuiOk, result);
+    ASSERT_TRUE(sps);
+    EXPECT_EQ(sps->width, kWidth);
+    EXPECT_EQ(sps->height, kHeight);
+    EXPECT_EQ(sps->vui_params_present, 1u);
+  }
 }
 
-#define REWRITE_TEST(test_name, mode, expected_parse_result) \
-  TEST(SpsVuiRewriterTest, test_name) { TestSps(mode, expected_parse_result); }
+class SpsVuiRewriterTest : public ::testing::Test,
+                           public ::testing::WithParamInterface<
+                               ::testing::tuple<VuiHeader,
+                                                const ColorSpace*,
+                                                SpsVuiRewriter::ParseResult>> {
+};
 
-REWRITE_TEST(PocCorrect,
-             kNoRewriteRequired_PocCorrect,
-             SpsVuiRewriter::ParseResult::kPocOk);
-REWRITE_TEST(VuiAlreadyOptimal,
-             kNoRewriteRequired_VuiOptimal,
-             SpsVuiRewriter::ParseResult::kVuiOk);
-REWRITE_TEST(RewriteFullVui,
-             kRewriteRequired_NoVui,
-             SpsVuiRewriter::ParseResult::kVuiRewritten);
-REWRITE_TEST(AddBitstreamRestriction,
-             kRewriteRequired_NoBitstreamRestriction,
-             SpsVuiRewriter::ParseResult::kVuiRewritten);
-REWRITE_TEST(RewriteSuboptimalVui,
-             kRewriteRequired_VuiSuboptimal,
-             SpsVuiRewriter::ParseResult::kVuiRewritten);
+TEST_P(SpsVuiRewriterTest, RewriteVui) {
+  VuiHeader vui = ::testing::get<0>(GetParam());
+  const ColorSpace* color_space = ::testing::get<1>(GetParam());
+  SpsVuiRewriter::ParseResult expected_parse_result =
+      ::testing::get<2>(GetParam());
+  TestSps(vui, color_space, expected_parse_result);
+}
 
+INSTANTIATE_TEST_SUITE_P(
+    ,
+    SpsVuiRewriterTest,
+    ::testing::Values(
+        std::make_tuple(kVuiNoFrameBuffering,
+                        nullptr,
+                        SpsVuiRewriter::ParseResult::kVuiOk),
+        std::make_tuple(kVuiNoVideoSignalType,
+                        &kColorSpaceH264Default,
+                        SpsVuiRewriter::ParseResult::kVuiOk),
+        std::make_tuple(kVuiLimitedRangeBt709Color,
+                        &kColorSpaceBt709LimitedRange,
+                        SpsVuiRewriter::ParseResult::kVuiOk),
+        std::make_tuple(kVuiNotPresent,
+                        nullptr,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiNoBitstreamRestriction,
+                        nullptr,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiFrameBuffering,
+                        nullptr,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiLimitedRangeNoColourDescription,
+                        &kColorSpaceFullRange,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiNoVideoSignalType,
+                        &kColorSpacePrimariesBt709,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiNoVideoSignalType,
+                        &kColorSpaceTransferBt709,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiNoVideoSignalType,
+                        &kColorSpaceMatrixBt709,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiFullRangeNoColourDescription,
+                        &kColorSpaceH264Default,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten),
+        std::make_tuple(kVuiLimitedRangeBt709Color,
+                        &kColorSpaceH264Default,
+                        SpsVuiRewriter::ParseResult::kVuiRewritten)));
+
+TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamOptimalVui) {
+  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+
+  rtc::Buffer optimal_sps;
+  GenerateFakeSps(kVuiNoFrameBuffering, &optimal_sps);
+
+  rtc::Buffer buffer;
+  const size_t kNumNalus = 2;
+  size_t nalu_offsets[kNumNalus];
+  size_t nalu_lengths[kNumNalus];
+  buffer.AppendData(kStartSequence);
+  nalu_offsets[0] = buffer.size();
+  nalu_lengths[0] = optimal_sps.size();
+  buffer.AppendData(optimal_sps);
+  buffer.AppendData(kStartSequence);
+  nalu_offsets[1] = buffer.size();
+  nalu_lengths[1] = sizeof(kIdr1);
+  buffer.AppendData(kIdr1);
+
+  rtc::Buffer modified_buffer;
+  size_t modified_nalu_offsets[kNumNalus];
+  size_t modified_nalu_lengths[kNumNalus];
+
+  SpsVuiRewriter::ParseOutgoingBitstreamAndRewriteSps(
+      buffer, kNumNalus, nalu_offsets, nalu_lengths, nullptr, &modified_buffer,
+      modified_nalu_offsets, modified_nalu_lengths);
+
+  EXPECT_THAT(
+      std::vector<uint8_t>(modified_buffer.data(),
+                           modified_buffer.data() + modified_buffer.size()),
+      ::testing::ElementsAreArray(buffer.data(), buffer.size()));
+  EXPECT_THAT(std::vector<size_t>(modified_nalu_offsets,
+                                  modified_nalu_offsets + kNumNalus),
+              ::testing::ElementsAreArray(nalu_offsets, kNumNalus));
+  EXPECT_THAT(std::vector<size_t>(modified_nalu_lengths,
+                                  modified_nalu_lengths + kNumNalus),
+              ::testing::ElementsAreArray(nalu_lengths, kNumNalus));
+}
+
+TEST(SpsVuiRewriterOutgoingVuiTest, ParseOutgoingBitstreamNoVui) {
+  rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+
+  rtc::Buffer sps;
+  GenerateFakeSps(kVuiNotPresent, &sps);
+
+  rtc::Buffer buffer;
+  const size_t kNumNalus = 3;
+  size_t nalu_offsets[kNumNalus];
+  size_t nalu_lengths[kNumNalus];
+  buffer.AppendData(kStartSequence);
+  nalu_offsets[0] = buffer.size();
+  nalu_lengths[0] = sizeof(kIdr1);
+  buffer.AppendData(kIdr1);
+  buffer.AppendData(kStartSequence);
+  nalu_offsets[1] = buffer.size();
+  nalu_lengths[1] = sizeof(kSpsNaluType) + sps.size();
+  buffer.AppendData(kSpsNaluType);
+  buffer.AppendData(sps);
+  buffer.AppendData(kStartSequence);
+  nalu_offsets[2] = buffer.size();
+  nalu_lengths[2] = sizeof(kIdr2);
+  buffer.AppendData(kIdr2);
+
+  rtc::Buffer optimal_sps;
+  GenerateFakeSps(kVuiNoFrameBuffering, &optimal_sps);
+
+  rtc::Buffer expected_buffer;
+  size_t expected_nalu_offsets[kNumNalus];
+  size_t expected_nalu_lengths[kNumNalus];
+  expected_buffer.AppendData(kStartSequence);
+  expected_nalu_offsets[0] = expected_buffer.size();
+  expected_nalu_lengths[0] = sizeof(kIdr1);
+  expected_buffer.AppendData(kIdr1);
+  expected_buffer.AppendData(kStartSequence);
+  expected_nalu_offsets[1] = expected_buffer.size();
+  expected_nalu_lengths[1] = sizeof(kSpsNaluType) + optimal_sps.size();
+  expected_buffer.AppendData(kSpsNaluType);
+  expected_buffer.AppendData(optimal_sps);
+  expected_buffer.AppendData(kStartSequence);
+  expected_nalu_offsets[2] = expected_buffer.size();
+  expected_nalu_lengths[2] = sizeof(kIdr2);
+  expected_buffer.AppendData(kIdr2);
+
+  rtc::Buffer modified_buffer;
+  size_t modified_nalu_offsets[kNumNalus];
+  size_t modified_nalu_lengths[kNumNalus];
+
+  SpsVuiRewriter::ParseOutgoingBitstreamAndRewriteSps(
+      buffer, kNumNalus, nalu_offsets, nalu_lengths, nullptr, &modified_buffer,
+      modified_nalu_offsets, modified_nalu_lengths);
+
+  EXPECT_THAT(
+      std::vector<uint8_t>(modified_buffer.data(),
+                           modified_buffer.data() + modified_buffer.size()),
+      ::testing::ElementsAreArray(expected_buffer.data(),
+                                  expected_buffer.size()));
+  EXPECT_THAT(std::vector<size_t>(modified_nalu_offsets,
+                                  modified_nalu_offsets + kNumNalus),
+              ::testing::ElementsAreArray(expected_nalu_offsets, kNumNalus));
+  EXPECT_THAT(std::vector<size_t>(modified_nalu_lengths,
+                                  modified_nalu_lengths + kNumNalus),
+              ::testing::ElementsAreArray(expected_nalu_lengths, kNumNalus));
+}
 }  // namespace webrtc

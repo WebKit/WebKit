@@ -13,17 +13,18 @@
 #include <memory>
 #include <numeric>
 
+#include "absl/algorithm/container.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
-using ::testing::ElementsAre;
-using ::testing::Le;
-using ::testing::Gt;
 using ::testing::Each;
+using ::testing::ElementsAre;
+using ::testing::Gt;
 using ::testing::IsEmpty;
+using ::testing::Le;
 using ::testing::Not;
 using ::testing::SizeIs;
 
@@ -36,13 +37,13 @@ int EffectivePacketsSizeDifference(
   // Account for larger last packet header.
   sizes.back() += limits.last_packet_reduction_len;
 
-  auto minmax = std::minmax_element(sizes.begin(), sizes.end());
+  auto minmax = absl::c_minmax_element(sizes);
   // MAX-MIN
   return *minmax.second - *minmax.first;
 }
 
 int Sum(const std::vector<int>& sizes) {
-  return std::accumulate(sizes.begin(), sizes.end(), 0);
+  return absl::c_accumulate(sizes, 0);
 }
 
 TEST(RtpPacketizerSplitAboutEqually, AllPacketsAreEqualSumToPayloadLen) {

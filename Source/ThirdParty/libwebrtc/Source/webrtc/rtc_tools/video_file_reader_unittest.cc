@@ -9,8 +9,13 @@
  */
 
 #include "rtc_tools/video_file_reader.h"
+
+#include <stdint.h>
+
+#include <string>
+
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {

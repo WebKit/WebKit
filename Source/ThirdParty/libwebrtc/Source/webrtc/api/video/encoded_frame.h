@@ -11,6 +11,9 @@
 #ifndef API_VIDEO_ENCODED_FRAME_H_
 #define API_VIDEO_ENCODED_FRAME_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/video_coding/encoded_frame.h"
 
 namespace webrtc {
@@ -54,9 +57,8 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
   static const uint8_t kMaxFrameReferences = 5;
 
   EncodedFrame() = default;
+  EncodedFrame(const EncodedFrame&) = default;
   virtual ~EncodedFrame() {}
-
-  virtual bool GetBitstream(uint8_t* destination) const = 0;
 
   // When this frame was received.
   virtual int64_t ReceivedTime() const = 0;
@@ -68,8 +70,6 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
   // TODO(philipel): Remove this function when a new timing class has
   //                 been implemented.
   virtual bool delayed_by_retransmission() const;
-
-  size_t size() const { return _length; }
 
   bool is_keyframe() const { return num_references == 0; }
 

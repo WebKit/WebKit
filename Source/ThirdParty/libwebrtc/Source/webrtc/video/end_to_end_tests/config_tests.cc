@@ -8,6 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <map>
+#include <vector>
+
+#include "api/crypto/crypto_options.h"
+#include "api/rtp_headers.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/rtp_config.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
 #include "test/null_transport.h"
@@ -43,6 +52,8 @@ void VerifyEmptyFlexfecConfig(const RtpConfig::Flexfec& config) {
 
 TEST_F(ConfigEndToEndTest, VerifyDefaultSendConfigParameters) {
   VideoSendStream::Config default_send_config(nullptr);
+  EXPECT_FALSE(default_send_config.rtp.lntf.enabled)
+      << "Enabling LNTF require rtcp-fb: goog-lntf negotiation.";
   EXPECT_EQ(0, default_send_config.rtp.nack.rtp_history_ms)
       << "Enabling NACK require rtcp-fb: nack negotiation.";
   EXPECT_TRUE(default_send_config.rtp.rtx.ssrcs.empty())
@@ -65,6 +76,8 @@ TEST_F(ConfigEndToEndTest, VerifyDefaultVideoReceiveConfigParameters) {
   VideoReceiveStream::Config default_receive_config(nullptr);
   EXPECT_EQ(RtcpMode::kCompound, default_receive_config.rtp.rtcp_mode)
       << "Reduced-size RTCP require rtcp-rsize to be negotiated.";
+  EXPECT_FALSE(default_receive_config.rtp.lntf.enabled)
+      << "Enabling LNTF require rtcp-fb: goog-lntf negotiation.";
   EXPECT_FALSE(default_receive_config.rtp.remb)
       << "REMB require rtcp-fb: goog-remb to be negotiated.";
   EXPECT_FALSE(

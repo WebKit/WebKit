@@ -12,6 +12,9 @@
 
 #include <utility>
 
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_frame.h"
+
 namespace webrtc {
 
 FakeDesktopCapturer::FakeDesktopCapturer() = default;

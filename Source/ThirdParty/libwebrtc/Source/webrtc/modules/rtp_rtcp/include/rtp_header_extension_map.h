@@ -12,10 +12,11 @@
 #define MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_EXTENSION_MAP_H_
 
 #include <stdint.h>
+
 #include <string>
 
 #include "api/array_view.h"
-#include "api/rtpparameters.h"
+#include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
 

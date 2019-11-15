@@ -71,6 +71,8 @@ namespace rtc {
 template <class T>
 class scoped_refptr {
  public:
+  typedef T element_type;
+
   scoped_refptr() : ptr_(nullptr) {}
 
   scoped_refptr(T* p) : ptr_(p) {  // NOLINT(runtime/explicit)

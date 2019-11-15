@@ -11,7 +11,9 @@
 #include "modules/audio_processing/aec3/suppression_filter.h"
 
 #include <math.h>
+
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 
 #include "test/gtest.h"
@@ -24,14 +26,23 @@ constexpr float kPi = 3.141592f;
 void ProduceSinusoid(int sample_rate_hz,
                      float sinusoidal_frequency_hz,
                      size_t* sample_counter,
-                     rtc::ArrayView<float> x) {
+                     std::vector<std::vector<std::vector<float>>>* x) {
   // Produce a sinusoid of the specified frequency.
   for (size_t k = *sample_counter, j = 0; k < (*sample_counter + kBlockSize);
        ++k, ++j) {
-    x[j] =
-        32767.f * sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
+    for (size_t channel = 0; channel < (*x)[0].size(); ++channel) {
+      (*x)[0][channel][j] =
+          32767.f *
+          std::sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
+    }
   }
   *sample_counter = *sample_counter + kBlockSize;
+
+  for (size_t band = 1; band < x->size(); ++band) {
+    for (size_t channel = 0; channel < (*x)[band].size(); ++channel) {
+      std::fill((*x)[band][channel].begin(), (*x)[band][channel].end(), 0.f);
+    }
+  }
 }
 
 }  // namespace
@@ -73,29 +84,41 @@ TEST(SuppressionFilter, ComfortNoiseInUnityGain) {
   cn_high_bands.re.fill(1.f);
   cn_high_bands.im.fill(1.f);
 
-  std::vector<std::vector<float>> e(3, std::vector<float>(kBlockSize, 0.f));
-  std::vector<std::vector<float>> e_ref = e;
+  std::vector<std::vector<std::vector<float>>> e(
+      3,
+      std::vector<std::vector<float>>(1, std::vector<float>(kBlockSize, 0.f)));
+  std::vector<std::vector<std::vector<float>>> e_ref = e;
 
   FftData E;
-  fft.PaddedFft(e[0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
-  std::copy(e[0].begin(), e[0].end(), e_old_.begin());
+  fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
+  std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
 
   filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
 
-  for (size_t k = 0; k < e.size(); ++k) {
-    EXPECT_EQ(e_ref[k], e[k]);
+  for (size_t band = 0; band < e.size(); ++band) {
+    for (size_t channel = 0; channel < e[band].size(); ++channel) {
+      for (size_t sample = 0; sample < e[band][channel].size(); ++sample) {
+        EXPECT_EQ(e_ref[band][channel][sample], e[band][channel][sample]);
+      }
+    }
   }
 }
 
 // Verifies that the suppressor is able to suppress a signal.
 TEST(SuppressionFilter, SignalSuppression) {
-  SuppressionFilter filter(Aec3Optimization::kNone, 48000);
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+  constexpr size_t kNumChannels = 1;
+
+  SuppressionFilter filter(Aec3Optimization::kNone, kSampleRateHz);
   FftData cn;
   FftData cn_high_bands;
   std::array<float, kFftLengthBy2> e_old_;
   Aec3Fft fft;
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<float>> e(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> e(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
   e_old_.fill(0.f);
 
   gain.fill(1.f);
@@ -111,18 +134,17 @@ TEST(SuppressionFilter, SignalSuppression) {
   float e0_input = 0.f;
   float e0_output = 0.f;
   for (size_t k = 0; k < 100; ++k) {
-    ProduceSinusoid(16000, 16000 * 40 / kFftLengthBy2 / 2, &sample_counter,
-                    e[0]);
-    e0_input =
-        std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_input);
+    ProduceSinusoid(16000, 16000 * 40 / kFftLengthBy2 / 2, &sample_counter, &e);
+    e0_input = std::inner_product(e[0][0].begin(), e[0][0].end(),
+                                  e[0][0].begin(), e0_input);
 
     FftData E;
-    fft.PaddedFft(e[0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
-    std::copy(e[0].begin(), e[0].end(), e_old_.begin());
+    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
+    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
-    e0_output =
-        std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_output);
+    e0_output = std::inner_product(e[0][0].begin(), e[0][0].end(),
+                                   e[0][0].begin(), e0_output);
   }
 
   EXPECT_LT(e0_output, e0_input / 1000.f);
@@ -131,13 +153,19 @@ TEST(SuppressionFilter, SignalSuppression) {
 // Verifies that the suppressor is able to pass through a desired signal while
 // applying suppressing for some frequencies.
 TEST(SuppressionFilter, SignalTransparency) {
-  SuppressionFilter filter(Aec3Optimization::kNone, 48000);
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
+  SuppressionFilter filter(Aec3Optimization::kNone, kSampleRateHz);
   FftData cn;
   std::array<float, kFftLengthBy2> e_old_;
   Aec3Fft fft;
   FftData cn_high_bands;
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<float>> e(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> e(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
   e_old_.fill(0.f);
   gain.fill(1.f);
   std::for_each(gain.begin() + 30, gain.end(), [](float& a) { a = 0.f; });
@@ -152,18 +180,17 @@ TEST(SuppressionFilter, SignalTransparency) {
   float e0_input = 0.f;
   float e0_output = 0.f;
   for (size_t k = 0; k < 100; ++k) {
-    ProduceSinusoid(16000, 16000 * 10 / kFftLengthBy2 / 2, &sample_counter,
-                    e[0]);
-    e0_input =
-        std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_input);
+    ProduceSinusoid(16000, 16000 * 10 / kFftLengthBy2 / 2, &sample_counter, &e);
+    e0_input = std::inner_product(e[0][0].begin(), e[0][0].end(),
+                                  e[0][0].begin(), e0_input);
 
     FftData E;
-    fft.PaddedFft(e[0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
-    std::copy(e[0].begin(), e[0].end(), e_old_.begin());
+    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
+    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
-    e0_output =
-        std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_output);
+    e0_output = std::inner_product(e[0][0].begin(), e[0][0].end(),
+                                   e[0][0].begin(), e0_output);
   }
 
   EXPECT_LT(0.9f * e0_input, e0_output);
@@ -171,13 +198,19 @@ TEST(SuppressionFilter, SignalTransparency) {
 
 // Verifies that the suppressor delay.
 TEST(SuppressionFilter, Delay) {
-  SuppressionFilter filter(Aec3Optimization::kNone, 48000);
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
+  SuppressionFilter filter(Aec3Optimization::kNone, kSampleRateHz);
   FftData cn;
   FftData cn_high_bands;
   std::array<float, kFftLengthBy2> e_old_;
   Aec3Fft fft;
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<float>> e(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> e(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
 
   gain.fill(1.f);
 
@@ -187,21 +220,26 @@ TEST(SuppressionFilter, Delay) {
   cn_high_bands.im.fill(0.f);
 
   for (size_t k = 0; k < 100; ++k) {
-    for (size_t j = 0; j < 3; ++j) {
-      for (size_t i = 0; i < kBlockSize; ++i) {
-        e[j][i] = k * kBlockSize + i;
+    for (size_t band = 0; band < kNumBands; ++band) {
+      for (size_t channel = 0; channel < kNumChannels; ++channel) {
+        for (size_t sample = 0; sample < kBlockSize; ++sample) {
+          e[band][channel][sample] = k * kBlockSize + sample + channel;
+        }
       }
     }
 
     FftData E;
-    fft.PaddedFft(e[0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
-    std::copy(e[0].begin(), e[0].end(), e_old_.begin());
+    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E);
+    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
     if (k > 2) {
-      for (size_t j = 0; j < 2; ++j) {
-        for (size_t i = 0; i < kBlockSize; ++i) {
-          EXPECT_NEAR(k * kBlockSize + i - kBlockSize, e[j][i], 0.01);
+      for (size_t band = 0; band < kNumBands; ++band) {
+        for (size_t channel = 0; channel < kNumChannels; ++channel) {
+          for (size_t sample = 0; sample < kBlockSize; ++sample) {
+            EXPECT_NEAR(k * kBlockSize + sample - kBlockSize + channel,
+                        e[band][channel][sample], 0.01);
+          }
         }
       }
     }

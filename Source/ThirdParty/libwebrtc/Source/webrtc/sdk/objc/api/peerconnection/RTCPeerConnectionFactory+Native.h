@@ -10,7 +10,7 @@
 
 #import "RTCPeerConnectionFactory.h"
 
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
@@ -18,6 +18,7 @@ class AudioDeviceModule;
 class AudioEncoderFactory;
 class AudioDecoderFactory;
 class MediaTransportFactory;
+class NetworkControllerFactoryInterface;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
 class AudioProcessing;
@@ -62,6 +63,23 @@ NS_ASSUME_NONNULL_BEGIN
                     audioDeviceModule:(nullable webrtc::AudioDeviceModule *)audioDeviceModule
                 audioProcessingModule:
                     (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule
+                mediaTransportFactory:
+                    (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory;
+
+- (instancetype)
+    initWithNativeAudioEncoderFactory:
+        (rtc::scoped_refptr<webrtc::AudioEncoderFactory>)audioEncoderFactory
+            nativeAudioDecoderFactory:
+                (rtc::scoped_refptr<webrtc::AudioDecoderFactory>)audioDecoderFactory
+            nativeVideoEncoderFactory:
+                (std::unique_ptr<webrtc::VideoEncoderFactory>)videoEncoderFactory
+            nativeVideoDecoderFactory:
+                (std::unique_ptr<webrtc::VideoDecoderFactory>)videoDecoderFactory
+                    audioDeviceModule:(nullable webrtc::AudioDeviceModule *)audioDeviceModule
+                audioProcessingModule:
+                    (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule
+             networkControllerFactory:(std::unique_ptr<webrtc::NetworkControllerFactoryInterface>)
+                                          networkControllerFactory
                 mediaTransportFactory:
                     (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory;
 

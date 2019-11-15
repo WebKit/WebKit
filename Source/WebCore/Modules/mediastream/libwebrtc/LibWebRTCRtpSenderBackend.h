@@ -35,8 +35,8 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/rtpsenderinterface.h>
-#include <webrtc/rtc_base/scoped_ref_ptr.h>
+#include <webrtc/api/rtp_sender_interface.h>
+#include <webrtc/api/scoped_refptr.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

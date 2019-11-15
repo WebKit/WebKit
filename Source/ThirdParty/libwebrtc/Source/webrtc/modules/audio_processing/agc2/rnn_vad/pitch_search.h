@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "common_audio/real_fourier.h"
+#include "modules/audio_processing/agc2/rnn_vad/auto_correlation.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/pitch_info.h"
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search_internal.h"
@@ -36,7 +36,7 @@ class PitchEstimator {
 
  private:
   PitchInfo last_pitch_48kHz_;
-  std::unique_ptr<RealFourier> fft_;
+  AutoCorrelationCalculator auto_corr_calculator_;
   std::vector<float> pitch_buf_decimated_;
   rtc::ArrayView<float, kBufSize12kHz> pitch_buf_decimated_view_;
   std::vector<float> auto_corr_;

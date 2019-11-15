@@ -31,8 +31,8 @@
 #include "LibWebRTCSocket.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <webrtc/rtc_base/nethelpers.h>
-#include <webrtc/p2p/base/packetsocketfactory.h>
+#include <webrtc/rtc_base/net_helpers.h>
+#include <webrtc/p2p/base/packet_socket_factory.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -47,9 +47,10 @@ public:
     void removeSocket(LibWebRTCSocket&);
     LibWebRTCSocket* socket(WebCore::LibWebRTCSocketIdentifier identifier) { return m_sockets.get(identifier); }
 
+    void forSocketInGroup(const void* socketGroup, const Function<void(LibWebRTCSocket&)>&);
     rtc::AsyncPacketSocket* createUdpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
     rtc::AsyncPacketSocket* createServerTcpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
-    rtc::AsyncPacketSocket* createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, int options);
+    rtc::AsyncPacketSocket* createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions&);
     rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier, const rtc::SocketAddress&);
 
     LibWebRTCResolver* resolver(uint64_t identifier) { return m_resolvers.get(identifier); }
@@ -57,8 +58,6 @@ public:
     rtc::AsyncResolverInterface* createAsyncResolver();
     
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
-
-    void forSocketInGroup(const void* socketGroup, const Function<void(LibWebRTCSocket&)>&);
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.

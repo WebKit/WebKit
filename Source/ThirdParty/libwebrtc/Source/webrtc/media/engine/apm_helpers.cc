@@ -10,8 +10,8 @@
 
 #include "media/engine/apm_helpers.h"
 
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -23,59 +23,18 @@ void Init(AudioProcessing* apm) {
   constexpr int kMinVolumeLevel = 0;
   constexpr int kMaxVolumeLevel = 255;
 
+  AudioProcessing::Config config = apm->GetConfig();
+#if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
+  config.gain_controller1.mode = config.gain_controller1.kFixedDigital;
+#else
+  config.gain_controller1.mode = config.gain_controller1.kAdaptiveAnalog;
+#endif
+  RTC_LOG(LS_INFO) << "Setting AGC mode to " << config.gain_controller1.mode;
   // This is the initialization which used to happen in VoEBase::Init(), but
   // which is not covered by the WVoE::ApplyOptions().
-  GainControl* gc = apm->gain_control();
-  if (gc->set_analog_level_limits(kMinVolumeLevel, kMaxVolumeLevel) != 0) {
-    RTC_DLOG(LS_ERROR) << "Failed to set analog level limits with minimum: "
-                       << kMinVolumeLevel
-                       << " and maximum: " << kMaxVolumeLevel;
-  }
-}
-
-AgcConfig GetAgcConfig(AudioProcessing* apm) {
-  RTC_DCHECK(apm);
-  AgcConfig result;
-  result.targetLeveldBOv = apm->gain_control()->target_level_dbfs();
-  result.digitalCompressionGaindB = apm->gain_control()->compression_gain_db();
-  result.limiterEnable = apm->gain_control()->is_limiter_enabled();
-  return result;
-}
-
-void SetAgcConfig(AudioProcessing* apm, const AgcConfig& config) {
-  RTC_DCHECK(apm);
-  GainControl* gc = apm->gain_control();
-  if (gc->set_target_level_dbfs(config.targetLeveldBOv) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to set target level: "
-                      << config.targetLeveldBOv;
-  }
-  if (gc->set_compression_gain_db(config.digitalCompressionGaindB) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to set compression gain: "
-                      << config.digitalCompressionGaindB;
-  }
-  if (gc->enable_limiter(config.limiterEnable) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to set limiter on/off: "
-                      << config.limiterEnable;
-  }
-}
-
-void SetAgcStatus(AudioProcessing* apm, bool enable) {
-  RTC_DCHECK(apm);
-#if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
-  GainControl::Mode agc_mode = GainControl::kFixedDigital;
-#else
-  GainControl::Mode agc_mode = GainControl::kAdaptiveAnalog;
-#endif
-  GainControl* gc = apm->gain_control();
-  if (gc->set_mode(agc_mode) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to set AGC mode: " << agc_mode;
-    return;
-  }
-  if (gc->Enable(enable) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to enable/disable AGC: " << enable;
-    return;
-  }
-  RTC_LOG(LS_INFO) << "AGC set to " << enable << " with mode " << agc_mode;
+  config.gain_controller1.analog_level_minimum = kMinVolumeLevel;
+  config.gain_controller1.analog_level_maximum = kMaxVolumeLevel;
+  apm->ApplyConfig(config);
 }
 
 void SetEcStatus(AudioProcessing* apm, bool enable, EcModes mode) {
@@ -101,20 +60,6 @@ void SetNsStatus(AudioProcessing* apm, bool enable) {
     return;
   }
   RTC_LOG(LS_INFO) << "NS set to " << enable;
-}
-
-void SetTypingDetectionStatus(AudioProcessing* apm, bool enable) {
-  RTC_DCHECK(apm);
-  VoiceDetection* vd = apm->voice_detection();
-  if (vd->Enable(enable)) {
-    RTC_LOG(LS_ERROR) << "Failed to enable/disable VAD: " << enable;
-    return;
-  }
-  if (vd->set_likelihood(VoiceDetection::kVeryLowLikelihood)) {
-    RTC_LOG(LS_ERROR) << "Failed to set low VAD likelihood.";
-    return;
-  }
-  RTC_LOG(LS_INFO) << "VAD set to " << enable << " for typing detection.";
 }
 }  // namespace apm_helpers
 }  // namespace webrtc

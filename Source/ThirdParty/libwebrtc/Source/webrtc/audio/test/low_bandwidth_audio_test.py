@@ -61,6 +61,8 @@ def _ParseArgs():
       help='Path to store perf results in chartjson format.')
   parser.add_argument('--isolated-script-test-output', default=None,
       help='Path to output an empty JSON file which Chromium infra requires.')
+  parser.add_argument('--extra-test-args', default=[], action='append',
+      help='Extra args to path to the test binary.')
 
   # Ignore Chromium-specific flags
   parser.add_argument('--test-launcher-summary-output',
@@ -110,7 +112,8 @@ def _GetPathToTools():
 def ExtractTestRuns(lines, echo=False):
   """Extracts information about tests from the output of a test runner.
 
-  Produces tuples (android_device, test_name, reference_file, degraded_file).
+  Produces tuples
+  (android_device, test_name, reference_file, degraded_file, cur_perf_results).
   """
   for line in lines:
     if echo:
@@ -118,7 +121,8 @@ def ExtractTestRuns(lines, echo=False):
 
     # Output from Android has a prefix with the device name.
     android_prefix_re = r'(?:I\b.+\brun_tests_on_device\((.+?)\)\s*)?'
-    test_re = r'^' + android_prefix_re + r'TEST (\w+) ([^ ]+?) ([^ ]+?)\s*$'
+    test_re = r'^' + android_prefix_re + (r'TEST (\w+) ([^ ]+?) ([^\s]+)'
+                                          r' ?([^\s]+)?\s*$')
 
     match = re.search(test_re, line)
     if match:
@@ -206,7 +210,20 @@ def _AddChart(charts, metric, test_name, value, units):
   }
 
 
-Analyzer = collections.namedtuple('Analyzer', ['func', 'executable',
+def _AddRunPerfResults(charts, run_perf_results_file):
+  with open(run_perf_results_file, 'rb') as f:
+    per_run_perf_results = json.load(f)
+  if 'charts' not in per_run_perf_results:
+    return
+  for metric, cases in per_run_perf_results['charts'].items():
+    chart = charts.setdefault(metric, {})
+    for case_name, case_value in cases.items():
+      if case_name in chart:
+        logging.error('Overriding results for %s/%s', metric, case_name)
+      chart[case_name] = case_value
+
+
+Analyzer = collections.namedtuple('Analyzer', ['name', 'func', 'executable',
                                                'sample_rate_hz'])
 
 
@@ -228,25 +245,29 @@ def main():
   else:
     test_command = [os.path.join(args.build_dir, 'low_bandwidth_audio_test')]
 
-  analyzers = [Analyzer(_RunPesq, pesq_path, 16000)]
+  analyzers = [Analyzer('pesq', _RunPesq, pesq_path, 16000)]
   # Check if POLQA can run at all, or skip the 48 kHz tests entirely.
   example_path = os.path.join(SRC_DIR, 'resources',
                               'voice_engine', 'audio_tiny48.wav')
   if polqa_path and _RunPolqa(polqa_path, example_path, example_path):
-    analyzers.append(Analyzer(_RunPolqa, polqa_path, 48000))
+    analyzers.append(Analyzer('polqa', _RunPolqa, polqa_path, 48000))
 
   charts = {}
 
   for analyzer in analyzers:
     # Start the test executable that produces audio files.
     test_process = subprocess.Popen(
-        _LogCommand(test_command + ['--sample_rate_hz=%d' %
-                                    analyzer.sample_rate_hz]),
+        _LogCommand(test_command + [
+            '--sample_rate_hz=%d' % analyzer.sample_rate_hz,
+            '--test_case_prefix=%s' % analyzer.name
+          ] + args.extra_test_args),
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    perf_results_file = None
     try:
       lines = iter(test_process.stdout.readline, '')
       for result in ExtractTestRuns(lines, echo=True):
-        (android_device, test_name, reference_file, degraded_file) = result
+        (android_device, test_name, reference_file, degraded_file,
+         perf_results_file) = result
 
         adb_prefix = (args.adb_path,)
         if android_device:
@@ -269,6 +290,12 @@ def main():
           os.remove(degraded_file)
     finally:
       test_process.terminate()
+    if perf_results_file:
+      perf_results_file = _GetFile(perf_results_file, out_dir, move=True,
+                           android=args.android, adb_prefix=adb_prefix)
+      _AddRunPerfResults(charts, perf_results_file)
+      if args.remove:
+        os.remove(perf_results_file)
 
   if args.isolated_script_test_perf_output:
     with open(args.isolated_script_test_perf_output, 'w') as f:

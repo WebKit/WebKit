@@ -18,7 +18,7 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -47,13 +47,10 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
     detect_file_name << "audio_processing/transient/detect"
                      << (sample_rate_hz / 1000) << "kHz";
 
-    std::unique_ptr<FileWrapper> detect_file(FileWrapper::Create());
+    FileWrapper detect_file = FileWrapper::OpenReadOnly(
+        test::ResourcePath(detect_file_name.str(), "dat").c_str());
 
-    detect_file->OpenFile(
-        test::ResourcePath(detect_file_name.str(), "dat").c_str(),
-        true);  // Read only.
-
-    bool file_opened = detect_file->is_open();
+    bool file_opened = detect_file.is_open();
     ASSERT_TRUE(file_opened) << "File could not be opened.\n"
                              << detect_file_name.str().c_str();
 
@@ -62,11 +59,8 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
     audio_file_name << "audio_processing/transient/audio"
                     << (sample_rate_hz / 1000) << "kHz";
 
-    std::unique_ptr<FileWrapper> audio_file(FileWrapper::Create());
-
-    audio_file->OpenFile(
-        test::ResourcePath(audio_file_name.str(), "pcm").c_str(),
-        true);  // Read only.
+    FileWrapper audio_file = FileWrapper::OpenReadOnly(
+        test::ResourcePath(audio_file_name.str(), "pcm").c_str());
 
     // Create detector.
     TransientDetector detector(sample_rate_hz);
@@ -78,14 +72,14 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
 
     size_t frames_read = 0;
 
-    while (ReadInt16FromFileToFloatBuffer(audio_file.get(), buffer_length,
+    while (ReadInt16FromFileToFloatBuffer(&audio_file, buffer_length,
                                           buffer.get()) == buffer_length) {
       ++frames_read;
 
       float detector_value =
           detector.Detect(buffer.get(), buffer_length, NULL, 0);
       double file_value;
-      ASSERT_EQ(1u, ReadDoubleBufferFromFile(detect_file.get(), 1, &file_value))
+      ASSERT_EQ(1u, ReadDoubleBufferFromFile(&detect_file, 1, &file_value))
           << "Detect test file is malformed.\n";
 
       // Compare results with data from the matlab test file.
@@ -93,8 +87,8 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
           << "Frame: " << frames_read;
     }
 
-    detect_file->CloseFile();
-    audio_file->CloseFile();
+    detect_file.Close();
+    audio_file.Close();
   }
 }
 

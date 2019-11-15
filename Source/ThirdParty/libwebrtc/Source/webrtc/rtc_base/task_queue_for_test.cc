@@ -10,10 +10,12 @@
 
 #include "rtc_base/task_queue_for_test.h"
 
-namespace rtc {
-namespace test {
-TaskQueueForTest::TaskQueueForTest(const char* queue_name, Priority priority)
-    : TaskQueue(queue_name, priority) {}
-TaskQueueForTest::~TaskQueueForTest() {}
-}  // namespace test
-}  // namespace rtc
+#include "api/task_queue/default_task_queue_factory.h"
+
+namespace webrtc {
+
+TaskQueueForTest::TaskQueueForTest(absl::string_view name, Priority priority)
+    : TaskQueue(
+          CreateDefaultTaskQueueFactory()->CreateTaskQueue(name, priority)) {}
+
+}  // namespace webrtc

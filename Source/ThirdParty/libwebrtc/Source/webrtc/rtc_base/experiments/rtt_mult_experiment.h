@@ -10,15 +10,24 @@
 #ifndef RTC_BASE_EXPERIMENTS_RTT_MULT_EXPERIMENT_H_
 #define RTC_BASE_EXPERIMENTS_RTT_MULT_EXPERIMENT_H_
 
+#include "absl/types/optional.h"
+
 namespace webrtc {
 
 class RttMultExperiment {
  public:
+  struct Settings {
+    float rtt_mult_setting;  // Jitter buffer size is increased by this factor
+                             // times the estimated RTT.
+    float rtt_mult_add_cap_ms;  // Jitter buffer size increase is capped by this
+                                // value.
+  };
+
   // Returns true if the experiment is enabled.
   static bool RttMultEnabled();
 
-  // Returns rtt_mult value from field trial.
-  static float GetRttMultValue();
+  // Returns rtt_mult value and rtt_mult addition cap value from field trial.
+  static absl::optional<RttMultExperiment::Settings> GetRttMultValue();
 };
 
 }  // namespace webrtc

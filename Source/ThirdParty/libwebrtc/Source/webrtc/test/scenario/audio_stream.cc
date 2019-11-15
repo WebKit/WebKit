@@ -9,7 +9,7 @@
  */
 #include "test/scenario/audio_stream.h"
 
-#include "rtc_base/bitrateallocationstrategy.h"
+#include "absl/memory/memory.h"
 #include "test/call_test.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -25,6 +25,11 @@ RTC_POP_IGNORING_WUNDEF()
 namespace webrtc {
 namespace test {
 namespace {
+enum : int {  // The first valid value is 1.
+  kTransportSequenceNumberExtensionId = 1,
+  kAbsSendTimeExtensionId
+};
+
 absl::optional<std::string> CreateAdaptationString(
     AudioStreamConfig::NetworkAdaptation config) {
 #if WEBRTC_ENABLE_PROTOBUF
@@ -69,7 +74,7 @@ SendAudioStream::SendAudioStream(
     Transport* send_transport)
     : sender_(sender), config_(config) {
   AudioSendStream::Config send_config(send_transport,
-                                      /*media_transport=*/nullptr);
+                                      webrtc::MediaTransportConfig());
   ssrc_ = sender->GetNextAudioSsrc();
   send_config.rtp.ssrc = ssrc_;
   SdpAudioFormat::Parameters sdp_params;
@@ -78,6 +83,8 @@ SendAudioStream::SendAudioStream(
   if (config.encoder.initial_frame_length != TimeDelta::ms(20))
     sdp_params["ptime"] =
         std::to_string(config.encoder.initial_frame_length.ms());
+  if (config.encoder.enable_dtx)
+    sdp_params["usedtx"] = "1";
 
   // SdpAudioFormat::num_channels indicates that the encoder is capable of
   // stereo, but the actual channel count used is based on the "stereo"
@@ -106,61 +113,57 @@ SendAudioStream::SendAudioStream(
       min_rate = *config.encoder.min_rate;
       max_rate = *config.encoder.max_rate;
     }
-    if (field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")) {
-      TimeDelta min_frame_length = TimeDelta::ms(20);
-      // Note, depends on WEBRTC_OPUS_SUPPORT_120MS_PTIME being set, which is
-      // the default.
-      TimeDelta max_frame_length = TimeDelta::ms(120);
-      DataSize rtp_overhead = DataSize::bytes(12);
-      // Note that this does not include rtp extension overhead and will not
-      // follow updates in the transport overhead over time.
-      DataSize total_overhead =
-          sender_->transport_.packet_overhead() + rtp_overhead;
-
-      min_rate += total_overhead / max_frame_length;
-      // In WebRTCVoiceEngine the max rate is also based on the max frame
-      // length.
-      max_rate += total_overhead / min_frame_length;
-    }
     send_config.min_bitrate_bps = min_rate.bps();
     send_config.max_bitrate_bps = max_rate.bps();
   }
 
   if (config.stream.in_bandwidth_estimation) {
     send_config.send_codec_spec->transport_cc_enabled = true;
-    send_config.rtp.extensions = {
-        {RtpExtension::kTransportSequenceNumberUri, 8}};
+    send_config.rtp.extensions = {{RtpExtension::kTransportSequenceNumberUri,
+                                   kTransportSequenceNumberExtensionId}};
+  }
+  if (config.stream.abs_send_time) {
+    send_config.rtp.extensions.push_back(
+        {RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId});
   }
 
-  if (config.encoder.priority_rate) {
-    send_config.track_id = sender->GetNextPriorityId();
-    sender_->call_->SetBitrateAllocationStrategy(
-        absl::make_unique<rtc::AudioPriorityBitrateAllocationStrategy>(
-            send_config.track_id,
-            config.encoder.priority_rate->bps<uint32_t>()));
-  }
-  send_stream_ = sender_->call_->CreateAudioSendStream(send_config);
-  if (field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")) {
-    sender->call_->OnAudioTransportOverheadChanged(
-        sender_->transport_.packet_overhead().bytes());
-  }
+  sender_->SendTask([&] {
+    send_stream_ = sender_->call_->CreateAudioSendStream(send_config);
+    if (field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")) {
+      sender->call_->OnAudioTransportOverheadChanged(
+          sender_->transport_->packet_overhead().bytes());
+    }
+  });
 }
 
 SendAudioStream::~SendAudioStream() {
-  sender_->call_->DestroyAudioSendStream(send_stream_);
+  sender_->SendTask(
+      [this] { sender_->call_->DestroyAudioSendStream(send_stream_); });
 }
 
 void SendAudioStream::Start() {
-  send_stream_->Start();
-  sender_->call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+  sender_->SendTask([this] {
+    send_stream_->Start();
+    sender_->call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+  });
+}
+
+void SendAudioStream::Stop() {
+  sender_->SendTask([this] { send_stream_->Stop(); });
+}
+
+void SendAudioStream::SetMuted(bool mute) {
+  send_stream_->SetMuted(mute);
 }
 
 ColumnPrinter SendAudioStream::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "audio_target_rate",
       [this](rtc::SimpleStringBuilder& sb) {
-        AudioSendStream::Stats stats = send_stream_->GetStats();
-        sb.AppendFormat("%.0lf", stats.target_bitrate_bps / 8.0);
+        sender_->SendTask([this, &sb] {
+          AudioSendStream::Stats stats = send_stream_->GetStats();
+          sb.AppendFormat("%.0lf", stats.target_bitrate_bps / 8.0);
+        });
       },
       64);
 }
@@ -173,29 +176,44 @@ ReceiveAudioStream::ReceiveAudioStream(
     Transport* feedback_transport)
     : receiver_(receiver), config_(config) {
   AudioReceiveStream::Config recv_config;
-  recv_config.rtp.local_ssrc = CallTest::kReceiverLocalAudioSsrc;
+  recv_config.rtp.local_ssrc = receiver_->GetNextAudioLocalSsrc();
   recv_config.rtcp_send_transport = feedback_transport;
   recv_config.rtp.remote_ssrc = send_stream->ssrc_;
   receiver->ssrc_media_types_[recv_config.rtp.remote_ssrc] = MediaType::AUDIO;
   if (config.stream.in_bandwidth_estimation) {
     recv_config.rtp.transport_cc = true;
-    recv_config.rtp.extensions = {
-        {RtpExtension::kTransportSequenceNumberUri, 8}};
+    recv_config.rtp.extensions = {{RtpExtension::kTransportSequenceNumberUri,
+                                   kTransportSequenceNumberExtensionId}};
   }
   receiver_->AddExtensions(recv_config.rtp.extensions);
   recv_config.decoder_factory = decoder_factory;
   recv_config.decoder_map = {
       {CallTest::kAudioSendPayloadType, {"opus", 48000, 2}}};
   recv_config.sync_group = config.render.sync_group;
-  receive_stream_ = receiver_->call_->CreateAudioReceiveStream(recv_config);
+  receiver_->SendTask([&] {
+    receive_stream_ = receiver_->call_->CreateAudioReceiveStream(recv_config);
+  });
 }
 ReceiveAudioStream::~ReceiveAudioStream() {
-  receiver_->call_->DestroyAudioReceiveStream(receive_stream_);
+  receiver_->SendTask(
+      [&] { receiver_->call_->DestroyAudioReceiveStream(receive_stream_); });
 }
 
 void ReceiveAudioStream::Start() {
-  receive_stream_->Start();
-  receiver_->call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+  receiver_->SendTask([&] {
+    receive_stream_->Start();
+    receiver_->call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+  });
+}
+
+void ReceiveAudioStream::Stop() {
+  receiver_->SendTask([&] { receive_stream_->Stop(); });
+}
+
+AudioReceiveStream::Stats ReceiveAudioStream::GetStats() const {
+  AudioReceiveStream::Stats result;
+  receiver_->SendTask([&] { result = receive_stream_->GetStats(); });
+  return result;
 }
 
 AudioStreamPair::~AudioStreamPair() = default;
@@ -207,12 +225,12 @@ AudioStreamPair::AudioStreamPair(
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     AudioStreamConfig config)
     : config_(config),
-      send_stream_(sender, config, encoder_factory, &sender->transport_),
+      send_stream_(sender, config, encoder_factory, sender->transport_.get()),
       receive_stream_(receiver,
                       config,
                       &send_stream_,
                       decoder_factory,
-                      &receiver->transport_) {}
+                      receiver->transport_.get()) {}
 
 }  // namespace test
 }  // namespace webrtc

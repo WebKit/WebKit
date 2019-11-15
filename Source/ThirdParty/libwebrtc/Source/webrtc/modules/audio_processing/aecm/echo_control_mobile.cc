@@ -85,8 +85,6 @@ static int WebRtcAecm_DelayComp(AecMobile* aecm);
 void* WebRtcAecm_Create() {
   AecMobile* aecm = static_cast<AecMobile*>(malloc(sizeof(AecMobile)));
 
-  WebRtcSpl_Init();
-
   aecm->aecmCore = WebRtcAecm_CreateCore();
   if (!aecm->aecmCore) {
     WebRtcAecm_Free(aecm);

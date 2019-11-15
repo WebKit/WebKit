@@ -16,9 +16,6 @@
 #include <limits>
 #include <string>
 
-#include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
-
 namespace webrtc {
 
 // Video timing timestamps in ms counted from capture_time_ms of a frame.
@@ -46,10 +43,7 @@ struct VideoSendTiming {
   // Used to fill this data structure as per
   // https://webrtc.org/experiments/rtp-hdrext/video-timing/ extension stores
   // 16-bit deltas of timestamps from packet capture time.
-  static uint16_t GetDeltaCappedMs(int64_t base_ms, int64_t time_ms) {
-    RTC_DCHECK_GE(time_ms, base_ms);
-    return rtc::saturated_cast<uint16_t>(time_ms - base_ms);
-  }
+  static uint16_t GetDeltaCappedMs(int64_t base_ms, int64_t time_ms);
 
   uint16_t encode_start_delta_ms;
   uint16_t encode_finish_delta_ms;

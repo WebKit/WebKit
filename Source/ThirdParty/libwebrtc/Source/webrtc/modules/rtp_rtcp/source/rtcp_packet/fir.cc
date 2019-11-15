@@ -46,6 +46,8 @@ constexpr uint8_t Fir::kFeedbackMessageType;
 
 Fir::Fir() = default;
 
+Fir::Fir(const Fir& fir) = default;
+
 Fir::~Fir() = default;
 
 bool Fir::Parse(const CommonHeader& packet) {

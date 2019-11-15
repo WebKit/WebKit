@@ -12,16 +12,18 @@
 
 #include <stdint.h>
 
+#include "api/transport/webrtc_key_value_config.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
-bool AdaptiveThresholdExperimentIsDisabled();
+bool AdaptiveThresholdExperimentIsDisabled(
+    const WebRtcKeyValueConfig& key_value_config);
 
 class OveruseDetector {
  public:
-  OveruseDetector();
+  explicit OveruseDetector(const WebRtcKeyValueConfig* key_value_config);
   virtual ~OveruseDetector();
 
   // Update the detection state based on the estimated inter-arrival time delta
@@ -40,7 +42,7 @@ class OveruseDetector {
 
  private:
   void UpdateThreshold(double modified_offset, int64_t now_ms);
-  void InitializeExperiment();
+  void InitializeExperiment(const WebRtcKeyValueConfig& key_value_config);
 
   bool in_experiment_;
   double k_up_;

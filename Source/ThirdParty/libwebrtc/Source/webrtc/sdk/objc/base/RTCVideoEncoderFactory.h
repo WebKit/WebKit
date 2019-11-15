@@ -18,11 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
 RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 @protocol RTCVideoEncoderFactory <NSObject>
 
 - (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;  // TODO(andersc): "supportedFormats" instead?
+
+@optional
+- (NSArray<RTCVideoCodecInfo *> *)implementations;
 
 @end
 

@@ -8,11 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing/aecm/aecm_core.h"
-
 #include <arm_neon.h>
 
 #include "common_audio/signal_processing/include/real_fft.h"
+#include "modules/audio_processing/aecm/aecm_core.h"
 #include "rtc_base/checks.h"
 
 // TODO(kma): Re-write the corresponding assembly file, the offset

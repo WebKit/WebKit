@@ -18,7 +18,7 @@
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/utility/ooura_fft.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -31,7 +31,7 @@ class SuppressionFilter {
                  const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
                  float high_bands_gain,
                  const FftData& E_lowest_band,
-                 std::vector<std::vector<float>>* e);
+                 std::vector<std::vector<std::vector<float>>>* e);
 
  private:
   const Aec3Optimization optimization_;

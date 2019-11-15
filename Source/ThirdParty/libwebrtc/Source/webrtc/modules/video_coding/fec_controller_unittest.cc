@@ -8,6 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/fec_controller.h"
+
+#include <stdint.h>
+
+#include <vector>
+
+#include "modules/include/module_fec_types.h"
 #include "modules/video_coding/fec_controller_default.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"

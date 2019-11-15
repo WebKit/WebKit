@@ -10,51 +10,65 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_TEST_GOOG_CC_PRINTER_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_TEST_GOOG_CC_PRINTER_H_
 
+#include <deque>
 #include <memory>
+#include <string>
 
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/goog_cc_factory.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
-#include "modules/congestion_controller/test/controller_printer.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
-class GoogCcStatePrinter : public DebugStatePrinter {
+
+class FieldLogger {
+ public:
+  virtual ~FieldLogger() = default;
+  virtual const std::string& name() const = 0;
+  virtual void WriteValue(RtcEventLogOutput* out) = 0;
+};
+
+class GoogCcStatePrinter {
  public:
   GoogCcStatePrinter();
-  ~GoogCcStatePrinter() override;
-  void Attach(GoogCcNetworkController*);
-  bool Attached() const override;
+  GoogCcStatePrinter(const GoogCcStatePrinter&) = delete;
+  GoogCcStatePrinter& operator=(const GoogCcStatePrinter&) = delete;
+  ~GoogCcStatePrinter();
 
-  void PrintHeaders(FILE* out) override;
-  void PrintValues(FILE* out) override;
-
-  NetworkControlUpdate GetState(Timestamp at_time) const override;
+  void PrintHeaders(RtcEventLogOutput* log);
+  void PrintState(RtcEventLogOutput* log,
+                  GoogCcNetworkController* controller,
+                  Timestamp at_time);
 
  private:
+  std::deque<FieldLogger*> CreateLoggers();
+  std::deque<std::unique_ptr<FieldLogger>> loggers_;
+
   GoogCcNetworkController* controller_ = nullptr;
+  TargetTransferRate target_;
+  PacerConfig pacing_;
+  DataSize congestion_window_ = DataSize::PlusInfinity();
+  NetworkStateEstimate est_;
 };
 
 class GoogCcDebugFactory : public GoogCcNetworkControllerFactory {
  public:
-  GoogCcDebugFactory(RtcEventLog* event_log, GoogCcStatePrinter* printer);
+  GoogCcDebugFactory();
+  explicit GoogCcDebugFactory(GoogCcFactoryConfig config);
   std::unique_ptr<NetworkControllerInterface> Create(
       NetworkControllerConfig config) override;
 
- private:
-  GoogCcStatePrinter* printer_;
-  GoogCcNetworkController* controller_ = nullptr;
-};
+  void PrintState(const Timestamp at_time);
 
-class GoogCcFeedbackDebugFactory
-    : public GoogCcFeedbackNetworkControllerFactory {
- public:
-  GoogCcFeedbackDebugFactory(RtcEventLog* event_log,
-                             GoogCcStatePrinter* printer);
-  std::unique_ptr<NetworkControllerInterface> Create(
-      NetworkControllerConfig config) override;
+  void AttachWriter(std::unique_ptr<RtcEventLogOutput> log_writer);
 
  private:
-  GoogCcStatePrinter* printer_;
+  GoogCcStatePrinter printer_;
   GoogCcNetworkController* controller_ = nullptr;
+  std::unique_ptr<RtcEventLogOutput> log_writer_;
 };
 }  // namespace webrtc
 

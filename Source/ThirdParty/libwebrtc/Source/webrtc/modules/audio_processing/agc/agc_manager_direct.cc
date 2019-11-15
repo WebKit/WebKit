@@ -17,6 +17,7 @@
 #include <cstdio>
 #endif
 
+#include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc/gain_map_internal.h"
 #include "modules/audio_processing/agc2/adaptive_mode_level_estimator_agc.h"
 #include "modules/audio_processing/include/gain_control.h"
@@ -58,6 +59,10 @@ const int kMaxResidualGainChange = 15;
 // Maximum additional gain allowed to compensate for microphone level
 // restrictions from clipping events.
 const int kSurplusCompressionGain = 6;
+
+// Maximum number of channels and number of samples per channel supported.
+constexpr size_t kMaxNumSamplesPerChannel = 1920;
+constexpr size_t kMaxNumChannels = 4;
 
 int ClampLevel(int mic_level) {
   return rtc::SafeClamp(mic_level, kMinMicLevel, kMaxMicLevel);
@@ -220,7 +225,7 @@ int AgcManagerDirect::Initialize() {
   return InitializeGainControl(gctrl_, disable_digital_adaptive_);
 }
 
-void AgcManagerDirect::AnalyzePreProcess(int16_t* audio,
+void AgcManagerDirect::AnalyzePreProcess(float* audio,
                                          int num_channels,
                                          size_t samples_per_channel) {
   size_t length = num_channels * samples_per_channel;
@@ -228,7 +233,19 @@ void AgcManagerDirect::AnalyzePreProcess(int16_t* audio,
     return;
   }
 
-  file_preproc_->Write(audio, length);
+  std::array<int16_t, kMaxNumSamplesPerChannel * kMaxNumChannels> audio_data;
+  int16_t* audio_fix;
+  size_t safe_length;
+  if (audio) {
+    audio_fix = audio_data.data();
+    safe_length = std::min(audio_data.size(), length);
+    FloatS16ToS16(audio, length, audio_fix);
+  } else {
+    audio_fix = nullptr;
+    safe_length = length;
+  }
+
+  file_preproc_->Write(audio_fix, safe_length);
 
   if (frames_since_clipped_ < kClippedWaitFrames) {
     ++frames_since_clipped_;
@@ -244,7 +261,7 @@ void AgcManagerDirect::AnalyzePreProcess(int16_t* audio,
   // maximum. This harsh treatment is an effort to avoid repeated clipped echo
   // events. As compensation for this restriction, the maximum compression
   // gain is increased, through SetMaxLevel().
-  float clipped_ratio = agc_->AnalyzePreproc(audio, length);
+  float clipped_ratio = agc_->AnalyzePreproc(audio_fix, safe_length);
   if (clipped_ratio > kClippedRatioThreshold) {
     RTC_DLOG(LS_INFO) << "[agc] Clipping detected. clipped_ratio="
                       << clipped_ratio;
@@ -263,13 +280,29 @@ void AgcManagerDirect::AnalyzePreProcess(int16_t* audio,
     }
     frames_since_clipped_ = 0;
   }
+
+  if (audio) {
+    S16ToFloatS16(audio_fix, safe_length, audio);
+  }
 }
 
-void AgcManagerDirect::Process(const int16_t* audio,
+void AgcManagerDirect::Process(const float* audio,
                                size_t length,
                                int sample_rate_hz) {
   if (capture_muted_) {
     return;
+  }
+
+  std::array<int16_t, kMaxNumSamplesPerChannel * kMaxNumChannels> audio_data;
+  const int16_t* audio_fix;
+  size_t safe_length;
+  if (audio) {
+    audio_fix = audio_data.data();
+    safe_length = std::min(audio_data.size(), length);
+    FloatS16ToS16(audio, length, audio_data.data());
+  } else {
+    audio_fix = nullptr;
+    safe_length = length;
   }
 
   if (check_volume_on_next_process_) {
@@ -279,14 +312,14 @@ void AgcManagerDirect::Process(const int16_t* audio,
     CheckVolumeAndReset();
   }
 
-  agc_->Process(audio, length, sample_rate_hz);
+  agc_->Process(audio_fix, safe_length, sample_rate_hz);
 
   UpdateGain();
   if (!disable_digital_adaptive_) {
     UpdateCompressor();
   }
 
-  file_postproc_->Write(audio, length);
+  file_postproc_->Write(audio_fix, safe_length);
 
   data_dumper_->DumpRaw("experimental_gain_control_compression_gain_db", 1,
                         &compression_);

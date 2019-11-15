@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/codec_timer.h"
 
+#include <cstdint>
+
 namespace webrtc {
 
 namespace {

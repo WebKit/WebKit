@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
+
 #include <pthread.h>
 
 #include <memory>
 
-#include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ignore_wundef.h"
 #include "sdk/android/native_api/base/init.h"

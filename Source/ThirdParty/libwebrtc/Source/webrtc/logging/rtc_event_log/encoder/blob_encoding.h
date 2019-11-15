@@ -11,6 +11,8 @@
 #ifndef LOGGING_RTC_EVENT_LOG_ENCODER_BLOB_ENCODING_H_
 #define LOGGING_RTC_EVENT_LOG_ENCODER_BLOB_ENCODING_H_
 
+#include <stddef.h>
+
 #include <string>
 #include <vector>
 

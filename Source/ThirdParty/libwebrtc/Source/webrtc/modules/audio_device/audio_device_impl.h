@@ -14,8 +14,10 @@
 #if defined(WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE)
 
 #include <stdint.h>
+
 #include <memory>
 
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/include/audio_device.h"
 
@@ -40,7 +42,8 @@ class AudioDeviceModuleImpl : public AudioDeviceModuleForTest {
   int32_t CreatePlatformSpecificObjects();
   int32_t AttachAudioBuffer();
 
-  AudioDeviceModuleImpl(const AudioLayer audioLayer);
+  AudioDeviceModuleImpl(AudioLayer audio_layer,
+                        TaskQueueFactory* task_queue_factory);
   ~AudioDeviceModuleImpl() override;
 
   // Retrieve the currently utilized audio layer
@@ -133,6 +136,9 @@ class AudioDeviceModuleImpl : public AudioDeviceModuleForTest {
   int32_t EnableBuiltInAGC(bool enable) override;
   bool BuiltInNSIsAvailable() const override;
   int32_t EnableBuiltInNS(bool enable) override;
+
+  // Play underrun count.
+  int32_t GetPlayoutUnderrunCount() const override;
 
 #if defined(WEBRTC_IOS)
   int GetPlayoutAudioParameters(AudioParameters* params) const override;

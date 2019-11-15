@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
 
 #include <math.h>
+
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -23,7 +24,7 @@
 #include "common_audio/channel_buffer.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -74,6 +75,26 @@ class ChannelBufferWavWriter final {
   std::vector<float> interleaved_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ChannelBufferWavWriter);
+};
+
+// Takes a pointer to a vector. Allows appending the samples of channel buffers
+// to the given vector, by interleaving the samples and converting them to float
+// S16.
+class ChannelBufferVectorWriter final {
+ public:
+  explicit ChannelBufferVectorWriter(std::vector<float>* output);
+  ChannelBufferVectorWriter(const ChannelBufferVectorWriter&) = delete;
+  ChannelBufferVectorWriter& operator=(const ChannelBufferVectorWriter&) =
+      delete;
+  ~ChannelBufferVectorWriter();
+
+  // Creates an interleaved copy of |buffer|, converts the samples to float S16
+  // and appends the result to output_.
+  void Write(const ChannelBuffer<float>& buffer);
+
+ private:
+  std::vector<float> interleaved_buffer_;
+  std::vector<float>* output_;
 };
 
 void WriteIntData(const int16_t* data,

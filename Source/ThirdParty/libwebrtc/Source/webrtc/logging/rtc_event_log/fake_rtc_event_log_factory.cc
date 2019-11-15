@@ -10,22 +10,13 @@
 
 #include "logging/rtc_event_log/fake_rtc_event_log_factory.h"
 
-#include <utility>
-
-#include "logging/rtc_event_log/rtc_event_log.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/fake_rtc_event_log.h"
 
 namespace webrtc {
 
 std::unique_ptr<RtcEventLog> FakeRtcEventLogFactory::CreateRtcEventLog(
     RtcEventLog::EncodingType encoding_type) {
-  std::unique_ptr<RtcEventLog> fake_event_log(new FakeRtcEventLog(thread()));
-  last_log_created_ = fake_event_log.get();
-  return fake_event_log;
-}
-
-std::unique_ptr<RtcEventLog> FakeRtcEventLogFactory::CreateRtcEventLog(
-    RtcEventLog::EncodingType encoding_type,
-    std::unique_ptr<rtc::TaskQueue> task_queue) {
   std::unique_ptr<RtcEventLog> fake_event_log(new FakeRtcEventLog(thread()));
   last_log_created_ = fake_event_log.get();
   return fake_event_log;

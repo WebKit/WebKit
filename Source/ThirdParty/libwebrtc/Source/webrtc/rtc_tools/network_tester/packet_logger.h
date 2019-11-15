@@ -14,7 +14,7 @@
 #include <fstream>
 #include <string>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 
 #ifdef WEBRTC_NETWORK_TESTER_PROTO

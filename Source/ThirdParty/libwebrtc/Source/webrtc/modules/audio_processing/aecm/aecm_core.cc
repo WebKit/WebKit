@@ -21,7 +21,6 @@ extern "C" {
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_processing/aecm/echo_control_mobile.h"
 #include "modules/audio_processing/utility/delay_estimator_wrapper.h"
-
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -440,9 +439,8 @@ int WebRtcAecm_InitCore(AecmCore* const aecm, int samplingFreq) {
   aecm->farEnergyMin = WEBRTC_SPL_WORD16_MAX;
   aecm->farEnergyMax = WEBRTC_SPL_WORD16_MIN;
   aecm->farEnergyMaxMin = 0;
-  aecm->farEnergyVAD =
-      FAR_ENERGY_MIN;  // This prevents false speech detection at the
-                       // beginning.
+  aecm->farEnergyVAD = FAR_ENERGY_MIN;  // This prevents false speech detection
+                                        // at the beginning.
   aecm->farEnergyMSE = 0;
   aecm->currentVADValue = 0;
   aecm->vadUpdateCount = 0;

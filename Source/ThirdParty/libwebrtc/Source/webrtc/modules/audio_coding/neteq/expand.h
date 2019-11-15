@@ -12,10 +12,11 @@
 #define MODULES_AUDIO_CODING_NETEQ_EXPAND_H_
 
 #include <assert.h>
+
 #include <memory>
 
 #include "modules/audio_coding/neteq/audio_vector.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -75,13 +76,6 @@ class Expand {
   void GenerateRandomVector(int16_t seed_increment,
                             size_t length,
                             int16_t* random_vector);
-
-  void GenerateBackgroundNoise(int16_t* random_vector,
-                               size_t channel,
-                               int mute_slope,
-                               bool too_many_expands,
-                               size_t num_noise_samples,
-                               int16_t* buffer);
 
   // Initializes member variables at the beginning of an expand period.
   void InitializeForAnExpandPeriod();

@@ -12,10 +12,7 @@
 
 namespace webrtc {
 
-int32_t VCMReceiveCallback::ReceivedDecodedReferenceFrame(
-    const uint64_t pictureId) {
-  return -1;
-}
+void VCMReceiveCallback::OnDroppedFrames(uint32_t frames_dropped) {}
 void VCMReceiveCallback::OnIncomingPayloadType(int payload_type) {}
 void VCMReceiveCallback::OnDecoderImplementationName(
     const char* implementation_name) {}

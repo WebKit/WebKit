@@ -10,6 +10,9 @@
 
 #include "modules/desktop_capture/test_utils.h"
 
+#include <stdint.h>
+
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"

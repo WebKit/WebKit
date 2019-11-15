@@ -27,7 +27,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <mutex>
-#include <webrtc/api/mediastreaminterface.h>
+#include <webrtc/api/media_stream_interface.h>
 
 GST_DEBUG_CATEGORY(webkit_capturer_debug);
 #define GST_CAT_DEFAULT webkit_capturer_debug

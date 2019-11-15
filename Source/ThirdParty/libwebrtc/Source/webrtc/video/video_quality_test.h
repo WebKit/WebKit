@@ -16,11 +16,13 @@
 #include <vector>
 
 #include "api/fec_controller.h"
+#include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/test/video_quality_test_fixture.h"
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "call/fake_network_pipe.h"
-#include "media/engine/internaldecoderfactory.h"
-#include "media/engine/internalencoderfactory.h"
+#include "media/engine/internal_decoder_factory.h"
+#include "media/engine/internal_encoder_factory.h"
 #include "test/call_test.h"
 #include "test/frame_generator.h"
 #include "test/layer_filtering_transport.h"
@@ -31,8 +33,8 @@
 
 namespace webrtc {
 
-class VideoQualityTest :
-    public test::CallTest, public VideoQualityTestFixtureInterface {
+class VideoQualityTest : public test::CallTest,
+                         public VideoQualityTestFixtureInterface {
  public:
   explicit VideoQualityTest(
       std::unique_ptr<InjectionComponents> injection_components);
@@ -82,8 +84,6 @@ class VideoQualityTest :
   void SetupVideo(Transport* send_transport, Transport* recv_transport);
   void SetupThumbnails(Transport* send_transport, Transport* recv_transport);
   void StartAudioStreams();
-  void StartThumbnailCapture();
-  void StopThumbnailCapture();
   void StartThumbnails();
   void StopThumbnails();
   void DestroyThumbnailStreams();
@@ -99,16 +99,19 @@ class VideoQualityTest :
   virtual std::unique_ptr<test::LayerFilteringTransport> CreateSendTransport();
   virtual std::unique_ptr<test::DirectTransport> CreateReceiveTransport();
 
-  std::vector<std::unique_ptr<test::TestVideoCapturer>> thumbnail_capturers_;
+  std::vector<std::unique_ptr<rtc::VideoSourceInterface<VideoFrame>>>
+      thumbnail_capturers_;
   Clock* const clock_;
+  const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
+  RtcEventLogFactory rtc_event_log_factory_;
 
   test::FunctionVideoDecoderFactory video_decoder_factory_;
-  InternalDecoderFactory internal_decoder_factory_;
+  std::unique_ptr<VideoDecoderFactory> decoder_factory_;
   test::FunctionVideoEncoderFactory video_encoder_factory_;
   test::FunctionVideoEncoderFactory video_encoder_factory_with_analyzer_;
   std::unique_ptr<VideoBitrateAllocatorFactory>
       video_bitrate_allocator_factory_;
-  InternalEncoderFactory internal_encoder_factory_;
+  std::unique_ptr<VideoEncoderFactory> encoder_factory_;
   std::vector<VideoSendStream::Config> thumbnail_send_configs_;
   std::vector<VideoEncoderConfig> thumbnail_encoder_configs_;
   std::vector<VideoSendStream*> thumbnail_send_streams_;

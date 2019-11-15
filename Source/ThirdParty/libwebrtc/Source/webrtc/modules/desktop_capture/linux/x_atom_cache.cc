@@ -36,6 +36,10 @@ Atom XAtomCache::WindowTypeNormal() {
   return CreateIfNotExist(&window_type_normal_, "_NET_WM_WINDOW_TYPE_NORMAL");
 }
 
+Atom XAtomCache::IccProfile() {
+  return CreateIfNotExist(&icc_profile_, "_ICC_PROFILE");
+}
+
 Atom XAtomCache::CreateIfNotExist(Atom* atom, const char* name) {
   RTC_DCHECK(atom);
   if (*atom == None) {

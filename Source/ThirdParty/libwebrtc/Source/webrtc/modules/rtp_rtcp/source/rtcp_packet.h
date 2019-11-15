@@ -15,8 +15,8 @@
 #include <stdint.h>
 
 #include "api/array_view.h"
+#include "api/function_view.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/function_view.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -84,6 +84,13 @@ class RtcpPacket {
   static void CreateHeader(size_t count_or_format,
                            uint8_t packet_type,
                            size_t block_length,  // Payload size in 32bit words.
+                           uint8_t* buffer,
+                           size_t* pos);
+
+  static void CreateHeader(size_t count_or_format,
+                           uint8_t packet_type,
+                           size_t block_length,  // Payload size in 32bit words.
+                           bool padding,  // True if there are padding bytes.
                            uint8_t* buffer,
                            size_t* pos);
 

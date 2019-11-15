@@ -32,7 +32,7 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/pc/rtcstatscollector.h>
+#include <webrtc/pc/rtc_stats_collector.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

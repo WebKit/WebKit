@@ -13,11 +13,11 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/protobuf_utils.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -47,7 +47,7 @@ class ControllerManagerImpl final : public ControllerManager {
   };
 
   static std::unique_ptr<ControllerManager> Create(
-      const ProtoString& config_string,
+      const std::string& config_string,
       size_t num_encoder_channels,
       rtc::ArrayView<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,
@@ -58,7 +58,7 @@ class ControllerManagerImpl final : public ControllerManager {
       bool initial_dtx_enabled);
 
   static std::unique_ptr<ControllerManager> Create(
-      const ProtoString& config_string,
+      const std::string& config_string,
       size_t num_encoder_channels,
       rtc::ArrayView<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,

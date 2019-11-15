@@ -11,7 +11,7 @@
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 
 #include "absl/memory/memory.h"
-#include "media/engine/internaldecoderfactory.h"
+#include "media/engine/internal_decoder_factory.h"
 
 namespace webrtc {
 

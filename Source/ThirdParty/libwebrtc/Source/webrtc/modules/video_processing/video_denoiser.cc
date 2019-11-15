@@ -9,7 +9,11 @@
  */
 
 #include "modules/video_processing/video_denoiser.h"
-#include "common_video/libyuv/include/webrtc_libyuv.h"
+
+#include <stdint.h>
+#include <string.h>
+
+#include "api/video/i420_buffer.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 
 namespace webrtc {

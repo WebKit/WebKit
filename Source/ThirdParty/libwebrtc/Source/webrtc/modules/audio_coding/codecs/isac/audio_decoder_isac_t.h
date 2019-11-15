@@ -15,19 +15,22 @@
 
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
 template <typename T>
 class AudioDecoderIsacT final : public AudioDecoder {
  public:
-  explicit AudioDecoderIsacT(int sample_rate_hz);
-  AudioDecoderIsacT(int sample_rate_hz,
-                    const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo);
-  ~AudioDecoderIsacT() override;
+  struct Config {
+    bool IsOk() const;
+    rtc::scoped_refptr<LockedIsacBandwidthInfo> bwinfo;
+    int sample_rate_hz = 16000;
+  };
+  explicit AudioDecoderIsacT(const Config& config);
+  virtual ~AudioDecoderIsacT() override;
 
   bool HasDecodePlc() const override;
   size_t DecodePlc(size_t num_frames, int16_t* decoded) override;

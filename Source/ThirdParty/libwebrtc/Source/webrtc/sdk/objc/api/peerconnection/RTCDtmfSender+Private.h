@@ -10,7 +10,7 @@
 
 #import "RTCDtmfSender.h"
 
-#include "api/dtmfsenderinterface.h"
+#include "api/dtmf_sender_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -22,8 +22,6 @@ class ReadableWav {
  public:
   // Returns the number of bytes read.
   virtual size_t Read(void* buf, size_t num_bytes) = 0;
-  // Returns true if the end-of-file has been reached.
-  virtual bool Eof() const = 0;
   virtual bool SeekForward(uint32_t num_bytes) = 0;
   virtual ~ReadableWav() = default;
 };

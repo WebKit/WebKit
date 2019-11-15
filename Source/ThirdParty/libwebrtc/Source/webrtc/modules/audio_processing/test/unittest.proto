@@ -35,7 +35,7 @@ message Test {
 
   repeated DelayMetrics delay_metrics = 12;
 
-  repeated int32 rms_level = 13;
+  optional float rms_dbfs_average = 13;
 
   optional float ns_speech_probability_average = 14;
 

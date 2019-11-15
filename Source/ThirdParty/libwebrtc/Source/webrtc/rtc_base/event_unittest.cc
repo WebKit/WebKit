@@ -9,8 +9,9 @@
  */
 
 #include "rtc_base/event.h"
-#include "rtc_base/gunit.h"
+
 #include "rtc_base/platform_thread.h"
+#include "test/gtest.h"
 
 namespace rtc {
 

@@ -51,7 +51,8 @@ rtc_source_set("module_api") {
     ":module_api_public",
     ":module_fec_api",
     "..:webrtc_common",
-    "../api:libjingle_peerconnection_api",
+    "../api:rtp_headers",
+    "../api/video:video_frame_type",
     "../modules/rtp_rtcp:rtp_video_header",
     "../rtc_base:safe_conversions",
     "../rtc_base/system:rtc_export",
@@ -117,14 +118,14 @@ if (rtc_include_tests) {
   }
 
   modules_unittests_resources = [
-    "../resources/att-downlink.rx",
-    "../resources/att-uplink.rx",
     "../resources/audio_coding/neteq_opus.rtp",
     "../resources/audio_coding/neteq_opus_dtx.rtp",
     "../resources/audio_coding/neteq_universal_new.rtp",
     "../resources/audio_coding/speech_mono_16kHz.pcm",
     "../resources/audio_coding/speech_mono_32_48kHz.pcm",
+    "../resources/audio_coding/speech_4_channels_48k_one_second.wav",
     "../resources/audio_coding/testfile32kHz.pcm",
+    "../resources/audio_coding/testfile_fake_stereo_32kHz.pcm",
     "../resources/audio_coding/teststereo32kHz.pcm",
     "../resources/audio_device/audio_short16.pcm",
     "../resources/audio_device/audio_short44.pcm",
@@ -206,15 +207,6 @@ if (rtc_include_tests) {
     "../resources/short_mixed_mono_48.pcm",
     "../resources/short_mixed_stereo_48.dat",
     "../resources/short_mixed_stereo_48.pcm",
-    "../resources/sprint-downlink.rx",
-    "../resources/sprint-uplink.rx",
-    "../resources/synthetic-trace.rx",
-    "../resources/tmobile-downlink.rx",
-    "../resources/tmobile-uplink.rx",
-    "../resources/verizon3g-downlink.rx",
-    "../resources/verizon3g-uplink.rx",
-    "../resources/verizon4g-downlink.rx",
-    "../resources/verizon4g-uplink.rx",
     "../resources/voice_engine/audio_tiny48.wav",
   ]
   if (is_ios) {
@@ -236,6 +228,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":module_api",
+      ":module_api_public",
       "../test:test_main",
       "../test:test_support",
       "audio_coding:audio_coding_unittests",
@@ -255,10 +248,6 @@ if (rtc_include_tests) {
 
     if (rtc_desktop_capture_supported) {
       deps += [ "desktop_capture:desktop_capture_unittests" ]
-    }
-
-    if (!build_with_mozilla) {
-      deps += [ "video_capture" ]
     }
 
     data = modules_unittests_resources

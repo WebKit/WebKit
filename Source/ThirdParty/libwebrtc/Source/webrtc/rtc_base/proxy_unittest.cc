@@ -10,12 +10,13 @@
 
 #include <memory>
 #include <string>
+
 #include "rtc_base/gunit.h"
-#include "rtc_base/proxyserver.h"
-#include "rtc_base/socketadapters.h"
-#include "rtc_base/testclient.h"
-#include "rtc_base/testechoserver.h"
-#include "rtc_base/virtualsocketserver.h"
+#include "rtc_base/proxy_server.h"
+#include "rtc_base/socket_adapters.h"
+#include "rtc_base/test_client.h"
+#include "rtc_base/test_echo_server.h"
+#include "rtc_base/virtual_socket_server.h"
 
 using rtc::Socket;
 using rtc::SocketAddress;
@@ -25,7 +26,7 @@ static const SocketAddress kSocksProxyExtAddr("1.2.3.5", 0);
 static const SocketAddress kBogusProxyIntAddr("1.2.3.4", 999);
 
 // Sets up a virtual socket server and a SOCKS5 proxy server.
-class ProxyTest : public testing::Test {
+class ProxyTest : public ::testing::Test {
  public:
   ProxyTest() : ss_(new rtc::VirtualSocketServer()), thread_(ss_.get()) {
     socks_.reset(new rtc::SocksProxyServer(ss_.get(), kSocksProxyIntAddr,

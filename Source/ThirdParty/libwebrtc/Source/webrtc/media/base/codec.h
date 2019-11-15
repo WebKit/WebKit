@@ -16,9 +16,10 @@
 #include <string>
 #include <vector>
 
-#include "api/rtpparameters.h"
+#include "absl/types/optional.h"
+#include "api/rtp_parameters.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "media/base/mediaconstants.h"
+#include "media/base/media_constants.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
@@ -73,6 +74,7 @@ struct RTC_EXPORT Codec {
 
   // Indicates if this codec is compatible with the specified codec.
   bool Matches(const Codec& codec) const;
+  bool MatchesCapability(const webrtc::RtpCodecCapability& capability) const;
 
   // Find the parameter for |name| and write the value to |out|.
   bool GetParam(const std::string& name, std::string* out) const;
@@ -143,6 +145,8 @@ struct AudioCodec : public Codec {
 };
 
 struct RTC_EXPORT VideoCodec : public Codec {
+  absl::optional<std::string> packetization;
+
   // Creates a codec with the given parameters.
   VideoCodec(int id, const std::string& name);
   // Creates a codec with the given name and empty id.
@@ -170,6 +174,11 @@ struct RTC_EXPORT VideoCodec : public Codec {
 
   bool operator!=(const VideoCodec& c) const { return !(*this == c); }
 
+  // Return packetization which both |local_codec| and |remote_codec| support.
+  static absl::optional<std::string> IntersectPacketization(
+      const VideoCodec& local_codec,
+      const VideoCodec& remote_codec);
+
   static VideoCodec CreateRtxCodec(int rtx_payload_type,
                                    int associated_payload_type);
 
@@ -191,18 +200,22 @@ struct RTC_EXPORT VideoCodec : public Codec {
   void SetDefaultParameters();
 };
 
-struct DataCodec : public Codec {
-  DataCodec(int id, const std::string& name);
-  DataCodec();
-  DataCodec(const DataCodec& c);
-  DataCodec(DataCodec&& c);
-  ~DataCodec() override = default;
+struct RtpDataCodec : public Codec {
+  RtpDataCodec(int id, const std::string& name);
+  RtpDataCodec();
+  RtpDataCodec(const RtpDataCodec& c);
+  RtpDataCodec(RtpDataCodec&& c);
+  ~RtpDataCodec() override = default;
 
-  DataCodec& operator=(const DataCodec& c);
-  DataCodec& operator=(DataCodec&& c);
+  RtpDataCodec& operator=(const RtpDataCodec& c);
+  RtpDataCodec& operator=(RtpDataCodec&& c);
 
   std::string ToString() const;
 };
+
+// For backwards compatibility
+// TODO(bugs.webrtc.org/10597): Remove when no longer needed.
+typedef RtpDataCodec DataCodec;
 
 // Get the codec setting associated with |payload_type|. If there
 // is no codec associated with that payload type it returns nullptr.
@@ -215,6 +228,7 @@ const Codec* FindCodecById(const std::vector<Codec>& codecs, int payload_type) {
   return nullptr;
 }
 
+bool HasLntf(const Codec& codec);
 bool HasNack(const Codec& codec);
 bool HasRemb(const Codec& codec);
 bool HasRrtr(const Codec& codec);
@@ -224,10 +238,10 @@ bool HasTransportCc(const Codec& codec);
 const VideoCodec* FindMatchingCodec(
     const std::vector<VideoCodec>& supported_codecs,
     const VideoCodec& codec);
-bool IsSameCodec(const std::string& name1,
-                 const CodecParameterMap& params1,
-                 const std::string& name2,
-                 const CodecParameterMap& params2);
+RTC_EXPORT bool IsSameCodec(const std::string& name1,
+                            const CodecParameterMap& params1,
+                            const std::string& name2,
+                            const CodecParameterMap& params2);
 
 }  // namespace cricket
 

@@ -10,18 +10,15 @@
 
 #include "modules/video_coding/media_opt_util.h"
 
-#include <float.h>
-#include <limits.h>
+#include <assert.h>
 #include <math.h>
 
 #include <algorithm>
-#include <limits>
 
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/fec_rate_table.h"
-#include "modules/video_coding/include/video_coding_defines.h"
-#include "modules/video_coding/nack_fec_tables.h"
+#include "modules/video_coding/internal_defines.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {

@@ -48,7 +48,6 @@ __attribute__((objc_runtime_name("WK_RTCEncodedImage")))
 @property(nonatomic, assign) BOOL completeFrame;
 @property(nonatomic, strong) NSNumber *qp;
 @property(nonatomic, assign) RTCVideoContentType contentType;
-@property(nonatomic, assign) int spatialIndex;
 
 @end
 

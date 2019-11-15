@@ -10,8 +10,10 @@
 
 #include "rtc_base/sanitizer.h"
 
-#include "rtc_base/gunit.h"
+#include <stdint.h>
+
 #include "rtc_base/logging.h"
+#include "test/gtest.h"
 
 #if RTC_HAS_MSAN
 #include <sanitizer/msan_interface.h>

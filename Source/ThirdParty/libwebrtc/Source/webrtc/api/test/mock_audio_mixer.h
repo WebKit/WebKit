@@ -12,7 +12,6 @@
 #define API_TEST_MOCK_AUDIO_MIXER_H_
 
 #include "api/audio/audio_mixer.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

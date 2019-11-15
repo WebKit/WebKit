@@ -16,10 +16,11 @@
 #include <string>
 #include <vector>
 
+#include "api/video/video_source_interface.h"
+#include "rtc_base/numerics/running_statistics.h"
+#include "rtc_base/time_utils.h"
 #include "test/layer_filtering_transport.h"
 #include "test/rtp_file_writer.h"
-#include "test/statistics.h"
-#include "test/vcm_capturer.h"
 
 namespace webrtc {
 
@@ -27,6 +28,8 @@ class VideoAnalyzer : public PacketReceiver,
                       public Transport,
                       public rtc::VideoSinkInterface<VideoFrame> {
  public:
+  using Statistics = RunningStatistics<double>;
+
   VideoAnalyzer(test::LayerFilteringTransport* transport,
                 const std::string& test_label,
                 double avg_psnr_threshold,
@@ -41,11 +44,12 @@ class VideoAnalyzer : public PacketReceiver,
                 int selected_tl,
                 bool is_quick_test_enabled,
                 Clock* clock,
-                std::string rtp_dump_name);
+                std::string rtp_dump_name,
+                test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue);
   ~VideoAnalyzer();
 
   virtual void SetReceiver(PacketReceiver* receiver);
-  void SetSource(test::TestVideoCapturer* video_capturer,
+  void SetSource(rtc::VideoSourceInterface<VideoFrame>* video_source,
                  bool respect_sink_wants);
   void SetCall(Call* call);
   void SetSendStream(VideoSendStream* stream);
@@ -135,8 +139,10 @@ class VideoAnalyzer : public PacketReceiver,
   class CapturedFrameForwarder : public rtc::VideoSinkInterface<VideoFrame>,
                                  public rtc::VideoSourceInterface<VideoFrame> {
    public:
-    explicit CapturedFrameForwarder(VideoAnalyzer* analyzer, Clock* clock);
-    void SetSource(test::TestVideoCapturer* video_capturer);
+    CapturedFrameForwarder(VideoAnalyzer* analyzer,
+                           Clock* clock,
+                           int frames_to_process);
+    void SetSource(rtc::VideoSourceInterface<VideoFrame>* video_source);
 
    private:
     void OnFrame(const VideoFrame& video_frame) override;
@@ -152,8 +158,10 @@ class VideoAnalyzer : public PacketReceiver,
     rtc::CriticalSection crit_;
     rtc::VideoSinkInterface<VideoFrame>* send_stream_input_
         RTC_GUARDED_BY(crit_);
-    test::TestVideoCapturer* video_capturer_;
+    VideoSourceInterface<VideoFrame>* video_source_;
     Clock* clock_;
+    int captured_frames_ RTC_GUARDED_BY(crit_);
+    const int frames_to_process_;
   };
 
   struct FrameWithPsnr {
@@ -171,9 +179,8 @@ class VideoAnalyzer : public PacketReceiver,
                           int64_t render_time_ms)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  static void PollStatsThread(void* obj);
   void PollStats();
-  static bool FrameComparisonThread(void* obj);
+  static void FrameComparisonThread(void* obj);
   bool CompareFrames();
   bool PopComparison(FrameComparison* comparison);
   // Increment counter for number of frames received for comparison.
@@ -185,11 +192,12 @@ class VideoAnalyzer : public PacketReceiver,
   bool FrameProcessed();
   void PrintResults();
   void PerformFrameComparison(const FrameComparison& comparison);
-  void PrintResult(const char* result_type,
-                   test::Statistics stats,
-                   const char* unit);
+  void PrintResult(const char* result_type, Statistics stats, const char* unit);
+  void PrintResultWithExternalMean(const char* result_type,
+                                   double mean,
+                                   Statistics stats,
+                                   const char* unit);
   void PrintSamplesToFile(void);
-  double GetAverageMediaBitrateBps();
   void AddCapturedFrameForComparison(const VideoFrame& video_frame);
 
   Call* call_;
@@ -208,51 +216,59 @@ class VideoAnalyzer : public PacketReceiver,
 
   rtc::CriticalSection comparison_lock_;
   std::vector<Sample> samples_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics sender_time_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics receiver_time_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics network_time_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics psnr_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics ssim_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics end_to_end_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics rendered_delta_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics encoded_frame_size_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics encode_frame_rate_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics encode_time_ms_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics encode_usage_percent_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics decode_time_ms_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics decode_time_max_ms_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics media_bitrate_bps_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics fec_bitrate_bps_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics send_bandwidth_bps_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics memory_usage_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics time_between_freezes_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics audio_expand_rate_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics audio_accelerate_rate_ RTC_GUARDED_BY(comparison_lock_);
-  test::Statistics audio_jitter_buffer_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics sender_time_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics receiver_time_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics network_time_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics psnr_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics ssim_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics end_to_end_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics rendered_delta_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics encoded_frame_size_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics encode_frame_rate_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics encode_time_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics encode_usage_percent_ RTC_GUARDED_BY(comparison_lock_);
+  double mean_decode_time_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics decode_time_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics decode_time_max_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics media_bitrate_bps_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics fec_bitrate_bps_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics send_bandwidth_bps_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics memory_usage_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics audio_expand_rate_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics audio_accelerate_rate_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics audio_jitter_buffer_ms_ RTC_GUARDED_BY(comparison_lock_);
+  Statistics pixels_ RTC_GUARDED_BY(comparison_lock_);
   // Rendered frame with worst PSNR is saved for further analysis.
   absl::optional<FrameWithPsnr> worst_frame_ RTC_GUARDED_BY(comparison_lock_);
+  // Freeze metrics.
+  Statistics time_between_freezes_ RTC_GUARDED_BY(comparison_lock_);
+  uint32_t freeze_count_ RTC_GUARDED_BY(comparison_lock_);
+  uint32_t total_freezes_duration_ms_ RTC_GUARDED_BY(comparison_lock_);
+  uint32_t total_frames_duration_ms_ RTC_GUARDED_BY(comparison_lock_);
+  double sum_squared_frame_durations_ RTC_GUARDED_BY(comparison_lock_);
+
+  double decode_frame_rate_ RTC_GUARDED_BY(comparison_lock_);
+  double render_frame_rate_ RTC_GUARDED_BY(comparison_lock_);
 
   size_t last_fec_bytes_;
 
+  rtc::CriticalSection crit_;
   const int frames_to_process_;
-  int frames_recorded_;
-  int frames_processed_;
-  int dropped_frames_;
-  int dropped_frames_before_first_encode_;
-  int dropped_frames_before_rendering_;
-  int64_t last_render_time_;
-  int64_t last_render_delta_ms_;
-  int64_t last_unfreeze_time_ms_;
-  uint32_t rtp_timestamp_delta_;
-  int64_t total_media_bytes_;
-  int64_t first_sending_time_;
-  int64_t last_sending_time_;
+  int frames_recorded_ RTC_GUARDED_BY(comparison_lock_);
+  int frames_processed_ RTC_GUARDED_BY(comparison_lock_);
+  int captured_frames_ RTC_GUARDED_BY(comparison_lock_);
+  int dropped_frames_ RTC_GUARDED_BY(comparison_lock_);
+  int dropped_frames_before_first_encode_ RTC_GUARDED_BY(crit_);
+  int dropped_frames_before_rendering_ RTC_GUARDED_BY(crit_);
+  int64_t last_render_time_ RTC_GUARDED_BY(comparison_lock_);
+  int64_t last_render_delta_ms_ RTC_GUARDED_BY(comparison_lock_);
+  int64_t last_unfreeze_time_ms_ RTC_GUARDED_BY(comparison_lock_);
+  uint32_t rtp_timestamp_delta_ RTC_GUARDED_BY(crit_);
 
   rtc::CriticalSection cpu_measurement_lock_;
   int64_t cpu_time_ RTC_GUARDED_BY(cpu_measurement_lock_);
   int64_t wallclock_time_ RTC_GUARDED_BY(cpu_measurement_lock_);
 
-  rtc::CriticalSection crit_;
   std::deque<VideoFrame> frames_ RTC_GUARDED_BY(crit_);
   absl::optional<VideoFrame> last_rendered_frame_ RTC_GUARDED_BY(crit_);
   rtc::TimestampWrapAroundHandler wrap_handler_ RTC_GUARDED_BY(crit_);
@@ -266,14 +282,18 @@ class VideoAnalyzer : public PacketReceiver,
   bool is_quick_test_enabled_;
 
   std::vector<rtc::PlatformThread*> comparison_thread_pool_;
-  rtc::PlatformThread stats_polling_thread_;
   rtc::Event comparison_available_event_;
   std::deque<FrameComparison> comparisons_ RTC_GUARDED_BY(comparison_lock_);
+  bool quit_ RTC_GUARDED_BY(comparison_lock_);
   rtc::Event done_;
+  test::DEPRECATED_SingleThreadedTaskQueueForTesting::TaskId
+      stats_polling_task_id_ RTC_GUARDED_BY(comparison_lock_);
+  bool stop_stats_poller_ RTC_GUARDED_BY(comparison_lock_);
 
   std::unique_ptr<test::RtpFileWriter> rtp_file_writer_;
   Clock* const clock_;
   const int64_t start_ms_;
+  test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue_;
 };
 
 }  // namespace webrtc

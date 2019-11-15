@@ -9,13 +9,18 @@
  */
 
 #include "rtc_base/third_party/base64/base64.h"
-#include "rtc_base/gunit.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include <algorithm>
+
 #include "rtc_base/logging.h"
+#include "rtc_base/test_base64.h"
+#include "test/gtest.h"
 
-#include "rtc_base/testbase64.h"
-
-using namespace std;
-using namespace rtc;
+namespace rtc {
+namespace {
 
 static struct {
   size_t plain_length;
@@ -333,7 +338,7 @@ size_t Base64Escape(const unsigned char* src,
                     size_t szdest) {
   std::string escaped;
   Base64::EncodeFromArray((const char*)src, szsrc, &escaped);
-  memcpy(dest, escaped.data(), min(escaped.size(), szdest));
+  memcpy(dest, escaped.data(), std::min(escaped.size(), szdest));
   return escaped.size();
 }
 
@@ -344,7 +349,7 @@ size_t Base64Unescape(const char* src,
   std::string unescaped;
   EXPECT_TRUE(
       Base64::DecodeFromArray(src, szsrc, Base64::DO_LAX, &unescaped, nullptr));
-  memcpy(dest, unescaped.data(), min(unescaped.size(), szdest));
+  memcpy(dest, unescaped.data(), std::min(unescaped.size(), szdest));
   return unescaped.size();
 }
 
@@ -1444,3 +1449,6 @@ TEST(Base64, GetNextBase64Char) {
   EXPECT_FALSE(Base64::GetNextBase64Char('&', &next_char));
   EXPECT_FALSE(Base64::GetNextBase64Char('Z', nullptr));
 }
+
+}  // namespace
+}  // namespace rtc

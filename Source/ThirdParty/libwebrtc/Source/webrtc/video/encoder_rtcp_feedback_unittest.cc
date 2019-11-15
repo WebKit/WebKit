@@ -16,8 +16,6 @@
 #include "test/gtest.h"
 #include "video/test/mock_video_stream_encoder.h"
 
-using ::testing::NiceMock;
-
 namespace webrtc {
 
 class VieKeyRequestTest : public ::testing::Test {
@@ -34,7 +32,7 @@ class VieKeyRequestTest : public ::testing::Test {
   const uint32_t kSsrc = 1234;
 
   SimulatedClock simulated_clock_;
-  testing::StrictMock<MockVideoStreamEncoder> encoder_;
+  ::testing::StrictMock<MockVideoStreamEncoder> encoder_;
   EncoderRtcpFeedback encoder_rtcp_feedback_;
 };
 
@@ -55,6 +53,11 @@ TEST_F(VieKeyRequestTest, TooManyOnReceivedIntraFrameRequest) {
   encoder_rtcp_feedback_.OnReceivedIntraFrameRequest(kSsrc);
   encoder_rtcp_feedback_.OnReceivedIntraFrameRequest(kSsrc);
   encoder_rtcp_feedback_.OnReceivedIntraFrameRequest(kSsrc);
+}
+
+TEST_F(VieKeyRequestTest, TriggerRequestFromMediaTransport) {
+  EXPECT_CALL(encoder_, SendKeyFrame()).Times(1);
+  encoder_rtcp_feedback_.OnKeyFrameRequested(kSsrc);
 }
 
 }  // namespace webrtc

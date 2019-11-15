@@ -11,15 +11,18 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
 #define MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
-#include <utility>
 
 #include "absl/types/optional.h"
 #include "api/video_codecs/video_encoder.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/experiments/quality_scaling_experiment.h"
 #include "rtc_base/numerics/moving_average.h"
-#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/task_utils/repeating_task.h"
 
 namespace webrtc {
 
@@ -34,7 +37,9 @@ class AdaptationObserverInterface {
   // Called to signal that we can handle larger or more frequent frames.
   virtual void AdaptUp(AdaptReason reason) = 0;
   // Called to signal that the source should reduce the resolution or framerate.
-  virtual void AdaptDown(AdaptReason reason) = 0;
+  // Returns false if a downgrade was requested but the request did not result
+  // in a new limiting resolution or fps.
+  virtual bool AdaptDown(AdaptReason reason) = 0;
 
  protected:
   virtual ~AdaptationObserverInterface() {}
@@ -48,35 +53,39 @@ class QualityScaler {
   // Construct a QualityScaler with given |thresholds| and |observer|.
   // This starts the quality scaler periodically checking what the average QP
   // has been recently.
-  QualityScaler(AdaptationObserverInterface* observer,
+  QualityScaler(rtc::TaskQueue* task_queue,
+                AdaptationObserverInterface* observer,
                 VideoEncoder::QpThresholds thresholds);
   virtual ~QualityScaler();
   // Should be called each time a frame is dropped at encoding.
   void ReportDroppedFrameByMediaOpt();
   void ReportDroppedFrameByEncoder();
   // Inform the QualityScaler of the last seen QP.
-  void ReportQp(int qp);
+  void ReportQp(int qp, int64_t time_sent_us);
+
+  void SetQpThresholds(VideoEncoder::QpThresholds thresholds);
 
   // The following members declared protected for testing purposes.
  protected:
-  QualityScaler(AdaptationObserverInterface* observer,
+  QualityScaler(rtc::TaskQueue* task_queue,
+                AdaptationObserverInterface* observer,
                 VideoEncoder::QpThresholds thresholds,
                 int64_t sampling_period_ms);
 
  private:
-  class CheckQpTask;
   class QpSmoother;
+
   void CheckQp();
   void ClearSamples();
   void ReportQpLow();
   void ReportQpHigh();
   int64_t GetSamplingPeriodMs() const;
 
-  CheckQpTask* check_qp_task_ RTC_GUARDED_BY(&task_checker_);
+  RepeatingTaskHandle check_qp_task_ RTC_GUARDED_BY(&task_checker_);
   AdaptationObserverInterface* const observer_ RTC_GUARDED_BY(&task_checker_);
-  rtc::SequencedTaskChecker task_checker_;
+  SequenceChecker task_checker_;
 
-  const VideoEncoder::QpThresholds thresholds_;
+  VideoEncoder::QpThresholds thresholds_ RTC_GUARDED_BY(&task_checker_);
   const int64_t sampling_period_ms_;
   bool fast_rampup_ RTC_GUARDED_BY(&task_checker_);
   rtc::MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
@@ -90,6 +99,12 @@ class QualityScaler {
   std::unique_ptr<QpSmoother> qp_smoother_high_ RTC_GUARDED_BY(&task_checker_);
   std::unique_ptr<QpSmoother> qp_smoother_low_ RTC_GUARDED_BY(&task_checker_);
   bool observed_enough_frames_ RTC_GUARDED_BY(&task_checker_);
+
+  const size_t min_frames_needed_;
+  const double initial_scale_factor_;
+  const absl::optional<double> scale_factor_;
+  bool adapt_called_ RTC_GUARDED_BY(&task_checker_);
+  bool adapt_failed_ RTC_GUARDED_BY(&task_checker_);
 };
 }  // namespace webrtc
 

@@ -9,7 +9,9 @@
  */
 
 #include "modules/audio_mixer/audio_frame_manipulator.h"
+
 #include "audio/utility/audio_frame_operations.h"
+#include "audio/utility/channel_mixer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -55,11 +57,36 @@ void Ramp(float start_gain, float target_gain, AudioFrame* audio_frame) {
 
 void RemixFrame(size_t target_number_of_channels, AudioFrame* frame) {
   RTC_DCHECK_GE(target_number_of_channels, 1);
-  RTC_DCHECK_LE(target_number_of_channels, 2);
-  if (frame->num_channels_ == 1 && target_number_of_channels == 2) {
-    AudioFrameOperations::MonoToStereo(frame);
-  } else if (frame->num_channels_ == 2 && target_number_of_channels == 1) {
-    AudioFrameOperations::StereoToMono(frame);
+  // TODO(bugs.webrtc.org/10783): take channel layout into account as well.
+  if (frame->num_channels() == target_number_of_channels) {
+    return;
   }
+
+  // Use legacy components for the most simple cases (mono <-> stereo) to ensure
+  // that native WebRTC clients are not affected when support for multi-channel
+  // audio is added to Chrome.
+  // TODO(bugs.webrtc.org/10783): utilize channel mixer for mono/stereo as well.
+  if (target_number_of_channels < 3 && frame->num_channels() < 3) {
+    if (frame->num_channels() > target_number_of_channels) {
+      AudioFrameOperations::DownmixChannels(target_number_of_channels, frame);
+    } else {
+      AudioFrameOperations::UpmixChannels(target_number_of_channels, frame);
+    }
+  } else {
+    // Use generic channel mixer when the number of channels for input our
+    // output is larger than two. E.g. stereo -> 5.1 channel up-mixing.
+    // TODO(bugs.webrtc.org/10783): ensure that actual channel layouts are used
+    // instead of guessing based on number of channels.
+    const ChannelLayout output_layout(
+        GuessChannelLayout(target_number_of_channels));
+    ChannelMixer mixer(GuessChannelLayout(frame->num_channels()),
+                       output_layout);
+    mixer.Transform(frame);
+    RTC_DCHECK_EQ(frame->channel_layout(), output_layout);
+  }
+  RTC_DCHECK_EQ(frame->num_channels(), target_number_of_channels)
+      << "Wrong number of channels, " << frame->num_channels() << " vs "
+      << target_number_of_channels;
 }
+
 }  // namespace webrtc

@@ -10,10 +10,15 @@
 #include <fstream>
 #include <memory>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/vad/voice_activity_detector.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
+
+ABSL_FLAG(std::string, i, "", "Input wav file");
+ABSL_FLAG(std::string, o_probs, "", "VAD probabilities output file");
+ABSL_FLAG(std::string, o_rms, "", "VAD output file");
 
 namespace webrtc {
 namespace test {
@@ -24,16 +29,13 @@ constexpr int kMaxSampleRate = 48000;
 constexpr size_t kMaxFrameLen =
     kAudioFrameLengthMilliseconds * kMaxSampleRate / 1000;
 
-WEBRTC_DEFINE_string(i, "", "Input wav file");
-WEBRTC_DEFINE_string(o_probs, "", "VAD probabilities output file");
-WEBRTC_DEFINE_string(o_rms, "", "VAD output file");
-
 int main(int argc, char* argv[]) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true))
-    return 1;
-
+  absl::ParseCommandLine(argc, argv);
+  const std::string input_file = absl::GetFlag(FLAGS_i);
+  const std::string output_probs_file = absl::GetFlag(FLAGS_o_probs);
+  const std::string output_file = absl::GetFlag(FLAGS_o_rms);
   // Open wav input file and check properties.
-  WavReader wav_reader(FLAG_i);
+  WavReader wav_reader(input_file);
   if (wav_reader.num_channels() != 1) {
     RTC_LOG(LS_ERROR) << "Only mono wav files supported";
     return 1;
@@ -51,8 +53,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Create output file and write header.
-  std::ofstream out_probs_file(FLAG_o_probs, std::ofstream::binary);
-  std::ofstream out_rms_file(FLAG_o_rms, std::ofstream::binary);
+  std::ofstream out_probs_file(output_probs_file, std::ofstream::binary);
+  std::ofstream out_rms_file(output_file, std::ofstream::binary);
 
   // Run VAD and write decisions.
   VoiceActivityDetector vad;

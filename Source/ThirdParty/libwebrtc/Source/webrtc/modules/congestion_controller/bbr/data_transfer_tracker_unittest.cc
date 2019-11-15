@@ -9,6 +9,9 @@
  */
 
 #include "modules/congestion_controller/bbr/data_transfer_tracker.h"
+
+#include <stdint.h>
+
 #include "test/gtest.h"
 
 namespace webrtc {

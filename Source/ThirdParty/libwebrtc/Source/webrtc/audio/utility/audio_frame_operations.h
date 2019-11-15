@@ -15,6 +15,7 @@
 #include <stdint.h>
 
 #include "api/audio/audio_frame.h"
+#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 
@@ -32,28 +33,15 @@ class AudioFrameOperations {
   // |result_frame| is empty.
   static void Add(const AudioFrame& frame_to_add, AudioFrame* result_frame);
 
-  // Upmixes mono |src_audio| to stereo |dst_audio|. This is an out-of-place
-  // operation, meaning src_audio and dst_audio must point to different
-  // buffers. It is the caller's responsibility to ensure that |dst_audio| is
-  // sufficiently large.
-  static void MonoToStereo(const int16_t* src_audio,
-                           size_t samples_per_channel,
-                           int16_t* dst_audio);
-
   // |frame.num_channels_| will be updated. This version checks for sufficient
-  // buffer size and that |num_channels_| is mono.
-  static int MonoToStereo(AudioFrame* frame);
-
-  // Downmixes stereo |src_audio| to mono |dst_audio|. This is an in-place
-  // operation, meaning |src_audio| and |dst_audio| may point to the same
-  // buffer.
-  static void StereoToMono(const int16_t* src_audio,
-                           size_t samples_per_channel,
-                           int16_t* dst_audio);
+  // buffer size and that |num_channels_| is mono. Use UpmixChannels
+  // instead. TODO(bugs.webrtc.org/8649): remove.
+  RTC_DEPRECATED static int MonoToStereo(AudioFrame* frame);
 
   // |frame.num_channels_| will be updated. This version checks that
-  // |num_channels_| is stereo.
-  static int StereoToMono(AudioFrame* frame);
+  // |num_channels_| is stereo. Use DownmixChannels
+  // instead. TODO(bugs.webrtc.org/8649): remove.
+  RTC_DEPRECATED static int StereoToMono(AudioFrame* frame);
 
   // Downmixes 4 channels |src_audio| to stereo |dst_audio|. This is an in-place
   // operation, meaning |src_audio| and |dst_audio| may point to the same
@@ -66,17 +54,6 @@ class AudioFrameOperations {
   // |num_channels_| is 4 channels.
   static int QuadToStereo(AudioFrame* frame);
 
-  // Downmixes 4 channels |src_audio| to mono |dst_audio|. This is an in-place
-  // operation, meaning |src_audio| and |dst_audio| may point to the same
-  // buffer.
-  static void QuadToMono(const int16_t* src_audio,
-                         size_t samples_per_channel,
-                         int16_t* dst_audio);
-
-  // |frame.num_channels_| will be updated. This version checks that
-  // |num_channels_| is 4 channels.
-  static int QuadToMono(AudioFrame* frame);
-
   // Downmixes |src_channels| |src_audio| to |dst_channels| |dst_audio|.
   // This is an in-place operation, meaning |src_audio| and |dst_audio|
   // may point to the same buffer. Supported channel combinations are
@@ -88,10 +65,16 @@ class AudioFrameOperations {
                               int16_t* dst_audio);
 
   // |frame.num_channels_| will be updated. This version checks that
+  // |num_channels_| and |dst_channels| are valid and performs relevant downmix.
+  // Supported channel combinations are N channels to Mono, and Quad to Stereo.
+  static void DownmixChannels(size_t dst_channels, AudioFrame* frame);
+
+  // |frame.num_channels_| will be updated. This version checks that
   // |num_channels_| and |dst_channels| are valid and performs relevant
-  // downmix.  Supported channel combinations are Stereo to Mono, Quad to Mono,
-  // and Quad to Stereo.
-  static int DownmixChannels(size_t dst_channels, AudioFrame* frame);
+  // downmix. Supported channel combinations are Mono to N
+  // channels. The single channel is replicated.
+  static void UpmixChannels(size_t target_number_of_channels,
+                            AudioFrame* frame);
 
   // Swap the left and right channels of |frame|. Fails silently if |frame| is
   // not stereo.

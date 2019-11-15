@@ -85,16 +85,15 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef struct PaUtilRingBuffer {
-  PaRingBufferSize
-      bufferSize;                    /**< Number of elements in FIFO. Power of 2. Set by
-                                        PaUtil_InitRingBuffer. */
-  PaRingBufferSize writeIndex;       /**< Index of next writable element. Set by
-                                        PaUtil_AdvanceRingBufferWriteIndex. */
-  PaRingBufferSize readIndex;        /**< Index of next readable element. Set by
-                                        PaUtil_AdvanceRingBufferReadIndex. */
-  PaRingBufferSize bigMask;          /**< Used for wrapping indices with extra bit to
-                                        distinguish full/empty. */
-  PaRingBufferSize smallMask;        /**< Used for fitting indices to buffer. */
+  PaRingBufferSize bufferSize; /**< Number of elements in FIFO. Power of 2. Set
+                                  by PaUtil_InitRingBuffer. */
+  PaRingBufferSize writeIndex; /**< Index of next writable element. Set by
+                                  PaUtil_AdvanceRingBufferWriteIndex. */
+  PaRingBufferSize readIndex;  /**< Index of next readable element. Set by
+                                  PaUtil_AdvanceRingBufferReadIndex. */
+  PaRingBufferSize bigMask;    /**< Used for wrapping indices with extra bit to
+                                  distinguish full/empty. */
+  PaRingBufferSize smallMask;  /**< Used for fitting indices to buffer. */
   PaRingBufferSize elementSizeBytes; /**< Number of bytes per element. */
   char* buffer; /**< Pointer to the buffer containing the actual data. */
 } PaUtilRingBuffer;

@@ -19,7 +19,7 @@
 #include "modules/audio_device/include/audio_device_defines.h"
 #include "modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
 #include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread_annotations.h"
@@ -254,8 +254,8 @@ class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
   void PaLock();
   void PaUnLock();
 
-  static bool RecThreadFunc(void*);
-  static bool PlayThreadFunc(void*);
+  static void RecThreadFunc(void*);
+  static void PlayThreadFunc(void*);
   bool RecThreadProcess();
   bool PlayThreadProcess();
 
@@ -283,9 +283,9 @@ class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
   uint8_t _playChannels;
 
   // Stores thread ID in constructor.
-  // We can then use ThreadChecker::CalledOnValidThread() to ensure that
+  // We can then use ThreadChecker::IsCurrent() to ensure that
   // other methods are called from the same thread.
-  // Currently only does RTC_DCHECK(thread_checker_.CalledOnValidThread()).
+  // Currently only does RTC_DCHECK(thread_checker_.IsCurrent()).
   rtc::ThreadChecker thread_checker_;
 
   bool _initialized;
@@ -294,13 +294,11 @@ class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
   bool _recIsInitialized;
   bool _playIsInitialized;
   bool _startRec;
-  bool _stopRec;
   bool _startPlay;
-  bool _stopPlay;
   bool update_speaker_volume_at_startup_;
+  bool quit_ RTC_GUARDED_BY(&_critSect);
 
-  uint32_t _sndCardPlayDelay;
-  uint32_t _sndCardRecDelay;
+  uint32_t _sndCardPlayDelay RTC_GUARDED_BY(&_critSect);
 
   int32_t _writeErrors;
 

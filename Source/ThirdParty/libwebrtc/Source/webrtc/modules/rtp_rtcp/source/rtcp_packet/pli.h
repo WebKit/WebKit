@@ -20,8 +20,9 @@ class Pli : public Psfb {
  public:
   static constexpr uint8_t kFeedbackMessageType = 1;
 
-  Pli() {}
-  ~Pli() override {}
+  Pli();
+  Pli(const Pli& pli);
+  ~Pli() override;
 
   bool Parse(const CommonHeader& packet);
 

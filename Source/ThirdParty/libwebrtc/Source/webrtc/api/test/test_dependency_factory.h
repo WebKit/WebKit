@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "api/test/video_quality_test_fixture.h"
-#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 

@@ -13,17 +13,18 @@
 
 #include <stdint.h>
 #include <string.h>
+
 #include <list>
 #include <memory>
 
 #include "modules/audio_coding/neteq/tick_timer.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
 class DelayPeakDetector {
  public:
-  DelayPeakDetector(const TickTimer* tick_timer);
+  DelayPeakDetector(const TickTimer* tick_timer, bool ignore_reordered_packets);
   virtual ~DelayPeakDetector();
   virtual void Reset();
 
@@ -43,10 +44,11 @@ class DelayPeakDetector {
   // larger than 0), or 0 if no delay peaks have been observed recently.
   virtual uint64_t MaxPeakPeriod() const;
 
-  // Updates the DelayPeakDetector with a new inter-arrival time (in packets)
-  // and the current target buffer level (needed to decide if a peak is observed
-  // or not). Returns true if peak-mode is active, false if not.
-  virtual bool Update(int inter_arrival_time, int target_level);
+  // Updates the DelayPeakDetector with a new inter-arrival time (in packets),
+  // the current target buffer level (needed to decide if a peak is observed or
+  // not) and if the new inter-arrival time includes a compensation for
+  // reordering. Returns true if peak-mode is active, false if not.
+  virtual bool Update(int inter_arrival_time, bool reordered, int target_level);
 
  private:
   static const size_t kMaxNumPeaks = 8;
@@ -66,6 +68,7 @@ class DelayPeakDetector {
   int peak_detection_threshold_;
   const TickTimer* tick_timer_;
   std::unique_ptr<TickTimer::Stopwatch> peak_period_stopwatch_;
+  const bool ignore_reordered_packets_;
   const bool frame_length_change_experiment_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DelayPeakDetector);

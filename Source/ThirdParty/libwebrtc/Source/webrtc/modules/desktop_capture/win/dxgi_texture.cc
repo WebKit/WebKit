@@ -10,8 +10,8 @@
 
 #include "modules/desktop_capture/win/dxgi_texture.h"
 
-#include <D3D11.h>
 #include <comdef.h>
+#include <d3d11.h>
 #include <wrl/client.h>
 
 #include "modules/desktop_capture/desktop_region.h"

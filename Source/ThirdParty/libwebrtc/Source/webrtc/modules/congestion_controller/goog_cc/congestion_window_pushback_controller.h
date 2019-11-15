@@ -11,7 +11,12 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_CONGESTION_WINDOW_PUSHBACK_CONTROLLER_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_CONGESTION_WINDOW_PUSHBACK_CONTROLLER_H_
 
-#include "api/transport/network_types.h"
+#include <stddef.h>
+#include <stdint.h>
+
+#include "absl/types/optional.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_size.h"
 
 namespace webrtc {
 
@@ -22,18 +27,23 @@ namespace webrtc {
 // used to prevent video pause due to a full congestion window.
 class CongestionWindowPushbackController {
  public:
-  CongestionWindowPushbackController();
   explicit CongestionWindowPushbackController(
+      const WebRtcKeyValueConfig* key_value_config);
+  CongestionWindowPushbackController(
+      const WebRtcKeyValueConfig* key_value_config,
       uint32_t min_pushback_target_bitrate_bps);
-  void UpdateOutstandingData(size_t outstanding_bytes);
+  void UpdateOutstandingData(int64_t outstanding_bytes);
+  void UpdatePacingQueue(int64_t pacing_bytes);
   void UpdateMaxOutstandingData(size_t max_outstanding_bytes);
   uint32_t UpdateTargetBitrate(uint32_t bitrate_bps);
   void SetDataWindow(DataSize data_window);
 
  private:
   absl::optional<DataSize> current_data_window_;
-  size_t outstanding_bytes_ = 0;
-  uint32_t min_pushback_target_bitrate_bps_;
+  int64_t outstanding_bytes_ = 0;
+  int64_t pacing_bytes_ = 0;
+  const bool add_pacing_;
+  const uint32_t min_pushback_target_bitrate_bps_;
   double encoding_rate_ratio_ = 1.0;
 };
 

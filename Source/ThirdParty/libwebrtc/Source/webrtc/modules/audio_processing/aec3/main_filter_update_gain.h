@@ -12,12 +12,13 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_MAIN_FILTER_UPDATE_GAIN_H_
 
 #include <stddef.h>
+
 #include <array>
 #include <memory>
 
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -31,10 +32,13 @@ struct SubtractorOutput;
 // Provides functionality for  computing the adaptive gain for the main filter.
 class MainFilterUpdateGain {
  public:
-  explicit MainFilterUpdateGain(
+  MainFilterUpdateGain(
       const EchoCanceller3Config::Filter::MainConfiguration& config,
       size_t config_change_duration_blocks);
   ~MainFilterUpdateGain();
+
+  MainFilterUpdateGain(const MainFilterUpdateGain&) = delete;
+  MainFilterUpdateGain& operator=(const MainFilterUpdateGain&) = delete;
 
   // Takes action in the case of a known echo path change.
   void HandleEchoPathChange(const EchoPathVariability& echo_path_variability);
@@ -43,7 +47,8 @@ class MainFilterUpdateGain {
   void Compute(const std::array<float, kFftLengthBy2Plus1>& render_power,
                const RenderSignalAnalyzer& render_signal_analyzer,
                const SubtractorOutput& subtractor_output,
-               const AdaptiveFirFilter& filter,
+               rtc::ArrayView<const float> erl,
+               size_t size_partitions,
                bool saturated_capture_signal,
                FftData* gain_fft);
 
@@ -75,8 +80,6 @@ class MainFilterUpdateGain {
 
   // Updates the current config towards the target config.
   void UpdateCurrentConfig();
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(MainFilterUpdateGain);
 };
 
 }  // namespace webrtc

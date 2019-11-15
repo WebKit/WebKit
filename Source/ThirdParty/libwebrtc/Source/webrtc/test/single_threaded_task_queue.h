@@ -14,7 +14,8 @@
 #include <list>
 #include <memory>
 
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread_checker.h"
@@ -22,19 +23,24 @@
 namespace webrtc {
 namespace test {
 
+// DEPRECATED. This class doesn't striclty follow rtc::TaskQueue semantics,
+// which makes it surprising and hard to use correctly.
+// Please use TaskQueueForTest instead.
+
 // This class gives capabilities similar to rtc::TaskQueue, but ensures
 // everything happens on the same thread. This is intended to make the
 // threading model of unit-tests (specifically end-to-end tests) more closely
 // resemble that of real WebRTC, thereby allowing us to replace some critical
 // sections by thread-checkers.
 // This task is NOT tuned for performance, but rather for simplicity.
-class SingleThreadedTaskQueueForTesting {
+class DEPRECATED_SingleThreadedTaskQueueForTesting {
  public:
   using Task = std::function<void()>;
   using TaskId = size_t;
+  constexpr static TaskId kInvalidTaskId = static_cast<TaskId>(-1);
 
-  explicit SingleThreadedTaskQueueForTesting(const char* name);
-  ~SingleThreadedTaskQueueForTesting();
+  explicit DEPRECATED_SingleThreadedTaskQueueForTesting(const char* name);
+  ~DEPRECATED_SingleThreadedTaskQueueForTesting();
 
   // Sends one task to the task-queue, and returns a handle by which the
   // task can be cancelled.
@@ -55,6 +61,16 @@ class SingleThreadedTaskQueueForTesting {
   // Returns true if the task was found and cancelled. Failure possible
   // only for invalid task IDs, or for tasks which have already been executed.
   bool CancelTask(TaskId task_id);
+
+  // Returns true iff called on the thread associated with the task queue.
+  bool IsCurrent();
+
+  // Returns true iff the task queue is actively being serviced.
+  bool IsRunning();
+
+  bool HasPendingTasks() const;
+
+  void Stop();
 
  private:
   struct QueuedTask {
@@ -90,6 +106,10 @@ class SingleThreadedTaskQueueForTesting {
   //   its execution has come. [Event will time-out.]
   rtc::Event wake_up_;
 };
+
+// Warn if new usage.
+typedef DEPRECATED_SingleThreadedTaskQueueForTesting RTC_DEPRECATED
+    SingleThreadedTaskQueueForTesting;
 
 }  // namespace test
 }  // namespace webrtc

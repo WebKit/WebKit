@@ -18,7 +18,6 @@
 
 NsxHandle* WebRtcNsx_Create() {
   NoiseSuppressionFixedC* self = malloc(sizeof(NoiseSuppressionFixedC));
-  WebRtcSpl_Init();
   self->real_fft = NULL;
   self->initFlag = 0;
   return (NsxHandle*)self;

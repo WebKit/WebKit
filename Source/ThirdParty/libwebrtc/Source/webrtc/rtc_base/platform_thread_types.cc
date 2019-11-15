@@ -29,9 +29,11 @@ PlatformThreadId CurrentThreadId() {
   return zx_thread_self();
 #elif defined(WEBRTC_LINUX)
   return syscall(__NR_gettid);
+#elif defined(__EMSCRIPTEN__)
+  return static_cast<PlatformThreadId>(pthread_self());
 #else
   // Default implementation for nacl and solaris.
-  return reinterpret_cast<pid_t>(pthread_self());
+  return reinterpret_cast<PlatformThreadId>(pthread_self());
 #endif
 #endif  // defined(WEBRTC_POSIX)
 }

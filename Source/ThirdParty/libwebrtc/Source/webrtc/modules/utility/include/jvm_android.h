@@ -21,15 +21,17 @@
 
 namespace webrtc {
 
+// RAII JavaVM AttachCurrentThread/DetachCurrentThread object.
+//
 // The JNI interface pointer (JNIEnv) is valid only in the current thread.
 // Should another thread need to access the Java VM, it must first call
 // AttachCurrentThread() to attach itself to the VM and obtain a JNI interface
 // pointer. The native thread remains attached to the VM until it calls
 // DetachCurrentThread() to detach.
-class AttachCurrentThreadIfNeeded {
+class JvmThreadConnector {
  public:
-  AttachCurrentThreadIfNeeded();
-  ~AttachCurrentThreadIfNeeded();
+  JvmThreadConnector();
+  ~JvmThreadConnector();
 
  private:
   rtc::ThreadChecker thread_checker_;

@@ -13,9 +13,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <list>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

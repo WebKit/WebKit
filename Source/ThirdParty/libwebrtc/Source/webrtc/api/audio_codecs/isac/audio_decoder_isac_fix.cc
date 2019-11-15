@@ -32,7 +32,9 @@ void AudioDecoderIsacFix::AppendSupportedDecoders(
 std::unique_ptr<AudioDecoder> AudioDecoderIsacFix::MakeAudioDecoder(
     Config config,
     absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
-  return absl::make_unique<AudioDecoderIsacFixImpl>(16000);
+  AudioDecoderIsacFixImpl::Config c;
+  c.sample_rate_hz = 16000;
+  return absl::make_unique<AudioDecoderIsacFixImpl>(c);
 }
 
 }  // namespace webrtc

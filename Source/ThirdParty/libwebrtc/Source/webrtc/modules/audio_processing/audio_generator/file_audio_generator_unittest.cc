@@ -13,7 +13,7 @@
 #include "modules/audio_processing/include/audio_generator_factory.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {

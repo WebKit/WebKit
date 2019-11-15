@@ -11,6 +11,8 @@
 #include "rtc_base/strings/string_builder.h"
 
 #include <stdarg.h>
+
+#include <cstdio>
 #include <cstring>
 
 #include "rtc_base/checks.h"
@@ -25,7 +27,7 @@ SimpleStringBuilder::SimpleStringBuilder(rtc::ArrayView<char> buffer)
 }
 
 SimpleStringBuilder& SimpleStringBuilder::operator<<(const char* str) {
-  return Append(str);
+  return Append(str, strlen(str));
 }
 
 SimpleStringBuilder& SimpleStringBuilder::operator<<(char ch) {
@@ -106,11 +108,12 @@ SimpleStringBuilder& SimpleStringBuilder::AppendFormat(const char* fmt, ...) {
 
 SimpleStringBuilder& SimpleStringBuilder::Append(const char* str,
                                                  size_t length) {
-  const size_t chars_added =
-      rtc::strcpyn(&buffer_[size_], buffer_.size() - size_, str, length);
-  size_ += chars_added;
-  RTC_DCHECK_EQ(chars_added, length == SIZE_UNKNOWN ? std::strlen(str) : length)
+  RTC_DCHECK_LT(size_ + length, buffer_.size())
       << "Buffer size was insufficient";
+  const size_t chars_added = rtc::SafeMin(length, buffer_.size() - size_ - 1);
+  memcpy(&buffer_[size_], str, chars_added);
+  size_ += chars_added;
+  buffer_[size_] = '\0';
   RTC_DCHECK(IsConsistent());
   return *this;
 }

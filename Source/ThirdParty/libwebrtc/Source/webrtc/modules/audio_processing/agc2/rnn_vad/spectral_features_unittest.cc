@@ -32,21 +32,43 @@ void WriteTestData(rtc::ArrayView<float> samples) {
   }
 }
 
-SpectralFeaturesView GetSpectralFeaturesView(
+rtc::ArrayView<float, kNumBands - kNumLowerBands> GetHigherBandsSpectrum(
     std::array<float, kTestFeatureVectorSize>* feature_vector) {
-  return {
-      {feature_vector->data() + kNumLowerBands, kNumBands - kNumLowerBands},
-      {feature_vector->data(), kNumLowerBands},
-      {feature_vector->data() + kNumBands, kNumLowerBands},
-      {feature_vector->data() + kNumBands + kNumLowerBands, kNumLowerBands},
-      {feature_vector->data() + kNumBands + 2 * kNumLowerBands, kNumLowerBands},
-      &(*feature_vector)[kNumBands + 3 * kNumLowerBands]};
+  return {feature_vector->data() + kNumLowerBands, kNumBands - kNumLowerBands};
+}
+
+rtc::ArrayView<float, kNumLowerBands> GetAverage(
+    std::array<float, kTestFeatureVectorSize>* feature_vector) {
+  return {feature_vector->data(), kNumLowerBands};
+}
+
+rtc::ArrayView<float, kNumLowerBands> GetFirstDerivative(
+    std::array<float, kTestFeatureVectorSize>* feature_vector) {
+  return {feature_vector->data() + kNumBands, kNumLowerBands};
+}
+
+rtc::ArrayView<float, kNumLowerBands> GetSecondDerivative(
+    std::array<float, kTestFeatureVectorSize>* feature_vector) {
+  return {feature_vector->data() + kNumBands + kNumLowerBands, kNumLowerBands};
+}
+
+rtc::ArrayView<float, kNumLowerBands> GetCepstralCrossCorrelation(
+    std::array<float, kTestFeatureVectorSize>* feature_vector) {
+  return {feature_vector->data() + kNumBands + 2 * kNumLowerBands,
+          kNumLowerBands};
+}
+
+float* GetCepstralVariability(
+    std::array<float, kTestFeatureVectorSize>* feature_vector) {
+  return feature_vector->data() + kNumBands + 3 * kNumLowerBands;
 }
 
 constexpr float kInitialFeatureVal = -9999.f;
 
 }  // namespace
 
+// Checks that silence is detected when the input signal is 0 and that the
+// feature vector is written only if the input signal is not tagged as silence.
 TEST(RnnVadTest, SpectralFeaturesWithAndWithoutSilence) {
   // Initialize.
   SpectralFeaturesExtractor sfe;
@@ -54,7 +76,6 @@ TEST(RnnVadTest, SpectralFeaturesWithAndWithoutSilence) {
   rtc::ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
   bool is_silence;
   std::array<float, kTestFeatureVectorSize> feature_vector;
-  auto feature_vector_view = GetSpectralFeaturesView(&feature_vector);
 
   // Write an initial value in the feature vector to detect changes.
   std::fill(feature_vector.begin(), feature_vector.end(), kInitialFeatureVal);
@@ -64,8 +85,12 @@ TEST(RnnVadTest, SpectralFeaturesWithAndWithoutSilence) {
 
   // With silence.
   std::fill(samples.begin(), samples.end(), 0.f);
-  is_silence = sfe.CheckSilenceComputeFeatures(samples_view, samples_view,
-                                               feature_vector_view);
+  is_silence = sfe.CheckSilenceComputeFeatures(
+      samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector),
+      GetAverage(&feature_vector), GetFirstDerivative(&feature_vector),
+      GetSecondDerivative(&feature_vector),
+      GetCepstralCrossCorrelation(&feature_vector),
+      GetCepstralVariability(&feature_vector));
   // Silence is expected, the output won't be overwritten.
   EXPECT_TRUE(is_silence);
   EXPECT_TRUE(std::all_of(feature_vector.begin(), feature_vector.end(),
@@ -73,18 +98,23 @@ TEST(RnnVadTest, SpectralFeaturesWithAndWithoutSilence) {
 
   // With no silence.
   WriteTestData(samples);
-  is_silence = sfe.CheckSilenceComputeFeatures(samples_view, samples_view,
-                                               feature_vector_view);
+  is_silence = sfe.CheckSilenceComputeFeatures(
+      samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector),
+      GetAverage(&feature_vector), GetFirstDerivative(&feature_vector),
+      GetSecondDerivative(&feature_vector),
+      GetCepstralCrossCorrelation(&feature_vector),
+      GetCepstralVariability(&feature_vector));
   // Silence is not expected, the output will be overwritten.
   EXPECT_FALSE(is_silence);
   EXPECT_FALSE(std::all_of(feature_vector.begin(), feature_vector.end(),
                            [](float x) { return x == kInitialFeatureVal; }));
 }
 
-// When the input signal does not change, the spectral coefficients average does
-// not change and the derivatives are zero. Similarly, the spectral variability
-// score does not change either.
-TEST(RnnVadTest, SpectralFeaturesConstantAverageZeroDerivative) {
+// Feeds a constant input signal and checks that:
+// - the cepstral coefficients average does not change;
+// - the derivatives are zero;
+// - the cepstral variability score does not change.
+TEST(RnnVadTest, CepstralFeaturesConstantAverageZeroDerivative) {
   // Initialize.
   SpectralFeaturesExtractor sfe;
   std::array<float, kFrameSize20ms24kHz> samples;
@@ -94,17 +124,24 @@ TEST(RnnVadTest, SpectralFeaturesConstantAverageZeroDerivative) {
 
   // Fill the spectral features with test data.
   std::array<float, kTestFeatureVectorSize> feature_vector;
-  auto feature_vector_view = GetSpectralFeaturesView(&feature_vector);
-  for (size_t i = 0; i < kSpectralCoeffsHistorySize; ++i) {
-    is_silence = sfe.CheckSilenceComputeFeatures(samples_view, samples_view,
-                                                 feature_vector_view);
+  for (size_t i = 0; i < kCepstralCoeffsHistorySize; ++i) {
+    is_silence = sfe.CheckSilenceComputeFeatures(
+        samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector),
+        GetAverage(&feature_vector), GetFirstDerivative(&feature_vector),
+        GetSecondDerivative(&feature_vector),
+        GetCepstralCrossCorrelation(&feature_vector),
+        GetCepstralVariability(&feature_vector));
   }
 
   // Feed the test data one last time but using a different output vector.
   std::array<float, kTestFeatureVectorSize> feature_vector_last;
-  auto feature_vector_last_view = GetSpectralFeaturesView(&feature_vector_last);
-  is_silence = sfe.CheckSilenceComputeFeatures(samples_view, samples_view,
-                                               feature_vector_last_view);
+  is_silence = sfe.CheckSilenceComputeFeatures(
+      samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector_last),
+      GetAverage(&feature_vector_last),
+      GetFirstDerivative(&feature_vector_last),
+      GetSecondDerivative(&feature_vector_last),
+      GetCepstralCrossCorrelation(&feature_vector_last),
+      GetCepstralVariability(&feature_vector_last));
 
   // Average is unchanged.
   ExpectEqualFloatArray({feature_vector.data(), kNumLowerBands},
@@ -116,7 +153,7 @@ TEST(RnnVadTest, SpectralFeaturesConstantAverageZeroDerivative) {
   ExpectEqualFloatArray(
       {feature_vector_last.data() + kNumBands + kNumLowerBands, kNumLowerBands},
       zeros);
-  // Spectral variability is unchanged.
+  // Variability is unchanged.
   EXPECT_FLOAT_EQ(feature_vector[kNumBands + 3 * kNumLowerBands],
                   feature_vector_last[kNumBands + 3 * kNumLowerBands]);
 }

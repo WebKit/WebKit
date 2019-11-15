@@ -12,8 +12,8 @@
 
 #include "absl/memory/memory.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
-#include "sdk/android/src/jni/videoframe.h"
-#include "sdk/android/src/jni/videosink.h"
+#include "sdk/android/src/jni/video_frame.h"
+#include "sdk/android/src/jni/video_sink.h"
 
 namespace webrtc {
 

@@ -15,6 +15,7 @@
 #define MODULES_VIDEO_CODING_CODECS_VP9_INCLUDE_VP9_GLOBALS_H_
 
 #include <assert.h>
+#include <stdint.h>
 
 #include "modules/video_coding/codecs/interface/common_constants.h"
 
@@ -107,24 +108,24 @@ struct GofInfoVP9 {
         pid_diff[3][1] = 2;
 
         temporal_idx[4] = 0;
-        temporal_up_switch[0] = false;
+        temporal_up_switch[4] = false;
         num_ref_pics[4] = 1;
         pid_diff[4][0] = 4;
 
         temporal_idx[5] = 2;
-        temporal_up_switch[1] = false;
+        temporal_up_switch[5] = false;
         num_ref_pics[5] = 2;
         pid_diff[5][0] = 1;
         pid_diff[5][1] = 2;
 
         temporal_idx[6] = 1;
-        temporal_up_switch[2] = false;
+        temporal_up_switch[6] = false;
         num_ref_pics[6] = 2;
         pid_diff[6][0] = 2;
         pid_diff[6][1] = 4;
 
         temporal_idx[7] = 2;
-        temporal_up_switch[3] = false;
+        temporal_up_switch[7] = false;
         num_ref_pics[7] = 2;
         pid_diff[7][0] = 1;
         pid_diff[7][1] = 2;

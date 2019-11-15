@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "common_audio/audio_converter.h"
+
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <vector>
 
-#include "common_audio/audio_converter.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "rtc_base/arraysize.h"
@@ -78,7 +79,7 @@ float ComputeSNR(const ChannelBuffer<float>& ref,
       best_delay = delay;
     }
   }
-  printf("SNR=%.1f dB at delay=%" PRIuS "\n", best_snr, best_delay);
+  printf("SNR=%.1f dB at delay=%" RTC_PRIuS "\n", best_snr, best_delay);
   return best_snr;
 }
 
@@ -130,7 +131,7 @@ void RunAudioConverterTest(size_t src_channels,
                 PushSincResampler::AlgorithmicDelaySeconds(src_sample_rate_hz) *
                 dst_sample_rate_hz);
   // SNR reported on the same line later.
-  printf("(%" PRIuS ", %d Hz) -> (%" PRIuS ", %d Hz) ", src_channels,
+  printf("(%" RTC_PRIuS ", %d Hz) -> (%" RTC_PRIuS ", %d Hz) ", src_channels,
          src_sample_rate_hz, dst_channels, dst_sample_rate_hz);
 
   std::unique_ptr<AudioConverter> converter = AudioConverter::Create(

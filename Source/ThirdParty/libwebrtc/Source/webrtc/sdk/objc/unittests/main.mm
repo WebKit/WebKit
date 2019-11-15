@@ -10,10 +10,13 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#include "rtc_base/thread.h"
 #include "test/ios/coverage_util_ios.h"
 
 int main(int argc, char* argv[]) {
   rtc::test::ConfigureCoverageReportPath();
+
+  rtc::AutoThread main_thread;
 
   @autoreleasepool {
     return UIApplicationMain(argc, argv, nil, nil);

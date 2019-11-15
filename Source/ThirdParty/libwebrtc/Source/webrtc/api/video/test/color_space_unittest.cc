@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/video/color_space.h"
+
 #include <stdint.h>
 
-#include "api/video/color_space.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -50,6 +51,24 @@ TEST(ColorSpace, TestSettingRangeFromUint8) {
       static_cast<uint8_t>(ColorSpace::RangeID::kFull)));
   EXPECT_EQ(ColorSpace::RangeID::kFull, color_space.range());
   EXPECT_FALSE(color_space.set_range_from_uint8(4));
+}
+
+TEST(ColorSpace, TestSettingChromaSitingHorizontalFromUint8) {
+  ColorSpace color_space;
+  EXPECT_TRUE(color_space.set_chroma_siting_horizontal_from_uint8(
+      static_cast<uint8_t>(ColorSpace::ChromaSiting::kCollocated)));
+  EXPECT_EQ(ColorSpace::ChromaSiting::kCollocated,
+            color_space.chroma_siting_horizontal());
+  EXPECT_FALSE(color_space.set_chroma_siting_horizontal_from_uint8(3));
+}
+
+TEST(ColorSpace, TestSettingChromaSitingVerticalFromUint8) {
+  ColorSpace color_space;
+  EXPECT_TRUE(color_space.set_chroma_siting_vertical_from_uint8(
+      static_cast<uint8_t>(ColorSpace::ChromaSiting::kHalf)));
+  EXPECT_EQ(ColorSpace::ChromaSiting::kHalf,
+            color_space.chroma_siting_vertical());
+  EXPECT_FALSE(color_space.set_chroma_siting_vertical_from_uint8(3));
 }
 
 }  // namespace webrtc

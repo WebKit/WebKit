@@ -12,6 +12,7 @@
 #define SYSTEM_WRAPPERS_INCLUDE_RTP_TO_NTP_ESTIMATOR_H_
 
 #include <stdint.h>
+
 #include <list>
 
 #include "absl/types/optional.h"

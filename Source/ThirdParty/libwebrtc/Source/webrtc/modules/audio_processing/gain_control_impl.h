@@ -13,15 +13,14 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/include/gain_control.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/thread_annotations.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -30,8 +29,10 @@ class AudioBuffer;
 
 class GainControlImpl : public GainControl {
  public:
-  GainControlImpl(rtc::CriticalSection* crit_render,
-                  rtc::CriticalSection* crit_capture);
+  GainControlImpl();
+  GainControlImpl(const GainControlImpl&) = delete;
+  GainControlImpl& operator=(const GainControlImpl&) = delete;
+
   ~GainControlImpl() override;
 
   void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
@@ -45,7 +46,7 @@ class GainControlImpl : public GainControl {
 
   // GainControl implementation.
   bool is_enabled() const override;
-  int stream_analog_level() override;
+  int stream_analog_level() const override;
   bool is_limiter_enabled() const override;
   Mode mode() const override;
 
@@ -69,30 +70,26 @@ class GainControlImpl : public GainControl {
 
   int Configure();
 
-  rtc::CriticalSection* const crit_render_ RTC_ACQUIRED_BEFORE(crit_capture_);
-  rtc::CriticalSection* const crit_capture_;
-
   std::unique_ptr<ApmDataDumper> data_dumper_;
 
   bool enabled_ = false;
 
-  Mode mode_ RTC_GUARDED_BY(crit_capture_);
-  int minimum_capture_level_ RTC_GUARDED_BY(crit_capture_);
-  int maximum_capture_level_ RTC_GUARDED_BY(crit_capture_);
-  bool limiter_enabled_ RTC_GUARDED_BY(crit_capture_);
-  int target_level_dbfs_ RTC_GUARDED_BY(crit_capture_);
-  int compression_gain_db_ RTC_GUARDED_BY(crit_capture_);
-  int analog_capture_level_ RTC_GUARDED_BY(crit_capture_);
-  bool was_analog_level_set_ RTC_GUARDED_BY(crit_capture_);
-  bool stream_is_saturated_ RTC_GUARDED_BY(crit_capture_);
+  Mode mode_;
+  int minimum_capture_level_;
+  int maximum_capture_level_;
+  bool limiter_enabled_;
+  int target_level_dbfs_;
+  int compression_gain_db_;
+  int analog_capture_level_;
+  bool was_analog_level_set_;
+  bool stream_is_saturated_;
 
   std::vector<std::unique_ptr<GainController>> gain_controllers_;
 
-  absl::optional<size_t> num_proc_channels_ RTC_GUARDED_BY(crit_capture_);
-  absl::optional<int> sample_rate_hz_ RTC_GUARDED_BY(crit_capture_);
+  absl::optional<size_t> num_proc_channels_;
+  absl::optional<int> sample_rate_hz_;
 
   static int instance_counter_;
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(GainControlImpl);
 };
 }  // namespace webrtc
 

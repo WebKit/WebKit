@@ -9,6 +9,7 @@
  */
 
 #include "modules/video_coding/decoder_database.h"
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

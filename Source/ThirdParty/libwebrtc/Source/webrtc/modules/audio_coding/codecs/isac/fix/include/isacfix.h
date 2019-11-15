@@ -15,7 +15,9 @@
 
 #include "modules/audio_coding/codecs/isac/bandwidth_info.h"
 
-typedef struct { void* dummy; } ISACFIX_MainStruct;
+typedef struct {
+  void* dummy;
+} ISACFIX_MainStruct;
 
 #if defined(__cplusplus)
 extern "C" {

@@ -10,7 +10,7 @@
 
 package org.webrtc;
 
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 /** Java wrapper for a C++ MediaStreamTrackInterface. */
 public class MediaStreamTrack {

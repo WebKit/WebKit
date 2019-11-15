@@ -300,13 +300,9 @@ static const uint8_t SPS_PPS_BUFFER[] = {
 
   XCTAssertEqual(4, (int)out_header->Offset(0));
   XCTAssertEqual(4, (int)out_header->Length(0));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(0));
-  XCTAssertEqual(0, (int)out_header->PayloadType(0));
 
   XCTAssertEqual(12, (int)out_header->Offset(1));
   XCTAssertEqual(2, (int)out_header->Length(1));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(1));
-  XCTAssertEqual(0, (int)out_header->PayloadType(1));
 }
 
 - (void)testH264CMSampleBufferToAnnexBBufferWithKeyframe {
@@ -352,23 +348,15 @@ static const uint8_t SPS_PPS_BUFFER[] = {
 
   XCTAssertEqual(4, (int)out_header->Offset(0));
   XCTAssertEqual(14, (int)out_header->Length(0));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(0));
-  XCTAssertEqual(0, (int)out_header->PayloadType(0));
 
   XCTAssertEqual(22, (int)out_header->Offset(1));
   XCTAssertEqual(4, (int)out_header->Length(1));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(1));
-  XCTAssertEqual(0, (int)out_header->PayloadType(1));
 
   XCTAssertEqual(30, (int)out_header->Offset(2));
   XCTAssertEqual(4, (int)out_header->Length(2));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(2));
-  XCTAssertEqual(0, (int)out_header->PayloadType(2));
 
   XCTAssertEqual(38, (int)out_header->Offset(3));
   XCTAssertEqual(2, (int)out_header->Length(3));
-  XCTAssertEqual(0, (int)out_header->TimeDiff(3));
-  XCTAssertEqual(0, (int)out_header->PayloadType(3));
 }
 
 - (CMVideoFormatDescriptionRef)createDescription {

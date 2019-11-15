@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "common_video/h264/h264_common.h"
-#include "rtc_base/bitbuffer.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/checks.h"
 
 #define RETURN_EMPTY_ON_FAIL(x) \

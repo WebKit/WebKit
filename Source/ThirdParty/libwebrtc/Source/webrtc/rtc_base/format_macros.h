@@ -21,7 +21,7 @@
 //
 // To print a size_t value in a portable way:
 //   size_t size;
-//   printf("xyz: %" PRIuS, size);
+//   printf("xyz: %" RTC_PRIuS, size);
 // The "u" in the macro corresponds to %u, and S is for "size".
 
 #if defined(WEBRTC_POSIX)
@@ -39,57 +39,20 @@
 
 #include "rtc_base/system/arch.h"
 
-#if !defined(PRIuS)
-#define PRIuS "zu"
-#endif
-
-// The size of NSInteger and NSUInteger varies between 32-bit and 64-bit
-// architectures and Apple does not provides standard format macros and
-// recommends casting. This has many drawbacks, so instead define macros
-// for formatting those types.
-#if defined(WEBRTC_MAC)
-#if defined(WEBRTC_ARCH_64_BITS)
-#if !defined(PRIdNS)
-#define PRIdNS "ld"
-#endif
-#if !defined(PRIuNS)
-#define PRIuNS "lu"
-#endif
-#if !defined(PRIxNS)
-#define PRIxNS "lx"
-#endif
-#else  // defined(WEBRTC_ARCH_64_BITS)
-#if !defined(PRIdNS)
-#define PRIdNS "d"
-#endif
-#if !defined(PRIuNS)
-#define PRIuNS "u"
-#endif
-#if !defined(PRIxNS)
-#define PRIxNS "x"
-#endif
-#endif
-#endif  // defined(WEBRTC_MAC)
+#define RTC_PRIuS "zu"
 
 #else  // WEBRTC_WIN
 
 #include <inttypes.h>
 
-#if !defined(PRId64)
-#define PRId64 "I64d"
+#if !defined(PRId64) || !defined(PRIu64) || !defined(PRIx64)
+#error "inttypes.h provided by win toolchain should define these."
 #endif
 
-#if !defined(PRIu64)
-#define PRIu64 "I64u"
-#endif
+// PRI*64 were added in MSVC 2013, while "%zu" is supported since MSVC 2015
+// (so needs to be special-cased to "%Iu" instead).
 
-#if !defined(PRIx64)
-#define PRIx64 "I64x"
-#endif
-
-#if !defined(PRIuS)
-#define PRIuS "Iu"
-#endif
+#define RTC_PRIuS "Iu"
 
 #endif
 

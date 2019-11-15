@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <math.h>
 #include <string.h>
+
 #include <algorithm>
 
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"

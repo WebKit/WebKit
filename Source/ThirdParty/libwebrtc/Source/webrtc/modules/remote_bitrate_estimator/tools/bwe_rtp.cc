@@ -16,40 +16,39 @@
 #include <sstream>
 #include <string>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
-#include "modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "rtc_base/flags.h"
 #include "test/rtp_file_reader.h"
+#include "test/rtp_header_parser.h"
 
-namespace flags {
-
-WEBRTC_DEFINE_string(
-    extension_type,
-    "abs",
-    "Extension type, either abs for absolute send time or tsoffset "
-    "for timestamp offset.");
+ABSL_FLAG(std::string,
+          extension_type,
+          "abs",
+          "Extension type, either abs for absolute send time or tsoffset "
+          "for timestamp offset.");
 std::string ExtensionType() {
-  return static_cast<std::string>(FLAG_extension_type);
+  return absl::GetFlag(FLAGS_extension_type);
 }
 
-WEBRTC_DEFINE_int(extension_id, 3, "Extension id.");
+ABSL_FLAG(int, extension_id, 3, "Extension id.");
 int ExtensionId() {
-  return static_cast<int>(FLAG_extension_id);
+  return absl::GetFlag(FLAGS_extension_id);
 }
 
-WEBRTC_DEFINE_string(input_file, "", "Input file.");
+ABSL_FLAG(std::string, input_file, "", "Input file.");
 std::string InputFile() {
-  return static_cast<std::string>(FLAG_input_file);
+  return absl::GetFlag(FLAGS_input_file);
 }
 
-WEBRTC_DEFINE_string(
-    ssrc_filter,
-    "",
-    "Comma-separated list of SSRCs in hexadecimal which are to be "
-    "used as input to the BWE (only applicable to pcap files).");
+ABSL_FLAG(std::string,
+          ssrc_filter,
+          "",
+          "Comma-separated list of SSRCs in hexadecimal which are to be "
+          "used as input to the BWE (only applicable to pcap files).");
 std::set<uint32_t> SsrcFilter() {
-  std::string ssrc_filter_string = static_cast<std::string>(FLAG_ssrc_filter);
+  std::string ssrc_filter_string = absl::GetFlag(FLAGS_ssrc_filter);
   if (ssrc_filter_string.empty())
     return std::set<uint32_t>();
   std::stringstream ss;
@@ -66,79 +65,71 @@ std::set<uint32_t> SsrcFilter() {
   return ssrcs;
 }
 
-WEBRTC_DEFINE_bool(help, false, "Print this message.");
-}  // namespace flags
+std::unique_ptr<webrtc::RtpHeaderParser> ParseArgsAndSetupEstimator(
+    int argc,
+    char** argv,
+    webrtc::Clock* clock,
+    webrtc::RemoteBitrateObserver* observer,
+    std::unique_ptr<webrtc::test::RtpFileReader>* rtp_reader,
+    std::unique_ptr<webrtc::RemoteBitrateEstimator>* estimator,
+    std::string* estimator_used) {
+  absl::ParseCommandLine(argc, argv);
+  std::string filename = InputFile();
 
-bool ParseArgsAndSetupEstimator(int argc,
-                                char** argv,
-                                webrtc::Clock* clock,
-                                webrtc::RemoteBitrateObserver* observer,
-                                webrtc::test::RtpFileReader** rtp_reader,
-                                webrtc::RtpHeaderParser** parser,
-                                webrtc::RemoteBitrateEstimator** estimator,
-                                std::string* estimator_used) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true)) {
-    return 1;
-  }
-  if (flags::FLAG_help) {
-    rtc::FlagList::Print(nullptr, false);
-    return 0;
-  }
-  std::string filename = flags::InputFile();
-
-  std::set<uint32_t> ssrc_filter = flags::SsrcFilter();
+  std::set<uint32_t> ssrc_filter = SsrcFilter();
   fprintf(stderr, "Filter on SSRC: ");
   for (auto& s : ssrc_filter) {
     fprintf(stderr, "0x%08x, ", s);
   }
   fprintf(stderr, "\n");
-  if (filename.substr(filename.find_last_of(".")) == ".pcap") {
+  if (filename.substr(filename.find_last_of('.')) == ".pcap") {
     fprintf(stderr, "Opening as pcap\n");
-    *rtp_reader = webrtc::test::RtpFileReader::Create(
-        webrtc::test::RtpFileReader::kPcap, filename.c_str(),
-        flags::SsrcFilter());
+    rtp_reader->reset(webrtc::test::RtpFileReader::Create(
+        webrtc::test::RtpFileReader::kPcap, filename.c_str(), SsrcFilter()));
   } else {
     fprintf(stderr, "Opening as rtp\n");
-    *rtp_reader = webrtc::test::RtpFileReader::Create(
-        webrtc::test::RtpFileReader::kRtpDump, filename.c_str());
+    rtp_reader->reset(webrtc::test::RtpFileReader::Create(
+        webrtc::test::RtpFileReader::kRtpDump, filename.c_str()));
   }
   if (!*rtp_reader) {
     fprintf(stderr, "Cannot open input file %s\n", filename.c_str());
-    return false;
+    return nullptr;
   }
   fprintf(stderr, "Input file: %s\n\n", filename.c_str());
 
   webrtc::RTPExtensionType extension = webrtc::kRtpExtensionAbsoluteSendTime;
-  if (flags::ExtensionType() == "tsoffset") {
+  if (ExtensionType() == "tsoffset") {
     extension = webrtc::kRtpExtensionTransmissionTimeOffset;
     fprintf(stderr, "Extension: toffset\n");
-  } else if (flags::ExtensionType() == "abs") {
+  } else if (ExtensionType() == "abs") {
     fprintf(stderr, "Extension: abs\n");
   } else {
     fprintf(stderr, "Unknown extension type\n");
-    return false;
+    return nullptr;
   }
 
   // Setup the RTP header parser and the bitrate estimator.
-  *parser = webrtc::RtpHeaderParser::Create();
-  (*parser)->RegisterRtpHeaderExtension(extension, flags::ExtensionId());
+  auto parser = webrtc::RtpHeaderParser::CreateForTest();
+  parser->RegisterRtpHeaderExtension(extension, ExtensionId());
   if (estimator) {
     switch (extension) {
       case webrtc::kRtpExtensionAbsoluteSendTime: {
-        *estimator =
-            new webrtc::RemoteBitrateEstimatorAbsSendTime(observer, clock);
+        estimator->reset(
+            new webrtc::RemoteBitrateEstimatorAbsSendTime(observer, clock));
         *estimator_used = "AbsoluteSendTimeRemoteBitrateEstimator";
         break;
       }
       case webrtc::kRtpExtensionTransmissionTimeOffset: {
-        *estimator =
-            new webrtc::RemoteBitrateEstimatorSingleStream(observer, clock);
+        estimator->reset(
+            new webrtc::RemoteBitrateEstimatorSingleStream(observer, clock));
         *estimator_used = "RemoteBitrateEstimator";
         break;
       }
       default:
         assert(false);
+        return nullptr;
     }
   }
-  return true;
+
+  return parser;
 }

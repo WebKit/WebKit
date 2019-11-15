@@ -8,46 +8,45 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <map>
 #include <memory>
+#include <set>
 #include <sstream>
+#include <string>
+#include <vector>
 
-#include "p2p/base/basicpacketsocketfactory.h"
-#include "p2p/stunprober/stunprober.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/flags.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "p2p/base/basic_packet_socket_factory.h"
+#include "p2p/stunprober/stun_prober.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/nethelpers.h"
 #include "rtc_base/network.h"
-#include "rtc_base/ssladapter.h"
-#include "rtc_base/strings/string_builder.h"
-#include "rtc_base/stringutils.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_adapter.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
-using stunprober::StunProber;
 using stunprober::AsyncCallback;
+using stunprober::StunProber;
 
-WEBRTC_DEFINE_bool(help, false, "Prints this message");
-WEBRTC_DEFINE_int(interval,
-                  10,
-                  "Interval of consecutive stun pings in milliseconds");
-WEBRTC_DEFINE_bool(shared_socket,
-                   false,
-                   "Share socket mode for different remote IPs");
-WEBRTC_DEFINE_int(pings_per_ip,
-                  10,
-                  "Number of consecutive stun pings to send for each IP");
-WEBRTC_DEFINE_int(
-    timeout,
-    1000,
-    "Milliseconds of wait after the last ping sent before exiting");
-WEBRTC_DEFINE_string(
+ABSL_FLAG(int,
+          interval,
+          10,
+          "Interval of consecutive stun pings in milliseconds");
+ABSL_FLAG(bool,
+          shared_socket,
+          false,
+          "Share socket mode for different remote IPs");
+ABSL_FLAG(int,
+          pings_per_ip,
+          10,
+          "Number of consecutive stun pings to send for each IP");
+ABSL_FLAG(int,
+          timeout,
+          1000,
+          "Milliseconds of wait after the last ping sent before exiting");
+ABSL_FLAG(
+    std::string,
     servers,
     "stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302",
     "Comma separated STUN server addresses with ports");
@@ -107,14 +106,10 @@ void StopTrial(rtc::Thread* thread, StunProber* prober, int result) {
 }  // namespace
 
 int main(int argc, char* argv[]) {
-  rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);
-  if (FLAG_help) {
-    rtc::FlagList::Print(nullptr, false);
-    return 0;
-  }
+  absl::ParseCommandLine(argc, argv);
 
   std::vector<rtc::SocketAddress> server_addresses;
-  std::istringstream servers(FLAG_servers);
+  std::istringstream servers(absl::GetFlag(FLAGS_servers));
   std::string server;
   while (getline(servers, server, ',')) {
     rtc::SocketAddress addr;
@@ -139,8 +134,9 @@ int main(int argc, char* argv[]) {
   auto finish_callback = [thread](StunProber* prober, int result) {
     StopTrial(thread, prober, result);
   };
-  prober->Start(server_addresses, FLAG_shared_socket, FLAG_interval,
-                FLAG_pings_per_ip, FLAG_timeout,
+  prober->Start(server_addresses, absl::GetFlag(FLAGS_shared_socket),
+                absl::GetFlag(FLAGS_interval),
+                absl::GetFlag(FLAGS_pings_per_ip), absl::GetFlag(FLAGS_timeout),
                 AsyncCallback(finish_callback));
   thread->Run();
   delete prober;

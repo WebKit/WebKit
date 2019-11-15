@@ -17,6 +17,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.opengl.GLES20;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
 import org.webrtc.ThreadUtils.ThreadChecker;
 
 /**
@@ -88,6 +88,7 @@ class HardwareVideoEncoder implements VideoEncoder {
 
   // --- Valid and immutable while an encoding session is running.
   @Nullable private MediaCodecWrapper codec;
+  @Nullable private ByteBuffer[] outputBuffers;
   // Thread that delivers encoded frames to the user callback.
   @Nullable private Thread outputThread;
 
@@ -215,13 +216,14 @@ class HardwareVideoEncoder implements VideoEncoder {
           format, null /* surface */, null /* crypto */, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
       if (useSurfaceMode) {
-        textureEglBase = new EglBase14(sharedContext, EglBase.CONFIG_RECORDABLE);
+        textureEglBase = EglBase.createEgl14(sharedContext, EglBase.CONFIG_RECORDABLE);
         textureInputSurface = codec.createInputSurface();
         textureEglBase.createSurface(textureInputSurface);
         textureEglBase.makeCurrent();
       }
 
       codec.start();
+      outputBuffers = codec.getOutputBuffers();
     } catch (IllegalStateException e) {
       Logging.e(TAG, "initEncodeInternal failed", e);
       release();
@@ -271,6 +273,7 @@ class HardwareVideoEncoder implements VideoEncoder {
     outputBuilders.clear();
 
     codec = null;
+    outputBuffers = null;
     outputThread = null;
 
     // Allow changing thread after release.
@@ -488,10 +491,13 @@ class HardwareVideoEncoder implements VideoEncoder {
       MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
       int index = codec.dequeueOutputBuffer(info, DEQUEUE_OUTPUT_BUFFER_TIMEOUT_US);
       if (index < 0) {
+        if (index == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+          outputBuffers = codec.getOutputBuffers();
+        }
         return;
       }
 
-      ByteBuffer codecOutputBuffer = codec.getOutputBuffers()[index];
+      ByteBuffer codecOutputBuffer = outputBuffers[index];
       codecOutputBuffer.position(info.offset);
       codecOutputBuffer.limit(info.offset + info.size);
 

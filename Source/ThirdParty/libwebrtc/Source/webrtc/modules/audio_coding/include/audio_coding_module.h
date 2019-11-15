@@ -13,26 +13,24 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/function_view.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
-#include "rtc_base/function_view.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 // forward declarations
-struct CodecInst;
-struct WebRtcRTPHeader;
 class AudioDecoder;
 class AudioEncoder;
 class AudioFrame;
-class RTPFragmentationHeader;
+struct RTPHeader;
 
 #define WEBRTC_10MS_PCM_AUDIO 960  // 16 bits super wideband 48 kHz
 
@@ -41,12 +39,11 @@ class AudioPacketizationCallback {
  public:
   virtual ~AudioPacketizationCallback() {}
 
-  virtual int32_t SendData(FrameType frame_type,
+  virtual int32_t SendData(AudioFrameType frame_type,
                            uint8_t payload_type,
                            uint32_t timestamp,
                            const uint8_t* payload_data,
-                           size_t payload_len_bytes,
-                           const RTPFragmentationHeader* fragmentation) = 0;
+                           size_t payload_len_bytes) = 0;
 };
 
 // Callback class used for reporting VAD decision
@@ -54,7 +51,7 @@ class ACMVADCallback {
  public:
   virtual ~ACMVADCallback() {}
 
-  virtual int32_t InFrameType(FrameType frame_type) = 0;
+  virtual int32_t InFrameType(AudioFrameType frame_type) = 0;
 };
 
 class AudioCodingModule {
@@ -77,80 +74,6 @@ class AudioCodingModule {
   virtual ~AudioCodingModule() = default;
 
   ///////////////////////////////////////////////////////////////////////////
-  //   Utility functions
-  //
-
-  ///////////////////////////////////////////////////////////////////////////
-  // uint8_t NumberOfCodecs()
-  // Returns number of supported codecs.
-  //
-  // Return value:
-  //   number of supported codecs.
-  ///
-  static int NumberOfCodecs();
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t Codec()
-  // Get supported codec with list number.
-  //
-  // Input:
-  //   -list_id             : list number.
-  //
-  // Output:
-  //   -codec              : a structure where the parameters of the codec,
-  //                         given by list number is written to.
-  //
-  // Return value:
-  //   -1 if the list number (list_id) is invalid.
-  //    0 if succeeded.
-  //
-  static int Codec(int list_id, CodecInst* codec);
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t Codec()
-  // Get supported codec with the given codec name, sampling frequency, and
-  // a given number of channels.
-  //
-  // Input:
-  //   -payload_name       : name of the codec.
-  //   -sampling_freq_hz   : sampling frequency of the codec. Note! for RED
-  //                         a sampling frequency of -1 is a valid input.
-  //   -channels           : number of channels ( 1 - mono, 2 - stereo).
-  //
-  // Output:
-  //   -codec              : a structure where the function returns the
-  //                         default parameters of the codec.
-  //
-  // Return value:
-  //   -1 if no codec matches the given parameters.
-  //    0 if succeeded.
-  //
-  static int Codec(const char* payload_name,
-                   CodecInst* codec,
-                   int sampling_freq_hz,
-                   size_t channels);
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t Codec()
-  //
-  // Returns the list number of the given codec name, sampling frequency, and
-  // a given number of channels.
-  //
-  // Input:
-  //   -payload_name        : name of the codec.
-  //   -sampling_freq_hz    : sampling frequency of the codec. Note! for RED
-  //                          a sampling frequency of -1 is a valid input.
-  //   -channels            : number of channels ( 1 - mono, 2 - stereo).
-  //
-  // Return value:
-  //   if the codec is found, the index of the codec in the list,
-  //   -1 if the codec is not found.
-  //
-  static int Codec(const char* payload_name,
-                   int sampling_freq_hz,
-                   size_t channels);
-
-  ///////////////////////////////////////////////////////////////////////////
   //   Sender
   //
 
@@ -168,23 +91,6 @@ class AudioCodingModule {
       *encoder = std::move(new_encoder);
     });
   }
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t SendCodec()
-  // Get parameters for the codec currently registered as send codec.
-  //
-  // Return value:
-  //   The send codec, or nothing if we don't have one
-  //
-  virtual absl::optional<CodecInst> SendCodec() const = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // Sets the bitrate to the specified value in bits/sec. If the value is not
-  // supported by the codec, it will choose another appropriate value.
-  //
-  // This is only used in test code that rely on old ACM APIs.
-  // TODO(minyue): Remove it when possible.
-  virtual void SetBitRate(int bitrate_bps) = 0;
 
   // int32_t RegisterTransportCallback()
   // Register a transport callback which will be called to deliver
@@ -279,83 +185,9 @@ class AudioCodingModule {
   //
   virtual int32_t InitializeReceiver() = 0;
 
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t ReceiveFrequency()
-  // Get sampling frequency of the last received payload.
-  //
-  // Return value:
-  //   non-negative the sampling frequency in Hertz.
-  //   -1 if an error has occurred.
-  //
-  virtual int32_t ReceiveFrequency() const = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t PlayoutFrequency()
-  // Get sampling frequency of audio played out.
-  //
-  // Return value:
-  //   the sampling frequency in Hertz.
-  //
-  virtual int32_t PlayoutFrequency() const = 0;
-
   // Replace any existing decoders with the given payload type -> decoder map.
   virtual void SetReceiveCodecs(
       const std::map<int, SdpAudioFormat>& codecs) = 0;
-
-  // Registers a decoder for the given payload type. Returns true iff
-  // successful.
-  virtual bool RegisterReceiveCodec(int rtp_payload_type,
-                                    const SdpAudioFormat& audio_format) = 0;
-
-  // Registers an external decoder. The name is only used to provide information
-  // back to the caller about the decoder. Hence, the name is arbitrary, and may
-  // be empty.
-  virtual int RegisterExternalReceiveCodec(int rtp_payload_type,
-                                           AudioDecoder* external_decoder,
-                                           int sample_rate_hz,
-                                           int num_channels,
-                                           const std::string& name) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t UnregisterReceiveCodec()
-  // Unregister the codec currently registered with a specific payload type
-  // from the list of possible receive codecs.
-  //
-  // Input:
-  //   -payload_type        : The number representing the payload type to
-  //                         unregister.
-  //
-  // Output:
-  //   -1 if fails to unregister.
-  //    0 if the given codec is successfully unregistered.
-  //
-  virtual int UnregisterReceiveCodec(uint8_t payload_type) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t ReceiveCodec()
-  // Get the codec associated with last received payload.
-  //
-  // Output:
-  //   -curr_receive_codec : parameters of the codec associated with the last
-  //                         received payload, c.f. common_types.h for
-  //                         the definition of CodecInst.
-  //
-  // Return value:
-  //   -1 if failed to retrieve the codec,
-  //    0 if the codec is successfully retrieved.
-  //
-  virtual int32_t ReceiveCodec(CodecInst* curr_receive_codec) const = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // absl::optional<SdpAudioFormat> ReceiveFormat()
-  // Get the format associated with last received payload.
-  //
-  // Return value:
-  //    An SdpAudioFormat describing the format associated with the last
-  //    received payload.
-  //    An empty Optional if no payload has yet been received.
-  //
-  virtual absl::optional<SdpAudioFormat> ReceiveFormat() const = 0;
 
   ///////////////////////////////////////////////////////////////////////////
   // int32_t IncomingPacket()
@@ -373,58 +205,7 @@ class AudioCodingModule {
   //
   virtual int32_t IncomingPacket(const uint8_t* incoming_payload,
                                  const size_t payload_len_bytes,
-                                 const WebRtcRTPHeader& rtp_info) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int SetMinimumPlayoutDelay()
-  // Set a minimum for the playout delay, used for lip-sync. NetEq maintains
-  // such a delay unless channel condition yields to a higher delay.
-  //
-  // Input:
-  //   -time_ms            : minimum delay in milliseconds.
-  //
-  // Return value:
-  //   -1 if failed to set the delay,
-  //    0 if the minimum delay is set.
-  //
-  virtual int SetMinimumPlayoutDelay(int time_ms) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int SetMaximumPlayoutDelay()
-  // Set a maximum for the playout delay
-  //
-  // Input:
-  //   -time_ms            : maximum delay in milliseconds.
-  //
-  // Return value:
-  //   -1 if failed to set the delay,
-  //    0 if the maximum delay is set.
-  //
-  virtual int SetMaximumPlayoutDelay(int time_ms) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t PlayoutTimestamp()
-  // The send timestamp of an RTP packet is associated with the decoded
-  // audio of the packet in question. This function returns the timestamp of
-  // the latest audio obtained by calling PlayoutData10ms(), or empty if no
-  // valid timestamp is available.
-  //
-  virtual absl::optional<uint32_t> PlayoutTimestamp() = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int FilteredCurrentDelayMs()
-  // Returns the current total delay from NetEq (packet buffer and sync buffer)
-  // in ms, with smoothing applied to even out short-time fluctuations due to
-  // jitter. The packet buffer part of the delay is not updated during DTX/CNG
-  // periods.
-  //
-  virtual int FilteredCurrentDelayMs() const = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int FilteredCurrentDelayMs()
-  // Returns the current target delay for NetEq in ms.
-  //
-  virtual int TargetDelayMs() const = 0;
+                                 const RTPHeader& rtp_header) = 0;
 
   ///////////////////////////////////////////////////////////////////////////
   // int32_t PlayoutData10Ms(
@@ -451,47 +232,6 @@ class AudioCodingModule {
                                   bool* muted) = 0;
 
   ///////////////////////////////////////////////////////////////////////////
-  //   Codec specific
-  //
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int SetOpusMaxPlaybackRate()
-  // If current send codec is Opus, informs it about maximum playback rate the
-  // receiver will render. Opus can use this information to optimize the bit
-  // rate and increase the computation efficiency.
-  //
-  // Input:
-  //   -frequency_hz            : maximum playback rate in Hz.
-  //
-  // Return value:
-  //   -1 if current send codec is not Opus or
-  //      error occurred in setting the maximum playback rate,
-  //    0 if maximum bandwidth is set successfully.
-  //
-  virtual int SetOpusMaxPlaybackRate(int frequency_hz) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // EnableOpusDtx()
-  // Enable the DTX, if current send codec is Opus.
-  //
-  // Return value:
-  //   -1 if current send codec is not Opus or error occurred in enabling the
-  //      Opus DTX.
-  //    0 if Opus DTX is enabled successfully.
-  //
-  virtual int EnableOpusDtx() = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int DisableOpusDtx()
-  // If current send codec is Opus, disables its internal DTX.
-  //
-  // Return value:
-  //   -1 if current send codec is not Opus or error occurred in disabling DTX.
-  //    0 if Opus DTX is disabled successfully.
-  //
-  virtual int DisableOpusDtx() = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
   //   statistics
   //
 
@@ -509,37 +249,6 @@ class AudioCodingModule {
   //
   virtual int32_t GetNetworkStatistics(
       NetworkStatistics* network_statistics) = 0;
-
-  //
-  // Enable NACK and set the maximum size of the NACK list. If NACK is already
-  // enable then the maximum NACK list size is modified accordingly.
-  //
-  // If the sequence number of last received packet is N, the sequence numbers
-  // of NACK list are in the range of [N - |max_nack_list_size|, N).
-  //
-  // |max_nack_list_size| should be positive (none zero) and less than or
-  // equal to |Nack::kNackListSizeLimit|. Otherwise, No change is applied and -1
-  // is returned. 0 is returned at success.
-  //
-  virtual int EnableNack(size_t max_nack_list_size) = 0;
-
-  // Disable NACK.
-  virtual void DisableNack() = 0;
-
-  //
-  // Get a list of packets to be retransmitted. |round_trip_time_ms| is an
-  // estimate of the round-trip-time (in milliseconds). Missing packets which
-  // will be playout in a shorter time than the round-trip-time (with respect
-  // to the time this API is called) will not be included in the list.
-  //
-  // Negative |round_trip_time_ms| results is an error message and empty list
-  // is returned.
-  //
-  virtual std::vector<uint16_t> GetNackList(
-      int64_t round_trip_time_ms) const = 0;
-
-  virtual void GetDecodingCallStatistics(
-      AudioDecodingCallStats* call_stats) const = 0;
 
   virtual ANAStats GetANAStats() const = 0;
 };

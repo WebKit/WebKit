@@ -114,47 +114,52 @@ rtc_executable("fake_polqa") {
     "quality_assessment/fake_polqa.cc",
   ]
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
-  output_name = "py_quality_assessment/quality_assessment/fake_polqa"
+  output_dir = "${root_out_dir}/py_quality_assessment/quality_assessment"
   deps = [
-    "../../../..:webrtc_common",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:rtc_base_approved",
   ]
 }
 
 rtc_executable("vad") {
+  testonly = true
   sources = [
     "quality_assessment/vad.cc",
   ]
   deps = [
-    "../../../..:webrtc_common",
     "../../../../common_audio",
     "../../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/flags:flag",
+    "//third_party/abseil-cpp/absl/flags:parse",
   ]
 }
 
 rtc_executable("apm_vad") {
+  testonly = true
   sources = [
     "quality_assessment/apm_vad.cc",
   ]
   deps = [
     "../..",
-    "../../../..:webrtc_common",
     "../../../../common_audio",
     "../../../../rtc_base:rtc_base_approved",
     "../../vad",
+    "//third_party/abseil-cpp/absl/flags:flag",
+    "//third_party/abseil-cpp/absl/flags:parse",
   ]
 }
 
 rtc_executable("sound_level") {
+  testonly = true
   sources = [
     "quality_assessment/sound_level.cc",
   ]
   deps = [
     "../..",
-    "../../../..:webrtc_common",
     "../../../../common_audio",
     "../../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/flags:flag",
+    "//third_party/abseil-cpp/absl/flags:parse",
   ]
 }
 

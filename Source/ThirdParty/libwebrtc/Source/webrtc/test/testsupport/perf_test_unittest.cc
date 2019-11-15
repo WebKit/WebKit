@@ -10,6 +10,7 @@
 
 #include "test/testsupport/perf_test.h"
 
+#include <algorithm>
 #include <limits>
 #include <string>
 
@@ -70,7 +71,7 @@ class PerfTest : public ::testing::Test {
 #define MAYBE_TestPrintResult TestPrintResult
 #endif
 TEST_F(PerfTest, MAYBE_TestPrintResult) {
-  testing::internal::CaptureStdout();
+  ::testing::internal::CaptureStdout();
   std::string expected;
 
   expected += "RESULT measurementmodifier: trace= 42 units\n";
@@ -86,7 +87,7 @@ TEST_F(PerfTest, MAYBE_TestPrintResult) {
   expected += "RESULT foobar: baz_vl= [1,2,3] units\n";
   PrintResultList("foo", "bar", "baz_vl", kListOfScalars, "units", false);
 
-  EXPECT_EQ(expected, testing::internal::GetCapturedStdout());
+  EXPECT_EQ(expected, ::testing::internal::GetCapturedStdout());
 }
 
 TEST_F(PerfTest, TestGetPerfResultsJSON) {

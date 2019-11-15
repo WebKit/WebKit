@@ -11,6 +11,7 @@
 #include "modules/desktop_capture/linux/x_error_trap.h"
 
 #include <assert.h>
+#include <stddef.h>
 
 #if defined(TOOLKIT_GTK)
 #include <gdk/gdk.h>

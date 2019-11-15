@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
 
 #include "modules/audio_coding/neteq/packet_buffer.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -23,10 +22,8 @@ class MockPacketBuffer : public PacketBuffer {
       : PacketBuffer(max_number_of_packets, tick_timer) {}
   virtual ~MockPacketBuffer() { Die(); }
   MOCK_METHOD0(Die, void());
-  MOCK_METHOD0(Flush,
-      void());
-  MOCK_CONST_METHOD0(Empty,
-      bool());
+  MOCK_METHOD0(Flush, void());
+  MOCK_CONST_METHOD0(Empty, bool());
   int InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
     return InsertPacketWrapped(&packet, stats);
   }
@@ -41,12 +38,10 @@ class MockPacketBuffer : public PacketBuffer {
                    absl::optional<uint8_t>* current_rtp_payload_type,
                    absl::optional<uint8_t>* current_cng_rtp_payload_type,
                    StatisticsCalculator* stats));
-  MOCK_CONST_METHOD1(NextTimestamp,
-      int(uint32_t* next_timestamp));
+  MOCK_CONST_METHOD1(NextTimestamp, int(uint32_t* next_timestamp));
   MOCK_CONST_METHOD2(NextHigherTimestamp,
-      int(uint32_t timestamp, uint32_t* next_timestamp));
-  MOCK_CONST_METHOD0(PeekNextPacket,
-      const Packet*());
+                     int(uint32_t timestamp, uint32_t* next_timestamp));
+  MOCK_CONST_METHOD0(PeekNextPacket, const Packet*());
   MOCK_METHOD0(GetNextPacket, absl::optional<Packet>());
   MOCK_METHOD1(DiscardNextPacket, int(StatisticsCalculator* stats));
   MOCK_METHOD3(DiscardOldPackets,
@@ -55,12 +50,9 @@ class MockPacketBuffer : public PacketBuffer {
                     StatisticsCalculator* stats));
   MOCK_METHOD2(DiscardAllOldPackets,
                void(uint32_t timestamp_limit, StatisticsCalculator* stats));
-  MOCK_CONST_METHOD0(NumPacketsInBuffer,
-      size_t());
-  MOCK_METHOD1(IncrementWaitingTimes,
-      void(int));
-  MOCK_CONST_METHOD0(current_memory_bytes,
-      int());
+  MOCK_CONST_METHOD0(NumPacketsInBuffer, size_t());
+  MOCK_METHOD1(IncrementWaitingTimes, void(int));
+  MOCK_CONST_METHOD0(current_memory_bytes, int());
 };
 
 }  // namespace webrtc

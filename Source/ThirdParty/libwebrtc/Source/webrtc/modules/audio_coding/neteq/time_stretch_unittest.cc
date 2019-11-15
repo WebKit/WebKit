@@ -10,18 +10,17 @@
 
 // Unit tests for Accelerate and PreemptiveExpand classes.
 
-#include "modules/audio_coding/neteq/accelerate.h"
-#include "modules/audio_coding/neteq/preemptive_expand.h"
-
 #include <map>
 #include <memory>
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/accelerate.h"
 #include "modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/preemptive_expand.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -64,9 +63,7 @@ class TimeStretchTest : public ::testing::Test {
         sample_rate_hz_(32000),
         block_size_(30 * sample_rate_hz_ / 1000),  // 30 ms
         audio_(new int16_t[block_size_]),
-        background_noise_(kNumChannels) {
-    WebRtcSpl_Init();
-  }
+        background_noise_(kNumChannels) {}
 
   const int16_t* Next30Ms() {
     RTC_CHECK(input_file_->Read(block_size_, audio_.get()));

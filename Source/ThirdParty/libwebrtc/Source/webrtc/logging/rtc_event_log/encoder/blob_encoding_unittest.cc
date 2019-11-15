@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "logging/rtc_event_log/encoder/varint.h"
+#include "logging/rtc_event_log/encoder/var_int.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 

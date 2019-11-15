@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/utility/default_video_bitrate_allocator.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <algorithm>
@@ -24,14 +25,13 @@ DefaultVideoBitrateAllocator::~DefaultVideoBitrateAllocator() {}
 
 // TODO(http://crbug.com/webrtc/9671): Do not split bitrate between simulcast
 // streams, but allocate everything to the first stream.
-VideoBitrateAllocation DefaultVideoBitrateAllocator::GetAllocation(
-    uint32_t total_bitrate_bps,
-    uint32_t framerate) {
+VideoBitrateAllocation DefaultVideoBitrateAllocator::Allocate(
+    VideoBitrateAllocationParameters parameters) {
   VideoBitrateAllocation allocation;
-  if (total_bitrate_bps == 0 || !codec_.active)
+  if (parameters.total_bitrate.IsZero() || !codec_.active)
     return allocation;
 
-  uint32_t allocated_bitrate_bps = total_bitrate_bps;
+  uint32_t allocated_bitrate_bps = parameters.total_bitrate.bps();
   allocated_bitrate_bps =
       std::max(allocated_bitrate_bps, codec_.minBitrate * 1000);
   if (codec_.maxBitrate > 0) {

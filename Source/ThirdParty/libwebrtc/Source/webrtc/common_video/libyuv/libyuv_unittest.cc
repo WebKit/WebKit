@@ -8,19 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "third_party/libyuv/include/libyuv.h"
+
 #include <math.h>
 #include <string.h>
 
 #include <memory>
 
+#include "absl/memory/memory.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "test/frame_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
-#include "third_party/libyuv/include/libyuv.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -66,7 +68,12 @@ void TestLibYuv::SetUp() {
   rtc::scoped_refptr<I420BufferInterface> buffer(
       test::ReadI420Buffer(width_, height_, source_file_));
 
-  orig_frame_.reset(new VideoFrame(buffer, kVideoRotation_0, 0));
+  orig_frame_ =
+      absl::make_unique<VideoFrame>(VideoFrame::Builder()
+                                        .set_video_frame_buffer(buffer)
+                                        .set_rotation(webrtc::kVideoRotation_0)
+                                        .set_timestamp_us(0)
+                                        .build());
 }
 
 void TestLibYuv::TearDown() {

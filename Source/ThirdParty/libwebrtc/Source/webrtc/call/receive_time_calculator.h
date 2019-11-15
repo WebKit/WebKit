@@ -10,9 +10,12 @@
 #ifndef CALL_RECEIVE_TIME_CALCULATOR_H_
 #define CALL_RECEIVE_TIME_CALCULATOR_H_
 
+#include <stdint.h>
+
 #include <memory>
 
-#include "rtc_base/experiments/field_trial_units.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 

@@ -15,11 +15,10 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
-using testing::ElementsAre;
-using testing::ElementsAreArray;
-using testing::make_tuple;
-using testing::SizeIs;
-using webrtc::rtcp::Dlrr;
+using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
+using ::testing::make_tuple;
+using ::testing::SizeIs;
 using webrtc::rtcp::ExtendedReports;
 using webrtc::rtcp::ReceiveTimeInfo;
 using webrtc::rtcp::Rrtr;

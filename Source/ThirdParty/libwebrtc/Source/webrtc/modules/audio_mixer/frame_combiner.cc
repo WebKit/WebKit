@@ -12,28 +12,28 @@
 
 #include <algorithm>
 #include <array>
-#include <functional>
+#include <cstdint>
+#include <iterator>
+#include <string>
 
+#include "absl/memory/memory.h"
 #include "api/array_view.h"
-#include "audio/utility/audio_frame_operations.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_mixer/audio_frame_manipulator.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
+#include "modules/audio_processing/include/audio_frame_view.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
 
-// Stereo, 48 kHz, 10 ms.
-constexpr int kMaximumAmountOfChannels = 2;
-constexpr int kMaximumChannelSize = 48 * AudioMixerImpl::kFrameDurationInMs;
-
-using OneChannelBuffer = std::array<float, kMaximumChannelSize>;
+using MixingBuffer =
+    std::array<std::array<float, FrameCombiner::kMaximumChannelSize>,
+               FrameCombiner::kMaximumNumberOfChannels>;
 
 void SetAudioFrameFields(const std::vector<AudioFrame*>& mix_list,
                          size_t number_of_channels,
@@ -57,6 +57,7 @@ void SetAudioFrameFields(const std::vector<AudioFrame*>& mix_list,
     audio_frame_for_mixing->timestamp_ = mix_list[0]->timestamp_;
     audio_frame_for_mixing->elapsed_time_ms_ = mix_list[0]->elapsed_time_ms_;
     audio_frame_for_mixing->ntp_time_ms_ = mix_list[0]->ntp_time_ms_;
+    audio_frame_for_mixing->packet_infos_ = mix_list[0]->packet_infos_;
   }
 }
 
@@ -73,23 +74,30 @@ void MixFewFramesWithNoLimiter(const std::vector<AudioFrame*>& mix_list,
             audio_frame_for_mixing->mutable_data());
 }
 
-std::array<OneChannelBuffer, kMaximumAmountOfChannels> MixToFloatFrame(
-    const std::vector<AudioFrame*>& mix_list,
-    size_t samples_per_channel,
-    size_t number_of_channels) {
-  // Convert to FloatS16 and mix.
-  using OneChannelBuffer = std::array<float, kMaximumChannelSize>;
-  std::array<OneChannelBuffer, kMaximumAmountOfChannels> mixing_buffer{};
+void MixToFloatFrame(const std::vector<AudioFrame*>& mix_list,
+                     size_t samples_per_channel,
+                     size_t number_of_channels,
+                     MixingBuffer* mixing_buffer) {
+  RTC_DCHECK_LE(samples_per_channel, FrameCombiner::kMaximumChannelSize);
+  RTC_DCHECK_LE(number_of_channels, FrameCombiner::kMaximumNumberOfChannels);
+  // Clear the mixing buffer.
+  for (auto& one_channel_buffer : *mixing_buffer) {
+    std::fill(one_channel_buffer.begin(), one_channel_buffer.end(), 0.f);
+  }
 
+  // Convert to FloatS16 and mix.
   for (size_t i = 0; i < mix_list.size(); ++i) {
     const AudioFrame* const frame = mix_list[i];
-    for (size_t j = 0; j < number_of_channels; ++j) {
-      for (size_t k = 0; k < samples_per_channel; ++k) {
-        mixing_buffer[j][k] += frame->data()[number_of_channels * k + j];
+    for (size_t j = 0; j < std::min(number_of_channels,
+                                    FrameCombiner::kMaximumNumberOfChannels);
+         ++j) {
+      for (size_t k = 0; k < std::min(samples_per_channel,
+                                      FrameCombiner::kMaximumChannelSize);
+           ++k) {
+        (*mixing_buffer)[j][k] += frame->data()[number_of_channels * k + j];
       }
     }
   }
-  return mixing_buffer;
 }
 
 void RunLimiter(AudioFrameView<float> mixing_buffer_view, Limiter* limiter) {
@@ -115,10 +123,20 @@ void InterleaveToAudioFrame(AudioFrameView<const float> mixing_buffer_view,
 }
 }  // namespace
 
+constexpr size_t FrameCombiner::kMaximumNumberOfChannels;
+constexpr size_t FrameCombiner::kMaximumChannelSize;
+
 FrameCombiner::FrameCombiner(bool use_limiter)
     : data_dumper_(new ApmDataDumper(0)),
+      mixing_buffer_(
+          absl::make_unique<std::array<std::array<float, kMaximumChannelSize>,
+                                       kMaximumNumberOfChannels>>()),
       limiter_(static_cast<size_t>(48000), data_dumper_.get(), "AudioMixer"),
-      use_limiter_(use_limiter) {}
+      use_limiter_(use_limiter) {
+  static_assert(kMaximumChannelSize * kMaximumNumberOfChannels <=
+                    AudioFrame::kMaxDataSizeSamples,
+                "");
+}
 
 FrameCombiner::~FrameCombiner() = default;
 
@@ -153,16 +171,22 @@ void FrameCombiner::Combine(const std::vector<AudioFrame*>& mix_list,
     return;
   }
 
-  std::array<OneChannelBuffer, kMaximumAmountOfChannels> mixing_buffer =
-      MixToFloatFrame(mix_list, samples_per_channel, number_of_channels);
+  MixToFloatFrame(mix_list, samples_per_channel, number_of_channels,
+                  mixing_buffer_.get());
+
+  const size_t output_number_of_channels =
+      std::min(number_of_channels, kMaximumNumberOfChannels);
+  const size_t output_samples_per_channel =
+      std::min(samples_per_channel, kMaximumChannelSize);
 
   // Put float data in an AudioFrameView.
-  std::array<float*, kMaximumAmountOfChannels> channel_pointers{};
-  for (size_t i = 0; i < number_of_channels; ++i) {
-    channel_pointers[i] = &mixing_buffer[i][0];
+  std::array<float*, kMaximumNumberOfChannels> channel_pointers{};
+  for (size_t i = 0; i < output_number_of_channels; ++i) {
+    channel_pointers[i] = &(*mixing_buffer_.get())[i][0];
   }
-  AudioFrameView<float> mixing_buffer_view(
-      &channel_pointers[0], number_of_channels, samples_per_channel);
+  AudioFrameView<float> mixing_buffer_view(&channel_pointers[0],
+                                           output_number_of_channels,
+                                           output_samples_per_channel);
 
   if (use_limiter_) {
     RunLimiter(mixing_buffer_view, &limiter_);

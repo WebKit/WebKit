@@ -112,6 +112,8 @@ const coding_param param_set[] = {
                     string("pcm"),
                     true)};
 
-INSTANTIATE_TEST_CASE_P(AllTest, IsacSpeedTest, ::testing::ValuesIn(param_set));
+INSTANTIATE_TEST_SUITE_P(AllTest,
+                         IsacSpeedTest,
+                         ::testing::ValuesIn(param_set));
 
 }  // namespace webrtc

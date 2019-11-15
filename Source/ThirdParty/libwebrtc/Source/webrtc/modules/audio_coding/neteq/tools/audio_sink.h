@@ -12,7 +12,7 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_SINK_H_
 
 #include "api/audio/audio_frame.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {

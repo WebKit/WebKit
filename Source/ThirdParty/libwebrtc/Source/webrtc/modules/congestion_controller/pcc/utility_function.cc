@@ -12,7 +12,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <vector>
+
+#include "api/units/data_rate.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace pcc {

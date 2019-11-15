@@ -11,7 +11,7 @@
 #ifndef API_TEST_MOCK_FRAME_ENCRYPTOR_H_
 #define API_TEST_MOCK_FRAME_ENCRYPTOR_H_
 
-#include "api/crypto/frameencryptorinterface.h"
+#include "api/crypto/frame_encryptor_interface.h"
 #include "test/gmock.h"
 
 namespace webrtc {

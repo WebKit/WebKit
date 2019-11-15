@@ -16,8 +16,9 @@ rtc_static_library("pcc") {
   deps = [
     ":pcc_controller",
     "../../../api/transport:network_control",
+    "../../../api/units:time_delta",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
@@ -31,8 +32,14 @@ rtc_static_library("pcc_controller") {
     ":monitor_interval",
     ":rtt_tracker",
     "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -43,6 +50,10 @@ rtc_static_library("monitor_interval") {
   ]
   deps = [
     "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:rtc_base_approved",
   ]
 }
@@ -54,6 +65,8 @@ rtc_static_library("rtt_tracker") {
   ]
   deps = [
     "../../../api/transport:network_control",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:rtc_base_approved",
   ]
 }
@@ -66,6 +79,8 @@ rtc_static_library("utility_function") {
   deps = [
     ":monitor_interval",
     "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
   ]
 }
@@ -79,8 +94,9 @@ rtc_static_library("bitrate_controller") {
     ":monitor_interval",
     ":utility_function",
     "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -102,13 +118,15 @@ if (rtc_include_tests) {
       ":pcc_controller",
       ":rtt_tracker",
       ":utility_function",
-      "../../../api/transport:network_control_test",
+      "../../../api/transport:network_control",
       "../../../api/units:data_rate",
+      "../../../api/units:data_size",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
       "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
-      "//third_party/abseil-cpp/absl/memory:memory",
+      "../../../test/scenario",
+      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

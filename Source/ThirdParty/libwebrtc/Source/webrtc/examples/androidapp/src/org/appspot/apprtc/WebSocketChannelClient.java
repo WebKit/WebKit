@@ -11,7 +11,7 @@
 package org.appspot.apprtc;
 
 import android.os.Handler;
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import de.tavendo.autobahn.WebSocket.WebSocketConnectionObserver;
 import de.tavendo.autobahn.WebSocketConnection;

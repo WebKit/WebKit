@@ -37,7 +37,7 @@
 #include "WebRTCResolverMessages.h"
 #include "WebRTCSocketMessages.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/asyncpacketsocket.h>
+#include <webrtc/rtc_base/async_packet_socket.h>
 #include <webrtc/rtc_base/logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
@@ -146,7 +146,9 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         return;
     }
     callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() {
-        std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, proxyInfo, userAgent.utf8().data(), options));
+        rtc::PacketSocketTcpOptions tcpOptions;
+        tcpOptions.opts = options;
+        std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, proxyInfo, userAgent.utf8().data(), tcpOptions));
         createSocket(identifier, WTFMove(socket), Socket::Type::ClientTCP);
     });
 }

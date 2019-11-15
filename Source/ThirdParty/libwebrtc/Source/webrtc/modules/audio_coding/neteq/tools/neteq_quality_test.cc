@@ -8,16 +8,81 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <math.h>
+#include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
+
 #include <stdio.h>
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include <cmath>
+
+#include "absl/flags/flag.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "modules/audio_coding/neteq/tools/output_audio_file.h"
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "rtc_base/checks.h"
-#include "test/testsupport/fileutils.h"
+#include "system_wrappers/include/clock.h"
+#include "test/testsupport/file_utils.h"
+
+const std::string& DefaultInFilename() {
+  static const std::string path =
+      ::webrtc::test::ResourcePath("audio_coding/speech_mono_16kHz", "pcm");
+  return path;
+}
+
+const std::string& DefaultOutFilename() {
+  static const std::string path =
+      ::webrtc::test::OutputPath() + "neteq_quality_test_out.pcm";
+  return path;
+}
+
+ABSL_FLAG(
+    std::string,
+    in_filename,
+    DefaultInFilename(),
+    "Filename for input audio (specify sample rate with --input_sample_rate, "
+    "and channels with --channels).");
+
+ABSL_FLAG(int, input_sample_rate, 16000, "Sample rate of input file in Hz.");
+
+ABSL_FLAG(int, channels, 1, "Number of channels in input audio.");
+
+ABSL_FLAG(std::string,
+          out_filename,
+          DefaultOutFilename(),
+          "Name of output audio file.");
+
+ABSL_FLAG(
+    int,
+    runtime_ms,
+    10000,
+    "Simulated runtime (milliseconds). -1 will consume the complete file.");
+
+ABSL_FLAG(int, packet_loss_rate, 10, "Percentile of packet loss.");
+
+ABSL_FLAG(int,
+          random_loss_mode,
+          ::webrtc::test::kUniformLoss,
+          "Random loss mode: 0--no loss, 1--uniform loss, 2--Gilbert Elliot "
+          "loss, 3--fixed loss.");
+
+ABSL_FLAG(int,
+          burst_length,
+          30,
+          "Burst length in milliseconds, only valid for Gilbert Elliot loss.");
+
+ABSL_FLAG(float, drift_factor, 0.0, "Time drift factor.");
+
+ABSL_FLAG(int,
+          preload_packets,
+          1,
+          "Preload the buffer with this many packets.");
+
+ABSL_FLAG(std::string,
+          loss_events,
+          "",
+          "List of loss events time and duration separated by comma: "
+          "<first_event_time> <first_event_duration>, <second_event_time> "
+          "<second_event_duration>, ...");
 
 namespace webrtc {
 namespace test {
@@ -27,67 +92,19 @@ const int kOutputSizeMs = 10;
 const int kInitSeed = 0x12345678;
 const int kPacketLossTimeUnitMs = 10;
 
-const std::string& DefaultInFilename() {
-  static const std::string path =
-      ResourcePath("audio_coding/speech_mono_16kHz", "pcm");
-  return path;
-}
-
-const std::string& DefaultOutFilename() {
-  static const std::string path = OutputPath() + "neteq_quality_test_out.pcm";
-  return path;
-}
-
 // Common validator for file names.
-static bool ValidateFilename(const std::string& value, bool write) {
-  FILE* fid = write ? fopen(value.c_str(), "wb") : fopen(value.c_str(), "rb");
+static bool ValidateFilename(const std::string& value, bool is_output) {
+  if (!is_output) {
+    RTC_CHECK_NE(value.substr(value.find_last_of(".") + 1), "wav")
+        << "WAV file input is not supported";
+  }
+  FILE* fid =
+      is_output ? fopen(value.c_str(), "wb") : fopen(value.c_str(), "rb");
   if (fid == nullptr)
     return false;
   fclose(fid);
   return true;
 }
-
-WEBRTC_DEFINE_string(
-    in_filename,
-    DefaultInFilename().c_str(),
-    "Filename for input audio (specify sample rate with --input_sample_rate, "
-    "and channels with --channels).");
-
-WEBRTC_DEFINE_int(input_sample_rate, 16000, "Sample rate of input file in Hz.");
-
-WEBRTC_DEFINE_int(channels, 1, "Number of channels in input audio.");
-
-WEBRTC_DEFINE_string(out_filename,
-                     DefaultOutFilename().c_str(),
-                     "Name of output audio file.");
-
-WEBRTC_DEFINE_int(runtime_ms, 10000, "Simulated runtime (milliseconds).");
-
-WEBRTC_DEFINE_int(packet_loss_rate, 10, "Percentile of packet loss.");
-
-WEBRTC_DEFINE_int(
-    random_loss_mode,
-    kUniformLoss,
-    "Random loss mode: 0--no loss, 1--uniform loss, 2--Gilbert Elliot "
-    "loss, 3--fixed loss.");
-
-WEBRTC_DEFINE_int(
-    burst_length,
-    30,
-    "Burst length in milliseconds, only valid for Gilbert Elliot loss.");
-
-WEBRTC_DEFINE_float(drift_factor, 0.0, "Time drift factor.");
-
-WEBRTC_DEFINE_int(preload_packets,
-                  0,
-                  "Preload the buffer with this many packets.");
-
-WEBRTC_DEFINE_string(
-    loss_events,
-    "",
-    "List of loss events time and duration separated by comma: "
-    "<first_event_time> <first_event_duration>, <second_event_time> "
-    "<second_event_duration>, ...");
 
 // ProbTrans00Solver() is to calculate the transition probability from no-loss
 // state to itself in a modified Gilbert Elliot packet loss model. The result is
@@ -114,34 +131,36 @@ static double ProbTrans00Solver(int units,
   const int kIterations = 100;
   const double a = (1.0f - loss_rate) / prob_trans_10;
   const double b = (loss_rate - 1.0f) * (1.0f + 1.0f / prob_trans_10);
-  double x = 0.0f;  // Starting point;
+  double x = 0.0;  // Starting point;
   double f = b;
   double f_p;
   int iter = 0;
   while ((f >= kPrecision || f <= -kPrecision) && iter < kIterations) {
-    f_p = (units - 1.0f) * pow(x, units - 2) + a;
+    f_p = (units - 1.0f) * std::pow(x, units - 2) + a;
     x -= f / f_p;
     if (x > 1.0f) {
       x = 1.0f;
     } else if (x < 0.0f) {
       x = 0.0f;
     }
-    f = pow(x, units - 1) + a * x + b;
+    f = std::pow(x, units - 1) + a * x + b;
     iter++;
   }
   return x;
 }
 
-NetEqQualityTest::NetEqQualityTest(int block_duration_ms,
-                                   int in_sampling_khz,
-                                   int out_sampling_khz,
-                                   NetEqDecoder decoder_type)
-    : decoder_type_(decoder_type),
-      channels_(static_cast<size_t>(FLAG_channels)),
+NetEqQualityTest::NetEqQualityTest(
+    int block_duration_ms,
+    int in_sampling_khz,
+    int out_sampling_khz,
+    const SdpAudioFormat& format,
+    const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory)
+    : audio_format_(format),
+      channels_(absl::GetFlag(FLAGS_channels)),
       decoded_time_ms_(0),
       decodable_time_ms_(0),
-      drift_factor_(FLAG_drift_factor),
-      packet_loss_rate_(FLAG_packet_loss_rate),
+      drift_factor_(absl::GetFlag(FLAGS_drift_factor)),
+      packet_loss_rate_(absl::GetFlag(FLAGS_packet_loss_rate)),
       block_duration_ms_(block_duration_ms),
       in_sampling_khz_(in_sampling_khz),
       out_sampling_khz_(out_sampling_khz),
@@ -149,47 +168,50 @@ NetEqQualityTest::NetEqQualityTest(int block_duration_ms,
           static_cast<size_t>(in_sampling_khz_ * block_duration_ms_)),
       payload_size_bytes_(0),
       max_payload_bytes_(0),
-      in_file_(new ResampleInputAudioFile(FLAG_in_filename,
-                                          FLAG_input_sample_rate,
-                                          in_sampling_khz * 1000)),
+      in_file_(
+          new ResampleInputAudioFile(absl::GetFlag(FLAGS_in_filename),
+                                     absl::GetFlag(FLAGS_input_sample_rate),
+                                     in_sampling_khz * 1000,
+                                     absl::GetFlag(FLAGS_runtime_ms) > 0)),
       rtp_generator_(
           new RtpGenerator(in_sampling_khz_, 0, 0, decodable_time_ms_)),
       total_payload_size_bytes_(0) {
   // Flag validation
-  RTC_CHECK(ValidateFilename(FLAG_in_filename, false))
+  RTC_CHECK(ValidateFilename(absl::GetFlag(FLAGS_in_filename), false))
       << "Invalid input filename.";
 
-  RTC_CHECK(FLAG_input_sample_rate == 8000 || FLAG_input_sample_rate == 16000 ||
-            FLAG_input_sample_rate == 32000 || FLAG_input_sample_rate == 48000)
+  RTC_CHECK(absl::GetFlag(FLAGS_input_sample_rate) == 8000 ||
+            absl::GetFlag(FLAGS_input_sample_rate) == 16000 ||
+            absl::GetFlag(FLAGS_input_sample_rate) == 32000 ||
+            absl::GetFlag(FLAGS_input_sample_rate) == 48000)
       << "Invalid sample rate should be 8000, 16000, 32000 or 48000 Hz.";
 
-  RTC_CHECK_EQ(FLAG_channels, 1)
+  RTC_CHECK_EQ(absl::GetFlag(FLAGS_channels), 1)
       << "Invalid number of channels, current support only 1.";
 
-  RTC_CHECK(ValidateFilename(FLAG_out_filename, true))
+  RTC_CHECK(ValidateFilename(absl::GetFlag(FLAGS_out_filename), true))
       << "Invalid output filename.";
 
-  RTC_CHECK_GT(FLAG_runtime_ms, 0)
-      << "Invalid runtime, should be greater than 0.";
-
-  RTC_CHECK(FLAG_packet_loss_rate >= 0 && FLAG_packet_loss_rate <= 100)
+  RTC_CHECK(absl::GetFlag(FLAGS_packet_loss_rate) >= 0 &&
+            absl::GetFlag(FLAGS_packet_loss_rate) <= 100)
       << "Invalid packet loss percentile, should be between 0 and 100.";
 
-  RTC_CHECK(FLAG_random_loss_mode >= 0 && FLAG_random_loss_mode < kLastLossMode)
+  RTC_CHECK(absl::GetFlag(FLAGS_random_loss_mode) >= 0 &&
+            absl::GetFlag(FLAGS_random_loss_mode) < kLastLossMode)
       << "Invalid random packet loss mode, should be between 0 and "
       << kLastLossMode - 1 << ".";
 
-  RTC_CHECK_GE(FLAG_burst_length, kPacketLossTimeUnitMs)
+  RTC_CHECK_GE(absl::GetFlag(FLAGS_burst_length), kPacketLossTimeUnitMs)
       << "Invalid burst length, should be greater than or equal to "
       << kPacketLossTimeUnitMs << " ms.";
 
-  RTC_CHECK_GT(FLAG_drift_factor, -0.1)
+  RTC_CHECK_GT(absl::GetFlag(FLAGS_drift_factor), -0.1)
       << "Invalid drift factor, should be greater than -0.1.";
 
-  RTC_CHECK_GE(FLAG_preload_packets, 0)
+  RTC_CHECK_GE(absl::GetFlag(FLAGS_preload_packets), 0)
       << "Invalid number of packets to preload; must be non-negative.";
 
-  const std::string out_filename = FLAG_out_filename;
+  const std::string out_filename = absl::GetFlag(FLAGS_out_filename);
   const std::string log_filename = out_filename + ".log";
   log_file_.open(log_filename.c_str(), std::ofstream::out);
   RTC_CHECK(log_file_.is_open());
@@ -207,7 +229,7 @@ NetEqQualityTest::NetEqQualityTest(int block_duration_ms,
   NetEq::Config config;
   config.sample_rate_hz = out_sampling_khz_ * 1000;
   neteq_.reset(
-      NetEq::Create(config, webrtc::CreateBuiltinAudioDecoderFactory()));
+      NetEq::Create(config, Clock::GetRealTimeClock(), decoder_factory));
   max_payload_bytes_ = in_size_samples_ * channels_ * sizeof(int16_t);
   in_data_.reset(new int16_t[in_size_samples_ * channels_]);
 }
@@ -271,12 +293,11 @@ bool FixedLossModel::Lost(int now_ms) {
 }
 
 void NetEqQualityTest::SetUp() {
-  ASSERT_EQ(0,
-            neteq_->RegisterPayloadType(decoder_type_, "noname", kPayloadType));
+  ASSERT_TRUE(neteq_->RegisterPayloadType(kPayloadType, audio_format_));
   rtp_generator_->set_drift_factor(drift_factor_);
 
   int units = block_duration_ms_ / kPacketLossTimeUnitMs;
-  switch (FLAG_random_loss_mode) {
+  switch (absl::GetFlag(FLAGS_random_loss_mode)) {
     case kUniformLoss: {
       // |unit_loss_rate| is the packet loss rate for each unit time interval
       // (kPacketLossTimeUnitMs). Since a packet loss event is generated if any
@@ -285,13 +306,13 @@ void NetEqQualityTest::SetUp() {
       // (1 - unit_loss_rate) ^ (block_duration_ms_ / kPacketLossTimeUnitMs) ==
       // 1 - packet_loss_rate.
       double unit_loss_rate =
-          (1.0f - pow(1.0f - 0.01f * packet_loss_rate_, 1.0f / units));
+          (1.0 - std::pow(1.0 - 0.01 * packet_loss_rate_, 1.0 / units));
       loss_model_.reset(new UniformLoss(unit_loss_rate));
       break;
     }
     case kGilbertElliotLoss: {
-      // |FLAG_burst_length| should be integer times of kPacketLossTimeUnitMs.
-      ASSERT_EQ(0, FLAG_burst_length % kPacketLossTimeUnitMs);
+      // |FLAGS_burst_length| should be integer times of kPacketLossTimeUnitMs.
+      ASSERT_EQ(0, absl::GetFlag(FLAGS_burst_length) % kPacketLossTimeUnitMs);
 
       // We do not allow 100 percent packet loss in Gilbert Elliot model, which
       // makes no sense.
@@ -309,14 +330,15 @@ void NetEqQualityTest::SetUp() {
       // prob_trans_00 ^ (units - 1) = (loss_rate - 1) / prob_trans_10 *
       //     prob_trans_00 + (1 - loss_rate) * (1 + 1 / prob_trans_10).
       double loss_rate = 0.01f * packet_loss_rate_;
-      double prob_trans_10 = 1.0f * kPacketLossTimeUnitMs / FLAG_burst_length;
+      double prob_trans_10 =
+          1.0f * kPacketLossTimeUnitMs / absl::GetFlag(FLAGS_burst_length);
       double prob_trans_00 = ProbTrans00Solver(units, loss_rate, prob_trans_10);
       loss_model_.reset(
           new GilbertElliotLoss(1.0f - prob_trans_10, 1.0f - prob_trans_00));
       break;
     }
     case kFixedLoss: {
-      std::istringstream loss_events_stream(FLAG_loss_events);
+      std::istringstream loss_events_stream(absl::GetFlag(FLAGS_loss_events));
       std::string loss_event_string;
       std::set<FixedLossEvent, FixedLossEventCmp> loss_events;
       while (std::getline(loss_events_stream, loss_event_string, ',')) {
@@ -407,12 +429,21 @@ int NetEqQualityTest::DecodeBlock() {
 
 void NetEqQualityTest::Simulate() {
   int audio_size_samples;
+  bool end_of_input = false;
+  int runtime_ms = absl::GetFlag(FLAGS_runtime_ms) >= 0
+                       ? absl::GetFlag(FLAGS_runtime_ms)
+                       : INT_MAX;
 
-  while (decoded_time_ms_ < FLAG_runtime_ms) {
+  while (!end_of_input && decoded_time_ms_ < runtime_ms) {
     // Preload the buffer if needed.
-    while (decodable_time_ms_ - FLAG_preload_packets * block_duration_ms_ <
+    while (decodable_time_ms_ -
+               absl::GetFlag(FLAGS_preload_packets) * block_duration_ms_ <
            decoded_time_ms_) {
-      ASSERT_TRUE(in_file_->Read(in_size_samples_ * channels_, &in_data_[0]));
+      if (!in_file_->Read(in_size_samples_ * channels_, &in_data_[0])) {
+        end_of_input = true;
+        ASSERT_TRUE(end_of_input && absl::GetFlag(FLAGS_runtime_ms) < 0);
+        break;
+      }
       payload_.Clear();
       payload_size_bytes_ = EncodeBlock(&in_data_[0], in_size_samples_,
                                         &payload_, max_payload_bytes_);
@@ -425,8 +456,8 @@ void NetEqQualityTest::Simulate() {
     }
   }
   Log() << "Average bit rate was "
-        << 8.0f * total_payload_size_bytes_ / FLAG_runtime_ms << " kbps"
-        << std::endl;
+        << 8.0f * total_payload_size_bytes_ / absl::GetFlag(FLAGS_runtime_ms)
+        << " kbps" << std::endl;
 }
 
 }  // namespace test

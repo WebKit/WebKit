@@ -10,17 +10,20 @@
 #include "common_video/h264/h264_bitstream_parser.h"
 
 #include <stdlib.h>
+
 #include <cstdint>
 #include <vector>
 
 #include "common_video/h264/h264_common.h"
-#include "rtc_base/bitbuffer.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/logging.h"
 
 namespace {
+
 const int kMaxAbsQpDeltaValue = 51;
 const int kMinQpValue = 0;
 const int kMaxQpValue = 51;
+
 }  // namespace
 
 namespace webrtc {
@@ -311,6 +314,17 @@ bool H264BitstreamParser::GetLastSliceQp(int* qp) const {
   }
   *qp = parsed_qp;
   return true;
+}
+
+void H264BitstreamParser::ParseBitstream(
+    rtc::ArrayView<const uint8_t> bitstream) {
+  ParseBitstream(bitstream.data(), bitstream.size());
+}
+
+absl::optional<int> H264BitstreamParser::GetLastSliceQp() const {
+  int qp;
+  bool success = GetLastSliceQp(&qp);
+  return success ? absl::optional<int>(qp) : absl::nullopt;
 }
 
 }  // namespace webrtc

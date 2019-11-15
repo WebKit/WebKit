@@ -11,7 +11,6 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_PCC_UTILITY_FUNCTION_H_
 #define MODULES_CONGESTION_CONTROLLER_PCC_UTILITY_FUNCTION_H_
 
-#include "api/transport/network_control.h"
 #include "modules/congestion_controller/pcc/monitor_interval.h"
 
 namespace webrtc {

@@ -10,6 +10,9 @@
 
 #include "media/base/vp9_profile.h"
 
+#include <map>
+#include <utility>
+
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {

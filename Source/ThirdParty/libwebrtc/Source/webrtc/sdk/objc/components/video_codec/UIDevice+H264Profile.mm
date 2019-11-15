@@ -24,6 +24,9 @@ struct SupportedH264Profile {
 
 constexpr SupportedH264Profile kH264MaxSupportedProfiles[] = {
     // iPhones with at least iOS 9
+    {RTCDeviceTypeIPhoneXS, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP779
+    {RTCDeviceTypeIPhoneXSMax, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP780
+    {RTCDeviceTypeIPhoneXR, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP781
     {RTCDeviceTypeIPhoneX, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP770
     {RTCDeviceTypeIPhone8, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP767
     {RTCDeviceTypeIPhone8Plus, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP768

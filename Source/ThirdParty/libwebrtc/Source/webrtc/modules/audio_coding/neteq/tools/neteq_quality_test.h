@@ -14,12 +14,12 @@
 #include <fstream>
 #include <memory>
 
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
-#include "rtc_base/flags.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,7 +35,7 @@ enum LossModes {
 
 class LossModel {
  public:
-  virtual ~LossModel(){};
+  virtual ~LossModel() {}
   virtual bool Lost(int now_ms) = 0;
 };
 
@@ -96,10 +96,13 @@ class FixedLossModel : public LossModel {
 
 class NetEqQualityTest : public ::testing::Test {
  protected:
-  NetEqQualityTest(int block_duration_ms,
-                   int in_sampling_khz,
-                   int out_sampling_khz,
-                   NetEqDecoder decoder_type);
+  NetEqQualityTest(
+      int block_duration_ms,
+      int in_sampling_khz,
+      int out_sampling_khz,
+      const SdpAudioFormat& format,
+      const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory =
+          webrtc::CreateBuiltinAudioDecoderFactory());
   ~NetEqQualityTest() override;
 
   void SetUp() override;
@@ -133,7 +136,7 @@ class NetEqQualityTest : public ::testing::Test {
   // Write to log file. Usage Log() << ...
   std::ofstream& Log();
 
-  NetEqDecoder decoder_type_;
+  SdpAudioFormat audio_format_;
   const size_t channels_;
 
  private:

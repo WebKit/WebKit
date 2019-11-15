@@ -9,15 +9,10 @@
  */
 
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
-#include "common_types.h"  // NOLINT(build/include)
+
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-
-using ::testing::_;
-using ::testing::DoAll;
-using ::testing::Return;
-using ::testing::SetArgPointee;
 
 namespace webrtc {
 

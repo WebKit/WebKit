@@ -14,6 +14,8 @@
 #include <limits.h>  // For ULONG_MAX returned by strtoul.
 #include <stdio.h>
 #include <stdlib.h>  // For strtoul.
+
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <set>
@@ -21,7 +23,9 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
+#include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
@@ -35,211 +39,32 @@
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/flags.h"
-#include "test/testsupport/fileutils.h"
+#include "rtc_base/ref_counted_object.h"
+#include "test/function_audio_decoder_factory.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {
 namespace {
 
-// Parses the input string for a valid SSRC (at the start of the string). If a
-// valid SSRC is found, it is written to the output variable |ssrc|, and true is
-// returned. Otherwise, false is returned.
-bool ParseSsrc(const std::string& str, uint32_t* ssrc) {
-  if (str.empty())
-    return true;
-  int base = 10;
-  // Look for "0x" or "0X" at the start and change base to 16 if found.
-  if ((str.compare(0, 2, "0x") == 0) || (str.compare(0, 2, "0X") == 0))
-    base = 16;
-  errno = 0;
-  char* end_ptr;
-  unsigned long value = strtoul(str.c_str(), &end_ptr, base);  // NOLINT
-  if (value == ULONG_MAX && errno == ERANGE)
-    return false;  // Value out of range for unsigned long.
-  if (sizeof(unsigned long) > sizeof(uint32_t) && value > 0xFFFFFFFF)  // NOLINT
-    return false;  // Value out of range for uint32_t.
-  if (end_ptr - str.c_str() < static_cast<ptrdiff_t>(str.length()))
-    return false;  // Part of the string was not parsed.
-  *ssrc = static_cast<uint32_t>(value);
-  return true;
-}
-
-// Flag validators.
-bool ValidatePayloadType(int value) {
-  if (value >= 0 && value <= 127)  // Value is ok.
-    return true;
-  printf("Payload type must be between 0 and 127, not %d\n",
-         static_cast<int>(value));
-  return false;
-}
-
-bool ValidateSsrcValue(const std::string& str) {
-  uint32_t dummy_ssrc;
-  if (ParseSsrc(str, &dummy_ssrc))  // Value is ok.
-    return true;
-  printf("Invalid SSRC: %s\n", str.c_str());
-  return false;
-}
-
-static bool ValidateExtensionId(int value) {
-  if (value > 0 && value <= 255)  // Value is ok.
-    return true;
-  printf("Extension ID must be between 1 and 255, not %d\n",
-         static_cast<int>(value));
-  return false;
-}
-
-// Define command line flags.
-WEBRTC_DEFINE_int(pcmu, 0, "RTP payload type for PCM-u");
-WEBRTC_DEFINE_int(pcma, 8, "RTP payload type for PCM-a");
-WEBRTC_DEFINE_int(ilbc, 102, "RTP payload type for iLBC");
-WEBRTC_DEFINE_int(isac, 103, "RTP payload type for iSAC");
-WEBRTC_DEFINE_int(isac_swb, 104, "RTP payload type for iSAC-swb (32 kHz)");
-WEBRTC_DEFINE_int(opus, 111, "RTP payload type for Opus");
-WEBRTC_DEFINE_int(pcm16b, 93, "RTP payload type for PCM16b-nb (8 kHz)");
-WEBRTC_DEFINE_int(pcm16b_wb, 94, "RTP payload type for PCM16b-wb (16 kHz)");
-WEBRTC_DEFINE_int(pcm16b_swb32,
-                  95,
-                  "RTP payload type for PCM16b-swb32 (32 kHz)");
-WEBRTC_DEFINE_int(pcm16b_swb48,
-                  96,
-                  "RTP payload type for PCM16b-swb48 (48 kHz)");
-WEBRTC_DEFINE_int(g722, 9, "RTP payload type for G.722");
-WEBRTC_DEFINE_int(avt, 106, "RTP payload type for AVT/DTMF (8 kHz)");
-WEBRTC_DEFINE_int(avt_16, 114, "RTP payload type for AVT/DTMF (16 kHz)");
-WEBRTC_DEFINE_int(avt_32, 115, "RTP payload type for AVT/DTMF (32 kHz)");
-WEBRTC_DEFINE_int(avt_48, 116, "RTP payload type for AVT/DTMF (48 kHz)");
-WEBRTC_DEFINE_int(red, 117, "RTP payload type for redundant audio (RED)");
-WEBRTC_DEFINE_int(cn_nb, 13, "RTP payload type for comfort noise (8 kHz)");
-WEBRTC_DEFINE_int(cn_wb, 98, "RTP payload type for comfort noise (16 kHz)");
-WEBRTC_DEFINE_int(cn_swb32, 99, "RTP payload type for comfort noise (32 kHz)");
-WEBRTC_DEFINE_int(cn_swb48, 100, "RTP payload type for comfort noise (48 kHz)");
-WEBRTC_DEFINE_string(replacement_audio_file,
-                     "",
-                     "A PCM file that will be used to populate "
-                     "dummy"
-                     " RTP packets");
-WEBRTC_DEFINE_string(
-    ssrc,
-    "",
-    "Only use packets with this SSRC (decimal or hex, the latter "
-    "starting with 0x)");
-WEBRTC_DEFINE_int(audio_level, 1, "Extension ID for audio level (RFC 6464)");
-WEBRTC_DEFINE_int(abs_send_time, 3, "Extension ID for absolute sender time");
-WEBRTC_DEFINE_int(transport_seq_no,
-                  5,
-                  "Extension ID for transport sequence number");
-WEBRTC_DEFINE_int(video_content_type, 7, "Extension ID for video content type");
-WEBRTC_DEFINE_int(video_timing, 8, "Extension ID for video timing");
-WEBRTC_DEFINE_bool(matlabplot,
-                   false,
-                   "Generates a matlab script for plotting the delay profile");
-WEBRTC_DEFINE_bool(pythonplot,
-                   false,
-                   "Generates a python script for plotting the delay profile");
-WEBRTC_DEFINE_bool(concealment_events, false, "Prints concealment events");
-WEBRTC_DEFINE_int(max_nr_packets_in_buffer,
-                  50,
-                  "Maximum allowed number of packets in the buffer");
-WEBRTC_DEFINE_bool(enable_fast_accelerate,
-                   false,
-                   "Enables jitter buffer fast accelerate");
-
-// Maps a codec type to a printable name string.
-std::string CodecName(NetEqDecoder codec) {
-  switch (codec) {
-    case NetEqDecoder::kDecoderPCMu:
-      return "PCM-u";
-    case NetEqDecoder::kDecoderPCMa:
-      return "PCM-a";
-    case NetEqDecoder::kDecoderILBC:
-      return "iLBC";
-    case NetEqDecoder::kDecoderISAC:
-      return "iSAC";
-    case NetEqDecoder::kDecoderISACswb:
-      return "iSAC-swb (32 kHz)";
-    case NetEqDecoder::kDecoderOpus:
-      return "Opus";
-    case NetEqDecoder::kDecoderPCM16B:
-      return "PCM16b-nb (8 kHz)";
-    case NetEqDecoder::kDecoderPCM16Bwb:
-      return "PCM16b-wb (16 kHz)";
-    case NetEqDecoder::kDecoderPCM16Bswb32kHz:
-      return "PCM16b-swb32 (32 kHz)";
-    case NetEqDecoder::kDecoderPCM16Bswb48kHz:
-      return "PCM16b-swb48 (48 kHz)";
-    case NetEqDecoder::kDecoderG722:
-      return "G.722";
-    case NetEqDecoder::kDecoderRED:
-      return "redundant audio (RED)";
-    case NetEqDecoder::kDecoderAVT:
-      return "AVT/DTMF (8 kHz)";
-    case NetEqDecoder::kDecoderAVT16kHz:
-      return "AVT/DTMF (16 kHz)";
-    case NetEqDecoder::kDecoderAVT32kHz:
-      return "AVT/DTMF (32 kHz)";
-    case NetEqDecoder::kDecoderAVT48kHz:
-      return "AVT/DTMF (48 kHz)";
-    case NetEqDecoder::kDecoderCNGnb:
-      return "comfort noise (8 kHz)";
-    case NetEqDecoder::kDecoderCNGwb:
-      return "comfort noise (16 kHz)";
-    case NetEqDecoder::kDecoderCNGswb32kHz:
-      return "comfort noise (32 kHz)";
-    case NetEqDecoder::kDecoderCNGswb48kHz:
-      return "comfort noise (48 kHz)";
-    default:
-      FATAL();
-      return "undefined";
-  }
-}
-
-void PrintCodecMappingEntry(NetEqDecoder codec, int flag) {
-  std::cout << CodecName(codec) << ": " << flag << std::endl;
-}
-
-void PrintCodecMapping() {
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCMu, FLAG_pcmu);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCMa, FLAG_pcma);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderILBC, FLAG_ilbc);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderISAC, FLAG_isac);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderISACswb, FLAG_isac_swb);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderOpus, FLAG_opus);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCM16B, FLAG_pcm16b);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCM16Bwb, FLAG_pcm16b_wb);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCM16Bswb32kHz,
-                         FLAG_pcm16b_swb32);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderPCM16Bswb48kHz,
-                         FLAG_pcm16b_swb48);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderG722, FLAG_g722);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT, FLAG_avt);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT16kHz, FLAG_avt_16);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT32kHz, FLAG_avt_32);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderAVT48kHz, FLAG_avt_48);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderRED, FLAG_red);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGnb, FLAG_cn_nb);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGwb, FLAG_cn_wb);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGswb32kHz, FLAG_cn_swb32);
-  PrintCodecMappingEntry(NetEqDecoder::kDecoderCNGswb48kHz, FLAG_cn_swb48);
-}
-
-absl::optional<int> CodecSampleRate(uint8_t payload_type) {
-  if (payload_type == FLAG_pcmu || payload_type == FLAG_pcma ||
-      payload_type == FLAG_ilbc || payload_type == FLAG_pcm16b ||
-      payload_type == FLAG_cn_nb || payload_type == FLAG_avt)
+absl::optional<int> CodecSampleRate(
+    uint8_t payload_type,
+    webrtc::test::NetEqTestFactory::Config config) {
+  if (payload_type == config.pcmu || payload_type == config.pcma ||
+      payload_type == config.ilbc || payload_type == config.pcm16b ||
+      payload_type == config.cn_nb || payload_type == config.avt)
     return 8000;
-  if (payload_type == FLAG_isac || payload_type == FLAG_pcm16b_wb ||
-      payload_type == FLAG_g722 || payload_type == FLAG_cn_wb ||
-      payload_type == FLAG_avt_16)
+  if (payload_type == config.isac || payload_type == config.pcm16b_wb ||
+      payload_type == config.g722 || payload_type == config.cn_wb ||
+      payload_type == config.avt_16)
     return 16000;
-  if (payload_type == FLAG_isac_swb || payload_type == FLAG_pcm16b_swb32 ||
-      payload_type == FLAG_cn_swb32 || payload_type == FLAG_avt_32)
+  if (payload_type == config.isac_swb || payload_type == config.pcm16b_swb32 ||
+      payload_type == config.cn_swb32 || payload_type == config.avt_32)
     return 32000;
-  if (payload_type == FLAG_opus || payload_type == FLAG_pcm16b_swb48 ||
-      payload_type == FLAG_cn_swb48 || payload_type == FLAG_avt_48)
+  if (payload_type == config.opus || payload_type == config.pcm16b_swb48 ||
+      payload_type == config.cn_swb48 || payload_type == config.avt_48)
     return 48000;
-  if (payload_type == FLAG_red)
+  if (payload_type == config.red)
     return 0;
   return absl::nullopt;
 }
@@ -277,78 +102,67 @@ class SsrcSwitchDetector : public NetEqPostInsertPacket {
 };
 
 NetEqTestFactory::NetEqTestFactory() = default;
-
 NetEqTestFactory::~NetEqTestFactory() = default;
 
-void NetEqTestFactory::PrintCodecMap() {
-  PrintCodecMapping();
+NetEqTestFactory::Config::Config() = default;
+NetEqTestFactory::Config::Config(const Config& other) = default;
+NetEqTestFactory::Config::~Config() = default;
+
+std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromString(
+    const std::string& input_string,
+    const Config& config) {
+  std::unique_ptr<NetEqInput> input(
+      NetEqEventLogInput::CreateFromString(input_string, config.ssrc_filter));
+  if (!input) {
+    std::cerr << "Error: Cannot parse input string" << std::endl;
+    return nullptr;
+  }
+  return InitializeTest(std::move(input), config);
 }
 
-std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
-    std::string input_file_name,
-    std::string output_file_name) {
-  RTC_CHECK(ValidatePayloadType(FLAG_pcmu));
-  RTC_CHECK(ValidatePayloadType(FLAG_pcma));
-  RTC_CHECK(ValidatePayloadType(FLAG_ilbc));
-  RTC_CHECK(ValidatePayloadType(FLAG_isac));
-  RTC_CHECK(ValidatePayloadType(FLAG_isac_swb));
-  RTC_CHECK(ValidatePayloadType(FLAG_opus));
-  RTC_CHECK(ValidatePayloadType(FLAG_pcm16b));
-  RTC_CHECK(ValidatePayloadType(FLAG_pcm16b_wb));
-  RTC_CHECK(ValidatePayloadType(FLAG_pcm16b_swb32));
-  RTC_CHECK(ValidatePayloadType(FLAG_pcm16b_swb48));
-  RTC_CHECK(ValidatePayloadType(FLAG_g722));
-  RTC_CHECK(ValidatePayloadType(FLAG_avt));
-  RTC_CHECK(ValidatePayloadType(FLAG_avt_16));
-  RTC_CHECK(ValidatePayloadType(FLAG_avt_32));
-  RTC_CHECK(ValidatePayloadType(FLAG_avt_48));
-  RTC_CHECK(ValidatePayloadType(FLAG_red));
-  RTC_CHECK(ValidatePayloadType(FLAG_cn_nb));
-  RTC_CHECK(ValidatePayloadType(FLAG_cn_wb));
-  RTC_CHECK(ValidatePayloadType(FLAG_cn_swb32));
-  RTC_CHECK(ValidatePayloadType(FLAG_cn_swb48));
-  RTC_CHECK(ValidateSsrcValue(FLAG_ssrc));
-  RTC_CHECK(ValidateExtensionId(FLAG_audio_level));
-  RTC_CHECK(ValidateExtensionId(FLAG_abs_send_time));
-  RTC_CHECK(ValidateExtensionId(FLAG_transport_seq_no));
-  RTC_CHECK(ValidateExtensionId(FLAG_video_content_type));
-  RTC_CHECK(ValidateExtensionId(FLAG_video_timing));
-
+std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromFile(
+    const std::string& input_file_name,
+    const Config& config) {
   // Gather RTP header extensions in a map.
   NetEqPacketSourceInput::RtpHeaderExtensionMap rtp_ext_map = {
-      {FLAG_audio_level, kRtpExtensionAudioLevel},
-      {FLAG_abs_send_time, kRtpExtensionAbsoluteSendTime},
-      {FLAG_transport_seq_no, kRtpExtensionTransportSequenceNumber},
-      {FLAG_video_content_type, kRtpExtensionVideoContentType},
-      {FLAG_video_timing, kRtpExtensionVideoTiming}};
-
-  absl::optional<uint32_t> ssrc_filter;
-  // Check if an SSRC value was provided.
-  if (strlen(FLAG_ssrc) > 0) {
-    uint32_t ssrc;
-    RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc)) << "Flag verification has failed.";
-    ssrc_filter = ssrc;
-  }
+      {config.audio_level, kRtpExtensionAudioLevel},
+      {config.abs_send_time, kRtpExtensionAbsoluteSendTime},
+      {config.transport_seq_no, kRtpExtensionTransportSequenceNumber},
+      {config.video_content_type, kRtpExtensionVideoContentType},
+      {config.video_timing, kRtpExtensionVideoTiming}};
 
   std::unique_ptr<NetEqInput> input;
   if (RtpFileSource::ValidRtpDump(input_file_name) ||
       RtpFileSource::ValidPcap(input_file_name)) {
-    input.reset(
-        new NetEqRtpDumpInput(input_file_name, rtp_ext_map, ssrc_filter));
+    input.reset(new NetEqRtpDumpInput(input_file_name, rtp_ext_map,
+                                      config.ssrc_filter));
   } else {
-    input.reset(new NetEqEventLogInput(input_file_name, ssrc_filter));
+    input.reset(NetEqEventLogInput::CreateFromFile(input_file_name,
+                                                   config.ssrc_filter));
   }
 
   std::cout << "Input file: " << input_file_name << std::endl;
-  RTC_CHECK(input) << "Cannot open input file";
-  RTC_CHECK(!input->ended()) << "Input file is empty";
+  if (!input) {
+    std::cerr << "Error: Cannot open input file" << std::endl;
+    return nullptr;
+  }
+  return InitializeTest(std::move(input), config);
+}
+
+std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
+    std::unique_ptr<NetEqInput> input,
+    const Config& config) {
+  if (input->ended()) {
+    std::cerr << "Error: Input is empty" << std::endl;
+    return nullptr;
+  }
 
   // Check the sample rate.
   absl::optional<int> sample_rate_hz;
   std::set<std::pair<int, uint32_t>> discarded_pt_and_ssrc;
   while (absl::optional<RTPHeader> first_rtp_header = input->NextHeader()) {
     RTC_DCHECK(first_rtp_header);
-    sample_rate_hz = CodecSampleRate(first_rtp_header->payloadType);
+    sample_rate_hz = CodecSampleRate(first_rtp_header->payloadType, config);
     if (sample_rate_hz) {
       std::cout << "Found valid packet with payload type "
                 << static_cast<int>(first_rtp_header->payloadType)
@@ -372,67 +186,47 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
     }
   }
   if (!sample_rate_hz) {
-    std::cout << "Cannot find any packets with known payload types"
+    std::cerr << "Cannot find any packets with known payload types"
               << std::endl;
-    RTC_NOTREACHED();
+    return nullptr;
   }
 
-  // Open the output file now that we know the sample rate. (Rate is only needed
-  // for wav files.)
+  // If an output file is requested, open it.
   std::unique_ptr<AudioSink> output;
-  if (output_file_name.size() >= 4 &&
-      output_file_name.substr(output_file_name.size() - 4) == ".wav") {
-    // Open a wav file.
-    output.reset(new OutputWavFile(output_file_name, *sample_rate_hz));
+  if (!config.output_audio_filename.has_value()) {
+    output = absl::make_unique<VoidAudioSink>();
+    std::cout << "No output audio file" << std::endl;
+  } else if (config.output_audio_filename->size() >= 4 &&
+             config.output_audio_filename->substr(
+                 config.output_audio_filename->size() - 4) == ".wav") {
+    // Open a wav file with the known sample rate.
+    output = absl::make_unique<OutputWavFile>(*config.output_audio_filename,
+                                              *sample_rate_hz);
+    std::cout << "Output WAV file: " << *config.output_audio_filename
+              << std::endl;
   } else {
     // Open a pcm file.
-    output.reset(new OutputAudioFile(output_file_name));
+    output = absl::make_unique<OutputAudioFile>(*config.output_audio_filename);
+    std::cout << "Output PCM file: " << *config.output_audio_filename
+              << std::endl;
   }
 
-  std::cout << "Output file: " << output_file_name << std::endl;
+  NetEqTest::DecoderMap codecs = NetEqTest::StandardDecoderMap();
 
-  NetEqTest::DecoderMap codecs = {
-    {FLAG_pcmu, std::make_pair(NetEqDecoder::kDecoderPCMu, "pcmu")},
-    {FLAG_pcma, std::make_pair(NetEqDecoder::kDecoderPCMa, "pcma")},
-#ifdef WEBRTC_CODEC_ILBC
-    {FLAG_ilbc, std::make_pair(NetEqDecoder::kDecoderILBC, "ilbc")},
-#endif
-    {FLAG_isac, std::make_pair(NetEqDecoder::kDecoderISAC, "isac")},
-#if !defined(WEBRTC_ANDROID)
-    {FLAG_isac_swb, std::make_pair(NetEqDecoder::kDecoderISACswb, "isac-swb")},
-#endif
-#ifdef WEBRTC_CODEC_OPUS
-    {FLAG_opus, std::make_pair(NetEqDecoder::kDecoderOpus, "opus")},
-#endif
-    {FLAG_pcm16b, std::make_pair(NetEqDecoder::kDecoderPCM16B, "pcm16-nb")},
-    {FLAG_pcm16b_wb,
-     std::make_pair(NetEqDecoder::kDecoderPCM16Bwb, "pcm16-wb")},
-    {FLAG_pcm16b_swb32,
-     std::make_pair(NetEqDecoder::kDecoderPCM16Bswb32kHz, "pcm16-swb32")},
-    {FLAG_pcm16b_swb48,
-     std::make_pair(NetEqDecoder::kDecoderPCM16Bswb48kHz, "pcm16-swb48")},
-    {FLAG_g722, std::make_pair(NetEqDecoder::kDecoderG722, "g722")},
-    {FLAG_avt, std::make_pair(NetEqDecoder::kDecoderAVT, "avt")},
-    {FLAG_avt_16, std::make_pair(NetEqDecoder::kDecoderAVT16kHz, "avt-16")},
-    {FLAG_avt_32, std::make_pair(NetEqDecoder::kDecoderAVT32kHz, "avt-32")},
-    {FLAG_avt_48, std::make_pair(NetEqDecoder::kDecoderAVT48kHz, "avt-48")},
-    {FLAG_red, std::make_pair(NetEqDecoder::kDecoderRED, "red")},
-    {FLAG_cn_nb, std::make_pair(NetEqDecoder::kDecoderCNGnb, "cng-nb")},
-    {FLAG_cn_wb, std::make_pair(NetEqDecoder::kDecoderCNGwb, "cng-wb")},
-    {FLAG_cn_swb32,
-     std::make_pair(NetEqDecoder::kDecoderCNGswb32kHz, "cng-swb32")},
-    {FLAG_cn_swb48,
-     std::make_pair(NetEqDecoder::kDecoderCNGswb48kHz, "cng-swb48")}
-  };
+  rtc::scoped_refptr<AudioDecoderFactory> decoder_factory =
+      CreateBuiltinAudioDecoderFactory();
 
   // Check if a replacement audio file was provided.
-  if (strlen(FLAG_replacement_audio_file) > 0) {
+  if (config.replacement_audio_file.size() > 0) {
     // Find largest unused payload type.
     int replacement_pt = 127;
-    while (!(codecs.find(replacement_pt) == codecs.end() &&
-             ext_codecs_.find(replacement_pt) == ext_codecs_.end())) {
+    while (codecs.find(replacement_pt) != codecs.end()) {
       --replacement_pt;
-      RTC_CHECK_GE(replacement_pt, 0);
+      if (replacement_pt <= 0) {
+        std::cerr << "Error: Unable to find available replacement payload type"
+                  << std::endl;
+        return nullptr;
+      }
     }
 
     auto std_set_int32_to_uint8 = [](const std::set<int32_t>& a) {
@@ -444,39 +238,62 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
     };
 
     std::set<uint8_t> cn_types = std_set_int32_to_uint8(
-        {FLAG_cn_nb, FLAG_cn_wb, FLAG_cn_swb32, FLAG_cn_swb48});
-    std::set<uint8_t> forbidden_types = std_set_int32_to_uint8(
-        {FLAG_g722, FLAG_red, FLAG_avt, FLAG_avt_16, FLAG_avt_32, FLAG_avt_48});
+        {config.cn_nb, config.cn_wb, config.cn_swb32, config.cn_swb48});
+    std::set<uint8_t> forbidden_types =
+        std_set_int32_to_uint8({config.g722, config.red, config.avt,
+                                config.avt_16, config.avt_32, config.avt_48});
     input.reset(new NetEqReplacementInput(std::move(input), replacement_pt,
                                           cn_types, forbidden_types));
 
-    replacement_decoder_.reset(new FakeDecodeFromFile(
-        std::unique_ptr<InputAudioFile>(
-            new InputAudioFile(FLAG_replacement_audio_file)),
-        48000, false));
-    NetEqTest::ExternalDecoderInfo ext_dec_info = {
-        replacement_decoder_.get(), NetEqDecoder::kDecoderArbitrary,
-        "replacement codec"};
-    ext_codecs_[replacement_pt] = ext_dec_info;
+    // Note that capture-by-copy implies that the lambda captures the value of
+    // decoder_factory before it's reassigned on the left-hand side.
+    decoder_factory = new rtc::RefCountedObject<FunctionAudioDecoderFactory>(
+        [decoder_factory, config](
+            const SdpAudioFormat& format,
+            absl::optional<AudioCodecPairId> codec_pair_id) {
+          std::unique_ptr<AudioDecoder> decoder =
+              decoder_factory->MakeAudioDecoder(format, codec_pair_id);
+          if (!decoder && format.name == "replacement") {
+            decoder = absl::make_unique<FakeDecodeFromFile>(
+                absl::make_unique<InputAudioFile>(
+                    config.replacement_audio_file),
+                format.clockrate_hz, format.num_channels > 1);
+          }
+          return decoder;
+        });
+
+    if (!codecs
+             .insert({replacement_pt, SdpAudioFormat("replacement", 48000, 1)})
+             .second) {
+      std::cerr << "Error: Unable to insert replacement audio codec"
+                << std::endl;
+      return nullptr;
+    }
+  }
+
+  // Create a text log file if needed.
+  std::unique_ptr<std::ofstream> text_log;
+  if (config.textlog_filename.has_value()) {
+    text_log = absl::make_unique<std::ofstream>(*config.textlog_filename);
   }
 
   NetEqTest::Callbacks callbacks;
-  stats_plotter_.reset(new NetEqStatsPlotter(FLAG_matlabplot, FLAG_pythonplot,
-                                             FLAG_concealment_events,
-                                             output_file_name));
+  stats_plotter_ = absl::make_unique<NetEqStatsPlotter>(
+      config.matlabplot, config.pythonplot, config.concealment_events,
+      config.plot_scripts_basename.value_or(""));
 
   ssrc_switch_detector_.reset(
       new SsrcSwitchDetector(stats_plotter_->stats_getter()->delay_analyzer()));
   callbacks.post_insert_packet = ssrc_switch_detector_.get();
   callbacks.get_audio_callback = stats_plotter_->stats_getter();
   callbacks.simulation_ended_callback = stats_plotter_.get();
-  NetEq::Config config;
-  config.sample_rate_hz = *sample_rate_hz;
-  config.max_packets_in_buffer = FLAG_max_nr_packets_in_buffer;
-  config.enable_fast_accelerate = FLAG_enable_fast_accelerate;
-  return absl::make_unique<NetEqTest>(config, codecs, ext_codecs_,
-                                      std::move(input), std::move(output),
-                                      callbacks);
+  NetEq::Config neteq_config;
+  neteq_config.sample_rate_hz = *sample_rate_hz;
+  neteq_config.max_packets_in_buffer = config.max_nr_packets_in_buffer;
+  neteq_config.enable_fast_accelerate = config.enable_fast_accelerate;
+  return absl::make_unique<NetEqTest>(neteq_config, decoder_factory, codecs,
+                                      std::move(text_log), std::move(input),
+                                      std::move(output), callbacks);
 }
 
 }  // namespace test

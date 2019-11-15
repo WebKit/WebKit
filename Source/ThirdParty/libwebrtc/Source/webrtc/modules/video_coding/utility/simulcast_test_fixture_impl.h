@@ -21,7 +21,6 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 
 namespace webrtc {
@@ -29,10 +28,9 @@ namespace test {
 
 class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
  public:
-  SimulcastTestFixtureImpl(
-      std::unique_ptr<VideoEncoderFactory> encoder_factory,
-      std::unique_ptr<VideoDecoderFactory> decoder_factory,
-      SdpVideoFormat video_format);
+  SimulcastTestFixtureImpl(std::unique_ptr<VideoEncoderFactory> encoder_factory,
+                           std::unique_ptr<VideoDecoderFactory> decoder_factory,
+                           SdpVideoFormat video_format);
   ~SimulcastTestFixtureImpl() final;
 
   // Implements SimulcastTestFixture.
@@ -55,7 +53,8 @@ class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
 
   static void DefaultSettings(VideoCodec* settings,
                               const int* temporal_layer_profile,
-                              VideoCodecType codec_type);
+                              VideoCodecType codec_type,
+                              bool reverse_layer_order = false);
 
  private:
   class TestEncodedImageCallback;
@@ -66,9 +65,9 @@ class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
   void SetRates(uint32_t bitrate_kbps, uint32_t fps);
   void RunActiveStreamsTest(const std::vector<bool> active_streams);
   void UpdateActiveStreams(const std::vector<bool> active_streams);
-  void ExpectStreams(FrameType frame_type,
+  void ExpectStreams(VideoFrameType frame_type,
                      const std::vector<bool> expected_streams_active);
-  void ExpectStreams(FrameType frame_type, int expected_video_streams);
+  void ExpectStreams(VideoFrameType frame_type, int expected_video_streams);
   void VerifyTemporalIdxAndSyncForAllSpatialLayers(
       TestEncodedImageCallback* encoder_callback,
       const int* expected_temporal_idx,

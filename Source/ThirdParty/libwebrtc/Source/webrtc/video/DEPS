@@ -13,7 +13,6 @@ include_rules = [
   "+modules/rtp_rtcp",
   "+modules/utility",
   "+modules/video_coding",
-  "+modules/video_capture",
   "+modules/video_processing",
   "+system_wrappers",
 ]

@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/numerics/sample_counter.h"
+
 #include <limits>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/numerics/sample_counter.h"
 
 namespace rtc {
 
@@ -55,6 +56,13 @@ absl::optional<int> SampleCounter::Avg(int64_t min_required_samples) const {
 
 absl::optional<int> SampleCounter::Max() const {
   return max_;
+}
+
+absl::optional<int64_t> SampleCounter::Sum(int64_t min_required_samples) const {
+  RTC_DCHECK_GT(min_required_samples, 0);
+  if (num_samples_ < min_required_samples)
+    return absl::nullopt;
+  return sum_;
 }
 
 int64_t SampleCounter::NumSamples() const {

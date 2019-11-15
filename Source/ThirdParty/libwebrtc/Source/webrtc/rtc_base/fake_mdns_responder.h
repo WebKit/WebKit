@@ -15,9 +15,11 @@
 #include <memory>
 #include <string>
 
+#include "rtc_base/async_invoker.h"
+#include "rtc_base/ip_address.h"
+#include "rtc_base/location.h"
 #include "rtc_base/mdns_responder_interface.h"
-
-#include "rtc_base/helpers.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 

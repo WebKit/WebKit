@@ -10,20 +10,18 @@
 
 #include "rtc_tools/frame_analyzer/video_color_aligner.h"
 
+#include <stddef.h>
+
 #include <algorithm>
 #include <cmath>
-#include <deque>
-#include <limits>
+#include <cstdint>
 #include <vector>
 
 #include "api/array_view.h"
 #include "api/video/i420_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/refcountedobject.h"
+#include "rtc_base/ref_counted_object.h"
 #include "rtc_tools/frame_analyzer/linear_least_squares.h"
-#include "rtc_tools/frame_analyzer/video_quality_analysis.h"
-#include "third_party/libyuv/include/libyuv/compare.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
 

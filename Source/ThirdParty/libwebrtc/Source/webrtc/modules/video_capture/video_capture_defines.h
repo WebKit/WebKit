@@ -12,6 +12,7 @@
 #define MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_DEFINES_H_
 
 #include "api/video/video_frame.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/include/module_common_types.h"
 
 namespace webrtc {
@@ -35,7 +36,7 @@ struct VideoCaptureCapability {
     maxFPS = 0;
     videoType = VideoType::kUnknown;
     interlaced = false;
-  };
+  }
   bool operator!=(const VideoCaptureCapability& other) const {
     if (width != other.width)
       return true;
@@ -52,21 +53,6 @@ struct VideoCaptureCapability {
   bool operator==(const VideoCaptureCapability& other) const {
     return !operator!=(other);
   }
-};
-
-/* External Capture interface. Returned by Create
- and implemented by the capture module.
- */
-class VideoCaptureExternal {
- public:
-  // |capture_time| must be specified in the NTP time format in milliseconds.
-  virtual int32_t IncomingFrame(uint8_t* videoFrame,
-                                size_t videoFrameLength,
-                                const VideoCaptureCapability& frameInfo,
-                                int64_t captureTime = 0) = 0;
-
- protected:
-  ~VideoCaptureExternal() {}
 };
 
 }  // namespace webrtc

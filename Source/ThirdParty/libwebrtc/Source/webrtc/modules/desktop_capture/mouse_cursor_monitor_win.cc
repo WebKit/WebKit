@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/desktop_capture/mouse_cursor_monitor.h"
-
 #include <assert.h>
 #include <string.h>
 
@@ -19,6 +17,7 @@
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/mouse_cursor.h"
+#include "modules/desktop_capture/mouse_cursor_monitor.h"
 #include "modules/desktop_capture/win/cursor.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/window_capture_utils.h"
@@ -145,7 +144,8 @@ void MouseCursorMonitorWin::Capture() {
   if (window_) {
     DesktopRect original_rect;
     DesktopRect cropped_rect;
-    if (!GetCroppedWindowRect(window_, &cropped_rect, &original_rect)) {
+    if (!GetCroppedWindowRect(window_, /*avoid_cropping_border*/ false,
+                              &cropped_rect, &original_rect)) {
       position.set(0, 0);
       inside = false;
     } else {

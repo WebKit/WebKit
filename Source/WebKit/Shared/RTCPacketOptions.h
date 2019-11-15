@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/asyncpacketsocket.h>
+#include <webrtc/rtc_base/async_packet_socket.h>
 #include <wtf/Forward.h>
 
 namespace IPC {

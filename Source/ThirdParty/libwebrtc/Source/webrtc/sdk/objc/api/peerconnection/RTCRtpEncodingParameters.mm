@@ -10,14 +10,19 @@
 
 #import "RTCRtpEncodingParameters+Private.h"
 
+#import "helpers/NSString+StdString.h"
+
 @implementation RTCRtpEncodingParameters
 
+@synthesize rid = _rid;
 @synthesize isActive = _isActive;
 @synthesize maxBitrateBps = _maxBitrateBps;
 @synthesize minBitrateBps = _minBitrateBps;
 @synthesize maxFramerate = _maxFramerate;
 @synthesize numTemporalLayers = _numTemporalLayers;
+@synthesize scaleResolutionDownBy = _scaleResolutionDownBy;
 @synthesize ssrc = _ssrc;
+@synthesize networkPriority = _networkPriority;
 
 - (instancetype)init {
   return [super init];
@@ -26,6 +31,9 @@
 - (instancetype)initWithNativeParameters:
     (const webrtc::RtpEncodingParameters &)nativeParameters {
   if (self = [self init]) {
+    if (!nativeParameters.rid.empty()) {
+      _rid = [NSString stringForStdString:nativeParameters.rid];
+    }
     _isActive = nativeParameters.active;
     if (nativeParameters.max_bitrate_bps) {
       _maxBitrateBps =
@@ -41,15 +49,23 @@
     if (nativeParameters.num_temporal_layers) {
       _numTemporalLayers = [NSNumber numberWithInt:*nativeParameters.num_temporal_layers];
     }
+    if (nativeParameters.scale_resolution_down_by) {
+      _scaleResolutionDownBy =
+          [NSNumber numberWithDouble:*nativeParameters.scale_resolution_down_by];
+    }
     if (nativeParameters.ssrc) {
       _ssrc = [NSNumber numberWithUnsignedLong:*nativeParameters.ssrc];
     }
+    _networkPriority = nativeParameters.network_priority;
   }
   return self;
 }
 
 - (webrtc::RtpEncodingParameters)nativeParameters {
   webrtc::RtpEncodingParameters parameters;
+  if (_rid != nil) {
+    parameters.rid = [NSString stdStringForString:_rid];
+  }
   parameters.active = _isActive;
   if (_maxBitrateBps != nil) {
     parameters.max_bitrate_bps = absl::optional<int>(_maxBitrateBps.intValue);
@@ -63,9 +79,14 @@
   if (_numTemporalLayers != nil) {
     parameters.num_temporal_layers = absl::optional<int>(_numTemporalLayers.intValue);
   }
+  if (_scaleResolutionDownBy != nil) {
+    parameters.scale_resolution_down_by =
+        absl::optional<double>(_scaleResolutionDownBy.doubleValue);
+  }
   if (_ssrc != nil) {
     parameters.ssrc = absl::optional<uint32_t>(_ssrc.unsignedLongValue);
   }
+  parameters.network_priority = _networkPriority;
   return parameters;
 }
 

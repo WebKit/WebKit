@@ -10,42 +10,41 @@
 
 #include <memory>
 
+#include "absl/flags/flag.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
-
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
-using testing::InitGoogleTest;
+ABSL_FLAG(int, frame_size_ms, 20, "Codec frame size (milliseconds).");
+
+using ::testing::InitGoogleTest;
 
 namespace webrtc {
 namespace test {
 namespace {
 static const int kInputSampleRateKhz = 48;
 static const int kOutputSampleRateKhz = 48;
-
-WEBRTC_DEFINE_int(frame_size_ms, 20, "Codec frame size (milliseconds).");
-
 }  // namespace
 
 class NetEqPcm16bQualityTest : public NetEqQualityTest {
  protected:
   NetEqPcm16bQualityTest()
-      : NetEqQualityTest(FLAG_frame_size_ms,
+      : NetEqQualityTest(absl::GetFlag(FLAGS_frame_size_ms),
                          kInputSampleRateKhz,
                          kOutputSampleRateKhz,
-                         NetEqDecoder::kDecoderPCM16Bswb48kHz) {
+                         SdpAudioFormat("l16", 48000, 1)) {
     // Flag validation
-    RTC_CHECK(FLAG_frame_size_ms >= 10 && FLAG_frame_size_ms <= 60 &&
-              (FLAG_frame_size_ms % 10) == 0)
+    RTC_CHECK(absl::GetFlag(FLAGS_frame_size_ms) >= 10 &&
+              absl::GetFlag(FLAGS_frame_size_ms) <= 60 &&
+              (absl::GetFlag(FLAGS_frame_size_ms) % 10) == 0)
         << "Invalid frame size, should be 10, 20, ..., 60 ms.";
   }
 
   void SetUp() override {
     AudioEncoderPcm16B::Config config;
-    config.frame_size_ms = FLAG_frame_size_ms;
+    config.frame_size_ms = absl::GetFlag(FLAGS_frame_size_ms);
     config.sample_rate_hz = 48000;
     config.num_channels = channels_;
     encoder_.reset(new AudioEncoderPcm16B(config));

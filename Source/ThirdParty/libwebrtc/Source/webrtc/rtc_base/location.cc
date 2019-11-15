@@ -10,6 +10,8 @@
 
 #include "rtc_base/location.h"
 
+#include <stdio.h>
+
 namespace rtc {
 
 Location::Location(const char* function_name, const char* file_and_line)

@@ -15,7 +15,7 @@
 
 #include "common_audio/wav_file.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -24,8 +24,10 @@ class OutputWavFile : public AudioSink {
  public:
   // Creates an OutputWavFile, opening a file named |file_name| for writing.
   // The output file is a PCM encoded wav file.
-  OutputWavFile(const std::string& file_name, int sample_rate_hz)
-      : wav_writer_(file_name, sample_rate_hz, 1) {}
+  OutputWavFile(const std::string& file_name,
+                int sample_rate_hz,
+                int num_channels = 1)
+      : wav_writer_(file_name, sample_rate_hz, num_channels) {}
 
   bool WriteArray(const int16_t* audio, size_t num_samples) override {
     wav_writer_.WriteSamples(audio, num_samples);

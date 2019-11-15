@@ -14,16 +14,13 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/ilbc/audio_encoder_ilbc_config.h"
 #include "modules/audio_coding/codecs/ilbc/ilbc.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
-
-struct CodecInst;
 
 class AudioEncoderIlbcImpl final : public AudioEncoder {
  public:
   AudioEncoderIlbcImpl(const AudioEncoderIlbcConfig& config, int payload_type);
-  explicit AudioEncoderIlbcImpl(const CodecInst& codec_inst);
   ~AudioEncoderIlbcImpl() override;
 
   int SampleRateHz() const override;

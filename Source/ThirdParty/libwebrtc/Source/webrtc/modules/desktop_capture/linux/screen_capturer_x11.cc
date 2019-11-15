@@ -10,27 +10,28 @@
 
 #include "modules/desktop_capture/linux/screen_capturer_x11.h"
 
-#include <string.h>
-
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #include <X11/extensions/Xdamage.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/damagewire.h>
+#include <stdint.h>
+#include <string.h>
 
 #include <memory>
-#include <set>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/linux/x_server_pixel_buffer.h"
 #include "modules/desktop_capture/screen_capture_frame_queue.h"
 #include "modules/desktop_capture/screen_capturer_helper.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -51,6 +52,8 @@ ScreenCapturerX11::~ScreenCapturerX11() {
 bool ScreenCapturerX11::Init(const DesktopCaptureOptions& options) {
   TRACE_EVENT0("webrtc", "ScreenCapturerX11::Init");
   options_ = options;
+
+  atom_cache_ = absl::make_unique<XAtomCache>(display());
 
   root_window_ = RootWindow(display(), DefaultScreen(display()));
   if (root_window_ == BadValue) {
@@ -80,7 +83,8 @@ bool ScreenCapturerX11::Init(const DesktopCaptureOptions& options) {
   // Register for changes to the dimensions of the root window.
   XSelectInput(display(), root_window_, StructureNotifyMask);
 
-  if (!x_server_pixel_buffer_.Init(display(), DefaultRootWindow(display()))) {
+  if (!x_server_pixel_buffer_.Init(atom_cache_.get(),
+                                   DefaultRootWindow(display()))) {
     RTC_LOG(LS_ERROR) << "Failed to initialize pixel buffer.";
     return false;
   }
@@ -273,7 +277,8 @@ void ScreenCapturerX11::ScreenConfigurationChanged() {
   queue_.Reset();
 
   helper_.ClearInvalidRegion();
-  if (!x_server_pixel_buffer_.Init(display(), DefaultRootWindow(display()))) {
+  if (!x_server_pixel_buffer_.Init(atom_cache_.get(),
+                                   DefaultRootWindow(display()))) {
     RTC_LOG(LS_ERROR) << "Failed to initialize pixel buffer after screen "
                          "configuration change.";
   }

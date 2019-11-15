@@ -16,17 +16,11 @@
 
 #include <memory>
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/test/PCMFile.h"
-#include "modules/audio_coding/test/utility.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -68,22 +62,22 @@ void TwoWayCommunication::SetUpAutotest(
   //--- Set A codecs
   _acmA->SetEncoder(
       encoder_factory->MakeAudioEncoder(payload_type1, format1, absl::nullopt));
-  EXPECT_EQ(true, _acmA->RegisterReceiveCodec(payload_type2, format2));
+  _acmA->SetReceiveCodecs({{payload_type2, format2}});
 
   //--- Set ref-A codecs
   _acmRefA->SetEncoder(
       encoder_factory->MakeAudioEncoder(payload_type1, format1, absl::nullopt));
-  EXPECT_EQ(true, _acmRefA->RegisterReceiveCodec(payload_type2, format2));
+  _acmRefA->SetReceiveCodecs({{payload_type2, format2}});
 
   //--- Set B codecs
   _acmB->SetEncoder(
       encoder_factory->MakeAudioEncoder(payload_type2, format2, absl::nullopt));
-  EXPECT_EQ(true, _acmB->RegisterReceiveCodec(payload_type1, format1));
+  _acmB->SetReceiveCodecs({{payload_type1, format1}});
 
   //--- Set ref-B codecs
   _acmRefB->SetEncoder(
       encoder_factory->MakeAudioEncoder(payload_type2, format2, absl::nullopt));
-  EXPECT_EQ(true, _acmRefB->RegisterReceiveCodec(payload_type1, format1));
+  _acmRefB->SetReceiveCodecs({{payload_type1, format1}});
 
   uint16_t frequencyHz;
 
@@ -184,14 +178,13 @@ void TwoWayCommunication::Perform() {
     if (((secPassed % 5) == 4) && (msecPassed >= 990)) {
       _acmB->SetEncoder(encoder_factory->MakeAudioEncoder(
           payload_type2, format2, absl::nullopt));
-      EXPECT_TRUE(_acmB->SendCodec());
     }
     // Initialize receiver on side A.
     if (((secPassed % 7) == 6) && (msecPassed == 0))
       EXPECT_EQ(0, _acmA->InitializeReceiver());
     // Re-register codec on side A.
     if (((secPassed % 7) == 6) && (msecPassed >= 990)) {
-      EXPECT_EQ(true, _acmA->RegisterReceiveCodec(payload_type2, format2));
+      _acmA->SetReceiveCodecs({{payload_type2, format2}});
     }
   }
 }

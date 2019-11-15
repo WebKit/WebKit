@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_STATISTICS_CALCULATOR_H_
 
 #include "modules/audio_coding/neteq/statistics_calculator.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -21,6 +20,7 @@ class MockStatisticsCalculator : public StatisticsCalculator {
  public:
   MOCK_METHOD1(PacketsDiscarded, void(size_t num_packets));
   MOCK_METHOD1(SecondaryPacketsDiscarded, void(size_t num_packets));
+  MOCK_METHOD1(RelativePacketArrivalDelay, void(size_t delay_ms));
 };
 
 }  // namespace webrtc

@@ -10,15 +10,16 @@
 
 #include "call/receive_time_calculator.h"
 
+#include <stdlib.h>
+
 #include <algorithm>
-#include <iostream>
-#include <tuple>
+#include <cmath>
+#include <cstdint>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "rtc_base/random.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
 namespace webrtc {

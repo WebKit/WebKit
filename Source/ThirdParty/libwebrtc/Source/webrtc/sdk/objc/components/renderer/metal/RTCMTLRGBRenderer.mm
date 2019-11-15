@@ -34,17 +34,17 @@ static NSString *const shaderSource = MTL_STRINGIFY(
       float2 texcoord;
     } VertexIO;
 
-    vertex VertexIO vertexPassthrough(device Vertex * verticies[[buffer(0)]],
+    vertex VertexIO vertexPassthrough(constant Vertex *verticies[[buffer(0)]],
                                       uint vid[[vertex_id]]) {
       VertexIO out;
-      device Vertex &v = verticies[vid];
+      constant Vertex &v = verticies[vid];
       out.position = float4(float2(v.position), 0.0, 1.0);
       out.texcoord = v.texcoord;
       return out;
     }
 
-    fragment half4 fragmentColorConversion(
-        VertexIO in[[stage_in]], texture2d<half, access::sample> texture[[texture(0)]],
+    fragment half4 fragmentColorConversion(VertexIO in[[stage_in]],
+                                           texture2d<half, access::sample> texture[[texture(0)]],
                                            constant bool &isARGB[[buffer(0)]]) {
       constexpr sampler s(address::clamp_to_edge, filter::linear);
 

@@ -35,15 +35,15 @@ TEST_DATA_VARS = {
 
 DEPS_ENTRIES = {
   'src/build': 'https://build.com',
-  'src/buildtools': 'https://buildtools.com',
+  'src/third_party/depot_tools': 'https://depottools.com',
   'src/testing/gtest': 'https://gtest.com',
   'src/testing/gmock': 'https://gmock.com',
 }
 
 BUILD_OLD_REV = '52f7afeca991d96d68cf0507e20dbdd5b845691f'
 BUILD_NEW_REV = 'HEAD'
-BUILDTOOLS_OLD_REV = '64e38f0cebdde27aa0cfb405f330063582f9ac76'
-BUILDTOOLS_NEW_REV = '55ad626b08ef971fd82a62b7abb325359542952b'
+DEPOTTOOLS_OLD_REV = 'b9ae2ca9a55d9b754c313f4c9e9f0f3b804a5e44'
+DEPOTTOOLS_NEW_REV = '1206a353e40abb70d8454eb9af53db0ad10b713c'
 
 NO_CHROMIUM_REVISION_UPDATE = ChromiumRevisionUpdate('cafe', 'cafe')
 
@@ -203,9 +203,9 @@ class TestRollChromiumRevision(unittest.TestCase):
     self.assertEquals(changed_deps[0].current_rev, BUILD_OLD_REV)
     self.assertEquals(changed_deps[0].new_rev, BUILD_NEW_REV)
 
-    self.assertEquals(changed_deps[1].path, 'src/buildtools')
-    self.assertEquals(changed_deps[1].current_rev, BUILDTOOLS_OLD_REV)
-    self.assertEquals(changed_deps[1].new_rev, BUILDTOOLS_NEW_REV)
+    self.assertEquals(changed_deps[1].path, 'src/third_party/depot_tools')
+    self.assertEquals(changed_deps[1].current_rev, DEPOTTOOLS_OLD_REV)
+    self.assertEquals(changed_deps[1].new_rev, DEPOTTOOLS_NEW_REV)
 
     self.assertEquals(changed_deps[2].path, 'src/third_party/xstream')
     self.assertEquals(changed_deps[2].package, 'chromium/third_party/xstream')
@@ -254,7 +254,7 @@ class TestRollChromiumRevision(unittest.TestCase):
     new_cr_deps = ParseLocalDepsFile(self._new_cr_depsfile_android)
     _, other_paths = FindRemovedDeps(webrtc_deps, new_cr_deps)
     self.assertEquals(other_paths, ['src/third_party/xstream',
-                                    'src/buildtools'])
+                                    'src/third_party/depot_tools'])
 
   def testExpectedDepsIsNotReportedMissing(self):
     """Some deps musn't be seen as missing, even if absent from Chromium."""

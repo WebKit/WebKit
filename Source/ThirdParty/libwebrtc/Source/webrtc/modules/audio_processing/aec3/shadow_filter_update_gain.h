@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_SHADOW_FILTER_UPDATE_GAIN_H_
 
 #include <stddef.h>
+
 #include <array>
 
 #include "api/audio/echo_canceller3_config.h"

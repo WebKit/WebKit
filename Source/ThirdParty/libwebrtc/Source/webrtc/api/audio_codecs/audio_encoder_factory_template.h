@@ -15,8 +15,8 @@
 #include <vector>
 
 #include "api/audio_codecs/audio_encoder_factory.h"
-#include "rtc_base/refcountedobject.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 

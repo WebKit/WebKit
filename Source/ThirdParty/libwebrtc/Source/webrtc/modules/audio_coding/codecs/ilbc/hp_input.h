@@ -21,6 +21,8 @@
 
 #include "modules/audio_coding/codecs/ilbc/defines.h"
 
+// clang-format off
+// Bad job here. https://bugs.llvm.org/show_bug.cgi?id=34274
 void WebRtcIlbcfix_HpInput(
     int16_t* signal, /* (i/o) signal vector */
     int16_t* ba,     /* (i)   B- and A-coefficients (2:nd order)
@@ -30,5 +32,6 @@ void WebRtcIlbcfix_HpInput(
                               yhi[n-2] ylow[n-2] */
     int16_t* x,      /* (i/o) Filter state x[n-1] x[n-2] */
     size_t len);     /* (i)   Number of samples to filter */
+// clang-format on
 
 #endif

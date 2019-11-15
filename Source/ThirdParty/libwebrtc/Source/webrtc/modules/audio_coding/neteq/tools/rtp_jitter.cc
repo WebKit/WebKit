@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -17,13 +18,10 @@
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/flags.h"
 
 namespace webrtc {
 namespace test {
 namespace {
-
-WEBRTC_DEFINE_bool(help, false, "Print help message");
 
 constexpr size_t kRtpDumpHeaderLength = 8;
 
@@ -83,10 +81,9 @@ int RunRtpJitter(int argc, char* argv[]) {
       "Tool for alternating the arrival times in an RTP dump file.\n"
       "Example usage:\n" +
       program_name + " input.rtp arrival_times_ms.txt output.rtp\n\n";
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
-      argc != 4) {
+  if (argc != 4) {
     printf("%s", usage.c_str());
-    return FLAG_help ? 0 : 1;
+    return 1;
   }
 
   printf("Input RTP file: %s\n", argv[1]);

@@ -12,7 +12,7 @@
 
 #include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/refcountedobject.h"
+#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 
@@ -22,13 +22,16 @@ namespace {
 // callback and redirects the PCM data to AudioDeviceDataObserver callback.
 class ADMWrapper : public AudioDeviceModule, public AudioTransport {
  public:
-  ADMWrapper(const AudioLayer audio_layer, AudioDeviceDataObserver* observer)
-      : impl_(AudioDeviceModule::Create(audio_layer)), observer_(observer) {
+  ADMWrapper(AudioLayer audio_layer,
+             TaskQueueFactory* task_queue_factory,
+             AudioDeviceDataObserver* observer)
+      : impl_(AudioDeviceModule::Create(audio_layer, task_queue_factory)),
+        observer_(observer) {
     // Register self as the audio transport callback for underlying ADM impl.
     auto res = impl_->RegisterAudioCallback(this);
     is_valid_ = (impl_.get() != nullptr) && (res == 0);
   }
-  virtual ~ADMWrapper() {
+  ~ADMWrapper() override {
     audio_transport_ = nullptr;
     observer_ = nullptr;
   }
@@ -258,6 +261,9 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
   int32_t EnableBuiltInNS(bool enable) override {
     return impl_->EnableBuiltInNS(enable);
   }
+  int32_t GetPlayoutUnderrunCount() const override {
+    return impl_->GetPlayoutUnderrunCount();
+  }
 // Only supported on iOS.
 #if defined(WEBRTC_IOS)
   int GetPlayoutAudioParameters(AudioParameters* params) const override {
@@ -278,10 +284,12 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
 }  // namespace
 
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
-    const AudioDeviceModule::AudioLayer audio_layer,
+    AudioDeviceModule::AudioLayer audio_layer,
+    TaskQueueFactory* task_queue_factory,
     AudioDeviceDataObserver* observer) {
   rtc::scoped_refptr<ADMWrapper> audio_device(
-      new rtc::RefCountedObject<ADMWrapper>(audio_layer, observer));
+      new rtc::RefCountedObject<ADMWrapper>(audio_layer, task_queue_factory,
+                                            observer));
 
   if (!audio_device->IsValid()) {
     return nullptr;
@@ -289,13 +297,4 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
 
   return audio_device;
 }
-
-// TODO(bugs.webrtc.org/7306): deprecated.
-rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
-    const int32_t id,
-    const AudioDeviceModule::AudioLayer audio_layer,
-    AudioDeviceDataObserver* observer) {
-  return CreateAudioDeviceWithDataObserver(audio_layer, observer);
-}
-
 }  // namespace webrtc

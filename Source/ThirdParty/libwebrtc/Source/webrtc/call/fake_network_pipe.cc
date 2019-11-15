@@ -8,24 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <math.h>
+#include "call/fake_network_pipe.h"
+
 #include <string.h>
 
 #include <algorithm>
+#include <queue>
 #include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
-#include "call/call.h"
-#include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
+#include "api/media_types.h"
 #include "modules/utility/include/process_thread.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 namespace {
-constexpr int64_t kDefaultProcessIntervalMs = 5;
 constexpr int64_t kLogIntervalMs = 5000;
 }  // namespace
 
@@ -35,14 +35,16 @@ NetworkPacket::NetworkPacket(rtc::CopyOnWriteBuffer packet,
                              absl::optional<PacketOptions> packet_options,
                              bool is_rtcp,
                              MediaType media_type,
-                             absl::optional<int64_t> packet_time_us)
+                             absl::optional<int64_t> packet_time_us,
+                             Transport* transport)
     : packet_(std::move(packet)),
       send_time_(send_time),
       arrival_time_(arrival_time),
       packet_options_(packet_options),
       is_rtcp_(is_rtcp),
       media_type_(media_type),
-      packet_time_us_(packet_time_us) {}
+      packet_time_us_(packet_time_us),
+      transport_(transport) {}
 
 NetworkPacket::NetworkPacket(NetworkPacket&& o)
     : packet_(std::move(o.packet_)),
@@ -51,7 +53,8 @@ NetworkPacket::NetworkPacket(NetworkPacket&& o)
       packet_options_(o.packet_options_),
       is_rtcp_(o.is_rtcp_),
       media_type_(o.media_type_),
-      packet_time_us_(o.packet_time_us_) {}
+      packet_time_us_(o.packet_time_us_),
+      transport_(o.transport_) {}
 
 NetworkPacket::~NetworkPacket() = default;
 
@@ -63,6 +66,7 @@ NetworkPacket& NetworkPacket::operator=(NetworkPacket&& o) {
   is_rtcp_ = o.is_rtcp_;
   media_type_ = o.media_type_;
   packet_time_us_ = o.packet_time_us_;
+  transport_ = o.transport_;
 
   return *this;
 }
@@ -86,7 +90,7 @@ FakeNetworkPipe::FakeNetworkPipe(
     : clock_(clock),
       network_behavior_(std::move(network_behavior)),
       receiver_(receiver),
-      transport_(nullptr),
+      global_transport_(nullptr),
       clock_offset_ms_(0),
       dropped_packets_(0),
       sent_packets_(0),
@@ -100,33 +104,74 @@ FakeNetworkPipe::FakeNetworkPipe(
     : clock_(clock),
       network_behavior_(std::move(network_behavior)),
       receiver_(nullptr),
-      transport_(transport),
+      global_transport_(transport),
       clock_offset_ms_(0),
       dropped_packets_(0),
       sent_packets_(0),
       total_packet_delay_us_(0),
-      last_log_time_us_(clock_->TimeInMicroseconds()) {}
+      last_log_time_us_(clock_->TimeInMicroseconds()) {
+  RTC_DCHECK(global_transport_);
+  AddActiveTransport(global_transport_);
+}
 
-FakeNetworkPipe::~FakeNetworkPipe() = default;
+FakeNetworkPipe::~FakeNetworkPipe() {
+  if (global_transport_) {
+    RemoveActiveTransport(global_transport_);
+  }
+  RTC_DCHECK(active_transports_.empty());
+}
 
 void FakeNetworkPipe::SetReceiver(PacketReceiver* receiver) {
   rtc::CritScope crit(&config_lock_);
   receiver_ = receiver;
 }
 
+void FakeNetworkPipe::AddActiveTransport(Transport* transport) {
+  rtc::CritScope crit(&config_lock_);
+  active_transports_[transport]++;
+}
+
+void FakeNetworkPipe::RemoveActiveTransport(Transport* transport) {
+  rtc::CritScope crit(&config_lock_);
+  auto it = active_transports_.find(transport);
+  RTC_CHECK(it != active_transports_.end());
+  if (--(it->second) == 0) {
+    active_transports_.erase(it);
+  }
+}
+
 bool FakeNetworkPipe::SendRtp(const uint8_t* packet,
                               size_t length,
                               const PacketOptions& options) {
-  RTC_DCHECK(HasTransport());
+  RTC_DCHECK(global_transport_);
   EnqueuePacket(rtc::CopyOnWriteBuffer(packet, length), options, false,
-                MediaType::ANY);
+                global_transport_);
   return true;
 }
 
 bool FakeNetworkPipe::SendRtcp(const uint8_t* packet, size_t length) {
-  RTC_DCHECK(HasTransport());
+  RTC_DCHECK(global_transport_);
   EnqueuePacket(rtc::CopyOnWriteBuffer(packet, length), absl::nullopt, true,
-                MediaType::ANY);
+                global_transport_);
+  return true;
+}
+
+bool FakeNetworkPipe::SendRtp(const uint8_t* packet,
+                              size_t length,
+                              const PacketOptions& options,
+                              Transport* transport) {
+  RTC_DCHECK(transport);
+  EnqueuePacket(rtc::CopyOnWriteBuffer(packet, length), options, false,
+                transport);
+  return true;
+}
+
+bool FakeNetworkPipe::SendRtcp(const uint8_t* packet,
+                               size_t length,
+                               Transport* transport) {
+  RTC_DCHECK(transport);
+  EnqueuePacket(rtc::CopyOnWriteBuffer(packet, length), absl::nullopt, true,
+                transport);
   return true;
 }
 
@@ -155,25 +200,35 @@ bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
                                     absl::optional<int64_t> packet_time_us) {
   rtc::CritScope crit(&process_lock_);
   int64_t time_now_us = clock_->TimeInMicroseconds();
-  size_t packet_size = packet.size();
-  NetworkPacket net_packet(std::move(packet), time_now_us, time_now_us, options,
-                           is_rtcp, media_type, packet_time_us);
+  return EnqueuePacket(NetworkPacket(std::move(packet), time_now_us,
+                                     time_now_us, options, is_rtcp, media_type,
+                                     packet_time_us, nullptr));
+}
+
+bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
+                                    absl::optional<PacketOptions> options,
+                                    bool is_rtcp,
+                                    Transport* transport) {
+  rtc::CritScope crit(&process_lock_);
+  int64_t time_now_us = clock_->TimeInMicroseconds();
+  return EnqueuePacket(NetworkPacket(std::move(packet), time_now_us,
+                                     time_now_us, options, is_rtcp,
+                                     MediaType::ANY, absl::nullopt, transport));
+}
+
+bool FakeNetworkPipe::EnqueuePacket(NetworkPacket&& net_packet) {
+  int64_t send_time_us = net_packet.send_time();
+  size_t packet_size = net_packet.data_length();
 
   packets_in_flight_.emplace_back(StoredPacket(std::move(net_packet)));
   int64_t packet_id = reinterpret_cast<uint64_t>(&packets_in_flight_.back());
   bool sent = network_behavior_->EnqueuePacket(
-      PacketInFlightInfo(packet_size, time_now_us, packet_id));
+      PacketInFlightInfo(packet_size, send_time_us, packet_id));
 
   if (!sent) {
     packets_in_flight_.pop_back();
     ++dropped_packets_;
   }
-  if (network_behavior_->NextDeliveryTimeUs()) {
-    rtc::CritScope crit(&process_thread_lock_);
-    if (process_thread_)
-      process_thread_->WakeUp(nullptr);
-  }
-
   return sent;
 }
 
@@ -272,13 +327,18 @@ void FakeNetworkPipe::Process() {
 }
 
 void FakeNetworkPipe::DeliverNetworkPacket(NetworkPacket* packet) {
-  if (transport_) {
+  Transport* transport = packet->transport();
+  if (transport) {
     RTC_DCHECK(!receiver_);
+    if (active_transports_.find(transport) == active_transports_.end()) {
+      // Transport has been destroyed, ignore this packet.
+      return;
+    }
     if (packet->is_rtcp()) {
-      transport_->SendRtcp(packet->data(), packet->data_length());
+      transport->SendRtcp(packet->data(), packet->data_length());
     } else {
-      transport_->SendRtp(packet->data(), packet->data_length(),
-                          packet->packet_options());
+      transport->SendRtp(packet->data(), packet->data_length(),
+                         packet->packet_options());
     }
   } else if (receiver_) {
     int64_t packet_time_us = packet->packet_time_us().value_or(-1);
@@ -293,25 +353,16 @@ void FakeNetworkPipe::DeliverNetworkPacket(NetworkPacket* packet) {
   }
 }
 
-int64_t FakeNetworkPipe::TimeUntilNextProcess() {
+absl::optional<int64_t> FakeNetworkPipe::TimeUntilNextProcess() {
   rtc::CritScope crit(&process_lock_);
   absl::optional<int64_t> delivery_us = network_behavior_->NextDeliveryTimeUs();
   if (delivery_us) {
     int64_t delay_us = *delivery_us - clock_->TimeInMicroseconds();
     return std::max<int64_t>((delay_us + 500) / 1000, 0);
   }
-  return kDefaultProcessIntervalMs;
+  return absl::nullopt;
 }
 
-void FakeNetworkPipe::ProcessThreadAttached(ProcessThread* process_thread) {
-  rtc::CritScope cs(&process_thread_lock_);
-  process_thread_ = process_thread;
-}
-
-bool FakeNetworkPipe::HasTransport() const {
-  rtc::CritScope crit(&config_lock_);
-  return transport_ != nullptr;
-}
 bool FakeNetworkPipe::HasReceiver() const {
   rtc::CritScope crit(&config_lock_);
   return receiver_ != nullptr;

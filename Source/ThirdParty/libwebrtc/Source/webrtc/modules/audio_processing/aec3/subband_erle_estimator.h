@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBBAND_ERLE_ESTIMATOR_H_
 
 #include <stddef.h>
+
 #include <array>
 #include <memory>
 #include <vector>
@@ -66,7 +67,7 @@ class SubbandErleEstimator {
 
   const float min_erle_;
   const std::array<float, kFftLengthBy2Plus1> max_erle_;
-  const bool adapt_on_low_render_;
+  const bool use_min_erle_during_onsets_;
   AccumulatedSpectra accum_spectra_;
   std::array<float, kFftLengthBy2Plus1> erle_;
   std::array<float, kFftLengthBy2Plus1> erle_onsets_;

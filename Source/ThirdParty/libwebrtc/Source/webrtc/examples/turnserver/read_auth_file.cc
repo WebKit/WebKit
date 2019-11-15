@@ -9,7 +9,10 @@
  */
 
 #include "examples/turnserver/read_auth_file.h"
-#include "rtc_base/stringencode.h"
+
+#include <stddef.h>
+
+#include "rtc_base/string_encode.h"
 
 namespace webrtc_examples {
 

@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 // Default implementation of histogram methods for WebRTC clients that do not
@@ -88,6 +88,11 @@ class RtcHistogram {
     return (info_.samples.empty()) ? -1 : info_.samples.begin()->first;
   }
 
+  std::map<int, int> Samples() const {
+    rtc::CritScope cs(&crit_);
+    return info_.samples;
+  }
+
  private:
   rtc::CriticalSection crit_;
   const int min_;
@@ -160,6 +165,12 @@ class RtcHistogramMap {
     rtc::CritScope cs(&crit_);
     const auto& it = map_.find(name);
     return (it == map_.end()) ? -1 : it->second->MinSample();
+  }
+
+  std::map<int, int> Samples(const std::string& name) const {
+    rtc::CritScope cs(&crit_);
+    const auto& it = map_.find(name);
+    return (it == map_.end()) ? std::map<int, int>() : it->second->Samples();
   }
 
  private:
@@ -305,6 +316,11 @@ int NumSamples(const std::string& name) {
 int MinSample(const std::string& name) {
   RtcHistogramMap* map = GetMap();
   return map ? map->MinSample(name) : -1;
+}
+
+std::map<int, int> Samples(const std::string& name) {
+  RtcHistogramMap* map = GetMap();
+  return map ? map->Samples(name) : std::map<int, int>();
 }
 
 }  // namespace metrics

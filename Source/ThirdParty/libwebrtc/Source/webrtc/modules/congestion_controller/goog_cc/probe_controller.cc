@@ -12,10 +12,16 @@
 
 #include <algorithm>
 #include <initializer_list>
+#include <string>
 
+#include "absl/memory/memory.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -38,15 +44,6 @@ constexpr int kExponentialProbingDisabled = 0;
 // Default probing bitrate limit. Applied only when the application didn't
 // specify max bitrate.
 constexpr int64_t kDefaultMaxProbingBitrateBps = 5000000;
-
-// Interval between probes when ALR periodic probing is enabled.
-constexpr int64_t kAlrPeriodicProbingIntervalMs = 5000;
-
-// Minimum probe bitrate percentage to probe further for repeated probes,
-// relative to the previous probe. For example, if 1Mbps probe results in
-// 80kbps, then we'll probe again at 1.6Mbps. In that case second probe won't be
-// sent if we get 600kbps from the first one.
-constexpr int kRepeatedProbeMinPercentage = 70;
 
 // If the bitrate drops to a factor |kBitrateDropThreshold| or lower
 // and we recover within |kBitrateDropTimeoutMs|, then we'll send
@@ -73,12 +70,73 @@ constexpr double kProbeUncertainty = 0.05;
 constexpr char kBweRapidRecoveryExperiment[] =
     "WebRTC-BweRapidRecoveryExperiment";
 
+// Never probe higher than configured by OnMaxTotalAllocatedBitrate().
+constexpr char kCappedProbingFieldTrialName[] = "WebRTC-BweCappedProbing";
+
+void MaybeLogProbeClusterCreated(RtcEventLog* event_log,
+                                 const ProbeClusterConfig& probe) {
+  RTC_DCHECK(event_log);
+  if (!event_log) {
+    return;
+  }
+
+  size_t min_bytes = static_cast<int32_t>(probe.target_data_rate.bps() *
+                                          probe.target_duration.ms() / 8000);
+  event_log->Log(absl::make_unique<RtcEventProbeClusterCreated>(
+      probe.id, probe.target_data_rate.bps(), probe.target_probe_count,
+      min_bytes));
+}
+
 }  // namespace
 
-ProbeController::ProbeController() : enable_periodic_alr_probing_(false) {
+ProbeControllerConfig::ProbeControllerConfig(
+    const WebRtcKeyValueConfig* key_value_config)
+    : first_exponential_probe_scale("p1", 3.0),
+      second_exponential_probe_scale("p2", 6.0),
+      further_exponential_probe_scale("step_size", 2),
+      further_probe_threshold("further_probe_threshold", 0.7),
+      alr_probing_interval("alr_interval", TimeDelta::seconds(5)),
+      alr_probe_scale("alr_scale", 2),
+      first_allocation_probe_scale("alloc_p1", 1),
+      second_allocation_probe_scale("alloc_p2", 2),
+      allocation_allow_further_probing("alloc_probe_further", false) {
+  ParseFieldTrial(
+      {&first_exponential_probe_scale, &second_exponential_probe_scale,
+       &further_exponential_probe_scale, &further_probe_threshold,
+       &alr_probing_interval, &alr_probe_scale, &first_allocation_probe_scale,
+       &second_allocation_probe_scale, &allocation_allow_further_probing},
+      key_value_config->Lookup("WebRTC-Bwe-ProbingConfiguration"));
+
+  // Specialized keys overriding subsets of WebRTC-Bwe-ProbingConfiguration
+  ParseFieldTrial(
+      {&first_exponential_probe_scale, &second_exponential_probe_scale},
+      key_value_config->Lookup("WebRTC-Bwe-InitialProbing"));
+  ParseFieldTrial({&further_exponential_probe_scale, &further_probe_threshold},
+                  key_value_config->Lookup("WebRTC-Bwe-ExponentialProbing"));
+  ParseFieldTrial({&alr_probing_interval, &alr_probe_scale},
+                  key_value_config->Lookup("WebRTC-Bwe-AlrProbing"));
+  ParseFieldTrial(
+      {&first_allocation_probe_scale, &second_allocation_probe_scale,
+       &allocation_allow_further_probing},
+      key_value_config->Lookup("WebRTC-Bwe-AllocationProbing"));
+}
+
+ProbeControllerConfig::ProbeControllerConfig(const ProbeControllerConfig&) =
+    default;
+ProbeControllerConfig::~ProbeControllerConfig() = default;
+
+ProbeController::ProbeController(const WebRtcKeyValueConfig* key_value_config,
+                                 RtcEventLog* event_log)
+    : enable_periodic_alr_probing_(false),
+      in_rapid_recovery_experiment_(
+          key_value_config->Lookup(kBweRapidRecoveryExperiment)
+              .find("Enabled") == 0),
+      limit_probes_with_allocateable_rate_(
+          key_value_config->Lookup(kCappedProbingFieldTrialName)
+              .find("Disabled") != 0),
+      event_log_(event_log),
+      config_(ProbeControllerConfig(key_value_config)) {
   Reset(0);
-  in_rapid_recovery_experiment_ = webrtc::field_trial::FindFullName(
-                                      kBweRapidRecoveryExperiment) == "Enabled";
 }
 
 ProbeController::~ProbeController() {}
@@ -110,8 +168,8 @@ std::vector<ProbeClusterConfig> ProbeController::SetBitrates(
       break;
 
     case State::kProbingComplete:
-      // If the new max bitrate is higher than the old max bitrate and the
-      // estimate is lower than the new max bitrate then initiate probing.
+      // If the new max bitrate is higher than both the old max bitrate and the
+      // estimate then initiate probing.
       if (estimated_bitrate_bps_ != 0 &&
           old_max_bitrate_bps < max_bitrate_bps_ &&
           estimated_bitrate_bps_ < max_bitrate_bps_) {
@@ -126,7 +184,7 @@ std::vector<ProbeClusterConfig> ProbeController::SetBitrates(
         RTC_HISTOGRAM_COUNTS_10000("WebRTC.BWE.MidCallProbing.Initiated",
                                    max_bitrate_bps_ / 1000);
 
-        return InitiateProbing(at_time_ms, {max_bitrate_bps}, false);
+        return InitiateProbing(at_time_ms, {max_bitrate_bps_}, false);
       }
       break;
   }
@@ -136,15 +194,29 @@ std::vector<ProbeClusterConfig> ProbeController::SetBitrates(
 std::vector<ProbeClusterConfig> ProbeController::OnMaxTotalAllocatedBitrate(
     int64_t max_total_allocated_bitrate,
     int64_t at_time_ms) {
-  // TODO(philipel): Should |max_total_allocated_bitrate| be used as a limit for
-  //                 ALR probing?
+  const bool in_alr = alr_start_time_ms_.has_value();
+  const bool allow_allocation_probe = in_alr;
+
   if (state_ == State::kProbingComplete &&
       max_total_allocated_bitrate != max_total_allocated_bitrate_ &&
       estimated_bitrate_bps_ != 0 &&
       (max_bitrate_bps_ <= 0 || estimated_bitrate_bps_ < max_bitrate_bps_) &&
-      estimated_bitrate_bps_ < max_total_allocated_bitrate) {
+      estimated_bitrate_bps_ < max_total_allocated_bitrate &&
+      allow_allocation_probe) {
     max_total_allocated_bitrate_ = max_total_allocated_bitrate;
-    return InitiateProbing(at_time_ms, {max_total_allocated_bitrate}, false);
+
+    if (!config_.first_allocation_probe_scale)
+      return std::vector<ProbeClusterConfig>();
+
+    std::vector<int64_t> probes = {
+        static_cast<int64_t>(config_.first_allocation_probe_scale.Value() *
+                             max_total_allocated_bitrate)};
+    if (config_.second_allocation_probe_scale) {
+      probes.push_back(config_.second_allocation_probe_scale.Value() *
+                       max_total_allocated_bitrate);
+    }
+    return InitiateProbing(at_time_ms, probes,
+                           config_.allocation_allow_further_probing);
   }
   max_total_allocated_bitrate_ = max_total_allocated_bitrate;
   return std::vector<ProbeClusterConfig>();
@@ -172,15 +244,18 @@ std::vector<ProbeClusterConfig> ProbeController::InitiateExponentialProbing(
 
   // When probing at 1.8 Mbps ( 6x 300), this represents a threshold of
   // 1.2 Mbps to continue probing.
-  return InitiateProbing(
-      at_time_ms, {3 * start_bitrate_bps_, 6 * start_bitrate_bps_}, true);
+  std::vector<int64_t> probes = {static_cast<int64_t>(
+      config_.first_exponential_probe_scale * start_bitrate_bps_)};
+  if (config_.second_exponential_probe_scale) {
+    probes.push_back(config_.second_exponential_probe_scale.Value() *
+                     start_bitrate_bps_);
+  }
+  return InitiateProbing(at_time_ms, probes, true);
 }
 
 std::vector<ProbeClusterConfig> ProbeController::SetEstimatedBitrate(
     int64_t bitrate_bps,
     int64_t at_time_ms) {
-  int64_t now_ms = at_time_ms;
-
   if (mid_call_probing_waiting_for_result_ &&
       bitrate_bps >= mid_call_probing_succcess_threshold_) {
     RTC_HISTOGRAM_COUNTS_10000("WebRTC.BWE.MidCallProbing.Success",
@@ -199,13 +274,16 @@ std::vector<ProbeClusterConfig> ProbeController::SetEstimatedBitrate(
 
     if (min_bitrate_to_probe_further_bps_ != kExponentialProbingDisabled &&
         bitrate_bps > min_bitrate_to_probe_further_bps_) {
-      // Double the probing bitrate.
-      pending_probes = InitiateProbing(now_ms, {2 * bitrate_bps}, true);
+      pending_probes = InitiateProbing(
+          at_time_ms,
+          {static_cast<int64_t>(config_.further_exponential_probe_scale *
+                                bitrate_bps)},
+          true);
     }
   }
 
   if (bitrate_bps < kBitrateDropThreshold * estimated_bitrate_bps_) {
-    time_of_last_large_drop_ms_ = now_ms;
+    time_of_last_large_drop_ms_ = at_time_ms;
     bitrate_before_last_large_drop_bps_ = estimated_bitrate_bps_;
   }
 
@@ -253,22 +331,16 @@ std::vector<ProbeClusterConfig> ProbeController::RequestProbe(
         RTC_HISTOGRAM_COUNTS_10000(
             "WebRTC.BWE.BweDropProbingIntervalInS",
             (at_time_ms - last_bwe_drop_probing_time_ms_) / 1000);
-        return InitiateProbing(at_time_ms, {suggested_probe_bps}, false);
         last_bwe_drop_probing_time_ms_ = at_time_ms;
+        return InitiateProbing(at_time_ms, {suggested_probe_bps}, false);
       }
     }
   }
   return std::vector<ProbeClusterConfig>();
 }
 
-std::vector<ProbeClusterConfig> ProbeController::InitiateCapacityProbing(
-    int64_t bitrate_bps,
-    int64_t at_time_ms) {
-  if (state_ != State::kWaitingForProbingResult) {
-    RTC_DCHECK(network_available_);
-    return InitiateProbing(at_time_ms, {2 * bitrate_bps}, true);
-  }
-  return std::vector<ProbeClusterConfig>();
+void ProbeController::SetMaxBitrate(int64_t max_bitrate_bps) {
+  max_bitrate_bps_ = max_bitrate_bps;
 }
 
 void ProbeController::Reset(int64_t at_time_ms) {
@@ -289,9 +361,7 @@ void ProbeController::Reset(int64_t at_time_ms) {
 }
 
 std::vector<ProbeClusterConfig> ProbeController::Process(int64_t at_time_ms) {
-  int64_t now_ms = at_time_ms;
-
-  if (now_ms - time_last_probing_initiated_ms_ >
+  if (at_time_ms - time_last_probing_initiated_ms_ >
       kMaxWaitingTimeForProbingResultMs) {
     mid_call_probing_waiting_for_result_ = false;
 
@@ -307,9 +377,12 @@ std::vector<ProbeClusterConfig> ProbeController::Process(int64_t at_time_ms) {
     if (alr_start_time_ms_ && estimated_bitrate_bps_ > 0) {
       int64_t next_probe_time_ms =
           std::max(*alr_start_time_ms_, time_last_probing_initiated_ms_) +
-          kAlrPeriodicProbingIntervalMs;
-      if (now_ms >= next_probe_time_ms) {
-        return InitiateProbing(now_ms, {estimated_bitrate_bps_ * 2}, true);
+          config_.alr_probing_interval->ms();
+      if (at_time_ms >= next_probe_time_ms) {
+        return InitiateProbing(at_time_ms,
+                               {static_cast<int64_t>(estimated_bitrate_bps_ *
+                                                     config_.alr_probe_scale)},
+                               true);
       }
     }
   }
@@ -318,13 +391,26 @@ std::vector<ProbeClusterConfig> ProbeController::Process(int64_t at_time_ms) {
 
 std::vector<ProbeClusterConfig> ProbeController::InitiateProbing(
     int64_t now_ms,
-    std::initializer_list<int64_t> bitrates_to_probe,
+    std::vector<int64_t> bitrates_to_probe,
     bool probe_further) {
+  int64_t max_probe_bitrate_bps =
+      max_bitrate_bps_ > 0 ? max_bitrate_bps_ : kDefaultMaxProbingBitrateBps;
+  if (limit_probes_with_allocateable_rate_ &&
+      max_total_allocated_bitrate_ > 0) {
+    // If a max allocated bitrate has been configured, allow probing up to 2x
+    // that rate. This allows some overhead to account for bursty streams,
+    // which otherwise would have to ramp up when the overshoot is already in
+    // progress.
+    // It also avoids minor quality reduction caused by probes often being
+    // received at slightly less than the target probe bitrate.
+    max_probe_bitrate_bps =
+        std::min(max_probe_bitrate_bps, max_total_allocated_bitrate_ * 2);
+  }
+
   std::vector<ProbeClusterConfig> pending_probes;
   for (int64_t bitrate : bitrates_to_probe) {
     RTC_DCHECK_GT(bitrate, 0);
-    int64_t max_probe_bitrate_bps =
-        max_bitrate_bps_ > 0 ? max_bitrate_bps_ : kDefaultMaxProbingBitrateBps;
+
     if (bitrate > max_probe_bitrate_bps) {
       bitrate = max_probe_bitrate_bps;
       probe_further = false;
@@ -335,13 +421,16 @@ std::vector<ProbeClusterConfig> ProbeController::InitiateProbing(
     config.target_data_rate = DataRate::bps(rtc::dchecked_cast<int>(bitrate));
     config.target_duration = TimeDelta::ms(kMinProbeDurationMs);
     config.target_probe_count = kMinProbePacketsSent;
+    config.id = next_probe_cluster_id_;
+    next_probe_cluster_id_++;
+    MaybeLogProbeClusterCreated(event_log_, config);
     pending_probes.push_back(config);
   }
   time_last_probing_initiated_ms_ = now_ms;
   if (probe_further) {
     state_ = State::kWaitingForProbingResult;
     min_bitrate_to_probe_further_bps_ =
-        (*(bitrates_to_probe.end() - 1)) * kRepeatedProbeMinPercentage / 100;
+        (*(bitrates_to_probe.end() - 1)) * config_.further_probe_threshold;
   } else {
     state_ = State::kProbingComplete;
     min_bitrate_to_probe_further_bps_ = kExponentialProbingDisabled;

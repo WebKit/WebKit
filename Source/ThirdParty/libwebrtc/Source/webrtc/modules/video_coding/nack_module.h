@@ -11,6 +11,8 @@
 #ifndef MODULES_VIDEO_CODING_NACK_MODULE_H_
 #define MODULES_VIDEO_CODING_NACK_MODULE_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <set>
 #include <vector>
@@ -18,7 +20,7 @@
 #include "modules/include/module.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/histogram.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"

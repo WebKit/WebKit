@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/neteq/sync_buffer.h"
+
 #include <algorithm>  // Access to min.
 
-#include "modules/audio_coding/neteq/sync_buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

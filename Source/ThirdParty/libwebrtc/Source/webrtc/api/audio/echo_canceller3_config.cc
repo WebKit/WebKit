@@ -87,19 +87,11 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
     c->delay.down_sampling_factor = 4;
     res = false;
   }
-  if (c->delay.delay_headroom_blocks <= 1 &&
-      c->delay.hysteresis_limit_1_blocks == 1) {
-    c->delay.hysteresis_limit_1_blocks = 0;
-    res = false;
-  }
+
   res = res & Limit(&c->delay.default_delay, 0, 5000);
   res = res & Limit(&c->delay.num_filters, 0, 5000);
-  res = res & Limit(&c->delay.api_call_jitter_blocks, 1, 5000);
-  res = res & Limit(&c->delay.min_echo_path_delay_blocks, 0, 5000);
-  res = res & Limit(&c->delay.delay_headroom_blocks, 0, 5000);
-  res = res & Limit(&c->delay.hysteresis_limit_1_blocks, 0, 5000);
-  res = res & Limit(&c->delay.hysteresis_limit_2_blocks, 0, 5000);
-  res = res & Limit(&c->delay.skew_hysteresis_blocks, 0, 5000);
+  res = res & Limit(&c->delay.delay_headroom_samples, 0, 5000);
+  res = res & Limit(&c->delay.hysteresis_limit_blocks, 0, 5000);
   res = res & Limit(&c->delay.fixed_capture_delay_samples, 0, 5000);
   res = res & Limit(&c->delay.delay_estimate_smoothing, 0.f, 1.f);
   res = res & Limit(&c->delay.delay_candidate_detection_threshold, 0.f, 1.f);
@@ -150,9 +142,7 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
   }
   res = res & Limit(&c->erle.num_sections, 1, c->filter.main.length_blocks);
 
-  res = res & Limit(&c->ep_strength.lf, 0.f, 1000000.f);
-  res = res & Limit(&c->ep_strength.mf, 0.f, 1000000.f);
-  res = res & Limit(&c->ep_strength.hf, 0.f, 1000000.f);
+  res = res & Limit(&c->ep_strength.default_gain, 0.f, 1000000.f);
   res = res & Limit(&c->ep_strength.default_len, -1.f, 1.f);
 
   res =
@@ -174,15 +164,6 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
   res = res & Limit(&c->render_levels.poor_excitation_render_limit_ds8, 0.f,
                     32768.f * 32768.f);
 
-  res =
-      res & Limit(&c->echo_removal_control.gain_rampup.initial_gain, 0.f, 1.f);
-  res = res & Limit(&c->echo_removal_control.gain_rampup.first_non_zero_gain,
-                    0.f, 1.f);
-  res = res & Limit(&c->echo_removal_control.gain_rampup.non_zero_gain_blocks,
-                    0, 100000);
-  res = res &
-        Limit(&c->echo_removal_control.gain_rampup.full_gain_blocks, 0, 100000);
-
   res = res & Limit(&c->echo_model.noise_floor_hold, 0, 1000);
   res = res & Limit(&c->echo_model.min_noise_floor_power, 0, 2000000.f);
   res = res & Limit(&c->echo_model.stationary_gate_slope, 0, 1000000.f);
@@ -190,10 +171,6 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
   res = res & Limit(&c->echo_model.noise_gate_slope, 0, 1000000.f);
   res = res & Limit(&c->echo_model.render_pre_window_size, 0, 100);
   res = res & Limit(&c->echo_model.render_post_window_size, 0, 100);
-  res = res & Limit(&c->echo_model.render_pre_window_size_init, 0, 100);
-  res = res & Limit(&c->echo_model.render_post_window_size_init, 0, 100);
-  res = res & Limit(&c->echo_model.nonlinear_hold, 0, 100);
-  res = res & Limit(&c->echo_model.nonlinear_release, 0, 1.f);
 
   res = res & Limit(&c->suppressor.nearend_average_blocks, 1, 5000);
 
@@ -243,12 +220,6 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
                     0.f, 1.f);
 
   res = res & Limit(&c->suppressor.floor_first_increase, 0.f, 1000000.f);
-
-  if (c->delay.delay_headroom_blocks >
-      c->filter.main_initial.length_blocks - 1) {
-    c->delay.delay_headroom_blocks = c->filter.main_initial.length_blocks - 1;
-    res = false;
-  }
 
   return res;
 }

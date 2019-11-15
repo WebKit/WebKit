@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
 #include <list>
 #include <memory>
 
+#include "absl/algorithm/container.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/flexfec_header_reader_writer.h"
@@ -148,14 +148,10 @@ void RtpFecTest<ForwardErrorCorrectionType>::ReceivedPackets(
 
 template <typename ForwardErrorCorrectionType>
 bool RtpFecTest<ForwardErrorCorrectionType>::IsRecoveryComplete() {
-  // We must have equally many recovered packets as original packets.
-  if (recovered_packets_.size() != media_packets_.size()) {
-    return false;
-  }
-
-  // All recovered packets must be identical to the corresponding
-  // original packets.
-  auto cmp =
+  // We must have equally many recovered packets as original packets and all
+  // recovered packets must be identical to the corresponding original packets.
+  return absl::c_equal(
+      media_packets_, recovered_packets_,
       [](const std::unique_ptr<ForwardErrorCorrection::Packet>& media_packet,
          const std::unique_ptr<ForwardErrorCorrection::RecoveredPacket>&
              recovered_packet) {
@@ -167,9 +163,7 @@ bool RtpFecTest<ForwardErrorCorrectionType>::IsRecoveryComplete() {
           return false;
         }
         return true;
-      };
-  return std::equal(media_packets_.cbegin(), media_packets_.cend(),
-                    recovered_packets_.cbegin(), cmp);
+      });
 }
 
 // Define gTest typed test to loop over both ULPFEC and FlexFEC.
@@ -216,7 +210,7 @@ class UlpfecForwardErrorCorrection : public ForwardErrorCorrection {
 
 using FecTypes =
     Types<FlexfecForwardErrorCorrection, UlpfecForwardErrorCorrection>;
-TYPED_TEST_CASE(RtpFecTest, FecTypes);
+TYPED_TEST_SUITE(RtpFecTest, FecTypes);
 
 TYPED_TEST(RtpFecTest, WillProtectMediaPacketsWithLargeSequenceNumberGap) {
   constexpr int kNumImportantPackets = 0;

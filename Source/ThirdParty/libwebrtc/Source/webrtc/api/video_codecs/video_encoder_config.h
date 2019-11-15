@@ -12,14 +12,15 @@
 #define API_VIDEO_CODECS_VIDEO_ENCODER_CONFIG_H_
 
 #include <stddef.h>
+
 #include <string>
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/scoped_refptr.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
-#include "rtc_base/refcount.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 
@@ -36,13 +37,15 @@ struct VideoStream {
   int min_bitrate_bps;
   int target_bitrate_bps;
   int max_bitrate_bps;
+  // Scaling factor applied to the stream size.
+  // |width| and |height| values are already scaled down.
+  double scale_resolution_down_by;
   int max_qp;
 
   absl::optional<size_t> num_temporal_layers;
 
   absl::optional<double> bitrate_priority;
 
-  // TODO(bugs.webrtc.org/8653): Support active per-simulcast layer.
   bool active;
 };
 

@@ -14,7 +14,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "rtc_base/stringencode.h"
+#include "rtc_base/string_encode.h"
 
 namespace rtc {
 

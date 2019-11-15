@@ -33,7 +33,7 @@
 #include "NetworkRTCMonitorMessages.h"
 #include "WebProcess.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/nethelpers.h>
+#include <webrtc/rtc_base/net_helpers.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {

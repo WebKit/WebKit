@@ -18,8 +18,8 @@ namespace rnn_vad {
 // strength of the pitch (the higher, the stronger).
 struct PitchInfo {
   PitchInfo() : period(0), gain(0.f) {}
-  PitchInfo(size_t p, float g) : period(p), gain(g) {}
-  size_t period;
+  PitchInfo(int p, float g) : period(p), gain(g) {}
+  int period;
   float gain;
 };
 

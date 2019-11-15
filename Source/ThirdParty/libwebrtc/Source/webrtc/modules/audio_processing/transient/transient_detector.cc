@@ -11,9 +11,10 @@
 #include "modules/audio_processing/transient/transient_detector.h"
 
 #include <float.h>
-#include <math.h>
 #include <string.h>
+
 #include <algorithm>
+#include <cmath>
 
 #include "modules/audio_processing/transient/common.h"
 #include "modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
@@ -125,9 +126,9 @@ float TransientDetector::Detect(const float* data,
     const float kVerticalScaling = 0.5f;
     const float kVerticalShift = 1.f;
 
-    result =
-        (cos(result * horizontal_scaling + kHorizontalShift) + kVerticalShift) *
-        kVerticalScaling;
+    result = (std::cos(result * horizontal_scaling + kHorizontalShift) +
+              kVerticalShift) *
+             kVerticalScaling;
     result *= result;
   }
 
@@ -161,9 +162,9 @@ float TransientDetector::ReferenceDetectionValue(const float* data,
     return 1.f;
   }
   RTC_DCHECK_NE(0, reference_energy_);
-  float result = 1.f / (1.f + exp(kReferenceNonLinearity *
-                                  (kEnergyRatioThreshold -
-                                   reference_energy / reference_energy_)));
+  float result = 1.f / (1.f + std::exp(kReferenceNonLinearity *
+                                       (kEnergyRatioThreshold -
+                                        reference_energy / reference_energy_)));
   reference_energy_ =
       kMemory * reference_energy_ + (1.f - kMemory) * reference_energy;
 

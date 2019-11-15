@@ -33,7 +33,7 @@ void VideoObserver::OnFrame(const webrtc::VideoFrame& frame) {
 
   } else {
     // The buffer has alpha channel.
-    webrtc::I420ABufferInterface* i420a_buffer = buffer->GetI420A();
+    const webrtc::I420ABufferInterface* i420a_buffer = buffer->GetI420A();
 
     OnI420FrameReady(i420a_buffer->DataY(), i420a_buffer->DataU(),
                      i420a_buffer->DataV(), i420a_buffer->DataA(),

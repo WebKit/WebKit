@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "modules/audio_coding/test/Channel.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/PCMFile.h"
 
 namespace webrtc {
@@ -25,12 +25,11 @@ class TestPack : public AudioPacketizationCallback {
 
   void RegisterReceiverACM(AudioCodingModule* acm);
 
-  int32_t SendData(FrameType frame_type,
+  int32_t SendData(AudioFrameType frame_type,
                    uint8_t payload_type,
                    uint32_t timestamp,
                    const uint8_t* payload_data,
-                   size_t payload_size,
-                   const RTPFragmentationHeader* fragmentation) override;
+                   size_t payload_size) override;
 
   size_t payload_size();
   uint32_t timestamp_diff();
@@ -48,7 +47,7 @@ class TestPack : public AudioPacketizationCallback {
 
 class TestAllCodecs {
  public:
-  explicit TestAllCodecs(int test_mode);
+  TestAllCodecs();
   ~TestAllCodecs();
 
   void Perform();
@@ -67,9 +66,7 @@ class TestAllCodecs {
 
   void Run(TestPack* channel);
   void OpenOutFile(int test_number);
-  void DisplaySendReceiveCodec();
 
-  int test_mode_;
   std::unique_ptr<AudioCodingModule> acm_a_;
   std::unique_ptr<AudioCodingModule> acm_b_;
   TestPack* channel_a_to_b_;

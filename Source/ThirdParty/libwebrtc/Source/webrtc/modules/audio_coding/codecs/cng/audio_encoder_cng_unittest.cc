@@ -8,21 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
+
 #include <memory>
 #include <vector>
 
 #include "common_audio/vad/mock/mock_vad.h"
-#include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 
-using ::testing::Return;
 using ::testing::_;
-using ::testing::SetArgPointee;
 using ::testing::InSequence;
 using ::testing::Invoke;
+using ::testing::Return;
+using ::testing::SetArgPointee;
 
 namespace webrtc {
 

@@ -9,6 +9,11 @@
  */
 
 #include "modules/congestion_controller/pcc/monitor_interval.h"
+
+#include <stddef.h>
+
+#include <cmath>
+
 #include "rtc_base/logging.h"
 
 namespace webrtc {

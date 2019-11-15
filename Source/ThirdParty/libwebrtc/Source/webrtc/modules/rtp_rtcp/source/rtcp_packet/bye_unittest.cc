@@ -14,7 +14,7 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
-using testing::ElementsAre;
+using ::testing::ElementsAre;
 using webrtc::rtcp::Bye;
 
 namespace webrtc {

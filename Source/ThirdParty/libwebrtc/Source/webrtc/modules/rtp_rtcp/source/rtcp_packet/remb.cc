@@ -20,7 +20,6 @@
 
 namespace webrtc {
 namespace rtcp {
-constexpr uint8_t Remb::kFeedbackMessageType;
 // Receiver Estimated Max Bitrate (REMB) (draft-alvestrand-rmcat-remb).
 //
 //     0                   1                   2                   3
@@ -48,7 +47,7 @@ Remb::~Remb() = default;
 
 bool Remb::Parse(const CommonHeader& packet) {
   RTC_DCHECK(packet.type() == kPacketType);
-  RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
+  RTC_DCHECK_EQ(packet.fmt(), Psfb::kAfbMessageType);
 
   if (packet.payload_size_bytes() < 16) {
     RTC_LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
@@ -57,7 +56,6 @@ bool Remb::Parse(const CommonHeader& packet) {
   }
   const uint8_t* const payload = packet.payload();
   if (kUniqueIdentifier != ByteReader<uint32_t>::ReadBigEndian(&payload[8])) {
-    RTC_LOG(LS_WARNING) << "REMB identifier not found, not a REMB packet.";
     return false;
   }
   uint8_t number_of_ssrcs = payload[12];
@@ -113,7 +111,7 @@ bool Remb::Create(uint8_t* packet,
       return false;
   }
   size_t index_end = *index + BlockLength();
-  CreateHeader(kFeedbackMessageType, kPacketType, HeaderLength(), packet,
+  CreateHeader(Psfb::kAfbMessageType, kPacketType, HeaderLength(), packet,
                index);
   RTC_DCHECK_EQ(0, Psfb::media_ssrc());
   CreateCommonFeedback(packet + *index);

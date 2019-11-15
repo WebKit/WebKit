@@ -10,15 +10,13 @@
 
 #include "modules/video_coding/h264_sprop_parameter_sets.h"
 
-#include <stdint.h>
-
 #include <vector>
 
 #include "test/gtest.h"
 
 namespace webrtc {
 
-class H264SpropParameterSetsTest : public testing::Test {
+class H264SpropParameterSetsTest : public ::testing::Test {
  public:
   H264SpropParameterSets h264_sprop;
 };

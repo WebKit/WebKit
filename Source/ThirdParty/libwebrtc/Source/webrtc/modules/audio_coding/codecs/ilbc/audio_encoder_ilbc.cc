@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#include "common_types.h"
 #include "modules/audio_coding/codecs/ilbc/ilbc.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -23,12 +22,6 @@ namespace webrtc {
 namespace {
 
 const int kSampleRateHz = 8000;
-
-AudioEncoderIlbcConfig CreateConfig(const CodecInst& codec_inst) {
-  AudioEncoderIlbcConfig config;
-  config.frame_size_ms = codec_inst.pacsize / 8;
-  return config;
-}
 
 int GetIlbcBitrate(int ptime) {
   switch (ptime) {
@@ -57,9 +50,6 @@ AudioEncoderIlbcImpl::AudioEncoderIlbcImpl(const AudioEncoderIlbcConfig& config,
   RTC_CHECK(config.IsOk());
   Reset();
 }
-
-AudioEncoderIlbcImpl::AudioEncoderIlbcImpl(const CodecInst& codec_inst)
-    : AudioEncoderIlbcImpl(CreateConfig(codec_inst), codec_inst.pltype) {}
 
 AudioEncoderIlbcImpl::~AudioEncoderIlbcImpl() {
   RTC_CHECK_EQ(0, WebRtcIlbcfix_EncoderFree(encoder_));

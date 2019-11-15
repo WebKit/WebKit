@@ -53,10 +53,10 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include "RuntimeEnabledFeatures.h"
-#include <webrtc/rtc_base/physicalsocketserver.h>
-#include <webrtc/p2p/base/basicpacketsocketfactory.h>
-#include <webrtc/p2p/client/basicportallocator.h>
-#include <webrtc/pc/peerconnectionfactory.h>
+#include <webrtc/rtc_base/physical_socket_server.h>
+#include <webrtc/p2p/base/basic_packet_socket_factory.h>
+#include <webrtc/p2p/client/basic_port_allocator.h>
+#include <webrtc/pc/peer_connection_factory.h>
 #include <webrtc/system_wrappers/include/field_trial.h>
 #include <wtf/MainThread.h>
 
@@ -95,7 +95,7 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
     }
     auto oldConfiguration = m_backend->GetConfiguration();
     configuration.certificates = oldConfiguration.certificates;
-    return m_backend->SetConfiguration(WTFMove(configuration));
+    return m_backend->SetConfiguration(WTFMove(configuration)).ok();
 }
 
 void LibWebRTCMediaEndpoint::suspend()

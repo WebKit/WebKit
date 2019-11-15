@@ -10,7 +10,7 @@
 
 #import "RTCRtpHeaderExtension.h"
 
-#include "api/rtpparameters.h"
+#include "api/rtp_parameters.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

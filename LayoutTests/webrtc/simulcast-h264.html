@@ -122,12 +122,6 @@ function splitUnifiedPlanAnswer(answer) {
     return line;
   });
 
-  let params = ["0", "1", "2"];
-  for(let r in params) {
-    mSection.push("a=rid:" + r + " recv");
-  }
-  mSection.push("a=simulcast:recv " + params.join(";"));
-
   answer.sdp = sdpLines.concat(mSection)
     .filter(line => line && line.length > 0).join("\r\n") + "\r\n";
 }

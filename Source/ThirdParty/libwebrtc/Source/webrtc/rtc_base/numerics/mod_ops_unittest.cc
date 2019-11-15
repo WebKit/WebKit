@@ -9,6 +9,9 @@
  */
 
 #include "rtc_base/numerics/mod_ops.h"
+
+#include <stdint.h>
+
 #include "test/gtest.h"
 
 namespace webrtc {

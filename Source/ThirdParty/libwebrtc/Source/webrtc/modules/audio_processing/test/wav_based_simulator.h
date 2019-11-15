@@ -14,8 +14,7 @@
 #include <vector>
 
 #include "modules/audio_processing/test/audio_processing_simulator.h"
-
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {

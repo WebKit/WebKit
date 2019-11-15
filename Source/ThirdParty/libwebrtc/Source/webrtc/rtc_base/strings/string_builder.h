@@ -17,8 +17,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/array_view.h"
-#include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
+#include "rtc_base/string_encode.h"
 
 namespace rtc {
 
@@ -64,7 +63,7 @@ class SimpleStringBuilder {
 
   // An alternate way from operator<<() to append a string. This variant is
   // slightly more efficient when the length of the string to append, is known.
-  SimpleStringBuilder& Append(const char* str, size_t length = SIZE_UNKNOWN);
+  SimpleStringBuilder& Append(const char* str, size_t length);
 
  private:
   bool IsConsistent() const {

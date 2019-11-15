@@ -10,8 +10,6 @@
 
 #include "test/run_test.h"
 
-#include <stdio.h>
-
 namespace webrtc {
 namespace test {
 

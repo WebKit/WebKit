@@ -11,7 +11,7 @@
 #include <jni.h>
 
 #include "modules/utility/include/jvm_android.h"
-#include "rtc_base/ssladapter.h"
+#include "rtc_base/ssl_adapter.h"
 #include "sdk/android/native_api/base/init.h"
 
 namespace webrtc_examples {

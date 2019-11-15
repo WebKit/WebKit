@@ -52,7 +52,7 @@ public class MediaCodecVideoEncoderTest {
       Log.i(TAG, "hardware does not support VP8 encoding, skipping testEncoderUsingTextures");
       return;
     }
-    EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
+    EglBase14 eglBase = EglBase.createEgl14(EglBase.CONFIG_PLAIN);
     MediaCodecVideoEncoder.setEglContext(eglBase.getEglBaseContext());
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
@@ -73,7 +73,7 @@ public class MediaCodecVideoEncoderTest {
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
         640, 480, 300, 30, /* useSurface= */ false));
     encoder.release();
-    EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
+    EglBase14 eglBase = EglBase.createEgl14(EglBase.CONFIG_PLAIN);
     MediaCodecVideoEncoder.setEglContext(eglBase.getEglBaseContext());
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
         640, 480, 300, 30, /* useSurface= */ true));

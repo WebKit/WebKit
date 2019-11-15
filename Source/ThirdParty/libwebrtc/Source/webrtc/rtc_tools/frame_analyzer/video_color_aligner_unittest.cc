@@ -10,11 +10,13 @@
 
 #include "rtc_tools/frame_analyzer/video_color_aligner.h"
 
+#include <stdint.h>
+
+#include "api/video/i420_buffer.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/video_file_reader.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
-#include "third_party/libyuv/include/libyuv/scale.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {

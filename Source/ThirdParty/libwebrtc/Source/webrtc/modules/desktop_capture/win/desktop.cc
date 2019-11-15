@@ -75,7 +75,7 @@ Desktop* Desktop::GetDesktop(const WCHAR* desktop_name) {
                                DESKTOP_ENUMERATE | DESKTOP_HOOKCONTROL |
                                DESKTOP_WRITEOBJECTS | DESKTOP_READOBJECTS |
                                DESKTOP_SWITCHDESKTOP | GENERIC_WRITE;
-  HDESK desktop = OpenDesktop(desktop_name, 0, FALSE, desired_access);
+  HDESK desktop = OpenDesktopW(desktop_name, 0, FALSE, desired_access);
   if (desktop == NULL) {
     RTC_LOG(LS_ERROR) << "Failed to open the desktop '" << desktop_name
                       << "': " << GetLastError();

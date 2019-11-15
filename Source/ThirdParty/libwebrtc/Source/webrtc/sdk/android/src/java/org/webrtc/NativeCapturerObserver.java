@@ -10,40 +10,44 @@
 
 package org.webrtc;
 
-import javax.annotation.Nullable;
 import org.webrtc.VideoFrame;
 
 /**
- * Implements VideoCapturer.CapturerObserver and feeds frames to
- * webrtc::jni::AndroidVideoTrackSource.
+ * Used from native api and implements a simple VideoCapturer.CapturerObserver that feeds frames to
+ * a webrtc::jni::AndroidVideoTrackSource.
  */
 class NativeCapturerObserver implements CapturerObserver {
-  // Pointer to webrtc::jni::AndroidVideoTrackSource.
-  private final long nativeSource;
+  private final NativeAndroidVideoTrackSource nativeAndroidVideoTrackSource;
 
   @CalledByNative
   public NativeCapturerObserver(long nativeSource) {
-    this.nativeSource = nativeSource;
+    this.nativeAndroidVideoTrackSource = new NativeAndroidVideoTrackSource(nativeSource);
   }
 
   @Override
   public void onCapturerStarted(boolean success) {
-    nativeCapturerStarted(nativeSource, success);
+    nativeAndroidVideoTrackSource.setState(success);
   }
 
   @Override
   public void onCapturerStopped() {
-    nativeCapturerStopped(nativeSource);
+    nativeAndroidVideoTrackSource.setState(/* isLive= */ false);
   }
 
   @Override
   public void onFrameCaptured(VideoFrame frame) {
-    nativeOnFrameCaptured(nativeSource, frame.getBuffer().getWidth(), frame.getBuffer().getHeight(),
-        frame.getRotation(), frame.getTimestampNs(), frame.getBuffer());
-  }
+    final VideoProcessor.FrameAdaptationParameters parameters =
+        nativeAndroidVideoTrackSource.adaptFrame(frame);
+    if (parameters == null) {
+      // Drop frame.
+      return;
+    }
 
-  private static native void nativeCapturerStarted(long source, boolean success);
-  private static native void nativeCapturerStopped(long source);
-  private static native void nativeOnFrameCaptured(
-      long source, int width, int height, int rotation, long timestampNs, VideoFrame.Buffer frame);
+    final VideoFrame.Buffer adaptedBuffer =
+        frame.getBuffer().cropAndScale(parameters.cropX, parameters.cropY, parameters.cropWidth,
+            parameters.cropHeight, parameters.scaleWidth, parameters.scaleHeight);
+    nativeAndroidVideoTrackSource.onFrameCaptured(
+        new VideoFrame(adaptedBuffer, frame.getRotation(), parameters.timestampNs));
+    adaptedBuffer.release();
+  }
 }

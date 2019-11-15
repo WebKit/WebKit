@@ -11,7 +11,7 @@
 #include <string>
 
 #include "api/test/video/function_video_encoder_factory.h"
-#include "media/engine/internalencoderfactory.h"
+#include "media/engine/internal_encoder_factory.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
@@ -169,7 +169,9 @@ TEST_F(QualityScalingTest, NoAdaptDownForHighQpWithResizeOff_Vp8) {
           kFrameDropping, kExpectAdapt);
 }
 
-TEST_F(QualityScalingTest, NoAdaptDownForHighQpWithFrameDroppingOff_Vp8) {
+// TODO(bugs.webrtc.org/10388): Fix and re-enable.
+TEST_F(QualityScalingTest,
+       DISABLED_NoAdaptDownForHighQpWithFrameDroppingOff_Vp8) {
   // VP8 QP thresholds, low:1, high:1 -> high QP.
   test::ScopedFieldTrials field_trials(kPrefix + "1,1,0,0,0,0" + kEnd);
 

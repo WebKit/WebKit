@@ -9,6 +9,7 @@
  */
 
 #include "rtc_base/thread_annotations.h"
+
 #include "test/gtest.h"
 
 namespace {

@@ -12,12 +12,16 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 
 #include "examples/turnserver/read_auth_file.h"
-#include "p2p/base/basicpacketsocketfactory.h"
-#include "p2p/base/turnserver.h"
-#include "rtc_base/asyncudpsocket.h"
-#include "rtc_base/stringencode.h"
+#include "p2p/base/basic_packet_socket_factory.h"
+#include "p2p/base/port_interface.h"
+#include "p2p/base/turn_server.h"
+#include "rtc_base/async_udp_socket.h"
+#include "rtc_base/ip_address.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
 
 namespace {

@@ -26,30 +26,23 @@ class VCMInterFrameDelay {
   // This method is called when the frame is complete.
   //
   // Input:
-  //          - timestamp         : RTP timestamp of a received frame
+  //          - timestamp         : RTP timestamp of a received frame.
   //          - *delay            : Pointer to memory where the result should be
-  //          stored
+  //                                stored.
   //          - currentWallClock  : The current time in milliseconds.
   //                                Should be -1 for normal operation, only used
   //                                for testing.
-  // Return value                 : true if OK, false when reordered timestamps
+  // Return value                 : true if OK, false when reordered timestamps.
   bool CalculateDelay(uint32_t timestamp,
                       int64_t* delay,
                       int64_t currentWallClock);
 
-  // Returns the current difference between incoming timestamps
-  //
-  // Return value                 : Wrap-around compensated difference between
-  // incoming
-  //                                timestamps.
-  uint32_t CurrentTimeStampDiffMs() const;
-
  private:
-  // Controls if the RTP timestamp counter has had a wrap around
-  // between the current and the previously received frame.
+  // Controls if the RTP timestamp counter has had a wrap around between the
+  // current and the previously received frame.
   //
   // Input:
-  //          - timestmap         : RTP timestamp of the current frame.
+  //          - timestamp         : RTP timestamp of the current frame.
   void CheckForWrapArounds(uint32_t timestamp);
 
   int64_t _zeroWallClock;  // Local timestamp of the first video packet received

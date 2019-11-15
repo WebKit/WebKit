@@ -11,9 +11,9 @@
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search_internal.h"
 
 #include <stdlib.h>
+
 #include <algorithm>
 #include <cmath>
-#include <complex>
 #include <cstddef>
 #include <numeric>
 
@@ -128,12 +128,12 @@ size_t PitchPseudoInterpolationInvLagAutoCorr(
 //     sn = mex({n * i for i in S} | {1})
 //     S = S | {Fraction(1, n), Fraction(sn, n)}
 //     print(sn, end=', ')
-constexpr std::array<size_t, 14> kSubHarmonicMultipliers = {
+constexpr std::array<int, 14> kSubHarmonicMultipliers = {
     {3, 2, 3, 2, 5, 2, 3, 2, 3, 2, 5, 2, 3, 2}};
 
 // Initial pitch period candidate thresholds for ComputePitchGainThreshold() for
 // a sample rate of 24 kHz. Computed as [5*k*k for k in range(16)].
-constexpr std::array<size_t, 14> kInitialPitchPeriodThresholds = {
+constexpr std::array<int, 14> kInitialPitchPeriodThresholds = {
     {20, 45, 80, 125, 180, 245, 320, 405, 500, 605, 720, 845, 980, 1125}};
 
 }  // namespace
@@ -147,31 +147,34 @@ void Decimate2x(rtc::ArrayView<const float, kBufSize24kHz> src,
   }
 }
 
-float ComputePitchGainThreshold(size_t candidate_pitch_period,
-                                size_t pitch_period_ratio,
-                                size_t initial_pitch_period,
+float ComputePitchGainThreshold(int candidate_pitch_period,
+                                int pitch_period_ratio,
+                                int initial_pitch_period,
                                 float initial_pitch_gain,
-                                size_t prev_pitch_period,
-                                size_t prev_pitch_gain) {
+                                int prev_pitch_period,
+                                float prev_pitch_gain) {
   // Map arguments to more compact aliases.
-  const size_t& t1 = candidate_pitch_period;
-  const size_t& k = pitch_period_ratio;
-  const size_t& t0 = initial_pitch_period;
+  const int& t1 = candidate_pitch_period;
+  const int& k = pitch_period_ratio;
+  const int& t0 = initial_pitch_period;
   const float& g0 = initial_pitch_gain;
-  const size_t& t_prev = prev_pitch_period;
-  const size_t& g_prev = prev_pitch_gain;
+  const int& t_prev = prev_pitch_period;
+  const float& g_prev = prev_pitch_gain;
 
   // Validate input.
+  RTC_DCHECK_GE(t1, 0);
   RTC_DCHECK_GE(k, 2);
+  RTC_DCHECK_GE(t0, 0);
+  RTC_DCHECK_GE(t_prev, 0);
 
   // Compute a term that lowers the threshold when |t1| is close to the last
   // estimated period |t_prev| - i.e., pitch tracking.
   float lower_threshold_term = 0;
-  if (abs(static_cast<int>(t1) - static_cast<int>(t_prev)) <= 1) {
+  if (abs(t1 - t_prev) <= 1) {
     // The candidate pitch period is within 1 sample from the previous one.
     // Make the candidate at |t1| very easy to be accepted.
     lower_threshold_term = g_prev;
-  } else if (abs(static_cast<int>(t1) - static_cast<int>(t_prev)) == 2 &&
+  } else if (abs(t1 - t_prev) == 2 &&
              t0 > kInitialPitchPeriodThresholds[k - 2]) {
     // The candidate pitch period is 2 samples far from the previous one and the
     // period |t0| (from which |t1| has been derived) is greater than a
@@ -182,9 +185,11 @@ float ComputePitchGainThreshold(size_t candidate_pitch_period,
   // reduce the chance of false positives caused by a bias towards high
   // frequencies (originating from short-term correlations).
   float threshold = std::max(0.3f, 0.7f * g0 - lower_threshold_term);
-  if (t1 < 3 * kMinPitch24kHz) {  // High frequency.
+  if (static_cast<size_t>(t1) < 3 * kMinPitch24kHz) {
+    // High frequency.
     threshold = std::max(0.4f, 0.85f * g0 - lower_threshold_term);
-  } else if (t1 < 2 * kMinPitch24kHz) {  // Even higher frequency.
+  } else if (static_cast<size_t>(t1) < 2 * kMinPitch24kHz) {
+    // Even higher frequency.
     threshold = std::max(0.5f, 0.9f * g0 - lower_threshold_term);
   }
   return threshold;
@@ -206,64 +211,6 @@ void ComputeSlidingFrameSquareEnergies(
     yy = std::max(0.f, yy);
     yy_values[i] = yy;
   }
-}
-
-void ComputePitchAutoCorrelation(
-    rtc::ArrayView<const float, kBufSize12kHz> pitch_buf,
-    size_t max_pitch_period,
-    rtc::ArrayView<float, kNumInvertedLags12kHz> auto_corr,
-    webrtc::RealFourier* fft) {
-  RTC_DCHECK_GT(max_pitch_period, auto_corr.size());
-  RTC_DCHECK_LT(max_pitch_period, pitch_buf.size());
-  RTC_DCHECK(fft);
-
-  constexpr size_t time_domain_fft_length = 1 << kAutoCorrelationFftOrder;
-  constexpr size_t freq_domain_fft_length = time_domain_fft_length / 2 + 1;
-
-  RTC_DCHECK_EQ(RealFourier::FftLength(fft->order()), time_domain_fft_length);
-  RTC_DCHECK_EQ(RealFourier::ComplexLength(fft->order()),
-                freq_domain_fft_length);
-
-  // Cross-correlation of y_i=pitch_buf[i:i+convolution_length] and
-  // x=pitch_buf[-convolution_length:] is equivalent to convolution of
-  // y_i and reversed(x). New notation: h=reversed(x), x=y.
-  std::array<float, time_domain_fft_length> h{};
-  std::array<float, time_domain_fft_length> x{};
-
-  const size_t convolution_length = kBufSize12kHz - max_pitch_period;
-  // Check that the FFT-length is big enough to avoid cyclic
-  // convolution errors.
-  RTC_DCHECK_GT(time_domain_fft_length,
-                kNumInvertedLags12kHz + convolution_length);
-
-  // h[0:convolution_length] is reversed pitch_buf[-convolution_length:].
-  std::reverse_copy(pitch_buf.end() - convolution_length, pitch_buf.end(),
-                    h.begin());
-
-  // x is pitch_buf[:kNumInvertedLags12kHz + convolution_length].
-  std::copy(pitch_buf.begin(),
-            pitch_buf.begin() + kNumInvertedLags12kHz + convolution_length,
-            x.begin());
-
-  // Shift to frequency domain.
-  std::array<std::complex<float>, freq_domain_fft_length> X{};
-  std::array<std::complex<float>, freq_domain_fft_length> H{};
-  fft->Forward(&x[0], &X[0]);
-  fft->Forward(&h[0], &H[0]);
-
-  // Convolve in frequency domain.
-  for (size_t i = 0; i < X.size(); ++i) {
-    X[i] *= H[i];
-  }
-
-  // Shift back to time domain.
-  std::array<float, time_domain_fft_length> x_conv_h;
-  fft->Inverse(&X[0], &x_conv_h[0]);
-
-  // Collect the result.
-  std::copy(x_conv_h.begin() + convolution_length - 1,
-            x_conv_h.begin() + convolution_length + kNumInvertedLags12kHz - 1,
-            auto_corr.begin());
 }
 
 std::array<size_t, 2> FindBestPitchPeriods(
@@ -350,16 +297,16 @@ size_t RefinePitchPeriod48kHz(
 
 PitchInfo CheckLowerPitchPeriodsAndComputePitchGain(
     rtc::ArrayView<const float, kBufSize24kHz> pitch_buf,
-    size_t initial_pitch_period_48kHz,
+    int initial_pitch_period_48kHz,
     PitchInfo prev_pitch_48kHz) {
   RTC_DCHECK_LE(kMinPitch48kHz, initial_pitch_period_48kHz);
   RTC_DCHECK_LE(initial_pitch_period_48kHz, kMaxPitch48kHz);
   // Stores information for a refined pitch candidate.
   struct RefinedPitchCandidate {
     RefinedPitchCandidate() {}
-    RefinedPitchCandidate(size_t period_24kHz, float gain, float xy, float yy)
+    RefinedPitchCandidate(int period_24kHz, float gain, float xy, float yy)
         : period_24kHz(period_24kHz), gain(gain), xy(xy), yy(yy) {}
-    size_t period_24kHz;
+    int period_24kHz;
     // Pitch strength information.
     float gain;
     // Additional pitch strength information used for the final estimation of
@@ -380,8 +327,8 @@ PitchInfo CheckLowerPitchPeriodsAndComputePitchGain(
   };
   // Initial pitch candidate gain.
   RefinedPitchCandidate best_pitch;
-  best_pitch.period_24kHz =
-      std::min(initial_pitch_period_48kHz / 2, kMaxPitch24kHz - 1);
+  best_pitch.period_24kHz = std::min(initial_pitch_period_48kHz / 2,
+                                     static_cast<int>(kMaxPitch24kHz - 1));
   best_pitch.xy = ComputeAutoCorrelationCoeff(
       pitch_buf, GetInvertedLag(best_pitch.period_24kHz), kMaxPitch24kHz);
   best_pitch.yy = yy_values[best_pitch.period_24kHz];
@@ -392,24 +339,27 @@ PitchInfo CheckLowerPitchPeriodsAndComputePitchGain(
   const float initial_pitch_gain = best_pitch.gain;
 
   // Given the initial pitch estimation, check lower periods (i.e., harmonics).
-  const auto alternative_period = [](size_t period, size_t k,
-                                     size_t n) -> size_t {
-    RTC_DCHECK_LT(0, k);
+  const auto alternative_period = [](int period, int k, int n) -> int {
+    RTC_DCHECK_GT(k, 0);
     return (2 * n * period + k) / (2 * k);  // Same as round(n*period/k).
   };
-  for (size_t k = 2; k < kSubHarmonicMultipliers.size() + 2; ++k) {
-    size_t candidate_pitch_period =
-        alternative_period(initial_pitch_period, k, 1);
-    if (candidate_pitch_period < kMinPitch24kHz)
+  for (int k = 2; k < static_cast<int>(kSubHarmonicMultipliers.size() + 2);
+       ++k) {
+    int candidate_pitch_period = alternative_period(initial_pitch_period, k, 1);
+    if (static_cast<size_t>(candidate_pitch_period) < kMinPitch24kHz) {
       break;
+    }
     // When looking at |candidate_pitch_period|, we also look at one of its
     // sub-harmonics. |kSubHarmonicMultipliers| is used to know where to look.
     // |k| == 2 is a special case since |candidate_pitch_secondary_period| might
     // be greater than the maximum pitch period.
-    size_t candidate_pitch_secondary_period = alternative_period(
+    int candidate_pitch_secondary_period = alternative_period(
         initial_pitch_period, k, kSubHarmonicMultipliers[k - 2]);
-    if (k == 2 && candidate_pitch_secondary_period > kMaxPitch24kHz)
+    RTC_DCHECK_GT(candidate_pitch_secondary_period, 0);
+    if (k == 2 &&
+        candidate_pitch_secondary_period > static_cast<int>(kMaxPitch24kHz)) {
       candidate_pitch_secondary_period = initial_pitch_period;
+    }
     RTC_DCHECK_NE(candidate_pitch_period, candidate_pitch_secondary_period)
         << "The lower pitch period and the additional sub-harmonic must not "
         << "coincide.";
@@ -442,7 +392,7 @@ PitchInfo CheckLowerPitchPeriodsAndComputePitchGain(
                                ? 1.f
                                : best_pitch.xy / (best_pitch.yy + 1.f);
   final_pitch_gain = std::min(best_pitch.gain, final_pitch_gain);
-  size_t final_pitch_period_48kHz = std::max(
+  int final_pitch_period_48kHz = std::max(
       kMinPitch48kHz,
       PitchPseudoInterpolationLagPitchBuf(best_pitch.period_24kHz, pitch_buf));
 

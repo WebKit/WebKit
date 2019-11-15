@@ -25,7 +25,7 @@ extern "C" {
 #include "modules/audio_processing/aec/aec_common.h"
 #include "modules/audio_processing/utility/block_mean_calculator.h"
 #include "modules/audio_processing/utility/ooura_fft.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -82,10 +82,10 @@ typedef struct PowerLevel {
   float minlevel;
 } PowerLevel;
 
-class BlockBuffer {
+class Aec2BlockBuffer {
  public:
-  BlockBuffer();
-  ~BlockBuffer();
+  Aec2BlockBuffer();
+  ~Aec2BlockBuffer();
   void ReInit();
   void Insert(const float block[PART_LEN]);
   void ExtractExtendedBlock(float extended_block[PART_LEN]);
@@ -183,7 +183,7 @@ struct AecCore {
 
   int xfBufBlockPos;
 
-  BlockBuffer farend_block_buffer_;
+  Aec2BlockBuffer farend_block_buffer_;
 
   int system_delay;  // Current system delay buffered in AEC.
 

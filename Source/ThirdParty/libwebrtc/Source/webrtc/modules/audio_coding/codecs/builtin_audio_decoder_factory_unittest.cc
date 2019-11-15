@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+
 #include <memory>
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "test/gtest.h"
 
 namespace webrtc {

@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/reverb_model.h"
 
 #include <stddef.h>
+
 #include <algorithm>
 #include <functional>
 

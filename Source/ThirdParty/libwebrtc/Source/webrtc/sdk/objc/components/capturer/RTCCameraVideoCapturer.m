@@ -287,7 +287,14 @@ const int64_t kNanosecondsPerSecond = 1000000000;
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
     didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
          fromConnection:(AVCaptureConnection *)connection {
-  RTCLogError(@"Dropped sample buffer.");
+#if TARGET_OS_IPHONE
+  CFStringRef droppedReason =
+      CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_DroppedFrameReason, nil);
+#else
+  // DroppedFrameReason unavailable on macOS.
+  CFStringRef droppedReason = nil;
+#endif
+  RTCLogError(@"Dropped sample buffer. Reason: %@", (__bridge NSString *)droppedReason);
 }
 
 #pragma mark - AVCaptureSession notifications

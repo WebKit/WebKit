@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/test/create_video_quality_test_fixture.h"
+
 #include <memory>
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "api/test/create_video_quality_test_fixture.h"
 #include "video/video_quality_test.h"
 
 namespace webrtc {
@@ -23,8 +24,7 @@ CreateVideoQualityTestFixture() {
   return absl::make_unique<VideoQualityTest>(nullptr);
 }
 
-std::unique_ptr<VideoQualityTestFixtureInterface>
-CreateVideoQualityTestFixture(
+std::unique_ptr<VideoQualityTestFixtureInterface> CreateVideoQualityTestFixture(
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory) {
   auto components = absl::make_unique<
       VideoQualityTestFixtureInterface::InjectionComponents>();
@@ -39,5 +39,3 @@ std::unique_ptr<VideoQualityTestFixtureInterface> CreateVideoQualityTestFixture(
 }
 
 }  // namespace webrtc
-
-

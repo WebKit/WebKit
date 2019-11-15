@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_GUNIT_H_
 #define RTC_BASE_GUNIT_H_
 
-#include "rtc_base/fakeclock.h"
+#include "rtc_base/fake_clock.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
@@ -153,11 +153,11 @@
   } else                                                 \
     GTEST_CONCAT_TOKEN_(gunit_label_, __LINE__) : ASSERT_EQ(v1, v2)
 
-// Usage: EXPECT_PRED_FORMAT2(AssertStartsWith, str, "prefix");
-testing::AssertionResult AssertStartsWith(const char* str_expr,
+// Usage: EXPECT_PRED_FORMAT2(AssertStartsWith, text, "prefix");
+testing::AssertionResult AssertStartsWith(const char* text_expr,
                                           const char* prefix_expr,
-                                          const std::string& str,
-                                          const std::string& prefix);
+                                          absl::string_view text,
+                                          absl::string_view prefix);
 
 // Usage: EXPECT_PRED_FORMAT2(AssertStringContains, str, "substring");
 testing::AssertionResult AssertStringContains(const char* str_expr,

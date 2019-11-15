@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_coding/acm2/call_statistics.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -24,7 +25,7 @@ TEST(CallStatisticsTest, InitializedZero) {
   EXPECT_EQ(0, stats.calls_to_silence_generator);
   EXPECT_EQ(0, stats.decoded_normal);
   EXPECT_EQ(0, stats.decoded_cng);
-  EXPECT_EQ(0, stats.decoded_plc);
+  EXPECT_EQ(0, stats.decoded_neteq_plc);
   EXPECT_EQ(0, stats.decoded_plc_cng);
   EXPECT_EQ(0, stats.decoded_muted_output);
 }
@@ -36,15 +37,17 @@ TEST(CallStatisticsTest, AllCalls) {
   call_stats.DecodedBySilenceGenerator();
   call_stats.DecodedByNetEq(AudioFrame::kNormalSpeech, false);
   call_stats.DecodedByNetEq(AudioFrame::kPLC, false);
+  call_stats.DecodedByNetEq(AudioFrame::kCodecPLC, false);
   call_stats.DecodedByNetEq(AudioFrame::kPLCCNG, true);  // Let this be muted.
   call_stats.DecodedByNetEq(AudioFrame::kCNG, false);
 
   stats = call_stats.GetDecodingStatistics();
-  EXPECT_EQ(4, stats.calls_to_neteq);
+  EXPECT_EQ(5, stats.calls_to_neteq);
   EXPECT_EQ(1, stats.calls_to_silence_generator);
   EXPECT_EQ(1, stats.decoded_normal);
   EXPECT_EQ(1, stats.decoded_cng);
-  EXPECT_EQ(1, stats.decoded_plc);
+  EXPECT_EQ(1, stats.decoded_neteq_plc);
+  EXPECT_EQ(1, stats.decoded_codec_plc);
   EXPECT_EQ(1, stats.decoded_plc_cng);
   EXPECT_EQ(1, stats.decoded_muted_output);
 }

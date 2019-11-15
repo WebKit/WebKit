@@ -18,7 +18,7 @@
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/utility/ooura_fft.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

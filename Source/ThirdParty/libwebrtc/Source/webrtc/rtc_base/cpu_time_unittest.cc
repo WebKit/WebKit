@@ -9,11 +9,9 @@
  */
 
 #include "rtc_base/cpu_time.h"
-#include <algorithm>
-#include <memory>
+
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/timeutils.h"
-#include "system_wrappers/include/cpu_info.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 
@@ -32,7 +30,7 @@ const int kProcessingTimeMillisecs = 300;
 const int kWorkingThreads = 2;
 
 // Consumes approximately kProcessingTimeMillisecs of CPU time in single thread.
-bool WorkingFunction(void* counter_pointer) {
+void WorkingFunction(void* counter_pointer) {
   int64_t* counter = reinterpret_cast<int64_t*>(counter_pointer);
   *counter = 0;
   int64_t stop_cpu_time =
@@ -41,7 +39,6 @@ bool WorkingFunction(void* counter_pointer) {
   while (rtc::GetThreadCpuTimeNanos() < stop_cpu_time) {
     (*counter)++;
   }
-  return false;
 }
 }  // namespace
 

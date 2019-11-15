@@ -53,7 +53,6 @@ int16_t WebRtcIlbcfix_DecoderAssign(IlbcDecoderInstance** iLBC_decinst,
 int16_t WebRtcIlbcfix_EncoderCreate(IlbcEncoderInstance **iLBC_encinst) {
   *iLBC_encinst=(IlbcEncoderInstance*)malloc(sizeof(IlbcEncoder));
   if (*iLBC_encinst!=NULL) {
-    WebRtcSpl_Init();
     return(0);
   } else {
     return(-1);
@@ -63,7 +62,6 @@ int16_t WebRtcIlbcfix_EncoderCreate(IlbcEncoderInstance **iLBC_encinst) {
 int16_t WebRtcIlbcfix_DecoderCreate(IlbcDecoderInstance **iLBC_decinst) {
   *iLBC_decinst=(IlbcDecoderInstance*)malloc(sizeof(IlbcDecoder));
   if (*iLBC_decinst!=NULL) {
-    WebRtcSpl_Init();
     return(0);
   } else {
     return(-1);

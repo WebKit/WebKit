@@ -34,7 +34,7 @@ class MultiStreamTester {
   } codec_settings[kNumStreams];
 
   explicit MultiStreamTester(
-      test::SingleThreadedTaskQueueForTesting* task_queue);
+      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue);
 
   virtual ~MultiStreamTester();
 
@@ -52,13 +52,13 @@ class MultiStreamTester {
   virtual void UpdateReceiveConfig(size_t stream_index,
                                    VideoReceiveStream::Config* receive_config);
   virtual test::DirectTransport* CreateSendTransport(
-      test::SingleThreadedTaskQueueForTesting* task_queue,
+      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
       Call* sender_call);
   virtual test::DirectTransport* CreateReceiveTransport(
-      test::SingleThreadedTaskQueueForTesting* task_queue,
+      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
       Call* receiver_call);
 
-  test::SingleThreadedTaskQueueForTesting* const task_queue_;
+  test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
 };
 }  // namespace webrtc
 #endif  // VIDEO_END_TO_END_TESTS_MULTI_STREAM_TESTER_H_

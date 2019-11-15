@@ -17,7 +17,6 @@
 
 #include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
-#include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "modules/audio_coding/test/TestStereo.h"
 

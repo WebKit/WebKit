@@ -18,7 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 // RTCVideoFrameBuffer is an ObjectiveC version of webrtc::VideoFrameBuffer.
 RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
 @protocol RTCVideoFrameBuffer <NSObject>
 
 @property(nonatomic, readonly) int width;

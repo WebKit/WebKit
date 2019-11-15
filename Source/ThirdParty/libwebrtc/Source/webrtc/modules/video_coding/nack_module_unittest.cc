@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/nack_module.h"
+
+#include <cstdint>
 #include <cstring>
 #include <memory>
 
-#include "modules/video_coding/include/video_coding_defines.h"
-#include "modules/video_coding/nack_module.h"
 #include "system_wrappers/include/clock.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -27,7 +28,8 @@ class TestNackModule : public ::testing::Test,
         nack_module_(clock_.get(), this, this),
         keyframes_requested_(0) {}
 
-  void SendNack(const std::vector<uint16_t>& sequence_numbers) override {
+  void SendNack(const std::vector<uint16_t>& sequence_numbers,
+                bool buffering_allowed) override {
     sent_nacks_.insert(sent_nacks_.end(), sequence_numbers.begin(),
                        sequence_numbers.end());
   }
@@ -302,7 +304,8 @@ class TestNackModuleWithFieldTrial : public ::testing::Test,
         nack_module_(clock_.get(), this, this),
         keyframes_requested_(0) {}
 
-  void SendNack(const std::vector<uint16_t>& sequence_numbers) override {
+  void SendNack(const std::vector<uint16_t>& sequence_numbers,
+                bool buffering_allowed) override {
     sent_nacks_.insert(sent_nacks_.end(), sequence_numbers.begin(),
                        sequence_numbers.end());
   }

@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <arm_neon.h>
-
 #include "modules/video_processing/util/denoiser_filter_neon.h"
+
+#include <arm_neon.h>
 
 namespace webrtc {
 

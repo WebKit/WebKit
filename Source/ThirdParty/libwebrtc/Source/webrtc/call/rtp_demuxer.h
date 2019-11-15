@@ -88,6 +88,10 @@ class RtpDemuxer {
   // different SSRCs.
   static constexpr int kMaxSsrcBindings = 1000;
 
+  // Returns a string that contains all the attributes of the given packet
+  // relevant for demuxing.
+  static std::string DescribePacket(const RtpPacketReceived& packet);
+
   RtpDemuxer();
   ~RtpDemuxer();
 

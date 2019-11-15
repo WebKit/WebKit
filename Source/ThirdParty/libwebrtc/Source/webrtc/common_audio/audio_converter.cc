@@ -20,8 +20,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
-using rtc::checked_cast;
-
 namespace webrtc {
 
 class CopyConverter : public AudioConverter {
@@ -31,7 +29,7 @@ class CopyConverter : public AudioConverter {
                 size_t dst_channels,
                 size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
-  ~CopyConverter() override{};
+  ~CopyConverter() override {}
 
   void Convert(const float* const* src,
                size_t src_size,
@@ -52,7 +50,7 @@ class UpmixConverter : public AudioConverter {
                  size_t dst_channels,
                  size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
-  ~UpmixConverter() override{};
+  ~UpmixConverter() override {}
 
   void Convert(const float* const* src,
                size_t src_size,
@@ -74,7 +72,7 @@ class DownmixConverter : public AudioConverter {
                    size_t dst_channels,
                    size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
-  ~DownmixConverter() override{};
+  ~DownmixConverter() override {}
 
   void Convert(const float* const* src,
                size_t src_size,
@@ -103,7 +101,7 @@ class ResampleConverter : public AudioConverter {
       resamplers_.push_back(std::unique_ptr<PushSincResampler>(
           new PushSincResampler(src_frames, dst_frames)));
   }
-  ~ResampleConverter() override{};
+  ~ResampleConverter() override {}
 
   void Convert(const float* const* src,
                size_t src_size,
@@ -132,7 +130,7 @@ class CompositionConverter : public AudioConverter {
           std::unique_ptr<ChannelBuffer<float>>(new ChannelBuffer<float>(
               (*it)->dst_frames(), (*it)->dst_channels())));
   }
-  ~CompositionConverter() override{};
+  ~CompositionConverter() override {}
 
   void Convert(const float* const* src,
                size_t src_size,

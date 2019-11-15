@@ -10,6 +10,7 @@
 
 package org.webrtc.audio;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -17,11 +18,11 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Build;
 import android.os.Process;
+import android.support.annotation.Nullable;
 import java.lang.System;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
 import org.webrtc.CalledByNative;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;
@@ -31,10 +32,6 @@ import org.webrtc.audio.JavaAudioDeviceModule.SamplesReadyCallback;
 
 class WebRtcAudioRecord {
   private static final String TAG = "WebRtcAudioRecordExternal";
-
-  // Default audio data format is PCM 16 bit per sample.
-  // Guaranteed to be supported by all devices.
-  private static final int BITS_PER_SAMPLE = 16;
 
   // Requested size of each recorded buffer provided to the client.
   private static final int CALLBACK_BUFFER_SIZE_MS = 10;
@@ -53,9 +50,14 @@ class WebRtcAudioRecord {
 
   public static final int DEFAULT_AUDIO_SOURCE = AudioSource.VOICE_COMMUNICATION;
 
+  // Default audio data format is PCM 16 bit per sample.
+  // Guaranteed to be supported by all devices.
+  public static final int DEFAULT_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+
   private final Context context;
   private final AudioManager audioManager;
   private final int audioSource;
+  private final int audioFormat;
 
   private long nativeAudioRecord;
 
@@ -145,13 +147,14 @@ class WebRtcAudioRecord {
 
   @CalledByNative
   WebRtcAudioRecord(Context context, AudioManager audioManager) {
-    this(context, audioManager, DEFAULT_AUDIO_SOURCE, null /* errorCallback */,
-        null /* audioSamplesReadyCallback */, WebRtcAudioEffects.isAcousticEchoCancelerSupported(),
+    this(context, audioManager, DEFAULT_AUDIO_SOURCE, DEFAULT_AUDIO_FORMAT,
+        null /* errorCallback */, null /* audioSamplesReadyCallback */,
+        WebRtcAudioEffects.isAcousticEchoCancelerSupported(),
         WebRtcAudioEffects.isNoiseSuppressorSupported());
   }
 
   public WebRtcAudioRecord(Context context, AudioManager audioManager, int audioSource,
-      @Nullable AudioRecordErrorCallback errorCallback,
+      int audioFormat, @Nullable AudioRecordErrorCallback errorCallback,
       @Nullable SamplesReadyCallback audioSamplesReadyCallback,
       boolean isAcousticEchoCancelerSupported, boolean isNoiseSuppressorSupported) {
     if (isAcousticEchoCancelerSupported && !WebRtcAudioEffects.isAcousticEchoCancelerSupported()) {
@@ -163,6 +166,7 @@ class WebRtcAudioRecord {
     this.context = context;
     this.audioManager = audioManager;
     this.audioSource = audioSource;
+    this.audioFormat = audioFormat;
     this.errorCallback = errorCallback;
     this.audioSamplesReadyCallback = audioSamplesReadyCallback;
     this.isAcousticEchoCancelerSupported = isAcousticEchoCancelerSupported;
@@ -203,7 +207,7 @@ class WebRtcAudioRecord {
       reportWebRtcAudioRecordInitError("InitRecording called twice without StopRecording.");
       return -1;
     }
-    final int bytesPerFrame = channels * (BITS_PER_SAMPLE / 8);
+    final int bytesPerFrame = channels * getBytesPerSample(audioFormat);
     final int framesPerBuffer = sampleRate / BUFFERS_PER_SECOND;
     byteBuffer = ByteBuffer.allocateDirect(bytesPerFrame * framesPerBuffer);
     if (!(byteBuffer.hasArray())) {
@@ -221,8 +225,7 @@ class WebRtcAudioRecord {
     // an AudioRecord object, in byte units.
     // Note that this size doesn't guarantee a smooth recording under load.
     final int channelConfig = channelCountToConfiguration(channels);
-    int minBufferSize =
-        AudioRecord.getMinBufferSize(sampleRate, channelConfig, AudioFormat.ENCODING_PCM_16BIT);
+    int minBufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     if (minBufferSize == AudioRecord.ERROR || minBufferSize == AudioRecord.ERROR_BAD_VALUE) {
       reportWebRtcAudioRecordInitError("AudioRecord.getMinBufferSize failed: " + minBufferSize);
       return -1;
@@ -235,15 +238,22 @@ class WebRtcAudioRecord {
     int bufferSizeInBytes = Math.max(BUFFER_SIZE_FACTOR * minBufferSize, byteBuffer.capacity());
     Logging.d(TAG, "bufferSizeInBytes: " + bufferSizeInBytes);
     try {
-      audioRecord = new AudioRecord(audioSource, sampleRate, channelConfig,
-          AudioFormat.ENCODING_PCM_16BIT, bufferSizeInBytes);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // Use the AudioRecord.Builder class on Android M (23) and above.
+        audioRecord = createAudioRecordOnMOrHigher(
+            audioSource, sampleRate, channelConfig, audioFormat, bufferSizeInBytes);
+      } else {
+        // Use the old AudioRecord constructor for API levels below 23.
+        audioRecord = createAudioRecordOnLowerThanM(
+            audioSource, sampleRate, channelConfig, audioFormat, bufferSizeInBytes);
+      }
     } catch (IllegalArgumentException e) {
-      reportWebRtcAudioRecordInitError("AudioRecord ctor error: " + e.getMessage());
+      reportWebRtcAudioRecordInitError("AudioRecord build error: " + e.getMessage());
       releaseAudioResources();
       return -1;
     }
     if (audioRecord == null || audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
-      reportWebRtcAudioRecordInitError("Failed to create a new AudioRecord instance");
+      reportWebRtcAudioRecordInitError("Creation or initialization of audio recorder failed.");
       releaseAudioResources();
       return -1;
     }
@@ -267,7 +277,7 @@ class WebRtcAudioRecord {
     }
     if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
       reportWebRtcAudioRecordStartError(AudioRecordStartErrorCode.AUDIO_RECORD_START_STATE_MISMATCH,
-          "AudioRecord.startRecording failed - incorrect state :"
+          "AudioRecord.startRecording failed - incorrect state: "
               + audioRecord.getRecordingState());
       return false;
     }
@@ -289,6 +299,27 @@ class WebRtcAudioRecord {
     effects.release();
     releaseAudioResources();
     return true;
+  }
+
+  @TargetApi(Build.VERSION_CODES.M)
+  private static AudioRecord createAudioRecordOnMOrHigher(
+      int audioSource, int sampleRate, int channelConfig, int audioFormat, int bufferSizeInBytes) {
+    Logging.d(TAG, "createAudioRecordOnMOrHigher");
+    return new AudioRecord.Builder()
+        .setAudioSource(audioSource)
+        .setAudioFormat(new AudioFormat.Builder()
+                            .setEncoding(audioFormat)
+                            .setSampleRate(sampleRate)
+                            .setChannelMask(channelConfig)
+                            .build())
+        .setBufferSizeInBytes(bufferSizeInBytes)
+        .build();
+  }
+
+  private static AudioRecord createAudioRecordOnLowerThanM(
+      int audioSource, int sampleRate, int channelConfig, int audioFormat, int bufferSizeInBytes) {
+    Logging.d(TAG, "createAudioRecordOnLowerThanM");
+    return new AudioRecord(audioSource, sampleRate, channelConfig, audioFormat, bufferSizeInBytes);
   }
 
   private void logMainParameters() {
@@ -361,6 +392,25 @@ class WebRtcAudioRecord {
     WebRtcAudioUtils.logAudioState(TAG, context, audioManager);
     if (errorCallback != null) {
       errorCallback.onWebRtcAudioRecordError(errorMessage);
+    }
+  }
+
+  // Reference from Android code, AudioFormat.getBytesPerSample. BitPerSample / 8
+  // Default audio data format is PCM 16 bits per sample.
+  // Guaranteed to be supported by all devices
+  private static int getBytesPerSample(int audioFormat) {
+    switch (audioFormat) {
+      case AudioFormat.ENCODING_PCM_8BIT:
+        return 1;
+      case AudioFormat.ENCODING_PCM_16BIT:
+      case AudioFormat.ENCODING_IEC61937:
+      case AudioFormat.ENCODING_DEFAULT:
+        return 2;
+      case AudioFormat.ENCODING_PCM_FLOAT:
+        return 4;
+      case AudioFormat.ENCODING_INVALID:
+      default:
+        throw new IllegalArgumentException("Bad audio format " + audioFormat);
     }
   }
 }

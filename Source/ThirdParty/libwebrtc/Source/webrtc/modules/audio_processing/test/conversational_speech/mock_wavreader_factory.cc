@@ -18,8 +18,8 @@ namespace webrtc {
 namespace test {
 namespace conversational_speech {
 
-using testing::_;
-using testing::Invoke;
+using ::testing::_;
+using ::testing::Invoke;
 
 MockWavReaderFactory::MockWavReaderFactory(
     const Params& default_params,

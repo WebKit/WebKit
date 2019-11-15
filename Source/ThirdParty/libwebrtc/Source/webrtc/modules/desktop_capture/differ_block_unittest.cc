@@ -9,7 +9,10 @@
  */
 
 #include "modules/desktop_capture/differ_block.h"
-#include "test/gmock.h"
+
+#include <string.h>
+
+#include "test/gtest.h"
 
 namespace webrtc {
 

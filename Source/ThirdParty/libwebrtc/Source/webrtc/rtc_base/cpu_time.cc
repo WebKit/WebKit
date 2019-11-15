@@ -9,8 +9,9 @@
  */
 
 #include "rtc_base/cpu_time.h"
+
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 #if defined(WEBRTC_LINUX)
 #include <time.h>

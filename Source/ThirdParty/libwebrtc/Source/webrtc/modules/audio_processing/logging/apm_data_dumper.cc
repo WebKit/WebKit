@@ -54,7 +54,7 @@ std::string FormFileName(const char* output_dir,
 ApmDataDumper::ApmDataDumper(int instance_index)
     : instance_index_(instance_index) {}
 #else
-ApmDataDumper::ApmDataDumper(int instance_index){};
+ApmDataDumper::ApmDataDumper(int instance_index) {}
 #endif
 
 ApmDataDumper::~ApmDataDumper() = default;

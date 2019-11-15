@@ -10,9 +10,11 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 
+#include <iomanip>
 #include <iostream>
 
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace test {
@@ -50,20 +52,22 @@ void DefaultNetEqTestErrorCallback::OnGetAudioError() {
 }
 
 NetEqTest::NetEqTest(const NetEq::Config& config,
+                     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
                      const DecoderMap& codecs,
-                     const ExtDecoderMap& ext_codecs,
+                     std::unique_ptr<std::ofstream> text_log,
                      std::unique_ptr<NetEqInput> input,
                      std::unique_ptr<AudioSink> output,
                      Callbacks callbacks)
-    : neteq_(NetEq::Create(config, CreateBuiltinAudioDecoderFactory())),
+    : clock_(0),
+      neteq_(NetEq::Create(config, &clock_, decoder_factory)),
       input_(std::move(input)),
       output_(std::move(output)),
       callbacks_(callbacks),
-      sample_rate_hz_(config.sample_rate_hz) {
+      sample_rate_hz_(config.sample_rate_hz),
+      text_log_(std::move(text_log)) {
   RTC_CHECK(!config.enable_muted_state)
       << "The code does not handle enable_muted_state";
   RegisterDecoders(codecs);
-  RegisterExternalDecoders(ext_codecs);
 }
 
 NetEqTest::~NetEqTest() = default;
@@ -90,6 +94,7 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
   while (!input_->ended()) {
     // Advance time to next event.
     RTC_DCHECK(input_->NextEventTime());
+    clock_.AdvanceTimeMilliseconds(*input_->NextEventTime() - time_now_ms);
     time_now_ms = *input_->NextEventTime();
     // Check if it is time to insert packet.
     if (input_->NextPacketTime() && time_now_ms >= *input_->NextPacketTime()) {
@@ -117,7 +122,36 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
         current_state_.packet_iat_ms.push_back(time_now_ms -
                                                *last_packet_time_ms_);
       }
+      if (text_log_) {
+        const auto ops_state = neteq_->GetOperationsAndState();
+        const auto delta_wallclock =
+            last_packet_time_ms_ ? (time_now_ms - *last_packet_time_ms_) : -1;
+        const auto delta_timestamp =
+            last_packet_timestamp_
+                ? (static_cast<int64_t>(packet_data->header.timestamp) -
+                   *last_packet_timestamp_) *
+                      1000 / sample_rate_hz_
+                : -1;
+        const auto packet_size_bytes =
+            packet_data->payload.size() == 12
+                ? ByteReader<uint32_t>::ReadLittleEndian(
+                      &packet_data->payload[8])
+                : -1;
+        *text_log_ << "Packet   - wallclock: " << std::setw(5) << time_now_ms
+                   << ", delta wc: " << std::setw(4) << delta_wallclock
+                   << ", seq_no: " << packet_data->header.sequenceNumber
+                   << ", timestamp: " << std::setw(10)
+                   << packet_data->header.timestamp
+                   << ", delta ts: " << std::setw(4) << delta_timestamp
+                   << ", size: " << std::setw(5) << packet_size_bytes
+                   << ", frame size: " << std::setw(3)
+                   << ops_state.current_frame_size_ms
+                   << ", buffer size: " << std::setw(4)
+                   << ops_state.current_buffer_size_ms << std::endl;
+      }
       last_packet_time_ms_ = absl::make_optional<int>(time_now_ms);
+      last_packet_timestamp_ =
+          absl::make_optional<uint32_t>(packet_data->header.timestamp);
     }
 
     // Check if it is time to get output audio.
@@ -186,7 +220,45 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
         // Consider the whole frame to be the result of normal playout.
         result.action_times_ms[Action::kNormal] = 10;
       }
-      result.is_simulation_finished = input_->ended();
+      auto lifetime_stats = LifetimeStats();
+      if (text_log_) {
+        const bool plc =
+            (out_frame.speech_type_ == AudioFrame::SpeechType::kPLC) ||
+            (out_frame.speech_type_ == AudioFrame::SpeechType::kPLCCNG);
+        const bool cng = out_frame.speech_type_ == AudioFrame::SpeechType::kCNG;
+        const bool voice_concealed =
+            (lifetime_stats.concealed_samples -
+             lifetime_stats.silent_concealed_samples) >
+            (prev_lifetime_stats_.concealed_samples -
+             prev_lifetime_stats_.silent_concealed_samples);
+        *text_log_ << "GetAudio - wallclock: " << std::setw(5) << time_now_ms
+                   << ", delta wc: " << std::setw(4)
+                   << (input_->NextEventTime().value_or(time_now_ms) -
+                       start_time_ms)
+                   << ", CNG: " << cng << ", PLC: " << plc
+                   << ", voice concealed: " << voice_concealed
+                   << ", buffer size: " << std::setw(4)
+                   << current_state_.current_delay_ms << std::endl;
+        if (operations_state.discarded_primary_packets >
+            prev_ops_state_.discarded_primary_packets) {
+          *text_log_ << "Discarded "
+                     << (operations_state.discarded_primary_packets -
+                         prev_ops_state_.discarded_primary_packets)
+                     << " primary packets." << std::endl;
+        }
+        if (operations_state.packet_buffer_flushes >
+            prev_ops_state_.packet_buffer_flushes) {
+          *text_log_ << "Flushed packet buffer "
+                     << (operations_state.packet_buffer_flushes -
+                         prev_ops_state_.packet_buffer_flushes)
+                     << " times." << std::endl;
+        }
+      }
+      prev_lifetime_stats_ = lifetime_stats;
+      const bool no_more_packets_to_decode =
+          !input_->NextPacketTime() && !operations_state.next_packet_available;
+      result.is_simulation_finished =
+          no_more_packets_to_decode || input_->ended();
       prev_ops_state_ = operations_state;
       return result;
     }
@@ -217,53 +289,40 @@ NetEqLifetimeStatistics NetEqTest::LifetimeStats() const {
 
 NetEqTest::DecoderMap NetEqTest::StandardDecoderMap() {
   DecoderMap codecs = {
-    {0, std::make_pair(NetEqDecoder::kDecoderPCMu, "pcmu")},
-    {8, std::make_pair(NetEqDecoder::kDecoderPCMa, "pcma")},
+    {0, SdpAudioFormat("pcmu", 8000, 1)},
+    {8, SdpAudioFormat("pcma", 8000, 1)},
 #ifdef WEBRTC_CODEC_ILBC
-    {102, std::make_pair(NetEqDecoder::kDecoderILBC, "ilbc")},
+    {102, SdpAudioFormat("ilbc", 8000, 1)},
 #endif
-    {103, std::make_pair(NetEqDecoder::kDecoderISAC, "isac")},
+    {103, SdpAudioFormat("isac", 16000, 1)},
 #if !defined(WEBRTC_ANDROID)
-    {104, std::make_pair(NetEqDecoder::kDecoderISACswb, "isac-swb")},
+    {104, SdpAudioFormat("isac", 32000, 1)},
 #endif
 #ifdef WEBRTC_CODEC_OPUS
-    {111, std::make_pair(NetEqDecoder::kDecoderOpus, "opus")},
+    {111, SdpAudioFormat("opus", 48000, 2)},
 #endif
-    {93, std::make_pair(NetEqDecoder::kDecoderPCM16B, "pcm16-nb")},
-    {94, std::make_pair(NetEqDecoder::kDecoderPCM16Bwb, "pcm16-wb")},
-    {95, std::make_pair(NetEqDecoder::kDecoderPCM16Bswb32kHz, "pcm16-swb32")},
-    {96, std::make_pair(NetEqDecoder::kDecoderPCM16Bswb48kHz, "pcm16-swb48")},
-    {9, std::make_pair(NetEqDecoder::kDecoderG722, "g722")},
-    {106, std::make_pair(NetEqDecoder::kDecoderAVT, "avt")},
-    {114, std::make_pair(NetEqDecoder::kDecoderAVT16kHz, "avt-16")},
-    {115, std::make_pair(NetEqDecoder::kDecoderAVT32kHz, "avt-32")},
-    {116, std::make_pair(NetEqDecoder::kDecoderAVT48kHz, "avt-48")},
-    {117, std::make_pair(NetEqDecoder::kDecoderRED, "red")},
-    {13, std::make_pair(NetEqDecoder::kDecoderCNGnb, "cng-nb")},
-    {98, std::make_pair(NetEqDecoder::kDecoderCNGwb, "cng-wb")},
-    {99, std::make_pair(NetEqDecoder::kDecoderCNGswb32kHz, "cng-swb32")},
-    {100, std::make_pair(NetEqDecoder::kDecoderCNGswb48kHz, "cng-swb48")}
+    {93, SdpAudioFormat("l16", 8000, 1)},
+    {94, SdpAudioFormat("l16", 16000, 1)},
+    {95, SdpAudioFormat("l16", 32000, 1)},
+    {96, SdpAudioFormat("l16", 48000, 1)},
+    {9, SdpAudioFormat("g722", 8000, 1)},
+    {106, SdpAudioFormat("telephone-event", 8000, 1)},
+    {114, SdpAudioFormat("telephone-event", 16000, 1)},
+    {115, SdpAudioFormat("telephone-event", 32000, 1)},
+    {116, SdpAudioFormat("telephone-event", 48000, 1)},
+    {117, SdpAudioFormat("red", 8000, 1)},
+    {13, SdpAudioFormat("cn", 8000, 1)},
+    {98, SdpAudioFormat("cn", 16000, 1)},
+    {99, SdpAudioFormat("cn", 32000, 1)},
+    {100, SdpAudioFormat("cn", 48000, 1)}
   };
   return codecs;
 }
 
 void NetEqTest::RegisterDecoders(const DecoderMap& codecs) {
   for (const auto& c : codecs) {
-    RTC_CHECK_EQ(
-        neteq_->RegisterPayloadType(c.second.first, c.second.second, c.first),
-        NetEq::kOK)
-        << "Cannot register " << c.second.second << " to payload type "
-        << c.first;
-  }
-}
-
-void NetEqTest::RegisterExternalDecoders(const ExtDecoderMap& codecs) {
-  for (const auto& c : codecs) {
-    RTC_CHECK_EQ(
-        neteq_->RegisterExternalDecoder(c.second.decoder, c.second.codec,
-                                        c.second.codec_name, c.first),
-        NetEq::kOK)
-        << "Cannot register " << c.second.codec_name << " to payload type "
+    RTC_CHECK(neteq_->RegisterPayloadType(c.first, c.second))
+        << "Cannot register " << c.second.name << " to payload type "
         << c.first;
   }
 }

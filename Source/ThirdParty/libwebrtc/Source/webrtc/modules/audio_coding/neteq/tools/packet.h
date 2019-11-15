@@ -15,12 +15,14 @@
 #include <memory>
 
 #include "api/rtp_headers.h"  // NOLINT(build/include)
-#include "common_types.h"     // NOLINT(build/include)
-#include "rtc_base/constructormagic.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
+namespace RtpUtility {
 class RtpHeaderParser;
+}  // namespace RtpUtility
 
 namespace test {
 
@@ -33,22 +35,17 @@ class Packet {
   // when the Packet object is deleted. The |time_ms| is an extra time
   // associated with this packet, typically used to denote arrival time.
   // The first bytes in |packet_memory| will be parsed using |parser|.
-  Packet(uint8_t* packet_memory,
-         size_t allocated_bytes,
-         double time_ms,
-         const RtpHeaderParser& parser);
-
-  // Same as above, but with the extra argument |virtual_packet_length_bytes|.
-  // This is typically used when reading RTP dump files that only contain the
-  // RTP headers, and no payload (a.k.a RTP dummy files or RTP light). The
-  // |virtual_packet_length_bytes| tells what size the packet had on wire,
-  // including the now discarded payload, whereas |allocated_bytes| is the
-  // length of the remaining payload (typically only the RTP header).
+  // |virtual_packet_length_bytes| is typically used when reading RTP dump files
+  // that only contain the RTP headers, and no payload (a.k.a RTP dummy files or
+  // RTP light). The |virtual_packet_length_bytes| tells what size the packet
+  // had on wire, including the now discarded payload, whereas |allocated_bytes|
+  // is the length of the remaining payload (typically only the RTP header).
   Packet(uint8_t* packet_memory,
          size_t allocated_bytes,
          size_t virtual_packet_length_bytes,
          double time_ms,
-         const RtpHeaderParser& parser);
+         const RtpUtility::RtpHeaderParser& parser,
+         const RtpHeaderExtensionMap* extension_map = nullptr);
 
   // Same as above, but creates the packet from an already parsed RTPHeader.
   // This is typically used when reading RTP dump files that only contain the
@@ -99,25 +96,25 @@ class Packet {
 
   const RTPHeader& header() const { return header_; }
 
-  void set_time_ms(double time) { time_ms_ = time; }
   double time_ms() const { return time_ms_; }
   bool valid_header() const { return valid_header_; }
 
  private:
-  bool ParseHeader(const RtpHeaderParser& parser);
+  bool ParseHeader(const webrtc::RtpUtility::RtpHeaderParser& parser,
+                   const RtpHeaderExtensionMap* extension_map);
   void CopyToHeader(RTPHeader* destination) const;
 
   RTPHeader header_;
-  std::unique_ptr<uint8_t[]> payload_memory_;
-  const uint8_t* payload_;            // First byte after header.
-  const size_t packet_length_bytes_;  // Total length of packet.
-  size_t payload_length_bytes_;  // Length of the payload, after RTP header.
-                                 // Zero for dummy RTP packets.
+  const std::unique_ptr<uint8_t[]> payload_memory_;
+  const uint8_t* payload_ = nullptr;      // First byte after header.
+  const size_t packet_length_bytes_ = 0;  // Total length of packet.
+  size_t payload_length_bytes_ = 0;  // Length of the payload, after RTP header.
+                                     // Zero for dummy RTP packets.
   // Virtual lengths are used when parsing RTP header files (dummy RTP files).
   const size_t virtual_packet_length_bytes_;
-  size_t virtual_payload_length_bytes_;
-  double time_ms_;     // Used to denote a packet's arrival time.
-  bool valid_header_;  // Set by the RtpHeaderParser.
+  size_t virtual_payload_length_bytes_ = 0;
+  const double time_ms_;     // Used to denote a packet's arrival time.
+  const bool valid_header_;  // Set by the RtpHeaderParser.
 
   RTC_DISALLOW_COPY_AND_ASSIGN(Packet);
 };

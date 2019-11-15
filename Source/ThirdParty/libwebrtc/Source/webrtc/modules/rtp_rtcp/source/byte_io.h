@@ -35,6 +35,7 @@
 // it easy for the compiler to completely inline the reading/writing.
 
 #include <stdint.h>
+
 #include <limits>
 
 namespace webrtc {

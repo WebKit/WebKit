@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/include/flexfec_receiver.h"
+
 #include <algorithm>
 #include <memory>
 
-#include "modules/rtp_rtcp/include/flexfec_receiver.h"
 #include "modules/rtp_rtcp/mocks/mock_recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
@@ -26,7 +27,6 @@ namespace {
 using ::testing::_;
 using ::testing::Args;
 using ::testing::ElementsAreArray;
-using ::testing::Return;
 
 using test::fec::FlexfecPacketGenerator;
 using Packet = ForwardErrorCorrection::Packet;
@@ -49,8 +49,10 @@ class FlexfecReceiverForTest : public FlexfecReceiver {
   FlexfecReceiverForTest(uint32_t ssrc,
                          uint32_t protected_media_ssrc,
                          RecoveredPacketReceiver* recovered_packet_receiver)
-      : FlexfecReceiver(ssrc, protected_media_ssrc, recovered_packet_receiver) {
-  }
+      : FlexfecReceiver(Clock::GetRealTimeClock(),
+                        ssrc,
+                        protected_media_ssrc,
+                        recovered_packet_receiver) {}
   // Expose methods for tests.
   using FlexfecReceiver::AddReceivedPacket;
   using FlexfecReceiver::ProcessReceivedPacket;
@@ -77,7 +79,7 @@ class FlexfecReceiverTest : public ::testing::Test {
   std::unique_ptr<ForwardErrorCorrection> erasure_code_;
 
   FlexfecPacketGenerator packet_generator_;
-  testing::StrictMock<MockRecoveredPacketReceiver> recovered_packet_receiver_;
+  ::testing::StrictMock<MockRecoveredPacketReceiver> recovered_packet_receiver_;
 };
 
 void FlexfecReceiverTest::PacketizeFrame(size_t num_media_packets,
@@ -466,7 +468,7 @@ TEST_F(FlexfecReceiverTest, SurvivesOldRecoveredPacketBeingReinserted) {
   } loopback_recovered_packet_receiver;
 
   // Feed recovered packets back into |receiver|.
-  FlexfecReceiver receiver(kFlexfecSsrc, kMediaSsrc,
+  FlexfecReceiver receiver(Clock::GetRealTimeClock(), kFlexfecSsrc, kMediaSsrc,
                            &loopback_recovered_packet_receiver);
   loopback_recovered_packet_receiver.SetReceiver(&receiver);
 
@@ -590,7 +592,7 @@ TEST_F(FlexfecReceiverTest, RecoveryCallbackDoesNotLoopInfinitely) {
   } loopback_recovered_packet_receiver;
 
   // Feed recovered packets back into |receiver|.
-  FlexfecReceiver receiver(kFlexfecSsrc, kMediaSsrc,
+  FlexfecReceiver receiver(Clock::GetRealTimeClock(), kFlexfecSsrc, kMediaSsrc,
                            &loopback_recovered_packet_receiver);
   loopback_recovered_packet_receiver.SetReceiver(&receiver);
 

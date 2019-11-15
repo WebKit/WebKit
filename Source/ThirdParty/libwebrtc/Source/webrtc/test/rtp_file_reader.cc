@@ -18,7 +18,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/arch.h"
@@ -63,30 +63,25 @@ bool ReadUint16(uint16_t* out, FILE* file) {
 
 class RtpFileReaderImpl : public RtpFileReader {
  public:
-  virtual bool Init(const std::string& filename,
-                    const std::set<uint32_t>& ssrc_filter) = 0;
+  virtual bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) = 0;
 };
 
 class InterleavedRtpFileReader : public RtpFileReaderImpl {
  public:
-  virtual ~InterleavedRtpFileReader() {
-    if (file_ != NULL) {
+  ~InterleavedRtpFileReader() override {
+    if (file_ != nullptr) {
       fclose(file_);
-      file_ = NULL;
+      file_ = nullptr;
     }
   }
 
-  virtual bool Init(const std::string& filename,
-                    const std::set<uint32_t>& ssrc_filter) {
-    file_ = fopen(filename.c_str(), "rb");
-    if (file_ == NULL) {
-      printf("ERROR: Can't open file: %s\n", filename.c_str());
-      return false;
-    }
+  bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) override {
+    file_ = file;
     return true;
   }
-  virtual bool NextPacket(RtpPacket* packet) {
-    assert(file_ != NULL);
+
+  bool NextPacket(RtpPacket* packet) override {
+    assert(file_ != nullptr);
     packet->length = RtpPacket::kMaxPacketBufferSize;
     uint32_t len = 0;
     TRY(ReadUint32(&len, file_));
@@ -107,7 +102,7 @@ class InterleavedRtpFileReader : public RtpFileReaderImpl {
   }
 
  private:
-  FILE* file_ = NULL;
+  FILE* file_ = nullptr;
   int64_t time_ms_ = 0;
 };
 
@@ -115,24 +110,19 @@ class InterleavedRtpFileReader : public RtpFileReaderImpl {
 // http://www.cs.columbia.edu/irt/software/rtptools/
 class RtpDumpReader : public RtpFileReaderImpl {
  public:
-  RtpDumpReader() : file_(NULL) {}
-  virtual ~RtpDumpReader() {
-    if (file_ != NULL) {
+  RtpDumpReader() : file_(nullptr) {}
+  ~RtpDumpReader() override {
+    if (file_ != nullptr) {
       fclose(file_);
-      file_ = NULL;
+      file_ = nullptr;
     }
   }
 
-  bool Init(const std::string& filename,
-            const std::set<uint32_t>& ssrc_filter) override {
-    file_ = fopen(filename.c_str(), "rb");
-    if (file_ == NULL) {
-      printf("ERROR: Can't open file: %s\n", filename.c_str());
-      return false;
-    }
+  bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) override {
+    file_ = file;
 
     char firstline[kFirstLineLength + 1] = {0};
-    if (fgets(firstline, kFirstLineLength, file_) == NULL) {
+    if (fgets(firstline, kFirstLineLength, file_) == nullptr) {
       RTC_LOG(LS_INFO) << "Can't read from file";
       return false;
     }
@@ -179,10 +169,11 @@ class RtpDumpReader : public RtpFileReaderImpl {
     // Use 'len' here because a 'plen' of 0 specifies rtcp.
     len -= kPacketHeaderSize;
     if (packet->length < len) {
-      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
-              << packet->length
-              << " bytes allocated. Consider increasing the buffer "
-                 "size";
+      RTC_LOG(LS_ERROR) << "Packet is too large to fit: " << len << " bytes vs "
+                        << packet->length
+                        << " bytes allocated. Consider increasing the buffer "
+                           "size";
+      return false;
     }
     if (fread(rtp_data, 1, len, file_) != len) {
       return false;
@@ -242,7 +233,7 @@ const uint32_t kPcapBOMNoSwapOrder = 0xa1b2c3d4UL;
 class PcapReader : public RtpFileReaderImpl {
  public:
   PcapReader()
-      : file_(NULL),
+      : file_(nullptr),
         swap_pcap_byte_order_(false),
 #ifdef WEBRTC_ARCH_BIG_ENDIAN
         swap_network_byte_order_(false),
@@ -255,25 +246,19 @@ class PcapReader : public RtpFileReaderImpl {
         next_packet_it_() {
   }
 
-  virtual ~PcapReader() {
-    if (file_ != NULL) {
+  ~PcapReader() override {
+    if (file_ != nullptr) {
       fclose(file_);
-      file_ = NULL;
+      file_ = nullptr;
     }
   }
 
-  bool Init(const std::string& filename,
-            const std::set<uint32_t>& ssrc_filter) override {
-    return Initialize(filename, ssrc_filter) == kResultSuccess;
+  bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) override {
+    return Initialize(file, ssrc_filter) == kResultSuccess;
   }
 
-  int Initialize(const std::string& filename,
-                 const std::set<uint32_t>& ssrc_filter) {
-    file_ = fopen(filename.c_str(), "rb");
-    if (file_ == NULL) {
-      printf("ERROR: Can't open file: %s\n", filename.c_str());
-      return kResultFail;
-    }
+  int Initialize(FILE* file, const std::set<uint32_t>& ssrc_filter) {
+    file_ = file;
 
     if (ReadGlobalHeader() < 0) {
       return kResultFail;
@@ -302,14 +287,14 @@ class PcapReader : public RtpFileReaderImpl {
     }
 
     printf("Total packets in file: %d\n", total_packet_count);
-    printf("Total RTP/RTCP packets: %" PRIuS "\n", packets_.size());
+    printf("Total RTP/RTCP packets: %" RTC_PRIuS "\n", packets_.size());
 
     for (SsrcMapIterator mit = packets_by_ssrc_.begin();
          mit != packets_by_ssrc_.end(); ++mit) {
       uint32_t ssrc = mit->first;
       const std::vector<uint32_t>& packet_indices = mit->second;
       uint8_t pt = packets_[packet_indices[0]].rtp_header.payloadType;
-      printf("SSRC: %08x, %" PRIuS " packets, pt=%d\n", ssrc,
+      printf("SSRC: %08x, %" RTC_PRIuS " packets, pt=%d\n", ssrc,
              packet_indices.size(), pt);
     }
 
@@ -637,24 +622,59 @@ class PcapReader : public RtpFileReaderImpl {
   RTC_DISALLOW_COPY_AND_ASSIGN(PcapReader);
 };
 
-RtpFileReader* RtpFileReader::Create(FileFormat format,
-                                     const std::string& filename,
-                                     const std::set<uint32_t>& ssrc_filter) {
-  RtpFileReaderImpl* reader = NULL;
+RtpFileReaderImpl* CreateReaderForFormat(RtpFileReader::FileFormat format) {
+  RtpFileReaderImpl* reader = nullptr;
   switch (format) {
-    case kPcap:
+    case RtpFileReader::kPcap:
       reader = new PcapReader();
       break;
-    case kRtpDump:
+    case RtpFileReader::kRtpDump:
       reader = new RtpDumpReader();
       break;
-    case kLengthPacketInterleaved:
+    case RtpFileReader::kLengthPacketInterleaved:
       reader = new InterleavedRtpFileReader();
       break;
   }
-  if (!reader->Init(filename, ssrc_filter)) {
+  return reader;
+}
+
+RtpFileReader* RtpFileReader::Create(FileFormat format,
+                                     const uint8_t* data,
+                                     size_t size,
+                                     const std::set<uint32_t>& ssrc_filter) {
+  std::unique_ptr<RtpFileReaderImpl> reader(CreateReaderForFormat(format));
+
+  FILE* file = tmpfile();
+  if (file == nullptr) {
+    printf("ERROR: Can't open file from memory buffer\n");
+    return nullptr;
+  }
+
+  if (fwrite(reinterpret_cast<const void*>(data), sizeof(uint8_t), size,
+             file) != size) {
+    return nullptr;
+  }
+  rewind(file);
+
+  if (!reader->Init(file, ssrc_filter)) {
+    return nullptr;
+  }
+  return reader.release();
+}
+
+RtpFileReader* RtpFileReader::Create(FileFormat format,
+                                     const std::string& filename,
+                                     const std::set<uint32_t>& ssrc_filter) {
+  RtpFileReaderImpl* reader = CreateReaderForFormat(format);
+  FILE* file = fopen(filename.c_str(), "rb");
+  if (file == nullptr) {
+    printf("ERROR: Can't open file: %s\n", filename.c_str());
+    return nullptr;
+  }
+
+  if (!reader->Init(file, ssrc_filter)) {
     delete reader;
-    return NULL;
+    return nullptr;
   }
   return reader;
 }

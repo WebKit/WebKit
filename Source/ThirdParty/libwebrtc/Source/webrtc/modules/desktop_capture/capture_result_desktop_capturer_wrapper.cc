@@ -30,6 +30,7 @@ CaptureResultDesktopCapturerWrapper::~CaptureResultDesktopCapturerWrapper() =
 void CaptureResultDesktopCapturerWrapper::Start(Callback* callback) {
   if ((callback_ == nullptr) != (callback == nullptr)) {
     if (callback) {
+      callback_ = callback;
       base_capturer_->Start(this);
     } else {
       base_capturer_->Start(nullptr);

@@ -10,7 +10,11 @@
 
 #include "rtc_tools/network_tester/test_controller.h"
 
+#include <limits>
+
 #include "absl/types/optional.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -63,7 +67,7 @@ void TestController::SendData(const NetworkTesterPacket& packet,
 }
 
 void TestController::OnTestDone() {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&packet_sender_checker_);
+  RTC_DCHECK_RUN_ON(&packet_sender_checker_);
   NetworkTesterPacket packet;
   packet.set_type(NetworkTesterPacket::TEST_DONE);
   SendData(packet, absl::nullopt);
@@ -119,7 +123,9 @@ void TestController::OnReadPacket(rtc::AsyncPacketSocket* socket,
       remote_test_done_ = true;
       break;
     }
-    default: { RTC_NOTREACHED(); }
+    default: {
+      RTC_NOTREACHED();
+    }
   }
 }
 

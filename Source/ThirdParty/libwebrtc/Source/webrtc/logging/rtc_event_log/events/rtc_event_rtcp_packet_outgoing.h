@@ -12,6 +12,7 @@
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_RTCP_PACKET_OUTGOING_H_
 
 #include <stdint.h>
+
 #include <memory>
 
 #include "api/array_view.h"

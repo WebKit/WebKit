@@ -17,7 +17,7 @@
 #include "api/audio/audio_frame.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -50,12 +50,11 @@ class AcmSendTestOldApi : public AudioPacketizationCallback,
   std::unique_ptr<Packet> NextPacket() override;
 
   // Inherited from AudioPacketizationCallback.
-  int32_t SendData(FrameType frame_type,
+  int32_t SendData(AudioFrameType frame_type,
                    uint8_t payload_type,
                    uint32_t timestamp,
                    const uint8_t* payload_data,
-                   size_t payload_len_bytes,
-                   const RTPFragmentationHeader* fragmentation) override;
+                   size_t payload_len_bytes) override;
 
   AudioCodingModule* acm() { return acm_.get(); }
 
@@ -75,7 +74,7 @@ class AcmSendTestOldApi : public AudioPacketizationCallback,
   bool codec_registered_;
   int test_duration_ms_;
   // The following member variables are set whenever SendData() is called.
-  FrameType frame_type_;
+  AudioFrameType frame_type_;
   int payload_type_;
   uint32_t timestamp_;
   uint16_t sequence_number_;

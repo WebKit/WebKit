@@ -24,7 +24,7 @@ struct AudioDeviceName {
   static const char kDefaultCommunicationsDeviceId[];
 
   AudioDeviceName() = default;
-  AudioDeviceName(const std::string device_name, const std::string unique_id);
+  AudioDeviceName(std::string device_name, std::string unique_id);
 
   ~AudioDeviceName() = default;
 

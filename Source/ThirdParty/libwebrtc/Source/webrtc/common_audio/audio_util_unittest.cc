@@ -31,25 +31,6 @@ void ExpectArraysEq(const float* ref, const float* test, size_t length) {
   }
 }
 
-TEST(AudioUtilTest, FloatToS16) {
-  static constexpr float kInput[] = {0.f,
-                                     0.4f / 32767.f,
-                                     0.6f / 32767.f,
-                                     -0.4f / 32768.f,
-                                     -0.6f / 32768.f,
-                                     1.f,
-                                     -1.f,
-                                     1.1f,
-                                     -1.1f};
-  static constexpr int16_t kReference[] = {0,     0,      1,     0,     -1,
-                                           32767, -32768, 32767, -32768};
-  static constexpr size_t kSize = arraysize(kInput);
-  static_assert(arraysize(kReference) == kSize, "");
-  int16_t output[kSize];
-  FloatToS16(kInput, kSize, output);
-  ExpectArraysEq(kReference, output, kSize);
-}
-
 TEST(AudioUtilTest, S16ToFloat) {
   static constexpr int16_t kInput[] = {0, 1, -1, 16384, -16384, 32767, -32768};
   static constexpr float kReference[] = {
@@ -74,16 +55,16 @@ TEST(AudioUtilTest, FloatS16ToS16) {
 
 TEST(AudioUtilTest, FloatToFloatS16) {
   static constexpr float kInput[] = {0.f,
-                                     0.4f / 32767.f,
-                                     0.6f / 32767.f,
+                                     0.4f / 32768.f,
+                                     0.6f / 32768.f,
                                      -0.4f / 32768.f,
                                      -0.6f / 32768.f,
                                      1.f,
                                      -1.f,
-                                     1.1f,
-                                     -1.1f};
+                                     1.f,
+                                     -1.f};
   static constexpr float kReference[] = {
-      0.f, 0.4f, 0.6f, -0.4f, -0.6f, 32767.f, -32768.f, 36043.7f, -36044.8f};
+      0.f, 0.4f, 0.6f, -0.4f, -0.6f, 32768.f, -32768.f, 32768.f, -32768.f};
   static constexpr size_t kSize = arraysize(kInput);
   static_assert(arraysize(kReference) == kSize, "");
   float output[kSize];
@@ -92,17 +73,17 @@ TEST(AudioUtilTest, FloatToFloatS16) {
 }
 
 TEST(AudioUtilTest, FloatS16ToFloat) {
-  static constexpr float kInput[] = {
-      0.f, 0.4f, 0.6f, -0.4f, -0.6f, 32767.f, -32768.f, 36043.7f, -36044.8f};
+  static constexpr float kInput[] = {0.f,     0.4f,     0.6f,    -0.4f,   -0.6f,
+                                     32767.f, -32768.f, 32767.f, -32768.f};
   static constexpr float kReference[] = {0.f,
-                                         0.4f / 32767.f,
-                                         0.6f / 32767.f,
+                                         0.4f / 32768.f,
+                                         0.6f / 32768.f,
                                          -0.4f / 32768.f,
                                          -0.6f / 32768.f,
                                          1.f,
                                          -1.f,
-                                         1.1f,
-                                         -1.1f};
+                                         1.f,
+                                         -1.f};
   static constexpr size_t kSize = arraysize(kInput);
   static_assert(arraysize(kReference) == kSize, "");
   float output[kSize];

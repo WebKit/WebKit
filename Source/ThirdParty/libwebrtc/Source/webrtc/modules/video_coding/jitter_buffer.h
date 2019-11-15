@@ -25,17 +25,15 @@
 #include "modules/video_coding/inter_frame_delay.h"
 #include "modules/video_coding/jitter_buffer_common.h"
 #include "modules/video_coding/jitter_estimator.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 
-enum VCMNackMode { kNack, kNoNack };
-
 // forward declarations
 class Clock;
-class EventWrapper;
 class VCMFrameBuffer;
 class VCMPacket;
 class VCMEncodedFrame;
@@ -70,46 +68,9 @@ class FrameList
   void Reset(UnorderedFrameList* free_frames);
 };
 
-class Vp9SsMap {
- public:
-  typedef std::map<uint32_t, GofInfoVP9, TimestampLessThan> SsMap;
-  Vp9SsMap();
-  ~Vp9SsMap();
-
-  bool Insert(const VCMPacket& packet);
-  void Reset();
-
-  // Removes SS data that are older than |timestamp|.
-  // The |timestamp| should be an old timestamp, i.e. packets with older
-  // timestamps should no longer be inserted.
-  void RemoveOld(uint32_t timestamp);
-
-  bool UpdatePacket(VCMPacket* packet);
-  void UpdateFrames(FrameList* frames);
-
-  // Public for testing.
-  // Returns an iterator to the corresponding SS data for the input |timestamp|.
-  bool Find(uint32_t timestamp, SsMap::iterator* it);
-
- private:
-  // These two functions are called by RemoveOld.
-  // Checks if it is time to do a clean up (done each kSsCleanupIntervalSec).
-  bool TimeForCleanup(uint32_t timestamp) const;
-
-  // Advances the oldest SS data to handle timestamp wrap in cases where SS data
-  // are received very seldom (e.g. only once in beginning, second when
-  // IsNewerTimestamp is not true).
-  void AdvanceFront(uint32_t timestamp);
-
-  SsMap ss_map_;
-};
-
 class VCMJitterBuffer {
  public:
-  VCMJitterBuffer(Clock* clock,
-                  std::unique_ptr<EventWrapper> event,
-                  NackSender* nack_sender = nullptr,
-                  KeyFrameRequestSender* keyframe_request_sender = nullptr);
+  VCMJitterBuffer(Clock* clock, std::unique_ptr<EventWrapper> event);
 
   ~VCMJitterBuffer();
 
@@ -125,30 +86,15 @@ class VCMJitterBuffer {
   // Empty the jitter buffer of all its data.
   void Flush();
 
-  // Get the number of received frames, by type, since the jitter buffer
-  // was started.
-  FrameCounts FrameStatistics() const;
-
   // Gets number of packets received.
   int num_packets() const;
 
   // Gets number of duplicated packets received.
   int num_duplicated_packets() const;
 
-  // Gets number of packets discarded by the jitter buffer.
-  int num_discarded_packets() const;
-
-  // Statistics, Calculate frame and bit rates.
-  void IncomingRateStatistics(unsigned int* framerate, unsigned int* bitrate);
-
   // Wait |max_wait_time_ms| for a complete frame to arrive.
   // If found, a pointer to the frame is returned. Returns nullptr otherwise.
   VCMEncodedFrame* NextCompleteFrame(uint32_t max_wait_time_ms);
-
-  // Locates a frame for decoding (even an incomplete) without delay.
-  // The function returns true once such a frame is found, its corresponding
-  // timestamp is returned. Otherwise, returns false.
-  bool NextMaybeIncompleteTimestamp(uint32_t* timestamp);
 
   // Extract frame corresponding to input timestamp.
   // Frame will be set to a decoding state.
@@ -172,35 +118,12 @@ class VCMJitterBuffer {
   // Returns the estimated jitter in milliseconds.
   uint32_t EstimatedJitterMs();
 
-  // Updates the round-trip time estimate.
-  void UpdateRtt(int64_t rtt_ms);
-
-  // Set the NACK mode. |high_rtt_nack_threshold_ms| is an RTT threshold in ms
-  // above which NACK will be disabled if the NACK mode is |kNack|, -1 meaning
-  // that NACK is always enabled in the |kNack| mode.
-  // |low_rtt_nack_threshold_ms| is an RTT threshold in ms below which we expect
-  // to rely on NACK only, and therefore are using larger buffers to have time
-  // to wait for retransmissions.
-  void SetNackMode(VCMNackMode mode,
-                   int64_t low_rtt_nack_threshold_ms,
-                   int64_t high_rtt_nack_threshold_ms);
-
   void SetNackSettings(size_t max_nack_list_size,
                        int max_packet_age_to_nack,
                        int max_incomplete_time_ms);
 
-  // Returns the current NACK mode.
-  VCMNackMode nack_mode() const;
-
   // Returns a list of the sequence numbers currently missing.
   std::vector<uint16_t> GetNackList(bool* request_key_frame);
-
-  // Set decode error mode - Should not be changed in the middle of the
-  // session. Changes will not influence frames already in the buffer.
-  void SetDecodeErrorMode(VCMDecodeErrorMode error_mode);
-  VCMDecodeErrorMode decode_error_mode() const { return decode_error_mode_; }
-
-  void RegisterStatsCallback(VCMReceiveStatisticsCallback* callback);
 
  private:
   class SequenceNumberLessThan {
@@ -273,12 +196,6 @@ class VCMJitterBuffer {
   // completely full. Returns true if a key frame was found.
   bool RecycleFramesUntilKeyFrame() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
-  // Updates the frame statistics.
-  // Counts only complete frames, so decodable incomplete frames will not be
-  // counted.
-  void CountFrame(const VCMFrameBuffer& frame)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
-
   // Update rolling average of packets per frame.
   void UpdateAveragePacketsPerFrame(int current_number_packets_);
 
@@ -299,15 +216,10 @@ class VCMJitterBuffer {
                             unsigned int frame_size,
                             bool incomplete_frame);
 
-  // Returns true if we should wait for retransmissions, false otherwise.
-  bool WaitForRetransmissions();
-
   int NonContinuousOrIncompleteDuration()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   uint16_t EstimatedLowSequenceNumber(const VCMFrameBuffer& frame) const;
-
-  void UpdateHistograms() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Reset frame buffer and return it to free_frames_.
   void RecycleFrameBuffer(VCMFrameBuffer* frame)
@@ -327,26 +239,12 @@ class VCMJitterBuffer {
   VCMDecodingState last_decoded_state_ RTC_GUARDED_BY(crit_sect_);
   bool first_packet_since_reset_;
 
-  // Statistics.
-  VCMReceiveStatisticsCallback* stats_callback_ RTC_GUARDED_BY(crit_sect_);
-  // Frame counts for each type (key, delta, ...)
-  FrameCounts receive_statistics_;
-  // Latest calculated frame rates of incoming stream.
-  unsigned int incoming_frame_rate_;
-  unsigned int incoming_frame_count_;
-  int64_t time_last_incoming_frame_count_;
-  unsigned int incoming_bit_count_;
-  unsigned int incoming_bit_rate_;
   // Number of packets in a row that have been too old.
   int num_consecutive_old_packets_;
   // Number of packets received.
   int num_packets_ RTC_GUARDED_BY(crit_sect_);
   // Number of duplicated packets received.
   int num_duplicated_packets_ RTC_GUARDED_BY(crit_sect_);
-  // Number of packets discarded by the jitter buffer.
-  int num_discarded_packets_ RTC_GUARDED_BY(crit_sect_);
-  // Time when first packet is received.
-  int64_t time_first_packet_ms_ RTC_GUARDED_BY(crit_sect_);
 
   // Jitter estimation.
   // Filter for estimating jitter.
@@ -354,12 +252,7 @@ class VCMJitterBuffer {
   // Calculates network delays used for jitter calculations.
   VCMInterFrameDelay inter_frame_delay_;
   VCMJitterSample waiting_for_completion_;
-  int64_t rtt_ms_;
 
-  // NACK and retransmissions.
-  VCMNackMode nack_mode_;
-  int64_t low_rtt_nack_threshold_ms_;
-  int64_t high_rtt_nack_threshold_ms_;
   // Holds the internal NACK list (the missing sequence numbers).
   SequenceNumberSet missing_sequence_numbers_;
   uint16_t latest_received_sequence_number_;
@@ -367,7 +260,6 @@ class VCMJitterBuffer {
   int max_packet_age_to_nack_;  // Measured in sequence numbers.
   int max_incomplete_time_ms_;
 
-  VCMDecodeErrorMode decode_error_mode_;
   // Estimated rolling average of packets per frame
   float average_packets_per_frame_;
   // average_packets_per_frame converges fast if we have fewer than this many

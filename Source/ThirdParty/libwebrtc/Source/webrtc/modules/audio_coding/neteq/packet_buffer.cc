@@ -26,6 +26,7 @@
 #include "modules/audio_coding/neteq/tick_timer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace {
@@ -285,6 +286,28 @@ size_t PacketBuffer::NumSamplesInBuffer(size_t last_decoded_length) const {
     num_samples += last_duration;
   }
   return num_samples;
+}
+
+size_t PacketBuffer::GetSpanSamples(size_t last_decoded_length,
+                                    size_t sample_rate,
+                                    bool count_dtx_waiting_time) const {
+  if (buffer_.size() == 0) {
+    return 0;
+  }
+
+  size_t span = buffer_.back().timestamp - buffer_.front().timestamp;
+  if (buffer_.back().frame && buffer_.back().frame->Duration() > 0) {
+    size_t duration = buffer_.back().frame->Duration();
+    if (count_dtx_waiting_time && buffer_.back().frame->IsDtxPacket()) {
+      size_t waiting_time_samples = rtc::dchecked_cast<size_t>(
+          buffer_.back().waiting_time->ElapsedMs() * (sample_rate / 1000));
+      duration = std::max(duration, waiting_time_samples);
+    }
+    span += duration;
+  } else {
+    span += last_decoded_length;
+  }
+  return span;
 }
 
 bool PacketBuffer::ContainsDtxOrCngPacket(

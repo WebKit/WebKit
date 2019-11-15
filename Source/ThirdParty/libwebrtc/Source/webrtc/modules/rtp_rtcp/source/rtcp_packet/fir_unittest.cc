@@ -14,12 +14,12 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
-using testing::AllOf;
-using testing::ElementsAre;
-using testing::ElementsAreArray;
-using testing::Eq;
-using testing::Field;
-using testing::make_tuple;
+using ::testing::AllOf;
+using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
+using ::testing::Eq;
+using ::testing::Field;
+using ::testing::make_tuple;
 using webrtc::rtcp::Fir;
 
 namespace webrtc {

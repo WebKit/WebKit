@@ -11,10 +11,14 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_VP8_LIBVPX_INTERFACE_H_
 #define MODULES_VIDEO_CODING_CODECS_VP8_LIBVPX_INTERFACE_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "vpx/vp8cx.h"
+#include "vpx/vpx_codec.h"
 #include "vpx/vpx_encoder.h"
+#include "vpx/vpx_image.h"
 
 namespace webrtc {
 

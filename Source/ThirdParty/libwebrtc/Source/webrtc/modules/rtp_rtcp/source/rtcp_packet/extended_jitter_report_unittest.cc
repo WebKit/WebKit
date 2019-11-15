@@ -14,8 +14,8 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
-using testing::ElementsAre;
-using testing::IsEmpty;
+using ::testing::ElementsAre;
+using ::testing::IsEmpty;
 using webrtc::rtcp::ExtendedJitterReport;
 
 namespace webrtc {

@@ -16,15 +16,15 @@
 
 #include "api/transport/network_types.h"
 #include "modules/congestion_controller/rtp/send_time_history.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 class PacketFeedbackObserver;
+struct RtpPacketSendInfo;
 
 namespace rtcp {
 class TransportFeedback;
@@ -32,22 +32,21 @@ class TransportFeedback;
 
 class TransportFeedbackAdapter {
  public:
-  explicit TransportFeedbackAdapter(const Clock* clock);
+  TransportFeedbackAdapter();
   virtual ~TransportFeedbackAdapter();
 
   void RegisterPacketFeedbackObserver(PacketFeedbackObserver* observer);
   void DeRegisterPacketFeedbackObserver(PacketFeedbackObserver* observer);
 
-  void AddPacket(uint32_t ssrc,
-                 uint16_t sequence_number,
-                 size_t length,
-                 const PacedPacketInfo& pacing_info);
-
+  void AddPacket(const RtpPacketSendInfo& packet_info,
+                 size_t overhead_bytes,
+                 Timestamp creation_time);
   absl::optional<SentPacket> ProcessSentPacket(
       const rtc::SentPacket& sent_packet);
 
   absl::optional<TransportPacketsFeedback> ProcessTransportFeedback(
-      const rtcp::TransportFeedback& feedback);
+      const rtcp::TransportFeedback& feedback,
+      Timestamp feedback_time);
 
   std::vector<PacketFeedback> GetTransportFeedbackVector() const;
 
@@ -59,11 +58,13 @@ class TransportFeedbackAdapter {
   void OnTransportFeedback(const rtcp::TransportFeedback& feedback);
 
   std::vector<PacketFeedback> GetPacketFeedbackVector(
-      const rtcp::TransportFeedback& feedback);
+      const rtcp::TransportFeedback& feedback,
+      Timestamp feedback_time);
+
+  const bool allow_duplicates_;
 
   rtc::CriticalSection lock_;
   SendTimeHistory send_time_history_ RTC_GUARDED_BY(&lock_);
-  const Clock* const clock_;
   int64_t current_offset_ms_;
   int64_t last_timestamp_us_;
   std::vector<PacketFeedback> last_packet_feedback_vector_;

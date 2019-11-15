@@ -13,10 +13,10 @@
 #include "examples/peerconnection/client/defaults.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/nethelpers.h"
+#include "rtc_base/net_helpers.h"
 
 #ifdef WIN32
-#include "rtc_base/win32socketserver.h"
+#include "rtc_base/win32_socket_server.h"
 #endif
 
 namespace {

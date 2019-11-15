@@ -11,8 +11,9 @@
 package org.webrtc;
 
 import android.graphics.SurfaceTexture;
+import android.support.annotation.Nullable;
 import android.view.Surface;
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGL10;
 
 /**
@@ -22,8 +23,10 @@ import javax.microedition.khronos.egl.EGL10;
 public interface EglBase {
   // EGL wrapper for an actual EGLContext.
   public interface Context {
+    public final static long NO_CONTEXT = 0;
+
     /**
-     * Returns an EGL context that can be used by native code. Returns 0 if the method is
+     * Returns an EGL context that can be used by native code. Returns NO_CONTEXT if the method is
      * unsupported.
      *
      * @note This is currently only supported for EGL 1.4 and not for EGL 1.0.
@@ -42,51 +45,105 @@ public interface EglBase {
   // This is similar to how GlSurfaceView does:
   // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/opengl/GLSurfaceView.java#760
   public static final int EGL_OPENGL_ES2_BIT = 4;
+  public static final int EGL_OPENGL_ES3_BIT = 0x40;
   // Android-specific extension.
   public static final int EGL_RECORDABLE_ANDROID = 0x3142;
 
-  // clang-format off
-  public static final int[] CONFIG_PLAIN = {
-    EGL10.EGL_RED_SIZE, 8,
-    EGL10.EGL_GREEN_SIZE, 8,
-    EGL10.EGL_BLUE_SIZE, 8,
-    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL10.EGL_NONE
-  };
-  public static final int[] CONFIG_RGBA = {
-    EGL10.EGL_RED_SIZE, 8,
-    EGL10.EGL_GREEN_SIZE, 8,
-    EGL10.EGL_BLUE_SIZE, 8,
-    EGL10.EGL_ALPHA_SIZE, 8,
-    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL10.EGL_NONE
-  };
-  public static final int[] CONFIG_PIXEL_BUFFER = {
-    EGL10.EGL_RED_SIZE, 8,
-    EGL10.EGL_GREEN_SIZE, 8,
-    EGL10.EGL_BLUE_SIZE, 8,
-    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
-    EGL10.EGL_NONE
-  };
-  public static final int[] CONFIG_PIXEL_RGBA_BUFFER = {
-    EGL10.EGL_RED_SIZE, 8,
-    EGL10.EGL_GREEN_SIZE, 8,
-    EGL10.EGL_BLUE_SIZE, 8,
-    EGL10.EGL_ALPHA_SIZE, 8,
-    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
-    EGL10.EGL_NONE
-  };
-  public static final int[] CONFIG_RECORDABLE = {
-    EGL10.EGL_RED_SIZE, 8,
-    EGL10.EGL_GREEN_SIZE, 8,
-    EGL10.EGL_BLUE_SIZE, 8,
-    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL_RECORDABLE_ANDROID, 1,
-    EGL10.EGL_NONE
-  };
-  // clang-format on
+  public static ConfigBuilder configBuilder() {
+    return new ConfigBuilder();
+  }
+
+  public static class ConfigBuilder {
+    private int openGlesVersion = 2;
+    private boolean hasAlphaChannel;
+    private boolean supportsPixelBuffer;
+    private boolean isRecordable;
+
+    public ConfigBuilder setOpenGlesVersion(int version) {
+      if (version < 1 || version > 3) {
+        throw new IllegalArgumentException("OpenGL ES version " + version + " not supported");
+      }
+      this.openGlesVersion = version;
+      return this;
+    }
+
+    public ConfigBuilder setHasAlphaChannel(boolean hasAlphaChannel) {
+      this.hasAlphaChannel = hasAlphaChannel;
+      return this;
+    }
+
+    public ConfigBuilder setSupportsPixelBuffer(boolean supportsPixelBuffer) {
+      this.supportsPixelBuffer = supportsPixelBuffer;
+      return this;
+    }
+
+    public ConfigBuilder setIsRecordable(boolean isRecordable) {
+      this.isRecordable = isRecordable;
+      return this;
+    }
+
+    public int[] createConfigAttributes() {
+      ArrayList<Integer> list = new ArrayList<>();
+      list.add(EGL10.EGL_RED_SIZE);
+      list.add(8);
+      list.add(EGL10.EGL_GREEN_SIZE);
+      list.add(8);
+      list.add(EGL10.EGL_BLUE_SIZE);
+      list.add(8);
+      if (hasAlphaChannel) {
+        list.add(EGL10.EGL_ALPHA_SIZE);
+        list.add(8);
+      }
+      if (openGlesVersion == 2 || openGlesVersion == 3) {
+        list.add(EGL10.EGL_RENDERABLE_TYPE);
+        list.add(openGlesVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT);
+      }
+      if (supportsPixelBuffer) {
+        list.add(EGL10.EGL_SURFACE_TYPE);
+        list.add(EGL10.EGL_PBUFFER_BIT);
+      }
+      if (isRecordable) {
+        list.add(EGL_RECORDABLE_ANDROID);
+        list.add(1);
+      }
+      list.add(EGL10.EGL_NONE);
+
+      final int[] res = new int[list.size()];
+      for (int i = 0; i < list.size(); ++i) {
+        res[i] = list.get(i);
+      }
+      return res;
+    }
+  }
+
+  public static final int[] CONFIG_PLAIN = configBuilder().createConfigAttributes();
+  public static final int[] CONFIG_RGBA =
+      configBuilder().setHasAlphaChannel(true).createConfigAttributes();
+  public static final int[] CONFIG_PIXEL_BUFFER =
+      configBuilder().setSupportsPixelBuffer(true).createConfigAttributes();
+  public static final int[] CONFIG_PIXEL_RGBA_BUFFER = configBuilder()
+                                                           .setHasAlphaChannel(true)
+                                                           .setSupportsPixelBuffer(true)
+                                                           .createConfigAttributes();
+  public static final int[] CONFIG_RECORDABLE =
+      configBuilder().setIsRecordable(true).createConfigAttributes();
+
+  static int getOpenGlesVersionFromConfig(int[] configAttributes) {
+    for (int i = 0; i < configAttributes.length - 1; ++i) {
+      if (configAttributes[i] == EGL10.EGL_RENDERABLE_TYPE) {
+        switch (configAttributes[i + 1]) {
+          case EGL_OPENGL_ES2_BIT:
+            return 2;
+          case EGL_OPENGL_ES3_BIT:
+            return 3;
+          default:
+            return 1;
+        }
+      }
+    }
+    // Default to V1 if no renderable type is specified.
+    return 1;
+  }
 
   /**
    * Create a new context with the specified config attributes, sharing data with |sharedContext|.
@@ -94,10 +151,15 @@ public interface EglBase {
    * 1.4 context if possible, and an EGL 1.0 context otherwise.
    */
   public static EglBase create(@Nullable Context sharedContext, int[] configAttributes) {
-    return (EglBase14.isEGL14Supported()
-               && (sharedContext == null || sharedContext instanceof EglBase14.Context))
-        ? new EglBase14((EglBase14.Context) sharedContext, configAttributes)
-        : new EglBase10((EglBase10.Context) sharedContext, configAttributes);
+    if (sharedContext == null) {
+      return EglBase14Impl.isEGL14Supported() ? createEgl14(configAttributes)
+                                              : createEgl10(configAttributes);
+    } else if (sharedContext instanceof EglBase14.Context) {
+      return createEgl14((EglBase14.Context) sharedContext, configAttributes);
+    } else if (sharedContext instanceof EglBase10.Context) {
+      return createEgl10((EglBase10.Context) sharedContext, configAttributes);
+    }
+    throw new IllegalArgumentException("Unrecognized Context");
   }
 
   /**
@@ -116,36 +178,50 @@ public interface EglBase {
     return create(sharedContext, CONFIG_PLAIN);
   }
 
+  /** Explicitly create a root EGl 1.0 context with the specified config attributes. */
+  public static EglBase10 createEgl10(int[] configAttributes) {
+    return new EglBase10Impl(/* sharedContext= */ null, configAttributes);
+  }
+
   /**
-   * Explicitly create a root EGl 1.0 context with the specified config attributes.
+   * Explicitly create a root EGl 1.0 context with the specified config attributes and shared
+   * context.
    */
-  public static EglBase createEgl10(int[] configAttributes) {
-    return new EglBase10(null /* shaderContext */, configAttributes);
+  public static EglBase10 createEgl10(EglBase10.Context sharedContext, int[] configAttributes) {
+    return new EglBase10Impl(
+        sharedContext == null ? null : sharedContext.getRawContext(), configAttributes);
   }
 
   /**
    * Explicitly create a root EGl 1.0 context with the specified config attributes
    * and shared context.
    */
-  public static EglBase createEgl10(
+  public static EglBase10 createEgl10(
       javax.microedition.khronos.egl.EGLContext sharedContext, int[] configAttributes) {
-    return new EglBase10(new EglBase10.Context(sharedContext), configAttributes);
+    return new EglBase10Impl(sharedContext, configAttributes);
+  }
+
+  /** Explicitly create a root EGl 1.4 context with the specified config attributes. */
+  public static EglBase14 createEgl14(int[] configAttributes) {
+    return new EglBase14Impl(/* sharedContext= */ null, configAttributes);
   }
 
   /**
-   * Explicitly create a root EGl 1.4 context with the specified config attributes.
+   * Explicitly create a root EGl 1.4 context with the specified config attributes and shared
+   * context.
    */
-  public static EglBase createEgl14(int[] configAttributes) {
-    return new EglBase14(null /* shaderContext */, configAttributes);
+  public static EglBase14 createEgl14(EglBase14.Context sharedContext, int[] configAttributes) {
+    return new EglBase14Impl(
+        sharedContext == null ? null : sharedContext.getRawContext(), configAttributes);
   }
 
   /**
    * Explicitly create a root EGl 1.4 context with the specified config attributes
    * and shared context.
    */
-  public static EglBase createEgl14(
+  public static EglBase14 createEgl14(
       android.opengl.EGLContext sharedContext, int[] configAttributes) {
-    return new EglBase14(new EglBase14.Context(sharedContext), configAttributes);
+    return new EglBase14Impl(sharedContext, configAttributes);
   }
 
   void createSurface(Surface surface);

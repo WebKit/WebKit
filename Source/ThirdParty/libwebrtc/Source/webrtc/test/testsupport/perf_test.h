@@ -11,10 +11,10 @@
 #ifndef TEST_TESTSUPPORT_PERF_TEST_H_
 #define TEST_TESTSUPPORT_PERF_TEST_H_
 
-#include "api/array_view.h"
-
 #include <sstream>
 #include <string>
+
+#include "api/array_view.h"
 
 namespace webrtc {
 namespace test {

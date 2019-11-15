@@ -1,5 +1,4 @@
 include_rules = [
-  "+api",
   "+call",
   "+common_video",
   "+logging/rtc_event_log",
@@ -12,7 +11,6 @@ include_rules = [
   "+modules/video_coding",
   "+modules/video_coding/utility",
   "+p2p",
-  "+pc",
   "+sound",
   "+system_wrappers",
   "+usrsctplib",

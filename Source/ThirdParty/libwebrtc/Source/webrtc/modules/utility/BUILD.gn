@@ -26,10 +26,10 @@ rtc_static_library("utility") {
 
   deps = [
     "..:module_api",
+    "../../api/task_queue",
     "../../common_audio",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
-    "../../rtc_base:rtc_task_queue",
     "../../rtc_base/system:arch",
     "../../system_wrappers",
   ]
@@ -58,8 +58,8 @@ if (rtc_include_tests) {
     deps = [
       ":utility",
       "..:module_api",
+      "../../api/task_queue",
       "../../rtc_base:rtc_base_approved",
-      "../../rtc_base:rtc_task_queue",
       "../../test:test_support",
     ]
   }

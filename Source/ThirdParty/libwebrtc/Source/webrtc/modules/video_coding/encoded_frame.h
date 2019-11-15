@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "api/video/encoded_image.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -24,13 +23,9 @@ namespace webrtc {
 class VCMEncodedFrame : protected EncodedImage {
  public:
   VCMEncodedFrame();
-  VCMEncodedFrame(const VCMEncodedFrame&) = delete;
+  VCMEncodedFrame(const VCMEncodedFrame&);
 
   ~VCMEncodedFrame();
-  /**
-   *   Delete VideoFrame and resets members to zero
-   */
-  void Free();
   /**
    *   Set render time in milliseconds
    */
@@ -56,31 +51,20 @@ class VCMEncodedFrame : protected EncodedImage {
   const webrtc::EncodedImage& EncodedImage() const {
     return static_cast<const webrtc::EncodedImage&>(*this);
   }
-  /**
-   *   Get pointer to frame buffer
-   */
-  const uint8_t* Buffer() const { return _buffer; }
-  /**
-   *   Get pointer to frame buffer that can be mutated.
-   */
-  uint8_t* MutableBuffer() { return _buffer; }
-  /**
-   *   Get frame length
-   */
-  size_t Length() const { return _length; }
-  /**
-   *   Set frame length
-   */
-  void SetLength(size_t length) {
-    RTC_DCHECK(length <= _size);
-    _length = length;
-  }
-  /**
-   *   Frame RTP timestamp (90kHz)
-   */
+
+  using EncodedImage::ColorSpace;
+  using EncodedImage::data;
+  using EncodedImage::PacketInfos;
   using EncodedImage::set_size;
+  using EncodedImage::SetColorSpace;
+  using EncodedImage::SetEncodedData;
+  using EncodedImage::SetPacketInfos;
+  using EncodedImage::SetSpatialIndex;
+  using EncodedImage::SetSpatialLayerFrameSize;
   using EncodedImage::SetTimestamp;
   using EncodedImage::size;
+  using EncodedImage::SpatialIndex;
+  using EncodedImage::SpatialLayerFrameSize;
   using EncodedImage::Timestamp;
 
   /**
@@ -90,7 +74,7 @@ class VCMEncodedFrame : protected EncodedImage {
   /**
    *   Get frame type
    */
-  webrtc::FrameType FrameType() const { return _frameType; }
+  webrtc::VideoFrameType FrameType() const { return _frameType; }
   /**
    *   Get frame rotation
    */

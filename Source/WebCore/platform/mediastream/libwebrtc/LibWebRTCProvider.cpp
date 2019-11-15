@@ -34,16 +34,16 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/asyncresolverfactory.h>
+#include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/create_peerconnection_factory.h>
-#include <webrtc/api/peerconnectionfactoryproxy.h>
+#include <webrtc/api/peer_connection_factory_proxy.h>
 #include <webrtc/modules/audio_processing/include/audio_processing.h>
-#include <webrtc/p2p/base/basicpacketsocketfactory.h>
-#include <webrtc/p2p/client/basicportallocator.h>
-#include <webrtc/pc/peerconnectionfactory.h>
-#include <webrtc/rtc_base/physicalsocketserver.h>
+#include <webrtc/p2p/base/basic_packet_socket_factory.h>
+#include <webrtc/p2p/client/basic_port_allocator.h>
+#include <webrtc/pc/peer_connection_factory.h>
+#include <webrtc/rtc_base/physical_socket_server.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -98,7 +98,7 @@ public:
         return m_socketFactory->CreateServerTcpSocket(prepareSocketAddress(address, m_disableNonLocalhostConnections), minPort, maxPort, options);
     }
 
-    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo& info, const std::string& name, int options)
+    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo& info, const std::string& name, const rtc::PacketSocketTcpOptions& options)
     {
         return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, info, name, options);
     }

@@ -10,8 +10,12 @@
 #ifndef TEST_ENCODER_SETTINGS_H_
 #define TEST_ENCODER_SETTINGS_H_
 
+#include <stddef.h>
+
+#include <string>
 #include <vector>
 
+#include "api/video_codecs/video_encoder_config.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
 

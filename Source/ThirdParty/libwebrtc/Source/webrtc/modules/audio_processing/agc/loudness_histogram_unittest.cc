@@ -13,13 +13,14 @@
 #include "modules/audio_processing/agc/loudness_histogram.h"
 
 #include <stdio.h>
+
 #include <algorithm>
 #include <cmath>
 #include <memory>
 
 #include "modules/audio_processing/agc/utility.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 

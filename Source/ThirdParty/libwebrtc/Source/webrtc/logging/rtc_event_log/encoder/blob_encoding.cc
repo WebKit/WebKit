@@ -10,9 +10,10 @@
 
 #include "logging/rtc_event_log/encoder/blob_encoding.h"
 
-#include <algorithm>
+#include <cstdint>
 
-#include "logging/rtc_event_log/encoder/varint.h"
+#include "logging/rtc_event_log/encoder/var_int.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

@@ -10,7 +10,9 @@
 
 package org.webrtc;
 
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
+import java.lang.Double;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,9 @@ import org.webrtc.MediaStreamTrack;
  */
 public class RtpParameters {
   public static class Encoding {
+    // If non-null, this represents the RID that identifies this encoding layer.
+    // RIDs are used to identify layers in simulcast.
+    @Nullable public String rid;
     // Set to true to cause this encoding to be sent, and false for it not to
     // be sent.
     public boolean active = true;
@@ -40,19 +45,37 @@ public class RtpParameters {
     @Nullable public Integer maxFramerate;
     // The number of temporal layers for video.
     @Nullable public Integer numTemporalLayers;
+    // If non-null, scale the width and height down by this factor for video. If null,
+    // implementation default scaling factor will be used.
+    @Nullable public Double scaleResolutionDownBy;
     // SSRC to be used by this encoding.
     // Can't be changed between getParameters/setParameters.
     public Long ssrc;
 
+    // This constructor is useful for creating simulcast layers.
+    Encoding(String rid, boolean active, Double scaleResolutionDownBy) {
+      this.rid = rid;
+      this.active = active;
+      this.scaleResolutionDownBy = scaleResolutionDownBy;
+    }
+
     @CalledByNative("Encoding")
-    Encoding(boolean active, Integer maxBitrateBps, Integer minBitrateBps, Integer maxFramerate,
-        Integer numTemporalLayers, Long ssrc) {
+    Encoding(String rid, boolean active, Integer maxBitrateBps, Integer minBitrateBps,
+        Integer maxFramerate, Integer numTemporalLayers, Double scaleResolutionDownBy, Long ssrc) {
+      this.rid = rid;
       this.active = active;
       this.maxBitrateBps = maxBitrateBps;
       this.minBitrateBps = minBitrateBps;
       this.maxFramerate = maxFramerate;
       this.numTemporalLayers = numTemporalLayers;
+      this.scaleResolutionDownBy = scaleResolutionDownBy;
       this.ssrc = ssrc;
+    }
+
+    @Nullable
+    @CalledByNative("Encoding")
+    String getRid() {
+      return rid;
     }
 
     @CalledByNative("Encoding")
@@ -82,6 +105,12 @@ public class RtpParameters {
     @CalledByNative("Encoding")
     Integer getNumTemporalLayers() {
       return numTemporalLayers;
+    }
+
+    @Nullable
+    @CalledByNative("Encoding")
+    Double getScaleResolutionDownBy() {
+      return scaleResolutionDownBy;
     }
 
     @CalledByNative("Encoding")

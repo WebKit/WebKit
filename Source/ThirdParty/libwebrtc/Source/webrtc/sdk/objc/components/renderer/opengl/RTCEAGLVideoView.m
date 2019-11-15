@@ -251,7 +251,6 @@
 }
 
 - (void)setupGL {
-  self.videoFrame = nil;
   [self ensureGLContext];
   glDisable(GL_DITHER);
   _timer.isPaused = NO;

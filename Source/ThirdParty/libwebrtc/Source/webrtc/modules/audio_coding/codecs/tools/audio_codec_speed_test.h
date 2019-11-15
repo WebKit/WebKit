@@ -22,7 +22,7 @@ namespace webrtc {
 // <channels, bit_rate, file_name, extension, if_save_output>.
 typedef std::tuple<size_t, int, std::string, std::string, bool> coding_param;
 
-class AudioCodecSpeedTest : public testing::TestWithParam<coding_param> {
+class AudioCodecSpeedTest : public ::testing::TestWithParam<coding_param> {
  protected:
   AudioCodecSpeedTest(int block_duration_ms,
                       int input_sampling_khz,

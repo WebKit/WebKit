@@ -13,9 +13,12 @@ rtc_source_set("audio_frame_api") {
   sources = [
     "audio_frame.cc",
     "audio_frame.h",
+    "channel_layout.cc",
+    "channel_layout.h",
   ]
 
   deps = [
+    "..:rtp_packet_info",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
   ]
@@ -55,10 +58,11 @@ rtc_source_set("aec3_config_json") {
   ]
   deps = [
     ":aec3_config",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_json",
     "../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/strings",
   ]
 }
 

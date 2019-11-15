@@ -19,11 +19,7 @@
 #import "RTCVideoFrame.h"
 
 NS_ASSUME_NONNULL_BEGIN
-/*
-namespace webrtc {
-class VideoBitrateAllocation;
-};
-*/
+
 /** Callback block for encoder. */
 typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
                                         id<RTCCodecSpecificInfo> info,
@@ -31,7 +27,6 @@ typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
 
 /** Protocol for encoder implementations. */
 RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoEncoder")))
 @protocol RTCVideoEncoder <NSObject>
 
 - (void)setCallback:(RTCVideoEncoderCallback)callback;
@@ -42,7 +37,6 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoder")))
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes;
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
-- (int)setRateAllocation: (RTCVideoBitrateAllocation *)allocation framerate:(uint32_t)framerate;
 - (NSString *)implementationName;
 
 /** Returns QP scaling settings for encoder. The quality scaler adjusts the resolution in order to

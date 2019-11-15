@@ -7,14 +7,12 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-
-#if defined(WEBRTC_POSIX)
-#include <errno.h>
-#endif  // WEBRTC_POSIX
-
 #include <iostream>
 
-#include "p2p/base/stunserver.h"
+#include "p2p/base/stun_server.h"
+#include "rtc_base/async_udp_socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
 
 using cricket::StunServer;

@@ -10,6 +10,9 @@
 
 #include "modules/congestion_controller/rtp/congestion_controller_unittests_helper.h"
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 

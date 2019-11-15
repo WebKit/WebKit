@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 The WebRTC project authors. All Rights Reserved.
+ *  Copyright 2019 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -9,6 +9,8 @@
  */
 #include "rtc_base/experiments/field_trial_parser.h"
 
+#include <inttypes.h>
+
 #include <algorithm>
 #include <map>
 #include <type_traits>
@@ -16,6 +18,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace {
@@ -33,18 +36,31 @@ FieldTrialParameterInterface::~FieldTrialParameterInterface() {
   RTC_DCHECK(used_) << "Field trial parameter with key: '" << key_
                     << "' never used.";
 }
-std::string FieldTrialParameterInterface::Key() const {
-  return key_;
-}
 
 void ParseFieldTrial(
     std::initializer_list<FieldTrialParameterInterface*> fields,
     std::string trial_string) {
   std::map<std::string, FieldTrialParameterInterface*> field_map;
+  FieldTrialParameterInterface* keyless_field = nullptr;
   for (FieldTrialParameterInterface* field : fields) {
     field->MarkAsUsed();
-    field_map[field->Key()] = field;
+    if (!field->sub_parameters_.empty()) {
+      for (FieldTrialParameterInterface* sub_field : field->sub_parameters_) {
+        RTC_DCHECK(!sub_field->key_.empty());
+        sub_field->MarkAsUsed();
+        field_map[sub_field->key_] = sub_field;
+      }
+      continue;
+    }
+
+    if (field->key_.empty()) {
+      RTC_DCHECK(!keyless_field);
+      keyless_field = field;
+    } else {
+      field_map[field->key_] = field;
+    }
   }
+
   size_t i = 0;
   while (i < trial_string.length()) {
     int val_end = FindOrEnd(trial_string, i, ',');
@@ -62,10 +78,19 @@ void ParseFieldTrial(
         RTC_LOG(LS_WARNING) << "Failed to read field with key: '" << key
                             << "' in trial: \"" << trial_string << "\"";
       }
+    } else if (!opt_value && keyless_field && !key.empty()) {
+      if (!keyless_field->Parse(key)) {
+        RTC_LOG(LS_WARNING) << "Failed to read empty key field with value '"
+                            << key << "' in trial: \"" << trial_string << "\"";
+      }
     } else {
       RTC_LOG(LS_INFO) << "No field with key: '" << key
                        << "' (found in trial: \"" << trial_string << "\")";
     }
+  }
+
+  for (FieldTrialParameterInterface* field : fields) {
+    field->ParseDone();
   }
 }
 
@@ -94,17 +119,45 @@ absl::optional<double> ParseTypedParameter<double>(std::string str) {
 
 template <>
 absl::optional<int> ParseTypedParameter<int>(std::string str) {
-  int value;
-  if (sscanf(str.c_str(), "%i", &value) == 1) {
-    return value;
-  } else {
-    return absl::nullopt;
+  int64_t value;
+  if (sscanf(str.c_str(), "%" SCNd64, &value) == 1) {
+    if (rtc::IsValueInRangeForNumericType<int, int64_t>(value)) {
+      return static_cast<int>(value);
+    }
   }
+  return absl::nullopt;
 }
 
 template <>
-absl::optional<std::string> ParseTypedParameter<std::string>(std::string str) {
-  return std::move(str);
+absl::optional<unsigned> ParseTypedParameter<unsigned>(std::string str) {
+  int64_t value;
+  if (sscanf(str.c_str(), "%" SCNd64, &value) == 1) {
+    if (rtc::IsValueInRangeForNumericType<unsigned, int64_t>(value)) {
+      return static_cast<unsigned>(value);
+    }
+  }
+  return absl::nullopt;
+}
+
+template <>
+absl::optional<absl::optional<bool>> ParseTypedParameter<absl::optional<bool>>(
+    std::string str) {
+  return ParseOptionalParameter<bool>(str);
+}
+template <>
+absl::optional<absl::optional<int>> ParseTypedParameter<absl::optional<int>>(
+    std::string str) {
+  return ParseOptionalParameter<int>(str);
+}
+template <>
+absl::optional<absl::optional<unsigned>>
+ParseTypedParameter<absl::optional<unsigned>>(std::string str) {
+  return ParseOptionalParameter<unsigned>(str);
+}
+template <>
+absl::optional<absl::optional<double>>
+ParseTypedParameter<absl::optional<double>>(std::string str) {
+  return ParseOptionalParameter<double>(str);
 }
 
 FieldTrialFlag::FieldTrialFlag(std::string key) : FieldTrialFlag(key, false) {}
@@ -167,14 +220,15 @@ bool AbstractFieldTrialEnum::Parse(absl::optional<std::string> str_value) {
 template class FieldTrialParameter<bool>;
 template class FieldTrialParameter<double>;
 template class FieldTrialParameter<int>;
-template class FieldTrialParameter<std::string>;
+template class FieldTrialParameter<unsigned>;
 
 template class FieldTrialConstrained<double>;
 template class FieldTrialConstrained<int>;
+template class FieldTrialConstrained<unsigned>;
 
 template class FieldTrialOptional<double>;
 template class FieldTrialOptional<int>;
+template class FieldTrialOptional<unsigned>;
 template class FieldTrialOptional<bool>;
-template class FieldTrialOptional<std::string>;
 
 }  // namespace webrtc

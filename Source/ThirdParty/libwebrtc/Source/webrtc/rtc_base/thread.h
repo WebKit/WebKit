@@ -12,6 +12,7 @@
 #define RTC_BASE_THREAD_H_
 
 #include <stdint.h>
+
 #include <list>
 #include <memory>
 #include <string>
@@ -20,12 +21,12 @@
 #if defined(WEBRTC_POSIX)
 #include <pthread.h>
 #endif
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/location.h"
-#include "rtc_base/messagehandler.h"
-#include "rtc_base/messagequeue.h"
+#include "rtc_base/message_handler.h"
+#include "rtc_base/message_queue.h"
 #include "rtc_base/platform_thread_types.h"
-#include "rtc_base/socketserver.h"
+#include "rtc_base/socket_server.h"
 #include "rtc_base/thread_annotations.h"
 
 #if defined(WEBRTC_WIN)
@@ -35,6 +36,46 @@
 namespace rtc {
 
 class Thread;
+
+namespace rtc_thread_internal {
+
+class MessageLikeTask : public MessageData {
+ public:
+  virtual void Run() = 0;
+};
+
+template <class FunctorT>
+class MessageWithFunctor final : public MessageLikeTask {
+ public:
+  explicit MessageWithFunctor(FunctorT&& functor)
+      : functor_(std::forward<FunctorT>(functor)) {}
+
+  void Run() override { functor_(); }
+
+ private:
+  ~MessageWithFunctor() override {}
+
+  typename std::remove_reference<FunctorT>::type functor_;
+
+  RTC_DISALLOW_COPY_AND_ASSIGN(MessageWithFunctor);
+};
+
+class MessageHandlerWithTask final : public MessageHandler {
+ public:
+  MessageHandlerWithTask() = default;
+
+  void OnMessage(Message* msg) override {
+    static_cast<MessageLikeTask*>(msg->pdata)->Run();
+    delete msg->pdata;
+  }
+
+ private:
+  ~MessageHandlerWithTask() override {}
+
+  RTC_DISALLOW_COPY_AND_ASSIGN(MessageHandlerWithTask);
+};
+
+}  // namespace rtc_thread_internal
 
 class ThreadManager {
  public:
@@ -89,29 +130,10 @@ struct _SendMessage {
   bool* ready;
 };
 
-class Runnable {
- public:
-  virtual ~Runnable() {}
-  virtual void Run(Thread* thread) = 0;
-
- protected:
-  Runnable() {}
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(Runnable);
-};
-
 // WARNING! SUBCLASSES MUST CALL Stop() IN THEIR DESTRUCTORS!  See ~Thread().
 
 class RTC_LOCKABLE Thread : public MessageQueue {
  public:
-  // DEPRECATED.
-  // The default constructor should not be used because it hides whether or
-  // not a socket server will be associated with the thread. Most instances
-  // of Thread do actually not need one, so please use either of the Create*
-  // methods to construct an instance of Thread.
-  Thread();
-
   explicit Thread(SocketServer* ss);
   explicit Thread(std::unique_ptr<SocketServer> ss);
   // Constructors meant for subclasses; they should call DoInit themselves and
@@ -137,6 +159,9 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   class ScopedDisallowBlockingCalls {
    public:
     ScopedDisallowBlockingCalls();
+    ScopedDisallowBlockingCalls(const ScopedDisallowBlockingCalls&) = delete;
+    ScopedDisallowBlockingCalls& operator=(const ScopedDisallowBlockingCalls&) =
+        delete;
     ~ScopedDisallowBlockingCalls();
 
    private:
@@ -157,7 +182,7 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   bool SetName(const std::string& name, const void* obj);
 
   // Starts the execution of the thread.
-  bool Start(Runnable* runnable = nullptr);
+  bool Start();
 
   // Tells the thread to stop and waits until it is joined.
   // Never call Stop on the current thread.  Instead use the inherited Quit
@@ -183,12 +208,58 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   // &MyFunctionReturningBool);
   // NOTE: This function can only be called when synchronous calls are allowed.
   // See ScopedDisallowBlockingCalls for details.
+  // NOTE: Blocking invokes are DISCOURAGED, consider if what you're doing can
+  // be achieved with PostTask() and callbacks instead.
   template <class ReturnT, class FunctorT>
   ReturnT Invoke(const Location& posted_from, FunctorT&& functor) {
     FunctorMessageHandler<ReturnT, FunctorT> handler(
         std::forward<FunctorT>(functor));
     InvokeInternal(posted_from, &handler);
     return handler.MoveResult();
+  }
+
+  // Posts a task to invoke the functor on |this| thread asynchronously, i.e.
+  // without blocking the thread that invoked PostTask(). Ownership of |functor|
+  // is passed and (usually, see below) destroyed on |this| thread after it is
+  // invoked.
+  // Requirements of FunctorT:
+  // - FunctorT is movable.
+  // - FunctorT implements "T operator()()" or "T operator()() const" for some T
+  //   (if T is not void, the return value is discarded on |this| thread).
+  // - FunctorT has a public destructor that can be invoked from |this| thread
+  //   after operation() has been invoked.
+  // - The functor must not cause the thread to quit before PostTask() is done.
+  //
+  // Destruction of the functor/task mimics what TaskQueue::PostTask does: If
+  // the task is run, it will be destroyed on |this| thread. However, if there
+  // are pending tasks by the time the Thread is destroyed, or a task is posted
+  // to a thread that is quitting, the task is destroyed immediately, on the
+  // calling thread. Destroying the Thread only blocks for any currently running
+  // task to complete. Note that TQ abstraction is even vaguer on how
+  // destruction happens in these cases, allowing destruction to happen
+  // asynchronously at a later time and on some arbitrary thread. So to ease
+  // migration, don't depend on Thread::PostTask destroying un-run tasks
+  // immediately.
+  //
+  // Example - Calling a class method:
+  // class Foo {
+  //  public:
+  //   void DoTheThing();
+  // };
+  // Foo foo;
+  // thread->PostTask(RTC_FROM_HERE, Bind(&Foo::DoTheThing, &foo));
+  //
+  // Example - Calling a lambda function:
+  // thread->PostTask(RTC_FROM_HERE,
+  //                  [&x, &y] { x.TrackComputations(y.Compute()); });
+  template <class FunctorT>
+  void PostTask(const Location& posted_from, FunctorT&& functor) {
+    // Allocate at first call, never deallocate.
+    static auto* const handler =
+        new rtc_thread_internal::MessageHandlerWithTask;
+    Post(posted_from, handler, 0,
+         new rtc_thread_internal::MessageWithFunctor<FunctorT>(
+             std::forward<FunctorT>(functor)));
   }
 
   // From MessageQueue
@@ -219,10 +290,6 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   // of whatever code is conditionally executing because of the return value!
   bool RunningForTest() { return IsRunning(); }
 
-  // Sets the per-thread allow-blocking-calls flag and returns the previous
-  // value. Must be called on this thread.
-  bool SetAllowBlockingCalls(bool allow);
-
   // These functions are public to avoid injecting test hooks. Don't call them
   // outside of tests.
   // This method should be called when thread is created using non standard
@@ -231,6 +298,17 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   // owned to false. This must be called from the current thread.
   bool WrapCurrent();
   void UnwrapCurrent();
+
+  // Sets the per-thread allow-blocking-calls flag to false; this is
+  // irrevocable. Must be called on this thread.
+  void DisallowBlockingCalls() { SetAllowBlockingCalls(false); }
+
+#ifdef WEBRTC_ANDROID
+  // Sets the per-thread allow-blocking-calls flag to true, sidestepping the
+  // invariants upheld by DisallowBlockingCalls() and
+  // ScopedDisallowBlockingCalls. Must be called on this thread.
+  void DEPRECATED_AllowBlockingCalls() { SetAllowBlockingCalls(true); }
+#endif
 
  protected:
   // Same as WrapCurrent except that it never fails as it does not try to
@@ -246,10 +324,9 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   friend class ScopedDisallowBlockingCalls;
 
  private:
-  struct ThreadInit {
-    Thread* thread;
-    Runnable* runnable;
-  };
+  // Sets the per-thread allow-blocking-calls flag and returns the previous
+  // value. Must be called on this thread.
+  bool SetAllowBlockingCalls(bool allow);
 
 #if defined(WEBRTC_WIN)
   static DWORD WINAPI PreRun(LPVOID context);
@@ -283,8 +360,8 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   std::list<_SendMessage> sendlist_;
   std::string name_;
 
-// TODO(tommi): Add thread checks for proper use of control methods.
-// Ideally we should be able to just use PlatformThread.
+  // TODO(tommi): Add thread checks for proper use of control methods.
+  // Ideally we should be able to just use PlatformThread.
 
 #if defined(WEBRTC_POSIX)
   pthread_t thread_ = 0;

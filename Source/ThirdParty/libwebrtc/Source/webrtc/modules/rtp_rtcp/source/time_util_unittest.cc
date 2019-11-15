@@ -9,8 +9,8 @@
  */
 #include "modules/rtp_rtcp/source/time_util.h"
 
-#include "rtc_base/fakeclock.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/fake_clock.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
@@ -21,18 +21,18 @@ TEST(TimeUtilTest, TimeMicrosToNtpDoesntChangeBetweenRuns) {
   // TimeMicrosToNtp is not pure: it behave differently between different
   // execution of the program, but should behave same during same execution.
   const int64_t time_us = 12345;
-  clock.SetTimeMicros(2);
+  clock.SetTime(Timestamp::us(2));
   NtpTime time_ntp = TimeMicrosToNtp(time_us);
-  clock.SetTimeMicros(time_us);
+  clock.SetTime(Timestamp::us(time_us));
   EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
-  clock.SetTimeMicros(1000000);
+  clock.SetTime(Timestamp::us(1000000));
   EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
 }
 
 TEST(TimeUtilTest, TimeMicrosToNtpKeepsIntervals) {
   rtc::ScopedFakeClock clock;
   NtpTime time_ntp1 = TimeMicrosToNtp(rtc::TimeMicros());
-  clock.AdvanceTimeMicros(20000);
+  clock.AdvanceTime(TimeDelta::ms(20));
   NtpTime time_ntp2 = TimeMicrosToNtp(rtc::TimeMicros());
   EXPECT_EQ(time_ntp2.ToMs() - time_ntp1.ToMs(), 20);
 }

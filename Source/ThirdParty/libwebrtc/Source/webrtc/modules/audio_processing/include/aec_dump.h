@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_INCLUDE_AEC_DUMP_H_
 
 #include <stdint.h>
+
 #include <string>
 
 #include "api/audio/audio_frame.h"

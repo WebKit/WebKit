@@ -13,14 +13,29 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <memory>
 
 #include "absl/types/optional.h"
+#include "api/transport/webrtc_key_value_config.h"
 #include "modules/pacing/interval_budget.h"
+#include "rtc_base/experiments/alr_experiment.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {
 
 class RtcEventLog;
 
+struct AlrDetectorConfig {
+  // Sent traffic ratio as a function of network capacity used to determine
+  // application-limited region. ALR region start when bandwidth usage drops
+  // below kAlrStartUsageRatio and ends when it raises above
+  // kAlrEndUsageRatio. NOTE: This is intentionally conservative at the moment
+  // until BW adjustments of application limited region is fine tuned.
+  double bandwidth_usage_ratio = 0.65;
+  double start_budget_level_ratio = 0.80;
+  double stop_budget_level_ratio = 0.50;
+  std::unique_ptr<StructParametersParser> Parser();
+};
 // Application limited region detector is a class that utilizes signals of
 // elapsed time and bytes sent to estimate whether network traffic is
 // currently limited by the application's ability to generate traffic.
@@ -30,8 +45,10 @@ class RtcEventLog;
 // Note: This class is not thread-safe.
 class AlrDetector {
  public:
-  AlrDetector();
-  explicit AlrDetector(RtcEventLog* event_log);
+  AlrDetector(AlrDetectorConfig config, RtcEventLog* event_log);
+  explicit AlrDetector(const WebRtcKeyValueConfig* key_value_config);
+  AlrDetector(const WebRtcKeyValueConfig* key_value_config,
+              RtcEventLog* event_log);
   ~AlrDetector();
 
   void OnBytesSent(size_t bytes_sent, int64_t send_time_ms);
@@ -43,23 +60,12 @@ class AlrDetector {
   // started or empty result if the sender is currently not application-limited.
   absl::optional<int64_t> GetApplicationLimitedRegionStartTime() const;
 
-  // Sent traffic percentage as a function of network capacity used to determine
-  // application-limited region. ALR region start when bandwidth usage drops
-  // below kAlrStartUsagePercent and ends when it raises above
-  // kAlrEndUsagePercent. NOTE: This is intentionally conservative at the moment
-  // until BW adjustments of application limited region is fine tuned.
-  static constexpr int kDefaultAlrBandwidthUsagePercent = 65;
-  static constexpr int kDefaultAlrStartBudgetLevelPercent = 80;
-  static constexpr int kDefaultAlrStopBudgetLevelPercent = 50;
-
   void UpdateBudgetWithElapsedTime(int64_t delta_time_ms);
   void UpdateBudgetWithBytesSent(size_t bytes_sent);
 
  private:
   friend class GoogCcStatePrinter;
-  int bandwidth_usage_percent_;
-  int alr_start_budget_level_percent_;
-  int alr_stop_budget_level_percent_;
+  const AlrDetectorConfig conf_;
 
   absl::optional<int64_t> last_send_time_ms_;
 

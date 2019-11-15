@@ -14,7 +14,7 @@
 
 #include "call/rtp_demuxer.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 

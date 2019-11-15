@@ -16,9 +16,9 @@
 #include <string>
 #include <vector>
 
-#include "api/datachannelinterface.h"
-#include "api/mediastreaminterface.h"
-#include "api/peerconnectioninterface.h"
+#include "api/data_channel_interface.h"
+#include "api/media_stream_interface.h"
+#include "api/peer_connection_interface.h"
 #include "examples/unityplugin/unity_plugin_apis.h"
 #include "examples/unityplugin/video_observer.h"
 
@@ -66,7 +66,6 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
                             const char* username,
                             const char* credential);
   void CloseDataChannel();
-  std::unique_ptr<cricket::VideoCapturer> OpenVideoCaptureDevice();
   void SetAudioControl();
 
   // PeerConnectionObserver implementation.

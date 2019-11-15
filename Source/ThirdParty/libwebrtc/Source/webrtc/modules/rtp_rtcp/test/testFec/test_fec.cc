@@ -23,7 +23,7 @@
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 // #define VERBOSE_OUTPUT
 

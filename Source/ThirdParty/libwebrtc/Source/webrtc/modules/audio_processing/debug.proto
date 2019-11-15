@@ -83,6 +83,8 @@ message Config {
 message RuntimeSetting {
   optional float capture_pre_gain = 1;
   optional float custom_render_processing_setting = 2;
+  optional float capture_fixed_post_gain = 3;
+  optional int32 playout_volume_change = 4;
 }
 
 message Event {

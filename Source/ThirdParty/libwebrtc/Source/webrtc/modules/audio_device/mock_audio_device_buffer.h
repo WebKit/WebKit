@@ -18,7 +18,7 @@ namespace webrtc {
 
 class MockAudioDeviceBuffer : public AudioDeviceBuffer {
  public:
-  MockAudioDeviceBuffer() {}
+  using AudioDeviceBuffer::AudioDeviceBuffer;
   virtual ~MockAudioDeviceBuffer() {}
   MOCK_METHOD1(RequestPlayoutData, int32_t(size_t nSamples));
   MOCK_METHOD1(GetPlayoutData, int32_t(void* audioBuffer));

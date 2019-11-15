@@ -10,8 +10,7 @@
 #include "modules/congestion_controller/goog_cc/delay_based_bwe_unittest_helper.h"
 
 #include <algorithm>
-#include <limits>
-#include <utility>
+#include <cstdint>
 
 #include "absl/memory/memory.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
@@ -28,18 +27,13 @@ constexpr int kInitialProbingPackets = 5;
 
 namespace test {
 
-void TestBitrateObserver::OnReceiveBitrateChanged(
-    const std::vector<uint32_t>& ssrcs,
-    uint32_t bitrate) {
+void TestBitrateObserver::OnReceiveBitrateChanged(uint32_t bitrate) {
   latest_bitrate_ = bitrate;
   updated_ = true;
 }
 
 RtpStream::RtpStream(int fps, int bitrate_bps)
-    : fps_(fps),
-      bitrate_bps_(bitrate_bps),
-      next_rtp_time_(0),
-      sequence_number_(0) {
+    : fps_(fps), bitrate_bps_(bitrate_bps), next_rtp_time_(0) {
   RTC_CHECK_GT(fps_, 0);
 }
 
@@ -47,7 +41,7 @@ RtpStream::RtpStream(int fps, int bitrate_bps)
 // previous frame, no frame will be generated. The frame is split into
 // packets.
 int64_t RtpStream::GenerateFrame(int64_t time_now_us,
-                                 std::vector<PacketFeedback>* packets) {
+                                 std::vector<PacketResult>* packets) {
   if (time_now_us < next_rtp_time_) {
     return next_rtp_time_;
   }
@@ -57,9 +51,10 @@ int64_t RtpStream::GenerateFrame(int64_t time_now_us,
       std::max<size_t>((bits_per_frame + 4 * kMtu) / (8 * kMtu), 1u);
   size_t payload_size = (bits_per_frame + 4 * n_packets) / (8 * n_packets);
   for (size_t i = 0; i < n_packets; ++i) {
-    PacketFeedback packet(-1, sequence_number_++);
-    packet.send_time_ms = (time_now_us + kSendSideOffsetUs) / 1000;
-    packet.payload_size = payload_size;
+    PacketResult packet;
+    packet.sent_packet.send_time =
+        Timestamp::us(time_now_us + kSendSideOffsetUs);
+    packet.sent_packet.size = DataSize::bytes(payload_size);
     packets->push_back(packet);
   }
   next_rtp_time_ = time_now_us + (1000000 + fps_ / 2) / fps_;
@@ -125,7 +120,7 @@ void StreamGenerator::SetBitrateBps(int bitrate_bps) {
 
 // TODO(holmer): Break out the channel simulation part from this class to make
 // it possible to simulate different types of channels.
-int64_t StreamGenerator::GenerateFrame(std::vector<PacketFeedback>* packets,
+int64_t StreamGenerator::GenerateFrame(std::vector<PacketResult>* packets,
                                        int64_t time_now_us) {
   RTC_CHECK(packets != NULL);
   RTC_CHECK(packets->empty());
@@ -134,14 +129,15 @@ int64_t StreamGenerator::GenerateFrame(std::vector<PacketFeedback>* packets,
       std::min_element(streams_.begin(), streams_.end(), RtpStream::Compare);
   (*it)->GenerateFrame(time_now_us, packets);
   int i = 0;
-  for (PacketFeedback& packet : *packets) {
+  for (PacketResult& packet : *packets) {
     int capacity_bpus = capacity_ / 1000;
     int64_t required_network_time_us =
-        (8 * 1000 * packet.payload_size + capacity_bpus / 2) / capacity_bpus;
+        (8 * 1000 * packet.sent_packet.size.bytes() + capacity_bpus / 2) /
+        capacity_bpus;
     prev_arrival_time_us_ =
         std::max(time_now_us + required_network_time_us,
                  prev_arrival_time_us_ + required_network_time_us);
-    packet.arrival_time_ms = prev_arrival_time_us_ / 1000;
+    packet.receive_time = Timestamp::us(prev_arrival_time_us_);
     ++i;
   }
   it = std::min_element(streams_.begin(), streams_.end(), RtpStream::Compare);
@@ -153,9 +149,11 @@ DelayBasedBweTest::DelayBasedBweTest()
     : field_trial(),
       clock_(100000000),
       acknowledged_bitrate_estimator_(
-          absl::make_unique<AcknowledgedBitrateEstimator>()),
+          absl::make_unique<AcknowledgedBitrateEstimator>(
+              &field_trial_config_)),
       probe_bitrate_estimator_(new ProbeBitrateEstimator(nullptr)),
-      bitrate_estimator_(new DelayBasedBwe(nullptr)),
+      bitrate_estimator_(
+          new DelayBasedBwe(&field_trial_config_, nullptr, nullptr)),
       stream_generator_(new test::StreamGenerator(1e6,  // Capacity.
                                                   clock_.TimeInMicroseconds())),
       arrival_time_offset_ms_(0),
@@ -166,9 +164,11 @@ DelayBasedBweTest::DelayBasedBweTest(const std::string& field_trial_string)
           absl::make_unique<test::ScopedFieldTrials>(field_trial_string)),
       clock_(100000000),
       acknowledged_bitrate_estimator_(
-          absl::make_unique<AcknowledgedBitrateEstimator>()),
+          absl::make_unique<AcknowledgedBitrateEstimator>(
+              &field_trial_config_)),
       probe_bitrate_estimator_(new ProbeBitrateEstimator(nullptr)),
-      bitrate_estimator_(new DelayBasedBwe(nullptr)),
+      bitrate_estimator_(
+          new DelayBasedBwe(&field_trial_config_, nullptr, nullptr)),
       stream_generator_(new test::StreamGenerator(1e6,  // Capacity.
                                                   clock_.TimeInMicroseconds())),
       arrival_time_offset_ms_(0),
@@ -184,36 +184,38 @@ const uint32_t DelayBasedBweTest::kDefaultSsrc = 0;
 
 void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
                                          int64_t send_time_ms,
-                                         uint16_t sequence_number,
                                          size_t payload_size) {
-  IncomingFeedback(arrival_time_ms, send_time_ms, sequence_number, payload_size,
+  IncomingFeedback(arrival_time_ms, send_time_ms, payload_size,
                    PacedPacketInfo());
 }
 
 void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
                                          int64_t send_time_ms,
-                                         uint16_t sequence_number,
                                          size_t payload_size,
                                          const PacedPacketInfo& pacing_info) {
   RTC_CHECK_GE(arrival_time_ms + arrival_time_offset_ms_, 0);
-  PacketFeedback packet(arrival_time_ms + arrival_time_offset_ms_, send_time_ms,
-                        sequence_number, payload_size, pacing_info);
-  std::vector<PacketFeedback> packets;
-  packets.push_back(packet);
-  if (packet.send_time_ms != PacketFeedback::kNoSendTime &&
-      packet.pacing_info.probe_cluster_id != PacedPacketInfo::kNotAProbe)
+  PacketResult packet;
+  packet.receive_time =
+      Timestamp::ms(arrival_time_ms + arrival_time_offset_ms_);
+  packet.sent_packet.send_time = Timestamp::ms(send_time_ms);
+  packet.sent_packet.size = DataSize::bytes(payload_size);
+  packet.sent_packet.pacing_info = pacing_info;
+  if (packet.sent_packet.pacing_info.probe_cluster_id !=
+      PacedPacketInfo::kNotAProbe)
     probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);
 
-  acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(packets);
+  TransportPacketsFeedback msg;
+  msg.feedback_time = Timestamp::ms(clock_.TimeInMilliseconds());
+  msg.packet_feedbacks.push_back(packet);
+  acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(
+      msg.SortedByReceiveTime());
   DelayBasedBwe::Result result =
       bitrate_estimator_->IncomingPacketFeedbackVector(
-          packets, acknowledged_bitrate_estimator_->bitrate(),
+          msg, acknowledged_bitrate_estimator_->bitrate(),
           probe_bitrate_estimator_->FetchAndResetLastEstimatedBitrate(),
-          Timestamp::ms(clock_.TimeInMilliseconds()));
-  const uint32_t kDummySsrc = 0;
+          /*network_estimate*/ absl::nullopt, /*in_alr*/ false);
   if (result.updated) {
-    bitrate_observer_.OnReceiveBitrateChanged({kDummySsrc},
-                                              result.target_bitrate.bps());
+    bitrate_observer_.OnReceiveBitrateChanged(result.target_bitrate.bps());
   }
 }
 
@@ -226,7 +228,8 @@ void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
 bool DelayBasedBweTest::GenerateAndProcessFrame(uint32_t ssrc,
                                                 uint32_t bitrate_bps) {
   stream_generator_->SetBitrateBps(bitrate_bps);
-  std::vector<PacketFeedback> packets;
+  std::vector<PacketResult> packets;
+
   int64_t next_time_us =
       stream_generator_->GenerateFrame(&packets, clock_.TimeInMicroseconds());
   if (packets.empty())
@@ -234,27 +237,29 @@ bool DelayBasedBweTest::GenerateAndProcessFrame(uint32_t ssrc,
 
   bool overuse = false;
   bitrate_observer_.Reset();
-  clock_.AdvanceTimeMicroseconds(1000 * packets.back().arrival_time_ms -
+  clock_.AdvanceTimeMicroseconds(packets.back().receive_time.us() -
                                  clock_.TimeInMicroseconds());
   for (auto& packet : packets) {
-    RTC_CHECK_GE(packet.arrival_time_ms + arrival_time_offset_ms_, 0);
-    packet.arrival_time_ms += arrival_time_offset_ms_;
+    RTC_CHECK_GE(packet.receive_time.ms() + arrival_time_offset_ms_, 0);
+    packet.receive_time += TimeDelta::ms(arrival_time_offset_ms_);
 
-    if (packet.send_time_ms != PacketFeedback::kNoSendTime &&
-        packet.pacing_info.probe_cluster_id != PacedPacketInfo::kNotAProbe)
+    if (packet.sent_packet.pacing_info.probe_cluster_id !=
+        PacedPacketInfo::kNotAProbe)
       probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);
   }
 
   acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(packets);
+  TransportPacketsFeedback msg;
+  msg.packet_feedbacks = packets;
+  msg.feedback_time = Timestamp::ms(clock_.TimeInMilliseconds());
+
   DelayBasedBwe::Result result =
       bitrate_estimator_->IncomingPacketFeedbackVector(
-          packets, acknowledged_bitrate_estimator_->bitrate(),
+          msg, acknowledged_bitrate_estimator_->bitrate(),
           probe_bitrate_estimator_->FetchAndResetLastEstimatedBitrate(),
-          Timestamp::ms(clock_.TimeInMilliseconds()));
-  const uint32_t kDummySsrc = 0;
+          /*network_estimate*/ absl::nullopt, /*in_alr*/ false);
   if (result.updated) {
-    bitrate_observer_.OnReceiveBitrateChanged({kDummySsrc},
-                                              result.target_bitrate.bps());
+    bitrate_observer_.OnReceiveBitrateChanged(result.target_bitrate.bps());
     if (!first_update_ && result.target_bitrate.bps() < bitrate_bps)
       overuse = true;
     first_update_ = false;
@@ -303,7 +308,6 @@ void DelayBasedBweTest::InitialBehaviorTestHelper(
   const PacedPacketInfo kPacingInfo(0, 5, 5000);
   DataRate bitrate = DataRate::Zero();
   int64_t send_time_ms = 0;
-  uint16_t sequence_number = 0;
   std::vector<uint32_t> ssrcs;
   EXPECT_FALSE(bitrate_estimator_->LatestEstimate(&ssrcs, &bitrate));
   EXPECT_EQ(0u, ssrcs.size());
@@ -325,8 +329,8 @@ void DelayBasedBweTest::InitialBehaviorTestHelper(
       EXPECT_FALSE(bitrate_observer_.updated());
       bitrate_observer_.Reset();
     }
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, kMtu, pacing_info);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, kMtu,
+                     pacing_info);
     clock_.AdvanceTimeMilliseconds(1000 / kFramerate);
     send_time_ms += kFrameIntervalMs;
   }
@@ -346,7 +350,6 @@ void DelayBasedBweTest::RateIncreaseReorderingTestHelper(
   const int kFrameIntervalMs = 1000 / kFramerate;
   const PacedPacketInfo kPacingInfo(0, 5, 5000);
   int64_t send_time_ms = 0;
-  uint16_t sequence_number = 0;
   // Inserting packets for five seconds to get a valid estimate.
   for (int i = 0; i < 5 * kFramerate + 1 + kNumInitialPackets; ++i) {
     // NOTE!!! If the following line is moved under the if case then this test
@@ -361,8 +364,8 @@ void DelayBasedBweTest::RateIncreaseReorderingTestHelper(
 
       EXPECT_FALSE(bitrate_observer_.updated());  // No valid estimate.
     }
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, kMtu, pacing_info);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, kMtu,
+                     pacing_info);
     clock_.AdvanceTimeMilliseconds(kFrameIntervalMs);
     send_time_ms += kFrameIntervalMs;
   }
@@ -372,12 +375,9 @@ void DelayBasedBweTest::RateIncreaseReorderingTestHelper(
   for (int i = 0; i < 10; ++i) {
     clock_.AdvanceTimeMilliseconds(2 * kFrameIntervalMs);
     send_time_ms += 2 * kFrameIntervalMs;
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number + 2, 1000);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 1000);
     IncomingFeedback(clock_.TimeInMilliseconds(),
-                     send_time_ms - kFrameIntervalMs, sequence_number + 1,
-                     1000);
-    sequence_number += 2;
+                     send_time_ms - kFrameIntervalMs, 1000);
   }
   EXPECT_TRUE(bitrate_observer_.updated());
   EXPECT_NEAR(expected_bitrate_bps, bitrate_observer_.latest_bitrate(),
@@ -476,12 +476,10 @@ void DelayBasedBweTest::TestTimestampGroupingTestHelper() {
   const int kFramerate = 50;  // 50 fps to avoid rounding errors.
   const int kFrameIntervalMs = 1000 / kFramerate;
   int64_t send_time_ms = 0;
-  uint16_t sequence_number = 0;
   // Initial set of frames to increase the bitrate. 6 seconds to have enough
   // time for the first estimate to be generated and for Process() to be called.
   for (int i = 0; i <= 6 * kFramerate; ++i) {
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, 1000);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 1000);
 
     clock_.AdvanceTimeMilliseconds(kFrameIntervalMs);
     send_time_ms += kFrameIntervalMs;
@@ -496,8 +494,7 @@ void DelayBasedBweTest::TestTimestampGroupingTestHelper() {
     for (int j = 0; j < kTimestampGroupLength; ++j) {
       // Insert |kTimestampGroupLength| frames with just 1 timestamp ticks in
       // between. Should be treated as part of the same group by the estimator.
-      IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                       sequence_number++, 100);
+      IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 100);
       clock_.AdvanceTimeMilliseconds(kFrameIntervalMs / kTimestampGroupLength);
       send_time_ms += 1;
     }
@@ -514,11 +511,9 @@ void DelayBasedBweTest::TestWrappingHelper(int silence_time_s) {
   const int kFramerate = 100;
   const int kFrameIntervalMs = 1000 / kFramerate;
   int64_t send_time_ms = 0;
-  uint16_t sequence_number = 0;
 
   for (size_t i = 0; i < 3000; ++i) {
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, 1000);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 1000);
     clock_.AdvanceTimeMilliseconds(kFrameIntervalMs);
     send_time_ms += kFrameIntervalMs;
   }
@@ -530,8 +525,7 @@ void DelayBasedBweTest::TestWrappingHelper(int silence_time_s) {
   send_time_ms += silence_time_s * 1000;
 
   for (size_t i = 0; i < 24; ++i) {
-    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms,
-                     sequence_number++, 1000);
+    IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 1000);
     clock_.AdvanceTimeMilliseconds(2 * kFrameIntervalMs);
     send_time_ms += kFrameIntervalMs;
   }

@@ -13,10 +13,11 @@
 
 #include <assert.h>
 #include <stdio.h>
+
 #include <string>
 
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {

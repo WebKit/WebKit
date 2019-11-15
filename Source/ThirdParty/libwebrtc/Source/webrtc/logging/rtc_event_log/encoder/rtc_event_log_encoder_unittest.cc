@@ -32,17 +32,18 @@
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
-#include "logging/rtc_event_log/rtc_event_log_parser_new.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_log_unittest_helper.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "rtc_base/fake_clock.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 class RtcEventLogEncoderTest
-    : public testing::TestWithParam<std::tuple<int, bool, size_t, bool>> {
+    : public ::testing::TestWithParam<std::tuple<int, bool, size_t, bool>> {
  protected:
   RtcEventLogEncoderTest()
       : seed_(std::get<0>(GetParam())),
@@ -73,7 +74,7 @@ class RtcEventLogEncoderTest
 
   template <typename ParsedType>
   const std::vector<ParsedType>* GetRtpPacketsBySsrc(
-      const ParsedRtcEventLogNew* parsed_log,
+      const ParsedRtcEventLog* parsed_log,
       uint32_t ssrc);
 
   template <typename EventType, typename ParsedType>
@@ -81,7 +82,7 @@ class RtcEventLogEncoderTest
 
   std::deque<std::unique_ptr<RtcEvent>> history_;
   std::unique_ptr<RtcEventLogEncoder> encoder_;
-  ParsedRtcEventLogNew parsed_log_;
+  ParsedRtcEventLog parsed_log_;
   const uint64_t seed_;
   Random prng_;
   const bool new_encoding_;
@@ -127,9 +128,8 @@ std::unique_ptr<RtcEventRtpPacketOutgoing> RtcEventLogEncoderTest::NewRtpPacket(
 
 template <>
 const std::vector<LoggedRtpPacketIncoming>*
-RtcEventLogEncoderTest::GetRtpPacketsBySsrc(
-    const ParsedRtcEventLogNew* parsed_log,
-    uint32_t ssrc) {
+RtcEventLogEncoderTest::GetRtpPacketsBySsrc(const ParsedRtcEventLog* parsed_log,
+                                            uint32_t ssrc) {
   const auto& incoming_streams = parsed_log->incoming_rtp_packets_by_ssrc();
   for (const auto& stream : incoming_streams) {
     if (stream.ssrc == ssrc) {
@@ -141,9 +141,8 @@ RtcEventLogEncoderTest::GetRtpPacketsBySsrc(
 
 template <>
 const std::vector<LoggedRtpPacketOutgoing>*
-RtcEventLogEncoderTest::GetRtpPacketsBySsrc(
-    const ParsedRtcEventLogNew* parsed_log,
-    uint32_t ssrc) {
+RtcEventLogEncoderTest::GetRtpPacketsBySsrc(const ParsedRtcEventLog* parsed_log,
+                                            uint32_t ssrc) {
   const auto& outgoing_streams = parsed_log->outgoing_rtp_packets_by_ssrc();
   for (const auto& stream : outgoing_streams) {
     if (stream.ssrc == ssrc) {
@@ -216,6 +215,27 @@ TEST_P(RtcEventLogEncoderTest, RtcEventAlrState) {
   ASSERT_EQ(alr_state_events.size(), event_count_);
   for (size_t i = 0; i < event_count_; ++i) {
     verifier_.VerifyLoggedAlrStateEvent(*events[i], alr_state_events[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRouteChange) {
+  if (!new_encoding_) {
+    return;
+  }
+  std::vector<std::unique_ptr<RtcEventRouteChange>> events(event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_) ? gen_.NewRouteChange()
+                                                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  std::string encoded = encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+  const auto& route_change_events = parsed_log_.route_change_events();
+
+  ASSERT_EQ(route_change_events.size(), event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedRouteChangeEvent(*events[i], route_change_events[i]);
   }
 }
 
@@ -464,6 +484,130 @@ TEST_P(RtcEventLogEncoderTest, RtcEventBweUpdateLossBased) {
   }
 }
 
+TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketReceived) {
+  if (!new_encoding_) {
+    return;
+  }
+  std::vector<std::unique_ptr<RtcEventGenericPacketReceived>> events(
+      event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_)
+                    ? gen_.NewGenericPacketReceived()
+                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  std::string encoded = encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+  const auto& packets_received = parsed_log_.generic_packets_received();
+  ASSERT_EQ(packets_received.size(), event_count_);
+
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedGenericPacketReceived(*events[i],
+                                                packets_received[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketSent) {
+  if (!new_encoding_) {
+    return;
+  }
+  std::vector<std::unique_ptr<RtcEventGenericPacketSent>> events(event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_)
+                    ? gen_.NewGenericPacketSent()
+                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  std::string encoded = encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+  const auto& packets_sent = parsed_log_.generic_packets_sent();
+  ASSERT_EQ(packets_sent.size(), event_count_);
+
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedGenericPacketSent(*events[i], packets_sent[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventGenericAcksReceived) {
+  if (!new_encoding_) {
+    return;
+  }
+  std::vector<std::unique_ptr<RtcEventGenericAckReceived>> events(event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_)
+                    ? gen_.NewGenericAckReceived()
+                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  std::string encoded = encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+  const auto& decoded_events = parsed_log_.generic_acks_received();
+  ASSERT_EQ(decoded_events.size(), event_count_);
+
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedGenericAckReceived(*events[i], decoded_events[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventDtlsTransportState) {
+  std::vector<std::unique_ptr<RtcEventDtlsTransportState>> events(event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_)
+                    ? gen_.NewDtlsTransportState()
+                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  const std::string encoded =
+      encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+  const auto& dtls_transport_states = parsed_log_.dtls_transport_states();
+  if (!new_encoding_) {
+    ASSERT_EQ(dtls_transport_states.size(), 0u);
+    return;
+  }
+
+  ASSERT_EQ(dtls_transport_states.size(), event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedDtlsTransportState(*events[i],
+                                             dtls_transport_states[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventDtlsWritableState) {
+  std::vector<std::unique_ptr<RtcEventDtlsWritableState>> events(event_count_);
+  for (size_t i = 0; i < event_count_; ++i) {
+    events[i] = (i == 0 || !force_repeated_fields_)
+                    ? gen_.NewDtlsWritableState()
+                    : events[0]->Copy();
+    history_.push_back(events[i]->Copy());
+  }
+
+  const std::string encoded =
+      encoder_->EncodeBatch(history_.begin(), history_.end());
+  ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+  const auto& dtls_writable_states = parsed_log_.dtls_writable_states();
+  if (!new_encoding_) {
+    ASSERT_EQ(dtls_writable_states.size(), 0u);
+    return;
+  }
+
+  ASSERT_EQ(dtls_writable_states.size(), event_count_);
+
+  for (size_t i = 0; i < event_count_; ++i) {
+    verifier_.VerifyLoggedDtlsWritableState(*events[i],
+                                            dtls_writable_states[i]);
+  }
+}
+
 // TODO(eladalon/terelius): Test with multiple events in the batch.
 TEST_P(RtcEventLogEncoderTest, RtcEventIceCandidatePairConfig) {
   std::unique_ptr<RtcEventIceCandidatePairConfig> event =
@@ -565,9 +709,9 @@ TEST_P(RtcEventLogEncoderTest, RtcEventProbeResultSuccess) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventRtcpPacketIncoming) {
-  if (!new_encoding_ && force_repeated_fields_) {
-    // The old encoding does not work with duplicated packets. Since the legacy
-    // encoding is being phased out, we will not fix this.
+  if (force_repeated_fields_) {
+    // RTCP packets maybe delivered twice (once for audio and once for video).
+    // As a work around, we're removing duplicates in the parser.
     return;
   }
 
@@ -612,6 +756,356 @@ TEST_P(RtcEventLogEncoderTest, RtcEventRtcpPacketOutgoing) {
   }
 }
 
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpReceiverReport) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::ReceiverReport> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewReceiverReport();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& receiver_reports = parsed_log_.receiver_reports(direction);
+    ASSERT_EQ(receiver_reports.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedReceiverReport(timestamps_us[i], events[i],
+                                           receiver_reports[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpSenderReport) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::SenderReport> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewSenderReport();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& sender_reports = parsed_log_.sender_reports(direction);
+    ASSERT_EQ(sender_reports.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedSenderReport(timestamps_us[i], events[i],
+                                         sender_reports[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpExtendedReports) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::ExtendedReports> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewExtendedReports();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& extended_reports = parsed_log_.extended_reports(direction);
+    ASSERT_EQ(extended_reports.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedExtendedReports(timestamps_us[i], events[i],
+                                            extended_reports[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpFir) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::Fir> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewFir();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& firs = parsed_log_.firs(direction);
+    ASSERT_EQ(firs.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedFir(timestamps_us[i], events[i], firs[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpPli) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::Pli> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewPli();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& plis = parsed_log_.plis(direction);
+    ASSERT_EQ(plis.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedPli(timestamps_us[i], events[i], plis[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpNack) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::Nack> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewNack();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& nacks = parsed_log_.nacks(direction);
+    ASSERT_EQ(nacks.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedNack(timestamps_us[i], events[i], nacks[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpRemb) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::Remb> events(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events[i] = gen_.NewRemb();
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& rembs = parsed_log_.rembs(direction);
+    ASSERT_EQ(rembs.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedRemb(timestamps_us[i], events[i], rembs[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpTransportFeedback) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::TransportFeedback> events;
+    events.reserve(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events.emplace_back(gen_.NewTransportFeedback());
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& transport_feedbacks =
+        parsed_log_.transport_feedbacks(direction);
+    ASSERT_EQ(transport_feedbacks.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedTransportFeedback(timestamps_us[i], events[i],
+                                              transport_feedbacks[i]);
+    }
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventRtcpLossNotification) {
+  if (force_repeated_fields_) {
+    return;
+  }
+
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::ms(prng_.Rand<uint32_t>()));
+
+  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
+    std::vector<rtcp::LossNotification> events;
+    events.reserve(event_count_);
+    std::vector<int64_t> timestamps_us(event_count_);
+    for (size_t i = 0; i < event_count_; ++i) {
+      timestamps_us[i] = rtc::TimeMicros();
+      events.emplace_back(gen_.NewLossNotification());
+      rtc::Buffer buffer = events[i].Build();
+      if (direction == kIncomingPacket) {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketIncoming>(buffer));
+      } else {
+        history_.push_back(
+            absl::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
+      }
+      fake_clock.AdvanceTime(TimeDelta::ms(prng_.Rand(0, 1000)));
+    }
+
+    std::string encoded =
+        encoder_->EncodeBatch(history_.begin(), history_.end());
+    ASSERT_TRUE(parsed_log_.ParseString(encoded));
+
+    const auto& loss_notifications = parsed_log_.loss_notifications(direction);
+    ASSERT_EQ(loss_notifications.size(), event_count_);
+
+    for (size_t i = 0; i < event_count_; ++i) {
+      verifier_.VerifyLoggedLossNotification(timestamps_us[i], events[i],
+                                             loss_notifications[i]);
+    }
+  }
+}
+
 TEST_P(RtcEventLogEncoderTest, RtcEventRtpPacketIncoming) {
   TestRtpPackets<RtcEventRtpPacketIncoming, LoggedRtpPacketIncoming>();
 }
@@ -652,7 +1146,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventVideoSendStreamConfig) {
   verifier_.VerifyLoggedVideoSendConfig(*event, video_send_configs[0]);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     RandomSeeds,
     RtcEventLogEncoderTest,
     ::testing::Combine(/* Random seed*: */ ::testing::Values(1, 2, 3, 4, 5),

@@ -42,7 +42,7 @@
 //
 //   2. is no larger than the largest of the three argument types; and
 //
-//   3. has the same signedness as the type of the third argument, if this is
+//   3. has the same signedness as the type of the first argument, if this is
 //      possible without violating the First or Second Law.
 //
 // There is always at least one type that meets criteria 1 and 2. If more than

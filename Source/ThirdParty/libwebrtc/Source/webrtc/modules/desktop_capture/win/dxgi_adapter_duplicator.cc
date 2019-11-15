@@ -10,8 +10,8 @@
 
 #include "modules/desktop_capture/win/dxgi_adapter_duplicator.h"
 
-#include <DXGI.h>
 #include <comdef.h>
+#include <dxgi.h>
 
 #include <algorithm>
 

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "test/fake_vp8_encoder.h"
+
 #include <memory>
 #include <utility>
 
@@ -18,7 +20,6 @@
 #include "api/test/video/function_video_encoder_factory.h"
 #include "modules/video_coding/utility/simulcast_test_fixture_impl.h"
 #include "test/fake_vp8_decoder.h"
-#include "test/fake_vp8_encoder.h"
 
 namespace webrtc {
 namespace test {

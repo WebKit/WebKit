@@ -64,7 +64,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/template_util.h"
 
 #define NONAME

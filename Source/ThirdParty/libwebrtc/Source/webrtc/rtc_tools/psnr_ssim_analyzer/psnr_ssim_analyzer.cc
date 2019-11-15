@@ -11,11 +11,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <algorithm>
 #include <string>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/usage.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_frame_buffer.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
-#include "rtc_tools/simple_command_line_parser.h"
 #include "rtc_tools/video_file_reader.h"
+
+ABSL_FLAG(std::string,
+          results_file,
+          "results.txt",
+          "The full name of the file where the results will be written");
+ABSL_FLAG(std::string,
+          reference_file,
+          "ref.yuv",
+          "The reference YUV file to compare against");
+ABSL_FLAG(std::string,
+          test_file,
+          "test.yuv",
+          "The test YUV file to run the analysis for");
 
 void CompareFiles(
     const rtc::scoped_refptr<webrtc::test::Video>& reference_video,
@@ -57,45 +75,18 @@ void CompareFiles(
  * --results_file=<name_of_file>
  */
 int main(int argc, char* argv[]) {
-  std::string program_name = argv[0];
-  std::string usage =
+  absl::SetProgramUsageMessage(
       "Runs PSNR and SSIM on two I420 videos and write the"
       "results in a file.\n"
-      "Example usage:\n" +
-      program_name +
-      " --reference_file=ref.yuv "
-      "--test_file=test.yuv --results_file=results.txt\n"
-      "Command line flags:\n"
-      "  - reference_file(string): The reference YUV file to compare against."
-      " Default: ref.yuv\n"
-      "  - test_file(string): The test YUV file to run the analysis for."
-      " Default: test_file.yuv\n"
-      "  - results_file(string): The full name of the file where the results "
-      "will be written. Default: results.txt\n";
-
-  webrtc::test::CommandLineParser parser;
-
-  // Init the parser and set the usage message
-  parser.Init(argc, argv);
-  parser.SetUsageMessage(usage);
-
-  parser.SetFlag("results_file", "results.txt");
-  parser.SetFlag("reference_file", "ref.yuv");
-  parser.SetFlag("test_file", "test.yuv");
-  parser.SetFlag("results_file", "results.txt");
-  parser.SetFlag("help", "false");
-
-  parser.ProcessFlags();
-  if (parser.GetFlag("help") == "true") {
-    parser.PrintUsageMessage();
-    exit(EXIT_SUCCESS);
-  }
-  parser.PrintEnteredFlags();
+      "Example usage:\n"
+      "./psnr_ssim_analyzer --reference_file=ref.yuv "
+      "--test_file=test.yuv --results_file=results.txt\n");
+  absl::ParseCommandLine(argc, argv);
 
   rtc::scoped_refptr<webrtc::test::Video> reference_video =
-      webrtc::test::OpenY4mFile(parser.GetFlag("reference_file"));
+      webrtc::test::OpenY4mFile(absl::GetFlag(FLAGS_reference_file));
   rtc::scoped_refptr<webrtc::test::Video> test_video =
-      webrtc::test::OpenY4mFile(parser.GetFlag("test_file"));
+      webrtc::test::OpenY4mFile(absl::GetFlag(FLAGS_test_file));
 
   if (!reference_video || !test_video) {
     fprintf(stderr, "Error opening video files\n");
@@ -112,6 +103,6 @@ int main(int argc, char* argv[]) {
   }
 
   CompareFiles(reference_video, test_video,
-               parser.GetFlag("results_file").c_str());
+               absl::GetFlag(FLAGS_results_file).c_str());
   return 0;
 }

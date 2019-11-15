@@ -8,20 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
+#include "test/layer_filtering_transport.h"
 
+#include <string.h>
+
+#include <algorithm>
+#include <memory>
+#include <utility>
+
+#include "api/rtp_headers.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
-#include "test/layer_filtering_transport.h"
 
 namespace webrtc {
 namespace test {
 
 LayerFilteringTransport::LayerFilteringTransport(
-    SingleThreadedTaskQueueForTesting* task_queue,
+    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     uint8_t vp8_video_payload_type,
@@ -41,7 +50,7 @@ LayerFilteringTransport::LayerFilteringTransport(
       ssrc_to_filter_max_(ssrc_to_filter_max) {}
 
 LayerFilteringTransport::LayerFilteringTransport(
-    SingleThreadedTaskQueueForTesting* task_queue,
+    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     uint8_t vp8_video_payload_type,
@@ -117,11 +126,11 @@ bool LayerFilteringTransport::SendRtp(const uint8_t* packet,
         spatial_idx = vp9_header.spatial_idx;
         non_ref_for_inter_layer_pred = vp9_header.non_ref_for_inter_layer_pred;
         end_of_frame = vp9_header.end_of_frame;
-
-        // The number of spatial layers is sent in ssData, which is included
-        // only in the first packet of the first spatial layer of a key frame.
-        if (!vp9_header.inter_pic_predicted &&
-            vp9_header.beginning_of_frame == 1 && spatial_idx == 0) {
+        if (vp9_header.ss_data_available) {
+          RTC_DCHECK(vp9_header.temporal_idx == kNoTemporalIdx ||
+                     vp9_header.temporal_idx == 0);
+          RTC_DCHECK(vp9_header.spatial_idx == kNoSpatialIdx ||
+                     vp9_header.spatial_idx == 0);
           num_active_spatial_layers_ = vp9_header.num_spatial_layers;
         }
       }

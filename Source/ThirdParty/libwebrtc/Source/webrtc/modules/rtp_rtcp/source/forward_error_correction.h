@@ -13,14 +13,15 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <list>
 #include <memory>
 #include <vector>
 
+#include "api/scoped_refptr.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 

@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "examples/turnserver/read_auth_file.h"
+
 #include <sstream>
 
-#include "examples/turnserver/read_auth_file.h"
 #include "test/gtest.h"
 
 namespace webrtc_examples {

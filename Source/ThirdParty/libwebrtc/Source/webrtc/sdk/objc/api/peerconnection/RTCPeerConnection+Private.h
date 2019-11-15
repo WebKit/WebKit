@@ -10,7 +10,7 @@
 
 #import "RTCPeerConnection.h"
 
-#include "api/peerconnectioninterface.h"
+#include "api/peer_connection_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -39,6 +39,9 @@ class PeerConnectionDelegateAdapter : public PeerConnectionObserver {
 
   void OnIceConnectionChange(PeerConnectionInterface::IceConnectionState new_state) override;
 
+  void OnStandardizedIceConnectionChange(
+      PeerConnectionInterface::IceConnectionState new_state) override;
+
   void OnConnectionChange(PeerConnectionInterface::PeerConnectionState new_state) override;
 
   void OnIceGatheringChange(PeerConnectionInterface::IceGatheringState new_state) override;
@@ -46,6 +49,8 @@ class PeerConnectionDelegateAdapter : public PeerConnectionObserver {
   void OnIceCandidate(const IceCandidateInterface *candidate) override;
 
   void OnIceCandidatesRemoved(const std::vector<cricket::Candidate> &candidates) override;
+
+  void OnIceSelectedCandidatePairChanged(const cricket::CandidatePairChangeEvent &event) override;
 
   void OnAddTrack(rtc::scoped_refptr<RtpReceiverInterface> receiver,
                   const std::vector<rtc::scoped_refptr<MediaStreamInterface>> &streams) override;

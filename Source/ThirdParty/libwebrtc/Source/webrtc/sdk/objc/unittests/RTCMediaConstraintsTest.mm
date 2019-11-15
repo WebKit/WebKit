@@ -34,18 +34,15 @@
   std::unique_ptr<webrtc::MediaConstraints> nativeConstraints =
       [constraints nativeConstraints];
 
-  webrtc::MediaConstraintsInterface::Constraints nativeMandatory =
-      nativeConstraints->GetMandatory();
+  webrtc::MediaConstraints::Constraints nativeMandatory = nativeConstraints->GetMandatory();
   [self expectConstraints:mandatory inNativeConstraints:nativeMandatory];
 
-  webrtc::MediaConstraintsInterface::Constraints nativeOptional =
-      nativeConstraints->GetOptional();
+  webrtc::MediaConstraints::Constraints nativeOptional = nativeConstraints->GetOptional();
   [self expectConstraints:optional inNativeConstraints:nativeOptional];
 }
 
 - (void)expectConstraints:(NSDictionary *)constraints
-      inNativeConstraints:
-    (webrtc::MediaConstraintsInterface::Constraints)nativeConstraints {
+      inNativeConstraints:(webrtc::MediaConstraints::Constraints)nativeConstraints {
   EXPECT_EQ(constraints.count, nativeConstraints.size());
 
   for (NSString *key in constraints) {

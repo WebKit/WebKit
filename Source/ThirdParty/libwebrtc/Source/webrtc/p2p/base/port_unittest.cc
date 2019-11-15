@@ -8,41 +8,74 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "p2p/base/port.h"
+
+#include <string.h>
+
+#include <cstdint>
 #include <list>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "absl/memory/memory.h"
-#include "p2p/base/basicpacketsocketfactory.h"
-#include "p2p/base/p2pconstants.h"
-#include "p2p/base/relayport.h"
-#include "p2p/base/stunport.h"
-#include "p2p/base/tcpport.h"
-#include "p2p/base/testrelayserver.h"
-#include "p2p/base/teststunserver.h"
-#include "p2p/base/testturnserver.h"
-#include "p2p/base/turnport.h"
+#include "absl/types/optional.h"
+#include "api/candidate.h"
+#include "api/units/time_delta.h"
+#include "p2p/base/basic_packet_socket_factory.h"
+#include "p2p/base/p2p_constants.h"
+#include "p2p/base/packet_socket_factory.h"
+#include "p2p/base/port_allocator.h"
+#include "p2p/base/port_interface.h"
+#include "p2p/base/relay_port.h"
+#include "p2p/base/stun.h"
+#include "p2p/base/stun_port.h"
+#include "p2p/base/stun_server.h"
+#include "p2p/base/tcp_port.h"
+#include "p2p/base/test_relay_server.h"
+#include "p2p/base/test_stun_server.h"
+#include "p2p/base/test_turn_server.h"
+#include "p2p/base/transport_description.h"
+#include "p2p/base/turn_port.h"
+#include "p2p/base/turn_server.h"
+#include "p2p/client/relay_port_factory_interface.h"
 #include "rtc_base/arraysize.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/async_socket.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/crc32.h"
+#include "rtc_base/byte_buffer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/dscp.h"
+#include "rtc_base/fake_clock.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/natserver.h"
-#include "rtc_base/natsocketfactory.h"
-#include "rtc_base/socketaddress.h"
-#include "rtc_base/ssladapter.h"
-#include "rtc_base/stringutils.h"
+#include "rtc_base/nat_server.h"
+#include "rtc_base/nat_socket_factory.h"
+#include "rtc_base/nat_types.h"
+#include "rtc_base/net_helper.h"
+#include "rtc_base/network.h"
+#include "rtc_base/network/sent_packet.h"
+#include "rtc_base/network_constants.h"
+#include "rtc_base/proxy_info.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socket_adapters.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/virtualsocketserver.h"
+#include "rtc_base/time_utils.h"
+#include "rtc_base/virtual_socket_server.h"
+#include "test/gtest.h"
 
 using rtc::AsyncPacketSocket;
 using rtc::ByteBufferReader;
 using rtc::ByteBufferWriter;
-using rtc::NATType;
-using rtc::NAT_OPEN_CONE;
 using rtc::NAT_ADDR_RESTRICTED;
+using rtc::NAT_OPEN_CONE;
 using rtc::NAT_PORT_RESTRICTED;
 using rtc::NAT_SYMMETRIC;
+using rtc::NATType;
 using rtc::PacketSocketFactory;
 using rtc::Socket;
 using rtc::SocketAddress;
@@ -366,7 +399,7 @@ class TestChannel : public sigslot::has_slots<> {
   bool connection_ready_to_send_ = false;
 };
 
-class PortTest : public testing::Test, public sigslot::has_slots<> {
+class PortTest : public ::testing::Test, public sigslot::has_slots<> {
  public:
   PortTest()
       : ss_(new rtc::VirtualSocketServer()),
@@ -1001,13 +1034,12 @@ class FakePacketSocketFactory : public rtc::PacketSocketFactory {
     return result;
   }
 
-  // TODO(?): |proxy_info| and |user_agent| should be set
-  // per-factory and not when socket is created.
-  AsyncPacketSocket* CreateClientTcpSocket(const SocketAddress& local_address,
-                                           const SocketAddress& remote_address,
-                                           const rtc::ProxyInfo& proxy_info,
-                                           const std::string& user_agent,
-                                           int opts) override {
+  AsyncPacketSocket* CreateClientTcpSocket(
+      const SocketAddress& local_address,
+      const SocketAddress& remote_address,
+      const rtc::ProxyInfo& proxy_info,
+      const std::string& user_agent,
+      const rtc::PacketSocketTcpOptions& opts) override {
     EXPECT_TRUE(next_client_tcp_socket_ != NULL);
     AsyncPacketSocket* result = next_client_tcp_socket_;
     next_client_tcp_socket_ = NULL;

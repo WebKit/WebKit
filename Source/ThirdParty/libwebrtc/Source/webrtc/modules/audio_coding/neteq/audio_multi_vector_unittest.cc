@@ -309,9 +309,9 @@ TEST_P(AudioMultiVectorTest, CopyChannel) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(TestNumChannels,
-                        AudioMultiVectorTest,
-                        ::testing::Values(static_cast<size_t>(1),
-                                          static_cast<size_t>(2),
-                                          static_cast<size_t>(5)));
+INSTANTIATE_TEST_SUITE_P(TestNumChannels,
+                         AudioMultiVectorTest,
+                         ::testing::Values(static_cast<size_t>(1),
+                                           static_cast<size_t>(2),
+                                           static_cast<size_t>(5)));
 }  // namespace webrtc

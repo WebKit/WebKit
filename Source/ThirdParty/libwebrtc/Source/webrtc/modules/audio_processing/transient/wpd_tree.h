@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_TREE_H_
 
 #include <stddef.h>
+
 #include <memory>
 
 #include "modules/audio_processing/transient/wpd_node.h"

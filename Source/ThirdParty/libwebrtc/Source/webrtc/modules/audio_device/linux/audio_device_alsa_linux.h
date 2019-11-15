@@ -15,7 +15,7 @@
 
 #include "modules/audio_device/audio_device_generic.h"
 #include "modules/audio_device/linux/audio_mixer_manager_alsa_linux.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/platform_thread.h"
 
 #if defined(WEBRTC_USE_X11)
@@ -131,14 +131,14 @@ class AudioDeviceLinuxALSA : public AudioDeviceGeneric {
 
   bool KeyPressed() const;
 
-  void Lock() RTC_EXCLUSIVE_LOCK_FUNCTION(_critSect) { _critSect.Enter(); };
-  void UnLock() RTC_UNLOCK_FUNCTION(_critSect) { _critSect.Leave(); };
+  void Lock() RTC_EXCLUSIVE_LOCK_FUNCTION(_critSect) { _critSect.Enter(); }
+  void UnLock() RTC_UNLOCK_FUNCTION(_critSect) { _critSect.Leave(); }
 
   inline int32_t InputSanityCheckAfterUnlockedPeriod() const;
   inline int32_t OutputSanityCheckAfterUnlockedPeriod() const;
 
-  static bool RecThreadFunc(void*);
-  static bool PlayThreadFunc(void*);
+  static void RecThreadFunc(void*);
+  static void PlayThreadFunc(void*);
   bool RecThreadProcess();
   bool PlayThreadProcess();
 

@@ -12,9 +12,9 @@
 
 #include "absl/memory/memory.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
-#include "sdk/android/src/jni/videocodecinfo.h"
-#include "sdk/android/src/jni/videodecoderfactorywrapper.h"
-#include "sdk/android/src/jni/videoencoderfactorywrapper.h"
+#include "sdk/android/src/jni/video_codec_info.h"
+#include "sdk/android/src/jni/video_decoder_factory_wrapper.h"
+#include "sdk/android/src/jni/video_encoder_factory_wrapper.h"
 
 namespace webrtc {
 

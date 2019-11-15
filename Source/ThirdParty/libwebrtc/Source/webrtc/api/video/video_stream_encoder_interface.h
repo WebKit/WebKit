@@ -13,16 +13,16 @@
 
 #include <vector>
 
-#include "api/rtpparameters.h"  // For DegradationPreference.
+#include "api/fec_controller_override.h"
+#include "api/rtp_parameters.h"  // For DegradationPreference.
+#include "api/units/data_rate.h"
+#include "api/video/video_bitrate_allocator.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_config.h"
 
 namespace webrtc {
-
-// TODO(nisse): Move full declaration to api/.
-class VideoBitrateAllocationObserver;
 
 // This interface represents a class responsible for creating and driving the
 // encoder(s) for a single video stream. It is also responsible for adaptation
@@ -44,6 +44,7 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
    public:
     virtual void OnEncoderConfigurationChanged(
         std::vector<VideoStream> streams,
+        VideoEncoderConfig::ContentType content_type,
         int min_transmit_bitrate_bps) = 0;
   };
 
@@ -78,9 +79,17 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
   // Request a key frame. Used for signalling from the remote receiver.
   virtual void SendKeyFrame() = 0;
 
-  // Set the currently estimated network properties. A |bitrate_bps|
+  // Inform the encoder that a loss has occurred.
+  virtual void OnLossNotification(
+      const VideoEncoder::LossNotification& loss_notification) = 0;
+
+  // Set the currently estimated network properties. A |target_bitrate|
   // of zero pauses the encoder.
-  virtual void OnBitrateUpdated(uint32_t bitrate_bps,
+  // |link_allocation| is the bandwidth available for this video stream on the
+  // network link. It is always at least |target_bitrate| but may be higher
+  // if we are not network constrained.
+  virtual void OnBitrateUpdated(DataRate target_bitrate,
+                                DataRate link_allocation,
                                 uint8_t fraction_lost,
                                 int64_t round_trip_time_ms) = 0;
 
@@ -88,6 +97,11 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
   // and spatial layers.
   virtual void SetBitrateAllocationObserver(
       VideoBitrateAllocationObserver* bitrate_observer) = 0;
+
+  // Set a FecControllerOverride, through which the encoder may override
+  // decisions made by FecController.
+  virtual void SetFecControllerOverride(
+      FecControllerOverride* fec_controller_override) = 0;
 
   // Creates and configures an encoder with the given |config|. The
   // |max_data_payload_length| is used to support single NAL unit

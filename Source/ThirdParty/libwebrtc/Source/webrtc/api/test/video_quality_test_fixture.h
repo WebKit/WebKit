@@ -18,9 +18,13 @@
 
 #include "api/bitrate_constraints.h"
 #include "api/fec_controller.h"
-#include "api/mediatypes.h"
+#include "api/media_types.h"
+#include "api/network_state_predictor.h"
 #include "api/test/simulated_network.h"
+#include "api/transport/network_control.h"
+#include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_config.h"
+#include "api/video_codecs/video_encoder_factory.h"
 
 namespace webrtc {
 
@@ -57,15 +61,17 @@ class VideoQualityTestFixtureInterface {
       bool ulpfec;
       bool flexfec;
       bool automatic_scaling;
-      std::string clip_name;  // "Generator" to generate frames instead.
+      std::string clip_path;  // "Generator" to generate frames instead.
       size_t capture_device_index;
       SdpVideoFormat::Parameters sdp_params;
+      double encoder_overshoot_factor;
     } video[2];
     struct Audio {
       bool enabled;
       bool sync_video;
       bool dtx;
       bool use_real_adm;
+      absl::optional<std::string> ana_config;
     } audio;
     struct Screenshare {
       bool enabled;
@@ -118,6 +124,12 @@ class VideoQualityTestFixtureInterface {
     std::unique_ptr<NetworkBehaviorInterface> receiver_network;
 
     std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
+    std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
+    std::unique_ptr<VideoDecoderFactory> video_decoder_factory;
+    std::unique_ptr<NetworkStatePredictorFactoryInterface>
+        network_state_predictor_factory;
+    std::unique_ptr<NetworkControllerFactoryInterface>
+        network_controller_factory;
   };
 
   virtual ~VideoQualityTestFixtureInterface() = default;

@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 
+#include <stddef.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
@@ -64,7 +66,7 @@ std::unique_ptr<SharedMemory> FakeSharedMemoryFactory::CreateSharedMemory(
 
 }  // namespace
 
-class FallbackDesktopCapturerWrapperTest : public testing::Test,
+class FallbackDesktopCapturerWrapperTest : public ::testing::Test,
                                            public DesktopCapturer::Callback {
  public:
   FallbackDesktopCapturerWrapperTest();

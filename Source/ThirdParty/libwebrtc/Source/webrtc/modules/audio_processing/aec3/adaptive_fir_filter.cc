@@ -24,7 +24,6 @@
 
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -83,65 +82,16 @@ void UpdateFrequencyResponse_SSE2(
 }
 #endif
 
-// Computes and stores the echo return loss estimate of the filter, which is the
-// sum of the partition frequency responses.
-void UpdateErlEstimator(
-    const std::vector<std::array<float, kFftLengthBy2Plus1>>& H2,
-    std::array<float, kFftLengthBy2Plus1>* erl) {
-  erl->fill(0.f);
-  for (auto& H2_j : H2) {
-    std::transform(H2_j.begin(), H2_j.end(), erl->begin(), erl->begin(),
-                   std::plus<float>());
-  }
-}
-
-#if defined(WEBRTC_HAS_NEON)
-// Computes and stores the echo return loss estimate of the filter, which is the
-// sum of the partition frequency responses.
-void UpdateErlEstimator_NEON(
-    const std::vector<std::array<float, kFftLengthBy2Plus1>>& H2,
-    std::array<float, kFftLengthBy2Plus1>* erl) {
-  erl->fill(0.f);
-  for (auto& H2_j : H2) {
-    for (size_t k = 0; k < kFftLengthBy2; k += 4) {
-      const float32x4_t H2_j_k = vld1q_f32(&H2_j[k]);
-      float32x4_t erl_k = vld1q_f32(&(*erl)[k]);
-      erl_k = vaddq_f32(erl_k, H2_j_k);
-      vst1q_f32(&(*erl)[k], erl_k);
-    }
-    (*erl)[kFftLengthBy2] += H2_j[kFftLengthBy2];
-  }
-}
-#endif
-
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-// Computes and stores the echo return loss estimate of the filter, which is the
-// sum of the partition frequency responses.
-void UpdateErlEstimator_SSE2(
-    const std::vector<std::array<float, kFftLengthBy2Plus1>>& H2,
-    std::array<float, kFftLengthBy2Plus1>* erl) {
-  erl->fill(0.f);
-  for (auto& H2_j : H2) {
-    for (size_t k = 0; k < kFftLengthBy2; k += 4) {
-      const __m128 H2_j_k = _mm_loadu_ps(&H2_j[k]);
-      __m128 erl_k = _mm_loadu_ps(&(*erl)[k]);
-      erl_k = _mm_add_ps(erl_k, H2_j_k);
-      _mm_storeu_ps(&(*erl)[k], erl_k);
-    }
-    (*erl)[kFftLengthBy2] += H2_j[kFftLengthBy2];
-  }
-}
-#endif
 
 // Adapts the filter partitions as H(t+1)=H(t)+G(t)*conj(X(t)).
 void AdaptPartitions(const RenderBuffer& render_buffer,
                      const FftData& G,
                      rtc::ArrayView<FftData> H) {
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   size_t index = render_buffer.Position();
   for (auto& H_j : H) {
-    const FftData& X = render_buffer_data[index];
+    const FftData& X = render_buffer_data[index][/*channel=*/0];
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
       H_j.re[k] += X.re[k] * G.re[k] + X.im[k] * G.im[k];
       H_j.im[k] += X.re[k] * G.im[k] - X.im[k] * G.re[k];
@@ -156,23 +106,25 @@ void AdaptPartitions(const RenderBuffer& render_buffer,
 void AdaptPartitions_NEON(const RenderBuffer& render_buffer,
                           const FftData& G,
                           rtc::ArrayView<FftData> H) {
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const int lim1 =
       std::min(render_buffer_data.size() - render_buffer.Position(), H.size());
   const int lim2 = H.size();
   constexpr int kNumFourBinBands = kFftLengthBy2 / 4;
   FftData* H_j = &H[0];
-  const FftData* X = &render_buffer_data[render_buffer.Position()];
+  const std::vector<FftData>* X_channels =
+      &render_buffer_data[render_buffer.Position()];
   int limit = lim1;
   int j = 0;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
       for (int k = 0, n = 0; n < kNumFourBinBands; ++n, k += 4) {
         const float32x4_t G_re = vld1q_f32(&G.re[k]);
         const float32x4_t G_im = vld1q_f32(&G.im[k]);
-        const float32x4_t X_re = vld1q_f32(&X->re[k]);
-        const float32x4_t X_im = vld1q_f32(&X->im[k]);
+        const float32x4_t X_re = vld1q_f32(&X.re[k]);
+        const float32x4_t X_im = vld1q_f32(&X.im[k]);
         const float32x4_t H_re = vld1q_f32(&H_j->re[k]);
         const float32x4_t H_im = vld1q_f32(&H_j->im[k]);
         const float32x4_t a = vmulq_f32(X_re, G_re);
@@ -187,23 +139,24 @@ void AdaptPartitions_NEON(const RenderBuffer& render_buffer,
       }
     }
 
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
     limit = lim2;
   } while (j < lim2);
 
   H_j = &H[0];
-  X = &render_buffer_data[render_buffer.Position()];
+  X_channels = &render_buffer_data[render_buffer.Position()];
   limit = lim1;
   j = 0;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
-      H_j->re[kFftLengthBy2] += X->re[kFftLengthBy2] * G.re[kFftLengthBy2] +
-                                X->im[kFftLengthBy2] * G.im[kFftLengthBy2];
-      H_j->im[kFftLengthBy2] += X->re[kFftLengthBy2] * G.im[kFftLengthBy2] -
-                                X->im[kFftLengthBy2] * G.re[kFftLengthBy2];
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
+      H_j->re[kFftLengthBy2] += X.re[kFftLengthBy2] * G.re[kFftLengthBy2] +
+                                X.im[kFftLengthBy2] * G.im[kFftLengthBy2];
+      H_j->im[kFftLengthBy2] += X.re[kFftLengthBy2] * G.im[kFftLengthBy2] -
+                                X.im[kFftLengthBy2] * G.re[kFftLengthBy2];
     }
 
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
     limit = lim2;
   } while (j < lim2);
 }
@@ -214,14 +167,14 @@ void AdaptPartitions_NEON(const RenderBuffer& render_buffer,
 void AdaptPartitions_SSE2(const RenderBuffer& render_buffer,
                           const FftData& G,
                           rtc::ArrayView<FftData> H) {
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const int lim1 =
       std::min(render_buffer_data.size() - render_buffer.Position(), H.size());
   const int lim2 = H.size();
   constexpr int kNumFourBinBands = kFftLengthBy2 / 4;
   FftData* H_j;
-  const FftData* X;
+  const std::vector<FftData>* X_channels;
   int limit;
   int j;
   for (int k = 0, n = 0; n < kNumFourBinBands; ++n, k += 4) {
@@ -229,13 +182,14 @@ void AdaptPartitions_SSE2(const RenderBuffer& render_buffer,
     const __m128 G_im = _mm_loadu_ps(&G.im[k]);
 
     H_j = &H[0];
-    X = &render_buffer_data[render_buffer.Position()];
+    X_channels = &render_buffer_data[render_buffer.Position()];
     limit = lim1;
     j = 0;
     do {
-      for (; j < limit; ++j, ++H_j, ++X) {
-        const __m128 X_re = _mm_loadu_ps(&X->re[k]);
-        const __m128 X_im = _mm_loadu_ps(&X->im[k]);
+      for (; j < limit; ++j, ++H_j, ++X_channels) {
+        const FftData& X = (*X_channels)[/*channel=*/0];
+        const __m128 X_re = _mm_loadu_ps(&X.re[k]);
+        const __m128 X_im = _mm_loadu_ps(&X.im[k]);
         const __m128 H_re = _mm_loadu_ps(&H_j->re[k]);
         const __m128 H_im = _mm_loadu_ps(&H_j->im[k]);
         const __m128 a = _mm_mul_ps(X_re, G_re);
@@ -250,24 +204,25 @@ void AdaptPartitions_SSE2(const RenderBuffer& render_buffer,
         _mm_storeu_ps(&H_j->im[k], h);
       }
 
-      X = &render_buffer_data[0];
+      X_channels = &render_buffer_data[0];
       limit = lim2;
     } while (j < lim2);
   }
 
   H_j = &H[0];
-  X = &render_buffer_data[render_buffer.Position()];
+  X_channels = &render_buffer_data[render_buffer.Position()];
   limit = lim1;
   j = 0;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
-      H_j->re[kFftLengthBy2] += X->re[kFftLengthBy2] * G.re[kFftLengthBy2] +
-                                X->im[kFftLengthBy2] * G.im[kFftLengthBy2];
-      H_j->im[kFftLengthBy2] += X->re[kFftLengthBy2] * G.im[kFftLengthBy2] -
-                                X->im[kFftLengthBy2] * G.re[kFftLengthBy2];
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
+      H_j->re[kFftLengthBy2] += X.re[kFftLengthBy2] * G.re[kFftLengthBy2] +
+                                X.im[kFftLengthBy2] * G.im[kFftLengthBy2];
+      H_j->im[kFftLengthBy2] += X.re[kFftLengthBy2] * G.im[kFftLengthBy2] -
+                                X.im[kFftLengthBy2] * G.re[kFftLengthBy2];
     }
 
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
     limit = lim2;
   } while (j < lim2);
 }
@@ -280,11 +235,11 @@ void ApplyFilter(const RenderBuffer& render_buffer,
   S->re.fill(0.f);
   S->im.fill(0.f);
 
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   size_t index = render_buffer.Position();
   for (auto& H_j : H) {
-    const FftData& X = render_buffer_data[index];
+    const FftData& X = render_buffer_data[index][0];
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
       S->re[k] += X.re[k] * H_j.re[k] - X.im[k] * H_j.im[k];
       S->im[k] += X.re[k] * H_j.im[k] + X.im[k] * H_j.re[k];
@@ -299,25 +254,26 @@ void ApplyFilter_NEON(const RenderBuffer& render_buffer,
                       rtc::ArrayView<const FftData> H,
                       FftData* S) {
   RTC_DCHECK_GE(H.size(), H.size() - 1);
-  S->re.fill(0.f);
-  S->im.fill(0.f);
+  S->Clear();
 
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const int lim1 =
       std::min(render_buffer_data.size() - render_buffer.Position(), H.size());
   const int lim2 = H.size();
   constexpr int kNumFourBinBands = kFftLengthBy2 / 4;
   const FftData* H_j = &H[0];
-  const FftData* X = &render_buffer_data[render_buffer.Position()];
+  const std::vector<FftData>* X_channels =
+      &render_buffer_data[render_buffer.Position()];
 
   int j = 0;
   int limit = lim1;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
       for (int k = 0, n = 0; n < kNumFourBinBands; ++n, k += 4) {
-        const float32x4_t X_re = vld1q_f32(&X->re[k]);
-        const float32x4_t X_im = vld1q_f32(&X->im[k]);
+        const float32x4_t X_re = vld1q_f32(&X.re[k]);
+        const float32x4_t X_im = vld1q_f32(&X.im[k]);
         const float32x4_t H_re = vld1q_f32(&H_j->re[k]);
         const float32x4_t H_im = vld1q_f32(&H_j->im[k]);
         const float32x4_t S_re = vld1q_f32(&S->re[k]);
@@ -333,22 +289,23 @@ void ApplyFilter_NEON(const RenderBuffer& render_buffer,
       }
     }
     limit = lim2;
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
   } while (j < lim2);
 
   H_j = &H[0];
-  X = &render_buffer_data[render_buffer.Position()];
+  X_channels = &render_buffer_data[render_buffer.Position()];
   j = 0;
   limit = lim1;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
-      S->re[kFftLengthBy2] += X->re[kFftLengthBy2] * H_j->re[kFftLengthBy2] -
-                              X->im[kFftLengthBy2] * H_j->im[kFftLengthBy2];
-      S->im[kFftLengthBy2] += X->re[kFftLengthBy2] * H_j->im[kFftLengthBy2] +
-                              X->im[kFftLengthBy2] * H_j->re[kFftLengthBy2];
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
+      S->re[kFftLengthBy2] += X.re[kFftLengthBy2] * H_j->re[kFftLengthBy2] -
+                              X.im[kFftLengthBy2] * H_j->im[kFftLengthBy2];
+      S->im[kFftLengthBy2] += X.re[kFftLengthBy2] * H_j->im[kFftLengthBy2] +
+                              X.im[kFftLengthBy2] * H_j->re[kFftLengthBy2];
     }
     limit = lim2;
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
   } while (j < lim2);
 }
 #endif
@@ -362,22 +319,24 @@ void ApplyFilter_SSE2(const RenderBuffer& render_buffer,
   S->re.fill(0.f);
   S->im.fill(0.f);
 
-  rtc::ArrayView<const FftData> render_buffer_data =
+  rtc::ArrayView<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const int lim1 =
       std::min(render_buffer_data.size() - render_buffer.Position(), H.size());
   const int lim2 = H.size();
   constexpr int kNumFourBinBands = kFftLengthBy2 / 4;
   const FftData* H_j = &H[0];
-  const FftData* X = &render_buffer_data[render_buffer.Position()];
+  const std::vector<FftData>* X_channels =
+      &render_buffer_data[render_buffer.Position()];
 
   int j = 0;
   int limit = lim1;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
       for (int k = 0, n = 0; n < kNumFourBinBands; ++n, k += 4) {
-        const __m128 X_re = _mm_loadu_ps(&X->re[k]);
-        const __m128 X_im = _mm_loadu_ps(&X->im[k]);
+        const __m128 X_re = _mm_loadu_ps(&X.re[k]);
+        const __m128 X_im = _mm_loadu_ps(&X.im[k]);
         const __m128 H_re = _mm_loadu_ps(&H_j->re[k]);
         const __m128 H_im = _mm_loadu_ps(&H_j->im[k]);
         const __m128 S_re = _mm_loadu_ps(&S->re[k]);
@@ -395,43 +354,37 @@ void ApplyFilter_SSE2(const RenderBuffer& render_buffer,
       }
     }
     limit = lim2;
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
   } while (j < lim2);
 
   H_j = &H[0];
-  X = &render_buffer_data[render_buffer.Position()];
+  X_channels = &render_buffer_data[render_buffer.Position()];
   j = 0;
   limit = lim1;
   do {
-    for (; j < limit; ++j, ++H_j, ++X) {
-      S->re[kFftLengthBy2] += X->re[kFftLengthBy2] * H_j->re[kFftLengthBy2] -
-                              X->im[kFftLengthBy2] * H_j->im[kFftLengthBy2];
-      S->im[kFftLengthBy2] += X->re[kFftLengthBy2] * H_j->im[kFftLengthBy2] +
-                              X->im[kFftLengthBy2] * H_j->re[kFftLengthBy2];
+    for (; j < limit; ++j, ++H_j, ++X_channels) {
+      const FftData& X = (*X_channels)[/*channel=*/0];
+      S->re[kFftLengthBy2] += X.re[kFftLengthBy2] * H_j->re[kFftLengthBy2] -
+                              X.im[kFftLengthBy2] * H_j->im[kFftLengthBy2];
+      S->im[kFftLengthBy2] += X.re[kFftLengthBy2] * H_j->im[kFftLengthBy2] +
+                              X.im[kFftLengthBy2] * H_j->re[kFftLengthBy2];
     }
     limit = lim2;
-    X = &render_buffer_data[0];
+    X_channels = &render_buffer_data[0];
   } while (j < lim2);
 }
 #endif
 
 }  // namespace aec3
 
-namespace {
-
-bool EnablePartialFilterReset() {
-  return !field_trial::IsEnabled("WebRTC-Aec3PartialFilterResetKillSwitch");
-}
-
-}  // namespace
-
 AdaptiveFirFilter::AdaptiveFirFilter(size_t max_size_partitions,
                                      size_t initial_size_partitions,
                                      size_t size_change_duration_blocks,
+                                     size_t num_render_channels,
+                                     size_t num_capture_channels,
                                      Aec3Optimization optimization,
                                      ApmDataDumper* data_dumper)
     : data_dumper_(data_dumper),
-      use_partial_filter_reset_(EnablePartialFilterReset()),
       fft_(),
       optimization_(optimization),
       max_size_partitions_(max_size_partitions),
@@ -440,9 +393,7 @@ AdaptiveFirFilter::AdaptiveFirFilter(size_t max_size_partitions,
       current_size_partitions_(initial_size_partitions),
       target_size_partitions_(initial_size_partitions),
       old_target_size_partitions_(initial_size_partitions),
-      H_(max_size_partitions_),
-      H2_(max_size_partitions_, std::array<float, kFftLengthBy2Plus1>()),
-      h_(GetTimeDomainLength(max_size_partitions_), 0.f) {
+      H_(max_size_partitions_) {
   RTC_DCHECK(data_dumper_);
   RTC_DCHECK_GE(max_size_partitions, initial_size_partitions);
 
@@ -452,45 +403,23 @@ AdaptiveFirFilter::AdaptiveFirFilter(size_t max_size_partitions,
   for (auto& H_j : H_) {
     H_j.Clear();
   }
-  for (auto& H2_k : H2_) {
-    H2_k.fill(0.f);
-  }
-  erl_.fill(0.f);
   SetSizePartitions(current_size_partitions_, true);
 }
 
 AdaptiveFirFilter::~AdaptiveFirFilter() = default;
 
 void AdaptiveFirFilter::HandleEchoPathChange() {
-  size_t current_h_size = h_.size();
-  h_.resize(GetTimeDomainLength(max_size_partitions_));
-  const size_t begin_coeffficient =
-      use_partial_filter_reset_ ? current_h_size : 0;
-  std::fill(h_.begin() + begin_coeffficient, h_.end(), 0.f);
-  h_.resize(current_h_size);
-
   size_t current_size_partitions = H_.size();
   H_.resize(max_size_partitions_);
-  H2_.resize(max_size_partitions_);
 
-  const size_t begin_partition =
-      use_partial_filter_reset_ ? current_size_partitions : 0;
-  for (size_t k = begin_partition; k < max_size_partitions_; ++k) {
+  for (size_t k = current_size_partitions; k < max_size_partitions_; ++k) {
     H_[k].Clear();
-    H2_[k].fill(0.f);
   }
   H_.resize(current_size_partitions);
-  H2_.resize(current_size_partitions);
-
-  erl_.fill(0.f);
 }
 
 void AdaptiveFirFilter::SetSizePartitions(size_t size, bool immediate_effect) {
   RTC_DCHECK_EQ(max_size_partitions_, H_.capacity());
-  RTC_DCHECK_EQ(max_size_partitions_, H2_.capacity());
-  RTC_DCHECK_EQ(GetTimeDomainLength(max_size_partitions_), h_.capacity());
-  RTC_DCHECK_EQ(H_.size(), H2_.size());
-  RTC_DCHECK_EQ(h_.size(), GetTimeDomainLength(H_.size()));
   RTC_DCHECK_LE(size, max_size_partitions_);
 
   target_size_partitions_ = std::min(max_size_partitions_, size);
@@ -505,18 +434,7 @@ void AdaptiveFirFilter::SetSizePartitions(size_t size, bool immediate_effect) {
 }
 
 void AdaptiveFirFilter::ResetFilterBuffersToCurrentSize() {
-  if (current_size_partitions_ < H_.size()) {
-    for (size_t k = current_size_partitions_; k < H_.size(); ++k) {
-      H_[k].Clear();
-      H2_[k].fill(0.f);
-    }
-    std::fill(h_.begin() + GetTimeDomainLength(current_size_partitions_),
-              h_.end(), 0.f);
-  }
-
   H_.resize(current_size_partitions_);
-  H2_.resize(current_size_partitions_);
-  h_.resize(GetTimeDomainLength(current_size_partitions_));
   RTC_DCHECK_LT(0, current_size_partitions_);
   partition_to_constrain_ =
       std::min(partition_to_constrain_, current_size_partitions_ - 1);
@@ -566,6 +484,52 @@ void AdaptiveFirFilter::Filter(const RenderBuffer& render_buffer,
 
 void AdaptiveFirFilter::Adapt(const RenderBuffer& render_buffer,
                               const FftData& G) {
+  // Adapt the filter and update the filter size.
+  AdaptAndUpdateSize(render_buffer, G);
+
+  // Constrain the filter partitions in a cyclic manner.
+  Constrain();
+}
+
+void AdaptiveFirFilter::Adapt(const RenderBuffer& render_buffer,
+                              const FftData& G,
+                              std::vector<float>* impulse_response) {
+  // Adapt the filter and update the filter size.
+  AdaptAndUpdateSize(render_buffer, G);
+
+  // Constrain the filter partitions in a cyclic manner.
+  ConstrainAndUpdateImpulseResponse(impulse_response);
+}
+
+void AdaptiveFirFilter::ComputeFrequencyResponse(
+    std::vector<std::array<float, kFftLengthBy2Plus1>>* H2) const {
+  RTC_DCHECK_EQ(max_size_partitions_, H2->capacity());
+
+  if (H2->size() > H_.size()) {
+    for (size_t k = H_.size(); k < H2->size(); ++k) {
+      (*H2)[k].fill(0.f);
+    }
+  }
+  H2->resize(H_.size());
+
+  switch (optimization_) {
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+    case Aec3Optimization::kSse2:
+      aec3::UpdateFrequencyResponse_SSE2(H_, H2);
+      break;
+#endif
+#if defined(WEBRTC_HAS_NEON)
+    case Aec3Optimization::kNeon:
+      aec3::UpdateFrequencyResponse_NEON(H_, H2);
+      break;
+#endif
+    default:
+      aec3::UpdateFrequencyResponse(H_, H2);
+  }
+}
+
+void AdaptiveFirFilter::AdaptAndUpdateSize(const RenderBuffer& render_buffer,
+                                           const FftData& G) {
   // Update the filter size if needed.
   UpdateSize();
 
@@ -584,28 +548,34 @@ void AdaptiveFirFilter::Adapt(const RenderBuffer& render_buffer,
     default:
       aec3::AdaptPartitions(render_buffer, G, H_);
   }
+}
 
-  // Constrain the filter partitions in a cyclic manner.
-  Constrain();
+// Constrains the partition of the frequency domain filter to be limited in
+// time via setting the relevant time-domain coefficients to zero and updates
+// the corresponding values in an externally stored impulse response estimate.
+void AdaptiveFirFilter::ConstrainAndUpdateImpulseResponse(
+    std::vector<float>* impulse_response) {
+  RTC_DCHECK_EQ(GetTimeDomainLength(max_size_partitions_),
+                impulse_response->capacity());
 
-  // Update the frequency response and echo return loss for the filter.
-  switch (optimization_) {
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-    case Aec3Optimization::kSse2:
-      aec3::UpdateFrequencyResponse_SSE2(H_, &H2_);
-      aec3::UpdateErlEstimator_SSE2(H2_, &erl_);
-      break;
-#endif
-#if defined(WEBRTC_HAS_NEON)
-    case Aec3Optimization::kNeon:
-      aec3::UpdateFrequencyResponse_NEON(H_, &H2_);
-      aec3::UpdateErlEstimator_NEON(H2_, &erl_);
-      break;
-#endif
-    default:
-      aec3::UpdateFrequencyResponse(H_, &H2_);
-      aec3::UpdateErlEstimator(H2_, &erl_);
-  }
+  impulse_response->resize(GetTimeDomainLength(current_size_partitions_));
+  std::array<float, kFftLength> h;
+  fft_.Ifft(H_[partition_to_constrain_], &h);
+
+  static constexpr float kScale = 1.0f / kFftLengthBy2;
+  std::for_each(h.begin(), h.begin() + kFftLengthBy2,
+                [](float& a) { a *= kScale; });
+  std::fill(h.begin() + kFftLengthBy2, h.end(), 0.f);
+
+  std::copy(
+      h.begin(), h.begin() + kFftLengthBy2,
+      impulse_response->begin() + partition_to_constrain_ * kFftLengthBy2);
+
+  fft_.Fft(&h, &H_[partition_to_constrain_]);
+
+  partition_to_constrain_ = partition_to_constrain_ < (H_.size() - 1)
+                                ? partition_to_constrain_ + 1
+                                : 0;
 }
 
 // Constrains the a partiton of the frequency domain filter to be limited in
@@ -618,9 +588,6 @@ void AdaptiveFirFilter::Constrain() {
   std::for_each(h.begin(), h.begin() + kFftLengthBy2,
                 [](float& a) { a *= kScale; });
   std::fill(h.begin() + kFftLengthBy2, h.end(), 0.f);
-
-  std::copy(h.begin(), h.begin() + kFftLengthBy2,
-            h_.begin() + partition_to_constrain_ * kFftLengthBy2);
 
   fft_.Fft(&h, &H_[partition_to_constrain_]);
 
@@ -637,9 +604,6 @@ void AdaptiveFirFilter::ScaleFilter(float factor) {
     for (auto& im : H.im) {
       im *= factor;
     }
-  }
-  for (auto& h : h_) {
-    h *= factor;
   }
 }
 

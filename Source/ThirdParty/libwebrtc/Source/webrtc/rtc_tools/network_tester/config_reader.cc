@@ -9,8 +9,9 @@
  */
 #include "rtc_tools/network_tester/config_reader.h"
 
+#include <fstream>
+#include <iterator>
 #include <string>
-#include <vector>
 
 #include "rtc_base/checks.h"
 

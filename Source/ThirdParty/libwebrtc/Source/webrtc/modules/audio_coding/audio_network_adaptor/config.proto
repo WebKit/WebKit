@@ -98,6 +98,22 @@ message FrameLengthController {
 
   // Offset to apply to the per-packet overhead when decreasing frame length.
   optional int32 fl_decrease_overhead_offset = 8;
+
+  // Uplink bandwidth below which frame length can switch from 20ms to 40ms. In
+  // current implementation, defining this will invalidate
+  // fl_20ms_to_60ms_bandwidth_bps.
+  optional int32 fl_20ms_to_40ms_bandwidth_bps = 9;
+
+  // Uplink bandwidth above which frame length should switch from 40ms to 20ms.
+  optional int32 fl_40ms_to_20ms_bandwidth_bps = 10;
+
+  // Uplink bandwidth below which frame length can switch from 40ms to 60ms.
+  optional int32 fl_40ms_to_60ms_bandwidth_bps = 11;
+
+  // Uplink bandwidth above which frame length should switch from 60ms to 40ms.
+  // In current implementation, defining this will invalidate
+  // fl_60ms_to_20ms_bandwidth_bps.
+  optional int32 fl_60ms_to_40ms_bandwidth_bps = 12;
 }
 
 message ChannelController {

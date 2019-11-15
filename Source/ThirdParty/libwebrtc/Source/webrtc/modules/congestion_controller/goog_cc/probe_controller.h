@@ -17,20 +17,48 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_control.h"
-#include "rtc_base/constructormagic.h"
+#include "api/transport/webrtc_key_value_config.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/system/unused.h"
 
 namespace webrtc {
 
-class Clock;
+struct ProbeControllerConfig {
+  explicit ProbeControllerConfig(const WebRtcKeyValueConfig* key_value_config);
+  ProbeControllerConfig(const ProbeControllerConfig&);
+  ProbeControllerConfig& operator=(const ProbeControllerConfig&) = default;
+  ~ProbeControllerConfig();
+
+  // These parameters configure the initial probes. First we send one or two
+  // probes of sizes p1 * start_bitrate_bps_ and p2 * start_bitrate_bps_.
+  // Then whenever we get a bitrate estimate of at least further_probe_threshold
+  // times the size of the last sent probe we'll send another one of size
+  // step_size times the new estimate.
+  FieldTrialParameter<double> first_exponential_probe_scale;
+  FieldTrialOptional<double> second_exponential_probe_scale;
+  FieldTrialParameter<double> further_exponential_probe_scale;
+  FieldTrialParameter<double> further_probe_threshold;
+
+  // Configures how often we send ALR probes and how big they are.
+  FieldTrialParameter<TimeDelta> alr_probing_interval;
+  FieldTrialParameter<double> alr_probe_scale;
+
+  // Configures the probes emitted by changed to the allocated bitrate.
+  FieldTrialOptional<double> first_allocation_probe_scale;
+  FieldTrialOptional<double> second_allocation_probe_scale;
+  FieldTrialFlag allocation_allow_further_probing;
+};
 
 // This class controls initiation of probing to estimate initial channel
 // capacity. There is also support for probing during a session when max
 // bitrate is adjusted by an application.
 class ProbeController {
  public:
-  ProbeController();
+  explicit ProbeController(const WebRtcKeyValueConfig* key_value_config,
+                           RtcEventLog* event_log);
   ~ProbeController();
 
   RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig> SetBitrates(
@@ -60,8 +88,8 @@ class ProbeController {
   RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig> RequestProbe(
       int64_t at_time_ms);
 
-  RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig>
-  InitiateCapacityProbing(int64_t bitrate_bps, int64_t at_time_ms);
+  // Sets a new maximum probing bitrate, without generating a new probe cluster.
+  void SetMaxBitrate(int64_t max_bitrate_bps);
 
   // Resets the ProbeController to a state equivalent to as if it was just
   // created EXCEPT for |enable_periodic_alr_probing_|.
@@ -84,7 +112,7 @@ class ProbeController {
   InitiateExponentialProbing(int64_t at_time_ms);
   RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig> InitiateProbing(
       int64_t now_ms,
-      std::initializer_list<int64_t> bitrates_to_probe,
+      std::vector<int64_t> bitrates_to_probe,
       bool probe_further);
 
   bool network_available_;
@@ -102,11 +130,17 @@ class ProbeController {
   int64_t bitrate_before_last_large_drop_bps_;
   int64_t max_total_allocated_bitrate_;
 
-  bool in_rapid_recovery_experiment_;
+  const bool in_rapid_recovery_experiment_;
+  const bool limit_probes_with_allocateable_rate_;
   // For WebRTC.BWE.MidCallProbing.* metric.
   bool mid_call_probing_waiting_for_result_;
   int64_t mid_call_probing_bitrate_bps_;
   int64_t mid_call_probing_succcess_threshold_;
+  RtcEventLog* event_log_;
+
+  int32_t next_probe_cluster_id_ = 1;
+
+  ProbeControllerConfig config_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ProbeController);
 };

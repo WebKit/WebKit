@@ -10,7 +10,8 @@
 
 #include "rtc_base/experiments/jitter_upper_bound_experiment.h"
 
-#include <algorithm>
+#include <stdio.h>
+
 #include <string>
 
 #include "rtc_base/logging.h"

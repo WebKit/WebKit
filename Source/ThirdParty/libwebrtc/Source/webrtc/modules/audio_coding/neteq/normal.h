@@ -16,7 +16,7 @@
 
 #include "modules/audio_coding/neteq/defines.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {

@@ -14,7 +14,7 @@
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/atomicops.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 
@@ -43,7 +43,7 @@ void GainController2::Initialize(int sample_rate_hz) {
 }
 
 void GainController2::Process(AudioBuffer* audio) {
-  AudioFrameView<float> float_frame(audio->channels_f(), audio->num_channels(),
+  AudioFrameView<float> float_frame(audio->channels(), audio->num_channels(),
                                     audio->num_frames());
   // Apply fixed gain first, then the adaptive one.
   gain_applier_.ApplyGain(float_frame);

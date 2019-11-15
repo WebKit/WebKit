@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_EXPAND_H_
 
 #include "modules/audio_coding/neteq/expand.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

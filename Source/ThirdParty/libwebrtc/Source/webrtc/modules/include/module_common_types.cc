@@ -11,6 +11,7 @@
 #include "modules/include/module_common_types.h"
 
 #include <string.h>
+
 #include <cstdint>
 #include <utility>
 
@@ -21,9 +22,7 @@ namespace webrtc {
 RTPFragmentationHeader::RTPFragmentationHeader()
     : fragmentationVectorSize(0),
       fragmentationOffset(nullptr),
-      fragmentationLength(nullptr),
-      fragmentationTimeDiff(nullptr),
-      fragmentationPlType(nullptr) {}
+      fragmentationLength(nullptr) {}
 
 RTPFragmentationHeader::RTPFragmentationHeader(RTPFragmentationHeader&& other)
     : RTPFragmentationHeader() {
@@ -39,8 +38,6 @@ RTPFragmentationHeader& RTPFragmentationHeader::operator=(
 RTPFragmentationHeader::~RTPFragmentationHeader() {
   delete[] fragmentationOffset;
   delete[] fragmentationLength;
-  delete[] fragmentationTimeDiff;
-  delete[] fragmentationPlType;
 }
 
 void swap(RTPFragmentationHeader& a, RTPFragmentationHeader& b) {
@@ -48,8 +45,6 @@ void swap(RTPFragmentationHeader& a, RTPFragmentationHeader& b) {
   swap(a.fragmentationVectorSize, b.fragmentationVectorSize);
   swap(a.fragmentationOffset, b.fragmentationOffset);
   swap(a.fragmentationLength, b.fragmentationLength);
-  swap(a.fragmentationTimeDiff, b.fragmentationTimeDiff);
-  swap(a.fragmentationPlType, b.fragmentationPlType);
 }
 
 void RTPFragmentationHeader::CopyFrom(const RTPFragmentationHeader& src) {
@@ -65,10 +60,6 @@ void RTPFragmentationHeader::CopyFrom(const RTPFragmentationHeader& src) {
     fragmentationOffset = nullptr;
     delete[] fragmentationLength;
     fragmentationLength = nullptr;
-    delete[] fragmentationTimeDiff;
-    fragmentationTimeDiff = nullptr;
-    delete[] fragmentationPlType;
-    fragmentationPlType = nullptr;
 
     if (src.fragmentationVectorSize > 0) {
       // allocate new
@@ -77,12 +68,6 @@ void RTPFragmentationHeader::CopyFrom(const RTPFragmentationHeader& src) {
       }
       if (src.fragmentationLength) {
         fragmentationLength = new size_t[src.fragmentationVectorSize];
-      }
-      if (src.fragmentationTimeDiff) {
-        fragmentationTimeDiff = new uint16_t[src.fragmentationVectorSize];
-      }
-      if (src.fragmentationPlType) {
-        fragmentationPlType = new uint8_t[src.fragmentationVectorSize];
       }
     }
     // set new size
@@ -98,14 +83,6 @@ void RTPFragmentationHeader::CopyFrom(const RTPFragmentationHeader& src) {
     if (src.fragmentationLength) {
       memcpy(fragmentationLength, src.fragmentationLength,
              src.fragmentationVectorSize * sizeof(size_t));
-    }
-    if (src.fragmentationTimeDiff) {
-      memcpy(fragmentationTimeDiff, src.fragmentationTimeDiff,
-             src.fragmentationVectorSize * sizeof(uint16_t));
-    }
-    if (src.fragmentationPlType) {
-      memcpy(fragmentationPlType, src.fragmentationPlType,
-             src.fragmentationVectorSize * sizeof(uint8_t));
     }
   }
 }
@@ -132,26 +109,6 @@ void RTPFragmentationHeader::Resize(size_t size) {
              sizeof(size_t) * (size16 - oldVectorSize));
       memcpy(fragmentationLength, oldLengths, sizeof(size_t) * oldVectorSize);
       delete[] oldLengths;
-    }
-    // time diff
-    {
-      uint16_t* oldTimeDiffs = fragmentationTimeDiff;
-      fragmentationTimeDiff = new uint16_t[size16];
-      memset(fragmentationTimeDiff + oldVectorSize, 0,
-             sizeof(uint16_t) * (size16 - oldVectorSize));
-      memcpy(fragmentationTimeDiff, oldTimeDiffs,
-             sizeof(uint16_t) * oldVectorSize);
-      delete[] oldTimeDiffs;
-    }
-    // payload type
-    {
-      uint8_t* oldTimePlTypes = fragmentationPlType;
-      fragmentationPlType = new uint8_t[size16];
-      memset(fragmentationPlType + oldVectorSize, 0,
-             sizeof(uint8_t) * (size16 - oldVectorSize));
-      memcpy(fragmentationPlType, oldTimePlTypes,
-             sizeof(uint8_t) * oldVectorSize);
-      delete[] oldTimePlTypes;
     }
     fragmentationVectorSize = size16;
   }

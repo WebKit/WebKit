@@ -13,13 +13,14 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <vector>
 
 #include "api/audio/audio_frame.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

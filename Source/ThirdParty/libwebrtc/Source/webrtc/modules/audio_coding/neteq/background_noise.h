@@ -12,9 +12,11 @@
 #define MODULES_AUDIO_CODING_NETEQ_BACKGROUND_NOISE_H_
 
 #include <string.h>  // size_t
+
 #include <memory>
 
-#include "rtc_base/constructormagic.h"
+#include "api/array_view.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -27,7 +29,7 @@ class BackgroundNoise {
  public:
   // TODO(hlundin): For 48 kHz support, increase kMaxLpcOrder to 10.
   // Will work anyway, but probably sound a little worse.
-  static const size_t kMaxLpcOrder = 8;  // 32000 / 8000 + 4.
+  static constexpr size_t kMaxLpcOrder = 8;  // 32000 / 8000 + 4.
 
   explicit BackgroundNoise(size_t num_channels);
   virtual ~BackgroundNoise();
@@ -36,7 +38,17 @@ class BackgroundNoise {
 
   // Updates the parameter estimates based on the signal currently in the
   // |sync_buffer|, and on the latest decision in |vad| if it is running.
-  void Update(const AudioMultiVector& sync_buffer, const PostDecodeVad& vad);
+  // Returns true if the filter parameters are updated.
+  bool Update(const AudioMultiVector& sync_buffer, const PostDecodeVad& vad);
+
+  // Generates background noise given a random vector and writes the output to
+  // |buffer|.
+  void GenerateBackgroundNoise(rtc::ArrayView<const int16_t> random_vector,
+                               size_t channel,
+                               int mute_slope,
+                               bool too_many_expands,
+                               size_t num_noise_samples,
+                               int16_t* buffer);
 
   // Returns |energy_| for |channel|.
   int32_t Energy(size_t channel) const;
@@ -53,9 +65,9 @@ class BackgroundNoise {
   // Returns a pointer to |filter_state_| for |channel|.
   const int16_t* FilterState(size_t channel) const;
 
-  // Copies |length| elements from |input| to the filter state. Will not copy
-  // more than |kMaxLpcOrder| elements.
-  void SetFilterState(size_t channel, const int16_t* input, size_t length);
+  // Copies |input| to the filter state. Will not copy more than |kMaxLpcOrder|
+  // elements.
+  void SetFilterState(size_t channel, rtc::ArrayView<const int16_t> input);
 
   // Returns |scale_| for |channel|.
   int16_t Scale(size_t channel) const;

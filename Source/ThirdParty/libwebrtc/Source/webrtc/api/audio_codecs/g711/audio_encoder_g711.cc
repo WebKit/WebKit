@@ -79,7 +79,9 @@ std::unique_ptr<AudioEncoder> AudioEncoderG711::MakeAudioEncoder(
       impl_config.payload_type = payload_type;
       return absl::make_unique<AudioEncoderPcmA>(impl_config);
     }
-    default: { return nullptr; }
+    default: {
+      return nullptr;
+    }
   }
 }
 

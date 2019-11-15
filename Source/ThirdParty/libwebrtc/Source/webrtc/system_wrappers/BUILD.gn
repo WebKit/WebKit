@@ -17,14 +17,12 @@ rtc_static_library("system_wrappers") {
   sources = [
     "include/clock.h",
     "include/cpu_info.h",
-    "include/event_wrapper.h",
     "include/ntp_time.h",
     "include/rtp_to_ntp_estimator.h",
     "include/sleep.h",
     "source/clock.cc",
     "source/cpu_features.cc",
     "source/cpu_info.cc",
-    "source/event.cc",
     "source/rtp_to_ntp_estimator.cc",
     "source/sleep.cc",
   ]
@@ -34,6 +32,7 @@ rtc_static_library("system_wrappers") {
   deps = [
     ":cpu_features_api",
     "../api:array_view",
+    "../api/units:timestamp",
     "../modules:module_api_public",
     "../rtc_base:checks",
     "../rtc_base/synchronization:rw_lock_wrapper",
@@ -42,8 +41,6 @@ rtc_static_library("system_wrappers") {
   ]
 
   if (is_android) {
-    defines += [ "WEBRTC_THREAD_RR" ]
-
     if (build_with_mozilla) {
       include_dirs = [
         "/config/external/nspr",
@@ -58,8 +55,6 @@ rtc_static_library("system_wrappers") {
   }
 
   if (is_linux) {
-    defines += [ "WEBRTC_THREAD_RR" ]
-
     if (!build_with_chromium) {
       deps += [ ":cpu_features_linux" ]
     }
@@ -67,16 +62,12 @@ rtc_static_library("system_wrappers") {
     libs += [ "rt" ]
   }
 
-  if (is_ios || is_mac) {
-    defines += [ "WEBRTC_THREAD_RR" ]
-  }
-
   if (is_win) {
     libs += [ "winmm.lib" ]
 
-    # Windows needs ../rtc_base:rtc_base due to include of
+    # Windows needs ../rtc_base due to include of
     # webrtc/rtc_base/win32.h in source/clock.cc.
-    deps += [ "../rtc_base:rtc_base" ]
+    deps += [ "../rtc_base" ]
   }
 
   deps += [
@@ -102,16 +93,33 @@ rtc_source_set("field_trial") {
   if (rtc_exclude_field_trial_default) {
     defines = [ "WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT" ]
   }
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
   if (build_with_chromium) {
     # When WebRTC is built as part of Chromium it should exclude the default
     # implementation of field_trial unless it is building for NACL or
     # Chromecast.
     if (!is_nacl && !is_chromecast) {
-      deps = [
-        "../../webrtc_overrides:field_trial",
-      ]
+      deps += [ "../../webrtc_overrides:field_trial" ]
     }
   }
+}
+
+rtc_source_set("event_wrapper") {
+  visibility = [
+    "../modules/video_coding",
+    "../modules/video_coding:video_coding_unittests",
+  ]
+  sources = [
+    "include/event_wrapper.h",
+    "source/event.cc",
+  ]
+  deps = [
+    "../rtc_base:rtc_event",
+  ]
 }
 
 rtc_source_set("metrics") {
@@ -126,7 +134,6 @@ rtc_source_set("metrics") {
     defines = [ "WEBRTC_EXCLUDE_METRICS_DEFAULT" ]
   }
   deps = [
-    "..:webrtc_common",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
   ]
@@ -142,7 +149,7 @@ if (is_android && !build_with_mozilla) {
     ]
 
     deps = [
-      "//third_party/android_tools:cpu_features",
+      "//third_party/android_sdk:cpu_features",
     ]
   }
 }
@@ -164,6 +171,7 @@ if (rtc_include_tests) {
     testonly = true
     sources = [
       "source/clock_unittest.cc",
+      "source/field_trial_unittest.cc",
       "source/metrics_default_unittest.cc",
       "source/metrics_unittest.cc",
       "source/ntp_time_unittest.cc",
@@ -171,13 +179,15 @@ if (rtc_include_tests) {
     ]
 
     deps = [
+      ":field_trial",
       ":metrics",
       ":system_wrappers",
-      "..:webrtc_common",
+      "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings",
     ]
 
     if (is_android) {

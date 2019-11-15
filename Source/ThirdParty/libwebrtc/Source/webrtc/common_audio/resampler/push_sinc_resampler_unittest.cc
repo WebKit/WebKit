@@ -8,15 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "common_audio/resampler/push_sinc_resampler.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <memory>
 
 #include "common_audio/include/audio_util.h"
-#include "common_audio/resampler/push_sinc_resampler.h"
 #include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -255,7 +256,7 @@ TEST_P(PushSincResamplerTest, ResampleFloat) {
 
 // Thresholds chosen arbitrarily based on what each resampling reported during
 // testing.  All thresholds are in dbFS, http://en.wikipedia.org/wiki/DBFS.
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     PushSincResamplerTest,
     PushSincResamplerTest,
     ::testing::Values(
@@ -321,14 +322,14 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::make_tuple(32000, 16000, -18.48, -28.59),
         ::testing::make_tuple(44100, 16000, -19.30, -19.67),
         ::testing::make_tuple(48000, 16000, -19.81, -18.11),
-        ::testing::make_tuple(96000, 16000, -20.95, -10.96),
+        ::testing::make_tuple(96000, 16000, -20.95, -10.9596),
 
         // To 32 kHz
         ::testing::make_tuple(8000, 32000, kResamplingRMSError, -70.30),
         ::testing::make_tuple(16000, 32000, kResamplingRMSError, -75.51),
         ::testing::make_tuple(32000, 32000, kResamplingRMSError, -75.51),
-        ::testing::make_tuple(44100, 32000, -16.44, -51.10),
-        ::testing::make_tuple(48000, 32000, -16.90, -44.03),
+        ::testing::make_tuple(44100, 32000, -16.44, -51.0349),
+        ::testing::make_tuple(48000, 32000, -16.90, -43.9967),
         ::testing::make_tuple(96000, 32000, -19.61, -18.04),
         ::testing::make_tuple(192000, 32000, -21.02, -10.94)));
 

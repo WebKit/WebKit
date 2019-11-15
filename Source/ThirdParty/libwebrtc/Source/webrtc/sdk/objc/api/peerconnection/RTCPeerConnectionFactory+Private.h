@@ -10,8 +10,8 @@
 
 #import "RTCPeerConnectionFactory.h"
 
-#include "api/peerconnectioninterface.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/peer_connection_interface.h"
+#include "api/scoped_refptr.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

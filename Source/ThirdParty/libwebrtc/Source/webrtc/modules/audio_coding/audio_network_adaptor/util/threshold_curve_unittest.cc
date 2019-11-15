@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
+
 #include <memory>
 
-#include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
 #include "test/gtest.h"
 
 // A threshold curve divides 2D space into three domains - below, on and above

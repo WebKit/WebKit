@@ -15,7 +15,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace internal {
@@ -38,12 +38,12 @@ NullAudioPoller::NullAudioPoller(AudioTransport* audio_transport)
 }
 
 NullAudioPoller::~NullAudioPoller() {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   rtc::Thread::Current()->Clear(this);
 }
 
 void NullAudioPoller::OnMessage(rtc::Message* msg) {
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
 
   // Buffer to hold the audio samples.
   int16_t buffer[kNumSamples * kNumChannels];

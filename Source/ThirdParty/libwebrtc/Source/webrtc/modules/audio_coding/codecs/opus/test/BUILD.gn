@@ -27,7 +27,7 @@ if (rtc_include_tests) {
     ]
 
     deps = [
-      "../../../../../common_audio:common_audio",
+      "../../../../../common_audio",
       "../../../../../common_audio:common_audio_c",
       "../../../../../rtc_base:checks",
       "../../../../../rtc_base/memory:aligned_array",
@@ -45,7 +45,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":test",
-      "../../../../../common_audio:common_audio",
+      "../../../../../common_audio",
       "../../../../../common_audio:common_audio_c",
       "../../../../../rtc_base:rtc_base_approved",
       "../../../../../test:test_support",

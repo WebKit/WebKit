@@ -33,8 +33,8 @@
 
 namespace webrtc {
 
-ObjCVideoTrackSource::ObjCVideoTrackSource() :
-  AdaptedVideoTrackSource(/* required resolution alignment */ 4) {}
+ObjCVideoTrackSource::ObjCVideoTrackSource()
+    : AdaptedVideoTrackSource(/* required resolution alignment */ 2) {}
 
 ObjCVideoTrackSource::ObjCVideoTrackSource(RTCObjCVideoSourceAdapter *adapter) : adapter_(adapter) {
   adapter_.objCVideoTrackSource = this;
@@ -116,7 +116,11 @@ void ObjCVideoTrackSource::OnCapturedFrame(RTCVideoFrame *frame) {
     rotation = kVideoRotation_0;
   }
 
-  OnFrame(VideoFrame(buffer, rotation, translated_timestamp_us));
+  OnFrame(VideoFrame::Builder()
+              .set_video_frame_buffer(buffer)
+              .set_rotation(rotation)
+              .set_timestamp_us(translated_timestamp_us)
+              .build());
 }
 
 }  // namespace webrtc

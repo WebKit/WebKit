@@ -10,6 +10,7 @@
 
 package org.webrtc;
 
+import android.support.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
@@ -53,11 +54,11 @@ public class EncodedImage {
   public final FrameType frameType;
   public final int rotation;
   public final boolean completeFrame;
-  public final Integer qp;
+  public final @Nullable Integer qp;
 
   @CalledByNative
   private EncodedImage(ByteBuffer buffer, int encodedWidth, int encodedHeight, long captureTimeNs,
-      FrameType frameType, int rotation, boolean completeFrame, Integer qp) {
+      FrameType frameType, int rotation, boolean completeFrame, @Nullable Integer qp) {
     this.buffer = buffer;
     this.encodedWidth = encodedWidth;
     this.encodedHeight = encodedHeight;
@@ -67,6 +68,46 @@ public class EncodedImage {
     this.rotation = rotation;
     this.completeFrame = completeFrame;
     this.qp = qp;
+  }
+
+  @CalledByNative
+  private ByteBuffer getBuffer() {
+    return buffer;
+  }
+
+  @CalledByNative
+  private int getEncodedWidth() {
+    return encodedWidth;
+  }
+
+  @CalledByNative
+  private int getEncodedHeight() {
+    return encodedHeight;
+  }
+
+  @CalledByNative
+  private long getCaptureTimeNs() {
+    return captureTimeNs;
+  }
+
+  @CalledByNative
+  private int getFrameType() {
+    return frameType.getNative();
+  }
+
+  @CalledByNative
+  private int getRotation() {
+    return rotation;
+  }
+
+  @CalledByNative
+  private boolean getCompleteFrame() {
+    return completeFrame;
+  }
+
+  @CalledByNative
+  private @Nullable Integer getQp() {
+    return qp;
   }
 
   public static Builder builder() {
@@ -81,7 +122,7 @@ public class EncodedImage {
     private EncodedImage.FrameType frameType;
     private int rotation;
     private boolean completeFrame;
-    private Integer qp;
+    private @Nullable Integer qp;
 
     private Builder() {}
 
@@ -126,7 +167,7 @@ public class EncodedImage {
       return this;
     }
 
-    public Builder setQp(Integer qp) {
+    public Builder setQp(@Nullable Integer qp) {
       this.qp = qp;
       return this;
     }

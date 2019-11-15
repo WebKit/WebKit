@@ -225,8 +225,7 @@ void TransportFeedbackPacketLossTracker::UpdateRplr(
       UpdateCounter(&rplr_state_.num_acked_pairs_, apply);
       if (prev->second.status == PacketStatus::Lost &&
           it->second.status == PacketStatus::Received) {
-        UpdateCounter(
-            &rplr_state_.num_recoverable_losses_, apply);
+        UpdateCounter(&rplr_state_.num_recoverable_losses_, apply);
       }
     }
   }

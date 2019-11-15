@@ -46,8 +46,8 @@ void OpusSpeedTest::SetUp() {
   // If channels_ == 1, use Opus VOIP mode, otherwise, audio mode.
   int app = channels_ == 1 ? 0 : 1;
   /* Create encoder memory. */
-  EXPECT_EQ(0, WebRtcOpus_EncoderCreate(&opus_encoder_, channels_, app));
-  EXPECT_EQ(0, WebRtcOpus_DecoderCreate(&opus_decoder_, channels_));
+  EXPECT_EQ(0, WebRtcOpus_EncoderCreate(&opus_encoder_, channels_, app, 48000));
+  EXPECT_EQ(0, WebRtcOpus_DecoderCreate(&opus_decoder_, channels_, 48000));
   /* Set bitrate. */
   EXPECT_EQ(0, WebRtcOpus_SetBitRate(opus_encoder_, bit_rate_));
 }
@@ -96,17 +96,17 @@ constexpr size_t kDurationSec = 400;
     EncodeDecode(kDurationSec);                                        \
   }
 
-ADD_TEST(10);
-ADD_TEST(9);
-ADD_TEST(8);
-ADD_TEST(7);
-ADD_TEST(6);
-ADD_TEST(5);
-ADD_TEST(4);
-ADD_TEST(3);
-ADD_TEST(2);
-ADD_TEST(1);
-ADD_TEST(0);
+ADD_TEST(10)
+ADD_TEST(9)
+ADD_TEST(8)
+ADD_TEST(7)
+ADD_TEST(6)
+ADD_TEST(5)
+ADD_TEST(4)
+ADD_TEST(3)
+ADD_TEST(2)
+ADD_TEST(1)
+ADD_TEST(0)
 
 #define ADD_BANDWIDTH_TEST(bandwidth)                                \
   TEST_P(OpusSpeedTest, OpusSetBandwidthTest##bandwidth) {           \
@@ -116,11 +116,11 @@ ADD_TEST(0);
     EncodeDecode(kDurationSec);                                      \
   }
 
-ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_NARROWBAND);
-ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_MEDIUMBAND);
-ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_WIDEBAND);
-ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_SUPERWIDEBAND);
-ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_FULLBAND);
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_NARROWBAND)
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_MEDIUMBAND)
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_WIDEBAND)
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_SUPERWIDEBAND)
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_FULLBAND)
 
 // List all test cases: (channel, bit rat, filename, extension).
 const coding_param param_set[] = {
@@ -140,6 +140,8 @@ const coding_param param_set[] = {
                     string("pcm"),
                     true)};
 
-INSTANTIATE_TEST_CASE_P(AllTest, OpusSpeedTest, ::testing::ValuesIn(param_set));
+INSTANTIATE_TEST_SUITE_P(AllTest,
+                         OpusSpeedTest,
+                         ::testing::ValuesIn(param_set));
 
 }  // namespace webrtc

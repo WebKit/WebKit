@@ -156,9 +156,9 @@ void LossBasedBandwidthEstimation::UpdateAcknowledgedBitrate(
   if (acknowledged_bitrate > acknowledged_bitrate_max_) {
     acknowledged_bitrate_max_ = acknowledged_bitrate;
   } else {
-    acknowledged_bitrate_max_ +=
+    acknowledged_bitrate_max_ -=
         ExponentialUpdate(config_.acknowledged_rate_max_window, time_passed) *
-        (acknowledged_bitrate - acknowledged_bitrate_max_);
+        (acknowledged_bitrate_max_ - acknowledged_bitrate);
   }
 }
 
@@ -170,19 +170,12 @@ void LossBasedBandwidthEstimation::Update(Timestamp at_time,
   // Avoid multiple decreases from averaging over one loss spike.
   const double loss_estimate_for_decrease =
       std::min(average_loss_, last_loss_ratio_);
-
-  const double loss_increase_threshold = LossFromBitrate(
-      loss_based_bitrate_, config_.loss_bandwidth_balance_increase,
-      config_.loss_bandwidth_balance_exponent);
-  const double loss_decrease_threshold = LossFromBitrate(
-      loss_based_bitrate_, config_.loss_bandwidth_balance_decrease,
-      config_.loss_bandwidth_balance_exponent);
   const bool allow_decrease =
       !has_decreased_since_last_loss_report_ &&
       (at_time - time_last_decrease_ >=
        last_round_trip_time + config_.decrease_interval);
 
-  if (loss_estimate_for_increase < loss_increase_threshold) {
+  if (loss_estimate_for_increase < loss_increase_threshold()) {
     // Increase bitrate by RTT-adaptive ratio.
     DataRate new_increased_bitrate =
         min_bitrate * GetIncreaseFactor(config_, last_round_trip_time) +
@@ -194,22 +187,51 @@ void LossBasedBandwidthEstimation::Update(Timestamp at_time,
     new_increased_bitrate =
         std::min(new_increased_bitrate, new_increased_bitrate_cap);
     loss_based_bitrate_ = std::max(new_increased_bitrate, loss_based_bitrate_);
-  } else if (loss_estimate_for_decrease > loss_decrease_threshold &&
+  } else if (loss_estimate_for_decrease > loss_decrease_threshold() &&
              allow_decrease) {
-    DataRate new_decreased_bitrate =
-        config_.decrease_factor * acknowledged_bitrate_max_;
     // The bitrate that would make the loss "just acceptable".
     const DataRate new_decreased_bitrate_floor = BitrateFromLoss(
         loss_estimate_for_decrease, config_.loss_bandwidth_balance_decrease,
         config_.loss_bandwidth_balance_exponent);
-    new_decreased_bitrate =
-        std::max(new_decreased_bitrate, new_decreased_bitrate_floor);
+    DataRate new_decreased_bitrate =
+        std::max(decreased_bitrate(), new_decreased_bitrate_floor);
     if (new_decreased_bitrate < loss_based_bitrate_) {
       time_last_decrease_ = at_time;
       has_decreased_since_last_loss_report_ = true;
       loss_based_bitrate_ = new_decreased_bitrate;
     }
   }
+}
+
+void LossBasedBandwidthEstimation::Reset(DataRate bitrate) {
+  loss_based_bitrate_ = bitrate;
+  average_loss_ = 0;
+  average_loss_max_ = 0;
+}
+
+double LossBasedBandwidthEstimation::loss_increase_threshold() const {
+  return LossFromBitrate(loss_based_bitrate_,
+                         config_.loss_bandwidth_balance_increase,
+                         config_.loss_bandwidth_balance_exponent);
+}
+
+double LossBasedBandwidthEstimation::loss_decrease_threshold() const {
+  return LossFromBitrate(loss_based_bitrate_,
+                         config_.loss_bandwidth_balance_decrease,
+                         config_.loss_bandwidth_balance_exponent);
+}
+
+DataRate LossBasedBandwidthEstimation::decreased_bitrate() const {
+  return config_.decrease_factor * acknowledged_bitrate_max_;
+}
+
+void LossBasedBandwidthEstimation::MaybeReset(DataRate bitrate) {
+  if (config_.allow_resets)
+    Reset(bitrate);
+}
+
+void LossBasedBandwidthEstimation::SetInitialBitrate(DataRate bitrate) {
+  Reset(bitrate);
 }
 
 }  // namespace webrtc

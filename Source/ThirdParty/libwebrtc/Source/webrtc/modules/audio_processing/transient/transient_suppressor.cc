@@ -10,8 +10,8 @@
 
 #include "modules/audio_processing/transient/transient_suppressor.h"
 
-#include <math.h>
 #include <string.h>
+
 #include <cmath>
 #include <complex>
 #include <deque>
@@ -139,9 +139,9 @@ int TransientSuppressor::Initialize(int sample_rate_hz,
   for (size_t i = 0; i < complex_analysis_length_; ++i) {
     mean_factor_[i] =
         kFactorHeight /
-            (1.f + exp(kLowSlope * static_cast<int>(i - kMinVoiceBin))) +
+            (1.f + std::exp(kLowSlope * static_cast<int>(i - kMinVoiceBin))) +
         kFactorHeight /
-            (1.f + exp(kHighSlope * static_cast<int>(kMaxVoiceBin - i)));
+            (1.f + std::exp(kHighSlope * static_cast<int>(kMaxVoiceBin - i)));
   }
   detector_smoothed_ = 0.f;
   keypress_counter_ = 0;
@@ -352,7 +352,7 @@ void TransientSuppressor::UpdateBuffers(float* data) {
 // If a restoration takes place, the |magnitudes_| are updated to the new value.
 void TransientSuppressor::HardRestoration(float* spectral_mean) {
   const float detector_result =
-      1.f - pow(1.f - detector_smoothed_, using_reference_ ? 200.f : 50.f);
+      1.f - std::pow(1.f - detector_smoothed_, using_reference_ ? 200.f : 50.f);
   // To restore, we get the peaks in the spectrum. If higher than the previous
   // spectral mean we adjust them.
   for (size_t i = 0; i < complex_analysis_length_; ++i) {

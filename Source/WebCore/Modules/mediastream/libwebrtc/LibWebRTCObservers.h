@@ -31,7 +31,7 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/peerconnectioninterface.h>
+#include <webrtc/api/peer_connection_interface.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

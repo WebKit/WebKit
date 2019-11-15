@@ -9,15 +9,21 @@
  */
 
 #include <iostream>
+#include <vector>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "absl/memory/memory.h"
 #include "modules/audio_processing/test/conversational_speech/config.h"
 #include "modules/audio_processing/test/conversational_speech/multiend_call.h"
 #include "modules/audio_processing/test/conversational_speech/simulator.h"
 #include "modules/audio_processing/test/conversational_speech/timing.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_factory.h"
-#include "rtc_base/flags.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
+
+ABSL_FLAG(std::string, i, "", "Directory containing the speech turn wav files");
+ABSL_FLAG(std::string, t, "", "Path to the timing text file");
+ABSL_FLAG(std::string, o, "", "Output wav files destination path");
 
 namespace webrtc {
 namespace test {
@@ -32,28 +38,20 @@ const char kUsageDescription[] =
     "Command-line tool to generate multiple-end audio tracks to simulate "
     "conversational speech with two or more participants.\n";
 
-WEBRTC_DEFINE_string(i, "", "Directory containing the speech turn wav files");
-WEBRTC_DEFINE_string(t, "", "Path to the timing text file");
-WEBRTC_DEFINE_string(o, "", "Output wav files destination path");
-WEBRTC_DEFINE_bool(help, false, "Prints this message");
-
 }  // namespace
 
 int main(int argc, char* argv[]) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
-      argc != 1) {
+  std::vector<char*> args = absl::ParseCommandLine(argc, argv);
+  if (args.size() != 1) {
     printf("%s", kUsageDescription);
-    if (FLAG_help) {
-      rtc::FlagList::Print(nullptr, false);
-      return 0;
-    }
     return 1;
   }
-  RTC_CHECK(DirExists(FLAG_i));
-  RTC_CHECK(FileExists(FLAG_t));
-  RTC_CHECK(DirExists(FLAG_o));
+  RTC_CHECK(DirExists(absl::GetFlag(FLAGS_i)));
+  RTC_CHECK(FileExists(absl::GetFlag(FLAGS_t)));
+  RTC_CHECK(DirExists(absl::GetFlag(FLAGS_o)));
 
-  conversational_speech::Config config(FLAG_i, FLAG_t, FLAG_o);
+  conversational_speech::Config config(
+      absl::GetFlag(FLAGS_i), absl::GetFlag(FLAGS_t), absl::GetFlag(FLAGS_o));
 
   // Load timing.
   std::vector<conversational_speech::Turn> timing =

@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_processing/aec3/filter_analyzer.h"
+
 #include <math.h>
 
 #include <algorithm>
@@ -18,9 +19,8 @@
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
-#include "rtc_base/atomicops.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -43,16 +43,6 @@ size_t FindPeakIndex(rtc::ArrayView<const float> filter_time_domain,
   return peak_index_out;
 }
 
-bool EnableFilterPreprocessing() {
-  return !field_trial::IsEnabled(
-      "WebRTC-Aec3FilterAnalyzerPreprocessorKillSwitch");
-}
-
-bool EnableIncrementalAnalysis() {
-  return !field_trial::IsEnabled(
-      "WebRTC-Aec3FilterAnalyzerIncrementalAnalysisKillSwitch");
-}
-
 }  // namespace
 
 int FilterAnalyzer::instance_count_ = 0;
@@ -60,10 +50,8 @@ int FilterAnalyzer::instance_count_ = 0;
 FilterAnalyzer::FilterAnalyzer(const EchoCanceller3Config& config)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
-      use_preprocessed_filter_(EnableFilterPreprocessing()),
       bounded_erl_(config.ep_strength.bounded_erl),
-      default_gain_(config.ep_strength.lf),
-      use_incremental_analysis_(EnableIncrementalAnalysis()),
+      default_gain_(config.ep_strength.default_gain),
       h_highpass_(GetTimeDomainLength(config.filter.main.length_blocks), 0.f),
       filter_length_blocks_(config.filter.main_initial.length_blocks),
       consistent_filter_detector_(config) {
@@ -99,18 +87,16 @@ void FilterAnalyzer::AnalyzeRegion(
   PreProcessFilter(filter_time_domain);
   data_dumper_->DumpRaw("aec3_linear_filter_processed_td", h_highpass_);
 
-  const auto& filter_to_analyze =
-      use_preprocessed_filter_ ? h_highpass_ : filter_time_domain;
-  RTC_DCHECK_EQ(filter_to_analyze.size(), filter_time_domain.size());
+  RTC_DCHECK_EQ(h_highpass_.size(), filter_time_domain.size());
 
-  peak_index_ = FindPeakIndex(filter_to_analyze, peak_index_,
-                              region_.start_sample_, region_.end_sample_);
+  peak_index_ = FindPeakIndex(h_highpass_, peak_index_, region_.start_sample_,
+                              region_.end_sample_);
   delay_blocks_ = peak_index_ >> kBlockSizeLog2;
-  UpdateFilterGain(filter_to_analyze, peak_index_);
+  UpdateFilterGain(h_highpass_, peak_index_);
   filter_length_blocks_ = filter_time_domain.size() * (1.f / kBlockSize);
 
   consistent_estimate_ = consistent_filter_detector_.Detect(
-      filter_to_analyze, region_, render_buffer.Block(-delay_blocks_)[0],
+      h_highpass_, region_, render_buffer.Block(-delay_blocks_)[0][0],
       peak_index_, delay_blocks_);
 }
 
@@ -159,17 +145,16 @@ void FilterAnalyzer::SetRegionToAnalyze(
     rtc::ArrayView<const float> filter_time_domain) {
   constexpr size_t kNumberBlocksToUpdate = 1;
   auto& r = region_;
-  if (use_incremental_analysis_) {
-    r.start_sample_ =
-        r.end_sample_ == filter_time_domain.size() - 1 ? 0 : r.end_sample_ + 1;
-    r.end_sample_ =
-        std::min(r.start_sample_ + kNumberBlocksToUpdate * kBlockSize - 1,
-                 filter_time_domain.size() - 1);
+  r.start_sample_ =
+      r.end_sample_ >= filter_time_domain.size() - 1 ? 0 : r.end_sample_ + 1;
+  r.end_sample_ =
+      std::min(r.start_sample_ + kNumberBlocksToUpdate * kBlockSize - 1,
+               filter_time_domain.size() - 1);
 
-  } else {
-    r.start_sample_ = 0;
-    r.end_sample_ = filter_time_domain.size() - 1;
-  }
+  // Check range.
+  RTC_DCHECK_LT(r.start_sample_, filter_time_domain.size());
+  RTC_DCHECK_LT(r.end_sample_, filter_time_domain.size());
+  RTC_DCHECK_LE(r.start_sample_, r.end_sample_);
 }
 
 FilterAnalyzer::ConsistentFilterDetector::ConsistentFilterDetector(

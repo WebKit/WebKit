@@ -58,7 +58,8 @@ public class HardwareVideoEncoderTest {
       /* startBitrate= */ 10000,
       /* maxFramerate= */ 30,
       /* numberOfSimulcastStreams= */ 1,
-      /* automaticResizeOn= */ true);
+      /* automaticResizeOn= */ true,
+      /* capabilities= */ new VideoEncoder.Capabilities(false /* lossNotification */));
   private static final long POLL_DELAY_MS = 10;
   private static final long DELIVER_ENCODED_IMAGE_DELAY_MS = 10;
 

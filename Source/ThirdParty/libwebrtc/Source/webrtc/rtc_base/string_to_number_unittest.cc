@@ -10,11 +10,12 @@
 
 #include "rtc_base/string_to_number.h"
 
+#include <stdint.h>
+
 #include <limits>
 #include <string>
-#include <type_traits>
 
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace rtc {
 
@@ -36,7 +37,7 @@ using IntegerTypes =
 template <typename T>
 class BasicNumberTest : public ::testing::Test {};
 
-TYPED_TEST_CASE_P(BasicNumberTest);
+TYPED_TEST_SUITE_P(BasicNumberTest);
 
 TYPED_TEST_P(BasicNumberTest, TestValidNumbers) {
   using T = TypeParam;
@@ -93,16 +94,16 @@ TYPED_TEST_P(BasicNumberTest, TestInvalidInputs) {
   EXPECT_EQ(absl::nullopt, StringToNumber<T>("5 "));
 }
 
-REGISTER_TYPED_TEST_CASE_P(BasicNumberTest,
-                           TestValidNumbers,
-                           TestInvalidNumbers,
-                           TestInvalidInputs);
+REGISTER_TYPED_TEST_SUITE_P(BasicNumberTest,
+                            TestValidNumbers,
+                            TestInvalidNumbers,
+                            TestInvalidInputs);
 
 }  // namespace
 
-INSTANTIATE_TYPED_TEST_CASE_P(StringToNumberTest_Integers,
-                              BasicNumberTest,
-                              IntegerTypes);
+INSTANTIATE_TYPED_TEST_SUITE_P(StringToNumberTest_Integers,
+                               BasicNumberTest,
+                               IntegerTypes);
 
 TEST(StringToNumberTest, TestSpecificValues) {
   EXPECT_EQ(absl::nullopt, StringToNumber<uint8_t>("256"));

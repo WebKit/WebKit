@@ -12,9 +12,11 @@
 #define MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
 
 #include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
@@ -24,16 +26,14 @@
 #include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/acm2/call_statistics.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
 class Clock;
-struct CodecInst;
 class NetEq;
 struct RTPHeader;
-struct WebRtcRTPHeader;
 
 namespace acm2 {
 
@@ -58,7 +58,7 @@ class AcmReceiver {
   // Return value             : 0 if OK.
   //                           <0 if NetEq returned an error.
   //
-  int InsertPacket(const WebRtcRTPHeader& rtp_header,
+  int InsertPacket(const RTPHeader& rtp_header,
                    rtc::ArrayView<const uint8_t> incoming_payload);
 
   //
@@ -85,43 +85,6 @@ class AcmReceiver {
   void SetCodecs(const std::map<int, SdpAudioFormat>& codecs);
 
   //
-  // Adds a new codec to the NetEq codec database.
-  //
-  // Input:
-  //   - acm_codec_id        : ACM codec ID; -1 means external decoder.
-  //   - payload_type        : payload type.
-  //   - sample_rate_hz      : sample rate.
-  //   - audio_decoder       : pointer to a decoder object. If it's null, then
-  //                           NetEq will internally create a decoder object
-  //                           based on the value of |acm_codec_id| (which
-  //                           mustn't be -1). Otherwise, NetEq will use the
-  //                           given decoder for the given payload type. NetEq
-  //                           won't take ownership of the decoder; it's up to
-  //                           the caller to delete it when it's no longer
-  //                           needed.
-  //
-  //                           Providing an existing decoder object here is
-  //                           necessary for external decoders, but may also be
-  //                           used for built-in decoders if NetEq doesn't have
-  //                           all the info it needs to construct them properly
-  //                           (e.g. iSAC, where the decoder needs to be paired
-  //                           with an encoder).
-  //
-  // Return value             : 0 if OK.
-  //                           <0 if NetEq returned an error.
-  //
-  int AddCodec(int acm_codec_id,
-               uint8_t payload_type,
-               size_t channels,
-               int sample_rate_hz,
-               AudioDecoder* audio_decoder,
-               const std::string& name);
-
-  // Adds a new decoder to the NetEq codec database. Returns true iff
-  // successful.
-  bool AddCodec(int rtp_payload_type, const SdpAudioFormat& audio_format);
-
-  //
   // Sets a minimum delay for packet buffer. The given delay is maintained,
   // unless channel condition dictates a higher delay.
   //
@@ -145,6 +108,16 @@ class AcmReceiver {
   //
   int SetMaximumDelay(int delay_ms);
 
+  // Sets a base minimum delay in milliseconds for the packet buffer.
+  // Base minimum delay sets lower bound minimum delay value which
+  // is set via SetMinimumDelay.
+  //
+  // Returns true if value was successfully set, false overwise.
+  bool SetBaseMinimumDelayMs(int delay_ms);
+
+  // Returns current value of base minimum delay in milliseconds.
+  int GetBaseMinimumDelayMs() const;
+
   //
   // Resets the initial delay to zero.
   //
@@ -165,23 +138,12 @@ class AcmReceiver {
   // Output:
   //   - statistics           : The current network statistics.
   //
-  void GetNetworkStatistics(NetworkStatistics* statistics);
+  void GetNetworkStatistics(NetworkStatistics* statistics) const;
 
   //
   // Flushes the NetEq packet and speech buffers.
   //
   void FlushBuffers();
-
-  //
-  // Removes a payload-type from the NetEq codec database.
-  //
-  // Input:
-  //   - payload_type         : the payload-type to be removed.
-  //
-  // Return value             : 0 if OK.
-  //                           -1 if an error occurred.
-  //
-  int RemoveCodec(uint8_t payload_type);
 
   //
   // Remove all registered codecs.
@@ -204,42 +166,21 @@ class AcmReceiver {
   int TargetDelayMs() const;
 
   //
-  // Get the audio codec associated with the last non-CNG/non-DTMF received
-  // payload. If no non-CNG/non-DTMF packet is received -1 is returned,
-  // otherwise return 0.
+  // Get payload type and format of the last non-CNG/non-DTMF received payload.
+  // If no non-CNG/non-DTMF packet is received absl::nullopt is returned.
   //
-  int LastAudioCodec(CodecInst* codec) const;
-
-  absl::optional<SdpAudioFormat> LastAudioFormat() const;
-
-  //
-  // Get a decoder given its registered payload-type.
-  //
-  // Input:
-  //    -payload_type         : the payload-type of the codec to be retrieved.
-  //
-  // Output:
-  //    -codec                : codec associated with the given payload-type.
-  //
-  // Return value             : 0 if succeeded.
-  //                           -1 if failed, e.g. given payload-type is not
-  //                              registered.
-  //
-  int DecoderByPayloadType(uint8_t payload_type,
-                           CodecInst* codec) const;
-  absl::optional<SdpAudioFormat> DecoderByPayloadType(int payload_type) const;
+  absl::optional<std::pair<int, SdpAudioFormat>> LastDecoder() const;
 
   //
   // Enable NACK and set the maximum size of the NACK list. If NACK is already
   // enabled then the maximum NACK list size is modified accordingly.
   //
-  // Input:
-  //    -max_nack_list_size  : maximum NACK list size
-  //                           should be positive (none zero) and less than or
-  //                           equal to |Nack::kNackListSizeLimit|
-  // Return value
-  //                         : 0 if succeeded.
-  //                          -1 if failed
+  // If the sequence number of last received packet is N, the sequence numbers
+  // of NACK list are in the range of [N - |max_nack_list_size|, N).
+  //
+  // |max_nack_list_size| should be positive (none zero) and less than or
+  // equal to |Nack::kNackListSizeLimit|. Otherwise, No change is applied and -1
+  // is returned. 0 is returned at success.
   //
   int EnableNack(size_t max_nack_list_size);
 
@@ -247,11 +188,13 @@ class AcmReceiver {
   void DisableNack();
 
   //
-  // Get a list of packets to be retransmitted.
+  // Get a list of packets to be retransmitted. |round_trip_time_ms| is an
+  // estimate of the round-trip-time (in milliseconds). Missing packets which
+  // will be playout in a shorter time than the round-trip-time (with respect
+  // to the time this API is called) will not be included in the list.
   //
-  // Input:
-  //    -round_trip_time_ms : estimate of the round-trip-time (in milliseconds).
-  // Return value           : list of packets to be retransmitted.
+  // Negative |round_trip_time_ms| results is an error message and empty list
+  // is returned.
   //
   std::vector<uint16_t> GetNackList(int64_t round_trip_time_ms) const;
 
@@ -260,32 +203,17 @@ class AcmReceiver {
   void GetDecodingCallStatistics(AudioDecodingCallStats* stats) const;
 
  private:
-  struct Decoder {
-    int acm_codec_id;
-    uint8_t payload_type;
-    // This field is meaningful for codecs where both mono and
-    // stereo versions are registered under the same ID.
-    size_t channels;
-    int sample_rate_hz;
-  };
-
-  const absl::optional<CodecInst> RtpHeaderToDecoder(
-      const RTPHeader& rtp_header,
-      uint8_t first_payload_byte) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
-
   uint32_t NowInTimestamp(int decoder_sampling_rate) const;
 
   rtc::CriticalSection crit_sect_;
-  absl::optional<CodecInst> last_audio_decoder_ RTC_GUARDED_BY(crit_sect_);
-  absl::optional<SdpAudioFormat> last_audio_format_ RTC_GUARDED_BY(crit_sect_);
+  absl::optional<std::pair<int, SdpAudioFormat>> last_decoder_
+      RTC_GUARDED_BY(crit_sect_);
   ACMResampler resampler_ RTC_GUARDED_BY(crit_sect_);
   std::unique_ptr<int16_t[]> last_audio_buffer_ RTC_GUARDED_BY(crit_sect_);
   CallStatistics call_stats_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<NetEq> neteq_;  // NetEq is thread-safe; no lock needed.
-  const Clock* const clock_;
+  Clock* const clock_;
   bool resampled_last_output_frame_ RTC_GUARDED_BY(crit_sect_);
-  absl::optional<int> last_packet_sample_rate_hz_ RTC_GUARDED_BY(crit_sect_);
 };
 
 }  // namespace acm2

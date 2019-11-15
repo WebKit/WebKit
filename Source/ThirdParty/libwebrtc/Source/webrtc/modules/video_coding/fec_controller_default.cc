@@ -8,9 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
-
 #include "modules/video_coding/fec_controller_default.h"  // NOLINT
+
+#include <stdlib.h>
+
+#include <algorithm>
+#include <string>
+
+#include "modules/include/module_fec_types.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -159,6 +164,7 @@ uint32_t FecControllerDefault::UpdateFecRates(
   // Source coding rate: total rate - protection overhead.
   return estimated_bitrate_bps * (1.0 - protection_overhead_rate);
 }
+
 void FecControllerDefault::SetProtectionMethod(bool enable_fec,
                                                bool enable_nack) {
   media_optimization::VCMProtectionMethodEnum method(media_optimization::kNone);
@@ -172,13 +178,15 @@ void FecControllerDefault::SetProtectionMethod(bool enable_fec,
   CritScope lock(&crit_sect_);
   loss_prot_logic_->SetMethod(method);
 }
+
 void FecControllerDefault::UpdateWithEncodedData(
     const size_t encoded_image_length,
-    const FrameType encoded_image_frametype) {
+    const VideoFrameType encoded_image_frametype) {
   const size_t encoded_length = encoded_image_length;
   CritScope lock(&crit_sect_);
   if (encoded_length > 0) {
-    const bool delta_frame = encoded_image_frametype != kVideoFrameKey;
+    const bool delta_frame =
+        encoded_image_frametype != VideoFrameType::kVideoFrameKey;
     if (max_payload_size_ > 0 && encoded_length > 0) {
       const float min_packets_per_frame =
           encoded_length / static_cast<float>(max_payload_size_);

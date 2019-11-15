@@ -11,21 +11,24 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_SCREEN_CAPTURER_X11_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_SCREEN_CAPTURER_X11_H_
 
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xdamage.h>
+#include <X11/extensions/Xfixes.h>
 
 #include <memory>
-#include <set>
-#include <utility>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/linux/shared_x_display.h"
+#include "modules/desktop_capture/linux/x_atom_cache.h"
 #include "modules/desktop_capture/linux/x_server_pixel_buffer.h"
 #include "modules/desktop_capture/screen_capture_frame_queue.h"
 #include "modules/desktop_capture/screen_capturer_helper.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -114,6 +117,8 @@ class ScreenCapturerX11 : public DesktopCapturer,
   // Invalid region from the previous capture. This is used to synchronize the
   // current with the last buffer used.
   DesktopRegion last_invalid_region_;
+
+  std::unique_ptr<XAtomCache> atom_cache_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ScreenCapturerX11);
 };

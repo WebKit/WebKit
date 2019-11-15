@@ -42,17 +42,15 @@ enum VCMFrameBufferEnum {
   kTimeStampError = -2,
   kSizeError = -1,
   kNoError = 0,
-  kIncomplete = 1,        // Frame incomplete.
-  kCompleteSession = 3,   // at least one layer in the frame complete.
-  kDecodableSession = 4,  // Frame incomplete, but ready to be decoded
-  kDuplicatePacket = 5    // We're receiving a duplicate packet.
+  kIncomplete = 1,       // Frame incomplete.
+  kCompleteSession = 3,  // at least one layer in the frame complete.
+  kDuplicatePacket = 5   // We're receiving a duplicate packet.
 };
 
 enum VCMFrameBufferStateEnum {
   kStateEmpty,       // frame popped by the RTP receiver
   kStateIncomplete,  // frame that have one or more packet(s) stored
   kStateComplete,    // frame that have all packets
-  kStateDecodable    // Hybrid mode - frame can be decoded
 };
 
 enum { kH264StartCodeLengthBytes = 4 };

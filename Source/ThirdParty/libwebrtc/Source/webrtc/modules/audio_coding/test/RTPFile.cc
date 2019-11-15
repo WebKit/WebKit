@@ -11,6 +11,7 @@
 #include "RTPFile.h"
 
 #include <stdlib.h>
+
 #include <limits>
 
 #ifdef WIN32
@@ -25,19 +26,19 @@
 
 namespace webrtc {
 
-void RTPStream::ParseRTPHeader(WebRtcRTPHeader* rtpInfo,
+void RTPStream::ParseRTPHeader(RTPHeader* rtp_header,
                                const uint8_t* rtpHeader) {
-  rtpInfo->header.payloadType = rtpHeader[1];
-  rtpInfo->header.sequenceNumber =
+  rtp_header->payloadType = rtpHeader[1];
+  rtp_header->sequenceNumber =
       (static_cast<uint16_t>(rtpHeader[2]) << 8) | rtpHeader[3];
-  rtpInfo->header.timestamp = (static_cast<uint32_t>(rtpHeader[4]) << 24) |
-                              (static_cast<uint32_t>(rtpHeader[5]) << 16) |
-                              (static_cast<uint32_t>(rtpHeader[6]) << 8) |
-                              rtpHeader[7];
-  rtpInfo->header.ssrc = (static_cast<uint32_t>(rtpHeader[8]) << 24) |
-                         (static_cast<uint32_t>(rtpHeader[9]) << 16) |
-                         (static_cast<uint32_t>(rtpHeader[10]) << 8) |
-                         rtpHeader[11];
+  rtp_header->timestamp = (static_cast<uint32_t>(rtpHeader[4]) << 24) |
+                          (static_cast<uint32_t>(rtpHeader[5]) << 16) |
+                          (static_cast<uint32_t>(rtpHeader[6]) << 8) |
+                          rtpHeader[7];
+  rtp_header->ssrc = (static_cast<uint32_t>(rtpHeader[8]) << 24) |
+                     (static_cast<uint32_t>(rtpHeader[9]) << 16) |
+                     (static_cast<uint32_t>(rtpHeader[10]) << 8) |
+                     rtpHeader[11];
 }
 
 void RTPStream::MakeRTPheader(uint8_t* rtpHeader,
@@ -101,7 +102,7 @@ void RTPBuffer::Write(const uint8_t payloadType,
   _queueRWLock->ReleaseLockExclusive();
 }
 
-size_t RTPBuffer::Read(WebRtcRTPHeader* rtpInfo,
+size_t RTPBuffer::Read(RTPHeader* rtp_header,
                        uint8_t* payloadData,
                        size_t payloadSize,
                        uint32_t* offset) {
@@ -109,11 +110,11 @@ size_t RTPBuffer::Read(WebRtcRTPHeader* rtpInfo,
   RTPPacket* packet = _rtpQueue.front();
   _rtpQueue.pop();
   _queueRWLock->ReleaseLockShared();
-  rtpInfo->header.markerBit = 1;
-  rtpInfo->header.payloadType = packet->payloadType;
-  rtpInfo->header.sequenceNumber = packet->seqNo;
-  rtpInfo->header.ssrc = 0;
-  rtpInfo->header.timestamp = packet->timeStamp;
+  rtp_header->markerBit = 1;
+  rtp_header->payloadType = packet->payloadType;
+  rtp_header->sequenceNumber = packet->seqNo;
+  rtp_header->ssrc = 0;
+  rtp_header->timestamp = packet->timeStamp;
   if (packet->payloadSize > 0 && payloadSize >= packet->payloadSize) {
     memcpy(payloadData, packet->payloadData, packet->payloadSize);
   } else {
@@ -199,7 +200,7 @@ void RTPFile::Write(const uint8_t payloadType,
   EXPECT_EQ(payloadSize, fwrite(payloadData, 1, payloadSize, _rtpFile));
 }
 
-size_t RTPFile::Read(WebRtcRTPHeader* rtpInfo,
+size_t RTPFile::Read(RTPHeader* rtp_header,
                      uint8_t* payloadData,
                      size_t payloadSize,
                      uint32_t* offset) {
@@ -220,7 +221,7 @@ size_t RTPFile::Read(WebRtcRTPHeader* rtpInfo,
   EXPECT_GT(plen, 11);
 
   EXPECT_EQ(1u, fread(rtpHeader, 12, 1, _rtpFile));
-  ParseRTPHeader(rtpInfo, rtpHeader);
+  ParseRTPHeader(rtp_header, rtpHeader);
   EXPECT_EQ(lengthBytes, plen + 8);
 
   if (plen == 0) {

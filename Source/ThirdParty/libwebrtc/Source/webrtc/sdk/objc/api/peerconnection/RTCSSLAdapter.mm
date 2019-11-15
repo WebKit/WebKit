@@ -11,7 +11,7 @@
 #import "RTCSSLAdapter.h"
 
 #include "rtc_base/checks.h"
-#include "rtc_base/ssladapter.h"
+#include "rtc_base/ssl_adapter.h"
 
 BOOL RTCInitializeSSL(void) {
   BOOL initialized = rtc::InitializeSSL();

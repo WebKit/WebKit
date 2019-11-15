@@ -11,13 +11,13 @@
 #include "video/call_stats.h"
 
 #include <algorithm>
+#include <memory>
 
+#include "absl/algorithm/container.h"
 #include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
 #include "rtc_base/location.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/task_queue.h"
+#include "rtc_base/task_utils/to_queued_task.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -101,7 +101,7 @@ CallStats::CallStats(Clock* clock, ProcessThread* process_thread)
       process_thread_(process_thread),
       process_thread_running_(false) {
   RTC_DCHECK(process_thread_);
-  process_thread_checker_.DetachFromThread();
+  process_thread_checker_.Detach();
 }
 
 CallStats::~CallStats() {
@@ -122,6 +122,8 @@ void CallStats::Process() {
   int64_t now = clock_->TimeInMilliseconds();
   last_process_time_ = now;
 
+  // |avg_rtt_ms_| is allowed to be read on the process thread since that's the
+  // only thread that modifies the value.
   int64_t avg_rtt_ms = avg_rtt_ms_;
   RemoveOldReports(now, &reports_);
   max_rtt_ms_ = GetMaxRttMs(reports_);
@@ -151,7 +153,7 @@ void CallStats::ProcessThreadAttached(ProcessThread* process_thread) {
   // |process_thread_checker_| so that it can be used to protect variables
   // in either the process thread when it starts again, or UpdateHistograms()
   // (mutually exclusive).
-  process_thread_checker_.DetachFromThread();
+  process_thread_checker_.Detach();
 }
 
 void CallStats::RegisterStatsObserver(CallStatsObserver* observer) {
@@ -159,8 +161,7 @@ void CallStats::RegisterStatsObserver(CallStatsObserver* observer) {
   TemporaryDeregistration deregister(this, process_thread_,
                                      process_thread_running_);
 
-  auto it = std::find(observers_.begin(), observers_.end(), observer);
-  if (it == observers_.end())
+  if (!absl::c_linear_search(observers_, observer))
     observers_.push_back(observer);
 }
 
@@ -172,20 +173,26 @@ void CallStats::DeregisterStatsObserver(CallStatsObserver* observer) {
 }
 
 int64_t CallStats::LastProcessedRtt() const {
+  // TODO(tommi): This currently gets called from the construction thread of
+  // Call as well as from the process thread. Look into restricting this to
+  // allow only reading this from the process thread (or TQ once we get there)
+  // so that the lock isn't necessary.
+
   rtc::CritScope cs(&avg_rtt_ms_lock_);
   return avg_rtt_ms_;
 }
 
 void CallStats::OnRttUpdate(int64_t rtt) {
-  int64_t now_ms = clock_->TimeInMilliseconds();
-  process_thread_->PostTask(rtc::NewClosure([rtt, now_ms, this]() {
-    RTC_DCHECK_RUN_ON(&process_thread_checker_);
-    reports_.push_back(RttTime(rtt, now_ms));
-    if (time_of_first_rtt_ms_ == -1)
-      time_of_first_rtt_ms_ = now_ms;
+  RTC_DCHECK_RUN_ON(&process_thread_checker_);
 
-    process_thread_->WakeUp(this);
-  }));
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  reports_.push_back(RttTime(rtt, now_ms));
+  if (time_of_first_rtt_ms_ == -1)
+    time_of_first_rtt_ms_ = now_ms;
+
+  // Make sure Process() will be called and deliver the updates asynchronously.
+  last_process_time_ -= kUpdateIntervalMs;
+  process_thread_->WakeUp(this);
 }
 
 void CallStats::UpdateHistograms() {

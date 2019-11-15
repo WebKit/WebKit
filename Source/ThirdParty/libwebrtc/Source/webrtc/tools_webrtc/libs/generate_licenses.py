@@ -7,8 +7,18 @@
 #  tree. An additional intellectual property rights grant can be found
 #  in the file PATENTS.  All contributing project authors may
 #  be found in the AUTHORS file in the root of the source tree.
+"""Generates license markdown for a prebuilt version of WebRTC.
 
-"""Generates license markdown for a prebuilt version of WebRTC."""
+Licenses are taken from dependent libraries which are determined by
+GN desc command `gn desc` on all targets specified via `--target` argument.
+
+One can see all dependencies by invoking this command:
+$ gn.py desc --all --format=json <out_directory> <target> | python -m json.tool
+(see "deps" subarray)
+
+Libraries are mapped to licenses via LIB_TO_LICENSES_DICT dictionary.
+
+"""
 
 import sys
 
@@ -20,18 +30,12 @@ import os
 import re
 import subprocess
 
-
-def FindSrcDirPath():
-  """Returns the abs path to the src/ dir of the project."""
-  src_dir = os.path.dirname(os.path.abspath(__file__))
-  while os.path.basename(src_dir) != 'src':
-    src_dir = os.path.normpath(os.path.join(src_dir, os.pardir))
-  return src_dir
-
-
+# Third_party library to licences mapping. Keys are names of the libraries
+# (right after the `third_party/` prefix)
 LIB_TO_LICENSES_DICT = {
     'abseil-cpp': ['third_party/abseil-cpp/LICENSE'],
-    'android_tools': ['third_party/android_tools/LICENSE'],
+    'android_ndk': ['third_party/android_ndk/NOTICE'],
+    'android_sdk': ['third_party/android_sdk/LICENSE'],
     'auto': ['third_party/auto/src/LICENSE.txt'],
     'bazel': ['third_party/bazel/LICENSE'],
     'boringssl': ['third_party/boringssl/src/LICENSE'],
@@ -40,7 +44,6 @@ LIB_TO_LICENSES_DICT = {
     'guava': ['third_party/guava/LICENSE'],
     'ijar': ['third_party/ijar/LICENSE'],
     'jsoncpp': ['third_party/jsoncpp/LICENSE'],
-    'jsr-305': ['third_party/jsr-305/src/ri/LICENSE'],
     'libc++': ['buildtools/third_party/libc++/trunk/LICENSE.TXT'],
     'libc++abi': ['buildtools/third_party/libc++abi/trunk/LICENSE.TXT'],
     'libevent': ['base/third_party/libevent/LICENSE'],
@@ -49,6 +52,7 @@ LIB_TO_LICENSES_DICT = {
     'libvpx': ['third_party/libvpx/source/libvpx/LICENSE'],
     'libyuv': ['third_party/libyuv/LICENSE'],
     'opus': ['third_party/opus/src/COPYING'],
+    'pffft': ['third_party/pffft/LICENSE'],
     'protobuf': ['third_party/protobuf/LICENSE'],
     'rnnoise': ['third_party/rnnoise/COPYING'],
     'usrsctp': ['third_party/usrsctp/LICENSE'],
@@ -68,59 +72,112 @@ LIB_TO_LICENSES_DICT = {
     'ow2_asm': [],
 }
 
+# Third_party library _regex_ to licences mapping. Keys are regular expression
+# with names of the libraries (right after the `third_party/` prefix)
+LIB_REGEX_TO_LICENSES_DICT = {
+    'android_deps:android_support_annotations.*': [
+        'third_party/android_deps/libs/' +
+        'com_android_support_support_annotations/LICENSE'
+    ],
+
+    # Internal dependencies, licenses are already included by other dependencies
+    'android_deps:com_android_support_support_annotations.*': [],
+}
+
+
+def FindSrcDirPath():
+  """Returns the abs path to the src/ dir of the project."""
+  src_dir = os.path.dirname(os.path.abspath(__file__))
+  while os.path.basename(src_dir) != 'src':
+    src_dir = os.path.normpath(os.path.join(src_dir, os.pardir))
+  return src_dir
+
+
 SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
 WEBRTC_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
 SRC_DIR = FindSrcDirPath()
 sys.path.append(os.path.join(SRC_DIR, 'build'))
 import find_depot_tools
 
-THIRD_PARTY_LIB_REGEX = r'^.*/third_party/([\w\-+]+).*$'
+THIRD_PARTY_LIB_SIMPLE_NAME_REGEX = r'^.*/third_party/([\w\-+]+).*$'
+THIRD_PARTY_LIB_REGEX_TEMPLATE = r'^.*/third_party/%s$'
+
 
 class LicenseBuilder(object):
 
-  def __init__(self, buildfile_dirs, targets):
+  def __init__(self,
+               buildfile_dirs,
+               targets,
+               lib_to_licenses_dict=None,
+               lib_regex_to_licenses_dict=None):
+    if lib_to_licenses_dict is None:
+      lib_to_licenses_dict = LIB_TO_LICENSES_DICT
+
+    if lib_regex_to_licenses_dict is None:
+      lib_regex_to_licenses_dict = LIB_REGEX_TO_LICENSES_DICT
+
     self.buildfile_dirs = buildfile_dirs
     self.targets = targets
+    self.lib_to_licenses_dict = lib_to_licenses_dict
+    self.lib_regex_to_licenses_dict = lib_regex_to_licenses_dict
+
+    self.common_licenses_dict = self.lib_to_licenses_dict.copy()
+    self.common_licenses_dict.update(self.lib_regex_to_licenses_dict)
 
   @staticmethod
-  def _ParseLibrary(dep):
-    """
-    Returns a regex match containing library name after third_party
+  def _ParseLibraryName(dep):
+    """Returns library name after third_party
 
     Input one of:
     //a/b/third_party/libname:c
     //a/b/third_party/libname:c(//d/e/f:g)
     //a/b/third_party/libname/c:d(//e/f/g:h)
 
-    Outputs match with libname in group 1 or None if this is not a third_party
-    dependency.
+    Outputs libname or None if this is not a third_party dependency.
     """
-    return re.match(THIRD_PARTY_LIB_REGEX, dep)
+    groups = re.match(THIRD_PARTY_LIB_SIMPLE_NAME_REGEX, dep)
+    return groups.group(1) if groups else None
+
+  def _ParseLibrary(self, dep):
+    """Returns library simple or regex name that matches `dep` after third_party
+
+    This method matches `dep` dependency against simple names in
+    LIB_TO_LICENSES_DICT and regular expression names in
+    LIB_REGEX_TO_LICENSES_DICT keys
+
+    Outputs matched dict key or None if this is not a third_party dependency.
+    """
+    libname = LicenseBuilder._ParseLibraryName(dep)
+
+    for lib_regex in self.lib_regex_to_licenses_dict:
+      if re.match(THIRD_PARTY_LIB_REGEX_TEMPLATE % lib_regex, dep):
+        return lib_regex
+
+    return libname
 
   @staticmethod
   def _RunGN(buildfile_dir, target):
     cmd = [
-      sys.executable,
-      os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'gn.py'),
-      'desc',
-      '--all',
-      '--format=json',
-      os.path.abspath(buildfile_dir),
-      target,
+        sys.executable,
+        os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'gn.py'),
+        'desc',
+        '--all',
+        '--format=json',
+        os.path.abspath(buildfile_dir),
+        target,
     ]
-    logging.debug("Running: %r", cmd)
+    logging.debug('Running: %r', cmd)
     output_json = subprocess.check_output(cmd, cwd=WEBRTC_ROOT)
-    logging.debug("Output: %s", output_json)
+    logging.debug('Output: %s', output_json)
     return output_json
 
-  @staticmethod
-  def _GetThirdPartyLibraries(buildfile_dir, target):
+  def _GetThirdPartyLibraries(self, buildfile_dir, target):
     output = json.loads(LicenseBuilder._RunGN(buildfile_dir, target))
     libraries = set()
-    for target in output.values():
-      third_party_matches = (
-          LicenseBuilder._ParseLibrary(dep) for dep in target['deps'])
-      libraries |= set(match.group(1) for match in third_party_matches if match)
+    for described_target in output.values():
+      third_party_libs = (
+          self._ParseLibrary(dep) for dep in described_target['deps'])
+      libraries |= set(lib for lib in third_party_libs if lib)
     return libraries
 
   def GenerateLicenseText(self, output_dir):
@@ -129,13 +186,13 @@ class LicenseBuilder(object):
     third_party_libs = set()
     for buildfile in self.buildfile_dirs:
       for target in self.targets:
-        third_party_libs |= LicenseBuilder._GetThirdPartyLibraries(
-            buildfile, target)
+        third_party_libs |= self._GetThirdPartyLibraries(buildfile, target)
     assert len(third_party_libs) > 0
 
-    missing_licenses = third_party_libs - set(LIB_TO_LICENSES_DICT.keys())
+    missing_licenses = third_party_libs - set(self.common_licenses_dict.keys())
     if missing_licenses:
-      error_msg = 'Missing licenses: %s' % ', '.join(missing_licenses)
+      error_msg = 'Missing licenses for following third_party targets: %s' % \
+                  ', '.join(missing_licenses)
       logging.error(error_msg)
       raise Exception(error_msg)
 
@@ -143,18 +200,19 @@ class LicenseBuilder(object):
     license_libs = sorted(third_party_libs)
     license_libs.insert(0, 'webrtc')
 
-    logging.info("List of licenses: %s", ', '.join(license_libs))
+    logging.info('List of licenses: %s', ', '.join(license_libs))
 
     # Generate markdown.
     output_license_file = open(os.path.join(output_dir, 'LICENSE.md'), 'w+')
     for license_lib in license_libs:
-      if len(LIB_TO_LICENSES_DICT[license_lib]) == 0:
-        logging.info("Skipping compile time dependency: %s", license_lib)
-        continue # Compile time dependency
+      if len(self.common_licenses_dict[license_lib]) == 0:
+        logging.info('Skipping compile time or internal dependency: %s',
+                     license_lib)
+        continue  # Compile time dependency
 
       output_license_file.write('# %s\n' % license_lib)
       output_license_file.write('```\n')
-      for path in LIB_TO_LICENSES_DICT[license_lib]:
+      for path in self.common_licenses_dict[license_lib]:
         license_path = os.path.join(WEBRTC_ROOT, path)
         with open(license_path, 'r') as license_file:
           license_text = cgi.escape(license_file.read(), quote=True)
@@ -167,14 +225,19 @@ class LicenseBuilder(object):
 
 def main():
   parser = argparse.ArgumentParser(description='Generate WebRTC LICENSE.md')
-  parser.add_argument('--verbose', action='store_true', default=False,
-                      help='Debug logging.')
-  parser.add_argument('--target', required=True, action='append', default=[],
-                      help='Name of the GN target to generate a license for')
-  parser.add_argument('output_dir',
-                      help='Directory to output LICENSE.md to.')
-  parser.add_argument('buildfile_dirs', nargs="+",
-                      help='Directories containing gn generated ninja files')
+  parser.add_argument(
+      '--verbose', action='store_true', default=False, help='Debug logging.')
+  parser.add_argument(
+      '--target',
+      required=True,
+      action='append',
+      default=[],
+      help='Name of the GN target to generate a license for')
+  parser.add_argument('output_dir', help='Directory to output LICENSE.md to.')
+  parser.add_argument(
+      'buildfile_dirs',
+      nargs='+',
+      help='Directories containing gn generated ninja files')
   args = parser.parse_args()
 
   logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)

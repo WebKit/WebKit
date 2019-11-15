@@ -12,6 +12,7 @@
 #define API_TEST_NETEQ_SIMULATOR_H_
 
 #include <stdint.h>
+
 #include <map>
 #include <vector>
 

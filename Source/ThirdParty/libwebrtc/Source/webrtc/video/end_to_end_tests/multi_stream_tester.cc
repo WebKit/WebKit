@@ -14,13 +14,15 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/task_queue/default_task_queue_factory.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
-#include "logging/rtc_event_log/rtc_event_log.h"
-#include "media/engine/internaldecoderfactory.h"
+#include "media/engine/internal_decoder_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
 #include "test/encoder_settings.h"
@@ -28,7 +30,7 @@
 namespace webrtc {
 
 MultiStreamTester::MultiStreamTester(
-    test::SingleThreadedTaskQueueForTesting* task_queue)
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
     : task_queue_(task_queue) {
   // TODO(sprang): Cleanup when msvc supports explicit initializers for array.
   codec_settings[0] = {1, 640, 480};
@@ -43,8 +45,10 @@ MultiStreamTester::MultiStreamTester(
 MultiStreamTester::~MultiStreamTester() {}
 
 void MultiStreamTester::RunTest() {
-  webrtc::RtcEventLogNullImpl event_log;
+  webrtc::RtcEventLogNull event_log;
+  auto task_queue_factory = CreateDefaultTaskQueueFactory();
   Call::Config config(&event_log);
+  config.task_queue_factory = task_queue_factory.get();
   std::unique_ptr<Call> sender_call;
   std::unique_ptr<Call> receiver_call;
   std::unique_ptr<test::DirectTransport> sender_transport;
@@ -106,12 +110,16 @@ void MultiStreamTester::RunTest() {
           receiver_call->CreateVideoReceiveStream(std::move(receive_config));
       receive_streams[i]->Start();
 
-      frame_generators[i] = test::FrameGeneratorCapturer::Create(
-          width, height, absl::nullopt, absl::nullopt, 30,
-          Clock::GetRealTimeClock());
-      send_streams[i]->SetSource(frame_generators[i],
+      auto* frame_generator = new test::FrameGeneratorCapturer(
+          Clock::GetRealTimeClock(),
+          test::FrameGenerator::CreateSquareGenerator(
+              width, height, absl::nullopt, absl::nullopt),
+          30, *task_queue_factory);
+      frame_generators[i] = frame_generator;
+      send_streams[i]->SetSource(frame_generator,
                                  DegradationPreference::MAINTAIN_FRAMERATE);
-      frame_generators[i]->Start();
+      frame_generator->Init();
+      frame_generator->Start();
     }
   });
 
@@ -144,7 +152,7 @@ void MultiStreamTester::UpdateReceiveConfig(
     VideoReceiveStream::Config* receive_config) {}
 
 test::DirectTransport* MultiStreamTester::CreateSendTransport(
-    test::SingleThreadedTaskQueueForTesting* task_queue,
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
     Call* sender_call) {
   return new test::DirectTransport(
       task_queue,
@@ -155,7 +163,7 @@ test::DirectTransport* MultiStreamTester::CreateSendTransport(
 }
 
 test::DirectTransport* MultiStreamTester::CreateReceiveTransport(
-    test::SingleThreadedTaskQueueForTesting* task_queue,
+    test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
     Call* receiver_call) {
   return new test::DirectTransport(
       task_queue,

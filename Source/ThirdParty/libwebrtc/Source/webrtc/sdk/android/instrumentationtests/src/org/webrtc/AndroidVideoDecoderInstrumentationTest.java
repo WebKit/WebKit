@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.support.annotation.Nullable;
 import android.support.test.filters.SmallTest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
 import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
 import org.chromium.base.test.params.ParameterAnnotations.ClassParameter;
 import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
@@ -76,7 +76,8 @@ public final class AndroidVideoDecoderInstrumentationTest {
   private static final boolean ENABLE_H264_HIGH_PROFILE = true;
   private static final VideoEncoder.Settings ENCODER_SETTINGS =
       new VideoEncoder.Settings(1 /* core */, TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT, 300 /* kbps */,
-          30 /* fps */, 1 /* numberOfSimulcastStreams */, true /* automaticResizeOn */);
+          30 /* fps */, 1 /* numberOfSimulcastStreams */, true /* automaticResizeOn */,
+          /* capabilities= */ new VideoEncoder.Capabilities(false /* lossNotification */));
 
   private static final int DECODE_TIMEOUT_MS = 1000;
   private static final VideoDecoder.Settings SETTINGS =
@@ -162,7 +163,7 @@ public final class AndroidVideoDecoderInstrumentationTest {
 
     TEST_FRAMES = generateTestFrames();
 
-    eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
+    eglBase = EglBase.createEgl14(EglBase.CONFIG_PLAIN);
     eglBase.createDummyPbufferSurface();
     eglBase.makeCurrent();
 

@@ -274,10 +274,6 @@ static const NSInteger kMaxInflightBuffers = 1;
 }
 
 - (void)render {
-  // Wait until the inflight (curently sent to GPU) command buffer
-  // has completed the GPU work.
-  dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
-
   id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
   commandBuffer.label = commandBufferLabel;
 
@@ -317,8 +313,14 @@ static const NSInteger kMaxInflightBuffers = 1;
 
 - (void)drawFrame:(RTCVideoFrame *)frame {
   @autoreleasepool {
+    // Wait until the inflight (curently sent to GPU) command buffer
+    // has completed the GPU work.
+    dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
+
     if ([self setupTexturesForFrame:frame]) {
       [self render];
+    } else {
+      dispatch_semaphore_signal(_inflight_semaphore);
     }
   }
 }

@@ -8,8 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_device/linux/audio_device_alsa_linux.h"
 #include "modules/audio_device/linux/audio_mixer_manager_alsa_linux.h"
+
+#include "modules/audio_device/linux/audio_device_alsa_linux.h"
 #include "rtc_base/logging.h"
 
 // Accesses ALSA functions through our late-binding symbol table instead of

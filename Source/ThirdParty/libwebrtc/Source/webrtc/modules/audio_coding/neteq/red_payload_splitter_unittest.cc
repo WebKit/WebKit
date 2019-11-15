@@ -18,7 +18,7 @@
 #include <utility>  // pair
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
+#include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
@@ -300,10 +300,11 @@ TEST(RedPayloadSplitter, CheckRedPayloads) {
   // do its job.
   DecoderDatabase decoder_database(
       new rtc::RefCountedObject<MockAudioDecoderFactory>, absl::nullopt);
-  decoder_database.RegisterPayload(0, NetEqDecoder::kDecoderCNGnb, "cng-nb");
-  decoder_database.RegisterPayload(1, NetEqDecoder::kDecoderPCMu, "pcmu");
-  decoder_database.RegisterPayload(2, NetEqDecoder::kDecoderAVT, "avt");
-  decoder_database.RegisterPayload(3, NetEqDecoder::kDecoderILBC, "ilbc");
+  decoder_database.RegisterPayload(0, SdpAudioFormat("cn", 8000, 1));
+  decoder_database.RegisterPayload(1, SdpAudioFormat("pcmu", 8000, 1));
+  decoder_database.RegisterPayload(2,
+                                   SdpAudioFormat("telephone-event", 8000, 1));
+  decoder_database.RegisterPayload(3, SdpAudioFormat("ilbc", 8000, 1));
 
   RedPayloadSplitter splitter;
   splitter.CheckRedPayloads(&packet_list, decoder_database);
@@ -334,8 +335,8 @@ TEST(RedPayloadSplitter, CheckRedPayloadsRecursiveRed) {
   // do its job.
   DecoderDatabase decoder_database(
       new rtc::RefCountedObject<MockAudioDecoderFactory>, absl::nullopt);
-  decoder_database.RegisterPayload(kRedPayloadType, NetEqDecoder::kDecoderRED,
-                                   "red");
+  decoder_database.RegisterPayload(kRedPayloadType,
+                                   SdpAudioFormat("red", 8000, 1));
 
   RedPayloadSplitter splitter;
   splitter.CheckRedPayloads(&packet_list, decoder_database);

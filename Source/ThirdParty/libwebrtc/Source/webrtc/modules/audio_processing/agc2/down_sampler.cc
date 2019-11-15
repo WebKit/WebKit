@@ -11,6 +11,7 @@
 #include "modules/audio_processing/agc2/down_sampler.h"
 
 #include <string.h>
+
 #include <algorithm>
 
 #include "modules/audio_processing/agc2/biquad_filter.h"

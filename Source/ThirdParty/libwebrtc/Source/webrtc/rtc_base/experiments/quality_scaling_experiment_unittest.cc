@@ -10,8 +10,8 @@
 
 #include "rtc_base/experiments/quality_scaling_experiment.h"
 
-#include "rtc_base/gunit.h"
 #include "test/field_trial.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-#include <string>
-
 #include "api/video/video_bitrate_allocation.h"
+
+#include <vector>
+
+#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace webrtc {

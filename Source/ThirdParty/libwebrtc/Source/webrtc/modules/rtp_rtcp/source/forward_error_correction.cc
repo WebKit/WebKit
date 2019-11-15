@@ -11,9 +11,11 @@
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 
 #include <string.h>
+
 #include <algorithm>
 #include <utility>
 
+#include "absl/algorithm/container.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -380,9 +382,8 @@ void ForwardErrorCorrection::UpdateCoveringFecPackets(
     const RecoveredPacket& packet) {
   for (auto& fec_packet : received_fec_packets_) {
     // Is this FEC packet protecting the media packet |packet|?
-    auto protected_it = std::lower_bound(fec_packet->protected_packets.begin(),
-                                         fec_packet->protected_packets.end(),
-                                         &packet, SortablePacket::LessThan());
+    auto protected_it = absl::c_lower_bound(
+        fec_packet->protected_packets, &packet, SortablePacket::LessThan());
     if (protected_it != fec_packet->protected_packets.end() &&
         (*protected_it)->seq_num == packet.seq_num) {
       // Found an FEC packet which is protecting |packet|.

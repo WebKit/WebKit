@@ -23,7 +23,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Handler;
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.util.Range;
 import android.view.Surface;
 import java.util.Arrays;

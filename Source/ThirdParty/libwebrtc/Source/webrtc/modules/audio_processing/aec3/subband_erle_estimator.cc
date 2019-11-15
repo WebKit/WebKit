@@ -26,10 +26,6 @@ constexpr int kBlocksToHoldErle = 100;
 constexpr int kBlocksForOnsetDetection = kBlocksToHoldErle + 150;
 constexpr int kPointsToAccumulate = 6;
 
-bool EnableAdaptErleOnLowRender() {
-  return !field_trial::IsEnabled("WebRTC-Aec3AdaptErleOnLowRenderKillSwitch");
-}
-
 std::array<float, kFftLengthBy2Plus1> SetMaxErleBands(float max_erle_l,
                                                       float max_erle_h) {
   std::array<float, kFftLengthBy2Plus1> max_erle;
@@ -38,12 +34,16 @@ std::array<float, kFftLengthBy2Plus1> SetMaxErleBands(float max_erle_l,
   return max_erle;
 }
 
+bool EnableMinErleDuringOnsets() {
+  return !field_trial::IsEnabled("WebRTC-Aec3MinErleDuringOnsetsKillSwitch");
+}
+
 }  // namespace
 
 SubbandErleEstimator::SubbandErleEstimator(const EchoCanceller3Config& config)
     : min_erle_(config.erle.min),
       max_erle_(SetMaxErleBands(config.erle.max_l, config.erle.max_h)),
-      adapt_on_low_render_(EnableAdaptErleOnLowRender()) {
+      use_min_erle_during_onsets_(EnableMinErleDuringOnsets()) {
   Reset();
 }
 
@@ -101,10 +101,12 @@ void SubbandErleEstimator::UpdateBands(bool onset_detection) {
       if (is_erle_updated[k] && !accum_spectra_.low_render_energy_[k]) {
         if (coming_onset_[k]) {
           coming_onset_[k] = false;
-          float alpha = new_erle[k] < erle_onsets_[k] ? 0.3f : 0.15f;
-          erle_onsets_[k] = rtc::SafeClamp(
-              erle_onsets_[k] + alpha * (new_erle[k] - erle_onsets_[k]),
-              min_erle_, max_erle_[k]);
+          if (!use_min_erle_during_onsets_) {
+            float alpha = new_erle[k] < erle_onsets_[k] ? 0.3f : 0.15f;
+            erle_onsets_[k] = rtc::SafeClamp(
+                erle_onsets_[k] + alpha * (new_erle[k] - erle_onsets_[k]),
+                min_erle_, max_erle_[k]);
+          }
         }
         hold_counters_[k] = kBlocksForOnsetDetection;
       }
@@ -151,43 +153,23 @@ void SubbandErleEstimator::UpdateAccumulatedSpectra(
     rtc::ArrayView<const float> Y2,
     rtc::ArrayView<const float> E2) {
   auto& st = accum_spectra_;
-  if (adapt_on_low_render_) {
-    if (st.num_points_[0] == kPointsToAccumulate) {
-      st.num_points_[0] = 0;
-      st.Y2_.fill(0.f);
-      st.E2_.fill(0.f);
-      st.low_render_energy_.fill(false);
-    }
-    std::transform(Y2.begin(), Y2.end(), st.Y2_.begin(), st.Y2_.begin(),
-                   std::plus<float>());
-    std::transform(E2.begin(), E2.end(), st.E2_.begin(), st.E2_.begin(),
-                   std::plus<float>());
-
-    for (size_t k = 0; k < X2.size(); ++k) {
-      st.low_render_energy_[k] =
-          st.low_render_energy_[k] || X2[k] < kX2BandEnergyThreshold;
-    }
-    st.num_points_[0]++;
-    st.num_points_.fill(st.num_points_[0]);
-
-  } else {
-    // The update is always done using high render energy signals and
-    // therefore the field accum_spectra_.low_render_energy_ does not need to
-    // be modified.
-    for (size_t k = 0; k < X2.size(); ++k) {
-      if (X2[k] > kX2BandEnergyThreshold) {
-        if (st.num_points_[k] == kPointsToAccumulate) {
-          st.Y2_[k] = 0.f;
-          st.E2_[k] = 0.f;
-          st.num_points_[k] = 0;
-        }
-        st.Y2_[k] += Y2[k];
-        st.E2_[k] += E2[k];
-        st.num_points_[k]++;
-      }
-      RTC_DCHECK_EQ(st.low_render_energy_[k], false);
-    }
+  if (st.num_points_[0] == kPointsToAccumulate) {
+    st.num_points_[0] = 0;
+    st.Y2_.fill(0.f);
+    st.E2_.fill(0.f);
+    st.low_render_energy_.fill(false);
   }
+  std::transform(Y2.begin(), Y2.end(), st.Y2_.begin(), st.Y2_.begin(),
+                 std::plus<float>());
+  std::transform(E2.begin(), E2.end(), st.E2_.begin(), st.E2_.begin(),
+                 std::plus<float>());
+
+  for (size_t k = 0; k < X2.size(); ++k) {
+    st.low_render_energy_[k] =
+        st.low_render_energy_[k] || X2[k] < kX2BandEnergyThreshold;
+  }
+  st.num_points_[0]++;
+  st.num_points_.fill(st.num_points_[0]);
 }
 
 }  // namespace webrtc

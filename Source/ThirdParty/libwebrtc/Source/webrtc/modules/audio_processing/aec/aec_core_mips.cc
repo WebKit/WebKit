@@ -12,9 +12,9 @@
  * The core AEC algorithm, which is presented with time-aligned signals.
  */
 
-#include "modules/audio_processing/aec/aec_core.h"
-
 #include <math.h>
+
+#include "modules/audio_processing/aec/aec_core.h"
 
 extern "C" {
 #include "common_audio/signal_processing/include/signal_processing_library.h"

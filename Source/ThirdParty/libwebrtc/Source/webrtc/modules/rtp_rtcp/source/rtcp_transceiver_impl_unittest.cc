@@ -21,8 +21,8 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/compound_packet.h"
 #include "modules/rtp_rtcp/source/time_util.h"
 #include "rtc_base/event.h"
-#include "rtc_base/fakeclock.h"
-#include "rtc_base/task_queue.h"
+#include "rtc_base/fake_clock.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -32,11 +32,9 @@ namespace {
 
 using ::testing::_;
 using ::testing::ElementsAre;
-using ::testing::Invoke;
 using ::testing::Return;
 using ::testing::SizeIs;
 using ::testing::StrictMock;
-using ::webrtc::VideoBitrateAllocation;
 using ::webrtc::CompactNtp;
 using ::webrtc::CompactNtpRttToMs;
 using ::webrtc::MockRtcpRttStats;
@@ -45,7 +43,9 @@ using ::webrtc::NtpTime;
 using ::webrtc::RtcpTransceiverConfig;
 using ::webrtc::RtcpTransceiverImpl;
 using ::webrtc::SaturatedUsToCompactNtp;
+using ::webrtc::TaskQueueForTest;
 using ::webrtc::TimeMicrosToNtp;
+using ::webrtc::VideoBitrateAllocation;
 using ::webrtc::rtcp::Bye;
 using ::webrtc::rtcp::CompoundPacket;
 using ::webrtc::rtcp::ReportBlock;
@@ -136,9 +136,9 @@ RtcpTransceiverConfig DefaultTestConfig() {
   return config;
 }
 
-TEST(RtcpTransceiverImplTest, CanDestroyOnTaskQueue) {
+TEST(RtcpTransceiverImplTest, NeedToStopPeriodicTaskToDestroyOnTaskQueue) {
   FakeRtcpTransport transport;
-  rtc::TaskQueue queue("rtcp");
+  TaskQueueForTest queue("rtcp");
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.task_queue = &queue;
   config.schedule_periodic_compound_packets = true;
@@ -149,6 +149,7 @@ TEST(RtcpTransceiverImplTest, CanDestroyOnTaskQueue) {
 
   rtc::Event done;
   queue.PostTask([rtcp_transceiver, &done] {
+    rtcp_transceiver->StopPeriodicTask();
     delete rtcp_transceiver;
     done.Set();
   });
@@ -157,7 +158,7 @@ TEST(RtcpTransceiverImplTest, CanDestroyOnTaskQueue) {
 
 TEST(RtcpTransceiverImplTest, CanDestroyAfterTaskQueue) {
   FakeRtcpTransport transport;
-  auto* queue = new rtc::TaskQueue("rtcp");
+  auto* queue = new TaskQueueForTest("rtcp");
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.task_queue = queue;
   config.schedule_periodic_compound_packets = true;
@@ -171,7 +172,7 @@ TEST(RtcpTransceiverImplTest, CanDestroyAfterTaskQueue) {
 }
 
 TEST(RtcpTransceiverImplTest, DelaysSendingFirstCompondPacket) {
-  rtc::TaskQueue queue("rtcp");
+  TaskQueueForTest queue("rtcp");
   FakeRtcpTransport transport;
   RtcpTransceiverConfig config;
   config.outgoing_transport = &transport;
@@ -188,6 +189,7 @@ TEST(RtcpTransceiverImplTest, DelaysSendingFirstCompondPacket) {
   // Cleanup.
   rtc::Event done;
   queue.PostTask([&] {
+    rtcp_transceiver->StopPeriodicTask();
     rtcp_transceiver.reset();
     done.Set();
   });
@@ -195,7 +197,7 @@ TEST(RtcpTransceiverImplTest, DelaysSendingFirstCompondPacket) {
 }
 
 TEST(RtcpTransceiverImplTest, PeriodicallySendsPackets) {
-  rtc::TaskQueue queue("rtcp");
+  TaskQueueForTest queue("rtcp");
   FakeRtcpTransport transport;
   RtcpTransceiverConfig config;
   config.outgoing_transport = &transport;
@@ -221,6 +223,7 @@ TEST(RtcpTransceiverImplTest, PeriodicallySendsPackets) {
   // Cleanup.
   rtc::Event done;
   queue.PostTask([&] {
+    rtcp_transceiver->StopPeriodicTask();
     rtcp_transceiver.reset();
     done.Set();
   });
@@ -228,7 +231,7 @@ TEST(RtcpTransceiverImplTest, PeriodicallySendsPackets) {
 }
 
 TEST(RtcpTransceiverImplTest, SendCompoundPacketDelaysPeriodicSendPackets) {
-  rtc::TaskQueue queue("rtcp");
+  TaskQueueForTest queue("rtcp");
   FakeRtcpTransport transport;
   RtcpTransceiverConfig config;
   config.outgoing_transport = &transport;
@@ -266,6 +269,7 @@ TEST(RtcpTransceiverImplTest, SendCompoundPacketDelaysPeriodicSendPackets) {
   // Cleanup.
   rtc::Event done;
   queue.PostTask([&] {
+    rtcp_transceiver->StopPeriodicTask();
     rtcp_transceiver.reset();
     done.Set();
   });
@@ -313,7 +317,7 @@ TEST(RtcpTransceiverImplTest, SendsRtcpWhenNetworkStateIsUp) {
 }
 
 TEST(RtcpTransceiverImplTest, SendsPeriodicRtcpWhenNetworkStateIsUp) {
-  rtc::TaskQueue queue("rtcp");
+  TaskQueueForTest queue("rtcp");
   FakeRtcpTransport transport;
   RtcpTransceiverConfig config = DefaultTestConfig();
   config.schedule_periodic_compound_packets = true;
@@ -330,6 +334,7 @@ TEST(RtcpTransceiverImplTest, SendsPeriodicRtcpWhenNetworkStateIsUp) {
   // Cleanup.
   rtc::Event done;
   queue.PostTask([&] {
+    rtcp_transceiver->StopPeriodicTask();
     rtcp_transceiver.reset();
     done.Set();
   });
@@ -385,7 +390,7 @@ TEST(RtcpTransceiverImplTest, SetRembIncludesRembInNextCompoundPacket) {
   config.schedule_periodic_compound_packets = false;
   RtcpTransceiverImpl rtcp_transceiver(config);
 
-  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrc=*/{54321, 64321});
+  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrcs=*/{54321, 64321});
   rtcp_transceiver.SendCompoundPacket();
 
   EXPECT_EQ(rtcp_parser.remb()->num_packets(), 1);
@@ -404,14 +409,14 @@ TEST(RtcpTransceiverImplTest, SetRembUpdatesValuesToSend) {
   config.schedule_periodic_compound_packets = false;
   RtcpTransceiverImpl rtcp_transceiver(config);
 
-  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrc=*/{54321, 64321});
+  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrcs=*/{54321, 64321});
   rtcp_transceiver.SendCompoundPacket();
 
   EXPECT_EQ(rtcp_parser.remb()->num_packets(), 1);
   EXPECT_EQ(rtcp_parser.remb()->bitrate_bps(), 10000u);
   EXPECT_THAT(rtcp_parser.remb()->ssrcs(), ElementsAre(54321, 64321));
 
-  rtcp_transceiver.SetRemb(/*bitrate_bps=*/70000, /*ssrc=*/{67321});
+  rtcp_transceiver.SetRemb(/*bitrate_bps=*/70000, /*ssrcs=*/{67321});
   rtcp_transceiver.SendCompoundPacket();
 
   EXPECT_EQ(rtcp_parser.remb()->num_packets(), 2);
@@ -429,7 +434,7 @@ TEST(RtcpTransceiverImplTest, SetRembIncludesRembInAllCompoundPackets) {
   config.schedule_periodic_compound_packets = false;
   RtcpTransceiverImpl rtcp_transceiver(config);
 
-  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrc=*/{54321, 64321});
+  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrcs=*/{54321, 64321});
   rtcp_transceiver.SendCompoundPacket();
   rtcp_transceiver.SendCompoundPacket();
 
@@ -447,7 +452,7 @@ TEST(RtcpTransceiverImplTest, SendsNoRembAfterUnset) {
   config.schedule_periodic_compound_packets = false;
   RtcpTransceiverImpl rtcp_transceiver(config);
 
-  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrc=*/{54321, 64321});
+  rtcp_transceiver.SetRemb(/*bitrate_bps=*/10000, /*ssrcs=*/{54321, 64321});
   rtcp_transceiver.SendCompoundPacket();
   EXPECT_EQ(transport.num_packets(), 1);
   ASSERT_EQ(rtcp_parser.remb()->num_packets(), 1);
@@ -729,10 +734,10 @@ TEST(RtcpTransceiverImplTest,
   };
 
   receive_sender_report(kRemoteSsrc1);
-  clock.AdvanceTimeMicros(100 * rtc::kNumMicrosecsPerMillisec);
+  clock.AdvanceTime(webrtc::TimeDelta::ms(100));
 
   receive_sender_report(kRemoteSsrc2);
-  clock.AdvanceTimeMicros(100 * rtc::kNumMicrosecsPerMillisec);
+  clock.AdvanceTime(webrtc::TimeDelta::ms(100));
 
   // Trigger ReceiverReport back.
   rtcp_transceiver.SendCompoundPacket();

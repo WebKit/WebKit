@@ -9,6 +9,7 @@
  */
 
 #include <array>
+#include <string>
 #include <vector>
 
 #include "common_audio/resampler/push_sinc_resampler.h"
@@ -43,7 +44,67 @@ void DumpPerfStats(size_t num_samples,
   RTC_LOG(LS_INFO) << "speed: " << speed << "x";
 }
 
+// When the RNN VAD model is updated and the expected output changes, set the
+// constant below to true in order to write new expected output binary files.
+constexpr bool kWriteComputedOutputToFile = false;
+
 }  // namespace
+
+// Avoids that one forgets to set |kWriteComputedOutputToFile| back to false
+// when the expected output files are re-exported.
+TEST(RnnVadTest, CheckWriteComputedOutputIsFalse) {
+  ASSERT_FALSE(kWriteComputedOutputToFile)
+      << "Cannot land if kWriteComputedOutput is true.";
+}
+
+// Checks that the computed VAD probability for a test input sequence sampled at
+// 48 kHz is within tolerance.
+TEST(RnnVadTest, RnnVadProbabilityWithinTolerance) {
+  // Init resampler, feature extractor and RNN.
+  PushSincResampler decimator(kFrameSize10ms48kHz, kFrameSize10ms24kHz);
+  FeaturesExtractor features_extractor;
+  RnnBasedVad rnn_vad;
+
+  // Init input samples and expected output readers.
+  auto samples_reader = CreatePcmSamplesReader(kFrameSize10ms48kHz);
+  auto expected_vad_prob_reader = CreateVadProbsReader();
+
+  // Input length.
+  const size_t num_frames = samples_reader.second;
+  ASSERT_GE(expected_vad_prob_reader.second, num_frames);
+
+  // Init buffers.
+  std::vector<float> samples_48k(kFrameSize10ms48kHz);
+  std::vector<float> samples_24k(kFrameSize10ms24kHz);
+  std::vector<float> feature_vector(kFeatureVectorSize);
+  std::vector<float> computed_vad_prob(num_frames);
+  std::vector<float> expected_vad_prob(num_frames);
+
+  // Read expected output.
+  ASSERT_TRUE(expected_vad_prob_reader.first->ReadChunk(expected_vad_prob));
+
+  // Compute VAD probabilities on the downsampled input.
+  float cumulative_error = 0.f;
+  for (size_t i = 0; i < num_frames; ++i) {
+    samples_reader.first->ReadChunk(samples_48k);
+    decimator.Resample(samples_48k.data(), samples_48k.size(),
+                       samples_24k.data(), samples_24k.size());
+    bool is_silence = features_extractor.CheckSilenceComputeFeatures(
+        {samples_24k.data(), kFrameSize10ms24kHz},
+        {feature_vector.data(), kFeatureVectorSize});
+    computed_vad_prob[i] = rnn_vad.ComputeVadProbability(
+        {feature_vector.data(), kFeatureVectorSize}, is_silence);
+    EXPECT_NEAR(computed_vad_prob[i], expected_vad_prob[i], 1e-3f);
+    cumulative_error += std::abs(computed_vad_prob[i] - expected_vad_prob[i]);
+  }
+  // Check average error.
+  EXPECT_LT(cumulative_error / num_frames, 1e-4f);
+
+  if (kWriteComputedOutputToFile) {
+    BinaryFileWriter<float> vad_prob_writer("new_vad_prob.dat");
+    vad_prob_writer.WriteChunk(computed_vad_prob);
+  }
+}
 
 // Performance test for the RNN VAD (pre-fetching and downsampling are
 // excluded). Keep disabled and only enable locally to measure performance as

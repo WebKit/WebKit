@@ -34,8 +34,8 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/rtpparameters.h>
-#include <webrtc/api/rtptransceiverinterface.h>
+#include <webrtc/api/rtp_parameters.h>
+#include <webrtc/api/rtp_transceiver_interface.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

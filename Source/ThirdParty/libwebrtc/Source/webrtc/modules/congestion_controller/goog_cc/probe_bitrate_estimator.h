@@ -14,7 +14,9 @@
 #include <limits>
 #include <map>
 
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "absl/types/optional.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
 
 namespace webrtc {
 class RtcEventLog;
@@ -26,28 +28,32 @@ class ProbeBitrateEstimator {
 
   // Should be called for every probe packet we receive feedback about.
   // Returns the estimated bitrate if the probe completes a valid cluster.
-  int HandleProbeAndEstimateBitrate(const PacketFeedback& packet_feedback);
+  absl::optional<DataRate> HandleProbeAndEstimateBitrate(
+      const PacketResult& packet_feedback);
 
   absl::optional<DataRate> FetchAndResetLastEstimatedBitrate();
+
+  absl::optional<DataRate> last_estimate() const;
 
  private:
   struct AggregatedCluster {
     int num_probes = 0;
-    int64_t first_send_ms = std::numeric_limits<int64_t>::max();
-    int64_t last_send_ms = 0;
-    int64_t first_receive_ms = std::numeric_limits<int64_t>::max();
-    int64_t last_receive_ms = 0;
-    int size_last_send = 0;
-    int size_first_receive = 0;
-    int size_total = 0;
+    Timestamp first_send = Timestamp::PlusInfinity();
+    Timestamp last_send = Timestamp::MinusInfinity();
+    Timestamp first_receive = Timestamp::PlusInfinity();
+    Timestamp last_receive = Timestamp::MinusInfinity();
+    DataSize size_last_send = DataSize::Zero();
+    DataSize size_first_receive = DataSize::Zero();
+    DataSize size_total = DataSize::Zero();
   };
 
-  // Erases old cluster data that was seen before |timestamp_ms|.
-  void EraseOldClusters(int64_t timestamp_ms);
+  // Erases old cluster data that was seen before |timestamp|.
+  void EraseOldClusters(Timestamp timestamp);
 
   std::map<int, AggregatedCluster> clusters_;
   RtcEventLog* const event_log_;
-  absl::optional<int> estimated_bitrate_bps_;
+  absl::optional<DataRate> estimated_data_rate_;
+  absl::optional<DataRate> last_estimate_;
 };
 
 }  // namespace webrtc

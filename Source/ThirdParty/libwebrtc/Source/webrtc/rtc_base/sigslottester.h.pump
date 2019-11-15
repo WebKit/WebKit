@@ -35,7 +35,7 @@
 //   EXPECT_EQ("hello", capture);
 //   /* See unit-tests for more examples */
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {

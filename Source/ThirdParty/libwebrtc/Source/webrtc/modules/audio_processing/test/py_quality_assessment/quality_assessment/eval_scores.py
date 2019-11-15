@@ -350,7 +350,6 @@ class TotalHarmonicDistorsionScore(EvaluationScore):
     self._input_frequency = None
 
   def _Run(self, output_path):
-    # TODO(aleloi): Integrate changes made locally.
     self._CheckInputSignal()
 
     self._LoadTestedSignal()

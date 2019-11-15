@@ -12,9 +12,9 @@
 
 #import <UIKit/UIKit.h>
 
-#include "rtc_base/atomicops.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 
 #import "RTCAudioSessionConfiguration.h"
 #import "base/RTCLogging.h"
@@ -43,6 +43,8 @@ NSString * const kRTCAudioSessionOutputVolumeSelector = @"outputVolume";
 
 @synthesize session = _session;
 @synthesize delegates = _delegates;
+@synthesize ignoresPreferredAttributeConfigurationErrors =
+    _ignoresPreferredAttributeConfigurationErrors;
 
 + (instancetype)sharedInstance {
   static dispatch_once_t onceToken;
@@ -177,6 +179,23 @@ NSString * const kRTCAudioSessionOutputVolumeSelector = @"outputVolume";
 - (BOOL)isAudioEnabled {
   @synchronized(self) {
     return _isAudioEnabled;
+  }
+}
+
+- (void)setIgnoresPreferredAttributeConfigurationErrors:
+    (BOOL)ignoresPreferredAttributeConfigurationErrors {
+  @synchronized(self) {
+    if (_ignoresPreferredAttributeConfigurationErrors ==
+        ignoresPreferredAttributeConfigurationErrors) {
+      return;
+    }
+    _ignoresPreferredAttributeConfigurationErrors = ignoresPreferredAttributeConfigurationErrors;
+  }
+}
+
+- (BOOL)ignoresPreferredAttributeConfigurationErrors {
+  @synchronized(self) {
+    return _ignoresPreferredAttributeConfigurationErrors;
   }
 }
 

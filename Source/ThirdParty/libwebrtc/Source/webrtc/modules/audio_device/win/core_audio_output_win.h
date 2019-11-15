@@ -30,7 +30,7 @@ namespace webrtc_win {
 // layer.
 class CoreAudioOutput final : public CoreAudioBase, public AudioOutput {
  public:
-  CoreAudioOutput();
+  CoreAudioOutput(bool automatic_restart);
   ~CoreAudioOutput() override;
 
   // AudioOutput implementation.

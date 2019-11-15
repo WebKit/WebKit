@@ -18,8 +18,8 @@ interface BitrateAdjuster {
   void setTargets(int targetBitrateBps, int targetFps);
 
   /**
-   * Reports that a frame of the given size has been encoded.  Returns true if the bitrate should
-   * be adjusted.
+   * Should be used to report the size of an encoded frame to the bitrate adjuster. Use
+   * getAdjustedBitrateBps to get the updated bitrate after calling this method.
    */
   void reportEncodedFrame(int size);
 

@@ -13,8 +13,11 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_BBR_PACKET_NUMBER_INDEXED_QUEUE_H_
 #define MODULES_CONGESTION_CONTROLLER_BBR_PACKET_NUMBER_INDEXED_QUEUE_H_
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include <deque>
+#include <type_traits>
 #include <utility>
 
 #include "rtc_base/checks.h"

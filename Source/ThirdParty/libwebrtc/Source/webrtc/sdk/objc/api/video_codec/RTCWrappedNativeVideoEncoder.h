@@ -16,7 +16,6 @@
 #include "api/video_codecs/video_encoder.h"
 #include "media/base/codec.h"
 
-RTC_OBJC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCWrappedNativeVideoEncoder")))
 @interface RTCWrappedNativeVideoEncoder : NSObject <RTCVideoEncoder>
 

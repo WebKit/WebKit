@@ -49,7 +49,8 @@ def main(directories):
 
     # Perform download similar to how gclient hooks execute.
     try:
-      gclient_utils.CheckCallAndFilterAndHeader(cmd, cwd=SRC_DIR, always=True)
+      gclient_utils.CheckCallAndFilter(
+          cmd, cwd=SRC_DIR, always_show_header=True)
     except (gclient_utils.Error, subprocess2.CalledProcessError) as e:
       print 'Error: %s' % str(e)
       return 2

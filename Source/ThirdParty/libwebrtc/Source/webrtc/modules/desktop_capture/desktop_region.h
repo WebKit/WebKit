@@ -11,11 +11,12 @@
 #ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_REGION_H_
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_REGION_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <vector>
 
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "rtc_base/constructormagic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {

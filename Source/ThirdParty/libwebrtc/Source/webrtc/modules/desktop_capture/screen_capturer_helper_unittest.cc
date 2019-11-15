@@ -14,7 +14,7 @@
 
 namespace webrtc {
 
-class ScreenCapturerHelperTest : public testing::Test {
+class ScreenCapturerHelperTest : public ::testing::Test {
  protected:
   ScreenCapturerHelper capturer_helper_;
 };

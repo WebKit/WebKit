@@ -12,7 +12,7 @@
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
-class FiltersTest : public testing::Test {
+class FiltersTest : public ::testing::Test {
  protected:
   // Pass a function pointer to the Tester function.
   void FiltersTester(AutocorrFix WebRtcIsacfix_AutocorrFixFunction) {

@@ -13,7 +13,6 @@
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/trace_event.h"
-#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 

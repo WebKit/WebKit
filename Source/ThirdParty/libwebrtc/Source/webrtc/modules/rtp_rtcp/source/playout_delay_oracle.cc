@@ -10,55 +10,80 @@
 
 #include "modules/rtp_rtcp/source/playout_delay_oracle.h"
 
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include <algorithm>
+
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
-PlayoutDelayOracle::PlayoutDelayOracle()
-    : high_sequence_number_(0),
-      send_playout_delay_(false),
-      ssrc_(0),
-      playout_delay_{-1, -1} {}
+PlayoutDelayOracle::PlayoutDelayOracle() = default;
 
-PlayoutDelayOracle::~PlayoutDelayOracle() {}
+PlayoutDelayOracle::~PlayoutDelayOracle() = default;
 
-void PlayoutDelayOracle::UpdateRequest(uint32_t ssrc,
-                                       PlayoutDelay playout_delay,
-                                       uint16_t seq_num) {
+absl::optional<PlayoutDelay> PlayoutDelayOracle::PlayoutDelayToSend(
+    PlayoutDelay requested_delay) const {
   rtc::CritScope lock(&crit_sect_);
-  RTC_DCHECK_LE(playout_delay.min_ms, PlayoutDelayLimits::kMaxMs);
-  RTC_DCHECK_LE(playout_delay.max_ms, PlayoutDelayLimits::kMaxMs);
-  RTC_DCHECK_LE(playout_delay.min_ms, playout_delay.max_ms);
-  int64_t unwrapped_seq_num = unwrapper_.Unwrap(seq_num);
-  if (playout_delay.min_ms >= 0 &&
-      playout_delay.min_ms != playout_delay_.min_ms) {
-    send_playout_delay_ = true;
-    playout_delay_.min_ms = playout_delay.min_ms;
-    high_sequence_number_ = unwrapped_seq_num;
+  if (requested_delay.min_ms > PlayoutDelayLimits::kMaxMs ||
+      requested_delay.max_ms > PlayoutDelayLimits::kMaxMs) {
+    RTC_DLOG(LS_ERROR)
+        << "Requested playout delay values out of range, ignored";
+    return absl::nullopt;
+  }
+  if (requested_delay.max_ms != -1 &&
+      requested_delay.min_ms > requested_delay.max_ms) {
+    RTC_DLOG(LS_ERROR) << "Requested playout delay values out of order";
+    return absl::nullopt;
+  }
+  if ((requested_delay.min_ms == -1 ||
+       requested_delay.min_ms == latest_delay_.min_ms) &&
+      (requested_delay.max_ms == -1 ||
+       requested_delay.max_ms == latest_delay_.max_ms)) {
+    // Unchanged.
+    return unacked_sequence_number_ ? absl::make_optional(latest_delay_)
+                                    : absl::nullopt;
+  }
+  if (requested_delay.min_ms == -1) {
+    RTC_DCHECK_GE(requested_delay.max_ms, 0);
+    requested_delay.min_ms =
+        std::min(latest_delay_.min_ms, requested_delay.max_ms);
+  }
+  if (requested_delay.max_ms == -1) {
+    requested_delay.max_ms =
+        std::max(latest_delay_.max_ms, requested_delay.min_ms);
+  }
+  return requested_delay;
+}
+
+void PlayoutDelayOracle::OnSentPacket(uint16_t sequence_number,
+                                      absl::optional<PlayoutDelay> delay) {
+  rtc::CritScope lock(&crit_sect_);
+  int64_t unwrapped_sequence_number = unwrapper_.Unwrap(sequence_number);
+
+  if (!delay) {
+    return;
   }
 
-  if (playout_delay.max_ms >= 0 &&
-      playout_delay.max_ms != playout_delay_.max_ms) {
-    send_playout_delay_ = true;
-    playout_delay_.max_ms = playout_delay.max_ms;
-    high_sequence_number_ = unwrapped_seq_num;
+  RTC_DCHECK_LE(0, delay->min_ms);
+  RTC_DCHECK_LE(delay->max_ms, PlayoutDelayLimits::kMaxMs);
+  RTC_DCHECK_LE(delay->min_ms, delay->max_ms);
+
+  if (delay->min_ms != latest_delay_.min_ms ||
+      delay->max_ms != latest_delay_.max_ms) {
+    latest_delay_ = *delay;
+    unacked_sequence_number_ = unwrapped_sequence_number;
   }
-  ssrc_ = ssrc;
 }
 
 // If an ACK is received on the packet containing the playout delay extension,
 // we stop sending the extension on future packets.
-void PlayoutDelayOracle::OnReceivedRtcpReportBlocks(
-    const ReportBlockList& report_blocks) {
+void PlayoutDelayOracle::OnReceivedAck(
+    int64_t extended_highest_sequence_number) {
   rtc::CritScope lock(&crit_sect_);
-  for (const RTCPReportBlock& report_block : report_blocks) {
-    if ((ssrc_ == report_block.source_ssrc) && send_playout_delay_ &&
-        (report_block.extended_highest_sequence_number >
-         high_sequence_number_)) {
-      send_playout_delay_ = false;
-    }
+  if (unacked_sequence_number_ &&
+      extended_highest_sequence_number > *unacked_sequence_number_) {
+    unacked_sequence_number_ = absl::nullopt;
   }
 }
 

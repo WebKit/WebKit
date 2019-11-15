@@ -10,7 +10,9 @@
 
 package org.webrtc;
 
-import javax.annotation.Nullable;
+import android.support.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import org.webrtc.EncodedImage;
 
 /**
@@ -28,10 +30,19 @@ public interface VideoEncoder {
     public final int maxFramerate;
     public final int numberOfSimulcastStreams;
     public final boolean automaticResizeOn;
+    public final Capabilities capabilities;
+
+    // TODO(bugs.webrtc.org/10720): Remove.
+    @Deprecated
+    public Settings(int numberOfCores, int width, int height, int startBitrate, int maxFramerate,
+        int numberOfSimulcastStreams, boolean automaticResizeOn) {
+      this(numberOfCores, width, height, startBitrate, maxFramerate, numberOfSimulcastStreams,
+          automaticResizeOn, new VideoEncoder.Capabilities(false /* lossNotification */));
+    }
 
     @CalledByNative("Settings")
     public Settings(int numberOfCores, int width, int height, int startBitrate, int maxFramerate,
-        int numberOfSimulcastStreams, boolean automaticResizeOn) {
+        int numberOfSimulcastStreams, boolean automaticResizeOn, Capabilities capabilities) {
       this.numberOfCores = numberOfCores;
       this.width = width;
       this.height = height;
@@ -39,6 +50,21 @@ public interface VideoEncoder {
       this.maxFramerate = maxFramerate;
       this.numberOfSimulcastStreams = numberOfSimulcastStreams;
       this.automaticResizeOn = automaticResizeOn;
+      this.capabilities = capabilities;
+    }
+  }
+
+  /** Capabilities (loss notification, etc.) passed to the encoder by WebRTC. */
+  public class Capabilities {
+    /**
+     * The remote side has support for the loss notification RTCP feedback message format, and will
+     * be sending these feedback messages if necessary.
+     */
+    public final boolean lossNotification;
+
+    @CalledByNative("Capabilities")
+    public Capabilities(boolean lossNotification) {
+      this.lossNotification = lossNotification;
     }
   }
 
@@ -157,6 +183,59 @@ public interface VideoEncoder {
     }
   }
 
+  /**
+   * Bitrate limits for resolution.
+   */
+  public class ResolutionBitrateLimits {
+    /**
+     * Maximum size of video frame, in pixels, the bitrate limits are intended for.
+     */
+    public final int frameSizePixels;
+
+    /**
+     * Recommended minimum bitrate to start encoding.
+     */
+    public final int minStartBitrateBps;
+
+    /**
+     * Recommended minimum bitrate.
+     */
+    public final int minBitrateBps;
+
+    /**
+     * Recommended maximum bitrate.
+     */
+    public final int maxBitrateBps;
+
+    public ResolutionBitrateLimits(
+        int frameSizePixels, int minStartBitrateBps, int minBitrateBps, int maxBitrateBps) {
+      this.frameSizePixels = frameSizePixels;
+      this.minStartBitrateBps = minStartBitrateBps;
+      this.minBitrateBps = minBitrateBps;
+      this.maxBitrateBps = maxBitrateBps;
+    }
+
+    @CalledByNative("ResolutionBitrateLimits")
+    public int getFrameSizePixels() {
+      return frameSizePixels;
+    }
+
+    @CalledByNative("ResolutionBitrateLimits")
+    public int getMinStartBitrateBps() {
+      return minStartBitrateBps;
+    }
+
+    @CalledByNative("ResolutionBitrateLimits")
+    public int getMinBitrateBps() {
+      return minBitrateBps;
+    }
+
+    @CalledByNative("ResolutionBitrateLimits")
+    public int getMaxBitrateBps() {
+      return maxBitrateBps;
+    }
+  }
+
   public interface Callback {
     /**
      * Call to return an encoded frame. It is safe to assume the byte buffer held by |frame| is not
@@ -215,6 +294,14 @@ public interface VideoEncoder {
 
   /** Any encoder that wants to use WebRTC provided quality scaler must implement this method. */
   @CalledByNative ScalingSettings getScalingSettings();
+
+  /** Returns the list of bitrate limits. */
+  @CalledByNative
+  default ResolutionBitrateLimits[] getResolutionBitrateLimits() {
+    // TODO(ssilkin): Update downstream projects and remove default implementation.
+    ResolutionBitrateLimits bitrate_limits[] = {};
+    return bitrate_limits;
+  }
 
   /**
    * Should return a descriptive name for the implementation. Gets called once and cached. May be

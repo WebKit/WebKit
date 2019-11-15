@@ -86,7 +86,10 @@ ALIGN16_BEG const float ALIGN16_END rdft_wk3i[32] = {
     0.956940353f,  -0.956940353f,
 };
 ALIGN16_BEG const float ALIGN16_END cftmdl_wk1r[4] = {
-    0.707106769f, 0.707106769f, 0.707106769f, -0.707106769f,
+    0.707106769f,
+    0.707106769f,
+    0.707106769f,
+    -0.707106769f,
 };
 #endif
 

@@ -14,6 +14,7 @@ include_rules = [
   "+modules/audio_processing",
   "+modules/congestion_controller/bbr",
   "+modules/rtp_rtcp",
+  "+modules/utility",
   "+modules/video_capture",
   "+modules/video_coding",
   "+sdk",
@@ -37,7 +38,7 @@ specific_include_rules = {
     "+p2p/base/mdns_message.h",
   ],
   ".*pseudotcp_parser_fuzzer\.cc": [
-    "+p2p/base/pseudotcp.h",
+    "+p2p/base/pseudo_tcp.h",
   ],
   ".*stun_parser_fuzzer\.cc": [
     "+p2p/base/stun.h",
@@ -45,4 +46,24 @@ specific_include_rules = {
   ".*stun_validator_fuzzer\.cc": [
     "+p2p/base/stun.h",
   ],
+  ".*test_main\.cc": [
+    "+absl/debugging/failure_signal_handler.h",
+    "+absl/debugging/symbolize.h",
+  ],
+  ".*test_peer\.(h|cc)": [
+    "+pc",
+    "+p2p",
+  ],
+  ".*network_emulation_pc_unittest\.cc": [
+    "+pc/peer_connection_wrapper.h",
+    "+pc/test/mock_peer_connection_observers.h",
+    "+p2p/client/basic_port_allocator.h",
+  ],
+  ".*peer_connection_quality_test\.(h|cc)": [
+    "+pc",
+  ],
+  ".*sdp_changer\.(h|cc)": [
+    "+pc",
+    "+p2p",
+  ]
 }

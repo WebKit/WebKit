@@ -5,6 +5,8 @@ if (is_android) {
     testonly = true
     apk_name = "androidnativeapi"
     android_manifest = "AndroidManifest.xml"
+    min_sdk_version = 19
+    target_sdk_version = 27
 
     java_files = [
       "java/org/webrtc/examples/androidnativeapi/MainActivity.java",
@@ -18,6 +20,7 @@ if (is_android) {
       "//sdk/android:surfaceviewrenderer_java",
       "//sdk/android:video_api_java",
       "//sdk/android:video_java",
+      "//third_party/android_deps:com_android_support_support_annotations_java",
     ]
 
     shared_libraries = [ ":examples_androidnativeapi_jni" ]
@@ -28,7 +31,6 @@ if (is_android) {
     sources = [
       "java/org/webrtc/examples/androidnativeapi/CallClient.java",
     ]
-    jni_package = ""
     namespace = "webrtc_examples"
     jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
   }
@@ -36,8 +38,8 @@ if (is_android) {
   rtc_shared_library("examples_androidnativeapi_jni") {
     testonly = true
     sources = [
-      "jni/androidcallclient.cc",
-      "jni/androidcallclient.h",
+      "jni/android_call_client.cc",
+      "jni/android_call_client.h",
       "jni/onload.cc",
     ]
 
@@ -46,18 +48,16 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../api:scoped_refptr",
       "//api:libjingle_peerconnection_api",
-      "//api/audio_codecs:builtin_audio_decoder_factory",
-      "//api/audio_codecs:builtin_audio_encoder_factory",
-      "//api/video:builtin_video_bitrate_allocator_factory",
-      "//logging:rtc_event_log_impl_base",
+      "//api/rtc_event_log:rtc_event_log_factory",
+      "//api/task_queue:default_task_queue_factory",
       "//media:rtc_audio_video",
       "//media:rtc_internal_video_codecs",
-      "//modules/audio_processing",
-      "//modules/audio_processing:api",
-      "//modules/utility:utility",
+      "//media:rtc_media_engine_defaults",
+      "//modules/utility",
       "//pc:libjingle_peerconnection",
-      "//rtc_base:rtc_base",
+      "//rtc_base",
       "//rtc_base:rtc_base_approved",
       "//sdk/android:native_api_base",
       "//sdk/android:native_api_jni",

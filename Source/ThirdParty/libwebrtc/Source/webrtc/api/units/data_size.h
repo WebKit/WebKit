@@ -31,14 +31,13 @@ class DataSize final : public rtc_units_impl::RelativeUnit<DataSize> {
     return FromStaticValue<bytes>();
   }
 
-  template <
-      typename T,
-      typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
+  template <typename T>
   static DataSize bytes(T bytes) {
+    static_assert(std::is_arithmetic<T>::value, "");
     return FromValue(bytes);
   }
   template <typename T = int64_t>
-  typename std::enable_if<std::is_arithmetic<T>::value, T>::type bytes() const {
+  T bytes() const {
     return ToValue<T>();
   }
 
@@ -53,6 +52,9 @@ class DataSize final : public rtc_units_impl::RelativeUnit<DataSize> {
 };
 
 std::string ToString(DataSize value);
+inline std::string ToLogString(DataSize value) {
+  return ToString(value);
+}
 
 #ifdef UNIT_TEST
 inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)

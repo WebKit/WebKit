@@ -10,6 +10,7 @@
 
 #include "api/units/time_delta.h"
 
+#include "api/array_view.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -31,4 +32,5 @@ std::string ToString(TimeDelta value) {
   }
   return sb.str();
 }
+
 }  // namespace webrtc

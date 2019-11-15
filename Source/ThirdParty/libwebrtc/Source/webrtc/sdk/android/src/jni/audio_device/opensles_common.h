@@ -14,6 +14,7 @@
 #include <SLES/OpenSLES.h>
 #include <stddef.h>
 
+#include "api/ref_counted_base.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread_checker.h"
@@ -65,12 +66,12 @@ typedef ScopedSLObject<SLObjectItf, const SLObjectItf_*> ScopedSLObjectItf;
 // a reference to it. The engine object is only created at the first call
 // since OpenSL ES for Android only supports a single engine per application.
 // Subsequent calls returns the already created engine.
-// Note: This class must be used single threaded and this is enfored by a thread
-// checker.
-class OpenSLEngineManager {
+// Note: This class must be used single threaded and this is enforced by a
+// thread checker.
+class OpenSLEngineManager : public rtc::RefCountedBase {
  public:
   OpenSLEngineManager();
-  ~OpenSLEngineManager();
+  ~OpenSLEngineManager() override;
   SLObjectItf GetOpenSLEngine();
 
  private:

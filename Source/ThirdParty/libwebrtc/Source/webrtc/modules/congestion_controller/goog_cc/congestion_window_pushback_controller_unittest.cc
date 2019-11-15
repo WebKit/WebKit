@@ -9,16 +9,24 @@
  */
 
 #include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
+
+#include "api/transport/field_trial_based_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-using testing::_;
+using ::testing::_;
 
 namespace webrtc {
 namespace test {
 
 class CongestionWindowPushbackControllerTest : public ::testing::Test {
+ public:
+  CongestionWindowPushbackControllerTest()
+      : cwnd_controller_(&field_trial_based_config_) {}
+
  protected:
+  FieldTrialBasedConfig field_trial_based_config_;
+
   CongestionWindowPushbackController cwnd_controller_;
 };
 

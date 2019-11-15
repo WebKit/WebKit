@@ -7,6 +7,9 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 import json
 import optparse
 import os
@@ -45,18 +48,6 @@ def _ParseArgs():
                     help='Path to VMAF model.')
   parser.add_option('--vmaf_phone_model', action='store_true',
                     help='Whether to use phone model in VMAF.')
-  parser.add_option('--barcode_decoder', type='string',
-                    help=('DEPRECATED'))
-  parser.add_option('--ffmpeg_path', type='string',
-                    help=('DEPRECATED'))
-  parser.add_option('--zxing_path', type='string',
-                    help=('DEPRECATED'))
-  parser.add_option('--stats_file_ref', type='string', default='stats_ref.txt',
-                    help=('DEPRECATED'))
-  parser.add_option('--stats_file_test', type='string',
-                    help=('DEPRECATED'))
-  parser.add_option('--stats_file', type='string',
-                    help=('DEPRECATED'))
   parser.add_option('--yuv_frame_width', type='int', default=640,
                     help='Width of the YUV file\'s frames. Default: %default')
   parser.add_option('--yuv_frame_height', type='int', default=480,
@@ -101,8 +92,6 @@ def _RunFrameAnalyzer(options, yuv_directory=None):
     '--label=%s' % options.label,
     '--reference_file=%s' % options.ref_video,
     '--test_file=%s' % options.test_video,
-    '--stats_file_ref=%s' % options.stats_file_ref,
-    '--stats_file_test=%s' % options.stats_file_test,
     '--width=%d' % options.yuv_frame_width,
     '--height=%d' % options.yuv_frame_height,
   ]
@@ -116,7 +105,7 @@ def _RunFrameAnalyzer(options, yuv_directory=None):
                                     stdout=sys.stdout, stderr=sys.stderr)
   frame_analyzer.wait()
   if frame_analyzer.returncode != 0:
-    print 'Failed to run frame analyzer.'
+    print('Failed to run frame analyzer.')
   return frame_analyzer.returncode
 
 
@@ -146,7 +135,7 @@ def _RunVmaf(options, yuv_directory, logfile):
                           stdout=sys.stdout, stderr=sys.stderr)
   vmaf.wait()
   if vmaf.returncode != 0:
-    print 'Failed to run VMAF.'
+    print('Failed to run VMAF.')
     return 1
 
   # Read per-frame scores from VMAF output and print.
@@ -155,7 +144,7 @@ def _RunVmaf(options, yuv_directory, logfile):
     vmaf_scores = []
     for frame in vmaf_data['frames']:
       vmaf_scores.append(frame['metrics']['vmaf'])
-    print 'RESULT VMAF: %s=' % options.label, vmaf_scores
+    print('RESULT VMAF: %s=' % options.label, vmaf_scores)
 
   return 0
 

@@ -10,9 +10,20 @@
 
 #include "api/video/video_timing.h"
 
+#include "api/array_view.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
+
+uint16_t VideoSendTiming::GetDeltaCappedMs(int64_t base_ms, int64_t time_ms) {
+  if (time_ms < base_ms) {
+    RTC_DLOG(LS_ERROR) << "Delta " << (time_ms - base_ms)
+                       << "ms expected to be positive";
+  }
+  return rtc::saturated_cast<uint16_t>(time_ms - base_ms);
+}
 
 TimingFrameInfo::TimingFrameInfo()
     : rtp_timestamp(0),

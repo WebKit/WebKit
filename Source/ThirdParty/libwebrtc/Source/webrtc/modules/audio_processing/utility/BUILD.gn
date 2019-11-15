@@ -8,6 +8,17 @@
 
 import("../../../webrtc.gni")
 
+rtc_source_set("cascaded_biquad_filter") {
+  sources = [
+    "cascaded_biquad_filter.cc",
+    "cascaded_biquad_filter.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+  ]
+}
+
 rtc_source_set("block_mean_calculator") {
   sources = [
     "block_mean_calculator.cc",
@@ -67,15 +78,6 @@ rtc_source_set("ooura_fft") {
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags += [ "-mfpu=neon" ]
     }
-
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
-      ]
-    }
   }
 
   if (current_cpu == "mipsel" && mips_float_abi == "hard") {
@@ -83,7 +85,34 @@ rtc_source_set("ooura_fft") {
   }
 }
 
+rtc_source_set("pffft_wrapper") {
+  visibility = [ "../*" ]
+  sources = [
+    "pffft_wrapper.cc",
+    "pffft_wrapper.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "//third_party/pffft",
+  ]
+}
+
 if (rtc_include_tests) {
+  rtc_source_set("cascaded_biquad_filter_unittest") {
+    testonly = true
+
+    sources = [
+      "cascaded_biquad_filter_unittest.cc",
+    ]
+    deps = [
+      ":cascaded_biquad_filter",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+
   rtc_source_set("block_mean_calculator_unittest") {
     testonly = true
 
@@ -109,6 +138,19 @@ if (rtc_include_tests) {
       "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "//testing/gtest",
+    ]
+  }
+
+  rtc_source_set("pffft_wrapper_unittest") {
+    testonly = true
+    sources = [
+      "pffft_wrapper_unittest.cc",
+    ]
+    deps = [
+      ":pffft_wrapper",
+      "../../../test:test_support",
+      "//testing/gtest",
+      "//third_party/pffft",
     ]
   }
 }

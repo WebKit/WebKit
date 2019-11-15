@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_device/audio_device_generic.h"
+
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -39,6 +40,11 @@ bool AudioDeviceGeneric::BuiltInNSIsAvailable() const {
 }
 
 int32_t AudioDeviceGeneric::EnableBuiltInNS(bool enable) {
+  RTC_LOG_F(LS_ERROR) << "Not supported on this platform";
+  return -1;
+}
+
+int32_t AudioDeviceGeneric::GetPlayoutUnderrunCount() const {
   RTC_LOG_F(LS_ERROR) << "Not supported on this platform";
   return -1;
 }

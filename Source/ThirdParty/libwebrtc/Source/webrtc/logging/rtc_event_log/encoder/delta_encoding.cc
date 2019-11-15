@@ -16,10 +16,10 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
-#include "logging/rtc_event_log/encoder/varint.h"
-#include "rtc_base/bitbuffer.h"
+#include "logging/rtc_event_log/encoder/var_int.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 

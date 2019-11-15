@@ -31,7 +31,7 @@ rtc_source_set("audio_codecs_api") {
   deps = [
     "..:array_view",
     "..:bitrate_allocation",
-    "../..:webrtc_common",
+    "..:scoped_refptr",
     "../../rtc_base:checks",
     "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
@@ -51,6 +51,7 @@ rtc_static_library("builtin_audio_decoder_factory") {
   ]
   deps = [
     ":audio_codecs_api",
+    "..:scoped_refptr",
     "../../rtc_base:rtc_base_approved",
     "L16:audio_decoder_L16",
     "g711:audio_decoder_g711",
@@ -65,7 +66,10 @@ rtc_static_library("builtin_audio_decoder_factory") {
     defines += [ "WEBRTC_USE_BUILTIN_ILBC=0" ]
   }
   if (rtc_include_opus) {
-    deps += [ "opus:audio_decoder_opus" ]
+    deps += [
+      "opus:audio_decoder_multiopus",
+      "opus:audio_decoder_opus",
+    ]
     defines += [ "WEBRTC_USE_BUILTIN_OPUS=1" ]
   } else {
     defines += [ "WEBRTC_USE_BUILTIN_OPUS=0" ]
@@ -81,6 +85,7 @@ rtc_static_library("builtin_audio_encoder_factory") {
   ]
   deps = [
     ":audio_codecs_api",
+    "..:scoped_refptr",
     "../../rtc_base:rtc_base_approved",
     "L16:audio_encoder_L16",
     "g711:audio_encoder_g711",
@@ -95,7 +100,10 @@ rtc_static_library("builtin_audio_encoder_factory") {
     defines += [ "WEBRTC_USE_BUILTIN_ILBC=0" ]
   }
   if (rtc_include_opus) {
-    deps += [ "opus:audio_encoder_opus" ]
+    deps += [
+      "opus:audio_encoder_multiopus",
+      "opus:audio_encoder_opus",
+    ]
     defines += [ "WEBRTC_USE_BUILTIN_OPUS=1" ]
   } else {
     defines += [ "WEBRTC_USE_BUILTIN_OPUS=0" ]

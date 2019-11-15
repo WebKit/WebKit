@@ -47,10 +47,10 @@
   if (_captureSession == captureSession) {
     return;
   }
+  _captureSession = captureSession;
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeMain
                     block:^{
-                      self.captureSession = captureSession;
                       AVCaptureVideoPreviewLayer *previewLayer = [self previewLayer];
                       [RTCDispatcher
                           dispatchAsyncOnType:RTCDispatcherTypeCaptureSession

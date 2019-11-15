@@ -11,6 +11,9 @@
 #ifndef RTC_BASE_NUMERICS_MOVING_AVERAGE_H_
 #define RTC_BASE_NUMERICS_MOVING_AVERAGE_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <vector>
 
 #include "absl/types/optional.h"

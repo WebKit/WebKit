@@ -15,6 +15,7 @@
 
 #include "call/flexfec_receive_stream.h"
 #include "call/rtp_packet_sink_interface.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -31,6 +32,7 @@ class RtpStreamReceiverInterface;
 class FlexfecReceiveStreamImpl : public FlexfecReceiveStream {
  public:
   FlexfecReceiveStreamImpl(
+      Clock* clock,
       RtpStreamReceiverControllerInterface* receiver_controller,
       const Config& config,
       RecoveredPacketReceiver* recovered_packet_receiver,

@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "test/scenario/call_client.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/network_node.h"
@@ -29,6 +29,8 @@ class SendAudioStream {
   RTC_DISALLOW_COPY_AND_ASSIGN(SendAudioStream);
   ~SendAudioStream();
   void Start();
+  void Stop();
+  void SetMuted(bool mute);
   ColumnPrinter StatsPrinter();
 
  private:
@@ -51,6 +53,8 @@ class ReceiveAudioStream {
   RTC_DISALLOW_COPY_AND_ASSIGN(ReceiveAudioStream);
   ~ReceiveAudioStream();
   void Start();
+  void Stop();
+  AudioReceiveStream::Stats GetStats() const;
 
  private:
   friend class Scenario;

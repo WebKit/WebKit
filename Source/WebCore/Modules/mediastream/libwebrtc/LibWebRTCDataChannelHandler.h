@@ -31,7 +31,7 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/datachannelinterface.h>
+#include <webrtc/api/data_channel_interface.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 

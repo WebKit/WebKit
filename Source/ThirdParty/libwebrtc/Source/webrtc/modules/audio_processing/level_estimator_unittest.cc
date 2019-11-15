@@ -34,9 +34,9 @@ void RunBitexactnessTest(int sample_rate_hz,
   int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
   StreamConfig capture_config(sample_rate_hz, num_channels, false);
   AudioBuffer capture_buffer(
-      capture_config.num_frames(), capture_config.num_channels(),
-      capture_config.num_frames(), capture_config.num_channels(),
-      capture_config.num_frames());
+      capture_config.sample_rate_hz(), capture_config.num_channels(),
+      capture_config.sample_rate_hz(), capture_config.num_channels(),
+      capture_config.sample_rate_hz(), capture_config.num_channels());
 
   test::InputAudioFile capture_file(
       test::GetApmCaptureTestVectorFileName(sample_rate_hz));
@@ -48,7 +48,7 @@ void RunBitexactnessTest(int sample_rate_hz,
     test::CopyVectorToAudioBuffer(capture_config, capture_input,
                                   &capture_buffer);
 
-    level_estimator.ProcessStream(&capture_buffer);
+    level_estimator.ProcessStream(capture_buffer);
   }
 
   // Extract test results.

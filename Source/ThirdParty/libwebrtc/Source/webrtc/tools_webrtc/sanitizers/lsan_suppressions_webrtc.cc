@@ -82,7 +82,6 @@ char kLSanDefaultSuppressions[] =
     "leak:webrtc::AudioDeviceLinuxALSA::InitMicrophone\n"
     "leak:webrtc::AudioDeviceLinuxALSA::InitSpeaker\n"
     "leak:webrtc::CreateIceCandidate\n"
-    "leak:webrtc::FakeConstraints::AddOptional\n"
     "leak:webrtc::WebRtcIdentityRequestObserver::OnSuccess\n"
     "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateAnswer\n"
     "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateOffer\n"

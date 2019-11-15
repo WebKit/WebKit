@@ -11,6 +11,8 @@
 #ifndef EXAMPLES_PEERCONNECTION_SERVER_UTILS_H_
 #define EXAMPLES_PEERCONNECTION_SERVER_UTILS_H_
 
+#include <stddef.h>
+
 #include <string>
 
 #ifndef ARRAYSIZE

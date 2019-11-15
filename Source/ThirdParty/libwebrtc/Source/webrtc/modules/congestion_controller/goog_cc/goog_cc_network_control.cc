@@ -10,9 +10,11 @@
 
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
 
+#include <inttypes.h>
+#include <stdio.h>
+
 #include <algorithm>
-#include <functional>
-#include <limits>
+#include <cstdint>
 #include <memory>
 #include <numeric>
 #include <string>
@@ -20,28 +22,17 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/units/time_delta.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
-
-const char kCwndExperiment[] = "WebRTC-CwndExperiment";
-// When CongestionWindowPushback is enabled, the pacer is oblivious to
-// the congestion window. The relation between outstanding data and
-// the congestion window affects encoder allocations directly.
-const char kCongestionPushbackExperiment[] = "WebRTC-CongestionWindowPushback";
-
-const int64_t kDefaultAcceptedQueueMs = 250;
-
 // From RTCPSender video report interval.
 constexpr TimeDelta kLossUpdateInterval = TimeDelta::Millis<1000>();
 
@@ -52,70 +43,6 @@ constexpr TimeDelta kLossUpdateInterval = TimeDelta::Millis<1000>();
 // overshoots from the encoder.
 const float kDefaultPaceMultiplier = 2.5f;
 
-bool IsCongestionWindowPushbackExperimentEnabled() {
-  return webrtc::field_trial::IsEnabled(kCongestionPushbackExperiment) &&
-         webrtc::field_trial::IsEnabled(kCwndExperiment);
-}
-
-std::unique_ptr<CongestionWindowPushbackController>
-MaybeInitalizeCongestionWindowPushbackController() {
-  return IsCongestionWindowPushbackExperimentEnabled()
-             ? absl::make_unique<CongestionWindowPushbackController>()
-             : nullptr;
-}
-
-bool CwndExperimentEnabled() {
-  std::string experiment_string =
-      webrtc::field_trial::FindFullName(kCwndExperiment);
-  // The experiment is enabled iff the field trial string begins with "Enabled".
-  return experiment_string.find("Enabled") == 0;
-}
-bool ReadCwndExperimentParameter(int64_t* accepted_queue_ms) {
-  RTC_DCHECK(accepted_queue_ms);
-  std::string experiment_string =
-      webrtc::field_trial::FindFullName(kCwndExperiment);
-  int parsed_values =
-      sscanf(experiment_string.c_str(), "Enabled-%" PRId64, accepted_queue_ms);
-  if (parsed_values == 1) {
-    RTC_CHECK_GE(*accepted_queue_ms, 0)
-        << "Accepted must be greater than or equal to 0.";
-    return true;
-  }
-  return false;
-}
-
-// Makes sure that the bitrate and the min, max values are in valid range.
-static void ClampBitrates(int64_t* bitrate_bps,
-                          int64_t* min_bitrate_bps,
-                          int64_t* max_bitrate_bps) {
-  // TODO(holmer): We should make sure the default bitrates are set to 10 kbps,
-  // and that we don't try to set the min bitrate to 0 from any applications.
-  // The congestion controller should allow a min bitrate of 0.
-  if (*min_bitrate_bps < congestion_controller::GetMinBitrateBps())
-    *min_bitrate_bps = congestion_controller::GetMinBitrateBps();
-  if (*max_bitrate_bps > 0)
-    *max_bitrate_bps = std::max(*min_bitrate_bps, *max_bitrate_bps);
-  if (*bitrate_bps > 0)
-    *bitrate_bps = std::max(*min_bitrate_bps, *bitrate_bps);
-}
-
-std::vector<PacketFeedback> ReceivedPacketsFeedbackAsRtp(
-    const TransportPacketsFeedback report) {
-  std::vector<PacketFeedback> packet_feedback_vector;
-  for (auto& fb : report.PacketsWithFeedback()) {
-    if (fb.receive_time.IsFinite()) {
-      PacketFeedback pf(fb.receive_time.ms(), 0);
-      pf.creation_time_ms = report.feedback_time.ms();
-      pf.payload_size = fb.sent_packet.size.bytes();
-      pf.pacing_info = fb.sent_packet.pacing_info;
-      pf.send_time_ms = fb.sent_packet.send_time.ms();
-      pf.unacknowledged_data = fb.sent_packet.prior_unacked_data.bytes();
-      packet_feedback_vector.push_back(pf);
-    }
-  }
-  return packet_feedback_vector;
-}
-
 int64_t GetBpsOrDefault(const absl::optional<DataRate>& rate,
                         int64_t fallback_bps) {
   if (rate && rate->IsFinite()) {
@@ -124,51 +51,68 @@ int64_t GetBpsOrDefault(const absl::optional<DataRate>& rate,
     return fallback_bps;
   }
 }
-
+bool IsEnabled(const WebRtcKeyValueConfig* config, absl::string_view key) {
+  return config->Lookup(key).find("Enabled") == 0;
+}
+bool IsNotDisabled(const WebRtcKeyValueConfig* config, absl::string_view key) {
+  return config->Lookup(key).find("Disabled") != 0;
+}
 }  // namespace
 
-GoogCcNetworkController::GoogCcNetworkController(RtcEventLog* event_log,
-                                                 NetworkControllerConfig config,
-                                                 bool feedback_only)
-    : event_log_(event_log),
-      packet_feedback_only_(feedback_only),
+GoogCcNetworkController::GoogCcNetworkController(NetworkControllerConfig config,
+                                                 GoogCcConfig goog_cc_config)
+    : key_value_config_(config.key_value_config ? config.key_value_config
+                                                : &trial_based_config_),
+      event_log_(config.event_log),
+      packet_feedback_only_(goog_cc_config.feedback_only),
       safe_reset_on_route_change_("Enabled"),
       safe_reset_acknowledged_rate_("ack"),
-      use_stable_bandwidth_estimate_(
-          field_trial::IsEnabled("WebRTC-Bwe-StableBandwidthEstimate")),
-      probe_controller_(new ProbeController()),
+      use_downlink_delay_for_congestion_window_(
+          IsEnabled(key_value_config_,
+                    "WebRTC-Bwe-CongestionWindowDownlinkDelay")),
+      fall_back_to_probe_rate_(
+          IsEnabled(key_value_config_, "WebRTC-Bwe-ProbeRateFallback")),
+      use_min_allocatable_as_lower_bound_(
+          IsNotDisabled(key_value_config_, "WebRTC-Bwe-MinAllocAsLowerBound")),
+      rate_control_settings_(
+          RateControlSettings::ParseFromKeyValueConfig(key_value_config_)),
+      probe_controller_(
+          new ProbeController(key_value_config_, config.event_log)),
       congestion_window_pushback_controller_(
-          MaybeInitalizeCongestionWindowPushbackController()),
+          rate_control_settings_.UseCongestionWindowPushback()
+              ? absl::make_unique<CongestionWindowPushbackController>(
+                    key_value_config_)
+              : nullptr),
       bandwidth_estimation_(
           absl::make_unique<SendSideBandwidthEstimation>(event_log_)),
-      alr_detector_(absl::make_unique<AlrDetector>()),
-      probe_bitrate_estimator_(new ProbeBitrateEstimator(event_log)),
-      delay_based_bwe_(new DelayBasedBwe(event_log_)),
+      alr_detector_(
+          absl::make_unique<AlrDetector>(key_value_config_, config.event_log)),
+      probe_bitrate_estimator_(new ProbeBitrateEstimator(config.event_log)),
+      network_estimator_(std::move(goog_cc_config.network_state_estimator)),
+      network_state_predictor_(
+          std::move(goog_cc_config.network_state_predictor)),
+      delay_based_bwe_(new DelayBasedBwe(key_value_config_,
+                                         event_log_,
+                                         network_state_predictor_.get())),
       acknowledged_bitrate_estimator_(
-          absl::make_unique<AcknowledgedBitrateEstimator>()),
+          absl::make_unique<AcknowledgedBitrateEstimator>(key_value_config_)),
       initial_config_(config),
-      last_target_rate_(*config.constraints.starting_rate),
+      last_raw_target_rate_(*config.constraints.starting_rate),
+      last_pushback_target_rate_(last_raw_target_rate_),
       pacing_factor_(config.stream_based_config.pacing_factor.value_or(
           kDefaultPaceMultiplier)),
-      min_pacing_rate_(config.stream_based_config.min_pacing_rate.value_or(
-          DataRate::Zero())),
+      min_total_allocated_bitrate_(
+          config.stream_based_config.min_total_allocated_bitrate.value_or(
+              DataRate::Zero())),
       max_padding_rate_(config.stream_based_config.max_padding_rate.value_or(
           DataRate::Zero())),
-      max_total_allocated_bitrate_(DataRate::Zero()),
-      in_cwnd_experiment_(CwndExperimentEnabled()),
-      accepted_queue_ms_(kDefaultAcceptedQueueMs) {
+      max_total_allocated_bitrate_(DataRate::Zero()) {
   RTC_DCHECK(config.constraints.at_time.IsFinite());
   ParseFieldTrial(
       {&safe_reset_on_route_change_, &safe_reset_acknowledged_rate_},
-      field_trial::FindFullName("WebRTC-Bwe-SafeResetOnRouteChange"));
-
-  delay_based_bwe_->SetMinBitrate(congestion_controller::GetMinBitrate());
-  if (in_cwnd_experiment_ &&
-      !ReadCwndExperimentParameter(&accepted_queue_ms_)) {
-    RTC_LOG(LS_WARNING) << "Failed to parse parameters for CwndExperiment "
-                           "from field trial string. Experiment disabled.";
-    in_cwnd_experiment_ = false;
-  }
+      key_value_config_->Lookup("WebRTC-Bwe-SafeResetOnRouteChange"));
+  if (delay_based_bwe_)
+    delay_based_bwe_->SetMinBitrate(congestion_controller::GetMinBitrate());
 }
 
 GoogCcNetworkController::~GoogCcNetworkController() {}
@@ -182,51 +126,41 @@ NetworkControlUpdate GoogCcNetworkController::OnNetworkAvailability(
 
 NetworkControlUpdate GoogCcNetworkController::OnNetworkRouteChange(
     NetworkRouteChange msg) {
-  int64_t min_bitrate_bps = GetBpsOrDefault(msg.constraints.min_data_rate, 0);
-  int64_t max_bitrate_bps = GetBpsOrDefault(msg.constraints.max_data_rate, -1);
-  int64_t start_bitrate_bps =
-      GetBpsOrDefault(msg.constraints.starting_rate, -1);
-
-  ClampBitrates(&start_bitrate_bps, &min_bitrate_bps, &max_bitrate_bps);
-
   if (safe_reset_on_route_change_) {
-    absl::optional<uint32_t> estimated_bitrate_bps;
+    absl::optional<DataRate> estimated_bitrate;
     if (safe_reset_acknowledged_rate_) {
-      estimated_bitrate_bps = acknowledged_bitrate_estimator_->bitrate_bps();
-      if (!estimated_bitrate_bps)
-        estimated_bitrate_bps = acknowledged_bitrate_estimator_->PeekBps();
+      estimated_bitrate = acknowledged_bitrate_estimator_->bitrate();
+      if (!estimated_bitrate)
+        estimated_bitrate = acknowledged_bitrate_estimator_->PeekRate();
     } else {
       int32_t target_bitrate_bps;
       uint8_t fraction_loss;
       int64_t rtt_ms;
       bandwidth_estimation_->CurrentEstimate(&target_bitrate_bps,
                                              &fraction_loss, &rtt_ms);
-      estimated_bitrate_bps = target_bitrate_bps;
+      estimated_bitrate = DataRate::bps(target_bitrate_bps);
     }
-    if (estimated_bitrate_bps && (!msg.constraints.starting_rate ||
-                                  estimated_bitrate_bps < start_bitrate_bps)) {
-      start_bitrate_bps = *estimated_bitrate_bps;
-      msg.constraints.starting_rate = DataRate::bps(start_bitrate_bps);
+    if (estimated_bitrate) {
+      if (msg.constraints.starting_rate) {
+        msg.constraints.starting_rate =
+            std::min(*msg.constraints.starting_rate, *estimated_bitrate);
+      } else {
+        msg.constraints.starting_rate = estimated_bitrate;
+      }
     }
   }
 
-  acknowledged_bitrate_estimator_.reset(new AcknowledgedBitrateEstimator());
+  acknowledged_bitrate_estimator_.reset(
+      new AcknowledgedBitrateEstimator(key_value_config_));
   probe_bitrate_estimator_.reset(new ProbeBitrateEstimator(event_log_));
-  delay_based_bwe_.reset(new DelayBasedBwe(event_log_));
-  if (msg.constraints.starting_rate)
-    delay_based_bwe_->SetStartBitrate(*msg.constraints.starting_rate);
-  // TODO(srte): Use original values instead of converted.
-  delay_based_bwe_->SetMinBitrate(DataRate::bps(min_bitrate_bps));
+  if (network_estimator_)
+    network_estimator_->OnRouteChange(msg);
+  delay_based_bwe_.reset(new DelayBasedBwe(key_value_config_, event_log_,
+                                           network_state_predictor_.get()));
   bandwidth_estimation_->OnRouteChange();
-  bandwidth_estimation_->SetBitrates(
-      msg.constraints.starting_rate, DataRate::bps(min_bitrate_bps),
-      msg.constraints.max_data_rate.value_or(DataRate::Infinity()),
-      msg.at_time);
-
   probe_controller_->Reset(msg.at_time.ms());
   NetworkControlUpdate update;
-  update.probe_cluster_configs = probe_controller_->SetBitrates(
-      min_bitrate_bps, start_bitrate_bps, max_bitrate_bps, msg.at_time.ms());
+  update.probe_cluster_configs = ResetConstraints(msg.constraints);
   MaybeTriggerOnNetworkChanged(&update, msg.at_time);
   return update;
 }
@@ -236,12 +170,13 @@ NetworkControlUpdate GoogCcNetworkController::OnProcessInterval(
   NetworkControlUpdate update;
   if (initial_config_) {
     update.probe_cluster_configs =
-        UpdateBitrateConstraints(initial_config_->constraints,
-                                 initial_config_->constraints.starting_rate);
+        ResetConstraints(initial_config_->constraints);
     update.pacer_config = GetPacingRates(msg.at_time);
 
-    probe_controller_->EnablePeriodicAlrProbing(
-        initial_config_->stream_based_config.requests_alr_probing);
+    if (initial_config_->stream_based_config.requests_alr_probing) {
+      probe_controller_->EnablePeriodicAlrProbing(
+          *initial_config_->stream_based_config.requests_alr_probing);
+    }
     absl::optional<DataRate> total_bitrate =
         initial_config_->stream_based_config.max_total_allocated_bitrate;
     if (total_bitrate) {
@@ -254,7 +189,10 @@ NetworkControlUpdate GoogCcNetworkController::OnProcessInterval(
     }
     initial_config_.reset();
   }
-
+  if (congestion_window_pushback_controller_ && msg.pacer_queue) {
+    congestion_window_pushback_controller_->UpdatePacingQueue(
+        msg.pacer_queue->bytes());
+  }
   bandwidth_estimation_->UpdateEstimate(msg.at_time);
   absl::optional<int64_t> start_time_ms =
       alr_detector_->GetApplicationLimitedRegionStartTime();
@@ -264,6 +202,17 @@ NetworkControlUpdate GoogCcNetworkController::OnProcessInterval(
   update.probe_cluster_configs.insert(update.probe_cluster_configs.end(),
                                       probes.begin(), probes.end());
 
+  if (rate_control_settings_.UseCongestionWindow() &&
+      use_downlink_delay_for_congestion_window_ &&
+      last_packet_received_time_.IsFinite() && !feedback_max_rtts_.empty()) {
+    UpdateCongestionWindowSize(msg.at_time - last_packet_received_time_);
+  }
+  if (congestion_window_pushback_controller_ && current_data_window_) {
+    congestion_window_pushback_controller_->SetDataWindow(
+        *current_data_window_);
+  } else {
+    update.congestion_window = current_data_window_;
+  }
   MaybeTriggerOnNetworkChanged(&update, msg.at_time);
   return update;
 }
@@ -283,13 +232,12 @@ NetworkControlUpdate GoogCcNetworkController::OnRemoteBitrateReport(
 
 NetworkControlUpdate GoogCcNetworkController::OnRoundTripTimeUpdate(
     RoundTripTimeUpdate msg) {
-  if (packet_feedback_only_)
+  if (packet_feedback_only_ || msg.smoothed)
     return NetworkControlUpdate();
-  if (msg.smoothed) {
+  RTC_DCHECK(!msg.round_trip_time.IsZero());
+  if (delay_based_bwe_)
     delay_based_bwe_->OnRttUpdate(msg.round_trip_time);
-  } else {
-    bandwidth_estimation_->UpdateRtt(msg.round_trip_time, msg.receive_time);
-  }
+  bandwidth_estimation_->UpdateRtt(msg.round_trip_time, msg.receive_time);
   return NetworkControlUpdate();
 }
 
@@ -297,6 +245,9 @@ NetworkControlUpdate GoogCcNetworkController::OnSentPacket(
     SentPacket sent_packet) {
   alr_detector_->OnBytesSent(sent_packet.size.bytes(),
                              sent_packet.send_time.ms());
+  acknowledged_bitrate_estimator_->SetAlr(
+      alr_detector_->GetApplicationLimitedRegionStartTime().has_value());
+
   if (!first_packet_sent_) {
     first_packet_sent_ = true;
     // Initialize feedback time to send time to allow estimation of RTT until
@@ -304,9 +255,15 @@ NetworkControlUpdate GoogCcNetworkController::OnSentPacket(
     bandwidth_estimation_->UpdatePropagationRtt(sent_packet.send_time,
                                                 TimeDelta::Zero());
   }
+  bandwidth_estimation_->OnSentPacket(sent_packet);
+  bool network_changed = false;
+
   if (congestion_window_pushback_controller_) {
     congestion_window_pushback_controller_->UpdateOutstandingData(
         sent_packet.data_in_flight.bytes());
+    network_changed = true;
+  }
+  if (network_changed) {
     NetworkControlUpdate update;
     MaybeTriggerOnNetworkChanged(&update, sent_packet.send_time);
     return update;
@@ -315,15 +272,27 @@ NetworkControlUpdate GoogCcNetworkController::OnSentPacket(
   }
 }
 
+NetworkControlUpdate GoogCcNetworkController::OnReceivedPacket(
+    ReceivedPacket received_packet) {
+  last_packet_received_time_ = received_packet.receive_time;
+  return NetworkControlUpdate();
+}
+
 NetworkControlUpdate GoogCcNetworkController::OnStreamsConfig(
     StreamsConfig msg) {
   NetworkControlUpdate update;
-  probe_controller_->EnablePeriodicAlrProbing(msg.requests_alr_probing);
+  if (msg.requests_alr_probing) {
+    probe_controller_->EnablePeriodicAlrProbing(*msg.requests_alr_probing);
+  }
   if (msg.max_total_allocated_bitrate &&
       *msg.max_total_allocated_bitrate != max_total_allocated_bitrate_) {
-    update.probe_cluster_configs =
-        probe_controller_->OnMaxTotalAllocatedBitrate(
-            msg.max_total_allocated_bitrate->bps(), msg.at_time.ms());
+    if (rate_control_settings_.TriggerProbeOnMaxAllocatedBitrateChange()) {
+      update.probe_cluster_configs =
+          probe_controller_->OnMaxTotalAllocatedBitrate(
+              msg.max_total_allocated_bitrate->bps(), msg.at_time.ms());
+    } else {
+      probe_controller_->SetMaxBitrate(msg.max_total_allocated_bitrate->bps());
+    }
     max_total_allocated_bitrate_ = *msg.max_total_allocated_bitrate;
   }
   bool pacing_changed = false;
@@ -331,16 +300,21 @@ NetworkControlUpdate GoogCcNetworkController::OnStreamsConfig(
     pacing_factor_ = *msg.pacing_factor;
     pacing_changed = true;
   }
-  if (msg.min_pacing_rate && *msg.min_pacing_rate != min_pacing_rate_) {
-    min_pacing_rate_ = *msg.min_pacing_rate;
+  if (msg.min_total_allocated_bitrate &&
+      *msg.min_total_allocated_bitrate != min_total_allocated_bitrate_) {
+    min_total_allocated_bitrate_ = *msg.min_total_allocated_bitrate;
     pacing_changed = true;
+
+    if (use_min_allocatable_as_lower_bound_) {
+      ClampConstraints();
+      delay_based_bwe_->SetMinBitrate(min_data_rate_);
+      bandwidth_estimation_->SetMinMaxBitrate(min_data_rate_, max_data_rate_);
+    }
   }
   if (msg.max_padding_rate && *msg.max_padding_rate != max_padding_rate_) {
     max_padding_rate_ = *msg.max_padding_rate;
     pacing_changed = true;
   }
-  acknowledged_bitrate_estimator_->SetAllocatedBitrateWithoutFeedback(
-      msg.unacknowledged_rate_allocation.bps());
 
   if (pacing_changed)
     update.pacer_config = GetPacingRates(msg.at_time);
@@ -350,34 +324,47 @@ NetworkControlUpdate GoogCcNetworkController::OnStreamsConfig(
 NetworkControlUpdate GoogCcNetworkController::OnTargetRateConstraints(
     TargetRateConstraints constraints) {
   NetworkControlUpdate update;
-  update.probe_cluster_configs =
-      UpdateBitrateConstraints(constraints, constraints.starting_rate);
+  update.probe_cluster_configs = ResetConstraints(constraints);
   MaybeTriggerOnNetworkChanged(&update, constraints.at_time);
   return update;
 }
 
-std::vector<ProbeClusterConfig>
-GoogCcNetworkController::UpdateBitrateConstraints(
-    TargetRateConstraints constraints,
-    absl::optional<DataRate> starting_rate) {
-  int64_t min_bitrate_bps = GetBpsOrDefault(constraints.min_data_rate, 0);
-  int64_t max_bitrate_bps = GetBpsOrDefault(constraints.max_data_rate, -1);
-  int64_t start_bitrate_bps = GetBpsOrDefault(starting_rate, -1);
+void GoogCcNetworkController::ClampConstraints() {
+  // TODO(holmer): We should make sure the default bitrates are set to 10 kbps,
+  // and that we don't try to set the min bitrate to 0 from any applications.
+  // The congestion controller should allow a min bitrate of 0.
+  min_data_rate_ =
+      std::max(min_data_rate_, congestion_controller::GetMinBitrate());
+  if (use_min_allocatable_as_lower_bound_)
+    min_data_rate_ = std::max(min_data_rate_, min_total_allocated_bitrate_);
+  if (max_data_rate_ < min_data_rate_) {
+    RTC_LOG(LS_WARNING) << "max bitrate smaller than min bitrate";
+    max_data_rate_ = min_data_rate_;
+  }
+  if (starting_rate_ && starting_rate_ < min_data_rate_) {
+    RTC_LOG(LS_WARNING) << "start bitrate smaller than min bitrate";
+    starting_rate_ = min_data_rate_;
+  }
+}
 
-  ClampBitrates(&start_bitrate_bps, &min_bitrate_bps, &max_bitrate_bps);
+std::vector<ProbeClusterConfig> GoogCcNetworkController::ResetConstraints(
+    TargetRateConstraints new_constraints) {
+  min_data_rate_ = new_constraints.min_data_rate.value_or(DataRate::Zero());
+  max_data_rate_ =
+      new_constraints.max_data_rate.value_or(DataRate::PlusInfinity());
+  starting_rate_ = new_constraints.starting_rate;
+  ClampConstraints();
 
-  std::vector<ProbeClusterConfig> probes(probe_controller_->SetBitrates(
-      min_bitrate_bps, start_bitrate_bps, max_bitrate_bps,
-      constraints.at_time.ms()));
+  bandwidth_estimation_->SetBitrates(starting_rate_, min_data_rate_,
+                                     max_data_rate_, new_constraints.at_time);
 
-  bandwidth_estimation_->SetBitrates(
-      starting_rate, DataRate::bps(min_bitrate_bps),
-      constraints.max_data_rate.value_or(DataRate::Infinity()),
-      constraints.at_time);
-  if (starting_rate)
-    delay_based_bwe_->SetStartBitrate(*starting_rate);
-  delay_based_bwe_->SetMinBitrate(DataRate::bps(min_bitrate_bps));
-  return probes;
+  if (starting_rate_)
+    delay_based_bwe_->SetStartBitrate(*starting_rate_);
+  delay_based_bwe_->SetMinBitrate(min_data_rate_);
+
+  return probe_controller_->SetBitrates(
+      min_data_rate_.bps(), GetBpsOrDefault(starting_rate_, -1),
+      max_data_rate_.bps_or(-1), new_constraints.at_time.ms());
 }
 
 NetworkControlUpdate GoogCcNetworkController::OnTransportLossReport(
@@ -389,6 +376,31 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportLossReport(
   bandwidth_estimation_->UpdatePacketsLost(
       msg.packets_lost_delta, total_packets_delta, msg.receive_time);
   return NetworkControlUpdate();
+}
+
+void GoogCcNetworkController::UpdateCongestionWindowSize(
+    TimeDelta time_since_last_packet) {
+  TimeDelta min_feedback_max_rtt = TimeDelta::ms(
+      *std::min_element(feedback_max_rtts_.begin(), feedback_max_rtts_.end()));
+
+  const DataSize kMinCwnd = DataSize::bytes(2 * 1500);
+  TimeDelta time_window =
+      min_feedback_max_rtt +
+      TimeDelta::ms(
+          rate_control_settings_.GetCongestionWindowAdditionalTimeMs());
+
+  if (use_downlink_delay_for_congestion_window_) {
+    time_window += time_since_last_packet;
+  }
+
+  DataSize data_window = last_raw_target_rate_ * time_window;
+  if (current_data_window_) {
+    data_window =
+        std::max(kMinCwnd, (data_window + current_data_window_.value()) / 2);
+  } else {
+    data_window = std::max(kMinCwnd, data_window);
+  }
+  current_data_window_ = data_window;
 }
 
 NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
@@ -434,7 +446,8 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
       int64_t sum_rtt_ms = std::accumulate(feedback_max_rtts_.begin(),
                                            feedback_max_rtts_.end(), 0);
       int64_t mean_rtt_ms = sum_rtt_ms / feedback_max_rtts_.size();
-      delay_based_bwe_->OnRttUpdate(TimeDelta::ms(mean_rtt_ms));
+      if (delay_based_bwe_)
+        delay_based_bwe_->OnRttUpdate(TimeDelta::ms(mean_rtt_ms));
     }
 
     TimeDelta feedback_min_rtt = TimeDelta::PlusInfinity();
@@ -464,53 +477,69 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
       lost_packets_since_last_loss_update_ = 0;
     }
   }
-
-  std::vector<PacketFeedback> received_feedback_vector =
-      ReceivedPacketsFeedbackAsRtp(report);
-
   absl::optional<int64_t> alr_start_time =
       alr_detector_->GetApplicationLimitedRegionStartTime();
 
-  if (previously_in_alr && !alr_start_time.has_value()) {
+  if (previously_in_alr_ && !alr_start_time.has_value()) {
     int64_t now_ms = report.feedback_time.ms();
-    acknowledged_bitrate_estimator_->SetAlrEndedTimeMs(now_ms);
+    acknowledged_bitrate_estimator_->SetAlrEndedTime(report.feedback_time);
     probe_controller_->SetAlrEndedTimeMs(now_ms);
   }
-  previously_in_alr = alr_start_time.has_value();
+  previously_in_alr_ = alr_start_time.has_value();
   acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(
-      received_feedback_vector);
+      report.SortedByReceiveTime());
   auto acknowledged_bitrate = acknowledged_bitrate_estimator_->bitrate();
-  bandwidth_estimation_->SetAcknowledgedRate(acknowledged_bitrate,
-                                             report.feedback_time);
-  bandwidth_estimation_->IncomingPacketFeedbackVector(report);
-  for (const auto& feedback : received_feedback_vector) {
-    if (feedback.pacing_info.probe_cluster_id != PacedPacketInfo::kNotAProbe) {
+  for (const auto& feedback : report.SortedByReceiveTime()) {
+    if (feedback.sent_packet.pacing_info.probe_cluster_id !=
+        PacedPacketInfo::kNotAProbe) {
       probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(feedback);
     }
   }
+
   absl::optional<DataRate> probe_bitrate =
       probe_bitrate_estimator_->FetchAndResetLastEstimatedBitrate();
+  if (fall_back_to_probe_rate_ && !acknowledged_bitrate)
+    acknowledged_bitrate = probe_bitrate_estimator_->last_estimate();
+  bandwidth_estimation_->SetAcknowledgedRate(acknowledged_bitrate,
+                                             report.feedback_time);
+  bandwidth_estimation_->IncomingPacketFeedbackVector(report);
+
+  if (network_estimator_) {
+    network_estimator_->OnTransportPacketsFeedback(report);
+    estimate_ = network_estimator_->GetCurrentEstimate();
+  }
+
+  NetworkControlUpdate update;
+  bool recovered_from_overuse = false;
+  bool backoff_in_alr = false;
 
   DelayBasedBwe::Result result;
   result = delay_based_bwe_->IncomingPacketFeedbackVector(
-      received_feedback_vector, acknowledged_bitrate, probe_bitrate,
-      report.feedback_time);
+      report, acknowledged_bitrate, probe_bitrate, estimate_,
+      alr_start_time.has_value());
 
-  NetworkControlUpdate update;
   if (result.updated) {
     if (result.probe) {
       bandwidth_estimation_->SetSendBitrate(result.target_bitrate,
                                             report.feedback_time);
     }
-    // Since SetSendBitrate now resets the delay-based estimate, we have to call
-    // UpdateDelayBasedEstimate after SetSendBitrate.
+    // Since SetSendBitrate now resets the delay-based estimate, we have to
+    // call UpdateDelayBasedEstimate after SetSendBitrate.
     bandwidth_estimation_->UpdateDelayBasedEstimate(report.feedback_time,
                                                     result.target_bitrate);
     // Update the estimate in the ProbeController, in case we want to probe.
     MaybeTriggerOnNetworkChanged(&update, report.feedback_time);
   }
-  if (result.recovered_from_overuse) {
+  recovered_from_overuse = result.recovered_from_overuse;
+  backoff_in_alr = result.backoff_in_alr;
+
+  if (recovered_from_overuse) {
     probe_controller_->SetAlrStartTimeMs(alr_start_time);
+    auto probes = probe_controller_->RequestProbe(report.feedback_time.ms());
+    update.probe_cluster_configs.insert(update.probe_cluster_configs.end(),
+                                        probes.begin(), probes.end());
+  } else if (backoff_in_alr) {
+    // If we just backed off during ALR, request a new probe.
     auto probes = probe_controller_->RequestProbe(report.feedback_time.ms());
     update.probe_cluster_configs.insert(update.probe_cluster_configs.end(),
                                         probes.begin(), probes.end());
@@ -518,21 +547,9 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
 
   // No valid RTT could be because send-side BWE isn't used, in which case
   // we don't try to limit the outstanding packets.
-  if (in_cwnd_experiment_ && max_feedback_rtt.IsFinite()) {
-    int64_t min_feedback_max_rtt_ms =
-        *std::min_element(feedback_max_rtts_.begin(), feedback_max_rtts_.end());
-
-    const DataSize kMinCwnd = DataSize::bytes(2 * 1500);
-    TimeDelta time_window =
-        TimeDelta::ms(min_feedback_max_rtt_ms + accepted_queue_ms_);
-    DataSize data_window = last_target_rate_ * time_window;
-    if (current_data_window_) {
-      data_window =
-          std::max(kMinCwnd, (data_window + current_data_window_.value()) / 2);
-    } else {
-      data_window = std::max(kMinCwnd, data_window);
-    }
-    current_data_window_ = data_window;
+  if (rate_control_settings_.UseCongestionWindow() &&
+      max_feedback_rtt.IsFinite()) {
+    UpdateCongestionWindowSize(/*time_since_last_packet*/ TimeDelta::Zero());
   }
   if (congestion_window_pushback_controller_ && current_data_window_) {
     congestion_window_pushback_controller_->SetDataWindow(
@@ -544,26 +561,33 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
   return update;
 }
 
+NetworkControlUpdate GoogCcNetworkController::OnNetworkStateEstimate(
+    NetworkStateEstimate msg) {
+  estimate_ = msg;
+  return NetworkControlUpdate();
+}
+
 NetworkControlUpdate GoogCcNetworkController::GetNetworkState(
     Timestamp at_time) const {
-  DataRate bandwidth = DataRate::bps(last_estimated_bitrate_bps_);
   TimeDelta rtt = TimeDelta::ms(last_estimated_rtt_ms_);
   NetworkControlUpdate update;
   update.target_rate = TargetTransferRate();
   update.target_rate->network_estimate.at_time = at_time;
-  update.target_rate->network_estimate.bandwidth = bandwidth;
+  update.target_rate->network_estimate.bandwidth = last_raw_target_rate_;
   update.target_rate->network_estimate.loss_rate_ratio =
       last_estimated_fraction_loss_ / 255.0;
   update.target_rate->network_estimate.round_trip_time = rtt;
   update.target_rate->network_estimate.bwe_period =
       delay_based_bwe_->GetExpectedBwePeriod();
+
   update.target_rate->at_time = at_time;
-  update.target_rate->target_rate = bandwidth;
+  update.target_rate->target_rate = last_raw_target_rate_;
+  update.target_rate->stable_target_rate =
+      bandwidth_estimation_->GetEstimatedLinkCapacity();
   update.pacer_config = GetPacingRates(at_time);
   update.congestion_window = current_data_window_;
   return update;
 }
-
 
 void GoogCcNetworkController::MaybeTriggerOnNetworkChanged(
     NetworkControlUpdate* update,
@@ -574,66 +598,70 @@ void GoogCcNetworkController::MaybeTriggerOnNetworkChanged(
   bandwidth_estimation_->CurrentEstimate(&estimated_bitrate_bps, &fraction_loss,
                                          &rtt_ms);
 
-  estimated_bitrate_bps = std::max<int32_t>(
-      estimated_bitrate_bps, bandwidth_estimation_->GetMinBitrate());
-
   BWE_TEST_LOGGING_PLOT(1, "fraction_loss_%", at_time.ms(),
                         (fraction_loss * 100) / 256);
   BWE_TEST_LOGGING_PLOT(1, "rtt_ms", at_time.ms(), rtt_ms);
   BWE_TEST_LOGGING_PLOT(1, "Target_bitrate_kbps", at_time.ms(),
                         estimated_bitrate_bps / 1000);
 
+  DataRate target_rate = DataRate::bps(estimated_bitrate_bps);
+  if (congestion_window_pushback_controller_) {
+    int64_t pushback_rate =
+        congestion_window_pushback_controller_->UpdateTargetBitrate(
+            target_rate.bps());
+    pushback_rate = std::max<int64_t>(bandwidth_estimation_->GetMinBitrate(),
+                                      pushback_rate);
+    target_rate = DataRate::bps(pushback_rate);
+  }
+
   if ((estimated_bitrate_bps != last_estimated_bitrate_bps_) ||
       (fraction_loss != last_estimated_fraction_loss_) ||
-      (rtt_ms != last_estimated_rtt_ms_)) {
+      (rtt_ms != last_estimated_rtt_ms_) ||
+      (target_rate != last_pushback_target_rate_)) {
+    last_pushback_target_rate_ = target_rate;
     last_estimated_bitrate_bps_ = estimated_bitrate_bps;
     last_estimated_fraction_loss_ = fraction_loss;
     last_estimated_rtt_ms_ = rtt_ms;
 
     alr_detector_->SetEstimatedBitrate(estimated_bitrate_bps);
 
-    last_target_rate_ = DataRate::bps(estimated_bitrate_bps);
-    DataRate bandwidth = use_stable_bandwidth_estimate_
-                             ? bandwidth_estimation_->GetEstimatedLinkCapacity()
-                             : last_target_rate_;
+    last_raw_target_rate_ = DataRate::bps(estimated_bitrate_bps);
 
     TimeDelta bwe_period = delay_based_bwe_->GetExpectedBwePeriod();
-
-    // Set the target rate to the full estimated bandwidth since the estimation
-    // for legacy reasons includes target rate constraints.
-    DataRate target_rate = last_target_rate_;
-    if (congestion_window_pushback_controller_) {
-      int64_t pushback_rate =
-          congestion_window_pushback_controller_->UpdateTargetBitrate(
-              target_rate.bps());
-      pushback_rate = std::max<int64_t>(bandwidth_estimation_->GetMinBitrate(),
-                                        pushback_rate);
-      target_rate = DataRate::bps(pushback_rate);
-    }
 
     TargetTransferRate target_rate_msg;
     target_rate_msg.at_time = at_time;
     target_rate_msg.target_rate = target_rate;
+    target_rate_msg.stable_target_rate = std::min(
+        bandwidth_estimation_->GetEstimatedLinkCapacity(), target_rate);
     target_rate_msg.network_estimate.at_time = at_time;
     target_rate_msg.network_estimate.round_trip_time = TimeDelta::ms(rtt_ms);
-    target_rate_msg.network_estimate.bandwidth = bandwidth;
+    target_rate_msg.network_estimate.bandwidth = last_raw_target_rate_;
     target_rate_msg.network_estimate.loss_rate_ratio = fraction_loss / 255.0f;
     target_rate_msg.network_estimate.bwe_period = bwe_period;
 
     update->target_rate = target_rate_msg;
 
     auto probes = probe_controller_->SetEstimatedBitrate(
-        last_target_rate_.bps(), at_time.ms());
+        last_raw_target_rate_.bps(), at_time.ms());
     update->probe_cluster_configs.insert(update->probe_cluster_configs.end(),
                                          probes.begin(), probes.end());
     update->pacer_config = GetPacingRates(at_time);
+
+    RTC_LOG(LS_VERBOSE) << "bwe " << at_time.ms() << " pushback_target_bps="
+                        << last_pushback_target_rate_.bps()
+                        << " estimate_bps=" << last_raw_target_rate_.bps();
   }
 }
 
 PacerConfig GoogCcNetworkController::GetPacingRates(Timestamp at_time) const {
+  // Pacing rate is based on target rate before congestion window pushback,
+  // because we don't want to build queues in the pacer when pushback occurs.
   DataRate pacing_rate =
-      std::max(min_pacing_rate_, last_target_rate_) * pacing_factor_;
-  DataRate padding_rate = std::min(max_padding_rate_, last_target_rate_);
+      std::max(min_total_allocated_bitrate_, last_raw_target_rate_) *
+      pacing_factor_;
+  DataRate padding_rate =
+      std::min(max_padding_rate_, last_pushback_target_rate_);
   PacerConfig msg;
   msg.at_time = at_time;
   msg.time_window = TimeDelta::seconds(1);

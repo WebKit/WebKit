@@ -17,9 +17,9 @@
 #include <string>
 
 #include "modules/audio_device/audio_device_generic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/system/file_wrapper.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace rtc {
 class PlatformThread;
@@ -127,8 +127,8 @@ class FileAudioDevice : public AudioDeviceGeneric {
   void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
 
  private:
-  static bool RecThreadFunc(void*);
-  static bool PlayThreadFunc(void*);
+  static void RecThreadFunc(void*);
+  static void PlayThreadFunc(void*);
   bool RecThreadProcess();
   bool PlayThreadProcess();
 
@@ -154,8 +154,8 @@ class FileAudioDevice : public AudioDeviceGeneric {
   int64_t _lastCallPlayoutMillis;
   int64_t _lastCallRecordMillis;
 
-  FileWrapper& _outputFile;
-  FileWrapper& _inputFile;
+  FileWrapper _outputFile;
+  FileWrapper _inputFile;
   std::string _outputFilename;
   std::string _inputFilename;
 };

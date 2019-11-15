@@ -18,6 +18,7 @@
 #define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
 
 #include <string.h>
+
 #include "common_audio/signal_processing/dot_product_with_scale.h"
 
 // Macros specific for the fixed point implementation
@@ -99,14 +100,6 @@ extern "C" {
 // third party math functions
 #include "common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.h"
 
-// Initialize SPL. Currently it contains only function pointer initialization.
-// If the underlying platform is known to be ARM-Neon (WEBRTC_HAS_NEON defined),
-// the pointers will be assigned to code optimized for Neon; otherwise, generic
-// C code will be assigned.
-// Note that this function MUST be called in any application that uses SPL
-// functions.
-void WebRtcSpl_Init(void);
-
 int16_t WebRtcSpl_GetScalingSquare(int16_t* in_vector,
                                    size_t in_vector_length,
                                    size_t times);
@@ -141,7 +134,7 @@ void WebRtcSpl_ZerosArrayW32(int32_t* vector, size_t vector_length);
 //
 // Return value  : Maximum absolute value in vector.
 typedef int16_t (*MaxAbsValueW16)(const int16_t* vector, size_t length);
-extern MaxAbsValueW16 WebRtcSpl_MaxAbsValueW16;
+extern const MaxAbsValueW16 WebRtcSpl_MaxAbsValueW16;
 int16_t WebRtcSpl_MaxAbsValueW16C(const int16_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int16_t WebRtcSpl_MaxAbsValueW16Neon(const int16_t* vector, size_t length);
@@ -158,7 +151,7 @@ int16_t WebRtcSpl_MaxAbsValueW16_mips(const int16_t* vector, size_t length);
 //
 // Return value  : Maximum absolute value in vector.
 typedef int32_t (*MaxAbsValueW32)(const int32_t* vector, size_t length);
-extern MaxAbsValueW32 WebRtcSpl_MaxAbsValueW32;
+extern const MaxAbsValueW32 WebRtcSpl_MaxAbsValueW32;
 int32_t WebRtcSpl_MaxAbsValueW32C(const int32_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int32_t WebRtcSpl_MaxAbsValueW32Neon(const int32_t* vector, size_t length);
@@ -175,7 +168,7 @@ int32_t WebRtcSpl_MaxAbsValueW32_mips(const int32_t* vector, size_t length);
 //
 // Return value  : Maximum sample value in |vector|.
 typedef int16_t (*MaxValueW16)(const int16_t* vector, size_t length);
-extern MaxValueW16 WebRtcSpl_MaxValueW16;
+extern const MaxValueW16 WebRtcSpl_MaxValueW16;
 int16_t WebRtcSpl_MaxValueW16C(const int16_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int16_t WebRtcSpl_MaxValueW16Neon(const int16_t* vector, size_t length);
@@ -192,7 +185,7 @@ int16_t WebRtcSpl_MaxValueW16_mips(const int16_t* vector, size_t length);
 //
 // Return value  : Maximum sample value in |vector|.
 typedef int32_t (*MaxValueW32)(const int32_t* vector, size_t length);
-extern MaxValueW32 WebRtcSpl_MaxValueW32;
+extern const MaxValueW32 WebRtcSpl_MaxValueW32;
 int32_t WebRtcSpl_MaxValueW32C(const int32_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int32_t WebRtcSpl_MaxValueW32Neon(const int32_t* vector, size_t length);
@@ -209,7 +202,7 @@ int32_t WebRtcSpl_MaxValueW32_mips(const int32_t* vector, size_t length);
 //
 // Return value  : Minimum sample value in |vector|.
 typedef int16_t (*MinValueW16)(const int16_t* vector, size_t length);
-extern MinValueW16 WebRtcSpl_MinValueW16;
+extern const MinValueW16 WebRtcSpl_MinValueW16;
 int16_t WebRtcSpl_MinValueW16C(const int16_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int16_t WebRtcSpl_MinValueW16Neon(const int16_t* vector, size_t length);
@@ -226,7 +219,7 @@ int16_t WebRtcSpl_MinValueW16_mips(const int16_t* vector, size_t length);
 //
 // Return value  : Minimum sample value in |vector|.
 typedef int32_t (*MinValueW32)(const int32_t* vector, size_t length);
-extern MinValueW32 WebRtcSpl_MinValueW32;
+extern const MinValueW32 WebRtcSpl_MinValueW32;
 int32_t WebRtcSpl_MinValueW32C(const int32_t* vector, size_t length);
 #if defined(WEBRTC_HAS_NEON)
 int32_t WebRtcSpl_MinValueW32Neon(const int32_t* vector, size_t length);
@@ -347,7 +340,7 @@ typedef int (*ScaleAndAddVectorsWithRound)(const int16_t* in_vector1,
                                            int right_shifts,
                                            int16_t* out_vector,
                                            size_t length);
-extern ScaleAndAddVectorsWithRound WebRtcSpl_ScaleAndAddVectorsWithRound;
+extern const ScaleAndAddVectorsWithRound WebRtcSpl_ScaleAndAddVectorsWithRound;
 int WebRtcSpl_ScaleAndAddVectorsWithRoundC(const int16_t* in_vector1,
                                            int16_t in_vector1_scale,
                                            const int16_t* in_vector2,
@@ -384,13 +377,13 @@ void WebRtcSpl_AddVectorsAndShift(int16_t* out_vector,
                                   size_t vector_length,
                                   int16_t right_shifts);
 void WebRtcSpl_AddAffineVectorToVector(int16_t* out_vector,
-                                       int16_t* in_vector,
+                                       const int16_t* in_vector,
                                        int16_t gain,
                                        int32_t add_constant,
                                        int16_t right_shifts,
                                        size_t vector_length);
 void WebRtcSpl_AffineTransformVector(int16_t* out_vector,
-                                     int16_t* in_vector,
+                                     const int16_t* in_vector,
                                      int16_t gain,
                                      int32_t add_constant,
                                      int16_t right_shifts,
@@ -514,7 +507,7 @@ typedef void (*CrossCorrelation)(int32_t* cross_correlation,
                                  size_t dim_cross_correlation,
                                  int right_shifts,
                                  int step_seq2);
-extern CrossCorrelation WebRtcSpl_CrossCorrelation;
+extern const CrossCorrelation WebRtcSpl_CrossCorrelation;
 void WebRtcSpl_CrossCorrelationC(int32_t* cross_correlation,
                                  const int16_t* seq1,
                                  const int16_t* seq2,
@@ -663,7 +656,7 @@ typedef int (*DownsampleFast)(const int16_t* data_in,
                               size_t coefficients_length,
                               int factor,
                               size_t delay);
-extern DownsampleFast WebRtcSpl_DownsampleFast;
+extern const DownsampleFast WebRtcSpl_DownsampleFast;
 int WebRtcSpl_DownsampleFastC(const int16_t* data_in,
                               size_t data_in_length,
                               int16_t* data_out,

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "call/call.h"
+
 #include <list>
 #include <map>
 #include <memory>
@@ -15,13 +17,13 @@
 
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/task_queue/default_task_queue_factory.h"
 #include "api/test/fake_media_transport.h"
 #include "api/test/mock_audio_mixer.h"
 #include "audio/audio_receive_stream.h"
 #include "audio/audio_send_stream.h"
 #include "call/audio_state.h"
-#include "call/call.h"
-#include "logging/rtc_event_log/rtc_event_log.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "modules/pacing/mock/mock_paced_sender.h"
@@ -35,6 +37,7 @@ namespace {
 
 struct CallHelper {
   CallHelper() {
+    task_queue_factory_ = webrtc::CreateDefaultTaskQueueFactory();
     webrtc::AudioState::Config audio_state_config;
     audio_state_config.audio_mixer =
         new rtc::RefCountedObject<webrtc::test::MockAudioMixer>();
@@ -44,13 +47,15 @@ struct CallHelper {
         new rtc::RefCountedObject<webrtc::test::MockAudioDeviceModule>();
     webrtc::Call::Config config(&event_log_);
     config.audio_state = webrtc::AudioState::Create(audio_state_config);
+    config.task_queue_factory = task_queue_factory_.get();
     call_.reset(webrtc::Call::Create(config));
   }
 
   webrtc::Call* operator->() { return call_.get(); }
 
  private:
-  webrtc::RtcEventLogNullImpl event_log_;
+  webrtc::RtcEventLogNull event_log_;
+  std::unique_ptr<webrtc::TaskQueueFactory> task_queue_factory_;
   std::unique_ptr<webrtc::Call> call_;
 };
 }  // namespace
@@ -63,8 +68,8 @@ TEST(CallTest, ConstructDestruct) {
 
 TEST(CallTest, CreateDestroy_AudioSendStream) {
   CallHelper call;
-  AudioSendStream::Config config(/*send_transport=*/nullptr,
-                                 /*media_transport=*/nullptr);
+  MockTransport send_transport;
+  AudioSendStream::Config config(&send_transport, MediaTransportConfig());
   config.rtp.ssrc = 42;
   AudioSendStream* stream = call->CreateAudioSendStream(config);
   EXPECT_NE(stream, nullptr);
@@ -86,8 +91,8 @@ TEST(CallTest, CreateDestroy_AudioReceiveStream) {
 
 TEST(CallTest, CreateDestroy_AudioSendStreams) {
   CallHelper call;
-  AudioSendStream::Config config(/*send_transport=*/nullptr,
-                                 /*media_transport=*/nullptr);
+  MockTransport send_transport;
+  AudioSendStream::Config config(&send_transport, MediaTransportConfig());
   std::list<AudioSendStream*> streams;
   for (int i = 0; i < 2; ++i) {
     for (uint32_t ssrc = 0; ssrc < 1234567; ssrc += 34567) {
@@ -145,8 +150,8 @@ TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_RecvFirst) {
   AudioReceiveStream* recv_stream = call->CreateAudioReceiveStream(recv_config);
   EXPECT_NE(recv_stream, nullptr);
 
-  AudioSendStream::Config send_config(/*send_transport=*/nullptr,
-                                      /*media_transport=*/nullptr);
+  MockTransport send_transport;
+  AudioSendStream::Config send_config(&send_transport, MediaTransportConfig());
   send_config.rtp.ssrc = 777;
   AudioSendStream* send_stream = call->CreateAudioSendStream(send_config);
   EXPECT_NE(send_stream, nullptr);
@@ -164,8 +169,8 @@ TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_RecvFirst) {
 
 TEST(CallTest, CreateDestroy_AssociateAudioSendReceiveStreams_SendFirst) {
   CallHelper call;
-  AudioSendStream::Config send_config(/*send_transport=*/nullptr,
-                                      /*media_transport=*/nullptr);
+  MockTransport send_transport;
+  AudioSendStream::Config send_config(&send_transport, MediaTransportConfig());
   send_config.rtp.ssrc = 777;
   AudioSendStream* send_stream = call->CreateAudioSendStream(send_config);
   EXPECT_NE(send_stream, nullptr);
@@ -268,8 +273,8 @@ TEST(CallTest, RecreatingAudioStreamWithSameSsrcReusesRtpState) {
   CallHelper call;
 
   auto create_stream_and_get_rtp_state = [&](uint32_t ssrc) {
-    AudioSendStream::Config config(/*send_transport=*/nullptr,
-                                   /*media_transport=*/nullptr);
+    MockTransport send_transport;
+    AudioSendStream::Config config(&send_transport, MediaTransportConfig());
     config.rtp.ssrc = ssrc;
     AudioSendStream* stream = call->CreateAudioSendStream(config);
     const RtpState rtp_state =
@@ -288,29 +293,6 @@ TEST(CallTest, RecreatingAudioStreamWithSameSsrcReusesRtpState) {
   EXPECT_EQ(rtp_state1.last_timestamp_time_ms,
             rtp_state2.last_timestamp_time_ms);
   EXPECT_EQ(rtp_state1.media_has_been_sent, rtp_state2.media_has_been_sent);
-}
-
-TEST(CallTest, RegisterMediaTransportBitrateCallbacksInCreateStream) {
-  CallHelper call;
-  MediaTransportSettings settings;
-  webrtc::FakeMediaTransport fake_media_transport(settings);
-
-  EXPECT_EQ(0, fake_media_transport.target_rate_observers_size());
-  AudioSendStream::Config config(/*send_transport=*/nullptr,
-                                 /*media_transport=*/&fake_media_transport);
-
-  call->MediaTransportChange(&fake_media_transport);
-  AudioSendStream* stream = call->CreateAudioSendStream(config);
-
-  // We get 2 subscribers: one subscriber from call.cc, and one from
-  // ChannelSend.
-  EXPECT_EQ(2, fake_media_transport.target_rate_observers_size());
-
-  call->DestroyAudioSendStream(stream);
-  EXPECT_EQ(1, fake_media_transport.target_rate_observers_size());
-
-  call->MediaTransportChange(nullptr);
-  EXPECT_EQ(0, fake_media_transport.target_rate_observers_size());
 }
 
 }  // namespace webrtc

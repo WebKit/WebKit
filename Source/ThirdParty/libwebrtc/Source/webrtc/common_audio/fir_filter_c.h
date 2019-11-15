@@ -12,6 +12,7 @@
 #define COMMON_AUDIO_FIR_FILTER_C_H_
 
 #include <string.h>
+
 #include <memory>
 
 #include "common_audio/fir_filter.h"

@@ -13,7 +13,7 @@
 #import "RTCMediaStreamTrack.h"
 #import "helpers/NSString+StdString.h"
 
-#include "media/base/mediaconstants.h"
+#include "media/base/media_constants.h"
 #include "rtc_base/checks.h"
 
 const NSString * const kRTCRtxCodecName = @(cricket::kRtxCodecName);

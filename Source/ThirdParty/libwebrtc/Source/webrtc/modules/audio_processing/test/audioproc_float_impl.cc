@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_processing/test/audioproc_float_impl.h"
+
 #include <string.h>
 
 #include <iostream>
@@ -16,21 +18,252 @@
 #include <utility>
 #include <vector>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "absl/strings/string_view.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/aec_dump_based_simulator.h"
 #include "modules/audio_processing/test/audio_processing_simulator.h"
-#include "modules/audio_processing/test/audioproc_float_impl.h"
 #include "modules/audio_processing/test/wav_based_simulator.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/strings/string_builder.h"
+
+constexpr int kParameterNotSpecifiedValue = -10000;
+
+ABSL_FLAG(std::string, dump_input, "", "Aec dump input filename");
+ABSL_FLAG(std::string, dump_output, "", "Aec dump output filename");
+ABSL_FLAG(std::string, i, "", "Forward stream input wav filename");
+ABSL_FLAG(std::string, o, "", "Forward stream output wav filename");
+ABSL_FLAG(std::string, ri, "", "Reverse stream input wav filename");
+ABSL_FLAG(std::string, ro, "", "Reverse stream output wav filename");
+ABSL_FLAG(std::string,
+          artificial_nearend,
+          "",
+          "Artificial nearend wav filename");
+ABSL_FLAG(int,
+          output_num_channels,
+          kParameterNotSpecifiedValue,
+          "Number of forward stream output channels");
+ABSL_FLAG(int,
+          reverse_output_num_channels,
+          kParameterNotSpecifiedValue,
+          "Number of Reverse stream output channels");
+ABSL_FLAG(int,
+          output_sample_rate_hz,
+          kParameterNotSpecifiedValue,
+          "Forward stream output sample rate in Hz");
+ABSL_FLAG(int,
+          reverse_output_sample_rate_hz,
+          kParameterNotSpecifiedValue,
+          "Reverse stream output sample rate in Hz");
+ABSL_FLAG(bool,
+          fixed_interface,
+          false,
+          "Use the fixed interface when operating on wav files");
+ABSL_FLAG(int,
+          aec,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the echo canceller");
+ABSL_FLAG(int,
+          aecm,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the mobile echo controller");
+ABSL_FLAG(int,
+          ed,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate (0) the residual echo detector");
+ABSL_FLAG(std::string,
+          ed_graph,
+          "",
+          "Output filename for graph of echo likelihood");
+ABSL_FLAG(int,
+          agc,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the AGC");
+ABSL_FLAG(int,
+          agc2,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the AGC2");
+ABSL_FLAG(int,
+          pre_amplifier,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the pre amplifier");
+ABSL_FLAG(int,
+          hpf,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the high-pass filter");
+ABSL_FLAG(int,
+          ns,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the noise suppressor");
+ABSL_FLAG(int,
+          ts,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the transient suppressor");
+ABSL_FLAG(int,
+          vad,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the voice activity detector");
+ABSL_FLAG(int,
+          le,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the level estimator");
+ABSL_FLAG(bool,
+          all_default,
+          false,
+          "Activate all of the default components (will be overridden by any "
+          "other settings)");
+ABSL_FLAG(int,
+          aec_suppression_level,
+          kParameterNotSpecifiedValue,
+          "Set the aec suppression level (0-2)");
+ABSL_FLAG(int,
+          delay_agnostic,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the AEC delay agnostic mode");
+ABSL_FLAG(int,
+          extended_filter,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the AEC extended filter mode");
+ABSL_FLAG(int,
+          use_legacy_aec,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the legacy AEC");
+ABSL_FLAG(int,
+          experimental_agc,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the experimental AGC");
+ABSL_FLAG(int,
+          experimental_agc_disable_digital_adaptive,
+          kParameterNotSpecifiedValue,
+          "Force-deactivate (1) digital adaptation in "
+          "experimental AGC. Digital adaptation is active by default (0).");
+ABSL_FLAG(int,
+          experimental_agc_analyze_before_aec,
+          kParameterNotSpecifiedValue,
+          "Make level estimation happen before AEC"
+          " in the experimental AGC. After AEC is the default (0)");
+ABSL_FLAG(int,
+          experimental_agc_agc2_level_estimator,
+          kParameterNotSpecifiedValue,
+          "AGC2 level estimation"
+          " in the experimental AGC. AGC1 level estimation is the default (0)");
+ABSL_FLAG(
+    int,
+    refined_adaptive_filter,
+    kParameterNotSpecifiedValue,
+    "Activate (1) or deactivate(0) the refined adaptive filter functionality");
+ABSL_FLAG(int,
+          agc_mode,
+          kParameterNotSpecifiedValue,
+          "Specify the AGC mode (0-2)");
+ABSL_FLAG(int,
+          agc_target_level,
+          kParameterNotSpecifiedValue,
+          "Specify the AGC target level (0-31)");
+ABSL_FLAG(int,
+          agc_limiter,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the level estimator");
+ABSL_FLAG(int,
+          agc_compression_gain,
+          kParameterNotSpecifiedValue,
+          "Specify the AGC compression gain (0-90)");
+ABSL_FLAG(int,
+          agc2_enable_adaptive_gain,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the AGC2 adaptive gain");
+ABSL_FLAG(float,
+          agc2_fixed_gain_db,
+          kParameterNotSpecifiedValue,
+          "AGC2 fixed gain (dB) to apply");
+ABSL_FLAG(std::string,
+          agc2_adaptive_level_estimator,
+          "RMS",
+          "AGC2 adaptive digital level estimator to use [RMS, peak]");
+ABSL_FLAG(float,
+          pre_amplifier_gain_factor,
+          kParameterNotSpecifiedValue,
+          "Pre-amplifier gain factor (linear) to apply");
+ABSL_FLAG(int,
+          vad_likelihood,
+          kParameterNotSpecifiedValue,
+          "Specify the VAD likelihood (0-3)");
+ABSL_FLAG(int,
+          ns_level,
+          kParameterNotSpecifiedValue,
+          "Specify the NS level (0-3)");
+ABSL_FLAG(int,
+          stream_delay,
+          kParameterNotSpecifiedValue,
+          "Specify the stream delay in ms to use");
+ABSL_FLAG(int,
+          use_stream_delay,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) reporting the stream delay");
+ABSL_FLAG(int,
+          stream_drift_samples,
+          kParameterNotSpecifiedValue,
+          "Specify the number of stream drift samples to use");
+ABSL_FLAG(int, initial_mic_level, 100, "Initial mic level (0-255)");
+ABSL_FLAG(int,
+          simulate_mic_gain,
+          0,
+          "Activate (1) or deactivate(0) the analog mic gain simulation");
+ABSL_FLAG(int,
+          simulated_mic_kind,
+          kParameterNotSpecifiedValue,
+          "Specify which microphone kind to use for microphone simulation");
+ABSL_FLAG(bool, performance_report, false, "Report the APM performance ");
+ABSL_FLAG(std::string,
+          performance_report_output_file,
+          "",
+          "Generate a CSV file with the API call durations");
+ABSL_FLAG(bool, verbose, false, "Produce verbose output");
+ABSL_FLAG(bool,
+          quiet,
+          false,
+          "Avoid producing information about the progress.");
+ABSL_FLAG(bool,
+          bitexactness_report,
+          false,
+          "Report bitexactness for aec dump result reproduction");
+ABSL_FLAG(bool,
+          discard_settings_in_aecdump,
+          false,
+          "Discard any config settings specified in the aec dump");
+ABSL_FLAG(bool,
+          store_intermediate_output,
+          false,
+          "Creates new output files after each init");
+ABSL_FLAG(std::string,
+          custom_call_order_file,
+          "",
+          "Custom process API call order file");
+ABSL_FLAG(std::string,
+          output_custom_call_order_file,
+          "",
+          "Generate custom process API call order file from AEC dump");
+ABSL_FLAG(bool,
+          print_aec_parameter_values,
+          false,
+          "Print parameter values used in AEC in JSON-format");
+ABSL_FLAG(std::string,
+          aec_settings,
+          "",
+          "File in JSON-format with custom AEC settings");
+ABSL_FLAG(bool,
+          dump_data,
+          false,
+          "Dump internal data during the call (requires build flag)");
+ABSL_FLAG(std::string,
+          dump_data_output_dir,
+          "",
+          "Internal data dump output directory");
 
 namespace webrtc {
 namespace test {
 namespace {
-
-const int kParameterNotSpecifiedValue = -10000;
 
 const char kUsageDescription[] =
     "Usage: audioproc_f [options] -i <input.wav>\n"
@@ -41,185 +274,9 @@ const char kUsageDescription[] =
     "processing module, either based on wav files or "
     "protobuf debug dump recordings.\n";
 
-WEBRTC_DEFINE_string(dump_input, "", "Aec dump input filename");
-WEBRTC_DEFINE_string(dump_output, "", "Aec dump output filename");
-WEBRTC_DEFINE_string(i, "", "Forward stream input wav filename");
-WEBRTC_DEFINE_string(o, "", "Forward stream output wav filename");
-WEBRTC_DEFINE_string(ri, "", "Reverse stream input wav filename");
-WEBRTC_DEFINE_string(ro, "", "Reverse stream output wav filename");
-WEBRTC_DEFINE_string(artificial_nearend, "", "Artificial nearend wav filename");
-WEBRTC_DEFINE_int(output_num_channels,
-                  kParameterNotSpecifiedValue,
-                  "Number of forward stream output channels");
-WEBRTC_DEFINE_int(reverse_output_num_channels,
-                  kParameterNotSpecifiedValue,
-                  "Number of Reverse stream output channels");
-WEBRTC_DEFINE_int(output_sample_rate_hz,
-                  kParameterNotSpecifiedValue,
-                  "Forward stream output sample rate in Hz");
-WEBRTC_DEFINE_int(reverse_output_sample_rate_hz,
-                  kParameterNotSpecifiedValue,
-                  "Reverse stream output sample rate in Hz");
-WEBRTC_DEFINE_bool(fixed_interface,
-                   false,
-                   "Use the fixed interface when operating on wav files");
-WEBRTC_DEFINE_int(aec,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the echo canceller");
-WEBRTC_DEFINE_int(aecm,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the mobile echo controller");
-WEBRTC_DEFINE_int(ed,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate (0) the residual echo detector");
-WEBRTC_DEFINE_string(ed_graph,
-                     "",
-                     "Output filename for graph of echo likelihood");
-WEBRTC_DEFINE_int(agc,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the AGC");
-WEBRTC_DEFINE_int(agc2,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the AGC2");
-WEBRTC_DEFINE_int(pre_amplifier,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the pre amplifier");
-WEBRTC_DEFINE_int(hpf,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the high-pass filter");
-WEBRTC_DEFINE_int(ns,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the noise suppressor");
-WEBRTC_DEFINE_int(ts,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the transient suppressor");
-WEBRTC_DEFINE_int(vad,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the voice activity detector");
-WEBRTC_DEFINE_int(le,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the level estimator");
-WEBRTC_DEFINE_bool(
-    all_default,
-    false,
-    "Activate all of the default components (will be overridden by any "
-    "other settings)");
-WEBRTC_DEFINE_int(aec_suppression_level,
-                  kParameterNotSpecifiedValue,
-                  "Set the aec suppression level (0-2)");
-WEBRTC_DEFINE_int(delay_agnostic,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the AEC delay agnostic mode");
-WEBRTC_DEFINE_int(extended_filter,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the AEC extended filter mode");
-WEBRTC_DEFINE_int(
-    aec3,
-    kParameterNotSpecifiedValue,
-    "Activate (1) or deactivate(0) the experimental AEC mode AEC3");
-WEBRTC_DEFINE_int(experimental_agc,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the experimental AGC");
-WEBRTC_DEFINE_int(
-    experimental_agc_disable_digital_adaptive,
-    kParameterNotSpecifiedValue,
-    "Force-deactivate (1) digital adaptation in "
-    "experimental AGC. Digital adaptation is active by default (0).");
-WEBRTC_DEFINE_int(experimental_agc_analyze_before_aec,
-                  kParameterNotSpecifiedValue,
-                  "Make level estimation happen before AEC"
-                  " in the experimental AGC. After AEC is the default (0)");
-WEBRTC_DEFINE_int(
-    experimental_agc_agc2_level_estimator,
-    kParameterNotSpecifiedValue,
-    "AGC2 level estimation"
-    " in the experimental AGC. AGC1 level estimation is the default (0)");
-WEBRTC_DEFINE_int(
-    refined_adaptive_filter,
-    kParameterNotSpecifiedValue,
-    "Activate (1) or deactivate(0) the refined adaptive filter functionality");
-WEBRTC_DEFINE_int(agc_mode,
-                  kParameterNotSpecifiedValue,
-                  "Specify the AGC mode (0-2)");
-WEBRTC_DEFINE_int(agc_target_level,
-                  kParameterNotSpecifiedValue,
-                  "Specify the AGC target level (0-31)");
-WEBRTC_DEFINE_int(agc_limiter,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) the level estimator");
-WEBRTC_DEFINE_int(agc_compression_gain,
-                  kParameterNotSpecifiedValue,
-                  "Specify the AGC compression gain (0-90)");
-WEBRTC_DEFINE_float(agc2_enable_adaptive_gain,
-                    kParameterNotSpecifiedValue,
-                    "Activate (1) or deactivate(0) the AGC2 adaptive gain");
-WEBRTC_DEFINE_float(agc2_fixed_gain_db, 0.f, "AGC2 fixed gain (dB) to apply");
-
 std::vector<std::string> GetAgc2AdaptiveLevelEstimatorNames() {
   return {"RMS", "peak"};
 }
-WEBRTC_DEFINE_string(
-    agc2_adaptive_level_estimator,
-    "RMS",
-    "AGC2 adaptive digital level estimator to use [RMS, peak]");
-
-WEBRTC_DEFINE_float(pre_amplifier_gain_factor,
-                    1.f,
-                    "Pre-amplifier gain factor (linear) to apply");
-WEBRTC_DEFINE_int(vad_likelihood,
-                  kParameterNotSpecifiedValue,
-                  "Specify the VAD likelihood (0-3)");
-WEBRTC_DEFINE_int(ns_level,
-                  kParameterNotSpecifiedValue,
-                  "Specify the NS level (0-3)");
-WEBRTC_DEFINE_int(stream_delay,
-                  kParameterNotSpecifiedValue,
-                  "Specify the stream delay in ms to use");
-WEBRTC_DEFINE_int(use_stream_delay,
-                  kParameterNotSpecifiedValue,
-                  "Activate (1) or deactivate(0) reporting the stream delay");
-WEBRTC_DEFINE_int(stream_drift_samples,
-                  kParameterNotSpecifiedValue,
-                  "Specify the number of stream drift samples to use");
-WEBRTC_DEFINE_int(initial_mic_level, 100, "Initial mic level (0-255)");
-WEBRTC_DEFINE_int(
-    simulate_mic_gain,
-    0,
-    "Activate (1) or deactivate(0) the analog mic gain simulation");
-WEBRTC_DEFINE_int(
-    simulated_mic_kind,
-    kParameterNotSpecifiedValue,
-    "Specify which microphone kind to use for microphone simulation");
-WEBRTC_DEFINE_bool(performance_report, false, "Report the APM performance ");
-WEBRTC_DEFINE_bool(verbose, false, "Produce verbose output");
-WEBRTC_DEFINE_bool(quiet,
-                   false,
-                   "Avoid producing information about the progress.");
-WEBRTC_DEFINE_bool(bitexactness_report,
-                   false,
-                   "Report bitexactness for aec dump result reproduction");
-WEBRTC_DEFINE_bool(discard_settings_in_aecdump,
-                   false,
-                   "Discard any config settings specified in the aec dump");
-WEBRTC_DEFINE_bool(store_intermediate_output,
-                   false,
-                   "Creates new output files after each init");
-WEBRTC_DEFINE_string(custom_call_order_file,
-                     "",
-                     "Custom process API call order file");
-WEBRTC_DEFINE_bool(print_aec3_parameter_values,
-                   false,
-                   "Print parameter values used in AEC3 in JSON-format");
-WEBRTC_DEFINE_string(aec3_settings,
-                     "",
-                     "File in JSON-format with custom AEC3 settings");
-WEBRTC_DEFINE_bool(dump_data,
-                   false,
-                   "Dump internal data during the call (requires build flag)");
-WEBRTC_DEFINE_string(dump_data_output_dir,
-                     "",
-                     "Internal data dump output directory");
-WEBRTC_DEFINE_bool(help, false, "Print this message");
 
 void SetSettingIfSpecified(const std::string& value,
                            absl::optional<std::string>* parameter) {
@@ -230,6 +287,14 @@ void SetSettingIfSpecified(const std::string& value,
 
 void SetSettingIfSpecified(int value, absl::optional<int>* parameter) {
   if (value != kParameterNotSpecifiedValue) {
+    *parameter = value;
+  }
+}
+
+void SetSettingIfSpecified(float value, absl::optional<float>* parameter) {
+  constexpr float kFloatParameterNotSpecifiedValue =
+      kParameterNotSpecifiedValue;
+  if (value != kFloatParameterNotSpecifiedValue) {
     *parameter = value;
   }
 }
@@ -265,7 +330,7 @@ MapAgc2AdaptiveLevelEstimator(absl::string_view name) {
 
 SimulationSettings CreateSettings() {
   SimulationSettings settings;
-  if (FLAG_all_default) {
+  if (absl::GetFlag(FLAGS_all_default)) {
     settings.use_le = true;
     settings.use_vad = true;
     settings.use_ie = false;
@@ -279,82 +344,110 @@ SimulationSettings CreateSettings() {
     settings.use_aecm = false;
     settings.use_ed = false;
   }
-  SetSettingIfSpecified(FLAG_dump_input, &settings.aec_dump_input_filename);
-  SetSettingIfSpecified(FLAG_dump_output, &settings.aec_dump_output_filename);
-  SetSettingIfSpecified(FLAG_i, &settings.input_filename);
-  SetSettingIfSpecified(FLAG_o, &settings.output_filename);
-  SetSettingIfSpecified(FLAG_ri, &settings.reverse_input_filename);
-  SetSettingIfSpecified(FLAG_ro, &settings.reverse_output_filename);
-  SetSettingIfSpecified(FLAG_artificial_nearend,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_dump_input),
+                        &settings.aec_dump_input_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_dump_output),
+                        &settings.aec_dump_output_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_i), &settings.input_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_o), &settings.output_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_ri),
+                        &settings.reverse_input_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_ro),
+                        &settings.reverse_output_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_artificial_nearend),
                         &settings.artificial_nearend_filename);
-  SetSettingIfSpecified(FLAG_output_num_channels,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_output_num_channels),
                         &settings.output_num_channels);
-  SetSettingIfSpecified(FLAG_reverse_output_num_channels,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_reverse_output_num_channels),
                         &settings.reverse_output_num_channels);
-  SetSettingIfSpecified(FLAG_output_sample_rate_hz,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_output_sample_rate_hz),
                         &settings.output_sample_rate_hz);
-  SetSettingIfSpecified(FLAG_reverse_output_sample_rate_hz,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_reverse_output_sample_rate_hz),
                         &settings.reverse_output_sample_rate_hz);
-  SetSettingIfFlagSet(FLAG_aec, &settings.use_aec);
-  SetSettingIfFlagSet(FLAG_aecm, &settings.use_aecm);
-  SetSettingIfFlagSet(FLAG_ed, &settings.use_ed);
-  SetSettingIfSpecified(FLAG_ed_graph, &settings.ed_graph_output_filename);
-  SetSettingIfFlagSet(FLAG_agc, &settings.use_agc);
-  SetSettingIfFlagSet(FLAG_agc2, &settings.use_agc2);
-  SetSettingIfFlagSet(FLAG_pre_amplifier, &settings.use_pre_amplifier);
-  SetSettingIfFlagSet(FLAG_hpf, &settings.use_hpf);
-  SetSettingIfFlagSet(FLAG_ns, &settings.use_ns);
-  SetSettingIfFlagSet(FLAG_ts, &settings.use_ts);
-  SetSettingIfFlagSet(FLAG_vad, &settings.use_vad);
-  SetSettingIfFlagSet(FLAG_le, &settings.use_le);
-  SetSettingIfSpecified(FLAG_aec_suppression_level,
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_aec), &settings.use_aec);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_aecm), &settings.use_aecm);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_ed), &settings.use_ed);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_ed_graph),
+                        &settings.ed_graph_output_filename);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_agc), &settings.use_agc);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_agc2), &settings.use_agc2);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_pre_amplifier),
+                      &settings.use_pre_amplifier);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_hpf), &settings.use_hpf);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_ns), &settings.use_ns);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_ts), &settings.use_ts);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_vad), &settings.use_vad);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_le), &settings.use_le);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_aec_suppression_level),
                         &settings.aec_suppression_level);
-  SetSettingIfFlagSet(FLAG_delay_agnostic, &settings.use_delay_agnostic);
-  SetSettingIfFlagSet(FLAG_extended_filter, &settings.use_extended_filter);
-  SetSettingIfFlagSet(FLAG_refined_adaptive_filter,
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_delay_agnostic),
+                      &settings.use_delay_agnostic);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_extended_filter),
+                      &settings.use_extended_filter);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_refined_adaptive_filter),
                       &settings.use_refined_adaptive_filter);
 
-  SetSettingIfFlagSet(FLAG_aec3, &settings.use_aec3);
-  SetSettingIfFlagSet(FLAG_experimental_agc, &settings.use_experimental_agc);
-  SetSettingIfFlagSet(FLAG_experimental_agc_disable_digital_adaptive,
-                      &settings.experimental_agc_disable_digital_adaptive);
-  SetSettingIfFlagSet(FLAG_experimental_agc_analyze_before_aec,
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_use_legacy_aec),
+                      &settings.use_legacy_aec);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_experimental_agc),
+                      &settings.use_experimental_agc);
+  SetSettingIfFlagSet(
+      absl::GetFlag(FLAGS_experimental_agc_disable_digital_adaptive),
+      &settings.experimental_agc_disable_digital_adaptive);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_experimental_agc_analyze_before_aec),
                       &settings.experimental_agc_analyze_before_aec);
-  SetSettingIfFlagSet(FLAG_experimental_agc_agc2_level_estimator,
-                      &settings.use_experimental_agc_agc2_level_estimator);
-  SetSettingIfSpecified(FLAG_agc_mode, &settings.agc_mode);
-  SetSettingIfSpecified(FLAG_agc_target_level, &settings.agc_target_level);
-  SetSettingIfFlagSet(FLAG_agc_limiter, &settings.use_agc_limiter);
-  SetSettingIfSpecified(FLAG_agc_compression_gain,
+  SetSettingIfFlagSet(
+      absl::GetFlag(FLAGS_experimental_agc_agc2_level_estimator),
+      &settings.use_experimental_agc_agc2_level_estimator);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_agc_mode), &settings.agc_mode);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_agc_target_level),
+                        &settings.agc_target_level);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_agc_limiter),
+                      &settings.use_agc_limiter);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_agc_compression_gain),
                         &settings.agc_compression_gain);
-  SetSettingIfFlagSet(FLAG_agc2_enable_adaptive_gain,
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_agc2_enable_adaptive_gain),
                       &settings.agc2_use_adaptive_gain);
-  settings.agc2_fixed_gain_db = FLAG_agc2_fixed_gain_db;
-  settings.agc2_adaptive_level_estimator =
-      MapAgc2AdaptiveLevelEstimator(FLAG_agc2_adaptive_level_estimator);
-  settings.pre_amplifier_gain_factor = FLAG_pre_amplifier_gain_factor;
-  SetSettingIfSpecified(FLAG_vad_likelihood, &settings.vad_likelihood);
-  SetSettingIfSpecified(FLAG_ns_level, &settings.ns_level);
-  SetSettingIfSpecified(FLAG_stream_delay, &settings.stream_delay);
-  SetSettingIfFlagSet(FLAG_use_stream_delay, &settings.use_stream_delay);
-  SetSettingIfSpecified(FLAG_stream_drift_samples,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_agc2_fixed_gain_db),
+                        &settings.agc2_fixed_gain_db);
+  settings.agc2_adaptive_level_estimator = MapAgc2AdaptiveLevelEstimator(
+      absl::GetFlag(FLAGS_agc2_adaptive_level_estimator));
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_pre_amplifier_gain_factor),
+                        &settings.pre_amplifier_gain_factor);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_vad_likelihood),
+                        &settings.vad_likelihood);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_ns_level), &settings.ns_level);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_stream_delay),
+                        &settings.stream_delay);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_use_stream_delay),
+                      &settings.use_stream_delay);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_stream_drift_samples),
                         &settings.stream_drift_samples);
-  SetSettingIfSpecified(FLAG_custom_call_order_file,
-                        &settings.custom_call_order_filename);
-  SetSettingIfSpecified(FLAG_aec3_settings, &settings.aec3_settings_filename);
-  settings.initial_mic_level = FLAG_initial_mic_level;
-  settings.simulate_mic_gain = FLAG_simulate_mic_gain;
-  SetSettingIfSpecified(FLAG_simulated_mic_kind, &settings.simulated_mic_kind);
-  settings.report_performance = FLAG_performance_report;
-  settings.use_verbose_logging = FLAG_verbose;
-  settings.use_quiet_output = FLAG_quiet;
-  settings.report_bitexactness = FLAG_bitexactness_report;
-  settings.discard_all_settings_in_aecdump = FLAG_discard_settings_in_aecdump;
-  settings.fixed_interface = FLAG_fixed_interface;
-  settings.store_intermediate_output = FLAG_store_intermediate_output;
-  settings.print_aec3_parameter_values = FLAG_print_aec3_parameter_values;
-  settings.dump_internal_data = FLAG_dump_data;
-  SetSettingIfSpecified(FLAG_dump_data_output_dir,
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_custom_call_order_file),
+                        &settings.call_order_input_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_output_custom_call_order_file),
+                        &settings.call_order_output_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_aec_settings),
+                        &settings.aec_settings_filename);
+  settings.initial_mic_level = absl::GetFlag(FLAGS_initial_mic_level);
+  settings.simulate_mic_gain = absl::GetFlag(FLAGS_simulate_mic_gain);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_simulated_mic_kind),
+                        &settings.simulated_mic_kind);
+  settings.report_performance = absl::GetFlag(FLAGS_performance_report);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_performance_report_output_file),
+                        &settings.performance_report_output_filename);
+  settings.use_verbose_logging = absl::GetFlag(FLAGS_verbose);
+  settings.use_quiet_output = absl::GetFlag(FLAGS_quiet);
+  settings.report_bitexactness = absl::GetFlag(FLAGS_bitexactness_report);
+  settings.discard_all_settings_in_aecdump =
+      absl::GetFlag(FLAGS_discard_settings_in_aecdump);
+  settings.fixed_interface = absl::GetFlag(FLAGS_fixed_interface);
+  settings.store_intermediate_output =
+      absl::GetFlag(FLAGS_store_intermediate_output);
+  settings.print_aec_parameter_values =
+      absl::GetFlag(FLAGS_print_aec_parameter_values);
+  settings.dump_internal_data = absl::GetFlag(FLAGS_dump_data);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_dump_data_output_dir),
                         &settings.dump_internal_data_output_dir);
 
   return settings;
@@ -369,9 +462,15 @@ void ReportConditionalErrorAndExit(bool condition, const std::string& message) {
 
 void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
   if (settings.input_filename || settings.reverse_input_filename) {
-    ReportConditionalErrorAndExit(!!settings.aec_dump_input_filename,
-                                  "Error: The aec dump cannot be specified "
-                                  "together with input wav files!\n");
+    ReportConditionalErrorAndExit(
+        !!settings.aec_dump_input_filename,
+        "Error: The aec dump file cannot be specified "
+        "together with input wav files!\n");
+
+    ReportConditionalErrorAndExit(
+        !!settings.aec_dump_input_string,
+        "Error: The aec dump input string cannot be specified "
+        "together with input wav files!\n");
 
     ReportConditionalErrorAndExit(!!settings.artificial_nearend_filename,
                                   "Error: The artificial nearend cannot be "
@@ -387,9 +486,14 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
         "Error: When operating at wav files, the reverse input wav filename "
         "must be specified if the reverse output wav filename is specified!\n");
   } else {
-    ReportConditionalErrorAndExit(!settings.aec_dump_input_filename,
-                                  "Error: Either the aec dump or the wav "
-                                  "input files must be specified!\n");
+    ReportConditionalErrorAndExit(
+        !settings.aec_dump_input_filename && !settings.aec_dump_input_string,
+        "Error: Either the aec dump input file, the wav "
+        "input file or the aec dump input string must be specified!\n");
+    ReportConditionalErrorAndExit(
+        settings.aec_dump_input_filename && settings.aec_dump_input_string,
+        "Error: The aec dump input file cannot be specified together with the "
+        "aec dump input string!\n");
   }
 
   ReportConditionalErrorAndExit(
@@ -434,9 +538,8 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       "Error: --agc_compression_gain must be specified between 0 and 90.\n");
 
   ReportConditionalErrorAndExit(
-      settings.use_agc2 && *settings.use_agc2 &&
-          ((settings.agc2_fixed_gain_db) < 0 ||
-           (settings.agc2_fixed_gain_db) > 90),
+      settings.agc2_fixed_gain_db && ((*settings.agc2_fixed_gain_db) < 0 ||
+                                      (*settings.agc2_fixed_gain_db) > 90),
       "Error: --agc2_fixed_gain_db must be specified between 0 and 90.\n");
 
   ReportConditionalErrorAndExit(
@@ -455,7 +558,7 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       "aecdump\n");
 
   ReportConditionalErrorAndExit(
-      settings.custom_call_order_filename && settings.aec_dump_input_filename,
+      settings.call_order_input_filename && settings.aec_dump_input_filename,
       "Error: --custom_call_order_file cannot be used when operating on an "
       "aecdump\n");
 
@@ -515,28 +618,42 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       !settings.dump_internal_data &&
           settings.dump_internal_data_output_dir.has_value(),
       "Error: --dump_data_output_dir cannot be set without --dump_data.\n");
+
+  ReportConditionalErrorAndExit(
+      !settings.aec_dump_input_filename &&
+          settings.call_order_output_filename.has_value(),
+      "Error: --output_custom_call_order_file needs an AEC dump input file.\n");
+
+  ReportConditionalErrorAndExit(
+      (!settings.use_pre_amplifier || !(*settings.use_pre_amplifier)) &&
+          settings.pre_amplifier_gain_factor.has_value(),
+      "Error: --pre_amplifier_gain_factor needs --pre_amplifier to be "
+      "specified and set.\n");
 }
 
 }  // namespace
 
 int AudioprocFloatImpl(std::unique_ptr<AudioProcessingBuilder> ap_builder,
                        int argc,
-                       char* argv[]) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
-      argc != 1) {
+                       char* argv[],
+                       absl::string_view input_aecdump,
+                       std::vector<float>* processed_capture_samples) {
+  std::vector<char*> args = absl::ParseCommandLine(argc, argv);
+  if (args.size() != 1) {
     printf("%s", kUsageDescription);
-    if (FLAG_help) {
-      rtc::FlagList::Print(nullptr, false);
-      return 0;
-    }
     return 1;
   }
 
   SimulationSettings settings = CreateSettings();
+  if (!input_aecdump.empty()) {
+    settings.aec_dump_input_string = input_aecdump;
+    settings.processed_capture_samples = processed_capture_samples;
+    RTC_CHECK(settings.processed_capture_samples);
+  }
   PerformBasicParameterSanityChecks(settings);
   std::unique_ptr<AudioProcessingSimulator> processor;
 
-  if (settings.aec_dump_input_filename) {
+  if (settings.aec_dump_input_filename || settings.aec_dump_input_string) {
     processor.reset(new AecDumpBasedSimulator(settings, std::move(ap_builder)));
   } else {
     processor.reset(new WavBasedSimulator(settings, std::move(ap_builder)));
@@ -545,18 +662,11 @@ int AudioprocFloatImpl(std::unique_ptr<AudioProcessingBuilder> ap_builder,
   processor->Process();
 
   if (settings.report_performance) {
-    const auto& proc_time = processor->proc_time();
-    int64_t exec_time_us = proc_time.sum / rtc::kNumNanosecsPerMicrosec;
-    std::cout << std::endl
-              << "Execution time: " << exec_time_us * 1e-6 << " s, File time: "
-              << processor->get_num_process_stream_calls() * 1.f /
-                     AudioProcessingSimulator::kChunksPerSecond
-              << std::endl
-              << "Time per fwd stream chunk (mean, max, min): " << std::endl
-              << exec_time_us * 1.f / processor->get_num_process_stream_calls()
-              << " us, " << 1.f * proc_time.max / rtc::kNumNanosecsPerMicrosec
-              << " us, " << 1.f * proc_time.min / rtc::kNumNanosecsPerMicrosec
-              << " us" << std::endl;
+    processor->GetApiCallStatistics().PrintReport();
+  }
+  if (settings.performance_report_output_filename) {
+    processor->GetApiCallStatistics().WriteReportToFile(
+        *settings.performance_report_output_filename);
   }
 
   if (settings.report_bitexactness && settings.aec_dump_input_filename) {

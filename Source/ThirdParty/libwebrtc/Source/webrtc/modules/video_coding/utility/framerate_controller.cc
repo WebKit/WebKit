@@ -10,7 +10,9 @@
 
 #include "modules/video_coding/utility/framerate_controller.h"
 
-#include "rtc_base/checks.h"
+#include <stddef.h>
+
+#include <cstdint>
 
 namespace webrtc {
 

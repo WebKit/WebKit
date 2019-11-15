@@ -12,9 +12,10 @@
 #define RTC_BASE_WIN_WINDOWS_VERSION_H_
 
 #include <stddef.h>
+
 #include <string>
 
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 typedef void* HANDLE;
 

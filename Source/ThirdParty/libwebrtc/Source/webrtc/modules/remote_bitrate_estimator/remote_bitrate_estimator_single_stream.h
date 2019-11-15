@@ -13,14 +13,16 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <vector>
 
+#include "api/transport/field_trial_based_config.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -32,7 +34,7 @@ struct RTPHeader;
 class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
  public:
   RemoteBitrateEstimatorSingleStream(RemoteBitrateObserver* observer,
-                                     const Clock* clock);
+                                     Clock* clock);
   ~RemoteBitrateEstimatorSingleStream() override;
 
   void IncomingPacket(int64_t arrival_time_ms,
@@ -62,7 +64,8 @@ class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
   // otherwise creates it.
   AimdRateControl* GetRemoteRate() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
-  const Clock* const clock_;
+  Clock* const clock_;
+  const FieldTrialBasedConfig field_trials_;
   SsrcOveruseEstimatorMap overuse_detectors_ RTC_GUARDED_BY(crit_sect_);
   RateStatistics incoming_bitrate_ RTC_GUARDED_BY(crit_sect_);
   uint32_t last_valid_incoming_bitrate_ RTC_GUARDED_BY(crit_sect_);

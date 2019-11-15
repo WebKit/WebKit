@@ -12,51 +12,85 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_SPECTRAL_FEATURES_INTERNAL_H_
 
 #include <stddef.h>
+
 #include <array>
-#include <complex>
+#include <vector>
 
 #include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
-#include "rtc_base/function_view.h"
 
 namespace webrtc {
 namespace rnn_vad {
 
-// Computes FFT boundary indexes corresponding to sub-bands.
-std::array<size_t, kNumBands> ComputeBandBoundaryIndexes(
-    size_t sample_rate_hz,
-    size_t frame_size_samples);
+// At a sample rate of 24 kHz, the last 3 Opus bands are beyond the Nyquist
+// frequency. However, band #19 gets the contributions from band #18 because
+// of the symmetric triangular filter with peak response at 12 kHz.
+constexpr size_t kOpusBands24kHz = 20;
+static_assert(kOpusBands24kHz < kNumBands,
+              "The number of bands at 24 kHz must be less than those defined "
+              "in the Opus scale at 48 kHz.");
 
-// Iterates through frequency bands and computes coefficients via |functor| for
-// triangular bands with peak response at each band boundary. |functor| returns
-// a floating point value for the FFT coefficient having index equal to the
-// argument passed to |functor|; that argument is in the range {0, ...
-// |max_freq_bin_index| - 1}.
-void ComputeBandCoefficients(
-    rtc::FunctionView<float(size_t)> functor,
-    rtc::ArrayView<const size_t, kNumBands> band_boundaries,
-    const size_t max_freq_bin_index,
-    rtc::ArrayView<float, kNumBands> coefficients);
+// Number of FFT frequency bins covered by each band in the Opus scale at a
+// sample rate of 24 kHz for 20 ms frames.
+// Declared here for unit testing.
+constexpr std::array<int, kOpusBands24kHz - 1> GetOpusScaleNumBins24kHz20ms() {
+  return {4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 16, 16, 16, 24, 24, 32, 48};
+}
 
-// Given an array of FFT coefficients and a vector of band boundary indexes,
-// computes band energy coefficients.
-void ComputeBandEnergies(
-    rtc::ArrayView<const std::complex<float>> fft_coeffs,
-    rtc::ArrayView<const size_t, kNumBands> band_boundaries,
-    rtc::ArrayView<float, kNumBands> band_energies);
+// TODO(bugs.webrtc.org/10480): Move to a separate file.
+// Class to compute band-wise spectral features in the Opus perceptual scale
+// for 20 ms frames sampled at 24 kHz. The analysis methods apply triangular
+// filters with peak response at the each band boundary.
+class SpectralCorrelator {
+ public:
+  // Ctor.
+  SpectralCorrelator();
+  SpectralCorrelator(const SpectralCorrelator&) = delete;
+  SpectralCorrelator& operator=(const SpectralCorrelator&) = delete;
+  ~SpectralCorrelator();
 
-// Computes log band energy coefficients.
-void ComputeLogBandEnergiesCoefficients(
-    rtc::ArrayView<const float, kNumBands> band_energy_coeffs,
-    rtc::ArrayView<float, kNumBands> log_band_energy_coeffs);
+  // Computes the band-wise spectral auto-correlations.
+  // |x| must:
+  //  - have size equal to |kFrameSize20ms24kHz|;
+  //  - be encoded as vectors of interleaved real-complex FFT coefficients
+  //    where x[1] = y[1] = 0 (the Nyquist frequency coefficient is omitted).
+  void ComputeAutoCorrelation(
+      rtc::ArrayView<const float> x,
+      rtc::ArrayView<float, kOpusBands24kHz> auto_corr) const;
 
-// Creates a DCT table for arrays having size equal to |kNumBands|.
+  // Computes the band-wise spectral cross-correlations.
+  // |x| and |y| must:
+  //  - have size equal to |kFrameSize20ms24kHz|;
+  //  - be encoded as vectors of interleaved real-complex FFT coefficients where
+  //    x[1] = y[1] = 0 (the Nyquist frequency coefficient is omitted).
+  void ComputeCrossCorrelation(
+      rtc::ArrayView<const float> x,
+      rtc::ArrayView<const float> y,
+      rtc::ArrayView<float, kOpusBands24kHz> cross_corr) const;
+
+ private:
+  const std::vector<float> weights_;  // Weights for each Fourier coefficient.
+};
+
+// TODO(bugs.webrtc.org/10480): Move to anonymous namespace in
+// spectral_features.cc. Given a vector of Opus-bands energy coefficients,
+// computes the log magnitude spectrum applying smoothing both over time and
+// over frequency. Declared here for unit testing.
+void ComputeSmoothedLogMagnitudeSpectrum(
+    rtc::ArrayView<const float> bands_energy,
+    rtc::ArrayView<float, kNumBands> log_bands_energy);
+
+// TODO(bugs.webrtc.org/10480): Move to anonymous namespace in
+// spectral_features.cc. Creates a DCT table for arrays having size equal to
+// |kNumBands|. Declared here for unit testing.
 std::array<float, kNumBands * kNumBands> ComputeDctTable();
 
-// Computes DCT for |in| given a pre-computed DCT table. In-place computation is
-// not allowed and |out| can be smaller than |in| in order to only compute the
-// first DCT coefficients.
-void ComputeDct(rtc::ArrayView<const float, kNumBands> in,
+// TODO(bugs.webrtc.org/10480): Move to anonymous namespace in
+// spectral_features.cc. Computes DCT for |in| given a pre-computed DCT table.
+// In-place computation is not allowed and |out| can be smaller than |in| in
+// order to only compute the first DCT coefficients. Declared here for unit
+// testing.
+void ComputeDct(rtc::ArrayView<const float> in,
                 rtc::ArrayView<const float, kNumBands * kNumBands> dct_table,
                 rtc::ArrayView<float> out);
 

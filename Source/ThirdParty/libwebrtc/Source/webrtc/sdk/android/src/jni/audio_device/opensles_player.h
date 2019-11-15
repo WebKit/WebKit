@@ -17,6 +17,7 @@
 
 #include <memory>
 #include "absl/types/optional.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/fine_audio_buffer.h"
 #include "modules/audio_device/include/audio_device_defines.h"
@@ -60,7 +61,7 @@ class OpenSLESPlayer : public AudioOutput {
   static const int kNumOfOpenSLESBuffers = 2;
 
   OpenSLESPlayer(const AudioParameters& audio_parameters,
-                 std::unique_ptr<OpenSLEngineManager> engine_manager);
+                 rtc::scoped_refptr<OpenSLEngineManager> engine_manager);
   ~OpenSLESPlayer() override;
 
   int Init() override;
@@ -80,6 +81,8 @@ class OpenSLESPlayer : public AudioOutput {
   absl::optional<uint32_t> MinSpeakerVolume() const override;
 
   void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
+
+  int GetPlayoutUnderrunCount() override { return -1; }
 
  private:
   // These callback methods are called when data is required for playout.
@@ -159,7 +162,7 @@ class OpenSLESPlayer : public AudioOutput {
   // Example (kNumOfOpenSLESBuffers = 2): counts 0, 1, 0, 1, ...
   int buffer_index_;
 
-  std::unique_ptr<OpenSLEngineManager> engine_manager_;
+  const rtc::scoped_refptr<OpenSLEngineManager> engine_manager_;
   // This interface exposes creation methods for all the OpenSL ES object types.
   // It is the OpenSL ES API entry point.
   SLEngineItf engine_;

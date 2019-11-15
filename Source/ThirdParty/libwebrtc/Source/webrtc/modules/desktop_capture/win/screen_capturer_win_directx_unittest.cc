@@ -22,7 +22,9 @@ namespace webrtc {
 // devices in its output, since the device name is missing.
 TEST(ScreenCaptureUtilsTest, GetScreenListFromDeviceNamesAndGetIndex) {
   const std::vector<std::string> device_names = {
-      "\\\\.\\DISPLAY0", "\\\\.\\DISPLAY1", "\\\\.\\DISPLAY2",
+      "\\\\.\\DISPLAY0",
+      "\\\\.\\DISPLAY1",
+      "\\\\.\\DISPLAY2",
   };
   DesktopCapturer::SourceList screens;
   ASSERT_TRUE(ScreenCapturerWinDirectx::GetScreenListFromDeviceNames(

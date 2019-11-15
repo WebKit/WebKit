@@ -15,11 +15,10 @@
 #include <memory>
 #include <vector>
 
+#include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/three_band_filter_bank.h"
 
 namespace webrtc {
-
-class IFChannelBuffer;
 
 struct TwoBandsStates {
   TwoBandsStates() {
@@ -41,22 +40,26 @@ struct TwoBandsStates {
 //
 // For each block, Analysis() is called to split into bands and then Synthesis()
 // to merge these bands again. The input and output signals are contained in
-// IFChannelBuffers and for the different bands an array of IFChannelBuffers is
+// ChannelBuffers and for the different bands an array of ChannelBuffers is
 // used.
 class SplittingFilter {
  public:
   SplittingFilter(size_t num_channels, size_t num_bands, size_t num_frames);
   ~SplittingFilter();
 
-  void Analysis(const IFChannelBuffer* data, IFChannelBuffer* bands);
-  void Synthesis(const IFChannelBuffer* bands, IFChannelBuffer* data);
+  void Analysis(const ChannelBuffer<float>* data, ChannelBuffer<float>* bands);
+  void Synthesis(const ChannelBuffer<float>* bands, ChannelBuffer<float>* data);
 
  private:
   // Two-band analysis and synthesis work for 640 samples or less.
-  void TwoBandsAnalysis(const IFChannelBuffer* data, IFChannelBuffer* bands);
-  void TwoBandsSynthesis(const IFChannelBuffer* bands, IFChannelBuffer* data);
-  void ThreeBandsAnalysis(const IFChannelBuffer* data, IFChannelBuffer* bands);
-  void ThreeBandsSynthesis(const IFChannelBuffer* bands, IFChannelBuffer* data);
+  void TwoBandsAnalysis(const ChannelBuffer<float>* data,
+                        ChannelBuffer<float>* bands);
+  void TwoBandsSynthesis(const ChannelBuffer<float>* bands,
+                         ChannelBuffer<float>* data);
+  void ThreeBandsAnalysis(const ChannelBuffer<float>* data,
+                          ChannelBuffer<float>* bands);
+  void ThreeBandsSynthesis(const ChannelBuffer<float>* bands,
+                           ChannelBuffer<float>* data);
   void InitBuffers();
 
   const size_t num_bands_;

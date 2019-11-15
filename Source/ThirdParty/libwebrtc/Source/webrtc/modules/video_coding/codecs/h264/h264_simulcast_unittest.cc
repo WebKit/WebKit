@@ -95,5 +95,10 @@ TEST(TestH264Simulcast, TestStrideEncodeDecode) {
   fixture->TestStrideEncodeDecode();
 }
 
+TEST(TestH264Simulcast, TestSpatioTemporalLayers333PatternEncoder) {
+  auto fixture = CreateSpecificSimulcastTestFixture();
+  fixture->TestSpatioTemporalLayers333PatternEncoder();
+}
+
 }  // namespace test
 }  // namespace webrtc

@@ -15,8 +15,8 @@
 
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
-#include "rtc_base/constructormagic.h"
+#include "modules/audio_processing/utility/cascaded_biquad_filter.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

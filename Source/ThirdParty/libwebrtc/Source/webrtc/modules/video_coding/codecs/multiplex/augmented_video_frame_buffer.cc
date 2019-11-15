@@ -9,6 +9,11 @@
  */
 
 #include "modules/video_coding/codecs/multiplex/include/augmented_video_frame_buffer.h"
+
+#include <stdint.h>
+
+#include <utility>
+
 #include "api/video/video_frame_buffer.h"
 
 namespace webrtc {

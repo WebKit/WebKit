@@ -10,24 +10,27 @@
 
 #include "rtc_tools/video_file_reader.h"
 
-#include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <string>
-#include <utility>
+#include <vector>
 
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "api/video/i420_buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/refcountedobject.h"
+#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
-#include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
 
 namespace webrtc {
 namespace test {
 
 namespace {
+
+bool ReadBytes(uint8_t* dst, size_t n, FILE* file) {
+  return fread(reinterpret_cast<char*>(dst), /* size= */ 1, n, file) == n;
+}
 
 // Common base class for .yuv and .y4m files.
 class VideoFile : public Video {
@@ -53,17 +56,16 @@ class VideoFile : public Video {
 
     fsetpos(file_, &frame_positions_[frame_index]);
     rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
-    fread(reinterpret_cast<char*>(buffer->MutableDataY()), /* size= */ 1,
-          width_ * height_, file_);
-    fread(reinterpret_cast<char*>(buffer->MutableDataU()), /* size= */ 1,
-          buffer->ChromaWidth() * buffer->ChromaHeight(), file_);
-    fread(reinterpret_cast<char*>(buffer->MutableDataV()), /* size= */ 1,
-          buffer->ChromaWidth() * buffer->ChromaHeight(), file_);
 
-    if (ferror(file_) != 0) {
+    if (!ReadBytes(buffer->MutableDataY(), width_ * height_, file_) ||
+        !ReadBytes(buffer->MutableDataU(),
+                   buffer->ChromaWidth() * buffer->ChromaHeight(), file_) ||
+        !ReadBytes(buffer->MutableDataV(),
+                   buffer->ChromaWidth() * buffer->ChromaHeight(), file_)) {
       RTC_LOG(LS_ERROR) << "Could not read YUV data for frame " << frame_index;
       return nullptr;
     }
+
     return buffer;
   }
 
@@ -123,8 +125,8 @@ rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name) {
   }
 
   int parse_file_header_result = -1;
-  fscanf(file, "YUV4MPEG2 %n", &parse_file_header_result);
-  if (parse_file_header_result == -1) {
+  if (fscanf(file, "YUV4MPEG2 %n", &parse_file_header_result) != 0 ||
+      parse_file_header_result == -1) {
     RTC_LOG(LS_ERROR) << "File " << file_name
                       << " does not start with YUV4MPEG2 header";
     return nullptr;
@@ -203,8 +205,8 @@ rtc::scoped_refptr<Video> OpenY4mFile(const std::string& file_name) {
   std::vector<fpos_t> frame_positions;
   while (true) {
     int parse_frame_header_result = -1;
-    fscanf(file, "FRAME\n%n", &parse_frame_header_result);
-    if (parse_frame_header_result == -1) {
+    if (fscanf(file, "FRAME\n%n", &parse_frame_header_result) != 0 ||
+        parse_frame_header_result == -1) {
       if (!feof(file)) {
         RTC_LOG(LS_ERROR) << "Did not find FRAME header, ignoring rest of file";
       }
@@ -271,9 +273,9 @@ rtc::scoped_refptr<Video> OpenYuvFile(const std::string& file_name,
 rtc::scoped_refptr<Video> OpenYuvOrY4mFile(const std::string& file_name,
                                            int width,
                                            int height) {
-  if (rtc::ends_with(file_name.c_str(), ".yuv"))
+  if (absl::EndsWith(file_name, ".yuv"))
     return OpenYuvFile(file_name, width, height);
-  if (rtc::ends_with(file_name.c_str(), ".y4m"))
+  if (absl::EndsWith(file_name, ".y4m"))
     return OpenY4mFile(file_name);
 
   RTC_LOG(LS_ERROR) << "Video file does not end in either .yuv or .y4m: "

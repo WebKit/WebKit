@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_TEST_PROTOBUF_UTILS_H_
 
 #include <memory>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/protobuf_utils.h"
@@ -28,6 +29,11 @@ size_t ReadMessageBytesFromFile(FILE* file, std::unique_ptr<uint8_t[]>* bytes);
 
 // Returns true on success, false on error or end-of-file.
 bool ReadMessageFromFile(FILE* file, MessageLite* msg);
+
+// Returns true on success, false on error or end of string stream.
+bool ReadMessageFromString(
+    std::stringstream* input,  // no-presubmit-check TODO(webrtc:8982)
+    MessageLite* msg);
 
 }  // namespace webrtc
 

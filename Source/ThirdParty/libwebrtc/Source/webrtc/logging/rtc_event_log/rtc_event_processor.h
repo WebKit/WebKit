@@ -11,12 +11,16 @@
 #ifndef LOGGING_RTC_EVENT_LOG_RTC_EVENT_PROCESSOR_H_
 #define LOGGING_RTC_EVENT_LOG_RTC_EVENT_PROCESSOR_H_
 
+#include <stdint.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "rtc_base/function_view.h"
+#include "absl/memory/memory.h"
+#include "api/function_view.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -25,6 +29,7 @@ namespace webrtc {
 // in the merge-sort algorithm but without copying the elements or modifying the
 // lists.
 
+namespace event_processor_impl {
 // Interface to allow "merging" lists of different types. ProcessNext()
 // processes the next unprocesses element in the list. IsEmpty() checks if all
 // elements have been processed. GetNextTime returns the timestamp of the next
@@ -35,22 +40,19 @@ class ProcessableEventListInterface {
   virtual void ProcessNext() = 0;
   virtual bool IsEmpty() const = 0;
   virtual int64_t GetNextTime() const = 0;
+  virtual int GetTieBreaker() const = 0;
 };
 
 // ProcessableEventList encapsulates a list of events and a function that will
 // be applied to each element of the list.
-template <typename T>
+template <typename Iterator, typename T>
 class ProcessableEventList : public ProcessableEventListInterface {
  public:
-  // N.B. |f| is not owned by ProcessableEventList. The caller must ensure that
-  // the function object or lambda outlives ProcessableEventList and
-  // RtcEventProcessor. The same thing applies to the iterators (begin, end);
-  // the vector must outlive ProcessableEventList and must not be modified until
-  // processing has finished.
-  ProcessableEventList(typename std::vector<T>::const_iterator begin,
-                       typename std::vector<T>::const_iterator end,
-                       rtc::FunctionView<void(const T&)> f)
-      : begin_(begin), end_(end), f_(f) {}
+  ProcessableEventList(Iterator begin,
+                       Iterator end,
+                       std::function<void(const T&)> f,
+                       int tie_breaker)
+      : begin_(begin), end_(end), f_(f), tie_breaker_(tie_breaker) {}
 
   void ProcessNext() override {
     RTC_DCHECK(!IsEmpty());
@@ -64,12 +66,15 @@ class ProcessableEventList : public ProcessableEventListInterface {
     RTC_DCHECK(!IsEmpty());
     return begin_->log_time_us();
   }
+  int GetTieBreaker() const override { return tie_breaker_; }
 
  private:
-  typename std::vector<T>::const_iterator begin_;
-  typename std::vector<T>::const_iterator end_;
-  rtc::FunctionView<void(const T&)> f_;
+  Iterator begin_;
+  Iterator end_;
+  std::function<void(const T&)> f_;
+  int tie_breaker_;
 };
+}  // namespace event_processor_impl
 
 // Helper class used to "merge" two or more lists of ordered RtcEventLog events
 // so that they can be treated as a single ordered list. Since the individual
@@ -79,57 +84,47 @@ class ProcessableEventList : public ProcessableEventListInterface {
 // Usage example:
 // ParsedRtcEventLogNew log;
 // auto incoming_handler = [] (LoggedRtcpPacketIncoming elem) { ... };
-// auto incoming_rtcp =
-//     absl::make_unique<ProcessableEventList<LoggedRtcpPacketIncoming>>(
-//         log.incoming_rtcp_packets().begin(),
-//         log.incoming_rtcp_packets().end(),
-//         incoming_handler);
 // auto outgoing_handler = [] (LoggedRtcpPacketOutgoing elem) { ... };
-// auto outgoing_rtcp =
-//     absl::make_unique<ProcessableEventList<LoggedRtcpPacketOutgoing>>(
-//         log.outgoing_rtcp_packets().begin(),
-//         log.outgoing_rtcp_packets().end(),
-//         outgoing_handler);
 //
 // RtcEventProcessor processor;
-// processor.AddEvents(std::move(incoming_rtcp));
-// processor.AddEvents(std::move(outgoing_rtcp));
+// processor.AddEvents(log.incoming_rtcp_packets(),
+//                     incoming_handler);
+// processor.AddEvents(log.outgoing_rtcp_packets(),
+//                     outgoing_handler);
 // processor.ProcessEventsInOrder();
 class RtcEventProcessor {
  public:
+  RtcEventProcessor();
+  ~RtcEventProcessor();
   // The elements of each list is processed in the index order. To process all
-  // elements in all lists in timestamp order, each lists need to be sorted in
-  // timestamp order prior to insertion. Otherwise,
-  void AddEvents(std::unique_ptr<ProcessableEventListInterface> events) {
-    if (!events->IsEmpty()) {
-      event_lists_.push_back(std::move(events));
-      std::push_heap(event_lists_.begin(), event_lists_.end(), Cmp);
-    }
+  // elements in all lists in timestamp order, each list needs to be sorted in
+  // timestamp order prior to insertion.
+  // N.B. |iterable| is not owned by RtcEventProcessor. The caller must ensure
+  // that the iterable outlives RtcEventProcessor and it must not be modified
+  // until processing has finished.
+  template <typename Iterable>
+  void AddEvents(
+      const Iterable& iterable,
+      std::function<void(const typename Iterable::value_type&)> handler) {
+    if (iterable.begin() == iterable.end())
+      return;
+    event_lists_.push_back(
+        absl::make_unique<event_processor_impl::ProcessableEventList<
+            typename Iterable::const_iterator, typename Iterable::value_type>>(
+            iterable.begin(), iterable.end(), handler,
+            insertion_order_index_++));
+    std::push_heap(event_lists_.begin(), event_lists_.end(), Cmp);
   }
 
-  void ProcessEventsInOrder() {
-    // |event_lists_| is a min-heap of lists ordered by the timestamp of the
-    // first element in the list. We therefore process the first element of the
-    // first list, then reinsert the remainder of that list into the heap
-    // if the list still contains unprocessed elements.
-    while (!event_lists_.empty()) {
-      event_lists_.front()->ProcessNext();
-      std::pop_heap(event_lists_.begin(), event_lists_.end(), Cmp);
-      if (event_lists_.back()->IsEmpty()) {
-        event_lists_.pop_back();
-      } else {
-        std::push_heap(event_lists_.begin(), event_lists_.end(), Cmp);
-      }
-    }
-  }
+  void ProcessEventsInOrder();
 
  private:
-  using ListPtrType = std::unique_ptr<ProcessableEventListInterface>;
+  using ListPtrType =
+      std::unique_ptr<event_processor_impl::ProcessableEventListInterface>;
+  int insertion_order_index_ = 0;
   std::vector<ListPtrType> event_lists_;
   // Comparison function to make |event_lists_| into a min heap.
-  static bool Cmp(const ListPtrType& a, const ListPtrType& b) {
-    return a->GetNextTime() > b->GetNextTime();
-  }
+  static bool Cmp(const ListPtrType& a, const ListPtrType& b);
 };
 
 }  // namespace webrtc

@@ -22,9 +22,9 @@ ColumnPrinter::ColumnPrinter(
     : headers_(headers), printer_(printer), max_length_(max_length) {}
 
 ColumnPrinter ColumnPrinter::Fixed(const char* headers, std::string fields) {
-  return ColumnPrinter(headers,
-                       [fields](rtc::SimpleStringBuilder& sb) { sb << fields; },
-                       fields.size());
+  return ColumnPrinter(
+      headers, [fields](rtc::SimpleStringBuilder& sb) { sb << fields; },
+      fields.size());
 }
 
 ColumnPrinter ColumnPrinter::Lambda(
@@ -34,38 +34,26 @@ ColumnPrinter ColumnPrinter::Lambda(
   return ColumnPrinter(headers, printer, max_length);
 }
 
-StatesPrinter::StatesPrinter(std::string filename,
+StatesPrinter::StatesPrinter(std::unique_ptr<RtcEventLogOutput> writer,
                              std::vector<ColumnPrinter> printers)
-    : StatesPrinter(printers) {
-  if (!filename.empty()) {
-    output_file_ = fopen(filename.c_str(), "w");
-    RTC_CHECK(output_file_);
-    output_ = output_file_;
-  }
-}
-
-StatesPrinter::StatesPrinter(std::vector<ColumnPrinter> printers)
-    : printers_(printers) {
-  output_ = stdout;
+    : writer_(std::move(writer)), printers_(printers) {
   RTC_CHECK(!printers_.empty());
   for (auto& printer : printers_)
     buffer_size_ += printer.max_length_ + 1;
   buffer_.resize(buffer_size_);
 }
 
-StatesPrinter::~StatesPrinter() {
-  if (output_file_)
-    fclose(output_file_);
-}
+StatesPrinter::~StatesPrinter() = default;
 
 void StatesPrinter::PrintHeaders() {
-  if (!output_file_)
+  if (!writer_)
     return;
-  fprintf(output_, "%s", printers_[0].headers_);
+  writer_->Write(printers_[0].headers_);
   for (size_t i = 1; i < printers_.size(); ++i) {
-    fprintf(output_, " %s", printers_[i].headers_);
+    writer_->Write(" ");
+    writer_->Write(printers_[i].headers_);
   }
-  fputs("\n", output_);
+  writer_->Write("\n");
 }
 
 void StatesPrinter::PrintRow() {
@@ -77,9 +65,9 @@ void StatesPrinter::PrintRow() {
     sb << ' ';
     printers_[i].printer_(sb);
   }
-  sb << "\n\0";
-  if (output_file_)
-    fputs(&buffer_.front(), output_);
+  sb << "\n";
+  if (writer_)
+    writer_->Write(std::string(sb.str(), sb.size()));
 }
 }  // namespace test
 }  // namespace webrtc

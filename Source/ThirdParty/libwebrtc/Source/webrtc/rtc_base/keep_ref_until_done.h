@@ -11,10 +11,10 @@
 #ifndef RTC_BASE_KEEP_REF_UNTIL_DONE_H_
 #define RTC_BASE_KEEP_REF_UNTIL_DONE_H_
 
+#include "api/scoped_refptr.h"
 #include "rtc_base/bind.h"
 #include "rtc_base/callback.h"
-#include "rtc_base/refcount.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/ref_count.h"
 
 namespace rtc {
 

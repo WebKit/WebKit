@@ -12,7 +12,11 @@
 #include <algorithm>
 #include <string>
 
-#include "rtc_base/refcountedobject.h"
+#include "api/scoped_refptr.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/rtp_config.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 namespace test {
@@ -32,7 +36,17 @@ std::vector<VideoStream> CreateVideoStreams(
              DefaultVideoStreamFactory::kMaxNumberOfStreams);
 
   std::vector<VideoStream> stream_settings(encoder_config.number_of_streams);
-  int bitrate_left_bps = encoder_config.max_bitrate_bps;
+
+  int bitrate_left_bps = 0;
+  if (encoder_config.max_bitrate_bps > 0) {
+    bitrate_left_bps = encoder_config.max_bitrate_bps;
+  } else {
+    for (size_t stream_num = 0; stream_num < encoder_config.number_of_streams;
+         ++stream_num) {
+      bitrate_left_bps +=
+          DefaultVideoStreamFactory::kMaxBitratePerStream[stream_num];
+    }
+  }
 
   for (size_t i = 0; i < encoder_config.number_of_streams; ++i) {
     stream_settings[i].width =
@@ -62,12 +76,20 @@ std::vector<VideoStream> CreateVideoStreams(
               : DefaultVideoStreamFactory::kMaxBitratePerStream[i];
       target_bitrate_bps = std::min(max_bitrate_bps, target_bitrate_bps);
 
+      if (stream.min_bitrate_bps > 0) {
+        RTC_DCHECK_LE(stream.min_bitrate_bps, target_bitrate_bps);
+        stream_settings[i].min_bitrate_bps = stream.min_bitrate_bps;
+      }
       if (stream.max_framerate > 0) {
         stream_settings[i].max_framerate = stream.max_framerate;
       }
       if (stream.num_temporal_layers) {
         RTC_DCHECK_GE(*stream.num_temporal_layers, 1);
         stream_settings[i].num_temporal_layers = stream.num_temporal_layers;
+      }
+      if (stream.scale_resolution_down_by >= 1.0) {
+        stream_settings[i].width = width / stream.scale_resolution_down_by;
+        stream_settings[i].height = height / stream.scale_resolution_down_by;
       }
     } else {
       max_bitrate_bps = std::min(

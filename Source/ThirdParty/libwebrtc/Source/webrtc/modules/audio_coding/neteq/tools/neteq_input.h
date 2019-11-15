@@ -16,7 +16,6 @@
 #include <string>
 
 #include "absl/types/optional.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "rtc_base/buffer.h"

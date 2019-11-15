@@ -9,10 +9,11 @@
  */
 
 #include "modules/audio_coding/codecs/isac/fix/source/lpc_masking_model.h"
+
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 
-class LpcMaskingModelTest : public testing::Test {
+class LpcMaskingModelTest : public ::testing::Test {
  protected:
   // Pass a function pointer to the Tester function.
   void CalculateResidualEnergyTester(

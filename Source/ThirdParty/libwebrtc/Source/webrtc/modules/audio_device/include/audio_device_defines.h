@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DEFINES_H_
 
 #include <stddef.h>
+
 #include <string>
 
 #include "rtc_base/checks.h"

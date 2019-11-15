@@ -29,7 +29,6 @@ def FindSrcDirPath():
 # Skip these dependencies (list without solution name prefix).
 DONT_AUTOROLL_THESE = [
   'src/examples/androidtests/third_party/gradle',
-  'src/third_party/ffmpeg',
 ]
 
 # These dependencies are missing in chromium/src/DEPS, either unused or already
@@ -39,12 +38,12 @@ DONT_AUTOROLL_THESE = [
 WEBRTC_ONLY_DEPS = [
   'src/base',
   'src/build',
+  'src/buildtools',
   'src/ios',
   'src/testing',
   'src/third_party',
   'src/third_party/findbugs',
   'src/third_party/gtest-parallel',
-  'src/third_party/winsdk_samples',
   'src/third_party/yasm/binaries',
   'src/tools',
 ]
@@ -57,7 +56,7 @@ CHROMIUM_LOG_TEMPLATE = CHROMIUM_SRC_URL + '/+log/%s'
 CHROMIUM_FILE_TEMPLATE = CHROMIUM_SRC_URL + '/+/%s/%s'
 
 COMMIT_POSITION_RE = re.compile('^Cr-Commit-Position: .*#([0-9]+).*$')
-CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'(\d+)\'$')
+CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([0-9a-z]+)\'$')
 ROLL_BRANCH_NAME = 'roll_chromium_revision'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -248,6 +247,8 @@ def BuildDepsentryDict(deps_dict):
       if dep.get('dep_type') == 'cipd':
         result[path] = CipdDepsEntry(path, dep['packages'])
       else:
+        if '@' not in dep['url']:
+          continue
         url, revision = dep['url'].split('@')
         result[path] = DepsEntry(path, url, revision)
 
@@ -450,7 +451,7 @@ def GenerateCommitMessage(rev_update, current_commit_pos, new_commit_pos,
                                                     c.current_rev[0:10],
                                                     c.new_rev[0:10]))
       if 'libvpx' in c.path:
-        tbr_authors += 'marpan@webrtc.org, '
+        tbr_authors += 'marpan@webrtc.org, jianj@chromium.org, '
 
   if added_deps_paths:
     Section('Added', added_deps_paths)

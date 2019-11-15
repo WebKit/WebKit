@@ -12,8 +12,10 @@
 #define SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 
 #include <stdint.h>
+
 #include <memory>
 
+#include "api/units/timestamp.h"
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
 #include "system_wrappers/include/ntp_time.h"
 
@@ -29,20 +31,18 @@ const double kMagicNtpFractionalUnit = 4.294967296E+9;
 class Clock {
  public:
   virtual ~Clock() {}
-
-  // Return a timestamp in milliseconds relative to some arbitrary source; the
-  // source is fixed for this clock.
-  virtual int64_t TimeInMilliseconds() const = 0;
-
-  // Return a timestamp in microseconds relative to some arbitrary source; the
-  // source is fixed for this clock.
-  virtual int64_t TimeInMicroseconds() const = 0;
+  // Return a timestamp relative to an unspecified epoch.
+  virtual Timestamp CurrentTime() {
+    return Timestamp::us(TimeInMicroseconds());
+  }
+  virtual int64_t TimeInMilliseconds() { return CurrentTime().ms(); }
+  virtual int64_t TimeInMicroseconds() { return CurrentTime().us(); }
 
   // Retrieve an NTP absolute timestamp.
-  virtual NtpTime CurrentNtpTime() const = 0;
+  virtual NtpTime CurrentNtpTime() = 0;
 
   // Retrieve an NTP absolute timestamp in milliseconds.
-  virtual int64_t CurrentNtpInMilliseconds() const = 0;
+  virtual int64_t CurrentNtpInMilliseconds() = 0;
 
   // Converts an NTP timestamp to a millisecond timestamp.
   static int64_t NtpToMs(uint32_t seconds, uint32_t fractions) {
@@ -56,33 +56,31 @@ class Clock {
 class SimulatedClock : public Clock {
  public:
   explicit SimulatedClock(int64_t initial_time_us);
+  explicit SimulatedClock(Timestamp initial_time);
 
   ~SimulatedClock() override;
 
-  // Return a timestamp in milliseconds relative to some arbitrary source; the
-  // source is fixed for this clock.
-  int64_t TimeInMilliseconds() const override;
-
-  // Return a timestamp in microseconds relative to some arbitrary source; the
-  // source is fixed for this clock.
-  int64_t TimeInMicroseconds() const override;
+  // Return a timestamp relative to some arbitrary source; the source is fixed
+  // for this clock.
+  Timestamp CurrentTime() override;
 
   // Retrieve an NTP absolute timestamp.
-  NtpTime CurrentNtpTime() const override;
+  NtpTime CurrentNtpTime() override;
 
   // Converts an NTP timestamp to a millisecond timestamp.
-  int64_t CurrentNtpInMilliseconds() const override;
+  int64_t CurrentNtpInMilliseconds() override;
 
   // Advance the simulated clock with a given number of milliseconds or
   // microseconds.
   void AdvanceTimeMilliseconds(int64_t milliseconds);
   void AdvanceTimeMicroseconds(int64_t microseconds);
+  void AdvanceTime(TimeDelta delta);
 
  private:
-  int64_t time_us_;
+  Timestamp time_;
   std::unique_ptr<RWLockWrapper> lock_;
 };
 
-};  // namespace webrtc
+}  // namespace webrtc
 
 #endif  // SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_

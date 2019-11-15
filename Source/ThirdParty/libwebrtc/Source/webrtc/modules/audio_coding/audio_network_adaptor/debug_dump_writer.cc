@@ -10,11 +10,12 @@
 
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 
+#include <string>
+
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/protobuf_utils.h"
 #include "rtc_base/system/file_wrapper.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -32,13 +33,13 @@ namespace webrtc {
 #if WEBRTC_ENABLE_PROTOBUF
 namespace {
 
+using audio_network_adaptor::debug_dump::EncoderRuntimeConfig;
 using audio_network_adaptor::debug_dump::Event;
 using audio_network_adaptor::debug_dump::NetworkMetrics;
-using audio_network_adaptor::debug_dump::EncoderRuntimeConfig;
 
 void DumpEventToFile(const Event& event, FileWrapper* dump_file) {
   RTC_CHECK(dump_file->is_open());
-  ProtoString dump_data;
+  std::string dump_data;
   event.SerializeToString(&dump_data);
   int32_t size = rtc::checked_cast<int32_t>(event.ByteSizeLong());
   dump_file->Write(&size, sizeof(size));
@@ -67,14 +68,13 @@ class DebugDumpWriterImpl final : public DebugDumpWriter {
 #endif
 
  private:
-  std::unique_ptr<FileWrapper> dump_file_;
+  FileWrapper dump_file_;
 };
 
-DebugDumpWriterImpl::DebugDumpWriterImpl(FILE* file_handle)
-    : dump_file_(FileWrapper::Create()) {
+DebugDumpWriterImpl::DebugDumpWriterImpl(FILE* file_handle) {
 #if WEBRTC_ENABLE_PROTOBUF
-  dump_file_->OpenFromFileHandle(file_handle);
-  RTC_CHECK(dump_file_->is_open());
+  dump_file_ = FileWrapper(file_handle);
+  RTC_CHECK(dump_file_.is_open());
 #else
   RTC_NOTREACHED();
 #endif
@@ -110,7 +110,7 @@ void DebugDumpWriterImpl::DumpNetworkMetrics(
         *metrics.uplink_recoverable_packet_loss_fraction);
   }
 
-  DumpEventToFile(event, dump_file_.get());
+  DumpEventToFile(event, &dump_file_);
 #endif  // WEBRTC_ENABLE_PROTOBUF
 }
 
@@ -143,7 +143,7 @@ void DebugDumpWriterImpl::DumpEncoderRuntimeConfig(
   if (config.num_channels)
     dump_config->set_num_channels(*config.num_channels);
 
-  DumpEventToFile(event, dump_file_.get());
+  DumpEventToFile(event, &dump_file_);
 #endif  // WEBRTC_ENABLE_PROTOBUF
 }
 
@@ -157,7 +157,7 @@ void DebugDumpWriterImpl::DumpControllerManagerConfig(
   event.set_type(Event::CONTROLLER_MANAGER_CONFIG);
   event.mutable_controller_manager_config()->CopyFrom(
       controller_manager_config);
-  DumpEventToFile(event, dump_file_.get());
+  DumpEventToFile(event, &dump_file_);
 }
 #endif  // WEBRTC_ENABLE_PROTOBUF
 

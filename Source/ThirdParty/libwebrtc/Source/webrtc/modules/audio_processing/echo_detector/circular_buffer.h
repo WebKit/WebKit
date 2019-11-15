@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_ECHO_DETECTOR_CIRCULAR_BUFFER_H_
 
 #include <stddef.h>
+
 #include <vector>
 
 #include "absl/types/optional.h"

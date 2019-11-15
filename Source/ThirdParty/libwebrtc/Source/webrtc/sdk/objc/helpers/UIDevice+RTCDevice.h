@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#if !defined(WEBRTC_WEBKIT_BUILD)
+
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, RTCDeviceType) {
@@ -82,3 +84,5 @@ typedef NS_ENUM(NSInteger, RTCDeviceType) {
 + (BOOL)isIOS11OrLater;
 
 @end
+
+#endif

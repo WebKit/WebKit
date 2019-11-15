@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include "modules/congestion_controller/bbr/loss_rate_filter.h"
+
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "test/gtest.h"
 

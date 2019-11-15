@@ -12,10 +12,11 @@
 #define MODULES_AUDIO_CODING_NETEQ_TICK_TIMER_H_
 
 #include <stdint.h>
+
 #include <memory>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

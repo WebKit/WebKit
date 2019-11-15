@@ -10,6 +10,7 @@
  */
 
 #include "modules/audio_processing/echo_detector/normalized_covariance_estimator.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

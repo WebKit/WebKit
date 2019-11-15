@@ -10,6 +10,8 @@
 
 #include "modules/video_coding/timing.h"
 
+#include <assert.h>
+
 #include <algorithm>
 
 #include "rtc_base/time/timestamp_extrapolator.h"
@@ -27,7 +29,6 @@ VCMTiming::VCMTiming(Clock* clock, VCMTiming* master_timing)
       max_playout_delay_ms_(10000),
       jitter_delay_ms_(0),
       current_delay_ms_(0),
-      last_decode_ms_(0),
       prev_frame_timestamp_(0),
       timing_frame_info_(),
       num_decoded_frames_(0) {
@@ -149,14 +150,17 @@ void VCMTiming::UpdateCurrentDelay(int64_t render_time_ms,
   }
 }
 
-void VCMTiming::StopDecodeTimer(uint32_t time_stamp,
+void VCMTiming::StopDecodeTimer(uint32_t /*time_stamp*/,
                                 int32_t decode_time_ms,
                                 int64_t now_ms,
-                                int64_t render_time_ms) {
+                                int64_t /*render_time_ms*/) {
+  StopDecodeTimer(decode_time_ms, now_ms);
+}
+
+void VCMTiming::StopDecodeTimer(int32_t decode_time_ms, int64_t now_ms) {
   rtc::CritScope cs(&crit_sect_);
   codec_timer_->AddTiming(decode_time_ms, now_ms);
   assert(decode_time_ms >= 0);
-  last_decode_ms_ = decode_time_ms;
   ++num_decoded_frames_;
 }
 
@@ -216,15 +220,13 @@ int VCMTiming::TargetDelayInternal() const {
                   jitter_delay_ms_ + RequiredDecodeTimeMs() + render_delay_ms_);
 }
 
-bool VCMTiming::GetTimings(int* decode_ms,
-                           int* max_decode_ms,
+bool VCMTiming::GetTimings(int* max_decode_ms,
                            int* current_delay_ms,
                            int* target_delay_ms,
                            int* jitter_buffer_ms,
                            int* min_playout_delay_ms,
                            int* render_delay_ms) const {
   rtc::CritScope cs(&crit_sect_);
-  *decode_ms = last_decode_ms_;
   *max_decode_ms = RequiredDecodeTimeMs();
   *current_delay_ms = current_delay_ms_;
   *target_delay_ms = TargetDelayInternal();

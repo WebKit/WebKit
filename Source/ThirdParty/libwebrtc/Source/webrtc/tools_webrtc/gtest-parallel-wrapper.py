@@ -157,7 +157,20 @@ def ParseArgs(argv=None):
 
   options, unrecognized_args = parser.parse_known_args(argv)
 
-  executable_args = options.executable_args + unrecognized_args
+  webrtc_flags_to_change = {
+    '--isolated-script-test-perf-output': '--isolated_script_test_perf_output',
+    '--isolated-script-test-output': '--isolated_script_test_output',
+  }
+  args_to_pass = []
+  for arg in unrecognized_args:
+    if any(arg.startswith(k) for k in webrtc_flags_to_change.keys()):
+      arg_split = arg.split('=')
+      args_to_pass.append(
+        webrtc_flags_to_change[arg_split[0]] + '=' + arg_split[1])
+    else:
+      args_to_pass.append(arg)
+
+  executable_args = options.executable_args + args_to_pass
 
   if options.store_test_artifacts:
     assert options.output_dir, (

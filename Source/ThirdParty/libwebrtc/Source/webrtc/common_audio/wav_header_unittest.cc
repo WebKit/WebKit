@@ -8,10 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "common_audio/wav_header.h"
+
 #include <string.h>
+
 #include <limits>
 
-#include "common_audio/wav_header.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -33,9 +35,6 @@ class ReadableWavBuffer : public ReadableWav {
   }
 
   size_t Read(void* buf, size_t num_bytes) override {
-    // Verify we don't try to read outside of a properly sized header.
-    if (size_ >= kWavHeaderSize)
-      EXPECT_GE(size_, pos_ + num_bytes);
     EXPECT_FALSE(buf_exhausted_);
 
     const size_t bytes_remaining = size_ - pos_;
@@ -50,8 +49,6 @@ class ReadableWavBuffer : public ReadableWav {
     pos_ += num_bytes;
     return num_bytes;
   }
-
-  bool Eof() const override { return pos_ == size_; }
 
   bool SeekForward(uint32_t num_bytes) override {
     // Verify we don't try to read outside of a properly sized header.

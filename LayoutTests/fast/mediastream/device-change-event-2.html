@@ -20,6 +20,8 @@
     }
 
     promise_test(async (test) => {
+        // Trigger monitoring of device changes.
+        navigator.mediaDevices.ondevicechange = () => { };
     
         await setup(test);
 

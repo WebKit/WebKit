@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_processing/aec3/echo_path_variability.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

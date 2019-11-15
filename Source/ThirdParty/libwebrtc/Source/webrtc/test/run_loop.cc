@@ -14,7 +14,7 @@
 namespace webrtc {
 namespace test {
 
-void PressEnterToContinue(SingleThreadedTaskQueueForTesting&) {
+void PressEnterToContinue(DEPRECATED_SingleThreadedTaskQueueForTesting&) {
   puts(">> Press ENTER to continue...");
   while (getc(stdin) != '\n' && !feof(stdin))
     ;

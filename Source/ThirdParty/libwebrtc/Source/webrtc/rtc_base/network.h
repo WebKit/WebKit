@@ -19,10 +19,10 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/ipaddress.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/mdns_responder_interface.h"
-#include "rtc_base/messagehandler.h"
-#include "rtc_base/networkmonitor.h"
+#include "rtc_base/message_handler.h"
+#include "rtc_base/network_monitor.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 #if defined(WEBRTC_POSIX)
@@ -57,10 +57,22 @@ AdapterType GetAdapterTypeFromName(const char* network_name);
 class DefaultLocalAddressProvider {
  public:
   virtual ~DefaultLocalAddressProvider() = default;
+
   // The default local address is the local address used in multi-homed endpoint
   // when the any address (0.0.0.0 or ::) is used as the local address. It's
   // important to check the return value as a IP family may not be enabled.
   virtual bool GetDefaultLocalAddress(int family, IPAddress* ipaddr) const = 0;
+};
+
+class MdnsResponderProvider {
+ public:
+  virtual ~MdnsResponderProvider() = default;
+
+  // Returns the mDNS responder that can be used to obfuscate the local IP
+  // addresses of ICE host candidates by mDNS hostnames.
+  //
+  // The provider MUST outlive the mDNS responder.
+  virtual webrtc::MdnsResponderInterface* GetMdnsResponder() const = 0;
 };
 
 // Generic network manager interface. It provides list of local
@@ -72,7 +84,8 @@ class DefaultLocalAddressProvider {
 //
 // This allows constructing a NetworkManager subclass on one thread and
 // passing it into an object that uses it on a different thread.
-class NetworkManager : public DefaultLocalAddressProvider {
+class NetworkManager : public DefaultLocalAddressProvider,
+                       public MdnsResponderProvider {
  public:
   typedef std::vector<Network*> NetworkList;
 
@@ -139,9 +152,8 @@ class NetworkManager : public DefaultLocalAddressProvider {
     }
   };
 
-  // Returns the mDNS responder that can be used to obfuscate the local IP
-  // addresses of ICE host candidates by mDNS hostnames.
-  virtual webrtc::MdnsResponderInterface* GetMdnsResponder() const;
+  // MdnsResponderProvider interface.
+  webrtc::MdnsResponderInterface* GetMdnsResponder() const override;
 };
 
 // Base class for NetworkManager implementations.
@@ -152,12 +164,6 @@ class NetworkManagerBase : public NetworkManager {
 
   void GetNetworks(NetworkList* networks) const override;
   void GetAnyAddressNetworks(NetworkList* networks) override;
-
-  // Defaults to true.
-  // TODO(deadbeef): Remove this. Nothing but tests use this; IPv6 is enabled
-  // by default everywhere else.
-  bool ipv6_enabled() const { return ipv6_enabled_; }
-  void set_ipv6_enabled(bool enabled) { ipv6_enabled_ = enabled; }
 
   EnumerationPermission enumeration_permission() const override;
 
@@ -194,7 +200,6 @@ class NetworkManagerBase : public NetworkManager {
   NetworkList networks_;
 
   NetworkMap networks_map_;
-  bool ipv6_enabled_;
 
   std::unique_ptr<rtc::Network> ipv4_any_address_network_;
   std::unique_ptr<rtc::Network> ipv6_any_address_network_;
@@ -310,7 +315,11 @@ class Network {
     default_local_address_provider_ = provider;
   }
 
-  // Returns the name of the interface this network is associated wtih.
+  void set_mdns_responder_provider(const MdnsResponderProvider* provider) {
+    mdns_responder_provider_ = provider;
+  }
+
+  // Returns the name of the interface this network is associated with.
   const std::string& name() const { return name_; }
 
   // Returns the OS-assigned name for this network. This is useful for
@@ -329,7 +338,7 @@ class Network {
   // Returns the Network's current idea of the 'best' IP it has.
   // Or return an unset IP if this network has no active addresses.
   // Here is the rule on how we mark the IPv6 address as ignorable for WebRTC.
-  // 1) return all global temporary dynamic and non-deprecrated ones.
+  // 1) return all global temporary dynamic and non-deprecated ones.
   // 2) if #1 not available, return global ones.
   // 3) if #2 not available, use ULA ipv6 as last resort. (ULA stands
   // for unique local address, which is not route-able in open
@@ -361,19 +370,11 @@ class Network {
   const std::vector<InterfaceAddress>& GetIPs() const { return ips_; }
   // Clear the network's list of addresses.
   void ClearIPs() { ips_.clear(); }
-  // Sets the mDNS responder that can be used to obfuscate the local IP
+  // Returns the mDNS responder that can be used to obfuscate the local IP
   // addresses of host candidates by mDNS names in ICE gathering. After a
   // name-address mapping is created by the mDNS responder, queries for the
   // created name will be resolved by the responder.
-  //
-  // The mDNS responder, if not null, should outlive this rtc::Network.
-  void SetMdnsResponder(webrtc::MdnsResponderInterface* mdns_responder) {
-    mdns_responder_ = mdns_responder;
-  }
-  // Returns the mDNS responder, which is null by default.
-  webrtc::MdnsResponderInterface* GetMdnsResponder() const {
-    return mdns_responder_;
-  }
+  webrtc::MdnsResponderInterface* GetMdnsResponder() const;
 
   // Returns the scope-id of the network's address.
   // Should only be relevant for link-local IPv6 addresses.
@@ -440,13 +441,13 @@ class Network {
 
  private:
   const DefaultLocalAddressProvider* default_local_address_provider_ = nullptr;
+  const MdnsResponderProvider* mdns_responder_provider_ = nullptr;
   std::string name_;
   std::string description_;
   IPAddress prefix_;
   int prefix_length_;
   std::string key_;
   std::vector<InterfaceAddress> ips_;
-  webrtc::MdnsResponderInterface* mdns_responder_ = nullptr;
   int scope_id_;
   bool ignored_;
   AdapterType type_;

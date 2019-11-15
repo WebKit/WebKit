@@ -18,11 +18,17 @@ rtc_static_library("audio_frame_operations") {
   sources = [
     "audio_frame_operations.cc",
     "audio_frame_operations.h",
+    "channel_mixer.cc",
+    "channel_mixer.h",
+    "channel_mixing_matrix.cc",
+    "channel_mixing_matrix.h",
   ]
 
   deps = [
     "../../api/audio:audio_frame_api",
+    "../../common_audio",
     "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
   ]
 }
@@ -32,17 +38,16 @@ if (rtc_include_tests) {
     testonly = true
     sources = [
       "audio_frame_operations_unittest.cc",
+      "channel_mixer_unittest.cc",
+      "channel_mixing_matrix_unittest.cc",
     ]
     deps = [
       ":audio_frame_operations",
+      "../../api/audio:audio_frame_api",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
       "//testing/gtest",
     ]
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 }

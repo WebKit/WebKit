@@ -109,7 +109,6 @@ int16_t WebRtcIsacfix_Create(ISACFIX_MainStruct **ISAC_main_inst)
     (*(ISACFIX_SubStruct**)ISAC_main_inst)->errorcode = 0;
     (*(ISACFIX_SubStruct**)ISAC_main_inst)->initflag = 0;
     (*(ISACFIX_SubStruct**)ISAC_main_inst)->ISACenc_obj.SaveEnc_ptr = NULL;
-    WebRtcSpl_Init();
     WebRtcIsacfix_InitBandwidthEstimator(&tempo->bwestimator_obj);
     return(0);
   } else {

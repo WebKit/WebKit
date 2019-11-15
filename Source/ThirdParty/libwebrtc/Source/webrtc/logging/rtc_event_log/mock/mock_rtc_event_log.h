@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "logging/rtc_event_log/rtc_event_log.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "test/gmock.h"
 
 namespace webrtc {

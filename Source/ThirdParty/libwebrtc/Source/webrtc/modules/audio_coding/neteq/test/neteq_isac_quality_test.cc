@@ -8,11 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/flags/flag.h"
 #include "modules/audio_coding/codecs/isac/fix/include/isacfix.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
-#include "rtc_base/flags.h"
 
-using testing::InitGoogleTest;
+ABSL_FLAG(int, bit_rate_kbps, 32, "Target bit rate (kbps).");
+
+using ::testing::InitGoogleTest;
 
 namespace webrtc {
 namespace test {
@@ -20,9 +22,6 @@ namespace {
 static const int kIsacBlockDurationMs = 30;
 static const int kIsacInputSamplingKhz = 16;
 static const int kIsacOutputSamplingKhz = 16;
-
-WEBRTC_DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
-
 }  // namespace
 
 class NetEqIsacQualityTest : public NetEqQualityTest {
@@ -44,11 +43,12 @@ NetEqIsacQualityTest::NetEqIsacQualityTest()
     : NetEqQualityTest(kIsacBlockDurationMs,
                        kIsacInputSamplingKhz,
                        kIsacOutputSamplingKhz,
-                       NetEqDecoder::kDecoderISAC),
+                       SdpAudioFormat("isac", 16000, 1)),
       isac_encoder_(NULL),
-      bit_rate_kbps_(FLAG_bit_rate_kbps) {
+      bit_rate_kbps_(absl::GetFlag(FLAGS_bit_rate_kbps)) {
   // Flag validation
-  RTC_CHECK(FLAG_bit_rate_kbps >= 10 && FLAG_bit_rate_kbps <= 32)
+  RTC_CHECK(absl::GetFlag(FLAGS_bit_rate_kbps) >= 10 &&
+            absl::GetFlag(FLAGS_bit_rate_kbps) <= 32)
       << "Invalid bit rate, should be between 10 and 32 kbps.";
 }
 

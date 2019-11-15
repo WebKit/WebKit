@@ -10,7 +10,7 @@
 
 #import "RTCIceServer.h"
 
-#include "api/peerconnectioninterface.h"
+#include "api/peer_connection_interface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

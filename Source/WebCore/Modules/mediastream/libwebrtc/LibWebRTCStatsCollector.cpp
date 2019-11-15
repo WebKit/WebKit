@@ -94,6 +94,7 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRTPStreamSta
 {
     fillRTCRTPStreamStats(stats, rtcStats);
 
+    // FIXME: Add support for decoder_implementation
     if (rtcStats.packets_received.is_defined())
         stats.packetsReceived = *rtcStats.packets_received;
     if (rtcStats.bytes_received.is_defined())
@@ -102,8 +103,7 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRTPStreamSta
         stats.packetsLost = *rtcStats.packets_lost;
     if (rtcStats.jitter.is_defined())
         stats.jitter = *rtcStats.jitter;
-    if (rtcStats.fraction_lost.is_defined())
-        stats.fractionLost = *rtcStats.fraction_lost;
+    // FIXME: Add support back for fractionLost.
     if (rtcStats.packets_discarded.is_defined())
         stats.packetsDiscarded = *rtcStats.packets_discarded;
     if (rtcStats.packets_repaired.is_defined())
@@ -132,6 +132,7 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRTPStreamS
 {
     fillRTCRTPStreamStats(stats, rtcStats);
 
+    // FIXME: Add support for encoder_implementation
     if (rtcStats.packets_sent.is_defined())
         stats.packetsSent = *rtcStats.packets_sent;
     if (rtcStats.bytes_sent.is_defined())
@@ -349,8 +350,6 @@ static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const we
         stats.channels = *rtcStats.channels;
     if (rtcStats.sdp_fmtp_line.is_defined())
         stats.sdpFmtpLine = fromStdString(*rtcStats.sdp_fmtp_line);
-    if (rtcStats.implementation.is_defined())
-        stats.implementation = fromStdString(*rtcStats.implementation);
 }
 
 static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, const webrtc::RTCTransportStats& rtcStats)

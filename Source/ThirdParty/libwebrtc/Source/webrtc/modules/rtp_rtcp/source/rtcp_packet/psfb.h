@@ -25,6 +25,7 @@ namespace rtcp {
 class Psfb : public RtcpPacket {
  public:
   static constexpr uint8_t kPacketType = 206;
+  static constexpr uint8_t kAfbMessageType = 15;
 
   Psfb() : sender_ssrc_(0), media_ssrc_(0) {}
   ~Psfb() override {}

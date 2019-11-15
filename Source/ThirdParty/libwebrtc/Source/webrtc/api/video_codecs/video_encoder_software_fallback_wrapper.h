@@ -14,13 +14,15 @@
 #include <memory>
 
 #include "api/video_codecs/video_encoder.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Used to wrap external VideoEncoders to provide a fallback option on
 // software encoding when a hardware encoder fails to encode a stream due to
 // hardware restrictions, such as max resolution.
-std::unique_ptr<VideoEncoder> CreateVideoEncoderSoftwareFallbackWrapper(
+RTC_EXPORT std::unique_ptr<VideoEncoder>
+CreateVideoEncoderSoftwareFallbackWrapper(
     std::unique_ptr<VideoEncoder> sw_fallback_encoder,
     std::unique_ptr<VideoEncoder> hw_encoder);
 

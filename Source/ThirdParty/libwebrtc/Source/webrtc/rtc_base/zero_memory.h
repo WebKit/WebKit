@@ -12,6 +12,7 @@
 #define RTC_BASE_ZERO_MEMORY_H_
 
 #include <stddef.h>
+
 #include <type_traits>
 
 #include "api/array_view.h"

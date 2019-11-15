@@ -10,8 +10,8 @@
 
 package org.webrtc;
 
+import android.support.annotation.Nullable;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
 import org.webrtc.VideoFrame.I420Buffer;
 
 /** Implementation of VideoFrame.I420Buffer backed by Java direct byte buffers. */

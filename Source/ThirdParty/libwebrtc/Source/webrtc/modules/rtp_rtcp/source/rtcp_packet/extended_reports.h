@@ -30,6 +30,7 @@ class ExtendedReports : public RtcpPacket {
   static constexpr size_t kMaxNumberOfDlrrItems = 50;
 
   ExtendedReports();
+  ExtendedReports(const ExtendedReports& xr);
   ~ExtendedReports() override;
 
   // Parse assumes header is already parsed and validated.

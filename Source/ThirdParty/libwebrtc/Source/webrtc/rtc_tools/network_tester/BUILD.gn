@@ -6,8 +6,10 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("//third_party/protobuf/proto_library.gni")
 import("../../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
 
 if (rtc_enable_protobuf) {
   proto_library("network_tester_config_proto") {
@@ -41,20 +43,19 @@ if (rtc_enable_protobuf) {
     deps = [
       ":network_tester_config_proto",
       ":network_tester_packet_proto",
+      "../../api/task_queue",
+      "../../api/task_queue:default_task_queue_factory",
       "../../p2p",
+      "../../rtc_base",
       "../../rtc_base:checks",
       "../../rtc_base:protobuf_utils",
-      "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
-      "../../rtc_base:sequenced_task_checker",
+      "../../rtc_base/synchronization:sequence_checker",
+      "../../rtc_base/third_party/sigslot",
+      "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 
   network_tester_unittests_resources = [
@@ -94,11 +95,6 @@ if (rtc_enable_protobuf) {
     defines = [ "WEBRTC_NETWORK_TESTER_TEST_ENABLED" ]
 
     data = network_tester_unittests_resources
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 
   rtc_executable("network_tester_server") {
@@ -109,19 +105,16 @@ if (rtc_enable_protobuf) {
     deps = [
       ":network_tester",
     ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 }
 
 if (is_android) {
-  android_apk("NetworkTesterMobile") {
+  rtc_android_apk("NetworkTesterMobile") {
     testonly = true
     apk_name = "NetworkTesterMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
+    min_sdk_version = 17
+    target_sdk_version = 24
 
     deps = [
       ":NetworkTesterMobile_javalib",
@@ -132,7 +125,7 @@ if (is_android) {
     shared_libraries = [ "../../rtc_tools/network_tester:network_tester_so" ]
   }
 
-  android_library("NetworkTesterMobile_javalib") {
+  rtc_android_library("NetworkTesterMobile_javalib") {
     testonly = true
     android_manifest_for_lint = "androidapp/AndroidManifest.xml"
 

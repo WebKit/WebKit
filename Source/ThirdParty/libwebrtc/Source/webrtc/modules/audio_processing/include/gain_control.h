@@ -31,7 +31,7 @@ class GainControl {
   // When an analog mode is set, this should be called after |ProcessStream()|
   // to obtain the recommended new analog level for the audio HAL. It is the
   // users responsibility to apply this level.
-  virtual int stream_analog_level() = 0;
+  virtual int stream_analog_level() const = 0;
 
   enum Mode {
     // Adaptive mode intended for use if an analog volume control is available

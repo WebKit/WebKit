@@ -10,8 +10,7 @@
 
 #include "modules/audio_device/win/core_audio_utility_win.h"
 
-#include <Functiondiscoverykeys_devpkey.h>
-#include <atlbase.h>
+#include <functiondiscoverykeys_devpkey.h>
 #include <stdio.h>
 #include <tchar.h>
 
@@ -22,11 +21,10 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/win/windows_version.h"
 
-using ATL::CComHeapPtr;
 using Microsoft::WRL::ComPtr;
 using webrtc::AudioDeviceName;
 using webrtc::AudioParameters;
@@ -132,6 +130,32 @@ std::string ChannelMaskToString(DWORD channel_mask) {
   ss += ")";
   return ss;
 }
+
+#if !defined(KSAUDIO_SPEAKER_1POINT1)
+// These values are only defined in ksmedia.h after a certain version, to build
+// cleanly for older windows versions this just defines the ones that are
+// missing.
+#define KSAUDIO_SPEAKER_1POINT1 (SPEAKER_FRONT_CENTER | SPEAKER_LOW_FREQUENCY)
+#define KSAUDIO_SPEAKER_2POINT1 \
+  (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY)
+#define KSAUDIO_SPEAKER_3POINT0 \
+  (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER)
+#define KSAUDIO_SPEAKER_3POINT1                                      \
+  (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | \
+   SPEAKER_LOW_FREQUENCY)
+#define KSAUDIO_SPEAKER_5POINT0                                      \
+  (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | \
+   SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT)
+#define KSAUDIO_SPEAKER_7POINT0                                      \
+  (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER | \
+   SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT | SPEAKER_SIDE_LEFT |      \
+   SPEAKER_SIDE_RIGHT)
+#endif
+
+#if !defined(AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY)
+#define AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY 0x08000000
+#define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM 0x80000000
+#endif
 
 // Converts from channel mask to DirectSound speaker configuration.
 // The values below are copied from ksmedia.h.
@@ -303,9 +327,11 @@ ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
 std::string GetDeviceIdInternal(IMMDevice* device) {
   // Retrieve unique name of endpoint device.
   // Example: "{0.0.1.00000000}.{8db6020f-18e3-4f25-b6f5-7726c9122574}".
-  CComHeapPtr<WCHAR> device_id;
+  LPWSTR device_id;
   if (SUCCEEDED(device->GetId(&device_id))) {
-    return rtc::ToUtf8(device_id, wcslen(device_id));
+    std::string device_id_utf8 = rtc::ToUtf8(device_id, wcslen(device_id));
+    CoTaskMemFree(device_id);
+    return device_id_utf8;
   } else {
     return std::string();
   }
@@ -735,10 +761,11 @@ int NumberOfActiveSessions(IMMDevice* device) {
     }
 
     // Log the display name of the audio session for debugging purposes.
-    CComHeapPtr<WCHAR> display_name;
+    LPWSTR display_name;
     if (SUCCEEDED(session_control->GetDisplayName(&display_name))) {
       RTC_DLOG(INFO) << "display name: "
                      << rtc::ToUtf8(display_name, wcslen(display_name));
+      CoTaskMemFree(display_name);
     }
 
     // Get the current state and check if the state is active or not.
@@ -808,6 +835,9 @@ HRESULT SetClientProperties(IAudioClient2* client) {
   }
   RTC_DLOG(INFO) << "supports_offload: " << supports_offload;
   props.bIsOffload = false;
+#if (NTDDI_VERSION < NTDDI_WINBLUE)
+  RTC_DLOG(INFO) << "options: Not supported in this build";
+#else
   // TODO(henrika): pros and cons compared with AUDCLNT_STREAMOPTIONS_NONE?
   props.Options |= AUDCLNT_STREAMOPTIONS_NONE;
   // Requires System.Devices.AudioDevice.RawProcessingSupported.
@@ -824,6 +854,7 @@ HRESULT SetClientProperties(IAudioClient2* client) {
   // This interface is mainly meant for pro audio scenarios.
   // props.Options |= AUDCLNT_STREAMOPTIONS_MATCH_FORMAT;
   RTC_DLOG(INFO) << "options: 0x" << rtc::ToHex(props.Options);
+#endif
   error = client->SetClientProperties(&props);
   if (FAILED(error.Error())) {
     RTC_LOG(LS_ERROR) << "IAudioClient2::SetClientProperties failed: "
@@ -1386,8 +1417,7 @@ double FramesToMilliseconds(uint32_t num_frames, uint16_t sample_rate) {
 std::string ErrorToString(const _com_error& error) {
   char ss_buf[1024];
   rtc::SimpleStringBuilder ss(ss_buf);
-  ss.AppendFormat("%s (0x%08X)", rtc::ToUtf8(error.ErrorMessage()).c_str(),
-                  error.Error());
+  ss.AppendFormat("(HRESULT: 0x%08X)", error.Error());
   return ss.str();
 }
 

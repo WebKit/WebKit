@@ -11,12 +11,13 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
 
-#include <D3DCommon.h>
+#include <d3dcommon.h>
 
 #include <atomic>
 #include <string>
 #include <vector>
 
+#include "api/scoped_refptr.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "modules/desktop_capture/win/d3d_device.h"
@@ -24,8 +25,7 @@
 #include "modules/desktop_capture/win/dxgi_adapter_duplicator.h"
 #include "modules/desktop_capture/win/dxgi_context.h"
 #include "modules/desktop_capture/win/dxgi_frame.h"
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 

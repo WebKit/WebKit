@@ -28,14 +28,14 @@ class MockProcessThread : public ProcessThread {
   MOCK_METHOD0(Start, void());
   MOCK_METHOD0(Stop, void());
   MOCK_METHOD1(WakeUp, void(Module* module));
-  MOCK_METHOD1(PostTask, void(rtc::QueuedTask* task));
+  MOCK_METHOD1(PostTask, void(QueuedTask* task));
   MOCK_METHOD2(RegisterModule, void(Module* module, const rtc::Location&));
   MOCK_METHOD1(DeRegisterModule, void(Module* module));
 
   // MOCK_METHOD1 gets confused with mocking this method, so we work around it
   // by overriding the method from the interface and forwarding the call to a
   // mocked, simpler method.
-  void PostTask(std::unique_ptr<rtc::QueuedTask> task) /*override*/ {
+  void PostTask(std::unique_ptr<QueuedTask> task) /*override*/ {
     PostTask(task.get());
   }
 };

@@ -11,6 +11,7 @@
 #define TEST_TEST_MAIN_LIB_H_
 
 #include <memory>
+#include <string>
 
 namespace webrtc {
 
@@ -31,6 +32,8 @@ class TestMain {
 
  protected:
   TestMain() = default;
+
+  std::string field_trials_;
 };
 
 }  // namespace webrtc

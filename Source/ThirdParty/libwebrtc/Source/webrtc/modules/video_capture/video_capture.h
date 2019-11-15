@@ -109,7 +109,7 @@ class VideoCaptureModule : public rtc::RefCountInterface {
   virtual bool GetApplyRotation() = 0;
 
  protected:
-  ~VideoCaptureModule() override{};
+  ~VideoCaptureModule() override {}
 };
 
 }  // namespace webrtc

@@ -10,11 +10,11 @@
 
 #include "rtc_base/buffer.h"
 
-#include "api/array_view.h"
-#include "rtc_base/gunit.h"
-
-#include <type_traits>
+#include <cstdint>
 #include <utility>
+
+#include "api/array_view.h"
+#include "test/gtest.h"
 
 namespace rtc {
 

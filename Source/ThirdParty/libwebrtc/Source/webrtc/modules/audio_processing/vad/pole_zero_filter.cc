@@ -11,6 +11,7 @@
 #include "modules/audio_processing/vad/pole_zero_filter.h"
 
 #include <string.h>
+
 #include <algorithm>
 
 namespace webrtc {

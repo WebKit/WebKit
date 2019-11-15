@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
+
 #include <algorithm>
 
-#include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

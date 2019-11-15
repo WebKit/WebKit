@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/aec_dump.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
@@ -27,7 +28,7 @@ class MockGainControl : public GainControl {
   MOCK_METHOD1(Enable, int(bool enable));
   MOCK_CONST_METHOD0(is_enabled, bool());
   MOCK_METHOD1(set_stream_analog_level, int(int level));
-  MOCK_METHOD0(stream_analog_level, int());
+  MOCK_CONST_METHOD0(stream_analog_level, int());
   MOCK_METHOD1(set_mode, int(Mode mode));
   MOCK_CONST_METHOD0(mode, Mode());
   MOCK_METHOD1(set_target_level_dbfs, int(int level));
@@ -103,13 +104,13 @@ class MockVoiceDetection : public VoiceDetection {
   MOCK_CONST_METHOD0(frame_size_ms, int());
 };
 
-class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
+class MockAudioProcessing : public ::testing::NiceMock<AudioProcessing> {
  public:
   MockAudioProcessing()
-      : gain_control_(new testing::NiceMock<MockGainControl>()),
-        level_estimator_(new testing::NiceMock<MockLevelEstimator>()),
-        noise_suppression_(new testing::NiceMock<MockNoiseSuppression>()),
-        voice_detection_(new testing::NiceMock<MockVoiceDetection>()) {}
+      : gain_control_(new ::testing::NiceMock<MockGainControl>()),
+        level_estimator_(new ::testing::NiceMock<MockLevelEstimator>()),
+        noise_suppression_(new ::testing::NiceMock<MockNoiseSuppression>()),
+        voice_detection_(new ::testing::NiceMock<MockVoiceDetection>()) {}
 
   virtual ~MockAudioProcessing() {}
 
@@ -163,6 +164,8 @@ class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
   MOCK_METHOD1(set_stream_key_pressed, void(bool key_pressed));
   MOCK_METHOD1(set_delay_offset_ms, void(int offset));
   MOCK_CONST_METHOD0(delay_offset_ms, int());
+  MOCK_METHOD1(set_stream_analog_level, void(int));
+  MOCK_CONST_METHOD0(recommended_stream_analog_level, int());
 
   virtual void AttachAecDump(std::unique_ptr<AecDump> aec_dump) {}
   MOCK_METHOD0(DetachAecDump, void());

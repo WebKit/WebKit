@@ -11,8 +11,8 @@ deps = {
     Var('chromium_git') + '/chromium/src/build' + '@' + '52f7afeca991d96d68cf0507e20dbdd5b845691f',
 
   # Entry that's also a DEPS entry in the Chromium DEPS file.
-  'src/buildtools':
-    Var('chromium_git') + '/chromium/buildtools.git' + '@' + '64e38f0cebdde27aa0cfb405f330063582f9ac76',
+  'src/third_party/depot_tools':
+      Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + 'b9ae2ca9a55d9b754c313f4c9e9f0f3b804a5e44',
 
   # Entry that's also a CIPD entry in the Chromium DEPS file.
   'src/third_party/xstream': {

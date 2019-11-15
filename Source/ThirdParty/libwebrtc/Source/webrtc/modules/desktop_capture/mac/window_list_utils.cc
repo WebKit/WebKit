@@ -15,9 +15,10 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <list>
+#include <map>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/macutils.h"
 
 static_assert(static_cast<webrtc::WindowId>(kCGNullWindowID) ==
                   webrtc::kNullWindowId,
@@ -26,6 +27,19 @@ static_assert(static_cast<webrtc::WindowId>(kCGNullWindowID) ==
 namespace webrtc {
 
 namespace {
+
+bool ToUtf8(const CFStringRef str16, std::string* str8) {
+  size_t maxlen = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str16),
+                                                    kCFStringEncodingUTF8) +
+                  1;
+  std::unique_ptr<char[]> buffer(new char[maxlen]);
+  if (!buffer ||
+      !CFStringGetCString(str16, buffer.get(), maxlen, kCFStringEncodingUTF8)) {
+    return false;
+  }
+  str8->assign(buffer.get());
+  return true;
+}
 
 // Get CFDictionaryRef from |id| and call |on_window| against it. This function
 // returns false if native APIs fail, typically it indicates that the |id| does
@@ -78,11 +92,8 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
   if (!window_array)
     return false;
 
-  MacDesktopConfiguration desktop_config;
-  if (ignore_minimized) {
-    desktop_config = MacDesktopConfiguration::GetCurrent(
-        MacDesktopConfiguration::TopLeftOrigin);
-  }
+  MacDesktopConfiguration desktop_config = MacDesktopConfiguration::GetCurrent(
+      MacDesktopConfiguration::TopLeftOrigin);
 
   // Check windows to make sure they have an id, title, and use window layer
   // other than 0.
@@ -91,12 +102,6 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
     CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
         CFArrayGetValueAtIndex(window_array, i));
     if (!window) {
-      continue;
-    }
-
-    CFStringRef window_title = reinterpret_cast<CFStringRef>(
-        CFDictionaryGetValue(window, kCGWindowName));
-    if (!window_title) {
       continue;
     }
 
@@ -127,6 +132,15 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
       continue;
     }
 
+    // If window title is empty, only consider it if it is either on screen or
+    // fullscreen.
+    CFStringRef window_title = reinterpret_cast<CFStringRef>(
+        CFDictionaryGetValue(window, kCGWindowName));
+    if (!window_title && !IsWindowOnScreen(window) &&
+        !IsWindowFullScreen(desktop_config, window)) {
+      continue;
+    }
+
     if (!on_window(window)) {
       break;
     }
@@ -138,16 +152,66 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
 
 bool GetWindowList(DesktopCapturer::SourceList* windows,
                    bool ignore_minimized) {
-  return GetWindowList(
-      [windows](CFDictionaryRef window) {
-        WindowId id = GetWindowId(window);
-        std::string title = GetWindowTitle(window);
-        if (id != kNullWindowId && !title.empty()) {
-          windows->push_back(DesktopCapturer::Source{id, title});
+  // Use a std::list so that iterators are preversed upon insertion and
+  // deletion.
+  std::list<DesktopCapturer::Source> sources;
+  std::map<int, std::list<DesktopCapturer::Source>::const_iterator> pid_itr_map;
+  const bool ret = GetWindowList(
+      [&sources, &pid_itr_map](CFDictionaryRef window) {
+        WindowId window_id = GetWindowId(window);
+        if (window_id != kNullWindowId) {
+          const std::string title = GetWindowTitle(window);
+          const int pid = GetWindowOwnerPid(window);
+          // Check if window for the same pid have been already inserted.
+          std::map<int,
+                   std::list<DesktopCapturer::Source>::const_iterator>::iterator
+              itr = pid_itr_map.find(pid);
+
+          // Only consider empty titles if the app has no other window with a
+          // proper title.
+          if (title.empty()) {
+            std::string owner_name = GetWindowOwnerName(window);
+
+            // At this time we do not know if there will be other windows
+            // for the same pid unless they have been already inserted, hence
+            // the check in the map. Also skip the window if owner name is
+            // empty too.
+            if (!owner_name.empty() && (itr == pid_itr_map.end())) {
+              sources.push_back(DesktopCapturer::Source{window_id, owner_name});
+              RTC_DCHECK(!sources.empty());
+              // Get an iterator on the last valid element in the source list.
+              std::list<DesktopCapturer::Source>::const_iterator last_source =
+                  --sources.end();
+              pid_itr_map.insert(
+                  std::pair<int,
+                            std::list<DesktopCapturer::Source>::const_iterator>(
+                      pid, last_source));
+            }
+          } else {
+            sources.push_back(DesktopCapturer::Source{window_id, title});
+            // Once the window with empty title has been removed no other empty
+            // windows are allowed for the same pid.
+            if (itr != pid_itr_map.end() && (itr->second != sources.end())) {
+              sources.erase(itr->second);
+              // sdt::list::end() never changes during the lifetime of that
+              // list.
+              itr->second = sources.end();
+            }
+          }
         }
         return true;
       },
       ignore_minimized);
+
+  if (!ret)
+    return false;
+
+  RTC_DCHECK(windows);
+  windows->reserve(windows->size() + sources.size());
+  std::copy(std::begin(sources), std::end(sources),
+            std::back_inserter(*windows));
+
+  return true;
 }
 
 // Returns true if the window is occupying a full screen.
@@ -195,8 +259,39 @@ std::string GetWindowTitle(CFDictionaryRef window) {
   CFStringRef title = reinterpret_cast<CFStringRef>(
       CFDictionaryGetValue(window, kCGWindowName));
   std::string result;
-  if (title && rtc::ToUtf8(title, &result)) {
+  if (title && ToUtf8(title, &result)) {
     return result;
+  }
+
+  return std::string();
+}
+
+std::string GetWindowTitle(CGWindowID id) {
+  std::string title;
+  if (GetWindowRef(id, [&title](CFDictionaryRef window) {
+        title = GetWindowTitle(window);
+      })) {
+    return title;
+  }
+  return std::string();
+}
+
+std::string GetWindowOwnerName(CFDictionaryRef window) {
+  CFStringRef owner_name = reinterpret_cast<CFStringRef>(
+      CFDictionaryGetValue(window, kCGWindowOwnerName));
+  std::string result;
+  if (owner_name && ToUtf8(owner_name, &result)) {
+    return result;
+  }
+  return std::string();
+}
+
+std::string GetWindowOwnerName(CGWindowID id) {
+  std::string owner_name;
+  if (GetWindowRef(id, [&owner_name](CFDictionaryRef window) {
+        owner_name = GetWindowOwnerPid(window);
+      })) {
+    return owner_name;
   }
   return std::string();
 }
@@ -217,6 +312,31 @@ WindowId GetWindowId(CFDictionaryRef window) {
   }
 
   return id;
+}
+
+int GetWindowOwnerPid(CFDictionaryRef window) {
+  CFNumberRef window_pid = reinterpret_cast<CFNumberRef>(
+      CFDictionaryGetValue(window, kCGWindowOwnerPID));
+  if (!window_pid) {
+    return 0;
+  }
+
+  int pid;
+  if (!CFNumberGetValue(window_pid, kCFNumberIntType, &pid)) {
+    return 0;
+  }
+
+  return pid;
+}
+
+int GetWindowOwnerPid(CGWindowID id) {
+  int pid;
+  if (GetWindowRef(id, [&pid](CFDictionaryRef window) {
+        pid = GetWindowOwnerPid(window);
+      })) {
+    return pid;
+  }
+  return 0;
 }
 
 float GetScaleFactorAtPosition(const MacDesktopConfiguration& desktop_config,

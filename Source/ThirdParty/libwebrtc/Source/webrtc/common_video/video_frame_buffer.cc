@@ -9,16 +9,10 @@
  */
 #include "common_video/include/video_frame_buffer.h"
 
-#include <string.h>
-
-#include <algorithm>
-
 #include "api/video/i420_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/keep_ref_until_done.h"
+#include "rtc_base/ref_counted_object.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
-#include "third_party/libyuv/include/libyuv/planar_functions.h"
-#include "third_party/libyuv/include/libyuv/scale.h"
 
 namespace webrtc {
 

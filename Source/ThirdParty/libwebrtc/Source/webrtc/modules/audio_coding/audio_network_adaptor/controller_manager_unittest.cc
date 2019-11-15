@@ -8,14 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
+
+#include <string>
 #include <utility>
 
-#include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_debug_dump_writer.h"
-#include "rtc_base/fakeclock.h"
+#include "rtc_base/fake_clock.h"
 #include "rtc_base/ignore_wundef.h"
-#include "rtc_base/protobuf_utils.h"
 #include "test/gtest.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -129,8 +130,7 @@ TEST(ControllerManagerTest, ControllersInDefaultOrderOnEmptyNetworkMetrics) {
 
 TEST(ControllerManagerTest, ControllersWithoutCharPointAtEndAndInDefaultOrder) {
   auto states = CreateControllerManager();
-  CheckControllersOrder(&states, 0,
-                        0.0,
+  CheckControllersOrder(&states, 0, 0.0,
                         {kNumControllers - 2, kNumControllers - 1, -1, -1});
 }
 
@@ -249,8 +249,10 @@ void AddFrameLengthControllerConfig(
       controller_config_ext->mutable_frame_length_controller();
   controller_config->set_fl_decreasing_packet_loss_fraction(0.05f);
   controller_config->set_fl_increasing_packet_loss_fraction(0.04f);
-  controller_config->set_fl_20ms_to_60ms_bandwidth_bps(72000);
-  controller_config->set_fl_60ms_to_20ms_bandwidth_bps(88000);
+  controller_config->set_fl_20ms_to_40ms_bandwidth_bps(80000);
+  controller_config->set_fl_40ms_to_20ms_bandwidth_bps(88000);
+  controller_config->set_fl_40ms_to_60ms_bandwidth_bps(72000);
+  controller_config->set_fl_60ms_to_40ms_bandwidth_bps(80000);
 
   auto scoring_point = controller_config_ext->mutable_scoring_point();
   scoring_point->set_uplink_bandwidth_bps(kChracteristicBandwithBps[1]);
@@ -266,7 +268,7 @@ constexpr int kInitialFrameLengthMs = 60;
 constexpr int kMinBitrateBps = 6000;
 
 ControllerManagerStates CreateControllerManager(
-    const ProtoString& config_string) {
+    const std::string& config_string) {
   ControllerManagerStates states;
   constexpr size_t kNumEncoderChannels = 2;
   const std::vector<int> encoder_frame_lengths_ms = {20, 60};
@@ -319,8 +321,8 @@ void CheckControllersOrder(const std::vector<Controller*>& controllers,
 }
 
 MATCHER_P(ControllerManagerEqual, value, "") {
-  ProtoString value_string;
-  ProtoString arg_string;
+  std::string value_string;
+  std::string arg_string;
   EXPECT_TRUE(arg.SerializeToString(&arg_string));
   EXPECT_TRUE(value.SerializeToString(&value_string));
   return arg_string == value_string;
@@ -339,7 +341,7 @@ TEST(ControllerManagerTest, DebugDumpLoggedWhenCreateFromConfigString) {
   AddFrameLengthControllerConfig(&config);
   AddBitrateControllerConfig(&config);
 
-  ProtoString config_string;
+  std::string config_string;
   config.SerializeToString(&config_string);
 
   constexpr size_t kNumEncoderChannels = 2;
@@ -373,7 +375,7 @@ TEST(ControllerManagerTest, CreateFromConfigStringAndCheckDefaultOrder) {
   AddFrameLengthControllerConfig(&config);
   AddBitrateControllerConfig(&config);
 
-  ProtoString config_string;
+  std::string config_string;
   config.SerializeToString(&config_string);
 
   auto states = CreateControllerManager(config_string);
@@ -395,7 +397,7 @@ TEST(ControllerManagerTest, CreateCharPointFreeConfigAndCheckDefaultOrder) {
   AddDtxControllerConfig(&config);
   AddBitrateControllerConfig(&config);
 
-  ProtoString config_string;
+  std::string config_string;
   config.SerializeToString(&config_string);
 
   auto states = CreateControllerManager(config_string);
@@ -426,7 +428,7 @@ TEST(ControllerManagerTest, CreateFromConfigStringAndCheckReordering) {
 
   AddBitrateControllerConfig(&config);
 
-  ProtoString config_string;
+  std::string config_string;
   config.SerializeToString(&config_string);
 
   auto states = CreateControllerManager(config_string);

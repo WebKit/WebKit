@@ -16,7 +16,7 @@
 
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 class Clock;
@@ -29,7 +29,7 @@ namespace test {
 class FrameForwarder : public rtc::VideoSourceInterface<VideoFrame> {
  public:
   FrameForwarder();
-  virtual ~FrameForwarder();
+  ~FrameForwarder() override;
   // Forwards |video_frame| to the registered |sink_|.
   virtual void IncomingCapturedFrame(const VideoFrame& video_frame);
   rtc::VideoSinkWants sink_wants() const;
@@ -50,14 +50,21 @@ class FrameGenerator {
   virtual ~FrameGenerator() = default;
 
   // Returns video frame that remains valid until next call.
+  // TODO(kron): Return rtc::scoped_refptr<VideoFrameBuffer> instead of
+  // VideoFrame* and populate the VideoFrame struct in FrameGeneratorCapturer
+  // using VideoFrame::Builder.
   virtual VideoFrame* NextFrame() = 0;
 
   // Change the capture resolution.
-  virtual void ChangeResolution(size_t width, size_t height) {
-    RTC_NOTREACHED();
-  }
+  virtual void ChangeResolution(size_t width, size_t height);
 
-  enum class OutputType { I420, I420A, I010 };
+  enum class OutputType {
+    kI420,
+    // TODO(srte): Remove alias when downstream is updated.
+    I420 = kI420,
+    kI420A,
+    kI010
+  };
 
   // Creates a frame generator that produces frames with small squares that
   // move randomly towards the lower right corner.

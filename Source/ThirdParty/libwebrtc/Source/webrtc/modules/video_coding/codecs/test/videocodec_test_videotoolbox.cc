@@ -10,12 +10,13 @@
 
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "api/test/create_videocodec_test_fixture.h"
-#include "media/base/mediaconstants.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/objc_codec_factory_helper.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {
@@ -59,7 +60,7 @@ MAYBE_TEST(VideoCodecTestVideoToolbox, ForemanCif500kbpsH264CBP) {
   config.encoded_frame_checker = frame_checker.get();
   auto fixture = CreateTestFixtureWithConfig(config);
 
-  std::vector<RateProfile> rate_profiles = {{500, 30, kForemanNumFrames}};
+  std::vector<RateProfile> rate_profiles = {{500, 30, 0}};
 
   std::vector<QualityThresholds> quality_thresholds = {{33, 29, 0.9, 0.82}};
 
@@ -76,7 +77,7 @@ MAYBE_TEST(VideoCodecTestVideoToolbox, ForemanCif500kbpsH264CHP) {
   config.encoded_frame_checker = frame_checker.get();
   auto fixture = CreateTestFixtureWithConfig(config);
 
-  std::vector<RateProfile> rate_profiles = {{500, 30, kForemanNumFrames}};
+  std::vector<RateProfile> rate_profiles = {{500, 30, 0}};
 
   std::vector<QualityThresholds> quality_thresholds = {{33, 30, 0.91, 0.83}};
 

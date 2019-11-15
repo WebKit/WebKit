@@ -14,11 +14,11 @@
 #include "modules/audio_processing/aec_dump/mock_aec_dump.h"
 #include "modules/audio_processing/include/audio_processing.h"
 
-using testing::_;
-using testing::AtLeast;
-using testing::Exactly;
-using testing::Matcher;
-using testing::StrictMock;
+using ::testing::_;
+using ::testing::AtLeast;
+using ::testing::Exactly;
+using ::testing::Matcher;
+using ::testing::StrictMock;
 
 namespace {
 std::unique_ptr<webrtc::AudioProcessing> CreateAudioProcessing() {

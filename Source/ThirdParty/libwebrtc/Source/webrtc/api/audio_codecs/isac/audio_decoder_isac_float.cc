@@ -39,7 +39,9 @@ std::unique_ptr<AudioDecoder> AudioDecoderIsacFloat::MakeAudioDecoder(
     Config config,
     absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
-  return absl::make_unique<AudioDecoderIsacFloatImpl>(config.sample_rate_hz);
+  AudioDecoderIsacFloatImpl::Config c;
+  c.sample_rate_hz = config.sample_rate_hz;
+  return absl::make_unique<AudioDecoderIsacFloatImpl>(c);
 }
 
 }  // namespace webrtc

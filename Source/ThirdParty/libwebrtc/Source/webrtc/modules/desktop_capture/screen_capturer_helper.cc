@@ -11,7 +11,6 @@
 #include "modules/desktop_capture/screen_capturer_helper.h"
 
 #include <assert.h>
-#include <algorithm>
 
 namespace webrtc {
 

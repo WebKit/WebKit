@@ -19,7 +19,7 @@
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -111,31 +111,31 @@ AudioRecordJni::AudioRecordJni(AudioManager* audio_manager)
                               "<init>", "(J)V", PointerTojlong(this))));
   // Detach from this thread since we want to use the checker to verify calls
   // from the Java based audio thread.
-  thread_checker_java_.DetachFromThread();
+  thread_checker_java_.Detach();
 }
 
 AudioRecordJni::~AudioRecordJni() {
   RTC_LOG(INFO) << "dtor";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   Terminate();
 }
 
 int32_t AudioRecordJni::Init() {
   RTC_LOG(INFO) << "Init";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   return 0;
 }
 
 int32_t AudioRecordJni::Terminate() {
   RTC_LOG(INFO) << "Terminate";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   StopRecording();
   return 0;
 }
 
 int32_t AudioRecordJni::InitRecording() {
   RTC_LOG(INFO) << "InitRecording";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!initialized_);
   RTC_DCHECK(!recording_);
   ScopedHistogramTimer timer("WebRTC.Audio.InitRecordingDurationMs");
@@ -158,7 +158,7 @@ int32_t AudioRecordJni::InitRecording() {
 
 int32_t AudioRecordJni::StartRecording() {
   RTC_LOG(INFO) << "StartRecording";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!recording_);
   if (!initialized_) {
     RTC_DLOG(LS_WARNING)
@@ -176,7 +176,7 @@ int32_t AudioRecordJni::StartRecording() {
 
 int32_t AudioRecordJni::StopRecording() {
   RTC_LOG(INFO) << "StopRecording";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   if (!initialized_ || !recording_) {
     return 0;
   }
@@ -187,7 +187,7 @@ int32_t AudioRecordJni::StopRecording() {
   // If we don't detach here, we will hit a RTC_DCHECK in OnDataIsRecorded()
   // next time StartRecording() is called since it will create a new Java
   // thread.
-  thread_checker_java_.DetachFromThread();
+  thread_checker_java_.Detach();
   initialized_ = false;
   recording_ = false;
   direct_buffer_address_ = nullptr;
@@ -196,7 +196,7 @@ int32_t AudioRecordJni::StopRecording() {
 
 void AudioRecordJni::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
   RTC_LOG(INFO) << "AttachAudioBuffer";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   audio_device_buffer_ = audioBuffer;
   const int sample_rate_hz = audio_parameters_.sample_rate();
   RTC_LOG(INFO) << "SetRecordingSampleRate(" << sample_rate_hz << ")";
@@ -213,7 +213,7 @@ void AudioRecordJni::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
 
 int32_t AudioRecordJni::EnableBuiltInAEC(bool enable) {
   RTC_LOG(INFO) << "EnableBuiltInAEC(" << enable << ")";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   return j_audio_record_->EnableBuiltInAEC(enable) ? 0 : -1;
 }
 
@@ -225,7 +225,7 @@ int32_t AudioRecordJni::EnableBuiltInAGC(bool enable) {
 
 int32_t AudioRecordJni::EnableBuiltInNS(bool enable) {
   RTC_LOG(INFO) << "EnableBuiltInNS(" << enable << ")";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   return j_audio_record_->EnableBuiltInNS(enable) ? 0 : -1;
 }
 
@@ -242,7 +242,7 @@ void JNICALL AudioRecordJni::CacheDirectBufferAddress(JNIEnv* env,
 void AudioRecordJni::OnCacheDirectBufferAddress(JNIEnv* env,
                                                 jobject byte_buffer) {
   RTC_LOG(INFO) << "OnCacheDirectBufferAddress";
-  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!direct_buffer_address_);
   direct_buffer_address_ = env->GetDirectBufferAddress(byte_buffer);
   jlong capacity = env->GetDirectBufferCapacity(byte_buffer);
@@ -263,7 +263,7 @@ void JNICALL AudioRecordJni::DataIsRecorded(JNIEnv* env,
 // This method is called on a high-priority thread from Java. The name of
 // the thread is 'AudioRecordThread'.
 void AudioRecordJni::OnDataIsRecorded(int length) {
-  RTC_DCHECK(thread_checker_java_.CalledOnValidThread());
+  RTC_DCHECK(thread_checker_java_.IsCurrent());
   if (!audio_device_buffer_) {
     RTC_LOG(LS_ERROR) << "AttachAudioBuffer has not been called";
     return;

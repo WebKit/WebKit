@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include "modules/audio_device/include/audio_device_defines.h"
-#include "rtc_base/messagehandler.h"
-#include "rtc_base/messagequeue.h"
+#include "rtc_base/message_handler.h"
+#include "rtc_base/message_queue.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {

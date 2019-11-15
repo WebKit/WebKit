@@ -11,12 +11,13 @@
 #define MODULES_AUDIO_CODING_NETEQ_EXPAND_UMA_LOGGER_H_
 
 #include <stdint.h>
+
 #include <memory>
 #include <string>
 
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tick_timer.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

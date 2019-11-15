@@ -13,8 +13,6 @@
 
 #include "modules/audio_processing/agc/agc_manager_direct.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
@@ -35,15 +33,18 @@ class ApmDataDumper;
 class GainControlForExperimentalAgc : public GainControl,
                                       public VolumeCallbacks {
  public:
-  GainControlForExperimentalAgc(GainControl* gain_control,
-                                rtc::CriticalSection* crit_capture);
+  explicit GainControlForExperimentalAgc(GainControl* gain_control);
+  GainControlForExperimentalAgc(const GainControlForExperimentalAgc&) = delete;
+  GainControlForExperimentalAgc& operator=(
+      const GainControlForExperimentalAgc&) = delete;
+
   ~GainControlForExperimentalAgc() override;
 
   // GainControl implementation.
   int Enable(bool enable) override;
   bool is_enabled() const override;
   int set_stream_analog_level(int level) override;
-  int stream_analog_level() override;
+  int stream_analog_level() const override;
   int set_mode(Mode mode) override;
   Mode mode() const override;
   int set_target_level_dbfs(int level) override;
@@ -67,10 +68,8 @@ class GainControlForExperimentalAgc : public GainControl,
   std::unique_ptr<ApmDataDumper> data_dumper_;
   GainControl* real_gain_control_;
   int volume_;
-  rtc::CriticalSection* crit_capture_;
-  bool do_log_level_ = true;
+  mutable bool do_log_level_ = true;
   static int instance_counter_;
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(GainControlForExperimentalAgc);
 };
 
 }  // namespace webrtc

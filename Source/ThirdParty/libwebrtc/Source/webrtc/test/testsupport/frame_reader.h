@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 class I420Buffer;
@@ -59,13 +59,30 @@ class YuvFrameReaderImpl : public FrameReader {
   size_t FrameLength() override;
   int NumberOfFrames() override;
 
- private:
+ protected:
   const std::string input_filename_;
+  // It is not const, so subclasses will be able to add frame header size.
   size_t frame_length_in_bytes_;
   const int width_;
   const int height_;
   int number_of_frames_;
   FILE* input_file_;
+};
+
+class Y4mFrameReaderImpl : public YuvFrameReaderImpl {
+ public:
+  // Creates a file handler. The input file is assumed to exist and be readable.
+  // Parameters:
+  //   input_filename          The file to read from.
+  //   width, height           Size of each frame to read.
+  Y4mFrameReaderImpl(std::string input_filename, int width, int height);
+  ~Y4mFrameReaderImpl() override;
+  bool Init() override;
+  rtc::scoped_refptr<I420Buffer> ReadFrame() override;
+
+ private:
+  // Buffer that is used to read file and frame headers.
+  uint8_t* buffer_;
 };
 
 }  // namespace test

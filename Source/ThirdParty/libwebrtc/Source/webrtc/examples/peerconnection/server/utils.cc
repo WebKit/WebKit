@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 
-#include "rtc_base/stringencode.h"
+#include "rtc_base/string_encode.h"
 
 using rtc::ToString;
 

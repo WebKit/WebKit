@@ -58,11 +58,6 @@
   return 0;
 }
 
-- (int)setRateAllocation:(nonnull RTCVideoBitrateAllocation *)allocation framerate:(uint32_t)framerate {
-  RTC_NOTREACHED();
-  return 0;
-}
-
 - (NSString *)implementationName {
   RTC_NOTREACHED();
   return nil;

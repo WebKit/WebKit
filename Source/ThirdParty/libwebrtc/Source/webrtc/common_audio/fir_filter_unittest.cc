@@ -9,12 +9,12 @@
  */
 
 #include "common_audio/fir_filter.h"
-#include "common_audio/fir_filter_factory.h"
 
 #include <string.h>
 
 #include <memory>
 
+#include "common_audio/fir_filter_factory.h"
 #include "test/gtest.h"
 
 namespace webrtc {

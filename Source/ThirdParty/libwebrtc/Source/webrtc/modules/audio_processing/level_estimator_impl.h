@@ -14,8 +14,8 @@
 #include <memory>
 
 #include "modules/audio_processing/include/audio_processing.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 
@@ -29,7 +29,7 @@ class LevelEstimatorImpl : public LevelEstimator {
 
   // TODO(peah): Fold into ctor, once public API is removed.
   void Initialize();
-  void ProcessStream(AudioBuffer* audio);
+  void ProcessStream(const AudioBuffer& audio);
 
   // LevelEstimator implementation.
   int Enable(bool enable) override;

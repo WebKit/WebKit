@@ -17,7 +17,6 @@
 #include <intrin.h>
 #endif
 
-
 // No CPU feature is available => straight C path.
 int GetCPUInfoNoASM(CPUFeature feature) {
   (void)feature;

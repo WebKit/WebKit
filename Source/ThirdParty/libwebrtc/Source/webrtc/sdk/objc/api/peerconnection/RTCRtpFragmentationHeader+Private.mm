@@ -26,8 +26,8 @@
       for (int i = 0; i < count; ++i) {
         [offsets addObject:@(fragmentationHeader->fragmentationOffset[i])];
         [lengths addObject:@(fragmentationHeader->fragmentationLength[i])];
-        [timeDiffs addObject:@(fragmentationHeader->fragmentationTimeDiff[i])];
-        [plTypes addObject:@(fragmentationHeader->fragmentationPlType[i])];
+        [timeDiffs addObject:@(0)];
+        [plTypes addObject:@(0)];
       }
       self.fragmentationOffset = [offsets copy];
       self.fragmentationLength = [lengths copy];
@@ -46,9 +46,6 @@
   for (NSUInteger i = 0; i < self.fragmentationOffset.count; ++i) {
     fragmentationHeader->fragmentationOffset[i] = (size_t)self.fragmentationOffset[i].unsignedIntValue;
     fragmentationHeader->fragmentationLength[i] = (size_t)self.fragmentationLength[i].unsignedIntValue;
-    fragmentationHeader->fragmentationTimeDiff[i] =
-        (uint16_t)self.fragmentationOffset[i].unsignedIntValue;
-    fragmentationHeader->fragmentationPlType[i] = (uint8_t)self.fragmentationOffset[i].unsignedIntValue;
   }
 
   return fragmentationHeader;

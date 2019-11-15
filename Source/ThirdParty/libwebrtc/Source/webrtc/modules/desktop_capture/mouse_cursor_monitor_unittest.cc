@@ -8,18 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/desktop_capture/mouse_cursor_monitor.h"
+
+#include <assert.h>
+#include <stddef.h>
+
 #include <memory>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mouse_cursor.h"
-#include "modules/desktop_capture/mouse_cursor_monitor.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-class MouseCursorMonitorTest : public testing::Test,
+class MouseCursorMonitorTest : public ::testing::Test,
                                public MouseCursorMonitor::Callback {
  public:
   MouseCursorMonitorTest() : position_received_(false) {}

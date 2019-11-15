@@ -20,9 +20,10 @@
 #include "call/bitrate_allocator.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue.h"
+#include "rtc_base/thread_checker.h"
 #include "video/send_delay_stats.h"
 #include "video/send_statistics_proxy.h"
 
@@ -32,7 +33,6 @@ class VideoSendStreamPeer;
 }  // namespace test
 
 class CallStats;
-class SendSideCongestionController;
 class IvfFileWriter;
 class ProcessThread;
 class RateLimiter;
@@ -54,9 +54,10 @@ class VideoSendStream : public webrtc::VideoSendStream {
   using RtpPayloadStateMap = std::map<uint32_t, RtpPayloadState>;
 
   VideoSendStream(
+      Clock* clock,
       int num_cpu_cores,
       ProcessThread* module_process_thread,
-      rtc::TaskQueue* worker_queue,
+      TaskQueueFactory* task_queue_factory,
       CallStats* call_stats,
       RtpTransportControllerSendInterface* transport,
       BitrateAllocatorInterface* bitrate_allocator,
@@ -70,7 +71,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
 
   ~VideoSendStream() override;
 
-  bool DeliverRtcp(const uint8_t* packet, size_t length);
+  void DeliverRtcp(const uint8_t* packet, size_t length);
 
   // webrtc::VideoSendStream implementation.
   void UpdateActiveSimulcastLayers(

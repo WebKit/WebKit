@@ -52,7 +52,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/deprecation.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/inline.h"

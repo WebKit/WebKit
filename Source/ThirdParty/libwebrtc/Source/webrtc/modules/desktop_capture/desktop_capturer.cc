@@ -8,10 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <cstring>
-
 #include "modules/desktop_capture/desktop_capturer.h"
 
+#include <stdlib.h>
+#include <string.h>
+
+#include <cstring>
+#include <utility>
+
+#include "modules/desktop_capture/cropping_window_capturer.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
 
@@ -43,6 +48,12 @@ bool DesktopCapturer::IsOccluded(const DesktopVector& pos) {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateWindowCapturer(
     const DesktopCaptureOptions& options) {
+#if defined(WEBRTC_WIN)
+  if (options.allow_cropping_window_capturer()) {
+    return CroppingWindowCapturer::CreateCapturer(options);
+  }
+#endif  // defined(WEBRTC_WIN)
+
   std::unique_ptr<DesktopCapturer> capturer = CreateRawWindowCapturer(options);
   if (capturer && options.detect_updated_region()) {
     capturer.reset(new DesktopCapturerDifferWrapper(std::move(capturer)));

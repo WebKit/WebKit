@@ -11,9 +11,9 @@
 package org.webrtc;
 
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
 @SuppressWarnings("deprecation")

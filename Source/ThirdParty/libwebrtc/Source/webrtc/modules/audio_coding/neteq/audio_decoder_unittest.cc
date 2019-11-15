@@ -31,7 +31,7 @@
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -357,7 +357,10 @@ class AudioDecoderIsacFloatTest : public AudioDecoderTest {
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
     audio_encoder_.reset(new AudioEncoderIsacFloatImpl(config));
-    decoder_ = new AudioDecoderIsacFloatImpl(codec_input_rate_hz_);
+
+    AudioDecoderIsacFloatImpl::Config decoder_config;
+    decoder_config.sample_rate_hz = codec_input_rate_hz_;
+    decoder_ = new AudioDecoderIsacFloatImpl(decoder_config);
   }
 };
 
@@ -374,7 +377,10 @@ class AudioDecoderIsacSwbTest : public AudioDecoderTest {
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
     audio_encoder_.reset(new AudioEncoderIsacFloatImpl(config));
-    decoder_ = new AudioDecoderIsacFloatImpl(codec_input_rate_hz_);
+
+    AudioDecoderIsacFloatImpl::Config decoder_config;
+    decoder_config.sample_rate_hz = codec_input_rate_hz_;
+    decoder_ = new AudioDecoderIsacFloatImpl(decoder_config);
   }
 };
 
@@ -391,7 +397,10 @@ class AudioDecoderIsacFixTest : public AudioDecoderTest {
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
     audio_encoder_.reset(new AudioEncoderIsacFixImpl(config));
-    decoder_ = new AudioDecoderIsacFixImpl(codec_input_rate_hz_);
+
+    AudioDecoderIsacFixImpl::Config decoder_config;
+    decoder_config.sample_rate_hz = codec_input_rate_hz_;
+    decoder_ = new AudioDecoderIsacFixImpl(decoder_config);
   }
 };
 
@@ -426,33 +435,34 @@ class AudioDecoderG722StereoTest : public AudioDecoderTest {
   }
 };
 
-class AudioDecoderOpusTest : public AudioDecoderTest {
+class AudioDecoderOpusTest
+    : public AudioDecoderTest,
+      public testing::WithParamInterface<std::tuple<int, int>> {
  protected:
   AudioDecoderOpusTest() : AudioDecoderTest() {
-    codec_input_rate_hz_ = 48000;
-    frame_size_ = 480;
+    channels_ = opus_num_channels_;
+    codec_input_rate_hz_ = opus_sample_rate_hz_;
+    frame_size_ = rtc::CheckedDivExact(opus_sample_rate_hz_, 100);
     data_length_ = 10 * frame_size_;
-    decoder_ = new AudioDecoderOpusImpl(1);
+    decoder_ =
+        new AudioDecoderOpusImpl(opus_num_channels_, opus_sample_rate_hz_);
     AudioEncoderOpusConfig config;
-    config.frame_size_ms = static_cast<int>(frame_size_) / 48;
-    config.application = AudioEncoderOpusConfig::ApplicationMode::kVoip;
+    config.frame_size_ms = 10;
+    config.sample_rate_hz = opus_sample_rate_hz_;
+    config.num_channels = opus_num_channels_;
+    config.application = opus_num_channels_ == 1
+                             ? AudioEncoderOpusConfig::ApplicationMode::kVoip
+                             : AudioEncoderOpusConfig::ApplicationMode::kAudio;
     audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(config, payload_type_);
   }
+  const int opus_sample_rate_hz_{std::get<0>(GetParam())};
+  const int opus_num_channels_{std::get<1>(GetParam())};
 };
 
-class AudioDecoderOpusStereoTest : public AudioDecoderOpusTest {
- protected:
-  AudioDecoderOpusStereoTest() : AudioDecoderOpusTest() {
-    channels_ = 2;
-    delete decoder_;
-    decoder_ = new AudioDecoderOpusImpl(2);
-    AudioEncoderOpusConfig config;
-    config.frame_size_ms = static_cast<int>(frame_size_) / 48;
-    config.num_channels = 2;
-    config.application = AudioEncoderOpusConfig::ApplicationMode::kAudio;
-    audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(config, payload_type_);
-  }
-};
+INSTANTIATE_TEST_SUITE_P(Param,
+                         AudioDecoderOpusTest,
+                         testing::Combine(testing::Values(16000, 48000),
+                                          testing::Values(1, 2)));
 
 TEST_F(AudioDecoderPcmUTest, EncodeDecode) {
   int tolerance = 251;
@@ -592,41 +602,22 @@ TEST_F(AudioDecoderG722StereoTest, SetTargetBitrate) {
   TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 128000);
 }
 
-TEST_F(AudioDecoderOpusTest, EncodeDecode) {
-  int tolerance = 6176;
-  double mse = 238630.0;
-  int delay = 22;  // Delay from input to output.
-  EncodeDecodeTest(0, tolerance, mse, delay);
-  ReInitTest();
-  EXPECT_FALSE(decoder_->HasDecodePlc());
-}
-
-namespace {
-void TestOpusSetTargetBitrates(AudioEncoder* audio_encoder) {
-  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder, 5999));
-  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder, 6000));
-  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder, 32000));
-  EXPECT_EQ(510000, SetAndGetTargetBitrate(audio_encoder, 510000));
-  EXPECT_EQ(510000, SetAndGetTargetBitrate(audio_encoder, 511000));
-}
-}  // namespace
-
-TEST_F(AudioDecoderOpusTest, SetTargetBitrate) {
-  TestOpusSetTargetBitrates(audio_encoder_.get());
-}
-
-TEST_F(AudioDecoderOpusStereoTest, EncodeDecode) {
-  int tolerance = 6176;
-  int channel_diff_tolerance = 0;
-  double mse = 238630.0;
-  int delay = 22;  // Delay from input to output.
+TEST_P(AudioDecoderOpusTest, EncodeDecode) {
+  constexpr int tolerance = 6176;
+  const int channel_diff_tolerance = opus_sample_rate_hz_ == 16000 ? 6 : 0;
+  constexpr double mse = 238630.0;
+  constexpr int delay = 22;  // Delay from input to output.
   EncodeDecodeTest(0, tolerance, mse, delay, channel_diff_tolerance);
   ReInitTest();
   EXPECT_FALSE(decoder_->HasDecodePlc());
 }
 
-TEST_F(AudioDecoderOpusStereoTest, SetTargetBitrate) {
-  TestOpusSetTargetBitrates(audio_encoder_.get());
+TEST_P(AudioDecoderOpusTest, SetTargetBitrate) {
+  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder_.get(), 5999));
+  EXPECT_EQ(6000, SetAndGetTargetBitrate(audio_encoder_.get(), 6000));
+  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder_.get(), 32000));
+  EXPECT_EQ(510000, SetAndGetTargetBitrate(audio_encoder_.get(), 510000));
+  EXPECT_EQ(510000, SetAndGetTargetBitrate(audio_encoder_.get(), 511000));
 }
 
 }  // namespace webrtc

@@ -11,8 +11,10 @@
 #include "modules/audio_processing/aec3/decimator.h"
 
 #include <math.h>
+
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -46,8 +48,8 @@ void ProduceDecimatedSinusoidalOutputPower(int sample_rate_hz,
 
   // Produce a sinusoid of the specified frequency.
   for (size_t k = 0; k < kBlockSize * kNumBlocks; ++k) {
-    input[k] =
-        32767.f * sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
+    input[k] = 32767.f * std::sin(2.f * kPi * sinusoidal_frequency_hz * k /
+                                  sample_rate_hz);
   }
 
   Decimator decimator(down_sampling_factor);
@@ -88,7 +90,7 @@ void ProduceDecimatedSinusoidalOutputPower(int sample_rate_hz,
 TEST(Decimator, NoLeakageFromUpperFrequencies) {
   float input_power;
   float output_power;
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     for (auto down_sampling_factor : kDownSamplingFactors) {
       ProduceDebugText(rate);
       ProduceDecimatedSinusoidalOutputPower(rate, down_sampling_factor,

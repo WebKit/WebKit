@@ -8,23 +8,39 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
-#include "media/engine/internaldecoderfactory.h"
+#include "media/engine/internal_decoder_factory.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
+using ::testing::Contains;
+using ::testing::Not;
+
 namespace webrtc {
+namespace {
+enum : int {  // The first valid value is 1.
+  kTransportSequenceNumberExtensionId = 1,
+  kVideoRotationExtensionId,
+};
+}  // namespace
 
 class FecEndToEndTest : public test::CallTest {
  public:
-  FecEndToEndTest() = default;
+  FecEndToEndTest() {
+    RegisterRtpExtension(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
+                                      kTransportSequenceNumberExtensionId));
+    RegisterRtpExtension(RtpExtension(RtpExtension::kVideoRotationUri,
+                                      kVideoRotationExtensionId));
+  }
 };
 
 TEST_F(FecEndToEndTest, ReceivesUlpfec) {
@@ -230,7 +246,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
   }
 
   test::PacketTransport* CreateSendTransport(
-      test::SingleThreadedTaskQueueForTesting* task_queue,
+      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
       Call* sender_call) override {
     // At low RTT (< kLowRttNackMs) -> NACK only, no FEC.
     const int kNetworkDelayMs = 100;
@@ -404,8 +420,7 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
         test::RtcpPacketParser rtcp_parser;
         rtcp_parser.Parse(packet, length);
         const std::vector<uint16_t>& nacks = rtcp_parser.nack()->packet_ids();
-        EXPECT_TRUE(std::find(nacks.begin(), nacks.end(),
-                              ulpfec_sequence_number_) == nacks.end())
+        EXPECT_THAT(nacks, Not(Contains(ulpfec_sequence_number_)))
             << "Got nack for ULPFEC packet";
         if (!nacks.empty() &&
             IsNewerSequenceNumber(nacks.back(), ulpfec_sequence_number_)) {
@@ -416,7 +431,7 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
     }
 
     test::PacketTransport* CreateSendTransport(
-        test::SingleThreadedTaskQueueForTesting* task_queue,
+        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
         Call* sender_call) override {
       // At low RTT (< kLowRttNackMs) -> NACK only, no FEC.
       // Configure some network delay.

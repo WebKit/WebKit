@@ -9,12 +9,17 @@
  */
 
 #include "modules/video_processing/util/denoiser_filter.h"
+
 #include "modules/video_processing/util/denoiser_filter_c.h"
-#include "modules/video_processing/util/denoiser_filter_neon.h"
-#include "modules/video_processing/util/denoiser_filter_sse2.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
+
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+#include "modules/video_processing/util/denoiser_filter_sse2.h"
+#elif defined(WEBRTC_HAS_NEON)
+#include "modules/video_processing/util/denoiser_filter_neon.h"
+#endif
 
 namespace webrtc {
 

@@ -9,8 +9,10 @@
  */
 
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
+
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

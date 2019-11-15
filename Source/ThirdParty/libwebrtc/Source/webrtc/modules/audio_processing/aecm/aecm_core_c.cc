@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing/aecm/aecm_core.h"
-
 #include <stddef.h>
 #include <stdlib.h>
+
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 extern "C" {
 #include "common_audio/ring_buffer.h"
@@ -198,11 +198,11 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
     } else if (freq_signal[i].imag == 0) {
       freq_signal_abs[i] = (uint16_t)WEBRTC_SPL_ABS_W16(freq_signal[i].real);
     } else {
-// Approximation for magnitude of complex fft output
-// magn = sqrt(real^2 + imag^2)
-// magn ~= alpha * max(|imag|,|real|) + beta * min(|imag|,|real|)
-//
-// The parameters alpha and beta are stored in Q15
+      // Approximation for magnitude of complex fft output
+      // magn = sqrt(real^2 + imag^2)
+      // magn ~= alpha * max(|imag|,|real|) + beta * min(|imag|,|real|)
+      //
+      // The parameters alpha and beta are stored in Q15
 
 #ifdef AECM_WITH_ABS_APPROX
       tmp16no1 = WEBRTC_SPL_ABS_W16(freq_signal[i].real);

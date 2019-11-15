@@ -11,9 +11,11 @@
 #ifndef LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_UNITTEST_HELPER_H_
 #define LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_UNITTEST_HELPER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <memory>
 
-#include "logging/rtc_event_log/events/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
@@ -21,22 +23,36 @@
 #include "logging/rtc_event_log/events/rtc_event_audio_send_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
+#include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_route_change.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
-#include "logging/rtc_event_log/rtc_event_log_parser_new.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/pli.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/random.h"
 
 namespace webrtc {
@@ -48,28 +64,33 @@ class EventGenerator {
   explicit EventGenerator(uint64_t seed) : prng_(seed) {}
 
   std::unique_ptr<RtcEventAlrState> NewAlrState();
-
-  std::unique_ptr<RtcEventAudioPlayout> NewAudioPlayout(uint32_t ssrc);
-
   std::unique_ptr<RtcEventAudioNetworkAdaptation> NewAudioNetworkAdaptation();
-
+  std::unique_ptr<RtcEventAudioPlayout> NewAudioPlayout(uint32_t ssrc);
   std::unique_ptr<RtcEventBweUpdateDelayBased> NewBweUpdateDelayBased();
-
   std::unique_ptr<RtcEventBweUpdateLossBased> NewBweUpdateLossBased();
-
-  std::unique_ptr<RtcEventProbeClusterCreated> NewProbeClusterCreated();
-
-  std::unique_ptr<RtcEventProbeResultFailure> NewProbeResultFailure();
-
-  std::unique_ptr<RtcEventProbeResultSuccess> NewProbeResultSuccess();
-
-  std::unique_ptr<RtcEventIceCandidatePairConfig> NewIceCandidatePairConfig();
-
+  std::unique_ptr<RtcEventDtlsTransportState> NewDtlsTransportState();
+  std::unique_ptr<RtcEventDtlsWritableState> NewDtlsWritableState();
+  std::unique_ptr<RtcEventGenericAckReceived> NewGenericAckReceived();
+  std::unique_ptr<RtcEventGenericPacketReceived> NewGenericPacketReceived();
+  std::unique_ptr<RtcEventGenericPacketSent> NewGenericPacketSent();
   std::unique_ptr<RtcEventIceCandidatePair> NewIceCandidatePair();
-
+  std::unique_ptr<RtcEventIceCandidatePairConfig> NewIceCandidatePairConfig();
+  std::unique_ptr<RtcEventProbeClusterCreated> NewProbeClusterCreated();
+  std::unique_ptr<RtcEventProbeResultFailure> NewProbeResultFailure();
+  std::unique_ptr<RtcEventProbeResultSuccess> NewProbeResultSuccess();
+  std::unique_ptr<RtcEventRouteChange> NewRouteChange();
   std::unique_ptr<RtcEventRtcpPacketIncoming> NewRtcpPacketIncoming();
-
   std::unique_ptr<RtcEventRtcpPacketOutgoing> NewRtcpPacketOutgoing();
+
+  rtcp::SenderReport NewSenderReport();
+  rtcp::ReceiverReport NewReceiverReport();
+  rtcp::ExtendedReports NewExtendedReports();
+  rtcp::Nack NewNack();
+  rtcp::Remb NewRemb();
+  rtcp::Fir NewFir();
+  rtcp::Pli NewPli();
+  rtcp::TransportFeedback NewTransportFeedback();
+  rtcp::LossNotification NewLossNotification();
 
   // |all_configured_exts| determines whether the RTP packet exhibits all
   // configured extensions, or a random subset thereof.
@@ -116,8 +137,8 @@ class EventGenerator {
 
  private:
   rtcp::ReportBlock NewReportBlock();
-  rtcp::SenderReport NewSenderReport();
-  rtcp::ReceiverReport NewReceiverReport();
+  int sent_packet_number_ = 0;
+  int received_packet_number_ = 0;
 
   Random prng_;
 };
@@ -158,6 +179,14 @@ class EventVerifier {
       const RtcEventProbeResultSuccess& original_event,
       const LoggedBweProbeSuccessEvent& logged_event) const;
 
+  void VerifyLoggedDtlsTransportState(
+      const RtcEventDtlsTransportState& original_event,
+      const LoggedDtlsTransportState& logged_event) const;
+
+  void VerifyLoggedDtlsWritableState(
+      const RtcEventDtlsWritableState& original_event,
+      const LoggedDtlsWritableState& logged_event) const;
+
   void VerifyLoggedIceCandidatePairConfig(
       const RtcEventIceCandidatePairConfig& original_event,
       const LoggedIceCandidatePairConfig& logged_event) const;
@@ -166,6 +195,10 @@ class EventVerifier {
       const RtcEventIceCandidatePair& original_event,
       const LoggedIceCandidatePairEvent& logged_event) const;
 
+  void VerifyLoggedRouteChangeEvent(
+      const RtcEventRouteChange& original_event,
+      const LoggedRouteChangeEvent& logged_event) const;
+
   void VerifyLoggedRtpPacketIncoming(
       const RtcEventRtpPacketIncoming& original_event,
       const LoggedRtpPacketIncoming& logged_event) const;
@@ -173,6 +206,18 @@ class EventVerifier {
   void VerifyLoggedRtpPacketOutgoing(
       const RtcEventRtpPacketOutgoing& original_event,
       const LoggedRtpPacketOutgoing& logged_event) const;
+
+  void VerifyLoggedGenericPacketSent(
+      const RtcEventGenericPacketSent& original_event,
+      const LoggedGenericPacketSent& logged_event) const;
+
+  void VerifyLoggedGenericPacketReceived(
+      const RtcEventGenericPacketReceived& original_event,
+      const LoggedGenericPacketReceived& logged_event) const;
+
+  void VerifyLoggedGenericAckReceived(
+      const RtcEventGenericAckReceived& original_event,
+      const LoggedGenericAckReceived& logged_event) const;
 
   template <typename EventType, typename ParsedType>
   void VerifyLoggedRtpPacket(const EventType& original_event,
@@ -202,6 +247,38 @@ class EventVerifier {
       const RtcEventRtcpPacketOutgoing& original_event,
       const LoggedRtcpPacketOutgoing& logged_event) const;
 
+  void VerifyLoggedSenderReport(int64_t log_time_us,
+                                const rtcp::SenderReport& original_sr,
+                                const LoggedRtcpPacketSenderReport& logged_sr);
+  void VerifyLoggedReceiverReport(
+      int64_t log_time_us,
+      const rtcp::ReceiverReport& original_rr,
+      const LoggedRtcpPacketReceiverReport& logged_rr);
+  void VerifyLoggedExtendedReports(
+      int64_t log_time_us,
+      const rtcp::ExtendedReports& original_xr,
+      const LoggedRtcpPacketExtendedReports& logged_xr);
+  void VerifyLoggedFir(int64_t log_time_us,
+                       const rtcp::Fir& original_fir,
+                       const LoggedRtcpPacketFir& logged_fir);
+  void VerifyLoggedPli(int64_t log_time_us,
+                       const rtcp::Pli& original_pli,
+                       const LoggedRtcpPacketPli& logged_pli);
+  void VerifyLoggedNack(int64_t log_time_us,
+                        const rtcp::Nack& original_nack,
+                        const LoggedRtcpPacketNack& logged_nack);
+  void VerifyLoggedTransportFeedback(
+      int64_t log_time_us,
+      const rtcp::TransportFeedback& original_transport_feedback,
+      const LoggedRtcpPacketTransportFeedback& logged_transport_feedback);
+  void VerifyLoggedRemb(int64_t log_time_us,
+                        const rtcp::Remb& original_remb,
+                        const LoggedRtcpPacketRemb& logged_remb);
+  void VerifyLoggedLossNotification(
+      int64_t log_time_us,
+      const rtcp::LossNotification& original_loss_notification,
+      const LoggedRtcpPacketLossNotification& logged_loss_notification);
+
   void VerifyLoggedStartEvent(int64_t start_time_us,
                               int64_t utc_start_time_us,
                               const LoggedStartEvent& logged_event) const;
@@ -225,6 +302,9 @@ class EventVerifier {
       const LoggedVideoSendConfig& logged_event) const;
 
  private:
+  void VerifyReportBlock(const rtcp::ReportBlock& original_report_block,
+                         const rtcp::ReportBlock& logged_report_block);
+
   RtcEventLog::EncodingType encoding_type_;
 };
 

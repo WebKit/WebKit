@@ -27,6 +27,7 @@ void RemixAndResample(const AudioFrame& src_frame,
   dst_frame->timestamp_ = src_frame.timestamp_;
   dst_frame->elapsed_time_ms_ = src_frame.elapsed_time_ms_;
   dst_frame->ntp_time_ms_ = src_frame.ntp_time_ms_;
+  dst_frame->packet_infos_ = src_frame.packet_infos_;
 }
 
 void RemixAndResample(const int16_t* src_data,
@@ -80,7 +81,7 @@ void RemixAndResample(const int16_t* src_data,
     // The audio in dst_frame really is mono at this point; MonoToStereo will
     // set this back to stereo.
     dst_frame->num_channels_ = 1;
-    AudioFrameOperations::MonoToStereo(dst_frame);
+    AudioFrameOperations::UpmixChannels(2, dst_frame);
   }
 }
 

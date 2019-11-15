@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/reverb_frequency_response.h"
 
 #include <stddef.h>
+
 #include <algorithm>
 #include <array>
 #include <numeric>
@@ -18,16 +19,10 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
 namespace {
-
-bool EnableSmoothUpdatesTailFreqResp() {
-  return !field_trial::IsEnabled(
-      "WebRTC-Aec3SmoothUpdatesTailFreqRespKillSwitch");
-}
 
 // Computes the ratio of the energies between the direct path and the tail. The
 // energy is computed in the power spectrum domain discarding the DC
@@ -54,8 +49,7 @@ float AverageDecayWithinFilter(
 
 }  // namespace
 
-ReverbFrequencyResponse::ReverbFrequencyResponse()
-    : enable_smooth_tail_response_updates_(EnableSmoothUpdatesTailFreqResp()) {
+ReverbFrequencyResponse::ReverbFrequencyResponse() {
   tail_response_.fill(0.f);
 }
 ReverbFrequencyResponse::~ReverbFrequencyResponse() = default;
@@ -66,11 +60,6 @@ void ReverbFrequencyResponse::Update(
     int filter_delay_blocks,
     const absl::optional<float>& linear_filter_quality,
     bool stationary_block) {
-  if (!enable_smooth_tail_response_updates_) {
-    Update(frequency_response, filter_delay_blocks, 0.5f);
-    return;
-  }
-
   if (stationary_block || !linear_filter_quality) {
     return;
   }

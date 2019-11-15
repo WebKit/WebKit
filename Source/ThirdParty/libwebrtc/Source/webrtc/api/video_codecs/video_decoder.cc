@@ -24,15 +24,6 @@ void DecodedImageCallback::Decoded(VideoFrame& decodedImage,
   Decoded(decodedImage, decode_time_ms.value_or(-1));
 }
 
-int32_t DecodedImageCallback::ReceivedDecodedReferenceFrame(
-    const uint64_t pictureId) {
-  return -1;
-}
-
-int32_t DecodedImageCallback::ReceivedDecodedFrame(const uint64_t pictureId) {
-  return -1;
-}
-
 bool VideoDecoder::PrefersLateDecoding() const {
   return true;
 }

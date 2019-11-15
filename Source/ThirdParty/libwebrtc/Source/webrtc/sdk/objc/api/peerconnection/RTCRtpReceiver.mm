@@ -16,7 +16,7 @@
 #import "base/RTCLogging.h"
 #import "helpers/NSString+StdString.h"
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 
 namespace webrtc {
 

@@ -8,36 +8,46 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "common_types.h"  // NOLINT(build/include)
-#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include <stddef.h>
+
+#include <cstdint>
+#include <vector>
+
+#include "api/rtp_headers.h"
+#include "api/video_codecs/video_codec.h"
+#include "api/video_codecs/video_decoder.h"
+#include "modules/include/module_common_types.h"
 #include "modules/utility/include/process_thread.h"
+#include "modules/video_coding/decoder_database.h"
 #include "modules/video_coding/encoded_frame.h"
-#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/generic_decoder.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "modules/video_coding/internal_defines.h"
 #include "modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/media_opt_util.h"
 #include "modules/video_coding/packet.h"
+#include "modules/video_coding/receiver.h"
+#include "modules/video_coding/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/one_time_event.h"
+#include "rtc_base/thread_checker.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace vcm {
 
-VideoReceiver::VideoReceiver(Clock* clock,
-                             VCMTiming* timing,
-                             NackSender* nack_sender,
-                             KeyFrameRequestSender* keyframe_request_sender)
+VideoReceiver::VideoReceiver(Clock* clock, VCMTiming* timing)
     : clock_(clock),
       _timing(timing),
-      _receiver(_timing,
-                clock_,
-                nack_sender,
-                keyframe_request_sender),
+      _receiver(_timing, clock_),
       _decodedFrameCallback(_timing, clock_),
       _frameTypeCallback(nullptr),
-      _receiveStatsCallback(nullptr),
       _packetRequestCallback(nullptr),
       _scheduleKeyRequest(false),
       drop_frames_until_keyframe_(false),
@@ -46,8 +56,8 @@ VideoReceiver::VideoReceiver(Clock* clock,
       _receiveStatsTimer(1000, clock_),
       _retransmissionTimer(10, clock_),
       _keyRequestTimer(500, clock_) {
-  decoder_thread_checker_.DetachFromThread();
-  module_thread_checker_.DetachFromThread();
+  decoder_thread_checker_.Detach();
+  module_thread_checker_.Detach();
 }
 
 VideoReceiver::~VideoReceiver() {
@@ -62,9 +72,6 @@ void VideoReceiver::Process() {
   //                 ReceiveStatisticsProxy::QualitySample.
   if (_receiveStatsTimer.TimeUntilProcess() == 0) {
     _receiveStatsTimer.Processed();
-    if (_receiveStatsCallback != nullptr) {
-      _receiveStatsCallback->OnReceiveRatesUpdated(0, 0);
-    }
   }
 
   // Key frame requests
@@ -118,54 +125,15 @@ void VideoReceiver::ProcessThreadAttached(ProcessThread* process_thread) {
 int64_t VideoReceiver::TimeUntilNextProcess() {
   RTC_DCHECK_RUN_ON(&module_thread_checker_);
   int64_t timeUntilNextProcess = _receiveStatsTimer.TimeUntilProcess();
-  if (_receiver.NackMode() != kNoNack) {
-    // We need a Process call more often if we are relying on
-    // retransmissions
-    timeUntilNextProcess =
-        VCM_MIN(timeUntilNextProcess, _retransmissionTimer.TimeUntilProcess());
-  }
+  // We need a Process call more often if we are relying on
+  // retransmissions
+  timeUntilNextProcess =
+      VCM_MIN(timeUntilNextProcess, _retransmissionTimer.TimeUntilProcess());
+
   timeUntilNextProcess =
       VCM_MIN(timeUntilNextProcess, _keyRequestTimer.TimeUntilProcess());
 
   return timeUntilNextProcess;
-}
-
-int32_t VideoReceiver::SetReceiveChannelParameters(int64_t rtt) {
-  RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  _receiver.UpdateRtt(rtt);
-  return 0;
-}
-
-// Enable or disable a video protection method.
-// Note: This API should be deprecated, as it does not offer a distinction
-// between the protection method and decoding with or without errors.
-int32_t VideoReceiver::SetVideoProtection(VCMVideoProtection videoProtection,
-                                          bool enable) {
-  // By default, do not decode with errors.
-  _receiver.SetDecodeErrorMode(kNoErrors);
-  switch (videoProtection) {
-    case kProtectionNack: {
-      RTC_DCHECK(enable);
-      _receiver.SetNackMode(kNack, -1, -1);
-      break;
-    }
-
-    case kProtectionNackFEC: {
-      RTC_DCHECK(enable);
-      _receiver.SetNackMode(kNack, media_optimization::kLowRttNackMs,
-                            media_optimization::kMaxRttDelayThreshold);
-      _receiver.SetDecodeErrorMode(kNoErrors);
-      break;
-    }
-    case kProtectionFEC:
-    case kProtectionNone:
-      // No receiver-side protection.
-      RTC_DCHECK(enable);
-      _receiver.SetNackMode(kNoNack, -1, -1);
-      _receiver.SetDecodeErrorMode(kWithErrors);
-      break;
-  }
-  return VCM_OK;
 }
 
 // Register a receive callback. Will be called whenever there is a new frame
@@ -177,19 +145,6 @@ int32_t VideoReceiver::RegisterReceiveCallback(
   // This value is set before the decoder thread starts and unset after
   // the decoder thread has been stopped.
   _decodedFrameCallback.SetUserReceiveCallback(receiveCallback);
-  return VCM_OK;
-}
-
-int32_t VideoReceiver::RegisterReceiveStatisticsCallback(
-    VCMReceiveStatisticsCallback* receiveStats) {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning() && !is_attached_to_process_thread_);
-  // |_receiver| is used on both the decoder and module threads.
-  // However, since we make sure that we never do anything on the module thread
-  // when the decoder thread is not running, we don't need a lock for the
-  // |_receiver| or |_receiveStatsCallback| here.
-  _receiver.RegisterStatsCallback(receiveStats);
-  _receiveStatsCallback = receiveStats;
   return VCM_OK;
 }
 
@@ -255,7 +210,7 @@ void VideoReceiver::DecoderThreadStopped() {
   }
 #if RTC_DCHECK_IS_ON
   decoder_thread_is_running_ = false;
-  decoder_thread_checker_.DetachFromThread();
+  decoder_thread_checker_.Detach();
 #endif
 }
 
@@ -275,7 +230,7 @@ int32_t VideoReceiver::Decode(uint16_t maxWaitTimeMs) {
     if (drop_frames_until_keyframe_) {
       // Still getting delta frames, schedule another keyframe request as if
       // decode failed.
-      if (frame->FrameType() != kVideoFrameKey) {
+      if (frame->FrameType() != VideoFrameType::kVideoFrameKey) {
         drop_frame = true;
         _scheduleKeyRequest = true;
         // TODO(tommi): Consider if we could instead post a task to the module
@@ -369,11 +324,12 @@ int32_t VideoReceiver::RegisterReceiveCodec(const VideoCodec* receiveCodec,
 // Incoming packet from network parsed and ready for decode, non blocking.
 int32_t VideoReceiver::IncomingPacket(const uint8_t* incomingPayload,
                                       size_t payloadLength,
-                                      const WebRtcRTPHeader& rtpInfo) {
+                                      const RTPHeader& rtp_header,
+                                      const RTPVideoHeader& video_header) {
   RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  if (rtpInfo.frameType == kVideoFrameKey) {
+  if (video_header.frame_type == VideoFrameType::kVideoFrameKey) {
     TRACE_EVENT1("webrtc", "VCM::PacketKeyFrame", "seqnum",
-                 rtpInfo.header.sequenceNumber);
+                 rtp_header.sequenceNumber);
   }
   if (incomingPayload == nullptr) {
     // The jitter buffer doesn't handle non-zero payload lengths for packets
@@ -381,7 +337,10 @@ int32_t VideoReceiver::IncomingPacket(const uint8_t* incomingPayload,
     // TODO(holmer): We should fix this in the jitter buffer.
     payloadLength = 0;
   }
-  const VCMPacket packet(incomingPayload, payloadLength, rtpInfo);
+  // Callers don't provide any ntp time.
+  const VCMPacket packet(incomingPayload, payloadLength, rtp_header,
+                         video_header, /*ntp_time_ms=*/0,
+                         clock_->TimeInMilliseconds());
   int32_t ret = _receiver.InsertPacket(packet);
 
   // TODO(holmer): Investigate if this somehow should use the key frame
@@ -396,58 +355,6 @@ int32_t VideoReceiver::IncomingPacket(const uint8_t* incomingPayload,
     return ret;
   }
   return VCM_OK;
-}
-
-// Minimum playout delay (used for lip-sync). This is the minimum delay required
-// to sync with audio. Not included in  VideoCodingModule::Delay()
-// Defaults to 0 ms.
-int32_t VideoReceiver::SetMinimumPlayoutDelay(uint32_t minPlayoutDelayMs) {
-  RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  _timing->set_min_playout_delay(minPlayoutDelayMs);
-  return VCM_OK;
-}
-
-// The estimated delay caused by rendering, defaults to
-// kDefaultRenderDelayMs = 10 ms
-int32_t VideoReceiver::SetRenderDelay(uint32_t timeMS) {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
-  _timing->set_render_delay(timeMS);
-  return VCM_OK;
-}
-
-// Current video delay
-int32_t VideoReceiver::Delay() const {
-  RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  return _timing->TargetVideoDelay();
-}
-
-// Only used by VCMRobustnessTest.
-int VideoReceiver::SetReceiverRobustnessMode(
-    VideoCodingModule::ReceiverRobustness robustnessMode,
-    VCMDecodeErrorMode decode_error_mode) {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
-  switch (robustnessMode) {
-    case VideoCodingModule::kNone:
-      _receiver.SetNackMode(kNoNack, -1, -1);
-      break;
-    case VideoCodingModule::kHardNack:
-      // Always wait for retransmissions (except when decoding with errors).
-      _receiver.SetNackMode(kNack, -1, -1);
-      break;
-    default:
-      RTC_NOTREACHED();
-      return VCM_PARAMETER_ERROR;
-  }
-  _receiver.SetDecodeErrorMode(decode_error_mode);
-  return VCM_OK;
-}
-
-void VideoReceiver::SetDecodeErrorMode(VCMDecodeErrorMode decode_error_mode) {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
-  _receiver.SetDecodeErrorMode(decode_error_mode);
 }
 
 void VideoReceiver::SetNackSettings(size_t max_nack_list_size,

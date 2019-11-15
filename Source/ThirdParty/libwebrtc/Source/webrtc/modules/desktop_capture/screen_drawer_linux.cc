@@ -8,13 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <string.h>
 
 #include <memory>
 
 #include "absl/memory/memory.h"
+#include "api/scoped_refptr.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/linux/shared_x_display.h"
+#include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/screen_drawer.h"
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
 #include "rtc_base/checks.h"

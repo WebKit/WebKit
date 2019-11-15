@@ -19,7 +19,7 @@ PASS createDataChannel with protocol lone surrogate should succeed
 PASS createDataChannel with negotiated true should succeed 
 PASS createDataChannel with id 0 should succeed 
 PASS createDataChannel with id 1 should succeed 
-FAIL createDataChannel with id 65534 should succeed The operation is not supported.
+PASS createDataChannel with id 65534 should succeed 
 PASS createDataChannel with id -1 should throw TypeError 
 PASS createDataChannel with id 65535 should throw TypeError 
 PASS createDataChannel with id 65536 should throw TypeError 

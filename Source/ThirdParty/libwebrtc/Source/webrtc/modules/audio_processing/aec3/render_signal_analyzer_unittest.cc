@@ -11,7 +11,9 @@
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 
 #include <math.h>
+
 #include <array>
+#include <cmath>
 #include <vector>
 
 #include "api/array_view.h"
@@ -31,14 +33,23 @@ constexpr float kPi = 3.141592f;
 void ProduceSinusoid(int sample_rate_hz,
                      float sinusoidal_frequency_hz,
                      size_t* sample_counter,
-                     rtc::ArrayView<float> x) {
+                     std::vector<std::vector<std::vector<float>>>* x) {
   // Produce a sinusoid of the specified frequency.
   for (size_t k = *sample_counter, j = 0; k < (*sample_counter + kBlockSize);
        ++k, ++j) {
-    x[j] =
-        32767.f * sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
+    for (size_t channel = 0; channel < (*x)[0].size(); ++channel) {
+      (*x)[0][channel][j] =
+          32767.f *
+          std::sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
+    }
   }
   *sample_counter = *sample_counter + kBlockSize;
+
+  for (size_t band = 1; band < x->size(); ++band) {
+    for (size_t channel = 0; channel < (*x)[band].size(); ++channel) {
+      std::fill((*x)[band][channel].begin(), (*x)[band][channel].end(), 0.f);
+    }
+  }
 }
 
 }  // namespace
@@ -56,15 +67,17 @@ TEST(RenderSignalAnalyzer, NullMaskOutput) {
 TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
   RenderSignalAnalyzer analyzer(EchoCanceller3Config{});
   Random random_generator(42U);
-  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> x(
+      3,
+      std::vector<std::vector<float>>(1, std::vector<float>(kBlockSize, 0.f)));
   std::array<float, kBlockSize> x_old;
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(EchoCanceller3Config(), 3));
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 48000, 1));
   std::array<float, kFftLengthBy2Plus1> mask;
   x_old.fill(0.f);
 
   for (size_t k = 0; k < 100; ++k) {
-    RandomizeSampleVector(&random_generator, x[0]);
+    RandomizeSampleVector(&random_generator, x[0][0]);
 
     render_delay_buffer->Insert(x);
     if (k == 0) {
@@ -87,13 +100,17 @@ TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
 TEST(RenderSignalAnalyzer, NarrowBandDetection) {
   RenderSignalAnalyzer analyzer(EchoCanceller3Config{});
   Random random_generator(42U);
-  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+  std::vector<std::vector<std::vector<float>>> x(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
   std::array<float, kBlockSize> x_old;
   Aec3Fft fft;
   EchoCanceller3Config config;
-  config.delay.min_echo_path_delay_blocks = 0;
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
 
   std::array<float, kFftLengthBy2Plus1> mask;
   x_old.fill(0.f);
@@ -103,7 +120,7 @@ TEST(RenderSignalAnalyzer, NarrowBandDetection) {
     size_t sample_counter = 0;
     for (size_t k = 0; k < 100; ++k) {
       ProduceSinusoid(16000, 16000 / 2 * kSinusFrequencyBin / kFftLengthBy2,
-                      &sample_counter, x[0]);
+                      &sample_counter, &x);
 
       render_delay_buffer->Insert(x);
       if (k == 0) {

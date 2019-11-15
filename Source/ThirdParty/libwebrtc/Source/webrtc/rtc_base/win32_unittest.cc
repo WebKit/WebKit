@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/win32.h"
+
 #include <string>
 
 #include "rtc_base/gunit.h"
-#include "rtc_base/nethelpers.h"
-#include "rtc_base/win32.h"
+#include "rtc_base/net_helpers.h"
 
 #if !defined(WEBRTC_WIN)
 #error Only for Windows
@@ -20,7 +21,7 @@
 
 namespace rtc {
 
-class Win32Test : public testing::Test {
+class Win32Test : public ::testing::Test {
  public:
   Win32Test() {}
 };

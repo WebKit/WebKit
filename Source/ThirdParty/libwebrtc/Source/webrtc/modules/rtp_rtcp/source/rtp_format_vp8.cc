@@ -12,9 +12,9 @@
 
 #include <stdint.h>
 #include <string.h>  // memcpy
+
 #include <vector>
 
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/checks.h"
@@ -131,7 +131,8 @@ int ParseVP8Extension(RTPVideoHeaderVP8* vp8,
 int ParseVP8FrameSize(RtpDepacketizer::ParsedPayload* parsed_payload,
                       const uint8_t* data,
                       size_t data_length) {
-  if (parsed_payload->frame_type != kVideoFrameKey) {
+  if (parsed_payload->video_header().frame_type !=
+      VideoFrameType::kVideoFrameKey) {
     // Included in payload header for I-frames.
     return 0;
   }
@@ -357,10 +358,12 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
 
   // Read P bit from payload header (only at beginning of first partition).
   if (beginning_of_partition && partition_id == 0) {
-    parsed_payload->frame_type =
-        (*payload_data & 0x01) ? kVideoFrameDelta : kVideoFrameKey;
+    parsed_payload->video_header().frame_type =
+        (*payload_data & 0x01) ? VideoFrameType::kVideoFrameDelta
+                               : VideoFrameType::kVideoFrameKey;
   } else {
-    parsed_payload->frame_type = kVideoFrameDelta;
+    parsed_payload->video_header().frame_type =
+        VideoFrameType::kVideoFrameDelta;
   }
 
   if (ParseVP8FrameSize(parsed_payload, payload_data, payload_data_length) !=

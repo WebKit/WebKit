@@ -11,7 +11,7 @@
 #include "audio_device_module.h"
 
 #include "rtc_base/logging.h"
-#include "rtc_base/refcountedobject.h"
+#include "rtc_base/ref_counted_object.h"
 
 #include "sdk/objc/native/src/audio/audio_device_module_ios.h"
 

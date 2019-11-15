@@ -17,10 +17,10 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaCodecList;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /** Factory for decoders backed by Android MediaCodec API. */
 @SuppressWarnings("deprecation") // API level 16 requires use of deprecated methods.
@@ -28,22 +28,20 @@ class MediaCodecVideoDecoderFactory implements VideoDecoderFactory {
   private static final String TAG = "MediaCodecVideoDecoderFactory";
 
   private final @Nullable EglBase.Context sharedContext;
-  private final String[] prefixWhitelist;
-  private final String[] prefixBlacklist;
+  private final @Nullable Predicate<MediaCodecInfo> codecAllowedPredicate;
 
   /**
-   * MediaCodecVideoDecoderFactory will support codecs whitelisted excluding those blacklisted.
+   * MediaCodecVideoDecoderFactory with support of codecs filtering.
    *
    * @param sharedContext The textures generated will be accessible from this context. May be null,
    *                      this disables texture support.
-   * @param prefixWhitelist List of codec prefixes to be whitelisted.
-   * @param prefixBlacklist List of codec prefixes to be blacklisted.
+   * @param codecAllowedPredicate optional predicate to test if codec allowed. All codecs are
+   *                              allowed when predicate is not provided.
    */
-  public MediaCodecVideoDecoderFactory(
-      @Nullable EglBase.Context sharedContext, String[] prefixWhitelist, String[] prefixBlacklist) {
+  public MediaCodecVideoDecoderFactory(@Nullable EglBase.Context sharedContext,
+      @Nullable Predicate<MediaCodecInfo> codecAllowedPredicate) {
     this.sharedContext = sharedContext;
-    this.prefixWhitelist = Arrays.copyOf(prefixWhitelist, prefixWhitelist.length);
-    this.prefixBlacklist = Arrays.copyOf(prefixBlacklist, prefixBlacklist.length);
+    this.codecAllowedPredicate = codecAllowedPredicate;
   }
 
   @Nullable
@@ -123,25 +121,14 @@ class MediaCodecVideoDecoderFactory implements VideoDecoderFactory {
         == null) {
       return false;
     }
-    return isWhitelisted(name) && !isBlacklisted(name);
+    return isCodecAllowed(info);
   }
 
-  private boolean isWhitelisted(String name) {
-    for (String prefix : prefixWhitelist) {
-      if (name.startsWith(prefix)) {
-        return true;
-      }
+  private boolean isCodecAllowed(MediaCodecInfo info) {
+    if (codecAllowedPredicate == null) {
+      return true;
     }
-    return false;
-  }
-
-  private boolean isBlacklisted(String name) {
-    for (String prefix : prefixBlacklist) {
-      if (name.startsWith(prefix)) {
-        return true;
-      }
-    }
-    return false;
+    return codecAllowedPredicate.test(info);
   }
 
   private boolean isH264HighProfileSupported(MediaCodecInfo info) {

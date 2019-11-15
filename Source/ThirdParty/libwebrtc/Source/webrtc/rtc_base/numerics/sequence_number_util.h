@@ -11,12 +11,14 @@
 #ifndef RTC_BASE_NUMERICS_SEQUENCE_NUMBER_UTIL_H_
 #define RTC_BASE_NUMERICS_SEQUENCE_NUMBER_UTIL_H_
 
+#include <stdint.h>
+
 #include <limits>
 #include <type_traits>
 
 #include "absl/types/optional.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/mod_ops.h"
-#include "rtc_base/numerics/safe_compare.h"
 
 namespace webrtc {
 
@@ -80,46 +82,35 @@ struct DescendingSeqNumComp {
   bool operator()(T a, T b) const { return AheadOf<T, M>(b, a); }
 };
 
-// A sequencer number unwrapper where the start value of the unwrapped sequence
-// can be set. The unwrapped value is not allowed to wrap.
+// A sequence number unwrapper where the first unwrapped value equals the
+// first value being unwrapped.
 template <typename T, T M = 0>
 class SeqNumUnwrapper {
-  // Use '<' instead of rtc::SafeLt to avoid crbug.com/753488
   static_assert(
       std::is_unsigned<T>::value &&
-          std::numeric_limits<T>::max() < std::numeric_limits<uint64_t>::max(),
-      "Type unwrapped must be an unsigned integer smaller than uint64_t.");
+          std::numeric_limits<T>::max() < std::numeric_limits<int64_t>::max(),
+      "Type unwrapped must be an unsigned integer smaller than int64_t.");
 
  public:
-  // We want a default value that is close to 2^62 for a two reasons. Firstly,
-  // we can unwrap wrapping numbers in either direction, and secondly, the
-  // unwrapped numbers can be stored in either int64_t or uint64_t. We also want
-  // the default value to be human readable, which makes a power of 10 suitable.
-  static constexpr uint64_t kDefaultStartValue = 1000000000000000000UL;
-
-  SeqNumUnwrapper() : last_unwrapped_(kDefaultStartValue) {}
-  explicit SeqNumUnwrapper(uint64_t start_at) : last_unwrapped_(start_at) {}
-
-  uint64_t Unwrap(T value) {
-    if (!last_value_)
-      last_value_.emplace(value);
-
-    uint64_t unwrapped = 0;
-    if (AheadOrAt<T, M>(value, *last_value_)) {
-      unwrapped = last_unwrapped_ + ForwardDiff<T, M>(*last_value_, value);
-      RTC_CHECK_GE(unwrapped, last_unwrapped_);
+  int64_t Unwrap(T value) {
+    if (!last_value_) {
+      last_unwrapped_ = {value};
     } else {
-      unwrapped = last_unwrapped_ - ReverseDiff<T, M>(*last_value_, value);
-      RTC_CHECK_LT(unwrapped, last_unwrapped_);
+      last_unwrapped_ += ForwardDiff<T, M>(*last_value_, value);
+
+      if (!AheadOrAt<T, M>(value, *last_value_)) {
+        constexpr int64_t kBackwardAdjustment =
+            M == 0 ? int64_t{std::numeric_limits<T>::max()} + 1 : M;
+        last_unwrapped_ -= kBackwardAdjustment;
+      }
     }
 
-    *last_value_ = value;
-    last_unwrapped_ = unwrapped;
+    last_value_ = value;
     return last_unwrapped_;
   }
 
  private:
-  uint64_t last_unwrapped_;
+  int64_t last_unwrapped_ = 0;
   absl::optional<T> last_value_;
 };
 

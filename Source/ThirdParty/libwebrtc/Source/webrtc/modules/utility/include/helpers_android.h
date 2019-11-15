@@ -12,6 +12,7 @@
 #define MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
 
 #include <jni.h>
+
 #include <string>
 
 #include "rtc_base/system/arch.h"

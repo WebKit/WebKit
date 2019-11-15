@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
@@ -76,38 +77,38 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketGivesUnknownSsrcReturnCode) {
   std::unique_ptr<test::DirectTransport> receive_transport;
   std::unique_ptr<PacketInputObserver> input_observer;
 
-  task_queue_.SendTask([this, &send_transport, &receive_transport,
-                        &input_observer]() {
-    CreateCalls();
+  task_queue_.SendTask(
+      [this, &send_transport, &receive_transport, &input_observer]() {
+        CreateCalls();
 
-    send_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_,
-        absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                           absl::make_unique<SimulatedNetwork>(
+        send_transport = absl::make_unique<test::DirectTransport>(
+            &task_queue_,
+            absl::make_unique<FakeNetworkPipe>(
+                Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
                                                BuiltInNetworkBehaviorConfig())),
-        sender_call_.get(), payload_type_map_);
-    receive_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_,
-        absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                           absl::make_unique<SimulatedNetwork>(
+            sender_call_.get(), payload_type_map_);
+        receive_transport = absl::make_unique<test::DirectTransport>(
+            &task_queue_,
+            absl::make_unique<FakeNetworkPipe>(
+                Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
                                                BuiltInNetworkBehaviorConfig())),
-        receiver_call_.get(), payload_type_map_);
-    input_observer =
-        absl::make_unique<PacketInputObserver>(receiver_call_->Receiver());
-    send_transport->SetReceiver(input_observer.get());
-    receive_transport->SetReceiver(sender_call_->Receiver());
+            receiver_call_.get(), payload_type_map_);
+        input_observer =
+            absl::make_unique<PacketInputObserver>(receiver_call_->Receiver());
+        send_transport->SetReceiver(input_observer.get());
+        receive_transport->SetReceiver(sender_call_->Receiver());
 
-    CreateSendConfig(1, 0, 0, send_transport.get());
-    CreateMatchingReceiveConfigs(receive_transport.get());
+        CreateSendConfig(1, 0, 0, send_transport.get());
+        CreateMatchingReceiveConfigs(receive_transport.get());
 
-    CreateVideoStreams();
-    CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
-                                 kDefaultHeight);
-    Start();
+        CreateVideoStreams();
+        CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
+                                     kDefaultHeight);
+        Start();
 
-    receiver_call_->DestroyVideoReceiveStream(video_receive_streams_[0]);
-    video_receive_streams_.clear();
-  });
+        receiver_call_->DestroyVideoReceiveStream(video_receive_streams_[0]);
+        video_receive_streams_.clear();
+      });
 
   // Wait() waits for a received packet.
   EXPECT_TRUE(input_observer->Wait());

@@ -65,6 +65,7 @@ class AudioTrackJni : public AudioOutput {
   absl::optional<uint32_t> SpeakerVolume() const override;
   absl::optional<uint32_t> MaxSpeakerVolume() const override;
   absl::optional<uint32_t> MinSpeakerVolume() const override;
+  int GetPlayoutUnderrunCount() override;
 
   void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
 
@@ -73,16 +74,13 @@ class AudioTrackJni : public AudioOutput {
   // is also stored in |direct_buffer_capacity_in_bytes_|.
   // Called on the same thread as the creating thread.
   void CacheDirectBufferAddress(JNIEnv* env,
-                                const JavaParamRef<jobject>& j_caller,
                                 const JavaParamRef<jobject>& byte_buffer);
   // Called periodically by the Java based WebRtcAudioTrack object when
   // playout has started. Each call indicates that |length| new bytes should
   // be written to the memory area |direct_buffer_address_| for playout.
   // This method is called on a high-priority thread from Java. The name of
   // the thread is 'AudioTrackThread'.
-  void GetPlayoutData(JNIEnv* env,
-                      const JavaParamRef<jobject>& j_caller,
-                      size_t length);
+  void GetPlayoutData(JNIEnv* env, size_t length);
 
  private:
   // Stores thread ID in constructor.

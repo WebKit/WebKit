@@ -32,7 +32,7 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/modules/audio_device/include/audio_device.h>
-#include <webrtc/rtc_base/messagehandler.h>
+#include <webrtc/rtc_base/message_handler.h>
 #include <webrtc/rtc_base/thread.h>
 
 ALLOW_UNUSED_PARAMETERS_END

@@ -15,7 +15,7 @@
 
 #include "common_audio/resampler/include/resampler.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -23,14 +23,17 @@ namespace test {
 // Class for handling a looping input audio file with resampling.
 class ResampleInputAudioFile : public InputAudioFile {
  public:
-  ResampleInputAudioFile(const std::string file_name, int file_rate_hz)
-      : InputAudioFile(file_name),
+  ResampleInputAudioFile(const std::string file_name,
+                         int file_rate_hz,
+                         bool loop_at_end = true)
+      : InputAudioFile(file_name, loop_at_end),
         file_rate_hz_(file_rate_hz),
         output_rate_hz_(-1) {}
   ResampleInputAudioFile(const std::string file_name,
                          int file_rate_hz,
-                         int output_rate_hz)
-      : InputAudioFile(file_name),
+                         int output_rate_hz,
+                         bool loop_at_end = true)
+      : InputAudioFile(file_name, loop_at_end),
         file_rate_hz_(file_rate_hz),
         output_rate_hz_(output_rate_hz) {}
 

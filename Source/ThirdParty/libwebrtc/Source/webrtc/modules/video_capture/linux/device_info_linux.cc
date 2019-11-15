@@ -14,12 +14,17 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
-#include <sys/stat.h>
 #include <unistd.h>
 // v4l includes
 #include <linux/videodev2.h>
 
+#include <vector>
+
+#include "modules/video_capture/video_capture.h"
+#include "modules/video_capture/video_capture_defines.h"
+#include "modules/video_capture/video_capture_impl.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

@@ -28,10 +28,10 @@ rtc_static_library("video_capture_module") {
 
   deps = [
     "..:module_api",
-    "../..:webrtc_common",
-    "../../api:libjingle_peerconnection_api",
+    "../../api:scoped_refptr",
     "../../api/video:video_frame",
     "../../api/video:video_frame_i420",
+    "../../api/video:video_rtp_headers",
     "../../common_video",
     "../../media:rtc_media_base",
     "../../rtc_base:rtc_base_approved",
@@ -43,59 +43,12 @@ rtc_static_library("video_capture_module") {
   ]
 }
 
-rtc_static_library("video_capture") {
-  visibility = [ "*" ]
-  sources = [
-    "external/device_info_external.cc",
-    "external/video_capture_external.cc",
-  ]
-
-  deps = [
-    ":video_capture_module",
-    "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers",
-  ]
-}
-
 if (!build_with_chromium) {
-  config("video_capture_internal_impl_config") {
-    if (is_ios || is_mac) {
-      libs = [
-        "AVFoundation.framework",
-        "CoreMedia.framework",
-        "CoreVideo.framework",
-      ]
-    }
-  }
-
-  if (is_ios || is_mac) {
-    rtc_source_set("video_capture_internal_impl_objc") {
-      visibility = [ ":video_capture_internal_impl" ]
-
-      deps = [
-        ":video_capture_module",
-        "../../rtc_base:rtc_base_approved",
-        "../../system_wrappers",
-      ]
-
-      sources = [
-        "objc/device_info.h",
-        "objc/device_info.mm",
-        "objc/device_info_objc.h",
-        "objc/device_info_objc.mm",
-        "objc/rtc_video_capture_objc.h",
-        "objc/rtc_video_capture_objc.mm",
-        "objc/video_capture.h",
-        "objc/video_capture.mm",
-      ]
-
-      all_dependent_configs = [ ":video_capture_internal_impl_config" ]
-    }
-  }
-
   rtc_source_set("video_capture_internal_impl") {
+    visibility = [ "*" ]
     deps = [
       ":video_capture_module",
+      "../../api:scoped_refptr",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
@@ -108,17 +61,12 @@ if (!build_with_chromium) {
         "linux/video_capture_linux.cc",
         "linux/video_capture_linux.h",
       ]
-      deps += [
-        "../..:webrtc_common",
-        "../../media:rtc_media_base",
-      ]
+      deps += [ "../../media:rtc_media_base" ]
     }
     if (is_win) {
       sources = [
         "windows/device_info_ds.cc",
         "windows/device_info_ds.h",
-        "windows/device_info_mf.cc",
-        "windows/device_info_mf.h",
         "windows/help_functions_ds.cc",
         "windows/help_functions_ds.h",
         "windows/sink_filter_ds.cc",
@@ -126,8 +74,6 @@ if (!build_with_chromium) {
         "windows/video_capture_ds.cc",
         "windows/video_capture_ds.h",
         "windows/video_capture_factory_windows.cc",
-        "windows/video_capture_mf.cc",
-        "windows/video_capture_mf.h",
       ]
 
       libs = [ "strmiids.lib" ]
@@ -139,15 +85,8 @@ if (!build_with_chromium) {
           "windows/BasePin.cpp",
           "windows/MediaType.cpp",
         ]
-      } else {
-        deps += [ "//third_party/winsdk_samples" ]
       }
     }
-    if (is_ios || is_mac) {
-      deps += [ ":video_capture_internal_impl_objc" ]
-    }
-
-    all_dependent_configs = [ ":video_capture_internal_impl_config" ]
 
     if (build_with_mozilla && is_android) {
       include_dirs = [
@@ -186,15 +125,18 @@ if (!build_with_chromium) {
       deps = [
         ":video_capture_internal_impl",
         ":video_capture_module",
+        "../../api:scoped_refptr",
         "../../api/video:video_frame",
         "../../api/video:video_frame_i420",
-        "../../common_video:common_video",
+        "../../api/video:video_rtp_headers",
+        "../../common_video",
         "../../rtc_base:rtc_base_approved",
-        "../../system_wrappers:system_wrappers",
+        "../../system_wrappers",
         "../../test:test_support",
         "../../test:video_test_common",
         "../utility",
         "//testing/gtest",
+        "//third_party/abseil-cpp/absl/memory",
       ]
       deps += [ "../../test:test_main" ]
     }

@@ -9,7 +9,6 @@
  */
 
 #include "modules/audio_processing/aecm/aecm_core.h"
-
 #include "modules/audio_processing/aecm/echo_control_mobile.h"
 #include "modules/audio_processing/utility/delay_estimator_wrapper.h"
 #include "rtc_base/checks.h"

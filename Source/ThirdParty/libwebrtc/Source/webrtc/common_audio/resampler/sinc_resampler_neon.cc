@@ -11,9 +11,9 @@
 // Modified from the Chromium original:
 // src/media/base/sinc_resampler.cc
 
-#include "common_audio/resampler/sinc_resampler.h"
-
 #include <arm_neon.h>
+
+#include "common_audio/resampler/sinc_resampler.h"
 
 namespace webrtc {
 

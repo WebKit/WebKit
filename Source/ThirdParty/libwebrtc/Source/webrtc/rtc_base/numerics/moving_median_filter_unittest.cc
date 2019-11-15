@@ -9,6 +9,9 @@
  */
 
 #include "rtc_base/numerics/moving_median_filter.h"
+
+#include <stdint.h>
+
 #include "test/gtest.h"
 
 namespace webrtc {

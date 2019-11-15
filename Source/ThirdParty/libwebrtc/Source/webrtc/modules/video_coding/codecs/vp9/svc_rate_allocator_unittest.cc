@@ -8,13 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/codecs/vp9/svc_rate_allocator.h"
+
 #include <algorithm>
+#include <vector>
 
 #include "modules/video_coding/codecs/vp9/svc_config.h"
-#include "modules/video_coding/codecs/vp9/svc_rate_allocator.h"
+#include "rtc_base/checks.h"
+#include "test/field_trial.h"
 #include "test/gtest.h"
 
 namespace webrtc {
+namespace test {
 namespace {
 static VideoCodec Configure(size_t width,
                             size_t height,
@@ -44,13 +49,15 @@ static VideoCodec Configure(size_t width,
 
   return codec;
 }
+
 }  // namespace
 
 TEST(SvcRateAllocatorTest, SingleLayerFor320x180Input) {
   VideoCodec codec = Configure(320, 180, 3, 3, false);
   SvcRateAllocator allocator = SvcRateAllocator(codec);
 
-  VideoBitrateAllocation allocation = allocator.GetAllocation(1000 * 1000, 30);
+  VideoBitrateAllocation allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(1000 * 1000, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_EQ(allocation.GetSpatialLayerSum(1), 0u);
@@ -60,7 +67,8 @@ TEST(SvcRateAllocatorTest, TwoLayersFor640x360Input) {
   VideoCodec codec = Configure(640, 360, 3, 3, false);
   SvcRateAllocator allocator = SvcRateAllocator(codec);
 
-  VideoBitrateAllocation allocation = allocator.GetAllocation(1000 * 1000, 30);
+  VideoBitrateAllocation allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(1000 * 1000, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0u);
@@ -71,7 +79,8 @@ TEST(SvcRateAllocatorTest, ThreeLayersFor1280x720Input) {
   VideoCodec codec = Configure(1280, 720, 3, 3, false);
   SvcRateAllocator allocator = SvcRateAllocator(codec);
 
-  VideoBitrateAllocation allocation = allocator.GetAllocation(1000 * 1000, 30);
+  VideoBitrateAllocation allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(1000 * 1000, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0u);
@@ -85,8 +94,8 @@ TEST(SvcRateAllocatorTest,
 
   const SpatialLayer* layers = codec.spatialLayers;
 
-  VideoBitrateAllocation allocation =
-      allocator.GetAllocation(layers[0].minBitrate * 1000 / 2, 30);
+  VideoBitrateAllocation allocation = allocator.Allocate(
+      VideoBitrateAllocationParameters(layers[0].minBitrate * 1000 / 2, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_LT(allocation.GetSpatialLayerSum(0), layers[0].minBitrate * 1000);
@@ -102,8 +111,9 @@ TEST(SvcRateAllocatorTest, Disable640x360Layer) {
   size_t min_bitrate_for_640x360_layer_kbps =
       layers[0].minBitrate + layers[1].minBitrate;
 
-  VideoBitrateAllocation allocation = allocator.GetAllocation(
-      min_bitrate_for_640x360_layer_kbps * 1000 - 1, 30);
+  VideoBitrateAllocation allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(
+          min_bitrate_for_640x360_layer_kbps * 1000 - 1, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_EQ(allocation.GetSpatialLayerSum(1), 0u);
@@ -118,8 +128,9 @@ TEST(SvcRateAllocatorTest, Disable1280x720Layer) {
   size_t min_bitrate_for_1280x720_layer_kbps =
       layers[0].minBitrate + layers[1].minBitrate + layers[2].minBitrate;
 
-  VideoBitrateAllocation allocation = allocator.GetAllocation(
-      min_bitrate_for_1280x720_layer_kbps * 1000 - 1, 30);
+  VideoBitrateAllocation allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(
+          min_bitrate_for_1280x720_layer_kbps * 1000 - 1, 30));
 
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0u);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0u);
@@ -133,8 +144,8 @@ TEST(SvcRateAllocatorTest, BitrateIsCapped) {
   const SpatialLayer* layers = codec.spatialLayers;
 
   const uint32_t link_mbps = 100;
-  VideoBitrateAllocation allocation =
-      allocator.GetAllocation(link_mbps * 1000000, 30);
+  VideoBitrateAllocation allocation = allocator.Allocate(
+      VideoBitrateAllocationParameters(link_mbps * 1000000, 30));
 
   EXPECT_EQ(allocation.get_sum_kbps(),
             layers[0].maxBitrate + layers[1].maxBitrate + layers[2].maxBitrate);
@@ -151,14 +162,14 @@ TEST(SvcRateAllocatorTest, MinBitrateToGetQualityLayer) {
 
   EXPECT_LE(codec.VP9()->numberOfSpatialLayers, 3U);
 
-  VideoBitrateAllocation allocation =
-      allocator.GetAllocation(layers[0].minBitrate * 1000, 30);
+  VideoBitrateAllocation allocation = allocator.Allocate(
+      VideoBitrateAllocationParameters(layers[0].minBitrate * 1000, 30));
   EXPECT_EQ(allocation.GetSpatialLayerSum(0) / 1000, layers[0].minBitrate);
   EXPECT_EQ(allocation.GetSpatialLayerSum(1), 0UL);
 
-  allocation = allocator.GetAllocation(
-      (layers[0].maxBitrate + layers[1].minBitrate) * 1000, 30);
-  EXPECT_EQ(allocation.GetSpatialLayerSum(0) / 1000, layers[0].maxBitrate);
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      (layers[0].targetBitrate + layers[1].minBitrate) * 1000, 30));
+  EXPECT_EQ(allocation.GetSpatialLayerSum(0) / 1000, layers[0].targetBitrate);
   EXPECT_EQ(allocation.GetSpatialLayerSum(1) / 1000, layers[1].minBitrate);
 }
 
@@ -171,8 +182,8 @@ TEST(SvcRateAllocatorTest, DeativateLayers) {
 
     SvcRateAllocator allocator = SvcRateAllocator(codec);
 
-    VideoBitrateAllocation allocation =
-        allocator.GetAllocation(10 * 1000 * 1000, 30);
+    VideoBitrateAllocation allocation = allocator.Allocate(
+        VideoBitrateAllocationParameters(10 * 1000 * 1000, 30));
 
     // Ensure layers spatial_idx < deactivated_idx are activated.
     for (int spatial_idx = 0; spatial_idx < deactivated_idx; ++spatial_idx) {
@@ -186,9 +197,35 @@ TEST(SvcRateAllocatorTest, DeativateLayers) {
   }
 }
 
+TEST(SvcRateAllocatorTest, NoPaddingIfAllLayersAreDeactivated) {
+  VideoCodec codec = Configure(1280, 720, 3, 1, false);
+  EXPECT_EQ(codec.VP9()->numberOfSpatialLayers, 3U);
+  // Deactivation of base layer deactivates all layers.
+  codec.spatialLayers[0].active = false;
+  DataRate padding_rate = SvcRateAllocator::GetPaddingBitrate(codec);
+  EXPECT_EQ(padding_rate, DataRate::Zero());
+}
+
+TEST(SvcRateAllocatorTest, FindLayerTogglingThreshold) {
+  // Let's unit test a utility method of the unit test...
+
+  // Predetermined constants indicating the min bitrate needed for two and three
+  // layers to be enabled respectively, using the config from Configure() with
+  // 1280x720 resolution and three spatial layers.
+  const DataRate kTwoLayerMinRate = DataRate::bps(299150);
+  const DataRate kThreeLayerMinRate = DataRate::bps(891052);
+
+  VideoCodec codec = Configure(1280, 720, 3, 1, false);
+  absl::InlinedVector<DataRate, kMaxSpatialLayers> layer_start_bitrates =
+      SvcRateAllocator::GetLayerStartBitrates(codec);
+  ASSERT_EQ(layer_start_bitrates.size(), 3u);
+  EXPECT_EQ(layer_start_bitrates[1], kTwoLayerMinRate);
+  EXPECT_EQ(layer_start_bitrates[2], kThreeLayerMinRate);
+}
+
 class SvcRateAllocatorTestParametrizedContentType
-    : public testing::Test,
-      public testing::WithParamInterface<bool> {
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<bool> {
  public:
   SvcRateAllocatorTestParametrizedContentType()
       : is_screen_sharing_(GetParam()) {}
@@ -198,32 +235,32 @@ class SvcRateAllocatorTestParametrizedContentType
 
 TEST_P(SvcRateAllocatorTestParametrizedContentType, MaxBitrate) {
   VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
-  EXPECT_EQ(
-      SvcRateAllocator::GetMaxBitrateBps(codec),
-      (codec.spatialLayers[0].maxBitrate + codec.spatialLayers[1].maxBitrate +
-       codec.spatialLayers[2].maxBitrate) *
-          1000);
+  EXPECT_EQ(SvcRateAllocator::GetMaxBitrate(codec),
+            DataRate::kbps(codec.spatialLayers[0].maxBitrate +
+                           codec.spatialLayers[1].maxBitrate +
+                           codec.spatialLayers[2].maxBitrate));
 
   // Deactivate middle layer. This causes deactivation of top layer as well.
   codec.spatialLayers[1].active = false;
-  EXPECT_EQ(SvcRateAllocator::GetMaxBitrateBps(codec),
-            codec.spatialLayers[0].maxBitrate * 1000);
+  EXPECT_EQ(SvcRateAllocator::GetMaxBitrate(codec),
+            DataRate::kbps(codec.spatialLayers[0].maxBitrate));
 }
 
 TEST_P(SvcRateAllocatorTestParametrizedContentType, PaddingBitrate) {
   VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
   SvcRateAllocator allocator = SvcRateAllocator(codec);
 
-  uint32_t padding_bitrate_bps = SvcRateAllocator::GetPaddingBitrateBps(codec);
+  DataRate padding_bitrate = SvcRateAllocator::GetPaddingBitrate(codec);
 
   VideoBitrateAllocation allocation =
-      allocator.GetAllocation(padding_bitrate_bps, 30);
+      allocator.Allocate(VideoBitrateAllocationParameters(padding_bitrate, 30));
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
   EXPECT_GT(allocation.GetSpatialLayerSum(2), 0UL);
 
   // Allocate 90% of padding bitrate. Top layer should be disabled.
-  allocation = allocator.GetAllocation(9 * padding_bitrate_bps / 10, 30);
+  allocation = allocator.Allocate(
+      VideoBitrateAllocationParameters(9 * padding_bitrate / 10, 30));
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
   EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
@@ -231,20 +268,168 @@ TEST_P(SvcRateAllocatorTestParametrizedContentType, PaddingBitrate) {
   // Deactivate top layer.
   codec.spatialLayers[2].active = false;
 
-  padding_bitrate_bps = SvcRateAllocator::GetPaddingBitrateBps(codec);
-  allocation = allocator.GetAllocation(padding_bitrate_bps, 30);
+  padding_bitrate = SvcRateAllocator::GetPaddingBitrate(codec);
+  allocation =
+      allocator.Allocate(VideoBitrateAllocationParameters(padding_bitrate, 30));
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
   EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
   EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
 
-  allocation = allocator.GetAllocation(9 * padding_bitrate_bps / 10, 30);
+  allocation = allocator.Allocate(
+      VideoBitrateAllocationParameters(9 * padding_bitrate / 10, 30));
   EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
   EXPECT_EQ(allocation.GetSpatialLayerSum(1), 0UL);
   EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
 }
 
-INSTANTIATE_TEST_CASE_P(_,
-                        SvcRateAllocatorTestParametrizedContentType,
-                        ::testing::Bool());
+TEST_P(SvcRateAllocatorTestParametrizedContentType, StableBitrate) {
+  ScopedFieldTrials field_trial(
+      "WebRTC-StableTargetRate/enabled:true,video_hysteresis_factor:1.0,"
+      "screenshare_hysteresis_factor:1.0/");
 
+  const VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
+  const auto start_rates = SvcRateAllocator::GetLayerStartBitrates(codec);
+  const DataRate min_rate_two_layers = start_rates[1];
+  const DataRate min_rate_three_layers = start_rates[2];
+
+  const DataRate max_rate_one_layer =
+      DataRate::kbps(codec.spatialLayers[0].maxBitrate);
+  const DataRate max_rate_two_layers =
+      is_screen_sharing_ ? DataRate::kbps(codec.spatialLayers[0].targetBitrate +
+                                          codec.spatialLayers[1].maxBitrate)
+                         : DataRate::kbps(codec.spatialLayers[0].maxBitrate +
+                                          codec.spatialLayers[1].maxBitrate);
+
+  SvcRateAllocator allocator = SvcRateAllocator(codec);
+
+  // Two layers, stable and target equal.
+  auto allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/min_rate_two_layers,
+      /*stable_bitrate=*/min_rate_two_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_EQ(allocation.get_sum_bps(), min_rate_two_layers.bps());
+
+  // Two layers, stable bitrate too low for two layers.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/min_rate_two_layers,
+      /*stable_bitrate=*/min_rate_two_layers - DataRate::bps(1),
+      /*fps=*/30.0));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_EQ(
+      DataRate::bps(allocation.get_sum_bps()),
+      std::min(min_rate_two_layers - DataRate::bps(1), max_rate_one_layer));
+
+  // Three layers, stable and target equal.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/min_rate_three_layers,
+      /*stable_bitrate=*/min_rate_three_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(2));
+  EXPECT_EQ(allocation.get_sum_bps(), min_rate_three_layers.bps());
+
+  // Three layers, stable bitrate too low for three layers.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/min_rate_three_layers,
+      /*stable_bitrate=*/min_rate_three_layers - DataRate::bps(1),
+      /*fps=*/30.0));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+  EXPECT_EQ(
+      DataRate::bps(allocation.get_sum_bps()),
+      std::min(min_rate_three_layers - DataRate::bps(1), max_rate_two_layers));
+}
+
+TEST_P(SvcRateAllocatorTestParametrizedContentType,
+       StableBitrateWithHysteresis) {
+  const VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
+  const auto start_rates = SvcRateAllocator::GetLayerStartBitrates(codec);
+  const DataRate min_rate_single_layer = start_rates[0];
+  const DataRate min_rate_two_layers = start_rates[1];
+  const DataRate min_rate_three_layers = start_rates[2];
+
+  ScopedFieldTrials field_trial(
+      "WebRTC-StableTargetRate/enabled:true,video_hysteresis_factor:1.1,"
+      "screenshare_hysteresis_factor:1.1/");
+  SvcRateAllocator allocator = SvcRateAllocator(codec);
+  // Always use max bitrate as target, verify only stable is used for layer
+  // count selection.
+  const DataRate max_bitrate = allocator.GetMaxBitrate(codec);
+
+  // Start with a single layer.
+  auto allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_single_layer, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Min bitrate not enough to enable second layer due to 10% hysteresis.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_two_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Add hysteresis, second layer should turn on.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_two_layers * 1.1, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Remove hysteresis, second layer should stay on.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_two_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Going below min for two layers, second layer should turn off again.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_two_layers - DataRate::bps(1), /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Min bitrate not enough to enable third layer due to 10% hysteresis.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_three_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+
+  // Add hysteresis, third layer should turn on.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_three_layers * 1.1, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(2));
+
+  // Remove hysteresis, third layer should stay on.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_three_layers, /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(2));
+
+  // Going below min for three layers, third layer should turn off again.
+  allocation = allocator.Allocate(VideoBitrateAllocationParameters(
+      /*total_bitrate=*/max_bitrate,
+      /*stable_bitrate=*/min_rate_three_layers - DataRate::bps(1),
+      /*fps=*/30.0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(0));
+  EXPECT_TRUE(allocation.IsSpatialLayerUsed(1));
+  EXPECT_FALSE(allocation.IsSpatialLayerUsed(2));
+}
+
+INSTANTIATE_TEST_SUITE_P(_,
+                         SvcRateAllocatorTestParametrizedContentType,
+                         ::testing::Bool());
+
+}  // namespace test
 }  // namespace webrtc

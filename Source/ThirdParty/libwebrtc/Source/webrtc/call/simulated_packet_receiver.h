@@ -13,13 +13,12 @@
 
 #include "api/test/simulated_network.h"
 #include "call/packet_receiver.h"
-#include "modules/include/module.h"
 
 namespace webrtc {
 
 // Private API that is fixing surface between DirectTransport and underlying
 // network conditions simulation implementation.
-class SimulatedPacketReceiverInterface : public PacketReceiver, public Module {
+class SimulatedPacketReceiverInterface : public PacketReceiver {
  public:
   // Must not be called in parallel with DeliverPacket or Process.
   // Destination receiver will be injected with this method
@@ -27,6 +26,15 @@ class SimulatedPacketReceiverInterface : public PacketReceiver, public Module {
 
   // Reports average packet delay.
   virtual int AverageDelay() = 0;
+
+  // Process any pending tasks such as timeouts.
+  // Called on a worker thread.
+  virtual void Process() = 0;
+
+  // Returns the time until next process or nullopt to indicate that the next
+  // process time is unknown. If the next process time is unknown, this should
+  // be checked again any time a packet is enqueued.
+  virtual absl::optional<int64_t> TimeUntilNextProcess() = 0;
 };
 
 }  // namespace webrtc

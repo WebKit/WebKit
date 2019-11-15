@@ -10,42 +10,43 @@
 
 #include <memory>
 
+#include "absl/flags/flag.h"
 #include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
-using testing::InitGoogleTest;
+ABSL_FLAG(int, frame_size_ms, 20, "Codec frame size (milliseconds).");
+
+using ::testing::InitGoogleTest;
 
 namespace webrtc {
 namespace test {
 namespace {
 static const int kInputSampleRateKhz = 8;
 static const int kOutputSampleRateKhz = 8;
-
-WEBRTC_DEFINE_int(frame_size_ms, 20, "Codec frame size (milliseconds).");
-
 }  // namespace
 
 class NetEqIlbcQualityTest : public NetEqQualityTest {
  protected:
   NetEqIlbcQualityTest()
-      : NetEqQualityTest(FLAG_frame_size_ms,
+      : NetEqQualityTest(absl::GetFlag(FLAGS_frame_size_ms),
                          kInputSampleRateKhz,
                          kOutputSampleRateKhz,
-                         NetEqDecoder::kDecoderILBC) {
+                         SdpAudioFormat("ilbc", 8000, 1)) {
     // Flag validation
-    RTC_CHECK(FLAG_frame_size_ms == 20 || FLAG_frame_size_ms == 30 ||
-              FLAG_frame_size_ms == 40 || FLAG_frame_size_ms == 60)
+    RTC_CHECK(absl::GetFlag(FLAGS_frame_size_ms) == 20 ||
+              absl::GetFlag(FLAGS_frame_size_ms) == 30 ||
+              absl::GetFlag(FLAGS_frame_size_ms) == 40 ||
+              absl::GetFlag(FLAGS_frame_size_ms) == 60)
         << "Invalid frame size, should be 20, 30, 40, or 60 ms.";
   }
 
   void SetUp() override {
     ASSERT_EQ(1u, channels_) << "iLBC supports only mono audio.";
     AudioEncoderIlbcConfig config;
-    config.frame_size_ms = FLAG_frame_size_ms;
+    config.frame_size_ms = absl::GetFlag(FLAGS_frame_size_ms);
     encoder_.reset(new AudioEncoderIlbcImpl(config, 102));
     NetEqQualityTest::SetUp();
   }

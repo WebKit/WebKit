@@ -28,19 +28,24 @@
 namespace webrtc {
 namespace {
 
-using testing::AtLeast;
-using testing::Return;
-using testing::StrictMock;
-using testing::_;
+using ::testing::_;
+using ::testing::AtLeast;
+using ::testing::Return;
+using ::testing::StrictMock;
 
 // Verifies that the basic BlockProcessor functionality works and that the API
 // methods are callable.
 void RunBasicSetupAndApiCallTest(int sample_rate_hz, int num_iterations) {
-  std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create2(EchoCanceller3Config(), sample_rate_hz));
-  std::vector<std::vector<float>> block(NumBandsForRate(sample_rate_hz),
-                                        std::vector<float>(kBlockSize, 1000.f));
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
 
+  std::unique_ptr<BlockProcessor> block_processor(
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
+                             kNumRenderChannels, kNumCaptureChannels));
+  std::vector<std::vector<std::vector<float>>> block(
+      NumBandsForRate(sample_rate_hz),
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize, 1000.f)));
   for (int k = 0; k < num_iterations; ++k) {
     block_processor->BufferRender(block);
     block_processor->ProcessCapture(false, false, &block);
@@ -50,43 +55,67 @@ void RunBasicSetupAndApiCallTest(int sample_rate_hz, int num_iterations) {
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 void RunRenderBlockSizeVerificationTest(int sample_rate_hz) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
+
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create2(EchoCanceller3Config(), sample_rate_hz));
-  std::vector<std::vector<float>> block(
-      NumBandsForRate(sample_rate_hz), std::vector<float>(kBlockSize - 1, 0.f));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
+                             kNumRenderChannels, kNumCaptureChannels));
+  std::vector<std::vector<std::vector<float>>> block(
+      NumBandsForRate(sample_rate_hz),
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize - 1, 0.f)));
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
 }
 
 void RunCaptureBlockSizeVerificationTest(int sample_rate_hz) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
+
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create2(EchoCanceller3Config(), sample_rate_hz));
-  std::vector<std::vector<float>> block(
-      NumBandsForRate(sample_rate_hz), std::vector<float>(kBlockSize - 1, 0.f));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
+                             kNumRenderChannels, kNumCaptureChannels));
+  std::vector<std::vector<std::vector<float>>> block(
+      NumBandsForRate(sample_rate_hz),
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize - 1, 0.f)));
 
   EXPECT_DEATH(block_processor->ProcessCapture(false, false, &block), "");
 }
 
 void RunRenderNumBandsVerificationTest(int sample_rate_hz) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
+
   const size_t wrong_num_bands = NumBandsForRate(sample_rate_hz) < 3
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create2(EchoCanceller3Config(), sample_rate_hz));
-  std::vector<std::vector<float>> block(wrong_num_bands,
-                                        std::vector<float>(kBlockSize, 0.f));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
+                             kNumRenderChannels, kNumCaptureChannels));
+  std::vector<std::vector<std::vector<float>>> block(
+      wrong_num_bands,
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize, 0.f)));
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
 }
 
 void RunCaptureNumBandsVerificationTest(int sample_rate_hz) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
+
   const size_t wrong_num_bands = NumBandsForRate(sample_rate_hz) < 3
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create2(EchoCanceller3Config(), sample_rate_hz));
-  std::vector<std::vector<float>> block(wrong_num_bands,
-                                        std::vector<float>(kBlockSize, 0.f));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
+                             kNumRenderChannels, kNumCaptureChannels));
+  std::vector<std::vector<std::vector<float>>> block(
+      wrong_num_bands,
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize, 0.f)));
 
   EXPECT_DEATH(block_processor->ProcessCapture(false, false, &block), "");
 }
@@ -104,37 +133,44 @@ std::string ProduceDebugText(int sample_rate_hz) {
 // the render delay buffer inside block processor.
 // TODO(peah): Activate the unittest once the required code has been landed.
 TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
   constexpr size_t kNumBlocks = 310;
   constexpr size_t kDelayInSamples = 640;
   constexpr size_t kDelayHeadroom = 1;
   constexpr size_t kDelayInBlocks =
       kDelayInSamples / kBlockSize - kDelayHeadroom;
   Random random_generator(42U);
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<testing::StrictMock<webrtc::test::MockRenderDelayBuffer>>
         render_delay_buffer_mock(
-            new StrictMock<webrtc::test::MockRenderDelayBuffer>(rate));
+            new StrictMock<webrtc::test::MockRenderDelayBuffer>(rate, 1));
     EXPECT_CALL(*render_delay_buffer_mock, Insert(_))
         .Times(kNumBlocks)
         .WillRepeatedly(Return(RenderDelayBuffer::BufferingEvent::kNone));
-    EXPECT_CALL(*render_delay_buffer_mock, SetDelay(kDelayInBlocks))
+    EXPECT_CALL(*render_delay_buffer_mock, AlignFromDelay(kDelayInBlocks))
         .Times(AtLeast(1));
     EXPECT_CALL(*render_delay_buffer_mock, MaxDelay()).WillOnce(Return(30));
     EXPECT_CALL(*render_delay_buffer_mock, Delay())
         .Times(kNumBlocks + 1)
         .WillRepeatedly(Return(0));
-    std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create2(
-        EchoCanceller3Config(), rate, std::move(render_delay_buffer_mock)));
+    std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create(
+        EchoCanceller3Config(), rate, kNumRenderChannels, kNumCaptureChannels,
+        std::move(render_delay_buffer_mock)));
 
-    std::vector<std::vector<float>> render_block(
-        NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
-    std::vector<std::vector<float>> capture_block(
-        NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> render_block(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(kNumRenderChannels,
+                                        std::vector<float>(kBlockSize, 0.f)));
+    std::vector<std::vector<std::vector<float>>> capture_block(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(kNumCaptureChannels,
+                                        std::vector<float>(kBlockSize, 0.f)));
     DelayBuffer<float> signal_delay_buffer(kDelayInSamples);
     for (size_t k = 0; k < kNumBlocks; ++k) {
-      RandomizeSampleVector(&random_generator, render_block[0]);
-      signal_delay_buffer.Delay(render_block[0], capture_block[0]);
+      RandomizeSampleVector(&random_generator, render_block[0][0]);
+      signal_delay_buffer.Delay(render_block[0][0], capture_block[0][0]);
       block_processor->BufferRender(render_block);
       block_processor->ProcessCapture(false, false, &capture_block);
     }
@@ -144,14 +180,17 @@ TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
 // Verifies that BlockProcessor submodules are called in a proper manner.
 TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
   constexpr size_t kNumBlocks = 310;
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr size_t kNumCaptureChannels = 1;
+
   Random random_generator(42U);
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<testing::StrictMock<webrtc::test::MockRenderDelayBuffer>>
         render_delay_buffer_mock(
-            new StrictMock<webrtc::test::MockRenderDelayBuffer>(rate));
+            new StrictMock<webrtc::test::MockRenderDelayBuffer>(rate, 1));
     std::unique_ptr<
-        testing::StrictMock<webrtc::test::MockRenderDelayController>>
+        ::testing::StrictMock<webrtc::test::MockRenderDelayController>>
         render_delay_controller_mock(
             new StrictMock<webrtc::test::MockRenderDelayController>());
     std::unique_ptr<testing::StrictMock<webrtc::test::MockEchoRemover>>
@@ -162,29 +201,34 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
         .WillRepeatedly(Return(RenderDelayBuffer::BufferingEvent::kNone));
     EXPECT_CALL(*render_delay_buffer_mock, PrepareCaptureProcessing())
         .Times(kNumBlocks);
-    EXPECT_CALL(*render_delay_buffer_mock, SetDelay(9)).Times(AtLeast(1));
+    EXPECT_CALL(*render_delay_buffer_mock, AlignFromDelay(9)).Times(AtLeast(1));
     EXPECT_CALL(*render_delay_buffer_mock, Delay())
         .Times(kNumBlocks)
         .WillRepeatedly(Return(0));
-    EXPECT_CALL(*render_delay_controller_mock, GetDelay(_, _, _, _))
+    EXPECT_CALL(*render_delay_controller_mock, GetDelay(_, _, _))
         .Times(kNumBlocks);
     EXPECT_CALL(*echo_remover_mock, ProcessCapture(_, _, _, _, _))
         .Times(kNumBlocks);
     EXPECT_CALL(*echo_remover_mock, UpdateEchoLeakageStatus(_))
         .Times(kNumBlocks);
 
-    std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create2(
-        EchoCanceller3Config(), rate, std::move(render_delay_buffer_mock),
+    std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create(
+        EchoCanceller3Config(), rate, kNumRenderChannels, kNumCaptureChannels,
+        std::move(render_delay_buffer_mock),
         std::move(render_delay_controller_mock), std::move(echo_remover_mock)));
 
-    std::vector<std::vector<float>> render_block(
-        NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
-    std::vector<std::vector<float>> capture_block(
-        NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> render_block(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(kNumRenderChannels,
+                                        std::vector<float>(kBlockSize, 0.f)));
+    std::vector<std::vector<std::vector<float>>> capture_block(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(kNumCaptureChannels,
+                                        std::vector<float>(kBlockSize, 0.f)));
     DelayBuffer<float> signal_delay_buffer(640);
     for (size_t k = 0; k < kNumBlocks; ++k) {
-      RandomizeSampleVector(&random_generator, render_block[0]);
-      signal_delay_buffer.Delay(render_block[0], capture_block[0]);
+      RandomizeSampleVector(&random_generator, render_block[0][0]);
+      signal_delay_buffer.Delay(render_block[0][0], capture_block[0][0]);
       block_processor->BufferRender(render_block);
       block_processor->ProcessCapture(false, false, &capture_block);
       block_processor->UpdateEchoLeakageStatus(false);
@@ -193,7 +237,7 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
 }
 
 TEST(BlockProcessor, BasicSetupAndApiCalls) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunBasicSetupAndApiCallTest(rate, 1);
   }
@@ -207,21 +251,21 @@ TEST(BlockProcessor, TestLongerCall) {
 // TODO(gustaf): Re-enable the test once the issue with memory leaks during
 // DEATH tests on test bots has been fixed.
 TEST(BlockProcessor, DISABLED_VerifyRenderBlockSizeCheck) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderBlockSizeVerificationTest(rate);
   }
 }
 
 TEST(BlockProcessor, VerifyCaptureBlockSizeCheck) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunCaptureBlockSizeVerificationTest(rate);
   }
 }
 
 TEST(BlockProcessor, VerifyRenderNumBandsCheck) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderNumBandsVerificationTest(rate);
   }
@@ -230,7 +274,7 @@ TEST(BlockProcessor, VerifyRenderNumBandsCheck) {
 // TODO(peah): Verify the check for correct number of bands in the capture
 // signal.
 TEST(BlockProcessor, VerifyCaptureNumBandsCheck) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunCaptureNumBandsVerificationTest(rate);
   }
@@ -239,7 +283,7 @@ TEST(BlockProcessor, VerifyCaptureNumBandsCheck) {
 // Verifiers that the verification for null ProcessCapture input works.
 TEST(BlockProcessor, NullProcessCaptureParameter) {
   EXPECT_DEATH(std::unique_ptr<BlockProcessor>(
-                   BlockProcessor::Create2(EchoCanceller3Config(), 8000))
+                   BlockProcessor::Create(EchoCanceller3Config(), 16000, 1, 1))
                    ->ProcessCapture(false, false, nullptr),
                "");
 }
@@ -249,7 +293,7 @@ TEST(BlockProcessor, NullProcessCaptureParameter) {
 // tests on test bots has been fixed.
 TEST(BlockProcessor, DISABLED_WrongSampleRate) {
   EXPECT_DEATH(std::unique_ptr<BlockProcessor>(
-                   BlockProcessor::Create2(EchoCanceller3Config(), 8001)),
+                   BlockProcessor::Create(EchoCanceller3Config(), 8001, 1, 1)),
                "");
 }
 

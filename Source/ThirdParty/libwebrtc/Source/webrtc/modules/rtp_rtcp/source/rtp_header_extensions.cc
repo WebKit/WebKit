@@ -11,7 +11,9 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 
 #include <string.h>
+
 #include <cmath>
+#include <limits>
 
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -52,6 +54,89 @@ bool AbsoluteSendTime::Write(rtc::ArrayView<uint8_t> data,
   RTC_DCHECK_EQ(data.size(), 3);
   RTC_DCHECK_LE(time_24bits, 0x00FFFFFF);
   ByteWriter<uint32_t, 3>::WriteBigEndian(data.data(), time_24bits);
+  return true;
+}
+
+// Absolute Capture Time
+//
+// The Absolute Capture Time extension is used to stamp RTP packets with a NTP
+// timestamp showing when the first audio or video frame in a packet was
+// originally captured. The intent of this extension is to provide a way to
+// accomplish audio-to-video synchronization when RTCP-terminating intermediate
+// systems (e.g. mixers) are involved.
+//
+// Data layout of the shortened version of abs-capture-time:
+//
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | len=7 |     absolute capture timestamp (bit 0-23)     |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |             absolute capture timestamp (bit 24-55)            |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ... (56-63)  |
+//   +-+-+-+-+-+-+-+-+
+//
+// Data layout of the extended version of abs-capture-time:
+//
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | len=15|     absolute capture timestamp (bit 0-23)     |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |             absolute capture timestamp (bit 24-55)            |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ... (56-63)  |   estimated capture clock offset (bit 0-23)   |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |           estimated capture clock offset (bit 24-55)          |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ... (56-63)  |
+//   +-+-+-+-+-+-+-+-+
+constexpr RTPExtensionType AbsoluteCaptureTimeExtension::kId;
+constexpr uint8_t AbsoluteCaptureTimeExtension::kValueSizeBytes;
+constexpr uint8_t AbsoluteCaptureTimeExtension::
+    kValueSizeBytesWithoutEstimatedCaptureClockOffset;
+constexpr const char AbsoluteCaptureTimeExtension::kUri[];
+
+bool AbsoluteCaptureTimeExtension::Parse(rtc::ArrayView<const uint8_t> data,
+                                         AbsoluteCaptureTime* extension) {
+  if (data.size() != kValueSizeBytes &&
+      data.size() != kValueSizeBytesWithoutEstimatedCaptureClockOffset) {
+    return false;
+  }
+
+  extension->absolute_capture_timestamp =
+      ByteReader<uint64_t>::ReadBigEndian(data.data());
+
+  if (data.size() != kValueSizeBytesWithoutEstimatedCaptureClockOffset) {
+    extension->estimated_capture_clock_offset =
+        ByteReader<int64_t>::ReadBigEndian(data.data() + 8);
+  }
+
+  return true;
+}
+
+size_t AbsoluteCaptureTimeExtension::ValueSize(
+    const AbsoluteCaptureTime& extension) {
+  if (extension.estimated_capture_clock_offset != absl::nullopt) {
+    return kValueSizeBytes;
+  } else {
+    return kValueSizeBytesWithoutEstimatedCaptureClockOffset;
+  }
+}
+
+bool AbsoluteCaptureTimeExtension::Write(rtc::ArrayView<uint8_t> data,
+                                         const AbsoluteCaptureTime& extension) {
+  RTC_DCHECK_EQ(data.size(), ValueSize(extension));
+
+  ByteWriter<uint64_t>::WriteBigEndian(data.data(),
+                                       extension.absolute_capture_timestamp);
+
+  if (data.size() != kValueSizeBytesWithoutEstimatedCaptureClockOffset) {
+    ByteWriter<int64_t>::WriteBigEndian(
+        data.data() + 8, extension.estimated_capture_clock_offset.value());
+  }
+
   return true;
 }
 
@@ -125,27 +210,99 @@ bool TransmissionOffset::Write(rtc::ArrayView<uint8_t> data, int32_t rtp_time) {
   return true;
 }
 
+// TransportSequenceNumber
+//
 //   0                   1                   2
 //   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//  |  ID   | L=1   |transport wide sequence number |
+//  |  ID   | L=1   |transport-wide sequence number |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 constexpr RTPExtensionType TransportSequenceNumber::kId;
 constexpr uint8_t TransportSequenceNumber::kValueSizeBytes;
 constexpr const char TransportSequenceNumber::kUri[];
 
 bool TransportSequenceNumber::Parse(rtc::ArrayView<const uint8_t> data,
-                                    uint16_t* value) {
-  if (data.size() != 2)
+                                    uint16_t* transport_sequence_number) {
+  if (data.size() != kValueSizeBytes)
     return false;
-  *value = ByteReader<uint16_t>::ReadBigEndian(data.data());
+  *transport_sequence_number = ByteReader<uint16_t>::ReadBigEndian(data.data());
   return true;
 }
 
 bool TransportSequenceNumber::Write(rtc::ArrayView<uint8_t> data,
-                                    uint16_t value) {
-  RTC_DCHECK_EQ(data.size(), 2);
-  ByteWriter<uint16_t>::WriteBigEndian(data.data(), value);
+                                    uint16_t transport_sequence_number) {
+  RTC_DCHECK_EQ(data.size(), ValueSize(transport_sequence_number));
+  ByteWriter<uint16_t>::WriteBigEndian(data.data(), transport_sequence_number);
+  return true;
+}
+
+// TransportSequenceNumberV2
+//
+// In addition to the format used for TransportSequencNumber, V2 also supports
+// the following packet format where two extra bytes are used to specify that
+// the sender requests immediate feedback.
+//   0                   1                   2                   3
+//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//  |  ID   | L=3   |transport-wide sequence number |T|  seq count  |
+//  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//  |seq count cont.|
+//  +-+-+-+-+-+-+-+-+
+//
+// The bit |T| determines whether the feedback should include timing information
+// or not and |seq_count| determines how many packets the feedback packet should
+// cover including the current packet. If |seq_count| is zero no feedback is
+// requested.
+constexpr RTPExtensionType TransportSequenceNumberV2::kId;
+constexpr uint8_t TransportSequenceNumberV2::kValueSizeBytes;
+constexpr uint8_t
+    TransportSequenceNumberV2::kValueSizeBytesWithoutFeedbackRequest;
+constexpr const char TransportSequenceNumberV2::kUri[];
+constexpr uint16_t TransportSequenceNumberV2::kIncludeTimestampsBit;
+
+bool TransportSequenceNumberV2::Parse(
+    rtc::ArrayView<const uint8_t> data,
+    uint16_t* transport_sequence_number,
+    absl::optional<FeedbackRequest>* feedback_request) {
+  if (data.size() != kValueSizeBytes &&
+      data.size() != kValueSizeBytesWithoutFeedbackRequest)
+    return false;
+
+  *transport_sequence_number = ByteReader<uint16_t>::ReadBigEndian(data.data());
+
+  *feedback_request = absl::nullopt;
+  if (data.size() == kValueSizeBytes) {
+    uint16_t feedback_request_raw =
+        ByteReader<uint16_t>::ReadBigEndian(data.data() + 2);
+    bool include_timestamps =
+        (feedback_request_raw & kIncludeTimestampsBit) != 0;
+    uint16_t sequence_count = feedback_request_raw & ~kIncludeTimestampsBit;
+
+    // If |sequence_count| is zero no feedback is requested.
+    if (sequence_count != 0) {
+      *feedback_request = {include_timestamps, sequence_count};
+    }
+  }
+  return true;
+}
+
+bool TransportSequenceNumberV2::Write(
+    rtc::ArrayView<uint8_t> data,
+    uint16_t transport_sequence_number,
+    const absl::optional<FeedbackRequest>& feedback_request) {
+  RTC_DCHECK_EQ(data.size(),
+                ValueSize(transport_sequence_number, feedback_request));
+
+  ByteWriter<uint16_t>::WriteBigEndian(data.data(), transport_sequence_number);
+
+  if (feedback_request) {
+    RTC_DCHECK_GE(feedback_request->sequence_count, 0);
+    RTC_DCHECK_LT(feedback_request->sequence_count, kIncludeTimestampsBit);
+    uint16_t feedback_request_raw =
+        feedback_request->sequence_count |
+        (feedback_request->include_timestamps ? kIncludeTimestampsBit : 0);
+    ByteWriter<uint16_t>::WriteBigEndian(data.data() + 2, feedback_request_raw);
+  }
   return true;
 }
 
@@ -272,14 +429,14 @@ bool VideoContentTypeExtension::Write(rtc::ArrayView<uint8_t> data,
 // 255 = Invalid. The whole timing frame extension should be ignored.
 //
 //    0                   1                   2                   3
-//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |  ID   | len=12|     flags     |     encode start ms delta       |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |    encode finish ms delta     |   packetizer finish ms delta    |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |     pacer exit ms delta       |   network timestamp ms delta    |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | len=12|     flags     |     encode start ms delta     |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |    encode finish ms delta     |  packetizer finish ms delta   |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |     pacer exit ms delta       |  network timestamp ms delta   |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //   |  network2 timestamp ms delta  |
 //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -434,40 +591,128 @@ bool FrameMarkingExtension::Write(rtc::ArrayView<uint8_t> data,
   return true;
 }
 
-// HDR Metadata.
+// Color space including HDR metadata as an optional field.
 //
-// RTP header extension to carry HDR metadata.
-// Float values are upscaled by a static factor and transmitted as integers.
+// RTP header extension to carry color space information and optionally HDR
+// metadata. The float values in the HDR metadata struct are upscaled by a
+// static factor and transmitted as unsigned integers.
 //
+// Data layout of color space with HDR metadata (two-byte RTP header extension)
 //    0                   1                   2                   3
-//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |       ID      |     length    |                 luminance_max   |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |               |                  luminance_min                  |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |              mastering_metadata.primary_r.x and .y              |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |              mastering_metadata.primary_g.x and .y              |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |              mastering_metadata.primary_b.x and .y              |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |                mastering_metadata.white.x and .y                |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |                     max_content_light_level                     |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |                  max_frame_average_light_level                  |
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr RTPExtensionType HdrMetadataExtension::kId;
-constexpr uint8_t HdrMetadataExtension::kValueSizeBytes;
-constexpr const char HdrMetadataExtension::kUri[];
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |      ID       |   length=28   |   primaries   |   transfer    |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |    matrix     |range+chr.sit. |         luminance_max         |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |         luminance_min         |            mastering_metadata.|
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |primary_r.x and .y             |            mastering_metadata.|
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |primary_g.x and .y             |            mastering_metadata.|
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |primary_b.x and .y             |            mastering_metadata.|
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |white.x and .y                 |    max_content_light_level    |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   | max_frame_average_light_level |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+// Data layout of color space w/o HDR metadata (one-byte RTP header extension)
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |  ID   | L = 3 |   primaries   |   transfer    |    matrix     |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |range+chr.sit. |
+//   +-+-+-+-+-+-+-+-+
 
-bool HdrMetadataExtension::Parse(rtc::ArrayView<const uint8_t> data,
-                                 HdrMetadata* hdr_metadata) {
-  RTC_DCHECK(hdr_metadata);
-  if (data.size() != kValueSizeBytes)
+constexpr RTPExtensionType ColorSpaceExtension::kId;
+constexpr uint8_t ColorSpaceExtension::kValueSizeBytes;
+constexpr const char ColorSpaceExtension::kUri[];
+
+bool ColorSpaceExtension::Parse(rtc::ArrayView<const uint8_t> data,
+                                ColorSpace* color_space) {
+  RTC_DCHECK(color_space);
+  if (data.size() != kValueSizeBytes &&
+      data.size() != kValueSizeBytesWithoutHdrMetadata)
     return false;
 
+  size_t offset = 0;
+  // Read color space information.
+  if (!color_space->set_primaries_from_uint8(data[offset++]))
+    return false;
+  if (!color_space->set_transfer_from_uint8(data[offset++]))
+    return false;
+  if (!color_space->set_matrix_from_uint8(data[offset++]))
+    return false;
+
+  uint8_t range_and_chroma_siting = data[offset++];
+  if (!color_space->set_range_from_uint8((range_and_chroma_siting >> 4) & 0x03))
+    return false;
+  if (!color_space->set_chroma_siting_horizontal_from_uint8(
+          (range_and_chroma_siting >> 2) & 0x03))
+    return false;
+  if (!color_space->set_chroma_siting_vertical_from_uint8(
+          range_and_chroma_siting & 0x03))
+    return false;
+
+  // Read HDR metadata if it exists, otherwise clear it.
+  if (data.size() == kValueSizeBytesWithoutHdrMetadata) {
+    color_space->set_hdr_metadata(nullptr);
+  } else {
+    HdrMetadata hdr_metadata;
+    offset += ParseHdrMetadata(data.subview(offset), &hdr_metadata);
+    if (!hdr_metadata.Validate())
+      return false;
+    color_space->set_hdr_metadata(&hdr_metadata);
+  }
+  RTC_DCHECK_EQ(ValueSize(*color_space), offset);
+  return true;
+}
+
+bool ColorSpaceExtension::Write(rtc::ArrayView<uint8_t> data,
+                                const ColorSpace& color_space) {
+  RTC_DCHECK_EQ(data.size(), ValueSize(color_space));
+  size_t offset = 0;
+  // Write color space information.
+  data[offset++] = static_cast<uint8_t>(color_space.primaries());
+  data[offset++] = static_cast<uint8_t>(color_space.transfer());
+  data[offset++] = static_cast<uint8_t>(color_space.matrix());
+  data[offset++] = CombineRangeAndChromaSiting(
+      color_space.range(), color_space.chroma_siting_horizontal(),
+      color_space.chroma_siting_vertical());
+
+  // Write HDR metadata if it exists.
+  if (color_space.hdr_metadata()) {
+    offset +=
+        WriteHdrMetadata(data.subview(offset), *color_space.hdr_metadata());
+  }
+  RTC_DCHECK_EQ(ValueSize(color_space), offset);
+  return true;
+}
+
+// Combines range and chroma siting into one byte with the following bit layout:
+// bits 0-1 Chroma siting vertical.
+//      2-3 Chroma siting horizontal.
+//      4-5 Range.
+//      6-7 Unused.
+uint8_t ColorSpaceExtension::CombineRangeAndChromaSiting(
+    ColorSpace::RangeID range,
+    ColorSpace::ChromaSiting chroma_siting_horizontal,
+    ColorSpace::ChromaSiting chroma_siting_vertical) {
+  RTC_DCHECK_LE(static_cast<uint8_t>(range), 3);
+  RTC_DCHECK_LE(static_cast<uint8_t>(chroma_siting_horizontal), 3);
+  RTC_DCHECK_LE(static_cast<uint8_t>(chroma_siting_vertical), 3);
+  return (static_cast<uint8_t>(range) << 4) |
+         (static_cast<uint8_t>(chroma_siting_horizontal) << 2) |
+         static_cast<uint8_t>(chroma_siting_vertical);
+}
+
+size_t ColorSpaceExtension::ParseHdrMetadata(rtc::ArrayView<const uint8_t> data,
+                                             HdrMetadata* hdr_metadata) {
+  RTC_DCHECK_EQ(data.size(),
+                kValueSizeBytes - kValueSizeBytesWithoutHdrMetadata);
   size_t offset = 0;
   offset += ParseLuminance(data.data() + offset,
                            &hdr_metadata->mastering_metadata.luminance_max,
@@ -483,20 +728,39 @@ bool HdrMetadataExtension::Parse(rtc::ArrayView<const uint8_t> data,
                               &hdr_metadata->mastering_metadata.primary_b);
   offset += ParseChromaticity(data.data() + offset,
                               &hdr_metadata->mastering_metadata.white_point);
-  // TODO(kron): Do we need 32 bit here or is it enough with 16 bits?
-  // Also, what resolution is needed?
   hdr_metadata->max_content_light_level =
-      ByteReader<uint32_t>::ReadBigEndian(data.data() + offset);
-  offset += 4;
+      ByteReader<uint16_t>::ReadBigEndian(data.data() + offset);
+  offset += 2;
   hdr_metadata->max_frame_average_light_level =
-      ByteReader<uint32_t>::ReadBigEndian(data.data() + offset);
-  RTC_DCHECK_EQ(kValueSizeBytes, offset + 4);
-  return true;
+      ByteReader<uint16_t>::ReadBigEndian(data.data() + offset);
+  offset += 2;
+  return offset;
 }
 
-bool HdrMetadataExtension::Write(rtc::ArrayView<uint8_t> data,
-                                 const HdrMetadata& hdr_metadata) {
-  RTC_DCHECK_EQ(data.size(), kValueSizeBytes);
+size_t ColorSpaceExtension::ParseChromaticity(
+    const uint8_t* data,
+    HdrMasteringMetadata::Chromaticity* p) {
+  uint16_t chromaticity_x_scaled = ByteReader<uint16_t>::ReadBigEndian(data);
+  uint16_t chromaticity_y_scaled =
+      ByteReader<uint16_t>::ReadBigEndian(data + 2);
+  p->x = static_cast<float>(chromaticity_x_scaled) / kChromaticityDenominator;
+  p->y = static_cast<float>(chromaticity_y_scaled) / kChromaticityDenominator;
+  return 4;  // Return number of bytes read.
+}
+
+size_t ColorSpaceExtension::ParseLuminance(const uint8_t* data,
+                                           float* f,
+                                           int denominator) {
+  uint16_t luminance_scaled = ByteReader<uint16_t>::ReadBigEndian(data);
+  *f = static_cast<float>(luminance_scaled) / denominator;
+  return 2;  // Return number of bytes read.
+}
+
+size_t ColorSpaceExtension::WriteHdrMetadata(rtc::ArrayView<uint8_t> data,
+                                             const HdrMetadata& hdr_metadata) {
+  RTC_DCHECK_EQ(data.size(),
+                kValueSizeBytes - kValueSizeBytesWithoutHdrMetadata);
+  RTC_DCHECK(hdr_metadata.Validate());
   size_t offset = 0;
   offset += WriteLuminance(data.data() + offset,
                            hdr_metadata.mastering_metadata.luminance_max,
@@ -513,41 +777,22 @@ bool HdrMetadataExtension::Write(rtc::ArrayView<uint8_t> data,
   offset += WriteChromaticity(data.data() + offset,
                               hdr_metadata.mastering_metadata.white_point);
 
-  // TODO(kron): Do we need 32 bit here or is it enough with 16 bits?
-  // Also, what resolution is needed?
-  ByteWriter<uint32_t>::WriteBigEndian(data.data() + offset,
+  ByteWriter<uint16_t>::WriteBigEndian(data.data() + offset,
                                        hdr_metadata.max_content_light_level);
-  offset += 4;
-  ByteWriter<uint32_t>::WriteBigEndian(
+  offset += 2;
+  ByteWriter<uint16_t>::WriteBigEndian(
       data.data() + offset, hdr_metadata.max_frame_average_light_level);
-  RTC_DCHECK_EQ(kValueSizeBytes, offset + 4);
-  return true;
+  offset += 2;
+  return offset;
 }
 
-size_t HdrMetadataExtension::ParseChromaticity(
-    const uint8_t* data,
-    HdrMasteringMetadata::Chromaticity* p) {
-  uint16_t chromaticity_x_scaled = ByteReader<uint16_t>::ReadBigEndian(data);
-  uint16_t chromaticity_y_scaled =
-      ByteReader<uint16_t>::ReadBigEndian(data + 2);
-  p->x = static_cast<float>(chromaticity_x_scaled) / kChromaticityDenominator;
-  p->y = static_cast<float>(chromaticity_y_scaled) / kChromaticityDenominator;
-  return 4;  // Return number of bytes read.
-}
-
-size_t HdrMetadataExtension::ParseLuminance(const uint8_t* data,
-                                            float* f,
-                                            int denominator) {
-  uint32_t luminance_scaled = ByteReader<uint32_t, 3>::ReadBigEndian(data);
-  *f = static_cast<float>(luminance_scaled) / denominator;
-  return 3;  // Return number of bytes read.
-}
-
-size_t HdrMetadataExtension::WriteChromaticity(
+size_t ColorSpaceExtension::WriteChromaticity(
     uint8_t* data,
     const HdrMasteringMetadata::Chromaticity& p) {
   RTC_DCHECK_GE(p.x, 0.0f);
+  RTC_DCHECK_LE(p.x, 1.0f);
   RTC_DCHECK_GE(p.y, 0.0f);
+  RTC_DCHECK_LE(p.y, 1.0f);
   ByteWriter<uint16_t>::WriteBigEndian(
       data, std::round(p.x * kChromaticityDenominator));
   ByteWriter<uint16_t>::WriteBigEndian(
@@ -555,30 +800,14 @@ size_t HdrMetadataExtension::WriteChromaticity(
   return 4;  // Return number of bytes written.
 }
 
-size_t HdrMetadataExtension::WriteLuminance(uint8_t* data,
-                                            float f,
-                                            int denominator) {
+size_t ColorSpaceExtension::WriteLuminance(uint8_t* data,
+                                           float f,
+                                           int denominator) {
   RTC_DCHECK_GE(f, 0.0f);
-  ByteWriter<uint32_t, 3>::WriteBigEndian(data, std::round(f * denominator));
-  return 3;  // Return number of bytes written.
-}
-
-bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,
-                                   StringRtpHeaderExtension* str) {
-  if (data.empty() || data[0] == 0)  // Valid string extension can't be empty.
-    return false;
-  str->Set(data);
-  RTC_DCHECK(!str->empty());
-  return true;
-}
-
-bool BaseRtpStringExtension::Write(rtc::ArrayView<uint8_t> data,
-                                   const StringRtpHeaderExtension& str) {
-  RTC_DCHECK_EQ(data.size(), str.size());
-  RTC_DCHECK_GE(str.size(), 1);
-  RTC_DCHECK_LE(str.size(), StringRtpHeaderExtension::kMaxSize);
-  memcpy(data.data(), str.data(), str.size());
-  return true;
+  float upscaled_value = f * denominator;
+  RTC_DCHECK_LE(upscaled_value, std::numeric_limits<uint16_t>::max());
+  ByteWriter<uint16_t>::WriteBigEndian(data, std::round(upscaled_value));
+  return 2;  // Return number of bytes written.
 }
 
 bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,
@@ -595,7 +824,7 @@ bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,
 
 bool BaseRtpStringExtension::Write(rtc::ArrayView<uint8_t> data,
                                    const std::string& str) {
-  if (str.size() > StringRtpHeaderExtension::kMaxSize) {
+  if (str.size() > kMaxValueSizeBytes) {
     return false;
   }
   RTC_DCHECK_EQ(data.size(), str.size());

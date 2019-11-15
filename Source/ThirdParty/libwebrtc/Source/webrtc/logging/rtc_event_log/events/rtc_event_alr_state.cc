@@ -9,6 +9,7 @@
  */
 
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
+
 #include "absl/memory/memory.h"
 
 namespace webrtc {

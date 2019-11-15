@@ -13,8 +13,8 @@ package org.webrtc;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.opengl.GLES20;
+import android.support.annotation.Nullable;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
 
 /**
  * Helper class to draw VideoFrames. Calls either drawer.drawOes, drawer.drawRgb, or
@@ -22,13 +22,14 @@ import javax.annotation.Nullable;
  * taken into account. You can supply an additional render matrix for custom transformations.
  */
 public class VideoFrameDrawer {
+  public static final String TAG = "VideoFrameDrawer";
   /**
    * Draws a VideoFrame.TextureBuffer. Calls either drawer.drawOes or drawer.drawRgb
    * depending on the type of the buffer. You can supply an additional render matrix. This is
    * used multiplied together with the transformation matrix of the frame. (M = renderMatrix *
    * transformationMatrix)
    */
-  static void drawTexture(RendererCommon.GlDrawer drawer, VideoFrame.TextureBuffer buffer,
+  public static void drawTexture(RendererCommon.GlDrawer drawer, VideoFrame.TextureBuffer buffer,
       Matrix renderMatrix, int frameWidth, int frameHeight, int viewportX, int viewportY,
       int viewportWidth, int viewportHeight) {
     Matrix finalMatrix = new Matrix(buffer.getTransformMatrix());
@@ -189,8 +190,11 @@ public class VideoFrameDrawer {
       int viewportHeight) {
     final int width = frame.getRotatedWidth();
     final int height = frame.getRotatedHeight();
-
     calculateTransformedRenderSize(width, height, additionalRenderMatrix);
+    if (renderWidth <= 0 || renderHeight <= 0) {
+      Logging.w(TAG, "Illegal frame size: " + renderWidth + "x" + renderHeight);
+      return;
+    }
 
     final boolean isTextureFrame = frame.getBuffer() instanceof VideoFrame.TextureBuffer;
     renderMatrix.reset();
@@ -222,6 +226,12 @@ public class VideoFrameDrawer {
           RendererCommon.convertMatrixFromAndroidGraphicsMatrix(renderMatrix), renderWidth,
           renderHeight, viewportX, viewportY, viewportWidth, viewportHeight);
     }
+  }
+
+  public VideoFrame.Buffer prepareBufferForViewportSize(
+      VideoFrame.Buffer buffer, int width, int height) {
+    buffer.retain();
+    return buffer;
   }
 
   public void release() {

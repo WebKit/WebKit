@@ -28,7 +28,7 @@ int OverheadRateBps(size_t overhead_bytes_per_packet, int frame_length_ms) {
 }  // namespace
 
 FrameLengthController::Config::Config(
-    const std::vector<int>& encoder_frame_lengths_ms,
+    const std::set<int>& encoder_frame_lengths_ms,
     int initial_frame_length_ms,
     int min_encoder_bitrate_bps,
     float fl_increasing_packet_loss_fraction,
@@ -75,10 +75,8 @@ void FrameLengthController::MakeDecision(AudioEncoderRuntimeConfig* config) {
   RTC_DCHECK(!config->frame_length_ms);
 
   if (FrameLengthIncreasingDecision(*config)) {
-    ++frame_length_ms_;
     prev_decision_increase_ = true;
   } else if (FrameLengthDecreasingDecision(*config)) {
-    --frame_length_ms_;
     prev_decision_increase_ = false;
   }
   config->last_fl_change_increase = prev_decision_increase_;
@@ -99,7 +97,7 @@ bool FrameLengthController::Config::FrameLengthChange::operator<(
 }
 
 bool FrameLengthController::FrameLengthIncreasingDecision(
-    const AudioEncoderRuntimeConfig& config) const {
+    const AudioEncoderRuntimeConfig& config) {
   // Increase frame length if
   // 1. |uplink_bandwidth_bps| is known to be smaller or equal than
   //    |min_encoder_bitrate_bps| plus |prevent_overuse_margin_bps| plus the
@@ -108,12 +106,17 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
   // 3. |uplink_bandwidth_bps| is known to be smaller than a threshold AND
   // 4. |uplink_packet_loss_fraction| is known to be smaller than a threshold.
 
+  // Find next frame length to which a criterion is defined to shift from
+  // current frame length.
   auto longer_frame_length_ms = std::next(frame_length_ms_);
-  if (longer_frame_length_ms == config_.encoder_frame_lengths_ms.end())
-    return false;
-
-  auto increase_threshold = config_.fl_changing_bandwidths_bps.find(
-      Config::FrameLengthChange(*frame_length_ms_, *longer_frame_length_ms));
+  auto increase_threshold = config_.fl_changing_bandwidths_bps.end();
+  while (longer_frame_length_ms != config_.encoder_frame_lengths_ms.end()) {
+    increase_threshold = config_.fl_changing_bandwidths_bps.find(
+        Config::FrameLengthChange(*frame_length_ms_, *longer_frame_length_ms));
+    if (increase_threshold != config_.fl_changing_bandwidths_bps.end())
+      break;
+    longer_frame_length_ms = std::next(longer_frame_length_ms);
+  }
 
   if (increase_threshold == config_.fl_changing_bandwidths_bps.end())
     return false;
@@ -134,18 +137,23 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
               OverheadRateBps(*overhead_bytes_per_packet_ +
                                   config_.fl_increase_overhead_offset,
                               *frame_length_ms_)) {
+    frame_length_ms_ = longer_frame_length_ms;
     return true;
   }
 
-  return (uplink_bandwidth_bps_ &&
-          *uplink_bandwidth_bps_ <= increase_threshold->second) &&
-         (uplink_packet_loss_fraction_ &&
-          *uplink_packet_loss_fraction_ <=
-              config_.fl_increasing_packet_loss_fraction);
+  if ((uplink_bandwidth_bps_ &&
+       *uplink_bandwidth_bps_ <= increase_threshold->second) &&
+      (uplink_packet_loss_fraction_ &&
+       *uplink_packet_loss_fraction_ <=
+           config_.fl_increasing_packet_loss_fraction)) {
+    frame_length_ms_ = longer_frame_length_ms;
+    return true;
+  }
+  return false;
 }
 
 bool FrameLengthController::FrameLengthDecreasingDecision(
-    const AudioEncoderRuntimeConfig& config) const {
+    const AudioEncoderRuntimeConfig& config) {
   // Decrease frame length if
   // 1. shorter frame length is available AND
   // 2. |uplink_bandwidth_bps| is known to be bigger than
@@ -154,12 +162,18 @@ bool FrameLengthController::FrameLengthDecreasingDecision(
   // one or more of the followings:
   // 3. |uplink_bandwidth_bps| is known to be larger than a threshold,
   // 4. |uplink_packet_loss_fraction| is known to be larger than a threshold,
-  if (frame_length_ms_ == config_.encoder_frame_lengths_ms.begin())
-    return false;
 
-  auto shorter_frame_length_ms = std::prev(frame_length_ms_);
-  auto decrease_threshold = config_.fl_changing_bandwidths_bps.find(
-      Config::FrameLengthChange(*frame_length_ms_, *shorter_frame_length_ms));
+  // Find next frame length to which a criterion is defined to shift from
+  // current frame length.
+  auto shorter_frame_length_ms = frame_length_ms_;
+  auto decrease_threshold = config_.fl_changing_bandwidths_bps.end();
+  while (shorter_frame_length_ms != config_.encoder_frame_lengths_ms.begin()) {
+    shorter_frame_length_ms = std::prev(shorter_frame_length_ms);
+    decrease_threshold = config_.fl_changing_bandwidths_bps.find(
+        Config::FrameLengthChange(*frame_length_ms_, *shorter_frame_length_ms));
+    if (decrease_threshold != config_.fl_changing_bandwidths_bps.end())
+      break;
+  }
 
   if (decrease_threshold == config_.fl_changing_bandwidths_bps.end())
     return false;
@@ -173,11 +187,15 @@ bool FrameLengthController::FrameLengthDecreasingDecision(
     return false;
   }
 
-  return (uplink_bandwidth_bps_ &&
-          *uplink_bandwidth_bps_ >= decrease_threshold->second) ||
-         (uplink_packet_loss_fraction_ &&
-          *uplink_packet_loss_fraction_ >=
-              config_.fl_decreasing_packet_loss_fraction);
+  if ((uplink_bandwidth_bps_ &&
+       *uplink_bandwidth_bps_ >= decrease_threshold->second) ||
+      (uplink_packet_loss_fraction_ &&
+       *uplink_packet_loss_fraction_ >=
+           config_.fl_decreasing_packet_loss_fraction)) {
+    frame_length_ms_ = shorter_frame_length_ms;
+    return true;
+  }
+  return false;
 }
 
 }  // namespace webrtc

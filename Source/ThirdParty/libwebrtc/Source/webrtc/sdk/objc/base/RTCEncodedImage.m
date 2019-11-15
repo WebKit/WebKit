@@ -26,6 +26,5 @@
 @synthesize completeFrame = _completeFrame;
 @synthesize qp = _qp;
 @synthesize contentType = _contentType;
-@synthesize spatialIndex = _spatialIndex;
 
 @end

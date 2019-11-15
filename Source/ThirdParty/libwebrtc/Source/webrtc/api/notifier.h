@@ -13,7 +13,7 @@
 
 #include <list>
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

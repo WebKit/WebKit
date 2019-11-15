@@ -22,6 +22,7 @@ VideoStream::VideoStream()
       min_bitrate_bps(-1),
       target_bitrate_bps(-1),
       max_bitrate_bps(-1),
+      scale_resolution_down_by(-1.),
       max_qp(-1),
       active(true) {}
 VideoStream::VideoStream(const VideoStream& other) = default;

@@ -10,7 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 
-#include "api/rtpparameters.h"
+#include "api/rtp_parameters.h"
 
 namespace webrtc {
 

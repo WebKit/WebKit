@@ -24,14 +24,19 @@
 namespace webrtc {
 
 std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
-    VideoCodecType type,
+    absl::optional<VideoCodecType> type,
     rtc::ArrayView<const uint8_t> payload,
     PayloadSizeLimits limits,
     // Codec-specific details.
     const RTPVideoHeader& rtp_video_header,
-    FrameType frame_type,
+    VideoFrameType frame_type,
     const RTPFragmentationHeader* fragmentation) {
-  switch (type) {
+  if (!type) {
+    // Use raw packetizer.
+    return absl::make_unique<RtpPacketizerGeneric>(payload, limits);
+  }
+
+  switch (*type) {
     case kVideoCodecH264: {
       RTC_CHECK(fragmentation);
       const auto& h264 =
@@ -133,8 +138,13 @@ std::vector<int> RtpPacketizer::SplitAboutEqually(
   return result;
 }
 
-RtpDepacketizer* RtpDepacketizer::Create(VideoCodecType type) {
-  switch (type) {
+RtpDepacketizer* RtpDepacketizer::Create(absl::optional<VideoCodecType> type) {
+  if (!type) {
+    // Use raw depacketizer.
+    return new RtpDepacketizerGeneric(/*generic_header_enabled=*/false);
+  }
+
+  switch (*type) {
     case kVideoCodecH264:
       return new RtpDepacketizerH264();
     case kVideoCodecVP8:
@@ -142,7 +152,8 @@ RtpDepacketizer* RtpDepacketizer::Create(VideoCodecType type) {
     case kVideoCodecVP9:
       return new RtpDepacketizerVp9();
     default:
-      return new RtpDepacketizerGeneric();
+      return new RtpDepacketizerGeneric(/*generic_header_enabled=*/true);
   }
 }
+
 }  // namespace webrtc

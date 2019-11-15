@@ -453,9 +453,11 @@ class UnitTest(unittest.TestCase):
     self.assertEqual(files, [
         '../../.vpython',
         '../../testing/test_env.py',
+        '../../tools_webrtc/flags_compatibility.py',
         'base_unittests',
     ])
     self.assertEqual(command, [
+        '../../tools_webrtc/flags_compatibility.py',
         '../../testing/test_env.py',
         './base_unittests',
         '--asan=0',
@@ -775,6 +777,11 @@ class UnitTest(unittest.TestCase):
 
   def test_lookup(self):
     self.check(['lookup', '-c', 'debug_goma'], ret=0)
+
+  def test_quiet_lookup(self):
+    self.check(['lookup', '-c', 'debug_goma', '--quiet'], ret=0,
+               out=('is_debug = true\n'
+                    'use_goma = true\n'))
 
   def test_lookup_goma_dir_expansion(self):
     self.check(['lookup', '-c', 'rel_bot', '-g', '/foo'], ret=0,

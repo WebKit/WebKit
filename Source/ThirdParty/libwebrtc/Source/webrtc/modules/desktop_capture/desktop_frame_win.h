@@ -11,12 +11,12 @@
 #ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
 
-#include <memory>
-
 #include <windows.h>
 
+#include <memory>
+
 #include "modules/desktop_capture/desktop_frame.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 

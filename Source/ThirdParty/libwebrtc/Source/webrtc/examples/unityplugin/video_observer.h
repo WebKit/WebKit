@@ -13,7 +13,7 @@
 
 #include <mutex>
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 #include "api/video/video_sink_interface.h"
 #include "examples/unityplugin/unity_plugin_apis.h"
 

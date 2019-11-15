@@ -40,7 +40,7 @@
 
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/stringutils.h"
+#include "rtc_base/string_utils.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/sleep.h"
 
@@ -92,7 +92,7 @@ enum { kAecCaptureStreamIndex = 0, kAecRenderStreamIndex = 1 };
 //
 // Example implementation:
 // http://msdn.microsoft.com/en-us/library/dd376684(v=vs.85).aspx
-class MediaBufferImpl : public IMediaBuffer {
+class MediaBufferImpl final : public IMediaBuffer {
  public:
   explicit MediaBufferImpl(DWORD maxLength)
       : _data(new BYTE[maxLength]),
@@ -179,8 +179,8 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
   bool coreAudioIsSupported(false);
 
   HRESULT hr(S_OK);
-  TCHAR buf[MAXERRORLENGTH];
-  TCHAR errorText[MAXERRORLENGTH];
+  wchar_t buf[MAXERRORLENGTH];
+  wchar_t errorText[MAXERRORLENGTH];
 
   // 1) Check if Windows version is Vista SP1 or later.
   //
@@ -289,8 +289,8 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
       errorText[messageLength - 1] = '\0';
     }
 
-    StringCchPrintf(buf, MAXERRORLENGTH, TEXT("Error details: "));
-    StringCchCat(buf, MAXERRORLENGTH, errorText);
+    StringCchPrintfW(buf, MAXERRORLENGTH, L"Error details: ");
+    StringCchCatW(buf, MAXERRORLENGTH, errorText);
     RTC_LOG(LS_VERBOSE) << buf;
   } else {
     MMDeviceIsAvailable = true;
@@ -413,7 +413,6 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _playBlockSize(0),
       _playChannels(2),
       _sndCardPlayDelay(0),
-      _sndCardRecDelay(0),
       _writtenSamples(0),
       _readSamples(0),
       _recAudioFrameSize(0),
@@ -2471,9 +2470,6 @@ int32_t AudioDeviceWindowsCore::StopRecording() {
     }
   }
 
-  // Reset the recording delay value.
-  _sndCardRecDelay = 0;
-
   _UnLock();
 
   return err;
@@ -3286,8 +3282,6 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
             ((((UINT64)t1.QuadPart * _perfCounterFactor) - recTime) / 10000) +
             (10 * syncBufIndex) / _recBlockSize - 10);
         uint32_t sndCardPlayDelay = static_cast<uint32_t>(_sndCardPlayDelay);
-
-        _sndCardRecDelay = sndCardRecDelay;
 
         while (syncBufIndex >= _recBlockSize) {
           if (_ptrAudioBuffer) {
@@ -4160,8 +4154,8 @@ Exit:
 // ----------------------------------------------------------------------------
 
 void AudioDeviceWindowsCore::_TraceCOMError(HRESULT hr) const {
-  TCHAR buf[MAXERRORLENGTH];
-  TCHAR errorText[MAXERRORLENGTH];
+  wchar_t buf[MAXERRORLENGTH];
+  wchar_t errorText[MAXERRORLENGTH];
 
   const DWORD dwFlags =
       FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
@@ -4181,31 +4175,9 @@ void AudioDeviceWindowsCore::_TraceCOMError(HRESULT hr) const {
   }
 
   RTC_LOG(LS_ERROR) << "Core Audio method failed (hr=" << hr << ")";
-  StringCchPrintf(buf, MAXERRORLENGTH, TEXT("Error details: "));
-  StringCchCat(buf, MAXERRORLENGTH, errorText);
-  RTC_LOG(LS_ERROR) << WideToUTF8(buf);
-}
-
-// ----------------------------------------------------------------------------
-//  WideToUTF8
-// ----------------------------------------------------------------------------
-
-char* AudioDeviceWindowsCore::WideToUTF8(const TCHAR* src) const {
-#ifdef UNICODE
-  const size_t kStrLen = sizeof(_str);
-  memset(_str, 0, kStrLen);
-  // Get required size (in bytes) to be able to complete the conversion.
-  unsigned int required_size =
-      (unsigned int)WideCharToMultiByte(CP_UTF8, 0, src, -1, _str, 0, 0, 0);
-  if (required_size <= kStrLen) {
-    // Process the entire input string, including the terminating null char.
-    if (WideCharToMultiByte(CP_UTF8, 0, src, -1, _str, kStrLen, 0, 0) == 0)
-      memset(_str, 0, kStrLen);
-  }
-  return _str;
-#else
-  return const_cast<char*>(src);
-#endif
+  StringCchPrintfW(buf, MAXERRORLENGTH, L"Error details: ");
+  StringCchCatW(buf, MAXERRORLENGTH, errorText);
+  RTC_LOG(LS_ERROR) << rtc::ToUtf8(buf);
 }
 
 bool AudioDeviceWindowsCore::KeyPressed() const {

@@ -27,7 +27,6 @@ Legacy API directory                       | Including subdirectories?
 `modules/rtp_rtcp/source`                  | No
 `modules/utility/include`                  | No
 `modules/video_coding/codecs/h264/include` | No
-`modules/video_coding/codecs/i420/include` | No
 `modules/video_coding/codecs/vp8/include`  | No
 `modules/video_coding/codecs/vp9/include`  | No
 `modules/video_coding/include`             | No

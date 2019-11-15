@@ -20,11 +20,12 @@
 #include "absl/types/optional.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/test/api_call_statistics.h"
 #include "modules/audio_processing/test/fake_recording_device.h"
 #include "modules/audio_processing/test/test_utils.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/task_queue.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace test {
@@ -64,7 +65,7 @@ struct SimulationSettings {
   absl::optional<bool> use_delay_agnostic;
   absl::optional<bool> use_extended_filter;
   absl::optional<bool> use_drift_compensation;
-  absl::optional<bool> use_aec3;
+  absl::optional<bool> use_legacy_aec;
   absl::optional<bool> use_experimental_agc;
   absl::optional<bool> use_experimental_agc_agc2_level_estimator;
   absl::optional<bool> experimental_agc_disable_digital_adaptive;
@@ -74,10 +75,10 @@ struct SimulationSettings {
   absl::optional<bool> use_agc_limiter;
   absl::optional<int> agc_compression_gain;
   absl::optional<bool> agc2_use_adaptive_gain;
-  float agc2_fixed_gain_db;
+  absl::optional<float> agc2_fixed_gain_db;
   AudioProcessing::Config::GainController2::LevelEstimator
       agc2_adaptive_level_estimator;
-  float pre_amplifier_gain_factor;
+  absl::optional<float> pre_amplifier_gain_factor;
   absl::optional<int> vad_likelihood;
   absl::optional<int> ns_level;
   absl::optional<bool> use_refined_adaptive_filter;
@@ -85,6 +86,7 @@ struct SimulationSettings {
   bool simulate_mic_gain = false;
   absl::optional<int> simulated_mic_kind;
   bool report_performance = false;
+  absl::optional<std::string> performance_report_output_filename;
   bool report_bitexactness = false;
   bool use_verbose_logging = false;
   bool use_quiet_output = false;
@@ -93,19 +95,14 @@ struct SimulationSettings {
   absl::optional<std::string> aec_dump_output_filename;
   bool fixed_interface = false;
   bool store_intermediate_output = false;
-  bool print_aec3_parameter_values = false;
+  bool print_aec_parameter_values = false;
   bool dump_internal_data = false;
   absl::optional<std::string> dump_internal_data_output_dir;
-  absl::optional<std::string> custom_call_order_filename;
-  absl::optional<std::string> aec3_settings_filename;
-};
-
-// Holds a few statistics about a series of TickIntervals.
-struct TickIntervalStats {
-  TickIntervalStats() : min(std::numeric_limits<int64_t>::max()) {}
-  int64_t sum;
-  int64_t max;
-  int64_t min;
+  absl::optional<std::string> call_order_input_filename;
+  absl::optional<std::string> call_order_output_filename;
+  absl::optional<std::string> aec_settings_filename;
+  absl::optional<absl::string_view> aec_dump_input_string;
+  std::vector<float>* processed_capture_samples = nullptr;
 };
 
 // Copies samples present in a ChannelBuffer into an AudioFrame.
@@ -123,8 +120,10 @@ class AudioProcessingSimulator {
   // Processes the data in the input.
   virtual void Process() = 0;
 
-  // Returns the execution time of all AudioProcessing calls.
-  const TickIntervalStats& proc_time() const { return proc_time_; }
+  // Returns the execution times of all AudioProcessing calls.
+  const ApiCallStatistics& GetApiCallStatistics() const {
+    return api_call_statistics_;
+  }
 
   // Reports whether the processed recording was bitexact.
   bool OutputWasBitexact() { return bitexact_output_; }
@@ -135,22 +134,6 @@ class AudioProcessingSimulator {
   }
 
  protected:
-  // RAII class for execution time measurement. Updates the provided
-  // TickIntervalStats based on the time between ScopedTimer creation and
-  // leaving the enclosing scope.
-  class ScopedTimer {
-   public:
-    explicit ScopedTimer(TickIntervalStats* proc_time)
-        : proc_time_(proc_time), start_time_(rtc::TimeNanos()) {}
-
-    ~ScopedTimer();
-
-   private:
-    TickIntervalStats* const proc_time_;
-    int64_t start_time_;
-  };
-
-  TickIntervalStats* mutable_proc_time() { return &proc_time_; }
   void ProcessStream(bool fixed_interface);
   void ProcessReverseStream(bool fixed_interface);
   void CreateAudioProcessor();
@@ -183,20 +166,23 @@ class AudioProcessingSimulator {
   bool bitexact_output_ = true;
   int aec_dump_mic_level_ = 0;
 
+ protected:
+  size_t output_reset_counter_ = 0;
+
  private:
   void SetupOutput();
 
   size_t num_process_stream_calls_ = 0;
   size_t num_reverse_process_stream_calls_ = 0;
-  size_t output_reset_counter_ = 0;
-  std::unique_ptr<ChannelBufferWavWriter> buffer_writer_;
-  std::unique_ptr<ChannelBufferWavWriter> reverse_buffer_writer_;
-  TickIntervalStats proc_time_;
+  std::unique_ptr<ChannelBufferWavWriter> buffer_file_writer_;
+  std::unique_ptr<ChannelBufferWavWriter> reverse_buffer_file_writer_;
+  std::unique_ptr<ChannelBufferVectorWriter> buffer_memory_writer_;
+  ApiCallStatistics api_call_statistics_;
   std::ofstream residual_echo_likelihood_graph_writer_;
   int analog_mic_level_;
   FakeRecordingDevice fake_recording_device_;
 
-  rtc::TaskQueue worker_queue_;
+  TaskQueueForTest worker_queue_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AudioProcessingSimulator);
 };

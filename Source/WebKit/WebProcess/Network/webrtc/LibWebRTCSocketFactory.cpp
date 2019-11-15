@@ -75,12 +75,13 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(const void* sock
     return socket.release();
 }
 
-rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, int options)
+rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions& options)
 {
     auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::ClientTCP, localAddress, remoteAddress);
     socket->setState(LibWebRTCSocket::STATE_CONNECTING);
 
-    callOnMainThread([identifier = socket->identifier(), localAddress = prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress = prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections), userAgent = WTFMove(userAgent).isolatedCopy(), options]() {
+    // FIXME: We only transfer options.opts but should also handle other members.
+    callOnMainThread([identifier = socket->identifier(), localAddress = prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress = prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections), userAgent = WTFMove(userAgent).isolatedCopy(), options = options.opts]() {
         if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkRTCProvider::CreateClientTCPSocket(identifier, RTCNetwork::SocketAddress(localAddress), RTCNetwork::SocketAddress(remoteAddress), userAgent, options), 0)) {
             // FIXME: Set error back to socket
             return;

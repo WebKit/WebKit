@@ -640,4 +640,4 @@ using signal8 =
 
 }  // namespace sigslot
 
-#endif  /* RTC_BASE_THIRD_PARTY_SIGSLOT_SIGSLOT_H_ */
+#endif /* RTC_BASE_THIRD_PARTY_SIGSLOT_SIGSLOT_H_ */

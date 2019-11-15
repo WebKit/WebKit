@@ -25,6 +25,7 @@
 @class RTCRtpTransceiver;
 @class RTCRtpTransceiverInit;
 @class RTCSessionDescription;
+@class RTCStatisticsReport;
 @class RTCLegacyStatsReport;
 
 typedef NS_ENUM(NSInteger, RTCRtpMediaType);
@@ -125,6 +126,11 @@ RTC_OBJC_EXPORT
  *  This is only called with RTCSdpSemanticsUnifiedPlan specified.
  */
 @optional
+/** Called any time the IceConnectionState changes following standardized
+ * transition. */
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
+    didChangeStandardizedIceConnectionState:(RTCIceConnectionState)newState;
+
 /** Called any time the PeerConnectionState changes. */
 - (void)peerConnection:(RTCPeerConnection *)peerConnection
     didChangeConnectionState:(RTCPeerConnectionState)newState;
@@ -140,6 +146,13 @@ RTC_OBJC_EXPORT
 /** Called when the receiver and its track are removed. */
 - (void)peerConnection:(RTCPeerConnection *)peerConnection
      didRemoveReceiver:(RTCRtpReceiver *)rtpReceiver;
+
+/** Called when the selected ICE candidate pair is changed. */
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
+    didChangeLocalCandidate:(RTCIceCandidate *)local
+            remoteCandidate:(RTCIceCandidate *)remote
+             lastReceivedMs:(int)lastDataReceivedMs
+               changeReason:(NSString *)reason;
 
 @end
 
@@ -316,6 +329,8 @@ RTC_OBJC_EXPORT
 
 @end
 
+typedef void (^RTCStatisticsCompletionHandler)(RTCStatisticsReport *);
+
 @interface RTCPeerConnection (Stats)
 
 /** Gather stats for the given RTCMediaStreamTrack. If |mediaStreamTrack| is nil
@@ -324,6 +339,21 @@ RTC_OBJC_EXPORT
 - (void)statsForTrack:(nullable RTCMediaStreamTrack *)mediaStreamTrack
      statsOutputLevel:(RTCStatsOutputLevel)statsOutputLevel
     completionHandler:(nullable void (^)(NSArray<RTCLegacyStatsReport *> *stats))completionHandler;
+
+/** Gather statistic through the v2 statistics API. */
+- (void)statisticsWithCompletionHandler:(RTCStatisticsCompletionHandler)completionHandler;
+
+/** Spec-compliant getStats() performing the stats selection algorithm with the
+ *  sender.
+ */
+- (void)statisticsForSender:(RTCRtpSender *)sender
+          completionHandler:(RTCStatisticsCompletionHandler)completionHandler;
+
+/** Spec-compliant getStats() performing the stats selection algorithm with the
+ *  receiver.
+ */
+- (void)statisticsForReceiver:(RTCRtpReceiver *)receiver
+            completionHandler:(RTCStatisticsCompletionHandler)completionHandler;
 
 @end
 

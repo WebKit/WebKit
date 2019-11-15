@@ -11,27 +11,30 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_ULPFEC_RECEIVER_H_
 #define MODULES_RTP_RTCP_INCLUDE_ULPFEC_RECEIVER_H_
 
+#include <memory>
+
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 
 struct FecPacketCounter {
-  FecPacketCounter()
-      : num_packets(0),
-        num_fec_packets(0),
-        num_recovered_packets(0),
-        first_packet_time_ms(-1) {}
-
-  size_t num_packets;            // Number of received packets.
-  size_t num_fec_packets;        // Number of received FEC packets.
-  size_t num_recovered_packets;  // Number of recovered media packets using FEC.
-  int64_t first_packet_time_ms;  // Time when first packet is received.
+  FecPacketCounter() = default;
+  size_t num_packets = 0;  // Number of received packets.
+  size_t num_bytes = 0;
+  size_t num_fec_packets = 0;  // Number of received FEC packets.
+  size_t num_recovered_packets =
+      0;  // Number of recovered media packets using FEC.
+  int64_t first_packet_time_ms = -1;  // Time when first packet is received.
 };
 
 class UlpfecReceiver {
  public:
-  static UlpfecReceiver* Create(uint32_t ssrc,
-                                RecoveredPacketReceiver* callback);
+  static std::unique_ptr<UlpfecReceiver> Create(
+      uint32_t ssrc,
+      RecoveredPacketReceiver* callback,
+      rtc::ArrayView<const RtpExtension> extensions);
 
   virtual ~UlpfecReceiver() {}
 

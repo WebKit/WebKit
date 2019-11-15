@@ -9,7 +9,10 @@
  */
 
 #include "modules/video_processing/util/denoiser_filter_sse2.h"
+
 #include <emmintrin.h>
+#include <stdlib.h>
+#include <string.h>
 
 namespace webrtc {
 

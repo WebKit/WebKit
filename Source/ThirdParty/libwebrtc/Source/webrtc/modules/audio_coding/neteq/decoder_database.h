@@ -17,12 +17,10 @@
 
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
-#include "common_types.h"  // NOLINT(build/include)  // NULL
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/codecs/cng/webrtc_cng.h"
-#include "modules/audio_coding/neteq/neteq_decoder_enum.h"
 #include "modules/audio_coding/neteq/packet.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -48,18 +46,8 @@ class DecoderDatabase {
     explicit DecoderInfo(const SdpAudioFormat& audio_format,
                          absl::optional<AudioCodecPairId> codec_pair_id,
                          AudioDecoderFactory* factory = nullptr);
-    explicit DecoderInfo(NetEqDecoder ct,
-                         absl::optional<AudioCodecPairId> codec_pair_id,
-                         AudioDecoderFactory* factory = nullptr);
-    DecoderInfo(const SdpAudioFormat& audio_format,
-                AudioDecoder* ext_dec,
-                const std::string& codec_name);
     DecoderInfo(DecoderInfo&&);
     ~DecoderInfo();
-
-    // Was this info object created with a specification that allows us to
-    // actually produce a decoder?
-    bool CanGetDecoder() const;
 
     // Get the AudioDecoder object, creating it first if necessary.
     AudioDecoder* GetDecoder() const;
@@ -110,9 +98,6 @@ class DecoderDatabase {
     AudioDecoderFactory* const factory_;
     mutable std::unique_ptr<AudioDecoder> decoder_;
 
-    // Set iff this is an external decoder.
-    AudioDecoder* const external_decoder_;
-
     // Set iff this is a comfort noise decoder.
     struct CngDecoder {
       static absl::optional<CngDecoder> Create(const SdpAudioFormat& format);
@@ -153,25 +138,10 @@ class DecoderDatabase {
   virtual std::vector<int> SetCodecs(
       const std::map<int, SdpAudioFormat>& codecs);
 
-  // Registers |rtp_payload_type| as a decoder of type |codec_type|. The |name|
-  // is only used to populate the name field in the DecoderInfo struct in the
-  // database, and can be arbitrary (including empty). Returns kOK on success;
-  // otherwise an error code.
-  virtual int RegisterPayload(uint8_t rtp_payload_type,
-                              NetEqDecoder codec_type,
-                              const std::string& name);
-
   // Registers a decoder for the given payload type. Returns kOK on success;
   // otherwise an error code.
   virtual int RegisterPayload(int rtp_payload_type,
                               const SdpAudioFormat& audio_format);
-
-  // Registers an externally created AudioDecoder object, and associates it
-  // as a decoder of type |codec_type| with |rtp_payload_type|.
-  virtual int InsertExternal(uint8_t rtp_payload_type,
-                             NetEqDecoder codec_type,
-                             const std::string& codec_name,
-                             AudioDecoder* decoder);
 
   // Removes the entry for |rtp_payload_type| from the database.
   // Returns kDecoderNotFound or kOK depending on the outcome of the operation.

@@ -12,48 +12,30 @@
 #include <string>
 #include <vector>
 
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
+
+ABSL_FLAG(std::string, i, "", "Path to the input wav file");
+ABSL_FLAG(std::string, f, "", "Path to the output features file");
+ABSL_FLAG(std::string, o, "", "Path to the output VAD probabilities file");
 
 namespace webrtc {
 namespace rnn_vad {
 namespace test {
-namespace {
-
-WEBRTC_DEFINE_string(i, "", "Path to the input wav file");
-std::string InputWavFile() {
-  return static_cast<std::string>(FLAG_i);
-}
-
-WEBRTC_DEFINE_string(f, "", "Path to the output features file");
-std::string OutputFeaturesFile() {
-  return static_cast<std::string>(FLAG_f);
-}
-
-WEBRTC_DEFINE_string(o, "", "Path to the output VAD probabilities file");
-std::string OutputVadProbsFile() {
-  return static_cast<std::string>(FLAG_o);
-}
-
-WEBRTC_DEFINE_bool(help, false, "Prints this message");
-
-}  // namespace
 
 int main(int argc, char* argv[]) {
+  absl::ParseCommandLine(argc, argv);
   rtc::LogMessage::LogToDebug(rtc::LS_INFO);
-  rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);
-  if (FLAG_help) {
-    rtc::FlagList::Print(nullptr, false);
-    return 0;
-  }
 
   // Open wav input file and check properties.
-  WavReader wav_reader(InputWavFile());
+  const std::string input_wav_file = absl::GetFlag(FLAGS_i);
+  WavReader wav_reader(input_wav_file);
   if (wav_reader.num_channels() != 1) {
     RTC_LOG(LS_ERROR) << "Only mono wav files are supported";
     return 1;
@@ -65,9 +47,10 @@ int main(int argc, char* argv[]) {
   RTC_LOG(LS_INFO) << "Input sample rate: " << wav_reader.sample_rate();
 
   // Init output files.
-  FILE* vad_probs_file = fopen(OutputVadProbsFile().c_str(), "wb");
+  const std::string output_vad_probs_file = absl::GetFlag(FLAGS_o);
+  FILE* vad_probs_file = fopen(output_vad_probs_file.c_str(), "wb");
   FILE* features_file = nullptr;
-  const std::string output_feature_file = OutputFeaturesFile();
+  const std::string output_feature_file = absl::GetFlag(FLAGS_f);
   if (!output_feature_file.empty()) {
     features_file = fopen(output_feature_file.c_str(), "wb");
   }
@@ -108,6 +91,10 @@ int main(int argc, char* argv[]) {
     if (features_file) {
       const float float_is_silence = is_silence ? 1.f : 0.f;
       fwrite(&float_is_silence, sizeof(float), 1, features_file);
+      if (is_silence) {
+        // Do not write uninitialized values.
+        feature_vector.fill(0.f);
+      }
       fwrite(feature_vector.data(), sizeof(float), kFeatureVectorSize,
              features_file);
     }
@@ -115,10 +102,10 @@ int main(int argc, char* argv[]) {
 
   // Close output file(s).
   fclose(vad_probs_file);
-  RTC_LOG(LS_INFO) << "VAD probabilities written to " << FLAG_o;
+  RTC_LOG(LS_INFO) << "VAD probabilities written to " << output_vad_probs_file;
   if (features_file) {
     fclose(features_file);
-    RTC_LOG(LS_INFO) << "features written to " << FLAG_f;
+    RTC_LOG(LS_INFO) << "features written to " << output_feature_file;
   }
 
   return 0;

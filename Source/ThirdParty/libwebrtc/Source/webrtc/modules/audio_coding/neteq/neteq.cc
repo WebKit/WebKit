@@ -28,9 +28,10 @@ std::string NetEq::Config::ToString() const {
   ss << "sample_rate_hz=" << sample_rate_hz << ", enable_post_decode_vad="
      << (enable_post_decode_vad ? "true" : "false")
      << ", max_packets_in_buffer=" << max_packets_in_buffer
-     << ", enable_fast_accelerate="
-     << (enable_fast_accelerate ? " true" : "false")
-     << ", enable_muted_state=" << (enable_muted_state ? " true" : "false");
+     << ", min_delay_ms=" << min_delay_ms << ", enable_fast_accelerate="
+     << (enable_fast_accelerate ? "true" : "false")
+     << ", enable_muted_state=" << (enable_muted_state ? "true" : "false")
+     << ", enable_rtx_handling=" << (enable_rtx_handling ? "true" : "false");
   return ss.str();
 }
 
@@ -38,9 +39,10 @@ std::string NetEq::Config::ToString() const {
 // Return the new object.
 NetEq* NetEq::Create(
     const NetEq::Config& config,
+    Clock* clock,
     const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory) {
   return new NetEqImpl(config,
-                       NetEqImpl::Dependencies(config, decoder_factory));
+                       NetEqImpl::Dependencies(config, clock, decoder_factory));
 }
 
 }  // namespace webrtc

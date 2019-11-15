@@ -10,6 +10,9 @@
 #ifndef VIDEO_TRANSPORT_ADAPTER_H_
 #define VIDEO_TRANSPORT_ADAPTER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <atomic>
 
 #include "api/call/transport.h"

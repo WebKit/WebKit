@@ -45,7 +45,7 @@ void SparseFIRFilter::Filter(const float* in, size_t length, float* out) {
   }
 
   // Update current state.
-  if (state_.size() > 0u) {
+  if (!state_.empty()) {
     if (length >= state_.size()) {
       std::memcpy(&state_[0], &in[length - state_.size()],
                   state_.size() * sizeof(*in));

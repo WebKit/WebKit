@@ -158,13 +158,14 @@ class AudioManager {
                               jint input_buffer_size);
 
   // Stores thread ID in the constructor.
-  // We can then use ThreadChecker::CalledOnValidThread() to ensure that
+  // We can then use ThreadChecker::IsCurrent() to ensure that
   // other methods are called from the same thread.
   rtc::ThreadChecker thread_checker_;
 
-  // Calls AttachCurrentThread() if this thread is not attached at construction.
+  // Calls JavaVM::AttachCurrentThread() if this thread is not attached at
+  // construction.
   // Also ensures that DetachCurrentThread() is called at destruction.
-  AttachCurrentThreadIfNeeded attach_thread_if_needed_;
+  JvmThreadConnector attach_thread_if_needed_;
 
   // Wraps the JNI interface pointer and methods associated with it.
   std::unique_ptr<JNIEnvironment> j_environment_;

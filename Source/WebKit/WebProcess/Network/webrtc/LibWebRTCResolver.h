@@ -28,8 +28,8 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/nethelpers.h>
-#include <webrtc/p2p/base/packetsocketfactory.h>
+#include <webrtc/rtc_base/net_helpers.h>
+#include <webrtc/p2p/base/packet_socket_factory.h>
 #include <wtf/Vector.h>
 
 namespace IPC {

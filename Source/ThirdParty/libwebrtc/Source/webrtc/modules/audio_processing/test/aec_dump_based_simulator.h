@@ -11,9 +11,11 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_AEC_DUMP_BASED_SIMULATOR_H_
 #define MODULES_AUDIO_PROCESSING_TEST_AEC_DUMP_BASED_SIMULATOR_H_
 
-#include "modules/audio_processing/test/audio_processing_simulator.h"
+#include <fstream>
+#include <string>
 
-#include "rtc_base/constructormagic.h"
+#include "modules/audio_processing/test/audio_processing_simulator.h"
+#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
@@ -38,6 +40,8 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
   void Process() override;
 
  private:
+  void HandleEvent(const webrtc::audioproc::Event& event_msg,
+                   int* num_forward_chunks_processed);
   void HandleMessage(const webrtc::audioproc::Init& msg);
   void HandleMessage(const webrtc::audioproc::Stream& msg);
   void HandleMessage(const webrtc::audioproc::ReverseStream& msg);
@@ -47,7 +51,7 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
   void PrepareReverseProcessStreamCall(
       const webrtc::audioproc::ReverseStream& msg);
   void VerifyProcessStreamBitExactness(const webrtc::audioproc::Stream& msg);
-
+  void MaybeOpenCallOrderFile();
   enum InterfaceType {
     kFixedInterface,
     kFloatInterface,
@@ -59,7 +63,7 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
   std::unique_ptr<ChannelBufferWavReader> artificial_nearend_buffer_reader_;
   bool artificial_nearend_eof_reported_ = false;
   InterfaceType interface_used_ = InterfaceType::kNotSpecified;
-
+  std::unique_ptr<std::ofstream> call_order_output_file_;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AecDumpBasedSimulator);
 };
 

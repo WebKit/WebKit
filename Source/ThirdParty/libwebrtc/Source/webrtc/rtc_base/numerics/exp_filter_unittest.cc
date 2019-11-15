@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <math.h>
-
 #include "rtc_base/numerics/exp_filter.h"
+
+#include <cmath>
+
 #include "test/gtest.h"
 
 namespace rtc {
@@ -26,7 +27,7 @@ TEST(ExpFilterTest, FirstTimeOutputEqualInput) {
 }
 
 TEST(ExpFilterTest, SecondTime) {
-  double value;
+  float value;
 
   ExpFilter filter = ExpFilter(0.9f);
   filter.Apply(100.0f, 10.0f);
@@ -35,7 +36,7 @@ TEST(ExpFilterTest, SecondTime) {
   value = 10.0f;
 
   filter.Apply(10.0f, 20.0f);
-  double alpha = pow(0.9f, 10.0f);
+  float alpha = std::pow(0.9f, 10.0f);
   value = alpha * value + (1.0f - alpha) * 20.0f;
   EXPECT_FLOAT_EQ(value, filter.filtered());
 }

@@ -292,7 +292,7 @@ int Expand::Process(AudioMultiVector* output) {
     }
 
     // Background noise part.
-    GenerateBackgroundNoise(
+    background_noise_->GenerateBackgroundNoise(
         random_vector, channel_ix, channel_parameters_[channel_ix].mute_slope,
         TooManyExpands(), current_lag, unvoiced_array_memory);
 
@@ -324,12 +324,14 @@ void Expand::SetParametersForNormalAfterExpand() {
   lag_index_direction_ = 0;
   stop_muting_ = true;  // Do not mute signal any more.
   statistics_->LogDelayedPacketOutageEvent(expand_duration_samples_, fs_hz_);
+  statistics_->EndExpandEvent(fs_hz_);
 }
 
 void Expand::SetParametersForMergeAfterExpand() {
   current_lag_index_ = -1;  /* out of the 3 possible ones */
   lag_index_direction_ = 1; /* make sure we get the "optimal" lag */
   stop_muting_ = true;
+  statistics_->EndExpandEvent(fs_hz_);
 }
 
 bool Expand::Muted() const {
@@ -858,56 +860,6 @@ Expand* ExpandFactory::Create(BackgroundNoise* background_noise,
                               size_t num_channels) const {
   return new Expand(background_noise, sync_buffer, random_vector, statistics,
                     fs, num_channels);
-}
-
-// TODO(turajs): This can be moved to BackgroundNoise class.
-void Expand::GenerateBackgroundNoise(int16_t* random_vector,
-                                     size_t channel,
-                                     int mute_slope,
-                                     bool too_many_expands,
-                                     size_t num_noise_samples,
-                                     int16_t* buffer) {
-  static const size_t kNoiseLpcOrder = BackgroundNoise::kMaxLpcOrder;
-  int16_t scaled_random_vector[kMaxSampleRate / 8000 * 125];
-  assert(num_noise_samples <= (kMaxSampleRate / 8000 * 125));
-  int16_t* noise_samples = &buffer[kNoiseLpcOrder];
-  if (background_noise_->initialized()) {
-    // Use background noise parameters.
-    memcpy(noise_samples - kNoiseLpcOrder,
-           background_noise_->FilterState(channel),
-           sizeof(int16_t) * kNoiseLpcOrder);
-
-    int dc_offset = 0;
-    if (background_noise_->ScaleShift(channel) > 1) {
-      dc_offset = 1 << (background_noise_->ScaleShift(channel) - 1);
-    }
-
-    // Scale random vector to correct energy level.
-    WebRtcSpl_AffineTransformVector(
-        scaled_random_vector, random_vector, background_noise_->Scale(channel),
-        dc_offset, background_noise_->ScaleShift(channel), num_noise_samples);
-
-    WebRtcSpl_FilterARFastQ12(scaled_random_vector, noise_samples,
-                              background_noise_->Filter(channel),
-                              kNoiseLpcOrder + 1, num_noise_samples);
-
-    background_noise_->SetFilterState(
-        channel, &(noise_samples[num_noise_samples - kNoiseLpcOrder]),
-        kNoiseLpcOrder);
-
-    // Unmute the background noise.
-    int16_t bgn_mute_factor = background_noise_->MuteFactor(channel);
-    if (bgn_mute_factor < 16384) {
-      WebRtcSpl_AffineTransformVector(noise_samples, noise_samples,
-                                      bgn_mute_factor, 8192, 14,
-                                      num_noise_samples);
-    }
-    // Update mute_factor in BackgroundNoise class.
-    background_noise_->SetMuteFactor(channel, bgn_mute_factor);
-  } else {
-    // BGN parameters have not been initialized; use zero noise.
-    memset(noise_samples, 0, sizeof(int16_t) * num_noise_samples);
-  }
 }
 
 void Expand::GenerateRandomVector(int16_t seed_increment,

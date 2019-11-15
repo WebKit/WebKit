@@ -8,12 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/rtcp_receiver.h"
+
 #include <memory>
 
 #include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/mocks/mock_rtcp_bandwidth_observer.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
@@ -32,9 +35,9 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/time_util.h"
 #include "rtc_base/arraysize.h"
+#include "rtc_base/fake_clock.h"
 #include "rtc_base/random.h"
 #include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
@@ -43,10 +46,12 @@
 namespace webrtc {
 namespace {
 
+using rtcp::ReceiveTimeInfo;
 using ::testing::_;
 using ::testing::AllOf;
 using ::testing::ElementsAreArray;
 using ::testing::Field;
+using ::testing::InSequence;
 using ::testing::IsEmpty;
 using ::testing::NiceMock;
 using ::testing::Property;
@@ -54,7 +59,6 @@ using ::testing::SizeIs;
 using ::testing::StrEq;
 using ::testing::StrictMock;
 using ::testing::UnorderedElementsAre;
-using rtcp::ReceiveTimeInfo;
 
 class MockRtcpPacketTypeCounterObserver : public RtcpPacketTypeCounterObserver {
  public:
@@ -67,17 +71,34 @@ class MockRtcpIntraFrameObserver : public RtcpIntraFrameObserver {
   MOCK_METHOD1(OnReceivedIntraFrameRequest, void(uint32_t));
 };
 
+class MockRtcpLossNotificationObserver : public RtcpLossNotificationObserver {
+ public:
+  ~MockRtcpLossNotificationObserver() override = default;
+  MOCK_METHOD4(OnReceivedLossNotification,
+               void(uint32_t ssrc,
+                    uint16_t seq_num_of_last_decodable,
+                    uint16_t seq_num_of_last_received,
+                    bool decodability_flag));
+};
+
 class MockRtcpCallbackImpl : public RtcpStatisticsCallback {
  public:
   MOCK_METHOD2(StatisticsUpdated, void(const RtcpStatistics&, uint32_t));
-  MOCK_METHOD2(CNameChanged, void(const char*, uint32_t));
+};
+
+class MockCnameCallbackImpl : public RtcpCnameCallback {
+ public:
+  MOCK_METHOD2(OnCname, void(uint32_t, absl::string_view));
+};
+
+class MockReportBlockDataObserverImpl : public ReportBlockDataObserver {
+ public:
+  MOCK_METHOD1(OnReportBlockDataUpdated, void(ReportBlockData));
 };
 
 class MockTransportFeedbackObserver : public TransportFeedbackObserver {
  public:
-  MOCK_METHOD3(AddPacket, void(uint32_t, uint16_t, size_t));
-  MOCK_METHOD4(AddPacket,
-               void(uint32_t, uint16_t, size_t, const PacedPacketInfo&));
+  MOCK_METHOD1(OnAddPacket, void(const RtpPacketSendInfo&));
   MOCK_METHOD1(OnTransportFeedback, void(const rtcp::TransportFeedback&));
   MOCK_CONST_METHOD0(GetTransportFeedbackVector, std::vector<PacketFeedback>());
 };
@@ -115,19 +136,28 @@ class RtcpReceiverTest : public ::testing::Test {
  protected:
   RtcpReceiverTest()
       : system_clock_(1335900000),
-        rtcp_receiver_(&system_clock_,
-                       false,
-                       &packet_type_counter_observer_,
-                       &bandwidth_observer_,
-                       &intra_frame_observer_,
-                       &transport_feedback_observer_,
-                       &bitrate_allocation_observer_,
-                       kRtcpIntervalMs,
-                       &rtp_rtcp_impl_) {}
+        rtcp_receiver_(
+            [&] {
+              RtpRtcp::Configuration config;
+              config.clock = &system_clock_;
+              config.receiver_only = false;
+              config.rtcp_packet_type_counter_observer =
+                  &packet_type_counter_observer_;
+              config.bandwidth_callback = &bandwidth_observer_;
+              config.intra_frame_callback = &intra_frame_observer_;
+              config.rtcp_loss_notification_observer =
+                  &rtcp_loss_notification_observer_;
+              config.transport_feedback_callback =
+                  &transport_feedback_observer_;
+              config.bitrate_allocation_observer =
+                  &bitrate_allocation_observer_;
+              config.rtcp_report_interval_ms = kRtcpIntervalMs;
+              config.local_media_ssrc = kReceiverMainSsrc;
+              config.rtx_send_ssrc = kReceiverExtraSsrc;
+              return config;
+            }(),
+            &rtp_rtcp_impl_) {}
   void SetUp() {
-    std::set<uint32_t> ssrcs = {kReceiverMainSsrc, kReceiverExtraSsrc};
-    rtcp_receiver_.SetSsrcs(kReceiverMainSsrc, ssrcs);
-
     rtcp_receiver_.SetRemoteSSRC(kSenderSsrc);
   }
 
@@ -146,6 +176,7 @@ class RtcpReceiverTest : public ::testing::Test {
   NiceMock<MockRtcpPacketTypeCounterObserver> packet_type_counter_observer_;
   StrictMock<MockRtcpBandwidthObserver> bandwidth_observer_;
   StrictMock<MockRtcpIntraFrameObserver> intra_frame_observer_;
+  StrictMock<MockRtcpLossNotificationObserver> rtcp_loss_notification_observer_;
   StrictMock<MockTransportFeedbackObserver> transport_feedback_observer_;
   StrictMock<MockVideoBitrateAllocationObserver> bitrate_allocation_observer_;
   StrictMock<MockModuleRtpRtcp> rtp_rtcp_impl_;
@@ -557,12 +588,12 @@ TEST_F(RtcpReceiverTest, InjectApp) {
 
 TEST_F(RtcpReceiverTest, InjectSdesWithOneChunk) {
   const char kCname[] = "alice@host";
-  MockRtcpCallbackImpl callback;
-  rtcp_receiver_.RegisterRtcpStatisticsCallback(&callback);
+  MockCnameCallbackImpl callback;
+  rtcp_receiver_.RegisterRtcpCnameCallback(&callback);
   rtcp::Sdes sdes;
   sdes.AddCName(kSenderSsrc, kCname);
 
-  EXPECT_CALL(callback, CNameChanged(StrEq(kCname), kSenderSsrc));
+  EXPECT_CALL(callback, OnCname(kSenderSsrc, StrEq(kCname)));
   InjectRtcpPacket(sdes);
 
   char cName[RTCP_CNAME_SIZE];
@@ -1165,6 +1196,201 @@ TEST_F(RtcpReceiverTest, Callbacks) {
   EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport(_, _, _));
   EXPECT_CALL(callback, StatisticsUpdated(_, _)).Times(0);
   InjectRtcpPacket(rr2);
+}
+
+TEST_F(RtcpReceiverTest,
+       VerifyBlockAndTimestampObtainedFromReportBlockDataObserver) {
+  MockReportBlockDataObserverImpl observer;
+  rtcp_receiver_.SetReportBlockDataObserver(&observer);
+
+  const uint8_t kFractionLoss = 3;
+  const uint32_t kCumulativeLoss = 7;
+  const uint32_t kJitter = 9;
+  const uint16_t kSequenceNumber = 1234;
+  const int64_t kUtcNowUs = 42;
+
+  // The "report_block_timestamp_utc_us" is obtained from the global UTC clock
+  // (not the simulcated |system_clock_|) and requires a scoped fake clock.
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.SetTime(Timestamp::us(kUtcNowUs));
+
+  rtcp::ReportBlock rtcp_block;
+  rtcp_block.SetMediaSsrc(kReceiverMainSsrc);
+  rtcp_block.SetExtHighestSeqNum(kSequenceNumber);
+  rtcp_block.SetFractionLost(kFractionLoss);
+  rtcp_block.SetCumulativeLost(kCumulativeLoss);
+  rtcp_block.SetJitter(kJitter);
+
+  rtcp::ReceiverReport rtcp_report;
+  rtcp_report.SetSenderSsrc(kSenderSsrc);
+  rtcp_report.AddReportBlock(rtcp_block);
+  EXPECT_CALL(observer, OnReportBlockDataUpdated)
+      .WillOnce([&](ReportBlockData report_block_data) {
+        const auto& report_block = report_block_data.report_block();
+        EXPECT_EQ(rtcp_block.source_ssrc(), report_block.source_ssrc);
+        EXPECT_EQ(kSenderSsrc, report_block.sender_ssrc);
+        EXPECT_EQ(rtcp_block.fraction_lost(), report_block.fraction_lost);
+        EXPECT_EQ(rtcp_block.cumulative_lost_signed(),
+                  report_block.packets_lost);
+        EXPECT_EQ(rtcp_block.extended_high_seq_num(),
+                  report_block.extended_highest_sequence_number);
+        EXPECT_EQ(rtcp_block.jitter(), report_block.jitter);
+        EXPECT_EQ(kUtcNowUs, report_block_data.report_block_timestamp_utc_us());
+        // No RTT is calculated in this test.
+        EXPECT_EQ(0u, report_block_data.num_rtts());
+      });
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report);
+}
+
+TEST_F(RtcpReceiverTest, VerifyRttObtainedFromReportBlockDataObserver) {
+  MockReportBlockDataObserverImpl observer;
+  rtcp_receiver_.SetReportBlockDataObserver(&observer);
+
+  const int64_t kRttMs = 120;
+  const uint32_t kDelayNtp = 123000;
+  const int64_t kDelayMs = CompactNtpRttToMs(kDelayNtp);
+
+  uint32_t sent_ntp =
+      CompactNtp(TimeMicrosToNtp(system_clock_.TimeInMicroseconds()));
+  system_clock_.AdvanceTimeMilliseconds(kRttMs + kDelayMs);
+
+  rtcp::SenderReport sr;
+  sr.SetSenderSsrc(kSenderSsrc);
+  rtcp::ReportBlock block;
+  block.SetMediaSsrc(kReceiverMainSsrc);
+  block.SetLastSr(sent_ntp);
+  block.SetDelayLastSr(kDelayNtp);
+  sr.AddReportBlock(block);
+  block.SetMediaSsrc(kReceiverExtraSsrc);
+  block.SetLastSr(0);
+  sr.AddReportBlock(block);
+
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InSequence sequence;
+  EXPECT_CALL(observer, OnReportBlockDataUpdated)
+      .WillOnce([&](ReportBlockData report_block_data) {
+        EXPECT_EQ(kReceiverMainSsrc,
+                  report_block_data.report_block().source_ssrc);
+        EXPECT_EQ(1u, report_block_data.num_rtts());
+        EXPECT_EQ(kRttMs, report_block_data.min_rtt_ms());
+        EXPECT_EQ(kRttMs, report_block_data.max_rtt_ms());
+        EXPECT_EQ(kRttMs, report_block_data.sum_rtt_ms());
+        EXPECT_EQ(kRttMs, report_block_data.last_rtt_ms());
+      });
+  EXPECT_CALL(observer, OnReportBlockDataUpdated)
+      .WillOnce([](ReportBlockData report_block_data) {
+        EXPECT_EQ(kReceiverExtraSsrc,
+                  report_block_data.report_block().source_ssrc);
+        EXPECT_EQ(0u, report_block_data.num_rtts());
+      });
+  InjectRtcpPacket(sr);
+}
+
+TEST_F(RtcpReceiverTest, GetReportBlockDataAfterOneReportBlock) {
+  const uint16_t kSequenceNumber = 1234;
+
+  rtcp::ReportBlock rtcp_block;
+  rtcp_block.SetMediaSsrc(kReceiverMainSsrc);
+  rtcp_block.SetExtHighestSeqNum(kSequenceNumber);
+
+  rtcp::ReceiverReport rtcp_report;
+  rtcp_report.SetSenderSsrc(kSenderSsrc);
+  rtcp_report.AddReportBlock(rtcp_block);
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report);
+
+  auto report_block_datas = rtcp_receiver_.GetLatestReportBlockData();
+  ASSERT_THAT(report_block_datas, SizeIs(1));
+  EXPECT_EQ(kReceiverMainSsrc,
+            report_block_datas[0].report_block().source_ssrc);
+  EXPECT_EQ(
+      kSequenceNumber,
+      report_block_datas[0].report_block().extended_highest_sequence_number);
+}
+
+TEST_F(RtcpReceiverTest, GetReportBlockDataAfterTwoReportBlocksOfSameSsrc) {
+  const uint16_t kSequenceNumber1 = 1234;
+  const uint16_t kSequenceNumber2 = 1235;
+
+  rtcp::ReportBlock rtcp_block1;
+  rtcp_block1.SetMediaSsrc(kReceiverMainSsrc);
+  rtcp_block1.SetExtHighestSeqNum(kSequenceNumber1);
+
+  rtcp::ReceiverReport rtcp_report1;
+  rtcp_report1.SetSenderSsrc(kSenderSsrc);
+  rtcp_report1.AddReportBlock(rtcp_block1);
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report1);
+
+  // Inject a report block with an increased the sequence number for the same
+  // source SSRC.
+  rtcp::ReportBlock rtcp_block2;
+  rtcp_block2.SetMediaSsrc(kReceiverMainSsrc);
+  rtcp_block2.SetExtHighestSeqNum(kSequenceNumber2);
+
+  rtcp::ReceiverReport rtcp_report2;
+  rtcp_report2.SetSenderSsrc(kSenderSsrc);
+  rtcp_report2.AddReportBlock(rtcp_block2);
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report2);
+
+  // Only the latest block should be returned.
+  auto report_block_datas = rtcp_receiver_.GetLatestReportBlockData();
+  ASSERT_THAT(report_block_datas, SizeIs(1));
+  EXPECT_EQ(kReceiverMainSsrc,
+            report_block_datas[0].report_block().source_ssrc);
+  EXPECT_EQ(
+      kSequenceNumber2,
+      report_block_datas[0].report_block().extended_highest_sequence_number);
+}
+
+TEST_F(RtcpReceiverTest,
+       GetReportBlockDataAfterTwoReportBlocksOfDifferentSsrcs) {
+  const uint16_t kSequenceNumber1 = 1234;
+  const uint16_t kSequenceNumber2 = 42;
+
+  rtcp::ReportBlock rtcp_block1;
+  rtcp_block1.SetMediaSsrc(kReceiverMainSsrc);
+  rtcp_block1.SetExtHighestSeqNum(kSequenceNumber1);
+
+  rtcp::ReceiverReport rtcp_report1;
+  rtcp_report1.SetSenderSsrc(kSenderSsrc);
+  rtcp_report1.AddReportBlock(rtcp_block1);
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report1);
+
+  // Inject a report block for a different source SSRC.
+  rtcp::ReportBlock rtcp_block2;
+  rtcp_block2.SetMediaSsrc(kReceiverExtraSsrc);
+  rtcp_block2.SetExtHighestSeqNum(kSequenceNumber2);
+
+  rtcp::ReceiverReport rtcp_report2;
+  rtcp_report2.SetSenderSsrc(kSenderSsrc);
+  rtcp_report2.AddReportBlock(rtcp_block2);
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks);
+  EXPECT_CALL(bandwidth_observer_, OnReceivedRtcpReceiverReport);
+  InjectRtcpPacket(rtcp_report2);
+
+  // Both report blocks should be returned.
+  auto report_block_datas = rtcp_receiver_.GetLatestReportBlockData();
+  ASSERT_THAT(report_block_datas, SizeIs(2));
+  EXPECT_EQ(kReceiverMainSsrc,
+            report_block_datas[0].report_block().source_ssrc);
+  EXPECT_EQ(
+      kSequenceNumber1,
+      report_block_datas[0].report_block().extended_highest_sequence_number);
+  EXPECT_EQ(kReceiverExtraSsrc,
+            report_block_datas[1].report_block().source_ssrc);
+  EXPECT_EQ(
+      kSequenceNumber2,
+      report_block_datas[1].report_block().extended_highest_sequence_number);
 }
 
 TEST_F(RtcpReceiverTest, ReceivesTransportFeedback) {

@@ -12,13 +12,12 @@
 #define RTC_BASE_WEAK_PTR_H_
 
 #include <memory>
-
 #include <utility>
 
-#include "rtc_base/refcount.h"
-#include "rtc_base/refcountedobject.h"
-#include "rtc_base/scoped_ref_ptr.h"
-#include "rtc_base/sequenced_task_checker.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/ref_count.h"
+#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/synchronization/sequence_checker.h"
 
 // The implementation is borrowed from chromium except that it does not
 // implement SupportsWeakPtr.
@@ -104,7 +103,7 @@ class WeakReference {
 
     ~Flag() override;
 
-    SequencedTaskChecker checker_;
+    ::webrtc::SequenceChecker checker_;
     bool is_valid_;
   };
 

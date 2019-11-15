@@ -17,7 +17,7 @@
 
 #include "modules/audio_processing/vad/vad_audio_proc_internal.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 

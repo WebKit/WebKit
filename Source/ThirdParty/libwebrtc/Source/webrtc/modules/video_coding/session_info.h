@@ -11,10 +11,14 @@
 #ifndef MODULES_VIDEO_CODING_SESSION_INFO_H_
 #define MODULES_VIDEO_CODING_SESSION_INFO_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <list>
 #include <vector>
 
-#include "modules/include/module_common_types.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/packet.h"
 
@@ -36,10 +40,8 @@ class VCMSessionInfo {
   void Reset();
   int InsertPacket(const VCMPacket& packet,
                    uint8_t* frame_buffer,
-                   VCMDecodeErrorMode enable_decodable_state,
                    const FrameData& frame_data);
   bool complete() const;
-  bool decodable() const;
 
   // Makes the frame decodable. I.e., only contain decodable NALUs. All
   // non-decodable NALUs will be deleted and packets will be moved to in
@@ -52,7 +54,7 @@ class VCMSessionInfo {
   int NumPackets() const;
   bool HaveFirstPacket() const;
   bool HaveLastPacket() const;
-  webrtc::FrameType FrameType() const { return frame_type_; }
+  webrtc::VideoFrameType FrameType() const { return frame_type_; }
   int LowSequenceNumber() const;
 
   // Returns highest sequence number, media or empty.
@@ -100,27 +102,8 @@ class VCMSessionInfo {
   size_t DeletePacketData(PacketIterator start, PacketIterator end);
   void UpdateCompleteSession();
 
-  // When enabled, determine if session is decodable, i.e. incomplete but
-  // would be sent to the decoder.
-  // Note: definition assumes random loss.
-  // A frame is defined to be decodable when:
-  //  Round trip time is higher than threshold
-  //  It is not a key frame
-  //  It has the first packet: In VP8 the first packet contains all or part of
-  //    the first partition, which consists of the most relevant information for
-  //    decoding.
-  //  Either more than the upper threshold of the average number of packets per
-  //        frame is present
-  //      or less than the lower threshold of the average number of packets per
-  //        frame is present: suggests a small frame. Such a frame is unlikely
-  //        to contain many motion vectors, so having the first packet will
-  //        likely suffice. Once we have more than the lower threshold of the
-  //        frame, we know that the frame is medium or large-sized.
-  void UpdateDecodableSession(const FrameData& frame_data);
-
   bool complete_;
-  bool decodable_;
-  webrtc::FrameType frame_type_;
+  webrtc::VideoFrameType frame_type_;
   // Packets in this frame.
   PacketList packets_;
   int empty_seq_num_low_;

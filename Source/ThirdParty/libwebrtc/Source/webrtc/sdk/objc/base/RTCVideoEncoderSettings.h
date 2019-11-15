@@ -32,18 +32,12 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderSettings")))
 @property(nonatomic, assign) unsigned int startBitrate;  // kilobits/sec.
 @property(nonatomic, assign) unsigned int maxBitrate;
 @property(nonatomic, assign) unsigned int minBitrate;
-@property(nonatomic, assign) unsigned int targetBitrate;
 
 @property(nonatomic, assign) uint32_t maxFramerate;
 
 @property(nonatomic, assign) unsigned int qpMax;
 @property(nonatomic, assign) RTCVideoCodecMode mode;
 
-@end
-
-RTC_OBJC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoBitrateAllocation")))
-@interface RTCVideoBitrateAllocation : NSObject
 @end
 
 NS_ASSUME_NONNULL_END

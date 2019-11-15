@@ -103,7 +103,7 @@ TEST_P(SplitIlbcTest, NumFrames) {
 // Also test the maximum number of frames in one packet for 20 and 30 ms.
 // The maximum is defined by the largest payload length that can be uniquely
 // resolved to a frame size of either 38 bytes (20 ms) or 50 bytes (30 ms).
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     IlbcTest,
     SplitIlbcTest,
     ::testing::Values(std::pair<int, int>(1, 20),  // 1 frame, 20 ms.

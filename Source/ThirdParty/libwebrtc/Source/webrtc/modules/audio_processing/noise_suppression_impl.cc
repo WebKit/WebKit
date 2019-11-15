@@ -12,7 +12,7 @@
 
 #include "modules/audio_processing/audio_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructormagic.h"
+#include "rtc_base/constructor_magic.h"
 #if defined(WEBRTC_NS_FLOAT)
 #include "modules/audio_processing/ns/noise_suppression.h"
 
@@ -82,7 +82,7 @@ void NoiseSuppressionImpl::AnalyzeCaptureAudio(AudioBuffer* audio) {
   RTC_DCHECK_EQ(suppressors_.size(), audio->num_channels());
   for (size_t i = 0; i < suppressors_.size(); i++) {
     WebRtcNs_Analyze(suppressors_[i]->state(),
-                     audio->split_bands_const_f(i)[kBand0To8kHz]);
+                     audio->split_bands_const(i)[kBand0To8kHz]);
   }
 #endif
 }
@@ -98,11 +98,19 @@ void NoiseSuppressionImpl::ProcessCaptureAudio(AudioBuffer* audio) {
   RTC_DCHECK_EQ(suppressors_.size(), audio->num_channels());
   for (size_t i = 0; i < suppressors_.size(); i++) {
 #if defined(WEBRTC_NS_FLOAT)
-    WebRtcNs_Process(suppressors_[i]->state(), audio->split_bands_const_f(i),
-                     audio->num_bands(), audio->split_bands_f(i));
+    WebRtcNs_Process(suppressors_[i]->state(), audio->split_bands_const(i),
+                     audio->num_bands(), audio->split_bands(i));
 #elif defined(WEBRTC_NS_FIXED)
-    WebRtcNsx_Process(suppressors_[i]->state(), audio->split_bands_const(i),
-                      audio->num_bands(), audio->split_bands(i));
+    int16_t split_band_data[AudioBuffer::kMaxNumBands]
+                           [AudioBuffer::kMaxSplitFrameLength];
+    int16_t* split_bands[AudioBuffer::kMaxNumBands] = {
+        split_band_data[0], split_band_data[1], split_band_data[2]};
+    audio->ExportSplitChannelData(i, split_bands);
+
+    WebRtcNsx_Process(suppressors_[i]->state(), split_bands, audio->num_bands(),
+                      split_bands);
+
+    audio->ImportSplitChannelData(i, split_bands);
 #endif
   }
 }

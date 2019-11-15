@@ -10,7 +10,7 @@
 
 #import "RTCMediaStreamTrack.h"
 
-#include "api/mediastreaminterface.h"
+#include "api/media_stream_interface.h"
 
 typedef NS_ENUM(NSInteger, RTCMediaStreamTrackType) {
   RTCMediaStreamTrackTypeAudio,

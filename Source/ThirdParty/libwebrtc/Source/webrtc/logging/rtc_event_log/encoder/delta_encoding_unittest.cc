@@ -443,7 +443,7 @@ TEST_P(DeltaEncodingTest, ZeroDelta) {
   TestEncodingAndDecoding(base, values);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SignednessOverrideAndNumberOfValuesInSequence,
     DeltaEncodingTest,
     ::testing::Combine(::testing::Values(DeltaSignedness::kNoOverride,
@@ -555,7 +555,7 @@ TEST_P(DeltaEncodingCompressionQualityTest,
   }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SignednessOverrideAndDeltaMaxBitWidthAndNumberOfValuesInSequence,
     DeltaEncodingCompressionQualityTest,
     ::testing::Combine(
@@ -616,7 +616,7 @@ TEST_P(DeltaEncodingFuzzerLikeTest, Test) {
   TestEncodingAndDecoding(base, values);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SignednessOverrideAndDeltaMaxBitWidthAndNumberOfValuesInSequence,
     DeltaEncodingFuzzerLikeTest,
     ::testing::Combine(
@@ -679,7 +679,7 @@ TEST_P(DeltaEncodingSpecificEdgeCasesTest, ReverseSequence) {
   TestEncodingAndDecoding(base, values);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     _,
     DeltaEncodingSpecificEdgeCasesTest,
     ::testing::Combine(

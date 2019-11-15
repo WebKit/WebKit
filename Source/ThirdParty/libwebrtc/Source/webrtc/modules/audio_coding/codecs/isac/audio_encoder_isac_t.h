@@ -14,13 +14,11 @@
 #include <vector>
 
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
-
-struct CodecInst;
 
 template <typename T>
 class AudioEncoderIsacT final : public AudioEncoder {
@@ -52,9 +50,6 @@ class AudioEncoderIsacT final : public AudioEncoder {
   };
 
   explicit AudioEncoderIsacT(const Config& config);
-  explicit AudioEncoderIsacT(
-      const CodecInst& codec_inst,
-      const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo);
   ~AudioEncoderIsacT() override;
 
   int SampleRateHz() const override;

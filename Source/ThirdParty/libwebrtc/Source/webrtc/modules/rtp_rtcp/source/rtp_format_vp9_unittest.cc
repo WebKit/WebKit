@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/source/rtp_format_vp9.h"
+
 #include <memory>
 #include <vector>
 
-#include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -749,7 +750,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseFirstPacketInKeyFrame) {
 
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
-  EXPECT_EQ(kVideoFrameKey, parsed.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameKey, parsed.video_header().frame_type);
   EXPECT_TRUE(parsed.video_header().is_first_packet_in_frame);
 }
 
@@ -759,7 +760,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseLastPacketInDeltaFrame) {
 
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
-  EXPECT_EQ(kVideoFrameDelta, parsed.frame_type);
+  EXPECT_EQ(VideoFrameType::kVideoFrameDelta, parsed.video_header().frame_type);
   EXPECT_FALSE(parsed.video_header().is_first_packet_in_frame);
 }
 

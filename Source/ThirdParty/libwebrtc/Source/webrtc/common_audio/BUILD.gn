@@ -54,11 +54,12 @@ rtc_static_library("common_audio") {
     "../rtc_base/memory:aligned_array",
     "../rtc_base/memory:aligned_malloc",
     "../rtc_base/system:arch",
+    "../rtc_base/system:file_wrapper",
     "../system_wrappers",
     "../system_wrappers:cpu_features_api",
-    "third_party/fft4g:fft4g",
+    "third_party/fft4g",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
-    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 
@@ -188,7 +189,7 @@ rtc_source_set("common_audio_c") {
     "../rtc_base/system:arch",
     "../system_wrappers",
     "../system_wrappers:cpu_features_api",
-    "third_party/fft4g:fft4g",
+    "third_party/fft4g",
     "third_party/spl_sqrt_floor",
   ]
 }
@@ -284,15 +285,6 @@ if (rtc_build_with_neon) {
       cflags = [ "-mfpu=neon" ]
     }
 
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
-      ]
-    }
-
     deps = [
       ":common_audio_neon_c",
       ":fir_filter",
@@ -315,15 +307,6 @@ if (rtc_build_with_neon) {
       # Enable compilation for the NEON instruction set.
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags = [ "-mfpu=neon" ]
-    }
-
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
-      ]
     }
 
     deps = [

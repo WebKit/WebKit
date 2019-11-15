@@ -15,9 +15,9 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /** Container class for static constants and helpers used with MediaCodec. */
 // We are forced to use the old API because we want to support API level < 21.

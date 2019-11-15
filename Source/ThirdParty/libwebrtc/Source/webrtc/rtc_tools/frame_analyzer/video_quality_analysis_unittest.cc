@@ -11,13 +11,16 @@
 // This test doesn't actually verify the output since it's just printed
 // to stdout by void functions, but it's still useful as it executes the code.
 
+#include "rtc_tools/frame_analyzer/video_quality_analysis.h"
+
 #include <stdio.h>
+
+#include <cstddef>
 #include <fstream>
 #include <string>
 
-#include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {

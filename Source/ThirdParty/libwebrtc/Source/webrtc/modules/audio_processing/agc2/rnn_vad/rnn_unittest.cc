@@ -8,11 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
-#include <array>
-#include <vector>
-
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"
+
+#include <array>
+
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
@@ -63,7 +62,8 @@ void TestGatedRecurrentLayer(
 
 }  // namespace
 
-// Bit-exactness check for fully connected layers.
+// Checks that the output of a fully connected layer is within tolerance given
+// test input data.
 TEST(RnnVadTest, CheckFullyConnectedLayerOutput) {
   const std::array<int8_t, 1> bias = {-50};
   const std::array<int8_t, 24> weights = {
@@ -106,6 +106,8 @@ TEST(RnnVadTest, CheckFullyConnectedLayerOutput) {
   }
 }
 
+// Checks that the output of a GRU layer is within tolerance given test input
+// data.
 TEST(RnnVadTest, CheckGatedRecurrentLayer) {
   const std::array<int8_t, 12> bias = {96,   -99, -81, -114, 49,  119,
                                        -118, 68,  -76, 91,   121, 125};
@@ -136,41 +138,6 @@ TEST(RnnVadTest, CheckGatedRecurrentLayer) {
         0.00781069f, 0.75267816f, 0.f,         0.02579715f,
         0.00471378f, 0.59162533f, 0.11087593f, 0.01334511f};
     TestGatedRecurrentLayer(&gru, input_sequence, expected_output_sequence);
-  }
-}
-
-// TODO(bugs.webrtc.org/9076): Remove when the issue is fixed.
-// Bit-exactness test checking that precomputed frame-wise features lead to the
-// expected VAD probabilities.
-TEST(RnnVadTest, RnnBitExactness) {
-  // Init.
-  auto features_reader = CreateSilenceFlagsFeatureMatrixReader();
-  auto vad_probs_reader = CreateVadProbsReader();
-  ASSERT_EQ(features_reader.second, vad_probs_reader.second);
-  const size_t num_frames = features_reader.second;
-  // Frame-wise buffers.
-  float expected_vad_probability;
-  float is_silence;
-  std::array<float, kFeatureVectorSize> features;
-
-  // Compute VAD probability using the precomputed features.
-  RnnBasedVad vad;
-  for (size_t i = 0; i < num_frames; ++i) {
-    SCOPED_TRACE(i);
-    // Read frame data.
-    RTC_CHECK(vad_probs_reader.first->ReadValue(&expected_vad_probability));
-    // The features file also includes a silence flag for each frame.
-    RTC_CHECK(features_reader.first->ReadValue(&is_silence));
-    RTC_CHECK(features_reader.first->ReadChunk(features));
-    // Compute and check VAD probability.
-    float vad_probability = vad.ComputeVadProbability(features, is_silence);
-    ASSERT_TRUE(is_silence == 0.f || is_silence == 1.f);
-    if (is_silence == 1.f) {
-      ASSERT_EQ(0.f, expected_vad_probability);
-      EXPECT_EQ(0.f, vad_probability);
-    } else {
-      EXPECT_NEAR(expected_vad_probability, vad_probability, 3e-6f);
-    }
   }
 }
 

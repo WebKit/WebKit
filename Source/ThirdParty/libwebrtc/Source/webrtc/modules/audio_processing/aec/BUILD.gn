@@ -63,15 +63,6 @@ rtc_source_set("aec_core") {
       cflags += [ "-mfpu=neon" ]
     }
 
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
-      ]
-    }
-
     deps += [ "../../../common_audio" ]
   }
 

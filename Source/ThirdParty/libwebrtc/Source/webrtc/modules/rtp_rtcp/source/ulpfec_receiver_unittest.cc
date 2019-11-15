@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
+
 #include <string.h>
 
 #include <list>
 #include <memory>
 
-#include "modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/mocks/mock_recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -22,6 +22,7 @@
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/rtp_header_parser.h"
 
 namespace webrtc {
 
@@ -29,7 +30,6 @@ namespace {
 using ::testing::_;
 using ::testing::Args;
 using ::testing::ElementsAreArray;
-using ::testing::Return;
 
 using test::fec::AugmentedPacket;
 using Packet = ForwardErrorCorrection::Packet;
@@ -49,8 +49,9 @@ class UlpfecReceiverTest : public ::testing::Test {
  protected:
   UlpfecReceiverTest()
       : fec_(ForwardErrorCorrection::CreateUlpfec(kMediaSsrc)),
-        receiver_fec_(
-            UlpfecReceiver::Create(kMediaSsrc, &recovered_packet_receiver_)),
+        receiver_fec_(UlpfecReceiver::Create(kMediaSsrc,
+                                             &recovered_packet_receiver_,
+                                             {})),
         packet_generator_(kMediaSsrc) {}
 
   // Generates |num_fec_packets| FEC packets, given |media_packets|.
@@ -124,16 +125,16 @@ void UlpfecReceiverTest::BuildAndAddRedMediaPacket(AugmentedPacket* packet) {
   std::unique_ptr<AugmentedPacket> red_packet(
       packet_generator_.BuildMediaRedPacket(*packet));
   EXPECT_EQ(0, receiver_fec_->AddReceivedRedPacket(
-                   red_packet->header.header, red_packet->data,
-                   red_packet->length, kFecPayloadType));
+                   red_packet->header, red_packet->data, red_packet->length,
+                   kFecPayloadType));
 }
 
 void UlpfecReceiverTest::BuildAndAddRedFecPacket(Packet* packet) {
   std::unique_ptr<AugmentedPacket> red_packet(
       packet_generator_.BuildUlpfecRedPacket(*packet));
   EXPECT_EQ(0, receiver_fec_->AddReceivedRedPacket(
-                   red_packet->header.header, red_packet->data,
-                   red_packet->length, kFecPayloadType));
+                   red_packet->header, red_packet->data, red_packet->length,
+                   kFecPayloadType));
 }
 
 void UlpfecReceiverTest::VerifyReconstructedMediaPacket(
@@ -175,12 +176,12 @@ void UlpfecReceiverTest::SurvivesMaliciousPacket(const uint8_t* data,
                                                  size_t length,
                                                  uint8_t ulpfec_payload_type) {
   RTPHeader header;
-  std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::Create());
+  std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::CreateForTest());
   ASSERT_TRUE(parser->Parse(data, length, &header));
 
   NullRecoveredPacketReceiver null_callback;
   std::unique_ptr<UlpfecReceiver> receiver_fec(
-      UlpfecReceiver::Create(kMediaSsrc, &null_callback));
+      UlpfecReceiver::Create(kMediaSsrc, &null_callback, {}));
 
   receiver_fec->AddReceivedRedPacket(header, data, length, ulpfec_payload_type);
 }

@@ -108,21 +108,20 @@ static inline uint16_t BlockAlign(size_t num_channels,
 // Finds a chunk having the sought ID. If found, then |readable| points to the
 // first byte of the sought chunk data. If not found, the end of the file is
 // reached.
-void FindWaveChunk(ChunkHeader* chunk_header,
+bool FindWaveChunk(ChunkHeader* chunk_header,
                    ReadableWav* readable,
                    const std::string sought_chunk_id) {
   RTC_DCHECK_EQ(sought_chunk_id.size(), 4);
-  while (!readable->Eof()) {
+  while (true) {
     if (readable->Read(chunk_header, sizeof(*chunk_header)) !=
         sizeof(*chunk_header))
-      return;  // EOF.
+      return false;  // EOF.
     if (ReadFourCC(chunk_header->ID) == sought_chunk_id)
-      return;  // Sought chunk found.
+      return true;  // Sought chunk found.
     // Ignore current chunk by skipping its payload.
     if (!readable->SeekForward(chunk_header->Size))
-      return;  // EOF or error.
+      return false;  // EOF or error.
   }
-  return;  // EOF.
 }
 
 bool ReadFmtChunkData(FmtSubchunk* fmt_subchunk, ReadableWav* readable) {
@@ -254,8 +253,7 @@ bool ReadWavHeader(ReadableWav* readable,
   // does not put requirements on the chunks order, it is uncommon to find the
   // "data" chunk before the "fmt " one. The code below fails if this is not the
   // case.
-  FindWaveChunk(&header.fmt.header, readable, "fmt ");
-  if (ReadFourCC(header.fmt.header.ID) != "fmt ") {
+  if (!FindWaveChunk(&header.fmt.header, readable, "fmt ")) {
     RTC_LOG(LS_ERROR) << "Cannot find 'fmt ' chunk.";
     return false;
   }
@@ -263,12 +261,7 @@ bool ReadWavHeader(ReadableWav* readable,
     RTC_LOG(LS_ERROR) << "Cannot read 'fmt ' chunk.";
     return false;
   }
-  if (readable->Eof()) {
-    RTC_LOG(LS_ERROR) << "'fmt ' chunk placed after 'data' chunk.";
-    return false;
-  }
-  FindWaveChunk(&header.data.header, readable, "data");
-  if (ReadFourCC(header.data.header.ID) != "data") {
+  if (!FindWaveChunk(&header.data.header, readable, "data")) {
     RTC_LOG(LS_ERROR) << "Cannot find 'data' chunk.";
     return false;
   }

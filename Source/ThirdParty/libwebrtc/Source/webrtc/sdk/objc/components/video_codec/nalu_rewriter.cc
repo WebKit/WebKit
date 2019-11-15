@@ -149,8 +149,6 @@ bool H264CMSampleBufferToAnnexBBuffer(
   for (size_t i = 0; i < frag_offsets.size(); ++i) {
     header->fragmentationOffset[i] = frag_offsets[i];
     header->fragmentationLength[i] = frag_lengths[i];
-    header->fragmentationPlType[i] = 0;
-    header->fragmentationTimeDiff[i] = 0;
   }
   *out_header = std::move(header);
   CFRelease(contiguous_buffer);

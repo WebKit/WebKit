@@ -8,13 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "test/rtp_file_reader.h"
+
 #include <map>
 #include <memory>
 
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "test/gtest.h"
-#include "test/rtp_file_reader.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 

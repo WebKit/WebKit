@@ -54,9 +54,9 @@ void RunBitexactnessTest(int sample_rate_hz,
   int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
   const StreamConfig capture_config(sample_rate_hz, num_channels, false);
   AudioBuffer capture_buffer(
-      capture_config.num_frames(), capture_config.num_channels(),
-      capture_config.num_frames(), capture_config.num_channels(),
-      capture_config.num_frames());
+      capture_config.sample_rate_hz(), capture_config.num_channels(),
+      capture_config.sample_rate_hz(), capture_config.num_channels(),
+      capture_config.sample_rate_hz(), capture_config.num_channels());
   test::InputAudioFile capture_file(
       test::GetApmCaptureTestVectorFileName(sample_rate_hz));
   std::vector<float> capture_input(samples_per_channel * num_channels);
@@ -106,10 +106,10 @@ TEST(NoiseSuppresionBitExactnessTest, Mono8kHzLow) {
                                            7677.521973f};
   const float kOutputReference[] = {0.003510f, 0.004517f, 0.004669f};
 #else
-  const float kSpeechProbabilityReference = 0.73421317f;
-  const float kNoiseEstimateReference[] = {1175.266113f, 3289.305908f,
-                                           7532.991211f};
-  const float kOutputReference[] = {0.003263f, 0.004402f, 0.004537f};
+  const float kSpeechProbabilityReference = 0.73650402f;
+  const float kNoiseEstimateReference[] = {1176.856812f, 3287.490967f,
+                                           7525.964844f};
+  const float kOutputReference[] = {0.003306f, 0.004442f, 0.004574f};
 #endif
 
   RunBitexactnessTest(8000, 1, NoiseSuppression::Level::kLow,
@@ -129,9 +129,9 @@ TEST(NoiseSuppresionBitExactnessTest, Mono16kHzLow) {
                                            14367.499023f};
   const float kOutputReference[] = {0.003449f, 0.004334f, 0.004303f};
 #else
-  const float kSpeechProbabilityReference = 0.71672988f;
-  const float kNoiseEstimateReference[] = {2151.313965f, 6509.765137f,
-                                           15658.848633f};
+  const float kSpeechProbabilityReference = 0.71743423f;
+  const float kNoiseEstimateReference[] = {2179.853027f, 6507.995117f,
+                                           15652.758789f};
   const float kOutputReference[] = {0.003574f, 0.004494f, 0.004499f};
 #endif
 
@@ -166,18 +166,18 @@ TEST(NoiseSuppresionBitExactnessTest, Mono32kHzLow) {
 TEST(NoiseSuppresionBitExactnessTest, Mono48kHzLow) {
 #if defined(WEBRTC_ARCH_ARM64)
   const float kSpeechProbabilityReference = -4.0f;
-  const float kNoiseEstimateReference[] = {2564.605713f, 6213.656250f,
-                                           13372.284180f};
-  const float kOutputReference[] = {-0.013185f, -0.012769f, -0.012023f};
+  const float kNoiseEstimateReference[] = {2135.292480f, 6692.695801f,
+                                           14647.632812f};
+  const float kOutputReference[] = {-0.012738f, -0.012312f, -0.011576f};
 #elif defined(WEBRTC_ARCH_ARM)
   const float kSpeechProbabilityReference = -4.0f;
-  const float kNoiseEstimateReference[] = {2564.605713f, 6213.656250f,
-                                           13372.284180f};
-  const float kOutputReference[] = {-0.013185f, -0.012769f, -0.012023f};
+  const float kNoiseEstimateReference[] = {2135.292480f, 6692.695801f,
+                                           14647.632812f};
+  const float kOutputReference[] = {-0.012738f, -0.012312f, -0.011576f};
 #else
-  const float kSpeechProbabilityReference = 0.70645678f;
-  const float kNoiseEstimateReference[] = {2168.783203f, 6902.895508f,
-                                           13190.677734f};
+  const float kSpeechProbabilityReference = 0.70737761f;
+  const float kNoiseEstimateReference[] = {2187.394043f, 6913.306641f,
+                                           13182.945312f};
   const float kOutputReference[] = {-0.013062f, -0.012657f, -0.011934f};
 #endif
 
@@ -200,9 +200,9 @@ TEST(NoiseSuppresionBitExactnessTest, Stereo16kHzLow) {
   const float kOutputReference[] = {-0.011108f, -0.007904f, -0.012390f,
                                     -0.002472f, 0.000916f,  -0.003235f};
 #else
-  const float kSpeechProbabilityReference = 0.67230678f;
-  const float kNoiseEstimateReference[] = {9771.250000f, 11329.377930f,
-                                           10503.052734f};
+  const float kSpeechProbabilityReference = 0.67285913f;
+  const float kNoiseEstimateReference[] = {9753.257812f, 11515.603516f,
+                                           10503.309570f};
   const float kOutputReference[] = {-0.011459f, -0.008110f, -0.012728f,
                                     -0.002399f, 0.001018f,  -0.003189f};
 #endif
@@ -224,9 +224,9 @@ TEST(NoiseSuppresionBitExactnessTest, Mono16kHzModerate) {
                                            16726.523438f};
   const float kOutputReference[] = {0.004669f, 0.005615f, 0.005585f};
 #else
-  const float kSpeechProbabilityReference = 0.70897013f;
-  const float kNoiseEstimateReference[] = {2171.490723f, 6553.567871f,
-                                           15626.562500f};
+  const float kSpeechProbabilityReference = 0.70916927f;
+  const float kNoiseEstimateReference[] = {2172.830566f, 6552.661133f,
+                                           15624.025391f};
   const float kOutputReference[] = {0.004513f, 0.005590f, 0.005614f};
 #endif
 
@@ -247,9 +247,9 @@ TEST(NoiseSuppresionBitExactnessTest, Mono16kHzHigh) {
                                            16920.960938f};
   const float kOutputReference[] = {0.004547f, 0.005432f, 0.005402f};
 #else
-  const float kSpeechProbabilityReference = 0.70106733f;
-  const float kNoiseEstimateReference[] = {2224.968506f, 6712.025879f,
-                                           15785.087891f};
+  const float kSpeechProbabilityReference = 0.70104003f;
+  const float kNoiseEstimateReference[] = {2225.081055f, 6711.529785f,
+                                           15785.949219};
   const float kOutputReference[] = {0.004394f, 0.005406f, 0.005416f};
 #endif
 
@@ -270,9 +270,9 @@ TEST(NoiseSuppresionBitExactnessTest, Mono16kHzVeryHigh) {
                                            14365.744141f};
   const float kOutputReference[] = {0.004273f, 0.005127f, 0.005188f};
 #else
-  const float kSpeechProbabilityReference = 0.70281971f;
-  const float kNoiseEstimateReference[] = {2254.347900f, 6723.699707f,
-                                           15771.625977f};
+  const float kSpeechProbabilityReference = 0.70290041f;
+  const float kNoiseEstimateReference[] = {2254.921875f, 6723.172852f,
+                                           15770.559570f};
   const float kOutputReference[] = {0.004321f, 0.005247f, 0.005263f};
 #endif
 

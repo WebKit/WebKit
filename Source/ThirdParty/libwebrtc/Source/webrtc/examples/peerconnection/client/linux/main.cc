@@ -8,14 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <glib.h>
 #include <gtk/gtk.h>
+#include <stdio.h>
 
+#include "absl/flags/parse.h"
+#include "api/scoped_refptr.h"
 #include "examples/peerconnection/client/conductor.h"
-#include "examples/peerconnection/client/flagdefs.h"
+#include "examples/peerconnection/client/flag_defs.h"
 #include "examples/peerconnection/client/linux/main_wnd.h"
 #include "examples/peerconnection/client/peer_connection_client.h"
-
-#include "rtc_base/ssladapter.h"
+#include "rtc_base/message_queue.h"
+#include "rtc_base/physical_socket_server.h"
+#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/ssl_adapter.h"
 #include "rtc_base/thread.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
@@ -71,25 +77,25 @@ int main(int argc, char* argv[]) {
   g_thread_init(NULL);
 #endif
 
-  rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);
-  if (FLAG_help) {
-    rtc::FlagList::Print(NULL, false);
-    return 0;
-  }
+  absl::ParseCommandLine(argc, argv);
 
-  webrtc::test::ValidateFieldTrialsStringOrDie(FLAG_force_fieldtrials);
   // InitFieldTrialsFromString stores the char*, so the char array must outlive
   // the application.
-  webrtc::field_trial::InitFieldTrialsFromString(FLAG_force_fieldtrials);
+  const std::string forced_field_trials =
+      absl::GetFlag(FLAGS_force_fieldtrials);
+  webrtc::field_trial::InitFieldTrialsFromString(forced_field_trials.c_str());
 
   // Abort if the user specifies a port that is outside the allowed
   // range [1, 65535].
-  if ((FLAG_port < 1) || (FLAG_port > 65535)) {
-    printf("Error: %i is not a valid port.\n", FLAG_port);
+  if ((absl::GetFlag(FLAGS_port) < 1) || (absl::GetFlag(FLAGS_port) > 65535)) {
+    printf("Error: %i is not a valid port.\n", absl::GetFlag(FLAGS_port));
     return -1;
   }
 
-  GtkMainWnd wnd(FLAG_server, FLAG_port, FLAG_autoconnect, FLAG_autocall);
+  const std::string server = absl::GetFlag(FLAGS_server);
+  GtkMainWnd wnd(server.c_str(), absl::GetFlag(FLAGS_port),
+                 absl::GetFlag(FLAGS_autoconnect),
+                 absl::GetFlag(FLAGS_autocall));
   wnd.Create();
 
   CustomSocketServer socket_server(&wnd);

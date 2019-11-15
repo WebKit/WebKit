@@ -29,6 +29,7 @@
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/logging.h"
 #include "sdk/objc/native/src/objc_video_frame.h"
 
@@ -41,18 +42,25 @@ class ObjCVideoEncoder : public VideoEncoder {
   ObjCVideoEncoder(id<RTCVideoEncoder> encoder)
       : encoder_(encoder), implementation_name_([encoder implementationName].stdString) {}
 
-  int32_t InitEncode(const VideoCodec *codec_settings,
-                     int32_t number_of_cores,
-                     size_t max_payload_size) {
+  int32_t InitEncode(const VideoCodec *codec_settings, const Settings &encoder_settings) override {
+#if defined(WEBRTC_WEBKIT_BUILD)
+    int number_of_streams = SimulcastUtility::NumberOfSimulcastStreams(*codec_settings);
+    if (number_of_streams > 1) {
+      return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
+    }
+#endif
     RTCVideoEncoderSettings *settings =
         [[RTCVideoEncoderSettings alloc] initWithNativeVideoCodec:codec_settings];
-    return [encoder_ startEncodeWithSettings:settings numberOfCores:number_of_cores];
+    return [encoder_ startEncodeWithSettings:settings
+                               numberOfCores:encoder_settings.number_of_cores];
   }
 
-  int32_t RegisterEncodeCompleteCallback(EncodedImageCallback *callback) {
+  int32_t RegisterEncodeCompleteCallback(EncodedImageCallback *callback) override {
     [encoder_ setCallback:^BOOL(RTCEncodedImage *_Nonnull frame,
                                 id<RTCCodecSpecificInfo> _Nonnull info,
                                 RTCRtpFragmentationHeader *_Nonnull header) {
+      if (!callback)
+        return WEBRTC_VIDEO_CODEC_OK;
       EncodedImage encodedImage = [frame nativeEncodedImage];
 
       // Handle types that can be converted into one of CodecSpecificInfo's hard coded cases.
@@ -71,11 +79,10 @@ class ObjCVideoEncoder : public VideoEncoder {
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  int32_t Release() { return [encoder_ releaseEncoder]; }
+  int32_t Release() override { return [encoder_ releaseEncoder]; }
 
   int32_t Encode(const VideoFrame &frame,
-                 const CodecSpecificInfo *codec_specific_info,
-                 const std::vector<FrameType> *frame_types) {
+                 const std::vector<VideoFrameType> *frame_types) override {
     NSMutableArray<NSNumber *> *rtcFrameTypes = [NSMutableArray array];
     for (size_t i = 0; i < frame_types->size(); ++i) {
       [rtcFrameTypes addObject:@(RTCFrameType(frame_types->at(i)))];
@@ -86,16 +93,13 @@ class ObjCVideoEncoder : public VideoEncoder {
                  frameTypes:rtcFrameTypes];
   }
 
-  int32_t SetRates(uint32_t bitrate, uint32_t framerate) {
-    return [encoder_ setBitrate:bitrate framerate:framerate];
+  void SetRates(const RateControlParameters &parameters) override {
+    const uint32_t bitrate = parameters.bitrate.get_sum_kbps();
+    const uint32_t framerate = static_cast<uint32_t>(parameters.framerate_fps + 0.5);
+    [encoder_ setBitrate:bitrate framerate:framerate];
   }
 
-  int32_t SetRateAllocation(const VideoBitrateAllocation& allocation, uint32_t framerate) {
-    auto *rtcAllocation = [[RTCVideoBitrateAllocation alloc] initWithNativeVideoBitrateAllocation:&allocation];
-    return [encoder_ setRateAllocation: rtcAllocation framerate:framerate];
-  }
-
-  VideoEncoder::EncoderInfo GetEncoderInfo() const {
+  VideoEncoder::EncoderInfo GetEncoderInfo() const override {
     EncoderInfo info;
     info.supports_native_handle = true;
     info.implementation_name = implementation_name_;
@@ -103,6 +107,9 @@ class ObjCVideoEncoder : public VideoEncoder {
     RTCVideoEncoderQpThresholds *qp_thresholds = [encoder_ scalingSettings];
     info.scaling_settings = qp_thresholds ? ScalingSettings(qp_thresholds.low, qp_thresholds.high) :
                                             ScalingSettings::kOff;
+
+    info.is_hardware_accelerated = true;
+    info.has_internal_source = false;
     return info;
   }
 
@@ -123,12 +130,24 @@ id<RTCVideoEncoderFactory> ObjCVideoEncoderFactory::wrapped_encoder_factory() co
 
 std::vector<SdpVideoFormat> ObjCVideoEncoderFactory::GetSupportedFormats() const {
   std::vector<SdpVideoFormat> supported_formats;
-  for (RTCVideoCodecInfo *supportedCodec in encoder_factory_.supportedCodecs) {
+  for (RTCVideoCodecInfo *supportedCodec in [encoder_factory_ supportedCodecs]) {
     SdpVideoFormat format = [supportedCodec nativeSdpVideoFormat];
     supported_formats.push_back(format);
   }
 
   return supported_formats;
+}
+
+std::vector<SdpVideoFormat> ObjCVideoEncoderFactory::GetImplementations() const {
+  if ([encoder_factory_ respondsToSelector:SEL("implementations")]) {
+    std::vector<SdpVideoFormat> supported_formats;
+    for (RTCVideoCodecInfo *supportedCodec in [encoder_factory_ implementations]) {
+      SdpVideoFormat format = [supportedCodec nativeSdpVideoFormat];
+      supported_formats.push_back(format);
+    }
+    return supported_formats;
+  }
+  return GetSupportedFormats();
 }
 
 VideoEncoderFactory::CodecInfo ObjCVideoEncoderFactory::QueryVideoEncoder(

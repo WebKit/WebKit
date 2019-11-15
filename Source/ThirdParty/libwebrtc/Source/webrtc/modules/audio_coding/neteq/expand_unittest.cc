@@ -20,7 +20,7 @@
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -83,7 +83,6 @@ class ExpandTest : public ::testing::Test {
                 &statistics_,
                 test_sample_rate_hz_,
                 num_channels_) {
-    WebRtcSpl_Init();
     input_file_.set_output_rate_hz(test_sample_rate_hz_);
   }
 

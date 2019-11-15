@@ -35,8 +35,8 @@ void BlockDelayBuffer::DelaySignal(AudioBuffer* frame) {
     i = i_start;
     for (size_t k = 0; k < frame_length_; ++k) {
       const float tmp = buf_[j][i];
-      buf_[j][i] = frame->split_bands_f(0)[j][k];
-      frame->split_bands_f(0)[j][k] = tmp;
+      buf_[j][i] = frame->split_bands(0)[j][k];
+      frame->split_bands(0)[j][k] = tmp;
       i = i < buf_[0].size() - 1 ? i + 1 : 0;
     }
   }

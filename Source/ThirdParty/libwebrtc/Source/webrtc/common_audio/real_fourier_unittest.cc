@@ -68,7 +68,7 @@ class RealFourierTest : public ::testing::Test {
 };
 
 using FftTypes = ::testing::Types<RealFourierOoura>;
-TYPED_TEST_CASE(RealFourierTest, FftTypes);
+TYPED_TEST_SUITE(RealFourierTest, FftTypes);
 
 TYPED_TEST(RealFourierTest, SimpleForwardTransform) {
   this->real_buffer_[0] = 1.0f;

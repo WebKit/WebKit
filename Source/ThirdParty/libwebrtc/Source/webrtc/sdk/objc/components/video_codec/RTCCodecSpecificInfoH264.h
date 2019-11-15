@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "base/RTCCodecSpecificInfo.h"
+#import "RTCCodecSpecificInfo.h"
 #import "RTCMacros.h"
 
 /** Class for H264 specific config. */

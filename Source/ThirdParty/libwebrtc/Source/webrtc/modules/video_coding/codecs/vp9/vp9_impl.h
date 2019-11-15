@@ -16,14 +16,15 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
-#include "modules/video_coding/codecs/vp9/include/vp9.h"
-
+#include "api/fec_controller_override.h"
+#include "api/video_codecs/video_encoder.h"
 #include "media/base/vp9_profile.h"
+#include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
 #include "modules/video_coding/utility/framerate_controller.h"
-
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_decoder.h"
 #include "vpx/vpx_encoder.h"
@@ -34,22 +35,22 @@ class VP9EncoderImpl : public VP9Encoder {
  public:
   explicit VP9EncoderImpl(const cricket::VideoCodec& codec);
 
-  virtual ~VP9EncoderImpl();
+  ~VP9EncoderImpl() override;
+
+  void SetFecControllerOverride(
+      FecControllerOverride* fec_controller_override) override;
 
   int Release() override;
 
   int InitEncode(const VideoCodec* codec_settings,
-                 int number_of_cores,
-                 size_t max_payload_size) override;
+                 const Settings& settings) override;
 
   int Encode(const VideoFrame& input_image,
-             const CodecSpecificInfo* codec_specific_info,
-             const std::vector<FrameType>* frame_types) override;
+             const std::vector<VideoFrameType>* frame_types) override;
 
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
 
-  int SetRateAllocation(const VideoBitrateAllocation& bitrate_allocation,
-                        uint32_t frame_rate) override;
+  void SetRates(const RateControlParameters& parameters) override;
 
   EncoderInfo GetEncoderInfo() const override;
 
@@ -95,6 +96,8 @@ class VP9EncoderImpl : public VP9Encoder {
   //                            percentage of the per frame bandwidth
   uint32_t MaxIntraTarget(uint32_t optimal_buffer_size);
 
+  size_t SteadyStateSize(int sid, int tid);
+
   EncodedImage encoded_image_;
   CodecSpecificInfo codec_specific_;
   EncodedImageCallback* encoded_complete_callback_;
@@ -112,7 +115,6 @@ class VP9EncoderImpl : public VP9Encoder {
   GofInfoVP9 gof_;  // Contains each frame's temporal information for
                     // non-flexible mode.
   bool force_key_frame_;
-  bool different_framerates_used_;
   size_t pics_since_key_;
   uint8_t num_temporal_layers_;
   uint8_t num_spatial_layers_;         // Number of configured SLs
@@ -122,10 +124,13 @@ class VP9EncoderImpl : public VP9Encoder {
   InterLayerPredMode inter_layer_pred_;
   bool external_ref_control_;
   const bool trusted_rate_controller_;
+  const bool dynamic_rate_settings_;
   const bool full_superframe_drop_;
+  bool dropping_only_base_layer_;
+  vpx_svc_frame_drop_t svc_drop_frame_;
   bool first_frame_in_picture_;
   VideoBitrateAllocation current_bitrate_allocation_;
-  absl::optional<VideoBitrateAllocation> requested_bitrate_allocation_;
+  absl::optional<RateControlParameters> requested_rate_settings_;
   bool ss_info_needed_;
 
   std::vector<FramerateController> framerate_controller_;
@@ -151,6 +156,25 @@ class VP9EncoderImpl : public VP9Encoder {
     size_t temporal_layer_id = 0;
   };
   std::map<size_t, RefFrameBuffer> ref_buf_;
+
+  // Variable frame-rate related fields and methods.
+  const struct VariableFramerateExperiment {
+    bool enabled;
+    // Framerate is limited to this value in steady state.
+    float framerate_limit;
+    // This qp or below is considered a steady state.
+    int steady_state_qp;
+    // Frames of at least this percentage below ideal for configured bitrate are
+    // considered in a steady state.
+    int steady_state_undershoot_percentage;
+    // Number of consecutive frames with good QP and size required to detect
+    // the steady state.
+    int frames_before_steady_state;
+  } variable_framerate_experiment_;
+  static VariableFramerateExperiment ParseVariableFramerateConfig(
+      std::string group_name);
+  FramerateController variable_framerate_controller_;
+  int num_steady_state_frames_;
 };
 
 class VP9DecoderImpl : public VP9Decoder {
@@ -163,7 +187,6 @@ class VP9DecoderImpl : public VP9Decoder {
 
   int Decode(const EncodedImage& input_image,
              bool missing_frames,
-             const CodecSpecificInfo* codec_specific_info,
              int64_t /*render_time_ms*/) override;
 
   int RegisterDecodeCompleteCallback(DecodedImageCallback* callback) override;
@@ -175,9 +198,8 @@ class VP9DecoderImpl : public VP9Decoder {
  private:
   int ReturnFrame(const vpx_image_t* img,
                   uint32_t timestamp,
-                  int64_t ntp_time_ms,
                   int qp,
-                  const ColorSpace* explicit_color_space);
+                  const webrtc::ColorSpace* explicit_color_space);
 
   // Memory pool used to share buffers between libvpx and webrtc.
   Vp9FrameBufferPool frame_buffer_pool_;

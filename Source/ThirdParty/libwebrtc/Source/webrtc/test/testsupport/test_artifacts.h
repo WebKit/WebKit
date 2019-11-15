@@ -11,6 +11,7 @@
 #ifndef TEST_TESTSUPPORT_TEST_ARTIFACTS_H_
 #define TEST_TESTSUPPORT_TEST_ARTIFACTS_H_
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <string>

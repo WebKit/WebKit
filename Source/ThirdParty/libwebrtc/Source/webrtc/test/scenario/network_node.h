@@ -20,106 +20,38 @@
 #include "api/units/timestamp.h"
 #include "call/call.h"
 #include "call/simulated_network.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/task_queue.h"
+#include "test/network/network_emulation.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/scenario_config.h"
 
 namespace webrtc {
 namespace test {
 
-class NetworkReceiverInterface {
+class SimulationNode {
  public:
-  virtual bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                uint64_t receiver,
-                                Timestamp at_time) = 0;
-  virtual ~NetworkReceiverInterface() = default;
-};
-class NullReceiver : public NetworkReceiverInterface {
- public:
-  bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                        uint64_t receiver,
-                        Timestamp at_time) override;
-};
-class ActionReceiver : public NetworkReceiverInterface {
- public:
-  explicit ActionReceiver(std::function<void()> action);
-  virtual ~ActionReceiver() = default;
-  bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                        uint64_t receiver,
-                        Timestamp at_time) override;
+  SimulationNode(NetworkSimulationConfig config,
+                 SimulatedNetwork* behavior,
+                 EmulatedNetworkNode* network_node);
+  static std::unique_ptr<SimulatedNetwork> CreateBehavior(
+      NetworkSimulationConfig config);
 
- private:
-  std::function<void()> action_;
-};
-
-// NetworkNode represents one link in a simulated network. It is created by a
-// scenario and can be used when setting up audio and video stream sessions.
-class NetworkNode : public NetworkReceiverInterface {
- public:
-  ~NetworkNode() override;
-  RTC_DISALLOW_COPY_AND_ASSIGN(NetworkNode);
-
-  bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                        uint64_t receiver,
-                        Timestamp at_time) override;
-  // Creates a route  for the given receiver_id over all the given nodes to the
-  // given receiver.
-  static void Route(int64_t receiver_id,
-                    std::vector<NetworkNode*> nodes,
-                    NetworkReceiverInterface* receiver);
-
- protected:
-  friend class Scenario;
-  friend class AudioStreamPair;
-  friend class VideoStreamPair;
-
-  NetworkNode(NetworkNodeConfig config,
-              std::unique_ptr<NetworkBehaviorInterface> simulation);
-  static void ClearRoute(int64_t receiver_id, std::vector<NetworkNode*> nodes);
-  void Process(Timestamp at_time);
-
- private:
-  struct StoredPacket {
-    rtc::CopyOnWriteBuffer packet_data;
-    uint64_t receiver_id;
-    uint64_t id;
-    bool removed;
-  };
-  void SetRoute(uint64_t receiver, NetworkReceiverInterface* node);
-  void ClearRoute(uint64_t receiver_id);
-  rtc::CriticalSection crit_sect_;
-  size_t packet_overhead_ RTC_GUARDED_BY(crit_sect_);
-  const std::unique_ptr<NetworkBehaviorInterface> behavior_
-      RTC_GUARDED_BY(crit_sect_);
-  std::map<uint64_t, NetworkReceiverInterface*> routing_
-      RTC_GUARDED_BY(crit_sect_);
-  std::deque<StoredPacket> packets_ RTC_GUARDED_BY(crit_sect_);
-
-  uint64_t next_packet_id_ RTC_GUARDED_BY(crit_sect_) = 1;
-};
-// SimulationNode is a NetworkNode that expose an interface for changing run
-// time behavior of the underlying simulation.
-class SimulationNode : public NetworkNode {
- public:
-  void UpdateConfig(std::function<void(NetworkNodeConfig*)> modifier);
+  void UpdateConfig(std::function<void(NetworkSimulationConfig*)> modifier);
   void PauseTransmissionUntil(Timestamp until);
   ColumnPrinter ConfigPrinter() const;
+  EmulatedNetworkNode* node() { return network_node_; }
 
  private:
-  friend class Scenario;
-
-  SimulationNode(NetworkNodeConfig config,
-                 std::unique_ptr<NetworkBehaviorInterface> behavior,
-                 SimulatedNetwork* simulation);
-  static std::unique_ptr<SimulationNode> Create(NetworkNodeConfig config);
-  SimulatedNetwork* const simulated_network_;
-  NetworkNodeConfig config_;
+  NetworkSimulationConfig config_;
+  SimulatedNetwork* const simulation_;
+  EmulatedNetworkNode* const network_node_;
 };
 
 class NetworkNodeTransport : public Transport {
  public:
-  NetworkNodeTransport(const Clock* sender_clock, Call* sender_call);
+  NetworkNodeTransport(Clock* sender_clock, Call* sender_call);
   ~NetworkNodeTransport() override;
 
   bool SendRtp(const uint8_t* packet,
@@ -127,9 +59,10 @@ class NetworkNodeTransport : public Transport {
                const PacketOptions& options) override;
   bool SendRtcp(const uint8_t* packet, size_t length) override;
 
-  void Connect(NetworkNode* send_node,
-               uint64_t receiver_id,
+  void Connect(EmulatedNetworkNode* send_node,
+               rtc::IPAddress receiver_ip,
                DataSize packet_overhead);
+  void Disconnect();
 
   DataSize packet_overhead() {
     rtc::CritScope crit(&crit_sect_);
@@ -138,36 +71,14 @@ class NetworkNodeTransport : public Transport {
 
  private:
   rtc::CriticalSection crit_sect_;
-  const Clock* const sender_clock_;
+  Clock* const sender_clock_;
   Call* const sender_call_;
-  NetworkNode* send_net_ RTC_GUARDED_BY(crit_sect_) = nullptr;
-  uint64_t receiver_id_ RTC_GUARDED_BY(crit_sect_) = 0;
+  // Store local address here for consistency with receiver address.
+  const rtc::SocketAddress local_address_;
+  EmulatedNetworkNode* send_net_ RTC_GUARDED_BY(crit_sect_) = nullptr;
+  rtc::SocketAddress receiver_address_ RTC_GUARDED_BY(crit_sect_);
   DataSize packet_overhead_ RTC_GUARDED_BY(crit_sect_) = DataSize::Zero();
-};
-
-// CrossTrafficSource is created by a Scenario and generates cross traffic. It
-// provides methods to access and print internal state.
-class CrossTrafficSource {
- public:
-  DataRate TrafficRate() const;
-  ColumnPrinter StatsPrinter();
-  ~CrossTrafficSource();
-
- private:
-  friend class Scenario;
-  CrossTrafficSource(NetworkReceiverInterface* target,
-                     uint64_t receiver_id,
-                     CrossTrafficConfig config);
-  void Process(Timestamp at_time, TimeDelta delta);
-
-  NetworkReceiverInterface* const target_;
-  const uint64_t receiver_id_;
-  CrossTrafficConfig config_;
-  webrtc::Random random_;
-
-  TimeDelta time_since_update_ = TimeDelta::Zero();
-  double intensity_ = 0;
-  DataSize pending_size_ = DataSize::Zero();
+  rtc::NetworkRoute current_network_route_ RTC_GUARDED_BY(crit_sect_);
 };
 }  // namespace test
 }  // namespace webrtc

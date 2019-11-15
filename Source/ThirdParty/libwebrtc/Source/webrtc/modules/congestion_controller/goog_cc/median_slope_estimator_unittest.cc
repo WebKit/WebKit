@@ -9,6 +9,7 @@
  */
 
 #include "modules/congestion_controller/goog_cc/median_slope_estimator.h"
+
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 

@@ -11,6 +11,8 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_FRAMERATE_CONTROLLER_H_
 #define MODULES_VIDEO_CODING_UTILITY_FRAMERATE_CONTROLLER_H_
 
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 #include "rtc_base/rate_statistics.h"
 

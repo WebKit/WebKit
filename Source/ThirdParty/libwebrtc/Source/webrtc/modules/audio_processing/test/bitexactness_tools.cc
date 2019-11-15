@@ -11,12 +11,13 @@
 #include "modules/audio_processing/test/bitexactness_tools.h"
 
 #include <math.h>
+
 #include <algorithm>
 #include <string>
 #include <vector>
 
 #include "api/array_view.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {

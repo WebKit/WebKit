@@ -12,8 +12,8 @@ package org.webrtc;
 
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.support.annotation.Nullable;
 import java.nio.FloatBuffer;
-import javax.annotation.Nullable;
 import org.webrtc.GlShader;
 import org.webrtc.GlUtil;
 import org.webrtc.RendererCommon;

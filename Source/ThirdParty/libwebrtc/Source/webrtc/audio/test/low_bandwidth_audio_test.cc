@@ -8,28 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/flags/flag.h"
 #include "api/test/simulated_network.h"
 #include "audio/test/audio_end_to_end_test.h"
-#include "rtc_base/flags.h"
 #include "system_wrappers/include/sleep.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
-WEBRTC_DEFINE_int(sample_rate_hz,
-                  16000,
-                  "Sample rate (Hz) of the produced audio files.");
-
-WEBRTC_DEFINE_bool(
-    quick,
-    false,
-    "Don't do the full audio recording. "
-    "Used to quickly check that the test runs without crashing.");
+ABSL_DECLARE_FLAG(int, sample_rate_hz);
+ABSL_DECLARE_FLAG(bool, quick);
 
 namespace webrtc {
 namespace test {
 namespace {
 
 std::string FileSampleRateSuffix() {
-  return std::to_string(FLAG_sample_rate_hz / 1000);
+  return std::to_string(absl::GetFlag(FLAGS_sample_rate_hz) / 1000);
 }
 
 class AudioQualityTest : public AudioEndToEndTest {
@@ -55,11 +48,11 @@ class AudioQualityTest : public AudioEndToEndTest {
 
   std::unique_ptr<TestAudioDeviceModule::Renderer> CreateRenderer() override {
     return TestAudioDeviceModule::CreateBoundedWavFileWriter(
-        AudioOutputFile(), FLAG_sample_rate_hz);
+        AudioOutputFile(), absl::GetFlag(FLAGS_sample_rate_hz));
   }
 
   void PerformTest() override {
-    if (FLAG_quick) {
+    if (absl::GetFlag(FLAGS_quick)) {
       // Let the recording run for a small amount of time to check if it works.
       SleepMs(1000);
     } else {

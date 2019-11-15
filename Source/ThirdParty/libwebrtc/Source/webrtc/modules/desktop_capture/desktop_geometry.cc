@@ -11,6 +11,7 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 
 #include <algorithm>
+#include <cmath>
 
 namespace webrtc {
 
@@ -71,8 +72,8 @@ void DesktopRect::Extend(int32_t left_offset,
 }
 
 void DesktopRect::Scale(double horizontal, double vertical) {
-  right_ += width() * (horizontal - 1);
-  bottom_ += height() * (vertical - 1);
+  right_ += static_cast<int>(std::round(width() * (horizontal - 1)));
+  bottom_ += static_cast<int>(std::round(height() * (vertical - 1)));
 }
 
 }  // namespace webrtc

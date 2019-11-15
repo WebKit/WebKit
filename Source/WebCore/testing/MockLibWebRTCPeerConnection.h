@@ -30,8 +30,8 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
-#include <webrtc/api/mediastreaminterface.h>
-#include <webrtc/api/peerconnectioninterface.h>
+#include <webrtc/api/media_stream_interface.h>
+#include <webrtc/api/peer_connection_interface.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -181,7 +181,7 @@ private:
     cricket::MediaType media_type() const { return cricket::MEDIA_TYPE_VIDEO; }
     std::string id() const { return ""; }
     std::vector<std::string> stream_ids() const { return { }; }
-    webrtc::RtpParameters GetParameters() final { return { }; }
+    webrtc::RtpParameters GetParameters() const final { return { }; }
     webrtc::RTCError SetParameters(const webrtc::RtpParameters&) final { return { }; }
     rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const final { return nullptr; }
 
@@ -197,6 +197,7 @@ private:
     bool SetParameters(const webrtc::RtpParameters&) { return true; }
     void SetObserver(webrtc::RtpReceiverObserverInterface*) { }
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final { return { }; }
+    void SetJitterBufferMinimumDelay(absl::optional<double>) final { }
 };
 
 class MockRtpTransceiver : public webrtc::RtpTransceiverInterface {
@@ -286,13 +287,9 @@ private:
     void SetOptions(const Options&) final { }
     rtc::scoped_refptr<webrtc::AudioSourceInterface> CreateAudioSource(const cricket::AudioOptions&) final { return nullptr; }
 
-    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*) final { return nullptr; }
-    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(std::unique_ptr<cricket::VideoCapturer>, const webrtc::MediaConstraintsInterface*) final { return nullptr; }
-
     rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string&, webrtc::VideoTrackSourceInterface*) final;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string&, webrtc::AudioSourceInterface*) final;
 
-    bool StartAecDump(rtc::PlatformFile, int64_t) final { return false; }
     void StopAecDump() final { }
 
 private:

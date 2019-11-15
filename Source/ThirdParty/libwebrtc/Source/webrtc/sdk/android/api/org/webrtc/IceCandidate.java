@@ -10,6 +10,8 @@
 
 package org.webrtc;
 
+import org.webrtc.PeerConnection;
+
 /**
  * Representation of a single ICE Candidate, mirroring
  * {@code IceCandidateInterface} in the C++ API.
@@ -19,25 +21,30 @@ public class IceCandidate {
   public final int sdpMLineIndex;
   public final String sdp;
   public final String serverUrl;
+  public final PeerConnection.AdapterType adapterType;
 
   public IceCandidate(String sdpMid, int sdpMLineIndex, String sdp) {
     this.sdpMid = sdpMid;
     this.sdpMLineIndex = sdpMLineIndex;
     this.sdp = sdp;
     this.serverUrl = "";
+    this.adapterType = PeerConnection.AdapterType.UNKNOWN;
   }
 
   @CalledByNative
-  IceCandidate(String sdpMid, int sdpMLineIndex, String sdp, String serverUrl) {
+  IceCandidate(String sdpMid, int sdpMLineIndex, String sdp, String serverUrl,
+      PeerConnection.AdapterType adapterType) {
     this.sdpMid = sdpMid;
     this.sdpMLineIndex = sdpMLineIndex;
     this.sdp = sdp;
     this.serverUrl = serverUrl;
+    this.adapterType = adapterType;
   }
 
   @Override
   public String toString() {
-    return sdpMid + ":" + sdpMLineIndex + ":" + sdp + ":" + serverUrl;
+    return sdpMid + ":" + sdpMLineIndex + ":" + sdp + ":" + serverUrl + ":"
+        + adapterType.toString();
   }
 
   @CalledByNative

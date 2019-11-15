@@ -22,11 +22,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RTCVideoBitrateAllocation (Private)
-
-- (instancetype)initWithNativeVideoBitrateAllocation:(const webrtc::VideoBitrateAllocation *__nullable)videoBitrateAllocation;
-- (webrtc::VideoBitrateAllocation)nativeVideoBitrateAllocation;
-
-@end
-
 NS_ASSUME_NONNULL_END

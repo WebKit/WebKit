@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 class I420Buffer;

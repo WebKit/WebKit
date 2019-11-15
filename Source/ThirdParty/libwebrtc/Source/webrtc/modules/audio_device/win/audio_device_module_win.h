@@ -14,8 +14,9 @@
 #include <memory>
 #include <string>
 
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/include/audio_device.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -76,7 +77,8 @@ class AudioOutput {
 rtc::scoped_refptr<AudioDeviceModuleForTest>
 CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
     std::unique_ptr<AudioInput> audio_input,
-    std::unique_ptr<AudioOutput> audio_output);
+    std::unique_ptr<AudioOutput> audio_output,
+    TaskQueueFactory* task_queue_factory);
 
 }  // namespace webrtc_win
 

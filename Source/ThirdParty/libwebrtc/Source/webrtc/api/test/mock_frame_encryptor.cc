@@ -9,6 +9,7 @@
  */
 
 #include "api/test/mock_frame_encryptor.h"
+
 #include "test/gmock.h"
 
 namespace webrtc {

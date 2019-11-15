@@ -11,11 +11,17 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_PCC_PCC_NETWORK_CONTROLLER_H_
 #define MODULES_CONGESTION_CONTROLLER_PCC_PCC_NETWORK_CONTROLLER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <deque>
 #include <vector>
 
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/pcc/bitrate_controller.h"
 #include "modules/congestion_controller/pcc/monitor_interval.h"
 #include "modules/congestion_controller/pcc/rtt_tracker.h"
@@ -72,6 +78,9 @@ class PccNetworkController : public NetworkControllerInterface {
   NetworkControlUpdate OnRemoteBitrateReport(RemoteBitrateReport msg) override;
   NetworkControlUpdate OnRoundTripTimeUpdate(RoundTripTimeUpdate msg) override;
   NetworkControlUpdate OnTransportLossReport(TransportLossReport msg) override;
+  NetworkControlUpdate OnReceivedPacket(ReceivedPacket msg) override;
+  NetworkControlUpdate OnNetworkStateEstimate(
+      NetworkStateEstimate msg) override;
 
  private:
   void UpdateSendingRateAndMode();

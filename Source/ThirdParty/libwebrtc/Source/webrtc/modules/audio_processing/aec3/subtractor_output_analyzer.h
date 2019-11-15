@@ -34,7 +34,6 @@ class SubtractorOutputAnalyzer {
   void HandleEchoPathChange();
 
  private:
-  const bool strict_divergence_check_;
   bool shadow_filter_converged_ = false;
   bool main_filter_converged_ = false;
   bool filter_diverged_ = false;

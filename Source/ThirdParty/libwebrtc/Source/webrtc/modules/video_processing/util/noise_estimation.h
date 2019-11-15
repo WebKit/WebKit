@@ -11,9 +11,9 @@
 #ifndef MODULES_VIDEO_PROCESSING_UTIL_NOISE_ESTIMATION_H_
 #define MODULES_VIDEO_PROCESSING_UTIL_NOISE_ESTIMATION_H_
 
+#include <cstdint>
 #include <memory>
 
-#include "modules/include/module_common_types.h"
 #include "modules/video_processing/util/denoiser_filter.h"
 
 namespace webrtc {

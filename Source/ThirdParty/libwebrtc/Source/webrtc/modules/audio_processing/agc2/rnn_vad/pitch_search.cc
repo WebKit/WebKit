@@ -19,8 +19,7 @@ namespace webrtc {
 namespace rnn_vad {
 
 PitchEstimator::PitchEstimator()
-    : fft_(RealFourier::Create(kAutoCorrelationFftOrder)),
-      pitch_buf_decimated_(kBufSize12kHz),
+    : pitch_buf_decimated_(kBufSize12kHz),
       pitch_buf_decimated_view_(pitch_buf_decimated_.data(), kBufSize12kHz),
       auto_corr_(kNumInvertedLags12kHz),
       auto_corr_view_(auto_corr_.data(), kNumInvertedLags12kHz) {
@@ -34,20 +33,16 @@ PitchInfo PitchEstimator::Estimate(
     rtc::ArrayView<const float, kBufSize24kHz> pitch_buf) {
   // Perform the initial pitch search at 12 kHz.
   Decimate2x(pitch_buf, pitch_buf_decimated_view_);
-  // Compute auto-correlation terms.
-  ComputePitchAutoCorrelation(pitch_buf_decimated_view_, kMaxPitch12kHz,
-                              auto_corr_view_, fft_.get());
-
-  // Search for pitch at 12 kHz.
+  auto_corr_calculator_.ComputeOnPitchBuffer(pitch_buf_decimated_view_,
+                                             auto_corr_view_);
   std::array<size_t, 2> pitch_candidates_inv_lags = FindBestPitchPeriods(
       auto_corr_view_, pitch_buf_decimated_view_, kMaxPitch12kHz);
-
   // Refine the pitch period estimation.
   // The refinement is done using the pitch buffer that contains 24 kHz samples.
   // Therefore, adapt the inverted lags in |pitch_candidates_inv_lags| from 12
   // to 24 kHz.
-  for (size_t i = 0; i < pitch_candidates_inv_lags.size(); ++i)
-    pitch_candidates_inv_lags[i] *= 2;
+  pitch_candidates_inv_lags[0] *= 2;
+  pitch_candidates_inv_lags[1] *= 2;
   size_t pitch_inv_lag_48kHz =
       RefinePitchPeriod48kHz(pitch_buf, pitch_candidates_inv_lags);
   // Look for stronger harmonics to find the final pitch period and its gain.

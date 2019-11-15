@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_FFT_BUFFER_H_
 
 #include <stddef.h>
+
 #include <vector>
 
 #include "modules/audio_processing/aec3/fft_data.h"
@@ -22,7 +23,7 @@ namespace webrtc {
 // Struct for bundling a circular buffer of FftData objects together with the
 // read and write indices.
 struct FftBuffer {
-  explicit FftBuffer(size_t size);
+  FftBuffer(size_t size, size_t num_channels);
   ~FftBuffer();
 
   int IncIndex(int index) const {
@@ -49,7 +50,7 @@ struct FftBuffer {
   void DecReadIndex() { read = DecIndex(read); }
 
   const int size;
-  std::vector<FftData> buffer;
+  std::vector<std::vector<FftData>> buffer;
   int write = 0;
   int read = 0;
 };

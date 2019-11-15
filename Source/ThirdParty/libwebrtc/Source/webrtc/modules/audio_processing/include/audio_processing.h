@@ -20,20 +20,20 @@
 #include <stddef.h>  // size_t
 #include <stdio.h>   // FILE
 #include <string.h>
+
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_processing/include/audio_generator.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "modules/audio_processing/include/config.h"
 #include "modules/audio_processing/include/gain_control.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/deprecation.h"
-#include "rtc_base/platform_file.h"
-#include "rtc_base/refcount.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -239,29 +239,97 @@ class AudioProcessing : public rtc::RefCountInterface {
   // The parameters and behavior of the audio processing module are controlled
   // by changing the default values in the AudioProcessing::Config struct.
   // The config is applied by passing the struct to the ApplyConfig method.
+  //
+  // This config is intended to be used during setup, and to enable/disable
+  // top-level processing effects. Use during processing may cause undesired
+  // submodule resets, affecting the audio quality. Use the RuntimeSetting
+  // construct for runtime configuration.
   struct Config {
-    struct EchoCanceller {
-      bool enabled = false;
-      bool mobile_mode = false;
-      // Recommended not to use. Will be removed in the future.
-      // APM components are not fine-tuned for legacy suppression levels.
-      bool legacy_moderate_suppression_level = false;
-    } echo_canceller;
-
-    struct ResidualEchoDetector {
-      bool enabled = true;
-    } residual_echo_detector;
-
-    struct HighPassFilter {
-      bool enabled = false;
-    } high_pass_filter;
-
     // Enabled the pre-amplifier. It amplifies the capture signal
     // before any other processing is done.
     struct PreAmplifier {
       bool enabled = false;
       float fixed_gain_factor = 1.f;
     } pre_amplifier;
+
+    struct HighPassFilter {
+      bool enabled = false;
+    } high_pass_filter;
+
+    struct EchoCanceller {
+      bool enabled = false;
+      bool mobile_mode = false;
+      // Recommended not to use. Will be removed in the future.
+      // APM components are not fine-tuned for legacy suppression levels.
+      bool legacy_moderate_suppression_level = false;
+      // Recommended not to use. Will be removed in the future.
+      bool use_legacy_aec = false;
+    } echo_canceller;
+
+    // Enables background noise suppression.
+    struct NoiseSuppression {
+      bool enabled = false;
+      enum Level { kLow, kModerate, kHigh, kVeryHigh };
+      Level level = kModerate;
+    } noise_suppression;
+
+    // Enables reporting of |has_voice| in webrtc::AudioProcessingStats.
+    struct VoiceDetection {
+      bool enabled = false;
+    } voice_detection;
+
+    // Enables automatic gain control (AGC) functionality.
+    // The automatic gain control (AGC) component brings the signal to an
+    // appropriate range. This is done by applying a digital gain directly and,
+    // in the analog mode, prescribing an analog gain to be applied at the audio
+    // HAL.
+    // Recommended to be enabled on the client-side.
+    struct GainController1 {
+      bool enabled = false;
+      enum Mode {
+        // Adaptive mode intended for use if an analog volume control is
+        // available on the capture device. It will require the user to provide
+        // coupling between the OS mixer controls and AGC through the
+        // stream_analog_level() functions.
+        // It consists of an analog gain prescription for the audio device and a
+        // digital compression stage.
+        kAdaptiveAnalog,
+        // Adaptive mode intended for situations in which an analog volume
+        // control is unavailable. It operates in a similar fashion to the
+        // adaptive analog mode, but with scaling instead applied in the digital
+        // domain. As with the analog mode, it additionally uses a digital
+        // compression stage.
+        kAdaptiveDigital,
+        // Fixed mode which enables only the digital compression stage also used
+        // by the two adaptive modes.
+        // It is distinguished from the adaptive modes by considering only a
+        // short time-window of the input signal. It applies a fixed gain
+        // through most of the input level range, and compresses (gradually
+        // reduces gain with increasing level) the input signal at higher
+        // levels. This mode is preferred on embedded devices where the capture
+        // signal level is predictable, so that a known gain can be applied.
+        kFixedDigital
+      };
+      Mode mode = kAdaptiveAnalog;
+      // Sets the target peak level (or envelope) of the AGC in dBFs (decibels
+      // from digital full-scale). The convention is to use positive values. For
+      // instance, passing in a value of 3 corresponds to -3 dBFs, or a target
+      // level 3 dB below full-scale. Limited to [0, 31].
+      int target_level_dbfs = 3;
+      // Sets the maximum gain the digital compression stage may apply, in dB. A
+      // higher number corresponds to greater compression, while a value of 0
+      // will leave the signal uncompressed. Limited to [0, 90].
+      // For updates after APM setup, use a RuntimeSetting instead.
+      int compression_gain_db = 9;
+      // When enabled, the compression stage will hard limit the signal to the
+      // target level. Otherwise, the signal will be compressed but not limited
+      // above the target level.
+      bool enable_limiter = true;
+      // Sets the minimum and maximum analog levels of the audio capture device.
+      // Must be set if an analog mode is used. Limited to [0, 65535].
+      int analog_level_minimum = 0;
+      int analog_level_maximum = 255;
+    } gain_controller1;
 
     // Enables the next generation AGC functionality. This feature replaces the
     // standard methods of gain control in the previous AGC. Enabling this
@@ -283,6 +351,10 @@ class AudioProcessing : public rtc::RefCountInterface {
       } adaptive_digital;
     } gain_controller2;
 
+    struct ResidualEchoDetector {
+      bool enabled = true;
+    } residual_echo_detector;
+
     // Enables reporting of |output_rms_dbfs| in webrtc::AudioProcessingStats.
     struct LevelEstimation {
       bool enabled = false;
@@ -298,6 +370,8 @@ class AudioProcessing : public rtc::RefCountInterface {
       }
       return *this;
     }
+
+    std::string ToString() const;
   };
 
   // TODO(mgraczyk): Remove once all methods that use ChannelLayout are gone.
@@ -318,6 +392,9 @@ class AudioProcessing : public rtc::RefCountInterface {
     enum class Type {
       kNotSpecified,
       kCapturePreGain,
+      kCaptureCompressionGain,
+      kCaptureFixedPostGain,
+      kPlayoutVolumeChange,
       kCustomRenderProcessingRuntimeSetting
     };
 
@@ -329,6 +406,26 @@ class AudioProcessing : public rtc::RefCountInterface {
       return {Type::kCapturePreGain, gain};
     }
 
+    // Corresponds to Config::GainController1::compression_gain_db, but for
+    // runtime configuration.
+    static RuntimeSetting CreateCompressionGainDb(int gain_db) {
+      RTC_DCHECK_GE(gain_db, 0);
+      RTC_DCHECK_LE(gain_db, 90);
+      return {Type::kCaptureCompressionGain, static_cast<float>(gain_db)};
+    }
+
+    // Corresponds to Config::GainController2::fixed_digital::gain_db, but for
+    // runtime configuration.
+    static RuntimeSetting CreateCaptureFixedPostGain(float gain_db) {
+      RTC_DCHECK_GE(gain_db, 0.f);
+      RTC_DCHECK_LE(gain_db, 90.f);
+      return {Type::kCaptureFixedPostGain, gain_db};
+    }
+
+    static RuntimeSetting CreatePlayoutVolumeChange(int volume) {
+      return {Type::kPlayoutVolumeChange, volume};
+    }
+
     static RuntimeSetting CreateCustomRenderSetting(float payload) {
       return {Type::kCustomRenderProcessingRuntimeSetting, payload};
     }
@@ -336,13 +433,24 @@ class AudioProcessing : public rtc::RefCountInterface {
     Type type() const { return type_; }
     void GetFloat(float* value) const {
       RTC_DCHECK(value);
-      *value = value_;
+      *value = value_.float_value;
+    }
+    void GetInt(int* value) const {
+      RTC_DCHECK(value);
+      *value = value_.int_value;
     }
 
    private:
     RuntimeSetting(Type id, float value) : type_(id), value_(value) {}
+    RuntimeSetting(Type id, int value) : type_(id), value_(value) {}
     Type type_;
-    float value_;
+    union U {
+      U() {}
+      U(int value) : int_value(value) {}
+      U(float value) : float_value(value) {}
+      float float_value;
+      int int_value;
+    } value_;
   };
 
   ~AudioProcessing() override {}
@@ -475,6 +583,16 @@ class AudioProcessing : public rtc::RefCountInterface {
                                    const StreamConfig& output_config,
                                    float* const* dest) = 0;
 
+  // This must be called prior to ProcessStream() if and only if adaptive analog
+  // gain control is enabled, to pass the current analog level from the audio
+  // HAL. Must be within the range provided in Config::GainController1.
+  virtual void set_stream_analog_level(int level) = 0;
+
+  // When an analog mode is set, this should be called after ProcessStream()
+  // to obtain the recommended new analog level for the audio HAL. It is the
+  // user's responsibility to apply this level.
+  virtual int recommended_stream_analog_level() const = 0;
+
   // This must be called if and only if echo processing is enabled.
   //
   // Sets the |delay| in ms between ProcessReverseStream() receiving a far-end
@@ -530,6 +648,8 @@ class AudioProcessing : public rtc::RefCountInterface {
 
   // Use to send UMA histograms at end of a call. Note that all histogram
   // specific member variables are reset.
+  // Deprecated. This method is deprecated and will be removed.
+  // TODO(peah): Remove this method.
   virtual void UpdateHistogramsOnCallEnd() = 0;
 
   // Get audio processing statistics. The |has_remote_tracks| argument should be
@@ -539,6 +659,12 @@ class AudioProcessing : public rtc::RefCountInterface {
   // remote track.
   virtual AudioProcessingStats GetStatistics(bool has_remote_tracks) const = 0;
 
+  // DEPRECATED.
+  // TODO(https://crbug.com/webrtc/9878): Remove.
+  // Configure via AudioProcessing::ApplyConfig during setup.
+  // Set runtime settings via AudioProcessing::SetRuntimeSetting.
+  // Get stats via AudioProcessing::GetStatistics.
+  //
   // These provide access to the component interfaces and should never return
   // NULL. The pointers will be valid for the lifetime of the APM instance.
   // The memory for these objects is entirely managed internally.
@@ -572,6 +698,7 @@ class AudioProcessing : public rtc::RefCountInterface {
     kBadStreamParameterWarning = -13
   };
 
+  // Native rates supported by the AudioFrame interfaces.
   enum NativeRate {
     kSampleRate8kHz = 8000,
     kSampleRate16kHz = 16000,

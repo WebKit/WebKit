@@ -9,6 +9,11 @@
  *
  */
 
+// Everything declared/defined in this header is only required when WebRTC is
+// build with H264 support, please do not move anything out of the
+// #ifdef unless needed and tested.
+#ifdef WEBRTC_USE_H264
+
 #include "modules/video_coding/codecs/h264/h264_decoder_impl.h"
 
 #include <algorithm>
@@ -20,14 +25,17 @@ extern "C" {
 #include "third_party/ffmpeg/libavutil/imgutils.h"
 }  // extern "C"
 
+#include "absl/memory/memory.h"
 #include "api/video/color_space.h"
+#include "api/video/i010_buffer.h"
 #include "api/video/i420_buffer.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "modules/video_coding/codecs/h264/h264_color_space.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/keep_ref_until_done.h"
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -49,8 +57,9 @@ enum H264DecoderImplEvent {
 
 }  // namespace
 
-int H264DecoderImpl::AVGetBuffer2(
-    AVCodecContext* context, AVFrame* av_frame, int flags) {
+int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
+                                  AVFrame* av_frame,
+                                  int flags) {
   // Set in |InitDecode|.
   H264DecoderImpl* decoder = static_cast<H264DecoderImpl*>(context->opaque);
   // DCHECK values set in |InitDecode|.
@@ -120,12 +129,14 @@ int H264DecoderImpl::AVGetBuffer2(
   // TODO(nisse): The VideoFrame's timestamp and rotation info is not used.
   // Refactor to do not use a VideoFrame object at all.
   av_frame->buf[0] = av_buffer_create(
-      av_frame->data[kYPlaneIndex],
-      total_size,
-      AVFreeBuffer2,
-      static_cast<void*>(new VideoFrame(frame_buffer,
-                                        kVideoRotation_0,
-                                        0 /* timestamp_us */)),
+      av_frame->data[kYPlaneIndex], total_size, AVFreeBuffer2,
+      static_cast<void*>(absl::make_unique<VideoFrame>(
+                             VideoFrame::Builder()
+                                 .set_video_frame_buffer(frame_buffer)
+                                 .set_rotation(kVideoRotation_0)
+                                 .set_timestamp_us(0)
+                                 .build())
+                             .release()),
       0);
   RTC_CHECK(av_frame->buf[0]);
   return 0;
@@ -139,11 +150,13 @@ void H264DecoderImpl::AVFreeBuffer2(void* opaque, uint8_t* data) {
   delete video_frame;
 }
 
-H264DecoderImpl::H264DecoderImpl() : pool_(true),
-                                     decoded_image_callback_(nullptr),
-                                     has_reported_init_(false),
-                                     has_reported_error_(false) {
-}
+H264DecoderImpl::H264DecoderImpl()
+    : kEnable8bitHdrFix_(
+          !field_trial::IsEnabled("WebRTC-8bitH264HdrKillSwitch")),
+      pool_(true),
+      decoded_image_callback_(nullptr),
+      has_reported_init_(false),
+      has_reported_error_(false) {}
 
 H264DecoderImpl::~H264DecoderImpl() {
   Release();
@@ -152,8 +165,7 @@ H264DecoderImpl::~H264DecoderImpl() {
 int32_t H264DecoderImpl::InitDecode(const VideoCodec* codec_settings,
                                     int32_t number_of_cores) {
   ReportInit();
-  if (codec_settings &&
-      codec_settings->codecType != kVideoCodecH264) {
+  if (codec_settings && codec_settings->codecType != kVideoCodecH264) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
@@ -225,7 +237,6 @@ int32_t H264DecoderImpl::RegisterDecodeCompleteCallback(
 
 int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
                                 bool /*missing_frames*/,
-                                const CodecSpecificInfo* codec_specific_info,
                                 int64_t /*render_time_ms*/) {
   if (!IsInitialized()) {
     ReportError();
@@ -238,36 +249,20 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
     ReportError();
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
-  if (!input_image._buffer || !input_image._length) {
+  if (!input_image.data() || !input_image.size()) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (codec_specific_info &&
-      codec_specific_info->codecType != kVideoCodecH264) {
-    ReportError();
-    return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
-  }
-
-  // FFmpeg requires padding due to some optimized bitstream readers reading 32
-  // or 64 bits at once and could read over the end. See avcodec_decode_video2.
-  RTC_CHECK_GE(input_image._size, input_image._length +
-                   EncodedImage::GetBufferPaddingBytes(kVideoCodecH264));
-  // "If the first 23 bits of the additional bytes are not 0, then damaged MPEG
-  // bitstreams could cause overread and segfault." See
-  // AV_INPUT_BUFFER_PADDING_SIZE. We'll zero the entire padding just in case.
-  memset(input_image._buffer + input_image._length,
-         0,
-         EncodedImage::GetBufferPaddingBytes(kVideoCodecH264));
 
   AVPacket packet;
   av_init_packet(&packet);
-  packet.data = input_image._buffer;
-  if (input_image._length >
+  packet.data = input_image.mutable_data();
+  if (input_image.size() >
       static_cast<size_t>(std::numeric_limits<int>::max())) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
-  packet.size = static_cast<int>(input_image._length);
+  packet.size = static_cast<int>(input_image.size());
   int64_t frame_timestamp_us = input_image.ntp_time_ms_ * 1000;  // ms -> μs
   av_context_->reordered_opaque = frame_timestamp_us;
 
@@ -293,56 +288,67 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   VideoFrame* input_frame =
       static_cast<VideoFrame*>(av_buffer_get_opaque(av_frame_->buf[0]));
   RTC_DCHECK(input_frame);
-  rtc::scoped_refptr<webrtc::I420BufferInterface> i420_buffer =
+  const webrtc::I420BufferInterface* i420_buffer =
       input_frame->video_frame_buffer()->GetI420();
   RTC_CHECK_EQ(av_frame_->data[kYPlaneIndex], i420_buffer->DataY());
   RTC_CHECK_EQ(av_frame_->data[kUPlaneIndex], i420_buffer->DataU());
   RTC_CHECK_EQ(av_frame_->data[kVPlaneIndex], i420_buffer->DataV());
 
-  const ColorSpace& color_space = ExtractH264ColorSpace(av_context_.get());
-  VideoFrame decoded_frame =
-      VideoFrame::Builder()
-          .set_video_frame_buffer(input_frame->video_frame_buffer())
-          .set_timestamp_us(input_frame->timestamp_us())
-          .set_timestamp_rtp(input_image.Timestamp())
-          .set_rotation(input_frame->rotation())
-          .set_color_space(color_space)
-          .build();
-
   absl::optional<uint8_t> qp;
   // TODO(sakal): Maybe it is possible to get QP directly from FFmpeg.
-  h264_bitstream_parser_.ParseBitstream(input_image._buffer,
-                                        input_image._length);
+  h264_bitstream_parser_.ParseBitstream(input_image.data(), input_image.size());
   int qp_int;
   if (h264_bitstream_parser_.GetLastSliceQp(&qp_int)) {
     qp.emplace(qp_int);
   }
 
-  // The decoded image may be larger than what is supposed to be visible, see
-  // |AVGetBuffer2|'s use of |avcodec_align_dimensions|. This crops the image
-  // without copying the underlying buffer.
-  if (av_frame_->width != i420_buffer->width() ||
-      av_frame_->height != i420_buffer->height()) {
-    rtc::scoped_refptr<VideoFrameBuffer> cropped_buf = WrapI420Buffer(
+  rtc::scoped_refptr<VideoFrameBuffer> decoded_buffer;
+
+  // Pass on color space from input frame if explicitly specified.
+  const ColorSpace& color_space =
+      input_image.ColorSpace() ? *input_image.ColorSpace()
+                               : ExtractH264ColorSpace(av_context_.get());
+  // 8-bit HDR is currently not being rendered correctly in Chrome on Windows.
+  // If the ColorSpace transfer function is set to ST2084, convert the 8-bit
+  // buffer to a 10-bit buffer. This way 8-bit HDR content is rendered correctly
+  // in Chrome. This is a temporary fix until the root cause has been fixed in
+  // Chrome/WebRTC.
+  // TODO(chromium:956468): Remove this code and fix the underlying problem.
+  bool hdr_color_space =
+      color_space.transfer() == ColorSpace::TransferID::kSMPTEST2084;
+  if (kEnable8bitHdrFix_ && hdr_color_space) {
+    auto i010_buffer = I010Buffer::Copy(*i420_buffer);
+    // Crop image, see comment below.
+    decoded_buffer = WrapI010Buffer(
+        av_frame_->width, av_frame_->height, i010_buffer->DataY(),
+        i010_buffer->StrideY(), i010_buffer->DataU(), i010_buffer->StrideU(),
+        i010_buffer->DataV(), i010_buffer->StrideV(),
+        rtc::KeepRefUntilDone(i010_buffer));
+  } else if (av_frame_->width != i420_buffer->width() ||
+             av_frame_->height != i420_buffer->height()) {
+    // The decoded image may be larger than what is supposed to be visible, see
+    // |AVGetBuffer2|'s use of |avcodec_align_dimensions|. This crops the image
+    // without copying the underlying buffer.
+    decoded_buffer = WrapI420Buffer(
         av_frame_->width, av_frame_->height, i420_buffer->DataY(),
         i420_buffer->StrideY(), i420_buffer->DataU(), i420_buffer->StrideU(),
         i420_buffer->DataV(), i420_buffer->StrideV(),
         rtc::KeepRefUntilDone(i420_buffer));
-    VideoFrame cropped_frame =
-        VideoFrame::Builder()
-            .set_video_frame_buffer(cropped_buf)
-            .set_timestamp_ms(decoded_frame.render_time_ms())
-            .set_timestamp_rtp(decoded_frame.timestamp())
-            .set_rotation(decoded_frame.rotation())
-            .set_color_space(color_space)
-            .build();
-    // TODO(nisse): Timestamp and rotation are all zero here. Change decoder
-    // interface to pass a VideoFrameBuffer instead of a VideoFrame?
-    decoded_image_callback_->Decoded(cropped_frame, absl::nullopt, qp);
   } else {
-    // Return decoded frame.
-    decoded_image_callback_->Decoded(decoded_frame, absl::nullopt, qp);
+    decoded_buffer = input_frame->video_frame_buffer();
   }
+
+  VideoFrame decoded_frame = VideoFrame::Builder()
+                                 .set_video_frame_buffer(decoded_buffer)
+                                 .set_timestamp_rtp(input_image.Timestamp())
+                                 .set_color_space(color_space)
+                                 .build();
+
+  // Return decoded frame.
+  // TODO(nisse): Timestamp and rotation are all zero here. Change decoder
+  // interface to pass a VideoFrameBuffer instead of a VideoFrame?
+  decoded_image_callback_->Decoded(decoded_frame, absl::nullopt, qp);
+
   // Stop referencing it, possibly freeing |input_frame|.
   av_frame_unref(av_frame_.get());
   input_frame = nullptr;
@@ -362,8 +368,7 @@ void H264DecoderImpl::ReportInit() {
   if (has_reported_init_)
     return;
   RTC_HISTOGRAM_ENUMERATION("WebRTC.Video.H264DecoderImpl.Event",
-                            kH264DecoderEventInit,
-                            kH264DecoderEventMax);
+                            kH264DecoderEventInit, kH264DecoderEventMax);
   has_reported_init_ = true;
 }
 
@@ -371,9 +376,10 @@ void H264DecoderImpl::ReportError() {
   if (has_reported_error_)
     return;
   RTC_HISTOGRAM_ENUMERATION("WebRTC.Video.H264DecoderImpl.Event",
-                            kH264DecoderEventError,
-                            kH264DecoderEventMax);
+                            kH264DecoderEventError, kH264DecoderEventMax);
   has_reported_error_ = true;
 }
 
 }  // namespace webrtc
+
+#endif  // WEBRTC_USE_H264

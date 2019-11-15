@@ -36,12 +36,17 @@ std::string ProduceDebugText(size_t delay, size_t down_sampling_factor) {
 
 // Verifies that the basic API calls work.
 TEST(EchoPathDelayEstimator, BasicApiCalls) {
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
   EchoPathDelayEstimator estimator(&data_dumper, config);
-  std::vector<std::vector<float>> render(3, std::vector<float>(kBlockSize));
+  std::vector<std::vector<std::vector<float>>> render(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize)));
   std::vector<float> capture(kBlockSize);
   for (size_t k = 0; k < 100; ++k) {
     render_delay_buffer->Insert(render);
@@ -53,8 +58,14 @@ TEST(EchoPathDelayEstimator, BasicApiCalls) {
 // Verifies that the delay estimator produces correct delay for artificially
 // delayed signals.
 TEST(EchoPathDelayEstimator, DelayEstimation) {
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   Random random_generator(42U);
-  std::vector<std::vector<float>> render(3, std::vector<float>(kBlockSize));
+  std::vector<std::vector<std::vector<float>>> render(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize)));
   std::vector<float> capture(kBlockSize);
   ApmDataDumper data_dumper(0);
   constexpr size_t kDownSamplingFactors[] = {2, 4, 8};
@@ -65,14 +76,14 @@ TEST(EchoPathDelayEstimator, DelayEstimation) {
     for (size_t delay_samples : {30, 64, 150, 200, 800, 4000}) {
       SCOPED_TRACE(ProduceDebugText(delay_samples, down_sampling_factor));
       std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-          RenderDelayBuffer::Create2(config, 3));
+          RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
       DelayBuffer<float> signal_delay_buffer(delay_samples);
       EchoPathDelayEstimator estimator(&data_dumper, config);
 
       absl::optional<DelayEstimate> estimated_delay_samples;
       for (size_t k = 0; k < (500 + (delay_samples) / kBlockSize); ++k) {
-        RandomizeSampleVector(&random_generator, render[0]);
-        signal_delay_buffer.Delay(render[0], capture);
+        RandomizeSampleVector(&random_generator, render[0][0]);
+        signal_delay_buffer.Delay(render[0][0], capture);
         render_delay_buffer->Insert(render);
 
         if (k == 0) {
@@ -106,20 +117,26 @@ TEST(EchoPathDelayEstimator, DelayEstimation) {
 // Verifies that the delay estimator does not produce delay estimates for render
 // signals of low level.
 TEST(EchoPathDelayEstimator, NoDelayEstimatesForLowLevelRenderSignals) {
+  constexpr size_t kNumChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
   Random random_generator(42U);
   EchoCanceller3Config config;
-  std::vector<std::vector<float>> render(3, std::vector<float>(kBlockSize));
+  std::vector<std::vector<std::vector<float>>> render(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumChannels, std::vector<float>(kBlockSize)));
   std::vector<float> capture(kBlockSize);
   ApmDataDumper data_dumper(0);
   EchoPathDelayEstimator estimator(&data_dumper, config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(EchoCanceller3Config(), 3));
+      RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
+                                kNumChannels));
   for (size_t k = 0; k < 100; ++k) {
-    RandomizeSampleVector(&random_generator, render[0]);
-    for (auto& render_k : render[0]) {
+    RandomizeSampleVector(&random_generator, render[0][0]);
+    for (auto& render_k : render[0][0]) {
       render_k *= 100.f / 32767.f;
     }
-    std::copy(render[0].begin(), render[0].end(), capture.begin());
+    std::copy(render[0][0].begin(), render[0][0].end(), capture.begin());
     render_delay_buffer->Insert(render);
     render_delay_buffer->PrepareCaptureProcessing();
     EXPECT_FALSE(estimator.EstimateDelay(
@@ -137,7 +154,7 @@ TEST(EchoPathDelayEstimator, DISABLED_WrongRenderBlockSize) {
   EchoCanceller3Config config;
   EchoPathDelayEstimator estimator(&data_dumper, config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, 48000, 1));
   std::vector<float> capture(kBlockSize);
   EXPECT_DEATH(estimator.EstimateDelay(
                    render_delay_buffer->GetDownsampledRenderBuffer(), capture),
@@ -152,7 +169,7 @@ TEST(EchoPathDelayEstimator, WrongCaptureBlockSize) {
   EchoCanceller3Config config;
   EchoPathDelayEstimator estimator(&data_dumper, config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create2(config, 3));
+      RenderDelayBuffer::Create(config, 48000, 1));
   std::vector<float> capture(std::vector<float>(kBlockSize - 1));
   EXPECT_DEATH(estimator.EstimateDelay(
                    render_delay_buffer->GetDownsampledRenderBuffer(), capture),

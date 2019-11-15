@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/remote_bitrate_estimator/inter_arrival.h"
+
 #include <memory>
 
-#include "common_types.h"  // NOLINT(build/include)
-#include "modules/remote_bitrate_estimator/inter_arrival.h"
 #include "test/gtest.h"
 
 namespace webrtc {

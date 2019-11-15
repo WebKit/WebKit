@@ -22,7 +22,7 @@
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -42,7 +42,7 @@ ScreenCapturerWinGdi::ScreenCapturerWinGdi(
   if (options.disable_effects()) {
     // Load dwmapi.dll dynamically since it is not available on XP.
     if (!dwmapi_library_)
-      dwmapi_library_ = LoadLibrary(kDwmapiLibraryName);
+      dwmapi_library_ = LoadLibraryW(kDwmapiLibraryName);
 
     if (dwmapi_library_) {
       composition_func_ = reinterpret_cast<DwmEnableCompositionFunc>(

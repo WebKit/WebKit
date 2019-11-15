@@ -13,19 +13,23 @@
 namespace webrtc {
 namespace test {
 
-MockRenderDelayBuffer::MockRenderDelayBuffer(int sample_rate_hz)
+MockRenderDelayBuffer::MockRenderDelayBuffer(int sample_rate_hz,
+                                             size_t num_channels)
     : block_buffer_(GetRenderDelayBufferSize(4, 4, 12),
                     NumBandsForRate(sample_rate_hz),
+                    num_channels,
                     kBlockSize),
-      spectrum_buffer_(block_buffer_.buffer.size(), kFftLengthBy2Plus1),
-      fft_buffer_(block_buffer_.buffer.size()),
+      spectrum_buffer_(block_buffer_.buffer.size(),
+                       num_channels,
+                       kFftLengthBy2Plus1),
+      fft_buffer_(block_buffer_.buffer.size(), num_channels),
       render_buffer_(&block_buffer_, &spectrum_buffer_, &fft_buffer_),
       downsampled_render_buffer_(GetDownSampledBufferSize(4, 4)) {
   ON_CALL(*this, GetRenderBuffer())
       .WillByDefault(
-          testing::Invoke(this, &MockRenderDelayBuffer::FakeGetRenderBuffer));
+          ::testing::Invoke(this, &MockRenderDelayBuffer::FakeGetRenderBuffer));
   ON_CALL(*this, GetDownsampledRenderBuffer())
-      .WillByDefault(testing::Invoke(
+      .WillByDefault(::testing::Invoke(
           this, &MockRenderDelayBuffer::FakeGetDownsampledRenderBuffer));
 }
 

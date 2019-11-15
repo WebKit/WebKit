@@ -11,11 +11,11 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_MULTIPLEX_MULTIPLEX_ENCODED_IMAGE_PACKER_H_
 #define MODULES_VIDEO_CODING_CODECS_MULTIPLEX_MULTIPLEX_ENCODED_IMAGE_PACKER_H_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "api/video/encoded_image.h"
-#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -66,7 +66,7 @@ struct MultiplexImageComponentHeader {
   VideoCodecType codec_type;
 
   // Indicated the underlying frame is a key frame or delta frame.
-  FrameType frame_type;
+  VideoFrameType frame_type;
 };
 const int kMultiplexImageComponentHeaderSize =
     sizeof(uint32_t) + sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) +

@@ -10,8 +10,11 @@
 
 #include "modules/desktop_capture/linux/mouse_cursor_monitor_x11.h"
 
-#include <X11/Xutil.h>
+#include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/xfixeswire.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <memory>
@@ -19,9 +22,11 @@
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/linux/x_error_trap.h"
 #include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace {
@@ -202,11 +207,12 @@ void MouseCursorMonitorX11::CaptureCursor() {
   std::unique_ptr<DesktopFrame> image(
       new BasicDesktopFrame(DesktopSize(img->width, img->height)));
 
-  uint64_t* src = reinterpret_cast<uint64_t*>(img->pixels);
+  // Xlib stores 32-bit data in longs, even if longs are 64-bits long.
+  unsigned long* src = img->pixels;
   uint32_t* dst = reinterpret_cast<uint32_t*>(image->data());
   uint32_t* dst_end = dst + (img->width * img->height);
   while (dst < dst_end) {
-    *dst++ = *src++;
+    *dst++ = static_cast<uint32_t>(*src++);
   }
 
   DesktopVector hotspot(std::min(img->width, img->xhot),

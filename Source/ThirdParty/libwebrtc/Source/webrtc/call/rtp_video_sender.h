@@ -16,19 +16,25 @@
 #include <unordered_set>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/fec_controller.h"
+#include "api/fec_controller_override.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/rtp_config.h"
 #include "call/rtp_payload_params.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "call/rtp_video_sender_interface.h"
-#include "logging/rtc_event_log/rtc_event_log.h"
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_sender_video.h"
+#include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/utility/include/process_thread.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/critical_section.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
@@ -40,6 +46,26 @@ class RTPFragmentationHeader;
 class RtpRtcp;
 class RtpTransportControllerSendInterface;
 
+namespace webrtc_internal_rtp_video_sender {
+// RTP state for a single simulcast stream. Internal to the implementation of
+// RtpVideoSender.
+struct RtpStreamSender {
+  RtpStreamSender(std::unique_ptr<PlayoutDelayOracle> playout_delay_oracle,
+                  std::unique_ptr<RtpRtcp> rtp_rtcp,
+                  std::unique_ptr<RTPSenderVideo> sender_video);
+  ~RtpStreamSender();
+
+  RtpStreamSender(RtpStreamSender&&) = default;
+  RtpStreamSender& operator=(RtpStreamSender&&) = default;
+
+  // Note: Needs pointer stability.
+  std::unique_ptr<PlayoutDelayOracle> playout_delay_oracle;
+  std::unique_ptr<RtpRtcp> rtp_rtcp;
+  std::unique_ptr<RTPSenderVideo> sender_video;
+};
+
+}  // namespace webrtc_internal_rtp_video_sender
+
 // RtpVideoSender routes outgoing data to the correct sending RTP module, based
 // on the simulcast layer in RTPVideoHeader.
 class RtpVideoSender : public RtpVideoSenderInterface,
@@ -49,7 +75,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
  public:
   // Rtp modules are assumed to be sorted in simulcast index order.
   RtpVideoSender(
-      const std::vector<uint32_t>& ssrcs,
+      Clock* clock,
       std::map<uint32_t, RtpState> suspended_ssrcs,
       const std::map<uint32_t, RtpPayloadState>& states,
       const RtpConfig& rtp_config,
@@ -93,6 +119,9 @@ class RtpVideoSender : public RtpVideoSenderInterface,
                         uint32_t* sent_nack_rate_bps,
                         uint32_t* sent_fec_rate_bps) override;
 
+  // Implements FecControllerOverride.
+  void SetFecAllowed(bool fec_allowed) override;
+
   // Implements EncodedImageCallback.
   // Returns 0 if the packet was routed / sent, -1 otherwise.
   EncodedImageCallback::Result OnEncodedImage(
@@ -117,19 +146,27 @@ class RtpVideoSender : public RtpVideoSenderInterface,
                        size_t height,
                        size_t num_temporal_layers) override;
 
+  std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
+      uint32_t ssrc,
+      rtc::ArrayView<const uint16_t> sequence_numbers) const override;
+
   // From PacketFeedbackObserver.
-  void OnPacketAdded(uint32_t ssrc, uint16_t seq_num) override;
+  void OnPacketAdded(uint32_t ssrc, uint16_t seq_num) override {}
   void OnPacketFeedbackVector(
       const std::vector<PacketFeedback>& packet_feedback_vector) override;
 
  private:
   void UpdateModuleSendingState() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-  void ConfigureProtection(const RtpConfig& rtp_config);
-  void ConfigureSsrcs(const RtpConfig& rtp_config);
+  void ConfigureProtection();
+  void ConfigureSsrcs();
+  void ConfigureRids();
   bool FecEnabled() const;
   bool NackEnabled() const;
+  uint32_t GetPacketizationOverheadRate() const;
 
   const bool send_side_bwe_with_overhead_;
+  const bool account_for_packetization_overhead_;
+  const bool use_early_loss_detection_;
 
   // TODO(holmer): Remove crit_ once RtpVideoSender runs on the
   // transport task queue.
@@ -141,9 +178,13 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   std::map<uint32_t, RtpState> suspended_ssrcs_;
 
   std::unique_ptr<FlexfecSender> flexfec_sender_;
-  std::unique_ptr<FecController> fec_controller_;
+
+  const std::unique_ptr<FecController> fec_controller_;
+  bool fec_allowed_ RTC_GUARDED_BY(crit_);
+
   // Rtp modules are assumed to be sorted in simulcast index order.
-  const std::vector<std::unique_ptr<RtpRtcp>> rtp_modules_;
+  const std::vector<webrtc_internal_rtp_video_sender::RtpStreamSender>
+      rtp_streams_;
   const RtpConfig rtp_config_;
   RtpTransportControllerSendInterface* const transport_;
 
@@ -159,8 +200,15 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   uint32_t protection_bitrate_bps_;
   uint32_t encoder_target_rate_bps_;
 
-  std::unordered_set<uint16_t> feedback_packet_seq_num_set_;
   std::vector<bool> loss_mask_vector_ RTC_GUARDED_BY(crit_);
+
+  std::vector<FrameCounts> frame_counts_ RTC_GUARDED_BY(crit_);
+  FrameCountObserver* const frame_count_observer_;
+
+  // Effectively const map from ssrc to RTPSender, for all media ssrcs.
+  // This map is set at construction time and never changed, but it's
+  // non-trivial to make it properly const.
+  std::map<uint32_t, RTPSender*> ssrc_to_rtp_sender_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpVideoSender);
 };

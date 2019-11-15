@@ -9,16 +9,19 @@
  */
 
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-class WindowCapturerTest : public testing::Test,
+class WindowCapturerTest : public ::testing::Test,
                            public DesktopCapturer::Callback {
  public:
   void SetUp() override {

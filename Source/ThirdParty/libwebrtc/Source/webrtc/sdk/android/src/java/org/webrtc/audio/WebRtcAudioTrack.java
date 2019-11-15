@@ -18,9 +18,9 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Build;
 import android.os.Process;
+import android.support.annotation.Nullable;
 import java.lang.Thread;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
 import org.webrtc.CalledByNative;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;
@@ -182,9 +182,11 @@ class WebRtcAudioTrack {
   }
 
   @CalledByNative
-  private boolean initPlayout(int sampleRate, int channels) {
+  private boolean initPlayout(int sampleRate, int channels, double bufferSizeFactor) {
     threadChecker.checkIsOnValidThread();
-    Logging.d(TAG, "initPlayout(sampleRate=" + sampleRate + ", channels=" + channels + ")");
+    Logging.d(TAG,
+        "initPlayout(sampleRate=" + sampleRate + ", channels=" + channels
+            + ", bufferSizeFactor=" + bufferSizeFactor + ")");
     final int bytesPerFrame = channels * (BITS_PER_SAMPLE / 8);
     byteBuffer = ByteBuffer.allocateDirect(bytesPerFrame * (sampleRate / BUFFERS_PER_SECOND));
     Logging.d(TAG, "byteBuffer.capacity: " + byteBuffer.capacity());
@@ -197,11 +199,11 @@ class WebRtcAudioTrack {
     // Get the minimum buffer size required for the successful creation of an
     // AudioTrack object to be created in the MODE_STREAM mode.
     // Note that this size doesn't guarantee a smooth playback under load.
-    // TODO(henrika): should we extend the buffer size to avoid glitches?
     final int channelConfig = channelCountToConfiguration(channels);
-    final int minBufferSizeInBytes =
-        AudioTrack.getMinBufferSize(sampleRate, channelConfig, AudioFormat.ENCODING_PCM_16BIT);
-    Logging.d(TAG, "AudioTrack.getMinBufferSize: " + minBufferSizeInBytes);
+    final int minBufferSizeInBytes = (int) (AudioTrack.getMinBufferSize(sampleRate, channelConfig,
+                                                AudioFormat.ENCODING_PCM_16BIT)
+        * bufferSizeFactor);
+    Logging.d(TAG, "minBufferSizeInBytes: " + minBufferSizeInBytes);
     // For the streaming mode, data must be written to the audio sink in
     // chunks of size (given by byteBuffer.capacity()) less than or equal
     // to the total buffer size |minBufferSizeInBytes|. But, we have seen
@@ -340,6 +342,19 @@ class WebRtcAudioTrack {
     threadChecker.checkIsOnValidThread();
     Logging.d(TAG, "getStreamVolume");
     return audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+  }
+
+  @CalledByNative
+  private int GetPlayoutUnderrunCount() {
+    if (Build.VERSION.SDK_INT >= 24) {
+      if (audioTrack != null) {
+        return audioTrack.getUnderrunCount();
+      } else {
+        return -1;
+      }
+    } else {
+      return -2;
+    }
   }
 
   private void logMainParameters() {

@@ -8,12 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+// Everything declared/defined in this header is only required when WebRTC is
+// build with H264 support, please do not move anything out of the
+// #ifdef unless needed and tested.
+#ifdef WEBRTC_USE_H264
+
 #include "modules/video_coding/codecs/h264/h264_color_space.h"
 
 namespace webrtc {
 
 ColorSpace ExtractH264ColorSpace(AVCodecContext* codec) {
-  ColorSpace::PrimaryID primaries = ColorSpace::PrimaryID::kInvalid;
+  ColorSpace::PrimaryID primaries = ColorSpace::PrimaryID::kUnspecified;
   switch (codec->color_primaries) {
     case AVCOL_PRI_BT709:
       primaries = ColorSpace::PrimaryID::kBT709;
@@ -55,7 +60,7 @@ ColorSpace ExtractH264ColorSpace(AVCodecContext* codec) {
       break;
   }
 
-  ColorSpace::TransferID transfer = ColorSpace::TransferID::kInvalid;
+  ColorSpace::TransferID transfer = ColorSpace::TransferID::kUnspecified;
   switch (codec->color_trc) {
     case AVCOL_TRC_BT709:
       transfer = ColorSpace::TransferID::kBT709;
@@ -112,7 +117,7 @@ ColorSpace ExtractH264ColorSpace(AVCodecContext* codec) {
       break;
   }
 
-  ColorSpace::MatrixID matrix = ColorSpace::MatrixID::kInvalid;
+  ColorSpace::MatrixID matrix = ColorSpace::MatrixID::kUnspecified;
   switch (codec->colorspace) {
     case AVCOL_SPC_RGB:
       matrix = ColorSpace::MatrixID::kRGB;
@@ -169,3 +174,5 @@ ColorSpace ExtractH264ColorSpace(AVCodecContext* codec) {
 }
 
 }  // namespace webrtc
+
+#endif  // WEBRTC_USE_H264

@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_DOWNSAMPLED_RENDER_BUFFER_H_
 
 #include <stddef.h>
+
 #include <vector>
 
 #include "rtc_base/checks.h"

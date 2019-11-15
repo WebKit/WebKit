@@ -15,6 +15,7 @@
 #include <cstring>
 
 #include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace H264 {

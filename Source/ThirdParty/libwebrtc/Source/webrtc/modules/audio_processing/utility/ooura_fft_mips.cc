@@ -9,7 +9,6 @@
  */
 
 #include "modules/audio_processing/utility/ooura_fft.h"
-
 #include "modules/audio_processing/utility/ooura_fft_tables_common.h"
 
 namespace webrtc {

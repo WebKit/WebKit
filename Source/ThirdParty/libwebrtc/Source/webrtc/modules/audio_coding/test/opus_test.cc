@@ -13,14 +13,11 @@
 #include <string>
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
-#include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/TestStereo.h"
-#include "modules/audio_coding/test/utility.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -76,12 +73,12 @@ void OpusTest::Perform() {
   in_file_mono_.ReadStereo(false);
 
   // Create Opus encoders for mono and stereo.
-  ASSERT_GT(WebRtcOpus_EncoderCreate(&opus_mono_encoder_, 1, 0), -1);
-  ASSERT_GT(WebRtcOpus_EncoderCreate(&opus_stereo_encoder_, 2, 1), -1);
+  ASSERT_GT(WebRtcOpus_EncoderCreate(&opus_mono_encoder_, 1, 0, 48000), -1);
+  ASSERT_GT(WebRtcOpus_EncoderCreate(&opus_stereo_encoder_, 2, 1, 48000), -1);
 
   // Create Opus decoders for mono and stereo for stand-alone testing of Opus.
-  ASSERT_GT(WebRtcOpus_DecoderCreate(&opus_mono_decoder_, 1), -1);
-  ASSERT_GT(WebRtcOpus_DecoderCreate(&opus_stereo_decoder_, 2), -1);
+  ASSERT_GT(WebRtcOpus_DecoderCreate(&opus_mono_decoder_, 1, 48000), -1);
+  ASSERT_GT(WebRtcOpus_DecoderCreate(&opus_stereo_decoder_, 2, 48000), -1);
   WebRtcOpus_DecoderInit(opus_mono_decoder_);
   WebRtcOpus_DecoderInit(opus_stereo_decoder_);
 
@@ -89,13 +86,10 @@ void OpusTest::Perform() {
   EXPECT_EQ(0, acm_receiver_->InitializeReceiver());
 
   // Register Opus stereo as receiving codec.
-  CodecInst opus_codec_param;
-  int codec_id = acm_receiver_->Codec("opus", 48000, 2);
-  EXPECT_EQ(0, acm_receiver_->Codec(codec_id, &opus_codec_param));
-  payload_type_ = opus_codec_param.pltype;
-  EXPECT_EQ(true,
-            acm_receiver_->RegisterReceiveCodec(
-                opus_codec_param.pltype, CodecInstToSdp(opus_codec_param)));
+  constexpr int kOpusPayloadType = 120;
+  const SdpAudioFormat kOpusFormatStereo("opus", 48000, 2, {{"stereo", "1"}});
+  payload_type_ = kOpusPayloadType;
+  acm_receiver_->SetReceiveCodecs({{kOpusPayloadType, kOpusFormatStereo}});
 
   // Create and connect the channel.
   channel_a2b_ = new TestPackStereo;
@@ -159,10 +153,8 @@ void OpusTest::Perform() {
   OpenOutFile(test_cntr);
 
   // Register Opus mono as receiving codec.
-  opus_codec_param.channels = 1;
-  EXPECT_EQ(true,
-            acm_receiver_->RegisterReceiveCodec(
-                opus_codec_param.pltype, CodecInstToSdp(opus_codec_param)));
+  const SdpAudioFormat kOpusFormatMono("opus", 48000, 2);
+  acm_receiver_->SetReceiveCodecs({{kOpusPayloadType, kOpusFormatMono}});
 
   // Run Opus with 2.5 ms frame size.
   Run(channel_a2b_, audio_channels, 32000, 120);
@@ -323,8 +315,8 @@ void OpusTest::Run(TestPackStereo* channel,
         }
 
         // Send data to the channel. "channel" will handle the loss simulation.
-        channel->SendData(kAudioFrameSpeech, payload_type_, rtp_timestamp_,
-                          bitstream, bitstream_len_byte, NULL);
+        channel->SendData(AudioFrameType::kAudioFrameSpeech, payload_type_,
+                          rtp_timestamp_, bitstream, bitstream_len_byte);
         if (first_packet) {
           first_packet = false;
           start_time_stamp = rtp_timestamp_;

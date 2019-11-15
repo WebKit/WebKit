@@ -8,36 +8,38 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/audio/audio_mixer.h"
+
 #include <cstring>
 #include <iostream>
 #include <vector>
 
-#include "api/audio/audio_mixer.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_mixer/default_output_rate_calculator.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/strings/string_builder.h"
 
-WEBRTC_DEFINE_bool(help, false, "Prints this message");
-WEBRTC_DEFINE_int(
-    sampling_rate,
-    16000,
-    "Rate at which to mix (all input streams must have this rate)");
+ABSL_FLAG(int,
+          sampling_rate,
+          16000,
+          "Rate at which to mix (all input streams must have this rate)");
 
-WEBRTC_DEFINE_bool(
-    stereo,
-    false,
-    "Enable stereo (interleaved). Inputs need not be as this parameter.");
+ABSL_FLAG(bool,
+          stereo,
+          false,
+          "Enable stereo (interleaved). Inputs need not be as this parameter.");
 
-WEBRTC_DEFINE_bool(limiter, true, "Enable limiter.");
-WEBRTC_DEFINE_string(output_file,
-                     "mixed_file.wav",
-                     "File in which to store the mixed result.");
-WEBRTC_DEFINE_string(input_file_1, "", "First input. Default none.");
-WEBRTC_DEFINE_string(input_file_2, "", "Second input. Default none.");
-WEBRTC_DEFINE_string(input_file_3, "", "Third input. Default none.");
-WEBRTC_DEFINE_string(input_file_4, "", "Fourth input. Default none.");
+ABSL_FLAG(bool, limiter, true, "Enable limiter.");
+ABSL_FLAG(std::string,
+          output_file,
+          "mixed_file.wav",
+          "File in which to store the mixed result.");
+ABSL_FLAG(std::string, input_file_1, "", "First input. Default none.");
+ABSL_FLAG(std::string, input_file_2, "", "Second input. Default none.");
+ABSL_FLAG(std::string, input_file_3, "", "Third input. Default none.");
+ABSL_FLAG(std::string, input_file_4, "", "Fourth input. Default none.");
 
 namespace webrtc {
 namespace test {
@@ -96,9 +98,10 @@ namespace {
 
 const std::vector<std::string> parse_input_files() {
   std::vector<std::string> result;
-  for (auto* x : {FLAG_input_file_1, FLAG_input_file_2, FLAG_input_file_3,
-                  FLAG_input_file_4}) {
-    if (strcmp(x, "") != 0) {
+  for (auto& x :
+       {absl::GetFlag(FLAGS_input_file_1), absl::GetFlag(FLAGS_input_file_2),
+        absl::GetFlag(FLAGS_input_file_3), absl::GetFlag(FLAGS_input_file_4)}) {
+    if (!x.empty()) {
       result.push_back(x);
     }
   }
@@ -107,22 +110,19 @@ const std::vector<std::string> parse_input_files() {
 }  // namespace
 
 int main(int argc, char* argv[]) {
-  rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, false);
-  if (FLAG_help) {
-    rtc::FlagList::Print(nullptr, false);
-    return 0;
-  }
+  absl::ParseCommandLine(argc, argv);
 
   rtc::scoped_refptr<webrtc::AudioMixerImpl> mixer(
       webrtc::AudioMixerImpl::Create(
           std::unique_ptr<webrtc::OutputRateCalculator>(
               new webrtc::DefaultOutputRateCalculator()),
-          FLAG_limiter));
+          absl::GetFlag(FLAGS_limiter)));
 
   const std::vector<std::string> input_files = parse_input_files();
   std::vector<webrtc::test::FilePlayingSource> sources;
-  const int num_channels = FLAG_stereo ? 2 : 1;
-  for (auto input_file : input_files) {
+  const int num_channels = absl::GetFlag(FLAGS_stereo) ? 2 : 1;
+  sources.reserve(input_files.size());
+  for (const auto& input_file : input_files) {
     sources.emplace_back(input_file);
   }
 
@@ -133,7 +133,6 @@ int main(int argc, char* argv[]) {
 
   if (sources.empty()) {
     std::cout << "Need at least one source!\n";
-    rtc::FlagList::Print(nullptr, false);
     return 1;
   }
 
@@ -143,7 +142,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Print stats.
-  std::cout << "Limiting is: " << (FLAG_limiter ? "on" : "off") << "\n"
+  std::cout << "Limiting is: " << (absl::GetFlag(FLAGS_limiter) ? "on" : "off")
+            << "\n"
             << "Channels: " << num_channels << "\n"
             << "Rate: " << sample_rate << "\n"
             << "Number of input streams: " << input_files.size() << "\n";
@@ -152,7 +152,8 @@ int main(int argc, char* argv[]) {
   }
   std::cout << "Now mixing\n...\n";
 
-  webrtc::WavWriter wav_writer(FLAG_output_file, sample_rate, num_channels);
+  webrtc::WavWriter wav_writer(absl::GetFlag(FLAGS_output_file), sample_rate,
+                               num_channels);
 
   webrtc::AudioFrame frame;
 

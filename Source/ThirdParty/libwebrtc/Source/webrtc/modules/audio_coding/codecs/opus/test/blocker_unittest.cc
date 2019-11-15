@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-
 #include "modules/audio_coding/codecs/opus/test/blocker.h"
+
+#include <memory>
 
 #include "rtc_base/arraysize.h"
 #include "test/gtest.h"

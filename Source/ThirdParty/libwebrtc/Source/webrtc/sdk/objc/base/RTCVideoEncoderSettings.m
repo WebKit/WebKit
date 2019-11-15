@@ -18,7 +18,6 @@
 @synthesize startBitrate = _startBitrate;
 @synthesize maxBitrate = _maxBitrate;
 @synthesize minBitrate = _minBitrate;
-@synthesize targetBitrate = _targetBitrate;
 @synthesize maxFramerate = _maxFramerate;
 @synthesize qpMax = _qpMax;
 @synthesize mode = _mode;

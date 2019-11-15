@@ -12,13 +12,12 @@
 #define MODULES_DESKTOP_CAPTURE_LINUX_SHARED_X_DISPLAY_H_
 
 #include <map>
+#include <string>
 #include <vector>
 
-#include <string>
-
-#include "api/refcountedbase.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "api/ref_counted_base.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/constructor_magic.h"
 
 // Including Xlib.h will involve evil defines (Bool, Status, True, False), which
 // easily conflict with other headers.

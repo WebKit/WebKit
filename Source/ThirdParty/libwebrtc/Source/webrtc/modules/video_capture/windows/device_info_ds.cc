@@ -10,13 +10,12 @@
 
 #include "modules/video_capture/windows/device_info_ds.h"
 
+#include <dvdmedia.h>
+
 #include "modules/video_capture/video_capture_config.h"
 #include "modules/video_capture/windows/help_functions_ds.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringutils.h"
-
-#include <dvdmedia.h>
-#include <streams.h>
+#include "rtc_base/string_utils.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -370,7 +369,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(const char* deviceUniqueIdUTF8)
   GUID preferedVideoFormat = FORMAT_VideoInfo;
   for (int32_t tmp = 0; tmp < count; ++tmp) {
     hr = streamConfig->GetStreamCaps(tmp, &pmt, reinterpret_cast<BYTE*>(&caps));
-    if (!FAILED(hr)) {
+    if (hr == S_OK) {
       if (pmt->majortype == MEDIATYPE_Video &&
           pmt->formattype == FORMAT_VideoInfo2) {
         RTC_LOG(LS_INFO) << "Device support FORMAT_VideoInfo2";
@@ -399,7 +398,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(const char* deviceUniqueIdUTF8)
 
   for (int32_t tmp = 0; tmp < count; ++tmp) {
     hr = streamConfig->GetStreamCaps(tmp, &pmt, reinterpret_cast<BYTE*>(&caps));
-    if (FAILED(hr)) {
+    if (hr != S_OK) {
       RTC_LOG(LS_INFO) << "Failed to GetStreamCaps";
       RELEASE_AND_CLEAR(videoControlConfig);
       RELEASE_AND_CLEAR(streamConfig);
@@ -519,7 +518,7 @@ int32_t DeviceInfoDS::CreateCapabilityMap(const char* deviceUniqueIdUTF8)
                        << " type:" << static_cast<int>(capability.videoType)
                        << " fps:" << capability.maxFPS;
     }
-    DeleteMediaType(pmt);
+    FreeMediaType(pmt);
     pmt = NULL;
   }
   RELEASE_AND_CLEAR(streamConfig);

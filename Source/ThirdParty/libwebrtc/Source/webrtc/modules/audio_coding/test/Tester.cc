@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+
 #include <string>
 #include <vector>
 
@@ -23,14 +24,10 @@
 #include "modules/audio_coding/test/iSACTest.h"
 #include "modules/audio_coding/test/opus_test.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
-
-// This parameter is used to describe how to run the tests. It is normally
-// set to 0, and all tests are run in quite mode.
-#define ACM_TEST_MODE 0
+#include "test/testsupport/file_utils.h"
 
 TEST(AudioCodingModuleTest, TestAllCodecs) {
-  webrtc::TestAllCodecs(ACM_TEST_MODE).Perform();
+  webrtc::TestAllCodecs().Perform();
 }
 
 #if defined(WEBRTC_ANDROID)
@@ -38,7 +35,7 @@ TEST(AudioCodingModuleTest, DISABLED_TestEncodeDecode) {
 #else
 TEST(AudioCodingModuleTest, TestEncodeDecode) {
 #endif
-  webrtc::EncodeDecodeTest(ACM_TEST_MODE).Perform();
+  webrtc::EncodeDecodeTest().Perform();
 }
 
 TEST(AudioCodingModuleTest, TestRedFec) {
@@ -50,7 +47,7 @@ TEST(AudioCodingModuleTest, DISABLED_TestIsac) {
 #else
 TEST(AudioCodingModuleTest, TestIsac) {
 #endif
-  webrtc::ISACTest(ACM_TEST_MODE).Perform();
+  webrtc::ISACTest().Perform();
 }
 
 #if (defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)) && \
@@ -70,7 +67,7 @@ TEST(AudioCodingModuleTest, DISABLED_TestStereo) {
 #else
 TEST(AudioCodingModuleTest, TestStereo) {
 #endif
-  webrtc::TestStereo(ACM_TEST_MODE).Perform();
+  webrtc::TestStereo().Perform();
 }
 
 TEST(AudioCodingModuleTest, TestWebRtcVadDtx) {

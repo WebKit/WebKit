@@ -10,6 +10,8 @@
 
 #include "api/audio_codecs/audio_format.h"
 
+#include <utility>
+
 #include "absl/strings/match.h"
 
 namespace webrtc {
@@ -30,6 +32,15 @@ SdpAudioFormat::SdpAudioFormat(absl::string_view name,
       clockrate_hz(clockrate_hz),
       num_channels(num_channels),
       parameters(param) {}
+
+SdpAudioFormat::SdpAudioFormat(absl::string_view name,
+                               int clockrate_hz,
+                               size_t num_channels,
+                               Parameters&& param)
+    : name(name),
+      clockrate_hz(clockrate_hz),
+      num_channels(num_channels),
+      parameters(std::move(param)) {}
 
 bool SdpAudioFormat::Matches(const SdpAudioFormat& o) const {
   return absl::EqualsIgnoreCase(name, o.name) &&

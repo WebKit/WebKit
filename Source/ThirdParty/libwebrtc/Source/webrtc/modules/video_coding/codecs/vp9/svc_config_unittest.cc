@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/codecs/vp9/svc_config.h"
+
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
-#include "modules/video_coding/codecs/vp9/svc_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -55,7 +55,7 @@ TEST(SvcConfig, ScreenSharing) {
     const SpatialLayer& layer = spatial_layers[i];
     EXPECT_EQ(layer.width, 1920);
     EXPECT_EQ(layer.height, 1080);
-    EXPECT_EQ(layer.maxFramerate, (i < 2) ? 5 : 30);
+    EXPECT_EQ(layer.maxFramerate, (i < 1) ? 5 : (i < 2 ? 10 : 30));
     EXPECT_EQ(layer.numberOfTemporalLayers, 1);
     EXPECT_LE(layer.minBitrate, layer.maxBitrate);
     EXPECT_LE(layer.minBitrate, layer.targetBitrate);

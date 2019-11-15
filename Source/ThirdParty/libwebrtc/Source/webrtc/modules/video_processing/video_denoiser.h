@@ -13,6 +13,8 @@
 
 #include <memory>
 
+#include "api/scoped_refptr.h"
+#include "api/video/video_frame_buffer.h"
 #include "common_video/include/i420_buffer_pool.h"
 #include "modules/video_processing/util/denoiser_filter.h"
 #include "modules/video_processing/util/noise_estimation.h"

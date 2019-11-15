@@ -11,30 +11,30 @@
 #include "video/video_stream_decoder_impl.h"
 
 #include "absl/memory/memory.h"
+#include "api/task_queue/queued_task.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/mod_ops.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
 VideoStreamDecoderImpl::VideoStreamDecoderImpl(
-    VideoStreamDecoder::Callbacks* callbacks,
+    VideoStreamDecoderInterface::Callbacks* callbacks,
     VideoDecoderFactory* decoder_factory,
+    TaskQueueFactory* task_queue_factory,
     std::map<int, std::pair<SdpVideoFormat, int>> decoder_settings)
     : callbacks_(callbacks),
       decoder_factory_(decoder_factory),
       decoder_settings_(std::move(decoder_settings)),
-      bookkeeping_queue_("video_stream_decoder_bookkeeping_queue"),
+      bookkeeping_queue_(task_queue_factory->CreateTaskQueue(
+          "video_stream_decoder_bookkeeping_queue",
+          TaskQueueFactory::Priority::NORMAL)),
       decode_thread_(&DecodeLoop,
                      this,
                      "video_stream_decoder_decode_thread",
                      rtc::kHighestPriority),
-      jitter_estimator_(Clock::GetRealTimeClock()),
       timing_(Clock::GetRealTimeClock()),
-      frame_buffer_(Clock::GetRealTimeClock(),
-                    &jitter_estimator_,
-                    &timing_,
-                    nullptr),
+      frame_buffer_(Clock::GetRealTimeClock(), &timing_, nullptr),
       next_frame_timestamps_index_(0) {
   frame_timestamps_.fill({-1, -1, -1});
   decode_thread_.Start();
@@ -48,7 +48,7 @@ VideoStreamDecoderImpl::~VideoStreamDecoderImpl() {
 void VideoStreamDecoderImpl::OnFrame(
     std::unique_ptr<video_coding::EncodedFrame> frame) {
   if (!bookkeeping_queue_.IsCurrent()) {
-    struct OnFrameTask : rtc::QueuedTask {
+    struct OnFrameTask : QueuedTask {
       OnFrameTask(std::unique_ptr<video_coding::EncodedFrame> frame,
                   VideoStreamDecoderImpl* video_stream_decoder)
           : frame_(std::move(frame)),
@@ -76,6 +76,14 @@ void VideoStreamDecoderImpl::OnFrame(
     last_continuous_id_ = continuous_id;
     callbacks_->OnContinuousUntil(last_continuous_id_);
   }
+}
+
+void VideoStreamDecoderImpl::SetMinPlayoutDelay(TimeDelta min_delay) {
+  timing_.set_min_playout_delay(min_delay.ms());
+}
+
+void VideoStreamDecoderImpl::SetMaxPlayoutDelay(TimeDelta max_delay) {
+  timing_.set_max_playout_delay(max_delay.ms());
 }
 
 VideoDecoder* VideoStreamDecoderImpl::GetDecoder(int payload_type) {
@@ -205,8 +213,7 @@ VideoStreamDecoderImpl::DecodeResult VideoStreamDecoderImpl::DecodeNextFrame(
         });
 
     int32_t decode_result = decoder->Decode(frame->EncodedImage(),
-                                            false,    // missing_frame
-                                            nullptr,  // codec specific info
+                                            false,  // missing_frame
                                             frame->RenderTimeMs());
 
     return decode_result == WEBRTC_VIDEO_CODEC_OK ? kOk : kDecodeFailure;
@@ -268,13 +275,11 @@ void VideoStreamDecoderImpl::Decoded(VideoFrame& decoded_image,
     absl::optional<int> casted_decode_time_ms(decode_time_ms.value_or(
         decode_stop_time_ms - frame_timestamps->decode_start_time_ms));
 
-    timing_.StopDecodeTimer(0, *casted_decode_time_ms, decode_stop_time_ms,
-                            frame_timestamps->render_time_us / 1000);
+    timing_.StopDecodeTimer(*casted_decode_time_ms, decode_stop_time_ms);
 
-    callbacks_->OnDecodedFrame(
-        VideoFrame(decoded_image.video_frame_buffer(), decoded_image.rotation(),
-                   frame_timestamps->render_time_us),
-        casted_decode_time_ms, casted_qp);
+    VideoFrame copy = decoded_image;
+    copy.set_timestamp_us(frame_timestamps->render_time_us);
+    callbacks_->OnDecodedFrame(copy, casted_decode_time_ms, casted_qp);
   });
 }
 

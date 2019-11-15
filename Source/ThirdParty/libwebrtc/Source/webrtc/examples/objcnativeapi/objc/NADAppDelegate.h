@@ -10,7 +10,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NADAppDelegate : UIResponder<UIApplicationDelegate>
+@interface NADAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property(strong, nonatomic) UIWindow* window;
 

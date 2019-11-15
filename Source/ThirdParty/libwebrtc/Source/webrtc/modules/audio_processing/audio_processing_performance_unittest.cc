@@ -7,8 +7,6 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "modules/audio_processing/audio_processing_impl.h"
-
 #include <math.h>
 
 #include <algorithm>
@@ -16,8 +14,9 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "modules/audio_processing/audio_processing_impl.h"
 #include "modules/audio_processing/test/test_utils.h"
-#include "rtc_base/atomicops.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/event.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
@@ -391,11 +390,14 @@ class TimedThreadApiProcessor {
 class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
  public:
   CallSimulator()
-      : render_thread_(
-            new rtc::PlatformThread(RenderProcessorThreadFunc, this, "render")),
+      : render_thread_(new rtc::PlatformThread(RenderProcessorThreadFunc,
+                                               this,
+                                               "render",
+                                               rtc::kRealtimePriority)),
         capture_thread_(new rtc::PlatformThread(CaptureProcessorThreadFunc,
                                                 this,
-                                                "capture")),
+                                                "capture",
+                                                rtc::kRealtimePriority)),
         rand_gen_(42U),
         simulation_config_(static_cast<SimulationConfig>(GetParam())) {}
 
@@ -450,10 +452,10 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
                 apm->gain_control()->set_mode(GainControl::kAdaptiveDigital));
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(true));
       AudioProcessing::Config apm_config = apm->GetConfig();
       apm_config.echo_canceller.enabled = true;
       apm_config.echo_canceller.mobile_mode = false;
+      apm_config.voice_detection.enabled = true;
       apm->ApplyConfig(apm_config);
     };
 
@@ -465,10 +467,10 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
                 apm->gain_control()->set_mode(GainControl::kAdaptiveDigital));
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(true));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(true));
-      ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(true));
       AudioProcessing::Config apm_config = apm->GetConfig();
       apm_config.echo_canceller.enabled = true;
       apm_config.echo_canceller.mobile_mode = true;
+      apm_config.voice_detection.enabled = true;
       apm->ApplyConfig(apm_config);
     };
 
@@ -481,9 +483,9 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
                 apm->gain_control()->set_mode(GainControl::kAdaptiveDigital));
       ASSERT_EQ(apm->kNoError, apm->gain_control()->Enable(false));
       ASSERT_EQ(apm->kNoError, apm->noise_suppression()->Enable(false));
-      ASSERT_EQ(apm->kNoError, apm->voice_detection()->Enable(false));
       AudioProcessing::Config apm_config = apm->GetConfig();
       apm_config.echo_canceller.enabled = false;
+      apm_config.voice_detection.enabled = false;
       apm->ApplyConfig(apm_config);
     };
 
@@ -549,23 +551,23 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
   }
 
   // Thread callback for the render thread.
-  static bool RenderProcessorThreadFunc(void* context) {
-    return reinterpret_cast<CallSimulator*>(context)
-        ->render_thread_state_->Process();
+  static void RenderProcessorThreadFunc(void* context) {
+    CallSimulator* call_simulator = reinterpret_cast<CallSimulator*>(context);
+    while (call_simulator->render_thread_state_->Process()) {
+    }
   }
 
   // Thread callback for the capture thread.
-  static bool CaptureProcessorThreadFunc(void* context) {
-    return reinterpret_cast<CallSimulator*>(context)
-        ->capture_thread_state_->Process();
+  static void CaptureProcessorThreadFunc(void* context) {
+    CallSimulator* call_simulator = reinterpret_cast<CallSimulator*>(context);
+    while (call_simulator->capture_thread_state_->Process()) {
+    }
   }
 
   // Start the threads used in the test.
   void StartThreads() {
     ASSERT_NO_FATAL_FAILURE(render_thread_->Start());
-    render_thread_->SetPriority(rtc::kRealtimePriority);
     ASSERT_NO_FATAL_FAILURE(capture_thread_->Start());
-    capture_thread_->SetPriority(rtc::kRealtimePriority);
   }
 
   // Event handler for the test.
@@ -621,7 +623,7 @@ TEST_P(CallSimulator, DISABLED_ApiCallDurationTest) {
   EXPECT_TRUE(Run());
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     AudioProcessingPerformanceTest,
     CallSimulator,
     ::testing::ValuesIn(SimulationConfig::GenerateSimulationConfigs()));

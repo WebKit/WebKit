@@ -9,6 +9,7 @@
  */
 
 #include "modules/rtp_rtcp/source/packet_loss_stats.h"
+
 #include "test/gtest.h"
 
 namespace webrtc {

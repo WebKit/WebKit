@@ -10,7 +10,7 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_BBR_LOSS_RATE_FILTER_H_
 #define MODULES_CONGESTION_CONTROLLER_BBR_LOSS_RATE_FILTER_H_
 
-#include "absl/types/optional.h"
+#include <stdint.h>
 
 namespace webrtc {
 namespace bbr {

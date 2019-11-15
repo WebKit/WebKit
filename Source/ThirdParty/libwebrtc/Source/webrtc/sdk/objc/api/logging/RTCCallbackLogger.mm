@@ -13,8 +13,8 @@
 #include <memory>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/log_sinks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/logsinks.h"
 
 class CallbackLogSink : public rtc::LogSink {
  public:
@@ -48,8 +48,6 @@ class CallbackWithSeverityLogSink : public rtc::LogSink {
  private:
   static RTCLoggingSeverity NativeSeverityToObjcSeverity(rtc::LoggingSeverity severity) {
     switch (severity) {
-      case rtc::LS_SENSITIVE:
-        return RTCLoggingSeveritySensitive;
       case rtc::LS_VERBOSE:
         return RTCLoggingSeverityVerbose;
       case rtc::LS_INFO:
@@ -122,8 +120,6 @@ class CallbackWithSeverityLogSink : public rtc::LogSink {
 
 - (rtc::LoggingSeverity)rtcSeverity {
   switch (_severity) {
-    case RTCLoggingSeveritySensitive:
-      return rtc::LS_SENSITIVE;
     case RTCLoggingSeverityVerbose:
       return rtc::LS_VERBOSE;
     case RTCLoggingSeverityInfo:

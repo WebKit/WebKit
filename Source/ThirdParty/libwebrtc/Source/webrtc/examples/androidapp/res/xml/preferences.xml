@@ -165,11 +165,6 @@
             android:dialogTitle="@string/pref_speakerphone_dlg"
             android:entries="@array/speakerphone"
             android:entryValues="@array/speakerphoneValues" />
-
-        <CheckBoxPreference
-            android:key="@string/pref_use_legacy_audio_device_key"
-            android:title="@string/pref_use_legacy_audio_device_title"
-            android:defaultValue="@string/pref_use_legacy_audio_device_default" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -54,16 +54,12 @@ constexpr size_t kMatchedFilterAlignmentShiftSizeSubBlocks =
 
 // TODO(peah): Integrate this with how it is done inside audio_processing_impl.
 constexpr size_t NumBandsForRate(int sample_rate_hz) {
-  return static_cast<size_t>(sample_rate_hz == 8000 ? 1
-                                                    : sample_rate_hz / 16000);
-}
-constexpr int LowestBandRate(int sample_rate_hz) {
-  return sample_rate_hz == 8000 ? sample_rate_hz : 16000;
+  return static_cast<size_t>(sample_rate_hz / 16000);
 }
 
 constexpr bool ValidFullBandRate(int sample_rate_hz) {
-  return sample_rate_hz == 8000 || sample_rate_hz == 16000 ||
-         sample_rate_hz == 32000 || sample_rate_hz == 48000;
+  return sample_rate_hz == 16000 || sample_rate_hz == 32000 ||
+         sample_rate_hz == 48000;
 }
 
 constexpr int GetTimeDomainLength(int filter_length_blocks) {
@@ -100,21 +96,10 @@ static_assert(1 << kBlockSizeLog2 == kBlockSize,
 static_assert(1 << kFftLengthBy2Log2 == kFftLengthBy2,
               "Proper number of shifts for the fft length");
 
-static_assert(1 == NumBandsForRate(8000), "Number of bands for 8 kHz");
 static_assert(1 == NumBandsForRate(16000), "Number of bands for 16 kHz");
 static_assert(2 == NumBandsForRate(32000), "Number of bands for 32 kHz");
 static_assert(3 == NumBandsForRate(48000), "Number of bands for 48 kHz");
 
-static_assert(8000 == LowestBandRate(8000), "Sample rate of band 0 for 8 kHz");
-static_assert(16000 == LowestBandRate(16000),
-              "Sample rate of band 0 for 16 kHz");
-static_assert(16000 == LowestBandRate(32000),
-              "Sample rate of band 0 for 32 kHz");
-static_assert(16000 == LowestBandRate(48000),
-              "Sample rate of band 0 for 48 kHz");
-
-static_assert(ValidFullBandRate(8000),
-              "Test that 8 kHz is a valid sample rate");
 static_assert(ValidFullBandRate(16000),
               "Test that 16 kHz is a valid sample rate");
 static_assert(ValidFullBandRate(32000),

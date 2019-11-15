@@ -31,13 +31,26 @@ void I420BufferPool::Release() {
 
 rtc::scoped_refptr<I420Buffer> I420BufferPool::CreateBuffer(int width,
                                                             int height) {
+  // Default stride_y is width, default uv stride is width / 2 (rounding up).
+  return CreateBuffer(width, height, width, (width + 1) / 2, (width + 1) / 2);
+}
+
+rtc::scoped_refptr<I420Buffer> I420BufferPool::CreateBuffer(int width,
+                                                            int height,
+                                                            int stride_y,
+                                                            int stride_u,
+                                                            int stride_v) {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   // Release buffers with wrong resolution.
   for (auto it = buffers_.begin(); it != buffers_.end();) {
-    if ((*it)->width() != width || (*it)->height() != height)
+    const auto& buffer = *it;
+    if (buffer->width() != width || buffer->height() != height ||
+        buffer->StrideY() != stride_y || buffer->StrideU() != stride_u ||
+        buffer->StrideV() != stride_v) {
       it = buffers_.erase(it);
-    else
+    } else {
       ++it;
+    }
   }
   // Look for a free buffer.
   for (const rtc::scoped_refptr<PooledI420Buffer>& buffer : buffers_) {
@@ -53,7 +66,7 @@ rtc::scoped_refptr<I420Buffer> I420BufferPool::CreateBuffer(int width,
     return nullptr;
   // Allocate new buffer.
   rtc::scoped_refptr<PooledI420Buffer> buffer =
-      new PooledI420Buffer(width, height);
+      new PooledI420Buffer(width, height, stride_y, stride_u, stride_v);
   if (zero_initialize_)
     buffer->InitializeData();
   buffers_.push_back(buffer);

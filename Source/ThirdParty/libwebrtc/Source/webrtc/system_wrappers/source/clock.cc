@@ -17,7 +17,7 @@
 
 #include <mmsystem.h>
 
-#include "rtc_base/criticalsection.h"
+#include "rtc_base/critical_section.h"
 
 #elif defined(WEBRTC_POSIX)
 
@@ -27,21 +27,22 @@
 #endif  // defined(WEBRTC_POSIX)
 
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
 class RealTimeClock : public Clock {
+  Timestamp CurrentTime() override { return Timestamp::us(rtc::TimeMicros()); }
   // Return a timestamp in milliseconds relative to some arbitrary source; the
   // source is fixed for this clock.
-  int64_t TimeInMilliseconds() const override { return rtc::TimeMillis(); }
+  int64_t TimeInMilliseconds() override { return rtc::TimeMillis(); }
 
   // Return a timestamp in microseconds relative to some arbitrary source; the
   // source is fixed for this clock.
-  int64_t TimeInMicroseconds() const override { return rtc::TimeMicros(); }
+  int64_t TimeInMicroseconds() override { return rtc::TimeMicros(); }
 
   // Retrieve an NTP absolute timestamp.
-  NtpTime CurrentNtpTime() const override {
+  NtpTime CurrentNtpTime() override {
     timeval tv = CurrentTimeVal();
     double microseconds_in_seconds;
     uint32_t seconds;
@@ -52,7 +53,7 @@ class RealTimeClock : public Clock {
   }
 
   // Retrieve an NTP absolute timestamp in milliseconds.
-  int64_t CurrentNtpInMilliseconds() const override {
+  int64_t CurrentNtpInMilliseconds() override {
     timeval tv = CurrentTimeVal();
     uint32_t seconds;
     double microseconds_in_seconds;
@@ -62,7 +63,7 @@ class RealTimeClock : public Clock {
   }
 
  protected:
-  virtual timeval CurrentTimeVal() const = 0;
+  virtual timeval CurrentTimeVal() = 0;
 
   static void Adjust(const timeval& tv,
                      uint32_t* adjusted_s,
@@ -80,9 +81,31 @@ class RealTimeClock : public Clock {
   }
 };
 
-#if defined(WEBRTC_WIN)
+#if defined(WINUWP)
+class WinUwpRealTimeClock final : public RealTimeClock {
+ public:
+  WinUwpRealTimeClock() = default;
+  ~WinUwpRealTimeClock() override {}
+
+ protected:
+  timeval CurrentTimeVal() override {
+    // The rtc::SystemTimeNanos() method is already time offset from a base
+    // epoch value and might as be synchronized against an NTP time server as
+    // an added bonus.
+    auto nanos = rtc::SystemTimeNanos();
+
+    struct timeval tv;
+
+    tv.tv_sec = rtc::dchecked_cast<long>(nanos / 1000000000);
+    tv.tv_usec = rtc::dchecked_cast<long>(nanos / 1000);
+
+    return tv;
+  }
+};
+
+#elif defined(WEBRTC_WIN)
 // TODO(pbos): Consider modifying the implementation to synchronize itself
-// against system time (update ref_point_, make it non-const) periodically to
+// against system time (update ref_point_) periodically to
 // prevent clock drift.
 class WindowsRealTimeClock : public RealTimeClock {
  public:
@@ -99,7 +122,7 @@ class WindowsRealTimeClock : public RealTimeClock {
     LARGE_INTEGER counter_ms;
   };
 
-  timeval CurrentTimeVal() const override {
+  timeval CurrentTimeVal() override {
     const uint64_t FILETIME_1970 = 0x019db1ded53e8000;
 
     FILETIME StartTime;
@@ -121,7 +144,7 @@ class WindowsRealTimeClock : public RealTimeClock {
     return tv;
   }
 
-  void GetTime(FILETIME* current_time) const {
+  void GetTime(FILETIME* current_time) {
     DWORD t;
     LARGE_INTEGER elapsed_ms;
     {
@@ -175,10 +198,9 @@ class WindowsRealTimeClock : public RealTimeClock {
     return ref;
   }
 
-  // mutable as time-accessing functions are const.
   rtc::CriticalSection crit_;
-  mutable DWORD last_time_ms_;
-  mutable LONG num_timer_wraps_;
+  DWORD last_time_ms_;
+  LONG num_timer_wraps_;
   const ReferencePoint ref_point_;
 };
 
@@ -190,7 +212,7 @@ class UnixRealTimeClock : public RealTimeClock {
   ~UnixRealTimeClock() override {}
 
  protected:
-  timeval CurrentTimeVal() const override {
+  timeval CurrentTimeVal() override {
     struct timeval tv;
     struct timezone tz;
     tz.tz_minuteswest = 0;
@@ -202,7 +224,9 @@ class UnixRealTimeClock : public RealTimeClock {
 #endif  // defined(WEBRTC_POSIX)
 
 Clock* Clock::GetRealTimeClock() {
-#if defined(WEBRTC_WIN)
+#if defined(WINUWP)
+  static Clock* const clock = new WinUwpRealTimeClock();
+#elif defined(WEBRTC_WIN)
   static Clock* const clock = new WindowsRealTimeClock();
 #elif defined(WEBRTC_POSIX)
   static Clock* const clock = new UnixRealTimeClock();
@@ -213,21 +237,19 @@ Clock* Clock::GetRealTimeClock() {
 }
 
 SimulatedClock::SimulatedClock(int64_t initial_time_us)
-    : time_us_(initial_time_us), lock_(RWLockWrapper::CreateRWLock()) {}
+    : SimulatedClock(Timestamp::us(initial_time_us)) {}
+
+SimulatedClock::SimulatedClock(Timestamp initial_time)
+    : time_(initial_time), lock_(RWLockWrapper::CreateRWLock()) {}
 
 SimulatedClock::~SimulatedClock() {}
 
-int64_t SimulatedClock::TimeInMilliseconds() const {
+Timestamp SimulatedClock::CurrentTime() {
   ReadLockScoped synchronize(*lock_);
-  return (time_us_ + 500) / 1000;
+  return time_;
 }
 
-int64_t SimulatedClock::TimeInMicroseconds() const {
-  ReadLockScoped synchronize(*lock_);
-  return time_us_;
-}
-
-NtpTime SimulatedClock::CurrentNtpTime() const {
+NtpTime SimulatedClock::CurrentNtpTime() {
   int64_t now_ms = TimeInMilliseconds();
   uint32_t seconds = (now_ms / 1000) + kNtpJan1970;
   uint32_t fractions =
@@ -235,17 +257,21 @@ NtpTime SimulatedClock::CurrentNtpTime() const {
   return NtpTime(seconds, fractions);
 }
 
-int64_t SimulatedClock::CurrentNtpInMilliseconds() const {
+int64_t SimulatedClock::CurrentNtpInMilliseconds() {
   return TimeInMilliseconds() + 1000 * static_cast<int64_t>(kNtpJan1970);
 }
 
 void SimulatedClock::AdvanceTimeMilliseconds(int64_t milliseconds) {
-  AdvanceTimeMicroseconds(1000 * milliseconds);
+  AdvanceTime(TimeDelta::ms(milliseconds));
 }
 
 void SimulatedClock::AdvanceTimeMicroseconds(int64_t microseconds) {
-  WriteLockScoped synchronize(*lock_);
-  time_us_ += microseconds;
+  AdvanceTime(TimeDelta::us(microseconds));
 }
 
-};  // namespace webrtc
+void SimulatedClock::AdvanceTime(TimeDelta delta) {
+  WriteLockScoped synchronize(*lock_);
+  time_ += delta;
+}
+
+}  // namespace webrtc

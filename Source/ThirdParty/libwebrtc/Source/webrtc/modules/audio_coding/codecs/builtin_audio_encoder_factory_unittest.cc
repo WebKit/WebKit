@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+
 #include <limits>
 #include <memory>
 #include <vector>
 
-#include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -103,9 +104,9 @@ TEST_P(AudioEncoderFactoryTest, CanRunAllSupportedEncoders) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(BuiltinAudioEncoderFactoryTest,
-                        AudioEncoderFactoryTest,
-                        ::testing::Values(CreateBuiltinAudioEncoderFactory()));
+INSTANTIATE_TEST_SUITE_P(BuiltinAudioEncoderFactoryTest,
+                         AudioEncoderFactoryTest,
+                         ::testing::Values(CreateBuiltinAudioEncoderFactory()));
 
 TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
   using ::testing::ElementsAreArray;
@@ -116,6 +117,7 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 
   const std::vector<SdpAudioFormat> supported_formats = [&specs] {
     std::vector<SdpAudioFormat> formats;
+    formats.reserve(specs.size());
     for (const auto& spec : specs) {
       formats.push_back(spec.format);
     }

@@ -15,10 +15,12 @@
 #include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
 #include "media/base/codec.h"
-#include "media/base/mediaconstants.h"
-#include "media/engine/internalencoderfactory.h"
-#include "media/engine/vp8_encoder_simulcast_proxy.h"
+#include "media/base/media_constants.h"
+#include "media/engine/encoder_simulcast_proxy.h"
+#include "media/engine/internal_encoder_factory.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -59,11 +61,8 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
     std::unique_ptr<VideoEncoder> internal_encoder;
     if (IsFormatSupported(internal_encoder_factory_->GetSupportedFormats(),
                           format)) {
-      internal_encoder =
-          absl::EqualsIgnoreCase(format.name, cricket::kVp8CodecName)
-              ? absl::make_unique<VP8EncoderSimulcastProxy>(
-                    internal_encoder_factory_.get(), format)
-              : internal_encoder_factory_->CreateVideoEncoder(format);
+      internal_encoder = absl::make_unique<EncoderSimulcastProxy>(
+          internal_encoder_factory_.get(), format);
     }
 
     return internal_encoder;

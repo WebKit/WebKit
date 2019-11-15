@@ -33,6 +33,12 @@ enum ACMVADMode {
   VADVeryAggr = 3
 };
 
+enum class AudioFrameType {
+  kEmptyFrame = 0,
+  kAudioFrameSpeech = 1,
+  kAudioFrameCN = 2,
+};
+
 ///////////////////////////////////////////////////////////////////////////
 //
 // Enumeration of Opus mode for intended application.
@@ -51,7 +57,8 @@ struct AudioDecodingCallStats {
       : calls_to_silence_generator(0),
         calls_to_neteq(0),
         decoded_normal(0),
-        decoded_plc(0),
+        decoded_neteq_plc(0),
+        decoded_codec_plc(0),
         decoded_cng(0),
         decoded_plc_cng(0),
         decoded_muted_output(0) {}
@@ -60,7 +67,8 @@ struct AudioDecodingCallStats {
                                    // and NetEq was disengaged from decoding.
   int calls_to_neteq;              // Number of calls to NetEq.
   int decoded_normal;  // Number of calls where audio RTP packet decoded.
-  int decoded_plc;     // Number of calls resulted in PLC.
+  int decoded_neteq_plc;  // Number of calls resulted in NetEq PLC.
+  int decoded_codec_plc;  // Number of calls resulted in codec PLC.
   int decoded_cng;  // Number of calls where comfort noise generated due to DTX.
   int decoded_plc_cng;       // Number of calls resulted where PLC faded to CNG.
   int decoded_muted_output;  // Number of calls returning a muted state output.
@@ -78,8 +86,14 @@ struct NetworkStatistics {
   // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats
   uint64_t totalSamplesReceived;
   uint64_t concealedSamples;
+  uint64_t silentConcealedSamples;
   uint64_t concealmentEvents;
   uint64_t jitterBufferDelayMs;
+  uint64_t jitterBufferEmittedCount;
+  uint64_t insertedSamplesForDeceleration;
+  uint64_t removedSamplesForAcceleration;
+  uint64_t fecPacketsReceived;
+  uint64_t fecPacketsDiscarded;
   // Stats below DO NOT correspond directly to anything in the WebRTC stats
   // Loss rate (network + late); fraction between 0 and 1, scaled to Q14.
   uint16_t currentPacketLossRate;
@@ -105,8 +119,6 @@ struct NetworkStatistics {
   // primary data, obsoleting the secondary data. It can also be caused by early
   // or late arrival of secondary data.
   uint16_t currentSecondaryDiscardedRate;
-  // clock-drift in parts-per-million (negative or positive)
-  int32_t clockDriftPPM;
   // average packet waiting time in the jitter buffer (ms)
   int meanWaitingTimeMs;
   // median packet waiting time in the jitter buffer (ms)
@@ -121,6 +133,12 @@ struct NetworkStatistics {
   uint64_t packetBufferFlushes;
   // number of samples expanded due to delayed packets
   uint64_t delayedPacketOutageSamples;
+  // arrival delay of incoming packets
+  uint64_t relativePacketArrivalDelayMs;
+  // number of audio interruptions
+  int32_t interruptionCount;
+  // total duration of audio interruptions
+  int32_t totalInterruptionDurationMs;
 };
 
 }  // namespace webrtc

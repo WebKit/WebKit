@@ -64,18 +64,28 @@ public class RendererCommon {
     // The scaling type determines how the video will fill the allowed layout area in measure(). It
     // can be specified separately for the case when video has matched orientation with layout size
     // and when there is an orientation mismatch.
-    private ScalingType scalingTypeMatchOrientation = ScalingType.SCALE_ASPECT_BALANCED;
-    private ScalingType scalingTypeMismatchOrientation = ScalingType.SCALE_ASPECT_BALANCED;
+    private float visibleFractionMatchOrientation =
+        convertScalingTypeToVisibleFraction(ScalingType.SCALE_ASPECT_BALANCED);
+    private float visibleFractionMismatchOrientation =
+        convertScalingTypeToVisibleFraction(ScalingType.SCALE_ASPECT_BALANCED);
 
     public void setScalingType(ScalingType scalingType) {
-      this.scalingTypeMatchOrientation = scalingType;
-      this.scalingTypeMismatchOrientation = scalingType;
+      setScalingType(/* scalingTypeMatchOrientation= */ scalingType,
+          /* scalingTypeMismatchOrientation= */ scalingType);
     }
 
     public void setScalingType(
         ScalingType scalingTypeMatchOrientation, ScalingType scalingTypeMismatchOrientation) {
-      this.scalingTypeMatchOrientation = scalingTypeMatchOrientation;
-      this.scalingTypeMismatchOrientation = scalingTypeMismatchOrientation;
+      this.visibleFractionMatchOrientation =
+          convertScalingTypeToVisibleFraction(scalingTypeMatchOrientation);
+      this.visibleFractionMismatchOrientation =
+          convertScalingTypeToVisibleFraction(scalingTypeMismatchOrientation);
+    }
+
+    public void setVisibleFraction(
+        float visibleFractionMatchOrientation, float visibleFractionMismatchOrientation) {
+      this.visibleFractionMatchOrientation = visibleFractionMatchOrientation;
+      this.visibleFractionMismatchOrientation = visibleFractionMismatchOrientation;
     }
 
     public Point measure(int widthSpec, int heightSpec, int frameWidth, int frameHeight) {
@@ -89,10 +99,10 @@ public class RendererCommon {
       // and maximum layout size.
       final float frameAspect = frameWidth / (float) frameHeight;
       final float displayAspect = maxWidth / (float) maxHeight;
-      final ScalingType scalingType = (frameAspect > 1.0f) == (displayAspect > 1.0f)
-          ? scalingTypeMatchOrientation
-          : scalingTypeMismatchOrientation;
-      final Point layoutSize = getDisplaySize(scalingType, frameAspect, maxWidth, maxHeight);
+      final float visibleFraction = (frameAspect > 1.0f) == (displayAspect > 1.0f)
+          ? visibleFractionMatchOrientation
+          : visibleFractionMismatchOrientation;
+      final Point layoutSize = getDisplaySize(visibleFraction, frameAspect, maxWidth, maxHeight);
 
       // If the measure specification is forcing a specific size - yield.
       if (View.MeasureSpec.getMode(widthSpec) == View.MeasureSpec.EXACTLY) {
@@ -233,7 +243,7 @@ public class RendererCommon {
    * Calculate display size based on minimum fraction of the video that must remain visible,
    * video aspect ratio, and maximum display size.
    */
-  private static Point getDisplaySize(
+  public static Point getDisplaySize(
       float minVisibleFraction, float videoAspectRatio, int maxDisplayWidth, int maxDisplayHeight) {
     // If there is no constraint on the amount of cropping, fill the allowed display area.
     if (minVisibleFraction == 0 || videoAspectRatio == 0) {

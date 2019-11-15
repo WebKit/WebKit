@@ -11,16 +11,19 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
 
+#include <fstream>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/types/optional.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/test/neteq_simulator.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace test {
@@ -65,15 +68,7 @@ class NetEqSimulationEndedCallback {
 // directed to an AudioSink object.
 class NetEqTest : public NetEqSimulator {
  public:
-  using DecoderMap = std::map<int, std::pair<NetEqDecoder, std::string> >;
-
-  struct ExternalDecoderInfo {
-    AudioDecoder* decoder;
-    NetEqDecoder codec;
-    std::string codec_name;
-  };
-
-  using ExtDecoderMap = std::map<int, ExternalDecoderInfo>;
+  using DecoderMap = std::map<int, SdpAudioFormat>;
 
   struct Callbacks {
     NetEqTestErrorCallback* error_callback = nullptr;
@@ -85,8 +80,9 @@ class NetEqTest : public NetEqSimulator {
   // Sets up the test with given configuration, codec mappings, input, ouput,
   // and callback objects for error reporting.
   NetEqTest(const NetEq::Config& config,
+            rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
             const DecoderMap& codecs,
-            const ExtDecoderMap& ext_codecs,
+            std::unique_ptr<std::ofstream> text_log,
             std::unique_ptr<NetEqInput> input,
             std::unique_ptr<AudioSink> output,
             Callbacks callbacks);
@@ -111,7 +107,7 @@ class NetEqTest : public NetEqSimulator {
 
  private:
   void RegisterDecoders(const DecoderMap& codecs);
-  void RegisterExternalDecoders(const ExtDecoderMap& codecs);
+  SimulatedClock clock_;
   absl::optional<Action> next_action_;
   absl::optional<int> last_packet_time_ms_;
   std::unique_ptr<NetEq> neteq_;
@@ -121,6 +117,9 @@ class NetEqTest : public NetEqSimulator {
   int sample_rate_hz_;
   NetEqState current_state_;
   NetEqOperationsAndState prev_ops_state_;
+  NetEqLifetimeStatistics prev_lifetime_stats_;
+  absl::optional<uint32_t> last_packet_timestamp_;
+  std::unique_ptr<std::ofstream> text_log_;
 };
 
 }  // namespace test

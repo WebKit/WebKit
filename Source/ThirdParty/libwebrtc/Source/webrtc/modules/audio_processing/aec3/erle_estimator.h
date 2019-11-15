@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_ERLE_ESTIMATOR_H_
 
 #include <stddef.h>
+
 #include <array>
 #include <memory>
 

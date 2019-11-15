@@ -10,12 +10,16 @@
 
 #include "modules/desktop_capture/linux/x_server_pixel_buffer.h"
 
+#include <X11/Xutil.h>
+#include <stdint.h>
 #include <string.h>
+#include <sys/ipc.h>
 #include <sys/shm.h>
 
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/linux/window_list_utils.h"
 #include "modules/desktop_capture/linux/x_error_trap.h"
+#include "modules/desktop_capture/linux/x_window_property.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -169,13 +173,26 @@ void XServerPixelBuffer::ReleaseSharedMemorySegment() {
   shm_segment_info_ = nullptr;
 }
 
-bool XServerPixelBuffer::Init(Display* display, Window window) {
+bool XServerPixelBuffer::Init(XAtomCache* cache, Window window) {
   Release();
-  display_ = display;
+  display_ = cache->display();
 
   XWindowAttributes attributes;
   if (!GetWindowRect(display_, window, &window_rect_, &attributes)) {
     return false;
+  }
+
+  if (cache->IccProfile() != None) {
+    // |window| is the root window when doing screen capture.
+    XWindowProperty<uint8_t> icc_profile_property(cache->display(), window,
+                                                  cache->IccProfile());
+    if (icc_profile_property.is_valid() && icc_profile_property.size() > 0) {
+      icc_profile_ = std::vector<uint8_t>(
+          icc_profile_property.data(),
+          icc_profile_property.data() + icc_profile_property.size());
+    } else {
+      RTC_LOG(LS_WARNING) << "Failed to get icc profile";
+    }
   }
 
   window_ = window;
@@ -344,6 +361,9 @@ bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
   } else {
     SlowBlit(image, data, rect, frame);
   }
+
+  if (!icc_profile_.empty())
+    frame->set_icc_profile(icc_profile_);
 
   return true;
 }

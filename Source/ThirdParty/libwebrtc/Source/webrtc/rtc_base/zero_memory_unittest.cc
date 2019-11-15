@@ -10,9 +10,10 @@
 
 #include "rtc_base/zero_memory.h"
 
+#include <stdint.h>
+
 #include "api/array_view.h"
-#include "rtc_base/buffer.h"
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 namespace rtc {
 

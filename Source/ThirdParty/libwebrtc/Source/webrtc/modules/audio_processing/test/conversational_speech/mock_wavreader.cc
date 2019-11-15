@@ -14,7 +14,7 @@ namespace webrtc {
 namespace test {
 namespace conversational_speech {
 
-using testing::Return;
+using ::testing::Return;
 
 MockWavReader::MockWavReader(int sample_rate,
                              size_t num_channels,

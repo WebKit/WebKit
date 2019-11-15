@@ -131,8 +131,8 @@ class ChannelBuffer {
 
  private:
   std::unique_ptr<T[]> data_;
-  std::unique_ptr<T* []> channels_;
-  std::unique_ptr<T* []> bands_;
+  std::unique_ptr<T*[]> channels_;
+  std::unique_ptr<T*[]> bands_;
   const size_t num_frames_;
   const size_t num_frames_per_band_;
   // Number of channels the internal buffer holds.

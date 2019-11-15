@@ -25,17 +25,23 @@ class TransportFeedback : public Rtpfb {
   class ReceivedPacket {
    public:
     ReceivedPacket(uint16_t sequence_number, int16_t delta_ticks)
-        : sequence_number_(sequence_number), delta_ticks_(delta_ticks) {}
+        : sequence_number_(sequence_number),
+          delta_ticks_(delta_ticks),
+          received_(true) {}
+    explicit ReceivedPacket(uint16_t sequence_number)
+        : sequence_number_(sequence_number), received_(false) {}
     ReceivedPacket(const ReceivedPacket&) = default;
     ReceivedPacket& operator=(const ReceivedPacket&) = default;
 
     uint16_t sequence_number() const { return sequence_number_; }
     int16_t delta_ticks() const { return delta_ticks_; }
     int32_t delta_us() const { return delta_ticks_ * kDeltaScaleFactor; }
+    bool received() const { return received_; }
 
    private:
     uint16_t sequence_number_;
     int16_t delta_ticks_;
+    bool received_;
   };
   // TODO(sprang): IANA reg?
   static constexpr uint8_t kFeedbackMessageType = 15;
@@ -45,6 +51,11 @@ class TransportFeedback : public Rtpfb {
   static constexpr size_t kMaxReportedPackets = 0xffff;
 
   TransportFeedback();
+
+  // If |include_timestamps| is set to false, the created packet will not
+  // contain the receive delta block.
+  explicit TransportFeedback(bool include_timestamps,
+                             bool include_lost = false);
   TransportFeedback(const TransportFeedback&);
   TransportFeedback(TransportFeedback&&);
 
@@ -56,6 +67,7 @@ class TransportFeedback : public Rtpfb {
   // NOTE: This method requires increasing sequence numbers (excepting wraps).
   bool AddReceivedPacket(uint16_t sequence_number, int64_t timestamp_us);
   const std::vector<ReceivedPacket>& GetReceivedPackets() const;
+  const std::vector<ReceivedPacket>& GetAllPackets() const;
 
   uint16_t GetBaseSequence() const;
 
@@ -65,6 +77,12 @@ class TransportFeedback : public Rtpfb {
   // Get the reference time in microseconds, including any precision loss.
   int64_t GetBaseTimeUs() const;
 
+  // Get the unwrapped delta between current base time and |prev_timestamp_us|.
+  int64_t GetBaseDeltaUs(int64_t prev_timestamp_us) const;
+
+  // Does the feedback packet contain timestamp information?
+  bool IncludeTimestamps() const { return include_timestamps_; }
+
   bool Parse(const CommonHeader& packet);
   static std::unique_ptr<TransportFeedback> ParseFrom(const uint8_t* buffer,
                                                       size_t length);
@@ -73,6 +91,7 @@ class TransportFeedback : public Rtpfb {
   bool IsConsistent() const;
 
   size_t BlockLength() const override;
+  size_t PaddingLength() const;
 
   bool Create(uint8_t* packet,
               size_t* position,
@@ -136,13 +155,16 @@ class TransportFeedback : public Rtpfb {
 
   bool AddDeltaSize(DeltaSize delta_size);
 
+  const bool include_lost_;
   uint16_t base_seq_no_;
   uint16_t num_seq_no_;
   int32_t base_time_ticks_;
   uint8_t feedback_seq_;
+  bool include_timestamps_;
 
   int64_t last_timestamp_us_;
-  std::vector<ReceivedPacket> packets_;
+  std::vector<ReceivedPacket> received_packets_;
+  std::vector<ReceivedPacket> all_packets_;
   // All but last encoded packet chunks.
   std::vector<uint16_t> encoded_chunks_;
   LastChunk last_chunk_;

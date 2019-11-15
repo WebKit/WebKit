@@ -194,11 +194,10 @@ public:
 
     int32_t Decode(const webrtc::EncodedImage& inputImage,
         bool,
-        const webrtc::CodecSpecificInfo*,
         int64_t renderTimeMs) override
     {
         if (m_needsKeyframe) {
-            if (inputImage._frameType != webrtc::kVideoFrameKey) {
+            if (inputImage._frameType != webrtc::VideoFrameType::kVideoFrameKey) {
                 GST_ERROR("Waiting for keyframe but got a delta unit... asking for keyframe");
                 return WEBRTC_VIDEO_CODEC_ERROR;
             }
@@ -224,8 +223,8 @@ public:
         }
 
         // FIXME- Use a GstBufferPool.
-        auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(inputImage._buffer, inputImage._size),
-            inputImage._size));
+        auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(inputImage.data(), inputImage.size()),
+            inputImage.size()));
         GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage.Timestamp()) * GST_MSECOND) - m_firstBufferDts;
         GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
         InputTimestamps timestamps = {inputImage.Timestamp(), renderTimeMs};
@@ -354,29 +353,6 @@ public:
         if (codecInfo && codecInfo->codecType != webrtc::kVideoCodecH264)
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
 
-        m_profile = nullptr;
-        if (codecInfo) {
-            auto h264Info = codecInfo->H264();
-
-            switch (h264Info.profile) {
-            case webrtc::H264::kProfileConstrainedBaseline:
-                m_profile = "constrained-baseline";
-                break;
-            case webrtc::H264::kProfileBaseline:
-                m_profile = "baseline";
-                break;
-            case webrtc::H264::kProfileMain:
-                m_profile = "main";
-                break;
-            case webrtc::H264::kProfileConstrainedHigh:
-                m_profile = "constrained-high";
-                break;
-            case webrtc::H264::kProfileHigh:
-                m_profile = "high";
-                break;
-            }
-        }
-
         return GStreamerVideoDecoder::InitDecode(codecInfo, nCores);
     }
 
@@ -395,9 +371,6 @@ public:
     const gchar* Caps() final { return "video/x-h264"; }
     const gchar* Name() final { return cricket::kH264CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
-
-private:
-    const gchar* m_profile;
 };
 
 class VP8Decoder : public GStreamerVideoDecoder {

@@ -18,7 +18,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "rtc_base/win/windows_version.h"
 
 using Microsoft::WRL::ComPtr;
@@ -126,15 +126,18 @@ bool IsLowLatencySupported(IAudioClient3* client3,
 }  // namespace
 
 CoreAudioBase::CoreAudioBase(Direction direction,
+                             bool automatic_restart,
                              OnDataCallback data_callback,
                              OnErrorCallback error_callback)
     : format_(),
       direction_(direction),
+      automatic_restart_(automatic_restart),
       on_data_callback_(data_callback),
       on_error_callback_(error_callback),
       device_index_(kUndefined),
       is_restarting_(false) {
   RTC_DLOG(INFO) << __FUNCTION__ << "[" << DirectionToString(direction) << "]";
+  RTC_DLOG(INFO) << "Automatic restart: " << automatic_restart;
   RTC_DLOG(INFO) << "Windows version: " << rtc::rtc_win::GetVersion();
 
   // Create the event which the audio engine will signal each time a buffer
@@ -591,7 +594,7 @@ bool CoreAudioBase::Stop() {
   // thread is not destroyed during restart attempts triggered by internal
   // error callbacks.
   if (!IsRestarting()) {
-    thread_checker_audio_.DetachFromThread();
+    thread_checker_audio_.Detach();
   }
 
   // Release all allocated COM interfaces to allow for a restart without
@@ -640,6 +643,9 @@ bool CoreAudioBase::IsVolumeControlAvailable(bool* available) const {
 bool CoreAudioBase::Restart() {
   RTC_DLOG(INFO) << __FUNCTION__ << "[" << DirectionToString(direction())
                  << "]";
+  if (!automatic_restart()) {
+    return false;
+  }
   is_restarting_ = true;
   SetEvent(restart_event_.Get());
   return true;
@@ -765,11 +771,28 @@ HRESULT CoreAudioBase::OnStateChanged(AudioSessionState new_state) {
 // When a session is disconnected because of a device removal or format change
 // event, we want to inform the audio thread about the lost audio session and
 // trigger an attempt to restart audio using a new (default) device.
+// This method is called on separate threads owned by the session manager and
+// it can happen that the same type of callback is called more than once for the
+// same event.
 HRESULT CoreAudioBase::OnSessionDisconnected(
     AudioSessionDisconnectReason disconnect_reason) {
   RTC_DLOG(INFO) << "___" << __FUNCTION__ << "["
                  << DirectionToString(direction()) << "] reason: "
                  << SessionDisconnectReasonToString(disconnect_reason);
+  // Ignore changes in the audio session (don't try to restart) if the user
+  // has explicitly asked for this type of ADM during construction.
+  if (!automatic_restart()) {
+    RTC_DLOG(LS_WARNING) << "___Automatic restart is disabled";
+    return S_OK;
+  }
+
+  if (IsRestarting()) {
+    RTC_DLOG(LS_WARNING) << "___Ignoring since restart is already active";
+    return S_OK;
+  }
+
+  // By default, automatic restart is enabled and the restart event will be set
+  // below if the device was removed or the format was changed.
   if (disconnect_reason == DisconnectReasonDeviceRemoval ||
       disconnect_reason == DisconnectReasonFormatChanged) {
     is_restarting_ = true;

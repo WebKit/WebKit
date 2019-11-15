@@ -10,8 +10,16 @@
 
 #include "test/fake_vp8_decoder.h"
 
+#include <stddef.h>
+
+#include "absl/types/optional.h"
+#include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
-#include "rtc_base/timeutils.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
+#include "modules/video_coding/include/video_error_codes.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace test {
@@ -38,17 +46,19 @@ int32_t FakeVp8Decoder::InitDecode(const VideoCodec* config,
 
 int32_t FakeVp8Decoder::Decode(const EncodedImage& input,
                                bool missing_frames,
-                               const CodecSpecificInfo* codec_specific_info,
                                int64_t render_time_ms) {
   constexpr size_t kMinPayLoadHeaderLength = 10;
-  if (input._length < kMinPayLoadHeaderLength) {
+  if (input.size() < kMinPayLoadHeaderLength) {
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
-  ParseFakeVp8(input._buffer, &width_, &height_);
+  ParseFakeVp8(input.data(), &width_, &height_);
 
-  VideoFrame frame(I420Buffer::Create(width_, height_),
-                   webrtc::kVideoRotation_0,
-                   render_time_ms * rtc::kNumMicrosecsPerMillisec);
+  VideoFrame frame =
+      VideoFrame::Builder()
+          .set_video_frame_buffer(I420Buffer::Create(width_, height_))
+          .set_rotation(webrtc::kVideoRotation_0)
+          .set_timestamp_ms(render_time_ms)
+          .build();
   frame.set_timestamp(input.Timestamp());
   frame.set_ntp_time_ms(input.ntp_time_ms_);
 

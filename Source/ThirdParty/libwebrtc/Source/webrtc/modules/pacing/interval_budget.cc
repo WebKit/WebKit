@@ -8,14 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/pacing/interval_budget.h"
+
 #include <algorithm>
 
-#include "modules/pacing/interval_budget.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace {
-constexpr int kWindowMs = 500;
+constexpr int64_t kWindowMs = 500;
 }
 
 IntervalBudget::IntervalBudget(int initial_target_rate_kbps)
@@ -35,7 +36,7 @@ void IntervalBudget::set_target_rate_kbps(int target_rate_kbps) {
 }
 
 void IntervalBudget::IncreaseBudget(int64_t delta_time_ms) {
-  int bytes = rtc::dchecked_cast<int>(target_rate_kbps_ * delta_time_ms / 8);
+  int64_t bytes = target_rate_kbps_ * delta_time_ms / 8;
   if (bytes_remaining_ < 0 || can_build_up_underuse_) {
     // We overused last interval, compensate this interval.
     bytes_remaining_ = std::min(bytes_remaining_ + bytes, max_bytes_in_budget_);
@@ -51,14 +52,13 @@ void IntervalBudget::UseBudget(size_t bytes) {
 }
 
 size_t IntervalBudget::bytes_remaining() const {
-  return static_cast<size_t>(std::max(0, bytes_remaining_));
+  return rtc::saturated_cast<size_t>(std::max<int64_t>(0, bytes_remaining_));
 }
 
-int IntervalBudget::budget_level_percent() const {
+double IntervalBudget::budget_ratio() const {
   if (max_bytes_in_budget_ == 0)
-    return 0;
-  return rtc::dchecked_cast<int>(int64_t{bytes_remaining_} * 100 /
-                                 max_bytes_in_budget_);
+    return 0.0;
+  return static_cast<double>(bytes_remaining_) / max_bytes_in_budget_;
 }
 
 int IntervalBudget::target_rate_kbps() const {

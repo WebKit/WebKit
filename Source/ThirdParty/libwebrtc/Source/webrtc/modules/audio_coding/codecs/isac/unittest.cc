@@ -19,7 +19,7 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
-#include "test/testsupport/fileutils.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
@@ -210,7 +210,7 @@ struct IsacTestParam {
   }
 };
 
-class IsacCommonTest : public testing::TestWithParam<IsacTestParam> {};
+class IsacCommonTest : public ::testing::TestWithParam<IsacTestParam> {};
 
 }  // namespace
 
@@ -252,6 +252,6 @@ std::vector<IsacTestParam> TestCases() {
   return cases;
 }
 
-INSTANTIATE_TEST_CASE_P(, IsacCommonTest, testing::ValuesIn(TestCases()));
+INSTANTIATE_TEST_SUITE_P(, IsacCommonTest, ::testing::ValuesIn(TestCases()));
 
 }  // namespace webrtc

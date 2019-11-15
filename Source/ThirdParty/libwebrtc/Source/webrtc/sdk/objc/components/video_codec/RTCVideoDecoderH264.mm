@@ -19,10 +19,14 @@
 #import "helpers.h"
 #import "helpers/scoped_cftyperef.h"
 
+#if defined(WEBRTC_IOS)
+#import "helpers/UIDevice+RTCDevice.h"
+#endif
+
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/time_utils.h"
 #include "sdk/objc/components/video_codec/nalu_rewriter.h"
 
 // Struct that we pass to the decoder per frame to decode. We receive it again
@@ -89,11 +93,6 @@ void decompressionOutputCallback(void *decoderRef,
 }
 
 - (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores {
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
-- (NSInteger)startDecodeWithSettings:(RTCVideoEncoderSettings *)settings
-                       numberOfCores:(int)numberOfCores {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -246,8 +245,14 @@ void decompressionOutputCallback(void *decoderRef,
 
 - (void)destroyDecompressionSession {
   if (_decompressionSession) {
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_WEBKIT_BUILD)
     VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+#else
+#if defined(WEBRTC_IOS)
+    if ([UIDevice isIOS11OrLater]) {
+      VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+    }
+#endif
 #endif
     VTDecompressionSessionInvalidate(_decompressionSession);
     CFRelease(_decompressionSession);

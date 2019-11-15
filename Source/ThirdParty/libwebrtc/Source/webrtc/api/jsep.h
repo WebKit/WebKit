@@ -27,8 +27,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/rtcerror.h"
-#include "rtc_base/refcount.h"
+#include "api/rtc_error.h"
+#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {

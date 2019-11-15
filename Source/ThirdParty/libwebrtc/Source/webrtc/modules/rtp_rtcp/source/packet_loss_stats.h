@@ -12,6 +12,7 @@
 #define MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
 
 #include <stdint.h>
+
 #include <set>
 
 namespace webrtc {

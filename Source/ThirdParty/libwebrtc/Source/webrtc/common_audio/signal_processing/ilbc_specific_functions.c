@@ -64,7 +64,7 @@ void WebRtcSpl_AddVectorsAndShift(int16_t *out, const int16_t *in1,
     }
 }
 
-void WebRtcSpl_AddAffineVectorToVector(int16_t *out, int16_t *in,
+void WebRtcSpl_AddAffineVectorToVector(int16_t *out, const int16_t *in,
                                        int16_t gain, int32_t add_constant,
                                        int16_t right_shifts,
                                        size_t vector_length)
@@ -77,7 +77,7 @@ void WebRtcSpl_AddAffineVectorToVector(int16_t *out, int16_t *in,
     }
 }
 
-void WebRtcSpl_AffineTransformVector(int16_t *out, int16_t *in,
+void WebRtcSpl_AffineTransformVector(int16_t *out, const int16_t *in,
                                      int16_t gain, int32_t add_constant,
                                      int16_t right_shifts, size_t vector_length)
 {

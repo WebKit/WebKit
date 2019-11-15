@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_PROCESSING_AGC_MOCK_AGC_H_
 
 #include "modules/audio_processing/agc/agc.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

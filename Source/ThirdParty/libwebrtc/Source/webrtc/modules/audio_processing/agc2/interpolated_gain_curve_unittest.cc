@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_processing/agc2/interpolated_gain_curve.h"
+
 #include <array>
 #include <type_traits>
 #include <vector>
@@ -16,7 +18,6 @@
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/compute_interpolated_gain_curve.h"
-#include "modules/audio_processing/agc2/interpolated_gain_curve.h"
 #include "modules/audio_processing/agc2/limiter_db_gain_curve.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"

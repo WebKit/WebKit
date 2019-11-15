@@ -11,24 +11,26 @@
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 
 // Defines WEBRTC_ARCH_X86_FAMILY, used below.
-#include "rtc_base/system/arch.h"
-
 #include <math.h>
+
 #include <algorithm>
 #include <numeric>
 #include <string>
+
+#include "rtc_base/system/arch.h"
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
 
+#include "modules/audio_processing/aec3/adaptive_fir_filter_erl.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
-#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/aec3/shadow_filter_update_gain.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/random.h"
@@ -52,10 +54,17 @@ std::string ProduceDebugText(size_t delay) {
 // Verifies that the optimized methods for filter adaptation are similar to
 // their reference counterparts.
 TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+      RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
+                                kNumRenderChannels));
   Random random_generator(42U);
-  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> x(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.f)));
   FftData S_C;
   FftData S_NEON;
   FftData G;
@@ -70,7 +79,11 @@ TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
   }
 
   for (size_t k = 0; k < 30; ++k) {
-    RandomizeSampleVector(&random_generator, x[0]);
+    for (size_t band = 0; band < x.size(); ++band) {
+      for (size_t channel = 0; channel < x[band].size(); ++channel) {
+        RandomizeSampleVector(&random_generator, x[band][channel]);
+      }
+    }
     render_delay_buffer->Insert(x);
     if (k == 0) {
       render_delay_buffer->Reset();
@@ -133,40 +146,26 @@ TEST(AdaptiveFirFilter, UpdateFrequencyResponseNeonOptimization) {
   }
 }
 
-// Verifies that the optimized method for echo return loss computation is
-// bitexact to the reference counterpart.
-TEST(AdaptiveFirFilter, UpdateErlNeonOptimization) {
-  const size_t kNumPartitions = 12;
-  std::vector<std::array<float, kFftLengthBy2Plus1>> H2(kNumPartitions);
-  std::array<float, kFftLengthBy2Plus1> erl;
-  std::array<float, kFftLengthBy2Plus1> erl_NEON;
-
-  for (size_t j = 0; j < H2.size(); ++j) {
-    for (size_t k = 0; k < H2[j].size(); ++k) {
-      H2[j][k] = k + j / 3.f;
-    }
-  }
-
-  UpdateErlEstimator(H2, &erl);
-  UpdateErlEstimator_NEON(H2, &erl_NEON);
-
-  for (size_t j = 0; j < erl.size(); ++j) {
-    EXPECT_FLOAT_EQ(erl[j], erl_NEON[j]);
-  }
-}
-
 #endif
 
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 // Verifies that the optimized methods for filter adaptation are bitexact to
 // their reference counterparts.
 TEST(AdaptiveFirFilter, FilterAdaptationSse2Optimizations) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   bool use_sse2 = (WebRtc_GetCPUInfo(kSSE2) != 0);
   if (use_sse2) {
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+        RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
+                                  kNumRenderChannels));
     Random random_generator(42U);
-    std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+    std::vector<std::vector<std::vector<float>>> x(
+        kNumBands,
+        std::vector<std::vector<float>>(kNumRenderChannels,
+                                        std::vector<float>(kBlockSize, 0.f)));
     FftData S_C;
     FftData S_SSE2;
     FftData G;
@@ -181,7 +180,11 @@ TEST(AdaptiveFirFilter, FilterAdaptationSse2Optimizations) {
     }
 
     for (size_t k = 0; k < 500; ++k) {
-      RandomizeSampleVector(&random_generator, x[0]);
+      for (size_t band = 0; band < x.size(); ++band) {
+        for (size_t channel = 0; channel < x[band].size(); ++channel) {
+          RandomizeSampleVector(&random_generator, x[band][channel]);
+        }
+      }
       render_delay_buffer->Insert(x);
       if (k == 0) {
         render_delay_buffer->Reset();
@@ -242,45 +245,21 @@ TEST(AdaptiveFirFilter, UpdateFrequencyResponseSse2Optimization) {
   }
 }
 
-// Verifies that the optimized method for echo return loss computation is
-// bitexact to the reference counterpart.
-TEST(AdaptiveFirFilter, UpdateErlSse2Optimization) {
-  bool use_sse2 = (WebRtc_GetCPUInfo(kSSE2) != 0);
-  if (use_sse2) {
-    const size_t kNumPartitions = 12;
-    std::vector<std::array<float, kFftLengthBy2Plus1>> H2(kNumPartitions);
-    std::array<float, kFftLengthBy2Plus1> erl;
-    std::array<float, kFftLengthBy2Plus1> erl_SSE2;
-
-    for (size_t j = 0; j < H2.size(); ++j) {
-      for (size_t k = 0; k < H2[j].size(); ++k) {
-        H2[j][k] = k + j / 3.f;
-      }
-    }
-
-    UpdateErlEstimator(H2, &erl);
-    UpdateErlEstimator_SSE2(H2, &erl_SSE2);
-
-    for (size_t j = 0; j < erl.size(); ++j) {
-      EXPECT_FLOAT_EQ(erl[j], erl_SSE2[j]);
-    }
-  }
-}
-
 #endif
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // Verifies that the check for non-null data dumper works.
 TEST(AdaptiveFirFilter, NullDataDumper) {
-  EXPECT_DEATH(AdaptiveFirFilter(9, 9, 250, DetectOptimization(), nullptr), "");
+  EXPECT_DEATH(
+      AdaptiveFirFilter(9, 9, 250, 1, 1, DetectOptimization(), nullptr), "");
 }
 
 // Verifies that the check for non-null filter output works.
 TEST(AdaptiveFirFilter, NullFilterOutput) {
   ApmDataDumper data_dumper(42);
-  AdaptiveFirFilter filter(9, 9, 250, DetectOptimization(), &data_dumper);
+  AdaptiveFirFilter filter(9, 9, 250, 1, 1, DetectOptimization(), &data_dumper);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 48000, 1));
   EXPECT_DEATH(filter.Filter(*render_delay_buffer->GetRenderBuffer(), nullptr),
                "");
 }
@@ -291,16 +270,25 @@ TEST(AdaptiveFirFilter, NullFilterOutput) {
 // are turned on.
 TEST(AdaptiveFirFilter, FilterStatisticsAccess) {
   ApmDataDumper data_dumper(42);
-  AdaptiveFirFilter filter(9, 9, 250, DetectOptimization(), &data_dumper);
-  filter.Erl();
-  filter.FilterFrequencyResponse();
+  Aec3Optimization optimization = DetectOptimization();
+  AdaptiveFirFilter filter(9, 9, 250, 1, 1, optimization, &data_dumper);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> H2(
+      filter.max_filter_size_partitions(),
+      std::array<float, kFftLengthBy2Plus1>());
+  for (auto& H2_k : H2) {
+    H2_k.fill(0.f);
+  }
+
+  std::array<float, kFftLengthBy2Plus1> erl;
+  ComputeErl(optimization, H2, erl);
+  filter.ComputeFrequencyResponse(&H2);
 }
 
 // Verifies that the filter size if correctly repported.
 TEST(AdaptiveFirFilter, FilterSize) {
   ApmDataDumper data_dumper(42);
   for (size_t filter_size = 1; filter_size < 5; ++filter_size) {
-    AdaptiveFirFilter filter(filter_size, filter_size, 250,
+    AdaptiveFirFilter filter(filter_size, filter_size, 250, 1, 1,
                              DetectOptimization(), &data_dumper);
     EXPECT_EQ(filter_size, filter.SizePartitions());
   }
@@ -309,22 +297,32 @@ TEST(AdaptiveFirFilter, FilterSize) {
 // Verifies that the filter is being able to properly filter a signal and to
 // adapt its coefficients.
 TEST(AdaptiveFirFilter, FilterAndAdapt) {
+  constexpr size_t kNumRenderChannels = 1;
+  constexpr int kSampleRateHz = 48000;
+  constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   constexpr size_t kNumBlocksToProcess = 1000;
   ApmDataDumper data_dumper(42);
   EchoCanceller3Config config;
   AdaptiveFirFilter filter(config.filter.main.length_blocks,
                            config.filter.main.length_blocks,
-                           config.filter.config_change_duration_blocks,
+                           config.filter.config_change_duration_blocks, 1, 1,
                            DetectOptimization(), &data_dumper);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> H2(
+      filter.max_filter_size_partitions(),
+      std::array<float, kFftLengthBy2Plus1>());
+  std::vector<float> h(GetTimeDomainLength(filter.max_filter_size_partitions()),
+                       0.f);
   Aec3Fft fft;
-  config.delay.min_echo_path_delay_blocks = 0;
   config.delay.default_delay = 1;
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, 3));
+      RenderDelayBuffer::Create(config, kSampleRateHz, kNumRenderChannels));
   ShadowFilterUpdateGain gain(config.filter.shadow,
                               config.filter.config_change_duration_blocks);
   Random random_generator(42U);
-  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
+  std::vector<std::vector<std::vector<float>>> x(
+      kNumBands, std::vector<std::vector<float>>(
+                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.f)));
   std::vector<float> n(kBlockSize, 0.f);
   std::vector<float> y(kBlockSize, 0.f);
   AecState aec_state(EchoCanceller3Config{});
@@ -357,15 +355,15 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
 
     SCOPED_TRACE(ProduceDebugText(delay_samples));
     for (size_t j = 0; j < kNumBlocksToProcess; ++j) {
-      RandomizeSampleVector(&random_generator, x[0]);
-      delay_buffer.Delay(x[0], y);
+      RandomizeSampleVector(&random_generator, x[0][0]);
+      delay_buffer.Delay(x[0][0], y);
 
       RandomizeSampleVector(&random_generator, n);
       static constexpr float kNoiseScaling = 1.f / 100.f;
       std::transform(y.begin(), y.end(), n.begin(), y.begin(),
                      [](float a, float b) { return a + b * kNoiseScaling; });
 
-      x_hp_filter.Process(x[0]);
+      x_hp_filter.Process(x[0][0]);
       y_hp_filter.Process(y);
 
       render_delay_buffer->Insert(x);
@@ -394,13 +392,13 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
       render_buffer->SpectralSum(filter.SizePartitions(), &render_power);
       gain.Compute(render_power, render_signal_analyzer, E,
                    filter.SizePartitions(), false, &G);
-      filter.Adapt(*render_buffer, G);
+      filter.Adapt(*render_buffer, G, &h);
       aec_state.HandleEchoPathChange(EchoPathVariability(
           false, EchoPathVariability::DelayAdjustment::kNone, false));
 
-      aec_state.Update(delay_estimate, filter.FilterFrequencyResponse(),
-                       filter.FilterImpulseResponse(), *render_buffer, E2_main,
-                       Y2, output, y);
+      filter.ComputeFrequencyResponse(&H2);
+      aec_state.Update(delay_estimate, H2, h, *render_buffer, E2_main, Y2,
+                       output, y);
     }
     // Verify that the filter is able to perform well.
     EXPECT_LT(1000 * std::inner_product(e.begin(), e.end(), e.begin(), 0.f),

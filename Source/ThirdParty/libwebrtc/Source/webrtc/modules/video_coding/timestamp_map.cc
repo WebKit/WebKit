@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/timestamp_map.h"
+
 #include <stdlib.h>
 
-#include "modules/include/module_common_types.h"
-#include "modules/video_coding/timestamp_map.h"
+#include "modules/include/module_common_types_public.h"
 
 namespace webrtc {
 
