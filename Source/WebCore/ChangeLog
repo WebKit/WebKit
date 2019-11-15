@@ -1,3 +1,9 @@
+2019-11-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update the feature status of WebAuthn
+
+        * features.json:
+
 2019-11-07  Youenn Fablet  <youenn@apple.com> and Thibault Saunier <tsaunier@igalia.com>
 
         Update libwebrtc to M78
