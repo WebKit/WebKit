@@ -35,6 +35,7 @@ import os
 import re
 import socket
 
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.servers import http_server_base
 
 
@@ -134,7 +135,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
                 start_cmd += ['-C', 'Listen [::1]:%d' % port]
 
         if additional_dirs:
-            for alias, path in additional_dirs.iteritems():
+            for alias, path in iteritems(additional_dirs):
                 start_cmd += ['-c', 'Alias %s "%s"' % (alias, path),
                         # Disable CGI handler for additional dirs.
                         '-c', '<Location %s>' % alias,

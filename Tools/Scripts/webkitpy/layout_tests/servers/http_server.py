@@ -32,6 +32,7 @@ import logging
 import os
 import time
 
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.servers import http_server_base
 
 
@@ -129,7 +130,7 @@ class Lighttpd(http_server_base.HttpServerBase):
             operator = "+="
 
         if self._additional_dirs:
-            for alias, path in self._additional_dirs.iteritems():
+            for alias, path in iteritems(self._additional_dirs):
                 f.write(('alias.url += ( "%s" => "%s" )\n\n') % (alias, path))
 
         # dump out of virtual host config at the bottom.

@@ -1,3 +1,16 @@
+2019-11-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.layout_tests.servers
+        https://bugs.webkit.org/show_bug.cgi?id=204209
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.layout_tests.servers.
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Use compatible iteritems.
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._prepare_config): Ditto.
+
 2019-11-14  Megan Gardner  <megan_gardner@apple.com>
 
         Fix another build error from r252449
