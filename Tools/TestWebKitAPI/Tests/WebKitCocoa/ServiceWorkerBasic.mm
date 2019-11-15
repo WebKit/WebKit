@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerTCPServer.h"
 #import "Test.h"
@@ -50,7 +51,10 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
+
+#if HAVE(NETWORK_FRAMEWORK)
 static bool didFinishNavigation;
+#endif
 
 static String expectedMessage;
 static String retrievedString;
@@ -1685,7 +1689,9 @@ TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcesses)
 }
 
 
-TEST(ServiceWorkers, DISABLED_ThrottleCrash)
+#if HAVE(NETWORK_FRAMEWORK)
+
+TEST(ServiceWorkers, ThrottleCrash)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -1698,10 +1704,9 @@ TEST(ServiceWorkers, DISABLED_ThrottleCrash)
 
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", mainBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { scriptBytes, {{ "Content-Type", "application/javascript" }} } },
     });
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
@@ -1749,6 +1754,8 @@ TEST(ServiceWorkers, DISABLED_ThrottleCrash)
     didFinishNavigation = false;
     TestWebKitAPI::Util::run(&didFinishNavigation);
 }
+
+#endif // HAVE(NETWORK_FRAMEWORK)
 
 TEST(ServiceWorkers, LoadData)
 {

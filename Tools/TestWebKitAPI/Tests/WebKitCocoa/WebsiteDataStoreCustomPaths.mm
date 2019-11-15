@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "Test.h"
@@ -570,36 +571,14 @@ TEST(WebKit, NetworkCacheDirectory)
     EXPECT_FALSE(error);
 }
 
-TEST(WebKit, DISABLED_ApplicationCacheDirectories)
-{
-    using namespace TestWebKitAPI;
-    TCPServer server([] (int socket) {
-        TCPServer::read(socket);
-        const char* firstResponse =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 31\r\n\r\n"
-        "<html manifest='test.appcache'>";
-        TCPServer::write(socket, firstResponse, strlen(firstResponse));
-        
-        TCPServer::read(socket);
-        const char* secondResponse =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 35\r\n\r\n"
-        "CACHE MANIFEST\n"
-        "index.html\n"
-        "test.mp4\n";
-        TCPServer::write(socket, secondResponse, strlen(secondResponse));
+#if HAVE(NETWORK_FRAMEWORK)
 
-        TCPServer::read(socket);
-        TCPServer::write(socket, firstResponse, strlen(firstResponse));
-        
-        const char* videoResponse =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: video/test\r\n"
-        "Content-Length: 5\r\n\r\n"
-        "test!";
-        TCPServer::read(socket);
-        TCPServer::write(socket, videoResponse, strlen(videoResponse));
+TEST(WebKit, ApplicationCacheDirectories)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/index.html", { "<html manifest='test.appcache'>" } },
+        { "/test.appcache", { "CACHE MANIFEST\nindex.html\ntest.mp4\n" } },
+        { "/test.mp4", { "test!", {{ "Content-Type", "video/test" }}}},
     });
     
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
@@ -620,12 +599,14 @@ TEST(WebKit, DISABLED_ApplicationCacheDirectories)
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/index.html", server.port()]]]];
 
     while (![fileManager fileExistsAtPath:subdirectoryPath])
-        Util::spinRunLoop();
+        TestWebKitAPI::Util::spinRunLoop();
 
     NSError *error = nil;
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
 }
+
+#endif // HAVE(NETWORK_FRAMEWORK)
 
 // FIXME: investigate why this test times out on High Sierra
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
