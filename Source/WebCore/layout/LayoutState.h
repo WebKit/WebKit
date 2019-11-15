@@ -73,7 +73,9 @@ public:
     bool inNoQuirksMode() const { return m_quirksMode == QuirksMode::No; }
 
     const Container& root() const { return *m_layoutTreeContent.rootLayoutBox; }
-
+#ifndef NDEBUG
+    const RenderBox& rootRenderer() const { return m_layoutTreeContent.rootRenderer; }
+#endif
     Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_layoutTreeContent.renderObjectToLayoutBox.get(&renderer); }
 
 private:

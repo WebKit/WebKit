@@ -55,7 +55,9 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
-    m_initialLayoutState = Layout::LayoutContext::runLayoutAndVerify(*renderView());
+    if (!m_layoutState)
+        m_layoutState = Layout::LayoutContext::createLayoutState(*renderView());
+    Layout::LayoutContext::runLayoutAndVerify(*m_layoutState);
 } 
 #endif
 

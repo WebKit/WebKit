@@ -141,12 +141,18 @@ void LayoutContext::runLayout(LayoutState& layoutState)
     LayoutContext(layoutState).layout(invalidationState);
 }
 
-std::unique_ptr<LayoutState> LayoutContext::runLayoutAndVerify(const RenderView& renderView)
+void LayoutContext::runLayoutAndVerify(LayoutState& layoutState)
+{
+    runLayout(layoutState);
+#ifndef NDEBUG
+    LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState);
+#endif
+}
+
+std::unique_ptr<LayoutState> LayoutContext::createLayoutState(const RenderView& renderView)
 {
     auto layoutState = makeUnique<LayoutState>(TreeBuilder::buildLayoutTree(renderView));
     initializeLayoutState(*layoutState, renderView);
-    runLayout(*layoutState);
-    LayoutContext::verifyAndOutputMismatchingLayoutTree(*layoutState, renderView);
     return layoutState;
 }
 

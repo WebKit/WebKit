@@ -1,3 +1,32 @@
+2019-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Invalidation] Reuse FrameViewLayoutContext::m_layoutState for incremental layout
+        https://bugs.webkit.org/show_bug.cgi?id=204225
+        <rdar://problem/57227259>
+
+        Reviewed by Antti Koivisto.
+
+        Let's rely on the invalidation logic instead of reconstructing the layout state on each layout frame. 
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::initializeLayoutState):
+        (WebCore::Layout::LayoutContext::runLayoutAndVerify):
+        (WebCore::Layout::LayoutContext::createLayoutState):
+        * layout/LayoutContext.h:
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::rootRenderer const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+        * page/FrameViewLayoutContext.h:
+        (WebCore::FrameViewLayoutContext::layoutFormattingState const):
+        (WebCore::FrameViewLayoutContext::initialLayoutState const): Deleted.
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle):
+
 2019-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         The image is flashing if falls out and has an animation transform: rotate

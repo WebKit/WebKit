@@ -116,7 +116,7 @@ public:
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const Layout::LayoutState* initialLayoutState() const { return m_initialLayoutState.get(); }
+    const Layout::LayoutState* layoutFormattingState() const { return m_layoutState.get(); }
 #endif
 
 private:
@@ -188,7 +188,7 @@ private:
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    std::unique_ptr<Layout::LayoutState> m_initialLayoutState;
+    std::unique_ptr<Layout::LayoutState> m_layoutState;
 #endif
 };
 

@@ -297,9 +297,9 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
-        if (!m_document.view() || m_document.view()->layoutContext().initialLayoutState())
+        if (!m_document.view() || m_document.view()->layoutContext().layoutFormattingState())
             return;
-        if (auto* layoutBox = m_document.view()->layoutContext().initialLayoutState()->layoutBoxForRenderer(renderer))
+        if (auto* layoutBox = m_document.view()->layoutContext().layoutFormattingState()->layoutBoxForRenderer(renderer))
             layoutBox->updateStyle(newStyle);
     }
 #endif

@@ -35,6 +35,7 @@
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
