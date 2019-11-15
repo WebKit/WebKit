@@ -34,6 +34,10 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (type in WI.Resource.Type)
             type = WI.Resource.Type[type];
+        else if (type === "Stylesheet") {
+            // COMPATIBILITY (iOS 13): Page.ResourceType.Stylesheet was renamed to Page.ResourceType.StyleSheet.
+            type = WI.Resource.Type.StyleSheet;
+        }
 
         this._url = url;
         this._urlComponents = null;
@@ -725,6 +729,10 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (type in WI.Resource.Type)
             type = WI.Resource.Type[type];
+        else if (type === "Stylesheet") {
+            // COMPATIBILITY (iOS 13): Page.ResourceType.Stylesheet was renamed to Page.ResourceType.StyleSheet.
+            type = WI.Resource.Type.StyleSheet;
+        }
 
         if (url)
             this._url = url;
@@ -1216,9 +1224,6 @@ WI.Resource.Type = {
     Beacon: "resource-type-beacon",
     WebSocket: "resource-type-websocket",
     Other: "resource-type-other",
-
-    // COMPATIBILITY (iOS 13): Page.ResourceType.Stylesheet was renamed to Page.ResourceType.StyleSheet.
-    Stylesheet: "resource-type-style-sheet",
 };
 
 WI.Resource.ResponseSource = {
