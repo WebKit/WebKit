@@ -1,3 +1,15 @@
+2019-11-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix sysctl-read sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=204238
+        <rdar://problem/57198954>
+
+        Reviewed by Brent Fulgham.
+
+        There is missing a rule for reading a specific sysctl property in the WebContent process on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-15  Benjamin Nham  <nham@apple.com>
 
         Add SPI to clear web process cache

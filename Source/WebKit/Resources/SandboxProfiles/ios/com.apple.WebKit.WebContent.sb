@@ -846,6 +846,7 @@
         "hw.memsize"
         "hw.model"
         "hw.pagesize_compat"
+        "hw.physicalcpu"
         "hw.physicalcpu_max"
         "kern.bootargs"
         "kern.memorystatus_level"
