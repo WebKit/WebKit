@@ -78,6 +78,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "GCReachableRef.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
@@ -361,6 +362,14 @@ struct FrameFlatteningLayoutDisallower {
 private:
     FrameView& m_frameView;
     bool m_disallowLayout { false };
+};
+
+// Defined here to avoid including GCReachableRef.h in Document.h
+struct Document::PendingScrollEventTargetList {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    Vector<GCReachableRef<ContainerNode>> targets;
 };
 
 #if ENABLE(INTERSECTION_OBSERVER)
@@ -759,6 +768,8 @@ void Document::commonTeardown()
         accessSVGExtensions().pauseAnimations();
 
     clearScriptedAnimationController();
+
+    m_pendingScrollEventTargetList = nullptr;
 }
 
 Element* Document::elementForAccessKey(const String& key)
@@ -4003,13 +4014,17 @@ void Document::runResizeSteps()
 
 void Document::addPendingScrollEventTarget(ContainerNode& target)
 {
-    if (m_pendingScrollEventTargets.contains(&target))
+    if (!m_pendingScrollEventTargetList)
+        m_pendingScrollEventTargetList = makeUnique<PendingScrollEventTargetList>();
+
+    auto& targets = m_pendingScrollEventTargetList->targets;
+    if (targets.findMatching([&] (auto& entry) { return entry.ptr() == &target; }) != notFound)
         return;
 
-    if (m_pendingScrollEventTargets.isEmpty())
+    if (targets.isEmpty())
         scheduleTimedRenderingUpdate();
 
-    m_pendingScrollEventTargets.append(makeWeakPtr(target));
+    targets.append(target);
 }
 
 void Document::setNeedsVisualViewportScrollEvent()
@@ -4023,16 +4038,12 @@ void Document::setNeedsVisualViewportScrollEvent()
 void Document::runScrollSteps()
 {
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
-    if (!m_pendingScrollEventTargets.isEmpty()) {
+    if (m_pendingScrollEventTargetList && !m_pendingScrollEventTargetList->targets.isEmpty()) {
         LOG_WITH_STREAM(Events, stream << "Document" << this << "sending scroll events to pending scroll event targets");
-        auto currentTargets = WTFMove(m_pendingScrollEventTargets);
-        for (auto target : currentTargets) {
-            auto protectedTarget = makeRefPtr(target.get());
-            ASSERT(protectedTarget);
-            if (!protectedTarget)
-                continue;
-            auto bubbles = protectedTarget->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
-            protectedTarget->dispatchEvent(Event::create(eventNames().scrollEvent, bubbles, Event::IsCancelable::No));
+        auto currentTargets = WTFMove(m_pendingScrollEventTargetList->targets);
+        for (auto& target : currentTargets) {
+            auto bubbles = target->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
+            target->dispatchEvent(Event::create(eventNames().scrollEvent, bubbles, Event::IsCancelable::No));
         }
     }
     if (m_needsVisualViewportScrollEvent) {

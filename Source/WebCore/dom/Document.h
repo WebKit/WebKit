@@ -2041,7 +2041,8 @@ private:
     bool m_isTelephoneNumberParsingAllowed { true };
 #endif
 
-    Vector<WeakPtr<ContainerNode>> m_pendingScrollEventTargets;
+    struct PendingScrollEventTargetList;
+    std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
 
 #if ENABLE(MEDIA_STREAM)
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;

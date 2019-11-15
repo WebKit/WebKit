@@ -1,3 +1,16 @@
+2019-11-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        JS wrappers of scroll event targets can get prematurely collected by GC
+        https://bugs.webkit.org/show_bug.cgi?id=204219
+
+        Reviewed by Keith Miller.
+
+        Added a regression test for adding elements as pending scroll event targets,
+        and removing them from the document before scroll events are fired.
+
+        * fast/scrolling/scrolling-event-target-gc-expected.txt: Added.
+        * fast/scrolling/scrolling-event-target-gc.html: Added.
+
 2019-11-15  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE][GTK] Gardening after r252487

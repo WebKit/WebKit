@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<body>
+<style>
+.container > div { width: 10px; height: 10px; overflow: scroll; }
+</style>
+<p>This tests scheduling a scroll event on an element then removing the element.<br>WebKit should not collect its JS wrappers.</p>
+<pre id="result"></pre>
+<div class="container"></div>
+<script src="../../resources/gc.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const logs = [];
+let currentNumber = 0;
+function scheduleScrollEvents(count)
+{
+    let container = document.querySelector('.container');
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.innerHTML = '<p>hello, world<br>this is a test</p>';
+        container.appendChild(div);
+        div.liveNumber = currentNumber;
+        div.addEventListener('scroll', log);
+        currentNumber++;
+    }
+
+    for (const div of container.children)
+        div.scrollTo(10, 10);
+
+    container.textContent = '';
+}
+
+function log()
+{
+    logs.push(this.liveNumber);
+}
+
+function checkLogs()
+{
+    let failed = false;
+    for (let i = 0; i < logs.length; ++i) {
+        if (logs[i] != i) {
+            result.textContent += `FAIL at ${i}: ${logs[i]}\n`;
+            failed = true;
+        }
+    }
+    if (!failed)
+        result.textContent = 'PASS';
+}
+
+for (let i = 0; i < 5; ++i) {
+    scheduleScrollEvents(20);
+    gc();
+}
+
+requestAnimationFrame(() => {
+    checkLogs();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>
