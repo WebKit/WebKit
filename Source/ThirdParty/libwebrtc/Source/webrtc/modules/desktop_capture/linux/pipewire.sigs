@@ -1,0 +1,44 @@
+// Copyright 2018 The WebRTC project authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+//------------------------------------------------
+// Functions from PipeWire used in capturer code.
+//------------------------------------------------
+
+// core.h
+void pw_core_destroy(pw_core *core);
+pw_type *pw_core_get_type(pw_core *core);
+pw_core * pw_core_new(pw_loop *main_loop, pw_properties *props);
+
+// loop.h
+void pw_loop_destroy(pw_loop *loop);
+pw_loop * pw_loop_new(pw_properties *properties);
+
+// pipewire.h
+void pw_init(int *argc, char **argv[]);
+
+// properties.h
+pw_properties * pw_properties_new_string(const char *args);
+
+// remote.h
+void pw_remote_add_listener(pw_remote *remote, spa_hook *listener, const pw_remote_events *events, void *data);
+int pw_remote_connect_fd(pw_remote *remote, int fd);
+void pw_remote_destroy(pw_remote *remote);
+pw_remote * pw_remote_new(pw_core *core, pw_properties *properties, size_t user_data_size);
+
+// stream.h
+void pw_stream_add_listener(pw_stream *stream, spa_hook *listener, const pw_stream_events *events, void *data);
+int pw_stream_connect(pw_stream *stream, enum pw_direction direction, const char *port_path, enum pw_stream_flags flags, const spa_pod **params, uint32_t n_params);
+pw_buffer *pw_stream_dequeue_buffer(pw_stream *stream);
+void pw_stream_destroy(pw_stream *stream);
+void pw_stream_finish_format(pw_stream *stream, int res, const spa_pod **params, uint32_t n_params);
+pw_stream * pw_stream_new(pw_remote *remote, const char *name, pw_properties *props);
+int pw_stream_queue_buffer(pw_stream *stream, pw_buffer *buffer);
+int pw_stream_set_active(pw_stream *stream, bool active);
+
+// thread-loop.h
+void pw_thread_loop_destroy(pw_thread_loop *loop);
+pw_thread_loop * pw_thread_loop_new(pw_loop *loop, const char *name);
+int pw_thread_loop_start(pw_thread_loop *loop);
+void pw_thread_loop_stop(pw_thread_loop *loop);
