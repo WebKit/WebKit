@@ -1067,4 +1067,21 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`uiController.setContinuousSpellCheckingEnabled(${enabled})`, resolve);
         });
     }
+
+    static async longPressElement(element)
+    {
+        return this.longPressAtPoint(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);
+    }
+
+    static async longPressAtPoint(x, y)
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.longPressAtPoint(${x}, ${y}, function() {
+                        uiController.uiScriptComplete();
+                    });
+                })();`, resolve);
+        });
+    }
 }

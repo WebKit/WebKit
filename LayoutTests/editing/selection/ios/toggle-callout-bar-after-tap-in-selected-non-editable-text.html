@@ -11,34 +11,41 @@ body, html {
     height: 100%;
     margin: 0;
 }
+
+#text {
+    font-size: 120px;
+    margin: 0;
+}
+
+#target {
+    margin-top: 100px;
+}
+text
 </style>
 <script>
 jsTestIsAsync = true;
 
 addEventListener("load", async () => {
-    description("This test verifies that tapping selected non-editable text toggles callout bar visibility. To manually test, tap the button to select the text above, and then tap inside the selection to show the callout bar; tap inside the selection again to dismiss the callout bar, and finally tap outside of the selected text to clear the selection.");
+    description("This test verifies that tapping selected non-editable text toggles callout bar visibility. To manually test, select the text above, and wait for the callout bar to show; tap inside the selection to dismiss the callout bar, tap to show the callout bar again, and finally tap outside of the selected text to clear the selection.");
 
     const text = document.getElementById("text");
-    const button = document.querySelector("button");
     const target = document.getElementById("target");
 
-    button.addEventListener("mousedown", event => {
-        getSelection().selectAllChildren(text);
-        event.preventDefault();
-        button.remove();
-    });
-
-    await UIHelper.activateElement(button);
+    await UIHelper.longPressElement(text);
     await UIHelper.waitForSelectionToAppear();
     testPassed("Observed selection.");
 
-    await UIHelper.activateElement(text);
     await UIHelper.waitForMenuToShow();
-    testPassed("Showed callout bar after first tap in selection.");
+    testPassed("Showed callout bar after selecting text.");
 
     await UIHelper.activateElement(text);
     await UIHelper.waitForMenuToHide();
-    testPassed("Dismissed callout bar after second tap in selection.");
+    testPassed("Dismissed callout bar after tap in selected text.");
+
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToShow();
+    testPassed("Showed callout bar after second tap in selected text.");
 
     await UIHelper.activateElement(target);
     await UIHelper.waitForSelectionToDisappear();
@@ -51,8 +58,7 @@ addEventListener("load", async () => {
 </script>
 </head>
 <body>
-<button>Click to select text</button>
-<p id="text">Here’s to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can’t do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</p>
+<p id="text">Select</p>
 <div id="target">Then click here</div>
 <p id="description"></p>
 <p id="console"></p>
