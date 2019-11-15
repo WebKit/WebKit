@@ -112,7 +112,11 @@ public:
     Keys keyIDs();
     AVContentKeySession* contentKeySession() { return m_session.get(); }
 
-    using Request = Vector<RetainPtr<AVContentKeyRequest>>;
+    struct Request {
+        AtomString initType;
+        Vector<RetainPtr<AVContentKeyRequest>> requests;
+        bool operator==(const Request& other) const { return initType == other.initType && requests == other.requests; }
+    };
 
 private:
     AVContentKeySession* ensureSession();
@@ -124,7 +128,7 @@ private:
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
     RetainPtr<AVContentKeySession> m_session;
-    Request m_currentRequest;
+    Optional<Request> m_currentRequest;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     Vector<RetainPtr<NSData>> m_expiredSessions;
     WeakPtr<CDMInstanceSessionClient> m_client;

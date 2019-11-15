@@ -47,6 +47,7 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
+static NSString * const InitializationDataTypeKey = @"InitializationDataType";
 
 @interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
     WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC* _parent;
@@ -357,9 +358,18 @@ using Request = CDMInstanceSessionFairPlayStreamingAVFObjC::Request;
 static Keys keyIDsForRequest(const Request& requests)
 {
     Keys keyIDs;
-    for (auto& request : requests)
+    for (auto& request : requests.requests)
         keyIDs.appendVector(keyIDsForRequest(request.get()));
     return keyIDs;
+}
+
+static AtomString initTypeForRequest(AVContentKeyRequest* request)
+{
+    auto nsInitType = (NSString*)[request.options valueForKey:InitializationDataTypeKey];
+    if (![nsInitType isKindOfClass:NSString.class])
+        return emptyAtom();
+
+    return AtomString(nsInitType);
 }
 
 Keys CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
@@ -411,7 +421,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
     }
 
     m_requestLicenseCallback = WTFMove(callback);
-    [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:nil];
+    [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:@{ InitializationDataTypeKey: (NSString*)initDataType }];
 }
 
 static bool isEqual(const SharedBuffer& data, const String& value)
@@ -464,23 +474,23 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         return;
     }
 
-    if (m_currentRequest.isEmpty()) {
+    if (!m_currentRequest) {
         callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
         return;
     }
-    Keys keyIDs = keyIDsForRequest(m_currentRequest);
+    Keys keyIDs = keyIDsForRequest(m_currentRequest.value());
     if (keyIDs.isEmpty()) {
         callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
         return;
     }
 
-    if (m_currentRequest.size() > 1) {
+    if (m_currentRequest.value().initType == InitDataRegistry::cencName()) {
         if (m_updateResponseCollector) {
             m_updateResponseCollector->fail();
             m_updateResponseCollector = nullptr;
         }
 
-        m_updateResponseCollector = WTF::makeUnique<UpdateResponseCollector>(m_currentRequest.size(), [weakThis = makeWeakPtr(*this), this] (Optional<UpdateResponseCollector::ResponseMap>&& responses) {
+        m_updateResponseCollector = WTF::makeUnique<UpdateResponseCollector>(m_currentRequest.value().requests.size(), [weakThis = makeWeakPtr(*this), this] (Optional<UpdateResponseCollector::ResponseMap>&& responses) {
             if (!weakThis)
                 return;
 
@@ -494,7 +504,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
 
             m_updateLicenseCallback(false, keyStatuses(), WTF::nullopt, WTF::nullopt, Succeeded);
             m_updateResponseCollector = nullptr;
-            m_currentRequest.clear();
+            m_currentRequest = WTF::nullopt;
             nextRequest();
         });
 
@@ -519,14 +529,14 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 return false;
 
             auto keyID = SharedBuffer::create(WTFMove(keyIDVector));
-            auto foundIndex = m_currentRequest.findMatching([&] (auto& request) {
+            auto foundIndex = m_currentRequest.value().requests.findMatching([&] (auto& request) {
                 auto keyIDs = keyIDsForRequest(request.get());
                 return keyIDs.contains(keyID);
             });
             if (foundIndex == notFound)
                 return false;
 
-            auto& request = m_currentRequest[foundIndex];
+            auto& request = m_currentRequest.value().requests[foundIndex];
 
             auto payloadFindResults = object->find("payload");
             auto errorFindResults = object->find("error");
@@ -562,7 +572,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             }
         }
     } else
-        [m_currentRequest.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData.createNSData().get()]];
+        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData.createNSData().get()]];
 
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
     struct objc_method_description method = protocol_getMethodDescription(@protocol(AVContentKeySessionDelegate), @selector(contentKeySession:contentKeyRequestDidSucceed:), NO, YES);
@@ -630,7 +640,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
         m_removeSessionDataCallback({ }, WTF::nullopt, Failed);
         ASSERT(!m_removeSessionDataCallback);
     }
-    m_currentRequest.clear();
+    m_currentRequest = WTF::nullopt;
     m_pendingRequests.clear();
     m_requests.clear();
     callback();
@@ -690,14 +700,19 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::clearClient()
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest *request)
 {
-    if (!m_currentRequest.isEmpty()) {
-        m_pendingRequests.append({ retainPtr(request) });
+    auto initDataType = initTypeForRequest(request);
+    if (initDataType == emptyAtom())
+        return;
+
+    Request currentRequest = { initDataType, { request } };
+
+    if (m_currentRequest) {
+        m_pendingRequests.append(WTFMove(currentRequest));
         return;
     }
 
-    m_currentRequest = { retainPtr(request) };
-
-    m_requests.append(m_currentRequest);
+    m_currentRequest = currentRequest;
+    m_requests.append(WTFMove(currentRequest));
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
@@ -733,13 +748,28 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&& requests)
 {
-    if (!m_currentRequest.isEmpty()) {
-        m_pendingRequests.append(WTFMove(requests));
+    if (requests.isEmpty())
+        return;
+
+    auto initDataType = AtomString((NSString *)[requests.first().get().options valueForKey:InitializationDataTypeKey]);
+    if (initDataType != InitDataRegistry::cencName()) {
+        didProvideRequest(requests.first().get());
+        requests.remove(0);
+
+        for (auto& request : requests)
+            m_pendingRequests.append({ initDataType, { WTFMove(request) } });
+
         return;
     }
 
-    m_currentRequest = requests;
-    m_requests.append(WTFMove(requests));
+    Request currentRequest = { initDataType, WTFMove(requests) };
+    if (m_currentRequest) {
+        m_pendingRequests.append(WTFMove(currentRequest));
+        return;
+    }
+
+    m_currentRequest = currentRequest;
+    m_requests.append(WTFMove(currentRequest));
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
@@ -798,7 +828,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         m_requestLicenseCallback(requestBuffer.releaseNonNull(), m_sessionId, false, Succeeded);
     });
 
-    for (auto request : m_currentRequest) {
+    for (auto request : m_currentRequest.value().requests) {
         auto keyIDs = keyIDsForRequest(request.get());
         RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
         auto contentIdentifier = keyID->createNSData();
@@ -814,12 +844,17 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVContentKeyRequest *request)
 {
     ASSERT(!m_requestLicenseCallback);
-    if (!m_currentRequest.isEmpty()) {
-        m_pendingRequests.append({ retainPtr(request) });
+    auto initDataType = initTypeForRequest(request);
+    if (initDataType == emptyAtom())
+        return;
+
+    Request currentRequest = { initDataType, { request } };
+    if (m_currentRequest) {
+        m_pendingRequests.append(WTFMove(currentRequest));
         return;
     }
 
-    m_currentRequest = { retainPtr(request) };
+    m_currentRequest = currentRequest;
 
     // The assumption here is that AVContentKeyRequest will only ever notify us of a renewing request as a result of calling
     // -renewExpiringResponseDataForContentKeyRequest: with an existing request.
@@ -828,7 +863,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
         appIdentifier = certificate->createNSData();
-    auto keyIDs = keyIDsForRequest(m_currentRequest);
+    auto keyIDs = keyIDsForRequest(m_currentRequest.value());
 
     RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
     [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
@@ -867,7 +902,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
         ASSERT(!m_updateLicenseCallback);
     }
 
-    m_currentRequest.clear();
+    m_currentRequest = WTF::nullopt;
 
     nextRequest();
 }
@@ -885,7 +920,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed(AVContentKeyR
         ASSERT(!m_updateLicenseCallback);
     }
 
-    m_currentRequest.clear();
+    m_currentRequest = WTF::nullopt;
 
     nextRequest();
 }
@@ -898,15 +933,16 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest()
     Request nextRequest = WTFMove(m_pendingRequests.first());
     m_pendingRequests.remove(0);
 
-    if (nextRequest.isEmpty())
+    if (nextRequest.requests.isEmpty())
         return;
 
-    if (nextRequest.size() > 1) {
-        didProvideRequests(WTFMove(nextRequest));
+    if (nextRequest.initType == InitDataRegistry::cencName()) {
+        didProvideRequests(WTFMove(nextRequest.requests));
         return;
     }
 
-    auto* oneRequest = nextRequest.first().get();
+    ASSERT(nextRequest.requests.size() == 1);
+    auto* oneRequest = nextRequest.requests.first().get();
     if (oneRequest.renewsExpiringResponseData)
         didProvideRenewingRequest(oneRequest);
     else
@@ -918,9 +954,9 @@ AVContentKeyRequest* CDMInstanceSessionFairPlayStreamingAVFObjC::lastKeyRequest(
     if (m_requests.isEmpty())
         return nil;
     auto& lastRequest = m_requests.last();
-    if (lastRequest.isEmpty())
+    if (lastRequest.requests.isEmpty())
         return nil;
-    return lastRequest.last().get();
+    return lastRequest.requests.last().get();
 }
 
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *request, NSString *reason)
@@ -965,7 +1001,7 @@ CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::
     KeyStatusVector keyStatuses;
 
     for (auto& request : m_requests) {
-        for (auto& oneRequest : request) {
+        for (auto& oneRequest : request.requests) {
             auto keyIDs = keyIDsForRequest(oneRequest.get());
             auto status = requestStatusToCDMStatus(oneRequest.get().status);
             if (m_outputObscured)

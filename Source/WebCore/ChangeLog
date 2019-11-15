@@ -1,3 +1,30 @@
+2019-11-15  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r251895) - 'sinf' init data flow generates 'cenc' style encrypted messages
+        https://bugs.webkit.org/show_bug.cgi?id=204239
+        <rdar://problem/57166445>
+
+        Reviewed by Eric Carlson.
+
+        Track what kind of initialization data was used for a given AVContentKeyRequest, and
+        generate that initialiazation data type of MediaKeySession message.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::keyIDsForRequest):
+        (WebCore::initTypeForRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::lastKeyRequest const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+
 2019-11-15  Chris Dumez  <cdumez@apple.com>
 
         Regression: http/tests/navigation/page-cache-getUserMedia-pending-promise.html is crashing in Debug
