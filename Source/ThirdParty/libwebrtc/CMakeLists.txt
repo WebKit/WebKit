@@ -1388,6 +1388,7 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/string_utils.cc
     Source/webrtc/rtc_base/synchronization/rw_lock_posix.cc
     Source/webrtc/rtc_base/synchronization/rw_lock_wrapper.cc
+    Source/webrtc/rtc_base/synchronization/sequence_checker.cc
     Source/webrtc/rtc_base/synchronization/yield_policy.cc
     Source/webrtc/rtc_base/system/file_wrapper.cc
     Source/webrtc/rtc_base/task_queue_libevent.cc
