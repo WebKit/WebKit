@@ -58,7 +58,7 @@ public:
         bool changed = false;
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (block->cfaFoundConstants)
+            if (block->cfaThinksShouldTryConstantFolding)
                 changed |= foldConstants(block);
         }
         

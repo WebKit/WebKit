@@ -247,7 +247,7 @@ private:
     void setConstant(Node* node, FrozenValue value)
     {
         setBuiltInConstant(node, value);
-        m_state.setFoundConstants(true);
+        m_state.setShouldTryConstantFolding(true);
     }
     
     ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type);

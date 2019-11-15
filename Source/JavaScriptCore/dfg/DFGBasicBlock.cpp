@@ -40,7 +40,6 @@ BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsig
     , cfaBranchDirection(InvalidBranchDirection)
     , cfaHasVisited(false)
     , cfaShouldRevisit(false)
-    , cfaFoundConstants(false)
     , cfaDidFinish(true)
     , intersectionOfCFAHasVisited(true)
     , isOSRTarget(false)

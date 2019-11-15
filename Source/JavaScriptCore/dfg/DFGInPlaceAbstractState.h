@@ -257,7 +257,7 @@ public:
     // block. But, the last time we did it, it was a 1% SunSpider regression:
     // https://bugs.webkit.org/show_bug.cgi?id=133947
     // So, we should probably keep this method.
-    void setFoundConstants(bool foundConstants) { m_foundConstants = foundConstants; }
+    void setShouldTryConstantFolding(bool tryConstantFolding) { m_shouldTryConstantFolding = tryConstantFolding; }
 
     void setProofStatus(Edge& edge, ProofStatus status)
     {
@@ -282,9 +282,9 @@ private:
     Operands<AbstractValue> m_variables;
     FastBitVector m_activeVariables;
     BasicBlock* m_block;
-    
-    bool m_foundConstants;
-    
+
+    bool m_shouldTryConstantFolding;
+
     bool m_isValid;
     AbstractInterpreterClobberState m_clobberState;
     StructureClobberState m_structureClobberState;

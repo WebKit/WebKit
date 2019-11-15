@@ -1,3 +1,36 @@
+2019-11-15  Mark Lam  <mark.lam@apple.com>
+
+        Rename InPlaceAbstractState's m_foundConstant to m_shouldTryConstantFolding.
+        https://bugs.webkit.org/show_bug.cgi?id=204244
+
+        Reviewed by Saam Barati.
+
+        m_shouldTryConstantFolding is a more accurate description of what this flag really
+        means i.e. that the AbstractInterpreter thinks that we may benefit from constant
+        folding, and therefore, should attempt it.  It doesn't always mean that it found
+        constants to be folded.  It also doesn't guarantee that the constant folding phase
+        will succeed in folding any constants.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::setConstant):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::setShouldTryConstantFolding):
+        (JSC::DFG::AtTailAbstractState::setFoundConstants): Deleted.
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::setShouldTryConstantFolding):
+        (JSC::DFG::InPlaceAbstractState::setFoundConstants): Deleted.
+
 2019-11-14  Saam Barati  <sbarati@apple.com>
 
         Make gcSafeMemcpy/gcSafeMemmove/gcSafeZeroMemory work properly on arm64_32

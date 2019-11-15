@@ -84,7 +84,7 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
     basicBlock->cfaShouldRevisit = false;
     basicBlock->cfaHasVisited = true;
     m_isValid = true;
-    m_foundConstants = false;
+    m_shouldTryConstantFolding = false;
     m_branchDirection = InvalidBranchDirection;
     m_structureClobberState = basicBlock->cfaStructureClobberStateAtHead;
 }
@@ -114,7 +114,7 @@ void InPlaceAbstractState::initialize()
     for (BasicBlock* entrypoint : m_graph.m_roots) {
         entrypoint->cfaShouldRevisit = true;
         entrypoint->cfaHasVisited = false;
-        entrypoint->cfaFoundConstants = false;
+        entrypoint->cfaThinksShouldTryConstantFolding = false;
         entrypoint->cfaStructureClobberStateAtHead = StructuresAreWatched;
         entrypoint->cfaStructureClobberStateAtTail = StructuresAreWatched;
 
@@ -172,7 +172,7 @@ void InPlaceAbstractState::initialize()
         ASSERT(block->isReachable);
         block->cfaShouldRevisit = false;
         block->cfaHasVisited = false;
-        block->cfaFoundConstants = false;
+        block->cfaThinksShouldTryConstantFolding = false;
         block->cfaStructureClobberStateAtHead = StructuresAreWatched;
         block->cfaStructureClobberStateAtTail = StructuresAreWatched;
         for (size_t i = 0; i < block->valuesAtHead.numberOfArguments(); ++i) {
@@ -202,7 +202,7 @@ bool InPlaceAbstractState::endBasicBlock()
     
     BasicBlock* block = m_block; // Save the block for successor merging.
     
-    block->cfaFoundConstants = m_foundConstants;
+    block->cfaThinksShouldTryConstantFolding = m_shouldTryConstantFolding;
     block->cfaDidFinish = m_isValid;
     block->cfaBranchDirection = m_branchDirection;
     
