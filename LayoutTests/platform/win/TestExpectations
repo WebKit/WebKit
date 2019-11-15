@@ -4467,3 +4467,5 @@ webkit.org/b/204153 fast/scrolling/iframe-scrollable-after-back.html [ Timeout ]
 webkit.org/b/204153 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
 webkit.org/b/204153 http/tests/navigation/page-cache-mediastream.html [ Timeout ]
 webkit.org/b/204153 ietestcenter/Javascript/15.4.4.15-3-29.html [ Timeout ]
+
+webkit.org/b/204253 animations/no-style-recalc-during-accelerated-animation.html [ Failure ]
