@@ -967,7 +967,6 @@ namespace JSC {
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
-        bool m_shouldUseIndexMasking;
         BytecodeIndex m_loopOSREntryBytecodeIndex;
     };
 

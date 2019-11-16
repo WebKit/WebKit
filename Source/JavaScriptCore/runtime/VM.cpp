@@ -130,6 +130,7 @@
 #include "RegisterAtOffsetList.h"
 #include "RuntimeType.h"
 #include "SamplingProfiler.h"
+#include "ScopedArguments.h"
 #include "ShadowChicken.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
@@ -282,6 +283,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
     , ropeStringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSRopeString)
+    , scopedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ScopedArguments)
     , sparseArrayValueMapSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SparseArrayValueMap)
     , stringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSString) // Hash:0x90cf758f
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData) // Hash:0xaca4e62d

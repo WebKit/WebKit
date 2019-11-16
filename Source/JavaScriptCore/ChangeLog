@@ -1,3 +1,49 @@
+2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove index-masking on ScopedArguments and put it in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204269
+
+        Reviewed by Saam Barati.
+
+        We should remove index-masking for ScopedArguments. This patch reverts it.
+        We still use AuxiliaryBuffer, and avoid using variable sized cell. Then,
+        this patch also puts ScopedArguments in IsoSubspace.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::LowerDFGToB3):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::preciseIndexMask64): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::preciseIndexMask32): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitPreparePreciseIndexMask32): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::ScopedArguments):
+        (JSC::ScopedArguments::createUninitialized):
+        (JSC::ScopedArguments::create):
+        (JSC::ScopedArguments::createByCopyingFrom):
+        (JSC::ScopedArguments::visitChildren):
+        (JSC::ScopedArguments::overrideThings):
+        (JSC::ScopedArguments::overrideThingsIfNecessary):
+        (JSC::ScopedArguments::unmapArgument):
+        * runtime/ScopedArguments.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         Don't use AVCapture on watchOS and tvOS

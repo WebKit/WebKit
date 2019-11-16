@@ -988,18 +988,6 @@ void AssemblyHelpers::sanitizeStackInline(VM& vm, GPRReg scratch)
     storePtr(scratch, vm.addressOfLastStackTop());
 }
 
-void AssemblyHelpers::emitPreparePreciseIndexMask32(GPRReg index, GPRReg length, GPRReg result)
-{
-    if (length == result) {
-        negPtr(length);
-        addPtr(index, length);
-    } else {
-        move(index, result);
-        subPtr(length, result);
-    }
-    rshiftPtr(TrustedImm32(preciseIndexMaskShift<void*>()), result);
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

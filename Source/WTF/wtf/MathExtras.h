@@ -564,44 +564,6 @@ inline bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
     return nonEmptyRangesOverlap(leftMin, leftMax, rightMin, rightMax);
 }
 
-// This mask is not necessarily the minimal mask, specifically if size is
-// a power of 2. It has the advantage that it's fast to compute, however.
-inline uint32_t computeIndexingMask(uint32_t size)
-{
-    return static_cast<uint64_t>(static_cast<uint32_t>(-1)) >> std::clz(size);
-}
-
-constexpr unsigned preciseIndexMaskShiftForSize(unsigned size)
-{
-    return size * 8 - 1;
-}
-
-template<typename T>
-constexpr unsigned preciseIndexMaskShift()
-{
-    return preciseIndexMaskShiftForSize(sizeof(T));
-}
-
-template<typename T>
-T opaque(T pointer)
-{
-#if !OS(WINDOWS)
-    asm("" : "+r"(pointer));
-#endif
-    return pointer;
-}
-
-// This masks the given pointer with 0xffffffffffffffff (ptrwidth) if `index <
-// length`. Otherwise, it masks the pointer with 0. Similar to Linux kernel's array_ptr.
-template<typename T>
-inline T* preciseIndexMaskPtr(uintptr_t index, uintptr_t length, T* value)
-{
-    uintptr_t result = bitwise_cast<uintptr_t>(value) & static_cast<uintptr_t>(
-        static_cast<intptr_t>(index - opaque(length)) >>
-        static_cast<intptr_t>(preciseIndexMaskShift<T*>()));
-    return bitwise_cast<T*>(result);
-}
-
 template<typename VectorType, typename RandomFunc>
 void shuffleVector(VectorType& vector, size_t size, const RandomFunc& randomFunc)
 {
@@ -735,10 +697,6 @@ constexpr unsigned getMSBSetConstexpr(T t)
 
 } // namespace WTF
 
-using WTF::opaque;
-using WTF::preciseIndexMaskPtr;
-using WTF::preciseIndexMaskShift;
-using WTF::preciseIndexMaskShiftForSize;
 using WTF::shuffleVector;
 using WTF::clz;
 using WTF::ctz;

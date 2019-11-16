@@ -576,15 +576,12 @@ void AccessCase::generateWithGuard(
         fallThrough.append(
             jit.branchIfNotType(baseGPR, ScopedArgumentsType));
 
-        jit.loadPtr(
-            CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfStorage()),
-            scratchGPR);
         fallThrough.append(
             jit.branchTest8(
                 CCallHelpers::NonZero,
-                CCallHelpers::Address(scratchGPR, ScopedArguments::offsetOfOverrodeThingsInStorage())));
+                CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfOverrodeThings())));
         jit.load32(
-            CCallHelpers::Address(scratchGPR, ScopedArguments::offsetOfTotalLengthInStorage()),
+            CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfTotalLength()),
             valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();

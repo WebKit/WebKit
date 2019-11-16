@@ -158,7 +158,6 @@ public:
         , m_availabilityCalculator(m_graph)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
-        , m_indexMaskingMode(Options::enableSpectreMitigations() ?  IndexMaskingEnabled : IndexMaskingDisabled)
     {
         if (Options::validateAbstractInterpreterState()) {
             performLivenessAnalysis(m_graph);
@@ -4183,11 +4182,10 @@ private:
             
         case Array::ScopedArguments: {
             LValue arguments = lowCell(m_node->child1());
-            LValue storage = m_out.loadPtr(arguments, m_heaps.ScopedArguments_storage);
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notZero32(m_out.load8ZeroExt32(storage, m_heaps.ScopedArguments_Storage_overrodeThings)));
-            setInt32(m_out.load32NonNegative(storage, m_heaps.ScopedArguments_Storage_totalLength));
+                m_out.notZero32(m_out.load8ZeroExt32(arguments, m_heaps.ScopedArguments_overrodeThings)));
+            setInt32(m_out.load32NonNegative(arguments, m_heaps.ScopedArguments_totalLength));
             return;
         }
             
@@ -4382,12 +4380,11 @@ private:
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             
-            LValue storage = m_out.loadPtr(base, m_heaps.ScopedArguments_storage);
-            LValue totalLength = m_out.load32NonNegative(
-                storage, m_heaps.ScopedArguments_Storage_totalLength);
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.aboveOrEqual(index, totalLength));
+                m_out.aboveOrEqual(
+                    index,
+                    m_out.load32NonNegative(base, m_heaps.ScopedArguments_totalLength)));
             
             LValue table = m_out.loadPtr(base, m_heaps.ScopedArguments_table);
             LValue namedLength = m_out.load32(table, m_heaps.ScopedArgumentsTable_length);
@@ -4419,6 +4416,7 @@ private:
             
             m_out.appendTo(overflowCase, continuation);
             
+            LValue storage = m_out.loadPtr(base, m_heaps.ScopedArguments_storage);
             address = m_out.baseIndex(
                 m_heaps.ScopedArguments_Storage_storage, storage,
                 m_out.zeroExtPtr(m_out.sub(index, namedLength)));
@@ -4428,11 +4426,7 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            
-            LValue result = m_out.phi(Int64, namedResult, overflowResult);
-            result = preciseIndexMask32(result, index, totalLength);
-            
-            setJSValue(result);
+            setJSValue(m_out.phi(Int64, namedResult, overflowResult));
             return;
         }
             
@@ -4609,7 +4603,6 @@ private:
             LValue pointer = m_out.baseIndex(
                 base.value(), m_out.zeroExt(index, pointerType()), ScaleEight);
             result = m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer));
-            result = preciseIndexMask32(result, indexToCheck, numberOfArgs);
         } else
             result = m_out.constInt64(JSValue::encode(jsUndefined()));
         
@@ -17349,22 +17342,6 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    LValue preciseIndexMask64(LValue value, LValue index, LValue limit)
-    {
-        return m_out.bitAnd(
-            value,
-            m_out.aShr(
-                m_out.sub(
-                    index,
-                    m_out.opaque(limit)),
-                m_out.constInt32(63)));
-    }
-    
-    LValue preciseIndexMask32(LValue value, LValue index, LValue limit)
-    {
-        return preciseIndexMask64(value, m_out.zeroExt(index, Int64), m_out.zeroExt(limit, Int64));
-    }
-    
     template<typename OperationType, typename... Args>
     LValue vmCall(LType type, OperationType function, Args&&... args)
     {
@@ -18059,10 +18036,6 @@ private:
     DFG::BasicBlock* m_highBlock;
     DFG::BasicBlock* m_nextHighBlock;
     LBasicBlock m_nextLowBlock;
-
-    enum IndexMaskingMode { IndexMaskingDisabled, IndexMaskingEnabled };
-
-    IndexMaskingMode m_indexMaskingMode;
 
     NodeOrigin m_origin;
     unsigned m_nodeIndex;

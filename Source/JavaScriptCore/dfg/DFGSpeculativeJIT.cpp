@@ -6967,14 +6967,12 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     JSValueRegsTemporary result(this);
     GPRTemporary scratch(this);
     GPRTemporary scratch2(this);
-    GPRTemporary indexMask(this);
     
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     JSValueRegs resultRegs = result.regs();
     GPRReg scratchReg = scratch.gpr();
     GPRReg scratch2Reg = scratch2.gpr();
-    GPRReg indexMaskReg = indexMask.gpr();
     
     if (!m_compileOkay)
         return;
@@ -6983,15 +6981,12 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultRegs.payloadGPR());
-    m_jit.load32(
-        MacroAssembler::Address(resultRegs.payloadGPR(), ScopedArguments::offsetOfTotalLengthInStorage()),
-        scratchReg);
-    
+
     speculationCheck(
         ExoticObjectMode, JSValueSource(), nullptr,
-        m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, scratchReg));
-    
-    m_jit.emitPreparePreciseIndexMask32(propertyReg, scratchReg, indexMaskReg);
+        m_jit.branch32(
+            MacroAssembler::AboveOrEqual, propertyReg,
+            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTotalLength())));
     
     m_jit.loadPtr(MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTable()), scratchReg);
     m_jit.load32(
@@ -7033,8 +7028,6 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     speculationCheck(ExoticObjectMode, JSValueSource(), nullptr, m_jit.branchIfEmpty(resultRegs));
     
     done.link(&m_jit);
-    
-    m_jit.andPtr(indexMaskReg, resultRegs.payloadGPR());
     
     jsValueResult(resultRegs, node);
 }
@@ -7166,7 +7159,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     }
     case Array::ScopedArguments: {
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary result(this);
+        GPRTemporary result(this, Reuse, base);
         
         GPRReg baseReg = base.gpr();
         GPRReg resultReg = result.gpr();
@@ -7176,17 +7169,14 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         
         ASSERT(ArrayMode(Array::ScopedArguments, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
         
-        m_jit.loadPtr(
-            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultReg);
-
         speculationCheck(
             ExoticObjectMode, JSValueSource(), 0,
             m_jit.branchTest8(
                 MacroAssembler::NonZero,
-                MacroAssembler::Address(resultReg, ScopedArguments::offsetOfOverrodeThingsInStorage())));
+                MacroAssembler::Address(baseReg, ScopedArguments::offsetOfOverrodeThings())));
         
         m_jit.load32(
-            MacroAssembler::Address(resultReg, ScopedArguments::offsetOfTotalLengthInStorage()), resultReg);
+            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTotalLength()), resultReg);
         
         int32Result(resultReg, node);
         break;

@@ -38,16 +38,16 @@ namespace JSC {
 // lookups.
 class ScopedArguments final : public GenericArguments<ScopedArguments> {
 private:
-    ScopedArguments(VM&, Structure*, WriteBarrier<Unknown>* storage);
+    ScopedArguments(VM&, Structure*, WriteBarrier<Unknown>* storage, unsigned totalLength);
     void finishCreation(VM&, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);
     using Base = GenericArguments<ScopedArguments>;
 
 public:
     template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.variableSizedCellSpace;
+        return &vm.scopedArgumentsSpace;
     }
 
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right
@@ -68,14 +68,14 @@ public:
     
     uint32_t internalLength() const
     {
-        return storageHeader().totalLength;
+        return m_totalLength;
     }
     
     uint32_t length(JSGlobalObject* globalObject) const
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        if (UNLIKELY(storageHeader().overrodeThings)) {
+        if (UNLIKELY(m_overrodeThings)) {
             auto value = get(globalObject, vm.propertyNames->length);
             RETURN_IF_EXCEPTION(scope, 0);
             RELEASE_AND_RETURN(scope, value.toUInt32(globalObject));
@@ -85,13 +85,12 @@ public:
     
     bool isMappedArgument(uint32_t i) const
     {
-        WriteBarrier<Unknown>* storage = overflowStorage();
-        if (i >= storageHeader(storage).totalLength)
+        if (i >= m_totalLength)
             return false;
         unsigned namedLength = m_table->length();
         if (i < namedLength)
             return !!m_table->get(i);
-        return !!storage[i - namedLength].get();
+        return !!storage()[i - namedLength].get();
     }
 
     bool isMappedArgumentInDFG(uint32_t i) const
@@ -102,24 +101,20 @@ public:
     JSValue getIndexQuickly(uint32_t i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        WriteBarrier<Unknown>* storage = overflowStorage();
-        unsigned totalLength = storageHeader(storage).totalLength;
         unsigned namedLength = m_table->length();
         if (i < namedLength)
-            return preciseIndexMaskPtr(i, totalLength, &m_scope->variableAt(m_table->get(i)))->get();
-        return preciseIndexMaskPtr(i, totalLength, storage + (i - namedLength))->get();
+            return m_scope->variableAt(m_table->get(i)).get();
+        return storage()[i - namedLength].get();
     }
 
     void setIndexQuickly(VM& vm, uint32_t i, JSValue value)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        WriteBarrier<Unknown>* storage = overflowStorage();
-        unsigned totalLength = storageHeader(storage).totalLength;
         unsigned namedLength = m_table->length();
         if (i < namedLength)
-            preciseIndexMaskPtr(i, totalLength, &m_scope->variableAt(m_table->get(i)))->set(vm, m_scope.get(), value);
+            m_scope->variableAt(m_table->get(i)).set(vm, m_scope.get(), value);
         else
-            preciseIndexMaskPtr(i, totalLength, storage + (i - namedLength))->set(vm, this, value);
+            storage()[i - namedLength].set(vm, this, value);
     }
 
     JSFunction* callee()
@@ -127,7 +122,7 @@ public:
         return m_callee.get();
     }
 
-    bool overrodeThings() const { return storageHeader().overrodeThings; }
+    bool overrodeThings() const { return m_overrodeThings; }
     void overrideThings(VM&);
     void overrideThingsIfNecessary(VM&);
     void unmapArgument(VM&, uint32_t index);
@@ -153,47 +148,20 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
-    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(ScopedArguments, m_storage); }
-    static ptrdiff_t offsetOfOverrodeThingsInStorage() { return OBJECT_OFFSETOF(StorageHeader, overrodeThings) - sizeof(WriteBarrier<Unknown>); }
-    static ptrdiff_t offsetOfTotalLengthInStorage() { return OBJECT_OFFSETOF(StorageHeader, totalLength) - sizeof(WriteBarrier<Unknown>); }
+    static ptrdiff_t offsetOfOverrodeThings() { return OBJECT_OFFSETOF(ScopedArguments, m_overrodeThings); }
+    static ptrdiff_t offsetOfTotalLength() { return OBJECT_OFFSETOF(ScopedArguments, m_totalLength); }
     static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(ScopedArguments, m_table); }
     static ptrdiff_t offsetOfScope() { return OBJECT_OFFSETOF(ScopedArguments, m_scope); }
-    
-    static size_t allocationSize(size_t inlineSize)
-    {
-        RELEASE_ASSERT(!inlineSize);
-        return sizeof(ScopedArguments);
-    }
-    
-    static size_t storageSize(Checked<size_t> capacity)
-    {
-        return (sizeof(WriteBarrier<Unknown>) * (capacity + static_cast<size_t>(1))).unsafeGet();
-    }
-    
-    static size_t storageHeaderSize() { return sizeof(WriteBarrier<Unknown>); }
+    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(ScopedArguments, m_storage); }
     
 private:
-    struct StorageHeader {
-        unsigned totalLength;
-        bool overrodeThings; // True if length, callee, and caller are fully materialized in the object.
-    };
-    
-    WriteBarrier<Unknown>* overflowStorage() const
+    WriteBarrier<Unknown>* storage() const
     {
         return m_storage.get();
     }
     
-    static StorageHeader& storageHeader(WriteBarrier<Unknown>* storage)
-    {
-        static_assert(sizeof(StorageHeader) <= sizeof(WriteBarrier<Unknown>), "StorageHeader needs to be no bigger than a JSValue");
-        return *bitwise_cast<StorageHeader*>(storage - 1);
-    }
-    
-    StorageHeader& storageHeader() const
-    {
-        return storageHeader(overflowStorage());
-    }
-    
+    bool m_overrodeThings { false }; // True if length, callee, and caller are fully materialized in the object.
+    unsigned m_totalLength; // The length of declared plus overflow arguments.
     WriteBarrier<JSFunction> m_callee;
     WriteBarrier<ScopedArgumentsTable> m_table;
     WriteBarrier<JSLexicalEnvironment> m_scope;

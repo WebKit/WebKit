@@ -1634,20 +1634,17 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(const Instruction*, PatchableJump
     JSValueRegs result = JSValueRegs(regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
-    RegisterID scratch3 = regT5;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     JSValueRegs result = JSValueRegs(regT1, regT0);
     RegisterID scratch = regT3;
     RegisterID scratch2 = regT4;
-    RegisterID scratch3 = regT5;
 #endif
 
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(ScopedArgumentsType));
-    loadPtr(Address(base, ScopedArguments::offsetOfStorage()), scratch3);
-    slowCases.append(branch32(AboveOrEqual, property, Address(scratch3, ScopedArguments::offsetOfTotalLengthInStorage())));
+    slowCases.append(branch32(AboveOrEqual, property, Address(base, ScopedArguments::offsetOfTotalLength())));
     
     loadPtr(Address(base, ScopedArguments::offsetOfTable()), scratch);
     load32(Address(scratch, ScopedArgumentsTable::offsetOfLength()), scratch2);
@@ -1661,13 +1658,10 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(const Instruction*, PatchableJump
     overflowCase.link(this);
     sub32(property, scratch2);
     neg32(scratch2);
-    loadValue(BaseIndex(scratch3, scratch2, TimesEight), result);
+    loadPtr(Address(base, ScopedArguments::offsetOfStorage()), scratch);
+    loadValue(BaseIndex(scratch, scratch2, TimesEight), result);
     slowCases.append(branchIfEmpty(result));
     done.link(this);
-    
-    load32(Address(scratch3, ScopedArguments::offsetOfTotalLengthInStorage()), scratch);
-    emitPreparePreciseIndexMask32(property, scratch, scratch2);
-    andPtr(scratch2, result.payloadGPR());
     
     return slowCases;
 }

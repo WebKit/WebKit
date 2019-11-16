@@ -383,6 +383,7 @@ public:
     IsoSubspace nativeExecutableSpace;
     IsoSubspace propertyTableSpace;
     IsoSubspace ropeStringSpace;
+    IsoSubspace scopedArgumentsSpace;
     IsoSubspace sparseArrayValueMapSpace;
     IsoSubspace stringSpace;
     IsoSubspace structureRareDataSpace;

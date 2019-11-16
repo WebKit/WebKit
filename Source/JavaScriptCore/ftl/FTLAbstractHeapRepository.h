@@ -133,11 +133,11 @@ namespace JSC { namespace FTL {
     macro(ShadowChicken_Packet_scope, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)) \
     macro(ShadowChicken_Packet_codeBlock, OBJECT_OFFSETOF(ShadowChicken::Packet, codeBlock)) \
     macro(ShadowChicken_Packet_callSiteIndex, OBJECT_OFFSETOF(ShadowChicken::Packet, callSiteIndex)) \
-    macro(ScopedArguments_Storage_overrodeThings, ScopedArguments::offsetOfOverrodeThingsInStorage()) \
-    macro(ScopedArguments_Storage_totalLength, ScopedArguments::offsetOfTotalLengthInStorage()) \
-    macro(ScopedArguments_storage, ScopedArguments::offsetOfStorage()) \
+    macro(ScopedArguments_overrodeThings, ScopedArguments::offsetOfOverrodeThings()) \
     macro(ScopedArguments_scope, ScopedArguments::offsetOfScope()) \
+    macro(ScopedArguments_storage, ScopedArguments::offsetOfStorage()) \
     macro(ScopedArguments_table, ScopedArguments::offsetOfTable()) \
+    macro(ScopedArguments_totalLength, ScopedArguments::offsetOfTotalLength()) \
     macro(ScopedArgumentsTable_arguments, ScopedArgumentsTable::offsetOfArguments()) \
     macro(ScopedArgumentsTable_length, ScopedArgumentsTable::offsetOfLength()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \

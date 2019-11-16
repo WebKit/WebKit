@@ -81,7 +81,6 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_pcToCodeOriginMapBuilder(vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
-    , m_shouldUseIndexMasking(Options::enableSpectreMitigations())
     , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
 }
