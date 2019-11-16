@@ -1,3 +1,17 @@
+2019-11-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r252497): Multiple mediacapturefromelement tests are crashing on mac debug
+        https://bugs.webkit.org/show_bug.cgi?id=204267
+        <rdar://problem/57248130>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure the CanvasCaptureMediaStreamTrack factory function calls suspendIfNeeded()
+        since the class inhehits ActiveDOMObject.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::create):
+
 2019-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         Don't use AVCapture on watchOS and tvOS
