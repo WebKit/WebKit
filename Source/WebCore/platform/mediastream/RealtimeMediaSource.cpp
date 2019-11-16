@@ -98,11 +98,15 @@ void RealtimeMediaSource::setMuted(bool muted)
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
 
     // Changed m_muted before calling start/stop so muted() will reflect the correct state.
-    notifyMutedChange(muted);
+    bool changed = m_muted != muted;
+    m_muted = muted;
     if (muted)
         stop();
     else
         start();
+
+    if (changed)
+        notifyMutedObservers();
 }
 
 void RealtimeMediaSource::notifyMutedChange(bool muted)

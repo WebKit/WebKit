@@ -1,3 +1,16 @@
+2019-11-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Audio capture fails when a track is unmuted
+        https://bugs.webkit.org/show_bug.cgi?id=204202
+        <rdar://problem/57005820>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this fixes an API test broken by r252470.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted):
+
 2019-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Apple] Enable variation fonts on all Apple platforms
