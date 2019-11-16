@@ -669,8 +669,10 @@ private:
 
                         UniquedStringImpl* indexUID = vm().propertyNames->index.impl();
                         UniquedStringImpl* inputUID = vm().propertyNames->input.impl();
+                        UniquedStringImpl* groupsUID = vm().propertyNames->groups.impl();
                         unsigned indexIndex = m_graph.identifiers().ensure(indexUID);
                         unsigned inputIndex = m_graph.identifiers().ensure(inputUID);
+                        unsigned groupsIndex = m_graph.identifiers().ensure(groupsUID);
 
                         unsigned firstChild = m_graph.m_varArgChildren.size();
                         m_graph.m_varArgChildren.append(
@@ -697,6 +699,14 @@ private:
                         m_graph.m_varArgChildren.append(Edge(stringNode, UntypedUse));
                         data->m_properties.append(
                             PromotedLocationDescriptor(NamedPropertyPLoc, inputIndex));
+
+                        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176464
+                        // Implement strength reduction optimization for named capture groups.
+                        m_graph.m_varArgChildren.append(
+                            m_insertionSet.insertConstantForUse(
+                                m_nodeIndex, origin, jsUndefined(), UntypedUse));
+                        data->m_properties.append(
+                            PromotedLocationDescriptor(NamedPropertyPLoc, groupsIndex));
 
                         auto materializeString = [&] (const String& string) -> Node* {
                             if (string.isNull())

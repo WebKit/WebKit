@@ -1,5 +1,21 @@
 2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG strength reduction should define "groups" for RegExp constant-folded result
+        https://bugs.webkit.org/show_bug.cgi?id=204264
+
+        Reviewed by Michael Saboff.
+
+        We always define "groups" property in the result of RegExp matching.
+        But we do not define it when DFG performs strength-reduction for the RegExp matching node.
+        This patch adds "groups" field correctly.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+
+2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Wasm error message should be cross-thread-copied
         https://bugs.webkit.org/show_bug.cgi?id=204143
 

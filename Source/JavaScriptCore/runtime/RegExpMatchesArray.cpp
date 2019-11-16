@@ -67,6 +67,7 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
 
     array->putDirectWithoutBarrier(RegExpMatchesArrayIndexPropertyOffset, jsNumber(-1));
     array->putDirectWithoutBarrier(RegExpMatchesArrayInputPropertyOffset, input);
+    array->putDirectWithoutBarrier(RegExpMatchesArrayGroupsPropertyOffset, jsUndefined());
     return array;
 }
 
