@@ -274,6 +274,7 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass, F
 
         m_objectTypes.set(chunk, ObjectType::Small);
 
+        size_t accountedInFreeable = 0;
         forEachPage(chunk, pageSize, [&](SmallPage* page) {
             page->setHasPhysicalPages(true);
 #if !BUSE(PARTIAL_SCAVENGE)
@@ -281,9 +282,10 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass, F
 #endif
             page->setHasFreeLines(lock, true);
             chunk->freePages().push(page);
+            accountedInFreeable += pageSize;
         });
 
-        m_freeableMemory += chunkSize;
+        m_freeableMemory += accountedInFreeable;
         
         m_scavenger->schedule(0);
 
