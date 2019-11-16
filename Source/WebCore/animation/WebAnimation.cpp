@@ -614,9 +614,6 @@ void WebAnimation::cancel(Silently silently)
     timingDidChange(DidSeek::No, SynchronouslyNotify::No);
 
     invalidateEffect();
-
-    if (m_effect)
-        m_effect->animationWasCanceled();
 }
 
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
