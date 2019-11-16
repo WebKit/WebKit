@@ -754,6 +754,7 @@ localizedStrings["No Entries"] = "No Entries";
 localizedStrings["No Event Listeners"] = "No Event Listeners";
 localizedStrings["No Filter Results"] = "No Filter Results";
 localizedStrings["No Layer Available"] = "No Layer Available";
+localizedStrings["No Overrides"] = "No Overrides";
 localizedStrings["No Parameters"] = "No Parameters";
 localizedStrings["No Preview Available"] = "No Preview Available";
 localizedStrings["No Properties"] = "No Properties";

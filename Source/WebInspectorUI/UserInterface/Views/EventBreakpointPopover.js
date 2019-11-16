@@ -142,6 +142,6 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
         let rect = WI.Rect.rectFromClientRect(this._domEventNameInputElement.getBoundingClientRect());
         rect.origin.x += padding;
         rect.size.width -= padding + parseInt(computedStyle.borderRightWidth) + parseInt(computedStyle.paddingRight);
-        this._suggestionsView.show(rect);
+        this._suggestionsView.show(rect.pad(2));
      }
 };

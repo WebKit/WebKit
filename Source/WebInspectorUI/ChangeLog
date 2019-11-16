@@ -1,5 +1,32 @@
 2019-11-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: move the "Local Override..." creation context menu item from the Breakpoints section options menu to the Create Resource menu
+        https://bugs.webkit.org/show_bug.cgi?id=204178
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissLocalOverridePopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateResourceContextMenu):
+        If the Local Overrides section isn't already visible, show it. Use the Local Overrides title
+        as the anchor for the configuration popover. If there are no existing Local Overrides, show
+        placeholder "No Overrides" text temporarily.
+
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype._showSuggestionsView):
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype._presentOverTargetElement):
+        * UserInterface/Views/URLBreakpointPopover.js:
+        (WI.URLBreakpointPopover.prototype._presentOverTargetElement):
+        Add some padding around the popover's anchor so the arrow doesn't overlap it.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-11-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Local Overrides: add context menu item to reveal the local override when a resource is loaded from it
         https://bugs.webkit.org/show_bug.cgi?id=204206
 

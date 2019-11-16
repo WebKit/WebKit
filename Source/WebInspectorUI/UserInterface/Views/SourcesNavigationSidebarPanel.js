@@ -202,10 +202,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._localOverridesTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
         this._localOverridesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
 
-        let localOverridesRow = new WI.DetailsSectionRow;
-        localOverridesRow.element.appendChild(this._localOverridesTreeOutline.element);
+        this._localOverridesRow = new WI.DetailsSectionRow(WI.UIString("No Overrides"));
 
-        let localOverridesGroup = new WI.DetailsSectionGroup([localOverridesRow]);
+        let localOverridesGroup = new WI.DetailsSectionGroup([this._localOverridesRow]);
         this._localOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localOverridesGroup]);
 
         this._localOverridesContainer = this.contentView.element.appendChild(document.createElement("div"));
@@ -236,7 +235,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        if (WI.NetworkManager.supportsBootstrapScript() || InspectorBackend.hasDomain("CSS")) {
+        if (WI.NetworkManager.supportsLocalResourceOverrides() || WI.NetworkManager.supportsBootstrapScript() || InspectorBackend.hasDomain("CSS")) {
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
@@ -661,6 +660,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         let serializedData = popover.serializedData;
         if (!serializedData) {
+            if (!this._localOverridesTreeOutline.children.length)
+                this._localOverridesContainer.hidden = true;
+
             InspectorFrontendHost.beep();
             return;
         }
@@ -1275,6 +1277,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let index = insertionIndexForObjectInListSortedByFunction(localOverrideTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
         parentTreeElement.insertChild(localOverrideTreeElement, index);
 
+        this._localOverridesRow.hideEmptyMessage();
+        this._localOverridesRow.element.appendChild(this._localOverridesTreeOutline.element);
         this._localOverridesContainer.hidden = false;
     }
 
@@ -1915,18 +1919,25 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 popover.show(this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
             });
         }
-
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
-            contextMenu.appendSeparator();
-            contextMenu.appendItem(WI.UIString("Local Override\u2026"), () => {
-                let popover = new WI.LocalResourceOverridePopover(this);
-                popover.show(null, this._createBreakpointButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
-            });
-        }
     }
 
     _populateCreateResourceContextMenu(contextMenu)
     {
+        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+            contextMenu.appendItem(WI.UIString("Local Override\u2026"), () => {
+                if (!this._localOverridesTreeOutline.children.length)
+                    this._localOverridesRow.showEmptyMessage();
+
+                this._localOverridesContainer.hidden = false;
+
+                this._localOverridesSection.titleElement.scrollIntoViewIfNeeded(false);
+                requestAnimationFrame(() => {
+                    let popover = new WI.LocalResourceOverridePopover(this);
+                    popover.show(null, this._localOverridesSection.titleElement, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+                });
+            });
+        }
+
         if (WI.NetworkManager.supportsBootstrapScript()) {
             contextMenu.appendItem(WI.UIString("Inspector Bootstrap Script"), async () => {
                 await WI.networkManager.createBootstrapScript();

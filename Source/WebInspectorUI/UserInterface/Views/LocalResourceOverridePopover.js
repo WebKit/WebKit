@@ -354,6 +354,6 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             return;
 
         let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
-        this.present(targetFrame, this._preferredEdges);
+        this.present(targetFrame.pad(2), this._preferredEdges);
     }
 };
