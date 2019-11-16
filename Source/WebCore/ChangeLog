@@ -1,5 +1,15 @@
 2019-11-15  Eric Carlson  <eric.carlson@apple.com>
 
+        Don't use AVCapture on watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=204254
+        <rdar://problem/45508044>
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2019-11-15  Eric Carlson  <eric.carlson@apple.com>
+
         [iOS] Audio capture fails when a track is unmuted
         https://bugs.webkit.org/show_bug.cgi?id=204202
         <rdar://problem/57005820>
