@@ -1334,6 +1334,12 @@ void KeyframeEffect::animationDidSeek()
         addPendingAcceleratedAction(AcceleratedAction::Seek);
 }
 
+void KeyframeEffect::animationWasCanceled()
+{
+    if (m_shouldRunAccelerated && isRunningAccelerated())
+        addPendingAcceleratedAction(AcceleratedAction::Stop);
+}
+
 void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended)
 {
     if (m_shouldRunAccelerated)

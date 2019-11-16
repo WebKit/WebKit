@@ -399,10 +399,29 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
-    auto existingAnimation = cssAnimationForElementAndProperty(element, property);
-    const auto& beforeChangeStyle = existingAnimation ? downcast<CSSAnimation>(existingAnimation.get())->unanimatedStyle() : currentStyle;
+    bool hasRunningTransition = runningTransitionsByProperty.contains(property);
+    auto& beforeChangeStyle = [&]() -> const RenderStyle& {
+        if (hasRunningTransition && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property)) {
+            // In case we have an accelerated transition running for this element, we need to get its computed style as the before-change style
+            // since otherwise the animated value for that property won't be visible.
+            auto* runningTransition = runningTransitionsByProperty.get(property);
+            if (is<KeyframeEffect>(runningTransition->effect())) {
+                auto& keyframeEffect = *downcast<KeyframeEffect>(runningTransition->effect());
+                if (keyframeEffect.isAccelerated()) {
+                    auto animatedStyle = RenderStyle::clonePtr(currentStyle);
+                    runningTransition->resolve(*animatedStyle);
+                    return *animatedStyle;
+                }
+            }
+        }
 
-    if (!runningTransitionsByProperty.contains(property)
+        if (auto existingAnimation = cssAnimationForElementAndProperty(element, property))
+            return downcast<CSSAnimation>(existingAnimation.get())->unanimatedStyle();
+
+        return currentStyle;
+    }();
+
+    if (!hasRunningTransition
         && !CSSPropertyAnimation::propertiesEqual(property, &beforeChangeStyle, &afterChangeStyle)
         && CSSPropertyAnimation::canPropertyBeInterpolated(property, &beforeChangeStyle, &afterChangeStyle)
         && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, completedTransitionsByProperty)
@@ -435,7 +454,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         completedTransitionsByProperty.remove(property);
     }
 
-    bool hasRunningTransition = runningTransitionsByProperty.contains(property);
+    hasRunningTransition = runningTransitionsByProperty.contains(property);
     if ((hasRunningTransition || completedTransitionsByProperty.contains(property)) && !matchingBackingAnimation) {
         // 3. If the element has a running transition or completed transition for the property, and there is not a matching transition-property
         //    value, then implementations must cancel the running transition or remove the completed transition from the set of completed transitions.

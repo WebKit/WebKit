@@ -113,6 +113,7 @@ public:
     void apply(RenderStyle&) override;
     void invalidate() override;
     void animationDidSeek() final;
+    void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
     void applyPendingAcceleratedActions();

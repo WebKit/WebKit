@@ -307,13 +307,13 @@ void DocumentTimeline::removeAnimation(WebAnimation& animation)
 {
     AnimationTimeline::removeAnimation(animation);
 
-    if (m_animations.isEmpty())
+    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         unscheduleAnimationResolution();
 }
 
 void DocumentTimeline::scheduleAnimationResolution()
 {
-    if (m_isSuspended || m_animations.isEmpty() || m_animationResolutionScheduled)
+    if (m_isSuspended || m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
     if (!m_document || !m_document->page())
@@ -329,6 +329,11 @@ void DocumentTimeline::unscheduleAnimationResolution()
     m_animationResolutionScheduled = false;
 }
 
+bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const
+{
+    return !m_animations.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
+}
+
 void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
 {
     // We need to freeze the current time even if no animation is running.
@@ -337,7 +342,7 @@ void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timesta
     if (!m_isSuspended)
         cacheCurrentTime(timestamp);
 
-    if (m_isSuspended || m_animations.isEmpty() || !m_animationResolutionScheduled)
+    if (m_isSuspended || !m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
     internalUpdateAnimationsAndSendEvents();

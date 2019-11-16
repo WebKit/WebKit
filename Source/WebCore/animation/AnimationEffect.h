@@ -61,6 +61,7 @@ public:
     virtual void apply(RenderStyle&) = 0;
     virtual void invalidate() = 0;
     virtual void animationDidSeek() = 0;
+    virtual void animationWasCanceled() = 0;
     virtual void animationSuspensionStateDidChange(bool) = 0;
     virtual void animationTimelineDidChange(AnimationTimeline*) = 0;
 
