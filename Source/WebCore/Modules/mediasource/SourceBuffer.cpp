@@ -801,6 +801,10 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
 {
     DEBUG_LOG(LOGIDENTIFIER, "start = ", start, ", end = ", end);
 
+    ASSERT(start < end);
+    if (start >= end)
+        return;
+
     // 3.5.9 Coded Frame Removal Algorithm
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
 

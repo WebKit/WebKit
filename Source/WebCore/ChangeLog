@@ -1,3 +1,17 @@
+2019-11-15  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in SourceBuffer::removeCodedFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=204248
+
+        Reviewed by Eric Carlson.
+
+        Speculative fix for rare crash. It's possible that the startTime and endTime inputs to
+        removeCodedFrames() are out-of-order, which could lead to iterating off the end of the
+        SampleMap. Verify that startTime < endTime and bail out early if not true.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+
 2019-11-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         JS wrappers of scroll event targets can get prematurely collected by GC
