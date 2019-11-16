@@ -1,3 +1,23 @@
+2019-11-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Update style of lambda in isolated tree
+        https://bugs.webkit.org/show_bug.cgi?id=204233
+        <rdar://problem/57232085>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary & capture and Optional<AXID>.
+
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::objectAttributeValue const):
+        (WebCore::AXIsolatedObject::rectAttributeValue const):
+        (WebCore::AXIsolatedObject::doubleAttributeValue const):
+        (WebCore::AXIsolatedObject::unsignedAttributeValue const):
+        (WebCore::AXIsolatedObject::boolAttributeValue const):
+        (WebCore::AXIsolatedObject::stringAttributeValue const):
+        (WebCore::AXIsolatedObject::intAttributeValue const):
+
 2019-11-15  Jer Noble  <jer.noble@apple.com>
 
         CRASH in SourceBuffer::removeCodedFrames()
@@ -317,7 +337,6 @@
         * platform/mock/MockRealtimeAudioSource.cpp:
         (WebCore::MockRealtimeAudioSource::startProducingData): Ditto.
 
->>>>>>> .r252470
 2019-11-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The CSSParser should not consume negative or unit-less lengths for the SVG properties 'r', 'rx' and 'ry'

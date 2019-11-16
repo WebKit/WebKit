@@ -95,7 +95,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object)
         setProperty(AXPropertyName::IsMathToken, object.isMathToken());
         setProperty(AXPropertyName::MathFencedOpenString, object.mathFencedOpenString());
         setProperty(AXPropertyName::MathFencedCloseString, object.mathFencedCloseString());
-        setProperty(AXPropertyName::MathLineThickness, object.mathLineThickness());åß
+        setProperty(AXPropertyName::MathLineThickness, object.mathLineThickness());
         setObjectProperty(AXPropertyName::MathRadicandObject, object.mathRadicandObject());
         setObjectProperty(AXPropertyName::MathRootIndexObject, object.mathRootIndexObject());
         setObjectProperty(AXPropertyName::MathUnderObject, object.mathUnderObject());
@@ -192,11 +192,7 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
 {
     auto value = m_attributeMap.get(propertyName);
     AXID nodeID = WTF::switchOn(value,
-        [&] (Optional<AXID> typedValue) {
-            if (!typedValue)
-                return InvalidAXID;
-        return typedValue.value();
-        },
+        [] (AXID& typedValue) { return typedValue; },
         [] (auto&) { return InvalidAXID; }
     );
     
@@ -208,7 +204,7 @@ FloatRect AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) cons
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (Optional<FloatRect> typedValue) {
+        [] (Optional<FloatRect> typedValue) {
             if (!typedValue)
                 return FloatRect { };
             return typedValue.value();
@@ -221,7 +217,7 @@ double AXIsolatedObject::doubleAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (double& typedValue) { return typedValue; },
+        [] (double& typedValue) { return typedValue; },
         [] (auto&) { return 0; }
     );
 }
@@ -230,7 +226,7 @@ unsigned AXIsolatedObject::unsignedAttributeValue(AXPropertyName propertyName) c
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (unsigned& typedValue) { return typedValue; },
+        [] (unsigned& typedValue) { return typedValue; },
         [] (auto&) { return 0; }
     );
 }
@@ -239,7 +235,7 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (bool& typedValue) { return typedValue; },
+        [] (bool& typedValue) { return typedValue; },
         [] (auto&) { return false; }
     );
 }
@@ -248,7 +244,7 @@ const String AXIsolatedObject::stringAttributeValue(AXPropertyName propertyName)
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (String& typedValue) { return typedValue; },
+        [] (String& typedValue) { return typedValue; },
         [] (auto&) { return emptyString(); }
     );
 }
@@ -257,7 +253,7 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&] (int& typedValue) { return typedValue; },
+        [] (int& typedValue) { return typedValue; },
         [] (auto&) { return 0; }
     );
 }
