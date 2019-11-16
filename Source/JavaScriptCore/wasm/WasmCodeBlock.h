@@ -30,6 +30,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "WasmCallee.h"
 #include "WasmEmbedder.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
@@ -68,8 +69,7 @@ public:
     String errorMessage()
     {
         ASSERT(!runnable());
-        CString cString = m_errorMessage.ascii();
-        return String(cString.data());
+        return crossThreadCopy(m_errorMessage);
     }
 
     unsigned functionImportCount() const { return m_wasmToWasmExitStubs.size(); }

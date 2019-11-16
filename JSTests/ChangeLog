@@ -1,3 +1,13 @@
+2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Wasm error message should be cross-thread-copied
+        https://bugs.webkit.org/show_bug.cgi?id=204143
+
+        Reviewed by Mark Lam.
+
+        * stress/wasm-error-message-cross-threads.js: Added.
+        (f):
+
 2019-11-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use toLength() and getIndexQuickly() in JSON.stringify

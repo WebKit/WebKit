@@ -32,6 +32,7 @@
 #include "WasmEmbedder.h"
 #include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -64,9 +65,9 @@ public:
     void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
 
-    const String& errorMessage() const { return m_errorMessage; }
+    String errorMessage() const { return crossThreadCopy(m_errorMessage); }
 
-    bool WARN_UNUSED_RETURN failed() const { return !errorMessage().isNull(); }
+    bool WARN_UNUSED_RETURN failed() const { return !m_errorMessage.isNull(); }
     virtual bool hasWork() const = 0;
     enum CompilationEffort { All, Partial };
     virtual void work(CompilationEffort = All) = 0;

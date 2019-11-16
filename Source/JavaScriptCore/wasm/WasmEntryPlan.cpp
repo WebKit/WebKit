@@ -31,6 +31,7 @@
 #include "WasmMemory.h"
 #include "WasmSignatureInlines.h"
 #include "WasmValidate.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/MonotonicTime.h>
@@ -136,7 +137,7 @@ bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLengt
     }
 
     if (m_streamingParser.finalize() != StreamingParser::State::Finished) {
-        fail(holdLock(m_lock), String(m_streamingParser.errorMessage()));
+        fail(holdLock(m_lock), m_streamingParser.errorMessage());
         return false;
     }
 

@@ -30,6 +30,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmParser.h"
 #include "WasmSections.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -77,7 +78,7 @@ public:
     State addBytes(const uint8_t* bytes, size_t length) { return addBytes(bytes, length, IsEndOfStream::No); }
     State finalize();
 
-    const String& errorMessage() const { return m_errorMessage; }
+    String errorMessage() const { return crossThreadCopy(m_errorMessage); }
 
     void reportError() { moveToStateIfNotFailed(failOnState(State::FatalError)); }
 

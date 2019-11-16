@@ -1,3 +1,22 @@
+2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Wasm error message should be cross-thread-copied
+        https://bugs.webkit.org/show_bug.cgi?id=204143
+
+        Reviewed by Mark Lam.
+
+        It is shared by multiple threads, so we should copy it via crossThreadCopy.
+
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::errorMessage):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::errorMessage const):
+        (JSC::Wasm::Plan::failed const):
+        * wasm/WasmStreamingParser.h:
+        (JSC::Wasm::StreamingParser::errorMessage const):
+
 2019-11-15  Mark Lam  <mark.lam@apple.com>
 
         Rename InPlaceAbstractState's m_foundConstant to m_shouldTryConstantFolding.
