@@ -76,7 +76,7 @@ public:
     size_t largeSize(std::unique_lock<Mutex>&, void*);
     void shrinkLarge(std::unique_lock<Mutex>&, const Range&, size_t);
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     void scavengeToHighWatermark(std::lock_guard<Mutex>&, BulkDecommit&);
     void scavenge(std::lock_guard<Mutex>&, BulkDecommit&);
 #else
@@ -158,7 +158,7 @@ private:
     PhysicalPageMap m_physicalPageMap;
 #endif
     
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     void* m_highWatermark { nullptr };
 #endif
 };

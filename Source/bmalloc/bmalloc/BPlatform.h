@@ -254,3 +254,8 @@
 #define BUSE_CHECK_NANO_MALLOC 0
 #endif
 
+#if BPLATFORM(MAC)
+#define BUSE_PARTIAL_SCAVENGE 1
+#else
+#define BUSE_PARTIAL_SCAVENGE 0
+#endif

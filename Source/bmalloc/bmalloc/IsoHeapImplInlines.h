@@ -110,7 +110,7 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
     m_directoryHighWatermark = 0;
 }
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
 template<typename Config>
 void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
 {

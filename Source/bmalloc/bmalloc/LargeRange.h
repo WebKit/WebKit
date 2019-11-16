@@ -37,7 +37,7 @@ public:
         : Range()
         , m_startPhysicalSize(0)
         , m_totalPhysicalSize(0)
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
         , m_isEligible(true)
         , m_usedSinceLastScavenge(false)
 #endif
@@ -48,7 +48,7 @@ public:
         : Range(other)
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
         , m_isEligible(true)
         , m_usedSinceLastScavenge(false)
 #endif
@@ -57,7 +57,7 @@ public:
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize)
         : Range(begin, size)
         , m_startPhysicalSize(startPhysicalSize)
@@ -104,7 +104,7 @@ public:
     void setEligible(bool eligible) { m_isEligible = eligible; }
     bool isEligibile() const { return m_isEligible; }
 
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
     bool usedSinceLastScavenge() const { return m_usedSinceLastScavenge; }
     void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
     void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
@@ -116,7 +116,7 @@ public:
 private:
     size_t m_startPhysicalSize;
     size_t m_totalPhysicalSize;
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     bool m_isEligible { true };
 #else
     unsigned m_isEligible: 1;
@@ -144,7 +144,7 @@ inline bool canMerge(const LargeRange& a, const LargeRange& b)
 inline LargeRange merge(const LargeRange& a, const LargeRange& b)
 {
     const LargeRange& left = std::min(a, b);
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
     bool mergedUsedSinceLastScavenge = a.usedSinceLastScavenge() || b.usedSinceLastScavenge();
 #endif
     if (left.size() == left.startPhysicalSize()) {
@@ -153,7 +153,7 @@ inline LargeRange merge(const LargeRange& a, const LargeRange& b)
             a.size() + b.size(),
             a.startPhysicalSize() + b.startPhysicalSize(),
             a.totalPhysicalSize() + b.totalPhysicalSize()
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
             , mergedUsedSinceLastScavenge
 #endif
         );
@@ -165,7 +165,7 @@ inline LargeRange merge(const LargeRange& a, const LargeRange& b)
         a.size() + b.size(),
         left.startPhysicalSize(),
         a.totalPhysicalSize() + b.totalPhysicalSize()
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
         , mergedUsedSinceLastScavenge
 #endif
     );

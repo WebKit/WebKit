@@ -89,7 +89,7 @@ private:
     void setThreadName(const char*);
 
     std::chrono::milliseconds timeSinceLastFullScavenge();
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     std::chrono::milliseconds timeSinceLastPartialScavenge();
     void partialScavenge();
 #endif
@@ -105,7 +105,7 @@ private:
 
     std::thread m_thread;
     std::chrono::steady_clock::time_point m_lastFullScavengeTime { std::chrono::steady_clock::now() };
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     std::chrono::steady_clock::time_point m_lastPartialScavengeTime { std::chrono::steady_clock::now() };
 #endif
 

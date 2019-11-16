@@ -75,7 +75,7 @@ public:
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
     void scavenge(Vector<DeferredDecommit>&);
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     void scavengeToHighWatermark(Vector<DeferredDecommit>&);
 #endif
 
@@ -92,7 +92,7 @@ private:
     Bits<numPages> m_committed;
     std::array<IsoPage<Config>*, numPages> m_pages;
     unsigned m_firstEligibleOrDecommitted { 0 };
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     unsigned m_highWatermark { 0 };
 #endif
 };

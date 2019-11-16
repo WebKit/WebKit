@@ -175,7 +175,7 @@ void Heap::decommitLargeRange(std::lock_guard<Mutex>&, LargeRange& range, BulkDe
 #endif
 }
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
 void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
 #else
 void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, size_t& deferredDecommits)
@@ -186,7 +186,7 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
             for (auto* page : chunk->freePages()) {
                 if (!page->hasPhysicalPages())
                     continue;
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
                 if (page->usedSinceLastScavenge()) {
                     page->clearUsedSinceLastScavenge();
                     deferredDecommits++;
@@ -213,7 +213,7 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
     }
 
     for (LargeRange& range : m_largeFree) {
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
         m_highWatermark = std::min(m_highWatermark, static_cast<void*>(range.begin()));
 #else
         if (range.usedSinceLastScavenge()) {
@@ -225,12 +225,12 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
         decommitLargeRange(lock, range, decommitter);
     }
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     m_freeableMemory = 0;
 #endif
 }
 
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
 void Heap::scavengeToHighWatermark(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
 {
     void* newHighWaterMark = nullptr;
@@ -276,7 +276,7 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass, F
 
         forEachPage(chunk, pageSize, [&](SmallPage* page) {
             page->setHasPhysicalPages(true);
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
             page->setUsedSinceLastScavenge();
 #endif
             page->setHasFreeLines(lock, true);
@@ -361,7 +361,7 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
             m_physicalPageMap.commit(page->begin()->begin(), pageSize);
 #endif
         }
-#if !BPLATFORM(MAC)
+#if !BUSE(PARTIAL_SCAVENGE)
         page->setUsedSinceLastScavenge();
 #endif
 
@@ -639,7 +639,7 @@ void* Heap::allocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_
     m_freeableMemory -= range.totalPhysicalSize();
 
     void* result = splitAndAllocate(lock, range, alignment, size).begin();
-#if BPLATFORM(MAC)
+#if BUSE(PARTIAL_SCAVENGE)
     m_highWatermark = std::max(m_highWatermark, result);
 #endif
     ASSERT_OR_RETURN_ON_FAILURE(result);
