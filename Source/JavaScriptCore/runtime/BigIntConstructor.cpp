@@ -66,7 +66,7 @@ BigIntConstructor::BigIntConstructor(VM& vm, Structure* structure)
 
 void BigIntConstructor::finishCreation(VM& vm, BigIntPrototype* bigIntPrototype)
 {
-    Base::finishCreation(vm, "BigInt"_s, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, "BigInt"_s, NameAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, bigIntPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);

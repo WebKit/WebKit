@@ -143,7 +143,7 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
 {
     ASSERT(!m_rareData);
-    FunctionRareData* rareData = FunctionRareData::create(vm, this);
+    FunctionRareData* rareData = FunctionRareData::create(vm);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -183,7 +183,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* glob
     ASSERT(canUseAllocationProfile());
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
-    FunctionRareData* rareData = FunctionRareData::create(vm, this);
+    FunctionRareData* rareData = FunctionRareData::create(vm);
     rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
 
     // A DFG compilation thread may be trying to read the rare data
@@ -826,10 +826,11 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         reifyName(vm, globalObject);
     else if (this->inherits<JSBoundFunction>(vm)) {
         FunctionRareData* rareData = this->rareData(vm);
-        String name = makeString("bound ", static_cast<NativeExecutable*>(m_executable.get())->name());
+        const String& name = static_cast<NativeExecutable*>(m_executable.get())->name();
+        JSString* string = !name ? jsEmptyString(vm) : jsString(vm, makeString("bound ", name));
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
-        putDirect(vm, nameIdent, jsString(vm, name), initialAttributes);
+        putDirect(vm, nameIdent, string, initialAttributes);
     }
     return PropertyStatus::Reified;
 }

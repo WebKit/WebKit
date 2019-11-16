@@ -103,7 +103,7 @@ ObjectConstructor::ObjectConstructor(VM& vm, Structure* structure)
 
 void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, ObjectPrototype* objectPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Object.string(), NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, vm.propertyNames->Object.string(), NameAdditionMode::WithoutStructureTransition);
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, objectPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);

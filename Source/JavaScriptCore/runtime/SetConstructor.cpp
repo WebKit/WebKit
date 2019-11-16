@@ -41,7 +41,7 @@ const ClassInfo SetConstructor::s_info = { "Function", &Base::s_info, nullptr, n
 
 void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, vm.propertyNames->Set.string(), NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, vm.propertyNames->Set.string(), NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);

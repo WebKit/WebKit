@@ -11,7 +11,7 @@ function NotPromise(executor) {
 }
 Promise.resolve.call(NotPromise);
 
-shouldBe(JSON.stringify(Object.getOwnPropertyNames(executorFunction).sort()), `["length"]`);
-shouldBe(executorFunction.hasOwnProperty('name'), false);
+shouldBe(JSON.stringify(Object.getOwnPropertyNames(executorFunction).sort()), `["length","name"]`);
+shouldBe(executorFunction.hasOwnProperty('name'), true);
 shouldBe(executorFunction.name, ``);
 shouldBe(delete executorFunction.name, true);

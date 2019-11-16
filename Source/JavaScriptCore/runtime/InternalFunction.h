@@ -85,9 +85,8 @@ public:
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 
-    enum class NameVisibility { Visible, Anonymous };
     enum class NameAdditionMode { WithStructureTransition, WithoutStructureTransition };
-    JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameVisibility = NameVisibility::Visible, NameAdditionMode = NameAdditionMode::WithStructureTransition);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameAdditionMode = NameAdditionMode::WithStructureTransition);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructureSlow(JSGlobalObject*, JSValue newTarget, Structure*);
 

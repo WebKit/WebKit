@@ -52,7 +52,7 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 
 void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(vm, name, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, name, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 

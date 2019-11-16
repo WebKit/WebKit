@@ -50,7 +50,7 @@ public:
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static FunctionRareData* create(VM&, JSFunction*);
+    static FunctionRareData* create(VM&);
 
     static constexpr bool needsDestruction = true;
 
@@ -126,7 +126,7 @@ public:
     class AllocationProfileClearingWatchpoint;
 
 protected:
-    FunctionRareData(VM&, JSFunction*);
+    FunctionRareData(VM&);
     ~FunctionRareData();
 
 private:

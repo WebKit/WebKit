@@ -39,7 +39,7 @@ function all(iterable)
     function newResolveElement(index)
     {
         var alreadyCalled = false;
-        return function @resolve(argument)
+        return function (argument)
         {
             if (alreadyCalled)
                 return @undefined;
@@ -96,47 +96,45 @@ function allSettled(iterable)
     {
         var alreadyCalled = false;
 
-        var resolveElement = function @resolve(x)
-        {
-            if (alreadyCalled)
+        return [
+            function (value) {
+                if (alreadyCalled)
+                    return @undefined;
+                alreadyCalled = true;
+
+                var obj = {
+                    status: "fulfilled",
+                    value
+                };
+
+                @putByValDirect(values, index, obj);
+
+                --remainingElementsCount;
+                if (remainingElementsCount === 0)
+                    return promiseCapability.@resolve.@call(@undefined, values);
+
                 return @undefined;
-            alreadyCalled = true;
+            },
 
-            var obj = {
-                status: "fulfilled",
-                value: x
-            };
+            function (reason) {
+                if (alreadyCalled)
+                    return @undefined;
+                alreadyCalled = true;
 
-            @putByValDirect(values, index, obj);
+                var obj = {
+                    status: "rejected",
+                    reason
+                };
 
-            --remainingElementsCount;
-            if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(@undefined, values);
+                @putByValDirect(values, index, obj);
 
-            return @undefined;
-        };
+                --remainingElementsCount;
+                if (remainingElementsCount === 0)
+                    return promiseCapability.@resolve.@call(@undefined, values);
 
-        var rejectElement = function @reject(x)
-        {
-            if (alreadyCalled)
                 return @undefined;
-            alreadyCalled = true;
-
-            var obj = {
-                status: "rejected",
-                reason: x
-            };
-
-            @putByValDirect(values, index, obj);
-
-            --remainingElementsCount;
-            if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(@undefined, values);
-
-            return @undefined;
-        };
-
-        return [resolveElement, rejectElement];
+            }
+        ];
     }
 
     try {
@@ -239,10 +237,10 @@ function Promise(executor)
 
     try {
         executor(
-            function @resolve(resolution) {
+            function (resolution) {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
             },
-            function @reject(reason) {
+            function (reason) {
                 return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
             });
     } catch (error) {
@@ -265,10 +263,10 @@ function InternalPromise(executor)
 
     try {
         executor(
-            function @resolve(resolution) {
+            function (resolution) {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
             },
-            function @reject(reason) {
+            function (reason) {
                 return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
             });
     } catch (error) {

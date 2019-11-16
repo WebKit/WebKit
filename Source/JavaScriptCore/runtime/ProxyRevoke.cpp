@@ -38,7 +38,7 @@ const ClassInfo ProxyRevoke::s_info = { "ProxyRevoke", &Base::s_info, nullptr, n
 ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* proxy)
 {
     ProxyRevoke* revoke = new (NotNull, allocateCell<ProxyRevoke>(vm.heap)) ProxyRevoke(vm, structure);
-    revoke->finishCreation(vm, "revoke", proxy);
+    revoke->finishCreation(vm, proxy);
     return revoke;
 }
 
@@ -49,9 +49,9 @@ ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
 {
 }
 
-void ProxyRevoke::finishCreation(VM& vm, const char* name, ProxyObject* proxy)
+void ProxyRevoke::finishCreation(VM& vm, ProxyObject* proxy)
 {
-    Base::finishCreation(vm, String(name), NameVisibility::Anonymous);
+    Base::finishCreation(vm, emptyString());
     m_proxy.set(vm, this, proxy);
 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);

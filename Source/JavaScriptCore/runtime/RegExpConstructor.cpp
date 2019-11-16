@@ -88,7 +88,7 @@ RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure)
 
 void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, vm.propertyNames->RegExp.string(), NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, vm.propertyNames->RegExp.string(), NameAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);

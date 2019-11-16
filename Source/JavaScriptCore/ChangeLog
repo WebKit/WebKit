@@ -1,3 +1,135 @@
+2019-11-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Anonymous built-in functions should have empty string for a name
+        https://bugs.webkit.org/show_bug.cgi?id=204214
+
+        Reviewed by Yusuke Suzuki.
+
+        Ensure that Function.prototype.name (exists and) is an empty string for various anonymous built-in functions,
+        following https://github.com/tc39/ecma262/pull/1490.
+
+        Specifically:
+        1. for promises, resolve / reject / executor elements are lacking a name property
+        2. for proxies, the revocation function is lacking a name property
+        3. for certain Intl objects, function getters return a bound function named "bound <name>" instead of ""
+
+        This change also means that we no longer need the NameVisibility enum or isAnonymousBuiltinFunction logic.
+
+        * builtins/PromiseConstructor.js:
+        * builtins/PromiseOperations.js:
+        Ensure resolve / reject / executor elements have a name property.
+        (They were @-named, which resulted in no name property at all.)
+
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::create):
+        (JSC::ProxyRevoke::finishCreation):
+        * runtime/ProxyRevoke.h:
+        Ensure revocation functions have a name property.
+        (NameVisibility existed solely to ensure this *wasn't* the case.)
+
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        Give these bound functions an empty name.
+
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::FunctionRareData):
+        * runtime/FunctionRareData.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateRareData):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::hasReifiedName const): Ensure bound anonymous built-in functions can have an empty name.
+        (JSC::JSFunction::isAnonymousBuiltinFunction const): Deleted.
+        Get rid of isAnonymousBuiltinFunction logic.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::AsyncGeneratorFunctionConstructor::finishCreation):
+        * runtime/BigIntConstructor.cpp:
+        (JSC::BigIntConstructor::finishCreation):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::finishCreation):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructorBase::finishCreation):
+        * runtime/NullGetterFunction.h:
+        * runtime/NullSetterFunction.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::finishCreation):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::finishCreation):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::WeakObjectRefConstructor::finishCreation):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::WeakSetConstructor::finishCreation):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::finishCreation):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::WebAssemblyLinkErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::finishCreation):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::finishCreation):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::finishCreation):
+        Get rid of NameVisibility enum.
+
 2019-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Apple] Enable variation fonts on all Apple platforms

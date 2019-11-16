@@ -1,3 +1,18 @@
+2019-11-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Anonymous built-in functions should have empty string for a name
+        https://bugs.webkit.org/show_bug.cgi?id=204214
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark 20 test cases as passing.
+
+        * stress/builtin-function-name.js:
+        (shouldThrow):
+        * stress/private-name-as-anonymous-builtin.js:
+        Fix tests which are no longer accurate.
+
 2019-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG strength reduction should define "groups" for RegExp constant-folded result

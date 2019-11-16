@@ -1093,30 +1093,18 @@ test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js:
 test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-test/built-ins/Promise/all/resolve-element-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/all/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-test/built-ins/Promise/allSettled/reject-element-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Promise/allSettled/resolve-element-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/allSettled/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Promise/executor-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/executor-function-nonconstructor.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1126,15 +1114,9 @@ test/built-ins/Promise/proto-from-ctor-realm.js:
 test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-test/built-ins/Promise/reject-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/reject-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Promise/resolve-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/resolve-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1174,9 +1156,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/Proxy/revocable/revocation-function-name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
@@ -1833,9 +1812,6 @@ test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
 test/intl402/Collator/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
-test/intl402/Collator/prototype/compare/compare-function-name.js:
-  default: 'Test262Error: descriptor value should be '
-  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
@@ -1881,9 +1857,6 @@ test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js:
 test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
   default: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
   strict mode: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
-test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
-  default: 'Test262Error: descriptor value should be '
-  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js:
   default: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
   strict mode: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
@@ -1941,9 +1914,6 @@ test/intl402/NumberFormat/numbering-system-options.js:
 test/intl402/NumberFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
-test/intl402/NumberFormat/prototype/format/format-function-name.js:
-  default: 'Test262Error: descriptor value should be '
-  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
   default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
   strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'

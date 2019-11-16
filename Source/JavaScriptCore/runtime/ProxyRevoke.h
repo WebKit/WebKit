@@ -51,7 +51,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-    void finishCreation(VM&, const char* name, ProxyObject*);
+    void finishCreation(VM&, ProxyObject*);
     static void visitChildren(JSCell*, SlotVisitor&);
     JSValue proxy() { return m_proxy.get(); }
     void setProxyToNull(VM& vm) { return m_proxy.set(vm, this, jsNull()); }

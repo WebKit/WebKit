@@ -62,7 +62,7 @@ NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
 
 void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Number.string(), NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, vm.propertyNames->Number.string(), NameAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
 
     JSGlobalObject* globalObject = numberPrototype->globalObject(vm);

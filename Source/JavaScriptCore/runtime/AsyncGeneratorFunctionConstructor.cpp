@@ -55,7 +55,7 @@ AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Str
 
 void AsyncGeneratorFunctionConstructor::finishCreation(VM& vm, AsyncGeneratorFunctionPrototype* prototype)
 {
-    Base::finishCreation(vm, "AsyncGeneratorFunction"_s, NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, "AsyncGeneratorFunction"_s, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
     // Number of arguments for constructor

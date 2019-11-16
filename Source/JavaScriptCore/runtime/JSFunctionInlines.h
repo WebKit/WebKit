@@ -69,11 +69,6 @@ inline bool JSFunction::isBuiltinFunction() const
     return !isHostFunction() && jsExecutable()->isBuiltinFunction();
 }
 
-inline bool JSFunction::isAnonymousBuiltinFunction() const
-{
-    return !isHostFunction() && jsExecutable()->isAnonymousBuiltinFunction();
-}
-
 inline bool JSFunction::isHostOrBuiltinFunction() const
 {
     return isHostFunction() || isBuiltinFunction();
@@ -111,11 +106,7 @@ inline bool JSFunction::hasReifiedLength() const
 
 inline bool JSFunction::hasReifiedName() const
 {
-    if (m_rareData)
-        return m_rareData->hasReifiedName();
-    if (isAnonymousBuiltinFunction())
-        return true;
-    return false;
+    return m_rareData ? m_rareData->hasReifiedName() : false;
 }
 
 inline bool JSFunction::canUseAllocationProfile()
