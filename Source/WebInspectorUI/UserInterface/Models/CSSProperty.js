@@ -118,6 +118,14 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._isVariable = name.startsWith("--");
         this._styleSheetTextRange = styleSheetTextRange || null;
 
+        this._rawValueNewlineIndent = "";
+        if (this._rawValue) {
+            let match = this._rawValue.match(/^[^\n]+\n(\s*)/);
+            if (match)
+                this._rawValueNewlineIndent = match[1];
+        }
+        this._rawValue = this._rawValue.replace(/\n\s+/g, "\n");
+
         this._isShorthand = undefined;
         this._shorthandPropertyNames = undefined;
 
@@ -455,8 +463,10 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     {
         let text = "";
 
-        if (this._name && this._rawValue)
-            text = this._name + ": " + this._rawValue + ";";
+        if (this._name && this._rawValue) {
+            let value = this._rawValue.replace(/\n/g, "\n" + this._rawValueNewlineIndent);
+            text = this._name + ": " + value + ";";
+        }
 
         let oldText = this._text;
         this._text = text;

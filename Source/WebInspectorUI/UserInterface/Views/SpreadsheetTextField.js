@@ -232,11 +232,19 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
                 return;
         }
 
-        if (event.key === "Enter" || event.key === "Tab") {
+        let isEnterKey = event.key === "Enter";
+
+        if (isEnterKey && event.shiftKey) {
+            if (this._delegate && this._delegate.spreadsheetTextFieldAllowsNewlines(this))
+                return;
+        }
+
+        let isTabKey = event.key === "Tab";
+        if (isEnterKey || isTabKey) {
             event.stop();
             this._applyCompletionHint();
 
-            let direction = (event.shiftKey && event.key === "Tab") ? "backward" : "forward";
+            let direction = (isTabKey && event.shiftKey) ? "backward" : "forward";
 
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidCommit === "function")
                 this._delegate.spreadsheetTextFieldDidCommit(this, {direction});

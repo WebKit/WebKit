@@ -317,6 +317,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (this._selected)
             classNames.push("selected");
 
+        if (this._valueTextField && this._valueTextField.value.includes("\n"))
+            classNames.push("has-newline");
+
         this._element.className = classNames.join(" ");
         this._element.title = elementTitle;
     }
@@ -340,6 +343,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         let isEditingName = textField === this._nameTextField;
         textField.value = isEditingName ? this._property.name : this._property.rawValue;
+    }
+
+    spreadsheetTextFieldAllowsNewlines(textField)
+    {
+        return textField === this._valueTextField;
     }
 
     spreadsheetTextFieldDidChange(textField)
@@ -736,7 +744,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _handleValueChange()
     {
-        this._property.rawValue = this._valueElement.textContent.trim();
+        let value = this._valueElement.textContent;
+
+        this._property.rawValue = value.trim();
+
+        this._element.classList.toggle("has-newline", value.includes("\n"));
     }
 
     _handleNameBeforeInput(event)

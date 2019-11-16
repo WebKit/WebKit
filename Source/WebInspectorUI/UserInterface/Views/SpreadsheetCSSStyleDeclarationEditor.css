@@ -53,6 +53,16 @@
 
 .spreadsheet-style-declaration-editor .property:not(.disabled) .value {
     color: var(--text-color);
+    white-space: pre-wrap;
+}
+
+.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .semicolon {
+    vertical-align: bottom;
 }
 
 .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {

@@ -1,5 +1,31 @@
 2019-11-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: Styles: support multiline CSS property values
+        https://bugs.webkit.org/show_bug.cgi?id=203754
+        <rdar://problem/56819044>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.update):
+        (WI.CSSProperty.prototype._updateStyleText):
+        When the property is updated from the backend, find the first newline inside the value and
+        preserve the indent string so it can be re-added when updating the backend.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .value):
+        (.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value): Added.
+        (.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .semicolon): Added.
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldAllowsNewlines): Added.
+        (WI.SpreadsheetStyleProperty.prototype._handleValueChange):
+        Support shift-enter when editing a CSS property's value to insert a newline.
+
+2019-11-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: move the "Local Override..." creation context menu item from the Breakpoints section options menu to the Create Resource menu
         https://bugs.webkit.org/show_bug.cgi?id=204178
 
