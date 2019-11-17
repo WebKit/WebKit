@@ -91,6 +91,7 @@ private:
     void collectInlineContent();
     Line::InitialConstraints initialConstraintsForLine(UsedHorizontalValues, const LayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayout::LineContent&, UsedHorizontalValues);
+    void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

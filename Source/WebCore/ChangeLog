@@ -1,5 +1,24 @@
 2019-11-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Invalidation] Add support for simple inline invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=204268
+        <rdar://problem/57248995>
+
+        Reviewed by Antti Koivisto.
+
+        Eventually invalidateFormattingState() will take care of cleaning up the state based on the current InvalidationState.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::resetInlineRuns):
+
+2019-11-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Optimize Line::isVisuallyEmpty for the most common inline content.
         https://bugs.webkit.org/show_bug.cgi?id=204259
         <rdar://problem/57243610>

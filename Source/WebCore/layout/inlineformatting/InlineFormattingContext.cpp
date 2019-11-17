@@ -68,6 +68,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     if (!root().hasInFlowOrFloatingChild())
         return;
 
+    invalidateFormattingState(invalidationState);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& rootGeometry = geometryForBox(root());
     auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { rootGeometry } };
@@ -82,10 +83,6 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
             computeHorizontalAndVerticalGeometry(*layoutBox, usedHorizontalValues, usedVerticalValues);
         layoutBox = nextInPreOrder(*layoutBox, root());
     }
-
-    // FIXME: This is such a waste when intrinsic width computation already collected the inline items.
-    formattingState().inlineItems().clear();
-    formattingState().inlineRuns().clear();
 
     collectInlineContent();
     lineLayout(usedHorizontalValues);
@@ -502,6 +499,14 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         }
         ASSERT_NOT_REACHED();
     }
+}
+
+void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)
+{
+    // Find out what we need to invalidate. This is where we add some smarts to do partial line layout.
+    // For now let's just clear the runs.
+    formattingState().resetInlineRuns();
+    // FIXME: This is also where we would delete inline items if their content changed.
 }
 
 }
