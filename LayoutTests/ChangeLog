@@ -1,3 +1,18 @@
+2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r243606): Interacting with date and time pickers hangs the UI process on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=204280
+        <rdar://problem/49718359>
+
+        Reviewed by Chris Dumez.
+
+        Clean up a few details in the layout test.
+
+        * fast/forms/watchos/time-picker-value-change-expected.txt:
+        * fast/forms/watchos/time-picker-value-change.html:
+
+        Tweak the test description, and simplify logic for completing the layout test.
+
 2019-11-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r252526.

@@ -5463,16 +5463,22 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
 
 static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)
 {
+#if PLATFORM(WATCHOS)
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(view);
+    return nil;
+#else
     switch (type) {
     case WebKit::InputType::Select:
         return adoptNS([[WKFormSelectControl alloc] initWithView:view]);
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
         return adoptNS([[WKFormColorControl alloc] initWithView:view]);
-#endif
+#endif // ENABLE(INPUT_TYPE_COLOR)
     default:
         return adoptNS([[WKFormInputControl alloc] initWithView:view]);
     }
+#endif
 }
 
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject

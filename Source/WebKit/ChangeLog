@@ -1,5 +1,24 @@
 2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        REGRESSION (r243606): Interacting with date and time pickers hangs the UI process on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=204280
+        <rdar://problem/49718359>
+
+        Reviewed by Chris Dumez.
+
+        After r243606, interacting with date and time inputs on watchOS hangs the UI process indefinitely while
+        attempting to create an input peripheral (WKFormInputControl) for the date or time picker. This is because, in
+        the process of setting up a new WKDateTimePicker, we call into +[UIKeyboard defaultSizeForInterfaceOrientation:]
+        which hangs when attempting to fetch the current UIKit keyboard layout type.
+
+        To address this, we simply avoid setting _inputPeripheral on watchOS, as we did prior to r243606. Covered by the
+        existing layout test fast/forms/watchos/time-picker-value-change.html, which currently times out.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createInputPeripheralWithView):
+
+2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects
         https://bugs.webkit.org/show_bug.cgi?id=204278
         <rdar://problem/56527803>
