@@ -50,6 +50,7 @@ public:
     bool isBox() const { return m_inlineItem.isBox(); }
     bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
     bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
+    bool isForcedLineBreak() const { return m_inlineItem.isForcedLineBreak(); }
     InlineItem::Type type() const { return m_inlineItem.type(); }
 
     void setIsCollapsed() { m_isCollapsed = true; }
@@ -193,6 +194,11 @@ bool Line::isVisuallyEmpty() const
     // Return true for empty inline containers like <span></span>.
     auto& formattingContext = this->formattingContext();
     for (auto& run : m_inlineItemRuns) {
+        if (run->isText()) {
+            if (!run->isCollapsedToZeroAdvanceWidth())
+                return false;
+            continue;
+        }
         if (run->isContainerStart()) {
             if (!isInlineContainerConsideredEmpty(formattingContext, run->layoutBox()))
                 return false;
@@ -200,7 +206,9 @@ bool Line::isVisuallyEmpty() const
         }
         if (run->isContainerEnd())
             continue;
-        if (run->layoutBox().establishesFormattingContext()) {
+        if (run->isBox()) {
+            if (!run->layoutBox().establishesFormattingContext())
+                return false;
             ASSERT(run->layoutBox().isInlineBlockBox());
             auto& boxGeometry = formattingContext.geometryForBox(run->layoutBox());
             if (!boxGeometry.width())
@@ -209,7 +217,7 @@ bool Line::isVisuallyEmpty() const
                 return false;
             continue;
         }
-        if (!run->isText() || !run->isCollapsedToZeroAdvanceWidth())
+        if (run->isForcedLineBreak())
             return false;
     }
     return true;

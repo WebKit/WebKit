@@ -1,3 +1,16 @@
+2019-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Optimize Line::isVisuallyEmpty for the most common inline content.
+        https://bugs.webkit.org/show_bug.cgi?id=204259
+        <rdar://problem/57243610>
+
+        Reviewed by Antti Koivisto.
+
+        Move the check on text content to the front.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+
 2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects
