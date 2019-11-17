@@ -48,29 +48,24 @@ class FormattingContext;
 // Note, while the initial containing block is entry point for the initial layout, it does not necessarily need to be the entry point of any
 // subsequent layouts (subtree layout). A non-initial, subtree layout could be initiated on multiple formatting contexts.
 // Each formatting context has an entry point for layout, which potenitally means multiple entry points per layout frame.
-// LayoutState holds the formatting states. They cache formatting context specific data to enable performant incremental layouts.
 class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
-    // FIXME: These are temporary entry points for LFC layout.
-    static std::unique_ptr<LayoutState> createLayoutState(const RenderView&);
-    static void runLayoutAndVerify(const LayoutSize& rootContentBoxSize, LayoutState&);
-    static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
-
     LayoutContext(LayoutState&);
     void layout(const LayoutSize& rootContentBoxSize, InvalidationState&);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 
+    // FIXME: This is temporary. 
+    static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
+#ifndef NDEBUG
+    // For testing purposes only
+    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&);
+#endif
+
 private:
     void layoutFormattingContextSubtree(const Container&, InvalidationState&);
     LayoutState& layoutState() { return m_layoutState; }
-
-    // For testing purposes only
-#ifndef NDEBUG
-    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&);
-#endif
-    static void runLayout(const LayoutSize& rootContentBoxSize, LayoutState&);
 
     LayoutState& m_layoutState;
 };

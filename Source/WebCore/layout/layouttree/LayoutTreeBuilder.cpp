@@ -54,10 +54,18 @@
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutTreeContent);
+LayoutTreeContent::LayoutTreeContent(const RenderBox& rootRenderer, std::unique_ptr<Container> rootLayoutBox)
+    : m_rootRenderer(rootRenderer)
+    , m_rootLayoutBox(WTFMove(rootLayoutBox))
+{
+}
 
 static void appendChild(Container& parent, Box& newChild)
 {
@@ -102,7 +110,7 @@ static String applyTextTransform(const String& text, const RenderStyle& style)
     return text;
 }
 
-LayoutTreeContent TreeBuilder::buildLayoutTree(const RenderView& renderView)
+std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const RenderView& renderView)
 {
     PhaseScope scope(Phase::Type::TreeBuilding);
 
@@ -110,15 +118,9 @@ LayoutTreeContent TreeBuilder::buildLayoutTree(const RenderView& renderView)
     style.setLogicalWidth(Length(renderView.width(), Fixed));
     style.setLogicalHeight(Length(renderView.height(), Fixed));
 
-    auto layoutTreeContent = LayoutTreeContent { renderView, makeUnique<Container>(WTF::nullopt, WTFMove(style)) };
-    TreeBuilder(layoutTreeContent).buildTree();
+    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderView, makeUnique<Container>(WTF::nullopt, WTFMove(style)));
+    TreeBuilder(*layoutTreeContent).buildTree();
     return layoutTreeContent;
-}
-
-LayoutTreeContent::LayoutTreeContent(const RenderBox& rootRenderer, std::unique_ptr<Container> rootLayoutBox)
-    : rootRenderer(rootRenderer)
-    , rootLayoutBox(WTFMove(rootLayoutBox))
-{
 }
 
 TreeBuilder::TreeBuilder(LayoutTreeContent& layoutTreeContent)
@@ -128,7 +130,7 @@ TreeBuilder::TreeBuilder(LayoutTreeContent& layoutTreeContent)
 
 void TreeBuilder::buildTree()
 {
-    buildSubTree(m_layoutTreeContent.rootRenderer, *m_layoutTreeContent.rootLayoutBox);
+    buildSubTree(m_layoutTreeContent.rootRenderer(), m_layoutTreeContent.rootLayoutBox());
 }
 
 std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer)
@@ -231,7 +233,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
         if (childRenderer.isAnonymous())
             childLayoutBox->setIsAnonymous();
     }
-    m_layoutTreeContent.renderObjectToLayoutBox.add(&childRenderer, childLayoutBox.get());
+    m_layoutTreeContent.addLayoutBoxForRenderer(childRenderer, *childLayoutBox);
     return childLayoutBox;
 }
 
@@ -417,8 +419,8 @@ void printLayoutTreeForLiveDocuments()
         fprintf(stderr, "%s\n", document->url().string().utf8().data());
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
-        auto layoutState = LayoutState { TreeBuilder::buildLayoutTree(renderView) };
-        layoutState.setQuirksMode(renderView.document().inLimitedQuirksMode() ? LayoutState::QuirksMode::Limited : (renderView.document().inQuirksMode() ? LayoutState::QuirksMode::Yes : LayoutState::QuirksMode::No));
+        auto layoutTreeContent = TreeBuilder::buildLayoutTree(renderView);
+        auto layoutState = LayoutState { *layoutTreeContent };
 
         auto& layoutRoot = layoutState.root();
         auto invalidationState = InvalidationState { };

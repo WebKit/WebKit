@@ -109,43 +109,6 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
     CRASH();
 }
 
-static void initializeLayoutState(LayoutState& layoutState, const RenderView& renderView)
-{
-    auto quirksMode = [&] {
-        auto& document = renderView.document();
-        if (document.inLimitedQuirksMode())
-            return LayoutState::QuirksMode::Limited;
-        if (document.inQuirksMode())
-            return LayoutState::QuirksMode::Yes;
-        return LayoutState::QuirksMode::No;
-    };
-    layoutState.setQuirksMode(quirksMode());
-}
-
-void LayoutContext::runLayout(const LayoutSize& rootContentBoxSize, LayoutState& layoutState)
-{
-    auto invalidationState = InvalidationState { };
-    auto invalidationContext = InvalidationContext { invalidationState };
-    invalidationContext.styleChanged(*layoutState.root().firstChild(), StyleDifference::Layout);
-
-    LayoutContext(layoutState).layout(rootContentBoxSize, invalidationState);
-}
-
-void LayoutContext::runLayoutAndVerify(const LayoutSize& rootContentBoxSize, LayoutState& layoutState)
-{
-    runLayout(rootContentBoxSize, layoutState);
-#ifndef NDEBUG
-    LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState);
-#endif
-}
-
-std::unique_ptr<LayoutState> LayoutContext::createLayoutState(const RenderView& renderView)
-{
-    auto layoutState = makeUnique<LayoutState>(TreeBuilder::buildLayoutTree(renderView));
-    initializeLayoutState(*layoutState, renderView);
-    return layoutState;
-}
-
 void LayoutContext::paint(const LayoutState& layoutState, GraphicsContext& context, const IntRect& dirtyRect)
 {
     Display::Painter::paint(layoutState, context, dirtyRect);

@@ -299,7 +299,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
         if (!m_document.view() || m_document.view()->layoutContext().layoutFormattingState())
             return;
-        if (auto* layoutBox = m_document.view()->layoutContext().layoutFormattingState()->layoutBoxForRenderer(renderer))
+        if (auto* layoutBox = m_document.view()->layoutContext().layoutTreeContent()->layoutBoxForRenderer(renderer))
             layoutBox->updateStyle(newStyle);
     }
 #endif

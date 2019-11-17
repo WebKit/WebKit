@@ -1,5 +1,50 @@
 2019-11-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Move layout state initialization out of LayoutContext
+        https://bugs.webkit.org/show_bug.cgi?id=204285
+        <rdar://problem/57262858>
+
+        Reviewed by Antti Koivisto.
+
+        Move layout initialization to FrameViewLayoutContext::layoutUsingFormattingContext. This is now pretty close to
+        what the final initialization will look like.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::initializeLayoutState): Deleted.
+        (WebCore::Layout::LayoutContext::runLayout): Deleted.
+        (WebCore::Layout::LayoutContext::runLayoutAndVerify): Deleted.
+        (WebCore::Layout::LayoutContext::createLayoutState): Deleted.
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::layoutState):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::root const):
+        (WebCore::Layout::LayoutState::rootRenderer const):
+        (WebCore::Layout::LayoutState::setQuirksMode):
+        (WebCore::Layout::LayoutState::layoutBoxForRenderer const): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::LayoutTreeContent::LayoutTreeContent):
+        (WebCore::Layout::TreeBuilder::buildLayoutTree):
+        (WebCore::Layout::TreeBuilder::buildTree):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        (WebCore::Layout::LayoutTreeContent::rootLayoutBox const):
+        (WebCore::Layout::LayoutTreeContent::rootLayoutBox):
+        (WebCore::Layout::LayoutTreeContent::rootRenderer const):
+        (WebCore::Layout::LayoutTreeContent::layoutBoxForRenderer):
+        (WebCore::Layout::LayoutTreeContent::addLayoutBoxForRenderer):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+        (WebCore::FrameViewLayoutContext::invalidateLayoutTreeContent):
+        * page/FrameViewLayoutContext.h:
+        (WebCore::FrameViewLayoutContext::layoutTreeContent const):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle):
+
+2019-11-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Pass in the content area to LayoutContext::layout
         https://bugs.webkit.org/show_bug.cgi?id=204284
         <rdar://problem/57262690>

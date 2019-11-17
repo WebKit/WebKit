@@ -38,11 +38,21 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(LayoutTreeContent&& layoutTreeContent)
-    : m_layoutTreeContent(WTFMove(layoutTreeContent))
+LayoutState::LayoutState(const LayoutTreeContent& layoutTreeContent)
+    : m_layoutTreeContent(makeWeakPtr(layoutTreeContent))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
-    ASSERT(m_layoutTreeContent.rootLayoutBox->establishesFormattingContext());
+    ASSERT(m_layoutTreeContent->rootLayoutBox().establishesFormattingContext());
+
+    auto quirksMode = [&] {
+        auto& document = m_layoutTreeContent->rootRenderer().document();
+        if (document.inLimitedQuirksMode())
+            return LayoutState::QuirksMode::Limited;
+        if (document.inQuirksMode())
+            return LayoutState::QuirksMode::Yes;
+        return LayoutState::QuirksMode::No;
+    };
+    setQuirksMode(quirksMode());
 }
 
 LayoutState::~LayoutState() = default;

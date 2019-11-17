@@ -40,8 +40,11 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "InvalidationContext.h"
+#include "InvalidationState.h"
 #include "LayoutContext.h"
 #include "LayoutState.h"
+#include "LayoutTreeBuilder.h"
 #endif
 
 #include <wtf/SetForScope.h>
@@ -55,10 +58,31 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
+
+    if (!m_layoutTreeContent) {
+        m_layoutTreeContent = Layout::TreeBuilder::buildLayoutTree(*renderView());
+        // FIXME: New layout tree requires a new state for now.
+        m_layoutState = nullptr;
+    }
     if (!m_layoutState)
-        m_layoutState = Layout::LayoutContext::createLayoutState(*renderView());
-    Layout::LayoutContext::runLayoutAndVerify(renderView()->size(), *m_layoutState);
-} 
+        m_layoutState = makeUnique<Layout::LayoutState>(*m_layoutTreeContent);
+
+    // FIXME: This is not the real invalidation yet.
+    auto invalidationState = Layout::InvalidationState { };
+    auto invalidationContext = Layout::InvalidationContext { invalidationState };
+    invalidationContext.styleChanged(*m_layoutState->root().firstChild(), StyleDifference::Layout);
+
+    auto layoutContext = Layout::LayoutContext { *m_layoutState };
+    layoutContext.layout(renderView()->size(), invalidationState);
+#ifndef NDEBUG
+    Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree(*m_layoutState);
+#endif
+}
+
+void FrameViewLayoutContext::invalidateLayoutTreeContent()
+{
+    m_layoutTreeContent = nullptr;
+}
 #endif
 
 static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& descendant)

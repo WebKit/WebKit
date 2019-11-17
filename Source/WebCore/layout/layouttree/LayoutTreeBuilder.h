@@ -27,6 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class RenderElement;
@@ -40,19 +43,28 @@ class Box;
 class Container;
 class LayoutState;
 
-struct LayoutTreeContent {
+class LayoutTreeContent : public CanMakeWeakPtr<LayoutTreeContent> {
+    WTF_MAKE_ISO_ALLOCATED(LayoutTreeContent);
+public:
     LayoutTreeContent(const RenderBox&, std::unique_ptr<Container>);
 
-    const RenderBox& rootRenderer;
-    std::unique_ptr<Container> rootLayoutBox;
+    const Container& rootLayoutBox() const { return *m_rootLayoutBox; }
+    Container& rootLayoutBox() { return *m_rootLayoutBox; }
+    const RenderBox& rootRenderer() const { return m_rootRenderer; }
 
     using RenderObjectToLayoutBoxMap = HashMap<const RenderObject*, Box*>;
-    RenderObjectToLayoutBoxMap renderObjectToLayoutBox;
+    Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
+    void addLayoutBoxForRenderer(const RenderObject& renderer, Box& layoutBox) { m_renderObjectToLayoutBox.add(&renderer, &layoutBox); }
+
+private:
+    const RenderBox& m_rootRenderer;
+    std::unique_ptr<Container> m_rootLayoutBox;
+    RenderObjectToLayoutBoxMap m_renderObjectToLayoutBox;
 };
 
 class TreeBuilder {
 public:
-    static LayoutTreeContent buildLayoutTree(const RenderView&);
+    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderView&);
 
 private:
     TreeBuilder(LayoutTreeContent&);
