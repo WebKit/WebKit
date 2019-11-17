@@ -425,7 +425,7 @@ void printLayoutTreeForLiveDocuments()
         auto invalidationContext = InvalidationContext { invalidationState };
         invalidationContext.styleChanged(*layoutRoot.firstChild(), StyleDifference::Layout);
 
-        LayoutContext(layoutState).layout(invalidationState);
+        LayoutContext(layoutState).layout(renderView.size(), invalidationState);
         showLayoutTree(layoutRoot, &layoutState);
     }
 }

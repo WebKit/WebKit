@@ -56,9 +56,22 @@ LayoutContext::LayoutContext(LayoutState& layoutState)
 {
 }
 
-void LayoutContext::layout(InvalidationState& invalidationState)
+void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationState& invalidationState)
 {
     PhaseScope scope(Phase::Type::Layout);
+    // Set the geometry on the root.
+    // Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
+    // ICB establishes the initial BFC, but it does not live in a formatting context and while a non-ICB root(subtree layout) has to have a formatting context,
+    // we could not lay it out even if we wanted to since it's outside of this LayoutContext.
+    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutState().root());
+    displayBox.setHorizontalMargin({ });
+    displayBox.setHorizontalComputedMargin({ });
+    displayBox.setVerticalMargin({ });
+    displayBox.setBorder({ });
+    displayBox.setPadding({ });
+    displayBox.setTopLeft({ });
+    displayBox.setContentBoxHeight(rootContentBoxSize.height());
+    displayBox.setContentBoxWidth(rootContentBoxSize.width());
 
     auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
     ASSERT(!formattingContextRootsForLayout.computesEmpty());
@@ -109,29 +122,18 @@ static void initializeLayoutState(LayoutState& layoutState, const RenderView& re
     layoutState.setQuirksMode(quirksMode());
 }
 
-void LayoutContext::runLayout(LayoutState& layoutState)
+void LayoutContext::runLayout(const LayoutSize& rootContentBoxSize, LayoutState& layoutState)
 {
-    auto& layoutRoot = layoutState.root();
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
-    displayBox.setHorizontalMargin({ });
-    displayBox.setHorizontalComputedMargin({ });
-    displayBox.setVerticalMargin({ });
-    displayBox.setBorder({ });
-    displayBox.setPadding({ });
-    displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(LayoutUnit(layoutRoot.style().logicalHeight().value()));
-    displayBox.setContentBoxWidth(LayoutUnit(layoutRoot.style().logicalWidth().value()));
-
     auto invalidationState = InvalidationState { };
     auto invalidationContext = InvalidationContext { invalidationState };
-    invalidationContext.styleChanged(*layoutRoot.firstChild(), StyleDifference::Layout);
+    invalidationContext.styleChanged(*layoutState.root().firstChild(), StyleDifference::Layout);
 
-    LayoutContext(layoutState).layout(invalidationState);
+    LayoutContext(layoutState).layout(rootContentBoxSize, invalidationState);
 }
 
-void LayoutContext::runLayoutAndVerify(LayoutState& layoutState)
+void LayoutContext::runLayoutAndVerify(const LayoutSize& rootContentBoxSize, LayoutState& layoutState)
 {
-    runLayout(layoutState);
+    runLayout(rootContentBoxSize, layoutState);
 #ifndef NDEBUG
     LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState);
 #endif

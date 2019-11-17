@@ -1,5 +1,25 @@
 2019-11-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Pass in the content area to LayoutContext::layout
+        https://bugs.webkit.org/show_bug.cgi?id=204284
+        <rdar://problem/57262690>
+
+        Reviewed by Antti Koivisto.
+
+        Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::runLayout):
+        (WebCore::Layout::LayoutContext::runLayoutAndVerify):
+        * layout/LayoutContext.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
+2019-11-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Out-of-flow] Collect out-of-flow boxes lazily
         https://bugs.webkit.org/show_bug.cgi?id=204282
         <rdar://problem/57259302>

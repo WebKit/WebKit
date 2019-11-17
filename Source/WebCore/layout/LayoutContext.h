@@ -54,11 +54,11 @@ class LayoutContext {
 public:
     // FIXME: These are temporary entry points for LFC layout.
     static std::unique_ptr<LayoutState> createLayoutState(const RenderView&);
-    static void runLayoutAndVerify(LayoutState&);
+    static void runLayoutAndVerify(const LayoutSize& rootContentBoxSize, LayoutState&);
     static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 
     LayoutContext(LayoutState&);
-    void layout(InvalidationState&);
+    void layout(const LayoutSize& rootContentBoxSize, InvalidationState&);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 
@@ -70,7 +70,7 @@ private:
 #ifndef NDEBUG
     static void verifyAndOutputMismatchingLayoutTree(const LayoutState&);
 #endif
-    static void runLayout(LayoutState&);
+    static void runLayout(const LayoutSize& rootContentBoxSize, LayoutState&);
 
     LayoutState& m_layoutState;
 };

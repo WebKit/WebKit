@@ -57,7 +57,7 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
         return;
     if (!m_layoutState)
         m_layoutState = Layout::LayoutContext::createLayoutState(*renderView());
-    Layout::LayoutContext::runLayoutAndVerify(*m_layoutState);
+    Layout::LayoutContext::runLayoutAndVerify(renderView()->size(), *m_layoutState);
 } 
 #endif
 
