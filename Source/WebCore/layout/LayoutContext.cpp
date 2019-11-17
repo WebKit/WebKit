@@ -106,19 +106,7 @@ static void initializeLayoutState(LayoutState& layoutState, const RenderView& re
             return LayoutState::QuirksMode::Yes;
         return LayoutState::QuirksMode::No;
     };
-
     layoutState.setQuirksMode(quirksMode());
-
-    auto& layoutRoot = layoutState.root();
-    layoutState.createFormattingStateForFormattingRootIfNeeded(layoutRoot);
-    // Not efficient, but this is temporary anyway.
-    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
-    for (auto& descendant : descendantsOfType<Box>(layoutRoot)) {
-        if (!descendant.isOutOfFlowPositioned())
-            continue;
-        auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(descendant.formattingContextRoot());
-        formattingState.addOutOfFlowBox(descendant);
-    }
 }
 
 void LayoutContext::runLayout(LayoutState& layoutState)

@@ -191,6 +191,7 @@ protected:
     FormattingContext::Quirks quirks() const { return Quirks(*this); }
 
 private:
+    void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&);
     void computeOutOfFlowHorizontalGeometry(const Box&);
 

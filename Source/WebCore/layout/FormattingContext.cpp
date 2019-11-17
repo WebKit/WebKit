@@ -154,6 +154,8 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
+    collectOutOfFlowDescendantsIfNeeded();
+
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
         if (!invalidationState.needsLayout(*outOfFlowBox))
@@ -270,6 +272,26 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
     ASSERT(isOkToAccessDisplayBox());
     ASSERT(layoutState().hasDisplayBox(layoutBox));
     return layoutState().displayBoxForLayoutBox(layoutBox);
+}
+
+void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
+{
+    if (!formattingState().outOfFlowBoxes().isEmpty())
+        return;
+    auto& root = this->root();
+    if (!root.hasChild())
+        return;
+    if (!root.isPositioned() && !root.isInitialContainingBlock())
+        return;
+    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
+    // FIXME: Turn this into a register-self as boxes are being inserted.
+    for (auto& descendant : descendantsOfType<Box>(root)) {
+        if (!descendant.isOutOfFlowPositioned())
+            continue;
+        if (&descendant.formattingContextRoot() != &root)
+            continue;
+        formattingState().addOutOfFlowBox(descendant);
+    }
 }
 
 #ifndef NDEBUG
