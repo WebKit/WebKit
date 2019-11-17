@@ -1,3 +1,34 @@
+2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects
+        https://bugs.webkit.org/show_bug.cgi?id=204278
+        <rdar://problem/56527803>
+
+        Reviewed by Tim Horton.
+
+        Add support for a new UIWKDocumentRequest option to request character rects for each character in the marked
+        text range. Unless UIWKDocumentRequestRects is additionally specified (in which case we'll return rects for
+        every single character in the editable root anyways), this option will ensure that all characters in the
+        composition range (which should match -[UIWKDocumentContext markedTextRange]) will have known character rects
+        that can be retrieved using -[UIWKDocumentContext enumerateLayoutRects:] (or one of the other helper methods
+        that utilize -enumerateLayoutRects:).
+
+        Test: WebKit.DocumentEditingContextWithMarkedText
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add a staging declaration for the new option.
+
+        * Shared/DocumentEditingContext.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toWebDocumentRequestOptions):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
+        Refactor logic that uses CharacterIterator to find rects for each character range into a lambda function, and
+        use this lambda function to handle UIWKDocumentRequestRects and the new UIWKDocumentRequestMarkedTextRects. The
+        marked text range is relative to the start of the context before the selection.
+
 2019-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         Don't use AVCapture on watchOS and tvOS

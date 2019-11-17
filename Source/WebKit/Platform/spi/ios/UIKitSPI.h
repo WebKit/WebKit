@@ -1110,6 +1110,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#define UIWKDocumentRequestMarkedTextRects (1 << 5)
+
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 @interface UIContextMenuConfiguration (IPI)
 @property (nonatomic, copy) UIContextMenuContentPreviewProvider previewProvider;

@@ -7137,6 +7137,8 @@ static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDoc
         options.add(WebKit::DocumentEditingContextRequest::Options::Spatial);
     if (flags & UIWKDocumentRequestAnnotation)
         options.add(WebKit::DocumentEditingContextRequest::Options::Annotation);
+    if (flags & UIWKDocumentRequestMarkedTextRects)
+        options.add(WebKit::DocumentEditingContextRequest::Options::MarkedTextRects);
 
     return options;
 }

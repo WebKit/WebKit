@@ -1,3 +1,17 @@
+2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects
+        https://bugs.webkit.org/show_bug.cgi?id=204278
+        <rdar://problem/56527803>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the new request option.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (-[UIWKDocumentContext markedTextRects]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Audio capture fails when a track is unmuted

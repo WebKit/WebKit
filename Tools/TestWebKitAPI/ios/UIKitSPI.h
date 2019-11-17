@@ -136,6 +136,7 @@ WTF_EXTERN_C_END
 @property (nonatomic, copy) NSObject *markedText;
 @property (nonatomic, assign) NSRange selectedRangeInMarkedText;
 @property (nonatomic, copy) NSAttributedString *annotatedText;
+@property (nonatomic, readonly) NSRange markedTextRange;
 
 - (NSArray<NSValue *> *)characterRectsForCharacterRange:(NSRange)range;
 
@@ -170,6 +171,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
+- (void)selectWordBackward;
 @property (nonatomic, readonly) NSString *selectedText;
 @end
 
@@ -193,6 +195,8 @@ IGNORE_WARNINGS_END
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#define UIWKDocumentRequestMarkedTextRects (1 << 5)
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;

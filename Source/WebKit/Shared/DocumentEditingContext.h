@@ -47,6 +47,7 @@ struct DocumentEditingContextRequest {
         Rects = 1 << 2,
         Spatial = 1 << 3,
         Annotation = 1 << 4,
+        MarkedTextRects = 1 << 5,
     };
 
     OptionSet<Options> options;

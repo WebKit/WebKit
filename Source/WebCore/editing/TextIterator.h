@@ -248,7 +248,7 @@ private:
 // character at a time, or faster, as needed. Useful for searching.
 class CharacterIterator {
 public:
-    explicit CharacterIterator(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit CharacterIterator(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
     WEBCORE_EXPORT explicit CharacterIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     bool atEnd() const { return m_underlyingIterator.atEnd(); }

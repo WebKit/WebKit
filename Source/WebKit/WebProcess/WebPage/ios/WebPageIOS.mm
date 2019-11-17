@@ -3936,6 +3936,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     bool isSpatialRequest = request.options.contains(DocumentEditingContextRequest::Options::Spatial);
     bool wantsRects = request.options.contains(DocumentEditingContextRequest::Options::Rects);
+    bool wantsMarkedTextRects = request.options.contains(DocumentEditingContextRequest::Options::MarkedTextRects);
 
     if (auto textInputContext = request.textInputContext) {
         RefPtr<Element> element = elementForContext(*textInputContext);
@@ -4044,9 +4045,10 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }
 
-    if (wantsRects) {
-        CharacterIterator contextIterator(contextBeforeStart.deepEquivalent(), contextAfterEnd.deepEquivalent());
-        unsigned currentLocation = 0;
+    auto characterRectsForRange = [&] (Range& range, uint64_t locationOffset) {
+        Vector<DocumentEditingContext::TextRectAndRange> rects;
+        CharacterIterator contextIterator(range);
+        unsigned currentLocation = locationOffset;
         while (!contextIterator.atEnd()) {
             unsigned length = contextIterator.text().length();
             if (!length) {
@@ -4054,14 +4056,19 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
                 continue;
             }
 
-            DocumentEditingContext::TextRectAndRange rect;
-            rect.rect = contextIterator.range()->absoluteBoundingBox();
-            rect.range = { currentLocation, 1 };
-            context.textRects.append(rect);
-
+            rects.append({ contextIterator.range()->absoluteBoundingBox(), { currentLocation, 1 } });
             currentLocation++;
             contextIterator.advance(1);
         }
+        return rects;
+    };
+
+    if (wantsRects) {
+        if (auto contextRange = makeRange(contextBeforeStart, contextAfterEnd))
+            context.textRects = characterRectsForRange(*contextRange, 0);
+    } else if (wantsMarkedTextRects && compositionRange) {
+        auto compositionStartOffset = plainTextReplacingNoBreakSpace(contextBeforeStart.deepEquivalent(), compositionRange->startPosition()).length();
+        context.textRects = characterRectsForRange(*compositionRange, compositionStartOffset);
     }
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
