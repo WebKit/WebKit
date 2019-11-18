@@ -2902,9 +2902,22 @@ bool Element::hasAttributeNS(const AtomString& namespaceURI, const AtomString& l
     return elementData()->findAttributeByName(qName);
 }
 
+static RefPtr<ShadowRoot> shadowRootWithDelegatesFocus(const Element& element)
+{
+    if (auto* root = element.shadowRoot()) {
+        if (root->delegatesFocus())
+            return root;
+    }
+    return nullptr;
+}
+
 static bool isProgramaticallyFocusable(Element& element)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    if (shadowRootWithDelegatesFocus(element))
+        return false;
+
     // If the stylesheets have already been loaded we can reliably check isFocusable.
     // If not, we continue and set the focused node on the focus controller below so that it can be updated soon after attach.
     if (element.document().haveStylesheetsLoaded()) {
@@ -2946,21 +2959,18 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     if (&newTarget->document() != document.ptr())
         return;
 
-    if (auto root = makeRefPtr(shadowRoot())) {
-        if (root->delegatesFocus()) {
-            newTarget = findFirstProgramaticallyFocusableElementInComposedTree(*this);            
-            if (!newTarget)
-                return;
+    if (auto root = shadowRootWithDelegatesFocus(*this)) {
+        auto currentlyFocusedElement = makeRefPtr(document->focusedElement());
+        if (root->containsIncludingShadowDOM(currentlyFocusedElement.get())) {
+            if (document->page())
+                document->page()->chrome().client().elementDidRefocus(*currentlyFocusedElement);
+            return;
         }
-    }
 
-    if (document->focusedElement() == newTarget) {
-        if (document->page())
-            document->page()->chrome().client().elementDidRefocus(*newTarget);
-        return;
-    }
-
-    if (!isProgramaticallyFocusable(*newTarget))
+        newTarget = findFirstProgramaticallyFocusableElementInComposedTree(*this);            
+        if (!newTarget)
+            return;
+    } else if (!isProgramaticallyFocusable(*newTarget))
         return;
 
     if (Page* page = document->page()) {

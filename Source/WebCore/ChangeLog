@@ -1,3 +1,21 @@
+2019-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Focusing a shadow host which delegates focus should skip inner shadow hosts which delegate focus
+        https://bugs.webkit.org/show_bug.cgi?id=203869
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug that WebKit doesn't skip a shadow host with delegatesFocus set when looking for
+        the first programatically focusable element.
+
+        Test: imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html
+
+        * dom/Element.cpp:
+        (WebCore::shadowRootWithDelegatesFocus): Added.
+        (WebCore::isProgramaticallyFocusable): Updated to return false on a shadow host with delegatesFocus.
+        (WebCore::Element::focus): Don't move the focus if the shadow host only contains a focused element
+        per https://github.com/w3c/webcomponents/issues/840.
+
 2019-11-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move layout state initialization out of LayoutContext
