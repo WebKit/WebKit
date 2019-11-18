@@ -709,7 +709,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @interface UIWebGeolocationPolicyDecider ()
 + (instancetype)sharedPolicyDecider;
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 - (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id)listener;
 @end
 

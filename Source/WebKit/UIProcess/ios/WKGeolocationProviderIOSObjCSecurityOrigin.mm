@@ -51,10 +51,7 @@ void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin
     RetainPtr<WebSecurityOrigin> securityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
     RetainPtr<NSURL> requestUrl = adoptNS([[NSURL alloc] initWithString:urlString]);
     RetainPtr<UIWebGeolocationPolicyDecider> decider = [UIWebGeolocationPolicyDecider sharedPolicyDecider];
-    if ([decider respondsToSelector:@selector(decidePolicyForGeolocationRequestFromOrigin:requestingURL:view:listener:)])
-        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:requestUrl.get() view:view listener:listener];
-    else
-        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:requestUrl.get() window:view.window listener:listener];
+    [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:requestUrl.get() window:view.window listener:listener];
 }
 
 } // namespace WebKit
