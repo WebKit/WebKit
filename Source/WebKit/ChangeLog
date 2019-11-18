@@ -1,3 +1,18 @@
+2019-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Promote main thread assertions related to sendWithAsyncReply() to be release assertions
+        https://bugs.webkit.org/show_bug.cgi?id=204298
+
+        Reviewed by Wenson Hsieh.
+
+        Promote main thread assertions related to sendWithAsyncReply() to be release assertions, to help identify
+        threading bugs such as <rdar://problem/57231170>.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::addAsyncReplyHandler):
+        (IPC::clearAsyncReplyHandlers):
+        (IPC::CompletionHandler<void):
+
 2019-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion in layout test after r252492.
