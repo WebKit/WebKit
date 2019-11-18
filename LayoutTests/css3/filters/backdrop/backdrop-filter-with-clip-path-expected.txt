@@ -27,4 +27,4 @@ layer at (8,8) size 200x200 scrollHeight 342
       text run at (0,306) width 192: "augue, vel eleifend augue erat"
       text run at (0,324) width 62: "eget ante."
 layer at (50,50) size 100x100
-  RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF00007F]
+  RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF000080]

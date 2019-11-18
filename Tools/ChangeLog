@@ -61,6 +61,19 @@
         (Testprinter.test_test_status_line): Ditto.
         (Testprinter.test_print_found): Ditto.
 
+2019-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix alpha value rounding to match the CSS Color spec
+        https://bugs.webkit.org/show_bug.cgi?id=203597
+        <rdar://problem/56728546>
+
+        Reviewed by Tim Horton.
+
+        Fix the test for rounding.
+
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects

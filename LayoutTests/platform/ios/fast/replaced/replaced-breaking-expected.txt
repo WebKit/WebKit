@@ -10,47 +10,47 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (1,51) size 27x27 [border: (1px solid #000000)]
         RenderImage {IMG} at (1,78) size 27x27 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (3,107) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (3,107) size 48x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 24x14
             RenderText at (0,0) size 24x14
               text run at (0,0) width 24: "input"
-        RenderButton {INPUT} at (3,131) size 48x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (3,131) size 48x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 24x14
             RenderText at (0,0) size 24x14
               text run at (0,0) width 24: "input"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {BUTTON} at (3,155) size 55x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {BUTTON} at (3,155) size 55x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 31x14
             RenderText {#text} at (0,0) size 31x14
               text run at (0,0) width 31: "button"
-        RenderButton {BUTTON} at (3,179) size 55x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {BUTTON} at (3,179) size 55x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 31x14
             RenderText {#text} at (0,0) size 31x14
               text run at (0,0) width 31: "button"
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (3,203) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (3,203) size 61x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
             RenderText at (0,0) size 29x14
               text run at (0,0) width 29: "select"
-        RenderMenuList {SELECT} at (3,227) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (3,227) size 61x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
             RenderText at (0,0) size 29x14
               text run at (0,0) width 29: "select"
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (3,251) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (3,251) size 61x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "
-        RenderMenuList {SELECT} at (3,275) size 61x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (3,275) size 61x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 49x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (3,300) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock {INPUT} at (3,322) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (3,300) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (3,322) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (3,344) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock {INPUT} at (3,366) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (3,344) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (3,366) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (0,0) size 0x0
         RenderIFrame {IFRAME} at (1,385) size 27x27 [border: (1px solid #000000)]
           layer at (0,0) size 25x25

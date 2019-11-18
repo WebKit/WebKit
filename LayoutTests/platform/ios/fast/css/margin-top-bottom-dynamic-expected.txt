@@ -35,13 +35,13 @@ layer at (0,0) size 800x600
             text run at (1,1) width 86: "Lorem ipsum"
       RenderBlock (anonymous) at (0,288) size 784x44
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 105x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (2,22) size 105x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 81x14
             RenderText at (0,0) size 81x14
               text run at (0,0) width 81: "Negative margin"
         RenderText {#text} at (108,21) size 5x19
           text run at (108,21) width 5: " "
-        RenderButton {INPUT} at (114,22) size 100x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (114,22) size 100x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 76x14
             RenderText at (0,0) size 76x14
               text run at (0,0) width 76: "Positive margin"
@@ -58,13 +58,13 @@ layer at (0,0) size 800x600
             text run at (1,1) width 86: "Lorem ipsum"
       RenderBlock (anonymous) at (0,460) size 784x44
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 105x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (2,22) size 105x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 81x14
             RenderText at (0,0) size 81x14
               text run at (0,0) width 81: "Negative margin"
         RenderText {#text} at (108,21) size 5x19
           text run at (108,21) width 5: " "
-        RenderButton {INPUT} at (114,22) size 100x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (114,22) size 100x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 76x14
             RenderText at (0,0) size 76x14
               text run at (0,0) width 76: "Positive margin"

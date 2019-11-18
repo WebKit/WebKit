@@ -1,18 +1,18 @@
 
-FAIL Property text-decoration-color has initial value rgba(2, 3, 4, 0.5) assert_equals: expected "rgba(2, 3, 4, 0.5)" but got "rgba(2, 3, 4, 0.498039)"
-FAIL Property text-decoration-color does not inherit assert_equals: expected "rgba(42, 53, 64, 0.75)" but got "rgba(42, 53, 64, 0.74902)"
+PASS Property text-decoration-color has initial value rgba(2, 3, 4, 0.5) 
+PASS Property text-decoration-color does not inherit 
 PASS Property text-decoration-line has initial value none 
 PASS Property text-decoration-line does not inherit 
 PASS Property text-decoration-style has initial value solid 
 PASS Property text-decoration-style does not inherit 
-FAIL Property text-emphasis-color has initial value rgba(2, 3, 4, 0.5) assert_equals: expected "rgba(2, 3, 4, 0.5)" but got "rgba(2, 3, 4, 0.498039)"
-FAIL Property text-emphasis-color inherits assert_equals: expected "rgba(42, 53, 64, 0.75)" but got "rgba(42, 53, 64, 0.74902)"
+PASS Property text-emphasis-color has initial value rgba(2, 3, 4, 0.5) 
+PASS Property text-emphasis-color inherits 
 PASS Property text-emphasis-position has initial value over right 
 PASS Property text-emphasis-position inherits 
 PASS Property text-emphasis-style has initial value none 
 FAIL Property text-emphasis-style inherits assert_equals: expected "triangle" but got "filled triangle"
 PASS Property text-shadow has initial value none 
-FAIL Property text-shadow inherits assert_equals: expected "rgba(42, 53, 64, 0.75) 10px 20px 0px" but got "rgba(42, 53, 64, 0.74902) 10px 20px 0px"
+PASS Property text-shadow inherits 
 PASS Property text-underline-position has initial value auto 
 PASS Property text-underline-position inherits 
 FAIL Property text-decoration-skip-ink has initial value auto assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false

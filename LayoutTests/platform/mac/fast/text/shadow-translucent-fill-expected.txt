@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (48,0) width 24: "A"
         RenderText {#text} at (72,0) size 24x24
           text run at (72,0) width 24: " "
-        RenderInline {SPAN} at (0,0) size 24x24 [color=#00000019]
+        RenderInline {SPAN} at (0,0) size 24x24 [color=#0000001A]
           RenderText {#text} at (96,0) size 24x24
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
             text run at (48,0) width 24: "A"
         RenderText {#text} at (72,0) size 24x24
           text run at (72,0) width 24: " "
-        RenderInline {SPAN} at (0,0) size 24x24 [color=#00000019]
+        RenderInline {SPAN} at (0,0) size 24x24 [color=#0000001A]
           RenderText {#text} at (96,0) size 24x24
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
             text run at (48,0) width 24: "A"
         RenderText {#text} at (72,0) size 24x24
           text run at (72,0) width 24: " "
-        RenderInline {SPAN} at (0,0) size 24x24 [color=#00000019]
+        RenderInline {SPAN} at (0,0) size 24x24 [color=#0000001A]
           RenderText {#text} at (96,0) size 24x24
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0

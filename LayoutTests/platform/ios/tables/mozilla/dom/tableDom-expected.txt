@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x25
-        RenderMenuList {SELECT} at (2,2) size 90x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (2,2) size 90x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 78x14
             RenderText at (0,0) size 57x14
               text run at (0,0) width 57: "append cell"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (558,2) size 44x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (603,1) size 21x19
           text run at (603,1) width 21: "     "
-        RenderButton {INPUT} at (625,2) size 49x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (625,2) size 49x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 24x14
             RenderText at (0,0) size 24x14
               text run at (0,0) width 24: "Do It"

@@ -16,7 +16,7 @@ PASS getComputedStyle(blur).left is "0px"
 PASS getComputedStyle(blur).top is "0px"
 PASS getComputedStyle(blur).width is "100px"
 PASS getComputedStyle(blur).height is "100px"
-PASS getComputedStyle(blur).backgroundColor is "rgba(0, 0, 0, 0.54902)"
+PASS getComputedStyle(blur).backgroundColor is "rgba(0, 0, 0, 0.55)"
 PASS getComputedStyle(blur).webkitBackdropFilter is "saturate(1.8) blur(17.5px)"
 
 Tint
@@ -27,7 +27,7 @@ PASS getComputedStyle(tint).left is "0px"
 PASS getComputedStyle(tint).top is "0px"
 PASS getComputedStyle(tint).width is "100px"
 PASS getComputedStyle(tint).height is "100px"
-PASS getComputedStyle(tint).backgroundColor is "rgba(255, 255, 255, 0.137255)"
+PASS getComputedStyle(tint).backgroundColor is "rgba(255, 255, 255, 0.14)"
 PASS getComputedStyle(tint).mixBlendMode is "lighten"
 PASS successfullyParsed is true
 

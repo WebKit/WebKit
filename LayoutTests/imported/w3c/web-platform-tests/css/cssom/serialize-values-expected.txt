@@ -5,7 +5,7 @@ PASS background-attachment: inherit
 PASS background-color: black 
 PASS background-color: red 
 PASS background-color: rgb(50, 75, 100) 
-FAIL background-color: rgba(5, 7, 10, 0.5) assert_equals: background-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS background-color: rgba(5, 7, 10, 0.5) 
 PASS background-color: transparent 
 PASS background-color: inherit 
 PASS background-image: url("http://localhost/") 
@@ -197,25 +197,25 @@ PASS border-spacing: inherit
 PASS border-top-color: black 
 PASS border-top-color: red 
 PASS border-top-color: rgb(50, 75, 100) 
-FAIL border-top-color: rgba(5, 7, 10, 0.5) assert_equals: border-top-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS border-top-color: rgba(5, 7, 10, 0.5) 
 PASS border-top-color: transparent 
 PASS border-top-color: inherit 
 PASS border-right-color: black 
 PASS border-right-color: red 
 PASS border-right-color: rgb(50, 75, 100) 
-FAIL border-right-color: rgba(5, 7, 10, 0.5) assert_equals: border-right-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS border-right-color: rgba(5, 7, 10, 0.5) 
 PASS border-right-color: transparent 
 PASS border-right-color: inherit 
 PASS border-bottom-color: black 
 PASS border-bottom-color: red 
 PASS border-bottom-color: rgb(50, 75, 100) 
-FAIL border-bottom-color: rgba(5, 7, 10, 0.5) assert_equals: border-bottom-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS border-bottom-color: rgba(5, 7, 10, 0.5) 
 PASS border-bottom-color: transparent 
 PASS border-bottom-color: inherit 
 PASS border-left-color: black 
 PASS border-left-color: red 
 PASS border-left-color: rgb(50, 75, 100) 
-FAIL border-left-color: rgba(5, 7, 10, 0.5) assert_equals: border-left-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS border-left-color: rgba(5, 7, 10, 0.5) 
 PASS border-left-color: transparent 
 PASS border-left-color: inherit 
 PASS border-top-style: none 
@@ -311,7 +311,7 @@ PASS clip: inherit
 PASS color: black 
 PASS color: red 
 PASS color: rgb(50, 75, 100) 
-FAIL color: rgba(5, 7, 10, 0.5) assert_equals: color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS color: rgba(5, 7, 10, 0.5) 
 PASS color: inherit 
 PASS content: normal 
 PASS content: none 
@@ -522,7 +522,7 @@ PASS orphans: inherit
 PASS outline-color: black 
 PASS outline-color: red 
 PASS outline-color: rgb(50, 75, 100) 
-FAIL outline-color: rgba(5, 7, 10, 0.5) assert_equals: outline-color raw inline style declaration expected "rgba(5, 7, 10, 0.5)" but got "rgba(5, 7, 10, 0.498039)"
+PASS outline-color: rgba(5, 7, 10, 0.5) 
 FAIL outline-color: invert assert_equals: outline-color raw inline style declaration expected "invert" but got ""
 PASS outline-color: inherit 
 PASS outline-style: none 

@@ -329,7 +329,7 @@ static bool parseColorIntOrPercentage(const CharacterType*& string, const Charac
 
     if (*current == '%') {
         expect = CSSUnitType::CSS_PERCENTAGE;
-        localValue = localValue / 100.0 * 256.0;
+        localValue = localValue / 100.0 * 255.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
@@ -400,7 +400,7 @@ static inline bool parseAlphaValue(const CharacterType*& string, const Character
     }
 
     if (isTenthAlpha(string, length - 1)) {
-        static const int tenthAlphaValues[] = { 0, 25, 51, 76, 102, 127, 153, 179, 204, 230 };
+        static const int tenthAlphaValues[] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230 };
         value = negative ? 0 : tenthAlphaValues[string[length - 2] - '0'];
         string = end;
         return true;
@@ -409,7 +409,9 @@ static inline bool parseAlphaValue(const CharacterType*& string, const Character
     double alpha = 0;
     if (!parseDouble(string, end, terminator, alpha))
         return false;
-    value = negative ? 0 : static_cast<int>(alpha * nextafter(256.0, 0.0));
+
+    // W3 standard stipulates a 2.55 alpha value multiplication factor.
+    value = negative ? 0 : static_cast<int>(lroundf(clampTo<double>(alpha, 0.0, 1.0) * 255.0f));
     string = end;
     return true;
 }

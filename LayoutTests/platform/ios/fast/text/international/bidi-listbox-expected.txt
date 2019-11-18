@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 102x19
           text run at (0,0) width 102: "1) direction: rtl;"
         RenderBR {BR} at (101,15) size 1x0
-        RenderMenuList {SELECT} at (2,22) size 86x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (2,22) size 86x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 74x14
             RenderText at (74,0) size 0x14
               text run at (74,0) width 0 RTL: " "
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,20) size 102x19
           text run at (0,20) width 102: "2) direction: ltr;"
         RenderBR {BR} at (101,35) size 1x0
-        RenderMenuList {SELECT} at (2,42) size 86x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (2,42) size 86x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 74x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,20) size 72x19
           text run at (0,20) width 72: "3) No style"
         RenderBR {BR} at (71,35) size 1x0
-        RenderMenuList {SELECT} at (2,42) size 86x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderMenuList {SELECT} at (2,42) size 86x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 74x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "

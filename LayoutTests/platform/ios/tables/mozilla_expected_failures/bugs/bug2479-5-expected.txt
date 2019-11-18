@@ -134,7 +134,7 @@ layer at (8,8) size 784x1539
               RenderBlock {P} at (1,17) size 429x69
                 RenderText {#text} at (0,0) size 263x19
                   text run at (0,0) width 263: "How does your browser fare on this test?"
-                RenderMenuList {SELECT} at (2,22) size 425x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderMenuList {SELECT} at (2,22) size 425x20 [color=#000000] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (6,3) size 413x14
                     RenderText at (0,0) size 197x14
                       text run at (0,0) width 197: "Document renders exactly as described."
@@ -145,7 +145,7 @@ layer at (8,8) size 784x1539
                   RenderTextControl {INPUT} at (73,46) size 136x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                 RenderText {#text} at (210,45) size 5x19
                   text run at (210,45) width 5: " "
-                RenderButton {INPUT} at (216,46) size 60x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderButton {INPUT} at (216,46) size 60x20 [color=#000000] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (12,3) size 35x14
                     RenderText at (0,0) size 35x14
                       text run at (0,0) width 35: "Submit"

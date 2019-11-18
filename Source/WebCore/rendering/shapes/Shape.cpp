@@ -192,7 +192,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         RELEASE_ASSERT(pixelArray);
         unsigned pixelArrayLength = pixelArray->length();
         unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
-        uint8_t alphaPixelThreshold = threshold * 255;
+        uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
 
         int minBufferY = std::max(0, marginRect.y() - imageRect.y());
         int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());

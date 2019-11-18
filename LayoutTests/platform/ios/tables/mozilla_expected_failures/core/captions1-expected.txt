@@ -13,7 +13,7 @@ layer at (0,0) size 800x1141
         RenderBlock {CAPTION} at (10,72) size 81x28 [border: (3px solid #800080)]
           RenderText {#text} at (6,5) size 48x19
             text run at (6,5) width 48: "caption"
-          RenderBlock {INPUT} at (55,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock {INPUT} at (55,6) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderTableSection {TBODY} at (10,10) size 71x50
           RenderTableRow {TR} at (0,2) size 71x22
             RenderTableCell {TD} at (2,2) size 33x22 [r=0 c=0 rs=1 cs=1]
@@ -36,7 +36,7 @@ layer at (0,0) size 800x1141
         RenderBlock {CAPTION} at (10,72) size 81x48 [border: (3px solid #800080)]
           RenderText {#text} at (6,5) size 48x19
             text run at (6,5) width 48: "caption"
-          RenderBlock {INPUT} at (55,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock {INPUT} at (55,6) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderText {#text} at (16,25) size 48x19
             text run at (16,25) width 48: "foo foo"
         RenderTableSection {TBODY} at (10,10) size 71x50
@@ -61,7 +61,7 @@ layer at (0,0) size 800x1141
         RenderBlock {CAPTION} at (10,72) size 141x48 [border: (3px solid #800080)]
           RenderText {#text} at (36,5) size 48x19
             text run at (36,5) width 48: "caption"
-          RenderBlock {INPUT} at (85,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock {INPUT} at (85,6) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderText {#text} at (3,25) size 145x19
             text run at (3,25) width 145: "very_large_very_large"
         RenderTableSection {TBODY} at (10,10) size 131x50
@@ -108,7 +108,7 @@ layer at (0,0) size 800x1141
         RenderBlock {CAPTION} at (10,72) size 128x28 [border: (3px solid #800080)]
           RenderText {#text} at (29,5) size 49x19
             text run at (29,5) width 49: "caption"
-          RenderBlock {INPUT} at (79,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock {INPUT} at (79,6) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderTableSection {TBODY} at (10,10) size 118x50
           RenderTableRow {TR} at (0,2) size 118x22
             RenderTableCell {TD} at (2,2) size 79x22 [r=0 c=0 rs=1 cs=1]
@@ -138,7 +138,7 @@ layer at (0,0) size 800x1141
         RenderBlock {CAPTION} at (10,96) size 97x28 [border: (3px solid #800080)]
           RenderText {#text} at (14,5) size 48x19
             text run at (14,5) width 48: "caption"
-          RenderBlock {INPUT} at (63,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock {INPUT} at (63,6) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderTableSection {TBODY} at (10,36) size 87x48
           RenderTableRow {TR} at (0,0) size 87x22
             RenderTableCell {TD} at (2,0) size 49x22 [r=0 c=0 rs=1 cs=1]

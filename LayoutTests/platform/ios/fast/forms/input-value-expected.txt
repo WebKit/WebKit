@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 252x19
                   text run at (1,1) width 252: "check box with value property changed"
               RenderTableCell {TD} at (395,58) size 240x24 [r=2 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderTableCell {TD} at (636,59) size 63x22 [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 228x19
                   text run at (1,1) width 228: "button with value property changed"
               RenderTableCell {TD} at (395,108) size 240x26 [r=4 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 47x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderButton {INPUT} at (3,3) size 47x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (12,3) size 23x14
                     RenderText at (0,0) size 23x14
                       text run at (0,0) width 23: "after"
@@ -109,7 +109,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 220x19
                   text run at (1,1) width 220: "radio with value property changed"
               RenderTableCell {TD} at (395,160) size 240x24 [r=6 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderTableCell {TD} at (636,161) size 63x22 [r=6 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -133,7 +133,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 252x19
                   text run at (1,1) width 252: "check box with value attribute changed"
               RenderTableCell {TD} at (395,215) size 240x24 [r=8 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderTableCell {TD} at (636,216) size 63x22 [r=8 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -145,7 +145,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 390x19
                   text run at (1,1) width 390: "text with value property changed, then turned into check box"
               RenderTableCell {TD} at (395,241) size 240x24 [r=9 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderTableCell {TD} at (636,242) size 63x22 [r=9 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -169,7 +169,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 389x19
                   text run at (1,1) width 389: "text with value attribute changed, then turned into check box"
               RenderTableCell {TD} at (395,296) size 240x24 [r=11 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderTableCell {TD} at (636,297) size 63x22 [r=11 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -194,7 +194,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 208: "file with value property changed"
               RenderTableCell {TD} at (395,351) size 240x26 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 233x20 "no file selected"
-                  RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                  RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                     RenderBlock (anonymous) at (12,3) size 59x14
                       RenderText at (0,0) size 59x14
                         text run at (0,0) width 59: "Choose File"

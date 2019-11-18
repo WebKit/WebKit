@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                   text run at (390,1) width 142: "I agree with the program"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (532,82) size 77x24 [r=1 c=1 rs=1 cs=1]
-              RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderTableRow {TR} at (0,106) size 784x24
             RenderTableCell {TD} at (0,109) size 533x18 [r=2 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 153x15
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                   text run at (379,1) width 153: "I think vouchers are wrong"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (532,106) size 77x24 [r=2 c=1 rs=1 cs=1]
-              RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderTableRow {TR} at (0,130) size 784x26
             RenderTableCell {TD} at (0,134) size 609x18 [r=3 c=0 rs=1 cs=2]
               RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
               RenderInline {FONT} at (0,0) size 1x15
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (608,130) size 177x26 [r=3 c=2 rs=1 cs=2]
-              RenderButton {INPUT} at (65,3) size 46x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderButton {INPUT} at (65,3) size 46x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (12,3) size 21x14
                   RenderText at (0,0) size 21x14
                     text run at (0,0) width 21: "vote"

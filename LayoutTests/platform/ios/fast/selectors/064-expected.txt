@@ -10,7 +10,7 @@ layer at (0,0) size 800x92
               text run at (0,0) width 286: "This text should turn green while it is active."
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,36) size 784x24 [color=#00FF00]
-          RenderButton {BUTTON} at (2,2) size 237x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderButton {BUTTON} at (2,2) size 237x20 [color=#000000] [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
             RenderBlock (anonymous) at (12,3) size 213x14
               RenderText {#text} at (0,0) size 213x14
                 text run at (0,0) width 213: "This text should turn green while it is active."

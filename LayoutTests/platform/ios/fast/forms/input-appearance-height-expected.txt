@@ -21,14 +21,14 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (171,41) size 1x0
         RenderText {#text} at (0,52) size 66x19
           text run at (0,52) width 66: "checkbox "
-        RenderBlock {INPUT} at (67,53) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (67,53) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (85,52) size 5x19
           text run at (85,52) width 5: " "
         RenderBR {BR} at (89,67) size 1x0
         RenderText {#text} at (0,73) size 26x19
           text run at (0,73) width 26: "file "
         RenderFileUploadControl {INPUT} at (27,74) size 234x20 "no file selected"
-          RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderButton {INPUT} at (0,0) size 83x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
             RenderBlock (anonymous) at (12,3) size 59x14
               RenderText at (0,0) size 59x14
                 text run at (0,0) width 59: "Choose File"
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (57,111) size 1x0
         RenderText {#text} at (0,118) size 37x19
           text run at (0,118) width 37: "radio "
-        RenderBlock {INPUT} at (38,119) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock {INPUT} at (38,119) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
         RenderText {#text} at (56,118) size 5x19
           text run at (56,118) width 5: " "
         RenderBR {BR} at (60,133) size 1x0
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (176,156) size 1x0
         RenderText {#text} at (0,162) size 35x19
           text run at (0,162) width 35: "reset "
-        RenderButton {INPUT} at (36,163) size 53x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (36,163) size 53x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 29x14
             RenderText at (0,0) size 29x14
               text run at (0,0) width 29: "Reset"
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (94,177) size 1x0
         RenderText {#text} at (0,186) size 48x19
           text run at (0,186) width 48: "submit "
-        RenderButton {INPUT} at (49,187) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (49,187) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 35x14
             RenderText at (0,0) size 35x14
               text run at (0,0) width 35: "Submit"

@@ -14,7 +14,7 @@ layer at (0,0) size 800x640
             text run at (128,0) width 108: "text"
         RenderText {#text} at (235,0) size 18x60
           text run at (235,0) width 18: " "
-        RenderInline {SPAN} at (0,0) size 140x60 [color=#0000004C]
+        RenderInline {SPAN} at (0,0) size 140x60 [color=#0000004D]
           RenderText {#text} at (252,0) size 140x60
             text run at (252,0) width 140: "casts"
         RenderText {#text} at (391,0) size 17x60

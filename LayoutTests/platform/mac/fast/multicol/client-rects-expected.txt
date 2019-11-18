@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x29
         RenderText {#text} at (0,11) size 431x18
           text run at (0,11) width 431: "The blue borders should coincide with light blue squares, like this: "
-        RenderBlock {SPAN} at (430,0) size 26x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
+        RenderBlock {SPAN} at (430,0) size 26x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF80)]
         RenderText {#text} at (455,11) size 200x18
           text run at (455,11) width 9: ". "
           text run at (463,11) width 192: "There should be none of this: "
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (679,11) size 54x18
           text run at (679,11) width 5: " "
           text run at (683,11) width 50: "or this: "
-        RenderBlock {SPAN} at (732,0) size 26x25 [border: (3px solid #0000FF7F)]
+        RenderBlock {SPAN} at (732,0) size 26x25 [border: (3px solid #0000FF80)]
         RenderText {#text} at (757,11) size 5x18
           text run at (757,11) width 5: "."
       RenderBlock (anonymous) at (0,45) size 784x357
@@ -284,86 +284,86 @@ layer at (551,298) size 65x48
   RenderMultiColumnFlowThread at (8,8) size 65x48
     RenderBlock {DIV} at (40,0) size 25x25 [bgcolor=#ADD8E6]
 layer at (16,96) size 25x25
-  RenderBlock (positioned) {DIV} at (16,96) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (16,96) size 25x25 [border: (3px solid #0000FF80)]
 layer at (69,71) size 25x25
-  RenderBlock (positioned) {DIV} at (68,71) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (68,71) size 26x25 [border: (3px solid #0000FF80)]
 layer at (69,96) size 25x25
-  RenderBlock (positioned) {DIV} at (68,96) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (68,96) size 26x25 [border: (3px solid #0000FF80)]
 layer at (136,96) size 25x25
-  RenderBlock (positioned) {DIV} at (136,96) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (136,96) size 25x25 [border: (3px solid #0000FF80)]
 layer at (189,71) size 25x25
-  RenderBlock (positioned) {DIV} at (188,71) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (188,71) size 26x25 [border: (3px solid #0000FF80)]
 layer at (189,96) size 25x25
-  RenderBlock (positioned) {DIV} at (188,96) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (188,96) size 26x25 [border: (3px solid #0000FF80)]
 layer at (256,96) size 25x25
-  RenderBlock (positioned) {DIV} at (256,96) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (256,96) size 25x25 [border: (3px solid #0000FF80)]
 layer at (309,71) size 25x25
-  RenderBlock (positioned) {DIV} at (308,71) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (308,71) size 26x25 [border: (3px solid #0000FF80)]
 layer at (309,96) size 25x25
-  RenderBlock (positioned) {DIV} at (308,96) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (308,96) size 26x25 [border: (3px solid #0000FF80)]
 layer at (429,71) size 25x25
-  RenderBlock (positioned) {DIV} at (428,71) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (428,71) size 26x25 [border: (3px solid #0000FF80)]
 layer at (429,96) size 25x25
-  RenderBlock (positioned) {DIV} at (428,96) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (428,96) size 26x25 [border: (3px solid #0000FF80)]
 layer at (551,91) size 25x25
-  RenderBlock (positioned) {DIV} at (550,91) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (550,91) size 26x25 [border: (3px solid #0000FF80)]
 layer at (669,91) size 25x25
-  RenderBlock (positioned) {DIV} at (668,91) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (668,91) size 26x25 [border: (3px solid #0000FF80)]
 layer at (69,208) size 25x25
-  RenderBlock (positioned) {DIV} at (68,208) size 26x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (68,208) size 26x25 [border: (3px solid #0000FF80)]
 layer at (171,178) size 25x25
-  RenderBlock (positioned) {DIV} at (171,178) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (171,178) size 25x25 [border: (3px solid #0000FF80)]
 layer at (146,231) size 25x25
-  RenderBlock (positioned) {DIV} at (146,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (146,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (171,231) size 25x25
-  RenderBlock (positioned) {DIV} at (171,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (171,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (261,178) size 25x25
-  RenderBlock (positioned) {DIV} at (261,178) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (261,178) size 25x25 [border: (3px solid #0000FF80)]
 layer at (236,231) size 25x25
-  RenderBlock (positioned) {DIV} at (236,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (236,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (261,231) size 25x25
-  RenderBlock (positioned) {DIV} at (261,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (261,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (351,178) size 25x25
-  RenderBlock (positioned) {DIV} at (351,178) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (351,178) size 25x25 [border: (3px solid #0000FF80)]
 layer at (326,231) size 25x25
-  RenderBlock (positioned) {DIV} at (326,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (326,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (351,231) size 25x25
-  RenderBlock (positioned) {DIV} at (351,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (351,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (416,231) size 25x25
-  RenderBlock (positioned) {DIV} at (416,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (416,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (441,231) size 25x25
-  RenderBlock (positioned) {DIV} at (441,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (441,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (508,233) size 25x25
-  RenderBlock (positioned) {DIV} at (508,232) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (508,232) size 25x26 [border: (3px solid #0000FF80)]
 layer at (596,231) size 25x25
-  RenderBlock (positioned) {DIV} at (596,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (596,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (676,231) size 25x25
-  RenderBlock (positioned) {DIV} at (676,230) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (676,230) size 25x26 [border: (3px solid #0000FF80)]
 layer at (26,298) size 25x25
-  RenderBlock (positioned) {DIV} at (26,298) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (26,298) size 25x25 [border: (3px solid #0000FF80)]
 layer at (51,351) size 25x25
-  RenderBlock (positioned) {DIV} at (51,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (51,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (26,351) size 25x25
-  RenderBlock (positioned) {DIV} at (26,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (26,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (116,298) size 25x25
-  RenderBlock (positioned) {DIV} at (116,298) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (116,298) size 25x25 [border: (3px solid #0000FF80)]
 layer at (141,351) size 25x25
-  RenderBlock (positioned) {DIV} at (141,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (141,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (116,351) size 25x25
-  RenderBlock (positioned) {DIV} at (116,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (116,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (206,298) size 25x25
-  RenderBlock (positioned) {DIV} at (206,298) size 25x25 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (206,298) size 25x25 [border: (3px solid #0000FF80)]
 layer at (231,351) size 25x25
-  RenderBlock (positioned) {DIV} at (231,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (231,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (206,351) size 25x25
-  RenderBlock (positioned) {DIV} at (206,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (206,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (321,351) size 25x25
-  RenderBlock (positioned) {DIV} at (321,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (321,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (296,351) size 25x25
-  RenderBlock (positioned) {DIV} at (296,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (296,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (409,353) size 25x25
-  RenderBlock (positioned) {DIV} at (409,352) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (409,352) size 25x26 [border: (3px solid #0000FF80)]
 layer at (501,351) size 25x25
-  RenderBlock (positioned) {DIV} at (501,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (501,350) size 25x26 [border: (3px solid #0000FF80)]
 layer at (601,351) size 25x25
-  RenderBlock (positioned) {DIV} at (601,350) size 25x26 [border: (3px solid #0000FF7F)]
+  RenderBlock (positioned) {DIV} at (601,350) size 25x26 [border: (3px solid #0000FF80)]

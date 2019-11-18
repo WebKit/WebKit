@@ -8,6 +8,6 @@ PASS rgb(0, 128, 0) for <div style='background: green;' id=selected><span style=
 PASS rgb(0, 128, 0) for <div style='background: green;' id=selected><span style='background-color: yellow'>hello</span><span style='background-color: blue'> world</span></div>
 PASS rgb(255, 255, 0) for <div style='background: green;'><span style='background-color: yellow' id=selected>hello world</span></div>
 PASS rgb(0, 128, 0) for <div style='background: green;'><span style='background-color: rgba(255, 255, 0, 0);' id=selected>hello world</span></div>
-PASS rgba(255, 255, 0, 0.498039) for <div style='background: green;'><span style='background-color: rgba(255, 255, 0, 0.5);' id=selected>hello world</span></div>
+PASS rgba(255, 255, 0, 0.5) for <div style='background: green;'><span style='background-color: rgba(255, 255, 0, 0.5);' id=selected>hello world</span></div>
 
 

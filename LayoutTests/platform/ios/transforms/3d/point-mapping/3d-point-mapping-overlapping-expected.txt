@@ -35,4 +35,4 @@ layer at (73,63) size 200x200
 layer at (124,114) size 100x100
   RenderBlock (relative positioned) {DIV} at (51,51) size 100x100 [bgcolor=#0000FF]
 layer at (22,22) size 150x300
-  RenderBlock (positioned) {DIV} at (1,1) size 150x300 [bgcolor=#0080004C]
+  RenderBlock (positioned) {DIV} at (1,1) size 150x300 [bgcolor=#0080004D]

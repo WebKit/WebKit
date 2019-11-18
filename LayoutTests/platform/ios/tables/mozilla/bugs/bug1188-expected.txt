@@ -19,14 +19,14 @@ layer at (0,0) size 800x600
                       text run at (56,5) width 128: "Search the Web with"
                 RenderText {#text} at (183,2) size 5x19
                   text run at (183,2) width 5: " "
-                RenderMenuList {SELECT} at (189,3) size 80x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderMenuList {SELECT} at (189,3) size 80x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (6,3) size 67x14
                     RenderText at (0,0) size 47x14
                       text run at (0,0) width 47: "Netscape"
                 RenderTextControl {INPUT} at (272,3) size 197x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                 RenderText {#text} at (470,2) size 5x19
                   text run at (470,2) width 5: " "
-                RenderButton {INPUT} at (476,3) size 60x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                RenderButton {INPUT} at (476,3) size 60x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (12,3) size 35x14
                     RenderText at (0,0) size 35x14
                       text run at (0,0) width 35: "Search"

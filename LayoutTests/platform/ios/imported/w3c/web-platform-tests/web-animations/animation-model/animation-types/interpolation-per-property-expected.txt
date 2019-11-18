@@ -59,12 +59,12 @@ PASS border-top-width (type: length) has testInterpolation function
 PASS border-top-width supports animating as a length 
 PASS border-top-width supports animating as a length of rem 
 PASS box-shadow (type: boxShadowList) has testInterpolation function 
-FAIL box-shadow: from none to other assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
-FAIL box-shadow: from other to none assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
+PASS box-shadow: from none to other 
+PASS box-shadow: from other to none 
 PASS box-shadow: single shadow 
 PASS box-shadow: shadow list 
-FAIL box-shadow: mismatched list length (from shorter to longer) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
-FAIL box-shadow: mismatched list length (from longer to shorter) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.5) 5px 5px 5px 0px" but got "rgb(150, 150, 150) 15px 15px 15px 10px, rgba(100, 100, 100, 0.501961) 5px 5px 5px 0px"
+PASS box-shadow: mismatched list length (from shorter to longer) 
+PASS box-shadow: mismatched list length (from longer to shorter) 
 PASS box-shadow: with currentcolor 
 PASS caret-color (type: color) has testInterpolation function 
 PASS caret-color supports animating as color of rgb() 
@@ -216,12 +216,12 @@ FAIL stroke-miterlimit supports animating as a positive number assert_equals: Th
 PASS stroke-opacity (type: opacity) has testInterpolation function 
 FAIL stroke-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
 PASS text-shadow (type: textShadowList) has testInterpolation function 
-FAIL text-shadow: from none to other assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px"
-FAIL text-shadow: from other to none assert_equals: The value should be rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgba(100, 100, 100, 0.501961) 5px 5px 5px"
+PASS text-shadow: from none to other 
+PASS text-shadow: from other to none 
 PASS text-shadow: single shadow 
 PASS text-shadow: shadow list 
-FAIL text-shadow: mismatched list length (from longer to shorter) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.501961) 5px 5px 5px"
-FAIL text-shadow: mismatched list length (from shorter to longer) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.501961) 5px 5px 5px"
+PASS text-shadow: mismatched list length (from longer to shorter) 
+PASS text-shadow: mismatched list length (from shorter to longer) 
 PASS text-shadow: with currentcolor 
 PASS transform (type: transformList) has testInterpolation function 
 PASS transform: translate 

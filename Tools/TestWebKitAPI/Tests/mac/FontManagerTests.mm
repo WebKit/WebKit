@@ -473,7 +473,7 @@ TEST(FontManagerTests, AddFontShadowUsingFontOptions)
     options.shadowHeight = -3;
     options.hasShadow = YES;
 
-    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.333333) 3px -3px 0px", [webView stylePropertyAtSelectionStart:@"text-shadow"]);
+    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.333) 3px -3px 0px", [webView stylePropertyAtSelectionStart:@"text-shadow"]);
     [webView waitForNextPresentationUpdate];
     NSShadow *shadow = [webView typingAttributes][NSShadowAttributeName];
     EXPECT_EQ(shadow.shadowOffset.width, 3);

@@ -21,13 +21,13 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 245: "foo bar foo bar foo bar foo bar foo bar"
       RenderBlock (anonymous) at (0,68) size 784x45
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (2,22) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 35x14
             RenderText at (0,0) size 35x14
               text run at (0,0) width 35: "Reload"
         RenderText {#text} at (62,21) size 9x19
           text run at (62,21) width 9: "  "
-        RenderButton {INPUT} at (72,22) size 89x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (72,22) size 89x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (12,3) size 64x14
             RenderText at (0,0) size 64x14
               text run at (0,0) width 64: "Change Font"

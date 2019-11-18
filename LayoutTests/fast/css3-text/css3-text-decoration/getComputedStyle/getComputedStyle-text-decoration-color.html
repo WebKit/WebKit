@@ -62,13 +62,13 @@ debug("Valid value 'rgb(0, 255, 0)':");
 testValue("rgb(0, 255, 0)", "rgb(0, 255, 0)", "[object CSSPrimitiveValue]", "rgb(0, 255, 0)", "[object CSSPrimitiveValue]");
 
 debug("Valid value 'rgba(100, 100, 100, 0.5)':");
-testValue("rgba(100, 100, 100, 0.5)", "rgba(100, 100, 100, 0.498039)", "[object CSSPrimitiveValue]", "rgba(100, 100, 100, 0.498039)", "[object CSSPrimitiveValue]");
+testValue("rgba(100, 100, 100, 0.5)", "rgba(100, 100, 100, 0.5)", "[object CSSPrimitiveValue]", "rgba(100, 100, 100, 0.5)", "[object CSSPrimitiveValue]");
 
 debug("Valid value 'hsl(240, 100%, 50%)':");
 testValue("hsl(240, 100%, 50%)", "rgb(0, 0, 255)", "[object CSSPrimitiveValue]", "rgb(0, 0, 255)", "[object CSSPrimitiveValue]");
 
 debug("Valid value 'hsla(240, 100%, 50%, 0.5)':");
-testValue("hsla(240, 100%, 50%, 0.5)", "rgba(0, 0, 255, 0.498039)", "[object CSSPrimitiveValue]", "rgba(0, 0, 255, 0.498039)", "[object CSSPrimitiveValue]");
+testValue("hsla(240, 100%, 50%, 0.5)", "rgba(0, 0, 255, 0.5)", "[object CSSPrimitiveValue]", "rgba(0, 0, 255, 0.5)", "[object CSSPrimitiveValue]");
 
 debug("Initial value:");
 testValue("initial", "initial", "[object CSSValue]", "rgb(0, 0, 0)", "[object CSSPrimitiveValue]");

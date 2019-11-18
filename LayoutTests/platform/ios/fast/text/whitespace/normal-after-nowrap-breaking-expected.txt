@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,0) size 50x34
               RenderText {#text} at (50,19) size 4x19
                 text run at (50,19) width 4: " "
-              RenderBlock {INPUT} at (56,20) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,20) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (74,19) size 47x19
                   text run at (74,19) width 47: "Classic"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (124,0) size 51x34
               RenderText {#text} at (174,19) size 5x19
                 text run at (174,19) width 5: " "
-              RenderBlock {INPUT} at (180,20) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (180,20) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (198,19) size 42x19
                   text run at (198,19) width 42: "Africa"
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (243,0) size 51x34
               RenderText {#text} at (293,19) size 5x19
                 text run at (293,19) width 5: " "
-              RenderBlock {INPUT} at (299,20) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (299,20) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (317,19) size 127x19
                   text run at (317,19) width 127: "Alexander's Empire"
@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (447,0) size 51x34
               RenderText {#text} at (497,19) size 5x19
                 text run at (497,19) width 5: " "
-              RenderBlock {INPUT} at (503,20) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (503,20) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (521,19) size 101x19
                   text run at (521,19) width 101: "Ancient Greece"
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (625,0) size 51x34
               RenderText {#text} at (675,19) size 5x19
                 text run at (675,19) width 5: " "
-              RenderBlock {INPUT} at (681,20) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (681,20) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 48x19
                 RenderText {#text} at (699,19) size 48x19
                   text run at (699,19) width 48: "Classic"
@@ -81,7 +81,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,39) size 50x34
               RenderText {#text} at (50,58) size 4x19
                 text run at (50,58) width 4: " "
-              RenderBlock {INPUT} at (56,59) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,59) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 41x19
                 RenderText {#text} at (74,58) size 41x19
                   text run at (74,58) width 41: "Africa"
@@ -95,7 +95,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (118,39) size 51x34
               RenderText {#text} at (168,58) size 5x19
                 text run at (168,58) width 5: " "
-              RenderBlock {INPUT} at (174,59) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (174,59) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 128x19
                 RenderText {#text} at (192,58) size 128x19
                   text run at (192,58) width 128: "Alexander's Empire"
@@ -109,7 +109,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (323,39) size 51x34
               RenderText {#text} at (373,58) size 5x19
                 text run at (373,58) width 5: " "
-              RenderBlock {INPUT} at (379,59) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (379,59) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (397,58) size 101x19
                   text run at (397,58) width 101: "Ancient Greece"
@@ -123,7 +123,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (501,39) size 51x34
               RenderText {#text} at (551,58) size 5x19
                 text run at (551,58) width 5: " "
-              RenderBlock {INPUT} at (557,59) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (557,59) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (575,58) size 47x19
                   text run at (575,58) width 47: "Classic"
@@ -137,7 +137,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (625,39) size 51x34
               RenderText {#text} at (675,58) size 5x19
                 text run at (675,58) width 5: " "
-              RenderBlock {INPUT} at (681,59) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (681,59) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (699,58) size 42x19
                   text run at (699,58) width 42: "Africa"
@@ -150,7 +150,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,78) size 50x34
               RenderText {#text} at (50,97) size 4x19
                 text run at (50,97) width 4: " "
-              RenderBlock {INPUT} at (56,98) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,98) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,97) size 127x19
                   text run at (74,97) width 127: "Alexander's Empire"
@@ -164,7 +164,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,78) size 51x34
               RenderText {#text} at (254,97) size 5x19
                 text run at (254,97) width 5: " "
-              RenderBlock {INPUT} at (260,98) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,98) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,97) size 101x19
                   text run at (278,97) width 101: "Ancient Greece"
@@ -178,7 +178,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,78) size 51x34
               RenderText {#text} at (432,97) size 5x19
                 text run at (432,97) width 5: " "
-              RenderBlock {INPUT} at (438,98) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,98) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,97) size 47x19
                   text run at (456,97) width 47: "Classic"
@@ -192,7 +192,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,78) size 51x34
               RenderText {#text} at (556,97) size 5x19
                 text run at (556,97) width 5: " "
-              RenderBlock {INPUT} at (562,98) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,98) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,97) size 42x19
                   text run at (580,97) width 42: "Africa"
@@ -205,7 +205,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,117) size 50x34
               RenderText {#text} at (50,136) size 4x19
                 text run at (50,136) width 4: " "
-              RenderBlock {INPUT} at (56,137) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,137) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,136) size 127x19
                   text run at (74,136) width 127: "Alexander's Empire"
@@ -219,7 +219,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,117) size 51x34
               RenderText {#text} at (254,136) size 5x19
                 text run at (254,136) width 5: " "
-              RenderBlock {INPUT} at (260,137) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,137) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,136) size 101x19
                   text run at (278,136) width 101: "Ancient Greece"
@@ -233,7 +233,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,117) size 51x34
               RenderText {#text} at (432,136) size 5x19
                 text run at (432,136) width 5: " "
-              RenderBlock {INPUT} at (438,137) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,137) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,136) size 47x19
                   text run at (456,136) width 47: "Classic"
@@ -247,7 +247,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,117) size 51x34
               RenderText {#text} at (556,136) size 5x19
                 text run at (556,136) width 5: " "
-              RenderBlock {INPUT} at (562,137) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,137) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,136) size 42x19
                   text run at (580,136) width 42: "Africa"
@@ -260,7 +260,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,156) size 50x34
               RenderText {#text} at (50,175) size 4x19
                 text run at (50,175) width 4: " "
-              RenderBlock {INPUT} at (56,176) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,176) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,175) size 127x19
                   text run at (74,175) width 127: "Alexander's Empire"
@@ -274,7 +274,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,156) size 51x34
               RenderText {#text} at (254,175) size 5x19
                 text run at (254,175) width 5: " "
-              RenderBlock {INPUT} at (260,176) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,176) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,175) size 101x19
                   text run at (278,175) width 101: "Ancient Greece"
@@ -288,7 +288,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,156) size 51x34
               RenderText {#text} at (432,175) size 5x19
                 text run at (432,175) width 5: " "
-              RenderBlock {INPUT} at (438,176) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,176) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,175) size 47x19
                   text run at (456,175) width 47: "Classic"
@@ -302,7 +302,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,156) size 51x34
               RenderText {#text} at (556,175) size 5x19
                 text run at (556,175) width 5: " "
-              RenderBlock {INPUT} at (562,176) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,176) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,175) size 42x19
                   text run at (580,175) width 42: "Africa"
@@ -315,7 +315,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,195) size 50x34
               RenderText {#text} at (50,214) size 4x19
                 text run at (50,214) width 4: " "
-              RenderBlock {INPUT} at (56,215) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,215) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,214) size 127x19
                   text run at (74,214) width 127: "Alexander's Empire"
@@ -329,7 +329,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,195) size 51x34
               RenderText {#text} at (254,214) size 5x19
                 text run at (254,214) width 5: " "
-              RenderBlock {INPUT} at (260,215) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,215) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,214) size 101x19
                   text run at (278,214) width 101: "Ancient Greece"
@@ -343,7 +343,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,195) size 51x34
               RenderText {#text} at (432,214) size 5x19
                 text run at (432,214) width 5: " "
-              RenderBlock {INPUT} at (438,215) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,215) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,214) size 47x19
                   text run at (456,214) width 47: "Classic"
@@ -357,7 +357,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,195) size 51x34
               RenderText {#text} at (556,214) size 5x19
                 text run at (556,214) width 5: " "
-              RenderBlock {INPUT} at (562,215) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,215) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,214) size 42x19
                   text run at (580,214) width 42: "Africa"
@@ -370,7 +370,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,234) size 50x34
               RenderText {#text} at (50,253) size 4x19
                 text run at (50,253) width 4: " "
-              RenderBlock {INPUT} at (56,254) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,254) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,253) size 127x19
                   text run at (74,253) width 127: "Alexander's Empire"
@@ -384,7 +384,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,234) size 51x34
               RenderText {#text} at (254,253) size 5x19
                 text run at (254,253) width 5: " "
-              RenderBlock {INPUT} at (260,254) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,254) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,253) size 101x19
                   text run at (278,253) width 101: "Ancient Greece"
@@ -398,7 +398,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,234) size 51x34
               RenderText {#text} at (432,253) size 5x19
                 text run at (432,253) width 5: " "
-              RenderBlock {INPUT} at (438,254) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,254) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,253) size 47x19
                   text run at (456,253) width 47: "Classic"
@@ -412,7 +412,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,234) size 51x34
               RenderText {#text} at (556,253) size 5x19
                 text run at (556,253) width 5: " "
-              RenderBlock {INPUT} at (562,254) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,254) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,253) size 42x19
                   text run at (580,253) width 42: "Africa"
@@ -425,7 +425,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,273) size 50x34
               RenderText {#text} at (50,292) size 4x19
                 text run at (50,292) width 4: " "
-              RenderBlock {INPUT} at (56,293) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,293) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,292) size 127x19
                   text run at (74,292) width 127: "Alexander's Empire"
@@ -439,7 +439,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,273) size 51x34
               RenderText {#text} at (254,292) size 5x19
                 text run at (254,292) width 5: " "
-              RenderBlock {INPUT} at (260,293) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,293) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,292) size 101x19
                   text run at (278,292) width 101: "Ancient Greece"
@@ -453,7 +453,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (382,273) size 51x34
               RenderText {#text} at (432,292) size 5x19
                 text run at (432,292) width 5: " "
-              RenderBlock {INPUT} at (438,293) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (438,293) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 47x19
                 RenderText {#text} at (456,292) size 47x19
                   text run at (456,292) width 47: "Classic"
@@ -467,7 +467,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (506,273) size 51x34
               RenderText {#text} at (556,292) size 5x19
                 text run at (556,292) width 5: " "
-              RenderBlock {INPUT} at (562,293) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (562,293) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 42x19
                 RenderText {#text} at (580,292) size 42x19
                   text run at (580,292) width 42: "Africa"
@@ -480,7 +480,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (0,312) size 50x34
               RenderText {#text} at (50,331) size 4x19
                 text run at (50,331) width 4: " "
-              RenderBlock {INPUT} at (56,332) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (56,332) size 16x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 127x19
                 RenderText {#text} at (74,331) size 127x19
                   text run at (74,331) width 127: "Alexander's Empire"
@@ -494,7 +494,7 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (204,312) size 51x34
               RenderText {#text} at (254,331) size 5x19
                 text run at (254,331) width 5: " "
-              RenderBlock {INPUT} at (260,332) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderBlock {INPUT} at (260,332) size 17x16 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
               RenderInline {LABEL} at (0,0) size 101x19
                 RenderText {#text} at (278,331) size 101x19
                   text run at (278,331) width 101: "Ancient Greece"

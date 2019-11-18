@@ -45,12 +45,12 @@ PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText 
 PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 255, 0)'
 
 Valid value 'rgba(100, 100, 100, 0.5)':
-PASS e.style.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.498039)'
+PASS e.style.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.5)'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
-PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.498039)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.5)'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.498039)'
-PASS computedStyle.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.498039)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.5)'
+PASS computedStyle.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.5)'
 
 Valid value 'hsl(240, 100%, 50%)':
 PASS e.style.webkitTextDecorationColor is 'rgb(0, 0, 255)'
@@ -61,12 +61,12 @@ PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText 
 PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 255)'
 
 Valid value 'hsla(240, 100%, 50%, 0.5)':
-FAIL e.style.webkitTextDecorationColor should be rgba(0, 0, 255, 0.498039). Was rgba(0, 0, 255, 0.501961).
+PASS e.style.webkitTextDecorationColor is 'rgba(0, 0, 255, 0.5)'
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
-FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText should be rgba(0, 0, 255, 0.498039). Was rgba(0, 0, 255, 0.501961).
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(0, 0, 255, 0.5)'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
-FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText should be rgba(0, 0, 255, 0.498039). Was rgba(0, 0, 255, 0.501961).
-FAIL computedStyle.webkitTextDecorationColor should be rgba(0, 0, 255, 0.498039). Was rgba(0, 0, 255, 0.501961).
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(0, 0, 255, 0.5)'
+PASS computedStyle.webkitTextDecorationColor is 'rgba(0, 0, 255, 0.5)'
 
 Initial value:
 PASS e.style.webkitTextDecorationColor is 'initial'

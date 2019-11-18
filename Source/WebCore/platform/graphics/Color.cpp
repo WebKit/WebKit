@@ -346,11 +346,15 @@ String Color::cssText() const
     builder.appendNumber(static_cast<unsigned char>(green()));
     builder.appendLiteral(", ");
 
-
     builder.appendNumber(static_cast<unsigned char>(blue()));
     if (colorHasAlpha) {
+        // https://drafts.csswg.org/cssom/#serializing-css-values
         builder.appendLiteral(", ");
-        builder.appendFixedPrecisionNumber(alpha() / 255.0f);
+        int alpha = this->alpha();
+        float rounded = round(alpha * 100 / 255.0f) / 100;
+        if (round(rounded * 255) != alpha)
+            rounded = round(alpha * 1000 / 255.0f) / 1000;
+        builder.appendFixedPrecisionNumber(rounded);
     }
         
     builder.append(')');
