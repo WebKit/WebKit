@@ -1,3 +1,18 @@
+2019-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove self-defined C++14 features in StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=204220
+
+        Reviewed by Ross Kirsling.
+
+        Remove std::conjunction, std::in_place_t and std::make_unique definitions.
+        Remove unsued std::clz.
+
+        * wtf/StdLibExtras.h:
+        (std::make_unique): Deleted.
+        (std::exchange): Deleted.
+        (std::clz): Deleted.
+
 2019-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Use SecTrustEvaluateWithError instead of SecTrustEvaluate where available
