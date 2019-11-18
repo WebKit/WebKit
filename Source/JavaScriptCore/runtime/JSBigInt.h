@@ -29,7 +29,7 @@
 #include "CPU.h"
 #include "ExceptionHelpers.h"
 #include "JSObject.h"
-#include <wtf/CagedPtr.h>
+#include <wtf/CagedUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -37,13 +37,21 @@
 namespace JSC {
 
 class JSBigInt final : public JSCell {
+public:
     using Base = JSCell;
+    using Digit = UCPURegister;
+
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
     friend class CachedBigInt;
 
-public:
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
 
-    JSBigInt(VM&, Structure*, unsigned length);
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.bigIntSpace;
+    }
 
     enum class InitializationType { None, WithZero };
     void initialize(InitializationType);
@@ -134,8 +142,8 @@ public:
     static JSBigInt* signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
 
 private:
+    JSBigInt(VM&, Structure*, Digit*, unsigned length);
 
-    using Digit = UCPURegister;
     static constexpr unsigned bitsPerByte = 8;
     static constexpr unsigned digitBits = sizeof(Digit) * bitsPerByte;
     static constexpr unsigned halfDigitBits = digitBits / 2;
@@ -233,31 +241,20 @@ private:
 
     static Optional<Digit> toShiftAmount(JSBigInt* x);
 
-    inline static size_t allocationSize(unsigned length);
     inline static size_t offsetOfData()
     {
-        return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
+        return OBJECT_OFFSETOF(JSBigInt, m_data);
     }
 
-    inline Digit* dataStorage()
-    {
-        return bitwise_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
-    }
+    inline Digit* dataStorage() { return m_data.get(m_length); }
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit);
 
     const unsigned m_length;
     bool m_sign { false };
-
-    friend size_t cellSize(VM&, JSCell*);
+    CagedUniquePtr<Gigacage::Primitive, Digit> m_data;
 };
-
-inline size_t JSBigInt::allocationSize(unsigned length)
-{
-    size_t sizeWithPadding = WTF::roundUpToMultipleOf<sizeof(size_t)>(sizeof(JSBigInt));
-    return sizeWithPadding + length * sizeof(Digit);
-}
 
 inline JSBigInt* asBigInt(JSValue value)
 {

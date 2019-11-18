@@ -35,8 +35,7 @@ namespace JSC {
 
 inline constexpr bool isDynamicallySizedType(JSType type)
 {
-    if (type == BigIntType
-        || type == DirectArgumentsType
+    if (type == DirectArgumentsType
         || type == FinalObjectType
         || type == LexicalEnvironmentType
         || type == ModuleEnvironmentType
@@ -53,10 +52,6 @@ inline size_t cellSize(VM& vm, JSCell* cell)
 
     if (isDynamicallySizedType(cellType)) {
         switch (cellType) {
-        case BigIntType: {
-            auto* bigInt = jsCast<JSBigInt*>(cell);
-            return JSBigInt::allocationSize(bigInt->length());
-        }
         case DirectArgumentsType: {
             auto* args = jsCast<DirectArguments*>(cell);
             return DirectArguments::allocationSize(args->m_minCapacity);

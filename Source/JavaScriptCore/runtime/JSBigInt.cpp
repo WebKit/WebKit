@@ -61,10 +61,16 @@ namespace JSC {
 
 const ClassInfo JSBigInt::s_info = { "BigInt", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
 
-JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
+JSBigInt::JSBigInt(VM& vm, Structure* structure, Digit* data, unsigned length)
     : Base(vm, structure)
     , m_length(length)
+    , m_data(data, length)
 { }
+
+void JSBigInt::destroy(JSCell* thisCell)
+{
+    static_cast<JSBigInt*>(thisCell)->~JSBigInt();
+}
 
 void JSBigInt::initialize(InitializationType initType)
 {
@@ -101,7 +107,8 @@ JSBigInt* JSBigInt::tryCreateWithLength(JSGlobalObject* globalObject, unsigned l
 JSBigInt* JSBigInt::createWithLengthUnchecked(VM& vm, unsigned length)
 {
     ASSERT(length <= maxLength);
-    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap, allocationSize(length))) JSBigInt(vm, vm.bigIntStructure.get(), length);
+    void* data = Gigacage::malloc(Gigacage::Primitive, length * sizeof(Digit));
+    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
     bigInt->finishCreation(vm);
     return bigInt;
 }

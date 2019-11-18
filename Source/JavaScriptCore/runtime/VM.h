@@ -376,6 +376,7 @@ public:
     CompleteSubspace destructibleCellSpace;
     CompleteSubspace destructibleObjectSpace;
     
+    IsoSubspace bigIntSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace getterSetterSpace;

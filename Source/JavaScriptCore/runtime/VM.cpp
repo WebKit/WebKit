@@ -276,6 +276,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , variableSizedCellSpace("Variable Sized JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbcd769cc
     , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbfff3d73
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
+    , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
     , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
