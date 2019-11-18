@@ -126,7 +126,7 @@ public:
     class AllocationProfileClearingWatchpoint;
 
 protected:
-    FunctionRareData(VM&);
+    explicit FunctionRareData(VM&);
     ~FunctionRareData();
 
 private:

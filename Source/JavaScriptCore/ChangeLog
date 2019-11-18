@@ -1,3 +1,12 @@
+2019-11-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, address Darin's feedback on r252520.
+
+        * runtime/FunctionRareData.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::hasReifiedLength const):
+        (JSC::JSFunction::hasReifiedName const):
+
 2019-11-18  Keith Miller  <keith_miller@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         BigInt should store its data in the primitive gigacage.

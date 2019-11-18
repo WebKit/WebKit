@@ -101,12 +101,12 @@ inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
 
 inline bool JSFunction::hasReifiedLength() const
 {
-    return m_rareData ? m_rareData->hasReifiedLength() : false;
+    return m_rareData && m_rareData->hasReifiedLength();
 }
 
 inline bool JSFunction::hasReifiedName() const
 {
-    return m_rareData ? m_rareData->hasReifiedName() : false;
+    return m_rareData && m_rareData->hasReifiedName();
 }
 
 inline bool JSFunction::canUseAllocationProfile()
