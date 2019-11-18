@@ -1,4 +1,4 @@
-//@ slow!
+//@ if $architecture == "mips" then skip else slow! end
 // Does not crash.
 function foo() {
     +new Proxy({}, {get: foo});

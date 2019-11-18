@@ -1,3 +1,16 @@
+2019-11-18  Caio Lima  <ticaiolima@gmail.com>
+
+        Skipping wasm-error-message-cross-threads.js on architectures without WASM support
+        https://bugs.webkit.org/show_bug.cgi?id=204293
+
+        Unreviewed gardening.
+
+        * stress/ensure-code-block-is-not-precise-allocation.js:
+
+        Skipping this test until we fix OSR to LLInt on MIPS.
+
+        * stress/wasm-error-message-cross-threads.js:
+
 2019-11-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Anonymous built-in functions should have empty string for a name
