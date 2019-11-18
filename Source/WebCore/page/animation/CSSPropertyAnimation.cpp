@@ -1794,7 +1794,7 @@ static bool gatherEnclosingShorthandProperties(CSSPropertyID property, Animation
 }
 
 // Returns true if we need to start animation timers
-bool CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* anim, CSSPropertyID prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress)
+void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* anim, CSSPropertyID prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress)
 {
     ASSERT(prop != CSSPropertyInvalid);
 
@@ -1804,9 +1804,7 @@ bool CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* anim
 #if !LOG_DISABLED
         wrapper->logBlend(a, b, dst, progress);
 #endif
-        return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
     }
-    return false;
 }
 
 bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID prop)

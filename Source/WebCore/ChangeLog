@@ -1,3 +1,23 @@
+2019-11-18  Antoine Quint  <graouts@apple.com>
+
+        Return value of CSSPropertyAnimation::blendProperties() isn't used anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=204299
+
+        Reviewed by Dean Jackson.
+
+        There is no code calling CSSPropertyAnimation::blendProperties() that uses its returen value, so we change
+        that function to return void. Also, since this function contains the only call site to
+        CSSPropertyBlendingClient::isAccelerated(), we delete that function too.
+
+        * animation/CSSPropertyBlendingClient.h:
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::isAccelerated const):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::isAccelerated const):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::blendProperties):
+        * page/animation/CSSPropertyAnimation.h:
+
 2019-11-18  Antti Koivisto  <antti@apple.com>
 
         Rename DocumentRuleSets to Style::ScopeRuleSets

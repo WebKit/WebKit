@@ -137,7 +137,7 @@ public:
     bool waitingForStartTime() const { return m_animationState == AnimationState::StartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animationState == AnimationState::StartWaitStyleAvailable; }
 
-    bool isAccelerated() const override { return m_isAccelerated; }
+    bool isAccelerated() const { return m_isAccelerated; }
 
     virtual Optional<Seconds> timeToNextService();
 

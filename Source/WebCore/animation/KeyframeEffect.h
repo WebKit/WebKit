@@ -124,7 +124,7 @@ public:
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
-    bool isAccelerated() const override { return m_shouldRunAccelerated; }
+    bool isAccelerated() const { return m_shouldRunAccelerated; }
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
