@@ -1,3 +1,12 @@
+2019-11-18  Aakash Jain  <aakash_jain@apple.com>
+
+        Dedicate ews116 to macOS-High-Sierra-Debug-Build-EWS queue
+        https://bugs.webkit.org/show_bug.cgi?id=204256
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-11-18  Chris Dumez  <cdumez@apple.com>
 
         TestWebKitAPI.ProcessSwap.QuickBackForwardNavigationWithPSON is a flaky crash
