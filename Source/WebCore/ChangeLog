@@ -1,3 +1,26 @@
+2019-11-18  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r252497): Multiple mediacapturefromelement tests are crashing on mac debug
+        https://bugs.webkit.org/show_bug.cgi?id=204267
+        <rdar://problem/57248130>
+
+        Reviewed by Eric Carlson.
+
+        No new tests, covered by fast/mediacapturefromelement/CanvasCaptureMediaStream-creation.html.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::activeDOMObjectName const):
+        (WebCore::CanvasCaptureMediaStreamTrack::clone):
+        We were failing to call suspendIfNeeded() on the track after constructing it.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::assertSuspendIfNeededWasCalled const):
+        Add logging when the suspendIfNeeded assertion fails to facilitate debugging such issues
+        in the future.
+
 2019-11-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Invalidation] Force rebuild layout tree on tree mutation

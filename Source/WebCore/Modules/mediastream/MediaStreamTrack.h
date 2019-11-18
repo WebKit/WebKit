@@ -176,7 +176,7 @@ private:
 
     // ActiveDOMObject API.
     void stop() final;
-    const char* activeDOMObjectName() const final;
+    const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) final;
 
     // EventTarget

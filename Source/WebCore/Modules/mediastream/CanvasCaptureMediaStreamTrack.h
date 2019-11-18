@@ -48,6 +48,8 @@ public:
     RefPtr<MediaStreamTrack> clone() final;
 
 private:
+    const char* activeDOMObjectName() const override;
+
     class Source final : public RealtimeMediaSource, private CanvasObserver {
     public:
         static Ref<Source> create(HTMLCanvasElement&, Optional<double>&& frameRequestRate);

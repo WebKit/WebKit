@@ -69,6 +69,11 @@ Ref<CanvasCaptureMediaStreamTrack::Source> CanvasCaptureMediaStreamTrack::Source
     return source;
 }
 
+const char* CanvasCaptureMediaStreamTrack::activeDOMObjectName() const
+{
+    return "CanvasCaptureMediaStreamTrack";
+}
+
 // FIXME: Give source id and name
 CanvasCaptureMediaStreamTrack::Source::Source(HTMLCanvasElement& canvas, Optional<double>&& frameRequestRate)
     : RealtimeMediaSource(Type::Video, "CanvasCaptureMediaStreamTrack"_s)
@@ -195,7 +200,9 @@ RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()
     if (!scriptExecutionContext())
         return nullptr;
     
-    return adoptRef(*new CanvasCaptureMediaStreamTrack(downcast<Document>(*scriptExecutionContext()), m_canvas.copyRef(), m_private->clone()));
+    auto track = adoptRef(*new CanvasCaptureMediaStreamTrack(downcast<Document>(*scriptExecutionContext()), m_canvas.copyRef(), m_private->clone()));
+    track->suspendIfNeeded();
+    return track;
 }
 
 }
