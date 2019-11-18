@@ -25,7 +25,7 @@
 
 # Script to run selected LayoutTests/{js,fast/regex} tests using jsc
 
-jscCmd="/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc"
+jscCmd="/System/Library/Frameworks/JavaScriptCore.framework/Helpers/jsc"
 testRoot=/tmp/LayoutTests
 resultsRoot=`date \+/tmp/results-%Y-%m-%d-%H-%M-%S`
 

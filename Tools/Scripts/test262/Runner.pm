@@ -601,7 +601,7 @@ sub getBuildPath {
         my $jscDir = executableProductDir();
 
         $jsc = $jscDir . '/jsc';
-        $jsc = $jscDir . '/JavaScriptCore.framework/Resources/jsc' if (! -e $jsc);
+        $jsc = $jscDir . '/JavaScriptCore.framework/Helpers/jsc' if (! -e $jsc);
         $jsc = $jscDir . '/bin/jsc' if (! -e $jsc);
 
         # Sets the Env DYLD_FRAMEWORK_PATH, abs_path will remove any extra '/' character

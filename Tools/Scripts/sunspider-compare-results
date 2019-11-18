@@ -98,7 +98,7 @@ sub pathToBuiltJSC($)
 
 sub pathToSystemJSC()
 {
-    my $path = "/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc";
+    my $path = "/System/Library/Frameworks/JavaScriptCore.framework/Helpers/jsc";
     if (-f $path) {
         return $path;
     }

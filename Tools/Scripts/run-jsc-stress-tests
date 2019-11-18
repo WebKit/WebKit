@@ -306,7 +306,7 @@ unless jscArg
 
     output = output[0]
     jscArg = Pathname.new(output).join("jsc")
-    jscArg = Pathname.new(output).join("JavaScriptCore.framework", "Resources", "jsc") if !File.file?(jscArg)
+    jscArg = Pathname.new(output).join("JavaScriptCore.framework", "Helpers", "jsc") if !File.file?(jscArg)
     jscArg = Pathname.new(output).join("bin", "jsc") if !File.file?(jscArg) # Support CMake build.
     if !File.file?(jscArg)
         $stderr.puts "Error: must specify --jsc <path>"
@@ -325,7 +325,7 @@ end
 $progressMeter = ($verbosity == 0 and $stdout.tty? and $remoteHosts.length <= 1)
 
 if $bundle
-    $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Resources" + "jsc"
+    $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Helpers" + "jsc"
     $outputDir = $bundle
 end
 
@@ -1740,7 +1740,7 @@ def prepareBundle
         
         frameworkPath = frameworkFromJSCPath($jscPath)
         destinationFrameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
-        $jscPath = destinationFrameworkPath + "Resources" + "jsc"
+        $jscPath = destinationFrameworkPath + "Helpers" + "jsc"
         $testingFrameworkPath = Pathname.new("..") + destinationFrameworkPath
 
         if frameworkPath
