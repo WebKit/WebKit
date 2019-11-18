@@ -1,3 +1,16 @@
+2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.writeText()
+        https://bugs.webkit.org/show_bug.cgi?id=204287
+        <rdar://problem/57270440>
+
+        Reviewed by Tim Horton.
+
+        Rebaseline a couple of web platform tests.
+
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+        * web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https-expected.txt:
+
 2019-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focusing a shadow host which delegates focus should skip inner shadow hosts which delegate focus

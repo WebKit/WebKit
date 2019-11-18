@@ -1,3 +1,27 @@
+2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.writeText()
+        https://bugs.webkit.org/show_bug.cgi?id=204287
+        <rdar://problem/57270440>
+
+        Reviewed by Tim Horton.
+
+        * editing/async-clipboard/clipboard-write-text-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-text-requires-user-gesture-expected.txt: Added.
+        * editing/async-clipboard/clipboard-write-text-requires-user-gesture.html: Added.
+
+        Add a layout test to verify that `navigator.clipboard.writeText` is gated on user gesture, if the
+        javaScriptCanAccessClipboard preference is disabled.
+
+        * editing/async-clipboard/clipboard-write-text.html: Added.
+
+        Add a layout test to verify that writing text to the clipboard puts a single item on the system clipboard with
+        the type "text/plain", which can be read back using `navigator.clipboard.read`.
+
+        * platform/win/TestExpectations:
+
+        Skip clipboard-write-text.html on Windows, since custom pasteboard data is not implemented there yet.
+
 2019-11-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Retargeted transitions targeting accelerated properties do not stop the original transition

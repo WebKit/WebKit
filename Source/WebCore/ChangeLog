@@ -1,3 +1,25 @@
+2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.writeText()
+        https://bugs.webkit.org/show_bug.cgi?id=204287
+        <rdar://problem/57270440>
+
+        Reviewed by Tim Horton.
+
+        Implements the `writeText` method on Clipboard.
+
+        Tests: editing/async-clipboard/clipboard-write-text-requires-user-gesture.html
+               editing/async-clipboard/clipboard-write-text.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::shouldProceedWithClipboardWrite):
+
+        Move this helper function further up the file.
+
+        (WebCore::Clipboard::writeText):
+
+        Implement the API, by populating a single PasteboardCustomData and writing it to the system clipboard.
+
 2019-11-18  Antoine Quint  <graouts@apple.com>
 
         Return value of CSSPropertyAnimation::blendProperties() isn't used anywhere
