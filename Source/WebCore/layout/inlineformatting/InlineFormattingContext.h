@@ -88,7 +88,7 @@ private:
     void computeHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
     void computeWidthAndMargin(const Box&, UsedHorizontalValues);
 
-    void collectInlineContent();
+    void collectInlineContentIfNeeded();
     Line::InitialConstraints initialConstraintsForLine(UsedHorizontalValues, const LayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayout::LineContent&, UsedHorizontalValues);
     void invalidateFormattingState(const InvalidationState&);

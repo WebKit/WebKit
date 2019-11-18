@@ -84,7 +84,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
         layoutBox = nextInPreOrder(*layoutBox, root());
     }
 
-    collectInlineContent();
+    collectInlineContentIfNeeded();
     lineLayout(usedHorizontalValues);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
@@ -210,7 +210,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
         layoutBox = nextInPreOrder(*layoutBox, root());
     }
 
-    collectInlineContent();
+    collectInlineContentIfNeeded();
 
     auto maximumLineWidth = [&](auto availableWidth) {
         // Switch to the min/max formatting root width values before formatting the lines.
@@ -321,11 +321,13 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
     computeHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 }
 
-void InlineFormattingContext::collectInlineContent()
+void InlineFormattingContext::collectInlineContentIfNeeded()
 {
+    auto& formattingState = this->formattingState();
+    if (!formattingState.inlineItems().isEmpty())
+        return;
     // Traverse the tree and create inline items out of containers and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [ContainerStart][InlineBox][ContainerStart][ContainerEnd][InlineBox][ContainerEnd]
-    auto& formattingState = this->formattingState();
     LayoutQueue layoutQueue;
     if (root().hasInFlowOrFloatingChild())
         layoutQueue.append(root().firstInFlowOrFloatingChild());
