@@ -1,3 +1,122 @@
+2019-11-18  Mark Lam  <mark.lam@apple.com>
+
+        Reduce the amount of memory needed to store Options.
+        https://bugs.webkit.org/show_bug.cgi?id=202105
+        <rdar://problem/55641041>
+
+        Reviewed by Robin Morisset.
+
+        Options used to be stored as an array of unions of all option types, where the
+        size of the array is around 349 elements.  We also needed a second array for the
+        default option value.  We now store each option (and its default value) as a type
+        specific field in an OptionsStorage struct.  This reduces the size of storage for
+        Options from 16752 to 2192 bytes.  This, in turn, allows JSC::Config to fit in a
+        single page.
+ 
+        The reason we previously stored options in an array of unions is to allow us to
+        randomly access each option by its id.  We now store the offset of the option
+        field in the Options::s_constMetaData array (previously called s_optionsInfo).
+        With this offset, we can compute the address of the option value field in
+        the OptionsStorage struct in the JSC::Config.
+ 
+        In this patch, we also:
+
+        1. Renamed Options::s_optionsInfo to Options::s_constMetaData.
+
+        2. Refactor the Option class into the OptionReader::Option class.
+
+           Previously, the Option class provided another way to access option values,
+           specifically when we need to access them by id.  It also provided a means to
+           change that option value.  However, it practice, we can do without this, and
+           remove a lot of the code.  This class now exists as OptionReader::Option which
+           only provides a means to read information about options, but not change them
+           The only client for this class is the dumpOption() function.
+
+        3. Removed the OptionEntry class.  It previously served 2 purpose:
+           a. Define the option types.  The types are now defined in OptionsStorage.
+           b. Define a union abstract type large enough to store any option value.
+              This is now expressed as a union member in OptionReader::Option.
+ 
+           OptionEntry.h also defines the OptionRange class.  OptionRange is now moved
+           to OptionsList.h.
+ 
+        4. Changed the implementation of the option value parse functions to return
+           Optional values instead of taking a reference to the value.  This makes the
+           code cleaner and easier to read on the client side.
+
+        5. Fixed scaleJITPolicy() to not rely on the Option class (see 2 above), and use
+           the canonical way to read and write option values instead i.e. via the
+           Options::<optionName>() accessors.
+
+        6. Fixed recomputeDependentOptions() to rely on the Option class (see 2 above).
+           We can compare the option against its default value using the canonical
+           accessors.
+
+        7. Fixed Options::initialize() to only compute the default option value once.
+           The "default" value may actually be a function call.  Though current uses does
+           not have side effects if called more than once, it is best to not assume this.
+
+        8. Moved the definition of  MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS and
+           enableWebAssemblyStreamingApi  from Options.h to OptionsList.h because they are
+           used there first.
+
+        9. Reduced the size of the JSC::Config to 1 PageSize.
+ 
+        * API/glib/JSCOptions.cpp:
+        (jscOptionsSetValue):
+        (jscOptionsGetValue):
+        (jsc_options_foreach):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSCConfig.h:
+        * runtime/OptionEntry.h: Removed.
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::scaleJITPolicy):
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::addressOfOption):
+        (JSC::Options::addressOfOptionDefault):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::invertBoolOptionValue):
+        (JSC::Options::setAliasedOption):
+        (JSC::Options::dumpAllOptions):
+        (JSC::OptionReader::Option::operator!= const):
+        (JSC::OptionReader::Option::name const):
+        (JSC::OptionReader::Option::description const):
+        (JSC::OptionReader::Option::type const):
+        (JSC::OptionReader::Option::availability const):
+        (JSC::OptionReader::Option::isOverridden const):
+        (JSC::OptionReader::Option::Option):
+        (JSC::Options::dumpOption):
+        (JSC::OptionReader::optionFor):
+        (JSC::OptionReader::defaultFor):
+        (JSC::OptionReader::Option::initValue):
+        (JSC::OptionReader::Option::dump const):
+        (JSC::OptionReader::Option::operator== const):
+        (JSC::Option::dump const): Deleted.
+        (JSC::Option::operator== const): Deleted.
+        * runtime/Options.h:
+        (JSC::Option::Option): Deleted.
+        (JSC::Option::operator!= const): Deleted.
+        (JSC::Option::id const): Deleted.
+        (JSC::Option::name const): Deleted.
+        (JSC::Option::description const): Deleted.
+        (JSC::Option::type const): Deleted.
+        (JSC::Option::availability const): Deleted.
+        (JSC::Option::isOverridden const): Deleted.
+        (JSC::Option::defaultOption const): Deleted.
+        (JSC::Option::boolVal): Deleted.
+        (JSC::Option::unsignedVal): Deleted.
+        (JSC::Option::doubleVal): Deleted.
+        (JSC::Option::int32Val): Deleted.
+        (JSC::Option::optionRangeVal): Deleted.
+        (JSC::Option::optionStringVal): Deleted.
+        (JSC::Option::gcLogLevelVal): Deleted.
+        * runtime/OptionsList.h:
+        (JSC::OptionRange::operator= ):
+        (JSC::OptionRange::rangeString const):
+
 2019-11-18  Chris Polcyn  <cpolcyn@apple.com>
 
         Publish JavaScriptCore as Clang module

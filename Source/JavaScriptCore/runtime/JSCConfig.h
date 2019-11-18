@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "OptionEntry.h"
 #include "OptionsList.h"
 #include <wtf/StdLibExtras.h>
 
@@ -40,7 +39,7 @@ constexpr size_t PageSize = 16 * KB;
 constexpr size_t PageSize = 4 * KB;
 #endif
 
-constexpr size_t ConfigSizeToProtect = 32 * KB;
+constexpr size_t ConfigSizeToProtect = PageSize;
 
 #if ENABLE(SEPARATED_WX_HEAP)
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
@@ -82,8 +81,7 @@ struct Config {
             bool useFastPermisionsJITCopy;
 #endif
 
-            OptionEntry options[NumberOfOptions];
-            OptionEntry defaultOptions[NumberOfOptions];
+            OptionsStorage options;
         };
         char ensureSize[ConfigSizeToProtect];
     };

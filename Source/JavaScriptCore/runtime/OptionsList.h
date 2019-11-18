@@ -25,19 +25,35 @@
 
 #pragma once
 
+#include "GCLogging.h"
+
+using WTF::PrintStream;
+
 namespace JSC {
+
+#if PLATFORM(IOS_FAMILY)
+#define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 2
+#else
+#define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
+#endif
+
+#if ENABLE(WEBASSEMBLY_STREAMING_API)
+constexpr bool enableWebAssemblyStreamingApi = true;
+#else
+constexpr bool enableWebAssemblyStreamingApi = false;
+#endif
 
 // How do JSC VM options work?
 // ===========================
 // The FOR_EACH_JSC_OPTION() macro below defines a list of all JSC options in use,
 // along with their types and default values. The options values are actually
-// realized as an array of OptionEntry elements in JSC::Config.
+// realized as fields in OptionsStorage embedded in JSC::Config.
 //
-//     Options::initialize() will initialize the array of options values with
-// the defaults specified in FOR_EACH_JSC_OPTION() below. After that, the values can
-// be programmatically read and written to using an accessor method with the
-// same name as the option. For example, the option "useJIT" can be read and
-// set like so:
+//     Options::initialize() will initialize the option values with the defaults
+// specified in FOR_EACH_JSC_OPTION() below. After that, the values can be
+// programmatically read and written to using an accessor method with the same
+// name as the option. For example, the option "useJIT" can be read and set like
+// so:
 //
 //     bool jitIsOn = Options::useJIT();  // Get the option value.
 //     Options::useJIT() = false;         // Sets the option value.
@@ -54,6 +70,10 @@ namespace JSC {
 // checks are done after the option values are set. If you alter the option
 // values after the sanity checks (for your own testing), then you're liable to
 // ensure that the new values set are sane and reasonable for your own run.
+//
+// Any modifications to options must be done before the first VM is instantiated.
+// On instantiation of the first VM instance, the Options will be write protected
+// and cannot be modified thereafter.
 
 #define FOR_EACH_JSC_OPTION(v)                                          \
     v(Bool, useKernTCSM, true, Normal, "Note: this needs to go before other options since they depend on this value.") \
@@ -527,5 +547,54 @@ constexpr size_t countNumberOfJSCOptions()
 
 constexpr size_t NumberOfOptions = countNumberOfJSCOptions();
 
-} // namespace JSC
+class OptionRange {
+private:
+    enum RangeState { Uninitialized, InitError, Normal, Inverted };
+public:
+    OptionRange& operator= (const int& rhs)
+    { // Only needed for initialization
+        if (!rhs) {
+            m_state = Uninitialized;
+            m_rangeString = 0;
+            m_lowLimit = 0;
+            m_highLimit = 0;
+        }
+        return *this;
+    }
 
+    bool init(const char*);
+    bool isInRange(unsigned);
+    const char* rangeString() const { return (m_state > InitError) ? m_rangeString : s_nullRangeStr; }
+    
+    void dump(PrintStream& out) const;
+
+private:
+    static const char* const s_nullRangeStr;
+
+    RangeState m_state;
+    const char* m_rangeString;
+    unsigned m_lowLimit;
+    unsigned m_highLimit;
+};
+
+struct OptionsStorage {
+    using Bool = bool;
+    using Unsigned = unsigned;
+    using Double = double;
+    using Int32 = int32_t;
+    using Size = size_t;
+    using OptionRange = JSC::OptionRange;
+    using OptionString = const char*;
+    using GCLogLevel = GCLogging::Level;
+
+#define DECLARE_OPTION(type_, name_, defaultValue_, availability_, description_) \
+    type_ name_; \
+    type_ name_##Default;
+FOR_EACH_JSC_OPTION(DECLARE_OPTION)
+#undef DECLARE_OPTION
+};
+
+// Options::Metadata's offsetOfOption and offsetOfOptionDefault relies on this.
+static_assert(sizeof(OptionsStorage) <= 16 * KB);
+
+} // namespace JSC

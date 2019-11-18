@@ -41,6 +41,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/Optional.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -56,80 +57,92 @@
 
 namespace JSC {
 
-static bool parse(const char* string, bool& value)
+template<typename T>
+Optional<T> parse(const char* string);
+
+template<>
+Optional<OptionsStorage::Bool> parse(const char* string)
 {
-    if (equalLettersIgnoringASCIICase(string, "true") || equalLettersIgnoringASCIICase(string, "yes") || !strcmp(string, "1")) {
-        value = true;
+    if (equalLettersIgnoringASCIICase(string, "true") || equalLettersIgnoringASCIICase(string, "yes") || !strcmp(string, "1"))
         return true;
-    }
-    if (equalLettersIgnoringASCIICase(string, "false") || equalLettersIgnoringASCIICase(string, "no") || !strcmp(string, "0")) {
-        value = false;
-        return true;
-    }
-    return false;
+    if (equalLettersIgnoringASCIICase(string, "false") || equalLettersIgnoringASCIICase(string, "no") || !strcmp(string, "0"))
+        return false;
+    return WTF::nullopt;
 }
 
-static bool parse(const char* string, int32_t& value)
+template<>
+Optional<OptionsStorage::Int32> parse(const char* string)
 {
-    return sscanf(string, "%d", &value) == 1;
+    int32_t value;
+    if (sscanf(string, "%d", &value) == 1)
+        return value;
+    return WTF::nullopt;
 }
 
-static bool parse(const char* string, unsigned& value)
+template<>
+Optional<OptionsStorage::Unsigned> parse(const char* string)
 {
-    return sscanf(string, "%u", &value) == 1;
+    unsigned value;
+    if (sscanf(string, "%u", &value) == 1)
+        return value;
+    return WTF::nullopt;
 }
 
-static bool UNUSED_FUNCTION parse(const char* string, unsigned long& value)
+#if CPU(ADDRESS64)
+template<>
+Optional<OptionsStorage::Size> parse(const char* string)
 {
-    return sscanf(string, "%lu", &value);
+    size_t value;
+    if (sscanf(string, "%zu", &value) == 1)
+        return value;
+    return WTF::nullopt;
+}
+#endif // CPU(ADDRESS64)
+
+template<>
+Optional<OptionsStorage::Double> parse(const char* string)
+{
+    double value;
+    if (sscanf(string, "%lf", &value) == 1)
+        return value;
+    return WTF::nullopt;
 }
 
-static bool UNUSED_FUNCTION parse(const char* string, unsigned long long& value)
+template<>
+Optional<OptionsStorage::OptionRange> parse(const char* string)
 {
-    return sscanf(string, "%llu", &value);
+    OptionRange range;
+    if (range.init(string))
+        return range;
+    return WTF::nullopt;
 }
 
-static bool parse(const char* string, double& value)
+template<>
+Optional<OptionsStorage::OptionString> parse(const char* string)
 {
-    return sscanf(string, "%lf", &value) == 1;
-}
-
-static bool parse(const char* string, OptionRange& value)
-{
-    return value.init(string);
-}
-
-static bool parse(const char* string, const char*& value)
-{
-    if (!strlen(string)) {
-        value = nullptr;
-        return true;
-    }
+    const char* value = nullptr;
+    if (!strlen(string))
+        return value;
 
     // FIXME <https://webkit.org/b/169057>: This could leak if this option is set more than once.
     // Given that Options are typically used for testing, this isn't considered to be a problem.
     value = WTF::fastStrDup(string);
-    return true;
+    return value;
 }
 
-static bool parse(const char* string, GCLogging::Level& value)
+template<>
+Optional<OptionsStorage::GCLogLevel> parse(const char* string)
 {
-    if (equalLettersIgnoringASCIICase(string, "none") || equalLettersIgnoringASCIICase(string, "no") || equalLettersIgnoringASCIICase(string, "false") || !strcmp(string, "0")) {
-        value = GCLogging::None;
-        return true;
-    }
+    if (equalLettersIgnoringASCIICase(string, "none") || equalLettersIgnoringASCIICase(string, "no") || equalLettersIgnoringASCIICase(string, "false") || !strcmp(string, "0"))
+        return GCLogging::None;
 
-    if (equalLettersIgnoringASCIICase(string, "basic") || equalLettersIgnoringASCIICase(string, "yes") || equalLettersIgnoringASCIICase(string, "true") || !strcmp(string, "1")) {
-        value = GCLogging::Basic;
-        return true;
-    }
+    if (equalLettersIgnoringASCIICase(string, "basic") || equalLettersIgnoringASCIICase(string, "yes") || equalLettersIgnoringASCIICase(string, "true") || !strcmp(string, "1"))
+        return GCLogging::Basic;
 
-    if (equalLettersIgnoringASCIICase(string, "verbose") || !strcmp(string, "2")) {
-        value = GCLogging::Verbose;
-        return true;
-    }
+    if (equalLettersIgnoringASCIICase(string, "verbose") || !strcmp(string, "2"))
+        return GCLogging::Verbose;
 
-    return false;
+    return WTF::nullopt;
 }
 
 bool Options::isAvailable(Options::ID id, Options::Availability availability)
@@ -168,8 +181,13 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
     if (!stringValue)
         return false;
     
-    if (available && parse(stringValue, variable))
-        return true;
+    if (available) {
+        Optional<T> value = parse<T>(stringValue);
+        if (value) {
+            variable = value.value();
+            return true;
+        }
+    }
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
     return false;
@@ -283,9 +301,9 @@ void OptionRange::dump(PrintStream& out) const
 }
 
 // Realize the names for each of the options:
-const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
+const Options::ConstMetaData Options::s_constMetaData[NumberOfOptions] = {
 #define FILL_OPTION_INFO(type_, name_, defaultValue_, availability_, description_) \
-    { #name_, description_, Options::Type::type_, Availability::availability_ },
+    { #name_, description_, Options::Type::type_, Availability::availability_, offsetof(OptionsStorage, name_), offsetof(OptionsStorage, name_##Default) },
     FOR_EACH_JSC_OPTION(FILL_OPTION_INFO)
 #undef FILL_OPTION_INFO
 };
@@ -298,28 +316,18 @@ static void scaleJITPolicy()
     else if (scaleFactor < 0.0)
         scaleFactor = 0.0;
 
-    struct OptionToScale {
-        Options::ID id;
-        int32_t minVal;
+    auto scaleOption = [&] (int32_t& optionValue, int32_t minValue) {
+        optionValue *= scaleFactor;
+        optionValue = std::max(optionValue, minValue);
     };
 
-    static const OptionToScale optionsToScale[] = {
-        { Options::thresholdForJITAfterWarmUpID, 0 },
-        { Options::thresholdForJITSoonID, 0 },
-        { Options::thresholdForOptimizeAfterWarmUpID, 1 },
-        { Options::thresholdForOptimizeAfterLongWarmUpID, 1 },
-        { Options::thresholdForOptimizeSoonID, 1 },
-        { Options::thresholdForFTLOptimizeSoonID, 2 },
-        { Options::thresholdForFTLOptimizeAfterWarmUpID, 2 }
-    };
-
-    const int numberOfOptionsToScale = sizeof(optionsToScale) / sizeof(OptionToScale);
-    for (int i = 0; i < numberOfOptionsToScale; i++) {
-        Option option(optionsToScale[i].id);
-        ASSERT(option.type() == Options::Type::Int32);
-        option.int32Val() *= scaleFactor;
-        option.int32Val() = std::max(option.int32Val(), optionsToScale[i].minVal);
-    }
+    scaleOption(Options::thresholdForJITAfterWarmUp(), 0);
+    scaleOption(Options::thresholdForJITSoon(), 0);
+    scaleOption(Options::thresholdForOptimizeAfterWarmUp(), 1);
+    scaleOption(Options::thresholdForOptimizeAfterLongWarmUp(), 1);
+    scaleOption(Options::thresholdForOptimizeSoon(), 1);
+    scaleOption(Options::thresholdForFTLOptimizeSoon(), 2);
+    scaleOption(Options::thresholdForFTLOptimizeAfterWarmUp(), 2);
 }
 
 static void overrideDefaults()
@@ -446,7 +454,7 @@ static void recomputeDependentOptions()
     if (!Options::useConcurrentGC())
         Options::collectContinuously() = false;
 
-    if (Option(Options::jitPolicyScaleID).isOverridden())
+    if (Options::jitPolicyScale() != Options::jitPolicyScaleDefault())
         scaleJITPolicy();
     
     if (Options::forceEagerCompilation()) {
@@ -516,6 +524,18 @@ static void recomputeDependentOptions()
         Options::randomIntegrityAuditRate() = 1.0;
 }
 
+inline void* Options::addressOfOption(Options::ID id)
+{
+    auto offset = Options::s_constMetaData[id].offsetOfOption;
+    return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
+}
+
+inline void* Options::addressOfOptionDefault(Options::ID id)
+{
+    auto offset = Options::s_constMetaData[id].offsetOfOptionDefault;
+    return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
+}
+
 void Options::initialize()
 {
     static std::once_flag initializeOptionsOnceFlag;
@@ -523,13 +543,23 @@ void Options::initialize()
     std::call_once(
         initializeOptionsOnceFlag,
         [] {
+            // Sanity check that options address computation is working.
+            RELEASE_ASSERT(Options::addressOfOption(useKernTCSMID) ==  &Options::useKernTCSM());
+            RELEASE_ASSERT(Options::addressOfOptionDefault(useKernTCSMID) ==  &Options::useKernTCSMDefault());
+            RELEASE_ASSERT(Options::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
+            RELEASE_ASSERT(Options::addressOfOptionDefault(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSizeDefault());
+            RELEASE_ASSERT(Options::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
+            RELEASE_ASSERT(Options::addressOfOptionDefault(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLIntDefault());
+
 #ifndef NDEBUG
             Config::enableRestrictedOptions();
 #endif
             // Initialize each of the options with their default values:
-#define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
-            name_() = defaultValue_; \
-            name_##Default() = defaultValue_;
+#define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) { \
+                auto value = defaultValue_; \
+                name_() = value; \
+                name_##Default() = value; \
+            }
             FOR_EACH_JSC_OPTION(INIT_OPTION)
 #undef INIT_OPTION
 
@@ -732,7 +762,7 @@ bool Options::setOptionWithoutAlias(const char* arg)
 
     const char* valueStr = equalStr + 1;
 
-    // For each option, check if the specify arg is a match. If so, set the arg
+    // For each option, check if the specified arg is a match. If so, set the arg
     // if the value makes sense. Otherwise, move on to checking the next option.
 #define SET_OPTION_IF_MATCH(type_, name_, defaultValue_, availability_, description_) \
     if (strlen(#name_) == static_cast<size_t>(equalStr - arg)      \
@@ -740,11 +770,10 @@ bool Options::setOptionWithoutAlias(const char* arg)
         if (Availability::availability_ != Availability::Normal     \
             && !isAvailable(name_##ID, Availability::availability_)) \
             return false;                                          \
-        OptionEntry::type_ value;                                  \
-        value = (defaultValue_);                                   \
-        bool success = parse(valueStr, value);                     \
-        if (success) {                                             \
-            name_() = value;                                       \
+        Optional<OptionsStorage::type_> value;                     \
+        value = parse<OptionsStorage::type_>(valueStr);            \
+        if (value) {                                               \
+            name_() = value.value();                               \
             correctOptions();                                      \
             recomputeDependentOptions();                           \
             return true;                                           \
@@ -758,13 +787,12 @@ bool Options::setOptionWithoutAlias(const char* arg)
     return false; // No option matched.
 }
 
-static bool invertBoolOptionValue(const char* valueStr, const char*& invertedValueStr)
+static const char* invertBoolOptionValue(const char* valueStr)
 {
-    bool boolValue;
-    if (!parse(valueStr, boolValue))
-        return false;
-    invertedValueStr = boolValue ? "false" : "true";
-    return true;
+    Optional<OptionsStorage::Bool> value = parse<OptionsStorage::Bool>(valueStr);
+    if (!value)
+        return nullptr;
+    return value.value() ? "false" : "true";
 }
 
 
@@ -788,8 +816,8 @@ bool Options::setAliasedOption(const char* arg)
             unaliasedOption = unaliasedOption + equalStr;               \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
-            const char* invertedValueStr = nullptr;                     \
-            if (!invertBoolOptionValue(equalStr + 1, invertedValueStr)) \
+            auto* invertedValueStr = invertBoolOptionValue(equalStr + 1); \
+            if (!invertedValueStr)                                      \
                 return false;                                           \
             unaliasedOption = unaliasedOption + "=" + invertedValueStr; \
         }                                                               \
@@ -821,7 +849,7 @@ void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char
         builder.append('\n');
     }
 
-    for (int id = 0; id < numberOfOptions; id++) {
+    for (size_t id = 0; id < NumberOfOptions; id++) {
         if (separator && id)
             builder.append(separator);
         dumpOption(builder, level, static_cast<ID>(id), optionHeader, optionFooter, dumpDefaultsOption);
@@ -840,13 +868,54 @@ void Options::dumpAllOptions(FILE* stream, DumpLevel level, const char* title)
     fprintf(stream, "%s", builder.toString().utf8().data());
 }
 
+struct OptionReader {
+    class Option {
+    public:
+        void dump(StringBuilder&) const;
+
+        bool operator==(const Option& other) const;
+        bool operator!=(const Option& other) const { return !(*this == other); }
+
+        const char* name() const { return Options::s_constMetaData[m_id].name; }
+        const char* description() const { return Options::s_constMetaData[m_id].description; }
+        Options::Type type() const { return Options::s_constMetaData[m_id].type; }
+        Options::Availability availability() const { return Options::s_constMetaData[m_id].availability; }
+        bool isOverridden() const { return *this != OptionReader::defaultFor(m_id); }
+
+    private:
+        Option(Options::ID id, void* addressOfValue)
+            : m_id(id)
+        {
+            initValue(addressOfValue);
+        }
+
+        void initValue(void* addressOfValue);
+
+        Options::ID m_id;
+        union {
+            bool m_bool;
+            unsigned m_unsigned;
+            double m_double;
+            int32_t m_int32;
+            size_t m_size;
+            OptionRange m_optionRange;
+            const char* m_optionString;
+            GCLogging::Level m_gcLogLevel;
+        };
+
+        friend struct OptionReader;
+    };
+
+    static const Option optionFor(Options::ID);
+    static const Option defaultFor(Options::ID);
+};
+
 void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id,
     const char* header, const char* footer, DumpDefaultsOption dumpDefaultsOption)
 {
-    if (id >= numberOfOptions)
-        return; // Illegal option.
+    RELEASE_ASSERT(static_cast<size_t>(id) < NumberOfOptions);
 
-    Option option(id);
+    auto option = OptionReader::optionFor(id);
     Availability availability = option.availability();
     if (availability != Availability::Normal && !isAvailable(id, availability))
         return;
@@ -863,8 +932,9 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
     option.dump(builder);
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
+        auto defaultOption = OptionReader::defaultFor(id);
         builder.appendLiteral(" (default: ");
-        option.defaultOption().dump(builder);
+        defaultOption.dump(builder);
         builder.appendLiteral(")");
     }
 
@@ -885,29 +955,70 @@ void Options::ensureOptionsAreCoherent()
         CRASH();
 }
 
-void Option::dump(StringBuilder& builder) const
+const OptionReader::Option OptionReader::optionFor(Options::ID id)
+{
+    return Option(id, Options::addressOfOption(id));
+}
+
+const OptionReader::Option OptionReader::defaultFor(Options::ID id)
+{
+    return Option(id, Options::addressOfOptionDefault(id));
+}
+
+void OptionReader::Option::initValue(void* addressOfValue)
+{
+    Options::Type type = Options::s_constMetaData[m_id].type;
+    switch (type) {
+    case Options::Type::Bool:
+        memcpy(&m_bool, addressOfValue, sizeof(OptionsStorage::Bool));
+        break;
+    case Options::Type::Unsigned:
+        memcpy(&m_unsigned, addressOfValue, sizeof(OptionsStorage::Unsigned));
+        break;
+    case Options::Type::Double:
+        memcpy(&m_double, addressOfValue, sizeof(OptionsStorage::Double));
+        break;
+    case Options::Type::Int32:
+        memcpy(&m_int32, addressOfValue, sizeof(OptionsStorage::Int32));
+        break;
+    case Options::Type::Size:
+        memcpy(&m_size, addressOfValue, sizeof(OptionsStorage::Size));
+        break;
+    case Options::Type::OptionRange:
+        memcpy(&m_optionRange, addressOfValue, sizeof(OptionsStorage::OptionRange));
+        break;
+    case Options::Type::OptionString:
+        memcpy(&m_optionString, addressOfValue, sizeof(OptionsStorage::OptionString));
+        break;
+    case Options::Type::GCLogLevel:
+        memcpy(&m_gcLogLevel, addressOfValue, sizeof(OptionsStorage::GCLogLevel));
+        break;
+    }
+}
+
+void OptionReader::Option::dump(StringBuilder& builder) const
 {
     switch (type()) {
     case Options::Type::Bool:
-        builder.append(m_entry.valBool ? "true" : "false");
+        builder.append(m_bool ? "true" : "false");
         break;
     case Options::Type::Unsigned:
-        builder.appendNumber(m_entry.valUnsigned);
+        builder.appendNumber(m_unsigned);
         break;
     case Options::Type::Size:
-        builder.appendNumber(m_entry.valSize);
+        builder.appendNumber(m_size);
         break;
     case Options::Type::Double:
-        builder.appendFixedPrecisionNumber(m_entry.valDouble);
+        builder.appendFixedPrecisionNumber(m_double);
         break;
     case Options::Type::Int32:
-        builder.appendNumber(m_entry.valInt32);
+        builder.appendNumber(m_int32);
         break;
     case Options::Type::OptionRange:
-        builder.append(m_entry.valOptionRange.rangeString());
+        builder.append(m_optionRange.rangeString());
         break;
     case Options::Type::OptionString: {
-        const char* option = m_entry.valOptionString;
+        const char* option = m_optionString;
         if (!option)
             option = "";
         builder.append('"');
@@ -916,32 +1027,33 @@ void Option::dump(StringBuilder& builder) const
         break;
     }
     case Options::Type::GCLogLevel: {
-        builder.append(GCLogging::levelAsString(m_entry.valGCLogLevel));
+        builder.append(GCLogging::levelAsString(m_gcLogLevel));
         break;
     }
     }
 }
 
-bool Option::operator==(const Option& other) const
+bool OptionReader::Option::operator==(const Option& other) const
 {
+    ASSERT(type() == other.type());
     switch (type()) {
     case Options::Type::Bool:
-        return m_entry.valBool == other.m_entry.valBool;
+        return m_bool == other.m_bool;
     case Options::Type::Unsigned:
-        return m_entry.valUnsigned == other.m_entry.valUnsigned;
+        return m_unsigned == other.m_unsigned;
     case Options::Type::Size:
-        return m_entry.valSize == other.m_entry.valSize;
+        return m_size == other.m_size;
     case Options::Type::Double:
-        return (m_entry.valDouble == other.m_entry.valDouble) || (std::isnan(m_entry.valDouble) && std::isnan(other.m_entry.valDouble));
+        return (m_double == other.m_double) || (std::isnan(m_double) && std::isnan(other.m_double));
     case Options::Type::Int32:
-        return m_entry.valInt32 == other.m_entry.valInt32;
+        return m_int32 == other.m_int32;
     case Options::Type::OptionRange:
-        return m_entry.valOptionRange.rangeString() == other.m_entry.valOptionRange.rangeString();
+        return m_optionRange.rangeString() == other.m_optionRange.rangeString();
     case Options::Type::OptionString:
-        return (m_entry.valOptionString == other.m_entry.valOptionString)
-            || (m_entry.valOptionString && other.m_entry.valOptionString && !strcmp(m_entry.valOptionString, other.m_entry.valOptionString));
+        return (m_optionString == other.m_optionString)
+            || (m_optionString && other.m_optionString && !strcmp(m_optionString, other.m_optionString));
     case Options::Type::GCLogLevel:
-        return m_entry.valGCLogLevel == other.m_entry.valGCLogLevel;
+        return m_gcLogLevel == other.m_gcLogLevel;
     }
     return false;
 }
