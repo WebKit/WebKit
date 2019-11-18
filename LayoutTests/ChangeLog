@@ -1,3 +1,13 @@
+2019-11-18  Zalan Bujtas  <zalan@apple.com>
+
+        Block layout invalidation logic triggers excessive layout on height percentage descendants
+        https://bugs.webkit.org/show_bug.cgi?id=204255
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/height-percentage-descendants-with-absolute-pos-containingblock-expected.txt: Added.
+        * fast/block/height-percentage-descendants-with-absolute-pos-containingblock.html: Added.
+
 2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.writeText()

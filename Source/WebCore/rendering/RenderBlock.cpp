@@ -821,6 +821,17 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
 
     for (auto it = descendants->begin(), end = descendants->end(); it != end; ++it) {
         auto* box = *it;
+        // Let's not dirty the height perecentage descendant when it has an absolutely positioned containing block ancestor. We should be able to dirty such boxes through the regular invalidation logic.
+        bool descendantNeedsLayout = true;
+        for (auto* ancestor = box->containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
+            if (ancestor->isOutOfFlowPositioned()) {
+                descendantNeedsLayout = false;
+                break;
+            }
+        }
+        if (!descendantNeedsLayout)
+            continue;
+
         while (box != this) {
             if (box->normalChildNeedsLayout())
                 break;

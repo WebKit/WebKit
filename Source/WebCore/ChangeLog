@@ -1,3 +1,29 @@
+2019-11-18  Zalan Bujtas  <zalan@apple.com>
+
+        Block layout invalidation logic triggers excessive layout on height percentage descendants
+        https://bugs.webkit.org/show_bug.cgi?id=204255
+        rdar://problem/57236490
+
+        Reviewed by Simon Fraser.
+
+        This patch attempts to optimize the height percentage invalidation logic by skipping boxes with out-of-flow ancestors.
+
+        The normal box invalidation logic works at the parent-child level (a.k.a when the parent is dirty it walks its direct
+        children list and marks them dirty if needed). However percent height values require containing block-child type of invalidation
+        which atm we manage using RenderBlock's percentHeightDescendantsMap (this map contains all the height percentage descendants).
+        As part of this extra invalidation logic, the block container always marks all of these height descendants dirty.
+        In certain cases, this leads to excessive and unnecessary layouts, since the
+        "walk the ancestor chain and mark boxes dirty all the way to the RenderView" code ends up descending back to these height percentage boxes
+        marking entire subtrees dirty.
+
+        We could optimize it slightly by checking if there's a height percentage containing block in the ancestor chain.
+        In such cases, we know that the descendant's height used value computation will eventually stop at this out-of-flow containing block.
+
+        Test: fast/block/height-percentage-descendants-with-absolute-pos-containingblock.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+
 2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.writeText()
