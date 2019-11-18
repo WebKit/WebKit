@@ -55,7 +55,7 @@ Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
     if (!securityOrigin)
         return WTF::nullopt;
 
-    Optional<WebCore::FrameIdentifier> frameID;
+    Optional<Optional<WebCore::FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
         return WTF::nullopt;

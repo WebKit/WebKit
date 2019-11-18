@@ -43,7 +43,7 @@ struct FrameInfoData {
     bool isMainFrame { false };
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
-    WebCore::FrameIdentifier frameID;
+    Optional<WebCore::FrameIdentifier> frameID;
 };
 
 }

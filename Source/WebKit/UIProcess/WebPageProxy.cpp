@@ -4888,7 +4888,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
 
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
-    WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(originatingFrameInfoData.frameID) : nullptr;
+    WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* resourceLoadStatisticsStore = websiteDataStore().resourceLoadStatistics())
@@ -5228,7 +5228,7 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
 void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, Optional<WebPageProxyIdentifier> originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Messages::WebPageProxy::CreateNewPage::DelayedReply&& reply)
 {
     MESSAGE_CHECK(m_process, originatingFrameInfoData.frameID);
-    MESSAGE_CHECK(m_process, m_process->webFrame(originatingFrameInfoData.frameID));
+    MESSAGE_CHECK(m_process, m_process->webFrame(*originatingFrameInfoData.frameID));
 
     auto* originatingPage = m_process->webPage(*originatingPageID);
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);

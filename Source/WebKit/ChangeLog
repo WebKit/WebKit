@@ -1,5 +1,22 @@
 2019-11-18  Alex Christensen  <achristensen@webkit.org>
 
+        Fix assertion in layout test after r252492.
+        https://bugs.webkit.org/show_bug.cgi?id=204199
+
+        There is still a case in a test where there is no frame identifier, so keep the status quo.
+        This is a partial revert of r252492.
+        This fixes layout test http/tests/navigation/window-open-redirect-and-remove-opener.html
+
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::decode):
+        * Shared/FrameInfoData.h:
+        * UIProcess/API/APIFrameInfo.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::createNewPage):
+
+2019-11-18  Alex Christensen  <achristensen@webkit.org>
+
         Use SecTrustEvaluateWithError instead of SecTrustEvaluate where available
         https://bugs.webkit.org/show_bug.cgi?id=204159
 
