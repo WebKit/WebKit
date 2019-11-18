@@ -58,7 +58,6 @@ class PseudoElement;
 class RenderTreePosition;
 class StylePropertyMap;
 class WebAnimation;
-struct ElementStyle;
 struct ScrollIntoViewOptions;
 
 #if ENABLE(INTERSECTION_OBSERVER)
@@ -68,6 +67,10 @@ struct IntersectionObserverData;
 #if ENABLE(RESIZE_OBSERVER)
 struct ResizeObserverData;
 #endif
+
+namespace Style {
+struct ElementStyle;
+}
 
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
@@ -541,7 +544,7 @@ public:
     virtual void didAttachRenderers();
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
-    virtual Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle);
+    virtual Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle);
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 
@@ -562,8 +565,8 @@ public:
     bool allowsDoubleTapGesture() const override;
 #endif
 
-    StyleResolver& styleResolver();
-    ElementStyle resolveStyle(const RenderStyle* parentStyle);
+    Style::Resolver& styleResolver();
+    Style::ElementStyle resolveStyle(const RenderStyle* parentStyle);
 
     // Invalidates the style of a single element. Style is resolved lazily.
     // Descendant elements are resolved as needed, for example if an inherited property changes.

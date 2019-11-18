@@ -69,7 +69,6 @@ static inline bool parentElementPreventsSharing(const Element& parentElement)
 
 static inline bool elementHasDirectionAuto(const Element& element)
 {
-    // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
     return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasDirectionAuto();
 }
 

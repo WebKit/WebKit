@@ -39,34 +39,16 @@
 
 namespace WebCore {
 
-class CSSCursorImageValue;
-class CSSFontFace;
-class CSSFontFaceRule;
-class CSSFontValue;
-class CSSImageGeneratorValue;
-class CSSImageSetValue;
-class CSSImageValue;
-class CSSPageRule;
-class CSSPrimitiveValue;
-class CSSProperty;
 class CSSStyleSheet;
-class CSSValue;
-class ContainerNode;
 class Document;
 class Element;
-class Frame;
-class FrameView;
 class KeyframeList;
 class KeyframeValue;
-class MediaQueryEvaluator;
-class Node;
+class PageRuleCollector;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
 class Settings;
-class StyleCachedImage;
-class StyleGeneratedImage;
-class StyleImage;
 class StyleRuleKeyframe;
 class StyleProperties;
 class StyleRule;
@@ -74,10 +56,7 @@ class StyleRuleKeyframes;
 class StyleRulePage;
 class StyleSheet;
 class StyleSheetList;
-class StyledElement;
-class SVGElement;
 class ViewportStyleResolver;
-struct ResourceLoaderOptions;
 
 // MatchOnlyUserAgentRules is used in media queries, where relative units
 // are interpreted according to the document root element style, and styled only
@@ -89,22 +68,23 @@ enum class RuleMatchingBehavior: uint8_t {
     MatchOnlyUserAgentRules,
 };
 
+namespace Style {
+
 struct ElementStyle {
-    ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Style::Relations> relations = { })
+    ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Relations> relations = { })
         : renderStyle(WTFMove(renderStyle))
         , relations(WTFMove(relations))
     { }
 
     std::unique_ptr<RenderStyle> renderStyle;
-    std::unique_ptr<Style::Relations> relations;
+    std::unique_ptr<Relations> relations;
 };
 
-// This class selects a RenderStyle for a given element based on a collection of stylesheets.
-class StyleResolver {
-    WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
+class Resolver {
+    WTF_MAKE_NONCOPYABLE(Resolver); WTF_MAKE_FAST_ALLOCATED;
 public:
-    StyleResolver(Document&);
-    ~StyleResolver();
+    Resolver(Document&);
+    ~Resolver();
 
     ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle = nullptr, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules, const SelectorFilter* = nullptr);
 
@@ -175,7 +155,7 @@ public:
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
 
 private:
-    friend class PageRuleCollector;
+    friend class WebCore::PageRuleCollector;
 
     class State {
     public:
@@ -206,7 +186,7 @@ private:
         std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
     };
 
-    Style::BuilderContext builderContext(const State&);
+    BuilderContext builderContext(const State&);
 
     enum class UseMatchedDeclarationsCache { Yes, No };
     void applyMatchedProperties(State&, const MatchResult&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
@@ -233,14 +213,14 @@ private:
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
-    Style::MatchedDeclarationsCache m_matchedDeclarationsCache;
+    MatchedDeclarationsCache m_matchedDeclarationsCache;
 
     bool m_matchAuthorAndUserStyles { true };
-    // See if we still have crashes where StyleResolver gets deleted early.
+    // See if we still have crashes where Resolver gets deleted early.
     bool m_isDeleted { false };
 };
 
-inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const
+inline bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const
 {
     ASSERT(!attributeName.isEmpty());
     if (element.isHTMLElement())
@@ -248,10 +228,11 @@ inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const
     return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
 }
 
-inline bool StyleResolver::hasSelectorForId(const AtomString& idValue) const
+inline bool Resolver::hasSelectorForId(const AtomString& idValue) const
 {
     ASSERT(!idValue.isEmpty());
     return m_ruleSets.features().idsInRules.contains(idValue);
 }
 
+} // namespace Style
 } // namespace WebCore

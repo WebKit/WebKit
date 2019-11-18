@@ -77,7 +77,7 @@ private:
 #endif
     void willDetachRenderers() final;
 
-    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
     const AtomString& shadowPseudoId() const final;
 
     void startDragging();
@@ -136,7 +136,7 @@ public:
 private:
     SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
     const AtomString& shadowPseudoId() const final;
     bool isSliderContainerElement() const final { return true; }
 

@@ -741,7 +741,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
         return;
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
-    StyleResolver& styleResolver = m_target->styleResolver();
+    auto& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);

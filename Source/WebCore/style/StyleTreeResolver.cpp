@@ -66,27 +66,27 @@ TreeResolver::TreeResolver(Document& document)
 TreeResolver::~TreeResolver() = default;
 
 TreeResolver::Scope::Scope(Document& document)
-    : styleResolver(document.styleScope().resolver())
-    , sharingResolver(document, styleResolver.ruleSets(), selectorFilter)
+    : resolver(document.styleScope().resolver())
+    , sharingResolver(document, resolver.ruleSets(), selectorFilter)
 {
     document.setIsResolvingTreeStyle(true);
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
-    : styleResolver(shadowRoot.styleScope().resolver())
-    , sharingResolver(shadowRoot.documentScope(), styleResolver.ruleSets(), selectorFilter)
+    : resolver(shadowRoot.styleScope().resolver())
+    , sharingResolver(shadowRoot.documentScope(), resolver.ruleSets(), selectorFilter)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
-    styleResolver.setOverrideDocumentElementStyle(enclosingScope.styleResolver.overrideDocumentElementStyle());
+    resolver.setOverrideDocumentElementStyle(enclosingScope.resolver.overrideDocumentElementStyle());
 }
 
 TreeResolver::Scope::~Scope()
 {
     if (!shadowRoot)
-        styleResolver.document().setIsResolvingTreeStyle(false);
+        resolver.document().setIsResolvingTreeStyle(false);
 
-    styleResolver.setOverrideDocumentElementStyle(nullptr);
+    resolver.setOverrideDocumentElementStyle(nullptr);
 }
 
 TreeResolver::Parent::Parent(Document& document)
@@ -134,7 +134,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, con
     if (auto style = scope().sharingResolver.resolve(element, *m_update))
         return style;
 
-    auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, parentBoxStyle(), RuleMatchingBehavior::MatchAllRules, &scope().selectorFilter);
+    auto elementStyle = scope().resolver.styleForElement(element, &inheritedStyle, parentBoxStyle(), RuleMatchingBehavior::MatchAllRules, &scope().selectorFilter);
 
     if (elementStyle.relations)
         commitRelations(WTFMove(elementStyle.relations), *m_update);
@@ -212,12 +212,12 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
-        scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
+        scope().resolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         if (update.change != NoChange && existingStyle && existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             // In practice this is rare.
-            scope().styleResolver.invalidateMatchedDeclarationsCache();
+            scope().resolver.invalidateMatchedDeclarationsCache();
             descendantsToResolve = DescendantsToResolve::All;
         }
     }
@@ -254,7 +254,7 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
 
-    auto pseudoStyle = scope().styleResolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, parentBoxStyleForPseudo(elementUpdate), &scope().selectorFilter);
+    auto pseudoStyle = scope().resolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, parentBoxStyleForPseudo(elementUpdate), &scope().selectorFilter);
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()))
         return { };
 
@@ -565,13 +565,13 @@ std::unique_ptr<Update> TreeResolver::resolve()
     m_parentStack.append(Parent(m_document));
 
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || scope().styleResolver.usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || scope().styleResolver.usesFirstLetterRules());
+    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || scope().resolver.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || scope().resolver.usesFirstLetterRules());
 
     resolveComposedTree();
 
-    renderView.setUsesFirstLineRules(scope().styleResolver.usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(scope().styleResolver.usesFirstLetterRules());
+    renderView.setUsesFirstLineRules(scope().resolver.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(scope().resolver.usesFirstLetterRules());
 
     ASSERT(m_scopeStack.size() == 1);
     ASSERT(m_parentStack.size() == 1);

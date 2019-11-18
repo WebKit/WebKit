@@ -1525,9 +1525,9 @@ RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String
     auto* frame = this->frame();
     frame->document()->styleScope().flushPendingUpdate();
 
-    unsigned rulesToInclude = StyleResolver::AuthorCSSRules;
+    unsigned rulesToInclude = Style::Resolver::AuthorCSSRules;
     if (!authorOnly)
-        rulesToInclude |= StyleResolver::UAAndUserCSSRules;
+        rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
 
     PseudoId pseudoId = CSSSelector::pseudoId(pseudoType);
 

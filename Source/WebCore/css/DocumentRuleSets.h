@@ -38,6 +38,10 @@ class ExtensionStyleSheets;
 class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
 
+namespace Style {
+class Resolver;
+}
+
 struct InvalidationRuleSet {
     MatchElement matchElement;
     std::unique_ptr<RuleSet> ruleSet;
@@ -48,7 +52,7 @@ struct InvalidationRuleSet {
 
 class DocumentRuleSets {
 public:
-    DocumentRuleSets(StyleResolver&);
+    DocumentRuleSets(Style::Resolver&);
     ~DocumentRuleSets();
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
@@ -70,7 +74,7 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, StyleResolver*);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, Style::Resolver*);
 
     void resetUserAgentMediaQueryStyle();
 
@@ -80,14 +84,14 @@ public:
 
 private:
     void collectFeatures() const;
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, Style::Resolver&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
     std::unique_ptr<RuleSet> m_authorStyle;
     mutable std::unique_ptr<RuleSet> m_userAgentMediaQueryStyle;
     std::unique_ptr<RuleSet> m_userStyle;
 
-    StyleResolver& m_styleResolver;
+    Style::Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;

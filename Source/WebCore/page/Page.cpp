@@ -570,7 +570,7 @@ void Page::initGroup()
 void Page::updateStyleAfterChangeInEnvironment()
 {
     forEachDocument([](Document& document) {
-        if (StyleResolver* styleResolver = document.styleScope().resolverIfExists())
+        if (auto* styleResolver = document.styleScope().resolverIfExists())
             styleResolver->invalidateMatchedDeclarationsCache();
         document.scheduleFullStyleRebuild();
         document.styleScope().didChangeStyleSheetEnvironment();

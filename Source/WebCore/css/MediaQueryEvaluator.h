@@ -36,7 +36,10 @@ class Document;
 class Frame;
 class MediaQuerySet;
 class RenderStyle;
-class StyleResolver;
+
+namespace Style {
+class Resolver;
+}
 
 struct MediaQueryResult {
     MediaQueryExpression expression;
@@ -63,7 +66,7 @@ public:
     bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
 
     // Evaluates a list of media queries.
-    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, StyleResolver* = nullptr) const;
+    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, Style::Resolver* = nullptr) const;
 
     // Evaluates media query subexpression, ie "and (media-feature: value)" part.
     bool evaluate(const MediaQueryExpression&) const;

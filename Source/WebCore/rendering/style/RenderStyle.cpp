@@ -981,7 +981,7 @@ static bool rareNonInheritedDataChangeRequiresLayerRepaint(const StyleRareNonInh
 
 bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
-    // StyleResolver has ensured that zIndex is non-auto only if it's applicable.
+    // Style::Resolver has ensured that zIndex is non-auto only if it's applicable.
     if (m_boxData->zIndex() != other.m_boxData->zIndex() || m_boxData->hasAutoZIndex() != other.m_boxData->hasAutoZIndex())
         return true;
 

@@ -44,8 +44,11 @@ class CSSSelector;
 class ContainerNode;
 class MediaQueryEvaluator;
 class Node;
-class StyleResolver;
 class StyleSheetContents;
+
+namespace Style {
+class Resolver;
+}
 
 enum class MatchBasedOnRuleHash : unsigned {
     None,
@@ -117,7 +120,7 @@ public:
     typedef Vector<RuleData, 1> RuleDataVector;
     typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
-    void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, StyleResolver* = 0);
+    void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, Style::Resolver* = 0);
 
     void addStyleRule(StyleRule*);
     void addRule(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex);
@@ -150,7 +153,7 @@ public:
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
 private:
-    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, bool isInitiatingElementInUserAgentShadowTree);
+    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, Style::Resolver*, bool isInitiatingElementInUserAgentShadowTree);
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;

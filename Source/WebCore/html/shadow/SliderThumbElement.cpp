@@ -590,7 +590,7 @@ RefPtr<HTMLInputElement> SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
+Optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -644,7 +644,7 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderSty
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
 }
 
-Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
+Optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 

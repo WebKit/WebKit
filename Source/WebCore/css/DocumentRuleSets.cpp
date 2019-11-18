@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
+DocumentRuleSets::DocumentRuleSets(Style::Resolver& styleResolver)
     : m_styleResolver(styleResolver)
 {
     m_authorStyle = makeUnique<RuleSet>();
@@ -102,7 +102,7 @@ void DocumentRuleSets::initializeUserStyle()
         m_userStyle = WTFMove(tempUserStyle);
 }
 
-void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, StyleResolver& resolver)
+void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, Style::Resolver& resolver)
 {
     for (unsigned i = 0; i < userSheets.size(); ++i) {
         ASSERT(userSheets[i]->contents().isUserStyleSheet());
@@ -134,7 +134,7 @@ void DocumentRuleSets::resetUserAgentMediaQueryStyle()
     m_userAgentMediaQueryStyle = nullptr;
 }
 
-void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, StyleResolver* resolver)
+void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, Style::Resolver* resolver)
 {
     // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
     // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.

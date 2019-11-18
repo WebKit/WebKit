@@ -304,7 +304,7 @@ AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle*
         }
 
         if (animatedStyle && checkForStackingContext) {
-            // Note that this is similar to code in StyleResolver::adjustRenderStyle() but only needs to consult
+            // Note that this is similar to code in Style::Adjuster::adjust() but only needs to consult
             // animatable properties that can trigger stacking context.
             if (animatedStyle->opacity() < 1.0f
                 || animatedStyle->hasTransformRelatedProperty()

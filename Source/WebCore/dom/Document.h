@@ -193,7 +193,6 @@ class SelectorQueryCache;
 class SerializedScriptValue;
 class Settings;
 class StringCallback;
-class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
@@ -264,6 +263,7 @@ class ResizeObserver;
 #endif
 
 namespace Style {
+class Resolver;
 class Scope;
 };
 
@@ -540,7 +540,7 @@ public:
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
-    StyleResolver& userAgentShadowTreeStyleResolver();
+    Style::Resolver& userAgentShadowTreeStyleResolver();
 
     CSSFontSelector& fontSelector() { return m_fontSelector; }
 
@@ -1679,7 +1679,7 @@ private:
 
     UniqueRef<Quirks> m_quirks;
 
-    std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
+    std::unique_ptr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;

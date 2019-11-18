@@ -593,12 +593,12 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
     propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
 }
 
-Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+Optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto styleElement = makeRefPtr(this->correspondingElement())) {
-        Optional<ElementStyle> style = styleElement->resolveStyle(&parentStyle);
-        Style::Adjuster::adjustSVGElementStyle(*style->renderStyle, *this);
+        auto style = styleElement->resolveStyle(&parentStyle);
+        Style::Adjuster::adjustSVGElementStyle(*style.renderStyle, *this);
         return style;
     }
 

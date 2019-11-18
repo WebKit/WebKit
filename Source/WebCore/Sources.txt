@@ -780,7 +780,6 @@ css/StyleColor.cpp
 css/StyleMedia.cpp
 css/StyleProperties.cpp
 css/StylePropertyShorthand.cpp
-css/StyleResolver.cpp
 css/StyleRule.cpp
 css/StyleRuleImport.cpp
 css/StyleSheet.cpp
@@ -2356,6 +2355,7 @@ style/StyleFontSizeFunctions.cpp
 style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
+style/StyleResolver.cpp
 style/StyleResolveForDocument.cpp
 style/StyleScope.cpp
 style/StyleSharingResolver.cpp

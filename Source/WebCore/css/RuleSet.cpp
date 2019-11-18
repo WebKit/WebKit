@@ -384,7 +384,7 @@ void RuleSet::addPageRule(StyleRulePage* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, StyleResolver* resolver, bool isInitiatingElementInUserAgentShadowTree)
+void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Style::Resolver* resolver, bool isInitiatingElementInUserAgentShadowTree)
 {
     for (auto& rule : rules) {
         if (is<StyleRule>(*rule))
@@ -411,7 +411,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
     }
 }
 
-void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, StyleResolver* resolver)
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, Style::Resolver* resolver)
 {
     for (auto& rule : sheet.importRules()) {
         if (rule->styleSheet() && (!rule->mediaQueries() || medium.evaluate(*rule->mediaQueries(), resolver)))

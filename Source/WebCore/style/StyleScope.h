@@ -43,7 +43,6 @@ class Document;
 class Element;
 class Node;
 class ProcessingInstruction;
-class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
@@ -51,6 +50,8 @@ class ShadowRoot;
 class TreeScope;
 
 namespace Style {
+
+class Resolver;
 
 // This is used to identify style scopes that can affect an element.
 // Scopes are in tree-of-trees order. Styles from earlier scopes win over later ones (modulo !important).
@@ -114,8 +115,8 @@ public:
     Vector<Ref<ProcessingInstruction>> collectXSLTransforms();
 #endif
 
-    StyleResolver& resolver();
-    StyleResolver* resolverIfExists();
+    Resolver& resolver();
+    Resolver* resolverIfExists();
     void clearResolver();
     void releaseMemory();
 
@@ -140,13 +141,13 @@ private:
 
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>&);
 
-    enum StyleResolverUpdateType {
+    enum ResolverUpdateType {
         Reconstruct,
         Reset,
         Additive
     };
-    StyleResolverUpdateType analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc);
-    void updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>&, StyleResolverUpdateType);
+    ResolverUpdateType analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc);
+    void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
 
     void pendingUpdateTimerFired();
     void clearPendingUpdate();
@@ -154,7 +155,7 @@ private:
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
-    std::unique_ptr<StyleResolver> m_resolver;
+    std::unique_ptr<Resolver> m_resolver;
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;

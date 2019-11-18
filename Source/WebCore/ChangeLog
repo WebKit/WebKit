@@ -1,3 +1,132 @@
+2019-11-18  Antti Koivisto  <antti@apple.com>
+
+        Move StyleResolver to Style namespace
+        https://bugs.webkit.org/show_bug.cgi?id=204294
+
+        Reviewed by Zalan Bujtas.
+
+        Most subparts are already in Style namespace.
+
+        Also rename it to Style::Resolver and move files to WebCore/style subdirectory.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::updateBlendingKeyframes):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::DocumentRuleSets):
+        (WebCore::DocumentRuleSets::collectRulesFromUserStyleSheets):
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets):
+        * css/DocumentRuleSets.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::evaluate const):
+        * css/MediaQueryEvaluator.h:
+        * css/PageRuleCollector.h:
+        (WebCore::PageRuleCollector::PageRuleCollector):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/RuleSet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::userAgentShadowTreeStyleResolver):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::styleResolver):
+        (WebCore::Element::resolveStyle):
+        (WebCore::Element::resolveCustomStyle):
+        * dom/Element.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeStyleFromRules):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::resolveCustomStyle):
+        (WebCore::SliderContainerElement::resolveCustomStyle):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::resolveCustomStyle):
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        (WebCore::TextControlInnerTextElement::resolveCustomStyle):
+        (WebCore::TextControlPlaceholderElement::resolveCustomStyle):
+        * html/shadow/TextControlInnerElements.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/agents/InspectorCSSAgent.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules const):
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * rendering/RenderTheme.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        * rendering/style/RenderStyle.h:
+        * style/StyleResolver.cpp: Renamed from Source/WebCore/css/StyleResolver.cpp.
+        (WebCore::Style::Resolver::Resolver):
+        (WebCore::Style::Resolver::addCurrentSVGFontFaceRules):
+        (WebCore::Style::Resolver::appendAuthorStyleSheets):
+        (WebCore::Style::Resolver::addKeyframeStyle):
+        (WebCore::Style::Resolver::~Resolver):
+        (WebCore::Style::Resolver::State::State):
+        (WebCore::Style::Resolver::State::setStyle):
+        (WebCore::Style::Resolver::State::setParentStyle):
+        (WebCore::Style::Resolver::builderContext):
+        (WebCore::Style::Resolver::styleForElement):
+        (WebCore::Style::Resolver::styleForKeyframe):
+        (WebCore::Style::Resolver::isAnimationNameValid):
+        (WebCore::Style::Resolver::keyframeStylesForAnimation):
+        (WebCore::Style::Resolver::pseudoStyleForElement):
+        (WebCore::Style::Resolver::styleForPage):
+        (WebCore::Style::Resolver::defaultStyleForElement):
+        (WebCore::Style::Resolver::styleRulesForElement):
+        (WebCore::Style::Resolver::pseudoStyleRulesForElement):
+        (WebCore::Style::Resolver::invalidateMatchedDeclarationsCache):
+        (WebCore::Style::Resolver::clearCachedDeclarationsAffectedByViewportUnits):
+        (WebCore::Style::Resolver::applyMatchedProperties):
+        (WebCore::Style::Resolver::addViewportDependentMediaQueryResult):
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByViewportChange const):
+        (WebCore::Style::Resolver::addAccessibilitySettingsDependentMediaQueryResult):
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange const):
+        (WebCore::Style::Resolver::addAppearanceDependentMediaQueryResult):
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByAppearanceChange const):
+        * style/StyleResolver.h: Renamed from Source/WebCore/css/StyleResolver.h.
+        (WebCore::Style::ElementStyle::ElementStyle):
+        (WebCore::Style::Resolver::hasSelectorForAttribute const):
+        (WebCore::Style::Resolver::hasSelectorForId const):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+        (WebCore::Style::Scope::resolverIfExists):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::invalidateHostAndSlottedStyleIfNeeded):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        (WebCore::Style::Scope::updateResolver):
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::evaluateMediaQueriesForViewportChange):
+        (WebCore::Style::Scope::evaluateMediaQueriesForAccessibilitySettingsChange):
+        (WebCore::Style::Scope::evaluateMediaQueriesForAppearanceChange):
+        (WebCore::Style::Scope::updateStyleResolver): Deleted.
+        * style/StyleScope.h:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::elementHasDirectionAuto):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::Scope::~Scope):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolvePseudoStyle):
+        (WebCore::Style::TreeResolver::resolve):
+        * style/StyleTreeResolver.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::resolveCustomStyle):
+        * svg/SVGElement.h:
+        
 2019-11-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r252497): Multiple mediacapturefromelement tests are crashing on mac debug

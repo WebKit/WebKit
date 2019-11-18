@@ -1894,7 +1894,7 @@ bool Element::allowsDoubleTapGesture() const
 }
 #endif
 
-StyleResolver& Element::styleResolver()
+Style::Resolver& Element::styleResolver()
 {
     if (auto* shadowRoot = containingShadowRoot())
         return shadowRoot->styleScope().resolver();
@@ -1902,7 +1902,7 @@ StyleResolver& Element::styleResolver()
     return document().styleScope().resolver();
 }
 
-ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)
+Style::ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)
 {
     return styleResolver().styleForElement(*this, parentStyle);
 }
@@ -4089,7 +4089,7 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-Optional<ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
+Optional<Style::ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     return WTF::nullopt;

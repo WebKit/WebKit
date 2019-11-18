@@ -31,7 +31,7 @@ class StyleRulePage;
 
 class PageRuleCollector {
 public:
-    PageRuleCollector(StyleResolver::State& state, DocumentRuleSets& ruleSets)
+    PageRuleCollector(Style::Resolver::State& state, DocumentRuleSets& ruleSets)
         : m_state(state)
         , m_ruleSets(ruleSets) { }
 
@@ -47,7 +47,7 @@ private:
     void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName);
 
-    const StyleResolver::State& m_state;
+    const Style::Resolver::State& m_state;
     DocumentRuleSets& m_ruleSets;
 
     MatchResult m_result;

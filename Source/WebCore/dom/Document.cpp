@@ -2286,10 +2286,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width);
 }
 
-StyleResolver& Document::userAgentShadowTreeStyleResolver()
+Style::Resolver& Document::userAgentShadowTreeStyleResolver()
 {
     if (!m_userAgentShadowTreeStyleResolver)
-        m_userAgentShadowTreeStyleResolver = makeUnique<StyleResolver>(*this);
+        m_userAgentShadowTreeStyleResolver = makeUnique<Style::Resolver>(*this);
     return *m_userAgentShadowTreeStyleResolver;
 }
 

@@ -40,9 +40,10 @@ class Element;
 class Node;
 class RenderStyle;
 class ShadowRoot;
-class StyleResolver;
 
 namespace Style {
+
+class Resolver;
 
 class TreeResolver {
 public:
@@ -62,7 +63,7 @@ private:
     ElementUpdate resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
 
     struct Scope : RefCounted<Scope> {
-        StyleResolver& styleResolver;
+        Resolver& resolver;
         SelectorFilter selectorFilter;
         SharingResolver sharingResolver;
         ShadowRoot* shadowRoot { nullptr };

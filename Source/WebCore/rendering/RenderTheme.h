@@ -45,7 +45,6 @@ class RenderMeter;
 class RenderObject;
 class RenderProgress;
 class RenderStyle;
-class StyleResolver;
 
 class RenderTheme {
 protected:

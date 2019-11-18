@@ -113,7 +113,6 @@ class Pair;
 class ShadowData;
 class StyleImage;
 class StyleInheritedData;
-class StyleResolver;
 class StyleScrollSnapArea;
 class StyleScrollSnapPort;
 class TransformationMatrix;
