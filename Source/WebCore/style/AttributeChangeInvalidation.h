@@ -28,10 +28,9 @@
 #include "Element.h"
 
 namespace WebCore {
+namespace Style {
 
 struct InvalidationRuleSet;
-
-namespace Style {
 
 class AttributeChangeInvalidation {
 public:

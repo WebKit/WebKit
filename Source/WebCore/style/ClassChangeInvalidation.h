@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-class DocumentRuleSets;
 class RuleSet;
 class SpaceSplitString;
-struct InvalidationRuleSet;
 
 namespace Style {
+
+struct InvalidationRuleSet;
 
 class ClassChangeInvalidation {
 public:

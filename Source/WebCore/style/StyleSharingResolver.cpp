@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StyleSharingResolver.h"
 
-#include "DocumentRuleSets.h"
 #include "ElementRuleCollector.h"
 #include "FullscreenManager.h"
 #include "HTMLInputElement.h"
@@ -37,6 +36,7 @@
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleScopeRuleSets.h"
 #include "StyleUpdate.h"
 #include "StyledElement.h"
 #include "VisitedLinkState.h"
@@ -55,7 +55,7 @@ struct SharingResolver::Context {
     InsideLink elementLinkState;
 };
 
-SharingResolver::SharingResolver(const Document& document, const DocumentRuleSets& ruleSets, const SelectorFilter& selectorFilter)
+SharingResolver::SharingResolver(const Document& document, const ScopeRuleSets& ruleSets, const SelectorFilter& selectorFilter)
     : m_document(document)
     , m_ruleSets(ruleSets)
     , m_selectorFilter(selectorFilter)

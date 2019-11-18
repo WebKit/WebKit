@@ -39,8 +39,8 @@ class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
 
 namespace Style {
+
 class Resolver;
-}
 
 struct InvalidationRuleSet {
     MatchElement matchElement;
@@ -50,10 +50,10 @@ struct InvalidationRuleSet {
     WTF_MAKE_FAST_ALLOCATED;
 };
 
-class DocumentRuleSets {
+class ScopeRuleSets {
 public:
-    DocumentRuleSets(Style::Resolver&);
-    ~DocumentRuleSets();
+    ScopeRuleSets(Resolver&);
+    ~ScopeRuleSets();
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
@@ -74,7 +74,7 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, Style::Resolver*);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, Resolver*);
 
     void resetUserAgentMediaQueryStyle();
 
@@ -84,14 +84,14 @@ public:
 
 private:
     void collectFeatures() const;
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, Style::Resolver&);
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, Resolver&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
     std::unique_ptr<RuleSet> m_authorStyle;
     mutable std::unique_ptr<RuleSet> m_userAgentMediaQueryStyle;
     std::unique_ptr<RuleSet> m_userStyle;
 
-    Style::Resolver& m_styleResolver;
+    Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
@@ -111,7 +111,7 @@ private:
     bool m_isInvalidatingStyleWithRuleSets { false };
 };
 
-inline const RuleFeatureSet& DocumentRuleSets::features() const
+inline const RuleFeatureSet& ScopeRuleSets::features() const
 {
     if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
         collectFeatures();
@@ -119,11 +119,12 @@ inline const RuleFeatureSet& DocumentRuleSets::features() const
 }
 
 // FIXME: There should be just the const version.
-inline RuleFeatureSet& DocumentRuleSets::mutableFeatures()
+inline RuleFeatureSet& ScopeRuleSets::mutableFeatures()
 {
     if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
         collectFeatures();
     return m_features;
 }
 
+} // namespace Style
 } // namespace WebCore

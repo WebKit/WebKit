@@ -22,7 +22,6 @@
 #pragma once
 
 #include "CSSSelector.h"
-#include "DocumentRuleSets.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MatchedDeclarationsCache.h"
@@ -30,6 +29,7 @@
 #include "RenderStyle.h"
 #include "RuleSet.h"
 #include "StyleBuilderState.h"
+#include "StyleScopeRuleSets.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -101,8 +101,8 @@ public:
 
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
-    DocumentRuleSets& ruleSets() { return m_ruleSets; }
-    const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
+    ScopeRuleSets& ruleSets() { return m_ruleSets; }
+    const ScopeRuleSets& ruleSets() const { return m_ruleSets; }
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
 
@@ -191,7 +191,7 @@ private:
     enum class UseMatchedDeclarationsCache { Yes, No };
     void applyMatchedProperties(State&, const MatchResult&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
 
-    DocumentRuleSets m_ruleSets;
+    ScopeRuleSets m_ruleSets;
 
     typedef HashMap<AtomStringImpl*, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;

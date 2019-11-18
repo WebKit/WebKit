@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "DocumentRuleSets.h"
 #include "StyleResolver.h"
+#include "StyleScopeRuleSets.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -31,7 +31,7 @@ class StyleRulePage;
 
 class PageRuleCollector {
 public:
-    PageRuleCollector(Style::Resolver::State& state, DocumentRuleSets& ruleSets)
+    PageRuleCollector(Style::Resolver::State& state, Style::ScopeRuleSets& ruleSets)
         : m_state(state)
         , m_ruleSets(ruleSets) { }
 
@@ -48,7 +48,7 @@ private:
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName);
 
     const Style::Resolver::State& m_state;
-    DocumentRuleSets& m_ruleSets;
+    Style::ScopeRuleSets& m_ruleSets;
 
     MatchResult m_result;
 };

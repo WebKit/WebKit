@@ -755,7 +755,6 @@ css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
 css/DeprecatedCSSOMValue.cpp
 css/DeprecatedCSSOMValueList.cpp
-css/DocumentRuleSets.cpp
 css/ElementRuleCollector.cpp
 css/FontVariantBuilder.cpp
 css/InspectorCSSOMWrappers.cpp
@@ -2358,6 +2357,7 @@ style/StyleRelations.cpp
 style/StyleResolver.cpp
 style/StyleResolveForDocument.cpp
 style/StyleScope.cpp
+style/StyleScopeRuleSets.cpp
 style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp

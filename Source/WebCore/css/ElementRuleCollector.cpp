@@ -33,7 +33,6 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
-#include "DocumentRuleSets.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
 #include "SVGElement.h"
@@ -43,6 +42,7 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleScopeRuleSets.h"
 #include "StyledElement.h"
 #include <wtf/SetForScope.h>
 
@@ -79,7 +79,7 @@ public:
     Style::ScopeOrdinal styleScopeOrdinal;
 };
 
-ElementRuleCollector::ElementRuleCollector(const Element& element, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
+ElementRuleCollector::ElementRuleCollector(const Element& element, const Style::ScopeRuleSets& ruleSets, const SelectorFilter* selectorFilter)
     : m_element(element)
     , m_authorStyle(ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())

@@ -1,3 +1,48 @@
+2019-11-18  Antti Koivisto  <antti@apple.com>
+
+        Rename DocumentRuleSets to Style::ScopeRuleSets
+        https://bugs.webkit.org/show_bug.cgi?id=204301
+
+        Reviewed by Zalan Bujtas.
+
+        The current name is misleading, these objects are per style scope, not per document.
+        Also switch to Style namespace and directory.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        * css/ElementRuleCollector.h:
+        * css/PageRuleCollector.h:
+        (WebCore::PageRuleCollector::PageRuleCollector):
+        * style/AttributeChangeInvalidation.h:
+        * style/ClassChangeInvalidation.h:
+        * style/StyleInvalidationFunctions.h:
+        * style/StyleResolver.h:
+        (WebCore::Style::Resolver::ruleSets):
+        (WebCore::Style::Resolver::ruleSets const):
+        * style/StyleScopeRuleSets.cpp: Renamed from Source/WebCore/css/DocumentRuleSets.cpp.
+        (WebCore::Style::ScopeRuleSets::ScopeRuleSets):
+        (WebCore::Style::ScopeRuleSets::~ScopeRuleSets):
+        (WebCore::Style::ScopeRuleSets::userAgentMediaQueryStyle const):
+        (WebCore::Style::ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded const):
+        (WebCore::Style::ScopeRuleSets::userStyle const):
+        (WebCore::Style::ScopeRuleSets::initializeUserStyle):
+        (WebCore::Style::ScopeRuleSets::collectRulesFromUserStyleSheets):
+        (WebCore::Style::ScopeRuleSets::resetAuthorStyle):
+        (WebCore::Style::ScopeRuleSets::resetUserAgentMediaQueryStyle):
+        (WebCore::Style::ScopeRuleSets::appendAuthorStyleSheets):
+        (WebCore::Style::ScopeRuleSets::collectFeatures const):
+        (WebCore::Style::ScopeRuleSets::classInvalidationRuleSets const):
+        (WebCore::Style::ScopeRuleSets::attributeInvalidationRuleSets const):
+        (WebCore::Style::ScopeRuleSets::hasComplexSelectorsForStyleAttribute const):
+        * style/StyleScopeRuleSets.h: Renamed from Source/WebCore/css/DocumentRuleSets.h.
+        (WebCore::Style::ScopeRuleSets::features const):
+        (WebCore::Style::ScopeRuleSets::mutableFeatures):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::SharingResolver):
+        * style/StyleSharingResolver.h:
+
 2019-11-18  Benjamin Nham  <nham@apple.com>
 
         Delete unused visually non-empty methods from FrameView

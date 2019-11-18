@@ -31,9 +31,12 @@
 
 namespace WebCore {
 
-class DocumentRuleSets;
 class MatchRequest;
 class SelectorFilter;
+
+namespace Style {
+class ScopeRuleSets;
+}
 
 class PseudoStyleRequest {
 public:
@@ -80,7 +83,7 @@ struct MatchResult {
 
 class ElementRuleCollector {
 public:
-    ElementRuleCollector(const Element&, const DocumentRuleSets&, const SelectorFilter*);
+    ElementRuleCollector(const Element&, const Style::ScopeRuleSets&, const SelectorFilter*);
     ElementRuleCollector(const Element&, const RuleSet& authorStyle, const SelectorFilter*);
 
     void setIncludeEmptyRules(bool value) { m_shouldIncludeEmptyRules = value; }

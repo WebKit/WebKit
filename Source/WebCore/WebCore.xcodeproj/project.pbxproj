@@ -1315,7 +1315,7 @@
 		4A0FFA9E1AAF5E7E0062803B /* MockRealtimeMediaSourceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0FFA9C1AAF5E6C0062803B /* MockRealtimeMediaSourceCenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A0FFAA21AAF5EA20062803B /* RealtimeMediaSourceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0FFAA01AAF5EA20062803B /* RealtimeMediaSourceCenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A38BF4F14FE1C0900612512 /* WebSocketDeflateFramer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */; };
+		4A4F48AA16B0DFC000EDBB29 /* StyleScopeRuleSets.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F48A816B0DFC000EDBB29 /* StyleScopeRuleSets.h */; };
 		4A4F65711AA997F100E38CDD /* RealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F656C1AA997F100E38CDD /* RealtimeMediaSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A4F65721AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F656D1AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A4F65741AA997F100E38CDD /* RealtimeMediaSourceSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F656F1AA997F100E38CDD /* RealtimeMediaSourceSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7879,8 +7879,8 @@
 		4A0FFAA31AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeMediaSourceCenterMac.cpp; sourceTree = "<group>"; };
 		4A38BF4E14FE1C0900612512 /* WebSocketDeflateFramer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketDeflateFramer.cpp; sourceTree = "<group>"; };
 		4A38BF4F14FE1C0900612512 /* WebSocketDeflateFramer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketDeflateFramer.h; sourceTree = "<group>"; };
-		4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentRuleSets.cpp; sourceTree = "<group>"; };
-		4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentRuleSets.h; sourceTree = "<group>"; };
+		4A4F48A716B0DFC000EDBB29 /* StyleScopeRuleSets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScopeRuleSets.cpp; sourceTree = "<group>"; };
+		4A4F48A816B0DFC000EDBB29 /* StyleScopeRuleSets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleScopeRuleSets.h; sourceTree = "<group>"; };
 		4A4F656B1AA997F100E38CDD /* RealtimeMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeMediaSource.cpp; sourceTree = "<group>"; };
 		4A4F656C1AA997F100E38CDD /* RealtimeMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSource.h; sourceTree = "<group>"; };
 		4A4F656D1AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSourceCapabilities.h; sourceTree = "<group>"; };
@@ -27053,6 +27053,8 @@
 				E139866215478474001E3F65 /* StyleResolver.h */,
 				E461D65C1BB0C7F000CB5645 /* StyleScope.cpp */,
 				E461D65E1BB0C80D00CB5645 /* StyleScope.h */,
+				4A4F48A716B0DFC000EDBB29 /* StyleScopeRuleSets.cpp */,
+				4A4F48A816B0DFC000EDBB29 /* StyleScopeRuleSets.h */,
 				E47A3AC21C5EABBE00CCBFA7 /* StyleSharingResolver.cpp */,
 				E47A3AC41C5EAC7900CCBFA7 /* StyleSharingResolver.h */,
 				E4DEAA1517A93DC3000E0430 /* StyleTreeResolver.cpp */,
@@ -27360,8 +27362,6 @@
 				9479492D1E04578D00018D85 /* DeprecatedCSSOMValueList.cpp */,
 				947949271E03132000018D85 /* DeprecatedCSSOMValueList.h */,
 				A8D0651C0A23C1FE005E7203 /* DeprecatedCSSOMValueList.idl */,
-				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
-				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
 				4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */,
 				4BDA3FFA2151B6F300FD6604 /* DOMCSSCustomPropertyDescriptor.idl */,
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
@@ -29534,7 +29534,7 @@
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */,
 				1D2F8E03234474EF00993B68 /* DocumentPictureInPicture.h in Headers */,
-				4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */,
+				4A4F48AA16B0DFC000EDBB29 /* StyleScopeRuleSets.h in Headers */,
 				AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */,
 				6BDB5DC2227BD3B800919770 /* DocumentStorageAccess.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,

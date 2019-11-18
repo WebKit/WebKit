@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "DocumentRuleSets.h"
 #include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleScopeRuleSets.h"
 
 namespace WebCore {
 namespace Style {
