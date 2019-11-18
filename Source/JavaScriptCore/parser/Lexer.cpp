@@ -2137,17 +2137,15 @@ start:
         break;
     case CharacterQuestion:
         shift();
-        if (Options::useNullishAwareOperators()) {
-            if (m_current == '?') {
-                shift();
-                token = COALESCE;
-                break;
-            }
-            if (m_current == '.' && !isASCIIDigit(peek(1))) {
-                shift();
-                token = QUESTIONDOT;
-                break;
-            }
+        if (m_current == '?') {
+            shift();
+            token = COALESCE;
+            break;
+        }
+        if (m_current == '.' && !isASCIIDigit(peek(1))) {
+            shift();
+            token = QUESTIONDOT;
+            break;
         }
         token = QUESTION;
         break;

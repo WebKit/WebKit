@@ -1,8 +1,6 @@
 
 ---
 flags:
-  coalesce-expression: useNullishAwareOperators
-  optional-chaining: useNullishAwareOperators
   BigInt: useBigInt
   WeakRef: useWeakRefs
 skip:
