@@ -1,3 +1,13 @@
+2019-11-18  Darin Adler  <darin@apple.com>
+
+        WKWebView.mediaType is nullable, not null_resettable
+        https://bugs.webkit.org/show_bug.cgi?id=204297
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.h: Use nullable for mediaType since this
+        property returns a null value when the media type is not being overridden.
+
 2019-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Automation: scrollIntoView should do nothing if element is visible
@@ -296,7 +306,6 @@
         * NetworkProcess/NetworkResourceLoader.cpp:
         (WebKit::NetworkResourceLoader::didReceiveResponse):
 
->>>>>>> .r252470
 2019-11-14  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Crash under WebProcess::processTaskStateDidChange(WebKit::ProcessTaskStateObserver::TaskState)
