@@ -557,7 +557,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     if (scrollIntoViewIfNeeded && containerElement) {
         // §14.1 Element Click. Step 4. Scroll into view the element’s container.
         // https://w3c.github.io/webdriver/webdriver-spec.html#element-click
-        containerElement->scrollIntoViewIfNeeded(false);
+        containerElement->scrollIntoViewIfNotVisible(false);
         // FIXME: Wait in an implementation-specific way up to the session implicit wait timeout for the element to become in view.
     }
 

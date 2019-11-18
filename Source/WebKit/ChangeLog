@@ -1,3 +1,27 @@
+2019-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Automation: scrollIntoView should do nothing if element is visible
+        https://bugs.webkit.org/show_bug.cgi?id=204194
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        "To scroll into view an element perform the following steps only if the element is not already in view"
+        https://w3c.github.io/webdriver/#dfn-scrolls-into-view
+
+        Fixes: imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[9]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[8]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[7]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[6]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[5]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[4]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[3]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[2]
+               imported/w3c/webdriver/tests/element_click/scroll_into_view.py::test_partially_visible_does_not_scroll[1]
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout): Use scrollIntoViewIfNotVisible instead of
+        scrollIntoViewIfNeeded.
+
 2019-11-17  Alexey Proskuryakov  <ap@apple.com>
 
         Better build fix attempt after r252434. 
