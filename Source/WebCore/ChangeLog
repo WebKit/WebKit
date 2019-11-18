@@ -1,5 +1,21 @@
 2019-11-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Invalidation] Force rebuild layout tree on tree mutation
+        https://bugs.webkit.org/show_bug.cgi?id=204295
+        <rdar://problem/57283650>
+
+        Reviewed by Antti Koivisto.
+
+        This should evolve into a fine grained tree invalidation. 
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::detachFromRenderElement):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle):
+
+2019-11-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Invalidation] Do not collect inline items multiple times
         https://bugs.webkit.org/show_bug.cgi?id=204296
         <rdar://problem/57283761>

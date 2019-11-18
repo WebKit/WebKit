@@ -63,6 +63,11 @@
 #include "RenderTreeBuilderRuby.h"
 #include "RenderTreeBuilderSVG.h"
 #include "RenderTreeBuilderTable.h"
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "FrameView.h"
+#include "FrameViewLayoutContext.h"
+#include "RuntimeEnabledFeatures.h"
+#endif
 
 namespace WebCore {
 
@@ -436,6 +441,13 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         downcast<RenderBlockFlow>(parent).invalidateLineLayoutPath();
     if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On)
         newChild->setHasOutlineAutoAncestor();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
+        if (parent.document().view())
+            parent.document().view()->layoutContext().invalidateLayoutTreeContent();
+
+    }
+#endif
 }
 
 void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
@@ -853,7 +865,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         if (AXObjectCache* cache = parent.document().existingAXObjectCache())
             cache->childrenChanged(&parent);
     }
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
+        if (parent.document().view())
+            parent.document().view()->layoutContext().invalidateLayoutTreeContent();
 
+    }
+#endif
     return childToTake;
 }
 
