@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class Document;
 class Element;
 class RenderStyle;
 class SVGElement;

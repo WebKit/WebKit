@@ -59,9 +59,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RuleSet* CSSDefaultStyleSheets::defaultStyle;
-RuleSet* CSSDefaultStyleSheets::defaultQuirksStyle;
-RuleSet* CSSDefaultStyleSheets::defaultPrintStyle;
+Style::RuleSet* CSSDefaultStyleSheets::defaultStyle;
+Style::RuleSet* CSSDefaultStyleSheets::defaultQuirksStyle;
+Style::RuleSet* CSSDefaultStyleSheets::defaultPrintStyle;
 unsigned CSSDefaultStyleSheets::defaultStyleVersion;
 
 StyleSheetContents* CSSDefaultStyleSheets::simpleDefaultStyleSheet;
@@ -175,11 +175,11 @@ void CSSDefaultStyleSheets::loadFullDefaultStyle()
         simpleDefaultStyleSheet = nullptr;
     } else {
         ASSERT(!defaultStyle);
-        defaultQuirksStyle = makeUnique<RuleSet>().release();
+        defaultQuirksStyle = makeUnique<Style::RuleSet>().release();
     }
 
-    defaultStyle = makeUnique<RuleSet>().release();
-    defaultPrintStyle = makeUnique<RuleSet>().release();
+    defaultStyle = makeUnique<Style::RuleSet>().release();
+    defaultPrintStyle = makeUnique<Style::RuleSet>().release();
     mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
 
     // Strict-mode rules.
@@ -198,10 +198,10 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
     ASSERT(!defaultStyle);
     ASSERT(!simpleDefaultStyleSheet);
 
-    defaultStyle = makeUnique<RuleSet>().release();
+    defaultStyle = makeUnique<Style::RuleSet>().release();
     // There are no media-specific rules in the simple default style.
     defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = makeUnique<RuleSet>().release();
+    defaultQuirksStyle = makeUnique<Style::RuleSet>().release();
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(*simpleDefaultStyleSheet, screenEval());

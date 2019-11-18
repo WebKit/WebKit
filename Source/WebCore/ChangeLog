@@ -1,3 +1,47 @@
+2019-11-18  Antti Koivisto  <antti@apple.com>
+
+        Move RuleSet to Style namespace
+        https://bugs.webkit.org/show_bug.cgi?id=204307
+
+        Reviewed by Zalan Bujtas.
+
+        Also move RuleFeature.
+        Move to style/ directory.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::loadFullDefaultStyle):
+        (WebCore::CSSDefaultStyleSheets::loadSimpleDefaultStyle):
+        * css/CSSDefaultStyleSheets.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        (WebCore::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::ElementRuleCollector::matchUARules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::ElementRuleCollector::hasAnyMatchingRules):
+        * css/ElementRuleCollector.h:
+        * css/PageRuleCollector.cpp:
+        (WebCore::PageRuleCollector::matchPageRules):
+        * css/PageRuleCollector.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        * style/RuleFeature.cpp: Renamed from Source/WebCore/css/RuleFeature.cpp.
+        * style/RuleFeature.h: Renamed from Source/WebCore/css/RuleFeature.h.
+        * style/RuleSet.cpp: Renamed from Source/WebCore/css/RuleSet.cpp.
+        (WebCore::Style::computeContainsUncommonAttributeSelector):
+        (WebCore::Style::RuleData::RuleData):
+        (WebCore::Style::RuleSet::addChildRules):
+        (WebCore::Style::RuleSet::addRulesFromSheet):
+        * style/RuleSet.h: Renamed from Source/WebCore/css/RuleSet.h.
+        * style/StyleInvalidator.h:
+
 2019-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Use SecTrustEvaluateWithError instead of SecTrustEvaluate where available

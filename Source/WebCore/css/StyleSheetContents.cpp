@@ -156,8 +156,8 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
-    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
-        m_childRules.appendVector(downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount));
+    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount) {
+        m_childRules.appendVector(downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(Style::RuleData::maximumSelectorComponentCount));
         return;
     }
 
@@ -264,7 +264,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     childVectorIndex -= m_namespaceRules.size();
 
     // If the number of selectors would overflow RuleData, we drop the operation.
-    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount)
+    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount)
         return false;
 
     m_childRules.insert(childVectorIndex, WTFMove(rule));

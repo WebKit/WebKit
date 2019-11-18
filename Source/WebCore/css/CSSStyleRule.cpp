@@ -97,7 +97,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
-    if (selectorList.componentCount() > RuleData::maximumSelectorComponentCount)
+    if (selectorList.componentCount() > Style::RuleData::maximumSelectorComponentCount)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

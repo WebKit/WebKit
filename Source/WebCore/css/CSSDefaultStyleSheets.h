@@ -25,14 +25,17 @@
 namespace WebCore {
 
 class Element;
-class RuleSet;
 class StyleSheetContents;
+
+namespace Style {
+class RuleSet;
+}
 
 class CSSDefaultStyleSheets {
 public:
-    static RuleSet* defaultStyle;
-    static RuleSet* defaultQuirksStyle;
-    static RuleSet* defaultPrintStyle;
+    static Style::RuleSet* defaultStyle;
+    static Style::RuleSet* defaultQuirksStyle;
+    static Style::RuleSet* defaultPrintStyle;
     static unsigned defaultStyleVersion;
 
     static StyleSheetContents* simpleDefaultStyleSheet;

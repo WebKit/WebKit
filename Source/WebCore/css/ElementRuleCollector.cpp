@@ -70,12 +70,12 @@ static const StyleProperties& rightToLeftDeclaration()
 
 class MatchRequest {
 public:
-    MatchRequest(const RuleSet* ruleSet, Style::ScopeOrdinal styleScopeOrdinal = Style::ScopeOrdinal::Element)
+    MatchRequest(const Style::RuleSet* ruleSet, Style::ScopeOrdinal styleScopeOrdinal = Style::ScopeOrdinal::Element)
         : ruleSet(ruleSet)
         , styleScopeOrdinal(styleScopeOrdinal)
     {
     }
-    const RuleSet* ruleSet;
+    const Style::RuleSet* ruleSet;
     Style::ScopeOrdinal styleScopeOrdinal;
 };
 
@@ -89,7 +89,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const Style::
     ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
 }
 
-ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet& authorStyle, const SelectorFilter* selectorFilter)
+ElementRuleCollector::ElementRuleCollector(const Element& element, const Style::RuleSet& authorStyle, const SelectorFilter* selectorFilter)
     : m_element(element)
     , m_authorStyle(authorStyle)
     , m_selectorFilter(selectorFilter)
@@ -109,7 +109,7 @@ const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
     return m_matchedRuleList;
 }
 
-inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, Style::ScopeOrdinal styleScopeOrdinal)
+inline void ElementRuleCollector::addMatchedRule(const Style::RuleData& ruleData, unsigned specificity, Style::ScopeOrdinal styleScopeOrdinal)
 {
     m_matchedRules.append({ &ruleData, specificity, styleScopeOrdinal });
 }
@@ -344,7 +344,7 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
         collectMatchingRulesForList(rules.shadowPseudoElementRules(pseudoId), matchRequest);
 }
 
-std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPseudoElementRulesForSlot()
+std::unique_ptr<Style::RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPseudoElementRulesForSlot()
 {
     ASSERT(is<HTMLSlotElement>(element()));
 
@@ -359,7 +359,7 @@ std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPse
     if (m_matchedRules.isEmpty())
         return { };
 
-    auto ruleDataVector = makeUnique<RuleSet::RuleDataVector>();
+    auto ruleDataVector = makeUnique<Style::RuleSet::RuleDataVector>();
     ruleDataVector->reserveInitialCapacity(m_matchedRules.size());
     for (auto& matchedRule : m_matchedRules)
         ruleDataVector->uncheckedAppend(*matchedRule.ruleData);
@@ -385,7 +385,7 @@ void ElementRuleCollector::matchUARules()
     // First we match rules from the user agent sheet.
     if (CSSDefaultStyleSheets::simpleDefaultStyleSheet)
         m_result.isCacheable = false;
-    RuleSet* userAgentStyleSheet = m_isPrintStyle
+    auto* userAgentStyleSheet = m_isPrintStyle
         ? CSSDefaultStyleSheets::defaultPrintStyle : CSSDefaultStyleSheets::defaultStyle;
     matchUARules(*userAgentStyleSheet);
 
@@ -397,7 +397,7 @@ void ElementRuleCollector::matchUARules()
         matchUARules(*m_userAgentMediaQueryStyle);
 }
 
-void ElementRuleCollector::matchUARules(const RuleSet& rules)
+void ElementRuleCollector::matchUARules(const Style::RuleSet& rules)
 {
     clearMatchedRules();
     
@@ -418,28 +418,28 @@ static const CSSSelector* findSlottedPseudoElementSelector(const CSSSelector* se
     return nullptr;
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity)
+inline bool ElementRuleCollector::ruleMatches(const Style::RuleData& ruleData, unsigned& specificity)
 {
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
-    MatchBasedOnRuleHash matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
-    if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
+    auto matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
+    if (matchBasedOnRuleHash != Style::MatchBasedOnRuleHash::None && element().isHTMLElement()) {
         ASSERT_WITH_MESSAGE(m_pseudoStyleRequest.pseudoId == PseudoId::None, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
 
         switch (matchBasedOnRuleHash) {
-        case MatchBasedOnRuleHash::None:
+        case Style::MatchBasedOnRuleHash::None:
             ASSERT_NOT_REACHED();
             break;
-        case MatchBasedOnRuleHash::Universal:
+        case Style::MatchBasedOnRuleHash::Universal:
             specificity = 0;
             break;
-        case MatchBasedOnRuleHash::ClassA:
+        case Style::MatchBasedOnRuleHash::ClassA:
             specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
             break;
-        case MatchBasedOnRuleHash::ClassB:
+        case Style::MatchBasedOnRuleHash::ClassB:
             specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
             break;
-        case MatchBasedOnRuleHash::ClassC:
+        case Style::MatchBasedOnRuleHash::ClassC:
             specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
             break;
         }
@@ -514,13 +514,13 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     return selectorMatches;
 }
 
-void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)
+void ElementRuleCollector::collectMatchingRulesForList(const Style::RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)
 {
     if (!rules)
         return;
 
     for (unsigned i = 0, size = rules->size(); i < size; ++i) {
-        const RuleData& ruleData = rules->data()[i];
+        const auto& ruleData = rules->data()[i];
 
         if (!ruleData.canMatchPseudoElement() && m_pseudoStyleRequest.pseudoId != PseudoId::None)
             continue;
@@ -618,7 +618,7 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
         addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), false /* isCacheable */);
 }
 
-bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet* ruleSet)
+bool ElementRuleCollector::hasAnyMatchingRules(const Style::RuleSet* ruleSet)
 {
     clearMatchedRules();
 

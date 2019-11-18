@@ -770,8 +770,6 @@ css/MediaQueryParserContext.cpp
 css/PageRuleCollector.cpp
 css/PropertySetCSSStyleDeclaration.cpp
 css/RGBColor.cpp
-css/RuleFeature.cpp
-css/RuleSet.cpp
 css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
@@ -2346,6 +2344,8 @@ style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
 style/MatchedDeclarationsCache.cpp
 style/PropertyCascade.cpp
+style/RuleFeature.cpp
+style/RuleSet.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp

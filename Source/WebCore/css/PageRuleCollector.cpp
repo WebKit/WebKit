@@ -74,7 +74,7 @@ void PageRuleCollector::matchAllPageRules(int pageIndex)
         matchPageRules(&m_ruleSets.authorStyle(), isLeft, isFirst, page);
 }
 
-void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void PageRuleCollector::matchPageRules(Style::RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     if (!rules)
         return;

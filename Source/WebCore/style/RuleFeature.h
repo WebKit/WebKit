@@ -30,8 +30,11 @@
 
 namespace WebCore {
 
-class RuleData;
 class StyleRule;
+
+namespace Style {
+
+class RuleData;
 
 enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
@@ -88,4 +91,5 @@ private:
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);
 };
 
+} // namespace Style
 } // namespace WebCore

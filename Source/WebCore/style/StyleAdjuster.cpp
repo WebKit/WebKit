@@ -32,6 +32,7 @@
 
 #include "CSSFontSelector.h"
 #include "Element.h"
+#include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
@@ -39,6 +40,7 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "MathMLElement.h"
+#include "Page.h"
 #include "Quirks.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"

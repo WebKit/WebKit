@@ -32,14 +32,6 @@
 
 namespace WebCore {
 
-enum PropertyWhitelistType {
-    PropertyWhitelistNone   = 0,
-    PropertyWhitelistMarker,
-#if ENABLE(VIDEO_TRACK)
-    PropertyWhitelistCue
-#endif
-};
-
 class CSSSelector;
 class ContainerNode;
 class MediaQueryEvaluator;
@@ -47,8 +39,16 @@ class Node;
 class StyleSheetContents;
 
 namespace Style {
+
 class Resolver;
-}
+
+enum PropertyWhitelistType {
+    PropertyWhitelistNone   = 0,
+    PropertyWhitelistMarker,
+#if ENABLE(VIDEO_TRACK)
+    PropertyWhitelistCue
+#endif
+};
 
 enum class MatchBasedOnRuleHash : unsigned {
     None,
@@ -107,8 +107,12 @@ class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
 public:
     struct RuleSetSelectorPair {
-        RuleSetSelectorPair(const CSSSelector* selector, std::unique_ptr<RuleSet> ruleSet) : selector(selector), ruleSet(WTFMove(ruleSet)) { }
-        RuleSetSelectorPair(const RuleSetSelectorPair& pair) : selector(pair.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&pair)->ruleSet.release()) { }
+        RuleSetSelectorPair(const CSSSelector* selector, std::unique_ptr<RuleSet> ruleSet)
+            : selector(selector), ruleSet(WTFMove(ruleSet))
+        { }
+        RuleSetSelectorPair(const RuleSetSelectorPair& pair)
+            : selector(pair.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&pair)->ruleSet.release())
+        { }
 
         const CSSSelector* selector;
         std::unique_ptr<RuleSet> ruleSet;
@@ -186,11 +190,12 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
     return tagRules->get(key);
 }
 
+} // namespace Style
 } // namespace WebCore
 
 namespace WTF {
 
 // RuleData is simple enough that initializing to 0 and moving with memcpy will totally work.
-template<> struct VectorTraits<WebCore::RuleData> : SimpleClassVectorTraits { };
+template<> struct VectorTraits<WebCore::Style::RuleData> : SimpleClassVectorTraits { };
 
 } // namespace WTF

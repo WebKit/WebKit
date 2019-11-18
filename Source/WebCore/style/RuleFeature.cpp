@@ -34,6 +34,7 @@
 #include "RuleSet.h"
 
 namespace WebCore {
+namespace Style {
 
 static bool isSiblingOrSubject(MatchElement matchElement)
 {
@@ -251,4 +252,5 @@ void RuleFeatureSet::shrinkToFit()
         rules->shrinkToFit();
 }
 
+} // namespace Style
 } // namespace WebCore

@@ -37,6 +37,7 @@
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"
+#include "StylePropertyShorthand.h"
 
 namespace WebCore {
 namespace Style {

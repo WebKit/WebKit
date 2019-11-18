@@ -49,6 +49,7 @@
 #endif
 
 namespace WebCore {
+namespace Style {
 
 using namespace HTMLNames;
 
@@ -103,7 +104,7 @@ static inline bool isCommonAttributeSelectorAttribute(const QualifiedName& attri
     return attribute == typeAttr || attribute == readonlyAttr;
 }
 
-static bool containsUncommonAttributeSelector(const CSSSelector& rootSelector, bool matchesRightmostElement)
+static bool computeContainsUncommonAttributeSelector(const CSSSelector& rootSelector, bool matchesRightmostElement = true)
 {
     const CSSSelector* selector = &rootSelector;
     do {
@@ -117,7 +118,7 @@ static bool containsUncommonAttributeSelector(const CSSSelector& rootSelector, b
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                if (containsUncommonAttributeSelector(*subSelector, matchesRightmostElement))
+                if (computeContainsUncommonAttributeSelector(*subSelector, matchesRightmostElement))
                     return true;
             }
         }
@@ -128,11 +129,6 @@ static bool containsUncommonAttributeSelector(const CSSSelector& rootSelector, b
         selector = selector->tagHistory();
     } while (selector);
     return false;
-}
-
-static inline bool containsUncommonAttributeSelector(const CSSSelector& rootSelector)
-{
-    return containsUncommonAttributeSelector(rootSelector, true);
 }
 
 static inline PropertyWhitelistType determinePropertyWhitelistType(const CSSSelector* selector)
@@ -163,7 +159,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned selectorLis
     , m_position(position)
     , m_matchBasedOnRuleHash(static_cast<unsigned>(computeMatchBasedOnRuleHash(*selector())))
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
-    , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(*selector()))
+    , m_containsUncommonAttributeSelector(computeContainsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_propertyWhitelistType(determinePropertyWhitelistType(selector()))
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
@@ -384,7 +380,7 @@ void RuleSet::addPageRule(StyleRulePage* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Style::Resolver* resolver, bool isInitiatingElementInUserAgentShadowTree)
+void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Resolver* resolver, bool isInitiatingElementInUserAgentShadowTree)
 {
     for (auto& rule : rules) {
         if (is<StyleRule>(*rule))
@@ -404,14 +400,13 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
         else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
             addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, isInitiatingElementInUserAgentShadowTree);
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        else if (is<StyleRuleViewport>(*rule) && resolver) {
+        else if (is<StyleRuleViewport>(*rule) && resolver)
             resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
-        }
 #endif
     }
 }
 
-void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, Style::Resolver* resolver)
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, Resolver* resolver)
 {
     for (auto& rule : sheet.importRules()) {
         if (rule->styleSheet() && (!rule->mediaQueries() || medium.evaluate(*rule->mediaQueries(), resolver)))
@@ -470,4 +465,5 @@ void RuleSet::shrinkToFit()
     m_features.shrinkToFit();
 }
 
+} // namespace Style
 } // namespace WebCore

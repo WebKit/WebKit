@@ -33,12 +33,13 @@ namespace WebCore {
 class Document;
 class Element;
 class MediaQueryEvaluator;
-class RuleSet;
 class SelectorFilter;
 class ShadowRoot;
 class StyleSheetContents;
 
 namespace Style {
+
+class RuleSet;
 
 class Invalidator {
 public:
