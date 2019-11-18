@@ -395,8 +395,6 @@ public:
 
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
-    void updateIsVisuallyNonEmpty();
-    void updateSignificantRenderedTextMilestoneIfNeeded();
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
     WEBCORE_EXPORT bool qualifiesAsVisuallyNonEmpty() const;
 
