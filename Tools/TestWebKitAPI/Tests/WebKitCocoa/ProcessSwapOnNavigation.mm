@@ -2324,6 +2324,9 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
         TestWebKitAPI::Util::spinRunLoop(0.1);
     }
 
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
     Vector<String> backForwardListURLs;
     auto* backForwardList = [webView backForwardList];
     for (unsigned i = 0; i < backForwardList.backList.count; ++i)
@@ -2331,7 +2334,7 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
     backForwardListURLs.append([backForwardList.currentItem.URL absoluteString]);
     for (unsigned i = 0; i < backForwardList.forwardList.count; ++i)
         backForwardListURLs.append([backForwardList.forwardList[i].URL absoluteString]);
-    EXPECT_EQ(3u, backForwardListURLs.size());
+    RELEASE_ASSERT(backForwardListURLs.size() == 3u);
     EXPECT_WK_STREQ("pson://www.webkit.org/main1.html", backForwardListURLs[0]);
     EXPECT_WK_STREQ("pson://www.webkit.org/main2.html", backForwardListURLs[1]);
     EXPECT_WK_STREQ("pson://www.apple.com/main.html", backForwardListURLs[2]);

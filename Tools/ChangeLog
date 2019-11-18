@@ -1,3 +1,16 @@
+2019-11-18  Chris Dumez  <cdumez@apple.com>
+
+        TestWebKitAPI.ProcessSwap.QuickBackForwardNavigationWithPSON is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=199645
+        <rdar://problem/52856112>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the test waits for the history navigations to complete before checking the
+        back/forward list.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-11-18  Keith Rollin  <krollin@apple.com>
 
         Move jsc from Resources to Helpers
