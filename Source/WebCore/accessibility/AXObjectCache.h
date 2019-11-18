@@ -524,7 +524,7 @@ inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return n
 inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
-inline AccessibilityObject* AXObjectCache::rootObject() { return nullptr; }
+inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return nullptr; }
 inline bool nodeHasRole(Node*, const String&) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }

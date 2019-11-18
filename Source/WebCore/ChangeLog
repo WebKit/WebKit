@@ -1,3 +1,10 @@
+2019-11-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix build (again) for a11y disabled, after r252417.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::rootObject):
+
 2019-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focusing a shadow host which delegates focus should skip inner shadow hosts which delegate focus
