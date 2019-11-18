@@ -62,7 +62,7 @@ class MeteredStream(object):
         self._last_partial_line = ''
         self._last_write_time = 0.0
         self._throttle_delay_in_secs = 0.066 if self._erasing else 10.0
-        self._number_of_columns = sys.maxint
+        self._number_of_columns = sys.maxsize
         if self._isatty and number_of_columns:
             self._number_of_columns = number_of_columns
 

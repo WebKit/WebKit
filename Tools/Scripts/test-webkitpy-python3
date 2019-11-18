@@ -39,6 +39,7 @@ PYTHON3_COMPATIBLE_DIRECTORIES = [
   'webkitpy.layout_tests.layout_package',
   'webkitpy.layout_tests.models',
   'webkitpy.layout_tests.servers',
+  'webkitpy.layout_tests.views',
   'webkitpy.port',
   'webkitpy.results',
   'webkitpy.style',

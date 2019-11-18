@@ -28,9 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from webkitpy.layout_tests.models import test_expectations
-
 from webkitpy.common.net import resultsjsonparser
+from webkitpy.common.iteration_compatibility import iteritems
+from webkitpy.layout_tests.models import test_expectations
 
 
 TestExpectations = test_expectations.TestExpectations
@@ -128,7 +128,7 @@ class BuildBotPrinter(object):
         if len(passes) or len(flaky) or len(regressions):
             self._print("")
         if len(passes):
-            for key, tests in passes.iteritems():
+            for key, tests in iteritems(passes):
                 self._print("%s: (%d)" % (key, len(tests)))
                 tests.sort()
                 for test in tests:
@@ -138,7 +138,7 @@ class BuildBotPrinter(object):
 
         if len(flaky):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
-            for key, tests in flaky.iteritems():
+            for key, tests in iteritems(flaky):
                 result = TestExpectations.EXPECTATIONS[key.lower()]
                 self._print("Unexpected flakiness: %s (%d)" % (descriptions[result], len(tests)))
                 tests.sort()
@@ -156,7 +156,7 @@ class BuildBotPrinter(object):
 
         if len(regressions):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
-            for key, tests in regressions.iteritems():
+            for key, tests in iteritems(regressions):
                 result = TestExpectations.EXPECTATIONS[key.lower()]
                 self._print("Regressions: Unexpected %s (%d)" % (descriptions[result], len(tests)))
                 tests.sort()

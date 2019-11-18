@@ -1,3 +1,45 @@
+2019-11-18  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.layout_tests.views
+        https://bugs.webkit.org/show_bug.cgi?id=204227
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.layout_tests.views.
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (BuildBotPrinter.print_unexpected_results): Use compatible iteritems.
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py:
+        (BuildBotPrinterTests.get_printer): Use compatible StringIO object.
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.__init__): Use maxsize instead of maxint.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest.setUp): Use compatible StringIO, remove buflist.
+        (RegularTest.test_logging_not_included): Ditto.
+        (RegularTest._basic): Remove buflist.
+        (RegularTest.test_basic): Compare against stream value instead of buflist.
+        (RegularTest._log_after_update): Remove buflist.
+        (RegularTest.test_log_after_update): Compare against stream value
+        instead of buflist.
+        (RegularTest.test_log_args): Ditto.
+        (RegularTest.test_unicode): We can't join unicode strings and standard strings
+        in Python 2.
+        (RegularTest.test_stream_with_encoding): Use compatible StringIO, Python 3 uses
+        unicode strings.
+        (TtyTest.test_basic): Compare against stream value instead of buflist.
+        (TtyTest.test_log_after_update): Ditto.
+        (VerboseTest.test_basic): Ditto.
+        (VerboseTest.test_log_after_update): Ditto.
+        (VerboseTest.test_log_args): Ditto.
+        (VerboseWithOutTimestamp.test_basic): Ditto.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.assertWritten): Use stream value instead of buflist.
+        (Testprinter.reset): Use Python 3 compatible steam reset.
+        (Testprinter.get_printer): Use compatible StringIO.
+        (Testprinter.test_print_one_line_summary): Compare against stream value instead
+        of buflist.
+        (Testprinter.test_test_status_line): Ditto.
+        (Testprinter.test_print_found): Ditto.
+
 2019-11-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [UIWKDocumentContext] Add the ability to request all marked text rects

@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitpy.layout_tests.models import test_expectations
@@ -48,7 +48,7 @@ class BuildBotPrinterTests(unittest.TestCase):
         self.assertTrue(stream.getvalue())
 
     def get_printer(self):
-        stream = StringIO.StringIO()
+        stream = StringIO()
         printer = buildbot_results.BuildBotPrinter(stream, debug_logging=True)
         return printer, stream
 
