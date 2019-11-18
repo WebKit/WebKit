@@ -551,14 +551,16 @@ class OptionRange {
 private:
     enum RangeState { Uninitialized, InitError, Normal, Inverted };
 public:
-    OptionRange& operator= (const int& rhs)
-    { // Only needed for initialization
-        if (!rhs) {
-            m_state = Uninitialized;
-            m_rangeString = 0;
-            m_lowLimit = 0;
-            m_highLimit = 0;
-        }
+    OptionRange& operator=(int value)
+    {
+        // Only used for initialization to state Uninitialized.
+        // OptionsList specifies OptionRange options with default value 0.
+        RELEASE_ASSERT(!value);
+
+        m_state = Uninitialized;
+        m_rangeString = 0;
+        m_lowLimit = 0;
+        m_highLimit = 0;
         return *this;
     }
 
