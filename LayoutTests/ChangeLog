@@ -1,3 +1,30 @@
+2019-11-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix getTotalLength() and getPointAtLength() for optimized rect and ellipse renderers
+        https://bugs.webkit.org/show_bug.cgi?id=204213
+
+        Reviewed by Simon Fraser.
+
+        The following tests were added in r231955. The SVGElements in these were
+        defined such that a path has to be created to render any of them. Change
+        all the tests, except the polygon and the polyline, such that no path is
+        needed to render them. This will exercise the code path where we need to
+        create a temporary Path to answer the questions of getTotalLength() and
+        getPointAtLength().
+
+        * svg/dom/SVGGeometry-circle-expected.txt:
+        * svg/dom/SVGGeometry-circle.xhtml:
+        * svg/dom/SVGGeometry-ellipse-expected.txt:
+        * svg/dom/SVGGeometry-ellipse.xhtml:
+        * svg/dom/SVGGeometry-line-expected.txt:
+        * svg/dom/SVGGeometry-line.xhtml:
+        * svg/dom/SVGGeometry-polygon-expected.txt:
+        * svg/dom/SVGGeometry-polygon.xhtml:
+        * svg/dom/SVGGeometry-polyline-expected.txt:
+        * svg/dom/SVGGeometry-polyline.xhtml:
+        * svg/dom/SVGGeometry-rect-expected.txt:
+        * svg/dom/SVGGeometry-rect.xhtml:
+
 2019-11-18  Zalan Bujtas  <zalan@apple.com>
 
         Block layout invalidation logic triggers excessive layout on height percentage descendants

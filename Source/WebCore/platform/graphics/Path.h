@@ -134,9 +134,8 @@ namespace WebCore {
         FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
 
         float length() const;
-        PathTraversalState traversalStateAtLength(float length, bool& success) const;
-        FloatPoint pointAtLength(float length, bool& success) const;
-        float normalAngleAtLength(float length, bool& success) const;
+        PathTraversalState traversalStateAtLength(float length) const;
+        FloatPoint pointAtLength(float length) const;
 
         WEBCORE_EXPORT void clear();
         bool isNull() const { return !m_path; }

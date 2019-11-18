@@ -1,3 +1,42 @@
+2019-11-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix getTotalLength() and getPointAtLength() for optimized rect and ellipse renderers
+        https://bugs.webkit.org/show_bug.cgi?id=204213
+
+        Reviewed by Simon Fraser.
+
+        If the renderer does not create a Path to draw the shape, we need to create
+        a temporary Path from the SVGElement then use it to answer the questions
+        of these functions and finally delete it.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::traversalStateAtLength const):
+        (WebCore::Path::pointAtLength const):
+        No need for the 'success'. It is never used.
+
+        (WebCore::Path::normalAngleAtLength const): Deleted.
+        This function is not used.
+
+        * platform/graphics/Path.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateShapeFromElement):
+        Creating the Path from the SVGELement is moved to createPath().
+
+        (WebCore::RenderSVGShape::getTotalLength const):
+        (WebCore::RenderSVGShape::getPointAtLength const):
+        Create a temporary Path if the renderer draws the shape without creating
+        the Path.
+
+        (WebCore::RenderSVGShape::createPath const):
+        * rendering/svg/RenderSVGShape.h:
+
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::buildTransformForProgress):
+        Use PathTraversalState.success() to check instead of getting the same
+        value through an argument to traversalStateAtLength().
+
 2019-11-18  Zalan Bujtas  <zalan@apple.com>
 
         Block layout invalidation logic triggers excessive layout on height percentage descendants

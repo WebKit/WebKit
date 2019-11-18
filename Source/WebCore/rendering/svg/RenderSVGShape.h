@@ -122,6 +122,8 @@ private:
 
     bool shouldGenerateMarkerPositions() const;
     FloatRect markerRect(float strokeWidth) const;
+    
+    std::unique_ptr<Path> createPath() const;
     void processMarkerPositions();
 
     void fillShape(const RenderStyle&, GraphicsContext&);

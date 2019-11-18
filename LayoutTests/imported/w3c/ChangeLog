@@ -1,3 +1,12 @@
+2019-11-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix getTotalLength() and getPointAtLength() for optimized rect and ellipse renderers
+        https://bugs.webkit.org/show_bug.cgi?id=204213
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/types/elements/SVGGeometryElement-rect-expected.txt:
+
 2019-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.writeText()

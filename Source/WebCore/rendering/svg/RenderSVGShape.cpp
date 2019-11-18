@@ -79,7 +79,7 @@ RenderSVGShape::~RenderSVGShape() = default;
 
 void RenderSVGShape::updateShapeFromElement()
 {
-    m_path = makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
+    m_path = createPath();
     processMarkerPositions();
 
     m_fillBoundingBox = calculateObjectBoundingBox();
@@ -347,19 +347,12 @@ bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
 
 float RenderSVGShape::getTotalLength() const
 {
-    if (m_path)
-        return m_path->length();
-
-    return 0;
+    return hasPath() ? path().length() : createPath()->length();
 }
 
 FloatPoint RenderSVGShape::getPointAtLength(float distance) const
 {
-    if (!m_path)
-        return { };
-
-    bool isValid;
-    return m_path->pointAtLength(distance, isValid);
+    return hasPath() ? path().pointAtLength(distance) : createPath()->pointAtLength(distance);
 }
 
 bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
@@ -501,6 +494,11 @@ void RenderSVGShape::drawMarkers(PaintInfo& paintInfo)
         if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
             marker->draw(paintInfo, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth));
     }
+}
+
+std::unique_ptr<Path> RenderSVGShape::createPath() const
+{
+    return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
 }
 
 void RenderSVGShape::processMarkerPositions()

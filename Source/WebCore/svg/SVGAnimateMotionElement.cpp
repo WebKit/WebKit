@@ -190,10 +190,9 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
 {
     ASSERT(!m_animationPath.isEmpty());
 
-    bool success = false;
     float positionOnPath = m_animationPath.length() * percentage;
-    auto traversalState(m_animationPath.traversalStateAtLength(positionOnPath, success));
-    if (!success)
+    auto traversalState(m_animationPath.traversalStateAtLength(positionOnPath));
+    if (!traversalState.success())
         return;
 
     FloatPoint position = traversalState.current();

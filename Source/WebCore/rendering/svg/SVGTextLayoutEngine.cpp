@@ -531,9 +531,8 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
             if (textPathOffset > m_textPathLength)
                 break;
 
-            bool success = false;
-            auto traversalState(m_textPath.traversalStateAtLength(textPathOffset, success));
-            ASSERT(success);
+            auto traversalState(m_textPath.traversalStateAtLength(textPathOffset));
+            ASSERT(traversalState.success());
 
             FloatPoint point = traversalState.current();
             x = point.x();

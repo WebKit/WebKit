@@ -4,7 +4,7 @@
 </head>
 <body onload="run()">
 <svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-    <ellipse id="e1" cx="75" cy="50" rx="75" ry="50" fill="none" stroke="black" stroke-width="20" stroke-dashoffset="20" stroke-dasharray="20 20"/>
+    <ellipse id="e1" cx="85" cy="60" rx="75" ry="50" fill="none" stroke="black" stroke-width="20"/>
 </svg>
 <p id="description"></p>
 <div id="console"></div>
@@ -19,31 +19,28 @@ function run() {
 
     debug("");
     debug("Test isPointInFill()");
-    shouldBe("e1.isPointInFill({})", "false");
-    shouldBe("e1.isPointInFill({x: 75, y: 50})", "true");
-    shouldBe("e1.isPointInFill({x: 0, y: 50})", "true");
-    shouldBe("e1.isPointInFill({x: 150, y: 50})", "true");
-    shouldBe("e1.isPointInFill({x: 75, y: 0})", "true");
-    shouldBe("e1.isPointInFill({x: 75, y: 100})", "true");
-    shouldBe("e1.isPointInFill({x: -1, y: 50})", "false");
-    shouldBe("e1.isPointInFill({x: 151, y: 50})", "false");
-    shouldBe("e1.isPointInFill({x: 75, y: -1})", "false");
-    shouldBe("e1.isPointInFill({x: 75, y: 101})", "false");
-    shouldBe("e1.isPointInFill({x: 140, y: 90})", "false");
-    shouldBe("e1.isPointInFill({x: 10, y: 10})", "false");
-    shouldBe("e1.isPointInFill({x: 140, y: 10})", "false");
-    shouldBe("e1.isPointInFill({x: 10, y: 90})", "false");
+    shouldBeFalse("e1.isPointInFill({})");
+    shouldBeTrue("e1.isPointInFill({x: 159, y: 60})");
+    shouldBeFalse("e1.isPointInFill({x: 161, y: 60})");
+
+    shouldBeTrue("e1.isPointInFill({x: 85, y: 109})");
+    shouldBeFalse("e1.isPointInFill({x: 85, y: 111})");
+    shouldBeTrue("e1.isPointInFill({x: 11, y: 60})");
+    shouldBeFalse("e1.isPointInFill({x: 9, y: 60})");
+    shouldBeTrue("e1.isPointInFill({x: 85, y: 11})");
+    shouldBeFalse("e1.isPointInFill({x: 85, y: 9})");
 
     debug("");
     debug("Test isPointInStroke()");
-    shouldBe("e1.isPointInStroke({})", "false");
-    shouldBe("e1.isPointInStroke({x: 75, y: 50})", "false");
-    shouldBe("e1.isPointInStroke({x: 150, y: 51})", "false");
-    shouldBe("e1.isPointInStroke({x: 150, y: 49})", "true");
-    shouldBe("e1.isPointInStroke({x: 0, y: 52})", "true");
-    shouldBe("e1.isPointInStroke({x: 0, y: 48})", "false");
-    shouldBe("e1.isPointInStroke({x: 77, y: 100})", "false");
-    shouldBe("e1.isPointInStroke({x: 73, y: 100})", "true");
+    shouldBeFalse("e1.isPointInStroke({})");
+    shouldBeTrue("e1.isPointInStroke({x: 151, y: 60})");
+    shouldBeFalse("e1.isPointInStroke({x: 149, y: 60})");
+    shouldBeTrue("e1.isPointInStroke({x: 85, y: 101})");
+    shouldBeFalse("e1.isPointInStroke({x: 85, y: 99})");
+    shouldBeTrue("e1.isPointInStroke({x: 19, y: 60})");
+    shouldBeFalse("e1.isPointInStroke({x: 21, y: 60})");
+    shouldBeTrue("e1.isPointInStroke({x: 85, y: 19})");
+    shouldBeFalse("e1.isPointInStroke({x: 85, y: 21})");
 
     debug("");
     debug("Test getTotalLength()");
@@ -51,16 +48,16 @@ function run() {
 
     debug("");
     debug("Test getPointAtLength()");
-    shouldBeCloseTo("e1.getPointAtLength(0).x", 150, 0.1);
-    shouldBeCloseTo("e1.getPointAtLength(0).y", 50, 0.1);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 4).x", 75, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 4).y", 100, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 2).x", 0, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 2).y", 50, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 8).x", 123, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 8).y", 88, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) * 2).x", 150, 3);
-    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) * 2).y", 50, 3);
+    shouldBeCloseTo("e1.getPointAtLength(0).x", 160, 0.1);
+    shouldBeCloseTo("e1.getPointAtLength(0).y", 60, 0.1);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 4).x", 85, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 4).y", 110, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 2).x", 10, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 2).y", 60, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 8).x", 133, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) / 8).y", 98, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) * 2).x", 160, 3);
+    shouldBeCloseTo("e1.getPointAtLength(Math.PI * (75 + 50) * 2).y", 60, 3);
 
     finishJSTest();
 }
