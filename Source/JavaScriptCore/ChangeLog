@@ -1,3 +1,12 @@
+2019-11-18  Chris Polcyn  <cpolcyn@apple.com>
+
+        Publish JavaScriptCore as Clang module
+        https://bugs.webkit.org/show_bug.cgi?id=204207
+
+        Reviewed by Keith Miller.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2019-11-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, address Darin's feedback on r252520.
