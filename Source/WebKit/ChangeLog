@@ -1,5 +1,15 @@
 2019-11-17  Alexey Proskuryakov  <ap@apple.com>
 
+        Better build fix attempt after r252434. 
+
+        We do need this variant, it was a mistake to claim that it's "old".
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        (WebKit::decidePolicyForGeolocationRequestFromOrigin):
+
+2019-11-17  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix attempt after r252434.
 
         This variant of decidePolicyForGeolocationRequestFromOrigin doesn't exist in UIKit.
