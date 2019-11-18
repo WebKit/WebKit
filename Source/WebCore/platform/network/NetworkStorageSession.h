@@ -165,6 +165,7 @@ public:
     WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
     void setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled(bool enabled) { m_isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled = enabled; }
+    void setResourceLoadStatisticsEnabled(bool enabled) { m_isResourceLoadStatisticsEnabled = enabled; }
 #endif
 
 private:
@@ -199,6 +200,7 @@ private:
     HashMap<WebCore::PageIdentifier, RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
     bool m_isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled = true;
+    bool m_isResourceLoadStatisticsEnabled = false;
 #endif
 
 #if PLATFORM(COCOA)

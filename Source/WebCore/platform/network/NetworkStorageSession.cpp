@@ -60,7 +60,7 @@ void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
 
 bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain& registrableDomain) const
 {
-    if (registrableDomain.isEmpty())
+    if (!m_isResourceLoadStatisticsEnabled || registrableDomain.isEmpty())
         return false;
 
     return m_registrableDomainsToBlockCookieFor.contains(registrableDomain);
@@ -76,11 +76,17 @@ bool NetworkStorageSession::hasHadUserInteractionAsFirstParty(const RegistrableD
 
 bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
 {
+    if (!m_isResourceLoadStatisticsEnabled)
+        return false;
+
     return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID);
 }
     
 bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<PageIdentifier> pageID) const
 {
+    if (!m_isResourceLoadStatisticsEnabled)
+        return false;
+
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
     if (firstPartyDomain.isEmpty())
         return false;

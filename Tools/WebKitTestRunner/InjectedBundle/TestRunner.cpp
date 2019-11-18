@@ -1377,6 +1377,13 @@ void TestRunner::callDidRemoveSwipeSnapshotCallback()
     callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
+void TestRunner::setStatisticsEnabled(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsEnabled"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(SetStatisticsDebugModeCallbackID, completionHandler);
@@ -1384,7 +1391,6 @@ void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsDebugMode"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-
 }
 
 void TestRunner::statisticsCallDidSetDebugModeCallback()
