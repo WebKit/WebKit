@@ -1,3 +1,13 @@
+2019-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Use SecTrustEvaluateWithError instead of SecTrustEvaluate where available
+        https://bugs.webkit.org/show_bug.cgi?id=204159
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+
 2019-11-18  Darin Adler  <darin@apple.com>
 
         WKWebView.mediaType is nullable, not null_resettable

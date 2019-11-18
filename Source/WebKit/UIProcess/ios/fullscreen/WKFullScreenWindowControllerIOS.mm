@@ -929,19 +929,20 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     if (!trust)
         return nil;
 
-    NSDictionary *infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
+    NSDictionary *infoDictionary = CFBridgingRelease(SecTrustCopyInfo(trust));
     // If SecTrustCopyInfo returned NULL then it's likely that the SecTrustRef has not been evaluated
     // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
     if (!infoDictionary) {
+#if HAVE(SEC_TRUST_EVALUATE_WITH_ERROR)
+        if (!SecTrustEvaluateWithError(trust, nullptr))
+            return nil;
+#else
         SecTrustResultType result = kSecTrustResultProceed;
-
-        // FIXME: This is deprecated <rdar://problem/45894288>.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         OSStatus err = SecTrustEvaluate(trust, &result);
-        ALLOW_DEPRECATED_DECLARATIONS_END
-
-        if (err == noErr)
-            infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
+        if (err != noErr)
+            return nil;
+#endif
+        infoDictionary = CFBridgingRelease(SecTrustCopyInfo(trust));
         if (!infoDictionary)
             return nil;
     }

@@ -96,12 +96,14 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
         return { };
 
     if (trustResultType == kSecTrustResultInvalid) {
-        // FIXME: This is deprecated <rdar://problem/45894288>.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#if HAVE(SEC_TRUST_EVALUATE_WITH_ERROR)
+        if (!SecTrustEvaluateWithError(trust, nullptr))
+            return { };
+#else
         result = SecTrustEvaluate(trust, &trustResultType);
-        ALLOW_DEPRECATED_DECLARATIONS_END
         if (result != errSecSuccess)
             return { };
+#endif
     }
 
 #if HAVE(SEC_TRUST_SERIALIZATION)

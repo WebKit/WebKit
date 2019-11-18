@@ -1,3 +1,14 @@
+2019-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Use SecTrustEvaluateWithError instead of SecTrustEvaluate where available
+        https://bugs.webkit.org/show_bug.cgi?id=204159
+        <rdar://problem/45894288>
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const):
+
 2019-11-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix getTotalLength() and getPointAtLength() for optimized rect and ellipse renderers
