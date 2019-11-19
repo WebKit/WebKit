@@ -1504,7 +1504,6 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
         self.setProperty('buildnumber', '123')
         self.setProperty('workername', 'ews126')
-        os.environ['RESULTS_SERVER_API_KEY'] = 'sample-key'
 
     def test_success(self):
         self.configureStep()
@@ -1513,7 +1512,6 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
                         logEnviron=False,
                         command=['python',
                                  'Tools/Scripts/run-webkit-tests',
@@ -1524,11 +1522,6 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
                                  '--exit-after-n-failures', '30',
                                  '--skip-failing-tests',
                                  '--release',
-                                 '--buildbot-master', 'ews-build.webkit.org',
-                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
-                                 '--build-number', '123',
-                                 '--buildbot-worker', 'ews126',
-                                 '--report', 'https://results.webkit.org',
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging'],
                         )
@@ -1544,7 +1537,6 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
                         logEnviron=False,
                         command=['python',
                                  'Tools/Scripts/run-webkit-tests',
@@ -1555,11 +1547,6 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
                                  '--exit-after-n-failures', '30',
                                  '--skip-failing-tests',
                                  '--release',
-                                 '--buildbot-master', 'ews-build.webkit.org',
-                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
-                                 '--build-number', '123',
-                                 '--buildbot-worker', 'ews126',
-                                 '--report', 'https://results.webkit.org',
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging'],
                         )
@@ -2358,23 +2345,16 @@ class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
         self.setProperty('buildnumber', '11525')
         self.setProperty('workername', 'ews155')
-        os.environ['RESULTS_SERVER_API_KEY'] = 'sample-key'
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
                         command=['python',
                                  'Tools/Scripts/run-api-tests',
                                  '--no-build',
                                  '--release',
                                  '--verbose',
-                                 '--json-output={0}'.format(self.jsonFileName),
-                                 '--buildbot-master', 'ews-build.webkit.org',
-                                 '--builder-name', 'API-Tests-macOS-EWS',
-                                 '--build-number', '11525',
-                                 '--buildbot-worker', 'ews155',
-                                 '--report', 'https://results.webkit.org'],
+                                 '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -2405,18 +2385,12 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        env={'RESULTS_SERVER_API_KEY': None},
                         command=['python',
                                  'Tools/Scripts/run-api-tests',
                                  '--no-build',
                                  '--debug',
                                  '--verbose',
-                                 '--json-output={0}'.format(self.jsonFileName),
-                                 '--buildbot-master', 'ews-build.webkit.org',
-                                 '--builder-name', 'API-Tests-iOS-EWS',
-                                 '--build-number', '123',
-                                 '--buildbot-worker', 'ews156',
-                                 '--report', 'https://results.webkit.org'],
+                                 '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''

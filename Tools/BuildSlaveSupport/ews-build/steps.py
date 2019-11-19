@@ -31,7 +31,6 @@ from twisted.internet import defer
 from layout_test_failures import LayoutTestFailures
 
 import json
-import os
 import re
 import requests
 
@@ -40,8 +39,6 @@ S3URL = 'https://s3-us-west-2.amazonaws.com/'
 EWS_URL = 'https://ews-build.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
-RESULTS_WEBKIT_URL = 'https://results.webkit.org'
-RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -1342,16 +1339,6 @@ class ReRunWebKitTests(RunWebKitTests):
 class RunWebKitTestsWithoutPatch(RunWebKitTests):
     name = 'run-layout-tests-without-patch'
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
-        self.setCommand(self.command +
-            ['--buildbot-master', EWS_URL.replace('https://', '').strip('/'),
-            '--builder-name', self.getProperty('buildername'),
-            '--build-number', self.getProperty('buildnumber'),
-            '--buildbot-worker', self.getProperty('workername'),
-            '--report', RESULTS_WEBKIT_URL])
-        return super(RunWebKitTestsWithoutPatch, self).start()
-
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()])
@@ -1669,16 +1656,6 @@ class RunAPITestsWithoutPatch(RunAPITests):
 
     def evaluateCommand(self, cmd):
         return TestWithFailureCount.evaluateCommand(self, cmd)
-
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
-        self.setCommand(self.command +
-            ['--buildbot-master', EWS_URL.replace('https://', '').strip('/'),
-            '--builder-name', self.getProperty('buildername'),
-            '--build-number', self.getProperty('buildnumber'),
-            '--buildbot-worker', self.getProperty('workername'),
-            '--report', RESULTS_WEBKIT_URL])
-        return super(RunAPITestsWithoutPatch, self).start()
 
 
 class AnalyzeAPITestsResults(buildstep.BuildStep):

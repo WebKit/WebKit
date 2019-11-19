@@ -1,3 +1,18 @@
+2019-11-19  Aakash Jain  <aakash_jain@apple.com>
+
+        Disable reporting EWS test failures from clean-tree to results.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=204369
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTestsWithoutPatch):
+        (RunAPITestsWithoutPatch.evaluateCommand):
+        (RunWebKitTestsWithoutPatch.start): Deleted.
+        (RunAPITestsWithoutPatch.start): Deleted.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2019-11-19  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Add WKUIDelegate SPI to inform clients when a _WKInspector attaches to a WKWebView
