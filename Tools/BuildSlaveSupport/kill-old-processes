@@ -56,8 +56,10 @@ def main(user=None):
         "testapi_debug.exe",
         "VcBuildHelper.exe",
         "wdiff.exe",
-        "WebKit2WebProcess.exe",
-        "WebKit2WebProcess_debug.exe",
+        "WebKitNetworkProcess.exe",
+        "WebKitNetworkProcess_debug.exe",
+        "WebKitWebProcess.exe",
+        "WebKitWebProcess_debug.exe",
         "WebKitTestRunner.exe",
         "WebKitTestRunner_debug.exe",
     ]

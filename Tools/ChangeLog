@@ -1,3 +1,14 @@
+2019-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] kill-old-processes should kill WebKitWebProcess.exe and WebKitNetworkProcess.exe
+        https://bugs.webkit.org/show_bug.cgi?id=204337
+
+        Reviewed by Ross Kirsling.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main): Removed WebKit2WebProcess.exe, and added WebKitWebProcess.exe and WebKitNetworkProcess.exe to
+        tasksToKillWin.
+
 2019-11-18  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Support run-api-tests
