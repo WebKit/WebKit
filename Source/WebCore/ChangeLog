@@ -1,3 +1,35 @@
+2019-11-19  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILURE: useDownstream ? (result > vp) : (result < vp) in WebCore::nextSentenceBoundaryInDirection()
+        https://bugs.webkit.org/show_bug.cgi?id=204370
+        <rdar://problem/57332559>
+
+        Reviewed by Wenson Hsieh.
+
+        Only positions whose anchor nodes are in a document and in the same tree scope can be
+        compared using the operator< overload. Otherwise, the result is non-deterministic by
+        spec. <https://dom.spec.whatwg.org/#dom-node-comparedocumentposition> (13 November 2019):
+
+                6. If node1 or node2 is null, or node1's root is not node2's root, then return the result of
+                adding DOCUMENT_POSITION_DISCONNECTED, DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC, and either
+                DOCUMENT_POSITION_PRECEDING or DOCUMENT_POSITION_FOLLOWING, with the constraint that this is
+                to be consistent, together.
+
+                NOTE: Whether to return DOCUMENT_POSITION_PRECEDING or DOCUMENT_POSITION_FOLLOWING is typically
+                implemented via pointer comparison. In JavaScript implementations a cached Math.random()
+                value can be used.
+
+        * dom/Node.cpp:
+        (WebCore::areNodesConnectedInSameTreeScope): Added; extracted from compareDocumentPosition().
+        (WebCore::Node::compareDocumentPosition): Write in terms of areNodesConnectedInSameTreeScope().
+        * dom/Node.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::areVisiblePositionsInSameTreeScope): Added. Write in terms of areNodesConnectedInSameTreeScope().
+        * editing/VisiblePosition.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextSentenceBoundaryInDirection): Update assert. We can only compare positions
+        if areVisiblePositionsInSameTreeScope() returns true.
+
 2019-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename AbstractEventLoop to EventLoop and move to its own cpp file

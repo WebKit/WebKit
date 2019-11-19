@@ -1776,7 +1776,8 @@ static VisiblePosition nextSentenceBoundaryInDirection(const VisiblePosition& vp
     if (result == vp)
         return VisiblePosition();
 
-    ASSERT(useDownstream ? (result > vp) : (result < vp));
+    // Positions can only be compared if they are in the same tree scope.
+    ASSERT_IMPLIES(areVisiblePositionsInSameTreeScope(result, vp), useDownstream ? (result > vp) : (result < vp));
 
     return result;
 }
