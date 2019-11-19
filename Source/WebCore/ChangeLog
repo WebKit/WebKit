@@ -1,3 +1,24 @@
+2019-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        -webkit-font-smoothing: none leaves subsequent elements unantialiased
+        https://bugs.webkit.org/show_bug.cgi?id=204334
+
+        Reviewed by Myles C. Maxfield.
+
+        FontCascade::drawGlyphs() never called context.setShouldAntialias(true) for the
+        FontSmoothingMode::AutoSmoothing state, leaving it off for later elements.
+
+        Fix this function to save and restore antialiasing and smoothing in similar ways, and rather
+        than handle FontSmoothingMode::AutoSmoothing as "do nothing and let the platform decide"
+        (which caused this bug), explicitly treat it as equivalent to
+        FontSmoothingMode::SubpixelAntialiased. Note that FontSmoothingMode::SubpixelAntialiased
+        does not render with subpixel antialiasing on macOS Mojave and later.
+
+        Test: fast/text/font-antialiasing-save-restore.html
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+
 2019-11-18  Zalan Bujtas  <zalan@apple.com>
 
         Flex layout triggers excessive layout on height percentage descendants

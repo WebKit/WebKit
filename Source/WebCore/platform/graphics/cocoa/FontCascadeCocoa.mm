@@ -206,47 +206,35 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
     CGContextRef cgContext = context.platformContext();
 
-    bool shouldSmoothFonts;
-    bool changeFontSmoothing;
+    bool shouldAntialias = true;
+    bool shouldSmoothFonts = true;
     
     switch (smoothingMode) {
-    case FontSmoothingMode::Antialiased: {
-        context.setShouldAntialias(true);
+    case FontSmoothingMode::Antialiased:
         shouldSmoothFonts = false;
-        changeFontSmoothing = true;
         break;
-    }
-    case FontSmoothingMode::SubpixelAntialiased: {
-        context.setShouldAntialias(true);
-        shouldSmoothFonts = true;
-        changeFontSmoothing = true;
+    case FontSmoothingMode::AutoSmoothing:
+    case FontSmoothingMode::SubpixelAntialiased:
+        shouldAntialias = true;
         break;
-    }
-    case FontSmoothingMode::NoSmoothing: {
-        context.setShouldAntialias(false);
+    case FontSmoothingMode::NoSmoothing:
+        shouldAntialias = false;
         shouldSmoothFonts = false;
-        changeFontSmoothing = true;
         break;
-    }
-    case FontSmoothingMode::AutoSmoothing: {
-        shouldSmoothFonts = true;
-        changeFontSmoothing = false;
-        break;
-    }
-    }
-    
-    if (!shouldUseSmoothing()) {
-        shouldSmoothFonts = false;
-        changeFontSmoothing = true;
     }
 
+    if (!shouldUseSmoothing())
+        shouldSmoothFonts = false;
+
 #if !PLATFORM(IOS_FAMILY)
-    bool originalShouldUseFontSmoothing = false;
-    if (changeFontSmoothing) {
-        originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
+    bool originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
+    if (shouldSmoothFonts != originalShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
-    }
 #endif
+
+    bool originalShouldAntialias = CGContextGetShouldAntialias(cgContext);
+    if (shouldAntialias != originalShouldAntialias)
+        CGContextSetShouldAntialias(cgContext, shouldAntialias);
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(context);
     FloatPoint point = anchorPoint;
@@ -270,7 +258,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
     setCGFontRenderingMode(context);
     CGContextSetFontSize(cgContext, platformData.size());
-
 
     FloatSize shadowOffset;
     float shadowBlur;
@@ -315,9 +302,12 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         context.setShadow(shadowOffset, shadowBlur, shadowColor);
 
 #if !PLATFORM(IOS_FAMILY)
-    if (changeFontSmoothing)
+    if (shouldSmoothFonts != originalShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 #endif
+
+    if (shouldAntialias != originalShouldAntialias)
+        CGContextSetShouldAntialias(cgContext, originalShouldAntialias);
 }
 
 bool FontCascade::primaryFontIsSystemFont() const
