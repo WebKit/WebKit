@@ -1,3 +1,21 @@
+CONSOLE MESSAGE: line 116: Test is beginning. document.location.hash is empty.
+CONSOLE MESSAGE: line 122: About to call runTest() for the first time.
+CONSOLE MESSAGE: line 61: step1. About to set a cookie
+CONSOLE MESSAGE: line 126: About to call runTest() after cookie was set. document hash is #step2
+CONSOLE MESSAGE: line 66: step2. About to open an iFrame to test for third party cookie access (should be successful)
+CONSOLE MESSAGE: line 72: step3. About to classify localhost as prevalent
+CONSOLE MESSAGE: line 76: step3. In the callback for testRunner.setStatisticsPrevalentResource
+CONSOLE MESSAGE: line 83: step4. About to open an iFrame to test for third party cookie access (should not be successful)
+CONSOLE MESSAGE: line 89: step5. About to open an iFrame to try to set a cookie as a third party (should fail)
+CONSOLE MESSAGE: line 95: step6. About to open an iFrame and fireDataModificationHandlerAndContinue
+CONSOLE MESSAGE: line 39: In fireDataModificationHandlerAndContinue
+CONSOLE MESSAGE: line 44: Calling statisticsProcessStatisticsAndDataRecords
+CONSOLE MESSAGE: line 41: In callback function for installStatisticsDidScanDataRecordsCallback
+CONSOLE MESSAGE: line 101: step7. About to open an iFrame and setAsNonPrevalentAndContinue
+CONSOLE MESSAGE: line 49: In setAsNonPrevalentAndContinue
+CONSOLE MESSAGE: line 51: In callback function for setStatisticsPrevalentResource
+CONSOLE MESSAGE: line 107: step8. About to open an iFrame and confirm third party has no cookie access
+CONSOLE MESSAGE: line 24: in finishTest
 Test for partitioned and unpartitioned cookie deletion.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

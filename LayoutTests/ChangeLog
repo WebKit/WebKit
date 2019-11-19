@@ -1,3 +1,19 @@
+2019-11-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ Jazz ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=203813
+        <rdar://problem/54316765>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added console logging to narrow down cause of flaky test which does not
+        reproduce locally. Changed test expectations to timeout so the bots
+        actually run the test and the issue can be determined.
+
+        * http/tests/resourceLoadStatistics/cookie-deletion-expected.txt:
+        * http/tests/resourceLoadStatistics/cookie-deletion.html:
+        * platform/wk2/TestExpectations:
+
 2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.readText()
