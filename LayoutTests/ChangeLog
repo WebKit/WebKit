@@ -1,3 +1,14 @@
+2019-11-18  John Wilander  <wilander@apple.com>
+
+        Check if ITP is on before applying third-party cookie blocking
+        https://bugs.webkit.org/show_bug.cgi?id=204322
+        <rdar://problem/57120772>
+
+        Reviewed by Chris Dumez and Alexey Proskuryakov.
+
+        * http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html: Added.
+
 2019-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         -webkit-font-smoothing: none leaves subsequent elements unantialiased

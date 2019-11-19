@@ -1,3 +1,37 @@
+2019-11-18  John Wilander  <wilander@apple.com>
+
+        Check if ITP is on before applying third-party cookie blocking
+        https://bugs.webkit.org/show_bug.cgi?id=204322
+        <rdar://problem/57120772>
+
+        Reviewed by Chris Dumez and Alexey Proskuryakov.
+
+        This change makes sure WebCore::NetworkStorageSession knows
+        whether ITP is on or off and checks that first thing in
+        WebCore::NetworkStorageSession::shouldBlockCookies().
+
+        This check was never needed before since if ITP was off,
+        there would be no classified domains and thus the function
+        would always return false. However,
+        https://trac.webkit.org/changeset/251353/webkit introduced
+        full third-party cookie blocking for websites without user
+        interaction and that rule is checked before checking domain
+        classification. The effect was unconditional third-party
+        cookie blocking if ITP is off. This changes fixes that bug.
+
+        Note that this patch already landed as branch-specific in
+        https://trac.webkit.org/changeset/252549/webkit
+
+        Test: http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html
+
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor const):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+            Now checks whether ITP is on or off.
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::setResourceLoadStatisticsEnabled):
+
 2019-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         -webkit-font-smoothing: none leaves subsequent elements unantialiased

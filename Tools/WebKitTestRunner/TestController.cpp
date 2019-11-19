@@ -3254,6 +3254,11 @@ static void resourceStatisticsBooleanResultCallback(bool result, void* userData)
     context->testController.notifyDone();
 }
 
+void TestController::setStatisticsEnabled(bool value)
+{
+    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(TestController::websiteDataStore(), value);
+}
+
 void TestController::setStatisticsDebugMode(bool value)
 {
     ResourceStatisticsCallbackContext context(*this);

@@ -292,6 +292,7 @@ interface TestRunner {
     void disconnectMockGamepad(unsigned long index);
 
     // Resource Load Statistics
+    void setStatisticsEnabled(boolean value);
     void installStatisticsDidModifyDataRecordsCallback(object callback);
     void installStatisticsDidScanDataRecordsCallback(object callback);
     void installStatisticsDidRunTelemetryCallback(object callback);
