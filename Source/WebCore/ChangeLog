@@ -1,3 +1,22 @@
+2019-11-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Display::Run:TextContext should use StringView
+        https://bugs.webkit.org/show_bug.cgi?id=204356
+        <rdar://problem/57323695>
+
+        Reviewed by Antti Koivisto.
+
+        We could just use StringView instead of String here (though this is all temporary until We figure out the relationship
+        between the layout and the display trees e.g. how to reference content from the display tree). 
+
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::TextContext):
+        (WebCore::Display::Run::TextContext::content const):
+        (WebCore::Display::Run::TextContext::expand):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::appendTextContent):
+
 2019-11-19  Antti Koivisto  <antti@apple.com>
 
         Rename CSSDefaultStyleSheets to UserAgentStyle

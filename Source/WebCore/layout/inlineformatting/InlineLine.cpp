@@ -130,7 +130,8 @@ void Line::Run::expand(const InlineItemRun& nextRun)
     ASSERT(!isCollapsedToVisuallyEmpty());
 
     m_logicalRect.expandHorizontally(nextRun.logicalRect().width());
-    m_textContext->expand(*nextRun.textContext());
+    auto expandedLength = m_textContext->length() + nextRun.textContext()->length();
+    m_textContext->expand(StringView(layoutBox().textContent()).substring(m_textContext->start(), expandedLength), expandedLength);
 
     // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount. 
     if (hasExpansionOpportunity() && nextRun.hasExpansionOpportunity()) {
@@ -548,8 +549,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
-    auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
-    auto lineRun = makeUnique<InlineItemRun>(inlineItem, logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent });
+    auto lineRun = makeUnique<InlineItemRun>(inlineItem, logicalRect, Display::Run::TextContext { contentStart, contentLength, StringView(inlineItem.layoutBox().textContent()).substring(contentStart, contentLength) });
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)

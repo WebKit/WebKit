@@ -44,12 +44,12 @@ struct Run {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
         struct ExpansionContext;
-        TextContext(unsigned position, unsigned length, String content, Optional<ExpansionContext> = { });
+        TextContext(unsigned position, unsigned length, StringView content, Optional<ExpansionContext> = { });
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
         unsigned length() const { return m_length; }
-        String content() const { return m_content; }
+        StringView content() const { return m_content; }
 
         struct ExpansionContext {
             ExpansionBehavior behavior;
@@ -58,14 +58,14 @@ struct Run {
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
-        void expand(const TextContext& other);
+        void expand(StringView, unsigned expandedLength);
 
     private:
         unsigned m_start { 0 };
         unsigned m_length { 0 };
         Optional<ExpansionContext> m_expansionContext;
         // FIXME: This is temporary. We should have some mapping setup to identify associated text content instead.
-        String m_content;
+        StringView m_content;
     };
 
     Run(const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
@@ -114,7 +114,7 @@ inline Run::Run(const RenderStyle& style, const Rect& logicalRect, Optional<Text
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length, String content, Optional<ExpansionContext> expansionContext)
+inline Run::TextContext::TextContext(unsigned start, unsigned length, StringView content, Optional<ExpansionContext> expansionContext)
     : m_start(start)
     , m_length(length)
     , m_expansionContext(expansionContext)
@@ -122,10 +122,10 @@ inline Run::TextContext::TextContext(unsigned start, unsigned length, String con
 {
 }
 
-inline void Run::TextContext::expand(const TextContext& other)
+inline void Run::TextContext::expand(StringView text, unsigned expandedLength)
 {
-    m_content.append(other.content());
-    m_length += other.length();
+    m_length = expandedLength;
+    m_content = text;
 }
 
 }
