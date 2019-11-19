@@ -832,7 +832,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (!this.representedObject.isPseudoElement()) {
             subMenus.copy.appendItem(WI.UIString("HTML"), () => {
-                this._copyHTML();
+                this.representedObject.getOuterHTML()
+                .then((outerHTML) => {
+                    InspectorFrontendHost.copyText(outerHTML);
+                });
             });
         }
 
@@ -1790,11 +1793,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 hideExistingElements: true,
             });
         });
-    }
-
-    _copyHTML()
-    {
-        this.representedObject.copyNode();
     }
 
     _highlightSearchResults()

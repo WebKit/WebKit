@@ -549,7 +549,10 @@ WI.DOMNode = class DOMNode extends WI.Object
     getOuterHTML(callback)
     {
         let target = WI.assumingMainTarget();
-        target.DOMAgent.getOuterHTML(this.id, callback);
+        if (typeof callback === "function")
+            target.DOMAgent.getOuterHTML(this.id, callback);
+        else
+            return target.DOMAgent.getOuterHTML(this.id).then(({outerHTML}) => outerHTML);
     }
 
     setOuterHTML(html, callback)
@@ -585,18 +588,6 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         let target = WI.assumingMainTarget();
         target.DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
-    }
-
-    copyNode()
-    {
-        function copy(error, text)
-        {
-            if (!error)
-                InspectorFrontendHost.copyText(text);
-        }
-
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.getOuterHTML(this.id, copy);
     }
 
     getEventListeners(callback)

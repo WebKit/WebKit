@@ -219,16 +219,23 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._domTreeOutline.selectDOMNode(domNode, !preventFocusChange);
     }
 
-    handleCopyEvent(event)
+    async handleCopyEvent(event)
     {
-        var selectedDOMNode = this._domTreeOutline.selectedDOMNode();
-        if (!selectedDOMNode)
+        let promises = [];
+
+        for (let treeElement of this._domTreeOutline.selectedTreeElements) {
+            if (treeElement.representedObject instanceof WI.DOMNode)
+                promises.push(treeElement.representedObject.getOuterHTML());
+        }
+
+        if (!promises.length)
             return;
 
         event.clipboardData.clearData();
         event.preventDefault();
 
-        selectedDOMNode.copyNode();
+        let outerHTMLs = await Promise.all(promises);
+        InspectorFrontendHost.copyText(outerHTMLs.join("\n"));
     }
 
     handlePasteEvent(event)
