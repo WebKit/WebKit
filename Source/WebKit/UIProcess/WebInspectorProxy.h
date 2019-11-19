@@ -158,6 +158,8 @@ public:
 
     bool isUnderTest() const { return m_underTest; }
 
+    void setDiagnosticLoggingAvailable(bool);
+
     // Provided by platform WebInspectorProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();

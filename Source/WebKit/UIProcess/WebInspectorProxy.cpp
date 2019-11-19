@@ -610,6 +610,15 @@ void WebInspectorProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enab
 #endif
 }
 
+void WebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
+{
+#if ENABLE(INSPECTOR_TELEMETRY)
+    m_inspectorPage->process().send(Messages::WebInspectorUI::SetDiagnosticLoggingAvailable(available), m_inspectorPage->webPageID());
+#else
+    UNUSED_PARAM(available);
+#endif
+}
+
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
     platformSave(filename, content, base64Encoded, forceSaveAs);

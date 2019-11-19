@@ -119,6 +119,7 @@ public:
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
     void logDiagnosticEvent(const WTF::String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+    void setDiagnosticLoggingAvailable(bool avaliable);
 #endif
 
     void sendMessageToBackend(const String&) override;

@@ -75,6 +75,11 @@ InspectorFrontendAPI = {
         WI.updateVisibilityState(visible);
     },
 
+    setDiagnosticLoggingAvailable: function(available)
+    {
+        // FIXME: update diagnostic availability and start/stop diagnostic recorders.
+    },
+
     showConsole: function()
     {
         WI.showConsoleTab();

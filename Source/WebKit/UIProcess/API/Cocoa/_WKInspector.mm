@@ -24,17 +24,18 @@
  */
 
 #import "config.h"
-#import "_WKInspector.h"
+#import "_WKInspectorInternal.h"
 
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
-#import "_WKInspectorInternal.h"
 #import <WebCore/FrameIdentifier.h>
 #import <wtf/RetainPtr.h>
 
 @implementation _WKInspector
+
+// MARK: _WKInspector methods
 
 - (WKWebView *)webView
 {
@@ -129,6 +130,16 @@
     // FIXME: This should use a new message source rdar://problem/34658378
     [self.webView evaluateJavaScript:[NSString stringWithFormat:@"console.error(\"%@\");", error] completionHandler:nil];
 }
+
+// MARK: _WKInspectorPrivate methods
+
+- (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)delegate
+{
+    self.webView._diagnosticLoggingDelegate = delegate;
+    _inspector->setDiagnosticLoggingAvailable(!!delegate);
+}
+
+// MARK: _WKInspectorInternal methods
 
 - (API::Object&)_apiObject
 {

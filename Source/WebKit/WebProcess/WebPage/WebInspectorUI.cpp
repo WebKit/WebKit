@@ -300,6 +300,11 @@ void WebInspectorUI::logDiagnosticEvent(const String& eventName, const Diagnosti
 {
     m_page.corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
 }
+
+void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
+{
+    m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, available);
+}
 #endif
 
 void WebInspectorUI::showConsole()

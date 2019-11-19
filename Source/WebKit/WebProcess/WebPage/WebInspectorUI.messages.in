@@ -31,6 +31,10 @@ messages -> WebInspectorUI {
     SetDockingUnavailable(bool unavailable)
     SetIsVisible(bool visible)
 
+#if ENABLE(INSPECTOR_TELEMETRY)
+    SetDiagnosticLoggingAvailable(bool available)
+#endif
+
     ShowConsole()
     ShowResources()
 

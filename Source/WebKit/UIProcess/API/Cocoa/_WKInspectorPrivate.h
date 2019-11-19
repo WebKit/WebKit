@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorPrivate.h"
+#import "_WKInspector.h"
 
-#import "WKObject.h"
-#import "WebInspectorProxy.h"
+@protocol _WKDiagnosticLoggingDelegate;
 
-namespace WebKit {
+@interface _WKInspector (WKPrivate)
 
-template<> struct WrapperTraits<WebInspectorProxy> {
-    using WrapperClass = _WKInspector;
-};
+@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
 
-}
-
-@interface _WKInspector () <WKObject> {
-@package
-    API::ObjectStorage<WebKit::WebInspectorProxy> _inspector;
-}
 @end

@@ -1,3 +1,14 @@
+2019-11-19  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Add _WKInspector SPI to set diagnostic logging delegate for a local Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=204323
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setDiagnosticLoggingAvailable):
+        Add a stub FrontendAPI method to be filled in later.
+
 2019-11-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: copying multiple DOM nodes should copy more than just the last selected node
