@@ -380,6 +380,7 @@ public:
     void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value);
     
     // Resource Load Statistics
+    void setStatisticsEnabled(bool value);
     void installStatisticsDidModifyDataRecordsCallback(JSValueRef callback);
     void installStatisticsDidScanDataRecordsCallback(JSValueRef callback);
     void installStatisticsDidRunTelemetryCallback(JSValueRef callback);
