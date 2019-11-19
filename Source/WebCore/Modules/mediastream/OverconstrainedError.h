@@ -44,6 +44,7 @@ public:
 
     String constraint() const { return m_constraint; }
     String message() const { return m_message; }
+    String name() const { return "OverconstrainedError"_s; }
 
 protected:
     explicit OverconstrainedError(const String& constraint, const String& message)

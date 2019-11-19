@@ -1,3 +1,14 @@
+2019-11-19  Eric Carlson  <eric.carlson@apple.com>
+
+        OverConstrainedError is missing 'name' property
+        https://bugs.webkit.org/show_bug.cgi?id=204069
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/mediacapture-streams/GUM-impossible-constraint.https-expected.txt:
+        * web-platform-tests/mediacapture-streams/GUM-invalid-facing-mode.https-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-applyConstraints.https-expected.txt:
+
 2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.readText()

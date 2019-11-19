@@ -48,7 +48,7 @@ PASS Error callback called.
 
 PASS navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(invalidGotStream).catch(errorWithConstraints2) did not throw exception.
 PASS Error callback called.
-PASS errorArg.name is "Error"
+PASS errorArg.name is "OverconstrainedError"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,13 @@
+2019-11-19  Eric Carlson  <eric.carlson@apple.com>
+
+        OverConstrainedError is missing 'name' property
+        https://bugs.webkit.org/show_bug.cgi?id=204069
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaDevices-getUserMedia.html:
+        * fast/mediastream/overconstrainederror-constraint.html:
+
 2019-11-19  Kate Cheney  <katherine_cheney@apple.com>
 
         [ Jazz ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out

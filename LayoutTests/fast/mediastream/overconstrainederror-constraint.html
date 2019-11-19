@@ -20,6 +20,7 @@ promise_test(async () => {
         (e) => {
             assert_true(e instanceof OverconstrainedError);
             assert_equals(e.constraint, "", "constraint should be the empty string");
+            assert_equals(e.name, "OverconstrainedError", "OverconstrainedError name is correct");
         }
     );
 }, "Before grant");
@@ -31,6 +32,7 @@ promise_test(async(test) => {
         (e) => {
             assert_true(e instanceof OverconstrainedError);
             assert_equals(e.constraint, "deviceId", "constraint should be deviceId");
+            assert_equals(e.name, "OverconstrainedError", "OverconstrainedError name is correct");
         }
     );
 }, "After grant");

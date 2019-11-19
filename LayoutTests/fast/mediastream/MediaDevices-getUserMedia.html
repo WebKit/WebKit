@@ -35,7 +35,7 @@
             function errorWithConstraints2(e) {
                 testPassed("Error callback called.");
                 errorArg = e;
-                shouldBeEqualToString("errorArg.name", "Error");
+                shouldBeEqualToString("errorArg.name", "OverconstrainedError");
 
                 finishJSTest();
             }

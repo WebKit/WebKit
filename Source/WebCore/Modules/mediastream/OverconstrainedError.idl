@@ -33,4 +33,5 @@
 ] exception OverconstrainedError {
     readonly attribute DOMString message;
     readonly attribute DOMString constraint;
+    readonly attribute DOMString name;
 };
