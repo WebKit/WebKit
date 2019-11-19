@@ -26,8 +26,8 @@
 #include "config.h"
 #include "DOMCache.h"
 
-#include "AbstractEventLoop.h"
 #include "CacheQueryOptions.h"
+#include "EventLoop.h"
 #include "FetchResponse.h"
 #include "HTTPParsers.h"
 #include "JSFetchRequest.h"

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "FontFaceSet.h"
 
-#include "AbstractEventLoop.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "EventLoop.h"
 #include "FontFace.h"
 #include "FrameLoader.h"
 #include "JSDOMBinding.h"

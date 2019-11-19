@@ -880,6 +880,7 @@ dom/Event.cpp
 dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventListenerMap.cpp
+dom/EventLoop.cpp
 dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp

@@ -28,10 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "AbstractEventLoop.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Exception.h"
 #include "IDLTypes.h"

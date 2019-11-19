@@ -27,8 +27,8 @@
 #include "config.h"
 #include "ActiveDOMObject.h"
 
-#include "AbstractEventLoop.h"
 #include "Document.h"
+#include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

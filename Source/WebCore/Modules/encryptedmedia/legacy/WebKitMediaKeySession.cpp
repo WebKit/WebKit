@@ -28,8 +28,8 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "AbstractEventLoop.h"
 #include "Document.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Page.h"
 #include "SecurityOriginData.h"

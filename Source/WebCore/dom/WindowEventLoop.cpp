@@ -59,38 +59,6 @@ WindowEventLoop::~WindowEventLoop()
     RELEASE_ASSERT(didRemove);
 }
 
-void AbstractEventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
-{
-    ASSERT(task->group());
-    ASSERT(isContextThread());
-    scheduleToRunIfNeeded();
-    m_tasks.append(WTFMove(task));
-}
-
-void AbstractEventLoop::resumeGroup(EventLoopTaskGroup& group)
-{
-    ASSERT(isContextThread());
-    if (!m_groupsWithSuspenedTasks.contains(group))
-        return;
-    scheduleToRunIfNeeded();
-}
-
-void AbstractEventLoop::stopGroup(EventLoopTaskGroup& group)
-{
-    ASSERT(isContextThread());
-    m_tasks.removeAllMatching([&group] (auto& task) {
-        return group.matchesTask(*task);
-    });
-}
-
-void AbstractEventLoop::scheduleToRunIfNeeded()
-{
-    if (m_isScheduledToRun)
-        return;
-    m_isScheduledToRun = true;
-    scheduleToRun();
-}
-
 void WindowEventLoop::scheduleToRun()
 {
     callOnMainThread([eventLoop = makeRef(*this)] () {
@@ -101,58 +69,6 @@ void WindowEventLoop::scheduleToRun()
 bool WindowEventLoop::isContextThread() const
 {
     return isMainThread();
-}
-
-void AbstractEventLoop::run()
-{
-    m_isScheduledToRun = false;
-    if (m_tasks.isEmpty())
-        return;
-
-    auto tasks = std::exchange(m_tasks, { });
-    m_groupsWithSuspenedTasks.clear();
-    Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
-    for (auto& task : tasks) {
-        auto* group = task->group();
-        if (!group || group->isStoppedPermanently())
-            continue;
-
-        if (group->isSuspended()) {
-            m_groupsWithSuspenedTasks.add(group);
-            remainingTasks.append(WTFMove(task));
-            continue;
-        }
-
-        task->execute();
-    }
-    for (auto& task : m_tasks)
-        remainingTasks.append(WTFMove(task));
-    m_tasks = WTFMove(remainingTasks);
-}
-
-void AbstractEventLoop::clearAllTasks()
-{
-    m_tasks.clear();
-    m_groupsWithSuspenedTasks.clear();
-}
-
-class EventLoopFunctionDispatchTask : public EventLoopTask {
-public:
-    EventLoopFunctionDispatchTask(TaskSource source, EventLoopTaskGroup& group, AbstractEventLoop::TaskFunction&& function)
-        : EventLoopTask(source, group)
-        , m_function(WTFMove(function))
-    {
-    }
-
-    void execute() final { m_function(); }
-
-private:
-    AbstractEventLoop::TaskFunction m_function;
-};
-
-void EventLoopTaskGroup::queueTask(TaskSource source, AbstractEventLoop::TaskFunction&& function)
-{
-    return queueTask(makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
 }
 
 } // namespace WebCore

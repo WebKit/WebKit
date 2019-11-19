@@ -53,7 +53,7 @@ class ScriptCallStack;
 
 namespace WebCore {
 
-class AbstractEventLoop;
+class EventLoop;
 class CachedScript;
 class DatabaseContext;
 class EventQueue;

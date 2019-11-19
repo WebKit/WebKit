@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AbstractEventLoop.h"
 #include "DocumentIdentifier.h"
+#include "EventLoop.h"
 #include "RegistrableDomain.h"
 #include <wtf/HashSet.h>
 
@@ -35,7 +35,7 @@ namespace WebCore {
 class Document;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
-class WindowEventLoop final : public AbstractEventLoop {
+class WindowEventLoop final : public EventLoop {
 public:
     static Ref<WindowEventLoop> ensureForRegistrableDomain(const RegistrableDomain&);
 

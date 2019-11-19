@@ -88,7 +88,7 @@ class InputCursor;
 
 namespace WebCore {
 
-class AbstractEventLoop;
+class EventLoop;
 class ApplicationStateChangeListener;
 class AXObjectCache;
 class Attr;

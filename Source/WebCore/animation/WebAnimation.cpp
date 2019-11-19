@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebAnimation.h"
 
-#include "AbstractEventLoop.h"
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
@@ -34,6 +33,7 @@
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
 #include "JSWebAnimation.h"

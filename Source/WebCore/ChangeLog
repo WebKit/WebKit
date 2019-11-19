@@ -1,3 +1,41 @@
+2019-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename AbstractEventLoop to EventLoop and move to its own cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=204335
+
+        Reviewed by Antti Koivisto.
+
+        This patch renames AbstractEventLoop to EventLoop and move to its own cpp file since
+        r252607 consolidated the event loop implementations in WindowEventLoop and WorkerEventLoop.
+
+        * Modules/cache/DOMCache.cpp:
+        * Modules/cache/DOMCacheStorage.cpp:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/WebAnimation.cpp:
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * css/FontFaceSet.cpp:
+        * dom/ActiveDOMObject.cpp:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * dom/WindowEventLoop.cpp:
+        (WebCore::AbstractEventLoop::queueTask): Deleted.
+        (WebCore::AbstractEventLoop::resumeGroup): Deleted.
+        (WebCore::AbstractEventLoop::stopGroup): Deleted.
+        (WebCore::AbstractEventLoop::scheduleToRunIfNeeded): Deleted.
+        (WebCore::AbstractEventLoop::run): Deleted.
+        (WebCore::AbstractEventLoop::clearAllTasks): Deleted.
+        (WebCore::EventLoopFunctionDispatchTask::EventLoopFunctionDispatchTask): Deleted.
+        (WebCore::EventLoopTaskGroup::queueTask): Deleted.
+        * dom/WindowEventLoop.h:
+        * fileapi/FileReader.cpp:
+        * testing/Internals.cpp:
+        * workers/WorkerEventLoop.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+
 2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [IndexedDB] IndexedDB's threading assertion should respect Web thread

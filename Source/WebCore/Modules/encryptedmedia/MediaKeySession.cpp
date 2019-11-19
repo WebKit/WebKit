@@ -31,11 +31,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "AbstractEventLoop.h"
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Logging.h"
 #include "MediaKeyMessageEvent.h"

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "DOMCacheStorage.h"
 
-#include "AbstractEventLoop.h"
 #include "CacheQueryOptions.h"
 #include "ClientOrigin.h"
+#include "EventLoop.h"
 #include "JSDOMCache.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"

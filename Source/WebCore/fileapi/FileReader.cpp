@@ -31,7 +31,7 @@
 #include "config.h"
 #include "FileReader.h"
 
-#include "AbstractEventLoop.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "File.h"
 #include "Logging.h"

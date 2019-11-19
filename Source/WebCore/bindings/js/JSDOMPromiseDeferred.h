@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AbstractEventLoop.h"
+#include "EventLoop.h"
 #include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"

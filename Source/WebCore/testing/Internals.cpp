@@ -28,7 +28,6 @@
 #include "Internals.h"
 
 #include "AXObjectCache.h"
-#include "AbstractEventLoop.h"
 #include "ActiveDOMCallbackMicrotask.h"
 #include "ActivityState.h"
 #include "AnimationTimeline.h"
@@ -71,6 +70,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "EventListener.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"

@@ -59,9 +59,9 @@ private:
 };
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
-class AbstractEventLoop : public RefCounted<AbstractEventLoop>, public CanMakeWeakPtr<AbstractEventLoop> {
+class EventLoop : public RefCounted<EventLoop>, public CanMakeWeakPtr<EventLoop> {
 public:
-    virtual ~AbstractEventLoop() = default;
+    virtual ~EventLoop() = default;
 
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
@@ -70,7 +70,7 @@ public:
     void stopGroup(EventLoopTaskGroup&);
 
 protected:
-    AbstractEventLoop() = default;
+    EventLoop() = default;
     void run();
     void clearAllTasks();
 
@@ -90,7 +90,7 @@ class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    EventLoopTaskGroup(AbstractEventLoop& eventLoop)
+    EventLoopTaskGroup(EventLoop& eventLoop)
         : m_eventLoop(makeWeakPtr(eventLoop))
     {
     }
@@ -113,7 +113,7 @@ public:
         ASSERT(m_state != State::Stopped);
         m_state = State::Suspended;
         // We don't remove suspended tasks to preserve the ordering.
-        // AbstractEventLoop::run checks whether each task's group is suspended or not.
+        // EventLoop::run checks whether each task's group is suspended or not.
     }
 
     void resume()
@@ -127,20 +127,13 @@ public:
     bool isStoppedPermanently() { return m_state == State::Stopped; }
     bool isSuspended() { return m_state == State::Suspended; }
 
-    void queueTask(std::unique_ptr<EventLoopTask>&& task)
-    {
-        if (m_state == State::Stopped || !m_eventLoop)
-            return;
-        ASSERT(task->group() == this);
-        m_eventLoop->queueTask(WTFMove(task));
-    }
-
-    WEBCORE_EXPORT void queueTask(TaskSource, AbstractEventLoop::TaskFunction&&);
+    void queueTask(std::unique_ptr<EventLoopTask>&&);
+    WEBCORE_EXPORT void queueTask(TaskSource, EventLoop::TaskFunction&&);
 
 private:
     enum class State : uint8_t { Running, Suspended, Stopped };
 
-    WeakPtr<AbstractEventLoop> m_eventLoop;
+    WeakPtr<EventLoop> m_eventLoop;
     State m_state { State::Running };
 };
 
