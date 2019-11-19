@@ -80,6 +80,7 @@ struct ResourceLoadStatistics {
     HashSet<RegistrableDomain> topFrameUniqueRedirectsFrom;
     HashSet<RegistrableDomain> topFrameLinkDecorationsFrom;
     bool gotLinkDecorationFromPrevalentResource { false };
+    HashSet<RegistrableDomain> topFrameLoadedThirdPartyScripts;
 
     // Subframe stats
     HashSet<RegistrableDomain> subframeUnderTopFrameDomains;

@@ -1,3 +1,42 @@
+2019-11-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Count third-party script loads under top frame
+        https://bugs.webkit.org/show_bug.cgi?id=204262
+        <rdar://problem/57244945>
+
+        Reviewed by Alex Christensen.
+
+        Third-party scripts running in the first-party context are a significant privacy
+        and security risk. This change captures the number of such script loads which will
+        allow ITP to take action.
+
+        Tests: http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database.html
+               http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker.html
+               http/tests/resourceLoadStatistics/count-third-party-script-loads-database.html
+               http/tests/resourceLoadStatistics/count-third-party-script-loads.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+            Now sends the ResourceLoadObserver::FetchDestinationIsScriptLike parameter to
+            ResourceLoadObserver::logSubresourceLoading().
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+            Now takes a FetchDestinationIsScriptLike parameter.
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString const):
+            Output of the new topFrameLoadedThirdPartyScripts category.
+            Removed the lastSeen output since it may differ between test runs.
+        (WebCore::ResourceLoadStatistics::merge):
+            Handling of the new topFrameLoadedThirdPartyScripts category.
+        * loader/ResourceLoadStatistics.h:
+            Added the new topFrameLoadedThirdPartyScripts category.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+            Now sends the ResourceLoadObserver::FetchDestinationIsScriptLike parameter to
+            ResourceLoadObserver::logSubresourceLoading().
+
 2019-11-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Display::Run:TextContext should use StringView

@@ -3150,7 +3150,8 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
             platformStrategies()->loaderStrategy()->loadResourceSynchronously(*this, identifier, newRequest, clientCredentialPolicy, options, originalRequestHeaders, error, response, buffer);
             data = SharedBuffer::create(WTFMove(buffer));
             documentLoader()->applicationCacheHost().maybeLoadFallbackSynchronously(newRequest, error, response, data);
-            ResourceLoadObserver::shared().logSubresourceLoading(&m_frame, newRequest, response);
+            ResourceLoadObserver::shared().logSubresourceLoading(&m_frame, newRequest, response,
+                (isScriptLikeDestination(options.destination) ? ResourceLoadObserver::FetchDestinationIsScriptLike::Yes : ResourceLoadObserver::FetchDestinationIsScriptLike::No));
         }
     }
     notifier().sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, response, data ? data->data() : nullptr, data ? data->size() : 0, -1, error);

@@ -235,7 +235,7 @@ void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, con
 #endif
 }
 
-void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
+void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse, FetchDestinationIsScriptLike isScriptLike)
 {
     ASSERT(frame->page());
 
@@ -269,6 +269,13 @@ void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Re
         auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
         targetStatistics.lastSeen = lastSeen;
         targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain);
+
+        scheduleNotificationIfNeeded();
+    }
+
+    if (frame->isMainFrame() && isScriptLike == FetchDestinationIsScriptLike::Yes) {
+        auto& topFrameStatistics = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
+        topFrameStatistics.topFrameLoadedThirdPartyScripts.add(targetDomain);
 
         scheduleNotificationIfNeeded();
     }

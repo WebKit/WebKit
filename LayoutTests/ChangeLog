@@ -1,3 +1,33 @@
+2019-11-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Count third-party script loads under top frame
+        https://bugs.webkit.org/show_bug.cgi?id=204262
+        <rdar://problem/57244945>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database.html: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker.html: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database.html: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads.html: Added.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database.html: Added.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script.html: Added.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database-expected.txt:
+            Removed the lastSeen output since it may differ between test runs.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-expected.txt:
+            Removed the lastSeen output since it may differ between test runs.
+        * http/tests/resourceLoadStatistics/resources/dummy.js: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database-expected.txt:
+            Removed the lastSeen output since it may differ between test runs.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-expected.txt:
+            Removed the lastSeen output since it may differ between test runs.
+
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
         Update expectations for bufferedAmount-unchanged-by-sync-xhr.any.worker.html

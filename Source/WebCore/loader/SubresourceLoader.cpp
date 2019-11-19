@@ -195,7 +195,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
     if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
         tracePoint(SubresourceLoadWillStart);
-        ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
+        ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse,
+            (isScriptLikeDestination(options().destination) ? ResourceLoadObserver::FetchDestinationIsScriptLike::Yes : ResourceLoadObserver::FetchDestinationIsScriptLike::No));
     }
 
     auto continueWillSendRequest = [this, protectedThis = makeRef(*this), redirectResponse] (CompletionHandler<void(ResourceRequest&&)>&& completionHandler, ResourceRequest&& newRequest) mutable {

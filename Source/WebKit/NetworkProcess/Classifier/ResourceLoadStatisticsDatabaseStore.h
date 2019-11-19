@@ -223,6 +223,7 @@ private:
     WebCore::SQLiteStatement m_insertTopLevelDomainStatement;
     mutable WebCore::SQLiteStatement m_domainIDFromStringStatement;
     mutable WebCore::SQLiteStatement m_topFrameLinkDecorationsFromExists;
+    mutable WebCore::SQLiteStatement m_topFrameLoadedThirdPartyScriptsExists;
     mutable WebCore::SQLiteStatement m_subframeUnderTopFrameDomainExists;
     mutable WebCore::SQLiteStatement m_subresourceUnderTopFrameDomainExists;
     mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsToExists;

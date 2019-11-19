@@ -3,29 +3,29 @@ Test logging of link decorated cross-site navigations from a prevalent resource.
 Resource load statistics:
 
 Registrable domain: 127.0.0.1
-    lastSeen: 0
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No    isPrevalentResource: Yes
+    IsScheduledForAllButCookieDataRemoval: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: 127.0.0.2
-    lastSeen: 0
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No    isPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
+    isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: localhost
-    lastSeen: 0
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
     TopFrameLinkDecorationsFrom:
         127.0.0.1
         127.0.0.2
-    IsScheduledForAllButCookieDataRemoval: Yes    isPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: Yes
+    isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

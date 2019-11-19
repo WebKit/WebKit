@@ -51,7 +51,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-constexpr unsigned statisticsModelVersion { 16 };
+constexpr unsigned statisticsModelVersion { 17 };
 
 struct StatisticsLastSeen {
     RegistrableDomain domain;
