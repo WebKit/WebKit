@@ -88,7 +88,7 @@ Optional<OptionsStorage::Unsigned> parse(const char* string)
     return WTF::nullopt;
 }
 
-#if CPU(ADDRESS64)
+#if CPU(ADDRESS64) || OS(DARWIN)
 template<>
 Optional<OptionsStorage::Size> parse(const char* string)
 {
@@ -97,7 +97,7 @@ Optional<OptionsStorage::Size> parse(const char* string)
         return value;
     return WTF::nullopt;
 }
-#endif // CPU(ADDRESS64)
+#endif // CPU(ADDRESS64) || OS(DARWIN)
 
 template<>
 Optional<OptionsStorage::Double> parse(const char* string)

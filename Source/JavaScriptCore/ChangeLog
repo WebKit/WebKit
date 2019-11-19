@@ -1,3 +1,18 @@
+2019-11-18  Mark Lam  <mark.lam@apple.com>
+
+        Always enable Optional<OptionsStorage::Size> parse(const char* string) for OS(DARWIN).
+        https://bugs.webkit.org/show_bug.cgi?id=204333
+        <rdar://problem/57303785>
+
+        Reviewed by Yusuke Suzuki.
+
+        On OS(DARWIN), the compiler does not consider size_t and unsigned to be the same
+        type, even for 32-bit targets.  Hence, we need the size_t version of the function
+        in addition to the unsigned version.
+
+        * runtime/Options.cpp:
+        (JSC::parse):
+
 2019-11-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Local Resource Overrides: allow substitution based on a url pattern
