@@ -1533,6 +1533,33 @@ Overflow RenderFlexibleBox::crossAxisOverflowForChild(const RenderBox& child) co
     return child.style().overflowX();
 }
 
+bool RenderFlexibleBox::hasPercentHeightDescendants(const RenderBox& renderer) const
+{
+    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. 
+    if (!is<RenderBlock>(renderer))
+        return false;
+    auto& renderBlock = downcast<RenderBlock>(renderer);
+    if (!renderBlock.hasPercentHeightDescendants())
+        return false;
+
+    auto* percentHeightDescendants = renderBlock.percentHeightDescendants();
+    if (!percentHeightDescendants)
+        return false;
+
+    for (auto it = percentHeightDescendants->begin(), end = percentHeightDescendants->end(); it != end; ++it) {
+        bool hasOutOfFlowAncestor = false;
+        for (auto* ancestor = (*it)->containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
+            if (ancestor->isOutOfFlowPositioned()) {
+                hasOutOfFlowAncestor = true;
+                break;
+            }
+        }
+        if (!hasOutOfFlowAncestor)
+            return true;
+    }
+    return false;
+}
+
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>& children, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts)
 {
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
@@ -1569,7 +1596,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         // We may have already forced relayout for orthogonal flowing children in
         // computeInnerFlexBaseSizeForChild.
         bool forceChildRelayout = relayoutChildren && !m_relaidOutChildren.contains(&child);
-        if (child.isRenderBlock() && downcast<RenderBlock>(child).hasPercentHeightDescendants()) {
+        if (!forceChildRelayout && hasPercentHeightDescendants(child)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.
