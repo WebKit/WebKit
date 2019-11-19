@@ -963,6 +963,9 @@ class RunJavaScriptCoreTests(shell.Test):
         if remotesfile:
             self.command.append('--remote-config-file={0}'.format(remotesfile))
 
+        platform = self.getProperty('platform')
+        if platform == 'jsc-only' and remotesfile:
+            self.command.extend(['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited'])
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
@@ -1887,10 +1890,11 @@ class PrintConfiguration(steps.ShellSequence):
     def run(self):
         command_list = list(self.command_list_generic)
         platform = self.getProperty('platform', '*')
-        platform = platform.split('-')[0]
+        if platform != 'jsc-only':
+            platform = platform.split('-')[0]
         if platform in ('mac', 'ios', '*'):
             command_list.extend(self.command_list_apple)
-        elif platform in ('gtk', 'wpe'):
+        elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)
         elif platform in ('win', 'wincairo'):
             command_list.extend(self.command_list_win)

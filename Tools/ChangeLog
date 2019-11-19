@@ -1,3 +1,20 @@
+2019-11-19  Paulo Matos  <pmatos@igalia.com>
+
+        Setup EWS queues for JSConly 32bits ARMv7 and MIPSel
+        https://bugs.webkit.org/show_bug.cgi?id=203946
+
+        Reviewed by Aakash Jain.
+
+        Naming of queues follow old EWS: jsc-mips for MIPSel
+        and jsc-armv7 for ARMv7.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunJavaScriptCoreTests.start):
+        (PrintConfiguration.run):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunJavaScriptCoreTests.test_remote_success):
+
 2019-11-18  John Wilander  <wilander@apple.com>
 
         Check if ITP is on before applying third-party cookie blocking
