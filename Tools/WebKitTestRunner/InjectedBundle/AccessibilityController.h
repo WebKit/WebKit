@@ -28,8 +28,12 @@
 #include "AccessibilityUIElement.h"
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Platform.h>
+#include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
+
 #if USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #endif
@@ -82,6 +86,70 @@ private:
 #elif USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
+
+#if PLATFORM(COCOA)
+    // _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
+    // do not work for WebKitTestRunner since this is calling directly into
+    // WebCore/accessibility via JavaScript without going through HIServices.
+    // Thus to simulate the behavior of HIServices, AccessibilityController is spawning a secondary thread to service the JavaScript requests.
+    // The following flag allows to run the very first request in the main
+    // thread and all subsequent requests in the secondary thread. this is what
+    // the behavior would be if using HIServices.
+    // The first request has to be served in the main thread in order to build
+    // the AXIsolatedTree.
+    bool m_useAXThread { false };
+    BinarySemaphore m_semaphore;
+#endif
 };
+
+#if PLATFORM(COCOA)
+
+class AXThread {
+    WTF_MAKE_NONCOPYABLE(AXThread);
+
+public:
+    static bool isCurrentThread();
+    static void dispatch(Function<void()>&&);
+
+    // Will dispatch the given function on the main thread once all pending functions
+    // on the AX thread have finished executing. Used for synchronization purposes.
+    static void dispatchBarrier(Function<void()>&&);
+
+private:
+    friend NeverDestroyed<AXThread>;
+
+    AXThread();
+
+    static AXThread& singleton();
+
+    void createThreadIfNeeded();
+    void dispatchFunctionsFromAXThread();
+
+    void initializeRunLoop();
+    void wakeUpRunLoop();
+
+#if PLATFORM(COCOA)
+    static void threadRunLoopSourceCallback(void* AXThread);
+    void threadRunLoopSourceCallback();
+#endif
+
+    RefPtr<Thread> m_thread;
+
+    Condition m_initializeRunLoopConditionVariable;
+    Lock m_initializeRunLoopMutex;
+
+    Lock m_functionsMutex;
+    Vector<Function<void()>> m_functions;
+
+#if PLATFORM(COCOA)
+    // FIXME: We should use WebCore::RunLoop here.
+    RetainPtr<CFRunLoopRef> m_threadRunLoop;
+    RetainPtr<CFRunLoopSourceRef> m_threadRunLoopSource;
+#else
+    RunLoop* m_runLoop { nullptr };
+#endif
+};
+
+#endif // PLATFORM(COCOA)
 
 } // namespace WTR

@@ -76,9 +76,25 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    void* root = WKAccessibilityRootObject(page);
-    
-    return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
+    PlatformUIElement root = nullptr;
+
+    if (m_useAXThread) {
+        AXThread::dispatch([&root, page, this] {
+            root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+            m_semaphore.signal();
+        });
+
+        m_semaphore.wait();
+    } else {
+        root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+
+        if (WKAccessibilityCanUseSecondaryAXThread(page)) {
+            // Set m_useAXThread to true for next request.
+            m_useAXThread = true;
+        }
+    }
+
+    return AccessibilityUIElement::create(root);
 }
 
 Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
@@ -95,6 +111,102 @@ RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, in
     auto uiElement = rootElement();
     return uiElement->elementAtPoint(x, y);
 }
+
+#if PLATFORM(COCOA)
+
+// AXThread implementation
+
+AXThread::AXThread()
+{
+}
+
+bool AXThread::isCurrentThread()
+{
+    return AXThread::singleton().m_thread == &Thread::current();
+}
+
+void AXThread::dispatch(Function<void()>&& function)
+{
+    auto& axThread = AXThread::singleton();
+    axThread.createThreadIfNeeded();
+
+    {
+        std::lock_guard<Lock> lock(axThread.m_functionsMutex);
+        axThread.m_functions.append(WTFMove(function));
+    }
+
+    axThread.wakeUpRunLoop();
+}
+
+void AXThread::dispatchBarrier(Function<void()>&& function)
+{
+    dispatch([function = WTFMove(function)]() mutable {
+        callOnMainThread(WTFMove(function));
+    });
+}
+
+AXThread& AXThread::singleton()
+{
+    static NeverDestroyed<AXThread> axThread;
+    return axThread;
+}
+
+void AXThread::createThreadIfNeeded()
+{
+    // Wait for the thread to initialize the run loop.
+    std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
+
+    if (!m_thread) {
+        m_thread = Thread::create("WKTR: AccessibilityController", [this] {
+            WTF::Thread::setCurrentThreadIsUserInteractive();
+            initializeRunLoop();
+        });
+    }
+
+    m_initializeRunLoopConditionVariable.wait(lock, [this] {
+#if PLATFORM(COCOA)
+        return m_threadRunLoop;
+#else
+        return m_runLoop;
+#endif
+    });
+}
+
+void AXThread::dispatchFunctionsFromAXThread()
+{
+    ASSERT(isCurrentThread());
+
+    Vector<Function<void()>> functions;
+
+    {
+        std::lock_guard<Lock> lock(m_functionsMutex);
+        functions = WTFMove(m_functions);
+    }
+
+    for (auto& function : functions)
+        function();
+}
+
+#if !PLATFORM(MAC)
+NO_RETURN_DUE_TO_ASSERT void AXThread::initializeRunLoop()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void AXThread::wakeUpRunLoop()
+{
+}
+
+void AXThread::threadRunLoopSourceCallback(void*)
+{
+}
+
+void AXThread::threadRunLoopSourceCallback()
+{
+}
+#endif // !PLATFORM(MAC)
+
+#endif // PLATFORM(COCOA)
 
 } // namespace WTR
 #endif // ENABLE(ACCESSIBILITY)

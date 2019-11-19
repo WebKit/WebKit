@@ -109,4 +109,44 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
     return adopt(JSStringCreateWithUTF8CString("mac"));
 }
 
+// AXThread implementation
+
+void AXThread::initializeRunLoop()
+{
+    // Initialize the run loop.
+    {
+        std::lock_guard<Lock> lock(m_initializeRunLoopMutex);
+
+        m_threadRunLoop = CFRunLoopGetCurrent();
+
+        CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, threadRunLoopSourceCallback };
+        m_threadRunLoopSource = adoptCF(CFRunLoopSourceCreate(0, 0, &context));
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), m_threadRunLoopSource.get(), kCFRunLoopDefaultMode);
+
+        m_initializeRunLoopConditionVariable.notifyAll();
+    }
+
+    ASSERT(isCurrentThread());
+
+    CFRunLoopRun();
+}
+
+void AXThread::wakeUpRunLoop()
+{
+    CFRunLoopSourceSignal(m_threadRunLoopSource.get());
+    CFRunLoopWakeUp(m_threadRunLoop.get());
+}
+
+void AXThread::threadRunLoopSourceCallback(void* axThread)
+{
+    static_cast<AXThread*>(axThread)->threadRunLoopSourceCallback();
+}
+
+void AXThread::threadRunLoopSourceCallback()
+{
+    @autoreleasepool {
+        dispatchFunctionsFromAXThread();
+    }
+}
+
 } // namespace WTR

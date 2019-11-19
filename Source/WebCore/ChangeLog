@@ -1,3 +1,20 @@
+2019-11-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Run AccessibilityController::rootElement on secondary thread to simulate HIServices during LayoutTests.
+        https://bugs.webkit.org/show_bug.cgi?id=204226
+
+        Reviewed by Chris Fleizach.
+
+        No new tests, no new functionality.
+
+        Added AXObjectCahce::canUseSecondaryAXThread to support
+        WTR::AccessibilityController spawning of a secondary thread to simulate
+        execution of isolated tree code.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::canUseSecondaryAXThread):
+        * accessibility/AXObjectCache.h:
+
 2019-11-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Share more code between WindowEventLoop and WorkerEventLoop by introducing EventLoopTaskGroup

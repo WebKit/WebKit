@@ -282,6 +282,33 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 #endif
 }
 
+bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
+{
+#if ENABLE(ACCESSIBILITY)
+    if (!pageRef)
+        return false;
+
+    WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
+    if (!page)
+        return false;
+
+    WebCore::Frame& core = page->mainFrame();
+    if (!core.document())
+        return false;
+
+    WebCore::AXObjectCache::enableAccessibility();
+
+    auto* axObjectCache = core.document()->axObjectCache();
+    if (!axObjectCache)
+        return false;
+
+    return axObjectCache->canUseSecondaryAXThread();
+#else
+    UNUSED_PARAM(pageRef);
+    return false;
+#endif
+}
+
 void WKAccessibilityEnableEnhancedAccessibility(bool enable)
 {
 #if ENABLE(ACCESSIBILITY)

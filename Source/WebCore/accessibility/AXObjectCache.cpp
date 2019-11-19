@@ -705,6 +705,21 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 }
 #endif
 
+bool AXObjectCache::canUseSecondaryAXThread()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
+    if (_AXUIElementRequestServicedBySecondaryAXThread())
+        return true;
+
+    // _AXUIElementRequestServicedBySecondaryAXThread returns false for
+    // LayoutTests, but we still want to run LayoutTests using isolated tree on
+    // a secondary thread to simulate the actual execution.
+    return clientSupportsIsolatedTree();
+#else
+    return false;
+#endif
+}
+
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
 {
     if (!gAccessibilityEnabled)

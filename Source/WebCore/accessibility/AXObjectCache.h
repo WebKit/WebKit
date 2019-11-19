@@ -200,6 +200,8 @@ private:
 #endif
 
 public:
+    WEBCORE_EXPORT bool canUseSecondaryAXThread();
+
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();

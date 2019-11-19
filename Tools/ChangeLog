@@ -1,3 +1,39 @@
+2019-11-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Run AccessibilityController::rootElement on secondary thread to simulate HIServices during LayoutTests.
+        https://bugs.webkit.org/show_bug.cgi?id=204226
+
+        Reviewed by Chris Fleizach.
+
+        HIServices _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
+        do not work for WebKitTestRunner since this is calling directly into
+        WebCore/accessibility via JavaScript without going through HIServices.
+        Thus to simulate the behavior of HIServices, AccessibilityController is
+        spawning a secondary thread to service the JavaScript requests.
+        The very first request needs to be serviced in the main thread,
+        and all subsequent requests in the secondary thread. this is what
+        the behavior would be if using HIServices.
+        Once the IsolatedTree would be enabled, the first request has to be
+        served in the main thread in order to build the AXIsolatedTree.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::rootElement):
+        (WTR::AXThread::AXThread):
+        (WTR::AXThread::isCurrentThread):
+        (WTR::AXThread::dispatch):
+        (WTR::AXThread::dispatchBarrier):
+        (WTR::AXThread::singleton):
+        (WTR::AXThread::createThreadIfNeeded):
+        (WTR::AXThread::dispatchFunctionsFromAXThread):
+        (WTR::AXThread::initializeRunLoop):
+        (WTR::AXThread::wakeUpRunLoop):
+        (WTR::AXThread::threadRunLoopSourceCallback):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AXThread::initializeRunLoop):
+        (WTR::AXThread::wakeUpRunLoop):
+        (WTR::AXThread::threadRunLoopSourceCallback):
+
 2019-11-18  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Uncollapsed failures shouldn't include runs with no failures
