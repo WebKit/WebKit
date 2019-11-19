@@ -179,11 +179,11 @@ public:
 
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
 
-    using Style = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
-    Style strokeStyle() const;
-    void setStrokeStyle(Style&&);
-    Style fillStyle() const;
-    void setFillStyle(Style&&);
+    using StyleVariant = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
+    StyleVariant strokeStyle() const;
+    void setStrokeStyle(StyleVariant&&);
+    StyleVariant fillStyle() const;
+    void setFillStyle(StyleVariant&&);
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);

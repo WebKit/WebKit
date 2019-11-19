@@ -1431,7 +1431,7 @@ bool FrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientat
     StyleScrollbarState scrollbarState;
     scrollbarState.scrollbarPart = ScrollbarBGPart;
     scrollbarState.orientation = orientation;
-    auto scrollbarStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Scrollbar, scrollbarState), &renderer->style());
+    auto scrollbarStyle = renderer->getUncachedPseudoStyle({ PseudoId::Scrollbar, scrollbarState }, &renderer->style());
     return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
 }
 
@@ -3862,7 +3862,7 @@ void FrameView::updateScrollCorner()
         Element* body = doc ? doc->bodyOrFrameset() : nullptr;
         if (body && body->renderer()) {
             renderer = body->renderer();
-            cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &renderer->style());
+            cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &renderer->style());
         }
         
         if (!cornerStyle) {
@@ -3870,7 +3870,7 @@ void FrameView::updateScrollCorner()
             Element* docElement = doc ? doc->documentElement() : nullptr;
             if (docElement && docElement->renderer()) {
                 renderer = docElement->renderer();
-                cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &renderer->style());
+                cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &renderer->style());
             }
         }
         
@@ -3878,7 +3878,7 @@ void FrameView::updateScrollCorner()
             // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
             // FIXME: Seems wrong to do this for cross-origin frames.
             if (RenderWidget* renderer = frame().ownerRenderer())
-                cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &renderer->style());
+                cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &renderer->style());
         }
     }
 

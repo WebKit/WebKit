@@ -172,9 +172,9 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Now map the font property longhands into the style.
 
-    MatchResult matchResult;
+    Style::MatchResult matchResult;
     auto parentStyle = RenderStyle::clone(*newStyle);
-    WebCore::Style::Builder styleBuilder(*newStyle, { document, parentStyle }, matchResult, { });
+    Style::Builder styleBuilder(*newStyle, { document, parentStyle }, matchResult, { });
 
     styleBuilder.applyPropertyValue(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get());
     styleBuilder.applyPropertyValue(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());

@@ -1871,7 +1871,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     compositeBuffer(*buffer, bufferRect, op);
 }
 
-static CanvasRenderingContext2DBase::Style toStyle(const CanvasStyle& style)
+static CanvasRenderingContext2DBase::StyleVariant toStyleVariant(const CanvasStyle& style)
 {
     if (auto gradient = style.canvasGradient())
         return gradient;
@@ -1880,12 +1880,12 @@ static CanvasRenderingContext2DBase::Style toStyle(const CanvasStyle& style)
     return style.color();
 }
 
-CanvasRenderingContext2DBase::Style CanvasRenderingContext2DBase::strokeStyle() const
+CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::strokeStyle() const
 {
-    return toStyle(state().strokeStyle);
+    return toStyleVariant(state().strokeStyle);
 }
 
-void CanvasRenderingContext2DBase::setStrokeStyle(CanvasRenderingContext2DBase::Style&& style)
+void CanvasRenderingContext2DBase::setStrokeStyle(CanvasRenderingContext2DBase::StyleVariant&& style)
 {
     WTF::switchOn(style,
         [this] (const String& string) { this->setStrokeColor(string); },
@@ -1894,12 +1894,12 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasRenderingContext2DBase::
     );
 }
 
-CanvasRenderingContext2DBase::Style CanvasRenderingContext2DBase::fillStyle() const
+CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::fillStyle() const
 {
-    return toStyle(state().fillStyle);
+    return toStyleVariant(state().fillStyle);
 }
 
-void CanvasRenderingContext2DBase::setFillStyle(CanvasRenderingContext2DBase::Style&& style)
+void CanvasRenderingContext2DBase::setFillStyle(CanvasRenderingContext2DBase::StyleVariant&& style)
 {
     WTF::switchOn(style,
         [this] (const String& string) { this->setFillColor(string); },

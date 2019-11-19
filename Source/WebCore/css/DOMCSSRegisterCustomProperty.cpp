@@ -61,7 +61,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
             return Exception { SyntaxError, "The given initial value must be computationally independent." };
 
 
-        MatchResult matchResult;
+        Style::MatchResult matchResult;
 
         auto parentStyle = RenderStyle::clone(*style);
         Style::Builder dummyBuilder(*style, { document, parentStyle }, matchResult, { });

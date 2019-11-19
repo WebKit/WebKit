@@ -53,7 +53,6 @@ class HitTestResult;
 class InlineBox;
 class Path;
 class Position;
-class PseudoStyleRequest;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
@@ -84,6 +83,10 @@ const int caretWidth = 1;
 enum class ShouldAllowCrossOriginScrolling { No, Yes };
 
 struct ScrollRectToVisibleOptions;
+
+namespace Style {
+class PseudoElementRequest;
+}
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient, public CanMakeWeakPtr<RenderObject> {

@@ -122,7 +122,7 @@ using RecordCanvasActionVariant = Variant<
 
     // variant
     CanvasImageSource,
-    CanvasRenderingContext2DBase::Style,
+    CanvasRenderingContext2DBase::StyleVariant,
 #if ENABLE(WEBGL)
     WebGLRenderingContextBase::BufferDataSource,
     Optional<WebGLRenderingContextBase::BufferDataSource>,

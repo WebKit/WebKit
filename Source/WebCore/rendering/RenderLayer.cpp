@@ -6698,7 +6698,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 void RenderLayer::updateScrollCornerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &actualRenderer->style()) : nullptr;
+    auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
 
     if (!corner) {
         clearScrollCorner();
@@ -6725,7 +6725,7 @@ void RenderLayer::clearScrollCorner()
 void RenderLayer::updateResizerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Resizer), &actualRenderer->style()) : nullptr;
+    auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
         clearResizer();

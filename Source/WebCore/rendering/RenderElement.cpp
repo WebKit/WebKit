@@ -1358,15 +1358,15 @@ const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const Re
     if (cachedStyle)
         return cachedStyle;
 
-    std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
+    std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle({ pseudo }, parentStyle);
     if (result)
         return const_cast<RenderStyle&>(m_style).addCachedPseudoStyle(WTFMove(result));
     return nullptr;
 }
 
-std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
+std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::PseudoElementRequest& pseudoElementRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
 {
-    if (pseudoStyleRequest.pseudoId < PseudoId::FirstInternalPseudoId && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
+    if (pseudoElementRequest.pseudoId < PseudoId::FirstInternalPseudoId && !ownStyle && !style().hasPseudoStyle(pseudoElementRequest.pseudoId))
         return nullptr;
 
     if (!parentStyle) {
@@ -1379,7 +1379,7 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoS
 
     auto& styleResolver = element()->styleResolver();
 
-    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
+    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoElementRequest, *parentStyle);
 
     if (style)
         Style::loadPendingResources(*style, document(), element());
@@ -1415,11 +1415,11 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
     if (ShadowRoot* root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
             if (Element* shadowHost = element()->shadowHost())
-                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Selection));
+                return shadowHost->renderer()->getUncachedPseudoStyle({ PseudoId::Selection });
         }
     }
 
-    return getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Selection));
+    return getUncachedPseudoStyle({ PseudoId::Selection });
 }
 
 Color RenderElement::selectionForegroundColor() const

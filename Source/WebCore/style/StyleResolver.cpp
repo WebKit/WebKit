@@ -398,7 +398,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     }
 }
 
-std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const SelectorFilter* selectorFilter)
+std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const SelectorFilter* selectorFilter)
 {
     auto state = State(element, &parentStyle, m_overrideDocumentElementStyle);
 
@@ -411,7 +411,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     }
 
     ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
-    collector.setPseudoStyleRequest(pseudoStyleRequest);
+    collector.setPseudoElementRequest(pseudoElementRequest);
     collector.setMedium(&m_mediaQueryEvaluator);
     collector.matchUARules();
 
@@ -425,7 +425,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     if (collector.matchResult().isEmpty())
         return nullptr;
 
-    state.style()->setStyleType(pseudoStyleRequest.pseudoId);
+    state.style()->setStyleType(pseudoElementRequest.pseudoId);
 
     applyMatchedProperties(state, collector.matchResult());
 
@@ -498,7 +498,7 @@ Vector<RefPtr<StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* el
 
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
-    collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
+    collector.setPseudoElementRequest({ pseudoId });
     collector.setMedium(&m_mediaQueryEvaluator);
     collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 

@@ -34,6 +34,7 @@
 #include "StyleRule.h"
 
 namespace WebCore {
+namespace Style {
 
 static inline bool comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
 {
@@ -74,7 +75,7 @@ void PageRuleCollector::matchAllPageRules(int pageIndex)
         matchPageRules(&m_ruleSets.authorStyle(), isLeft, isFirst, page);
 }
 
-void PageRuleCollector::matchPageRules(Style::RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     if (!rules)
         return;
@@ -128,4 +129,5 @@ void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRul
     }
 }
 
+} // namespace Style
 } // namespace WebCore

@@ -29,9 +29,11 @@ namespace WebCore {
 
 class StyleRulePage;
 
+namespace Style {
+
 class PageRuleCollector {
 public:
-    PageRuleCollector(Style::Resolver::State& state, Style::ScopeRuleSets& ruleSets)
+    PageRuleCollector(Resolver::State& state, ScopeRuleSets& ruleSets)
         : m_state(state)
         , m_ruleSets(ruleSets) { }
 
@@ -44,13 +46,14 @@ private:
     bool isFirstPage(int pageIndex) const;
     String pageName(int pageIndex) const;
 
-    void matchPageRules(Style::RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName);
+    void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName);
 
-    const Style::Resolver::State& m_state;
-    Style::ScopeRuleSets& m_ruleSets;
+    const Resolver::State& m_state;
+    ScopeRuleSets& m_ruleSets;
 
     MatchResult m_result;
 };
 
+} // namespace Style
 } // namespace WebCore

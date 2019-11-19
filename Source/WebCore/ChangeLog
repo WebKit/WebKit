@@ -1,3 +1,80 @@
+2019-11-19  Antti Koivisto  <antti@apple.com>
+
+        Move ElementRuleCollector to Style namespace
+        https://bugs.webkit.org/show_bug.cgi?id=204329
+
+        Reviewed by Sam Weinig.
+
+        Also move PageRuleCollector.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CallTracerTypes.h:
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::toStyleVariant):
+        (WebCore::CanvasRenderingContext2DBase::strokeStyle const):
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::fillStyle const):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+
+        Rename CanvasRenderingContext2DBase::Style to StyleVariant to avoid name conflicts.
+
+        (WebCore::toStyle): Deleted.
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildAction):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::styleHidesScrollbarWithOrientation const):
+        (WebCore::FrameView::updateScrollCorner):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getCachedPseudoStyle const):
+        (WebCore::RenderElement::getUncachedPseudoStyle const):
+        (WebCore::RenderElement::selectionPseudoStyle const):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderObject.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle const):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::pseudoStyleCacheIsInvalid):
+        * style/ElementRuleCollector.cpp: Renamed from Source/WebCore/css/ElementRuleCollector.cpp.
+        (WebCore::Style::MatchRequest::MatchRequest):
+        (WebCore::Style::ElementRuleCollector::ElementRuleCollector):
+        (WebCore::Style::ElementRuleCollector::addMatchedRule):
+        (WebCore::Style::ElementRuleCollector::collectMatchingRules):
+        (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+        (WebCore::Style::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+        (WebCore::Style::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::Style::ElementRuleCollector::matchSlottedPseudoElementRules):
+        (WebCore::Style::ElementRuleCollector::matchPartPseudoElementRulesForScope):
+        (WebCore::Style::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::Style::ElementRuleCollector::matchUARules):
+        (WebCore::Style::ElementRuleCollector::ruleMatches):
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::Style::ElementRuleCollector::matchAllRules):
+        (WebCore::Style::ElementRuleCollector::hasAnyMatchingRules):
+        (WebCore::Style::ElementRuleCollector::addMatchedProperties):
+        * style/ElementRuleCollector.h: Renamed from Source/WebCore/css/ElementRuleCollector.h.
+        (WebCore::Style::PseudoElementRequest::PseudoElementRequest):
+        (WebCore::Style::ElementRuleCollector::setPseudoElementRequest):
+        (WebCore::Style::ElementRuleCollector::styleRelations const):
+        (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+        * style/PageRuleCollector.cpp: Renamed from Source/WebCore/css/PageRuleCollector.cpp.
+        (WebCore::Style::PageRuleCollector::matchPageRules):
+        * style/PageRuleCollector.h: Renamed from Source/WebCore/css/PageRuleCollector.h.
+        (WebCore::Style::PageRuleCollector::PageRuleCollector):
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::pseudoStyleForElement):
+        (WebCore::Style::Resolver::pseudoStyleRulesForElement):
+        * style/StyleResolver.h:
+
 2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Add support for Clipboard.readText()

@@ -755,7 +755,6 @@ css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
 css/DeprecatedCSSOMValue.cpp
 css/DeprecatedCSSOMValueList.cpp
-css/ElementRuleCollector.cpp
 css/FontVariantBuilder.cpp
 css/InspectorCSSOMWrappers.cpp
 css/LengthFunctions.cpp
@@ -767,7 +766,6 @@ css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryMatcher.cpp
 css/MediaQueryParserContext.cpp
-css/PageRuleCollector.cpp
 css/PropertySetCSSStyleDeclaration.cpp
 css/RGBColor.cpp
 css/SVGCSSComputedStyleDeclaration.cpp
@@ -2340,9 +2338,11 @@ storage/StorageNamespaceProvider.cpp
 
 style/AttributeChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
+style/ElementRuleCollector.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
 style/MatchedDeclarationsCache.cpp
+style/PageRuleCollector.cpp
 style/PropertyCascade.cpp
 style/RuleFeature.cpp
 style/RuleSet.cpp

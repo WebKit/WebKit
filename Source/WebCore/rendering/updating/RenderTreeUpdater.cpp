@@ -279,7 +279,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
 
     for (auto& cache : *pseudoStyleCache) {
         PseudoId pseudoId = cache->styleType();
-        std::unique_ptr<RenderStyle> newPseudoStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId), newStyle, newStyle);
+        std::unique_ptr<RenderStyle> newPseudoStyle = renderer->getUncachedPseudoStyle({ pseudoId }, newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
         if (*newPseudoStyle != *cache) {
