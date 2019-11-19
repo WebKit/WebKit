@@ -35,6 +35,8 @@
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
+#include "ServiceWorkerInitializationData.h"
+#include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebProcessProxyMessages.h"
@@ -73,6 +75,7 @@ class ProvisionalPageProxy;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
 class WebBackForwardListItem;
+class WebCompiledContentRuleListData;
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;

@@ -109,10 +109,20 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy,
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ASSERT(parameters.contentRuleLists.isEmpty());
-    for (const auto& contentRuleList : m_contentRuleLists.values())
-        parameters.contentRuleLists.append(std::make_pair(contentRuleList->name(), contentRuleList->compiledRuleList().data()));
+    parameters.contentRuleLists = contentRuleListData();
 #endif
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+Vector<std::pair<String, WebCompiledContentRuleListData>> WebUserContentControllerProxy::contentRuleListData()
+{
+    Vector<std::pair<String, WebCompiledContentRuleListData>> data;
+    data.reserveInitialCapacity(m_contentRuleLists.size());
+    for (const auto& contentRuleList : m_contentRuleLists.values())
+        data.uncheckedAppend(std::make_pair(contentRuleList->name(), contentRuleList->compiledRuleList().data()));
+    return data;
+}
+#endif
 
 void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessProxy)
 {

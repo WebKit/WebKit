@@ -47,11 +47,13 @@ struct ServiceWorkerContextData;
 namespace WebKit {
 
 class ServiceWorkerFrameLoaderClient;
+struct ServiceWorkerInitializationData;
 struct WebPreferencesStore;
+class WebUserContentController;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&, ServiceWorkerInitializationData&&);
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -109,6 +111,7 @@ private:
     uint64_t m_previousRequestIdentifier { 0 };
     String m_userAgent;
     bool m_isThrottleable { true };
+    RefPtr<WebUserContentController> m_userContentController;
 };
 
 } // namespace WebKit

@@ -111,7 +111,7 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
+    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID, struct WebKit::ServiceWorkerInitializationData initializationData)
     RegisterServiceWorkerClients()
 #endif
 

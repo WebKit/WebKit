@@ -33,7 +33,9 @@
 #include "Logging.h"
 #include "NetworkProcessMessages.h"
 #include "ServiceWorkerFetchTaskMessages.h"
+#include "ServiceWorkerInitializationData.h"
 #include "WebCacheStorageProvider.h"
+#include "WebCompiledContentRuleListData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
@@ -44,6 +46,7 @@
 #include "WebSWServerToContextConnectionMessages.h"
 #include "WebServiceWorkerFetchTaskClient.h"
 #include "WebSocketProvider.h"
+#include "WebUserContentController.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/EmptyClients.h>
 #include <WebCore/EmptyFrameLoaderClient.h>
@@ -106,7 +109,7 @@ private:
     String m_userAgent;
 };
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, PageIdentifier pageID, const WebPreferencesStore& store)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, PageIdentifier pageID, const WebPreferencesStore& store, ServiceWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_pageGroupID(pageGroupID)
     , m_pageID(pageID)
@@ -116,6 +119,13 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     , m_userAgent(standardUserAgent())
 #endif
 {
+    if (initializationData.userContentControllerIdentifier) {
+        m_userContentController = WebUserContentController::getOrCreate(*initializationData.userContentControllerIdentifier);
+#if ENABLE(CONTENT_EXTENSIONS)
+        m_userContentController->addContentRuleLists(WTFMove(initializationData.contentRuleLists));
+#endif
+    }
+
     updatePreferencesStore(store);
 }
 
@@ -146,6 +156,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
 #endif
     pageConfiguration.socketProvider = WebSocketProvider::create();
+    pageConfiguration.userContentProvider = m_userContentController;
 
     auto effectiveUserAgent =  WTFMove(userAgent);
     if (effectiveUserAgent.isNull())

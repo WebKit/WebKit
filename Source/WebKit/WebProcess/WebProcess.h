@@ -34,6 +34,7 @@
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
+#include "UserContentControllerIdentifier.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebProcessCreationParameters.h"
@@ -104,11 +105,13 @@ class InjectedBundle;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
+struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
 class WebCacheStorageProvider;
+class WebCompiledContentRuleListData;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebLoaderStrategy;
@@ -367,7 +370,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&, PAL::SessionID);
+    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebCore::PageIdentifier, const WebPreferencesStore&, PAL::SessionID, ServiceWorkerInitializationData&&);
     void registerServiceWorkerClients();
 #endif
 

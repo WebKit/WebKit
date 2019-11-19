@@ -51,6 +51,15 @@
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
 
+@interface WKTRSessionDelegate : NSObject <NSURLSessionDataDelegate>
+@end
+@implementation WKTRSessionDelegate
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+}
+@end
+
 namespace WTR {
 
 void TestController::notifyDone()
@@ -126,11 +135,20 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
     NSURL *filterURL = [(__bridge NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
-    NSStringEncoding encoding;
-    NSString *contentExtensionString = [[NSString alloc] initWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
-    if (!contentExtensionString)
-        return;
-    
+    __block NSString *contentExtensionString;
+    __block bool doneFetchingContentExtension = false;
+    auto delegate = adoptNS([WKTRSessionDelegate new]);
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:filterURL] completionHandler:^(NSData * data, NSURLResponse *response, NSError *error) {
+        ASSERT(data);
+        ASSERT(response);
+        ASSERT(!error);
+        contentExtensionString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        doneFetchingContentExtension = true;
+    }];
+    [task resume];
+    platformRunUntil(doneFetchingContentExtension, noTimeout);
+
     __block bool doneCompiling = false;
 
     NSURL *tempDir;

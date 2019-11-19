@@ -37,6 +37,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebSWContextManagerConnectionMessages.h"
+#include "WebUserContentControllerProxy.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RegistrationDatabase.h>
 
@@ -75,9 +76,34 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
     launchOptions.extraInitializationData.add("registrable-domain"_s, registrableDomain().string());
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+static Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListsFromIdentifier(const Optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
+{
+    if (!userContentControllerIdentifier) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto* userContentController = WebUserContentControllerProxy::get(*userContentControllerIdentifier);
+    if (!userContentController) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    return userContentController->contentRuleListData();
+}
+#endif
+
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, Optional<PAL::SessionID> initialSessionID)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerPageID, store, initialSessionID.valueOr(PAL::SessionID::defaultSessionID()) }, 0);
+    auto& userContentControllerID = processPool().userContentControllerIdentifierForServiceWorkers();
+    ServiceWorkerInitializationData initializationData {
+        userContentControllerID,
+#if ENABLE(CONTENT_EXTENSIONS)
+        contentRuleListsFromIdentifier(userContentControllerID),
+#endif
+    };
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerPageID, store, initialSessionID.valueOr(PAL::SessionID::defaultSessionID()), initializationData }, 0);
 }
 
 void ServiceWorkerProcessProxy::setUserAgent(const String& userAgent)
