@@ -1,3 +1,15 @@
+2019-11-19  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Add WKUIDelegate SPI to inform clients when a _WKInspector attaches to a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=204300
+        <rdar://problem/57136993>
+
+        Reviewed by Devin Rousso.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[InspectorDelegate _webView:didAttachInspector:]):
+        (TEST): Add new test to ensure the delegate is called as expected.
+
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
         Update expectations for bufferedAmount-unchanged-by-sync-xhr.any.worker.html
