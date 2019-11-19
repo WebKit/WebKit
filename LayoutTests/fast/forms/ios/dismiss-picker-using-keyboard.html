@@ -70,7 +70,7 @@ async function runTest()
             let expectedValue = elementToTest.value;
             await UIHelper.activateElementAndWaitForInputSession(elementToTest);
             UIHelper.keyDown(keyCommand.key, keyCommand.modifiers);
-            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.waitForInputSessionToDismiss();
             shouldBeEqualToString("elementToTest.value", expectedValue);
         }
     }

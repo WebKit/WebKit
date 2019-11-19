@@ -354,10 +354,30 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 (function() {
-                    uiController.didShowKeyboardCallback = function() {
+                    function clearCallbacksAndScriptComplete() {
+                        uiController.didShowKeyboardCallback = null;
+                        uiController.willPresentPopoverCallback = null;
                         uiController.uiScriptComplete();
-                    };
+                    }
+                    uiController.didShowKeyboardCallback = clearCallbacksAndScriptComplete;
+                    uiController.willPresentPopoverCallback = clearCallbacksAndScriptComplete;
                     uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                })()`, resolve);
+        });
+    }
+
+    static waitForInputSessionToDismiss()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    function clearCallbacksAndScriptComplete() {
+                        uiController.didHideKeyboardCallback = null;
+                        uiController.didDismissPopoverCallback = null;
+                        uiController.uiScriptComplete();
+                    }
+                    uiController.didHideKeyboardCallback = clearCallbacksAndScriptComplete;
+                    uiController.didDismissPopoverCallback = clearCallbacksAndScriptComplete;
                 })()`, resolve);
         });
     }
