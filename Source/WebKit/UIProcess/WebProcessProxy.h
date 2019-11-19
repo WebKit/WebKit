@@ -326,7 +326,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void processWasResumed();
+    void processWasResumed(CompletionHandler<void()>&&);
 #endif
 
     void webPageMediaStateDidChange(WebPageProxy&);

@@ -462,7 +462,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     void processTaskStateDidChange(ProcessTaskStateObserver::TaskState) final;
-    void parentProcessDidHandleProcessWasResumed();
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif

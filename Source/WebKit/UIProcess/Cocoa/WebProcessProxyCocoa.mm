@@ -191,11 +191,9 @@ void WebProcessProxy::releaseHighPerformanceGPU()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcessProxy::processWasResumed()
+void WebProcessProxy::processWasResumed(CompletionHandler<void()>&& completionHandler)
 {
-    auto exitScope = makeScopeExit([this] {
-        send(Messages::WebProcess::ParentProcessDidHandleProcessWasResumed(), 0);
-    });
+    CompletionHandlerCallingScope exitScope(WTFMove(completionHandler));
 
     if (m_throttler.shouldBeRunnable()) {
         // The process becoming unsuspended was not unexpected.

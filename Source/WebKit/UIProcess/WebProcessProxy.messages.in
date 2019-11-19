@@ -69,7 +69,7 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    ProcessWasResumed()
+    ProcessWasResumed() -> () Async
 #endif
 
     # Plug-in messages.

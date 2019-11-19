@@ -317,19 +317,13 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
     };
 
     // This will cause the parent process to send a ParentProcessDidHandleProcessWasResumed IPC back, so that we can release our assertion on its behalf.
-    // We are not using sendWithAsyncReply() because it would not be thread-safe.
-    parentProcessConnection()->send(Messages::WebProcessProxy::ProcessWasResumed(), 0);
-}
-
-void WebProcess::parentProcessDidHandleProcessWasResumed()
-{
-    LockHolder holder(m_processWasResumedUIAssertionLock);
-    ASSERT(m_processWasResumedUIAssertion);
-
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::parentProcessDidHandleProcessWasResumed() Releasing 'WebProcess was resumed' assertion on behalf on UIProcess", this);
-
-    [m_processWasResumedUIAssertion invalidate];
-    m_processWasResumedUIAssertion = nullptr;
+    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::ProcessWasResumed(), [this] {
+        LockHolder holder(m_processWasResumedUIAssertionLock);
+        ASSERT(m_processWasResumedUIAssertion);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::parentProcessDidHandleProcessWasResumed() Releasing 'WebProcess was resumed' assertion on behalf on UIProcess", this);
+        [m_processWasResumedUIAssertion invalidate];
+        m_processWasResumedUIAssertion = nullptr;
+    });
 }
 
 #endif
