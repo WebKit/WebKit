@@ -42,9 +42,9 @@
 
 namespace WebCore {
 
-class AbstractEventLoop;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
+class EventLoopTaskGroup;
 class MicrotaskQueue;
 class Performance;
 class ScheduledAction;
@@ -67,7 +67,7 @@ public:
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
     virtual bool isServiceWorkerGlobalScope() const { return false; }
 
-    AbstractEventLoop& eventLoop() final;
+    EventLoopTaskGroup& eventLoop() final;
 
     const URL& url() const final { return m_url; }
     String origin() const final;
@@ -198,6 +198,7 @@ private:
     bool m_shouldBypassMainWorldContentSecurityPolicy;
 
     RefPtr<WorkerEventLoop> m_eventLoop;
+    std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
 
     mutable WorkerEventQueue m_eventQueue;
 

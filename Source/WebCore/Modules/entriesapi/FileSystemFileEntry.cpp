@@ -48,7 +48,7 @@ void FileSystemFileEntry::file(Ref<FileCallback>&& successCallback, RefPtr<Error
         if (!document)
             return;
 
-        document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
+        document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
             if (result.hasException()) {
                 if (errorCallback)
                     errorCallback->handleEvent(DOMException::create(result.releaseException()));

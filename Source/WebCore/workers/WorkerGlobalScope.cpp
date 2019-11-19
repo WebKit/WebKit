@@ -105,12 +105,16 @@ WorkerGlobalScope::~WorkerGlobalScope()
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
 }
 
-AbstractEventLoop& WorkerGlobalScope::eventLoop()
+EventLoopTaskGroup& WorkerGlobalScope::eventLoop()
 {
     ASSERT(isContextThread());
-    if (!m_eventLoop)
+    if (UNLIKELY(!m_defaultTaskGroup)) {
         m_eventLoop = WorkerEventLoop::create(*this);
-    return *m_eventLoop;
+        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        if (activeDOMObjectsAreStopped())
+            m_defaultTaskGroup->stopAndDiscardAllTasks();
+    }
+    return *m_defaultTaskGroup;
 }
 
 String WorkerGlobalScope::origin() const
@@ -125,6 +129,8 @@ void WorkerGlobalScope::prepareForTermination()
     stopIndexedDatabase();
 #endif
 
+    if (m_defaultTaskGroup)
+        m_defaultTaskGroup->stopAndDiscardAllTasks();
     stopActiveDOMObjects();
 
     if (m_cacheStorageConnection)

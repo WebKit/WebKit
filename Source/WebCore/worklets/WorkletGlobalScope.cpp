@@ -77,6 +77,8 @@ void WorkletGlobalScope::prepareForDestruction()
 {
     if (!m_script)
         return;
+    if (m_defaultTaskGroup)
+        m_defaultTaskGroup->stopAndDiscardAllTasks();
     stopActiveDOMObjects();
     removeRejectedPromiseTracker();
     removeAllEventListeners();
@@ -90,11 +92,15 @@ auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
     return scopes;
 }
 
-AbstractEventLoop& WorkletGlobalScope::eventLoop()
+EventLoopTaskGroup& WorkletGlobalScope::eventLoop()
 {
-    if (!m_eventLoop)
+    if (UNLIKELY(!m_defaultTaskGroup)) {
         m_eventLoop = WorkerEventLoop::create(*this);
-    return *m_eventLoop;
+        m_defaultTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        if (activeDOMObjectsAreStopped())
+            m_defaultTaskGroup->stopAndDiscardAllTasks();
+    }
+    return *m_defaultTaskGroup;
 }
 
 String WorkletGlobalScope::origin() const

@@ -135,12 +135,48 @@ bool ActiveDOMObject::isAllowedToRunScript() const
     return scriptExecutionContext() && !scriptExecutionContext()->activeDOMObjectsAreStopped() && !scriptExecutionContext()->activeDOMObjectsAreSuspended();
 }
 
-void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&& task)
+void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&& function)
 {
     auto* context = scriptExecutionContext();
     if (!context)
         return;
-    context->eventLoop().queueTask(source, *context, WTFMove(task));
+    context->eventLoop().queueTask(source, WTFMove(function));
+}
+
+class ActiveDOMObjectEventDispatchTask : public EventLoopTask {
+public:
+    ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, EventTarget& target, Ref<Event>&& event)
+        : EventLoopTask(source, group)
+        , m_object(object)
+        , m_target(target)
+        , m_event(WTFMove(event))
+    {
+        ++m_object.m_pendingActivityCount;
+    }
+
+    ~ActiveDOMObjectEventDispatchTask()
+    {
+        ASSERT(m_object.m_pendingActivityCount);
+        --m_object.m_pendingActivityCount;
+    }
+
+    void execute() final { m_target->dispatchEvent(m_event.get()); }
+
+private:
+    ActiveDOMObject& m_object;
+    Ref<EventTarget> m_target;
+    Ref<Event> m_event;
+};
+
+void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, TaskSource source, Ref<Event>&& event)
+{
+    ASSERT(!event->target() || &target == event->target());
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    auto& eventLoopTaskGroup = context->eventLoop();
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, target, WTFMove(event));
+    eventLoopTaskGroup.queueTask(WTFMove(task));
 }
 
 } // namespace WebCore

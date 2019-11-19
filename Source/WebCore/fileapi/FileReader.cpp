@@ -254,7 +254,7 @@ void FileReader::enqueueTask(Function<void()>&& task)
     static uint64_t taskIdentifierSeed = 0;
     uint64_t taskIdentifier = ++taskIdentifierSeed;
     m_pendingTasks.add(taskIdentifier, WTFMove(task));
-    context->eventLoop().queueTask(TaskSource::FileReading, *context, [this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this), taskIdentifier] {
+    context->eventLoop().queueTask(TaskSource::FileReading, [this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this), taskIdentifier] {
         auto task = m_pendingTasks.take(taskIdentifier);
         if (task)
             task();

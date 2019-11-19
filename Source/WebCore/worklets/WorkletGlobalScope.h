@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-class AbstractEventLoop;
+class EventLoopTaskGroup;
 class WorkerEventLoop;
 class WorkletScriptController;
 
@@ -60,7 +60,7 @@ public:
 
     virtual bool isPaintWorkletGlobalScope() const { return false; }
 
-    AbstractEventLoop& eventLoop() final;
+    EventLoopTaskGroup& eventLoop() final;
 
     const URL& url() const final { return m_code.url(); }
     String origin() const final;
@@ -135,6 +135,7 @@ private:
     Ref<SecurityOrigin> m_topOrigin;
 
     RefPtr<WorkerEventLoop> m_eventLoop;
+    std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
 
     // FIXME: This is not implemented properly, it just satisfies the compiler.
     // https://bugs.webkit.org/show_bug.cgi?id=191136

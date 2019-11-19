@@ -89,7 +89,7 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
             if (result.hasException()) {
                 m_error = result.releaseException();
                 if (errorCallback && document) {
-                    document->eventLoop().queueTask(TaskSource::Networking, *document, [this, errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                    document->eventLoop().queueTask(TaskSource::Networking, [this, errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
                         errorCallback->handleEvent(DOMException::create(*m_error));
                     });
                 }
@@ -97,7 +97,7 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
             }
             m_isDone = true;
             if (document) {
-                document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), pendingActivity = WTFMove(pendingActivity), result = result.releaseReturnValue()]() mutable {
+                document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), pendingActivity = WTFMove(pendingActivity), result = result.releaseReturnValue()]() mutable {
                     successCallback->handleEvent(WTFMove(result));
                 });
             }

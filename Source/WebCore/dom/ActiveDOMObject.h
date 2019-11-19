@@ -37,6 +37,9 @@
 namespace WebCore {
 
 class Document;
+class Event;
+class EventLoopTaskGroup;
+class EventTarget;
 
 enum class ReasonForSuspension {
     JavaScriptDebuggerPaused,
@@ -116,7 +119,7 @@ public:
     template<typename T>
     static void queueTaskKeepingObjectAlive(T& object, TaskSource source, Function<void ()>&& task)
     {
-        object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.makePendingActivity(object), task = WTFMove(task)] () {
+        object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.ActiveDOMObject::makePendingActivity(object), task = WTFMove(task)] () {
             task();
         });
     }
@@ -124,10 +127,7 @@ public:
     template<typename EventTargetType, typename EventType>
     static void queueTaskToDispatchEvent(EventTargetType& target, TaskSource source, Ref<EventType>&& event)
     {
-        ASSERT(!event->target() || &target == event->target());
-        queueTaskKeepingObjectAlive(target, source, [&target, event = WTFMove(event)] () mutable {
-            target.dispatchEvent(event.get());
-        });
+        target.queueTaskToDispatchEventInternal(target, source, WTFMove(event));
     }
 
 protected:
@@ -141,12 +141,15 @@ private:
     ActiveDOMObject(ScriptExecutionContext*, CheckedScriptExecutionContextType);
 
     void queueTaskInEventLoop(TaskSource, Function<void ()>&&);
+    void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
 
     unsigned m_pendingActivityCount { 0 };
 #if !ASSERT_DISABLED
     bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
+
+    friend class ActiveDOMObjectEventDispatchTask;
 };
 
 #if ASSERT_DISABLED

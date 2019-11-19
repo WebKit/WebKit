@@ -106,7 +106,7 @@ void MediaKeys::setServerCertificate(ScriptExecutionContext& context, const Buff
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
 
-    context.eventLoop().queueTask(TaskSource::Networking, context, [this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
         // 5.1. Use this object's cdm instance to process certificate.
         if (m_instance->setServerCertificate(WTFMove(certificate)) == CDMInstance::Failed) {
             // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.

@@ -4684,7 +4684,7 @@ ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const St
     else
         return Exception { NotSupportedError };
 
-    context.eventLoop().queueTask(source, context, [callback = WTFMove(callback)]() {
+    context.eventLoop().queueTask(source, [callback = WTFMove(callback)]() {
         callback->handleEvent();
     });
 

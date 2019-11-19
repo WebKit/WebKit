@@ -141,7 +141,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
     if (!errorCallback)
         return;
 
-    m_database->document().eventLoop().queueTask(TaskSource::Networking, m_database->document(), [errorCallback = WTFMove(errorCallback)]() mutable {
+    m_database->document().eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback)]() mutable {
         errorCallback->handleEvent(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"));
     });
 }
@@ -415,7 +415,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
     if (errorCallback) {
-        m_database->document().eventLoop().queueTask(TaskSource::Networking, m_database->document(), [errorCallback = WTFMove(errorCallback), transactionError = m_transactionError]() mutable {
+        m_database->document().eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), transactionError = m_transactionError]() mutable {
             errorCallback->handleEvent(*transactionError);
         });
     }
@@ -466,7 +466,7 @@ void SQLTransaction::deliverSuccessCallback()
     // Spec 4.3.2.8: Deliver success callback.
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
     if (successCallback) {
-        m_database->document().eventLoop().queueTask(TaskSource::Networking, m_database->document(), [successCallback = WTFMove(successCallback)]() mutable {
+        m_database->document().eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback)]() mutable {
             successCallback->handleEvent();
         });
     }

@@ -57,6 +57,7 @@ class AbstractEventLoop;
 class CachedScript;
 class DatabaseContext;
 class EventQueue;
+class EventLoopTaskGroup;
 class EventTarget;
 class MessagePort;
 class PublicURLManager;
@@ -64,6 +65,7 @@ class RejectedPromiseTracker;
 class ResourceRequest;
 class SecurityOrigin;
 class SocketProvider;
+enum class TaskSource : uint8_t;
 
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;
@@ -89,7 +91,7 @@ public:
     virtual bool isContextThread() const { return true; }
     virtual bool isJSExecutionForbidden() const = 0;
 
-    virtual AbstractEventLoop& eventLoop() = 0;
+    virtual EventLoopTaskGroup& eventLoop() = 0;
 
     virtual const URL& url() const = 0;
     virtual URL completeURL(const String& url) const = 0;

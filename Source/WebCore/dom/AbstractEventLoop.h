@@ -28,21 +28,125 @@
 #include "TaskSource.h"
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class EventLoopTaskGroup;
+class EventTarget;
 class ScriptExecutionContext;
 
+class EventLoopTask {
+    WTF_MAKE_NONCOPYABLE(EventLoopTask);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    virtual ~EventLoopTask() = default;
+
+    TaskSource taskSource() { return m_taskSource; }
+    virtual void execute() = 0;
+
+    EventLoopTaskGroup* group() const { return m_group.get(); }
+
+protected:
+    EventLoopTask(TaskSource, EventLoopTaskGroup&);
+
+private:
+    const TaskSource m_taskSource;
+    WeakPtr<EventLoopTaskGroup> m_group;
+};
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
-class AbstractEventLoop : public RefCounted<AbstractEventLoop> {
+class AbstractEventLoop : public RefCounted<AbstractEventLoop>, public CanMakeWeakPtr<AbstractEventLoop> {
 public:
     virtual ~AbstractEventLoop() = default;
 
-    typedef WTF::Function<void ()> TaskFunction;
-    virtual void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) = 0;
+    typedef Function<void ()> TaskFunction;
+    void queueTask(std::unique_ptr<EventLoopTask>&&);
+
+    void resumeGroup(EventLoopTaskGroup&);
+    void stopGroup(EventLoopTaskGroup&);
 
 protected:
     AbstractEventLoop() = default;
+    void run();
+    void clearAllTasks();
+
+private:
+    void scheduleToRunIfNeeded();
+    virtual void scheduleToRun() = 0;
+    virtual bool isContextThread() const = 0;
+
+    // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
+    Vector<std::unique_ptr<EventLoopTask>> m_tasks;
+    WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspenedTasks;
+    bool m_isScheduledToRun { false };
 };
+
+class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {
+    WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    EventLoopTaskGroup(AbstractEventLoop& eventLoop)
+        : m_eventLoop(makeWeakPtr(eventLoop))
+    {
+    }
+
+    bool matchesTask(EventLoopTask& task) const
+    {
+        auto* group = task.group();
+        return group == this;
+    }
+
+    void stopAndDiscardAllTasks()
+    {
+        m_state = State::Stopped;
+        if (auto* eventLoop = m_eventLoop.get())
+            eventLoop->stopGroup(*this);
+    }
+
+    void suspend()
+    {
+        ASSERT(m_state != State::Stopped);
+        m_state = State::Suspended;
+        // We don't remove suspended tasks to preserve the ordering.
+        // AbstractEventLoop::run checks whether each task's group is suspended or not.
+    }
+
+    void resume()
+    {
+        ASSERT(m_state != State::Stopped);
+        m_state = State::Running;
+        if (auto* eventLoop = m_eventLoop.get())
+            eventLoop->resumeGroup(*this);
+    }
+
+    bool isStoppedPermanently() { return m_state == State::Stopped; }
+    bool isSuspended() { return m_state == State::Suspended; }
+
+    void queueTask(std::unique_ptr<EventLoopTask>&& task)
+    {
+        if (m_state == State::Stopped || !m_eventLoop)
+            return;
+        ASSERT(task->group() == this);
+        m_eventLoop->queueTask(WTFMove(task));
+    }
+
+    WEBCORE_EXPORT void queueTask(TaskSource, AbstractEventLoop::TaskFunction&&);
+
+private:
+    enum class State : uint8_t { Running, Suspended, Stopped };
+
+    WeakPtr<AbstractEventLoop> m_eventLoop;
+    State m_state { State::Running };
+};
+
+inline EventLoopTask::EventLoopTask(TaskSource source, EventLoopTaskGroup& group)
+    : m_taskSource(source)
+    , m_group(makeWeakPtr(group))
+{ }
 
 } // namespace WebCore

@@ -216,7 +216,7 @@ void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)
     if (!document)
         return;
 
-    document->eventLoop().queueTask(TaskSource::Networking, *document, [pendingActivity = makePendingActivity(*this), function = WTFMove(function)] {
+    document->eventLoop().queueTask(TaskSource::Networking, [pendingActivity = makePendingActivity(*this), function = WTFMove(function)] {
         function();
     });
 }

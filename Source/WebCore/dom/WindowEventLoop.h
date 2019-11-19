@@ -41,29 +41,13 @@ public:
 
     ~WindowEventLoop();
 
-    void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) override;
-
-    void suspend(Document&);
-    void resume(Document&);
-    void stop(Document&);
-
 private:
     WindowEventLoop(const RegistrableDomain&);
 
-    void scheduleToRunIfNeeded();
-    void run();
+    void scheduleToRun() final;
+    bool isContextThread() const final;
 
-    struct Task {
-        TaskSource source;
-        TaskFunction task;
-        DocumentIdentifier documentIdentifier;
-    };
-
-    // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
-    Vector<Task> m_tasks;
-    HashSet<DocumentIdentifier> m_documentIdentifiersForSuspendedTasks;
     RegistrableDomain m_domain;
-    bool m_isScheduledToRun { false };
 };
 
 } // namespace WebCore

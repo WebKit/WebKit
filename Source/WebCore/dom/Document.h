@@ -121,6 +121,7 @@ class DocumentSharedObjectPool;
 class DocumentTimeline;
 class DocumentType;
 class EditingBehavior;
+class EventLoopTaskGroup;
 class ExtensionStyleSheets;
 class FloatQuad;
 class FloatRect;
@@ -1063,7 +1064,7 @@ public:
 
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
-    AbstractEventLoop& eventLoop() final;
+    EventLoopTaskGroup& eventLoop() final;
 
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
     void suspendScriptedAnimationControllerCallbacks();
@@ -2064,6 +2065,7 @@ private:
     DocumentIdentifier m_identifier;
 
     RefPtr<WindowEventLoop> m_eventLoop;
+    std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
 
 #if ENABLE(SERVICE_WORKER)
     RefPtr<SWClientConnection> m_serviceWorkerConnection;

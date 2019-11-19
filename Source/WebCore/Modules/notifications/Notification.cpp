@@ -152,7 +152,7 @@ void Notification::queueTask(Function<void()>&& task)
     if (!document)
         return;
 
-    document->eventLoop().queueTask(TaskSource::UserInteraction, *document, WTFMove(task));
+    document->eventLoop().queueTask(TaskSource::UserInteraction, WTFMove(task));
 }
 
 void Notification::dispatchShowEvent()

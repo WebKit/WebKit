@@ -33,7 +33,7 @@ namespace WebCore {
 class WorkerGlobalScope;
 class WorkletGlobalScope;
 
-class WorkerEventLoop final : public AbstractEventLoop, private ActiveDOMObject {
+class WorkerEventLoop final : public AbstractEventLoop, private ContextDestructionObserver {
 public:
     // Explicitly take WorkerGlobalScope and WorkletGlobalScope for documentation purposes.
     static Ref<WorkerEventLoop> create(WorkerGlobalScope&);
@@ -42,27 +42,11 @@ public:
     static Ref<WorkerEventLoop> create(WorkletGlobalScope&);
 #endif
 
-    void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) override;
-
 private:
     explicit WorkerEventLoop(ScriptExecutionContext&);
 
-    void scheduleToRunIfNeeded();
-    void run();
-
-    // ActiveDOMObject;
-    const char* activeDOMObjectName() const override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
-    void stop() override;
-
-    struct Task {
-        TaskSource source;
-        TaskFunction task;
-    };
-
-    Vector<Task> m_tasks;
-    bool m_isScheduledToRun { false };
+    void scheduleToRun() final;
+    bool isContextThread() const;
 };
 
 } // namespace WebCore

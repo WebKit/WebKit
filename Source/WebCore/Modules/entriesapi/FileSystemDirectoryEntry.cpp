@@ -57,7 +57,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         auto* document = this->document();
         if (result.hasException()) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, *document, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {
                     errorCallback->handleEvent(DOMException::create(WTFMove(exception)));
                 });
             }
@@ -66,14 +66,14 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         auto entry = result.releaseReturnValue();
         if (!matches(entry)) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, *document, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
                     errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, "Entry at given path does not match expected type"_s }));
                 });
             }
             return;
         }
         if (successCallback && document) {
-            document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), entry = WTFMove(entry), pendingActivity = WTFMove(pendingActivity)]() mutable {
+            document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback), entry = WTFMove(entry), pendingActivity = WTFMove(pendingActivity)]() mutable {
                 successCallback->handleEvent(WTFMove(entry));
             });
         }

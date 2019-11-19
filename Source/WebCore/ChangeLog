@@ -1,3 +1,127 @@
+2019-11-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Share more code between WindowEventLoop and WorkerEventLoop by introducing EventLoopTaskGroup
+        https://bugs.webkit.org/show_bug.cgi?id=204263
+
+        Reviewed by Antti Koivisto.
+
+        This patch abstracts the logic in WindowEventLoop to deal with a set of tasks associated with
+        a particular documents all suspending, resuming, or stopping at the same time using a new abstraction
+        called EventLoopTaskGroup in order to group tasks for media code and elsewhere.
+
+        Each task is now represented as an instance of a concrete subclass of EventLoopTask, which has
+        a pure virtual execute() member function. Its primary purpose is to know EventLoopTaskGroup to which
+        each task belongs. One of subclasss, EventLoopFunctionDispatchTask, is used to store a callback function
+        and another subclass, ActiveDOMObjectEventDispatchTask, is used to dispatch an async event.
+
+        ScriptExecutionContext's eventLoop() method now returns EventLoopTaskGroup. Because this group is
+        specific to a given ScriptExecutionContext, we no longer have to pass the ScriptExecutionContext
+        in each call to queueTask everywhere in our codebase.
+
+        For now, I kept all the code in WindowEventLoop.cpp to make the patch reviewable. My plan is to create
+        a new cpp file (e.g. AbstractEventLoop.cpp) and move most of code there instead as a follow up.
+
+        No new tests since there should be no observable behavior change.
+
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setServerCertificate):
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::getEntry):
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::readEntries):
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::getParent):
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::file):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::scheduleDeferredTask):
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::queueTask):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::callErrorCallbackDueToInterruption):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::deliverSuccessCallback):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::whenSettled):
+        * dom/AbstractEventLoop.h:
+        (WebCore::EventLoopTask): Added.
+        (WebCore::EventLoopTask::taskSource): Added.
+        (WebCore::EventLoopTask::group const): Added.
+        (WebCore::EventLoopTask::EventLoopTask): Added.
+        (WebCore::EventLoopTaskGroup): Added. This class represents a group of tasks. For now, each group is
+        a distinct ScriptExecutionContext.
+        (WebCore::EventLoopTaskGroup::matchesTask const): Added.
+        (WebCore::EventLoopTaskGroup::startRunning): Added.
+        (WebCore::EventLoopTaskGroup::stopAndDiscardAllTasks): Added.
+        (WebCore::EventLoopTaskGroup::suspend): Added.
+        (WebCore::EventLoopTaskGroup::resume): Added.
+        (WebCore::EventLoopTaskGroup::isStoppedPermanently): Added.
+        (WebCore::EventLoopTaskGroup::isSuspended): Added.
+        (WebCore::EventLoopTaskGroup::hasScheduledTasks const): Added.
+        (WebCore::EventLoopTaskGroup::queueTask): Added.
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::queueTaskInEventLoop):
+        (WebCore::ActiveDOMObjectEventDispatchTask): Added; A subclass of EventLoopTask to dispatch an async event.
+        (WebCore::ActiveDOMObjectEventDispatchTask::ActiveDOMObjectEventDispatchTask): Added.
+        (WebCore::ActiveDOMObjectEventDispatchTask::~ActiveDOMObjectEventDispatchTask): Added.
+        (WebCore::ActiveDOMObject::queueTaskToDispatchEventInternal): Added.
+        * dom/ActiveDOMObject.h:
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        (WebCore::Document::stopActiveDOMObjects):
+        (WebCore::Document::eventLoop): Creates EventLoopTaskGroup for this document.
+        * dom/Document.h:
+        * dom/IdleCallbackController.cpp:
+        (WebCore::IdleCallbackController::queueTaskToStartIdlePeriod):
+        (WebCore::IdleCallbackController::queueTaskToInvokeIdleCallbacks):
+        * dom/ScriptExecutionContext.h:
+        * dom/WindowEventLoop.cpp:
+        (WebCore::AbstractEventLoop::queueTask): The implementation moved from WindowEventLoop to AbstractEventLoop.
+        (WebCore::AbstractEventLoop::suspend): Removed.
+        (WebCore::AbstractEventLoop::resumeGroup): Ditto.
+        (WebCore::AbstractEventLoop::stopGroup): Ditto.
+        (WebCore::WindowEventLoop::scheduleToRun): Renamed from WindowEventLoop::scheduleToRunIfNeeded.
+        (WebCore::AbstractEventLoop::scheduleToRunIfNeeded): Extracted from WindowEventLoop::scheduleToRunIfNeeded.
+        (WebCore::WindowEventLoop::isContextThread const): Added.
+        (WebCore::AbstractEventLoop::run): The implementation moved from WindowEventLoop to AbstractEventLoop.
+        (WebCore::AbstractEventLoop::clearAllTasks): Added.
+        (WebCore::EventLoopFunctionDispatchTask): Added; A subclass of EventLoopTask to call a function.
+        (WebCore::EventLoopFunctionDispatchTask::EventLoopFunctionDispatchTask): Added.
+        (WebCore::EventLoopTaskGroup::queueTask): Added.
+        * dom/WindowEventLoop.h:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::enqueueTask):
+        * testing/Internals.cpp:
+        (WebCore::Internals::queueTask):
+        * workers/WorkerEventLoop.cpp:
+        (WebCore::WorkerEventLoop::WorkerEventLoop):
+        (WebCore::WorkerEventLoop::queueTask): Deleted.
+        (WebCore::WorkerEventLoop::activeDOMObjectName const): Deleted.
+        (WebCore::WorkerEventLoop::suspend): Deleted.
+        (WebCore::WorkerEventLoop::resume): Deleted.
+        (WebCore::WorkerEventLoop::stop): Deleted.
+        (WebCore::WorkerEventLoop::scheduleToRun): Extracted from scheduleToRunIfNeeded.
+        (WebCore::WorkerEventLoop::scheduleToRunIfNeeded): Deleted.
+        (WebCore::WorkerEventLoop::run): Deleted.
+        (WebCore::WorkerEventLoop::isContextThread const): Added.
+        * workers/WorkerEventLoop.h:
+        (WebCore::WorkerEventLoop): This class is no longer an active DOM object. WorkerGlobalScope and WorkerGlobalScope
+        manually stop the task group associated with it.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::eventLoop): Create the default task group for this script execution context.
+        (WebCore::WorkerGlobalScope::prepareForTermination): Stop the default task group.
+        * workers/WorkerGlobalScope.h:
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::prepareForDestruction): Similar to WorkerGlobalScope::prepareForTermination.
+        (WebCore::WorkletGlobalScope::eventLoop): Similar to WorkerGlobalScope::eventLoop.
+        * worklets/WorkletGlobalScope.h:
+
 2019-11-18  Antti Koivisto  <antti@apple.com>
 
         Move RuleSet to Style namespace
