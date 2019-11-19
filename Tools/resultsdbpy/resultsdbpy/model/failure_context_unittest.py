@@ -109,3 +109,15 @@ class FailureContextTest(WaitForDockerTestCase):
             'start_time': list(results.values())[0][0]['start_time'],
             'uuid': 153802947900
         })
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_failures(self, redis=StrictRedis, cassandra=CassandraContext):
+        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+        self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+        MockModelFactory.add_mock_results(self.model)
+        MockModelFactory.process_results(self.model)
+        results = self.model.failure_context.failures_by_commit(
+            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            suite='layout-tests', recent=True, collapsed=False, unexpected=False,
+        )
+        self.assertEqual(len(results), 0)

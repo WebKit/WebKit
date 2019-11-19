@@ -1,3 +1,16 @@
+2019-11-18  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Uncollapsed failures shouldn't include runs with no failures
+        https://bugs.webkit.org/show_bug.cgi?id=204315
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/failure_context.py:
+        (FailureContext): Do not include test runs which have no failed tests.
+        * resultsdbpy/resultsdbpy/model/failure_context_unittest.py:
+        (FailureContextTest):
+        (FailureContextTest.test_no_failures):
+
 2019-11-18  Aakash Jain  <aakash_jain@apple.com>
 
         Dedicate ews116 to macOS-High-Sierra-Debug-Build-EWS queue

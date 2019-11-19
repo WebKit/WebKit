@@ -184,7 +184,14 @@ class FailureContext(UploadCallbackContext):
                                 if test not in ['uuid', 'start_time']:
                                     result.add(test)
                     else:
-                        result.update({config: [value.unpack() for value in values]})
+                        runs = []
+                        for value in values:
+                            # uuid and start_time are not in the unpacked values
+                            unpacked = value.unpack()
+                            if len(unpacked) > 2:
+                                runs.append(unpacked)
+                        if runs:
+                            result.update({config: runs})
 
             return result
 
