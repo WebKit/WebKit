@@ -50,6 +50,7 @@
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "Text.h"
 
 namespace WebCore {
 namespace Style {
