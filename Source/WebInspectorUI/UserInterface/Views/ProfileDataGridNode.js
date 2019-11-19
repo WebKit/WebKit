@@ -27,16 +27,14 @@ WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
 {
     constructor(callingContextTreeNode, tree)
     {
-        super(callingContextTreeNode, false);
+        // FIXME: Make profile data grid nodes copyable.
+        super(callingContextTreeNode, {copyable: false});
 
         this._node = callingContextTreeNode;
         this._tree = tree;
 
         this._childrenToChargeToSelf = new Set;
         this._extraSelfTimeFromChargedChildren = 0;
-
-        // FIXME: Make profile data grid nodes copyable.
-        this.copyable = false;
 
         this.addEventListener("populate", this._populate, this);
 

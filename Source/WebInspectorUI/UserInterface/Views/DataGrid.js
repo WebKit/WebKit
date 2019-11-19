@@ -177,7 +177,7 @@ WI.DataGrid = class DataGrid extends WI.View
             for (var j = 0; j < columnNames.length; ++j)
                 data[columnNames[j]] = values[numColumns * i + j];
 
-            var node = new WI.DataGridNode(data, false);
+            var node = new WI.DataGridNode(data);
             dataGrid.appendChild(node);
         }
 

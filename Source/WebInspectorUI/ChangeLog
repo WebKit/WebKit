@@ -1,3 +1,54 @@
+2019-11-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Local Overrides: the placeholder for the MIME type, status code, and status text is the same as the placeholder URL
+        https://bugs.webkit.org/show_bug.cgi?id=204330
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.get serializedData):
+        (WI.LocalResourceOverridePopover.prototype.show):
+        (WI.LocalResourceOverridePopover.prototype._createEditor):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content .data-grid tr.header-content-type > :matches(.name-column, .value-column)): Added.
+        Replace the hardcoded `placeholder` with an optional `options` object that can include a
+        `placeholder` value, allowing each caller to customize what is shown. Disallow selecting the
+        "Content-Type" header since it's automatically populated, even if there is no set value for
+        the MIME type or URL (e.g. inferred from placeholders).
+        Drive-by: if a `CodeMirror` has no value, attempt to use it's placeholder instead.
+        Drive-by: replace generic `dataGrid` with more specific `this._headersDataGrid`, which is
+                  more clear given how many `WI.DataGrid` are created by this class.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.get selectable):
+        (WI.PlaceholderDataGridNode):
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.createSortableDataGrid):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView.prototype.itemAdded):
+        (WI.DOMStorageContentView.prototype._populate):
+        * UserInterface/Views/EditableDataGridNode.js:
+        (WI.EditableDataGridNode): Deleted.
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WI.HeapSnapshotClassDataGridNode):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WI.HeapSnapshotInstanceDataGridNode):
+        * UserInterface/Views/HeapSnapshotInstanceFetchMoreDataGridNode.js:
+        (WI.HeapSnapshotInstanceFetchMoreDataGridNode):
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WI.ProfileDataGridNode):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        (WI.RecordingStateDetailsSidebarPanel):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid.addDataGridNode):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode):
+        Rework constructor of `WI.DataGridNode` to accept an `options`-style object as its second
+        parameter, instead of separate parameters for each configurable property. Now that this is
+        able to be done via a single parameter, add support for marking a `WI.DataGridNode` as not
+        being selectable.
+
 2019-11-19  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Add _WKInspector SPI to set diagnostic logging delegate for a local Web Inspector

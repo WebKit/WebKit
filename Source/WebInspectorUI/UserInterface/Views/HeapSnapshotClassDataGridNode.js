@@ -27,7 +27,7 @@ WI.HeapSnapshotClassDataGridNode = class HeapSnapshotClassDataGridNode extends W
 {
     constructor(data, tree)
     {
-        super(data, true);
+        super(data, {hasChildren: true});
 
         this._data = data;
         this._tree = tree;

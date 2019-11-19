@@ -168,8 +168,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
                 if (name.startsWith("webkit"))
                     classNames.push("non-standard");
 
-                const hasChildren = false;
-                dataGrid.appendChild(new WI.DataGridNode({name, value}, hasChildren, classNames));
+                dataGrid.appendChild(new WI.DataGridNode({name, value}, {classNames}));
             }
 
             dataGrid.updateLayoutIfNeeded();

@@ -27,7 +27,7 @@ WI.HeapSnapshotInstanceFetchMoreDataGridNode = class HeapSnapshotInstanceFetchMo
 {
     constructor(tree, batchCount, remainingCount, fetchCallback)
     {
-        super({}, false);
+        super();
 
         console.assert(typeof batchCount === "number");
         console.assert(typeof remainingCount === "number");

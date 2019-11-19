@@ -90,6 +90,10 @@
     -webkit-margin-start: 12px;
 }
 
+.popover .local-resource-override-popover-content .data-grid tr.header-content-type > :matches(.name-column, .value-column) {
+    opacity: 0.5;
+}
+
 .popover .local-resource-override-popover-content .add-header {
     margin-top: 8px;
 }

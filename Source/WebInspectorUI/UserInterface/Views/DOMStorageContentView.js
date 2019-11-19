@@ -98,7 +98,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 return;
         }
 
-        this._dataGrid.appendChild(new WI.DataGridNode({key, value, originalValue}, false));
+        this._dataGrid.appendChild(new WI.DataGridNode({key, value, originalValue}));
         this._sortDataGrid();
     }
 
@@ -145,7 +145,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
                 let originalValue = value;
                 value = this._truncateValue(value);
-                let node = new WI.DataGridNode({key, value, originalValue}, false);
+                let node = new WI.DataGridNode({key, value, originalValue});
                 this._dataGrid.appendChild(node);
             }
 

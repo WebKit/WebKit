@@ -25,15 +25,16 @@
 
 WI.DataGridNode = class DataGridNode extends WI.Object
 {
-    constructor(data, hasChildren, classNames)
+    constructor(data, {selectable, copyable, editable, hasChildren, classNames} = {})
     {
         super();
 
         this._expanded = false;
         this._hidden = false;
         this._selected = false;
-        this._copyable = true;
-        this._editable = true;
+        this._selectable = selectable !== undefined ? selectable : true;
+        this._copyable = copyable !== undefined ? copyable : true;
+        this._editable = editable !== undefined ? editable : true;
         this._shouldRefreshChildren = true;
         this._data = data || {};
         this.hasChildren = hasChildren || false;
@@ -68,7 +69,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
 
     get selectable()
     {
-        return this._element && !this._hidden;
+        return this._element && !this._hidden && this._selectable;
     }
 
     get copyable()
@@ -770,7 +771,7 @@ WI.PlaceholderDataGridNode = class PlaceholderDataGridNode extends WI.DataGridNo
 {
     constructor(data)
     {
-        super(data, false);
+        super(data);
         this.isPlaceholderNode = true;
     }
 

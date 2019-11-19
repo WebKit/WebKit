@@ -450,7 +450,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
             console.assert(typeof nodeValue.name === "string");
             console.assert(!nodeValue.value || typeof nodeValue.value === "string");
 
-            var node = new WI.DataGridNode({name: nodeValue.name, value: nodeValue.value || ""}, false);
+            var node = new WI.DataGridNode({name: nodeValue.name, value: nodeValue.value || ""});
             dataGrid.appendChild(node);
         }
 

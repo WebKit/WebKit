@@ -30,7 +30,8 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
         // Don't treat strings as having child nodes, even if they have a Structure.
         let hasChildren = node.hasChildren && node.className !== "string";
 
-        super(node, hasChildren);
+        // FIXME: Make instance grid nodes copyable.
+        super(node, {hasChildren, copyable: false});
 
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
         console.assert(!edge || edge instanceof WI.HeapSnapshotEdgeProxy);
@@ -40,9 +41,6 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
         this._tree = tree;
         this._edge = edge || null;
         this._base = base || null;
-
-        // FIXME: Make instance grid nodes copyable.
-        this.copyable = false;
 
         if (hasChildren)
             this.addEventListener("populate", this._populate, this);

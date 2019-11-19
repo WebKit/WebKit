@@ -25,12 +25,6 @@
 
 WI.EditableDataGridNode = class EditableDataGridNode extends WI.DataGridNode
 {
-    constructor(data)
-    {
-        const hasChildren = false;
-        super(data, hasChildren);
-    }
-
     // Public
 
     get element()
