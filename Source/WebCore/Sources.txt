@@ -2344,6 +2344,7 @@ style/InlineTextBoxStyle.cpp
 style/MatchedDeclarationsCache.cpp
 style/PageRuleCollector.cpp
 style/PropertyCascade.cpp
+style/RuleData.cpp
 style/RuleFeature.cpp
 style/RuleSet.cpp
 style/StyleAdjuster.cpp

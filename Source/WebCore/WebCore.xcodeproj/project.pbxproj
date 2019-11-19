@@ -4841,6 +4841,7 @@
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E484A33E23055325009ADE6A /* LineLayoutTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E484A33B23055303009ADE6A /* LineLayoutTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4863CFE23842E9E00972158 /* RuleData.h in Headers */ = {isa = PBXBuildFile; fileRef = E4863CFD23842E9E00972158 /* RuleData.h */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15187,6 +15188,8 @@
 		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
 		E484A33B23055303009ADE6A /* LineLayoutTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutTraversal.h; sourceTree = "<group>"; };
 		E484A33D23055303009ADE6A /* LineLayoutTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineLayoutTraversal.cpp; sourceTree = "<group>"; };
+		E4863CFA23842E8700972158 /* RuleData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuleData.cpp; sourceTree = "<group>"; };
+		E4863CFD23842E9E00972158 /* RuleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleData.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -27031,6 +27034,8 @@
 				FBDB61A016D6037E00BB3394 /* PageRuleCollector.h */,
 				E4ABABE52361A34200FA4345 /* PropertyCascade.cpp */,
 				E4ABABE22361A32900FA4345 /* PropertyCascade.h */,
+				E4863CFA23842E8700972158 /* RuleData.cpp */,
+				E4863CFD23842E9E00972158 /* RuleData.h */,
 				A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */,
 				A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */,
 				A79BAD9F161E7F3F00C2E652 /* RuleSet.cpp */,
@@ -31218,6 +31223,7 @@
 				E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */,
 				FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
+				E4863CFE23842E9E00972158 /* RuleData.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				0BCF83F71059C1EB00D999DD /* MathMLFractionElement.h in Headers */,
 				FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */,

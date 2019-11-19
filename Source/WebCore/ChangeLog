@@ -1,5 +1,55 @@
 2019-11-19  Antti Koivisto  <antti@apple.com>
 
+        Move RuleData to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=204351
+
+        Reviewed by Anders Carlsson.
+    
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * style/RuleData.cpp: Added.
+        (WebCore::Style::computeMatchBasedOnRuleHash):
+        (WebCore::Style::selectorCanMatchPseudoElement):
+        (WebCore::Style::isCommonAttributeSelectorAttribute):
+        (WebCore::Style::computeContainsUncommonAttributeSelector):
+        (WebCore::Style::determinePropertyWhitelistType):
+        (WebCore::Style::RuleData::RuleData):
+        * style/RuleData.h: Added.
+        (WebCore::Style::RuleData::position const):
+        (WebCore::Style::RuleData::rule const):
+        (WebCore::Style::RuleData::selector const):
+        (WebCore::Style::RuleData::selectorIndex const):
+        (WebCore::Style::RuleData::selectorListIndex const):
+        (WebCore::Style::RuleData::canMatchPseudoElement const):
+        (WebCore::Style::RuleData::matchBasedOnRuleHash const):
+        (WebCore::Style::RuleData::containsUncommonAttributeSelector const):
+        (WebCore::Style::RuleData::linkMatchType const):
+        (WebCore::Style::RuleData::propertyWhitelistType const):
+        (WebCore::Style::RuleData::descendantSelectorIdentifierHashes const):
+        (WebCore::Style::RuleData::disableSelectorFiltering):
+        * style/RuleSet.cpp:
+        (WebCore::Style::computeMatchBasedOnRuleHash): Deleted.
+        (WebCore::Style::selectorCanMatchPseudoElement): Deleted.
+        (WebCore::Style::isCommonAttributeSelectorAttribute): Deleted.
+        (WebCore::Style::computeContainsUncommonAttributeSelector): Deleted.
+        (WebCore::Style::determinePropertyWhitelistType): Deleted.
+        (WebCore::Style::RuleData::RuleData): Deleted.
+        * style/RuleSet.h:
+        (WebCore::Style::RuleData::position const): Deleted.
+        (WebCore::Style::RuleData::rule const): Deleted.
+        (WebCore::Style::RuleData::selector const): Deleted.
+        (WebCore::Style::RuleData::selectorIndex const): Deleted.
+        (WebCore::Style::RuleData::selectorListIndex const): Deleted.
+        (WebCore::Style::RuleData::canMatchPseudoElement const): Deleted.
+        (WebCore::Style::RuleData::matchBasedOnRuleHash const): Deleted.
+        (WebCore::Style::RuleData::containsUncommonAttributeSelector const): Deleted.
+        (WebCore::Style::RuleData::linkMatchType const): Deleted.
+        (WebCore::Style::RuleData::propertyWhitelistType const): Deleted.
+        (WebCore::Style::RuleData::descendantSelectorIdentifierHashes const): Deleted.
+        (WebCore::Style::RuleData::disableSelectorFiltering): Deleted.
+
+2019-11-19  Antti Koivisto  <antti@apple.com>
+
         Move ElementRuleCollector to Style namespace
         https://bugs.webkit.org/show_bug.cgi?id=204329
 

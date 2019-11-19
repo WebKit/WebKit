@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "RuleData.h"
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
 #include "SelectorFilter.h"
@@ -33,75 +34,12 @@
 namespace WebCore {
 
 class CSSSelector;
-class ContainerNode;
 class MediaQueryEvaluator;
-class Node;
 class StyleSheetContents;
 
 namespace Style {
 
 class Resolver;
-
-enum PropertyWhitelistType {
-    PropertyWhitelistNone   = 0,
-    PropertyWhitelistMarker,
-#if ENABLE(VIDEO_TRACK)
-    PropertyWhitelistCue
-#endif
-};
-
-enum class MatchBasedOnRuleHash : unsigned {
-    None,
-    Universal,
-    ClassA,
-    ClassB,
-    ClassC
-};
-
-class RuleData {
-public:
-    static const unsigned maximumSelectorComponentCount = 8192;
-
-    RuleData(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex, unsigned position);
-
-    unsigned position() const { return m_position; }
-    StyleRule* rule() const { return m_rule.get(); }
-    const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
-    unsigned selectorIndex() const { return m_selectorIndex; }
-    unsigned selectorListIndex() const { return m_selectorListIndex; }
-
-    bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
-    MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
-    bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
-    unsigned linkMatchType() const { return m_linkMatchType; }
-    PropertyWhitelistType propertyWhitelistType() const { return static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
-    const SelectorFilter::Hashes& descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
-
-    void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
-
-private:
-    RefPtr<StyleRule> m_rule;
-    unsigned m_selectorIndex : 16;
-    unsigned m_selectorListIndex : 16;
-    // This number was picked fairly arbitrarily. We can probably lower it if we need to.
-    // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 18;
-    unsigned m_matchBasedOnRuleHash : 3;
-    unsigned m_canMatchPseudoElement : 1;
-    unsigned m_containsUncommonAttributeSelector : 1;
-    unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_propertyWhitelistType : 2;
-    SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
-};
-    
-struct SameSizeAsRuleData {
-    void* a;
-    unsigned b;
-    unsigned c;
-    unsigned d[4];
-};
-
-COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
 
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
@@ -192,10 +130,3 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
 
 } // namespace Style
 } // namespace WebCore
-
-namespace WTF {
-
-// RuleData is simple enough that initializing to 0 and moving with memcpy will totally work.
-template<> struct VectorTraits<WebCore::Style::RuleData> : SimpleClassVectorTraits { };
-
-} // namespace WTF
