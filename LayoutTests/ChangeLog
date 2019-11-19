@@ -1,3 +1,24 @@
+2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/events/touch/ios/long-press-on-link.html times out after r251693
+        https://bugs.webkit.org/show_bug.cgi?id=204365
+        <rdar://problem/57324773>
+
+        Reviewed by Megan Gardner.
+
+        The change in trac.webkit.org/r251693 inadvertently fixed a failing layout test, fast/events/touch/ios/
+        long-press-on-image.html. In doing so, it caused the subsequent layout test, long-press-on-link.html, to begin
+        failing, since both tests depend on the previous test not presenting a context menu when long pressing; if the
+        previous test presents a context menu, the next test will proceed while the context menu is still dismissing,
+        which prevents the touches from making it to the web view.
+
+        To fix this, simply mark both tests as `runSingly` in test options; this forces context menu UI to be torn down
+        after running these two tests, so that these tests won't have side effects when they successfully show a context
+        menu.
+
+        * fast/events/touch/ios/long-press-on-image.html:
+        * fast/events/touch/ios/long-press-on-link.html:
+
 2019-11-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Count third-party script loads under top frame
