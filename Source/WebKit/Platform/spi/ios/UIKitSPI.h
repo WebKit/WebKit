@@ -449,11 +449,9 @@ typedef enum {
 @interface UITextInteractionAssistant ()
 - (void)activateSelection;
 - (void)deactivateSelection;
-- (void)didEndScrollingOrZooming;
 - (void)didEndScrollingOverflow;
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
-- (void)willStartScrollingOrZooming;
 - (void)willStartScrollingOverflow;
 @end
 
@@ -1110,6 +1108,11 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
+
+@interface UITextInteractionAssistant (Staging_55645619)
+- (void)didEndScrollingOrZooming;
+- (void)willStartScrollingOrZooming;
+@end
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 @interface UIContextMenuConfiguration (IPI)
