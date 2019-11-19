@@ -425,6 +425,9 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
 {
     ASSERT(is<StaticPasteboard>(*m_pasteboard) && !is<StaticPasteboard>(nativePasteboard));
     PasteboardCustomData customData = downcast<StaticPasteboard>(*m_pasteboard).takeCustomData();
+    if (!customData.hasData())
+        return;
+
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         customData.setOrigin(m_originIdentifier);
         nativePasteboard.writeCustomData({ customData });

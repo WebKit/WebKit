@@ -1,3 +1,16 @@
+2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.readText()
+        https://bugs.webkit.org/show_bug.cgi?id=204310
+        <rdar://problem/57292754>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline a couple of imported web platform tests.
+
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+        * web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https-expected.txt:
+
 2019-11-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix getTotalLength() and getPointAtLength() for optimized rect and ellipse renderers

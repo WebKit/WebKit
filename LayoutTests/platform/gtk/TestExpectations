@@ -1295,6 +1295,8 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-red
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-read-text-from-platform.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests

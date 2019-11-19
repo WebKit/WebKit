@@ -97,7 +97,39 @@ ScriptExecutionContext* Clipboard::scriptExecutionContext() const
 
 void Clipboard::readText(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    auto frame = makeRefPtr(this->frame());
+    if (!frame) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    auto changeCountAtStart = pasteboard->changeCount();
+    if (!frame->requestDOMPasteAccess()) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    auto allInfo = pasteboard->allPasteboardItemInfo();
+    if (!allInfo) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    String text;
+    for (size_t index = 0; index < allInfo->size(); ++index) {
+        if (allInfo->at(index).webSafeTypesByFidelity.contains("text/plain"_s)) {
+            PasteboardPlainText plainTextReader;
+            pasteboard->read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, index);
+            text = WTFMove(plainTextReader.text);
+            break;
+        }
+    }
+
+    if (changeCountAtStart == pasteboard->changeCount())
+        promise->resolve<IDLDOMString>(WTFMove(text));
+    else
+        promise->reject(NotAllowedError);
 }
 
 void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)

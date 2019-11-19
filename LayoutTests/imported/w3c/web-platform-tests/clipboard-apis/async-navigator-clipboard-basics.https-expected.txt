@@ -7,5 +7,5 @@ PASS navigator.clipboard.write(DOMString) fails (expect DataTransfer)
 PASS navigator.clipboard.writeText(DOMString) succeeds 
 PASS navigator.clipboard.writeText() fails (expect DOMString) 
 FAIL navigator.clipboard.read() succeeds assert_true: expected true got false
-FAIL navigator.clipboard.readText() succeeds promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS navigator.clipboard.readText() succeeds 
 

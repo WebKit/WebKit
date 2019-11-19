@@ -1,3 +1,39 @@
+2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Add support for Clipboard.readText()
+        https://bugs.webkit.org/show_bug.cgi?id=204310
+        <rdar://problem/57292754>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implements readText; see below for more detail.
+
+        Tests: editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html
+               editing/async-clipboard/clipboard-read-text-from-platform.html
+               editing/async-clipboard/clipboard-read-text-same-origin.html
+               editing/async-clipboard/clipboard-read-text.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::readText):
+
+        Implement the method. This works similarly to Clipboard::read, but immediately reads text data for the first
+        clipboard item with data for "text/plain", instead of exposing a list of clipboard items.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::commitToPasteboard):
+
+        If the custom pasteboard data object is empty, then don't bother trying to write it to the platform pasteboard.
+        This avoids hitting an assertion in WebDragClient::beginDrag that checks to make sure there's no data on the
+        pasteboard right before beginning a drag in the UI process which was getting hit because we'd otherwise end up
+        writing just the pasteboard data origin; it also has an added bonus of avoiding an unnecessary sync IPC message.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::write):
+
+        Write the custom data type ("com.apple.WebKit.custom-pasteboard-data") when writing PasteboardCustomData to the
+        pasteboard on macOS, even when the custom pasteboard data only contains an origin. This allows DOM paste
+        requests to automatically accept when exchanging text data between the same origin via the async clipboard API.
+
 2019-11-19  Chris Dumez  <cdumez@apple.com>
 
         http/tests/navigation/page-cache-mediastream.html is a flaky crash

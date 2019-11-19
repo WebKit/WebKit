@@ -231,8 +231,8 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
             [types addObject:platformType];
     });
 
-    bool hasSameOriginCustomData = data.hasSameOriginCustomData();
-    if (hasSameOriginCustomData)
+    bool shouldWriteCustomData = data.hasSameOriginCustomData() || !data.origin().isEmpty();
+    if (shouldWriteCustomData)
         [types addObject:@(PasteboardCustomData::cocoaType())];
 
     [m_pasteboard declareTypes:types owner:nil];
@@ -244,7 +244,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
             [m_pasteboard setString:data forType:platformType];
     });
 
-    if (hasSameOriginCustomData) {
+    if (shouldWriteCustomData) {
         if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
             [m_pasteboard setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
     }

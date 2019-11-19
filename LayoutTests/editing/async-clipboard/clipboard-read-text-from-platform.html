@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true domPasteAllowed=false ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button, iframe {
+                width: 100%;
+                height: 150px;
+                display: block;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        shouldCheckString = true;
+
+        if (window.testRunner)
+            testRunner.setJavaScriptCanAccessClipboard(false);
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.readText causes DOM paste UI to appear, if the text was written using platform API. To run the test manually, copy text from elsewhere on the system, and then click 'Paste'; DOM paste UI should appear when clicking 'Paste', and pasting should allow the page to read the text that was copied.");
+
+            paste = document.getElementById("paste");
+            paste.addEventListener("click", async () => {
+                try {
+                    clipboardText = await navigator.clipboard.readText();
+                    testPassed("Read text from clipboard using navigator.clipboard.readText.");
+                    if (shouldCheckString)
+                        shouldBeEqualToString("clipboardText", "This text was written by the platform.");
+                } catch (exception) {
+                    testFailed(`Failed to read with exception: ${exception.name}`);
+                } finally {
+                    paste.remove();
+                    finishJSTest();
+                }
+            });
+
+            if (!window.testRunner) {
+                shouldCheckString = false;
+                return;
+            }
+
+            await UIHelper.copyText("This text was written by the platform.");
+            await triggerProgrammaticPaste(paste);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="paste">Paste</button>
+        <p id="description"></p>
+        <p id="console"></p>
+    </body>
+</html>

@@ -1194,6 +1194,10 @@ webkit.org/b/203100 editing/async-clipboard/clipboard-change-data-while-writing.
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-basic.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-items-twice.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-write-text.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-read-text.html [ Skip ]
 
 webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ImageOnlyFailure ]
 webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion
