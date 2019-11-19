@@ -1200,12 +1200,6 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
     gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
-    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
-    g_object_set(appsink, "caps", caps.get(), nullptr);
-
-    result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
-
     // Workaround until we can depend on GStreamer 1.16.2.
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
     // Forcing a color conversion to RGBA here allows glupload to internally use
@@ -1218,21 +1212,21 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
     // and set the WEBKIT_GST_NO_RGBA_CONVERSION environment variable until
     // GStreamer 1.16.2 is released.
     // See also https://bugs.webkit.org/show_bug.cgi?id=201422
-    if (webkitGstCheckVersion(1, 16, 2) || getenv("WEBKIT_GST_NO_RGBA_CONVERSION")) {
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
-        gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
-    } else {
-        GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
-        GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format=RGBA"));
-        g_object_set(capsFilter, "caps", caps.get(), nullptr);
-
-        GstElement* videoconvert = gst_element_factory_make("videoconvert", nullptr);
-        gst_bin_add_many(GST_BIN_CAST(videoSink), capsFilter, videoconvert, nullptr);
-        result &= gst_element_link_many(capsFilter, videoconvert, upload, nullptr);
-
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(capsFilter, "sink"));
-        gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
+    GRefPtr<GstCaps> caps;
+    if (webkitGstCheckVersion(1, 16, 2) || getenv("WEBKIT_GST_NO_RGBA_CONVERSION"))
+        caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
+    else {
+        GST_INFO_OBJECT(pipeline(), "Forcing RGBA as GStreamer is not new enough.");
+        caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) RGBA"));
     }
+
+    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+    g_object_set(appsink, "caps", caps.get(), nullptr);
+
+    result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
+
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+    gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
 
     if (!result) {
         GST_WARNING("Failed to link GstGL elements");
