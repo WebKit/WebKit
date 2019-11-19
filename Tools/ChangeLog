@@ -1,3 +1,13 @@
+2019-11-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Update expectations for bufferedAmount-unchanged-by-sync-xhr.any.worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=204313
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2019-11-19  Paulo Matos  <pmatos@igalia.com>
 
         Setup EWS queues for JSConly 32bits ARMv7 and MIPSel

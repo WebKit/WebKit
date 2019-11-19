@@ -154,6 +154,7 @@ void SocketStreamHandleImpl::scheduleStreams()
         removePACRunLoopSource();
 
     m_connectingSubstate = WaitingForConnect;
+    RELEASE_LOG(Network, "SocketStreamHandleImpl::scheduleStreams - m_connectionSubState is WaitingForConnect");
 }
 
 void* SocketStreamHandleImpl::retainSocketStreamHandle(void* info)
@@ -578,6 +579,7 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
                     return;
                 }
             }
+            RELEASE_LOG(Network, "SocketStreamHandleImpl::readStreamCallback - m_connectionSubState is Connected");
             m_connectingSubstate = Connected;
             m_state = Open;
             m_client.didOpenSocketStream(*this);

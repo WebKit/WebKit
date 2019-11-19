@@ -1900,7 +1900,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 #endif
 
     TestRunner::setSerializeHTTPLoads(false);
-    TestRunner::setAllowsAnySSLCertificate(false);
+    TestRunner::setAllowsAnySSLCertificate(true);
 
     setlocale(LC_ALL, "");
 

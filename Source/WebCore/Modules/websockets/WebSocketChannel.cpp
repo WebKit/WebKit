@@ -203,7 +203,7 @@ void WebSocketChannel::close(int code, const String& reason)
 
 void WebSocketChannel::fail(const String& reason)
 {
-    LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8().data());
+    RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8().data());
     ASSERT(!m_suspended);
     if (m_document) {
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document.get(), m_identifier, reason);
@@ -363,6 +363,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
             message = "WebSocket network error: " + error.localizedDescription();
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document.get(), m_identifier, message);
         m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
+        LOG_ERROR("%s", message.utf8().data());
     }
     m_shouldDiscardReceivedData = true;
     if (m_client)
