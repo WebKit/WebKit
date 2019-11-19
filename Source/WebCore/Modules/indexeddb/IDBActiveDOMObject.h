@@ -38,7 +38,7 @@ public:
     Thread& originThread() const { return m_originThread.get(); }
 
     void contextDestroyed() final {
-        ASSERT(canCurrentThreadAccessThreadLocalData(m_originThread.get()));
+        ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
         Locker<Lock> lock(m_scriptExecutionContextLock);
         ActiveDOMObject::contextDestroyed();

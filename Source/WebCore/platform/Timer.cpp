@@ -258,8 +258,8 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
-    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()) || shouldSuppressThreadSafetyCheck());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread) || shouldSuppressThreadSafetyCheck());
     stop();
     ASSERT(!inHeap());
     if (m_heapItem)
@@ -269,7 +269,7 @@ TimerBase::~TimerBase()
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
 
     m_repeatInterval = repeatInterval;
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
@@ -277,7 +277,7 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 
 void TimerBase::stop()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
 
     m_repeatInterval = 0_s;
     setNextFireTime(MonotonicTime { });
@@ -461,8 +461,8 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
-    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()) || shouldSuppressThreadSafetyCheck());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
+    RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread) || shouldSuppressThreadSafetyCheck());
     bool timerHasBeenDeleted = std::isnan(m_unalignedNextFireTime);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!timerHasBeenDeleted);
 

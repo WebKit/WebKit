@@ -1,3 +1,25 @@
+2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up after r252642
+        https://bugs.webkit.org/show_bug.cgi?id=204346
+
+        * Modules/indexeddb/IDBActiveDOMObject.h:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::~TransactionOperation):
+        (WebCore::IDBClient::TransactionOperation::perform):
+        (WebCore::IDBClient::TransactionOperation::transitionToCompleteOnThisThread):
+        (WebCore::IDBClient::TransactionOperation::transitionToComplete):
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+        * platform/Supplementable.h:
+        (WebCore::Supplementable::provideSupplement):
+        (WebCore::Supplementable::removeSupplement):
+        (WebCore::Supplementable::requireSupplement):
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::~TimerBase):
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::stop):
+        (WebCore::TimerBase::setNextFireTime):
+
 2019-11-19  Daniel Bates  <dabates@apple.com>
 
         ASSERTION FAILURE: useDownstream ? (result > vp) : (result < vp) in WebCore::nextSentenceBoundaryInDirection()
