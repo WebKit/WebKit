@@ -25,9 +25,9 @@ import logging
 import time
 
 from webkitpy.api_tests.runner import Runner
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.results.upload import Upload
-
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ class Manager(object):
     def _collect_tests(self, args):
         available_tests = []
         specified_binaries = self._binaries_for_arguments(args)
-        for canonicalized_binary, path in self._port.path_to_api_test_binaries().iteritems():
+        for canonicalized_binary, path in self._port.path_to_api_test_binaries().items():
             if canonicalized_binary not in specified_binaries:
                 continue
             try:
@@ -124,7 +124,7 @@ class Manager(object):
             self._stream.writeln(runner.NAME_FOR_STATUS[status])
             self._stream.writeln('')
             need_newline = False
-            for test, output in mapping.iteritems():
+            for test, output in iteritems(mapping):
                 need_newline = Manager._print_test_result(self._stream, test, output)
             if need_newline:
                 self._stream.writeln('')
@@ -182,14 +182,14 @@ class Manager(object):
                 self._stream.writeln(test)
             return Manager.SUCCESS
 
-        test_names = [test for test in test_names for _ in xrange(self._options.repeat_each)]
+        test_names = [test for test in test_names for _ in range(self._options.repeat_each)]
         if self._options.repeat_each != 1:
             _log.debug('Repeating each test {} times'.format(self._options.iterations))
 
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream)
-            for i in xrange(self._options.iterations):
+            for i in range(self._options.iterations):
                 _log.debug('\nIteration {}'.format(i + 1))
                 runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else self._port.default_child_processes())
         except KeyboardInterrupt:
@@ -235,7 +235,7 @@ class Manager(object):
             self._print_tests_result_with_status(runner.STATUS_CRASHED, runner)
             self._print_tests_result_with_status(runner.STATUS_TIMEOUT, runner)
 
-            for test, result in runner.results.iteritems():
+            for test, result in iteritems(runner.results):
                 status_to_string = {
                     runner.STATUS_FAILED: 'Failed',
                     runner.STATUS_CRASHED: 'Crashed',
@@ -271,7 +271,7 @@ class Manager(object):
                     tests_skipped=len(result_dictionary['Skipped']),
                 ),
                 results={test: Upload.create_test_result(actual=status_to_test_result[result[0]])
-                         for test, result in runner.results.iteritems() if result[0] in status_to_test_result},
+                         for test, result in iteritems(runner.results) if result[0] in status_to_test_result},
             )
             for url in self._options.report_urls:
                 self._stream.write_update('Uploading to {} ...'.format(url))

@@ -25,8 +25,10 @@ import logging
 import time
 
 from webkitpy.common import message_pool
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
+from webkitpy.common.unicode_compatibility import decode_for
 
 
 class Runner(object):
@@ -90,7 +92,7 @@ class Runner(object):
         try:
             self._num_workers = min(num_workers, len(shards))
             with message_pool.get(self, lambda caller: _Worker(caller, self.port, shards), self._num_workers) as pool:
-                pool.run(('test', shard) for shard, _ in shards.iteritems())
+                pool.run(('test', shard) for shard, _ in iteritems(shards))
         finally:
             server_process_logger.setLevel(original_level)
 
@@ -129,7 +131,7 @@ class Runner(object):
 
     def result_map_by_status(self, status=None):
         map = {}
-        for test_name, result in self.results.iteritems():
+        for test_name, result in iteritems(self.results):
             if result[0] == status:
                 map[test_name] = result[1]
         return map
@@ -177,9 +179,11 @@ class _Worker(object):
                     break
 
                 if stderr_line:
+                    stderr_line = decode_for(stderr_line, str)
                     stderr_buffer += stderr_line
                     self.post('log', output=stderr_line[:-1])
                 if stdout_line:
+                    stdout_line = decode_for(stdout_line, str)
                     if '**PASS**' in stdout_line:
                         status = Runner.STATUS_PASSED
                     elif '**FAIL**' in stdout_line:
@@ -198,8 +202,8 @@ class _Worker(object):
                 status = Runner.STATUS_FAILED
 
         finally:
-            remaining_stderr = server_process.pop_all_buffered_stderr()
-            remaining_stdout = server_process.pop_all_buffered_stdout()
+            remaining_stderr = decode_for(server_process.pop_all_buffered_stderr(), str)
+            remaining_stdout = decode_for(server_process.pop_all_buffered_stdout(), str)
             self.post('log', output=remaining_stderr + remaining_stdout)
             output_buffer = stderr_buffer + stdout_buffer + remaining_stderr + remaining_stdout
             server_process.stop()
@@ -290,5 +294,5 @@ class _Worker(object):
             if split_test_name[0] not in binary_map:
                 binary_map[split_test_name[0]] = []
             binary_map[split_test_name[0]].append('.'.join(split_test_name[1:]))
-        for binary_name, test_list in binary_map.iteritems():
+        for binary_name, test_list in binary_map.items():
             self._run_shard_with_binary(binary_name, test_list)

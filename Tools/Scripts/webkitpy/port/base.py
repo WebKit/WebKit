@@ -251,7 +251,7 @@ class Port(object):
         if not self._root_was_set and self.get_option('build') and not self._build_api_tests(wtf_only=(canonicalized_binaries == ['TestWTF'])):
             return False
 
-        for binary, path in self.path_to_api_test_binaries().iteritems():
+        for binary, path in self.path_to_api_test_binaries().items():
             if binary not in canonicalized_binaries:
                 continue
             if not self._filesystem.exists(path):
@@ -1605,7 +1605,7 @@ class Port(object):
         repos['webkit'] = up(up(up(up(up(os.path.abspath(__file__))))))
 
         commits = []
-        for repo_id, path in repos.iteritems():
+        for repo_id, path in repos.items():
             scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(path)
             commits.append(Upload.create_commit(
                 repository_id=repo_id,

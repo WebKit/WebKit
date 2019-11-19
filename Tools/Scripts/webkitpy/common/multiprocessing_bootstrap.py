@@ -38,8 +38,6 @@ import os
 import subprocess
 import sys
 
-from webkitpy.common import version_check   # 'unused import' pylint: disable=W0611
-
 
 def run(*parts):
     up = os.path.dirname

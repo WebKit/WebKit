@@ -98,7 +98,7 @@ class _MessagePool(object):
         for message in shards:
             self._messages_to_worker.put(_Message(self._name, message[0], message[1:], from_user=True, logs=()))
 
-        for _ in xrange(self._num_workers):
+        for _ in range(self._num_workers):
             self._messages_to_worker.put(_Message(self._name, 'stop', message_args=(), from_user=False, logs=()))
 
         self.wait()
@@ -110,7 +110,7 @@ class _MessagePool(object):
         if self._running_inline or self._can_pickle(self._host):
             host = self._host
 
-        for worker_number in xrange(self._num_workers):
+        for worker_number in range(self._num_workers):
             worker = _Worker(host, self._messages_to_manager, self._messages_to_worker, self._worker_factory, worker_number, self._running_inline, self if self._running_inline else None, self._worker_log_level())
             self._workers.append(worker)
             worker.start()

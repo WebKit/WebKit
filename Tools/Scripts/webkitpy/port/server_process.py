@@ -110,8 +110,8 @@ class ServerProcess(object):
                 self._proc.stderr = None
 
         self._proc = None
-        self._output = str()  # bytesarray() once we require Python 2.6
-        self._error = str()  # bytesarray() once we require Python 2.6
+        self._output = b''
+        self._error = b''
         self._crashed = False
         self.timed_out = False
 
@@ -188,13 +188,13 @@ class ServerProcess(object):
                 self._crashed = True
 
     def _pop_stdout_line_if_ready(self):
-        index_after_newline = self._output.find('\n') + 1
+        index_after_newline = self._output.find(b'\n') + 1
         if index_after_newline > 0:
             return self._pop_output_bytes(index_after_newline)
         return None
 
     def _pop_stderr_line_if_ready(self):
-        index_after_newline = self._error.find('\n') + 1
+        index_after_newline = self._error.find(b'\n') + 1
         if index_after_newline > 0:
             return self._pop_error_bytes(index_after_newline)
         return None
