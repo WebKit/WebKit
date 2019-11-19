@@ -573,7 +573,7 @@ void MediaStreamTrack::suspend(ReasonForSuspension reason)
 
 bool MediaStreamTrack::hasPendingActivity() const
 {
-    return !m_ended;
+    return !m_ended || ActiveDOMObject::hasPendingActivity();
 }
 
 AudioSourceProvider* MediaStreamTrack::audioSourceProvider()
