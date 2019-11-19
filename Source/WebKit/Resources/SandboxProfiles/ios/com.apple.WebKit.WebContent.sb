@@ -849,10 +849,13 @@
         "hw.physicalcpu"
         "hw.physicalcpu_max"
         "kern.bootargs"
+        "kern.hostname"
         "kern.memorystatus_level"
         "kern.osproductversion"
+        "kern.osrelease"
         "kern.osvariant_status"
         "kern.secure_kernel"
+        "kern.version"
         "vm.footprint_suspend"))
 
 (allow iokit-get-properties
