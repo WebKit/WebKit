@@ -80,6 +80,8 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -87,6 +89,7 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadResourceCallback;
 
@@ -830,7 +833,7 @@ void InspectorNetworkAgent::disable(ErrorString&)
 {
     m_enabled = false;
     m_interceptionEnabled = false;
-    m_interceptResponseURLs.clear();
+    m_intercepts.clear();
     m_instrumentingAgents.setInspectorNetworkAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
@@ -838,6 +841,23 @@ void InspectorNetworkAgent::disable(ErrorString&)
     continuePendingResponses();
 
     setResourceCachingDisabled(false);
+}
+
+bool InspectorNetworkAgent::shouldIntercept(URL url)
+{
+    url.removeFragmentIdentifier();
+
+    String urlString = url.string();
+    if (urlString.isEmpty())
+        return false;
+
+    for (auto& intercept : m_intercepts) {
+        auto regex = ContentSearchUtilities::createSearchRegex(intercept.url, intercept.caseSensitive, intercept.isRegex);
+        if (regex.match(urlString) != -1)
+            return true;
+    }
+
+    return false;
 }
 
 void InspectorNetworkAgent::continuePendingResponses()
@@ -1009,7 +1029,7 @@ void InspectorNetworkAgent::setInterceptionEnabled(ErrorString& errorString, boo
         continuePendingResponses();
 }
 
-void InspectorNetworkAgent::addInterception(ErrorString& errorString, const String& url, const String* networkStageString)
+void InspectorNetworkAgent::addInterception(ErrorString& errorString, const String& url, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* networkStageString)
 {
     if (networkStageString) {
         auto networkStage = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Network::NetworkStage>(*networkStageString);
@@ -1019,13 +1039,20 @@ void InspectorNetworkAgent::addInterception(ErrorString& errorString, const Stri
         }
     }
 
+    Intercept intercept;
+    intercept.url = url;
+    if (optionalCaseSensitive)
+        intercept.caseSensitive = *optionalCaseSensitive;
+    if (optionalIsRegex)
+        intercept.isRegex = *optionalIsRegex;
+
     // FIXME: Support intercepting requests.
 
-    if (!m_interceptResponseURLs.add(url).isNewEntry)
-        errorString = "Intercept for given url already exists"_s;
+    if (!m_intercepts.appendIfNotContains(intercept))
+        errorString = "Intercept for given url and given isRegex already exists"_s;
 }
 
-void InspectorNetworkAgent::removeInterception(ErrorString& errorString, const String& url, const String* networkStageString)
+void InspectorNetworkAgent::removeInterception(ErrorString& errorString, const String& url, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* networkStageString)
 {
     if (networkStageString) {
         auto networkStage = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Network::NetworkStage>(*networkStageString);
@@ -1035,10 +1062,17 @@ void InspectorNetworkAgent::removeInterception(ErrorString& errorString, const S
         }
     }
 
+    Intercept intercept;
+    intercept.url = url;
+    if (optionalCaseSensitive)
+        intercept.caseSensitive = *optionalCaseSensitive;
+    if (optionalIsRegex)
+        intercept.isRegex = *optionalIsRegex;
+
     // FIXME: Support intercepting requests.
 
-    if (!m_interceptResponseURLs.remove(url))
-        errorString = "Missing intercept for given url"_s;
+    if (!m_intercepts.removeAll(intercept))
+        errorString = "Missing intercept for given url and given isRegex"_s;
 }
 
 bool InspectorNetworkAgent::willInterceptRequest(const ResourceRequest& request)
@@ -1046,14 +1080,7 @@ bool InspectorNetworkAgent::willInterceptRequest(const ResourceRequest& request)
     if (!m_interceptionEnabled)
         return false;
 
-    URL requestURL = request.url();
-    requestURL.removeFragmentIdentifier();
-
-    String url = requestURL.string();
-    if (url.isEmpty())
-        return false;
-
-    return m_interceptResponseURLs.contains(url);
+    return shouldIntercept(request.url());
 }
 
 bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& response)
@@ -1061,14 +1088,7 @@ bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& resp
     if (!m_interceptionEnabled)
         return false;
 
-    URL responseURL = response.url();
-    responseURL.removeFragmentIdentifier();
-
-    String url = responseURL.string();
-    if (url.isEmpty())
-        return false;
-
-    return m_interceptResponseURLs.contains(url);
+    return shouldIntercept(response.url());
 }
 
 void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)

@@ -25,26 +25,30 @@
 
 WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 {
-    constructor(localResource, {disabled} = {})
+    constructor(localResource, {isCaseSensitive, isRegex, disabled} = {})
     {
         console.assert(localResource instanceof WI.LocalResource);
         console.assert(localResource.isLocalResourceOverride);
         console.assert(localResource.url);
-        console.assert(!disabled || typeof disabled === "boolean");
+        console.assert(isCaseSensitive === undefined || typeof isCaseSensitive === "boolean");
+        console.assert(isRegex === undefined || typeof isRegex === "boolean");
+        console.assert(disabled === undefined || typeof disabled === "boolean");
 
         super();
 
         this._localResource = localResource;
-        this._disabled = disabled || false;
+        this._isCaseSensitive = isCaseSensitive !== undefined ? isCaseSensitive : true;
+        this._isRegex = isRegex !== undefined ? isRegex : false;
+        this._disabled = disabled !== undefined ? disabled : false;
     }
 
     // Static
 
-    static create({url, mimeType, content, base64Encoded, statusCode, statusText, headers, disabled})
+    static create({url, mimeType, content, base64Encoded, statusCode, statusText, headers, isCaseSensitive, isRegex, disabled})
     {
         let localResource = new WI.LocalResource({
             request: {
-                url: WI.urlWithoutFragment(url),
+                url: isRegex ? url : WI.urlWithoutFragment(url),
             },
             response: {
                 headers,
@@ -57,21 +61,23 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             isLocalResourceOverride: true,
         });
 
-        return new WI.LocalResourceOverride(localResource, {disabled});
+        return new WI.LocalResourceOverride(localResource, {isCaseSensitive, isRegex, disabled});
     }
 
     // Import / Export
 
     static fromJSON(json)
     {
-        let {localResource, disabled} = json;
-        return new WI.LocalResourceOverride(WI.LocalResource.fromJSON(localResource), {disabled});
+        let {localResource, isCaseSensitive, isRegex, disabled} = json;
+        return new WI.LocalResourceOverride(WI.LocalResource.fromJSON(localResource), {isCaseSensitive, isRegex, disabled});
     }
 
     toJSON(key)
     {
         let json = {
             localResource: this._localResource.toJSON(key),
+            isCaseSensitive: this._isCaseSensitive,
+            isRegex: this._isRegex,
             disabled: this._disabled,
         };
 
@@ -85,6 +91,8 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     get url() { return this._localResource.url; }
     get localResource() { return this._localResource; }
+    get isCaseSensitive() { return this._isCaseSensitive; }
+    get isRegex() { return this._isRegex; }
 
     get disabled()
     {
@@ -101,11 +109,26 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         this.dispatchEventToListeners(WI.LocalResourceOverride.Event.DisabledChanged);
     }
 
+    matches(url)
+    {
+        if (this._isRegex) {
+            let regex = new RegExp(this.url, !this._isCaseSensitive ? "i" : "");
+            return regex.test(url);
+        }
+
+        if (!this._isCaseSensitive)
+            return String(url).toLowerCase() === this.url.toLowerCase();
+
+        return url === this.url;
+    }
+
     // Protected
 
     saveIdentityToCookie(cookie)
     {
         cookie["local-resource-override-url"] = this._localResource.url;
+        cookie["local-resource-override-is-case-sensitive"] = this._isCaseSensitive;
+        cookie["local-resource-override-is-regex"] = this._isRegex;
         cookie["local-resource-override-disabled"] = this._disabled;
     }
 };

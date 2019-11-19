@@ -1,3 +1,33 @@
+2019-11-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Local Resource Overrides: allow substitution based on a url pattern
+        https://bugs.webkit.org/show_bug.cgi?id=202375
+
+        Reviewed by Brian Burg.
+
+        Test: http/tests/inspector/network/local-resource-override-isRegex.html
+
+        Often, websites will load content with a timestamp-based URL query parameter for
+        cache-busting or logging purposes. If a developer is trying to override these resources (or
+        is trying to have an existing override also match these resources), they'd need to edit the
+        local override's URL to match in addition to editing the resource that loads it (e.g. change
+        the <script> in an HTML file), which can sometimes be tricky of the content is dynamically
+        loaded (e.g. an XHR with a non-hardcoded URL).
+
+        Allowing for local overrides to be set using a regular expression pattern would help resolve
+        this limitation.
+
+        * inspector/agents/InspectorNetworkAgent.h:
+        (WebCore::InspectorNetworkAgent::Intercept): Added.
+        (WebCore::InspectorNetworkAgent::Intercept::operator== const): Added.
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::disable):
+        (WebCore::InspectorNetworkAgent::shouldIntercept): Added.
+        (WebCore::InspectorNetworkAgent::addInterception):
+        (WebCore::InspectorNetworkAgent::removeInterception):
+        (WebCore::InspectorNetworkAgent::willInterceptRequest):
+        (WebCore::InspectorNetworkAgent::shouldInterceptResponse):
+
 2019-11-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Run AccessibilityController::rootElement on secondary thread to simulate HIServices during LayoutTests.

@@ -46,6 +46,7 @@ localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
+localizedStrings["%s (Case Insensitive)"] = "%s (Case Insensitive)";
 localizedStrings["%s (default)"] = "%s (default)";
 localizedStrings["%s (hidden)"] = "%s (hidden)";
 localizedStrings["%s Callback"] = "%s Callback";

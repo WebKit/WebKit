@@ -165,6 +165,55 @@ function test()
     });
 
     addTestCase({
+        name: "LocalResourceOverride.URL.CaseSensitive",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?CaSe=SeNsItIvE")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt?case=sensitive",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isCaseSensitive: false,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.IsRegex",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?t=123456789")`,
+        overrides: [{
+            url: "\\/override\\.txt\\?t=\\d+",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isRegex: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.IsCaseSensitiveRegex",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?t=123456789")`,
+        overrides: [{
+            url: "\\/OvErRiDe\\.TxT\\?t=\\d+",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isCaseSensitive: false,
+            isRegex: true,
+        }]
+    });
+
+    addTestCase({
         name: "LocalResourceOverride.404",
         description: "Test for a 404 override.",
         expression: `triggerOverrideLoad()`,

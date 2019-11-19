@@ -69,6 +69,14 @@
     width: 324px;
 }
 
+.popover .local-resource-override-popover-content label:matches(.is-case-sensitive, .is-regex) {
+    display: inline-block;
+}
+
+.popover .local-resource-override-popover-content label.is-case-sensitive {
+    -webkit-margin-end: 8px;
+}
+
 .popover .local-resource-override-popover-content .editor.mime {
     width: 240px;
 }

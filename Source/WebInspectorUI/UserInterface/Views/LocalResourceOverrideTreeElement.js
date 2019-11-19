@@ -40,6 +40,21 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     // Protected
 
+    get mainTitleText()
+    {
+        let text;
+        if (this.representedObject.isRegex) {
+            text = "/" + this.resource.url + "/";
+            if (!this.representedObject.isCaseSensitive)
+                text += "i";
+        } else {
+            text = super.mainTitleText;
+            if (!this.representedObject.isCaseSensitive)
+                text = WI.UIString("%s (Case Insensitive)").format(text);
+        }
+        return text;
+    }
+
     onattach()
     {
         super.onattach();
@@ -86,7 +101,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
     {
         contextMenu.appendItem(WI.UIString("Edit Local Override\u2026"), (event) => {
             let popover = new WI.LocalResourceOverridePopover(this);
-            popover.show(this._localResourceOverride.localResource, this.status, [WI.RectEdge.MAX_X, WI.RectEdge.MIN_X]);
+            popover.show(this._localResourceOverride, this.status, [WI.RectEdge.MAX_X, WI.RectEdge.MIN_X]);
         });
 
         let toggleEnabledString = this._localResourceOverride.disabled ? WI.UIString("Enable Local Override") : WI.UIString("Disable Local Override");
@@ -114,7 +129,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         if (!serializedData)
             return;
 
-        let {url, mimeType, statusCode, statusText, headers} = serializedData;
+        let {url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
 
         // Do not conflict with an existing override unless we are modifying ourselves.
         let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
@@ -128,6 +143,8 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         let revision = this._localResourceOverride.localResource.currentRevision;
         let newLocalResourceOverride = WI.LocalResourceOverride.create({
             url,
+            isCaseSensitive,
+            isRegex,
             mimeType,
             statusCode,
             statusText,

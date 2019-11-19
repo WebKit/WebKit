@@ -30,6 +30,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         super(delegate);
 
         this._urlCodeMirror = null;
+        this._isCaseSensitiveCheckbox = null;
+        this._isRegexCheckbox = null;
         this._mimeTypeCodeMirror = null;
         this._statusCodeCodeMirror = null;
         this._statusTextCodeMirror = null;
@@ -51,9 +53,12 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         if (!url)
             return null;
 
-        const schemes = ["http:", "https:", "file:"];
-        if (!schemes.some((scheme) => url.startsWith(scheme)))
-            return null;
+        let isRegex = this._isRegexCheckbox && this._isRegexCheckbox.checked;
+        if (!isRegex) {
+            const schemes = ["http:", "https:", "file:"];
+            if (!schemes.some((scheme) => url.toLowerCase().startsWith(scheme)))
+                return null;
+        }
 
         // NOTE: We can allow an empty mimeType / statusCode / statusText to pass
         // network values through, but lets require them for overrides so that
@@ -91,6 +96,12 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             headers,
         };
 
+        if (this._isCaseSensitiveCheckbox)
+            data.isCaseSensitive = this._isCaseSensitiveCheckbox.checked;
+
+        if (this._isRegexCheckbox)
+            data.isRegex = this._isRegexCheckbox.checked;
+
         // No change.
         let oldSerialized = JSON.stringify(this._serializedDataWhenShown);
         let newSerialized = JSON.stringify(data);
@@ -100,10 +111,12 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         return data;
     }
 
-    show(localResource, targetElement, preferredEdges)
+    show(localResourceOverride, targetElement, preferredEdges)
     {
         this._targetElement = targetElement;
         this._preferredEdges = preferredEdges;
+
+        let localResource = localResourceOverride ? localResourceOverride.localResource : null;
 
         let url = localResource ? localResource.url : "";
         let mimeType = localResource ? localResource.mimeType : "";
@@ -125,7 +138,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         let table = popoverContentElement.appendChild(document.createElement("table"));
 
-        let createRow = (label, id, text) => {
+        let createRow = (label, id, text, placeholder) => {
             let row = table.appendChild(document.createElement("tr"));
             let headerElement = row.appendChild(document.createElement("th"));
             let dataElement = row.appendChild(document.createElement("td"));
@@ -136,7 +149,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             let editorElement = dataElement.appendChild(document.createElement("div"));
             editorElement.classList.add("editor", id);
 
-            let codeMirror = this._createEditor(editorElement, text);
+            let codeMirror = this._createEditor(editorElement, text, placeholder);
             let inputField = codeMirror.getInputField();
             inputField.id = `local-resource-override-popover-${id}-input-field`;
             labelElement.setAttribute("for", inputField.id);
@@ -144,19 +157,56 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             return {codeMirror, dataElement};
         };
 
-        let urlRow = createRow(WI.UIString("URL"), "url", url);
+        let urlRow = createRow(WI.UIString("URL"), "url", url, url || "http://example.com/index.html");
         this._urlCodeMirror = urlRow.codeMirror;
-        this._urlCodeMirror.setOption("mode", "text/x-local-override-url");
 
-        let mimeTypeRow = createRow(WI.UIString("MIME Type"), "mime", mimeType);
+        let updateURLCodeMirrorMode = () => {
+            let isRegex = this._isRegexCheckbox && this._isRegexCheckbox.checked;
+
+            this._urlCodeMirror.setOption("mode", isRegex ? "text/x-regex" : "text/x-local-override-url");
+
+            if (!isRegex) {
+                let url = this._urlCodeMirror.getValue();
+                const schemes = ["http:", "https:", "file:"];
+                if (!schemes.some((scheme) => url.toLowerCase().startsWith(scheme)))
+                    this._urlCodeMirror.setValue("http://" + url);
+            }
+        };
+
+        if (InspectorBackend.hasCommand("Network.addInterception", "caseSensitive")) {
+            let isCaseSensitiveLabel = urlRow.dataElement.appendChild(document.createElement("label"));
+            isCaseSensitiveLabel.className = "is-case-sensitive";
+
+            this._isCaseSensitiveCheckbox = isCaseSensitiveLabel.appendChild(document.createElement("input"));
+            this._isCaseSensitiveCheckbox.type = "checkbox";
+            this._isCaseSensitiveCheckbox.checked = localResourceOverride ? localResourceOverride.isCaseSensitive : true;
+
+            isCaseSensitiveLabel.append(WI.UIString("Case Sensitive"));
+        }
+
+        if (InspectorBackend.hasCommand("Network.addInterception", "isRegex")) {
+            let isRegexLabel = urlRow.dataElement.appendChild(document.createElement("label"));
+            isRegexLabel.className = "is-regex";
+
+            this._isRegexCheckbox = isRegexLabel.appendChild(document.createElement("input"));
+            this._isRegexCheckbox.type = "checkbox";
+            this._isRegexCheckbox.checked = localResourceOverride ? localResourceOverride.isRegex : false;
+            this._isRegexCheckbox.addEventListener("change", (event) => {
+                updateURLCodeMirrorMode();
+            });
+
+            isRegexLabel.append(WI.UIString("Regular Expression"));
+        }
+
+        let mimeTypeRow = createRow(WI.UIString("MIME Type"), "mime", mimeType, mimeType || "text/html");
         this._mimeTypeCodeMirror = mimeTypeRow.codeMirror;
 
-        let statusCodeRow = createRow(WI.UIString("Status"), "status", statusCode);
+        let statusCodeRow = createRow(WI.UIString("Status"), "status", statusCode, statusCode || "200");
         this._statusCodeCodeMirror = statusCodeRow.codeMirror;
 
         let statusTextEditorElement = statusCodeRow.dataElement.appendChild(document.createElement("div"));
         statusTextEditorElement.className = "editor status-text";
-        this._statusTextCodeMirror = this._createEditor(statusTextEditorElement, statusText);
+        this._statusTextCodeMirror = this._createEditor(statusTextEditorElement, statusText, statusText || "OK");
 
         let editCallback = () => {};
         let deleteCallback = (node) => {
@@ -278,6 +328,9 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         // Update mimeType when URL gets a file extension.
         this._urlCodeMirror.on("change", (cm) => {
+            if (this._isRegexCheckbox && this._isRegexCheckbox.checked)
+                return;
+
             let extension = WI.fileExtensionForURL(cm.getValue());
             if (!extension)
                 return;
@@ -295,6 +348,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             let mimeType = cm.getValue();
             contentTypeDataGridNode.data = {name: "Content-Type", value: mimeType};
         });
+
+        updateURLCodeMirrorMode();
 
         this._serializedDataWhenShown = this.serializedData;
 
@@ -315,14 +370,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
     // Private
 
-    _createEditor(element, value)
+    _createEditor(element, value, placeholder)
     {
         let codeMirror = WI.CodeMirrorEditor.create(element, {
             extraKeys: {"Tab": false, "Shift-Tab": false},
             lineWrapping: false,
             mode: "text/plain",
             matchBrackets: true,
-            placeholder: "http://example.com/index.html",
+            placeholder,
             scrollbarStyle: null,
             value,
         });

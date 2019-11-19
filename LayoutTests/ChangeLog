@@ -1,3 +1,13 @@
+2019-11-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Local Resource Overrides: allow substitution based on a url pattern
+        https://bugs.webkit.org/show_bug.cgi?id=202375
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/local-resource-override-basic.html:
+        * http/tests/inspector/network/local-resource-override-basic-expected.txt:
+
 2019-11-18  Megan Gardner  <megan_gardner@apple.com>
 
         Update dismiss-picker-using-keyboard.html test to work on iPad correctly

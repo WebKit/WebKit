@@ -239,6 +239,8 @@
             "description": "Add an interception.",
             "parameters": [
                 { "name": "url", "type": "string" },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." },
                 { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
             ]
         },
@@ -247,6 +249,8 @@
             "description": "Remove an interception.",
             "parameters": [
                 { "name": "url", "type": "string" },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats `url` parameter as a regular expression." },
                 { "name": "stage", "$ref": "NetworkStage", "optional": true, "description": "If not present this applies to all network stages." }
             ]
         },

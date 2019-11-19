@@ -88,6 +88,45 @@ Response Headers:
   X-Expected: PASS
 Content: PASS
 
+-- Running test case: LocalResourceOverride.URL.CaseSensitive
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt?case=sensitive
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?CaSe=SeNsItIvE
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.URL.IsRegex
+Creating Local Resource Override for: \/override\.txt\?t=\d+
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?t=123456789
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.URL.IsCaseSensitiveRegex
+Creating Local Resource Override for: \/OvErRiDe\.TxT\?t=\d+
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?t=123456789
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+  X-Expected: PASS
+Content: PASS
+
 -- Running test case: LocalResourceOverride.404
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Triggering load...

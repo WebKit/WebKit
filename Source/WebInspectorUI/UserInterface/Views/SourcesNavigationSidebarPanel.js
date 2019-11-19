@@ -667,7 +667,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        let {url, mimeType, statusCode, statusText, headers} = serializedData;
+        let {url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
 
         // Do not conflict with an existing override.
         let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
@@ -678,6 +678,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         let localResourceOverride = WI.LocalResourceOverride.create({
             url,
+            isCaseSensitive,
+            isRegex,
             mimeType,
             statusCode,
             statusText,

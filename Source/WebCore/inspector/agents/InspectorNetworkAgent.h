@@ -37,9 +37,8 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
-#include <wtf/HashSet.h>
+#include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
-#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -89,8 +88,8 @@ public:
     void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
     void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
     void setInterceptionEnabled(ErrorString&, bool enabled) final;
-    void addInterception(ErrorString&, const String& url, const String* networkStageString) final;
-    void removeInterception(ErrorString&, const String& url, const String* networkStageString) final;
+    void addInterception(ErrorString&, const String& url, const bool* caseSensitive, const bool* isRegex, const String* networkStageString) final;
+    void removeInterception(ErrorString&, const String& url, const bool* caseSensitive, const bool* isRegex, const String* networkStageString) final;
     void interceptContinue(ErrorString&, const String& requestId) final;
     void interceptWithResponse(ErrorString&, const String& requestId, const String& content, bool base64Encoded, const String* mimeType, const int* status, const String* statusText, const JSON::Object* headers) final;
 
@@ -141,6 +140,7 @@ private:
 
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
 
+    bool shouldIntercept(URL);
     void continuePendingResponses();
 
     WebSocket* webSocketForRequestId(const String& requestId);
@@ -200,7 +200,19 @@ private:
     HashMap<String, String> m_extraRequestHeaders;
     HashSet<unsigned long> m_hiddenRequestIdentifiers;
 
-    HashSet<String> m_interceptResponseURLs;
+    struct Intercept {
+        String url;
+        bool caseSensitive { true };
+        bool isRegex { false };
+
+        inline bool operator==(const Intercept& other) const
+        {
+            return url == other.url
+                && caseSensitive == other.caseSensitive
+                && isRegex == other.isRegex;
+        }
+    };
+    Vector<Intercept> m_intercepts;
     HashMap<String, std::unique_ptr<PendingInterceptResponse>> m_pendingInterceptResponses;
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.
