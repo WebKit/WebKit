@@ -86,7 +86,7 @@ void InlineItemRun::setCollapsesToZeroAdvanceWidth()
 }
 
 Line::Run::Run(const Box& layoutBox, InlineItem::Type type, const Display::Rect& logicalRect)
-    : m_layoutBox(layoutBox)
+    : m_layoutBox(&layoutBox)
     , m_type(type)
     , m_logicalRect(logicalRect)
 {

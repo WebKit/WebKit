@@ -1,3 +1,20 @@
+2019-11-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Assign inlineCapacity to various inline run vectors.
+        https://bugs.webkit.org/show_bug.cgi?id=204354
+        <rdar://problem/57322347>
+
+        Reviewed by Antti Koivisto.
+
+        Inline capacity values are mainly based off of the equivalent simple line layout vectors.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingState.h:
+        * layout/inlineformatting/InlineLine.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle): Apparently 'newStyle' is moved out at this point.
+
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
         Update expectations for bufferedAmount-unchanged-by-sync-xhr.any.worker.html

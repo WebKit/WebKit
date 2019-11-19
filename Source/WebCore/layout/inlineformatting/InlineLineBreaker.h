@@ -48,12 +48,12 @@ public:
         };
         Optional<TrailingPartialContent> trailingPartialContent;
     };
-    BreakingContext breakingContextForInlineContent(const Vector<LineLayout::Run>&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    BreakingContext breakingContextForInlineContent(const LineLayout::RunList&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
 
-    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const Vector<LineLayout::Run>&, LayoutUnit availableWidth) const;
+    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const LineLayout::RunList&, LayoutUnit availableWidth) const;
 
     struct SplitLengthAndWidth {
         unsigned length { 0 };

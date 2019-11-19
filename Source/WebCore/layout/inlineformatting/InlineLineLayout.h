@@ -69,6 +69,8 @@ public:
         LayoutUnit logicalWidth;
     };
 
+    using RunList = Vector<Run, 30>;
+
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
@@ -83,14 +85,14 @@ private:
         void reset();
         void trim(unsigned newSize);
 
-        Vector<Run>& runs() { return m_uncommittedRuns; }
-        const Vector<Run>& runs() const { return m_uncommittedRuns; }
+        RunList& runs() { return m_uncommittedRuns; }
+        const RunList& runs() const { return m_uncommittedRuns; }
         bool isEmpty() const { return m_uncommittedRuns.isEmpty(); }
         unsigned size() const { return m_uncommittedRuns.size(); }
         LayoutUnit width() const { return m_width; }
 
     private:
-        Vector<Run> m_uncommittedRuns;
+        RunList m_uncommittedRuns;
         LayoutUnit m_width;
     };
 

@@ -68,13 +68,16 @@ public:
     void moveLogicalRight(LayoutUnit);
 
     struct Run {
+        Run(Run&&) = default;
+        Run& operator=(Run&& other) = default;
+
         bool isText() const { return m_type == InlineItem::Type::Text; }
         bool isBox() const { return m_type == InlineItem::Type::Box; }
         bool isForcedLineBreak() const { return m_type == InlineItem::Type::ForcedLineBreak; }
         bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
         bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
 
-        const Box& layoutBox() const { return m_layoutBox; }
+        const Box& layoutBox() const { return *m_layoutBox; }
         const Display::Rect& logicalRect() const { return m_logicalRect; }
         Optional<Display::Run::TextContext> textContext() const { return m_textContext; }
         bool isCollapsedToVisuallyEmpty() const { return m_isCollapsedToVisuallyEmpty; }
@@ -98,14 +101,14 @@ public:
         void setComputedHorizontalExpansion(LayoutUnit logicalExpansion);
         void adjustExpansionBehavior(ExpansionBehavior);
 
-        const Box& m_layoutBox;
-        const InlineItem::Type m_type;
+        const Box* m_layoutBox { nullptr };
+        InlineItem::Type m_type;
         Display::Rect m_logicalRect;
         Optional<Display::Run::TextContext> m_textContext;
         unsigned m_expansionOpportunityCount { 0 };
         bool m_isCollapsedToVisuallyEmpty { false };
     };
-    using RunList = Vector<Run>;
+    using RunList = Vector<Run, 50>;
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
@@ -148,8 +151,8 @@ private:
     const InlineFormattingContext& formattingContext() const; 
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    Vector<std::unique_ptr<InlineItemRun>> m_inlineItemRuns;
-    Vector<InlineItemRun*> m_trimmableRuns;
+    Vector<std::unique_ptr<InlineItemRun>, 50> m_inlineItemRuns;
+    Vector<InlineItemRun*, 5> m_trimmableRuns;
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;

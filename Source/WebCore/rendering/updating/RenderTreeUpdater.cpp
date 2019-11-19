@@ -300,7 +300,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
         if (!m_document.view() || !m_document.view()->layoutContext().layoutFormattingState())
             return;
         if (auto* layoutBox = m_document.view()->layoutContext().layoutTreeContent()->layoutBoxForRenderer(renderer))
-            layoutBox->updateStyle(newStyle);
+            layoutBox->updateStyle(renderer.style());
     }
 #endif
 }

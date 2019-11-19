@@ -38,9 +38,9 @@ namespace WebCore {
 namespace Layout {
 
 // Temp
-using InlineItems = Vector<std::unique_ptr<InlineItem>>;
-using InlineRuns = Vector<std::unique_ptr<Display::Run>>;
-using LineBoxes = Vector<std::unique_ptr<LineBox>>;
+using InlineItems = Vector<std::unique_ptr<InlineItem>, 30>;
+using InlineRuns = Vector<std::unique_ptr<Display::Run>, 10>;
+using LineBoxes = Vector<std::unique_ptr<LineBox>, 5>;
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);

@@ -47,7 +47,7 @@ static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInl
     return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const LineLayout::RunList& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     if (logicalWidth <= availableWidth)
         return { BreakingContext::ContentBreak::Keep, { } };
@@ -87,7 +87,7 @@ bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit av
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, LayoutUnit availableWidth) const
+Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const LineLayout::RunList& runs, LayoutUnit availableWidth) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
