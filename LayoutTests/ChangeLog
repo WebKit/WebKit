@@ -1,3 +1,44 @@
+2019-11-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r251680. rdar://problem/57283563
+
+    Hidden framesets should provide default edgeInfo value
+    https://bugs.webkit.org/show_bug.cgi?id=203506
+    <rdar://problem/56233726>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    The grid information (and certain associated structures e.g. edegeInfo) for a frameset is updated through the layout() call.
+    When the used height/width computes to zero on a frameset child (frame or nested frameset), we don't run layout on the renderer thus
+    hidden nested framesets can only provide the default edge info.
+    This patch changes this behaviour and we now call layout on those hidden renderers the same way we do it on iOS.
+    
+    Test: fast/frames/hidden-frameset.html
+    
+    * rendering/RenderFrameSet.cpp:
+    (WebCore::RenderFrameSet::edgeInfo const):
+    
+    LayoutTests:
+    
+    * fast/frames/hidden-frameset-expected.txt: Added.
+    * fast/frames/hidden-frameset.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@251680 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-28  Zalan Bujtas  <zalan@apple.com>
+
+            Hidden framesets should provide default edgeInfo value
+            https://bugs.webkit.org/show_bug.cgi?id=203506
+            <rdar://problem/56233726>
+
+            Reviewed by Simon Fraser.
+
+            * fast/frames/hidden-frameset-expected.txt: Added.
+            * fast/frames/hidden-frameset.html: Added.
+
 2019-11-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r251957. rdar://problem/56887511
