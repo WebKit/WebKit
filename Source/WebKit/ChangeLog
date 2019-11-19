@@ -1,3 +1,26 @@
+2019-11-18  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Decoder should use nullptr as invalid value
+        <https://webkit.org/b/203880>
+        <rdar://problem/53159906>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::alignedBufferIsLargeEnoughToContain): Add bufferStart
+        parameter to add beginning bounds check now that m_bufferPos
+        uses nullptr for an invalid value.
+        (IPC::Decoder::alignBufferPosition): Update to pass m_buffer to
+        IPC::alignedBufferIsLargeEnoughToContain().
+        (IPC::Decoder::bufferIsLargeEnoughToContain const): Ditto.
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::isInvalid const): Add beginning bounds check now
+        that m_bufferPos uses nullptr for an invalid value.
+        (IPC::Decoder::markInvalid): Make nullptr the invalid value for
+        m_bufferPos.
+
 2019-11-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Run AccessibilityController::rootElement on secondary thread to simulate HIServices during LayoutTests.
