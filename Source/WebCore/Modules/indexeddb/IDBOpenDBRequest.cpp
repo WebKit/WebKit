@@ -66,12 +66,12 @@ IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext& context, IDBClient::I
 
 IDBOpenDBRequest::~IDBOpenDBRequest()
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 }
 
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_domError = data.error().toDOMException();
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, *this));
@@ -79,7 +79,7 @@ void IDBOpenDBRequest::onError(const IDBResultData& data)
 
 void IDBOpenDBRequest::versionChangeTransactionDidFinish()
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     // 3.3.7 "versionchange" transaction steps
     // When the transaction is finished, after firing complete/abort on the transaction, immediately set request's transaction property to null.
@@ -90,7 +90,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 {
     LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit() - %s", resourceIdentifier().loggingString().utf8().data());
 
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
     m_transaction->addRequest(*this);
 
@@ -104,7 +104,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 {
     LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion() - %s", resourceIdentifier().loggingString().utf8().data());
 
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
 
     IDBError idbError(AbortError);
@@ -125,7 +125,7 @@ void IDBOpenDBRequest::cancelForStop()
 
 void IDBOpenDBRequest::dispatchEvent(Event& event)
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     auto protectedThis = makeRef(*this);
 
@@ -139,7 +139,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
 
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     setResult(IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData));
     m_readyState = ReadyState::Done;
@@ -149,7 +149,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData);
     Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
@@ -172,7 +172,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
 void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     uint64_t oldVersion = resultData.databaseInfo().version();
 
@@ -188,7 +188,7 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_isBlocked = false;
 
@@ -230,7 +230,7 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 
 void IDBOpenDBRequest::requestBlocked(uint64_t oldVersion, uint64_t newVersion)
 {
-    ASSERT(&originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!m_isBlocked);
 
     m_isBlocked = true;

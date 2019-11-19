@@ -62,7 +62,7 @@ void initializeMainThread()
 }
 
 #if !USE(WEB_THREAD)
-bool canAccessThreadLocalDataForThread(Thread& thread)
+bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 {
     return &thread == &Thread::current();
 }

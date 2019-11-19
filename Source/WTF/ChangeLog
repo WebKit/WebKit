@@ -1,3 +1,18 @@
+2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [IndexedDB] IndexedDB's threading assertion should respect Web thread
+        https://bugs.webkit.org/show_bug.cgi?id=204346
+
+        Reviewed by Daniel Bates.
+
+        * wtf/MainThread.cpp:
+        (WTF::canCurrentThreadAccessThreadLocalData):
+        (WTF::canAccessThreadLocalDataForThread): Deleted.
+        * wtf/MainThread.h:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::canCurrentThreadAccessThreadLocalData):
+        (WTF::canAccessThreadLocalDataForThread): Deleted.
+
 2019-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove self-defined C++14 features in StdLibExtras.h

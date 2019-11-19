@@ -60,14 +60,14 @@ IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectS
     , m_originalInfo(info)
     , m_transaction(transaction)
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     suspendIfNeeded();
 }
 
 IDBObjectStore::~IDBObjectStore()
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 }
 
 const char* IDBObjectStore::activeDOMObjectName() const
@@ -82,13 +82,13 @@ bool IDBObjectStore::hasPendingActivity() const
 
 const String& IDBObjectStore::name() const
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
     return m_info.name();
 }
 
 ExceptionOr<void> IDBObjectStore::setName(const String& name)
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed set property 'name' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -113,13 +113,13 @@ ExceptionOr<void> IDBObjectStore::setName(const String& name)
 
 const Optional<IDBKeyPath>& IDBObjectStore::keyPath() const
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
     return m_info.keyPath();
 }
 
 Ref<DOMStringList> IDBObjectStore::indexNames() const
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     auto indexNames = DOMStringList::create();
 
@@ -134,20 +134,20 @@ Ref<DOMStringList> IDBObjectStore::indexNames() const
 
 IDBTransaction& IDBObjectStore::transaction()
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
     return m_transaction;
 }
 
 bool IDBObjectStore::autoIncrement() const
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
     return m_info.autoIncrement();
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(JSGlobalObject& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'openCursor' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -185,7 +185,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(JSGlobalObject& execStat
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(JSGlobalObject& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::openKeyCursor");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -223,7 +223,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(JSGlobalObject& execS
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, JSValue key)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -241,7 +241,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, JSVa
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'get' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -259,7 +259,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, IDBK
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, JSValue key)
 {
     LOG(IndexedDB, "IDBObjectStore::getKey");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -277,7 +277,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, J
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     LOG(IndexedDB, "IDBObjectStore::getKey");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'getKey' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -319,7 +319,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     auto context = scriptExecutionContextFromExecState(&state);
     if (!context)
@@ -389,7 +389,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& exec
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(JSGlobalObject& execState, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::deleteFunction");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
     // the exception for an object store being deleted.
@@ -429,7 +429,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& exec
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(JSGlobalObject& execState)
 {
     LOG(IndexedDB, "IDBObjectStore::clear");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
     // the exception for an object store being deleted.
@@ -451,7 +451,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(JSGlobalObject& execState)
 ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(JSGlobalObject&, const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s (keyPath: %s, unique: %i, multiEntry: %i)", name.utf8().data(), loggingString(keyPath).utf8().data(), parameters.unique, parameters.multiEntry);
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (!m_transaction.isVersionChange())
         return Exception { InvalidStateError, "Failed to execute 'createIndex' on 'IDBObjectStore': The database is not running a version change transaction."_s };
@@ -492,7 +492,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(JSGlobalObject&, const St
 ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
 {
     LOG(IndexedDB, "IDBObjectStore::index");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (!scriptExecutionContext())
         return Exception { InvalidStateError }; // FIXME: Is this code tested? Is iteven reachable?
@@ -524,7 +524,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
 ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
 {
     LOG(IndexedDB, "IDBObjectStore::deleteIndex %s", name.utf8().data());
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'deleteIndex' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -576,7 +576,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(JSGlobalObject& execState, ID
 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(JSGlobalObject& execState, const IDBKeyRangeData& range)
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
     // the exception for an object store being deleted.
@@ -598,7 +598,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(JSGlobalObject& execState, 
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAll(JSGlobalObject& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::getAll");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'getAll' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -635,7 +635,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(JSGlobalObject& execState, J
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllKeys(JSGlobalObject& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::getAllKeys");
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     if (m_deleted)
         return Exception { InvalidStateError, "Failed to execute 'getAllKeys' on 'IDBObjectStore': The object store has been deleted."_s };
@@ -671,13 +671,13 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(JSGlobalObject& execStat
 
 void IDBObjectStore::markAsDeleted()
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
     m_deleted = true;
 }
 
 void IDBObjectStore::rollbackForVersionChangeAbort()
 {
-    ASSERT(&m_transaction.database().originThread() == &Thread::current());
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
     String currentName = m_info.name();
     m_info = m_originalInfo;

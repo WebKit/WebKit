@@ -199,7 +199,7 @@ void initializeWebThread()
     });
 }
 
-bool canAccessThreadLocalDataForThread(Thread& thread)
+bool canCurrentThreadAccessThreadLocalData(Thread& thread)
 {
     Thread& currentThread = Thread::current();
     if (&thread == &currentThread)

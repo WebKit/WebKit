@@ -54,7 +54,7 @@ WTF_EXPORT_PRIVATE void setMainThreadCallbacksPaused(bool paused);
 
 WTF_EXPORT_PRIVATE bool isMainThread();
 
-WTF_EXPORT_PRIVATE bool canAccessThreadLocalDataForThread(Thread&);
+WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
 
 WTF_EXPORT_PRIVATE bool isMainRunLoop();
 WTF_EXPORT_PRIVATE void callOnMainRunLoop(Function<void()>&&);
@@ -83,7 +83,7 @@ using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
 using WTF::callOnMainRunLoop;
 using WTF::callOnMainRunLoopAndWait;
-using WTF::canAccessThreadLocalDataForThread;
+using WTF::canCurrentThreadAccessThreadLocalData;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
 using WTF::isUIThread;

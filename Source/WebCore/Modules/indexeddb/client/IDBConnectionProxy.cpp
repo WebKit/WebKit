@@ -548,6 +548,8 @@ void IDBConnectionProxy::forgetTransaction(IDBTransaction& transaction)
 template<typename KeyType, typename ValueType>
 void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map)
 {
+    // FIXME: Revisit when introducing WebThread aware thread comparison.
+    // https://bugs.webkit.org/show_bug.cgi?id=204345
     auto& currentThread = Thread::current();
 
     Vector<KeyType> keys;
@@ -564,6 +566,8 @@ void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map)
 template<typename KeyType, typename ValueType>
 void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, HashMap<KeyType, ValueType>& map, bool isContextSuspended)
 {
+    // FIXME: Revisit when introducing WebThread aware thread comparison.
+    // https://bugs.webkit.org/show_bug.cgi?id=204345
     auto& currentThread = Thread::current();
     for (auto& iterator : map) {
         if (&iterator.value->originThread() != &currentThread)

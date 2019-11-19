@@ -98,20 +98,20 @@ class Supplementable {
 public:
     void provideSupplement(const char* key, std::unique_ptr<Supplement<T>> supplement)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+        ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
         ASSERT(!m_supplements.get(key));
         m_supplements.set(key, WTFMove(supplement));
     }
 
     void removeSupplement(const char* key)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+        ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
         m_supplements.remove(key);
     }
 
     Supplement<T>* requireSupplement(const char* key)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+        ASSERT(canCurrentThreadAccessThreadLocalData(m_thread.get()));
         return m_supplements.get(key);
     }
 
