@@ -62,10 +62,10 @@ RuleSet* ScopeRuleSets::userAgentMediaQueryStyle() const
 
 void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
 {
-    if (!CSSDefaultStyleSheets::mediaQueryStyleSheet)
+    if (!UserAgentStyle::mediaQueryStyleSheet)
         return;
 
-    auto ruleCount = CSSDefaultStyleSheets::mediaQueryStyleSheet->ruleCount();
+    auto ruleCount = UserAgentStyle::mediaQueryStyleSheet->ruleCount();
     if (m_userAgentMediaQueryStyle && ruleCount == m_userAgentMediaQueryRuleCountOnUpdate)
         return;
     m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
@@ -77,7 +77,7 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
     m_userAgentMediaQueryStyle = makeUnique<RuleSet>();
-    m_userAgentMediaQueryStyle->addRulesFromSheet(*CSSDefaultStyleSheets::mediaQueryStyleSheet, mediaQueryEvaluator, &m_styleResolver);
+    m_userAgentMediaQueryStyle->addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet, mediaQueryEvaluator, &m_styleResolver);
 
     // Viewport dependent queries are currently too inefficient to allow on UA sheet.
     ASSERT(!m_styleResolver.hasViewportDependentMediaQueries() || hadViewportDependentMediaQueries);
@@ -158,9 +158,9 @@ void ScopeRuleSets::collectFeatures() const
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject
     // sharing candidates.
-    if (CSSDefaultStyleSheets::defaultStyle)
-        m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
-    m_defaultStyleVersionOnFeatureCollection = CSSDefaultStyleSheets::defaultStyleVersion;
+    if (UserAgentStyle::defaultStyle)
+        m_features.add(UserAgentStyle::defaultStyle->features());
+    m_defaultStyleVersionOnFeatureCollection = UserAgentStyle::defaultStyleVersion;
 
     if (auto* userAgentMediaQueryStyle = this->userAgentMediaQueryStyle())
         m_features.add(userAgentMediaQueryStyle->features());

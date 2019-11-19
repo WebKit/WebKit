@@ -23,8 +23,6 @@
 
 #include "SelectorFilter.h"
 #include "StyleRule.h"
-#include <wtf/text/AtomString.h>
-#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 namespace Style {

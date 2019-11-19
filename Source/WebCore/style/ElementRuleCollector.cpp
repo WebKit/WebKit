@@ -29,7 +29,6 @@
 #include "config.h"
 #include "ElementRuleCollector.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
@@ -44,6 +43,7 @@
 #include "StyleScope.h"
 #include "StyleScopeRuleSets.h"
 #include "StyledElement.h"
+#include "UserAgentStyle.h"
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -384,15 +384,15 @@ void ElementRuleCollector::matchUserRules()
 void ElementRuleCollector::matchUARules()
 {
     // First we match rules from the user agent sheet.
-    if (CSSDefaultStyleSheets::simpleDefaultStyleSheet)
+    if (UserAgentStyle::simpleDefaultStyleSheet)
         m_result.isCacheable = false;
     auto* userAgentStyleSheet = m_isPrintStyle
-        ? CSSDefaultStyleSheets::defaultPrintStyle : CSSDefaultStyleSheets::defaultStyle;
+        ? UserAgentStyle::defaultPrintStyle : UserAgentStyle::defaultStyle;
     matchUARules(*userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (element().document().inQuirksMode())
-        matchUARules(*CSSDefaultStyleSheets::defaultQuirksStyle);
+        matchUARules(*UserAgentStyle::defaultQuirksStyle);
 
     if (m_userAgentMediaQueryStyle)
         matchUARules(*m_userAgentMediaQueryStyle);

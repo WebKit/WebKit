@@ -28,14 +28,14 @@ class Element;
 class StyleSheetContents;
 
 namespace Style {
-class RuleSet;
-}
 
-class CSSDefaultStyleSheets {
+class RuleSet;
+
+class UserAgentStyle {
 public:
-    static Style::RuleSet* defaultStyle;
-    static Style::RuleSet* defaultQuirksStyle;
-    static Style::RuleSet* defaultPrintStyle;
+    static RuleSet* defaultStyle;
+    static RuleSet* defaultQuirksStyle;
+    static RuleSet* defaultPrintStyle;
     static unsigned defaultStyleVersion;
 
     static StyleSheetContents* simpleDefaultStyleSheet;
@@ -65,4 +65,5 @@ private:
     static void addToDefaultStyle(StyleSheetContents&);
 };
 
+} // namespace Style
 } // namespace WebCore

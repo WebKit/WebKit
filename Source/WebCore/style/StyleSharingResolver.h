@@ -33,13 +33,13 @@ class Document;
 class Element;
 class Node;
 class RenderStyle;
-class RuleSet;
 class SelectorFilter;
 class SpaceSplitString;
 class StyledElement;
 
 namespace Style {
 
+class RuleSet;
 class ScopeRuleSets;
 class Update;
 

@@ -36,8 +36,8 @@ class StyleRule;
 class StyleSheetContents;
 
 namespace Style {
+
 class Scope;
-}
 
 class InspectorCSSOMWrappers {
 public:
@@ -46,7 +46,7 @@ public:
     CSSStyleRule* getWrapperForRuleInSheets(StyleRule*);
     void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
     void collectDocumentWrappers(ExtensionStyleSheets&);
-    void collectScopeWrappers(Style::Scope&);
+    void collectScopeWrappers(Scope&);
 
 private:
     template <class ListType>
@@ -60,4 +60,5 @@ private:
     HashSet<RefPtr<CSSStyleSheet>> m_styleSheetCSSOMWrapperSet;
 };
 
+} // namespace Style
 } // namespace WebCore

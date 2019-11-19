@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ProcessWarming.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "CommonVM.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -38,6 +37,7 @@
 #include "SVGNames.h"
 #include "Settings.h"
 #include "TelephoneNumberDetector.h"
+#include "UserAgentStyle.h"
 #include "WebKitFontFamilyNames.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -67,7 +67,7 @@ void ProcessWarming::prewarmGlobally()
     Settings::create(nullptr);
     
     // Prewarms user agent stylesheet.
-    CSSDefaultStyleSheets::loadFullDefaultStyle();
+    Style::UserAgentStyle::loadFullDefaultStyle();
     
     // Prewarms JS VM.
     commonVM();

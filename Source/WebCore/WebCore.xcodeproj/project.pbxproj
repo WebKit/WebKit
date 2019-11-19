@@ -1322,7 +1322,7 @@
 		4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A5A2ADA161E7E00005889DD /* WebSocketExtensionParser.h */; };
 		4A6E9FC413C17D1D0046A7F8 /* CSSFontFeatureValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC213C17D1D0046A7F8 /* CSSFontFeatureValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A6E9FC813C17D570046A7F8 /* FontTaggedSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC613C17D570046A7F8 /* FontTaggedSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4A9CC81816BB9AC600EC645A /* CSSDefaultStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A9CC81616BB9AC600EC645A /* CSSDefaultStyleSheets.h */; };
+		4A9CC81816BB9AC600EC645A /* UserAgentStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A9CC81616BB9AC600EC645A /* UserAgentStyle.h */; };
 		4A9CC82116BF9BB400EC645A /* InspectorCSSOMWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */; };
 		4AD01009127E642A0015035F /* HTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD01006127E642A0015035F /* HTMLOutputElement.h */; };
 		4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0173B127E82860015035F /* JSHTMLOutputElement.h */; };
@@ -7894,8 +7894,8 @@
 		4A6E9FC513C17D570046A7F8 /* FontTaggedSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontTaggedSettings.cpp; sourceTree = "<group>"; };
 		4A6E9FC613C17D570046A7F8 /* FontTaggedSettings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = FontTaggedSettings.h; sourceTree = "<group>"; };
 		4A8C96EA0BE69032004EEFF0 /* FrameSelectionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameSelectionMac.mm; sourceTree = "<group>"; };
-		4A9CC81516BB9AC600EC645A /* CSSDefaultStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSDefaultStyleSheets.cpp; sourceTree = "<group>"; };
-		4A9CC81616BB9AC600EC645A /* CSSDefaultStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSDefaultStyleSheets.h; sourceTree = "<group>"; };
+		4A9CC81516BB9AC600EC645A /* UserAgentStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyle.cpp; sourceTree = "<group>"; };
+		4A9CC81616BB9AC600EC645A /* UserAgentStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgentStyle.h; sourceTree = "<group>"; };
 		4A9CC81E16BF9BB400EC645A /* InspectorCSSOMWrappers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCSSOMWrappers.cpp; sourceTree = "<group>"; };
 		4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSOMWrappers.h; sourceTree = "<group>"; };
 		4AD01005127E642A0015035F /* HTMLOutputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOutputElement.cpp; sourceTree = "<group>"; };
@@ -27028,6 +27028,8 @@
 				E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */,
 				1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */,
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
+				4A9CC81E16BF9BB400EC645A /* InspectorCSSOMWrappers.cpp */,
+				4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */,
 				E45BA6AB2374927B004DFC07 /* MatchedDeclarationsCache.cpp */,
 				E45BA6A82374926B004DFC07 /* MatchedDeclarationsCache.h */,
 				FBDB619C16D6034600BB3394 /* PageRuleCollector.cpp */,
@@ -27075,6 +27077,8 @@
 				E42E76D91C7AF76C00E3614D /* StyleUpdate.cpp */,
 				E42E76DB1C7AF77600E3614D /* StyleUpdate.h */,
 				E48137B81DB3B526005C59BF /* StyleValidity.h */,
+				4A9CC81516BB9AC600EC645A /* UserAgentStyle.cpp */,
+				4A9CC81616BB9AC600EC645A /* UserAgentStyle.h */,
 			);
 			path = style;
 			sourceTree = "<group>";
@@ -27210,8 +27214,6 @@
 				9444CBE11D8861580073A074 /* CSSCustomIdentValue.h */,
 				94D4AC611DC24C810080F02D /* CSSCustomPropertyValue.cpp */,
 				BC779E131BB215BB00CAA8BF /* CSSCustomPropertyValue.h */,
-				4A9CC81516BB9AC600EC645A /* CSSDefaultStyleSheets.cpp */,
-				4A9CC81616BB9AC600EC645A /* CSSDefaultStyleSheets.h */,
 				FB965B8217BBB62C00E835B9 /* CSSFilterImageValue.cpp */,
 				FB965B8117BBB5F900E835B9 /* CSSFilterImageValue.h */,
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
@@ -27408,8 +27410,6 @@
 				C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */,
 				CD4E0AFA11F7BC27009D3811 /* fullscreen.css */,
 				93CA4C9909DF93FA00DF8677 /* html.css */,
-				4A9CC81E16BF9BB400EC645A /* InspectorCSSOMWrappers.cpp */,
-				4A9CC81F16BF9BB400EC645A /* InspectorCSSOMWrappers.h */,
 				E55F4979151B888000BB67DB /* LengthFunctions.cpp */,
 				E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
@@ -29315,7 +29315,7 @@
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				9444CBE41D8861990073A074 /* CSSCustomIdentValue.h in Headers */,
 				BC779E141BB215BB00CAA8BF /* CSSCustomPropertyValue.h in Headers */,
-				4A9CC81816BB9AC600EC645A /* CSSDefaultStyleSheets.h in Headers */,
+				4A9CC81816BB9AC600EC645A /* UserAgentStyle.h in Headers */,
 				94476BDB1DFCAC0300690E23 /* CSSDeferredParser.h in Headers */,
 				FBB0C5B817BBD629003D3677 /* CSSFilterImageValue.h in Headers */,
 				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,

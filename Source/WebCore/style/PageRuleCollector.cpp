@@ -29,9 +29,9 @@
 #include "config.h"
 #include "PageRuleCollector.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include "UserAgentStyle.h"
 
 namespace WebCore {
 namespace Style {
@@ -68,7 +68,7 @@ void PageRuleCollector::matchAllPageRules(int pageIndex)
     const bool isFirst = isFirstPage(pageIndex);
     const String page = pageName(pageIndex);
     
-    matchPageRules(CSSDefaultStyleSheets::defaultPrintStyle, isLeft, isFirst, page);
+    matchPageRules(UserAgentStyle::defaultPrintStyle, isLeft, isFirst, page);
     matchPageRules(m_ruleSets.userStyle(), isLeft, isFirst, page);
     // Only consider the global author RuleSet for @page rules, as per the HTML5 spec.
     if (m_ruleSets.isAuthorStyleDefined())

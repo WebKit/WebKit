@@ -30,7 +30,6 @@
 #include "config.h"
 #include "StyleResolver.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
@@ -71,7 +70,7 @@
 #include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
-#include "UserAgentStyleSheets.h"
+#include "UserAgentStyle.h"
 #include "ViewportStyleResolver.h"
 #include "VisitedLinkState.h"
 #include "WebKitFontFamilyNames.h"
@@ -95,7 +94,7 @@ Resolver::Resolver(Document& document)
 {
     Element* root = m_document.documentElement();
 
-    CSSDefaultStyleSheets::initDefaultStyle(root);
+    UserAgentStyle::initDefaultStyle(root);
 
     // construct document root element default style. this is needed
     // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
@@ -236,7 +235,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle
         style.setInsideLink(linkState);
     }
 
-    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
+    UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
     ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
     collector.setMedium(&m_mediaQueryEvaluator);

@@ -24,7 +24,6 @@
 #include "RuleData.h"
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
-#include "SelectorFilter.h"
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

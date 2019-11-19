@@ -29,7 +29,6 @@
 #include "config.h"
 #include "InspectorCSSOMWrappers.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSRule.h"
@@ -39,8 +38,10 @@
 #include "ExtensionStyleSheets.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "UserAgentStyle.h"
 
 namespace WebCore {
+namespace Style {
 
 void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet* styleSheet)
 {
@@ -103,21 +104,21 @@ void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<RefPtr<CSS
 void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::simpleDefaultStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::defaultStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::quirksStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::svgStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::mathMLStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaControlsStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::fullscreenStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::simpleDefaultStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::mediaControlsStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet);
 #if ENABLE(DATALIST_ELEMENT)
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::dataListStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::dataListStyleSheet);
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::colorInputStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::colorInputStyleSheet);
 #endif
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::plugInsStyleSheet);
-        collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaQueryStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::plugInsStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::mediaQueryStyleSheet);
 
         collect(extensionStyleSheets.pageUserSheet());
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
@@ -125,7 +126,7 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
     }
 }
 
-void InspectorCSSOMWrappers::collectScopeWrappers(Style::Scope& styleScope)
+void InspectorCSSOMWrappers::collectScopeWrappers(Scope& styleScope)
 {
     maybeCollectFromStyleSheets(styleScope.activeStyleSheets());
 }
@@ -135,4 +136,5 @@ CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule)
     return m_styleRuleToCSSOMWrapperMap.get(rule);
 }
 
+} // namespace Style
 } // namespace WebCore

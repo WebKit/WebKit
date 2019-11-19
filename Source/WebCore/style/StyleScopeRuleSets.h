@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "CSSDefaultStyleSheets.h"
 #include "RuleFeature.h"
 #include "RuleSet.h"
+#include "UserAgentStyle.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -113,7 +113,7 @@ private:
 
 inline const RuleFeatureSet& ScopeRuleSets::features() const
 {
-    if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
+    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
         collectFeatures();
     return m_features;
 }
@@ -121,7 +121,7 @@ inline const RuleFeatureSet& ScopeRuleSets::features() const
 // FIXME: There should be just the const version.
 inline RuleFeatureSet& ScopeRuleSets::mutableFeatures()
 {
-    if (m_defaultStyleVersionOnFeatureCollection < CSSDefaultStyleSheets::defaultStyleVersion)
+    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
         collectFeatures();
     return m_features;
 }

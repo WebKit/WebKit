@@ -682,7 +682,6 @@ css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
 css/CSSCustomIdentValue.cpp
 css/CSSCustomPropertyValue.cpp
-css/CSSDefaultStyleSheets.cpp
 css/CSSFilterImageValue.cpp
 css/FontFaceSet.cpp
 css/FontFace.cpp
@@ -756,7 +755,6 @@ css/DeprecatedCSSOMPrimitiveValue.cpp
 css/DeprecatedCSSOMValue.cpp
 css/DeprecatedCSSOMValueList.cpp
 css/FontVariantBuilder.cpp
-css/InspectorCSSOMWrappers.cpp
 css/LengthFunctions.cpp
 css/MediaFeatureNames.cpp
 css/MediaList.cpp
@@ -2341,6 +2339,7 @@ style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
+style/InspectorCSSOMWrappers.cpp
 style/MatchedDeclarationsCache.cpp
 style/PageRuleCollector.cpp
 style/PropertyCascade.cpp
@@ -2362,6 +2361,7 @@ style/StyleScopeRuleSets.cpp
 style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
+style/UserAgentStyle.cpp
 
 svg/SVGAElement.cpp
 svg/SVGAltGlyphDefElement.cpp
