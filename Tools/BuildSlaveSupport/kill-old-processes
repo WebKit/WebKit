@@ -122,6 +122,7 @@ def main(user=None):
     # This allows to specify on the environment of the bot a list of process that should be killed.
     tasksToKill = os.getenv("WEBKITBOT_TASKSTOKILL", "").split()
     if sys.platform == 'darwin':
+        os.system("ps aux")
         for task in tasksToKill + tasksToKillMac:
             os.system("killall -9 -v -m " + task)
         # Shutdown any simulators
@@ -135,6 +136,7 @@ def main(user=None):
         for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
     elif sys.platform.startswith('linux'):
+        os.system("ps aux")
         builddir_bin = "WebKitBuild/Release/bin" if os.path.isdir("WebKitBuild/Release/bin") else "WebKitBuild/Debug/bin"
         for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
