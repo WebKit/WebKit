@@ -55,6 +55,17 @@
         * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-expected.txt:
             Removed the lastSeen output since it may differ between test runs.
 
+2019-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r252598): system-preview/badge.html and transforms/2d/zoom-menulist.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=204383
+
+        Unreviewed test gardening: adjust these tests for the different color component
+        rounding introduced in r252598.
+
+        * platform/ios/transforms/2d/zoom-menulist-expected.txt:
+        * system-preview/badge-expected.html:
+
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
         Update expectations for bufferedAmount-unchanged-by-sync-xhr.any.worker.html
