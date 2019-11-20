@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DisallowScope.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 
 namespace JSC {
@@ -47,20 +48,20 @@ public:
 
     static void initialize()
     {
-        WTF::threadSpecificKeyCreate(&s_scopeReentryCount, 0);
+        s_scopeReentryCount.construct();
     }
 
 private:
-    static uintptr_t scopeReentryCount()
+    static unsigned scopeReentryCount()
     {
-        return reinterpret_cast<uintptr_t>(WTF::threadSpecificGet(s_scopeReentryCount));
+        return *s_scopeReentryCount.get();
     }
-    static void setScopeReentryCount(uintptr_t value)
+    static void setScopeReentryCount(unsigned value)
     {
-        WTF::threadSpecificSet(s_scopeReentryCount, reinterpret_cast<void*>(value));
+        *s_scopeReentryCount.get() = value;
     }
 
-    JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_scopeReentryCount;
+    JS_EXPORT_PRIVATE static LazyNeverDestroyed<ThreadSpecific<unsigned, WTF::CanBeGCThread::True>> s_scopeReentryCount;
 
 #endif // NDEBUG
 

@@ -31,7 +31,7 @@
 namespace JSC {
 
 #ifndef NDEBUG
-WTF::ThreadSpecificKey DisallowGC::s_scopeReentryCount = 0;
+LazyNeverDestroyed<ThreadSpecific<unsigned, WTF::CanBeGCThread::True>> DisallowGC::s_scopeReentryCount;
 #endif
 
 } // namespace JSC

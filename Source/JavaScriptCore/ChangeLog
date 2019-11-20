@@ -1,3 +1,26 @@
+2019-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [JSC] DisallowVMReentry and DeferGC should use WTF::ThreadSpecific instead of using WTF::threadSpecificKeyCreate directly
+        https://bugs.webkit.org/show_bug.cgi?id=204350
+
+        Reviewed by Yusuke Suzuki.
+
+        WTF provides two thread specific storages, ThreadSpecific and
+        threadSpecificKeyCreate. Only DisallowVMReentry and DeferGC were
+        using the latter. They should use WTF::ThreadSpecific because it
+        is a useful type-safe wrapper class.
+
+        * heap/DeferGC.cpp:
+        * heap/DeferGC.h:
+        (JSC::DisallowGC::initialize):
+        (JSC::DisallowGC::scopeReentryCount):
+        (JSC::DisallowGC::setScopeReentryCount):
+        * runtime/DisallowVMReentry.cpp:
+        * runtime/DisallowVMReentry.h:
+        (JSC::DisallowVMReentry::initialize):
+        (JSC::DisallowVMReentry::scopeReentryCount):
+        (JSC::DisallowVMReentry::setScopeReentryCount):
+
 2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Work-around Leaks' false-positive report about memory leaking
