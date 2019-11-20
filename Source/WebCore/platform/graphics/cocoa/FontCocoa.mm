@@ -113,6 +113,11 @@ static bool needsAscentAdjustment(CFStringRef familyName)
 
 #endif
 
+static bool isAhemFont(CFStringRef familyName)
+{
+    return familyName && caseInsensitiveCompare(familyName, CFSTR("Ahem"));
+}
+
 void Font::platformInit()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -141,6 +146,11 @@ void Font::platformInit()
     }
 
     auto familyName = adoptCF(CTFontCopyFamilyName(m_platformData.font()));
+
+    // Disable antialiasing when rendering with Ahem because many tests require this.
+    if (isAhemFont(familyName.get()))
+        m_allowsAntialiasing = false;
+
 #if PLATFORM(MAC)
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto

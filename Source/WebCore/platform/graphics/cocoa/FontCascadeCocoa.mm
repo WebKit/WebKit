@@ -209,6 +209,9 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     bool shouldAntialias = true;
     bool shouldSmoothFonts = true;
     
+    if (!font.allowsAntialiasing())
+        smoothingMode = FontSmoothingMode::NoSmoothing;
+
     switch (smoothingMode) {
     case FontSmoothingMode::Antialiased:
         shouldSmoothFonts = false;

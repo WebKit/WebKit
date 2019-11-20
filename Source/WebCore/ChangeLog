@@ -1,3 +1,28 @@
+2019-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn off antialiasing when rendering with Ahem, for testing
+        https://bugs.webkit.org/show_bug.cgi?id=204197
+        <rdar://problem/57190712>
+
+        Reviewed by Myles C. Maxfield.
+
+        If the font family name matches "Ahem", turn off antialiasing when rendering text,
+        because many CSS tests assume that Ahem glyphs can be compared with positioned elements
+        in ref tests.
+
+        Since Ahem is a font only used for testing, I don't think this behavior needs to be
+        controlled by a setting.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        * platform/graphics/Font.h:
+        (WebCore::Font::allowsAntialiasing const):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::isAhemFont):
+        (WebCore::Font::platformInit):
+
 2019-11-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Cache InlinteTextItem width when possible

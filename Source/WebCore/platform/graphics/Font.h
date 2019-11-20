@@ -183,6 +183,7 @@ public:
     Origin origin() const { return m_origin; }
     bool isInterstitial() const { return m_isInterstitial; }
     Visibility visibility() const { return m_visibility; }
+    bool allowsAntialiasing() const { return m_allowsAntialiasing; }
 
 #if !LOG_DISABLED
     String description() const;
@@ -310,6 +311,8 @@ private:
     unsigned m_hasVerticalGlyphs : 1;
 
     unsigned m_isUsedInSystemFallbackCache : 1;
+    
+    unsigned m_allowsAntialiasing : 1;
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;

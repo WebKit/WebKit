@@ -1873,10 +1873,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-child-002.xht
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
 imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html [ ImageOnlyFailure ]
@@ -1901,21 +1897,14 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ] 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ] 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ] 
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-002.xht [ ImageOnlyFailure ]
 webkit.org/b/148816 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-color-inherit-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-px-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-shorthand-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html
@@ -1923,13 +1912,10 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-child-001.xht
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-005.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-008.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-bottom-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-none-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html
@@ -2299,26 +2285,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-011.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-ic-002.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-ic-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-004.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-005.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-006.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-007.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-008.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-009.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-010.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-014.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-015.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-016.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-017.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-004.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-005.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-002.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-003.html [ ImageOnlyFailure ]
@@ -2327,20 +2293,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-006.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-010.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-011.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-004.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-005.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-006.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-007.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-008.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-009.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-010.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-014.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-001.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure Pass ]
