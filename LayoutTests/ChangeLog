@@ -1,3 +1,9 @@
+2019-11-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/events/touch/ios/long-press-on-link.html times out after r251693
