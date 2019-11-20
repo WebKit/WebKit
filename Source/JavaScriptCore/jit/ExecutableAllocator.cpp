@@ -414,10 +414,14 @@ FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
     m_reservation.deallocate();
 }
 
+// Keep this pointer in a mutable global variable to help Leaks find it.
+// But we do not use this pointer.
+static FixedVMPoolExecutableAllocator* globalFixedVMPoolExecutableAllocatorToWorkAroundLeaks = nullptr;
 void ExecutableAllocator::initializeUnderlyingAllocator()
 {
     RELEASE_ASSERT(!g_jscConfig.fixedVMPoolExecutableAllocator);
     g_jscConfig.fixedVMPoolExecutableAllocator = new FixedVMPoolExecutableAllocator();
+    globalFixedVMPoolExecutableAllocatorToWorkAroundLeaks = g_jscConfig.fixedVMPoolExecutableAllocator;
     CodeProfiling::notifyAllocator(g_jscConfig.fixedVMPoolExecutableAllocator);
 }
 
@@ -642,9 +646,13 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
 namespace JSC {
 
+// Keep this pointer in a mutable global variable to help Leaks find it.
+// But we do not use this pointer.
+static ExecutableAllocator* globalExecutableAllocatorToWorkAroundLeaks = nullptr;
 void ExecutableAllocator::initialize()
 {
     g_jscConfig.executableAllocator = new ExecutableAllocator;
+    globalExecutableAllocatorToWorkAroundLeaks = g_jscConfig.executableAllocator;
 }
 
 ExecutableAllocator& ExecutableAllocator::singleton()

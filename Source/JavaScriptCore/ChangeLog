@@ -1,3 +1,21 @@
+2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Work-around Leaks' false-positive report about memory leaking
+        https://bugs.webkit.org/show_bug.cgi?id=204384
+        <rdar://problem/56950932>
+
+        Reviewed by Mark Lam.
+
+        According to the radar, Leaks start reporting false-positive memory leaks about ExecutableAllocator and FixedVMPoolExecutableAllocator,
+        while they are per-process singleton and reachable through g_jscConfig. I'm guessing this is because Leaks start skipping scan for
+        readonly memory region. (g_jscConfig is now mprotected to readonly).
+
+        To work-around this, we anchor these heap allocated things to global variables to help Leaks scan. Once it is fixed, we should remove it.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::initializeUnderlyingAllocator):
+        (JSC::ExecutableAllocator::initialize):
+
 2019-11-18  Mark Lam  <mark.lam@apple.com>
 
         Always enable Optional<OptionsStorage::Size> parse(const char* string) for OS(DARWIN).
