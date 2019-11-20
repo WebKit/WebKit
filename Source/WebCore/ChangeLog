@@ -1,3 +1,15 @@
+2019-11-19  Peng Liu  <peng.liu6@apple.com>
+
+        Assertion failure in HTMLMediaElement::enterFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=204376
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-set-presentation-mode-to-inline.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: pass along error of IDBBackingStore operations

@@ -474,8 +474,10 @@ void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenM
     }
 #endif
 
-    if (mode == VideoFullscreenModeNone && isFullscreen()) {
-        exitFullscreen();
+    if (mode == VideoFullscreenModeNone) {
+        if (isFullscreen())
+            exitFullscreen();
+
         return;
     }
 
