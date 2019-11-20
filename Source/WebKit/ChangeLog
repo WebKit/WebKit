@@ -1,3 +1,19 @@
+2019-11-20  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Make sure WebContent process does not get suspended while it is holding a process assertion for the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204418
+
+        Reviewed by Jer Noble.
+
+        Make sure WebContent process does not get suspended while it is holding a process assertion for the UIProcess. We
+        see this happening in sysdiagnoses, and it means the system ends up killing the WebContent process because it leaked
+        a process assertion.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+        (WebKit::WebProcess::releaseProcessWasResumedAssertions):
+
 2019-11-19  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Add _WKRemoteWebInspectorViewController SPI to set diagnostic logging delegate
