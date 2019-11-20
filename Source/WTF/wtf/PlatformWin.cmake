@@ -21,7 +21,6 @@ list(APPEND WTF_SOURCES
     win/OSAllocatorWin.cpp
     win/PathWalker.cpp
     win/RunLoopWin.cpp
-    win/ThreadSpecificWin.cpp
     win/ThreadingWin.cpp
     win/WorkQueueWin.cpp
 )

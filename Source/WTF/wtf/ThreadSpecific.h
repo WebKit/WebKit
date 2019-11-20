@@ -100,12 +100,12 @@ private:
     T* get();
     T* set();
     void setInTLS(Data*);
-    void static THREAD_SPECIFIC_CALL destroy(void* ptr);
+    void static destroy(void* ptr);
 
 #if USE(PTHREADS)
     pthread_key_t m_key { };
 #elif OS(WINDOWS)
-    int m_index;
+    int m_key;
 #endif
 };
 
@@ -136,47 +136,28 @@ inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 
 #elif OS(WINDOWS)
 
-// The maximum number of FLS keys that can be created. For simplification, we assume that:
-// 1) Once the instance of ThreadSpecific<> is created, it will not be destructed until the program dies.
-// 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.
-static constexpr int maxFlsKeySize = 128;
-
-WTF_EXPORT_PRIVATE long& flsKeyCount();
-WTF_EXPORT_PRIVATE DWORD* flsKeys();
-
 template<typename T, CanBeGCThread canBeGCThread>
 inline ThreadSpecific<T, canBeGCThread>::ThreadSpecific()
-    : m_index(-1)
+    : m_key(-1)
 {
-    DWORD flsKey = FlsAlloc(destroy);
-    if (flsKey == FLS_OUT_OF_INDEXES)
+    bool ok = Thread::SpecificStorage::allocateKey(m_key, destroy);
+    if (!ok)
         CRASH();
-
-    m_index = InterlockedIncrement(&flsKeyCount()) - 1;
-    if (m_index >= maxFlsKeySize)
-        CRASH();
-    flsKeys()[m_index] = flsKey;
-}
-
-template<typename T, CanBeGCThread canBeGCThread>
-inline ThreadSpecific<T, canBeGCThread>::~ThreadSpecific()
-{
-    FlsFree(flsKeys()[m_index]);
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
 inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
-    Data* data = static_cast<Data*>(FlsGetValue(flsKeys()[m_index]));
-    if (data)
-        return data->storagePointer();
-    return nullptr;
+    auto data = static_cast<Data*>(Thread::current().specificStorage().get(m_key));
+    if (!data)
+        return nullptr;
+    return data->storagePointer();
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
 inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 {
-    FlsSetValue(flsKeys()[m_index], data);
+    return Thread::current().specificStorage().set(m_key, data);
 }
 
 #else
@@ -184,7 +165,7 @@ inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 #endif
 
 template<typename T, CanBeGCThread canBeGCThread>
-inline void THREAD_SPECIFIC_CALL ThreadSpecific<T, canBeGCThread>::destroy(void* ptr)
+inline void ThreadSpecific<T, canBeGCThread>::destroy(void* ptr)
 {
     Data* data = static_cast<Data*>(ptr);
 

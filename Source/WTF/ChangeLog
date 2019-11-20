@@ -1,3 +1,42 @@
+2019-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Implement WTF::ThreadSpecific in WTF::Thread
+        https://bugs.webkit.org/show_bug.cgi?id=204341
+
+        Reviewed by Brent Fulgham and Yusuke Suzuki.
+
+        Thread::destructTLS had a tricky code to defer destroying
+        WTF::Thread in TLS in order to ensure WTF::Thread is destructed
+        after other ThreadSpecific are destructed, which is a part of
+        cause of nasty hanging issue in the process termination (Bug 204192).
+
+        This change implements WTF::ThreadSpecific in WTF::Thread by
+        adding a new class Thread::SpecificStorage to manage TLS. Simplify
+        Thread::destructTLS. Remove threadMapMutex in ThreadingWin.cpp
+
+        * wtf/PlatformWin.cmake:
+        * wtf/ThreadSpecific.h:
+        (WTF::canBeGCThread>::ThreadSpecific):
+        (WTF::canBeGCThread>::get):
+        (WTF::canBeGCThread>::setInTLS):
+        (WTF::canBeGCThread>::destroy):
+        (WTF::canBeGCThread>::~ThreadSpecific): Deleted.
+        * wtf/Threading.h:
+        (WTF::Thread::specificStorage):
+        (WTF::Thread::current):
+        * wtf/win/ThreadSpecificWin.cpp: Removed.
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::initializeTLSKey):
+        (WTF::Thread::initializeTLS):
+        (WTF::Thread::destructTLS):
+        (WTF::Thread::SpecificStorage::allocateKey):
+        (WTF::Thread::SpecificStorage::get):
+        (WTF::Thread::SpecificStorage::set):
+        (WTF::Thread::SpecificStorage::destroySlots):
+        (): Deleted.
+        (WTF::Thread::currentDying): Deleted.
+        (WTF::Thread::get): Deleted.
+
 2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Implement String.prototype.replaceAll

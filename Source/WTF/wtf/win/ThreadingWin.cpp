@@ -265,35 +265,9 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
 
 #define InvalidThread reinterpret_cast<Thread*>(static_cast<uintptr_t>(0xbbadbeef))
 
-static WordLock threadMapMutex;
-
-static HashMap<ThreadIdentifier, Thread*>& threadMap()
-{
-    static NeverDestroyed<HashMap<ThreadIdentifier, Thread*>> map;
-    return map.get();
-}
-
 void Thread::initializeTLSKey()
 {
-    threadMap();
     threadSpecificKeyCreate(&s_key, destructTLS);
-}
-
-Thread* Thread::currentDying()
-{
-    ASSERT(s_key != InvalidThreadSpecificKey);
-    // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
-    auto locker = holdLock(threadMapMutex);
-    return threadMap().get(currentID());
-}
-
-RefPtr<Thread> Thread::get(ThreadIdentifier id)
-{
-    auto locker = holdLock(threadMapMutex);
-    Thread* thread = threadMap().get(id);
-    if (thread)
-        return thread;
-    return nullptr;
 }
 
 Thread& Thread::initializeTLS(Ref<Thread>&& thread)
@@ -304,10 +278,6 @@ Thread& Thread::initializeTLS(Ref<Thread>&& thread)
     // We leak the ref to keep the Thread alive while it is held in TLS. destructTLS will deref it later at thread destruction time.
     auto& threadInTLS = thread.leakRef();
     threadSpecificSet(s_key, &threadInTLS);
-    {
-        auto locker = holdLock(threadMapMutex);
-        threadMap().add(id, &threadInTLS);
-    }
     return threadInTLS;
 }
 
@@ -319,41 +289,51 @@ void Thread::destructTLS(void* data)
     Thread* thread = static_cast<Thread*>(data);
     ASSERT(thread);
 
-    // Delay the deallocation of Thread more.
-    // It defers Thread deallocation after the other ThreadSpecific values are deallocated.
-    static thread_local class ThreadExitCallback {
-    public:
-        ThreadExitCallback(Thread* thread)
-            : m_thread(thread)
-        {
-        }
+    thread->specificStorage().destroySlots();
+    thread->didExit();
+    thread->deref();
 
-        ~ThreadExitCallback()
-        {
-            Thread::destructTLS(m_thread);
-        }
-
-    private:
-        Thread* m_thread;
-    } callback(thread);
-
-    if (thread->m_isDestroyedOnce) {
-        {
-            auto locker = holdLock(threadMapMutex);
-            ASSERT(threadMap().contains(thread->id()));
-            threadMap().remove(thread->id());
-        }
-        thread->didExit();
-        thread->deref();
-
-        // Fill the FLS with the non-nullptr value. While FLS destructor won't be called for that,
-        // non-nullptr value tells us that we already destructed Thread. This allows us to
-        // detect incorrect use of Thread::current() after this point because it will crash.
-        threadSpecificSet(s_key, InvalidThread);
-        return;
-    }
+    // Fill the FLS with the non-nullptr value. While FLS destructor won't be called for that,
+    // non-nullptr value tells us that we already destructed Thread. This allows us to
+    // detect incorrect use of Thread::current() after this point because it will crash.
     threadSpecificSet(s_key, InvalidThread);
-    thread->m_isDestroyedOnce = true;
+}
+
+Atomic<int> Thread::SpecificStorage::s_numberOfKeys;
+std::array<Atomic<Thread::SpecificStorage::DestroyFunction>, Thread::SpecificStorage::s_maxKeys> Thread::SpecificStorage::s_destroyFunctions;
+
+bool Thread::SpecificStorage::allocateKey(int& key, DestroyFunction destroy)
+{
+    int k = s_numberOfKeys.exchangeAdd(1);
+    if (k >= s_maxKeys) {
+        s_numberOfKeys.exchangeSub(1);
+        return false;
+    }
+    key = k;
+    s_destroyFunctions[key].store(destroy);
+    return true;
+}
+
+void* Thread::SpecificStorage::get(int key)
+{
+    return m_slots[key];
+}
+
+void Thread::SpecificStorage::set(int key, void* value)
+{
+    m_slots[key] = value;
+}
+
+void Thread::SpecificStorage::destroySlots()
+{
+    auto numberOfKeys = s_numberOfKeys.load();
+    for (size_t i = 0; i < numberOfKeys; i++) {
+        auto destroy = s_destroyFunctions[i].load();
+        if (destroy && m_slots[i]) {
+            destroy(m_slots[i]);
+            m_slots[i] = nullptr;
+        }
+    }
 }
 
 Mutex::~Mutex()
