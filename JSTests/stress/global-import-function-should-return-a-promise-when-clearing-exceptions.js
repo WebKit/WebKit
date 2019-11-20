@@ -1,5 +1,3 @@
-// Skip on mips until https://bugs.webkit.org/show_bug.cgi?id=203737 is fixed.
-//@ skip if $architecture == "mips"
 //@ requireOptions("--maxPerThreadStackUsage=300000", "--exceptionStackTraceLimit=0", "--defaultErrorStackTraceLimit=0")
 
 function bar(v) {

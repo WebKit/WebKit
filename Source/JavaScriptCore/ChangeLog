@@ -1,3 +1,36 @@
+2019-11-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] OSR exit to LLInt is broken on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=203737
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adjusting the OSR to LLInt mechanism to MIPS. When we
+        use PIC on this architecture, we need to properly configure `$gp`
+        at some places to be able to access global variables. This is required
+        on LLInt to access Global Offset Table (got). According to MIPS ABI,
+        the `$gp` can be recalculated during function prologue using caller
+        register `$t9`. We also emit such instructions (we can see this as 
+        `OFFLINE_ASM_CPLOAD` macro) immediately after a non-local label on
+        LLInt. With the introduction of OSR to LLInt mechanism, we now have
+        return location labels that are reached from `ret` LLInt instructions.
+        Such return locations are used to properly return to LLInt execution
+        whenever an OSR exits from inlined call on DFG or FTL to LLInt. When
+        OSR is materializing LLInt stack frames for inlined functions (or
+        accessors), it sets return address to its return location label.
+        This means that for such labels, we need to adjust `$gp`
+        using `$ra` instead of `$t9`, given that LLInt `ret` operation uses
+        `jr $ra` to jump the execution to there.
+        To implement this, we changed `mipsAddPICCode` to emit code
+        using the correct register required to recalculate `$gp`.
+        We also changed `callTargetFunction` to use the stubs as return
+        location points, since the declaration of global labels will emmit
+        `OFFLINE_ASM_CPLOAD($ra)` and we don't want to execute it during
+        normal LLInt execution.
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/mips.rb:
+
 2019-11-20  Robin Morisset  <rmorisset@apple.com>
 
         Fix load<16> on ARM64

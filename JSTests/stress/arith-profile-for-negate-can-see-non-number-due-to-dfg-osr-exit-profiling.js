@@ -1,5 +1,3 @@
-//@ skip if $architecture == "mips"
-
 function runNearStackLimit(f) {
     try {
         return t();

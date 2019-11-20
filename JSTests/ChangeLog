@@ -1,3 +1,25 @@
+2019-11-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] OSR exit to LLInt is broken on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=203737
+
+        Reviewed by Yusuke Suzuki.
+
+        Unskipping broken tests due to OSR to LLInt bug.
+
+        * microbenchmarks/call-spread-call.js:
+        * microbenchmarks/throw.js:
+        * stress/allocation-sinking-hints-are-valid-ssa-2.js:
+        * stress/allocation-sinking-hints-are-valid-ssa.js:
+        * stress/arith-profile-for-negate-can-see-non-number-due-to-dfg-osr-exit-profiling.js:
+        * stress/arrowfunction-lexical-bind-supercall-4.js:
+        * stress/arrowfunction-tdz-3.js:
+        * stress/function-constructor-semantics.js:
+        * stress/global-import-function-should-return-a-promise-when-clearing-exceptions.js:
+        * stress/stress-cleared-calllinkinfo.js:
+        * stress/typedarray-configure-index.js:
+        * stress/v8-deltablue-strict.js:
+
 2019-11-20  Mark Lam  <mark.lam@apple.com>
 
         Flaky JSC test: stress/stack-overflow-in-yarr-byteCompile.js.dfg-eager.

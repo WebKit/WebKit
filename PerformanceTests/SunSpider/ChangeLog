@@ -1,3 +1,12 @@
+2019-11-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] OSR exit to LLInt is broken on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=203737
+
+        Reviewed by Yusuke Suzuki.
+
+        * tests/v8-v6/v8-deltablue.js:
+
 2019-10-31  Caio Lima  <ticaiolima@gmail.com>
 
         Temporary skip broken tests on MIPS that is broken due to OSR exit to LLInt
