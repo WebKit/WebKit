@@ -1,3 +1,14 @@
+2019-11-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [WebGL] Add `--webgl-test-suite` flag for run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=204327
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Add the --webgl macro command, which is the equivalent of:
+        'Run-webkit-tests --additional-expectations=LayoutTests/webgl/TestExpectations webgl'
+
 2019-11-20  ChangSeok Oh  <changseok@webkit.org>
 
         Reactivate my committer status.

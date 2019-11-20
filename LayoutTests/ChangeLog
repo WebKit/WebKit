@@ -1,3 +1,12 @@
+2019-11-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [WebGL] Add `--webgl-test-suite` flag for run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=204327
+
+        Rubber-stamped by Aakash Jain.
+
+        * webgl/TestExpectations: Added.
+
 2019-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add ui-sans-serif as a sibling to ui-serif, ui-monospace, and ui-rounded
