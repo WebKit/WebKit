@@ -14,6 +14,7 @@
                     { "name": "bot247", "platform": "mac-catalina" },
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot121", "platform": "mac-catalina" },
+                    { "name": "bot659", "platform": "mac-catalina" },
 
                     { "name": "bot132", "platform": "mac-mojave" },
                     { "name": "bot178", "platform": "mac-mojave" },
@@ -101,7 +102,7 @@
     "builders":   [ 
                     { "name": "Apple-Catalina-Debug-Build", "type": "Build", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2"],
+                      "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-webgl"],
                       "slavenames": ["bot687", "bot688"]
                     },
                     { "name": "Apple-Catalina-Debug-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-debug-tests-wk1",
@@ -113,6 +114,11 @@
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot243", "bot244"]
+                    },
+                    { "name": "Apple-Catalina-Debug-WK2-WebGL-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-webgl",
+                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
+                      "slavenames": ["bot659"]
                     },
                     { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
