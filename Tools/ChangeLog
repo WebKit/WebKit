@@ -1,5 +1,39 @@
 2019-11-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r252058. rdar://problem/56889868
+
+    webkitpy: Build ImageDiff if it is missing (Follow-fix)
+    https://bugs.webkit.org/show_bug.cgi?id=183422
+    
+    Unreviewed infrastructure fix.
+    
+    * Scripts/webkitpy/port/base.py:
+    (Port._path_to_image_diff): Use the host build directory.
+    * Scripts/webkitpy/port/config.py:
+    (Config.build_directory): Allow the caller to ignore the port argument, which will return the default
+    build directory for the host running the script.
+    * Scripts/webkitpy/port/port_testcase.py:
+    (PortTestCase.make_port):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@252058 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-11-05  Jonathan Bedard  <jbedard@apple.com>
+
+            webkitpy: Build ImageDiff if it is missing (Follow-fix)
+            https://bugs.webkit.org/show_bug.cgi?id=183422
+
+            Unreviewed infrastructure fix.
+
+            * Scripts/webkitpy/port/base.py:
+            (Port._path_to_image_diff): Use the host build directory.
+            * Scripts/webkitpy/port/config.py:
+            (Config.build_directory): Allow the caller to ignore the port argument, which will return the default
+            build directory for the host running the script.
+            * Scripts/webkitpy/port/port_testcase.py:
+            (PortTestCase.make_port):
+
+2019-11-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r249652. rdar://problem/55190632
 
     run-webkit-tests: Report results archive to results.webkit.org

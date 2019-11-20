@@ -79,7 +79,7 @@ class Config(object):
         self._build_directories = {}
         self._port_implementation = port_implementation
 
-    def build_directory(self, configuration):
+    def build_directory(self, configuration, for_host=False):
         """Returns the path to the build directory for the configuration."""
         if configuration:
             flags = ["--configuration", self.flag_for_configuration(configuration)]
@@ -87,7 +87,7 @@ class Config(object):
             configuration = ""
             flags = []
 
-        if self._port_implementation:
+        if self._port_implementation and not for_host:
             flags.append('--' + self._port_implementation)
 
         if not self._build_directories.get(configuration):
