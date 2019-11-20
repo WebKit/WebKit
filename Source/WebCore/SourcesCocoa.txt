@@ -547,6 +547,7 @@ rendering/RenderThemeIOS.mm
 rendering/RenderThemeMac.mm
 rendering/TextAutoSizing.cpp
 
+platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CoreAudioCaptureDevice.cpp
 platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/mac/CoreAudioCaptureSource.cpp
@@ -563,7 +564,7 @@ platform/mediastream/mac/WindowDisplayCaptureSourceMac.mm
 
 platform/audio/mac/AudioSampleDataSource.mm
 
-platform/mediastream/mac/MockRealtimeAudioSourceMac.mm
+platform/mediastream/mac/MockAudioSharedUnit.mm
 platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm
 
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp

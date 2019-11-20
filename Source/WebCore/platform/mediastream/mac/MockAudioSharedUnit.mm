@@ -1,39 +1,38 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer
- *    in the documentation and/or other materials provided with the
- *    distribution.
- * 3. Neither the name of Google Inc. nor the names of its contributors
- *    may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import "config.h"
-#import "MockRealtimeAudioSourceMac.h"
+#import "MockAudioSharedUnit.h"
 
 #if ENABLE(MEDIA_STREAM)
 #import "AudioSampleBufferList.h"
+#import "AudioSession.h"
+#import "BaseAudioSharedUnit.h"
 #import "CAAudioStreamDescription.h"
+#import "CoreAudioCaptureSource.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
 #import "MockRealtimeMediaSourceCenter.h"
@@ -94,33 +93,110 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
     if (!device)
         return { };
 #endif
-
-    auto source = adoptRef(*new MockRealtimeAudioSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
-    // FIXME: We should report error messages
-    if (constraints && source->applyConstraints(*constraints))
-        return { };
-
-    return CaptureSourceOrError(WTFMove(source));
+    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID),  WTFMove(name), WTFMove(hashSalt), constraints, MockAudioSharedUnit::singleton());
 }
 
-MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac(String&& deviceID, String&& name, String&& hashSalt)
-    : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+MockAudioSharedUnit& MockAudioSharedUnit::singleton()
 {
-    ASSERT(isMainThread());
+    static NeverDestroyed<MockAudioSharedUnit> singleton;
+    return singleton;
 }
 
-void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
+MockAudioSharedUnit::MockAudioSharedUnit()
+    : m_timer(RunLoop::current(), this, &MockAudioSharedUnit::tick)
+    , m_workQueue(WorkQueue::create("MockAudioSharedUnit Capture Queue"))
 {
-    ASSERT(!isMainThread());
-    ASSERT(m_formatDescription);
-
-    CMTime startTime = CMTimeMake(m_samplesEmitted, sampleRate());
-    m_samplesEmitted += frameCount;
-
-    audioSamplesAvailable(PAL::toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
+    setSampleRate(AudioSession::sharedSession().sampleRate());
+    setEnableEchoCancellation(false);
 }
 
-void MockRealtimeAudioSourceMac::reconfigure()
+bool MockAudioSharedUnit::hasAudioUnit() const
+{
+    return m_hasAudioUnit;
+}
+
+void MockAudioSharedUnit::setCaptureDevice(String&&, uint32_t)
+{
+    reconfigureAudioUnit();
+}
+
+OSStatus MockAudioSharedUnit::reconfigureAudioUnit()
+{
+    if (!hasAudioUnit())
+        return 0;
+
+    m_timer.stop();
+    m_startTime = MonotonicTime::nan();
+    m_workQueue->dispatch([this] {
+        reconfigure();
+        callOnMainThread([this] {
+            m_startTime = MonotonicTime::now();
+            m_timer.startRepeating(renderInterval());
+        });
+    });
+    return 0;
+}
+
+void MockAudioSharedUnit::cleanupAudioUnit()
+{
+    m_hasAudioUnit = false;
+    m_timer.stop();
+    m_startTime = MonotonicTime::nan();
+}
+
+OSStatus MockAudioSharedUnit::startInternal()
+{
+#if PLATFORM(IOS_FAMILY)
+    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+#endif
+    if (!m_hasAudioUnit)
+        m_hasAudioUnit = true;
+
+    m_startTime = MonotonicTime::now();
+    m_timer.startRepeating(renderInterval());
+    return 0;
+}
+
+void MockAudioSharedUnit::stopInternal()
+{
+    if (!m_hasAudioUnit)
+        return;
+    m_timer.stop();
+    m_startTime = MonotonicTime::nan();
+}
+
+bool MockAudioSharedUnit::isProducingData() const
+{
+    return m_timer.isActive();
+}
+
+void MockAudioSharedUnit::tick()
+{
+    if (std::isnan(m_lastRenderTime))
+        m_lastRenderTime = MonotonicTime::now();
+
+    MonotonicTime now = MonotonicTime::now();
+
+    if (m_delayUntil) {
+        if (m_delayUntil < now)
+            return;
+        m_delayUntil = MonotonicTime();
+    }
+
+    Seconds delta = now - m_lastRenderTime;
+    m_lastRenderTime = now;
+
+    m_workQueue->dispatch([this, delta] {
+        render(delta);
+    });
+}
+
+void MockAudioSharedUnit::delaySamples(Seconds delta)
+{
+    m_delayUntil = MonotonicTime::now() + delta;
+}
+
+void MockAudioSharedUnit::reconfigure()
 {
     ASSERT(!isMainThread());
 
@@ -156,7 +232,18 @@ void MockRealtimeAudioSourceMac::reconfigure()
     addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
 }
 
-void MockRealtimeAudioSourceMac::render(Seconds delta)
+void MockAudioSharedUnit::emitSampleBuffers(uint32_t frameCount)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_formatDescription);
+
+    CMTime startTime = CMTimeMake(m_samplesEmitted, sampleRate());
+    m_samplesEmitted += frameCount;
+
+    audioSamplesAvailable(PAL::toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
+}
+
+void MockAudioSharedUnit::render(Seconds delta)
 {
     ASSERT(!isMainThread());
     if (!m_audioBufferList || !m_bipBopBuffer.size())
@@ -171,28 +258,14 @@ void MockRealtimeAudioSourceMac::render(Seconds delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
         for (auto& audioBuffer : m_audioBufferList->buffers()) {
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
-            if (!muted()) {
-                memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
-                addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
-            } else
-                memset(audioBuffer.mData, 0, sizeof(Float32) * bipBopCount);
+            memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
+            addHum(HumVolume, HumFrequency, sampleRate(), m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
         }
         emitSampleBuffers(bipBopCount);
         m_samplesRendered += bipBopCount;
         totalFrameCount -= bipBopCount;
         frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
     }
-}
-
-void MockRealtimeAudioSourceMac::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
-{
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
-        m_workQueue->dispatch([this, protectedThis = makeRef(*this)] {
-            reconfigure();
-        });
-    }
-
-    MockRealtimeAudioSource::settingsDidChange(settings);
 }
 
 } // namespace WebCore

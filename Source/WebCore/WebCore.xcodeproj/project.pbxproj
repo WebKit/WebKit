@@ -5425,8 +5425,8 @@
 		073B87631E43859D0071C0EC /* AudioSampleBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferList.h; sourceTree = "<group>"; };
 		073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleDataSource.mm; sourceTree = "<group>"; };
 		073B87651E43859D0071C0EC /* AudioSampleDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleDataSource.h; sourceTree = "<group>"; };
-		0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockRealtimeAudioSourceMac.h; sourceTree = "<group>"; };
-		0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockRealtimeAudioSourceMac.mm; sourceTree = "<group>"; };
+		0744ECEB1E0C4AE5000D0944 /* MockAudioSharedUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAudioSharedUnit.h; sourceTree = "<group>"; };
+		0744ECEC1E0C4AE5000D0944 /* MockAudioSharedUnit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockAudioSharedUnit.mm; sourceTree = "<group>"; };
 		0746D30A2146EA37003DDF84 /* ImageTransferSessionVT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageTransferSessionVT.mm; sourceTree = "<group>"; };
 		0746D30C2146EA38003DDF84 /* ImageTransferSessionVT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageTransferSessionVT.h; sourceTree = "<group>"; };
 		074E82B818A69F0E007EF54C /* PlatformTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformTimeRanges.cpp; sourceTree = "<group>"; };
@@ -7350,6 +7350,8 @@
 		417612AE1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCPeerConnectionBackend.h; path = libwebrtc/LibWebRTCPeerConnectionBackend.h; sourceTree = "<group>"; };
 		4176900322FCD8F200B1576D /* MediaSourceRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourceRegistry.h; sourceTree = "<group>"; };
 		4176900422FCD8F200B1576D /* MediaSourceRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceRegistry.cpp; sourceTree = "<group>"; };
+		4177F51C2382544000C04486 /* BaseAudioSharedUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseAudioSharedUnit.cpp; sourceTree = "<group>"; };
+		4177F51E2382545E00C04486 /* BaseAudioSharedUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseAudioSharedUnit.h; sourceTree = "<group>"; };
 		417DA4CE13734326007C57FB /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Internals.h; sourceTree = "<group>"; };
 		417DA4CF13734326007C57FB /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Internals.cpp; sourceTree = "<group>"; };
 		417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -16152,6 +16154,8 @@
 				070363DB181A1CDC00C074A5 /* AVCaptureDeviceManager.mm */,
 				070363DE181A1CDC00C074A5 /* AVVideoCaptureSource.h */,
 				070363DF181A1CDC00C074A5 /* AVVideoCaptureSource.mm */,
+				4177F51C2382544000C04486 /* BaseAudioSharedUnit.cpp */,
+				4177F51E2382545E00C04486 /* BaseAudioSharedUnit.h */,
 				3F8020311E9E381D00DEC61D /* CoreAudioCaptureDevice.cpp */,
 				3F8020321E9E381D00DEC61D /* CoreAudioCaptureDevice.h */,
 				3F8020331E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.cpp */,
@@ -16162,8 +16166,8 @@
 				07A6D8491FEB700C006441DE /* DisplayCaptureManagerCocoa.h */,
 				07A6D8471FEB700B006441DE /* DisplayCaptureSourceCocoa.cpp */,
 				07A6D84A1FEB700D006441DE /* DisplayCaptureSourceCocoa.h */,
-				0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */,
-				0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */,
+				0744ECEB1E0C4AE5000D0944 /* MockAudioSharedUnit.h */,
+				0744ECEC1E0C4AE5000D0944 /* MockAudioSharedUnit.mm */,
 				07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */,
 				07EE76EE1BEA619800F89133 /* MockRealtimeVideoSourceMac.mm */,
 				41103AAA1E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.cpp */,

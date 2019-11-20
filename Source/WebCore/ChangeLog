@@ -1,3 +1,89 @@
+2019-11-19  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a mock implementation of CoreAudioSharedUnit
+        https://bugs.webkit.org/show_bug.cgi?id=204290
+
+        Reviewed by Eric Carlson.
+
+        Introduce BaseAudioSharedUnit as a base class to CoreAudioSharedUnit.
+        Make CoreAudioCaptureSource use either CoreAudioSharedUnit singleton or an override.
+        Implement a MockAudioSharedUnit and use the override to implement mock audio capture sources.
+
+        Remove some code from CoreAudioCaptureSource related to reference data, which is not used currently.
+
+        Covered by existing tests.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp: Added.
+        (WebCore::BaseAudioSharedUnit::addClient):
+        (WebCore::BaseAudioSharedUnit::removeClient):
+        (WebCore::BaseAudioSharedUnit::forEachClient const):
+        (WebCore::BaseAudioSharedUnit::clearClients):
+        (WebCore::BaseAudioSharedUnit::startProducingData):
+        (WebCore::BaseAudioSharedUnit::resume):
+        (WebCore::BaseAudioSharedUnit::prepareForNewCapture):
+        (WebCore::BaseAudioSharedUnit::captureFailed):
+        (WebCore::BaseAudioSharedUnit::stopProducingData):
+        (WebCore::BaseAudioSharedUnit::suspend):
+        (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h: Added.
+        (WebCore::BaseAudioSharedUnit::delaySamples):
+        (WebCore::BaseAudioSharedUnit::isSuspended const):
+        (WebCore::BaseAudioSharedUnit::volume const):
+        (WebCore::BaseAudioSharedUnit::sampleRate const):
+        (WebCore::BaseAudioSharedUnit::enableEchoCancellation const):
+        (WebCore::BaseAudioSharedUnit::setVolume):
+        (WebCore::BaseAudioSharedUnit::setSampleRate):
+        (WebCore::BaseAudioSharedUnit::setEnableEchoCancellation):
+        (WebCore::BaseAudioSharedUnit::sampleRateCapacities const):
+        (WebCore::BaseAudioSharedUnit::hasClients const):
+        (WebCore::BaseAudioSharedUnit::setSuspended):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::unit):
+        (WebCore::CoreAudioSharedUnit::CoreAudioSharedUnit):
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::configureMicrophoneProc):
+        (WebCore::CoreAudioSharedUnit::configureSpeakerProc):
+        (WebCore::CoreAudioSharedUnit::provideSpeakerData):
+        (WebCore::CoreAudioSharedUnit::processMicrophoneSamples):
+        (WebCore::initializeCoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::createForTesting):
+        (WebCore::CoreAudioCaptureSource::unit):
+        (WebCore::CoreAudioCaptureSourceFactory::devicesChanged):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::initializeToStartProducingData):
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSource::capabilities):
+        (WebCore::CoreAudioCaptureSource::settingsDidChange):
+        (WebCore::CoreAudioCaptureSource::scheduleReconfiguration):
+        (WebCore::CoreAudioCaptureSource::beginInterruption):
+        (WebCore::CoreAudioCaptureSource::endInterruption):
+        (WebCore::CoreAudioCaptureSource::interrupted const):
+        (WebCore::CoreAudioCaptureSource::delaySamples):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.h: Added.
+        * platform/mediastream/mac/MockAudioSharedUnit.mm: Added.
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockAudioSharedUnit::singleton):
+        (WebCore::MockAudioSharedUnit::MockAudioSharedUnit):
+        (WebCore::MockAudioSharedUnit::hasAudioUnit const):
+        (WebCore::MockAudioSharedUnit::setCaptureDevice):
+        (WebCore::MockAudioSharedUnit::reconfigureAudioUnit):
+        (WebCore::MockAudioSharedUnit::cleanupAudioUnit):
+        (WebCore::MockAudioSharedUnit::startInternal):
+        (WebCore::MockAudioSharedUnit::stopInternal):
+        (WebCore::MockAudioSharedUnit::isProducingData const):
+        (WebCore::MockAudioSharedUnit::tick):
+        (WebCore::MockAudioSharedUnit::delaySamples):
+        (WebCore::MockAudioSharedUnit::reconfigure):
+        (WebCore::MockAudioSharedUnit::emitSampleBuffers):
+        (WebCore::MockAudioSharedUnit::render):
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h: Removed.
+
 2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fixes.
