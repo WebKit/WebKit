@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,15 +135,19 @@ static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned ali
     return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
 }
 
-static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferEnd, size_t size)
+static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferStart, const uint8_t* bufferEnd, size_t size)
 {
-    return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
+    // When size == 0 for the last argument and it's a variable length byte arrray,
+    // bufferStart == alignedPosition == bufferEnd, so checking (bufferEnd >= alignedPosition)
+    // is not an off-by-one error since (static_cast<size_t>(bufferEnd - alignedPosition) >= size)
+    // will catch issues when size != 0.
+    return bufferEnd >= alignedPosition && bufferStart <= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
 }
 
 bool Decoder::alignBufferPosition(unsigned alignment, size_t size)
 {
     const uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
-    if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_bufferEnd, size)) {
+    if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size)) {
         // We've walked off the end of this buffer.
         markInvalid();
         return false;
@@ -155,7 +159,7 @@ bool Decoder::alignBufferPosition(unsigned alignment, size_t size)
 
 bool Decoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
 {
-    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_bufferEnd, size);
+    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_buffer, m_bufferEnd, size);
 }
 
 bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
