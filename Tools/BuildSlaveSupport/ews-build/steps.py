@@ -632,7 +632,7 @@ class RunWebKitPerlTests(shell.ShellCommand):
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         if rc == FAILURE:
-            self.build.addStepsAfterCurrentStep([ReRunWebKitPerlTests()])
+            self.build.addStepsAfterCurrentStep([KillOldProcesses(), ReRunWebKitPerlTests()])
         return rc
 
 
@@ -974,7 +974,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunJavaScriptCoreTests()])
+            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunJavaScriptCoreTests()])
         return rc
 
     def commandComplete(self, cmd):
@@ -1050,6 +1050,7 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCToT(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                KillOldProcesses(),
                                                 RunJSCTestsWithoutPatch(),
                                                 AnalyzeJSCTestsResults()])
         return rc
@@ -1288,7 +1289,14 @@ class RunWebKitTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults(), ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunWebKitTests()])
+            self.build.addStepsAfterCurrentStep([
+                ArchiveTestResults(),
+                UploadTestResults(),
+                ExtractTestResults(),
+                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                KillOldProcesses(),
+                ReRunWebKitTests(),
+            ])
         return rc
 
     def getResultSummary(self):
@@ -1320,6 +1328,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitToT(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                KillOldProcesses(),
                                                 RunWebKitTestsWithoutPatch()])
         return rc
 
@@ -1626,7 +1635,7 @@ class RunAPITests(TestWithFailureCount):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunAPITests()])
+            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunAPITests()])
         return rc
 
 
@@ -1646,6 +1655,7 @@ class ReRunAPITests(RunAPITests):
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitToT(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                KillOldProcesses(),
                                                 RunAPITestsWithoutPatch(),
                                                 AnalyzeAPITestsResults()])
         return rc

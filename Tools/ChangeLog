@@ -1,5 +1,21 @@
 2019-11-20  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] iOS layout-tests fails with 30+ failures on re-run and on clean-tree
+        https://bugs.webkit.org/show_bug.cgi?id=204409
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPerlTests.evaluateCommand): Add killOldProcesses before running test suite.
+        (RunJavaScriptCoreTests.evaluateCommand): Ditto.
+        (ReRunJavaScriptCoreTests.evaluateCommand): Ditto.
+        (RunWebKitTests.evaluateCommand): Ditto.
+        (ReRunWebKitTests.evaluateCommand): Ditto.
+        (RunAPITests.evaluateCommand): Ditto.
+        (ReRunAPITests.evaluateCommand): Ditto.
+
+2019-11-20  Jonathan Bedard  <jbedard@apple.com>
+
         kill-old-processes: Log currently running processes
         https://bugs.webkit.org/show_bug.cgi?id=204415
 
