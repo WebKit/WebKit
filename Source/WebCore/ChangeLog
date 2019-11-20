@@ -1,3 +1,19 @@
+2019-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add ui-sans-serif as a sibling to ui-serif, ui-monospace, and ui-rounded
+        https://bugs.webkit.org/show_bug.cgi?id=204188
+
+        Reviewed by Simon Fraser.
+
+        As per https://github.com/w3c/csswg-drafts/commit/cd0059a32a74c5a48630ce7c77292642dac70fd9#diff-dd2d54c50c872e1e303daebd4794d642
+
+        Test: fast/text/design-system-ui-sans-serif.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontWithFamilySpecialCase):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::matchSystemFontUse):
+
 2019-11-19  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Add _WKRemoteWebInspectorViewController SPI to set diagnostic logging delegate

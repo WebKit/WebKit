@@ -1269,26 +1269,27 @@ static void invalidateFontCache()
 
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-#if HAVE(DESIGN_SYSTEM_UI_FONTS)
     Optional<SystemFontDatabaseCoreText::ClientUse> designSystemUI;
+
+#if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(family, "ui-serif"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
     else if (equalLettersIgnoringASCIICase(family, "ui-monospace"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospace;
     else if (equalLettersIgnoringASCIICase(family, "ui-rounded"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
+#endif
+
+    if (equalLettersIgnoringASCIICase(family, "ui-sans-serif")) {
+        ASSERT(!designSystemUI);
+        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
+    }
 
     if (designSystemUI) {
         auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *designSystemUI, allowUserInstalledFonts);
         if (!cascadeList.isEmpty())
             return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
     }
-#else
-    UNUSED_PARAM(family);
-    UNUSED_PARAM(fontDescription);
-    UNUSED_PARAM(size);
-    UNUSED_PARAM(allowUserInstalledFonts);
-#endif
 
     return nullptr;
 }

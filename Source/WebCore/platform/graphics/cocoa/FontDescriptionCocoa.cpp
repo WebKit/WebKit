@@ -52,7 +52,8 @@ static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse
     if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
         || equalLettersIgnoringASCIICase(string, "-apple-system")
         || equalLettersIgnoringASCIICase(string, "-apple-system-font")
-        || equalLettersIgnoringASCIICase(string, "system-ui"))
+        || equalLettersIgnoringASCIICase(string, "system-ui")
+        || equalLettersIgnoringASCIICase(string, "ui-sans-serif"))
         return SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)

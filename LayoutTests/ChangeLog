@@ -1,3 +1,13 @@
+2019-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add ui-sans-serif as a sibling to ui-serif, ui-monospace, and ui-rounded
+        https://bugs.webkit.org/show_bug.cgi?id=204188
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/design-system-ui-sans-serif-expected.html: Added.
+        * fast/text/design-system-ui-sans-serif.html: Added.
+
 2019-11-20  Truitt Savell  <tsavell@apple.com>
 
         Add platform specific expectations for High Sierra and Mojave for svg/custom/glyph-selection-arabic-forms.svg
