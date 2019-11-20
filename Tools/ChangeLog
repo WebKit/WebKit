@@ -1,3 +1,11 @@
+2019-11-19  Saam Barati  <sbarati@apple.com>
+
+        Remove runNullishAwareOperatorsEnabled
+
+        Rubber-stamped by Keith Miller.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-11-19  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Have build.webkit.org report JSC tests

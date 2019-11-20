@@ -704,10 +704,6 @@ def runBigIntEnabled(*optionalTestSpecificOptions)
     run("big-int-enabled", "--useBigInt=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runNullishAwareOperatorsEnabled(*optionalTestSpecificOptions)
-    run("nullish-aware-operators-enabled", "--useNullishAwareOperators=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
 def runFTLNoCJIT(*optionalTestSpecificOptions)
     run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end

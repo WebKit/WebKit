@@ -1,3 +1,13 @@
+2019-11-19  Saam Barati  <sbarati@apple.com>
+
+        Remove runNullishAwareOperatorsEnabled
+
+        Rubber-stamped by Keith Miller.
+
+        * stress/nullish-coalescing.js:
+        * stress/optional-chaining.js:
+        * stress/tail-call-recognize.js:
+
 2019-11-18  Keith Miller  <keith_miller@apple.com>
 
         Enable Nullish operators by default

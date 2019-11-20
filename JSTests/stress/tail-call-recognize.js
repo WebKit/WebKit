@@ -1,5 +1,3 @@
-//@ runNullishAwareOperatorsEnabled
-
 function callerMustBeRun() {
     if (!Object.is(callerMustBeRun.caller, runTests))
         throw new Error("Wrong caller, expected run but got ", callerMustBeRun.caller);
