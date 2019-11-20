@@ -1,3 +1,44 @@
+2019-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        Flexbox sizing logic triggers full repaint on the flex items.
+        https://bugs.webkit.org/show_bug.cgi?id=204380
+        <rdar://problem/57236404>
+
+        Reviewed by Simon Fraser.
+
+        RenderFlexibleBox::applyStretchAlignmentToChild explicitly sets the child renderer's height to 0 before issuing layout on it.
+        This confuses the child's repaint logic and could trigger unnecessary repaints on complete subtrees.
+
+        Many ::layout functions plant a LayoutRepainter stack object to track and report paint invalidations.
+        It works as long as the renderer's geometry change happens within the scope of this LayoutRepainter.
+        When the parent (RenderFlexibleBox) mutates the renderer's geometry, the LayoutRepainter object sees
+        this already mutated state as the initial state and will happily issue repaints even when the final
+        geometry remains the same.
+
+        This patch addresses the redundant repaint by pushing the height reset from the parent down to the child, inside the LayoutRepainter scope.
+
+        * rendering/RenderBlock.h: Restrict it to RenderBlock level for now. It might need to go all the way up to RenderBox.
+        (WebCore::RenderBlock::shouldResetChildLogicalHeightBeforeLayout const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::resetLogicalHeightBeforeLayoutIfNeeded):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::shouldResetLogicalHeightBeforeLayout const):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderGrid.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+
 2019-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add ui-sans-serif as a sibling to ui-serif, ui-monospace, and ui-rounded

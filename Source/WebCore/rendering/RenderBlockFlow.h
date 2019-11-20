@@ -391,6 +391,8 @@ public:
     void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
 
 protected:
+    bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
+
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;

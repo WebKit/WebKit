@@ -654,6 +654,9 @@ protected:
 
     bool createsNewFormattingContext() const;
 
+    virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
+    void resetLogicalHeightBeforeLayoutIfNeeded();
+
     virtual ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const { return ItemPosition::Stretch; }
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.

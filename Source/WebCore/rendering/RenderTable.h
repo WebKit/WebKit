@@ -361,6 +361,8 @@ private:
         return false;
     }
 
+    bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
+
     LayoutUnit m_hSpacing;
     LayoutUnit m_vSpacing;
     LayoutUnit m_borderStart;

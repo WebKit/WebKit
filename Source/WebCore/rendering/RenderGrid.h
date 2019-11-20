@@ -186,6 +186,8 @@ private:
     LayoutUnit translateOutOfFlowRTLCoordinate(const RenderBox&, LayoutUnit) const;
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
+    bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
+
     Grid m_grid;
 
     GridTrackSizingAlgorithm m_trackSizingAlgorithm;

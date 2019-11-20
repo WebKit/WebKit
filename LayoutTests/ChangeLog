@@ -1,3 +1,13 @@
+2019-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        Flexbox sizing logic triggers full repaint on the flex items.
+        https://bugs.webkit.org/show_bug.cgi?id=204380
+        <rdar://problem/57236404>
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/align-items-change-expected.txt: progression.
+
 2019-11-20  Justin Fan  <justin_fan@apple.com>
 
         webgl/1.0.3/conformance/context/context-release-upon-reload.html is flaky

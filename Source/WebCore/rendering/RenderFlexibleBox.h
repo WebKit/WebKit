@@ -92,6 +92,8 @@ protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
 
+    bool shouldResetChildLogicalHeightBeforeLayout(const RenderBox&) const override { return m_shouldResetChildLogicalHeightBeforeLayout; }
+
 private:
     enum FlexSign {
         PositiveFlexibility,
@@ -211,6 +213,7 @@ private:
     // This is SizeIsUnknown outside of layoutBlock()
     mutable SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };
+    bool m_shouldResetChildLogicalHeightBeforeLayout { false };
 };
 
 } // namespace WebCore

@@ -219,7 +219,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
                 m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
         }
         m_baselineItemsCached = true;
-        setLogicalHeight(0);
+        resetLogicalHeightBeforeLayoutIfNeeded();
         updateLogicalWidth();
 
         // Fieldsets need to find their legend and position it inside the border of the object.
