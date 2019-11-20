@@ -344,12 +344,12 @@ inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
 
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecNonInt32AsInt52));
+    return !(value & (SpecFullDouble | SpecNonInt32AsInt52 | SpecBigInt));
 }
 
 inline bool isInt32OrBooleanSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecNonInt32AsInt52));
+    return !(value & (SpecFullDouble | SpecNonInt32AsInt52 | SpecBigInt));
 }
 
 inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
@@ -512,6 +512,7 @@ bool valuesCouldBeEqual(SpeculatedType, SpeculatedType);
 // the closest one of these that applies.
 SpeculatedType typeOfDoubleSum(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleDifference(SpeculatedType, SpeculatedType);
+SpeculatedType typeOfDoubleIncOrDec(SpeculatedType);
 SpeculatedType typeOfDoubleProduct(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleQuotient(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleMinMax(SpeculatedType, SpeculatedType);

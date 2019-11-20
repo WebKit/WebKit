@@ -839,6 +839,27 @@ void JIT::emit_op_to_number(const Instruction* currentInstruction)
         emitStore(dst, regT1, regT0);
 }
 
+void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToNumeric>();
+    int dst = bytecode.m_dst.offset();
+    int src = bytecode.m_operand.offset();
+
+    emitLoad(src, regT1, regT0);
+
+    Jump isNotCell = branchIfNotCell(regT1);
+    addSlowCase(branchIfNotBigInt(regT0));
+    Jump isBigInt = jump();
+
+    isNotCell.link(this);
+    addSlowCase(branchIfNotNumber(regT1));
+    isBigInt.link(this);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    if (src != dst)
+        emitStore(dst, regT1, regT0);
+}
+
 void JIT::emit_op_to_string(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToString>();

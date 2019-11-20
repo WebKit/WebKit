@@ -4609,6 +4609,22 @@ void SpeculativeJIT::compileArithSub(Node* node)
     }
 }
 
+void SpeculativeJIT::compileIncOrDec(Node* node)
+{
+    // In all other cases the node should have been transformed into an add or a sub by FixupPhase
+    ASSERT(node->child1().useKind() == UntypedUse);
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    auto operation = node->op() == Inc ? operationInc : operationDec;
+    callOperation(operation, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), op1Regs);
+    m_jit.exceptionCheck();
+    jsValueResult(result.gpr(), node);
+}
+
 void SpeculativeJIT::compileValueNegate(Node* node)
 {
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
@@ -12933,6 +12949,34 @@ void SpeculativeJIT::compileToPrimitive(Node* node)
     addSlowPathGenerator(slowPathCall(notPrimitive, this, operationToPrimitive, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs));
 
     jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+}
+
+void SpeculativeJIT::compileToNumeric(Node* node)
+{
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+    JSValueOperand argument(this, node->child1());
+    JSValueRegsTemporary result(this);
+    GPRTemporary temp(this);
+
+    JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+    GPRReg scratch = temp.gpr();
+
+    MacroAssembler::JumpList slowCases;
+
+    MacroAssembler::Jump notCell = m_jit.branchIfNotCell(argumentRegs);
+    slowCases.append(m_jit.branchIfNotBigInt(argumentRegs.payloadGPR()));
+    MacroAssembler::Jump isBigInt = m_jit.jump();
+
+    notCell.link(&m_jit);
+    slowCases.append(m_jit.branchIfNotNumber(argumentRegs, scratch));
+
+    isBigInt.link(&m_jit);
+    m_jit.moveValueRegs(argumentRegs, resultRegs);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationToNumeric, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs));
+
+    jsValueResult(resultRegs, node, DataFormatJS);
 }
 
 void SpeculativeJIT::compileLogShadowChickenPrologue(Node* node)

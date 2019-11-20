@@ -481,6 +481,44 @@ EncodedJSValue JIT_OPERATION operationValueMod(JSGlobalObject* globalObject, Enc
     return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in remainder operation.");
 }
 
+EncodedJSValue JIT_OPERATION operationInc(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+
+    auto operandNumeric = op1.toNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::inc(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
+
+    double value = WTF::get<double>(operandNumeric);
+    return JSValue::encode(jsNumber(value + 1));
+}
+
+EncodedJSValue JIT_OPERATION operationDec(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+
+    auto operandNumeric = op1.toNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::dec(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
+
+    double value = WTF::get<double>(operandNumeric);
+    return JSValue::encode(jsNumber(value - 1));
+}
+
 EncodedJSValue JIT_OPERATION operationValueBitNot(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
     VM& vm = globalObject->vm();
@@ -1674,6 +1712,18 @@ EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject* globalObject, Enc
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(globalObject)));
+}
+
+EncodedJSValue JIT_OPERATION operationToNumeric(JSGlobalObject* globalObject, EncodedJSValue value)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto variant = JSValue::decode(value).toNumeric(globalObject);
+    if (WTF::holds_alternative<JSBigInt*>(variant))
+        return JSValue::encode(WTF::get<JSBigInt*>(variant));
+    return JSValue::encode(jsNumber(WTF::get<double>(variant)));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)

@@ -1341,6 +1341,7 @@ public:
     void compileArithAbs(Node*);
     void compileArithClz32(Node*);
     void compileArithSub(Node*);
+    void compileIncOrDec(Node*);
     void compileValueNegate(Node*);
     void compileArithNegate(Node*);
     void compileValueMul(Node*);
@@ -1482,6 +1483,7 @@ public:
     void compileNewGenerator(Node*);
     void compileNewAsyncGenerator(Node*);
     void compileToPrimitive(Node*);
+    void compileToNumeric(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
     void compileHasIndexedProperty(Node*);

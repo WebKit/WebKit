@@ -625,6 +625,7 @@ namespace JSC {
         void emit_op_tear_off_arguments(const Instruction*);
         void emit_op_throw(const Instruction*);
         void emit_op_to_number(const Instruction*);
+        void emit_op_to_numeric(const Instruction*);
         void emit_op_to_string(const Instruction*);
         void emit_op_to_object(const Instruction*);
         void emit_op_to_primitive(const Instruction*);

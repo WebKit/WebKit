@@ -335,7 +335,20 @@ private:
             node->child1()->mergeFlags(flags);
             break;
         }
-            
+
+        case Inc:
+        case Dec: {
+            flags &= ~NodeBytecodeNeedsNegZero;
+            flags &= ~NodeBytecodeUsesAsOther;
+            if (!isWithinPowerOfTwo<32>(node->child1()))
+                flags |= NodeBytecodeUsesAsNumber;
+            if (!m_allowNestedOverflowingAdditions)
+                flags |= NodeBytecodeUsesAsNumber;
+
+            node->child1()->mergeFlags(flags);
+            break;
+        }
+
         case ValueMul:
         case ArithMul: {
             // As soon as a multiply happens, we can easily end up in the part
@@ -401,7 +414,8 @@ private:
         }
             
         case ToPrimitive:
-        case ToNumber: {
+        case ToNumber:
+        case ToNumeric: {
             node->child1()->mergeFlags(flags);
             break;
         }

@@ -1790,8 +1790,8 @@ static RegisterID* emitIncOrDec(BytecodeGenerator& generator, RegisterID* srcDst
 static RegisterID* emitPostIncOrDec(BytecodeGenerator& generator, RegisterID* dst, RegisterID* srcDst, Operator oper)
 {
     if (dst == srcDst)
-        return generator.emitToNumber(generator.finalDestination(dst), srcDst);
-    RefPtr<RegisterID> tmp = generator.emitToNumber(generator.newTemporary(), srcDst);
+        return generator.emitToNumeric(generator.finalDestination(dst), srcDst);
+    RefPtr<RegisterID> tmp = generator.emitToNumeric(generator.newTemporary(), srcDst);
     RefPtr<RegisterID> result = generator.tempDestination(srcDst);
     generator.move(result.get(), tmp.get());
     emitIncOrDec(generator, result.get(), oper);

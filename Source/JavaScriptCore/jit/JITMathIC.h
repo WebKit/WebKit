@@ -70,21 +70,19 @@ public:
         state.fastPathStart = jit.label();
         size_t startSize = jit.m_assembler.buffer().codeSize();
 
-        if (m_arithProfile) {
-            if (m_arithProfile->isObservedTypeEmpty()) {
-                // It looks like the MathIC has yet to execute. We don't want to emit code in this
-                // case for a couple reasons. First, the operation may never execute, so if we don't emit
-                // code, it's a win. Second, if the operation does execute, we can emit better code
-                // once we have an idea about the types.
-                state.slowPathJumps.append(jit.patchableJump());
-                size_t inlineSize = jit.m_assembler.buffer().codeSize() - startSize;
-                ASSERT_UNUSED(inlineSize, static_cast<ptrdiff_t>(inlineSize) <= MacroAssembler::patchableJumpSize());
-                state.shouldSlowPathRepatch = true;
-                state.fastPathEnd = jit.label();
-                ASSERT(!m_generateFastPathOnRepatch); // We should have gathered some observed type info about the types before trying to regenerate again.
-                m_generateFastPathOnRepatch = true;
-                return true;
-            }
+        if (m_arithProfile && m_arithProfile->isObservedTypeEmpty()) {
+            // It looks like the MathIC has yet to execute. We don't want to emit code in this
+            // case for a couple reasons. First, the operation may never execute, so if we don't emit
+            // code, it's a win. Second, if the operation does execute, we can emit better code
+            // once we have an idea about the types.
+            state.slowPathJumps.append(jit.patchableJump());
+            size_t inlineSize = jit.m_assembler.buffer().codeSize() - startSize;
+            ASSERT_UNUSED(inlineSize, static_cast<ptrdiff_t>(inlineSize) <= MacroAssembler::patchableJumpSize());
+            state.shouldSlowPathRepatch = true;
+            state.fastPathEnd = jit.label();
+            ASSERT(!m_generateFastPathOnRepatch); // We should have gathered some observed type info about the types before trying to regenerate again.
+            m_generateFastPathOnRepatch = true;
+            return true;
         }
 
         JITMathICInlineResult result = m_generator.generateInline(jit, state, m_arithProfile);

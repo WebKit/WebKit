@@ -185,6 +185,51 @@ private:
             return;
         }
 
+        case Inc:
+        case Dec: {
+            if (node->child1()->shouldSpeculateUntypedForArithmetic()) {
+                fixEdge<UntypedUse>(node->child1());
+                break;
+            }
+
+            Node* nodeConstantOne;
+            if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
+                node->setOp(op == Inc ? ArithAdd : ArithSub);
+                node->setArithMode(Arith::CheckOverflow);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecInt32Only, JSConstant, node->origin, OpInfo(m_graph.freeze(jsNumber(1))));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<Int32Use>(node->child1());
+                fixEdge<Int32Use>(node->child2());
+                node->setResult(NodeResultInt32);
+            } else if (node->child1()->shouldSpeculateBigInt()) {
+                // FIXME: the freezing does not appear useful (since the JSCell is kept alive by vm), but it refuses to compile otherwise.
+                node->setOp(op == Inc ? ValueAdd : ValueSub);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt, JSConstant, node->origin, OpInfo(m_graph.freeze(vm().bigIntConstantOne.get())));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<BigIntUse>(node->child1());
+                fixEdge<BigIntUse>(node->child2());
+                // BigInts are currently cells, so the default of NodeResultJS is good here
+            } else if (node->child1()->shouldSpeculateInt52()) {
+                node->setOp(op == Inc ? ArithAdd : ArithSub);
+                node->setArithMode(Arith::CheckOverflow);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecInt32AsInt52, JSConstant, node->origin, OpInfo(m_graph.freeze(jsNumber(1))));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<Int52RepUse>(node->child1());
+                fixEdge<Int52RepUse>(node->child2());
+                node->setResult(NodeResultInt52);
+            } else {
+                node->setOp(op == Inc ? ArithAdd : ArithSub);
+                node->setArithMode(Arith::Unchecked);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBytecodeDouble, JSConstant, node->origin, OpInfo(m_graph.freeze(jsNumber(1))));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<DoubleRepUse>(node->child1());
+                fixEdge<DoubleRepUse>(node->child2());
+                node->setResult(NodeResultDouble);
+            }
+            node->clearFlags(NodeMustGenerate);
+            break;
+        }
+
         case ValueSub: {
             Edge& child1 = node->child1();
             Edge& child2 = node->child2();
@@ -1348,6 +1393,11 @@ private:
 
         case ToNumber: {
             fixupToNumber(node);
+            break;
+        }
+
+        case ToNumeric: {
+            fixupToNumeric(node);
             break;
         }
             
@@ -2833,6 +2883,18 @@ private:
             node->convertToToString();
             return;
         }
+    }
+
+    void fixupToNumeric(Node* node)
+    {
+        // If the prediction of the child is BigInt, we attempt to convert ToNumeric to Identity, since it can only return a BigInt when fed a BigInt.
+        if (node->child1()->shouldSpeculateBigInt()) {
+            fixEdge<BigIntUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        fixupToNumber(node);
     }
 
     void fixupToNumber(Node* node)

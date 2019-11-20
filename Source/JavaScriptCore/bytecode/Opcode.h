@@ -102,6 +102,7 @@ extern const unsigned wasmOpcodeLengths[];
     macro(OpGetByValWithThis) \
     macro(OpGetFromArguments) \
     macro(OpToNumber) \
+    macro(OpToNumeric) \
     macro(OpToObject) \
     macro(OpGetArgument) \
     macro(OpGetInternalField) \

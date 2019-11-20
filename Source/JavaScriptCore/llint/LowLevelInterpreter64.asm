@@ -923,16 +923,23 @@ strictEqualityJumpOp(jstricteq, OpJstricteq,
 strictEqualityJumpOp(jnstricteq, OpJnstricteq,
     macro (left, right, target) bqneq left, right, target end)
 
+macro preOp(opcodeName, opcodeStruct, integerOperation)
+    llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
+        macro updateArithProfile(type)
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
+        end
 
-macro preOp(opcodeName, opcodeStruct, arithmeticOperation)
-    llintOp(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch)
         get(m_srcDst, t0)
-        loadq [cfr, t0, 8], t1
-        bqb t1, numberTag, .slow
-        arithmeticOperation(t1, .slow)
-        orq numberTag, t1
-        storeq t1, [cfr, t0, 8]
+        loadq [cfr, t0, 8], t3
+        metadata(t1, t2)
+        # Metadata in t1, srcDst in t3
+        bqb t3, numberTag, .slow
+        integerOperation(t3, .slow)
+        orq numberTag, t3
+        storeq t3, [cfr, t0, 8]
+        updateArithProfile(ArithProfileInt)
         dispatch()
+
     .slow:
         callSlowPath(_slow_path_%opcodeName%)
         dispatch()
@@ -949,6 +956,19 @@ llintOpWithProfile(op_to_number, OpToNumber, macro (size, get, dispatch, return)
 
 .opToNumberSlow:
     callSlowPath(_slow_path_to_number)
+    dispatch()
+end)
+
+llintOpWithProfile(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return)
+    get(m_operand, t0)
+    loadConstantOrVariable(size, t0, t2)
+    bqaeq t2, numberTag, .opToNumericIsImmediate
+    btqz t2, numberTag, .opToNumericSlow
+.opToNumericIsImmediate:
+    return(t2)
+
+.opToNumericSlow:
+    callSlowPath(_slow_path_to_numeric)
     dispatch()
 end)
 
@@ -1012,7 +1032,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         metadata(t5, t0)
 
         macro profile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t5]
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + BinaryArithProfile::m_bits[t5]
         end
 
         get(m_rhs, t0)

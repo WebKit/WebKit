@@ -532,6 +532,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetByValWithThis, profile)
         LINK(OpGetFromArguments, profile)
         LINK(OpToNumber, profile)
+        LINK(OpToNumeric, profile)
         LINK(OpToObject, profile)
         LINK(OpGetArgument, profile)
         LINK(OpGetInternalField, profile)
@@ -571,6 +572,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpSub)
 
         LINK(OpNegate)
+        LINK(OpInc)
+        LINK(OpDec)
 
         LINK(OpJneqPtr)
 
@@ -3117,6 +3120,10 @@ UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const Instruction* pc)
     switch (pc->opcodeID()) {
     case op_negate:
         return &pc->as<OpNegate>().metadata(this).m_arithProfile;
+    case op_inc:
+        return &pc->as<OpInc>().metadata(this).m_arithProfile;
+    case op_dec:
+        return &pc->as<OpDec>().metadata(this).m_arithProfile;
     default:
         break;
     }

@@ -62,7 +62,7 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueReg
 template<typename BitfieldType>
 bool ArithProfile<BitfieldType>::shouldEmitSetDouble() const
 {
-    BitfieldType mask = Int32Overflow | Int52Overflow | NegZeroDouble | NonNegZeroDouble;
+    BitfieldType mask = ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble;
     return (m_bits & mask) != mask;
 }
 
@@ -70,13 +70,13 @@ template<typename BitfieldType>
 void ArithProfile<BitfieldType>::emitSetDouble(CCallHelpers& jit) const
 {
     if (shouldEmitSetDouble())
-        emitUnconditionalSet(jit, Int32Overflow | Int52Overflow | NegZeroDouble | NonNegZeroDouble);
+        emitUnconditionalSet(jit, ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble);
 }
 
 template<typename BitfieldType>
 bool ArithProfile<BitfieldType>::shouldEmitSetNonNumeric() const
 {
-    BitfieldType mask = ArithProfile::NonNumeric;
+    BitfieldType mask = ObservedResults::NonNumeric;
     return (m_bits & mask) != mask;
 }
 
@@ -84,13 +84,13 @@ template<typename BitfieldType>
 void ArithProfile<BitfieldType>::emitSetNonNumeric(CCallHelpers& jit) const
 {
     if (shouldEmitSetNonNumeric())
-        emitUnconditionalSet(jit, NonNumeric);
+        emitUnconditionalSet(jit, ObservedResults::NonNumeric);
 }
 
 template<typename BitfieldType>
 bool ArithProfile<BitfieldType>::shouldEmitSetBigInt() const
 {
-    BitfieldType mask = ArithProfile::BigInt;
+    BitfieldType mask = ObservedResults::BigInt;
     return (m_bits & mask) != mask;
 }
 
@@ -98,7 +98,7 @@ template<typename BitfieldType>
 void ArithProfile<BitfieldType>::emitSetBigInt(CCallHelpers& jit) const
 {
     if (shouldEmitSetBigInt())
-        emitUnconditionalSet(jit, BigInt);
+        emitUnconditionalSet(jit, ObservedResults::BigInt);
 }
 
 template<typename BitfieldType>

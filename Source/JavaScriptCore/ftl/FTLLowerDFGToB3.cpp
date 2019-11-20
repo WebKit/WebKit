@@ -752,6 +752,10 @@ private:
         case ToThis:
             compileToThis();
             break;
+        case Inc:
+        case Dec:
+            compileIncOrDec();
+            break;
         case ValueNegate:
             compileValueNegate();
             break;
@@ -1113,6 +1117,9 @@ private:
             break;
         case ToNumber:
             compileToNumber();
+            break;
+        case ToNumeric:
+            compileToNumeric();
             break;
         case ToString:
         case CallStringConstructor:
@@ -3091,6 +3098,15 @@ private:
         LValue argument = lowJSValue(m_node->child1());
         LValue result = vmCall(Double, operationArithFRound, weakPointer(globalObject), argument);
         setDouble(result);
+    }
+
+    void compileIncOrDec()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        LValue operand = lowJSValue(m_node->child1());
+        LValue result = vmCall(Int64, m_node->op() == Inc ? operationInc : operationDec, weakPointer(globalObject), operand);
+        setJSValue(result);
     }
 
     void compileValueNegate()
@@ -6898,6 +6914,41 @@ private:
             m_out.appendTo(continuation, lastNext);
             setJSValue(m_out.phi(Int64, fastResult, slowResult));
         }
+    }
+    
+    void compileToNumeric()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        LValue value = lowJSValue(m_node->child1());
+        
+        if (abstractValue(m_node->child1()).m_type & (SpecBytecodeNumber | SpecBigInt)) {
+            LBasicBlock notNumber = m_out.newBlock();
+            LBasicBlock isCellPath = m_out.newBlock();
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock fastResult = m_out.anchor(value);
+            m_out.branch(isNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notNumber));
+
+            // notNumber case.
+            LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
+            m_out.branch(isCell(value, provenType(m_node->child1())), unsure(isCellPath), unsure(slowPath));
+
+            m_out.appendTo(isCellPath);
+            m_out.branch(isBigInt(value, provenType(m_node->child1())), unsure(continuation), unsure(slowPath));
+            
+            m_out.appendTo(slowPath);
+            // We have several attempts to remove ToNumeric. But ToNumeric still exists.
+            // It means that the slow path is not rare.
+            // Instead of the lazy slow path generator, we call the operation here.
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToNumeric, weakPointer(globalObject), value));
+            m_out.jump(continuation);
+
+            // continuation case.
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, fastResult, slowResult));
+        } else
+            setJSValue(vmCall(Int64, operationToNumeric, weakPointer(globalObject), value));
     }
     
     void compileToStringOrCallStringConstructorOrStringValueOf()

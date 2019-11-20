@@ -665,6 +665,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetDirectPname:
     case InstanceOfCustom:
     case ToNumber:
+    case ToNumeric:
     case NumberToStringWithRadix:
     case CreateThis:
     case CreatePromise:
@@ -676,6 +677,23 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(World);
         write(Heap);
         return;
+
+    case Inc:
+    case Dec:
+        switch (node->child1().useKind()) {
+        case Int32Use:
+        case Int52RepUse:
+        case DoubleRepUse:
+        case BigIntUse:
+            def(PureValue(node));
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            DFG_CRASH(graph, node, "Bad use kind");
+        }
 
     case ValueBitAnd:
     case ValueBitXor:

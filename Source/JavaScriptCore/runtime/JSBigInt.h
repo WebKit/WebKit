@@ -127,6 +127,8 @@ public:
     
     ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
+    static JSBigInt* inc(JSGlobalObject*, JSBigInt* x);
+    static JSBigInt* dec(JSGlobalObject*, JSBigInt* x);
     static JSBigInt* add(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* sub(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* divide(JSGlobalObject*, JSBigInt* x, JSBigInt* y);

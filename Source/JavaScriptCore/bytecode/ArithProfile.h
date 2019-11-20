@@ -66,10 +66,9 @@ private:
     uint8_t m_bits { 0 };
 };
 
-template <typename BitfieldType>
-class ArithProfile {
+class ObservedResults {
 public:
-    enum ObservedResults : BitfieldType {
+    enum Tags : uint8_t {
         NonNegZeroDouble = 1 << 0,
         NegZeroDouble    = 1 << 1,
         NonNumeric       = 1 << 2,
@@ -77,37 +76,62 @@ public:
         Int52Overflow    = 1 << 4,
         BigInt           = 1 << 5,
     };
-    static constexpr uint32_t observedResultsNumBitsNeeded = 6;
+    static constexpr uint32_t numBitsNeeded = 6;
 
-    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumeric | BigInt); }
-    bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
-    bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
-    bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
-    bool didObserveNonNumeric() const { return hasBits(NonNumeric); }
-    bool didObserveBigInt() const { return hasBits(BigInt); }
-    bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
-    bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
+    ObservedResults() = default;
+    explicit ObservedResults(uint8_t bits)
+        : m_bits(bits)
+    { }
 
-    void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
-    void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
-    void setObservedNonNumeric() { setBit(NonNumeric); }
-    void setObservedBigInt() { setBit(BigInt); }
-    void setObservedInt32Overflow() { setBit(Int32Overflow); }
-    void setObservedInt52Overflow() { setBit(Int52Overflow); }
+    bool didObserveNonInt32() { return m_bits & (NonNegZeroDouble | NegZeroDouble | NonNumeric | BigInt); }
+    bool didObserveDouble() { return m_bits & (NonNegZeroDouble | NegZeroDouble); }
+    bool didObserveNonNegZeroDouble() { return m_bits & NonNegZeroDouble; }
+    bool didObserveNegZeroDouble() { return m_bits & NegZeroDouble; }
+    bool didObserveNonNumeric() { return m_bits & NonNumeric; }
+    bool didObserveBigInt() { return m_bits & BigInt; }
+    bool didObserveInt32Overflow() { return m_bits & Int32Overflow; }
+    bool didObserveInt52Overflow() { return m_bits & Int52Overflow; }
+
+private:
+    uint8_t m_bits { 0 };
+};
+
+template <typename BitfieldType>
+class ArithProfile {
+public:
+    ObservedResults observedResults() const
+    {
+        return ObservedResults(m_bits & ((1 << ObservedResults::numBitsNeeded) - 1));
+    }
+    bool didObserveNonInt32() const { return observedResults().didObserveNonInt32();}
+    bool didObserveDouble() const { return observedResults().didObserveDouble(); }
+    bool didObserveNonNegZeroDouble() const { return observedResults().didObserveNonNegZeroDouble(); }
+    bool didObserveNegZeroDouble() const { return observedResults().didObserveNegZeroDouble(); }
+    bool didObserveNonNumeric() const { return observedResults().didObserveNonNumeric(); }
+    bool didObserveBigInt() const { return observedResults().didObserveBigInt(); }
+    bool didObserveInt32Overflow() const { return observedResults().didObserveInt32Overflow(); }
+    bool didObserveInt52Overflow() const { return observedResults().didObserveInt52Overflow(); }
+
+    void setObservedNonNegZeroDouble() { setBit(ObservedResults::NonNegZeroDouble); }
+    void setObservedNegZeroDouble() { setBit(ObservedResults::NegZeroDouble); }
+    void setObservedNonNumeric() { setBit(ObservedResults::NonNumeric); }
+    void setObservedBigInt() { setBit(ObservedResults::BigInt); }
+    void setObservedInt32Overflow() { setBit(ObservedResults::Int32Overflow); }
+    void setObservedInt52Overflow() { setBit(ObservedResults::Int52Overflow); }
 
     void observeResult(JSValue value)
     {
         if (value.isInt32())
             return;
         if (value.isNumber()) {
-            m_bits |= Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble;
+            m_bits |= ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NonNegZeroDouble | ObservedResults::NegZeroDouble;
             return;
         }
         if (value && value.isBigInt()) {
-            m_bits |= BigInt;
+            m_bits |= ObservedResults::BigInt;
             return;
         }
-        m_bits |= NonNumeric;
+        m_bits |= ObservedResults::NonNumeric;
     }
 
     const void* addressOfBits() const { return &m_bits; }
@@ -135,9 +159,7 @@ public:
     constexpr uint32_t bits() const { return m_bits; }
 
 protected:
-    ArithProfile()
-    {
-    }
+    ArithProfile() = default;
 
     bool hasBits(int mask) const { return m_bits & mask; }
     void setBit(int mask) { m_bits |= mask; }
@@ -151,7 +173,7 @@ protected:
  */
 using UnaryArithProfileBase = uint16_t;
 class UnaryArithProfile : public ArithProfile<UnaryArithProfileBase> {
-    static constexpr unsigned argObservedTypeShift = observedResultsNumBitsNeeded;
+    static constexpr unsigned argObservedTypeShift = ObservedResults::numBitsNeeded;
 
     static_assert(argObservedTypeShift + ObservedType::numBitsNeeded <= sizeof(UnaryArithProfileBase) * 8, "Should fit in a the type of the underlying bitfield.");
 
@@ -224,7 +246,7 @@ public:
  */
 using BinaryArithProfileBase = uint16_t;
 class BinaryArithProfile : public ArithProfile<BinaryArithProfileBase> {
-    static constexpr uint32_t rhsObservedTypeShift = observedResultsNumBitsNeeded;
+    static constexpr uint32_t rhsObservedTypeShift = ObservedResults::numBitsNeeded;
     static constexpr uint32_t lhsObservedTypeShift = rhsObservedTypeShift + ObservedType::numBitsNeeded;
 
     static_assert(ObservedType::numBitsNeeded == 3, "We make a hard assumption about that here.");

@@ -1,3 +1,27 @@
+2019-11-19  Robin Morisset  <rmorisset@apple.com>
+
+        [ESNext][BigInt] Add support for op_inc
+        https://bugs.webkit.org/show_bug.cgi?id=193240
+
+        Reviewed by Yusuke Suzuki.
+
+        Some parts of these tests are inspired by tests in a WIP patch by Caio Lima.
+        Thanks to him for allowing their reuse.
+
+        * stress/inc-osr-exit-from-big-int.js: Added.
+        (let.assert.sameValue):
+        (postInc):
+        (preInc):
+        (postDec):
+        (preDec):
+        * stress/inc-osr-exit-to-big-int.js: Added.
+        (let.assert.sameValue):
+        (postInc):
+        (preInc):
+        (postDec):
+        (preDec):
+        (o.valueOf):
+
 2019-11-19  Saam Barati  <sbarati@apple.com>
 
         Remove runNullishAwareOperatorsEnabled

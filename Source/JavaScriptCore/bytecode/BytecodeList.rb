@@ -330,14 +330,16 @@ op_group :UnaryOp,
         operand: VirtualRegister,
     }
 
-op :inc,
+op_group :UnaryInPlaceProfiledOp,
+    [
+        :inc,
+        :dec,
+    ],
     args: {
         srcDst: VirtualRegister,
-    }
-
-op :dec,
-    args: {
-        srcDst: VirtualRegister,
+    },
+    metadata: {
+        arithProfile: UnaryArithProfile
     }
 
 op :to_object,
@@ -350,7 +352,11 @@ op :to_object,
         profile: ValueProfile,
     }
 
-op :to_number,
+op_group :ValueProfiledUnaryOp,
+    [
+        :to_number,
+        :to_numeric,
+    ],
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,

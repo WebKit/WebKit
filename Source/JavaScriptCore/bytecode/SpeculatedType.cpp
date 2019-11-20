@@ -703,6 +703,17 @@ SpeculatedType typeOfDoubleDifference(SpeculatedType a, SpeculatedType b)
     return typeOfDoubleSumOrDifferenceOrProduct(a, b);
 }
 
+SpeculatedType typeOfDoubleIncOrDec(SpeculatedType t)
+{
+    // Impure NaN could become pure NaN during addition because addition may clear bits.
+    if (t & SpecDoubleImpureNaN)
+        t |= SpecDoublePureNaN;
+    // Values could overflow, or fractions could become integers.
+    if (t & SpecDoubleReal)
+        t |= SpecDoubleReal;
+    return t;
+}
+
 SpeculatedType typeOfDoubleProduct(SpeculatedType a, SpeculatedType b)
 {
     return typeOfDoubleSumOrDifferenceOrProduct(a, b);

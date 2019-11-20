@@ -930,6 +930,31 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
     }
+
+    case Inc:
+    case Dec: {
+        // FIXME: support some form of constant folding here.
+        // https://bugs.webkit.org/show_bug.cgi?id=204258
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            setNonCellTypeForNode(node, SpecInt32Only);
+            break;
+        case Int52RepUse:
+            setNonCellTypeForNode(node, SpecInt52Any);
+            break;
+        case DoubleRepUse:
+            setNonCellTypeForNode(node, typeOfDoubleIncOrDec(forNode(node->child1()).m_type));
+            break;
+        case BigIntUse:
+            setTypeForNode(node, SpecBigInt);
+            break;
+        default:
+            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            clobberWorld(); // Because of the call to ToNumeric()
+            break;
+        }
+        break;
+    }
         
     case ValuePow: {
         JSValue childX = forNode(node->child1()).value();
@@ -2510,6 +2535,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         clobberWorld();
         setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case ToNumeric: {
+        JSValue childConst = forNode(node->child1()).value();
+        if (childConst && (childConst.isNumber() || childConst.isBigInt())) {
+            didFoldClobberWorld();
+            setConstant(node, childConst);
+            break;
+        }
+
+        ASSERT(node->child1().useKind() == UntypedUse);
+
+        if (!(forNode(node->child1()).m_type & ~(SpecBytecodeNumber | SpecBigInt))) {
+            m_state.setShouldTryConstantFolding(true);
+            didFoldClobberWorld();
+            setForNode(node, forNode(node->child1()));
+            break;
+        }
+
+        clobberWorld();
+        setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         break;
     }
         

@@ -661,6 +661,26 @@ void JIT::emit_op_to_number(const Instruction* currentInstruction)
         emitPutVirtualRegister(dstVReg);
 }
 
+void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToNumeric>();
+    int dstVReg = bytecode.m_dst.offset();
+    int srcVReg = bytecode.m_operand.offset();
+    emitGetVirtualRegister(srcVReg, regT0);
+
+    Jump isNotCell = branchIfNotCell(regT0);
+    addSlowCase(branchIfNotBigInt(regT0));
+    Jump isBigInt = jump();
+
+    isNotCell.link(this);
+    addSlowCase(branchIfNotNumber(regT0));
+    isBigInt.link(this);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    if (srcVReg != dstVReg)
+        emitPutVirtualRegister(dstVReg);
+}
+
 void JIT::emit_op_to_string(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToString>();

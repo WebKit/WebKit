@@ -240,6 +240,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ValueBitNot:
     case ValueBitLShift:
     case ValueBitRShift:
+    case Inc:
+    case Dec:
     case ValueNegate:
     case ValueAdd:
     case ValueSub:
@@ -358,6 +360,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToPrimitive:
     case ToString:
     case ToNumber:
+    case ToNumeric:
     case ToObject:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:

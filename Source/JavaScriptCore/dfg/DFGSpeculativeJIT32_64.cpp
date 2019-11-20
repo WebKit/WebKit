@@ -3079,6 +3079,11 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(resultRegs.tagGPR(), resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
         break;
     }
+
+    case ToNumeric: {
+        compileToNumeric(node);
+        break;
+    }
         
     case ToString:
     case CallStringConstructor:

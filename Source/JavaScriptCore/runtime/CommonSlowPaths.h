@@ -339,6 +339,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_greatereq);
 SLOW_PATH_HIDDEN_DECL(slow_path_inc);
 SLOW_PATH_HIDDEN_DECL(slow_path_dec);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_number);
+SLOW_PATH_HIDDEN_DECL(slow_path_to_numeric);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_string);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_object);
 SLOW_PATH_HIDDEN_DECL(slow_path_negate);

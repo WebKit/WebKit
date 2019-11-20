@@ -1930,6 +1930,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case Inc:
+    case Dec:
+        compileIncOrDec(node);
+        break;
+
     case GetLocal: {
         AbstractValue& value = m_state.operand(node->local());
 
@@ -3408,7 +3413,12 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
         break;
     }
-        
+
+    case ToNumeric: {
+        compileToNumeric(node);
+        break;
+    }
+
     case ToString:
     case CallStringConstructor:
     case StringValueOf: {

@@ -586,6 +586,8 @@ public:
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
+    Strong<JSBigInt> bigIntConstantOne;
+
     Structure* setIteratorStructure()
     {
         if (LIKELY(m_setIteratorStructure))

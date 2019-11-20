@@ -1,3 +1,135 @@
+2019-11-19  Robin Morisset  <rmorisset@apple.com>
+
+        [ESNext][BigInt] Add support for op_inc
+        https://bugs.webkit.org/show_bug.cgi?id=193240
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds support for both ++ and -- on BigInts.
+
+        It required the following secondary changes:
+        - teaching FixupPhase how to replace it by ArithAdd/ArithSub/ValueAdd/ValueSub when the type is Int32/Double/BigInt
+        - pulling ObservedResults out of UnaryArithProfile/BinaryArithProfile, so that it can be used by ArithAdd regardless of whether it comes from an Inc or from an Add
+        - adding the constant 1n to the VM object so that it can be used by FixupPhase since it cannot allocate a new JSValue.
+        - adding an UnaryArithProfile to op_inc and op_dec, and teaching the llint to update them.
+        - adding ToNumeric (identity on bigints, same as toNumber on everything else) to all tiers
+
+        * bytecode/ArithProfile.cpp:
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetDouble const):
+        (JSC::ArithProfile<BitfieldType>::emitSetDouble const):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetNonNumeric const):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetBigInt const):
+        (JSC::ArithProfile<BitfieldType>::emitSetNonNumeric const):
+        (JSC::ArithProfile<BitfieldType>::emitSetBigInt const):
+        * bytecode/ArithProfile.h:
+        (JSC::ObservedResults::ObservedResults):
+        (JSC::ObservedResults::didObserveNonInt32):
+        (JSC::ObservedResults::didObserveDouble):
+        (JSC::ObservedResults::didObserveNonNegZeroDouble):
+        (JSC::ObservedResults::didObserveNegZeroDouble):
+        (JSC::ObservedResults::didObserveNonNumeric):
+        (JSC::ObservedResults::didObserveBigInt):
+        (JSC::ObservedResults::didObserveInt32Overflow):
+        (JSC::ObservedResults::didObserveInt52Overflow):
+        (JSC::ArithProfile::observedResults const):
+        (JSC::ArithProfile::didObserveNonInt32 const):
+        (JSC::ArithProfile::didObserveDouble const):
+        (JSC::ArithProfile::didObserveNonNegZeroDouble const):
+        (JSC::ArithProfile::didObserveNegZeroDouble const):
+        (JSC::ArithProfile::didObserveNonNumeric const):
+        (JSC::ArithProfile::didObserveBigInt const):
+        (JSC::ArithProfile::didObserveInt32Overflow const):
+        (JSC::ArithProfile::didObserveInt52Overflow const):
+        (JSC::ArithProfile::setObservedNonNegZeroDouble):
+        (JSC::ArithProfile::setObservedNegZeroDouble):
+        (JSC::ArithProfile::setObservedNonNumeric):
+        (JSC::ArithProfile::setObservedBigInt):
+        (JSC::ArithProfile::setObservedInt32Overflow):
+        (JSC::ArithProfile::setObservedInt52Overflow):
+        (JSC::ArithProfile::observeResult):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        (JSC::computeDefsForBytecodeIndex):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::unaryArithProfileForPC):
+        * bytecode/ExitKind.h:
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationForArithmetic):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::emitToNumeric):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitPostIncOrDec):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToNumeric):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIncOrDec):
+        (JSC::DFG::SpeculativeJIT::compileToPrimitive):
+        (JSC::DFG::SpeculativeJIT::compileToNumeric):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIncOrDec):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateInline):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_numeric):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_numeric):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::inc):
+        (JSC::JSBigInt::dec):
+        * runtime/JSBigInt.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] MetadataTable::sizeInBytes should not touch m_rawBuffer in UnlinkedMetadataTable unless MetadataTable is linked to that UnlinkedMetadataTable

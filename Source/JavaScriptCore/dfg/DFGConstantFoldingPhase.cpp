@@ -863,6 +863,15 @@ private:
                 break;
             }
 
+            case ToNumeric: {
+                if (m_state.forNode(node->child1()).m_type & ~(SpecBytecodeNumber | SpecBigInt))
+                    break;
+
+                node->convertToIdentity();
+                changed = true;
+                break;
+            }
+
             case NormalizeMapKey: {
                 SpeculatedType typeMaybeNormalized = (SpecFullNumber & ~SpecInt32Only);
                 if (m_state.forNode(node->child1()).m_type & typeMaybeNormalized)

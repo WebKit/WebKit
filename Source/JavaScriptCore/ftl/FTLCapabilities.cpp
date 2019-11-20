@@ -105,6 +105,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueDiv:
     case ValueMod:
     case ValuePow:
+    case Inc:
+    case Dec:
     case StrCat:
     case ArithAdd:
     case ArithClz32:
@@ -208,6 +210,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetArgumentCountIncludingThis:
     case SetArgumentCountIncludingThis:
     case ToNumber:
+    case ToNumeric:
     case ToString:
     case ToObject:
     case CallObjectConstructor:

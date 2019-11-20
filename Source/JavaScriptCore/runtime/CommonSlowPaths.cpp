@@ -457,14 +457,30 @@ SLOW_PATH_DECL(slow_path_inc)
 {
     BEGIN();
     auto bytecode = pc->as<OpInc>();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, jsNumber(GET(bytecode.m_srcDst).jsValue().toNumber(globalObject) + 1), { });
+    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
+    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    CHECK_EXCEPTION();
+    JSValue result;
+    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
+        result = JSBigInt::inc(globalObject, WTF::get<JSBigInt*>(resultVariant));
+    else
+        result = jsNumber(WTF::get<double>(resultVariant) + 1);
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
 SLOW_PATH_DECL(slow_path_dec)
 {
     BEGIN();
     auto bytecode = pc->as<OpDec>();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, jsNumber(GET(bytecode.m_srcDst).jsValue().toNumber(globalObject) - 1), { });
+    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
+    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    CHECK_EXCEPTION();
+    JSValue result;
+    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
+        result = JSBigInt::dec(globalObject, WTF::get<JSBigInt*>(resultVariant));
+    else
+        result = jsNumber(WTF::get<double>(resultVariant) - 1);
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
 SLOW_PATH_DECL(slow_path_to_string)
@@ -572,6 +588,21 @@ SLOW_PATH_DECL(slow_path_to_number)
     auto bytecode = pc->as<OpToNumber>();
     JSValue argument = GET_C(bytecode.m_operand).jsValue();
     JSValue result = jsNumber(argument.toNumber(globalObject));
+    RETURN_PROFILED(result);
+}
+
+SLOW_PATH_DECL(slow_path_to_numeric)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpToNumeric>();
+    JSValue argument = GET_C(bytecode.m_operand).jsValue();
+    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    CHECK_EXCEPTION();
+    JSValue result;
+    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
+        result = WTF::get<JSBigInt*>(resultVariant);
+    else
+        result = jsNumber(WTF::get<double>(resultVariant));
     RETURN_PROFILED(result);
 }
 

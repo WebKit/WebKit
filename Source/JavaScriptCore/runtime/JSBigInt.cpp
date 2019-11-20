@@ -452,6 +452,20 @@ JSBigInt* JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigIn
     return remainder->rightTrim(vm);
 }
 
+JSBigInt* JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
+{
+    // FIXME: we can probably do something a fair bit more efficient here
+    VM& vm = globalObject->vm();
+    return add(globalObject, x, vm.bigIntConstantOne.get());
+}
+
+JSBigInt* JSBigInt::dec(JSGlobalObject* globalObject, JSBigInt* x)
+{
+    // FIXME: we can probably do something a fair bit more efficient here
+    VM& vm = globalObject->vm();
+    return sub(globalObject, x, vm.bigIntConstantOne.get());
+}
+
 JSBigInt* JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();

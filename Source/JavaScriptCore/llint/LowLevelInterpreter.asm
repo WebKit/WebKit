@@ -1773,7 +1773,6 @@ compareUnsignedJumpOp(
 preOp(inc, OpInc,
     macro (value, slow) baddio 1, value, slow end)
 
-
 preOp(dec, OpDec,
     macro (value, slow) bsubio 1, value, slow end)
 

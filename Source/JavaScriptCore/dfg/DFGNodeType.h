@@ -175,7 +175,10 @@ namespace JSC { namespace DFG {
     macro(ArithSqrt, NodeResultDouble | NodeMustGenerate) \
     macro(ArithUnary, NodeResultDouble | NodeMustGenerate) \
     \
-    /* BigInt is a valid operand for negate operations */\
+    /* BigInt is a valid operand for these three operations */\
+    /* Inc and Dec don't update their operand in-place, they are typically combined with some form of SetLocal */\
+    macro(Inc, NodeResultJS | NodeMustGenerate) \
+    macro(Dec, NodeResultJS | NodeMustGenerate) \
     macro(ValueNegate, NodeResultJS | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
@@ -394,6 +397,7 @@ namespace JSC { namespace DFG {
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
     macro(ToString, NodeResultJS | NodeMustGenerate) \
     macro(ToNumber, NodeResultJS | NodeMustGenerate) \
+    macro(ToNumeric, NodeResultJS | NodeMustGenerate) \
     macro(ToObject, NodeResultJS | NodeMustGenerate) \
     macro(CallObjectConstructor, NodeResultJS) \
     macro(CallStringConstructor, NodeResultJS | NodeMustGenerate) \

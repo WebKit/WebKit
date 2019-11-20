@@ -946,14 +946,20 @@ private:
         case ArithAdd:
         case ArithSub:
         case ValueAdd: {
-            BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
-            if (!arithProfile)
+            ObservedResults observed;
+            if (BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex))
+                observed = arithProfile->observedResults();
+            else if (UnaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->unaryArithProfileForBytecodeIndex(m_currentIndex)) {
+                // Happens for OpInc/OpDec
+                observed = arithProfile->observedResults();
+            } else
                 break;
-            if (arithProfile->didObserveDouble())
+
+            if (observed.didObserveDouble())
                 node->mergeFlags(NodeMayHaveDoubleResult);
-            if (arithProfile->didObserveNonNumeric())
+            if (observed.didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (arithProfile->didObserveBigInt())
+            if (observed.didObserveBigInt())
                 node->mergeFlags(NodeMayHaveBigIntResult);
             break;
         }
@@ -977,7 +983,9 @@ private:
             break;
         }
         case ValueNegate:
-        case ArithNegate: {
+        case ArithNegate:
+        case Inc:
+        case Dec: {
             UnaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->unaryArithProfileForBytecodeIndex(m_currentIndex);
             if (!arithProfile)
                 break;
@@ -5215,14 +5223,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_inc: {
             auto bytecode = currentInstruction->as<OpInc>();
             Node* op = get(bytecode.m_srcDst);
-            set(bytecode.m_srcDst, makeSafe(addToGraph(ArithAdd, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
+            // FIXME: we can replace the Inc by either ArithAdd with m_constantOne or ArithAdd with the equivalent BigInt in many cases.
+            // For now we only do so in DFGFixupPhase.
+            // We could probably do it earlier in some cases, but it is not clearly worth the trouble.
+            set(bytecode.m_srcDst, makeSafe(addToGraph(Inc, op)));
             NEXT_OPCODE(op_inc);
         }
 
         case op_dec: {
             auto bytecode = currentInstruction->as<OpDec>();
             Node* op = get(bytecode.m_srcDst);
-            set(bytecode.m_srcDst, makeSafe(addToGraph(ArithSub, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
+            // FIXME: we can replace the Inc by either ArithSub with m_constantOne or ArithSub with the equivalent BigInt in many cases.
+            // For now we only do so in DFGFixupPhase.
+            // We could probably do it earlier in some cases, but it is not clearly worth the trouble.
+            set(bytecode.m_srcDst, makeSafe(addToGraph(Dec, op)));
             NEXT_OPCODE(op_dec);
         }
 
@@ -6969,6 +6983,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_operand);
             set(bytecode.m_dst, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), value));
             NEXT_OPCODE(op_to_number);
+        }
+
+        case op_to_numeric: {
+            auto bytecode = currentInstruction->as<OpToNumeric>();
+            SpeculatedType prediction = getPrediction();
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(ToNumeric, OpInfo(0), OpInfo(prediction), value));
+            NEXT_OPCODE(op_to_numeric);
         }
 
         case op_to_string: {
