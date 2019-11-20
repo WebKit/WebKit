@@ -1,3 +1,14 @@
+2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Implement String.prototype.replaceAll
+        https://bugs.webkit.org/show_bug.cgi?id=202471
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/text/StringCommon.h:
+        (WTF::findCommon):
+        Fix logic: "start > length" early out should come before "empty search string" early out.
+
 2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [IndexedDB] IndexedDB's threading assertion should respect Web thread

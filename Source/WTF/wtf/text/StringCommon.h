@@ -570,11 +570,12 @@ size_t findCommon(const StringClass& haystack, const StringClass& needle, unsign
         return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
     }
 
+    if (start > haystack.length())
+        return notFound;
+
     if (!needleLength)
         return std::min(start, haystack.length());
 
-    if (start > haystack.length())
-        return notFound;
     unsigned searchLength = haystack.length() - start;
     if (needleLength > searchLength)
         return notFound;
