@@ -1,3 +1,23 @@
+2019-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-api-tests reports AssertionError os.pathsep not in value in _append_value_colon_separated in Cygwin Python
+        https://bugs.webkit.org/show_bug.cgi?id=204400
+
+        Reviewed by Jonathan Bedard.
+
+        r249500 changed Port.environment_for_api_tests to use
+        Port._append_value_colon_separated to append a build path to some
+        enviroment variables. _append_value_colon_separated has a
+        assertion to ensure the given value doesn't iclude ':'. However,
+        Port._build_path contains ':' on Cygwin Python.
+
+        Those enviroment variables are only for macOS and iOS. Move the code to darwin.py.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.environment_for_api_tests):
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.environment_for_api_tests):
+
 2019-11-20  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Add `--webgl-test-suite` flag for run-webkit-tests

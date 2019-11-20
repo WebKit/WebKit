@@ -269,3 +269,10 @@ class DarwinPort(ApplePort):
 
     def app_executable_from_bundle(self, app_bundle):
         return self._plist_data_from_bundle(app_bundle, 'CFBundleExecutable')
+
+    def environment_for_api_tests(self):
+        environment = super(DarwinPort, self).environment_for_api_tests()
+        build_root_path = str(self._build_path())
+        for name in ['DYLD_LIBRARY_PATH', '__XPC_DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', '__XPC_DYLD_FRAMEWORK_PATH']:
+            self._append_value_colon_separated(environment, name, build_root_path)
+        return environment
