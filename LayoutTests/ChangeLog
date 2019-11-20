@@ -1,3 +1,18 @@
+2019-11-19  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: update m_objectStoresByName after renaming object store
+        https://bugs.webkit.org/show_bug.cgi?id=204373
+
+        Reviewed by Brady Eidson.
+
+        * storage/indexeddb/put-after-objectstore-rename-expected.txt: Added.
+        * storage/indexeddb/put-after-objectstore-rename-private-expected.txt: Added.
+        * storage/indexeddb/put-after-objectstore-rename-private.html: Added.
+        * storage/indexeddb/put-after-objectstore-rename.html: Added.
+        * storage/indexeddb/resources/put-after-objectstore-rename.js: Added.
+        (prepareDatabase):
+        (openSuccess):
+
 2019-11-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Improve WebAuthn NFC tests after r252297

@@ -1,3 +1,16 @@
+2019-11-19  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: update m_objectStoresByName after renaming object store
+        https://bugs.webkit.org/show_bug.cgi?id=204373
+
+        Reviewed by Brady Eidson.
+
+        Tests: storage/indexeddb/put-after-objectstore-rename-private.html
+               storage/indexeddb/put-after-objectstore-rename.html
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameObjectStore):
+
 2019-11-19  Sunny He  <sunny_he@apple.com>
 
         Nullptr crash in Node::setTextContent via Document::setTitle if title element is removed before setTextContent call.

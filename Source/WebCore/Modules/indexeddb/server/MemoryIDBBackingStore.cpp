@@ -194,6 +194,9 @@ IDBError MemoryIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
     objectStore->rename(newName);
     transaction->objectStoreRenamed(*objectStore, oldName);
 
+    m_objectStoresByName.remove(oldName);
+    m_objectStoresByName.set(newName, objectStore);
+
     m_databaseInfo->renameObjectStore(objectStoreIdentifier, newName);
 
     return IDBError { };

@@ -1,0 +1,18 @@
+This tests verifies put operation can be performed on renamed object store
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Open database upgradeneeded: database old version - 0, new version - 1
+Current objectStore name: ObjectStore
+Current objectStore name: RenamedObjectStore
+Open database success
+Put success in renamed object store
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
