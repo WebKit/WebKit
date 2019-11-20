@@ -161,7 +161,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
             console.assert(localResourceOverride);
 
-            let revision = localResourceOverride.localResource.currentRevision;
+            let revision = localResourceOverride.localResource.editableRevision;
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
             if (!this.showingLocalResourceOverride)

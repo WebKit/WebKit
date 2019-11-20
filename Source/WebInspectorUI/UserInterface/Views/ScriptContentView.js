@@ -236,7 +236,7 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     _handleTextEditorContentDidChange(event)
     {
-        this._script.currentRevision.updateRevisionContent(this._textEditor.string);
+        this._script.editableRevision.updateRevisionContent(this._textEditor.string);
     }
 
     _togglePrettyPrint(event)

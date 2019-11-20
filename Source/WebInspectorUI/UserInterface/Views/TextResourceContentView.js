@@ -289,7 +289,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     _textEditorContentDidChange(event)
     {
         this._ignoreSourceCodeContentDidChangeEvent = true;
-        this.resource.currentRevision.updateRevisionContent(this._textEditor.string);
+        this.resource.editableRevision.updateRevisionContent(this._textEditor.string);
         this._ignoreSourceCodeContentDidChangeEvent = false;
     }
 

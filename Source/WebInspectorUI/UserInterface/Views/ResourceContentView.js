@@ -209,8 +209,12 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             return;
         }
 
+        // The view maybe populated with inline scripts content by the time resource
+        // content arrives. SourceCodeTextEditor will handle that.
+        if (this._hasContent())
+            return;
+
         // Content is ready to show, call the public method now.
-        console.assert(!this._hasContent());
         console.assert(parameters.sourceCode === this._resource);
         this.contentAvailable(parameters.sourceCode.content, parameters.base64Encoded);
 
@@ -290,8 +294,8 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
             console.assert(localResourceOverride);
 
-            let revision = localResourceOverride.localResource.currentRevision;
             await this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
+                let revision = localResourceOverride.localResource.editableRevision;
                 revision.updateRevisionContent(content, {base64Encoded, mimeType});
             });
 

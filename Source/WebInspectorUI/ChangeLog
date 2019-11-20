@@ -1,3 +1,38 @@
+2019-11-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: REGRESSION(r250618): main resource view is empty when pausing on inline 'debugger' statement
+        https://bugs.webkit.org/show_bug.cgi?id=204086
+
+        Reviewed by Devin Rousso.
+
+        SourceCodeRevision.currentRevision doesn't create new revisions under the hood anymore.
+        This allows to avoid undesirable side effects when e.g. text editor tries to read current
+        content of the SourceCode which results in a new revision (with empty content). 
+        New method editableRevision is introduced for applying changes to the resource while
+        keeping original content revision intact.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype._resourceContentDidChange.applyStyleSheetChanges.styleSheetFound):
+        (WI.CSSManager.prototype._resourceContentDidChange.applyStyleSheetChanges):
+        (WI.CSSManager.prototype._resourceContentDidChange):
+        (WI.CSSManager.prototype._updateResourceContent.fetchedStyleSheetContent):
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype.get currentRevision):
+        (WI.SourceCode.prototype.get editableRevision):
+        (WI.SourceCode.prototype.get content):
+        (WI.SourceCode.prototype.revisionContentDidChange):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView.prototype.dropZoneHandleDrop):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDrop):
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype._contentAvailable):
+        (WI.ResourceContentView.prototype._handleImportLocalResourceOverride):
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView.prototype._handleTextEditorContentDidChange):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype._textEditorContentDidChange):
+
 2019-11-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Local Overrides: the placeholder for the MIME type, status code, and status text is the same as the placeholder URL
