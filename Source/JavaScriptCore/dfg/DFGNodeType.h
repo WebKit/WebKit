@@ -272,7 +272,7 @@ namespace JSC { namespace DFG {
     macro(AssertNotEmpty, NodeMustGenerate) \
     macro(CheckBadCell, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate | NodeResultJS) \
-    macro(CheckStringIdent, NodeMustGenerate) \
+    macro(CheckIdent, NodeMustGenerate) \
     macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\
     macro(CheckSubClass, NodeMustGenerate) \
     macro(ParseInt, NodeMustGenerate | NodeResultJS) \
@@ -513,7 +513,7 @@ namespace JSC { namespace DFG {
     \
     /* Used to provide feedback to the IC profiler. */ \
     macro(FilterCallLinkStatus, NodeMustGenerate) \
-    macro(FilterGetByIdStatus, NodeMustGenerate) \
+    macro(FilterGetByStatus, NodeMustGenerate) \
     macro(FilterInByIdStatus, NodeMustGenerate) \
     macro(FilterPutByIdStatus, NodeMustGenerate) \
     /* Data view access */ \

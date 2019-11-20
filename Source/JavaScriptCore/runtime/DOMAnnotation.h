@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
+
 namespace JSC {
 
 struct ClassInfo;
@@ -34,6 +36,8 @@ class GetterSetter;
 }
 
 struct DOMAttributeAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     const ClassInfo* classInfo;
     const DOMJIT::GetterSetter* domJIT;
 };

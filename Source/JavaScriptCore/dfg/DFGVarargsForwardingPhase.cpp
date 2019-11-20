@@ -194,7 +194,7 @@ private:
                 break;
             }
                 
-            case FilterGetByIdStatus:
+            case FilterGetByStatus:
             case FilterPutByIdStatus:
             case FilterCallLinkStatus:
             case FilterInByIdStatus:
@@ -388,7 +388,7 @@ private:
                 break;
             }
 
-            case FilterGetByIdStatus:
+            case FilterGetByStatus:
             case FilterPutByIdStatus:
             case FilterCallLinkStatus:
             case FilterInByIdStatus:

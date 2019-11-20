@@ -1090,7 +1090,7 @@ private:
             break;
             
         case FilterCallLinkStatus:
-        case FilterGetByIdStatus:
+        case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
             break;
@@ -2378,7 +2378,7 @@ private:
             for (Node* node : *block) {
                 switch (node->op()) {
                 case FilterCallLinkStatus:
-                case FilterGetByIdStatus:
+                case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterInByIdStatus:
                     if (node->child1()->isPhantomAllocation())

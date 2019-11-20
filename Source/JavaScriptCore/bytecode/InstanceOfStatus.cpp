@@ -75,7 +75,7 @@ InstanceOfStatus InstanceOfStatus::computeForStubInfo(const ConcurrentJSLocker&,
     if (!isInlineable(summary))
         return InstanceOfStatus(summary);
     
-    if (stubInfo->cacheType != CacheType::Stub)
+    if (stubInfo->cacheType() != CacheType::Stub)
         return TakesSlowPath; // This is conservative. It could be that we have no information.
     
     PolymorphicAccess* list = stubInfo->u.stub;

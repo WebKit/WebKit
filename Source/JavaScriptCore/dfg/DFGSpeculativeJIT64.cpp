@@ -200,7 +200,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR
     
     JITGetByIdWithThisGenerator gen(
         m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifierUID(identifierNumber),
-        JSValueRegs(resultGPR), JSValueRegs(baseGPR), JSValueRegs(thisGPR), AccessType::GetWithThis);
+        JSValueRegs(resultGPR), JSValueRegs(baseGPR), JSValueRegs(thisGPR));
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;
@@ -2408,28 +2408,74 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         case Array::Generic: {
-            if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
-                if (m_graph.varArgChild(node, 1).useKind() == StringUse) {
-                    compileGetByValForObjectWithString(node);
-                    break;
+            if (m_graph.m_slowGetByVal.contains(node)) {
+                if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
+                    if (m_graph.varArgChild(node, 1).useKind() == StringUse) {
+                        compileGetByValForObjectWithString(node);
+                        break;
+                    }
+
+                    if (m_graph.varArgChild(node, 1).useKind() == SymbolUse) {
+                        compileGetByValForObjectWithSymbol(node);
+                        break;
+                    }
                 }
 
-                if (m_graph.varArgChild(node, 1).useKind() == SymbolUse) {
-                    compileGetByValForObjectWithSymbol(node);
-                    break;
-                }
+                JSValueOperand base(this, m_graph.varArgChild(node, 0));
+                JSValueOperand property(this, m_graph.varArgChild(node, 1));
+                GPRReg baseGPR = base.gpr();
+                GPRReg propertyGPR = property.gpr();
+                
+                flushRegisters();
+                GPRFlushedCallResult result(this);
+                callOperation(operationGetByVal, result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR);
+                m_jit.exceptionCheck();
+                
+                jsValueResult(result.gpr(), node);
+                break;
             }
-            JSValueOperand base(this, m_graph.varArgChild(node, 0));
-            JSValueOperand property(this, m_graph.varArgChild(node, 1));
+
+            speculate(node, m_graph.varArgChild(node, 0));
+            speculate(node, m_graph.varArgChild(node, 1));
+
+            JSValueOperand base(this, m_graph.varArgChild(node, 0), ManualOperandSpeculation);
+            JSValueOperand property(this, m_graph.varArgChild(node, 1), ManualOperandSpeculation);
+            GPRTemporary result(this, Reuse, property);
             GPRReg baseGPR = base.gpr();
             GPRReg propertyGPR = property.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            CodeOrigin codeOrigin = node->origin.semantic;
+            CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+            RegisterSet usedRegisters = this->usedRegisters();
+
+            JITCompiler::JumpList slowCases;
+            if (!m_state.forNode(m_graph.varArgChild(node, 0)).isType(SpecCell))
+                slowCases.append(m_jit.branchIfNotCell(baseGPR));
+
+            JITGetByValGenerator gen(
+                m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+                JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR));
+
+            if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecString))
+                gen.stubInfo()->propertyIsString = true;
+            else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecInt32Only))
+                gen.stubInfo()->propertyIsInt32 = true;
+            else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecSymbol))
+                gen.stubInfo()->propertyIsSymbol = true;
+
+            gen.generateFastPath(m_jit);
             
-            flushRegisters();
-            GPRFlushedCallResult result(this);
-            callOperation(operationGetByVal, result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR);
-            m_jit.exceptionCheck();
+            slowCases.append(gen.slowPathJump());
+
+            std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+                slowCases, this, operationGetByValOptimize,
+                resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), nullptr, baseGPR, propertyGPR);
             
-            jsValueResult(result.gpr(), node);
+            m_jit.addGetByVal(gen, slowPath.get());
+            addSlowPathGenerator(WTFMove(slowPath));
+
+            jsValueResult(resultGPR, node);
             break;
         }
         case Array::Int32:
@@ -3592,27 +3638,27 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case TryGetById: {
-        compileGetById(node, AccessType::TryGet);
+        compileGetById(node, AccessType::TryGetById);
         break;
     }
 
     case GetByIdDirect: {
-        compileGetById(node, AccessType::GetDirect);
+        compileGetById(node, AccessType::GetByIdDirect);
         break;
     }
 
     case GetByIdDirectFlush: {
-        compileGetByIdFlush(node, AccessType::GetDirect);
+        compileGetByIdFlush(node, AccessType::GetByIdDirect);
         break;
     }
 
     case GetById: {
-        compileGetById(node, AccessType::Get);
+        compileGetById(node, AccessType::GetById);
         break;
     }
 
     case GetByIdFlush: {
-        compileGetByIdFlush(node, AccessType::Get);
+        compileGetByIdFlush(node, AccessType::GetById);
         break;
     }
 
@@ -3691,8 +3737,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckStringIdent:
-        compileCheckStringIdent(node);
+    case CheckIdent:
+        compileCheckIdent(node);
         break;
 
     case GetExecutable: {
@@ -5179,7 +5225,7 @@ void SpeculativeJIT::compile(Node* node)
 #endif // ENABLE(FTL_JIT)
 
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
         m_interpreter.filterICStatus(node);

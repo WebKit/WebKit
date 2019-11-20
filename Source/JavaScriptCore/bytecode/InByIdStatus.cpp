@@ -130,7 +130,7 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
     // Finally figure out if we can derive an access strategy.
     InByIdStatus result;
     result.m_state = Simple;
-    switch (stubInfo->cacheType) {
+    switch (stubInfo->cacheType()) {
     case CacheType::Unset:
         return InByIdStatus(NoInformation);
 

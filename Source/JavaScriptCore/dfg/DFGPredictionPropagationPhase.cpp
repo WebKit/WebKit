@@ -1348,7 +1348,7 @@ private:
         case CheckCell:
         case CheckNotEmpty:
         case AssertNotEmpty:
-        case CheckStringIdent:
+        case CheckIdent:
         case CheckBadCell:
         case PutStructure:
         case Phantom:
@@ -1373,7 +1373,7 @@ private:
         case WeakSetAdd:
         case WeakMapSet:
         case FilterCallLinkStatus:
-        case FilterGetByIdStatus:
+        case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case ClearCatchLocals:

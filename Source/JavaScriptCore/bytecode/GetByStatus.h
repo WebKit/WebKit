@@ -43,7 +43,7 @@ class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
 class StructureStubInfo;
 
-class GetByIdStatus {
+class GetByStatus {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State : uint8_t {
@@ -62,18 +62,18 @@ public:
         MakesCalls,
     };
 
-    GetByIdStatus()
+    GetByStatus()
         : m_state(NoInformation)
     {
     }
     
-    explicit GetByIdStatus(State state)
+    explicit GetByStatus(State state)
         : m_state(state)
     {
         ASSERT(state == NoInformation || state == TakesSlowPath || state == MakesCalls);
     }
     
-    explicit GetByIdStatus(StubInfoSummary summary)
+    explicit GetByStatus(StubInfoSummary summary)
         : m_wasSeenInJIT(true)
     {
         switch (summary) {
@@ -94,23 +94,15 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    GetByIdStatus(
-        State state, bool wasSeenInJIT, const GetByIdVariant& variant = GetByIdVariant())
+    GetByStatus(
+        State state, bool wasSeenInJIT)
         : m_state(state)
         , m_wasSeenInJIT(wasSeenInJIT)
     {
-        ASSERT((state == Simple || state == Custom) == variant.isSet());
-        m_variants.append(variant);
     }
     
-    static GetByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
-    static GetByIdStatus computeFor(const StructureSet&, UniquedStringImpl* uid);
-    
-    static GetByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, UniquedStringImpl* uid);
-
-#if ENABLE(DFG_JIT)
-    static GetByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
-#endif
+    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin);
+    static GetByStatus computeFor(const StructureSet&, UniquedStringImpl*);
 
     State state() const { return m_state; }
     
@@ -128,40 +120,46 @@ public:
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls || m_state == Custom || m_state == ModuleNamespace; }
     bool makesCalls() const;
     
-    GetByIdStatus slowVersion() const;
+    GetByStatus slowVersion() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
-    void merge(const GetByIdStatus&);
+    void merge(const GetByStatus&);
     
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
 
-    JSModuleNamespaceObject* moduleNamespaceObject() const { return m_moduleNamespaceObject; }
-    JSModuleEnvironment* moduleEnvironment() const { return m_moduleEnvironment; }
-    ScopeOffset scopeOffset() const { return m_scopeOffset; }
+    JSModuleNamespaceObject* moduleNamespaceObject() const { return m_moduleNamespaceData->m_moduleNamespaceObject; }
+    JSModuleEnvironment* moduleEnvironment() const { return m_moduleNamespaceData->m_moduleEnvironment; }
+    ScopeOffset scopeOffset() const { return m_moduleNamespaceData->m_scopeOffset; }
     
     void markIfCheap(SlotVisitor&);
     bool finalize(VM&); // Return true if this gets to live.
+
+    bool appendVariant(const GetByIdVariant&);
     
     void dump(PrintStream&) const;
+
+    Box<Identifier> singleIdentifier() const;
     
 private:
 #if ENABLE(JIT)
-    GetByIdStatus(const ModuleNamespaceAccessCase&);
-    static GetByIdStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*,
-        UniquedStringImpl* uid, CallLinkStatus::ExitSiteData);
+    GetByStatus(const ModuleNamespaceAccessCase&);
+    static GetByStatus computeForStubInfoWithoutExitSiteFeedback(
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData);
 #endif
-    static GetByIdStatus computeFromLLInt(CodeBlock*, BytecodeIndex, UniquedStringImpl* uid);
-    
-    bool appendVariant(const GetByIdVariant&);
-    
-    
+    static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);
+    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData);
+
+    struct ModuleNamespaceData {
+        JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };
+        JSModuleEnvironment* m_moduleEnvironment { nullptr };
+        ScopeOffset m_scopeOffset { };
+        Box<Identifier> m_identifier;
+    };
+
     Vector<GetByIdVariant, 1> m_variants;
-    JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };
-    JSModuleEnvironment* m_moduleEnvironment { nullptr };
-    ScopeOffset m_scopeOffset { };
+    Box<ModuleNamespaceData> m_moduleNamespaceData;
     State m_state;
     bool m_wasSeenInJIT { false };
 };

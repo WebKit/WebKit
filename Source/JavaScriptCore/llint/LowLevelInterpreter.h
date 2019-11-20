@@ -32,7 +32,7 @@
 namespace JSC {
 
 // The following is a set of alias for the opcode names. This is needed
-// because there is code (e.g. in GetByIdStatus.cpp and PutByIdStatus.cpp)
+// because there is code (e.g. in GetByStatus.cpp and PutByIdStatus.cpp)
 // which refers to the opcodes expecting them to be prefixed with "llint_".
 // In the CLoop implementation, the 2 are equivalent. Hence, we set up this
 // alias here.

@@ -28,6 +28,7 @@
 #if ENABLE(DFG_JIT)
 
 #include <wtf/HashMap.h>
+#include <wtf/Variant.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
@@ -47,6 +48,7 @@ public:
     
     unsigned numberOfIdentifiers();
     unsigned ensure(UniquedStringImpl*);
+    unsigned ensure(Box<Identifier>);
     
     UniquedStringImpl* at(unsigned index) const;
     
@@ -55,8 +57,10 @@ public:
     void reallyAdd(VM&, CommonData*);
     
 private:
+    void processCodeBlockIdentifiersIfNeeded();
+
     CodeBlock* m_codeBlock;
-    Vector<UniquedStringImpl*> m_addedIdentifiers;
+    Vector<Variant<UniquedStringImpl*, Box<Identifier>>> m_addedIdentifiers;
     HashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
     bool m_didProcessIdentifiers;
 };

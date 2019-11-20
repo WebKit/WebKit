@@ -59,7 +59,7 @@ InstanceOfAccessCase::~InstanceOfAccessCase()
 InstanceOfAccessCase::InstanceOfAccessCase(
     VM& vm, JSCell* owner, AccessType accessType, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, JSObject* prototype)
-    : Base(vm, owner, accessType, invalidOffset, structure, conditionSet, nullptr)
+    : Base(vm, owner, accessType, Identifier(), invalidOffset, structure, conditionSet, nullptr)
     , m_prototype(vm, owner, prototype)
 {
 }

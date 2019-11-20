@@ -400,7 +400,7 @@ private:
                     // butterfly's child and check if it's a candidate.
                     break;
                     
-                case FilterGetByIdStatus:
+                case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
                 case FilterInByIdStatus:
@@ -1246,7 +1246,7 @@ private:
                     
                 case CheckArray:
                 case GetButterfly:
-                case FilterGetByIdStatus:
+                case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
                 case FilterInByIdStatus: {

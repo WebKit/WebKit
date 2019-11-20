@@ -984,7 +984,7 @@ void SpeculativeJIT::useChildren(Node* node)
 
 void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
 {
-    ASSERT(accessType == AccessType::Get || accessType == AccessType::GetDirect || accessType == AccessType::TryGet);
+    ASSERT(accessType == AccessType::GetById || accessType == AccessType::GetByIdDirect || accessType == AccessType::TryGetById);
 
     switch (node->child1().useKind()) {
     case CellUse: {
@@ -7209,21 +7209,26 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     } }
 }
 
-void SpeculativeJIT::compileCheckStringIdent(Node* node)
+void SpeculativeJIT::compileCheckIdent(Node* node)
 {
-    SpeculateCellOperand string(this, node->child1());
-    GPRTemporary storage(this);
+    SpeculateCellOperand stringOrSymbol(this, node->child1());
+    GPRTemporary impl(this);
+    GPRReg stringOrSymbolGPR = stringOrSymbol.gpr();
+    GPRReg implGPR = impl.gpr();
 
-    GPRReg stringGPR = string.gpr();
-    GPRReg storageGPR = storage.gpr();
-
-    speculateString(node->child1(), stringGPR);
-    speculateStringIdentAndLoadStorage(node->child1(), stringGPR, storageGPR);
+    if (node->child1().useKind() == StringIdentUse) {
+        speculateString(node->child1(), stringOrSymbolGPR);
+        speculateStringIdentAndLoadStorage(node->child1(), stringOrSymbolGPR, implGPR);
+    } else {
+        ASSERT(node->child1().useKind() == SymbolUse);
+        speculateSymbol(node->child1(), stringOrSymbolGPR);
+        m_jit.loadPtr(MacroAssembler::Address(stringOrSymbolGPR, Symbol::offsetOfSymbolImpl()), implGPR);
+    }
 
     UniquedStringImpl* uid = node->uidOperand();
     speculationCheck(
         BadIdent, JSValueSource(), nullptr,
-        m_jit.branchPtr(JITCompiler::NotEqual, storageGPR, TrustedImmPtr(uid)));
+        m_jit.branchPtr(JITCompiler::NotEqual, implGPR, TrustedImmPtr(uid)));
     noResult(node);
 }
 

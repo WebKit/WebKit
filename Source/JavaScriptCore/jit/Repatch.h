@@ -32,14 +32,16 @@
 
 namespace JSC {
 
-enum class GetByIDKind {
+enum class GetByKind {
     Normal,
+    NormalByVal,
     Try,
     WithThis,
     Direct
 };
 
-void repatchGetByID(JSGlobalObject*, CodeBlock*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByIDKind);
+void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&);
+void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByKind);
 void repatchPutByID(JSGlobalObject*, CodeBlock*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void repatchInByID(JSGlobalObject*, CodeBlock*, JSObject*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
@@ -48,7 +50,7 @@ void linkDirectFor(CallFrame*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<
 void linkSlowFor(CallFrame*, CallLinkInfo&);
 void unlinkFor(VM&, CallLinkInfo&);
 void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);
-void resetGetByID(CodeBlock*, StructureStubInfo&, GetByIDKind);
+void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetInByID(CodeBlock*, StructureStubInfo&);
 void resetInstanceOf(StructureStubInfo&);

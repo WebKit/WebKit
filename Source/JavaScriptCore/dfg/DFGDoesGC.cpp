@@ -134,7 +134,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckCell:
     case CheckNotEmpty:
     case AssertNotEmpty:
-    case CheckStringIdent:
+    case CheckIdent:
     case CompareBelow:
     case CompareBelowEq:
     case CompareEqPtr:
@@ -239,7 +239,7 @@ bool doesGC(Graph& graph, Node* node)
     case AtomicsIsLockFree:
     case MatchStructure:
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case DateGetInt32OrNaN:

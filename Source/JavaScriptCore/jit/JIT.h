@@ -207,20 +207,6 @@ namespace JSC {
             return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
         
-        static void compileGetByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompileGetByVal(locker, byValInfo, returnAddress, arrayMode);
-        }
-
-        static void compileGetByValWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, const Identifier& propertyName)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompileGetByValWithCachedId(byValInfo, returnAddress, propertyName);
-        }
-
         static void compilePutByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
@@ -382,15 +368,6 @@ namespace JSC {
         JumpList emitArrayStorageLoad(const Instruction*, PatchableJump& badType);
         JumpList emitLoadForArrayMode(const Instruction*, JITArrayMode, PatchableJump& badType);
 
-        JumpList emitInt32GetByVal(const Instruction* instruction, PatchableJump& badType) { return emitContiguousGetByVal(instruction, badType, Int32Shape); }
-        JumpList emitDoubleGetByVal(const Instruction*, PatchableJump& badType);
-        JumpList emitContiguousGetByVal(const Instruction*, PatchableJump& badType, IndexingType expectedShape = ContiguousShape);
-        JumpList emitArrayStorageGetByVal(const Instruction*, PatchableJump& badType);
-        JumpList emitDirectArgumentsGetByVal(const Instruction*, PatchableJump& badType);
-        JumpList emitScopedArgumentsGetByVal(const Instruction*, PatchableJump& badType);
-        JumpList emitIntTypedArrayGetByVal(const Instruction*, PatchableJump& badType, TypedArrayType);
-        JumpList emitFloatTypedArrayGetByVal(const Instruction*, PatchableJump& badType, TypedArrayType);
-        
         // Property is in regT1, base is in regT0. regT2 contains indecing type.
         // The value to store is not yet loaded. Property is int-checked and
         // zero-extended. Base is cell checked. Structure is already profiled.
@@ -422,7 +399,6 @@ namespace JSC {
         // Identifier check helper for GetByVal and PutByVal.
         void emitByValIdentifierCheck(ByValInfo*, RegisterID cell, RegisterID scratch, const Identifier&, JumpList& slowCases);
 
-        JITGetByIdGenerator emitGetByValWithCachedId(ByValInfo*, OpGetByVal, const Identifier&, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases);
         template<typename Op>
         JITPutByIdGenerator emitPutByValWithCachedId(ByValInfo*, Op, PutKind, const Identifier&, JumpList& doneCases, JumpList& slowCases);
 
@@ -927,6 +903,7 @@ namespace JSC {
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;
         Vector<JITGetByIdGenerator> m_getByIds;
+        Vector<JITGetByValGenerator> m_getByVals;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
         Vector<JITInByIdGenerator> m_inByIds;
@@ -947,6 +924,7 @@ namespace JSC {
         Label m_exceptionHandler;
 
         unsigned m_getByIdIndex { UINT_MAX };
+        unsigned m_getByValIndex { UINT_MAX };
         unsigned m_getByIdWithThisIndex { UINT_MAX };
         unsigned m_putByIdIndex { UINT_MAX };
         unsigned m_inByIdIndex { UINT_MAX };

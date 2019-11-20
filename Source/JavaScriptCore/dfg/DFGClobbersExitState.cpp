@@ -80,7 +80,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
         // These do clobber memory, but nothing that is observable. It may be nice to separate the

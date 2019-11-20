@@ -477,7 +477,7 @@
 		0F93275B1C20BCDF00CF6564 /* dynbench.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93275A1C20BCDF00CF6564 /* dynbench.cpp */; };
 		0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F9332A014CA7DCD0085F3C6 /* GetByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9332A014CA7DCD0085F3C6 /* GetByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329614CA7DC10085F3C6 /* GetByStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329B14CA7DC10085F3C6 /* StructureSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2779,8 +2779,8 @@
 		0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectInlines.h; sourceTree = "<group>"; };
 		0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkStatus.cpp; sourceTree = "<group>"; };
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
-		0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByIdStatus.cpp; sourceTree = "<group>"; };
-		0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByIdStatus.h; sourceTree = "<group>"; };
+		0F93329514CA7DC10085F3C6 /* GetByStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByStatus.cpp; sourceTree = "<group>"; };
+		0F93329614CA7DC10085F3C6 /* GetByStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByStatus.h; sourceTree = "<group>"; };
 		0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdStatus.cpp; sourceTree = "<group>"; };
 		0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdStatus.h; sourceTree = "<group>"; };
 		0F93329B14CA7DC10085F3C6 /* StructureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSet.h; sourceTree = "<group>"; };
@@ -8211,8 +8211,8 @@
 				14AD91161DCA97FD0014F9FE /* FunctionCodeBlock.cpp */,
 				14AD91071DCA92940014F9FE /* FunctionCodeBlock.h */,
 				1498CAD5214BF36D00710879 /* GetByIdMetadata.h */,
-				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
-				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
+				0F93329514CA7DC10085F3C6 /* GetByStatus.cpp */,
+				0F93329614CA7DC10085F3C6 /* GetByStatus.h */,
 				0F0332C118B01763005F979A /* GetByIdVariant.cpp */,
 				0F0332C218B01763005F979A /* GetByIdVariant.h */,
 				14AD91081DCA92940014F9FE /* GlobalCodeBlock.h */,
@@ -9493,7 +9493,7 @@
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,
 				1498CAD6214BF36D00710879 /* GetByIdMetadata.h in Headers */,
-				0F9332A014CA7DCD0085F3C6 /* GetByIdStatus.h in Headers */,
+				0F9332A014CA7DCD0085F3C6 /* GetByStatus.h in Headers */,
 				0F0332C418B01763005F979A /* GetByIdVariant.h in Headers */,
 				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,
 				534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */,

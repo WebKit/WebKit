@@ -51,10 +51,10 @@ CallLinkStatus* RecordedStatuses::addCallLinkStatus(const CodeOrigin& codeOrigin
     return result;
 }
 
-GetByIdStatus* RecordedStatuses::addGetByIdStatus(const CodeOrigin& codeOrigin, const GetByIdStatus& status)
+GetByStatus* RecordedStatuses::addGetByStatus(const CodeOrigin& codeOrigin, const GetByStatus& status)
 {
-    auto statusPtr = makeUnique<GetByIdStatus>(status);
-    GetByIdStatus* result = statusPtr.get();
+    auto statusPtr = makeUnique<GetByStatus>(status);
+    GetByStatus* result = statusPtr.get();
     gets.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
     return result;
 }

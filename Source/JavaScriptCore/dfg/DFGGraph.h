@@ -1121,6 +1121,8 @@ public:
     RegisteredStructure stringStructure;
     RegisteredStructure symbolStructure;
 
+    HashSet<Node*> m_slowGetByVal;
+
 private:
     bool isStringPrototypeMethodSane(JSGlobalObject*, UniquedStringImpl*);
 

@@ -38,7 +38,7 @@ namespace JSC {
 
 static StructureStubInfo* garbageStubInfo()
 {
-    static StructureStubInfo* stubInfo = new StructureStubInfo(AccessType::Get);
+    static StructureStubInfo* stubInfo = new StructureStubInfo(AccessType::GetById);
     return stubInfo;
 }
 
@@ -117,8 +117,8 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    UniquedStringImpl*, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, AccessType accessType)
-    : JITByIdGenerator(codeBlock, codeOrigin, callSite, accessType, usedRegisters, base, value)
+    UniquedStringImpl*, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::GetByIdWithThis, usedRegisters, base, value)
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
 
@@ -200,6 +200,8 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
         m_stubInfo->patch.usedRegisters.clear(scratch2);
 
     m_stubInfo->prototypeIsKnownObject = prototypeIsKnownObject;
+
+    m_stubInfo->hasConstantIdentifier = false;
 }
 
 void JITInstanceOfGenerator::generateFastPath(MacroAssembler& jit)
@@ -215,6 +217,33 @@ void JITInstanceOfGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath
         fastPath.locationOf<JITStubRoutinePtrTag>(m_jump));
     
     fastPath.link(m_jump.m_jump, slowPath.locationOf<NoPtrTag>(m_slowPathBegin));
+}
+
+JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result)
+    : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::GetByVal, usedRegisters)
+    , m_base(base)
+    , m_result(result)
+{
+    m_stubInfo->hasConstantIdentifier = false;
+
+    m_stubInfo->patch.baseGPR = base.payloadGPR();
+    m_stubInfo->patch.u.propertyGPR = property.payloadGPR();
+    m_stubInfo->patch.valueGPR = result.payloadGPR();
+}
+
+void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)
+{
+    m_start = jit.label();
+    m_slowPathJump = jit.patchableJump();
+    m_done = jit.label();
+}
+
+void JITGetByValGenerator::finalize(
+    LinkBuffer& fastPath, LinkBuffer& slowPath)
+{
+    ASSERT(m_start.isSet());
+    Base::finalize(
+        fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
 }
 
 } // namespace JSC

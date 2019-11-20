@@ -42,15 +42,15 @@ namespace GetterSetterAccessCaseInternal {
 static constexpr bool verbose = false;
 }
 
-GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
-    : Base(vm, owner, accessType, offset, structure, conditionSet, viaProxy, additionalSet, WTFMove(prototypeAccessChain))
+GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, const Identifier& identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
+    : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, viaProxy, additionalSet, WTFMove(prototypeAccessChain))
 {
     m_customSlotBase.setMayBeNull(vm, owner, customSlotBase);
 }
 
 
 std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
-    VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet,
+    VM& vm, JSCell* owner, AccessType type, const Identifier& identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet,
     bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<OperationPtrTag> customGetter, JSObject* customSlotBase,
     Optional<DOMAttributeAnnotation> domAttribute, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
@@ -63,18 +63,18 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
         ASSERT_NOT_REACHED();
     };
 
-    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
+    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
     result->m_customAccessor = customGetter ? FunctionPtr<OperationPtrTag>(customGetter) : nullptr;
     return result;
 }
 
-std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, PropertyOffset offset,
+std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, const Identifier& identifier, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain, FunctionPtr<OperationPtrTag> customSetter,
     JSObject* customSlotBase)
 {
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
-    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, offset, structure, conditionSet, false, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
+    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, false, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_customAccessor = customSetter ? FunctionPtr<OperationPtrTag>(customSetter) : nullptr;
     return result;
 }

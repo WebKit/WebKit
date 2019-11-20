@@ -893,8 +893,8 @@ private:
         case CheckBadCell:
             compileCheckBadCell();
             break;
-        case CheckStringIdent:
-            compileCheckStringIdent();
+        case CheckIdent:
+            compileCheckIdent();
             break;
         case GetExecutable:
             compileGetExecutable();
@@ -907,18 +907,18 @@ private:
             compilePutStructure();
             break;
         case TryGetById:
-            compileGetById(AccessType::TryGet);
+            compileGetById(AccessType::TryGetById);
             break;
         case GetById:
         case GetByIdFlush:
-            compileGetById(AccessType::Get);
+            compileGetById(AccessType::GetById);
             break;
         case GetByIdWithThis:
             compileGetByIdWithThis();
             break;
         case GetByIdDirect:
         case GetByIdDirectFlush:
-            compileGetById(AccessType::GetDirect);
+            compileGetById(AccessType::GetByIdDirect);
             break;
         case InById:
             compileInById();
@@ -1546,7 +1546,7 @@ private:
             compileCallDOMGetter();
             break;
         case FilterCallLinkStatus:
-        case FilterGetByIdStatus:
+        case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
             compileFilterICStatus();
@@ -3447,10 +3447,16 @@ private:
             });
     }
 
-    void compileCheckStringIdent()
+    void compileCheckIdent()
     {
         UniquedStringImpl* uid = m_node->uidOperand();
-        LValue stringImpl = lowStringIdent(m_node->child1());
+        LValue stringImpl;
+        if (m_node->child1().useKind() == StringIdentUse)
+            stringImpl = lowStringIdent(m_node->child1());
+        else {
+            ASSERT(m_node->child1().useKind() == SymbolUse);
+            stringImpl = m_out.loadPtr(lowSymbol(m_node->child1()), m_heaps.Symbol_symbolImpl);
+        }
         speculate(BadIdent, noValue(), nullptr, m_out.notEqual(stringImpl, m_out.constIntPtr(uid)));
     }
 
@@ -3538,7 +3544,7 @@ private:
     
     void compileGetById(AccessType type)
     {
-        ASSERT(type == AccessType::Get || type == AccessType::TryGet || type == AccessType::GetDirect);
+        ASSERT(type == AccessType::GetById || type == AccessType::TryGetById || type == AccessType::GetByIdDirect);
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         switch (m_node->child1().useKind()) {
         case CellUse: {
@@ -4447,24 +4453,112 @@ private:
         }
             
         case Array::Generic: {
-            if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
-                if (m_graph.varArgChild(m_node, 1).useKind() == StringUse) {
-                    setJSValue(vmCall(
-                        Int64, operationGetByValObjectString, weakPointer(globalObject),
-                        lowObject(m_graph.varArgChild(m_node, 0)), lowString(m_graph.varArgChild(m_node, 1))));
-                    return;
+            if (m_graph.m_slowGetByVal.contains(m_node)) {
+                if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
+                    if (m_graph.varArgChild(m_node, 1).useKind() == StringUse) {
+                        setJSValue(vmCall(
+                            Int64, operationGetByValObjectString, weakPointer(globalObject),
+                            lowObject(m_graph.varArgChild(m_node, 0)), lowString(m_graph.varArgChild(m_node, 1))));
+                        return;
+                    }
+
+                    if (m_graph.varArgChild(m_node, 1).useKind() == SymbolUse) {
+                        setJSValue(vmCall(
+                            Int64, operationGetByValObjectSymbol, weakPointer(globalObject),
+                            lowObject(m_graph.varArgChild(m_node, 0)), lowSymbol(m_graph.varArgChild(m_node, 1))));
+                        return;
+                    }
                 }
 
-                if (m_graph.varArgChild(m_node, 1).useKind() == SymbolUse) {
-                    setJSValue(vmCall(
-                        Int64, operationGetByValObjectSymbol, weakPointer(globalObject),
-                        lowObject(m_graph.varArgChild(m_node, 0)), lowSymbol(m_graph.varArgChild(m_node, 1))));
-                    return;
-                }
+                setJSValue(vmCall(
+                    Int64, operationGetByVal, weakPointer(globalObject),
+                    lowJSValue(m_graph.varArgChild(m_node, 0)), lowJSValue(m_graph.varArgChild(m_node, 1))));
+                return;
             }
-            setJSValue(vmCall(
-                Int64, operationGetByVal, weakPointer(globalObject),
-                lowJSValue(m_graph.varArgChild(m_node, 0)), lowJSValue(m_graph.varArgChild(m_node, 1))));
+
+            Node* node = m_node;
+
+            LValue base = lowJSValue(m_graph.varArgChild(node, 0), ManualOperandSpeculation);
+            LValue property = lowJSValue(m_graph.varArgChild(node, 1), ManualOperandSpeculation);
+
+            speculate(m_graph.varArgChild(node, 0));
+            speculate(m_graph.varArgChild(node, 1));
+            bool baseIsCell = abstractValue(m_graph.varArgChild(node, 0)).isType(SpecCell);
+            bool propertyIsString = false;
+            bool propertyIsInt32 = false;
+            bool propertyIsSymbol = false;
+            if (abstractValue(m_graph.varArgChild(node, 1)).isType(SpecString))
+                propertyIsString = true;
+            else if (abstractValue(m_graph.varArgChild(node, 1)).isType(SpecInt32Only))
+                propertyIsInt32 = true;
+            else if (abstractValue(m_graph.varArgChild(node, 1)).isType(SpecSymbol))
+                propertyIsSymbol = true;
+
+            PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+            patchpoint->appendSomeRegister(base);
+            patchpoint->appendSomeRegister(property);
+            patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+            patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+            RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+            State* state = &m_ftlState;
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic);
+
+                // This is the direct exit target for operation calls.
+                Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                // This is the exit for call IC's created by the IC for getters. We don't have
+                // to do anything weird other than call this, since it will associate the exit with
+                // the callsite index.
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+                GPRReg resultGPR = params[0].gpr();
+                GPRReg baseGPR = params[1].gpr();
+                GPRReg propertyGPR = params[2].gpr();
+
+                auto generator = Box<JITGetByValGenerator>::create(
+                    jit.codeBlock(), node->origin.semantic, callSiteIndex, params.unavailableRegisters(),
+                    JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR));
+
+                generator->stubInfo()->propertyIsString = propertyIsString;
+                generator->stubInfo()->propertyIsInt32 = propertyIsInt32;
+                generator->stubInfo()->propertyIsSymbol = propertyIsSymbol;
+
+                CCallHelpers::Jump notCell;
+                if (!baseIsCell)
+                    notCell = jit.branchIfNotCell(baseGPR);
+
+                generator->generateFastPath(jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath([=] (CCallHelpers& jit) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                    if (notCell.isSet())
+                        notCell.link(&jit);
+                    generator->slowPathJump().link(&jit);
+                    CCallHelpers::Label slowPathBegin = jit.label();
+                    CCallHelpers::Call slowPathCall = callOperation(
+                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                        exceptions.get(), operationGetByValOptimize, resultGPR,
+                        jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                        CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr), baseGPR, propertyGPR).call();
+                    jit.jump().linkTo(done, &jit);
+
+                    generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                        generator->finalize(linkBuffer, linkBuffer);
+                    });
+                });
+            });
+
+            setJSValue(patchpoint);
             return;
         }
 
@@ -12567,7 +12661,7 @@ private:
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), uid, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), AccessType::GetWithThis);
+                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()));
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();

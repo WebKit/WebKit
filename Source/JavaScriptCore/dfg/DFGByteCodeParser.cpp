@@ -46,7 +46,7 @@
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
 #include "FunctionCodeBlock.h"
-#include "GetByIdStatus.h"
+#include "GetByStatus.h"
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "InByIdStatus.h"
@@ -192,7 +192,7 @@ private:
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     bool handleDOMJITGetter(VirtualRegister result, const GetByIdVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
-    bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByIdStatus);
+    bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
 
     template<typename Bytecode>
     void handlePutByVal(Bytecode, unsigned instructionSize);
@@ -227,7 +227,7 @@ private:
     template<typename Op>
     void parseGetById(const Instruction*);
     void handleGetById(
-        VirtualRegister destination, SpeculatedType, Node* base, unsigned identifierNumber, GetByIdStatus, AccessType, unsigned instructionSize);
+        VirtualRegister destination, SpeculatedType, Node* base, unsigned identifierNumber, GetByStatus, AccessType, unsigned instructionSize);
     void emitPutById(
         Node* base, unsigned identifierNumber, Node* value,  const PutByIdStatus&, bool isDirect);
     void handlePutById(
@@ -3665,7 +3665,7 @@ bool ByteCodeParser::handleDOMJITGetter(VirtualRegister result, const GetByIdVar
     if (!variant.domAttribute())
         return false;
 
-    auto domAttribute = variant.domAttribute().value();
+    auto* domAttribute = variant.domAttribute();
 
     // We do not need to actually look up CustomGetterSetter here. Checking Structures or registering watchpoints are enough,
     // since replacement of CustomGetterSetter always incurs Structure transition.
@@ -3674,16 +3674,19 @@ bool ByteCodeParser::handleDOMJITGetter(VirtualRegister result, const GetByIdVar
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
     
     // We do not need to emit CheckCell thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
-    addToGraph(CheckSubClass, OpInfo(domAttribute.classInfo), thisNode);
+    addToGraph(CheckSubClass, OpInfo(domAttribute->classInfo), thisNode);
     
     bool wasSeenInJIT = true;
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), GetByIdStatus(GetByIdStatus::Custom, wasSeenInJIT, variant))), thisNode);
+    GetByStatus* status = m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), GetByStatus(GetByStatus::Custom, wasSeenInJIT));
+    bool success = status->appendVariant(variant);
+    RELEASE_ASSERT(success);
+    addToGraph(FilterGetByStatus, OpInfo(status), thisNode);
 
     CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
     callDOMGetterData->customAccessorGetter = variant.customAccessorGetter();
     ASSERT(callDOMGetterData->customAccessorGetter);
 
-    if (const auto* domJIT = domAttribute.domJIT) {
+    if (const auto* domJIT = domAttribute->domJIT) {
         callDOMGetterData->domJIT = domJIT;
         Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT->compiler()();
         callDOMGetterData->snippet = snippet.ptr();
@@ -3704,13 +3707,13 @@ bool ByteCodeParser::handleDOMJITGetter(VirtualRegister result, const GetByIdVar
     return true;
 }
 
-bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType prediction, Node* base, GetByIdStatus getById)
+bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType prediction, Node* base, GetByStatus getById)
 {
     if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
         return false;
     addToGraph(CheckCell, OpInfo(m_graph.freeze(getById.moduleNamespaceObject())), Edge(base, CellUse));
 
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getById)), base);
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getById)), base);
 
     // Ideally we wouldn't have to do this Phantom. But:
     //
@@ -4222,7 +4225,7 @@ Node* ByteCodeParser::load(
                 // the base not to have the property. We can only use ObjectPropertyCondition if all of
                 // the structures in the variant.structureSet() agree on the prototype (it would be
                 // hilariously rare if they didn't). Note that we are relying on structureSet() having
-                // at least one element. That will always be true here because of how GetByIdStatus/PutByIdStatus work.
+                // at least one element. That will always be true here because of how GetByStatus/PutByIdStatus work.
 
                 // FIXME: right now, if we have an OPCS, we have mono proto. However, this will
                 // need to be changed in the future once we have a hybrid data structure for
@@ -4311,9 +4314,9 @@ Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVarian
 
 void ByteCodeParser::handleGetById(
     VirtualRegister destination, SpeculatedType prediction, Node* base, unsigned identifierNumber,
-    GetByIdStatus getByIdStatus, AccessType type, unsigned instructionSize)
+    GetByStatus getByStatus, AccessType type, unsigned instructionSize)
 {
-    // Attempt to reduce the set of things in the GetByIdStatus.
+    // Attempt to reduce the set of things in the GetByStatus.
     if (base->op() == NewObject) {
         bool ok = true;
         for (unsigned i = m_currentBlock->size(); i--;) {
@@ -4326,19 +4329,19 @@ void ByteCodeParser::handleGetById(
             }
         }
         if (ok)
-            getByIdStatus.filter(base->structure().get());
+            getByStatus.filter(base->structure().get());
     }
     
     NodeType getById;
-    if (type == AccessType::Get)
-        getById = getByIdStatus.makesCalls() ? GetByIdFlush : GetById;
-    else if (type == AccessType::TryGet)
+    if (type == AccessType::GetById)
+        getById = getByStatus.makesCalls() ? GetByIdFlush : GetById;
+    else if (type == AccessType::TryGetById)
         getById = TryGetById;
     else
-        getById = getByIdStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
+        getById = getByStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
 
-    if (getById != TryGetById && getByIdStatus.isModuleNamespace()) {
-        if (handleModuleNamespaceLoad(destination, prediction, base, getByIdStatus)) {
+    if (getById != TryGetById && getByStatus.isModuleNamespace()) {
+        if (handleModuleNamespaceLoad(destination, prediction, base, getByStatus)) {
             if (UNLIKELY(m_graph.compilation()))
                 m_graph.compilation()->noticeInlinedGetById();
             return;
@@ -4347,10 +4350,10 @@ void ByteCodeParser::handleGetById(
 
     // Special path for custom accessors since custom's offset does not have any meanings.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.
-    if (Options::useDOMJIT() && getByIdStatus.isCustom()) {
-        ASSERT(getByIdStatus.numVariants() == 1);
-        ASSERT(!getByIdStatus.makesCalls());
-        GetByIdVariant variant = getByIdStatus[0];
+    if (Options::useDOMJIT() && getByStatus.isCustom()) {
+        ASSERT(getByStatus.numVariants() == 1);
+        ASSERT(!getByStatus.makesCalls());
+        GetByIdVariant variant = getByStatus[0];
         ASSERT(variant.domAttribute());
         if (handleDOMJITGetter(destination, variant, base, identifierNumber, prediction)) {
             if (UNLIKELY(m_graph.compilation()))
@@ -4359,34 +4362,34 @@ void ByteCodeParser::handleGetById(
         }
     }
 
-    ASSERT(type == AccessType::Get || type == AccessType::GetDirect ||  !getByIdStatus.makesCalls());
-    if (!getByIdStatus.isSimple() || !getByIdStatus.numVariants() || !Options::useAccessInlining()) {
+    ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect ||  !getByStatus.makesCalls());
+    if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
         set(destination,
             addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
         return;
     }
     
-    // FIXME: If we use the GetByIdStatus for anything then we should record it and insert a node
+    // FIXME: If we use the GetByStatus for anything then we should record it and insert a node
     // after everything else (like the GetByOffset or whatever) that will filter the recorded
-    // GetByIdStatus. That means that the constant folder also needs to do the same!
+    // GetByStatus. That means that the constant folder also needs to do the same!
     
-    if (getByIdStatus.numVariants() > 1) {
-        if (getByIdStatus.makesCalls() || !m_graph.m_plan.isFTL()
+    if (getByStatus.numVariants() > 1) {
+        if (getByStatus.makesCalls() || !m_graph.m_plan.isFTL()
             || !Options::usePolymorphicAccessInlining()
-            || getByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
+            || getByStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             set(destination,
                 addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
             return;
         }
 
-        addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
+        addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
 
         Vector<MultiGetByOffsetCase, 2> cases;
         
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
-        for (const GetByIdVariant& variant : getByIdStatus.variants()) {
+        for (const GetByIdVariant& variant : getByStatus.variants()) {
             if (variant.intrinsic() != NoIntrinsic) {
                 set(destination,
                     addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
@@ -4423,10 +4426,10 @@ void ByteCodeParser::handleGetById(
         return;
     }
 
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
 
-    ASSERT(getByIdStatus.numVariants() == 1);
-    GetByIdVariant variant = getByIdStatus[0];
+    ASSERT(getByStatus.numVariants() == 1);
+    GetByIdVariant variant = getByStatus[0];
     
     Node* loadedValue = load(prediction, base, identifierNumber, variant);
     if (!loadedValue) {
@@ -4438,7 +4441,7 @@ void ByteCodeParser::handleGetById(
     if (UNLIKELY(m_graph.compilation()))
         m_graph.compilation()->noticeInlinedGetById();
 
-    ASSERT(type == AccessType::Get || type == AccessType::GetDirect || !variant.callLinkStatus());
+    ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect || !variant.callLinkStatus());
     if (!variant.callLinkStatus() && variant.intrinsic() == NoIntrinsic) {
         set(destination, loadedValue);
         return;
@@ -4707,21 +4710,20 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     Node* base = get(bytecode.m_base);
     unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
     
-    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-    GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
+    GetByStatus getByStatus = GetByStatus::computeFor(
         m_inlineStackTop->m_profiledBlock,
         m_inlineStackTop->m_baselineMap, m_icContextStack,
-        currentCodeOrigin(), uid);
+        currentCodeOrigin());
 
-    AccessType type = AccessType::Get;
+    AccessType type = AccessType::GetById;
     unsigned opcodeLength = currentInstruction->size();
     if (Op::opcodeID == op_try_get_by_id)
-        type = AccessType::TryGet;
+        type = AccessType::TryGetById;
     else if (Op::opcodeID == op_get_by_id_direct)
-        type = AccessType::GetDirect;
+        type = AccessType::GetByIdDirect;
 
     handleGetById(
-        bytecode.m_dst, prediction, base, identifierNumber, getByIdStatus, type, opcodeLength);
+        bytecode.m_dst, prediction, base, identifierNumber, getByStatus, type, opcodeLength);
 
 }
 
@@ -5619,40 +5621,29 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
-            bool compiledAsGetById = false;
-            GetByIdStatus getByIdStatus;
+            bool shouldCompileAsGetById = false;
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
             unsigned identifierNumber = 0;
             {
-                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex())).byValInfo;
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                 // At that time, there is no information.
-                if (byValInfo
-                    && byValInfo->stubInfo
-                    && !byValInfo->tookSlowPath
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                     && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                     && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
-                    compiledAsGetById = true;
-                    identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
-                    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
-                    if (Symbol* symbol = byValInfo->cachedSymbol.get()) {
-                        FrozenValue* frozen = m_graph.freezeStrong(symbol);
-                        addToGraph(CheckCell, OpInfo(frozen), property);
-                    } else {
-                        ASSERT(!uid->isSymbol());
-                        addToGraph(CheckStringIdent, OpInfo(uid), property);
+                    // FIXME: In the future, we should be able to do something like MultiGetByOffset in a multi identifier mode.
+                    // That way, we could both switch on multiple structures and multiple identifiers (or int 32 properties).
+                    // https://bugs.webkit.org/show_bug.cgi?id=204216
+                    if (Box<Identifier> impl = getByStatus.singleIdentifier()) {
+                        identifierNumber = m_graph.identifiers().ensure(impl);
+                        shouldCompileAsGetById = true;
+                        addToGraph(CheckIdent, OpInfo(impl->impl()), property);
                     }
-
-                    getByIdStatus = GetByIdStatus::computeForStubInfo(
-                        locker, m_inlineStackTop->m_profiledBlock,
-                        byValInfo->stubInfo, currentCodeOrigin(), uid);
                 }
             }
 
-            if (compiledAsGetById)
-                handleGetById(bytecode.m_dst, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, currentInstruction->size());
+            if (shouldCompileAsGetById)
+                handleGetById(bytecode.m_dst, prediction, base, identifierNumber, getByStatus, AccessType::GetById, currentInstruction->size());
             else {
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
@@ -5664,6 +5655,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
+                if (getByStatus.takesSlowPath())
+                    m_graph.m_slowGetByVal.add(getByVal);
             }
 
             NEXT_OPCODE(op_get_by_val);
@@ -6542,8 +6535,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 SpeculatedType prediction = getPrediction();
 
-                GetByIdStatus status = GetByIdStatus::computeFor(structure, uid);
-                if (status.state() != GetByIdStatus::Simple
+                GetByStatus status = GetByStatus::computeFor(structure, uid);
+                if (status.state() != GetByStatus::Simple
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
                     set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(bytecode.m_scope)));
@@ -7455,7 +7448,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
                     addToGraph(CheckCell, OpInfo(frozen), property);
                 } else {
                     ASSERT(!uid->isSymbol());
-                    addToGraph(CheckStringIdent, OpInfo(uid), property);
+                    addToGraph(CheckIdent, OpInfo(uid), property);
                 }
 
                 putByIdStatus = PutByIdStatus::computeForStubInfo(

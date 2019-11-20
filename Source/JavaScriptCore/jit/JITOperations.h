@@ -245,9 +245,9 @@ void JIT_OPERATION operationPutGetterSetter(JSGlobalObject*, JSCell*, UniquedStr
 #endif
 void JIT_OPERATION operationPushFunctionNameScope(JSGlobalObject*, int32_t, SymbolTable*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPopScope(JSGlobalObject*, int32_t) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValGeneric(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValString(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
+
+EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValGeneric(JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationDeleteByIdJSResult(JSGlobalObject*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;

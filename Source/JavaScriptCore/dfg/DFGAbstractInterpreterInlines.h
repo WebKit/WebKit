@@ -33,7 +33,7 @@
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DOMJITGetterSetter.h"
 #include "DOMJITSignature.h"
-#include "GetByIdStatus.h"
+#include "GetByStatus.h"
 #include "GetterSetter.h"
 #include "HashMapImpl.h"
 #include "JITOperations.h"
@@ -3123,7 +3123,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (value.m_structure.isFinite()
             && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
             UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
-            GetByIdStatus status = GetByIdStatus::computeFor(value.m_structure.toStructureSet(), uid);
+            GetByStatus status = GetByStatus::computeFor(value.m_structure.toStructureSet(), uid);
             if (status.isSimple()) {
                 // Figure out what the result is going to be - is it TOP, a constant, or maybe
                 // something more subtle?
@@ -3686,21 +3686,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case CheckStringIdent: {
+    case CheckIdent: {
         AbstractValue& value = forNode(node->child1());
         UniquedStringImpl* uid = node->uidOperand();
-        ASSERT(!(value.m_type & ~SpecStringIdent)); // Edge filtering should have already ensured this.
 
         JSValue childConstant = value.value();
         if (childConstant) {
-            ASSERT(childConstant.isString());
-            if (asString(childConstant)->tryGetValueImpl() == uid) {
-                m_state.setShouldTryConstantFolding(true);
-                break;
+            if (childConstant.isString()) {
+                if (asString(childConstant)->tryGetValueImpl() == uid) {
+                    m_state.setShouldTryConstantFolding(true);
+                    break;
+                }
+            } else if (childConstant.isSymbol()) {
+                if (&jsCast<Symbol*>(childConstant)->privateName().uid() == uid) {
+                    m_state.setShouldTryConstantFolding(true);
+                    break;
+                }
             }
         }
 
-        filter(value, SpecStringIdent);
+        if (node->child1().useKind() == StringIdentUse)
+            filter(value, SpecStringIdent);
+        else
+            filter(value, SpecSymbol);
         break;
     }
 
@@ -4022,7 +4030,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ZombieHint:
     case ExitOK:
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case ClearCatchLocals:
@@ -4185,10 +4193,10 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
             node->callLinkStatus()->filter(m_vm, value);
         break;
         
-    case FilterGetByIdStatus: {
+    case FilterGetByStatus: {
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite())
-            node->getByIdStatus()->filter(value.m_structure.toStructureSet());
+            node->getByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
         

@@ -43,7 +43,7 @@ public:
     JSModuleEnvironment* moduleEnvironment() const { return m_moduleEnvironment.get(); }
     ScopeOffset scopeOffset() const { return m_scopeOffset; }
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
+    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, const Identifier&, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
     std::unique_ptr<AccessCase> clone() const override;
 
@@ -52,7 +52,7 @@ public:
     ~ModuleNamespaceAccessCase();
 
 private:
-    ModuleNamespaceAccessCase(VM&, JSCell* owner, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
+    ModuleNamespaceAccessCase(VM&, JSCell* owner, const Identifier&, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;

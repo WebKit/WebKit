@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CallLinkStatus.h"
-#include "GetByIdStatus.h"
+#include "GetByStatus.h"
 #include "InByIdStatus.h"
 #include "PutByIdStatus.h"
 
@@ -44,7 +44,7 @@ struct RecordedStatuses {
     RecordedStatuses(RecordedStatuses&& other);
     
     CallLinkStatus* addCallLinkStatus(const CodeOrigin&, const CallLinkStatus&);
-    GetByIdStatus* addGetByIdStatus(const CodeOrigin&, const GetByIdStatus&);
+    GetByStatus* addGetByStatus(const CodeOrigin&, const GetByStatus&);
     PutByIdStatus* addPutByIdStatus(const CodeOrigin&, const PutByIdStatus&);
     InByIdStatus* addInByIdStatus(const CodeOrigin&, const InByIdStatus&);
     
@@ -65,7 +65,7 @@ struct RecordedStatuses {
     }
     
     Vector<std::pair<CodeOrigin, std::unique_ptr<CallLinkStatus>>> calls;
-    Vector<std::pair<CodeOrigin, std::unique_ptr<GetByIdStatus>>> gets;
+    Vector<std::pair<CodeOrigin, std::unique_ptr<GetByStatus>>> gets;
     Vector<std::pair<CodeOrigin, std::unique_ptr<PutByIdStatus>>> puts;
     Vector<std::pair<CodeOrigin, std::unique_ptr<InByIdStatus>>> ins;
 };

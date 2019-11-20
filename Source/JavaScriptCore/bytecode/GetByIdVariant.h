@@ -29,6 +29,7 @@
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
+#include <wtf/Box.h>
 
 namespace JSC {
 namespace DOMJIT {
@@ -36,19 +37,20 @@ class GetterSetter;
 }
 
 class CallLinkStatus;
-class GetByIdStatus;
+class GetByStatus;
 struct DumpContext;
 
 class GetByIdVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GetByIdVariant(
+        Box<Identifier>,
         const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
         FunctionPtr<OperationPtrTag> customAccessorGetter = nullptr,
-        Optional<DOMAttributeAnnotation> = WTF::nullopt);
+        std::unique_ptr<DOMAttributeAnnotation> = nullptr);
 
     ~GetByIdVariant();
     
@@ -68,7 +70,7 @@ public:
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
     FunctionPtr<OperationPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
-    Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
+    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
@@ -79,9 +81,11 @@ public:
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
+
+    Box<Identifier> identifier() const { return m_identifier; }
     
 private:
-    friend class GetByIdStatus;
+    friend class GetByStatus;
 
     bool canMergeIntrinsicStructures(const GetByIdVariant&) const;
     
@@ -91,7 +95,8 @@ private:
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
     FunctionPtr<OperationPtrTag> m_customAccessorGetter;
-    Optional<DOMAttributeAnnotation> m_domAttribute;
+    std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
+    Box<Identifier> m_identifier; // We use this indirection to allow ref/deref in the concurrent compiler.
 };
 
 } // namespace JSC

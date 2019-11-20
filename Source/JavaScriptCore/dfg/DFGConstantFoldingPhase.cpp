@@ -36,7 +36,7 @@
 #include "DFGInPlaceAbstractState.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
-#include "GetByIdStatus.h"
+#include "GetByStatus.h"
 #include "JSCInlines.h"
 #include "PutByIdStatus.h"
 #include "StructureCache.h"
@@ -311,7 +311,7 @@ private:
                 break;
             }
 
-            case CheckStringIdent: {
+            case CheckIdent: {
                 UniquedStringImpl* uid = node->uidOperand();
                 const UniquedStringImpl* constantUid = nullptr;
 
@@ -326,6 +326,9 @@ private:
                             if (impl->isAtom())
                                 constantUid = static_cast<const UniquedStringImpl*>(impl);
                         }
+                    } else if (childConstant.isSymbol()) {
+                        Symbol* symbol = jsCast<Symbol*>(childConstant);
+                        constantUid = &symbol->privateName().uid();
                     }
                 }
 
@@ -546,7 +549,7 @@ private:
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
                 
-                GetByIdStatus status = GetByIdStatus::computeFor(
+                GetByStatus status = GetByStatus::computeFor(
                     baseValue.m_structure.toStructureSet(), m_graph.identifiers()[identifierNumber]);
                 if (!status.isSimple())
                     break;
@@ -561,8 +564,8 @@ private:
                 
                 auto addFilterStatus = [&] () {
                     m_insertionSet.insertNode(
-                        indexInBlock, SpecNone, FilterGetByIdStatus, node->origin,
-                        OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(node->origin.semantic, status)),
+                        indexInBlock, SpecNone, FilterGetByStatus, node->origin,
+                        OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(node->origin.semantic, status)),
                         Edge(child));
                 };
                 

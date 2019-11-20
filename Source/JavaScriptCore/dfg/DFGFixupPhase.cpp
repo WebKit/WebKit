@@ -1726,8 +1726,11 @@ private:
             break;
         }
 
-        case CheckStringIdent: {
-            fixEdge<StringIdentUse>(node->child1());
+        case CheckIdent: {
+            if (node->uidOperand()->isSymbol())
+                fixEdge<SymbolUse>(node->child1());
+            else
+                fixEdge<StringIdentUse>(node->child1());
             break;
         }
             
@@ -2514,7 +2517,7 @@ private:
         case ExtractValueFromWeakMapGet:
         case CPUIntrinsic:
         case FilterCallLinkStatus:
-        case FilterGetByIdStatus:
+        case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case InvalidationPoint:

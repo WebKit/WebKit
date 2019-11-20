@@ -133,7 +133,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     if (!isInlineable(summary))
         return PutByIdStatus(summary);
     
-    switch (stubInfo->cacheType) {
+    switch (stubInfo->cacheType()) {
     case CacheType::Unset:
         // This means that we attempted to cache but failed for some reason.
         return PutByIdStatus(JSC::slowVersion(summary));

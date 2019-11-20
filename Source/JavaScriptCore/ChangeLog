@@ -1,3 +1,346 @@
+2019-11-19  Saam Barati  <sbarati@apple.com>
+
+        GetByVal should use polymorphic access and hook into a status object
+        https://bugs.webkit.org/show_bug.cgi?id=202767
+
+        Reviewed by Keith Miller.
+
+        This patch puts get_by_val in our normal IC caching infrastructure. This means
+        building it on top of StructureStubInfo and PolymorphicAccess. For this to
+        work, AccessCase now supports all the array load variants that we used to have
+        fast paths for. For identifier based variants, it we just fall back to the
+        code we've already implemented, but only after doing a runtime check that
+        the identifier matches the expected identifier. This allows us to reuse all
+        the IC infrastructure we have for get_by_id.
+        
+        Our compilation strategy is that the baseline JIT always emits a get_by_val
+        IC. If that IC goes to the slow path, the DFG/FTL won't also emit the same IC,
+        since it's probable that we're seeing a megamorphic switch over strings. This
+        was needed to keep this patch neutral on Speedometer 2. It's likely there is
+        room to improve this heuristic: https://bugs.webkit.org/show_bug.cgi?id=204336
+        
+        This now allows us to have inline caches which contain array loads, and uses
+        of different identifiers. They just show up as different access cases inside
+        polymorphic access.
+        
+        This patch is a progression on various microbenchmarks, especially those with
+        uses of a fixed set of multiple identifiers. It's neutral on JetStream 2 and
+        Speedometer 2.
+        
+        This patch also hooks in get_by_val ICs to our ICStatus infrastructure. This
+        is going to pave the way to allow us to eagerly throw away baseline code, since
+        when we go for an FTL compile, we will be able to use the IC status from the
+        prior compile without relying on baseline specific data structures. 
+        
+        There are a few interesting tidbits in this patch that are worth
+        highlighting. 
+        - Unlike get_by_id, when we take an IC snapshot for a get_by_val 
+        IC, we're not guaranteed the various identifiers in question will outlive
+        the compile (get_by_id ensures this since they're in the constant pool of
+        CodeBlock). For get_by_val, the Identifiers in question are dynamic fields
+        of AccessCase, and AccessCase may get destroyed as we're compiling concurrently.
+        Also, String's reference counting isn't thread safe, so we can't just ref it.
+        Instead, we use a Box<Identifier> inside AccessCase. This allows us to safely
+        ref the Box without refing the underlying String. We're not worried about the
+        Box being destroyed while we're doing this, since we're holding a lock while
+        taking an IC snapshot inside GetByStatus.
+        - We no longer hold onto the actual JS symbol object in the inline cache.
+        This is what we used to do for inlining by val infos. Instead, this patch
+        extends the CheckStringIdent node to be able to handle symbols as well. This
+        patch also renames CheckStringIdent to CheckIdent.
+        
+        This patch also renames various IC related helpers from GetById* to GetBy*,
+        since they can both be used by get_by_val and get_by_id.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::commit):
+        (JSC::AccessCase::guardedByStructureCheck const):
+        (JSC::AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck const):
+        (JSC::AccessCase::requiresIdentifierNameMatch const):
+        (JSC::AccessCase::requiresInt32PropertyCheck const):
+        (JSC::AccessCase::needsScratchFPR const):
+        (JSC::AccessCase::forEachDependentCell const):
+        (JSC::AccessCase::doesCalls const):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::dump const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generate):
+        (JSC::AccessCase::generateImpl):
+        (JSC::AccessCase::toTypedArrayType):
+        (JSC::AccessCase::checkConsistency):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::uid const):
+        (JSC::AccessCase::identifier const):
+        (JSC::AccessCase::checkConsistency):
+        (JSC::AccessCase::AccessCase):
+        * bytecode/GetByIdStatus.cpp: Removed.
+        * bytecode/GetByIdStatus.h: Removed.
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::operator=):
+        (JSC::GetByIdVariant::attemptToMerge):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::domAttribute const):
+        (JSC::GetByIdVariant::identifier const):
+        * bytecode/GetByStatus.cpp: Copied from Source/JavaScriptCore/bytecode/GetByIdStatus.cpp.
+        (JSC::GetByStatus::appendVariant):
+        (JSC::GetByStatus::computeFromLLInt):
+        (JSC::GetByStatus::computeFor):
+        (JSC::GetByStatus::GetByStatus):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::makesCalls const):
+        (JSC::GetByStatus::slowVersion const):
+        (JSC::GetByStatus::merge):
+        (JSC::GetByStatus::filter):
+        (JSC::GetByStatus::markIfCheap):
+        (JSC::GetByStatus::finalize):
+        (JSC::GetByStatus::singleIdentifier const):
+        (JSC::GetByStatus::dump const):
+        (JSC::GetByIdStatus::appendVariant): Deleted.
+        (JSC::GetByIdStatus::computeFromLLInt): Deleted.
+        (JSC::GetByIdStatus::computeFor): Deleted.
+        (JSC::GetByIdStatus::computeForStubInfo): Deleted.
+        (JSC::GetByIdStatus::GetByIdStatus): Deleted.
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback): Deleted.
+        (JSC::GetByIdStatus::makesCalls const): Deleted.
+        (JSC::GetByIdStatus::slowVersion const): Deleted.
+        (JSC::GetByIdStatus::merge): Deleted.
+        (JSC::GetByIdStatus::filter): Deleted.
+        (JSC::GetByIdStatus::markIfCheap): Deleted.
+        (JSC::GetByIdStatus::finalize): Deleted.
+        (JSC::GetByIdStatus::dump const): Deleted.
+        * bytecode/GetByStatus.h: Copied from Source/JavaScriptCore/bytecode/GetByIdStatus.h.
+        (JSC::GetByStatus::GetByStatus):
+        (JSC::GetByStatus::moduleNamespaceObject const):
+        (JSC::GetByStatus::moduleEnvironment const):
+        (JSC::GetByStatus::scopeOffset const):
+        (JSC::GetByIdStatus::GetByIdStatus): Deleted.
+        (JSC::GetByIdStatus::state const): Deleted.
+        (JSC::GetByIdStatus::isSet const): Deleted.
+        (JSC::GetByIdStatus::operator bool const): Deleted.
+        (JSC::GetByIdStatus::isSimple const): Deleted.
+        (JSC::GetByIdStatus::isCustom const): Deleted.
+        (JSC::GetByIdStatus::isModuleNamespace const): Deleted.
+        (JSC::GetByIdStatus::numVariants const): Deleted.
+        (JSC::GetByIdStatus::variants const): Deleted.
+        (JSC::GetByIdStatus::at const): Deleted.
+        (JSC::GetByIdStatus::operator[] const): Deleted.
+        (JSC::GetByIdStatus::takesSlowPath const): Deleted.
+        (JSC::GetByIdStatus::wasSeenInJIT const): Deleted.
+        (JSC::GetByIdStatus::moduleNamespaceObject const): Deleted.
+        (JSC::GetByIdStatus::moduleEnvironment const): Deleted.
+        (JSC::GetByIdStatus::scopeOffset const): Deleted.
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/ICStatusMap.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::InlineAccess::canGenerateSelfPropertyReplace):
+        (JSC::InlineAccess::generateSelfPropertyReplace):
+        (JSC::InlineAccess::isCacheableArrayLength):
+        (JSC::InlineAccess::generateArrayLength):
+        (JSC::InlineAccess::isCacheableStringLength):
+        (JSC::InlineAccess::generateStringLength):
+        (JSC::InlineAccess::generateSelfInAccess):
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::InstanceOfAccessCase):
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::computeForStubInfo):
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::ModuleNamespaceAccessCase):
+        (JSC::ModuleNamespaceAccessCase::create):
+        * bytecode/ModuleNamespaceAccessCase.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall):
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::addCase):
+        (JSC::PolymorphicAccess::commit):
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::addGetByStatus):
+        (JSC::RecordedStatuses::addGetByIdStatus): Deleted.
+        * bytecode/RecordedStatuses.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initArrayLength):
+        (JSC::StructureStubInfo::initStringLength):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::summary const):
+        (JSC::StructureStubInfo::containsPC const):
+        (JSC::StructureStubInfo::setCacheType):
+        (JSC::StructureStubInfo::checkConsistency):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::getByIdSelfIdentifier):
+        (JSC::StructureStubInfo::thisValueIsInThisGPR const):
+        (JSC::StructureStubInfo::checkConsistency):
+        (JSC::StructureStubInfo::cacheType const):
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGenericGetByIdFunction):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::processCodeBlockIdentifiersIfNeeded):
+        (JSC::DFG::DesiredIdentifiers::ensure):
+        (JSC::DFG::DesiredIdentifiers::at const):
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        * dfg/DFGDesiredIdentifiers.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addGetByVal):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUidOperand):
+        (JSC::DFG::Node::hasGetByStatus):
+        (JSC::DFG::Node::getByStatus):
+        (JSC::DFG::Node::hasGetByIdStatus): Deleted.
+        (JSC::DFG::Node::getByIdStatus): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        (JSC::DFG::SpeculativeJIT::compileCheckIdent):
+        (JSC::DFG::SpeculativeJIT::compileCheckStringIdent): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckIdent):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStringIdent): Deleted.
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::garbageStubInfo):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        (JSC::JITGetByValGenerator::generateFastPath):
+        (JSC::JITGetByValGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        (JSC::JITGetByValGenerator::slowPathJump const):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitDoubleGetByVal): Deleted.
+        (JSC::JIT::emitContiguousGetByVal): Deleted.
+        (JSC::JIT::emitArrayStorageGetByVal): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::tryGetByValOptimize): Deleted.
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitGetByValWithCachedId): Deleted.
+        (JSC::JIT::privateCompileGetByVal): Deleted.
+        (JSC::JIT::privateCompileGetByValWithCachedId): Deleted.
+        (JSC::JIT::emitDirectArgumentsGetByVal): Deleted.
+        (JSC::JIT::emitScopedArgumentsGetByVal): Deleted.
+        (JSC::JIT::emitIntTypedArrayGetByVal): Deleted.
+        (JSC::JIT::emitFloatTypedArrayGetByVal): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitGetByValWithCachedId): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByFunction):
+        (JSC::appropriateGetByFunction):
+        (JSC::tryCacheGetBy):
+        (JSC::repatchGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::repatchArrayGetByVal):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        (JSC::resetGetBy):
+        (JSC::appropriateOptimizingGetByIdFunction): Deleted.
+        (JSC::appropriateGetByIdFunction): Deleted.
+        (JSC::tryCacheGetByID): Deleted.
+        (JSC::repatchGetByID): Deleted.
+        (JSC::resetGetByID): Deleted.
+        * jit/Repatch.h:
+        * llint/LowLevelInterpreter.h:
+        * runtime/DOMAnnotation.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+        * runtime/Structure.h:
+
 2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Implement String.prototype.replaceAll

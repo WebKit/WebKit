@@ -138,89 +138,15 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 
 void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 {
+    // FIXME: Implement IC here:
+    // https://bugs.webkit.org/show_bug.cgi?id=204082
     auto bytecode = currentInstruction->as<OpGetByVal>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     int dst = bytecode.m_dst.offset();
     int base = bytecode.m_base.offset();
     int property = bytecode.m_property.offset();
-    ArrayProfile* profile = &metadata.m_arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo();
-
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    
-    emitJumpSlowCaseIfNotJSCell(base, regT1);
-    PatchableJump notIndex = patchableBranch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(notIndex);
-    emitArrayProfilingSiteWithCell(regT0, regT1, profile);
-    and32(TrustedImm32(IndexingShapeMask), regT1);
-
-    PatchableJump badType;
-    JumpList slowCases;
-    
-    JITArrayMode mode = chooseArrayMode(profile);
-    switch (mode) {
-    case JITInt32:
-        slowCases = emitInt32GetByVal(currentInstruction, badType);
-        break;
-    case JITDouble:
-        slowCases = emitDoubleGetByVal(currentInstruction, badType);
-        break;
-    case JITContiguous:
-        slowCases = emitContiguousGetByVal(currentInstruction, badType);
-        break;
-    case JITArrayStorage:
-        slowCases = emitArrayStorageGetByVal(currentInstruction, badType);
-        break;
-    default:
-        CRASH();
-    }
-    
-    addSlowCase(badType);
-    addSlowCase(slowCases);
-    
-    Label done = label();
-
-    if (!ASSERT_DISABLED) {
-        Jump resultOK = branchIfNotEmpty(regT1);
-        abortWithReason(JITGetByValResultIsNotEmpty);
-        resultOK.link(this);
-    }
-
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitStore(dst, regT1, regT0);
-
-    Label nextHotPath = label();
-    
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, notIndex, badType, mode, profile, done, nextHotPath));
-}
-
-JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, OpGetByVal bytecode, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
-{
-    // base: tag(regT1), payload(regT0)
-    // property: tag(regT3), payload(regT2)
-    // scratch: regT4
-
-    int dst = bytecode.m_dst.offset();
-
-    slowCases.append(branchIfNotCell(regT3));
-    emitByValIdentifierCheck(byValInfo, regT2, regT4, propertyName, slowCases);
-
-    const Instruction* currentInstruction = m_codeBlock->instructions().at(byValInfo->bytecodeIndex).ptr();
-    JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
-        propertyName.impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::Get);
-    gen.generateFastPath(*this);
-
-    fastDoneCase = jump();
-
-    Label coldPathBegin = label();
-    gen.slowPathJump().link(this);
-
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, dst, m_codeBlock->globalObject(), gen.stubInfo(), JSValueRegs(regT1, regT0), propertyName.impl());
-    gen.reportSlowPathCall(coldPathBegin, call);
-    slowDoneCase = jump();
-
-    return gen;
+    callOperation(operationGetByVal, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 }
 
 void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -502,7 +428,7 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::TryGet);
+        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::TryGetById);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -541,7 +467,7 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::GetDirect);
+        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::GetByIdDirect);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -587,7 +513,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::Get);
+        ident->impl(), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), AccessType::GetById);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -628,7 +554,7 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
 
     JITGetByIdWithThisGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs(regT1, regT0), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT4, regT3), AccessType::GetWithThis);
+        ident->impl(), JSValueRegs(regT1, regT0), JSValueRegs::payloadOnly(regT0), JSValueRegs(regT4, regT3));
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIdsWithThis.append(gen);

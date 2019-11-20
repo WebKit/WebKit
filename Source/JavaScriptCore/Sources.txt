@@ -226,7 +226,7 @@ bytecode/ExitingInlineKind.cpp
 bytecode/ExitingJITType.cpp
 bytecode/FullCodeOrigin.cpp
 bytecode/FunctionCodeBlock.cpp
-bytecode/GetByIdStatus.cpp
+bytecode/GetByStatus.cpp
 bytecode/GetByIdVariant.cpp
 bytecode/GetterSetterAccessCase.cpp
 bytecode/ICStatusMap.cpp

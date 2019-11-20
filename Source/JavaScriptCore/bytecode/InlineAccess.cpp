@@ -178,6 +178,9 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
 
 bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
+
     CCallHelpers jit;
     
     GPRReg base = stubInfo.baseGPR();
@@ -226,6 +229,9 @@ ALWAYS_INLINE static bool hasFreeRegister(StructureStubInfo& stubInfo)
 
 bool InlineAccess::canGenerateSelfPropertyReplace(StructureStubInfo& stubInfo, PropertyOffset offset)
 {
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
+
     if (isInlineOffset(offset))
         return true;
 
@@ -234,6 +240,9 @@ bool InlineAccess::canGenerateSelfPropertyReplace(StructureStubInfo& stubInfo, P
 
 bool InlineAccess::generateSelfPropertyReplace(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
+
     ASSERT(canGenerateSelfPropertyReplace(stubInfo, offset));
 
     CCallHelpers jit;
@@ -268,6 +277,9 @@ bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* 
 {
     ASSERT(array->indexingType() & IsArray);
 
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
+
     if (!hasFreeRegister(stubInfo))
         return false;
 
@@ -277,6 +289,9 @@ bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* 
 bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
     ASSERT(isCacheableArrayLength(stubInfo, array));
+
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
 
     CCallHelpers jit;
 
@@ -300,12 +315,18 @@ bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* arr
 
 bool InlineAccess::isCacheableStringLength(StructureStubInfo& stubInfo)
 {
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
+
     return hasFreeRegister(stubInfo);
 }
 
 bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 {
     ASSERT(isCacheableStringLength(stubInfo));
+
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
 
     CCallHelpers jit;
 
@@ -339,6 +360,9 @@ bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* structure)
 {
     CCallHelpers jit;
+
+    if (!stubInfo.hasConstantIdentifier)
+        return false;
 
     GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();

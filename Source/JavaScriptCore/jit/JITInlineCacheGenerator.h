@@ -120,7 +120,7 @@ public:
 
     JITGetByIdWithThisGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
-        JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, AccessType);
+        JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs);
 
     void generateFastPath(MacroAssembler&);
 };
@@ -168,6 +168,35 @@ public:
 
 private:
     MacroAssembler::PatchableJump m_jump;
+};
+
+class JITGetByValGenerator : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITGetByValGenerator() { }
+
+    JITGetByValGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs property, JSValueRegs result);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+    
+    void generateFastPath(MacroAssembler&);
+
+private:
+    JSValueRegs m_base;
+    JSValueRegs m_result;
+    JSValueRegs m_;
+
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
 };
 
 template<typename VectorType>

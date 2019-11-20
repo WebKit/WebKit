@@ -486,6 +486,7 @@ void JIT::privateCompileLinkPass()
 void JIT::privateCompileSlowCases()
 {
     m_getByIdIndex = 0;
+    m_getByValIndex = 0;
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
     m_inByIdIndex = 0;
@@ -852,6 +853,7 @@ CompilationResult JIT::link()
     }
     
     finalizeInlineCaches(m_getByIds, patchBuffer);
+    finalizeInlineCaches(m_getByVals, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
     finalizeInlineCaches(m_putByIds, patchBuffer);
     finalizeInlineCaches(m_inByIds, patchBuffer);

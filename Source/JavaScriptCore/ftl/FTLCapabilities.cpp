@@ -161,7 +161,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckBadCell:
     case CheckNotEmpty:
     case AssertNotEmpty:
-    case CheckStringIdent:
+    case CheckIdent:
     case CheckTraps:
     case StringCharCodeAt:
     case StringCodePointAt:
@@ -381,7 +381,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByValWithThis:
     case MatchStructure:
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case CreateThis:

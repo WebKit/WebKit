@@ -38,9 +38,9 @@ namespace JSC {
 
 #define FOR_EACH_ICEVENT_KIND(macro) \
     macro(InvalidKind) \
-    macro(GetByIdAddAccessCase) \
-    macro(GetByIdReplaceWithJump) \
-    macro(GetByIdSelfPatch) \
+    macro(GetByAddAccessCase) \
+    macro(GetByReplaceWithJump) \
+    macro(GetBySelfPatch) \
     macro(InAddAccessCase) \
     macro(InReplaceWithJump) \
     macro(InstanceOfAddAccessCase) \
@@ -49,6 +49,7 @@ namespace JSC {
     macro(OperationGetByIdGeneric) \
     macro(OperationGetByIdBuildList) \
     macro(OperationGetByIdOptimize) \
+    macro(OperationGetByValOptimize) \
     macro(OperationGetByIdWithThisOptimize) \
     macro(OperationGenericIn) \
     macro(OperationInById) \

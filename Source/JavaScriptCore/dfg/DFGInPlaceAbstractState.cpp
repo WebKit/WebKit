@@ -30,7 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGBasicBlock.h"
-#include "GetByIdStatus.h"
+#include "GetByStatus.h"
 #include "JSCInlines.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"

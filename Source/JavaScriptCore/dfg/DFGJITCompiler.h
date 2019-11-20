@@ -181,6 +181,11 @@ public:
     {
         m_getByIdsWithThis.append(InlineCacheWrapper<JITGetByIdWithThisGenerator>(gen, slowPath));
     }
+
+    void addGetByVal(const JITGetByValGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_getByVals.append(InlineCacheWrapper<JITGetByValGenerator>(gen, slowPath));
+    }
     
     void addPutById(const JITPutByIdGenerator& gen, SlowPathGenerator* slowPath)
     {
@@ -341,6 +346,7 @@ private:
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;
     Vector<InlineCacheWrapper<JITGetByIdWithThisGenerator>, 4> m_getByIdsWithThis;
+    Vector<InlineCacheWrapper<JITGetByValGenerator>, 4> m_getByVals;
     Vector<InlineCacheWrapper<JITPutByIdGenerator>, 4> m_putByIds;
     Vector<InlineCacheWrapper<JITInByIdGenerator>, 4> m_inByIds;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;

@@ -235,7 +235,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITGetByIdWithThisGenerator gen(
         m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifierUID(identifierNumber),
-        JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), AccessType::GetWithThis);
+        JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR));
     
     gen.generateFastPath(m_jit);
     
@@ -2254,6 +2254,8 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         case Array::Generic: {
+            // FIXME: Implement IC here:
+            // https://bugs.webkit.org/show_bug.cgi?id=204082
             if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
                 if (m_graph.varArgChild(node, 1).useKind() == StringUse) {
                     compileGetByValForObjectWithString(node);
@@ -3254,27 +3256,27 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case TryGetById: {
-        compileGetById(node, AccessType::TryGet);
+        compileGetById(node, AccessType::TryGetById);
         break;
     }
 
     case GetByIdDirect: {
-        compileGetById(node, AccessType::GetDirect);
+        compileGetById(node, AccessType::GetByIdDirect);
         break;
     }
 
     case GetByIdDirectFlush: {
-        compileGetByIdFlush(node, AccessType::GetDirect);
+        compileGetByIdFlush(node, AccessType::GetByIdDirect);
         break;
     }
 
     case GetById: {
-        compileGetById(node, AccessType::Get);
+        compileGetById(node, AccessType::GetById);
         break;
     }
 
     case GetByIdFlush: {
-        compileGetByIdFlush(node, AccessType::Get);
+        compileGetByIdFlush(node, AccessType::GetById);
         break;
     }
 
@@ -3342,8 +3344,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckStringIdent:
-        compileCheckStringIdent(node);
+    case CheckIdent:
+        compileCheckIdent(node);
         break;
 
     case GetExecutable: {
@@ -4106,7 +4108,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
         
     case FilterCallLinkStatus:
-    case FilterGetByIdStatus:
+    case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
         m_interpreter.filterICStatus(node);
