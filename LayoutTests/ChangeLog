@@ -1,3 +1,12 @@
+2019-11-20  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/text/font-antialiasing-save-restore.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=204413
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2019-11-20  Truitt Savell  <tsavell@apple.com>
 
         Regression (r252660): Layout Test platform/ios/mediastream/audio-muted-in-background-tab.html is failing
