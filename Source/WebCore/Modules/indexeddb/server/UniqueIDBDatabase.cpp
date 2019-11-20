@@ -892,9 +892,8 @@ void UniqueIDBDatabase::performCreateObjectStore(uint64_t callbackIdentifier, co
     }
 
     ASSERT(m_backingStore);
-    m_backingStore->createObjectStore(transactionIdentifier, info);
+    IDBError error = m_backingStore->createObjectStore(transactionIdentifier, info);
 
-    IDBError error;
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateObjectStore, callbackIdentifier, error, info));
 }
 
@@ -945,9 +944,8 @@ void UniqueIDBDatabase::performDeleteObjectStore(uint64_t callbackIdentifier, co
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performDeleteObjectStore");
 
     ASSERT(m_backingStore);
-    m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreIdentifier);
+    IDBError error = m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreIdentifier);
 
-    IDBError error;
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteObjectStore, callbackIdentifier, error, objectStoreIdentifier));
 }
 
@@ -1048,9 +1046,8 @@ void UniqueIDBDatabase::performClearObjectStore(uint64_t callbackIdentifier, con
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performClearObjectStore");
 
     ASSERT(m_backingStore);
-    m_backingStore->clearObjectStore(transactionIdentifier, objectStoreIdentifier);
+    IDBError error = m_backingStore->clearObjectStore(transactionIdentifier, objectStoreIdentifier);
 
-    IDBError error;
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformClearObjectStore, callbackIdentifier, error));
 }
 
@@ -1168,9 +1165,8 @@ void UniqueIDBDatabase::performDeleteIndex(uint64_t callbackIdentifier, const ID
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performDeleteIndex");
 
     ASSERT(m_backingStore);
-    m_backingStore->deleteIndex(transactionIdentifier, objectStoreIdentifier, indexIdentifier);
+    IDBError error = m_backingStore->deleteIndex(transactionIdentifier, objectStoreIdentifier, indexIdentifier);
 
-    IDBError error;
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteIndex, callbackIdentifier, error, objectStoreIdentifier, indexIdentifier));
 }
 
