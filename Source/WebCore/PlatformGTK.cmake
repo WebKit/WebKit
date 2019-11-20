@@ -36,6 +36,12 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
+if (USE_ANGLE_WEBGL)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/angle"
+    )
+endif ()
+
 if (USE_WPE_RENDERER)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/libwpe"
@@ -117,20 +123,38 @@ if (USE_WPE_RENDERER)
     )
 endif ()
 
-if (USE_OPENGL_ES)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/opengl/Extensions3DOpenGLES.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
-    )
-endif ()
-
 if (USE_OPENGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/OpenGLShims.cpp
-
-        platform/graphics/opengl/Extensions3DOpenGL.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     )
+endif ()
+
+if (USE_ANGLE_WEBGL)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/angle/Extensions3DANGLE.cpp
+        platform/graphics/angle/GraphicsContext3DANGLE.cpp
+        platform/graphics/angle/TemporaryANGLESetting.cpp
+    )
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+    )
+
+    if (USE_OPENGL_ES)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/opengl/Extensions3DOpenGLES.cpp
+            platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+        )
+    endif ()
+
+    if (USE_OPENGL)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/opengl/Extensions3DOpenGL.cpp
+            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+        )
+    endif ()
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)

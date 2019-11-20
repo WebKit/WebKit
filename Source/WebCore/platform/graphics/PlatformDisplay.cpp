@@ -52,6 +52,9 @@
 
 #if PLATFORM(GTK) && PLATFORM(X11)
 #include <gdk/gdkx.h>
+#if defined(None)
+#undef None
+#endif
 #endif
 
 #if PLATFORM(GTK) && PLATFORM(WAYLAND)

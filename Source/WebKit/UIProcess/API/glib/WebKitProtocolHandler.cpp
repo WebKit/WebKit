@@ -64,6 +64,7 @@
 
 #if USE(GLX)
 #include <GL/glx.h>
+#include <WebCore/OpenGLShims.h>
 #endif
 
 namespace WebKit {

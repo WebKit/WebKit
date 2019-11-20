@@ -38,7 +38,10 @@
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GLContext.h>
 
-#if USE(OPENGL_ES)
+#if USE(ANGLE)
+#include <WebCore/Extensions3DANGLE.h>
+#include <WebCore/OpenGLShims.h>
+#elif USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <WebCore/Extensions3DOpenGLES.h>
@@ -78,7 +81,9 @@ bool AcceleratedBackingStoreWayland::checkRequirements()
         if (!eglContext->makeContextCurrent())
             return false;
 
-#if USE(OPENGL_ES)
+#if USE(ANGLE)
+        std::unique_ptr<Extensions3DANGLE> glExtensions = makeUnique<Extensions3DANGLE>(nullptr, GLContext::current()->version() >= 320);
+#elif USE(OPENGL_ES)
         std::unique_ptr<Extensions3DOpenGLES> glExtensions = makeUnique<Extensions3DOpenGLES>(nullptr,  false);
 #else
         std::unique_ptr<Extensions3DOpenGL> glExtensions = makeUnique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);

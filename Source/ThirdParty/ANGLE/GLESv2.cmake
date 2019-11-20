@@ -1101,6 +1101,13 @@ set(libglesv2_sources
     src/libGLESv2/resource.h
 )
 
+set(libglesv2_entry_points_headers
+    src/libGLESv2/entry_points_egl.h
+    src/libGLESv2/entry_points_gles_2_0_autogen.h
+    src/libGLESv2/entry_points_gles_3_0_autogen.h
+    src/libGLESv2/entry_points_gles_ext_autogen.h
+)
+
 set(libglesv1_cm_sources
     src/libGLESv1_CM/libGLESv1_CM.cpp
     src/libGLESv1_CM/libGLESv1_CM.def

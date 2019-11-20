@@ -136,6 +136,27 @@ else ()
     )
 endif ()
 
+if (USE_ANGLE_WEBGL)
+    WEBKIT_COPY_FILES(LibGLESv2EntryPointsHeaders
+        DESTINATION ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE
+        FILES ${libglesv2_entry_points_headers}
+        FLATTENED
+    )
+
+    add_custom_command(
+        OUTPUT ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE/angle.timestamp
+        DEPENDS LibGLESv2EntryPointsHeaders ANGLEWebGLHeaders
+        COMMAND BUILT_PRODUCTS_DIR=${ANGLE_FRAMEWORK_HEADERS_DIR}
+            PUBLIC_HEADERS_FOLDER_PATH=ANGLE
+            ${CMAKE_CURRENT_SOURCE_DIR}/adjust-angle-include-paths.sh
+        VERBATIM
+    )
+    add_custom_target(ANGLE-webgl-headers
+        DEPENDS ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE/angle.timestamp
+    )
+    add_dependencies(ANGLEFramework ANGLE-webgl-headers)
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -Wno-cast-align
                                       -Wno-suggest-attribute=format

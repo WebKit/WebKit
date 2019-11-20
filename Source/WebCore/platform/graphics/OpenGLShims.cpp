@@ -162,6 +162,7 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glGetShaderInfoLog, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glGetShaderiv, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glGetShaderSource, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glGetString, success);
     // glGetStringi is only available on OpenGL or GLES versions >= 3.0.
     // Add it with _EXT so it doesn't cause an initialization failure on lower versions.
     ASSIGN_FUNCTION_TABLE_ENTRY_EXT(glGetStringi);

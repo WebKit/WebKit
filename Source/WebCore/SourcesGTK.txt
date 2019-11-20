@@ -92,10 +92,6 @@ platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
-platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 
 platform/graphics/wayland/PlatformDisplayWayland.cpp

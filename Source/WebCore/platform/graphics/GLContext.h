@@ -20,10 +20,15 @@
 #ifndef GLContext_h
 #define GLContext_h
 
-#include "ANGLEWebKitBridge.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES)
+#include <GLES2/gl2.h>
+#endif
 
 #if USE(EGL) && !PLATFORM(GTK)
 #if PLATFORM(WPE)

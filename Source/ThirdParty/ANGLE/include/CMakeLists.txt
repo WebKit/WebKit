@@ -49,6 +49,23 @@ if (USE_ANGLE_EGL)
     )
 endif ()
 
+if (USE_ANGLE_WEBGL)
+    set(ANGLE_WEBGL_HEADERS
+        export.h
+        ${khr_headers}
+        ${egl_headers}
+        ${gles_headers}
+        ${gles2_headers}
+        ${gles3_headers}
+    )
+
+    WEBKIT_COPY_FILES(ANGLEWebGLHeaders
+        DESTINATION ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE
+        FILES ${ANGLE_WEBGL_HEADERS}
+        FLATTENED
+    )
+endif ()
+
 # Cocoa expects headers in an ANGLE directory
 WEBKIT_COPY_FILES(GLSLANGHeaders
     DESTINATION ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE

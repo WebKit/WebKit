@@ -36,14 +36,14 @@
 #include <ANGLE/ShaderLang.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
+#if USE(ANGLE)
+#include <ANGLE/gl2.h>
 
+#elif PLATFORM(COCOA)
 #if USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>
 #elif USE(OPENGL)
 #include <OpenGL/gl.h>
-#elif USE(ANGLE)
-#include <ANGLE/gl2.h>
 #else
 #error Unsupported configuration
 #endif

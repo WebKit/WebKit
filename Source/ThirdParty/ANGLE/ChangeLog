@@ -1,3 +1,24 @@
+2019-11-20  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Add ANGLE backend to GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=199060
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt: When USE_ANGLE_WEBGL is enabled, necessary glesv2 entry points headers
+          are installed in the derived source directory. And then adjust-angle-include-path.sh is applied
+          to change include paths in the entry points header files.
+        * GLESv2.cmake: libglesv2_entry_points_headers is newly defined, which is a gathering of
+          entry point headers of libGLESv2.
+        * PlatformGTK.cmake: In this file, we append gl and glx related angle code as a build target.
+          Since we want gl context and gles context simultaneously, we remove gl prototype calls
+          from the generated libGLESv2 library. Instead, we invoke egl and gl calls of ANGLE
+          via their non-prototype function names.
+        * adjust-angle-include-paths.sh: sed is slightly different in unix and linux systems.
+          In particular, its inplace option needs to be changed for better compatibility on linux.
+        * include/CMakeLists.txt: ANGLE_WEBGL_HEADERS is newly defined. It gathers header files of ANGLE
+          for WebGL support.
+
 2019-11-08  Dean Jackson  <dino@apple.com>
 
         Add ANGLE backend for iOS device

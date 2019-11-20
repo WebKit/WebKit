@@ -115,3 +115,9 @@ else ()
         platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
     )
 endif ()
+
+if (USE_ANGLE_WEBGL)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.cpp
+    )
+endif ()

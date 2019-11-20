@@ -1121,6 +1121,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h
 
+    platform/graphics/angle/Extensions3DANGLE.h
+
     platform/graphics/cv/ImageTransferSessionVT.h
 
     platform/graphics/filters/FilterOperation.h

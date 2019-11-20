@@ -101,12 +101,12 @@ const Platform3DObject NullPlatform3DObject = 0;
 
 namespace WebCore {
 class Extensions3D;
-#if !PLATFORM(COCOA) && USE(OPENGL_ES)
+#if USE(ANGLE)
+class Extensions3DANGLE;
+#elif !PLATFORM(COCOA) && USE(OPENGL_ES)
 class Extensions3DOpenGLES;
 #elif USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES))
 class Extensions3DOpenGL;
-#elif USE(ANGLE)
-class Extensions3DANGLE;
 #endif
 class HostWindow;
 class Image;
@@ -1456,7 +1456,10 @@ private:
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 #endif // !USE(ANGLE)
 
-#if !PLATFORM(COCOA) && USE(OPENGL_ES)
+#if USE(ANGLE)
+    friend class Extensions3DANGLE;
+    std::unique_ptr<Extensions3DANGLE> m_extensions;
+#elif !PLATFORM(COCOA) && USE(OPENGL_ES)
     friend class Extensions3DOpenGLES;
     friend class Extensions3DOpenGLCommon;
     std::unique_ptr<Extensions3DOpenGLES> m_extensions;
@@ -1464,9 +1467,6 @@ private:
     friend class Extensions3DOpenGL;
     friend class Extensions3DOpenGLCommon;
     std::unique_ptr<Extensions3DOpenGL> m_extensions;
-#elif USE(ANGLE)
-    friend class Extensions3DANGLE;
-    std::unique_ptr<Extensions3DANGLE> m_extensions;
 #endif
 
     GraphicsContext3DAttributes m_attrs;
@@ -1492,7 +1492,7 @@ private:
     bool m_layerComposited { false };
     GC3Duint m_internalColorFormat { 0 };
 
-#if USE(ANGLE)
+#if USE(ANGLE) && PLATFORM(COCOA)
     PlatformGraphicsContext3DSurface m_pbuffer;
 #endif
 

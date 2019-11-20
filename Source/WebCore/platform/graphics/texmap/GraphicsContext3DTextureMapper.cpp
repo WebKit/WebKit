@@ -37,20 +37,49 @@
 
 #include <ANGLE/ShaderLang.h>
 
-#if USE(LIBEPOXY)
+#if USE(ANGLE)
+#define EGL_EGL_PROTOTYPES 0
+// Skip the inclusion of ANGLE's explicit context entry points for now.
+#define GL_ANGLE_explicit_context
+#define GL_ANGLE_explicit_context_gles1
+typedef void* GLeglContext;
+#include <ANGLE/egl.h>
+#include <ANGLE/eglext.h>
+#include <ANGLE/eglext_angle.h>
+#include <ANGLE/entry_points_egl.h>
+#include <ANGLE/entry_points_gles_2_0_autogen.h>
+#include <ANGLE/entry_points_gles_ext_autogen.h>
+#include <ANGLE/gl2ext.h>
+#include <ANGLE/gl2ext_angle.h>
+#if defined(Above)
+#undef Above
+#endif
+#if defined(Below)
+#undef Below
+#endif
+#if defined(None)
+#undef None
+#endif
+#elif USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #elif !USE(OPENGL_ES)
 #include "OpenGLShims.h"
 #endif
 
-#if USE(OPENGL_ES)
+#if USE(ANGLE)
+#include "Extensions3DANGLE.h"
+#elif USE(OPENGL_ES)
 #include "Extensions3DOpenGLES.h"
 #else
 #include "Extensions3DOpenGL.h"
 #endif
 
 #if USE(NICOSIA)
+#if USE(ANGLE)
+#include "NicosiaGC3DANGLELayer.h"
+#else
 #include "NicosiaGC3DLayer.h"
+#endif
 #endif
 
 namespace WebCore {
@@ -71,7 +100,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     static bool initialized = false;
     static bool success = true;
     if (!initialized) {
-#if !USE(OPENGL_ES) && !USE(LIBEPOXY)
+#if !USE(OPENGL_ES) && !USE(LIBEPOXY) && !USE(ANGLE)
         success = initializeOpenGLShims();
 #endif
         initialized = true;
@@ -101,6 +130,79 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     return context;
 }
 
+#if USE(ANGLE)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
+    : m_attrs(attributes)
+{
+    ASSERT_UNUSED(sharedContext, !sharedContext);
+#if USE(NICOSIA)
+    m_nicosiaLayer = WTF::makeUnique<Nicosia::GC3DANGLELayer>(*this, renderStyle);
+#else
+    m_texmapLayer = WTF::makeUnique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
+#endif
+    makeContextCurrent();
+
+
+    validateAttributes();
+
+    if (renderStyle == RenderOffscreen) {
+        // Create a texture to render into.
+        gl::GenTextures(1, &m_texture);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+
+        // Create an FBO.
+        gl::GenFramebuffers(1, &m_fbo);
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+#if USE(COORDINATED_GRAPHICS)
+        gl::GenTextures(1, &m_compositorTexture);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_compositorTexture);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        gl::GenTextures(1, &m_intermediateTexture);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_intermediateTexture);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+#endif
+
+        // Create a multisample FBO.
+        if (m_attrs.antialias) {
+            gl::GenFramebuffers(1, &m_multisampleFBO);
+            gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+            m_state.boundFBO = m_multisampleFBO;
+            gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
+            if (m_attrs.stencil || m_attrs.depth)
+                gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        } else {
+            // Bind canvas FBO.
+            gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+            m_state.boundFBO = m_fbo;
+#if USE(OPENGL_ES)
+            if (m_attrs.depth)
+                gl::GenRenderbuffers(1, &m_depthBuffer);
+            if (m_attrs.stencil)
+                gl::GenRenderbuffers(1, &m_stencilBuffer);
+#endif
+            if (m_attrs.stencil || m_attrs.depth)
+                gl::GenRenderbuffers(1, &m_depthStencilBuffer);
+        }
+    }
+
+    gl::ClearColor(0, 0, 0, 0);
+}
+#else
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attributes)
 {
@@ -225,7 +327,51 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 
     ::glClearColor(0, 0, 0, 0);
 }
+#endif
 
+#if USE(ANGLE)
+GraphicsContext3D::~GraphicsContext3D()
+{
+    makeContextCurrent();
+    if (m_texture)
+        gl::DeleteTextures(1, &m_texture);
+#if USE(COORDINATED_GRAPHICS)
+    if (m_compositorTexture)
+        gl::DeleteTextures(1, &m_compositorTexture);
+#endif
+
+    if (m_attrs.antialias) {
+        gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
+        if (m_attrs.stencil || m_attrs.depth)
+            gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        gl::DeleteFramebuffers(1, &m_multisampleFBO);
+    } else if (m_attrs.stencil || m_attrs.depth) {
+#if USE(OPENGL_ES)
+        if (m_depthBuffer)
+            glDeleteRenderbuffers(1, &m_depthBuffer);
+
+        if (m_stencilBuffer)
+            glDeleteRenderbuffers(1, &m_stencilBuffer);
+#endif
+        if (m_depthStencilBuffer)
+            gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
+    }
+    gl::DeleteFramebuffers(1, &m_fbo);
+#if USE(COORDINATED_GRAPHICS)
+    gl::DeleteTextures(1, &m_intermediateTexture);
+#endif
+
+#if USE(CAIRO)
+    if (m_vao)
+        deleteVertexArray(m_vao);
+#endif
+
+    auto* activeContext = activeContexts().takeLast([this](auto* it) {
+        return it == this;
+    });
+    ASSERT_UNUSED(activeContext, !!activeContext);
+}
+#else
 GraphicsContext3D::~GraphicsContext3D()
 {
     makeContextCurrent();
@@ -262,9 +408,12 @@ GraphicsContext3D::~GraphicsContext3D()
         deleteVertexArray(m_vao);
 #endif
 
-    auto* activeContext = activeContexts().takeLast([this](auto* it) { return it == this; });
+    auto* activeContext = activeContexts().takeLast([this](auto* it) {
+        return it == this;
+    });
     ASSERT_UNUSED(activeContext, !!activeContext);
 }
+#endif // USE(ANGLE)
 
 void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback>)
 {
@@ -319,7 +468,7 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 #endif
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(ANGLE)
 Extensions3D& GraphicsContext3D::getExtensions()
 {
     if (!m_extensions) {

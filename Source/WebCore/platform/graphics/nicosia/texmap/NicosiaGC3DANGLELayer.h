@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2018, 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,35 +30,57 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
+#include "GLContext.h"
 #include "GraphicsContext3D.h"
-#include "NicosiaContentLayerTextureMapperImpl.h"
+#include "NicosiaGC3DLayer.h"
 #include <memory>
 
+typedef void *EGLConfig;
+typedef void *EGLContext;
+typedef void *EGLDisplay;
+typedef void *EGLSurface;
+
 namespace WebCore {
+class IntSize;
 class GLContext;
+class PlatformDisplay;
 }
 
 namespace Nicosia {
 
-class GC3DLayer : public ContentLayerTextureMapperImpl::Client {
+class GC3DANGLELayer final : public GC3DLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GC3DLayer(WebCore::GraphicsContext3D&);
-    GC3DLayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::RenderStyle);
+    class ANGLEContext {
+        WTF_MAKE_NONCOPYABLE(ANGLEContext);
+    public:
+        static const char* errorString(int statusCode);
+        static const char* lastErrorString();
 
-    virtual ~GC3DLayer();
+        static std::unique_ptr<ANGLEContext> createContext();
+        virtual ~ANGLEContext();
 
-    ContentLayer& contentLayer() const { return m_contentLayer; }
-    virtual bool makeContextCurrent();
-    virtual PlatformGraphicsContext3D platformContext();
+        bool makeContextCurrent();
+#if ENABLE(GRAPHICS_CONTEXT_3D)
+        PlatformGraphicsContext3D platformContext();
+#endif
 
-    void swapBuffersIfNeeded() override;
+    private:
+        ANGLEContext(EGLDisplay, EGLContext, EGLSurface);
+
+        EGLDisplay m_display { nullptr };
+        EGLContext m_context { nullptr };
+        EGLSurface m_surface { nullptr };
+    };
+
+    GC3DANGLELayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::RenderStyle);
+    virtual ~GC3DANGLELayer();
+
+    bool makeContextCurrent() override;
+    PlatformGraphicsContext3D platformContext() override;
 
 private:
-    WebCore::GraphicsContext3D& m_context;
-    std::unique_ptr<WebCore::GLContext> m_glContext;
-
-    Ref<ContentLayer> m_contentLayer;
+    std::unique_ptr<ANGLEContext> m_angleContext;
 };
 
 } // namespace Nicosia

@@ -1,3 +1,67 @@
+2019-11-20  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Add ANGLE backend to GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=199060
+
+        Reviewed by Žan Doberšek.
+
+        This change aims to bring ANGLE support for WebGL to GTK port. The port
+        wants to have a gl context for texture mapper and a gles/egl context for webgl
+        simultaneously, we adopt the readPixel-copyToTexture approach for now because
+        sharing textures between the two different contextes is not a feasible direction.
+        Also, to avoid conflicts between gl and gles calls, we use non-prototype functions
+        of ANGLE for WebGL context (i.e., GraphicsContext3D). Although many combinations
+        of graphic configurations exist, only default configuration (Nicosia layers
+        running on ANGLE + GLX is supported. Other combinations like ANGLE + GLES or WPE
+        will be covered by following patches.
+
+        No new tests since no functionality changed.
+
+        * Headers.cmake:
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GLContext.cpp:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/PlatformDisplay.cpp:
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        * platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.cpp: Added.
+        (Nicosia::GC3DANGLELayer::ANGLEContext::errorString):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::lastErrorString):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::createContext):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::ANGLEContext):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::~ANGLEContext):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::makeContextCurrent):
+        (Nicosia::GC3DANGLELayer::ANGLEContext::platformContext):
+        (Nicosia::GC3DANGLELayer::GC3DANGLELayer):
+        (Nicosia::GC3DANGLELayer::~GC3DANGLELayer):
+        (Nicosia::GC3DANGLELayer::makeContextCurrent):
+        (Nicosia::GC3DANGLELayer::platformContext):
+        * platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.h: Copied from Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h.
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp:
+        (Nicosia::GC3DLayer::GC3DLayer):
+        (Nicosia::GC3DLayer::swapBuffersIfNeeded):
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h:
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::setPendingContents):
+        (WebCore::BitmapTextureGL::updatePendingContents):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::pushNextBuffer):
+
 2019-11-20  Zalan Bujtas  <zalan@apple.com>
 
         Flexbox sizing logic triggers full repaint on the flex items.

@@ -26,7 +26,6 @@
 
 #include "Extensions3D.h"
 #include "FilterOperations.h"
-#include "Image.h"
 #include "LengthFunctions.h"
 #include "NativeImage.h"
 #include "NotImplemented.h"
@@ -168,6 +167,25 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 
     updateContents(imageData, targetRect, offset, bytesPerLine);
 }
+
+#if USE(ANGLE)
+void BitmapTextureGL::setPendingContents(RefPtr<Image>&& image)
+{
+    m_pendingContents = image;
+}
+
+void BitmapTextureGL::updatePendingContents(const IntRect& targetRect, const IntPoint& offset)
+{
+    if (!m_pendingContents)
+        return;
+
+    if (!isValid()) {
+        IntSize textureSize(m_pendingContents->size());
+        reset(textureSize);
+    }
+    updateContents(m_pendingContents.get(), targetRect, offset);
+}
+#endif
 
 static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
 {

@@ -69,6 +69,11 @@ typedef void* GLeglContext;
 // would need more work to be included from WebCore.
 #define GL_MAX_SAMPLES_EXT 0x8D57
 
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
+#define GL_COLOR_ATTACHMENT0_EXT 0x8CE0
+#define GL_FRAMEBUFFER_EXT 0x8D40
+#endif
+
 namespace WebCore {
 
 static const char* packedDepthStencilExtensionName = "GL_OES_packed_depth_stencil";
@@ -191,6 +196,18 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     allocateIOSurfaceBackingStore(IntSize(width, height));
     updateFramebufferTextureBackingStoreFromLayer();
     gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
+#elif PLATFORM(GTK)
+    gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
+    gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
+    if (m_compositorTexture) {
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_compositorTexture);
+        gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_intermediateTexture);
+        gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+    }
 #else
 #error FIXME: Port to non-Cocoa platforms.
 #endif // PLATFORM(COCOA)
@@ -476,7 +493,20 @@ void GraphicsContext3D::prepareTexture()
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
 
+#if USE(COORDINATED_GRAPHICS)
+    std::swap(m_texture, m_compositorTexture);
+    std::swap(m_texture, m_intermediateTexture);
+    gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
     gl::Flush();
+
+    if (m_state.boundFBO != m_fbo)
+        gl::BindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
+    else
+        gl::BindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+#else
+    gl::Flush();
+#endif
 }
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
