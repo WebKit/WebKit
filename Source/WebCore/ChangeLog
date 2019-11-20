@@ -1,3 +1,19 @@
+2019-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r252161): box-shadow with inset and rounded borders is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=204348
+
+        Reviewed by Zalan Bujtas.
+
+        r252161 introduced a bug for inset shadows where we passed the wrong rect to areaCastingShadowInHole().
+        Clean the code up a little, and make the xOffset stuff more similar to the outset shadow path.
+        We could still do a better job of pixel snapping here.
+
+        Test: fast/box-shadow/inset-box-shadow.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2019-11-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] TextUtil::width should use FontCascade::widthForSimpleText when applicable

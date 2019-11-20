@@ -2474,8 +2474,10 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
-            FloatRect pixelSnappedOuterRect = snapRectToDevicePixels(areaCastingShadowInHole(holeRect, shadowPaintingExtent, shadowSpread, shadowOffset), deviceScaleFactor);
+            LayoutRect shadowCastingRect = areaCastingShadowInHole(border.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
             RoundedRect roundedHoleRect(holeRect, border.radii());
+
+            FloatRect pixelSnappedOuterRect = snapRectToDevicePixels(shadowCastingRect, deviceScaleFactor);
             FloatRoundedRect pixelSnappedRoundedHole = roundedHoleRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
 
             GraphicsContextStateSaver stateSaver(context);
@@ -2485,7 +2487,9 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             } else
                 context.clip(pixelSnappedBorderRect.rect());
 
-            IntSize extraOffset(2 * roundToInt(paintRect.width()) + std::max<LayoutUnit>(0, shadowOffset.width()) + shadowPaintingExtent - 2 * shadowSpread + 1, 0);
+            LayoutUnit xOffset = 2 * paintRect.width() + std::max<LayoutUnit>(0, shadowOffset.width()) + shadowPaintingExtent + 2 * shadowSpread + LayoutUnit(1);
+            LayoutSize extraOffset(xOffset.ceil(), 0);
+
             context.translate(extraOffset);
             shadowOffset -= extraOffset;
 

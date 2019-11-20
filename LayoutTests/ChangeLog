@@ -1,3 +1,13 @@
+2019-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r252161): box-shadow with inset and rounded borders is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=204348
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/box-shadow/inset-box-shadow-expected.html: Added.
+        * fast/box-shadow/inset-box-shadow.html: Added.
+
 2019-11-20  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/text/font-antialiasing-save-restore.html is failing
