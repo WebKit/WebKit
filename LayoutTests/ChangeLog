@@ -1,3 +1,13 @@
+2019-11-20  Truitt Savell  <tsavell@apple.com>
+
+        Add platform specific expectations for High Sierra and Mojave for svg/custom/glyph-selection-arabic-forms.svg
+        https://bugs.webkit.org/show_bug.cgi?id=204249
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/svg/custom/glyph-selection-arabic-forms-expected.txt: Added.
+        * platform/mac-mojave/svg/custom/glyph-selection-arabic-forms-expected.txt: Added.
+
 2019-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Turn off antialiasing when rendering with Ahem, for testing
