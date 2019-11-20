@@ -522,6 +522,11 @@ bool InspectorFrontendHost::supportsDiagnosticLogging()
 }
 
 #if ENABLE(INSPECTOR_TELEMETRY)
+bool InspectorFrontendHost::diagnosticLoggingAvailable()
+{
+    return m_client && m_client->diagnosticLoggingAvailable();
+}
+
 static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(const RefPtr<JSON::Value>& value)
 {
     switch (value->type()) {
@@ -577,6 +582,6 @@ void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const St
 
     m_client->logDiagnosticEvent(makeString("WebInspector."_s, eventName), dictionary);
 }
-#endif
+#endif // ENABLE(INSPECTOR_TELEMETRY)
 
 } // namespace WebCore

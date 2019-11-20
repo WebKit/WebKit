@@ -87,6 +87,7 @@ public:
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     virtual bool supportsDiagnosticLogging() { return false; }
+    virtual bool diagnosticLoggingAvailable() { return false; }
     virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingClient::ValueDictionary&) { }
 #endif
 

@@ -303,7 +303,11 @@ void WebInspectorUI::logDiagnosticEvent(const String& eventName, const Diagnosti
 
 void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
 {
-    m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, available);
+    // Inspector's diagnostic logging client should never be used unless the page setting is also enabled.
+    ASSERT(!available || supportsDiagnosticLogging());
+    m_diagnosticLoggingAvailable = available;
+
+    m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, m_diagnosticLoggingAvailable);
 }
 #endif
 

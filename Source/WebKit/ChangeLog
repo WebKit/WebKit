@@ -1,3 +1,36 @@
+2019-11-19  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Add _WKRemoteWebInspectorViewController SPI to set diagnostic logging delegate
+        https://bugs.webkit.org/show_bug.cgi?id=204371
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/RemoteWebInspectorProxy.h:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::setDiagnosticLoggingAvailable):
+        Hook up the plumbing to forward this state change to the frontend.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerPrivate.h: Added.
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController _setDiagnosticLoggingDelegate:]):
+        Add new SPI to set the diagnostic logging delegate. This is preferable to directly
+        setting the delegate on the inspector WKWebView (via .webView._diagnosticLoggingDelegate),
+        because the controller can notify the frontend that diagnostic logging is now available.
+
+        * WebKit.xcodeproj/project.pbxproj: Add new header file and make it private.
+
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setDiagnosticLoggingAvailable):
+        Cache this value and use it for InspectorFrontendClient::diagnosticLoggingAvailable().
+
+        * WebProcess/WebPage/RemoteWebInspectorUI.messages.in:
+        * WebProcess/WebPage/RemoteWebInspectorUI.h:
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::setDiagnosticLoggingAvailable):
+        Duplicate what is done for the local case.
+
 2019-11-20  Jer Noble  <jer.noble@apple.com>
 
         HTML5 audio .ended event not fired when app in background or phone screen is off

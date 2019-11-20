@@ -52,6 +52,15 @@ void RemoteWebInspectorProxy::invalidate()
     closeFrontendPageAndWindow();
 }
 
+void RemoteWebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
+{
+#if ENABLE(INSPECTOR_TELEMETRY)
+    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available), m_inspectorPage->webPageID());
+#else
+    UNUSED_PARAM(available);
+#endif
+}
+
 void RemoteWebInspectorProxy::load(const String& debuggableType, const String& backendCommandsURL)
 {
     createFrontendPageAndWindow();

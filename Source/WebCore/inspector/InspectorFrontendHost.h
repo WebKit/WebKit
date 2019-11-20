@@ -120,6 +120,7 @@ public:
 
     bool supportsDiagnosticLogging();
 #if ENABLE(INSPECTOR_TELEMETRY)
+    bool diagnosticLoggingAvailable();
     void logDiagnosticEvent(const String& eventName, const String& payload);
 #endif
 

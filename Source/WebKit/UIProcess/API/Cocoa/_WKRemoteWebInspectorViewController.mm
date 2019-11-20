@@ -143,6 +143,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_delegate inspectorViewControllerInspectorDidClose:self];
 }
 
+// MARK: _WKRemoteWebInspectorViewControllerPrivate methods
+
+- (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)delegate
+{
+    self.webView._diagnosticLoggingDelegate = delegate;
+    m_remoteInspectorProxy->setDiagnosticLoggingAvailable(!!delegate);
+}
+
 @end
 
 #endif // PLATFORM(MAC)

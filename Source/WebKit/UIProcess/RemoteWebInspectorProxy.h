@@ -70,6 +70,8 @@ public:
 
     bool isUnderTest() const { return false; }
 
+    void setDiagnosticLoggingAvailable(bool);
+
     void invalidate();
 
     void load(const String& debuggableType, const String& backendCommandsURL);

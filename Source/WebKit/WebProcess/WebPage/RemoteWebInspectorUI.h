@@ -53,6 +53,10 @@ public:
     void didAppend(const String& url);
     void sendMessageToFrontend(const String&);
 
+#if ENABLE(INSPECTOR_TELEMETRY)
+    void setDiagnosticLoggingAvailable(bool);
+#endif
+
     // WebCore::InspectorFrontendClient
     void windowObjectCleared() override;
     void frontendLoaded() override;
@@ -81,6 +85,7 @@ public:
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
+    bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
     void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
 #endif
 
@@ -99,6 +104,10 @@ private:
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
     String m_debuggableType;
     String m_backendCommandsURL;
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+    bool m_diagnosticLoggingAvailable { false };
+#endif
 };
 
 } // namespace WebKit
