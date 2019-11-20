@@ -78,6 +78,7 @@ namespace WebKit {
 
 void WebPage::didReceiveWebPageMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    auto protectedThis = makeRef(*this);
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
         return;
@@ -163,6 +164,7 @@ void WebPage::didReceiveWebPageMessage(IPC::Connection& connection, IPC::Decoder
 
 void WebPage::didReceiveSyncWebPageMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
+    auto protectedThis = makeRef(*this);
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         IPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);
         return;

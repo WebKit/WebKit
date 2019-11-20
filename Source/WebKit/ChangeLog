@@ -1,5 +1,19 @@
 2019-11-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix webkitpy failures after r252655.
+
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveWebPageMessage):
+        (WebKit::WebPage::didReceiveSyncWebPageMessage):
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+
+2019-11-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed mac catalyst build fix after r252655.
 
         * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in:
