@@ -1,5 +1,17 @@
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: overflow of KeyGenerator in MemoryIDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=204366
+
+        Reviewed by Brady Eidson.
+
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/key-generator-private-expected.txt:
+        * storage/indexeddb/resources/key-generator.js:
+        (request.onerror):
+
+2019-11-19  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: update m_objectStoresByName after renaming object store
         https://bugs.webkit.org/show_bug.cgi?id=204373
 

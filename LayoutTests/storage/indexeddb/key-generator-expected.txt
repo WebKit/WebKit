@@ -161,6 +161,28 @@ event.preventDefault()
 PASS Got "d" for key: 2
 db.close()
 
+Verify that keys above 2^64 result in errors.
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+trans1 = db.transaction(['store'], 'readwrite')
+store_t1 = trans1.objectStore('store')
+store_t1.put('a')
+request = store.get(1)
+store_t1.put('b', Math.pow(2, 64))
+request = store.get(18446744073709552000)
+store_t1.put('c')
+store_t1.put('d', 2)
+request = store.get(2)
+PASS Got "a" for key: 1
+PASS Got "b" for key: 18446744073709552000
+Error event fired auto-incrementing past 2^64 (as expected)
+PASS event.target.error.name is 'ConstraintError'
+event.preventDefault()
+PASS Got "d" for key: 2
+db.close()
+
 Ensure key generator state is maintained across connections:
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 

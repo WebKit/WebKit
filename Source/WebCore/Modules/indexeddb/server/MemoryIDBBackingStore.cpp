@@ -487,6 +487,11 @@ IDBError MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
     if (newKeyNumber < objectStore->currentKeyGeneratorValue())
         return IDBError { };
 
+    if (newKeyNumber >= (double)maxGeneratedKeyValue) {
+        objectStore->setKeyGeneratorValue(maxGeneratedKeyValue + 1);
+        return IDBError { };
+    }
+
     uint64_t newKeyInteger(newKeyNumber);
     if (newKeyInteger <= uint64_t(newKeyNumber))
         ++newKeyInteger;

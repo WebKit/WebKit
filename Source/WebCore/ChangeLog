@@ -1,5 +1,19 @@
 2019-11-19  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: overflow of KeyGenerator in MemoryIDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=204366
+
+        Reviewed by Brady Eidson.
+
+        Do not set KeyGenerator if it is key is bigger than 2^53.
+
+        Test: storage/indexeddb/key-generator-private.html
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+
+2019-11-19  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: update m_objectStoresByName after renaming object store
         https://bugs.webkit.org/show_bug.cgi?id=204373
 
