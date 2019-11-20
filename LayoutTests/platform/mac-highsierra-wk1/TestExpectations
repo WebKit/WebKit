@@ -4,3 +4,4 @@
 #
 
 webkit.org/b/203984 [ Debug ] webgl/1.0.3/conformance/context/context-release-upon-reload.html [ Skip ]
+webkit.org/b/203984 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Skip ]

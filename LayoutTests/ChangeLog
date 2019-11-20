@@ -1,3 +1,12 @@
+2019-11-20  Justin Fan  <justin_fan@apple.com>
+
+        webgl/1.0.3/conformance/context/context-release-upon-reload.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203984
+
+        Unreviewed test gardening. Skip the 2.0.0 version of this test as well.
+
+        * platform/mac-highsierra-wk1/TestExpectations:
+
 2019-11-20  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Add `--webgl-test-suite` flag for run-webkit-tests
