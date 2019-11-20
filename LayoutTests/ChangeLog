@@ -1,3 +1,14 @@
+2019-11-19  Sunny He  <sunny_he@apple.com>
+
+        Nullptr crash in Node::setTextContent via Document::setTitle if title element is removed before setTextContent call.
+        https://bugs.webkit.org/show_bug.cgi?id=204332
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Document/title-property-set-with-dom-event-expected.txt: Added.
+        * fast/dom/Document/title-property-set-with-dom-event.html: Added.
+        * fast/dom/Document/title-property-set-with-dom-event-svg-expected.html: Added.
+        * fast/dom/Document/title-property-set-with-dom-event-svg.html: Added.
 2019-11-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, test gardening
