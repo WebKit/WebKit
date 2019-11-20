@@ -46,7 +46,8 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (!font.size() || from == to)
         return 0;
 
-    auto text = inlineBox.textContent();
+    auto& textContext = inlineBox.textContext();
+    auto& text = textContext.content;
     ASSERT(to <= text.length());
 
     if (font.isFixedPitch())
@@ -57,12 +58,15 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (measureWithEndSpace)
         ++to;
     LayoutUnit width;
-    auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
-
-    WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
-    if (tabWidth)
-        run.setTabSize(true, tabWidth);
-    width = font.width(run);
+    if (textContext.canUseSimplifiedContentMeasuring)
+        width = font.widthForSimpleText(text.substring(from, to - from));
+    else {
+        auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
+        WebCore::TextRun run(text.substring(from, to - from), contentLogicalLeft);
+        if (tabWidth)
+            run.setTabSize(true, tabWidth);
+        width = font.width(run);
+    }
 
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
@@ -70,7 +74,7 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     return std::max<LayoutUnit>(0, width);
 }
 
-LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
+LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
 {
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();

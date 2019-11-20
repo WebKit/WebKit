@@ -1,3 +1,39 @@
+2019-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] TextUtil::width should use FontCascade::widthForSimpleText when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=204393
+        <rdar://problem/57347144>
+
+        Reviewed by Antti Koivisto.
+
+        This is one of reasons why simple line layout performs better than complex line layout.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::fixedPitchWidth):
+        * layout/inlineformatting/text/TextUtil.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        (WebCore::Layout::Box::setTextContext):
+        (WebCore::Layout::Box::hasTextContent const):
+        (WebCore::Layout::Box::textContext const):
+        (WebCore::Layout::Box::setTextContent): Deleted.
+        (WebCore::Layout::Box::textContent const): Deleted.
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::canUseSimplifiedTextMeasuring):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::outputLayoutBox):
+
 2019-11-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM.highlightSelector should work for "div, div::before"

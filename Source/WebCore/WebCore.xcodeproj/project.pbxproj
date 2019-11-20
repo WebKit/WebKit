@@ -377,6 +377,7 @@
 		11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC920927CBC0081AA6C /* LayoutChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		113409DA203E038000C66915 /* RenderTreeBuilderContinuation.h in Headers */ = {isa = PBXBuildFile; fileRef = 113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */; };
+		113A3CB42385860100AE3ECE /* TextContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 113A3CB22385860000AE3ECE /* TextContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		113D0B521F9FDD2B00F611BB /* FrameViewLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 113D0B501F9FDD2B00F611BB /* FrameViewLayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		115CFA6A208AF7D0001E6991 /* FormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA68208AF7D0001E6991 /* FormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		115CFA6E208AFAB7001E6991 /* BlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5864,6 +5865,7 @@
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderContinuation.cpp; sourceTree = "<group>"; };
 		113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderContinuation.h; sourceTree = "<group>"; };
+		113A3CB22385860000AE3ECE /* TextContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextContext.h; sourceTree = "<group>"; };
 		113D0B4F1F9FDD2B00F611BB /* FrameViewLayoutContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameViewLayoutContext.cpp; sourceTree = "<group>"; };
 		113D0B501F9FDD2B00F611BB /* FrameViewLayoutContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameViewLayoutContext.h; sourceTree = "<group>"; };
 		115CA83023328B1E00FD3B08 /* LayoutUnits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnits.cpp; sourceTree = "<group>"; };
@@ -16656,6 +16658,7 @@
 				111C615620AD1AE1005B82FA /* LayoutReplaced.h */,
 				11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */,
 				11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */,
+				113A3CB22385860000AE3ECE /* TextContext.h */,
 			);
 			path = layouttree;
 			sourceTree = "<group>";
@@ -29320,7 +29323,6 @@
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				9444CBE41D8861990073A074 /* CSSCustomIdentValue.h in Headers */,
 				BC779E141BB215BB00CAA8BF /* CSSCustomPropertyValue.h in Headers */,
-				4A9CC81816BB9AC600EC645A /* UserAgentStyle.h in Headers */,
 				94476BDB1DFCAC0300690E23 /* CSSDeferredParser.h in Headers */,
 				FBB0C5B817BBD629003D3677 /* CSSFilterImageValue.h in Headers */,
 				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,
@@ -31228,7 +31230,6 @@
 				E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */,
 				FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
-				E4863CFE23842E9E00972158 /* RuleData.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				0BCF83F71059C1EB00D999DD /* MathMLFractionElement.h in Headers */,
 				FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */,
@@ -31977,6 +31978,7 @@
 				078E094717D16E1C00420AA1 /* RTCVoidRequest.h in Headers */,
 				5824ABA31AE81116009074B7 /* RubyElement.h in Headers */,
 				5824ABA71AE81384009074B7 /* RubyTextElement.h in Headers */,
+				E4863CFE23842E9E00972158 /* RuleData.h in Headers */,
 				A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */,
 				A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */,
 				2D76BB821945632400CFD29A /* RunLoopObserver.h in Headers */,
@@ -32525,6 +32527,7 @@
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
+				113A3CB42385860100AE3ECE /* TextContext.h in Headers */,
 				142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */,
 				582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */,
 				1C73A71521857587004CCEA5 /* TextDecorationThickness.h in Headers */,
@@ -32645,6 +32648,7 @@
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
 				A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */,
 				CDAB6D3117C9259500C60B34 /* UserAgentScripts.h in Headers */,
+				4A9CC81816BB9AC600EC645A /* UserAgentStyle.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */,
 				7C3F01C11C8E5ABA00ADD962 /* UserContentProvider.h in Headers */,

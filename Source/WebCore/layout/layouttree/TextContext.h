@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,24 +27,16 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineItem.h"
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 namespace Layout {
 
-class TextUtil {
+struct TextContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static LayoutUnit width(const Box&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
-    static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
-    struct SplitData {
-        unsigned start { 0 };
-        unsigned length { 0 };
-        LayoutUnit logicalWidth;
-    };
-    static SplitData split(const Box&, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft);
-
-private:
-    static LayoutUnit fixedPitchWidth(const StringView&, const RenderStyle&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
+    StringView content;
+    bool canUseSimplifiedContentMeasuring { false };
 };
 
 }

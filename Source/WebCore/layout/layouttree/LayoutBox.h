@@ -29,6 +29,7 @@
 
 #include "LayoutReplaced.h"
 #include "RenderStyle.h"
+#include "TextContext.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -63,7 +64,7 @@ public:
     typedef unsigned BaseTypeFlags;
 
     Box(Optional<ElementAttributes>, RenderStyle&&);
-    Box(String textContent, RenderStyle&&);
+    Box(TextContext&&, RenderStyle&&);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -143,7 +144,7 @@ public:
     // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
     Replaced* replaced();
     bool hasTextContent() const;
-    String textContent() const;
+    const TextContext& textContext() const;
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
@@ -165,14 +166,14 @@ protected:
     Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
 private:
-    void setTextContent(String);
+    void setTextContext(TextContext&&);
 
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         BoxRareData() = default;
 
-        String textContent;
+        TextContext textContext;
         std::unique_ptr<Replaced> replaced;
         unsigned rowSpan { 1 };
         unsigned columnSpan { 1 };

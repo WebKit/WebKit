@@ -110,6 +110,21 @@ static String applyTextTransform(const String& text, const RenderStyle& style)
     return text;
 }
 
+static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& font, bool whitespaceIsCollapsed)
+{
+    if (!content.is8Bit() && !content.isAllASCII() && FontCascade::characterRangeCodePath(content.characters16(), content.length()) != FontCascade::Simple)
+        return false;
+
+    if (font.wordSpacing() || font.letterSpacing())
+        return false;
+
+    for (unsigned i = 0; i < content.length(); ++i) {
+        if ((!whitespaceIsCollapsed && content[i] == '\t') || content[i] == noBreakSpace || content[i] >= HiraganaLetterSmallA)
+            return false;
+    }
+    return true;
+}
+
 std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const RenderView& renderView)
 {
     PhaseScope scope(Phase::Type::TreeBuilding);
@@ -156,12 +171,13 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
     std::unique_ptr<Box> childLayoutBox;
     if (is<RenderText>(childRenderer)) {
         auto& textRenderer = downcast<RenderText>(childRenderer);
-        auto textContent = applyTextTransform(textRenderer.originalText(), parentRenderer.style());
+        auto text = applyTextTransform(textRenderer.originalText(), parentRenderer.style());
         // FIXME: Clearly there must be a helper function for this.
+        auto textContent = TextContext { text, canUseSimplifiedTextMeasuring(text, parentRenderer.style().fontCascade(), parentRenderer.style().collapseWhiteSpace()) };
         if (parentRenderer.style().display() == DisplayType::Inline)
-            childLayoutBox = makeUnique<Box>(textContent, RenderStyle::clone(parentRenderer.style()));
+            childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::clone(parentRenderer.style()));
         else
-            childLayoutBox = makeUnique<Box>(textContent, RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
+            childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
@@ -372,7 +388,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
     stream << " layout box->(" << &layoutBox << ")";
     if (layoutBox.isInlineLevelBox() && layoutBox.isAnonymous())
-        stream << " text content [\"" << layoutBox.textContent().utf8().data() << "\"]";
+        stream << " text content [\"" << layoutBox.textContext().content.utf8().data() << "\"]";
 
     stream.nextLine();
 }

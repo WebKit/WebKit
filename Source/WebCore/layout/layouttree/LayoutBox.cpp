@@ -54,10 +54,10 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
 {
 }
 
-Box::Box(String textContent, RenderStyle&& style)
+Box::Box(TextContext&& textContext, RenderStyle&& style)
     : Box({ }, WTFMove(style), BaseTypeFlag::BoxFlag)
 {
-    setTextContent(textContent);
+    setTextContext(WTFMove(textContext));
 }
 
 Box::~Box()
@@ -386,23 +386,23 @@ bool Box::isPaddingApplicable() const
         && !isTableColumn();
 }
 
-void Box::setTextContent(String textContent)
+void Box::setTextContext(TextContext&& textContext)
 {
     ASSERT(isInlineLevelBox());
-    ensureRareData().textContent = textContent;
+    ensureRareData().textContext = WTFMove(textContext);
 }
 
 bool Box::hasTextContent() const
 {
     ASSERT(isInlineLevelBox());
-    return hasRareData() && !rareData().textContent.isNull();
+    return hasRareData() && !rareData().textContext.content.isNull();
 }
 
-String Box::textContent() const
+const TextContext& Box::textContext() const
 {
     ASSERT(hasRareData());
     ASSERT(isInlineLevelBox());
-    return rareData().textContent;
+    return rareData().textContext;
 }
 
 const Replaced* Box::replaced() const

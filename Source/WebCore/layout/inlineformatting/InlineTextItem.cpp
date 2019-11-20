@@ -38,7 +38,7 @@ static inline bool isWhitespaceCharacter(char character)
     return character == ' ' || character == '\t';
 }
 
-static unsigned moveToNextNonWhitespacePosition(String textContent, unsigned startPosition)
+static unsigned moveToNextNonWhitespacePosition(const StringView& textContent, unsigned startPosition)
 {
     auto nextNonWhiteSpacePosition = startPosition;
     while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition]))
@@ -82,7 +82,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 
 void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const Box& inlineBox)
 {
-    auto text = inlineBox.textContent();
+    auto text = inlineBox.textContext().content;
     if (!text.length())
         return inlineContent.append(InlineTextItem::createEmptyItem(inlineBox));
 
