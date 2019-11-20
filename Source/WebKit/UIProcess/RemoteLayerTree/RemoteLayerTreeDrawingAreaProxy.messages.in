@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy {
+messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy NotRefCounted {
     void WillCommitLayerTree(WebKit::TransactionID transactionID)
     void CommitLayerTree(WebKit::RemoteLayerTreeTransaction layerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction scrollingTreeTransaction)
 }

@@ -22,7 +22,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-messages -> NPObjectMessageReceiver LegacyReceiver {
+messages -> NPObjectMessageReceiver LegacyReceiver NotRefCounted {
     Deallocate() -> () Synchronous
     HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue) Synchronous
     Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) Synchronous

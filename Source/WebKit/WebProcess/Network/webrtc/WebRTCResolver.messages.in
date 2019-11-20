@@ -22,7 +22,7 @@
 
 #if USE(LIBWEBRTC)
 
-messages -> WebRTCResolver {
+messages -> WebRTCResolver NotRefCounted {
     void SetResolvedAddress(Vector<WebKit::RTCNetwork::IPAddress> addresses)
     void ResolvedAddressError(int error)
 }

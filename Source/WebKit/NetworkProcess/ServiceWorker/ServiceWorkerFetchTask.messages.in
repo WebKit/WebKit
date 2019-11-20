@@ -22,7 +22,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-messages -> ServiceWorkerFetchTask {
+messages -> ServiceWorkerFetchTask NotRefCounted {
     DidNotHandle()
     DidFail(WebCore::ResourceError error)
     DidReceiveRedirectResponse(WebCore::ResourceResponse response)

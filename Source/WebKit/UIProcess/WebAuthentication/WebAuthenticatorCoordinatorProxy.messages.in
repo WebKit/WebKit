@@ -24,7 +24,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-messages -> WebAuthenticatorCoordinatorProxy {
+messages -> WebAuthenticatorCoordinatorProxy NotRefCounted {
 
     MakeCredential(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData origin, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options) -> (struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception) Async
     GetAssertion(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData origin, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options) -> (struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception) Async

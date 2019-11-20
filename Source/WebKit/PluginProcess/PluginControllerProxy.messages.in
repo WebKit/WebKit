@@ -22,7 +22,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-messages -> PluginControllerProxy LegacyReceiver {
+messages -> PluginControllerProxy LegacyReceiver NotRefCounted {
     # Sent when the plug-in geometry changes.
     GeometryDidChange(WebCore::IntSize pluginSize, WebCore::IntRect clipRect, WebCore::AffineTransform pluginToRootViewTransform, float scaleFactor, WebKit::ShareableBitmap::Handle backingStoreHandle)
 

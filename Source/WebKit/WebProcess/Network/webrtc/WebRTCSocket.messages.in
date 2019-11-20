@@ -22,7 +22,7 @@
 
 #if USE(LIBWEBRTC)
 
-messages -> WebRTCSocket {
+messages -> WebRTCSocket NotRefCounted {
     SignalReadPacket(IPC::DataReference data, WebKit::RTCNetwork::IPAddress address, uint16_t port, int64_t timestamp)
     SignalSentPacket(int packetSize, int64_t timestamp)
     SignalAddressReady(WebKit::RTCNetwork::SocketAddress address)

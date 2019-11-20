@@ -22,7 +22,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-messages -> WebIDBConnectionToClient {
+messages -> WebIDBConnectionToClient NotRefCounted {
     DeleteDatabase(WebCore::IDBRequestData requestData)
     OpenDatabase(WebCore::IDBRequestData requestData);
     AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier);

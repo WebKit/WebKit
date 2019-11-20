@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> RemoteObjectRegistry {
+messages -> RemoteObjectRegistry NotRefCounted {
     InvokeMethod(WebKit::RemoteObjectInvocation invocation)
     CallReplyBlock(uint64_t replyID, WebKit::UserData blockInvocation);
     ReleaseUnusedReplyBlock(uint64_t replyID);

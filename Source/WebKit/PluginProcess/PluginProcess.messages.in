@@ -22,7 +22,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-messages -> PluginProcess LegacyReceiver {
+messages -> PluginProcess LegacyReceiver NotRefCounted {
     # Initializes the plug-in process.
     InitializePluginProcess(struct WebKit::PluginProcessCreationParameters processCreationParameters)
     

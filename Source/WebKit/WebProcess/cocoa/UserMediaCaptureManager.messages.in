@@ -23,7 +23,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-messages -> UserMediaCaptureManager {
+messages -> UserMediaCaptureManager NotRefCounted {
     CaptureFailed(uint64_t id)
     SourceStopped(uint64_t id)
     SourceMutedChanged(uint64_t id, bool muted)

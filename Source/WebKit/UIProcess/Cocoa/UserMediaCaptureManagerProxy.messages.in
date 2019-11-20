@@ -23,7 +23,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-messages -> UserMediaCaptureManagerProxy {
+messages -> UserMediaCaptureManagerProxy NotRefCounted {
     CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings) Synchronous
     StartProducingData(uint64_t id)
     StopProducingData(uint64_t id)

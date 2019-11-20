@@ -22,7 +22,7 @@
 
 #if ENABLE(WEB_RTC)
 
-messages -> NetworkMDNSRegister {
+messages -> NetworkMDNSRegister NotRefCounted {
     UnregisterMDNSNames(WebCore::DocumentIdentifier documentIdentifier)
     RegisterMDNSName(uint64_t requestIdentifier, WebCore::DocumentIdentifier documentIdentifier, String ipAddress)
 }

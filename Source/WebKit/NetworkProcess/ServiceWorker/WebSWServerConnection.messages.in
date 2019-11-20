@@ -22,7 +22,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-messages -> WebSWServerConnection {
+messages -> WebSWServerConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)

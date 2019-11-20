@@ -22,7 +22,7 @@
 
 #if USE(LIBWEBRTC)
 
-messages -> NetworkRTCSocket {
+messages -> NetworkRTCSocket NotRefCounted {
     void SendTo(IPC::DataReference data, WebKit::RTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)
     void Close()
     void SetOption(int option, int value)

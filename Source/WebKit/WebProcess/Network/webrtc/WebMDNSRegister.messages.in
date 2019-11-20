@@ -22,7 +22,7 @@
 
 #if ENABLE(WEB_RTC)
 
-messages -> WebMDNSRegister {
+messages -> WebMDNSRegister NotRefCounted {
     void FinishedRegisteringMDNSName(uint64_t identifier, WebCore::LibWebRTCProvider::MDNSNameOrError result)
 }
 

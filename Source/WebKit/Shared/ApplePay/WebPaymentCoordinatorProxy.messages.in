@@ -24,7 +24,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-messages -> WebPaymentCoordinatorProxy {
+messages -> WebPaymentCoordinatorProxy NotRefCounted {
 
     CanMakePayments() -> (bool result) Synchronous
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments) Async

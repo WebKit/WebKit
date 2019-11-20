@@ -22,7 +22,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-messages -> WebSWServerToContextConnection {
+messages -> WebSWServerToContextConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWServerToContextConnection
 
     ScriptContextFailedToStart(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message);
