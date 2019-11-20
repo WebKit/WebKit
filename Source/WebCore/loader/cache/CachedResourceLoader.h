@@ -192,10 +192,6 @@ private:
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
-    bool shouldSendXTempTabletHeader(CachedResource::Type, Frame&, const URL&) const;
-#endif
-
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
     WeakPtr<Document> m_document;
@@ -215,9 +211,6 @@ private:
     bool m_autoLoadImages : 1;
     bool m_imagesEnabled : 1;
     bool m_allowStaleResources : 1;
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
-    bool m_isXTempTabletHeaderExperimentOver : 1;
-#endif
 };
 
 class ResourceCacheValidationSuppressor {
