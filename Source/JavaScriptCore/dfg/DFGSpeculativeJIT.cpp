@@ -4617,12 +4617,12 @@ void SpeculativeJIT::compileIncOrDec(Node* node)
     JSValueOperand op1(this, node->child1());
     JSValueRegs op1Regs = op1.jsValueRegs();
     flushRegisters();
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
     auto operation = node->op() == Inc ? operationInc : operationDec;
-    callOperation(operation, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), op1Regs);
+    callOperation(operation, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), op1Regs);
     m_jit.exceptionCheck();
-    jsValueResult(result.gpr(), node);
+    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileValueNegate(Node* node)

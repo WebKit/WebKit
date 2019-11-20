@@ -1822,6 +1822,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case Inc:
+    case Dec:
+        compileIncOrDec(node);
+        break;
+
     case GetLocal: {
         AbstractValue& value = m_state.operand(node->local());
 

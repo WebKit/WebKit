@@ -1,3 +1,24 @@
+2019-11-20  Caio Lima  <ticaiolima@gmail.com>
+
+        Regression (r252680): JSCOnly build broken: no matching function for call to JSC::DFG::SpeculativeJIT::jsValueResult
+        https://bugs.webkit.org/show_bug.cgi?id=204404
+
+        Reviewed by Saam Barati.
+
+        Adjusting build after changes from r252684 and r252680.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIncOrDec):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_numeric):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+
 2019-11-19  Saam Barati  <sbarati@apple.com>
 
         GetByVal should use polymorphic access and hook into a status object

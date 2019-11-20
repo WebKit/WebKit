@@ -145,46 +145,39 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
     int dst = bytecode.m_dst.offset();
     int base = bytecode.m_base.offset();
     int property = bytecode.m_property.offset();
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    callOperation(operationGetByVal, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
+    emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+
+    JITGetByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_getByVals.append(gen);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitStore(dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpGetByVal>();
     int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
-    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    ArrayProfile* profile = &metadata.m_arrayProfile;
 
-    linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    linkSlowCase(iter); // property int32 check
+    JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
+    ++m_getByValIndex;
 
-    Jump nonCell = jump();
-    linkSlowCase(iter); // base array check
-    Jump notString = branchIfNotString(regT0);
-    emitNakedCall(CodeLocationLabel<NoPtrTag>(m_vm->getCTIStub(stringGetByValGenerator).retaggedCode<NoPtrTag>()));
-    Jump failed = branchTestPtr(Zero, regT0);
-    emitStoreCell(dst, regT0);
-    emitJumpSlowToHot(jump(), currentInstruction->size());
-    failed.link(this);
-    notString.link(this);
-    nonCell.link(this);
+    linkAllSlowCases(iter);
 
-    linkSlowCase(iter); // vector length check
-    linkSlowCase(iter); // empty value
-    
-    Label slowPath = label();
-    
-    emitLoad(base, regT1, regT0);
-    emitLoad(property, regT3, regT2);
-    Call call = callOperation(operationGetByValOptimize, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), byValInfo);
-
-    m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
-    m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
-    m_byValInstructionIndex++;
-
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    Label coldPathBegin = label();
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByValGeneric, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)
