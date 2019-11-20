@@ -1,3 +1,32 @@
+2019-11-19  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia echoCancellation constraint has no affect
+        https://bugs.webkit.org/show_bug.cgi?id=179411
+
+        Reviewed by Eric Carlson.
+
+        Update implementation to properly report echoCancellation is supported and can take true or false.
+        Update CoreAudioCaptureSource to initialize its state in constructor from the audio unit.
+        This allows getUserMedia constraints to kick in after construction and update the source parameters.
+        Audio unit parameters will then be set when the source will be asked to produce data.
+
+        To enable testing, the mock audio is now adding a high frequency hum when echo cancellation is off.
+
+        Covered by updated test.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::capabilityStringVector):
+        (WebCore::capabilityBooleanVector):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::RealtimeMediaSourceCenter):
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::initializeToStartProducingData):
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockAudioSharedUnit::reconfigure):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource):
+
 2019-11-19  Peng Liu  <peng.liu6@apple.com>
 
         Assertion failure in HTMLMediaElement::enterFullscreen()

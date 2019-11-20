@@ -72,6 +72,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& nam
     m_device = *device;
 
     setSampleRate(WTF::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
+    initializeEchoCancellation(true);
 }
 
 MockRealtimeAudioSource::~MockRealtimeAudioSource()

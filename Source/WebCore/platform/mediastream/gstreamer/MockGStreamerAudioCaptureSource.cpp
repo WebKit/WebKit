@@ -39,6 +39,7 @@ static const double s_BopFrequency = 500;
 static const double s_HumFrequency = 150;
 static const double s_HumVolume = 0.1;
 
+// FIXME: Add noise of frequency 3000 in case echoCancellation is false.
 class WrappedMockRealtimeAudioSource : public MockRealtimeAudioSource {
 public:
     static Ref<WrappedMockRealtimeAudioSource> create(String&& deviceID, String&& name, String&& hashSalt)

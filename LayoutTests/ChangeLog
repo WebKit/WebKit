@@ -1,3 +1,19 @@
+2019-11-19  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia echoCancellation constraint has no affect
+        https://bugs.webkit.org/show_bug.cgi?id=179411
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaDevices-getSupportedConstraints-expected.txt:
+        * fast/mediastream/MediaDevices-getSupportedConstraints.html:
+        * fast/mediastream/MediaStreamTrack-getCapabilities-expected.txt:
+        * fast/mediastream/apply-constraints-audio-expected.txt:
+        * fast/mediastream/apply-constraints-audio.html:
+        * fast/mediastream/getUserMedia-webaudio-expected.txt:
+        * fast/mediastream/getUserMedia-webaudio.html:
+        * webrtc/routines.js:
+
 2019-11-19  Peng Liu  <peng.liu6@apple.com>
 
         Typos in layout test names

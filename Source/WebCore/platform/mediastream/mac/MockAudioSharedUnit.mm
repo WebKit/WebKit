@@ -65,6 +65,8 @@ static const double BipFrequency = 1500;
 static const double BopFrequency = 500;
 static const double HumFrequency = 150;
 static const double HumVolume = 0.1;
+static const double NoiseFrequency = 3000;
+static const double NoiseVolume = 0.05;
 
 template <typename AudioSampleType>
 static void writeHum(float amplitude, float frequency, float sampleRate, AudioSampleType *p, uint64_t count)
@@ -230,6 +232,8 @@ void MockAudioSharedUnit::reconfigure()
 
     addHum(BipBopVolume, BipFrequency, rate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
     addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
+    if (!enableEchoCancellation())
+        addHum(NoiseVolume, NoiseFrequency, rate, 0, m_bipBopBuffer.data(), sampleCount);
 }
 
 void MockAudioSharedUnit::emitSampleBuffers(uint32_t frameCount)

@@ -9,29 +9,29 @@
                 {
                     message: "set volume to a valid value.",
                     constraint: { volume: .5 }, 
-                    expected: { volume: .5, echoCancellation: false }, 
+                    expected: { volume: .5, echoCancellation: true }, 
                 },
                 {
                     message: "the 'exact' constraint it too big, promise should reject and no settings should change.",
                     constraint: { volume: { exact: 2.1 } }, 
-                    expected: { volume: .5, echoCancellation: false }, 
+                    expected: { volume: .5, echoCancellation: true },
                     error: "volume",
                 },
                 {
                     message: "the 'exact' constraint it too small, promise should reject and no settings should change.",
                     constraint: { volume: { exact: -1 } }, 
-                    expected: { volume: .5, echoCancellation: false }, 
+                    expected: { volume: .5, echoCancellation: true }, 
                     error: "volume",
                 },
                 {
                     message: "set echoCancellation to a valid value.",
-                    constraint: { echoCancellation: true }, 
-                    expected: { volume: .5, echoCancellation: true }, 
+                    constraint: { echoCancellation: false }, 
+                    expected: { volume: .5, echoCancellation: false }, 
                 },
                 {
                     message: "constraint not supported by an audio track should be ignored.",
                     constraint: { facingMode: "environment", frameRate: 30, volume: 1.0 }, 
-                    expected: { volume: 1.0, echoCancellation: true }, 
+                    expected: { volume: 1.0, echoCancellation: false }, 
                 },
                 
             ];

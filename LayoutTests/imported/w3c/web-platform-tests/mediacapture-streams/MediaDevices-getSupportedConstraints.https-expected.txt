@@ -12,7 +12,7 @@ PASS facingMode is supported
 FAIL resizeMode is supported assert_true: expected true got undefined
 FAIL sampleRate is supported assert_true: expected true got false
 FAIL sampleSize is supported assert_true: expected true got false
-FAIL echoCancellation is supported assert_true: expected true got false
+PASS echoCancellation is supported 
 FAIL autoGainControl is supported assert_true: expected true got undefined
 FAIL noiseSuppression is supported assert_true: expected true got undefined
 FAIL latency is supported assert_true: expected true got undefined

@@ -730,9 +730,13 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     auto& unit = this->unit();
     unit.setCaptureDevice(String { persistentID() }, m_captureDeviceID);
 
-    initializeEchoCancellation(unit.enableEchoCancellation());
-    initializeSampleRate(unit.sampleRate());
-    initializeVolume(unit.volume());
+    bool shouldReconfigure = echoCancellation() != unit.enableEchoCancellation() || sampleRate() != unit.sampleRate() || volume() != unit.volume();
+    unit.setEnableEchoCancellation(echoCancellation());
+    unit.setSampleRate(sampleRate());
+    unit.setVolume(volume());
+
+    if (shouldReconfigure)
+        scheduleReconfiguration();
 
     unit.addClient(*this);
 }

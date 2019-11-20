@@ -5,6 +5,7 @@
         <title>Testing getUserMedia plugged in Web Audio</title>
         <script src="../../resources/testharness.js"></script>
         <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../webrtc/routines.js"></script>
     </head>
     <body>
         <script>
@@ -84,6 +85,39 @@ promise_test(async (test) => {
     source.disconnect(analyzer);
     analyzer.disconnect(audioContext.destination);
 }, "Web Audio should work with mock audio destination");
+
+var context;
+async function checkForNoise(stream, counter)
+{
+    if (!counter)
+        counter = 1;
+    else if (++counter > 4)
+        return Promise.resolve(false);
+    results = await analyseAudio(stream, 100, context);
+    if (results.heardNoise)
+        return Promise.resolve(true);
+    var results = await checkForNoise(stream, counter);
+    return results;
+}
+
+promise_test(async (test) => {
+    context = new webkitAudioContext();
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    let stream = await navigator.mediaDevices.getUserMedia({audio: { echoCancellation : true}});
+    assert_true(stream.getAudioTracks()[0].getSettings().echoCancellation);
+    const results = await analyseAudio(stream, 100, context);
+    assert_false(results.heardNoise, "should not hear noise");
+
+    stream = await navigator.mediaDevices.getUserMedia({audio: { echoCancellation : false}});
+    assert_false(stream.getAudioTracks()[0].getSettings().echoCancellation, "settings is ok");
+    const heardNoise = await checkForNoise(stream);
+    assert_true(heardNoise, "heard noise");
+
+    context.close();
+    context = null;
+}, "Check echo cancellation can be disabled in getUserMedia call");
 
         </script>
     </body>

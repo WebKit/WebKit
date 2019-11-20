@@ -10,7 +10,7 @@ supportedConstraints = navigator.mediaDevices.getSupportedConstraints()
 
 PASS supportedConstraints.aspectRatio is true
 PASS supportedConstraints.deviceId is true
-PASS supportedConstraints.echoCancellation is false
+PASS supportedConstraints.echoCancellation is true
 PASS supportedConstraints.facingMode is true
 PASS supportedConstraints.frameRate is true
 PASS supportedConstraints.groupId is false

@@ -52,6 +52,7 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
 
 RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
 {
+    m_supportedConstraints.setSupportsEchoCancellation(true);
     m_supportedConstraints.setSupportsWidth(true);
     m_supportedConstraints.setSupportsHeight(true);
     m_supportedConstraints.setSupportsAspectRatio(true);

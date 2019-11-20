@@ -86,7 +86,7 @@ function analyseAudio(stream, duration, context)
         var analyser = context.createAnalyser();
         var gain = context.createGain();
 
-        var results = { heardHum: false, heardBip: false, heardBop: false };
+        var results = { heardHum: false, heardBip: false, heardBop: false, heardNoise: false };
 
         analyser.fftSize = 2048;
         analyser.smoothingTimeConstant = 0;
@@ -116,7 +116,10 @@ function analyseAudio(stream, duration, context)
            if (!results.heardBop)
                 results.heardBop = hasFrequency(500);
 
-            if (results.heardHum && results.heardBip && results.heardBop)
+           if (!results.heardNoise)
+                results.heardNoise = hasFrequency(3000);
+
+           if (results.heardHum && results.heardBip && results.heardBop && results.heardNoise)
                 done();
         };
 
