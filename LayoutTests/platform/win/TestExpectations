@@ -1023,8 +1023,8 @@ media/controls-without-preload.html [ Skip ] # Crashing
 media/video-autoplay.html [ Skip ] # Crashing
 media/video-controls-transformed.html [ Skip ] # Crashing
 media/video-display-aspect-ratio.html [ Skip ] # Crashing
-media/video-fullscreeen-only-controls.html [ Skip ] # Crashing
-media/video-fullscreeen-only-playback.html [ Skip ] # Crashing
+media/video-fullscreen-only-controls.html [ Skip ] # Crashing
+media/video-fullscreen-only-playback.html [ Skip ] # Crashing
 media/video-load-networkState.html [ Skip ] # Crashing
 media/video-object-fit.html [ Skip ] # Crashing
 media/video-object-fit-change.html [ Skip ] # Crashing

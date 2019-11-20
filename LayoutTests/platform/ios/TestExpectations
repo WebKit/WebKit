@@ -2553,7 +2553,7 @@ media/video-controls-toggling.html [ Failure ]
 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
 media/video-controls-zoomed.html [ Failure ]
 media/video-frame-accurate-seek.html [ Failure ]
-media/video-fullscreeen-only-controls.html [ Failure ]
+media/video-fullscreen-only-controls.html [ Failure ]
 media/video-initially-hidden-volume-slider-up.html [ Failure ]
 media/video-trackmenu-selection.html [ Failure ]
 media/video-volume.html [ Failure ]
@@ -2605,7 +2605,7 @@ webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pa
 webkit.org/b/163291 media/require-user-gesture-to-load-video.html
 webkit.org/b/163291 media/video-controls-transformed.html [ Failure ]
 webkit.org/b/163291 media/video-controls-visible-audio-only.html [ Failure ]
-webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
+webkit.org/b/163291 media/video-fullscreen-only-playback.html [ Failure ]
 webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
