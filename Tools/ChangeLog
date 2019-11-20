@@ -1,3 +1,11 @@
+2019-11-20  Matt Lewis  <jlewis3@apple.com>
+
+        Add trigger for WebGL bot to config.
+
+        RS config fix by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2019-11-19  Matt Lewis  <jlewis3@apple.com>
 
         Bring up WebGL Test Queue.

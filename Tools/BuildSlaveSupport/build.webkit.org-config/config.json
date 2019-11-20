@@ -444,6 +444,9 @@
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
                       "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
                     },
+                    { "type": "Triggerable", "name": "catalina-debug-tests-webgl-wk2",
+                      "builderNames": ["Apple-Catalina-Debug-WK2-WebGL-Tests"]
+                    },
                     { "type": "Triggerable", "name": "catalina-leaks",
                       "builderNames": ["Apple-Catalina-Leaks"]
                     },
