@@ -35,6 +35,8 @@ import urllib
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
 S3URL = "https://s3-us-west-2.amazonaws.com/"
 WithProperties = properties.WithProperties
+RESULTS_WEBKIT = 'https://results.webkit.org'
+RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 
 
 class TestWithFailureCount(shell.Test):
@@ -393,13 +395,22 @@ class RunWebKitTests(shell.Test):
                "--clobber-old-results",
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
+               "--buildbot-worker", WithProperties("%(slavename)s"),
                "--master-name", "webkit.org",
+               "--buildbot-master", "build.webkit.org",
+               "--report", RESULTS_WEBKIT,
                "--test-results-server", "webkit-test-results.webkit.org",
                "--exit-after-n-crashes-or-timeouts", "50",
                "--exit-after-n-failures", "500",
                WithProperties("--%(configuration)s")]
 
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        shell.Test.__init__(self, *args, **kwargs)
+
     def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+
         platform = self.getProperty('platform')
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
@@ -507,11 +518,27 @@ class RunAPITests(TestWithFailureCount):
     name = "run-api-tests"
     description = ["api tests running"]
     descriptionDone = ["api-tests"]
-    command = ["python", "./Tools/Scripts/run-api-tests", "--no-build", WithProperties("--%(configuration)s"), "--verbose"]
+    command = [
+        "python",
+        "./Tools/Scripts/run-api-tests",
+        "--no-build",
+        WithProperties("--%(configuration)s"),
+        "--verbose",
+        "--buildbot-master", "build.webkit.org",
+        "--builder-name", WithProperties("%(buildername)s"),
+        "--build-number", WithProperties("%(buildnumber)s"),
+        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--report", RESULTS_WEBKIT,
+    ]
     failedTestsFormatString = "%d api test%s failed or timed out"
 
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        TestWithFailureCount.__init__(self, *args, **kwargs)
+
     def start(self):
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
@@ -527,10 +554,26 @@ class RunPythonTests(TestWithFailureCount):
     name = "webkitpy-test"
     description = ["python-tests running"]
     descriptionDone = ["python-tests"]
-    command = ["python", "./Tools/Scripts/test-webkitpy", "--verbose", WithProperties("--%(configuration)s")]
+    command = [
+        "python",
+        "./Tools/Scripts/test-webkitpy",
+        "--verbose",
+        WithProperties("--%(configuration)s"),
+        "--buildbot-master", "build.webkit.org",
+        "--builder-name", WithProperties("%(buildername)s"),
+        "--build-number", WithProperties("%(buildnumber)s"),
+        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--report", RESULTS_WEBKIT,
+    ]
     failedTestsFormatString = "%d python test%s failed"
 
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        TestWithFailureCount.__init__(self, *args, **kwargs)
+
     def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+
         platform = self.getProperty('platform')
         # Python tests are flaky on the GTK builders, running them serially
         # helps and does not significantly prolong the cycle time.
