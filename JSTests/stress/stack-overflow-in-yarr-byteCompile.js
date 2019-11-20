@@ -1,5 +1,6 @@
-//@ requireOptions("--disableOptionsFreezingForTesting")
+//@ runDefault("--disableOptionsFreezingForTesting")
 //@ skip if $hostOS != "darwin" or $architecture != "x86-64"
+//@ slow!
 
 function foo() {
     class C {

@@ -2016,6 +2016,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
 }
 #endif // ENABLE(MASM_PROBE)
 
+SUPPRESS_ASAN
 static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;

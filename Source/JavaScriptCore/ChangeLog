@@ -1,3 +1,15 @@
+2019-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Flaky JSC test: stress/stack-overflow-in-yarr-byteCompile.js.dfg-eager.
+        https://bugs.webkit.org/show_bug.cgi?id=204405
+
+        Reviewed by Alexey Proskuryakov.
+
+        $vm.allWithStackSize() manipulates the stack in ways that will freak out ASan.
+        So, add SUPPRESS_ASAN to functionCallWithStackSize() to tell ASan to ignore it.
+
+        * tools/JSDollarVM.cpp:
+
 2019-11-20  Caio Lima  <ticaiolima@gmail.com>
 
         Regression (r252680): JSCOnly build broken: no matching function for call to JSC::DFG::SpeculativeJIT::jsValueResult

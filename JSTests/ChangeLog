@@ -1,3 +1,16 @@
+2019-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Flaky JSC test: stress/stack-overflow-in-yarr-byteCompile.js.dfg-eager.
+        https://bugs.webkit.org/show_bug.cgi?id=204405
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test was timing out because it's slow.  We don't really need to run this test
+        on all configurations.  So, we'll change it to on run with the default
+        configuration.  Also declare the test as "//@ slow!".
+
+        * stress/stack-overflow-in-yarr-byteCompile.js:
+
 2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Implement String.prototype.replaceAll
