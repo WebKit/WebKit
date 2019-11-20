@@ -1,3 +1,18 @@
+2019-11-20  Robin Morisset  <rmorisset@apple.com>
+
+        Fix load<16> on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=204326
+
+        Reviewed by Mark Lam.
+
+        On ARM64 I used load<16> in https://bugs.webkit.org/show_bug.cgi?id=202832.
+        Unfortunately it turns out to call ldr<16>, and ldr<n> asserts that n is either 32 or 64.
+        This fix simply calls ldrh/strh directly.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::store16):
+
 2019-11-20  Mark Lam  <mark.lam@apple.com>
 
         Flaky JSC test: stress/stack-overflow-in-yarr-byteCompile.js.dfg-eager.

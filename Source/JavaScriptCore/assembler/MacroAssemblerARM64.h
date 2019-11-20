@@ -1254,7 +1254,8 @@ public:
 
     void load16(const void* address, RegisterID dest)
     {
-        load<16>(address, dest);
+        moveToCachedReg(TrustedImmPtr(address), cachedMemoryTempRegister());
+        m_assembler.ldrh(dest, memoryTempRegister, 0);
     }
 
     void load16Unaligned(ImplicitAddress address, RegisterID dest)
@@ -1567,7 +1568,8 @@ public:
 
     void store16(RegisterID src, const void* address)
     {
-        store<16>(src, address);
+        moveToCachedReg(TrustedImmPtr(address), cachedMemoryTempRegister());
+        m_assembler.strh(src, memoryTempRegister, 0);
     }
 
     void store16(TrustedImm32 imm, const void* address)
