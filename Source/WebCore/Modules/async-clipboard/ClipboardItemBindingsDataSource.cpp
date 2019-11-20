@@ -35,6 +35,7 @@
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PasteboardCustomData.h"
 #include "SharedBuffer.h"
 #include <wtf/Function.h>
 

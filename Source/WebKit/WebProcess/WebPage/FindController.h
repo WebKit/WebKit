@@ -46,6 +46,7 @@ enum class DidWrap : bool;
 
 namespace WebKit {
 
+class CallbackID;
 class WebPage;
 
 class FindController : private WebCore::PageOverlay::Client {

@@ -35,6 +35,7 @@ namespace WebCore {
 class Clipboard;
 class ClipboardItem;
 class DeferredPromise;
+class PasteboardCustomData;
 
 class ClipboardItemDataSource {
 public:

@@ -38,6 +38,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #include "Microtasks.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>

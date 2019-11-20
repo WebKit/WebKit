@@ -33,9 +33,12 @@
 
 namespace WebCore {
 
+class Blob;
 class DOMPromise;
 class FileReaderLoader;
 class PasteboardCustomData;
+class ScriptExecutionContext;
+class SharedBuffer;
 
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
     WTF_MAKE_FAST_ALLOCATED;

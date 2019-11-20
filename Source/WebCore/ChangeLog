@@ -1,3 +1,16 @@
+2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed non-unified build fixes.
+
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.h:
+        * Modules/async-clipboard/ClipboardItemDataSource.h:
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp:
+        * animation/WebAnimation.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2019-11-19  Brady Eidson  <beidson@apple.com>
 
         Fix null deref when a DocumentLoader's policy decision is delivered.
