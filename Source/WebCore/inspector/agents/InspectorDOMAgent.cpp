@@ -1260,7 +1260,8 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
 
     SelectorChecker selectorChecker(*document);
 
-    Vector<Ref<Node>> nodes;
+    Vector<Ref<Node>> nodeList;
+    HashSet<Node*> seenNodes;
 
     for (auto& descendant : composedTreeDescendants(*document)) {
         if (!is<Element>(descendant))
@@ -1281,8 +1282,8 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
 
             unsigned ignoredSpecificity;
             if (selectorChecker.match(*selector, descendantElement, context, ignoredSpecificity)) {
-                nodes.append(descendantElement);
-                break;
+                if (seenNodes.add(&descendantElement))
+                    nodeList.append(descendantElement);
             }
 
             if (context.pseudoIDSet) {
@@ -1290,25 +1291,29 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
 
                 if (pseudoIDs.has(PseudoId::Before)) {
                     pseudoIDs.remove(PseudoId::Before);
-                    if (auto* beforePseudoElement = descendantElement.beforePseudoElement())
-                        nodes.append(*beforePseudoElement);
+                    if (auto* beforePseudoElement = descendantElement.beforePseudoElement()) {
+                        if (seenNodes.add(beforePseudoElement))
+                            nodeList.append(*beforePseudoElement);
+                    }
                 }
 
                 if (pseudoIDs.has(PseudoId::After)) {
                     pseudoIDs.remove(PseudoId::After);
-                    if (auto* afterPseudoElement = descendantElement.afterPseudoElement())
-                        nodes.append(*afterPseudoElement);
+                    if (auto* afterPseudoElement = descendantElement.afterPseudoElement()) {
+                        if (seenNodes.add(afterPseudoElement))
+                            nodeList.append(*afterPseudoElement);
+                    }
                 }
 
                 if (pseudoIDs) {
-                    nodes.append(descendantElement);
-                    break;
+                    if (seenNodes.add(&descendantElement))
+                        nodeList.append(descendantElement);
                 }
             }
         }
     }
 
-    m_overlay->highlightNodeList(StaticNodeList::create(WTFMove(nodes)), *highlightConfig);
+    m_overlay->highlightNodeList(StaticNodeList::create(WTFMove(nodeList)), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const JSON::Object& highlightInspectorObject, const int* nodeId, const String* objectId)

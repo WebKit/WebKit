@@ -1,3 +1,27 @@
+2019-11-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM.highlightSelector should work for "div, div::before"
+        https://bugs.webkit.org/show_bug.cgi?id=204306
+
+        Reviewed by Brian Burg.
+
+        In r252436, the implementation of `DOM.highlightSelector` was changed from just calling
+        `document.querySelectorAll` to actually attempting to mimic what the CSS selector matching
+        engine does. Basically, this meant adding logic to walk the entire DOM tree and for each
+        node test each `CSSSelector` of the given `selector` string to see if it matched.
+
+        At the time, I had incorrectly assumed that once a selector was found that matched the
+        current node, it wouldn't need to be checked against ever again. This would be a fine
+        assumption if we didn't care about `:before`/`:after`, but since `DOM.highlightSelector`
+        also wants to match those, it is necessary to test every `CSSSelector` in case a later one
+        in the given `selector` string matches a pseudo-element (e.g. `div, div:before`).
+
+        The fix is simply to change `break` to `continue` and to ensure that every item in the
+        generated `NodeList` is unique (otherwise the overlay for a node may be drawn twice).
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+
 2019-11-19  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia echoCancellation constraint has no affect

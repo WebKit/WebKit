@@ -1,0 +1,44 @@
+<style>
+p {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    margin: 0;
+}
+
+.expected {
+    position: absolute;
+    width: 300px;
+    height: 100px;
+    background-image: linear-gradient(to right, rgba(111, 168, 220, 0.66) 33.3%, transparent 33.3%, transparent 66.6%, rgba(111, 168, 220, 0.66) 66.6%);
+}
+.actual, .actual::before {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+}
+.actual {
+    position: relative;
+}
+.actual::before {
+    position: absolute;
+    left: 200px;
+    content: "";
+}
+</style>
+<body>
+    <div id="test1">
+        <div class="expected" hidden></div>
+        <div class="actual"></div>
+    </div>
+
+    <p>Inspect this page and hover the `<code>.actual, .actual::before</code>` CSS selector in the Styles panel of the details sidebar in the Elements tab.  Click <button>Show Expected</button> to compare with the expected result.</p>
+    <script>
+let showingExpected = false;
+document.querySelector("button").addEventListener("click", (event) => {
+    showingExpected = !showingExpected;
+    for (let node of document.querySelectorAll(".expected"))
+        node.hidden = !showingExpected;
+});
+    </script>
+</body>
