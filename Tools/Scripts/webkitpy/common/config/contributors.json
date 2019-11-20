@@ -1136,10 +1136,11 @@
       "emails" : [
          "changseok@webkit.org"
       ],
-      "expertise" : "The WebKitGTK port, H/W acceleration, Layout and Rendering",
+      "expertise" : "WebKitGTK, Layout, Rendering, Security",
       "nicks" : [
          "changseok"
-      ]
+      ],
+      "status" : "committer"
    },
    "Charles Reis" : {
       "emails" : [

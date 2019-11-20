@@ -1,3 +1,11 @@
+2019-11-20  ChangSeok Oh  <changseok@webkit.org>
+
+        Reactivate my committer status.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-11-20  Matt Lewis  <jlewis3@apple.com>
 
         Add trigger for WebGL bot to config.
