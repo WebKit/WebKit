@@ -4475,3 +4475,5 @@ webkit.org/b/204153 http/tests/navigation/page-cache-mediastream.html [ Timeout 
 webkit.org/b/204153 ietestcenter/Javascript/15.4.4.15-3-29.html [ Timeout ]
 
 webkit.org/b/204253 animations/no-style-recalc-during-accelerated-animation.html [ Failure ]
+
+webkit.org/b/204413 fast/text/font-antialiasing-save-restore.html [ Failure ]
