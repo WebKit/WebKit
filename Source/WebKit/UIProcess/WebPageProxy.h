@@ -2169,6 +2169,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     static bool isInHardwareKeyboardMode();
+    void clearAudibleActivity();
 #endif
 
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
@@ -2300,6 +2301,7 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_alwaysRunsAtForegroundPriorityActivity;
+    RunLoop::Timer<WebPageProxy> m_audibleActivityTimer;
 #endif
     bool m_initialCapitalizationEnabled { false };
     Optional<double> m_cpuLimit;

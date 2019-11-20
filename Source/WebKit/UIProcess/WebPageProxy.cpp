@@ -269,6 +269,7 @@ static const unsigned wheelEventQueueSizeThreshold = 10;
 
 static const Seconds resetRecentCrashCountDelay = 30_s;
 static unsigned maximumWebProcessRelaunchAttempts = 1;
+static const Seconds audibleActivityClearDelay = 10_s;
 
 namespace WebKit {
 using namespace WebCore;
@@ -429,6 +430,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_notificationPermissionRequestManager(*this)
 #if PLATFORM(IOS_FAMILY)
     , m_alwaysRunsAtForegroundPriority(m_configuration->alwaysRunsAtForegroundPriority())
+    , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
     , m_cpuLimit(m_configuration->cpuLimit())
@@ -1059,6 +1061,7 @@ void WebPageProxy::close()
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
     m_alwaysRunsAtForegroundPriorityActivity = nullptr;
+    m_audibleActivityTimer.stop();
 #endif
 
     stopAllURLSchemeTasks();
@@ -1949,9 +1952,11 @@ void WebPageProxy::updateThrottleState()
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because we are playing audio");
             m_isAudibleActivity = m_process->throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
         }
+        m_audibleActivityTimer.stop();
     } else if (m_isAudibleActivity) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
-        m_isAudibleActivity = nullptr;
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess will release a foreground assertion in %g seconds because we are no longer playing audio", audibleActivityClearDelay.seconds());
+        if (!m_audibleActivityTimer.isActive())
+            m_audibleActivityTimer.startOneShot(audibleActivityClearDelay);
     }
 
     bool isCapturingMedia = m_activityState.contains(ActivityState::IsCapturingMedia);
@@ -1976,6 +1981,14 @@ void WebPageProxy::updateThrottleState()
     }
 #endif
 }
+
+#if PLATFORM(IOS_FAMILY)
+void WebPageProxy::clearAudibleActivity()
+{
+    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
+    m_isAudibleActivity = nullptr;
+}
+#endif
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
 {

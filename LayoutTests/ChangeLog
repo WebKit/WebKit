@@ -1,3 +1,14 @@
+2019-11-20  Jer Noble  <jer.noble@apple.com>
+
+        HTML5 audio .ended event not fired when app in background or phone screen is off
+        https://bugs.webkit.org/show_bug.cgi?id=173332
+        <rdar://problem/32757402>
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-background-playback-playlist-expected.txt: Added.
+        * media/audio-background-playback-playlist.html: Added.
+
 2019-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r252161): box-shadow with inset and rounded borders is clipped

@@ -7601,7 +7601,10 @@ bool HTMLMediaElement::canProduceAudio() const
     if (muted())
         return false;
 
-    return m_player && m_readyState >= HAVE_METADATA && hasAudio();
+    if (m_player && m_readyState >= HAVE_METADATA)
+        return hasAudio();
+
+    return hasEverHadAudio();
 }
 
 bool HTMLMediaElement::isSuspended() const

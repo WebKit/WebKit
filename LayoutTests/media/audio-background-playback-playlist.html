@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        window.audio = document.querySelector('audio');
+        run('internals.setMediaElementRestrictions(audio, "RequireUserGestureForAudioRateChange,RequireUserGestureToControlControlsManager")');
+        run('audio.src = findMediaFile("audio", "content/test")');
+
+        await waitFor(audio, 'canplaythrough');
+        runWithKeyDown('audio.play()');
+        await waitFor(audio, 'playing');
+        testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("NowPlaying")', audio);
+        run('internals.applicationDidEnterBackground(true)');
+        run('audio.currentTime = audio.duration - 0.1')
+        await waitFor(audio, 'ended');
+        run('audio.src = ""');
+        run('audio.load()');
+        testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("NowPlaying")', audio);
+        run('audio.src = findMediaFile("audio", "content/test")');
+        run('audio.load()');
+        await waitFor(audio, 'canplaythrough');
+        run('audio.play()');
+        await waitFor(audio, 'playing');
+        testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("NowPlaying")', audio);
+        endTest();        
+    });
+    </script>
+</head>
+
+<body>
+    <audio controls><audio>
+</body>
+</html>

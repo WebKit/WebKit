@@ -436,7 +436,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
-    if (client().presentationType() == Audio) {
+    if (client().presentationType() == Audio && purpose == PlaybackControlsPurpose::ControlsManager) {
         if (!hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || m_element.document().processingUserGestureForMedia()) {
             INFO_LOG(LOGIDENTIFIER, "returning TRUE: audio element with user gesture");
             return true;
