@@ -910,6 +910,11 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (isStopping())
         return;
 
+    if (!m_frame) {
+        RELEASE_LOG_IF_ALLOWED("continueAfterContentPolicy: Policy action %i received by DocumentLoader with null frame", (int)policy);
+        return;
+    }
+
     switch (policy) {
     case PolicyAction::Use: {
         if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || disallowWebArchive()) {

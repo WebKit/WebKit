@@ -1,3 +1,17 @@
+2019-11-19  Brady Eidson  <beidson@apple.com>
+
+        Fix null deref when a DocumentLoader's policy decision is delivered.
+        <rdar://problem/54847830> and https://bugs.webkit.org/show_bug.cgi?id=204378
+
+        Reviewed by Ryosuke Niwa.
+
+        Definitely a required null check, as all async entries into DocumentLoader should (and most do!)
+        
+        No new tests, as no steps to reproduce are known.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy): Null check m_frame.
+
 2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r252642
