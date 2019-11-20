@@ -89,6 +89,13 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto& style = inlineBox.style();
     LazyLineBreakIterator lineBreakIterator(text);
     unsigned currentPosition = 0;
+
+    auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<LayoutUnit> {
+        if (!inlineBox.textContext().canUseSimplifiedContentMeasuring)
+            return { };
+        return TextUtil::width(inlineBox, startPosition, startPosition + length);
+    };
+
     while (currentPosition < text.length()) {
         auto isSegmentBreakCandidate = [](auto character) {
             return character == '\n';
@@ -101,32 +108,33 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             ++currentPosition;
             continue;
         }
+
         if (isWhitespaceCharacter(text[currentPosition])) {
             auto length = moveToNextNonWhitespacePosition(text, currentPosition);
-            inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length));
+            inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
             currentPosition += length;
             continue;
         }
 
         auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineBox, currentPosition, length));
+        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
         currentPosition += length;
     }
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length)
+std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width)
 {
-    return makeUnique<InlineTextItem>(inlineBox, start, length, TextItemType::Whitespace);
+    return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::Whitespace);
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length)
+std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width)
 {
-    return makeUnique<InlineTextItem>(inlineBox, start, length, TextItemType::NonWhitespace);
+    return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::NonWhitespace);
 }
 
 std::unique_ptr<InlineTextItem> InlineTextItem::createSegmentBreakItem(const Box& inlineBox, unsigned position)
 {
-    return makeUnique<InlineTextItem>(inlineBox, position, 1, TextItemType::SegmentBreak);
+    return makeUnique<InlineTextItem>(inlineBox, position, 1, WTF::nullopt, TextItemType::SegmentBreak);
 }
 
 std::unique_ptr<InlineTextItem> InlineTextItem::createEmptyItem(const Box& inlineBox)
@@ -134,10 +142,11 @@ std::unique_ptr<InlineTextItem> InlineTextItem::createEmptyItem(const Box& inlin
     return makeUnique<InlineTextItem>(inlineBox);
 }
 
-InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, TextItemType textItemType)
+InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width, TextItemType textItemType)
     : InlineItem(inlineBox, Type::Text)
     , m_start(start)
     , m_length(length)
+    , m_width(width)
     , m_textItemType(textItemType)
 {
 }
@@ -151,14 +160,14 @@ std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const
 {
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
-    return makeUnique<InlineTextItem>(layoutBox(), start(), length, m_textItemType);
+    return makeUnique<InlineTextItem>(layoutBox(), start(), length, WTF::nullopt, m_textItemType);
 }
 
 std::unique_ptr<InlineTextItem> InlineTextItem::right(unsigned length) const
 {
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
-    return makeUnique<InlineTextItem>(layoutBox(), end() - length, length, m_textItemType);
+    return makeUnique<InlineTextItem>(layoutBox(), end() - length, length, WTF::nullopt, m_textItemType);
 }
 
 }

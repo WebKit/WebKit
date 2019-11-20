@@ -1,3 +1,29 @@
+2019-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Cache InlinteTextItem width when possible
+        https://bugs.webkit.org/show_bug.cgi?id=204412
+        <rdar://problem/57359366>
+
+        Reviewed by Antti Koivisto.
+
+        This helps when subsequent inline layouts use the same set of InlineTextItems and they would
+        keep re-measuring them on each layout frame (e.g. view resize).
+
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::createWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createNonWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createSegmentBreakItem):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        (WebCore::Layout::InlineTextItem::left const):
+        (WebCore::Layout::InlineTextItem::right const):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::width const):
+        * layout/inlineformatting/text/TextUtil.h:
+        (WebCore::Layout::TextUtil::width):
+
 2019-11-20  Jer Noble  <jer.noble@apple.com>
 
         HTML5 audio .ended event not fired when app in background or phone screen is off

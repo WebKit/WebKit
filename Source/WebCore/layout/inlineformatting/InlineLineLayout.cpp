@@ -42,6 +42,8 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
 
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        if (auto contentWidth = inlineTextItem.width())
+            return *contentWidth;
         auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
         return TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
     }
