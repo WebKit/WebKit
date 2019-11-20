@@ -1,3 +1,9 @@
+2019-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed mac catalyst build fix after r252655.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in:
+
 2019-11-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fixes.
