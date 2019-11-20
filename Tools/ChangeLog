@@ -1,3 +1,46 @@
+2019-11-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r249652. rdar://problem/55190632
+
+    run-webkit-tests: Report results archive to results.webkit.org
+    https://bugs.webkit.org/show_bug.cgi?id=201321
+    
+    Reviewed by Aakash Jain.
+    
+    * Scripts/webkitpy/layout_tests/controllers/manager.py:
+    (Manager.run): After all tests are finish, upload the results archive for each
+    configuration.
+    * Scripts/webkitpy/results/upload.py:
+    (Upload):
+    (Upload.__init__): Automatically define timestamp.
+    (Upload.upload_archive): Upload an archive associated with the test run.
+    * Scripts/webkitpy/results/upload_unittest.py:
+    (UploadTest.test_buildbot):
+    (UploadTest):
+    (UploadTest.test_archive_upload):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249652 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-09  Jonathan Bedard  <jbedard@apple.com>
+
+            run-webkit-tests: Report results archive to results.webkit.org
+            https://bugs.webkit.org/show_bug.cgi?id=201321
+
+            Reviewed by Aakash Jain.
+
+            * Scripts/webkitpy/layout_tests/controllers/manager.py:
+            (Manager.run): After all tests are finish, upload the results archive for each
+            configuration.
+            * Scripts/webkitpy/results/upload.py:
+            (Upload):
+            (Upload.__init__): Automatically define timestamp.
+            (Upload.upload_archive): Upload an archive associated with the test run.
+            * Scripts/webkitpy/results/upload_unittest.py:
+            (UploadTest.test_buildbot):
+            (UploadTest):
+            (UploadTest.test_archive_upload):
+
 2019-11-18  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/57283569

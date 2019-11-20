@@ -37,6 +37,7 @@ create a final report.
 import json
 import logging
 import random
+import shutil
 import sys
 import time
 from collections import defaultdict, OrderedDict
@@ -244,6 +245,7 @@ class Manager(object):
 
         max_child_processes_for_run = 1
         child_processes_option_value = self._options.child_processes
+        uploads = []
 
         for device_type in device_type_list:
             self._runner._test_is_slow = lambda test_file: self._test_is_slow(test_file, device_type=device_type)
@@ -281,6 +283,7 @@ class Manager(object):
                     configuration=configuration,
                     details=Upload.create_details(options=self._options),
                     commits=self._port.commits_for_upload(),
+                    timestamp=start_time,
                     run_stats=Upload.create_run_stats(
                         start_time=start_time_for_device,
                         end_time=time.time(),
@@ -288,10 +291,12 @@ class Manager(object):
                     ),
                     results=self._results_to_upload_json_trie(self._expectations[device_type], temp_initial_results),
                 )
-                for url in self._options.report_urls:
-                    self._printer.write_update('Uploading to {} ...'.format(url))
-                    if not upload.upload(url, log_line_func=self._printer.writeln):
+                for hostname in self._options.report_urls:
+                    self._printer.write_update('Uploading to {} ...'.format(hostname))
+                    if not upload.upload(hostname, log_line_func=self._printer.writeln):
                         num_failed_uploads += 1
+                    else:
+                        uploads.append(upload)
                 self._printer.writeln('Uploads completed!')
 
             initial_results = initial_results.merge(temp_initial_results) if initial_results else temp_initial_results
@@ -309,6 +314,21 @@ class Manager(object):
 
         end_time = time.time()
         result = self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
+
+        if self._options.report_urls and uploads:
+            self._printer.writeln('\n')
+            self._printer.write_update('Preparing to upload test archive ...')
+
+            with self._filesystem.mkdtemp() as temp:
+                archive = self._filesystem.join(temp, 'test-archive')
+                shutil.make_archive(archive, 'zip', self._results_directory)
+
+                for upload in uploads:
+                    for hostname in self._options.report_urls:
+                        self._printer.write_update('Uploading archive to {} ...'.format(hostname))
+                        if not upload.upload_archive(hostname, self._filesystem.open_binary_file_for_reading(archive + '.zip'), log_line_func=self._printer.writeln):
+                            num_failed_uploads += 1
+
         if num_failed_uploads:
             result.exit_code = -1
         return result
