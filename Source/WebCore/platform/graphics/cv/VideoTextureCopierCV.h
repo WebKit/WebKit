@@ -70,9 +70,22 @@ private:
     }
 #endif
 
+#if USE(ANGLE)
+#if !HAVE(IOSURFACE)
+#error USE(ANGLE) requires HAVE(IOSURFACE)
+#endif // !HAVE(IOSURFACE)
+
+    // Returns a handle which, if non-null, must be released via the
+    // detach call below.
+    void* attachIOSurfaceToTexture(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type, IOSurfaceRef, GC3Duint plane);
+    void detachIOSurfaceFromTexture(void* handle);
+#endif
+
     Ref<GraphicsContext3D> m_sharedContext;
     Ref<GraphicsContext3D> m_context;
+#if !USE(ANGLE)
     std::unique_ptr<TextureCacheCV> m_textureCache;
+#endif
     Platform3DObject m_framebuffer { 0 };
     Platform3DObject m_program { 0 };
     Platform3DObject m_vertexBuffer { 0 };

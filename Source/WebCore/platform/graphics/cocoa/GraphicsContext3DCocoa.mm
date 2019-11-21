@@ -290,7 +290,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 #elif USE(ANGLE)
 
     UNUSED_PARAM(hostWindow);
-    UNUSED_PARAM(sharedContext);
 
     m_displayObj = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
     if (m_displayObj == EGL_NO_DISPLAY)
@@ -304,7 +303,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
     LOG(WebGL, "Extensions: %s", displayExtensions);
 
-    EGLConfig config;
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_RED_SIZE, 8,
@@ -314,7 +312,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         EGL_NONE
     };
     EGLint numberConfigsReturned = 0;
-    EGL_ChooseConfig(m_displayObj, configAttributes, &config, 1, &numberConfigsReturned);
+    EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
     if (numberConfigsReturned != 1) {
         LOG(WebGL, "EGLConfig Initialization failed.");
         return;
@@ -349,7 +347,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     }
     contextAttributes.push_back(EGL_NONE);
 
-    m_contextObj = EGL_CreateContext(m_displayObj, config, EGL_NO_CONTEXT, contextAttributes.data());
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharedContext ? static_cast<EGLContext>(sharedContext->m_contextObj) : EGL_NO_CONTEXT, contextAttributes.data());
     if (m_contextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "EGLContext Initialization failed.");
         return;
@@ -387,7 +385,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
 #if USE(ANGLE)
-        [m_webGLLayer setEGLDisplay:m_displayObj config:config];
+        [m_webGLLayer setEGLDisplay:m_displayObj config:m_configObj];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
 

@@ -742,8 +742,11 @@ public:
         PRIMITIVE_RESTART_FIXED_INDEX = 0x8D69,
         PRIMITIVE_RESTART = 0x8F9D,
 
-        // OpenGL ES 3 constants
-        MAP_READ_BIT = 0x0001
+        // OpenGL ES 3 constants.
+        MAP_READ_BIT = 0x0001,
+
+        // Necessary desktop OpenGL constants.
+        TEXTURE_RECTANGLE_ARB = 0x84F5
     };
 
     enum RenderStyle {
@@ -777,6 +780,10 @@ public:
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
     Platform3DObject platformTexture() const { return m_texture; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
+#if USE(ANGLE)
+    PlatformGraphicsContext3DDisplay platformDisplay() const { return m_displayObj; }
+    PlatformGraphicsContext3DConfig platformConfig() const { return m_configObj; }
+#endif // USE(ANGLE)
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const;
@@ -1380,6 +1387,7 @@ private:
     PlatformGraphicsContext3D m_contextObj { nullptr };
 #if USE(ANGLE)
     PlatformGraphicsContext3DDisplay m_displayObj { nullptr };
+    PlatformGraphicsContext3DConfig m_configObj { nullptr };
 #endif // USE(ANGLE)
 #endif // PLATFORM(COCOA)
 

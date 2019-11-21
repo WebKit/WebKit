@@ -1,3 +1,39 @@
+2019-11-21  Kenneth Russell  <kbr@chromium.org>
+
+        Implement accelerated video-to-texture upload path for ANGLE backend for WebGL on desktop
+        https://bugs.webkit.org/show_bug.cgi?id=200904
+
+        Support GPU-accelerated video uploads to WebGL textures with ANGLE.
+
+        Uses the IOSurface path, as the CVOpenGLTextureCache seems to have
+        been disabled at the OS level, even on top-of-tree WebKit without
+        using ANGLE.
+
+        Uses the EGL_ANGLE_iosurface_client_buffer extension to import
+        IOSurfaces; reuses all of the existing shader and OpenGL code.
+
+        Necessary other fixes to GraphicsContext3D's ANGLE backend: supporting
+        context sharing, and querying the selected EGLConfig.
+
+        Covered by WebGL conformance tests. Verified speedup with
+        "Animating textures in WebGL" MDN article.
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformDisplay const):
+        (WebCore::GraphicsContext3D::platformConfig const):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::VideoTextureCopierCV::initializeContextObjects):
+        (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+        (WebCore::VideoTextureCopierCV::attachIOSurfaceToTexture):
+        (WebCore::VideoTextureCopierCV::detachIOSurfaceFromTexture):
+        (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+
 2019-11-21  Youenn Fablet  <youenn@apple.com>
 
         Regression (r252660): Layout Test platform/ios/mediastream/audio-muted-in-background-tab.html is failing
