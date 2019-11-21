@@ -2472,20 +2472,15 @@ void WebGLRenderingContextBase::framebufferTexture2D(GC3Denum target, GC3Denum a
         return;
     }
     Platform3DObject textureObject = objectOrZero(texture);
-    switch (attachment) {
-    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+
+#if !USE_ANGLE
+    if (attachment == GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT) {
         m_context->framebufferTexture2D(target, GraphicsContext3D::DEPTH_ATTACHMENT, textarget, textureObject, level);
         m_context->framebufferTexture2D(target, GraphicsContext3D::STENCIL_ATTACHMENT, textarget, textureObject, level);
-        break;
-    case GraphicsContext3D::DEPTH_ATTACHMENT:
+    } else
+#endif
         m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
-        break;
-    case GraphicsContext3D::STENCIL_ATTACHMENT:
-        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
-        break;
-    default:
-        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
-    }
+
     targetFramebuffer->setAttachmentForBoundFramebuffer(attachment, textarget, texture, level);
     applyStencilTest();
 }

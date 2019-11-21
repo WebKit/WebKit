@@ -1,3 +1,17 @@
+2019-11-21  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Fix framebufferTexture2D with DEPTH_STENCIL_ATTACHMENT on ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=204433
+
+        Reviewed by Dean Jackson.
+
+        ANGLE expects requests for DEPTH_STENCIL_ATTACHMENT to not be split into two calls, as previous WebGL 1 backend required.
+
+        No new tests. Prevents conformance/extensions/webgl-depth-texture.html regression when run with the ANGLE backend.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+
 2019-11-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Cache trailing trimmable width.
