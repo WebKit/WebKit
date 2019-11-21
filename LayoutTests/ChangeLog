@@ -1,3 +1,11 @@
+2019-11-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in again, regression is not caused by it
+        https://bugs.webkit.org/show_bug.cgi?id=202471
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2019-11-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r252683 and r252721.
