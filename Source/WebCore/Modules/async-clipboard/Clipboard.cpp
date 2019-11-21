@@ -136,7 +136,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
 {
     auto frame = makeRefPtr(this->frame());
     auto document = makeRefPtr(frame ? frame->document() : nullptr);
-    if (!document || !frame || !shouldProceedWithClipboardWrite(*frame)) {
+    if (!document || !shouldProceedWithClipboardWrite(*frame)) {
         promise->reject(NotAllowedError);
         return;
     }
