@@ -140,6 +140,7 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
+    SetForScope inCommitTreeState(m_inCommitTreeState, true);
     LockHolder locker(m_treeMutex);
 
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
@@ -244,13 +245,11 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     node->commitStateBeforeChildren(*stateNode);
     
     // Move all children into the orphanNodes map. Live ones will get added back as we recurse over children.
-    if (auto nodeChildren = node->children()) {
-        for (auto& childScrollingNode : *nodeChildren) {
-            childScrollingNode->setParent(nullptr);
-            orphanNodes.add(childScrollingNode->scrollingNodeID(), childScrollingNode.get());
-        }
-        nodeChildren->clear();
+    for (auto& childScrollingNode : node->children()) {
+        childScrollingNode->setParent(nullptr);
+        orphanNodes.add(childScrollingNode->scrollingNodeID(), childScrollingNode.ptr());
     }
+    node->removeAllChildren();
 
     // Now update the children if we have any.
     if (auto children = stateNode->children()) {
@@ -286,14 +285,12 @@ void ScrollingTree::applyLayerPositions()
     LOG(Scrolling, "ScrollingTree %p applyLayerPositions - done\n", this);
 }
 
-void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& currNode)
+void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& node)
 {
-    currNode.applyLayerPositions();
+    node.applyLayerPositions();
 
-    if (auto children = currNode.children()) {
-        for (auto& child : *children)
-            applyLayerPositionsRecursive(*child);
-    }
+    for (auto& child : node.children())
+        applyLayerPositionsRecursive(child.get());
 }
 
 ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
@@ -324,15 +321,12 @@ void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
 {
     node.applyLayerPositions();
 
-    if (!node.children())
-        return;
-
-    for (auto& child : *node.children()) {
+    for (auto& child : node.children()) {
         // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.
         if (is<ScrollingTreeFrameScrollingNode>(child))
             continue;
 
-        notifyRelatedNodesRecursive(*child);
+        notifyRelatedNodesRecursive(child.get());
     }
 }
 

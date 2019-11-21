@@ -159,6 +159,7 @@ public:
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
 
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
+    bool inCommitTreeState() const { return m_inCommitTreeState; }
 
 protected:
     void setMainFrameScrollPosition(FloatPoint);
@@ -217,6 +218,7 @@ private:
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wasScrolledByDelegatedScrollingSincePreviousCommit { false };
+    bool m_inCommitTreeState { false };
 };
     
 } // namespace WebCore

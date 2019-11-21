@@ -1,3 +1,35 @@
+2019-11-21  Antti Koivisto  <antti@apple.com>
+
+        Tighten ScrollingTreeNode tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=204451
+
+        Reviewed by Simon Fraser.
+
+        - Use plain Vector instead of std::unique_ptr<Vector> for children
+        - Use Vector<Ref> instead of Vector<RefPtr>
+        - Remove non-const ScrollingTreeNode::children() accessor
+        - Add relase assert that all mutations happen during ScrollingTree::commitTreeState
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        (WebCore::ScrollingTree::applyLayerPositionsRecursive):
+        (WebCore::ScrollingTree::notifyRelatedNodesRecursive):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::inCommitTreeState const):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::appendChild):
+        (WebCore::ScrollingTreeNode::removeChild):
+        (WebCore::ScrollingTreeNode::removeAllChildren):
+
+        Encapsulate mutations to these functions.
+
+        (WebCore::ScrollingTreeNode::dump const):
+        (WebCore::ScrollingTreeNode::scrollingNodeForPoint const):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::children const):
+        (WebCore::ScrollingTreeNode::children): Deleted.
+
 2019-11-21  Kenneth Russell  <kbr@chromium.org>
 
         Implement accelerated video-to-texture upload path for ANGLE backend for WebGL on desktop

@@ -66,11 +66,11 @@ public:
     
     WEBCORE_EXPORT bool isRootNode() const;
 
-    Vector<RefPtr<ScrollingTreeNode>>* children() { return m_children.get(); }
-    const Vector<RefPtr<ScrollingTreeNode>>* children() const { return m_children.get(); }
+    const Vector<Ref<ScrollingTreeNode>>& children() const { return m_children; }
 
     void appendChild(Ref<ScrollingTreeNode>&&);
     void removeChild(ScrollingTreeNode&);
+    void removeAllChildren();
 
     WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNodeIncludingSelf();
     WEBCORE_EXPORT ScrollingTreeScrollingNode* enclosingScrollingNodeIncludingSelf();
@@ -89,7 +89,7 @@ protected:
 
     WEBCORE_EXPORT virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
-    std::unique_ptr<Vector<RefPtr<ScrollingTreeNode>>> m_children;
+    Vector<Ref<ScrollingTreeNode>> m_children;
 
 private:
     ScrollingTree& m_scrollingTree;
