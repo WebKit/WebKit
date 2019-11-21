@@ -11,14 +11,14 @@ function makeDots(width, height, spacing = 10)
     }
 }
 
-function layerTreeWithoutTransforms()
+function layerTreeWithoutTransforms(layerTreeFlags = 0)
 {
-    var layerTreeText = internals.layerTreeAsText(document);
+    var layerTreeText = internals.layerTreeAsText(document, layerTreeFlags);
     var filteredLines = layerTreeText.split("\n").filter(line => line.indexOf('transform') == -1);
     return filteredLines.join('\n');
 }
 
-function dumpLayers()
+function dumpLayersWithoutTransforms()
 {
     if (window.testRunner) {
         document.getElementById('layers').innerText = layerTreeWithoutTransforms();

@@ -37,7 +37,7 @@
             }
         }
     </style>
-    <script src="resources/compositing-overlap-utils.js"></script>
+  <script src="../resources/compositing-test-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -49,7 +49,7 @@
             makeDots(30, 30);
             
             window.setTimeout(function() {
-                document.getElementById('target').addEventListener('animationstart', dumpLayers, false);
+                document.getElementById('target').addEventListener('animationstart', dumpLayersWithoutTransforms, false);
                 document.body.classList.add('changed');
             }, 0);
         }

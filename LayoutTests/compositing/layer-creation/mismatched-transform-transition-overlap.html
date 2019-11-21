@@ -28,7 +28,7 @@
             -webkit-transform: scale(1.3);
         }
     </style>
-    <script src="resources/compositing-overlap-utils.js"></script>
+    <script src="../resources/compositing-test-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -41,7 +41,7 @@
             
             window.setTimeout(function() {
                 document.body.classList.add('changed');
-                window.setTimeout(dumpLayers, 0);
+                window.setTimeout(dumpLayersWithoutTransforms, 0);
             }, 0);
         }
         

@@ -52,7 +52,7 @@
       to { -webkit-transform: translateX(100px); }
     }
   </style>
-  <script src="resources/compositing-overlap-utils.js"></script>
+  <script src="../resources/compositing-test-utils.js"></script>
   <script>
     if (window.testRunner) {
       testRunner.dumpAsText();
@@ -62,7 +62,7 @@
     function runTest()
     {
       var box = document.getElementById('to-animate');
-      box.addEventListener('webkitAnimationStart', dumpLayers, false);
+      box.addEventListener('webkitAnimationStart', dumpLayersWithoutTransforms, false);
       box.classList.add('animating');
     }
     

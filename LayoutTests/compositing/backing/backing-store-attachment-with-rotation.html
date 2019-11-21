@@ -30,6 +30,7 @@
             box-sizing: border-box;
         }
     </style>
+    <script src="../resources/compositing-test-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.waitUntilDone();
@@ -40,7 +41,7 @@
         {
             var layersResult = document.getElementById('layers');
             if (window.testRunner)
-                layersResult.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                layersResult.innerText = layerTreeWithoutTransforms(internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
         }
 
         window.addEventListener('load', () => {

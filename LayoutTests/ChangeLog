@@ -1,3 +1,44 @@
+2019-11-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Flaky Test: compositing/backing/backing-store-attachment-with-rotation.html
+        https://bugs.webkit.org/show_bug.cgi?id=204394
+
+        Reviewed by Myles C. Maxfield.
+
+        Move compositing-overlap-utils.js to compositing/resources and use its layerTreeWithoutTransforms()
+        function to not dump transforms for the flakey test.
+
+        Adjust other tests which use this JS file.
+
+        * compositing/backing/backing-store-attachment-with-rotation-expected.txt:
+        * compositing/backing/backing-store-attachment-with-rotation.html:
+        * compositing/layer-creation/animation-overlap-with-children.html:
+        * compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html:
+        * compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html:
+        * compositing/layer-creation/mismatched-transform-transition-overlap.html:
+        * compositing/layer-creation/multiple-keyframes-animation-overlap.html:
+        * compositing/layer-creation/scale-rotation-animation-overlap.html:
+        * compositing/layer-creation/scale-rotation-transition-overlap.html:
+        * compositing/layer-creation/translate-animation-overlap.html:
+        * compositing/layer-creation/translate-scale-animation-overlap.html:
+        * compositing/layer-creation/translate-scale-transition-overlap.html:
+        * compositing/layer-creation/translate-transition-overlap.html:
+        * compositing/resources/compositing-test-utils.js: Renamed from LayoutTests/compositing/layer-creation/resources/compositing-overlap-utils.js.
+        (makeDots):
+        (layerTreeWithoutTransforms):
+        (dumpLayersWithoutTransforms):
+        * legacy-animation-engine/compositing/layer-creation/animation-overlap-with-children.html:
+        * legacy-animation-engine/compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/mismatched-transform-transition-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/multiple-keyframes-animation-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/scale-rotation-animation-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/scale-rotation-transition-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/translate-animation-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/translate-scale-transition-overlap.html:
+        * legacy-animation-engine/compositing/layer-creation/translate-transition-overlap.html:
+
 2019-11-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Outline sRGB-safe areas on P3 color picker
