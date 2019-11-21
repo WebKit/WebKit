@@ -217,17 +217,17 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (blackboxData) {
             switch (blackboxData.type) {
             case WI.DebuggerManager.BlackboxType.Pattern:
-                this._toggleBlackboxedImageElement.title = WI.UIString("Script ignored when debugging due to previously set blackbox URL pattern");
+                this._toggleBlackboxedImageElement.title = WI.UIString("Script ignored when debugging due to URL pattern blackbox");
                 break;
 
             case WI.DebuggerManager.BlackboxType.URL:
-                this._toggleBlackboxedImageElement.title = WI.UIString("Include script when debugging");
+                this._toggleBlackboxedImageElement.title = WI.UIString("Unblackbox script to include it when debugging");
                 break;
             }
 
             console.assert(this._toggleBlackboxedImageElement.title);
         } else
-            this._toggleBlackboxedImageElement.title = WI.UIString("Ignore script when debugging");
+            this._toggleBlackboxedImageElement.title = WI.UIString("Blackbox script to ignore it when debugging");
     }
 
     _handleToggleBlackboxedImageElementClicked(event)

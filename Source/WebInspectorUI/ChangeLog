@@ -1,3 +1,36 @@
+2019-11-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: call frames from blackboxed scripts should be visually distinct
+        https://bugs.webkit.org/show_bug.cgi?id=204424
+
+        Reviewed by Timothy Hatcher.
+
+        Seeing "Deferred pause from blackboxed script" in the Pause Reason does indicate that
+        something in the Call Stack was blackboxed, but it doesn't clarify what was blackboxed.
+
+        Given that the debugger effectively ignores blackboxed scripts, we should distinguish call
+        frames that were ignored so that it's clear how the current pause location was reached.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WI.CallFrameTreeElement):
+        (WI.CallFrameTreeElement.prototype.onattach):
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame.blackboxed:not(.selected)): Added.
+        Make blackboxed call frames 50% opaque when not selected. Add additional explanatory text to
+        the end of the tooltip when hovering blackboxed call frame tree elements.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement.prototype._updateToggleBlackboxImageElementState):
+        Update tooltip/contextmenu text to include "blacboxing" so functionality is clearer.
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WI.SourceCodeLocation.prototype.populateLiveDisplayLocationTooltip):
+        Allow a suffix to be added to the end of the live location.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-11-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: REGRESSION(r250618): main resource view is empty when pausing on inline 'debugger' statement

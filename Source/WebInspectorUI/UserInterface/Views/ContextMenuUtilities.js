@@ -101,7 +101,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
                 });
             });
         } else {
-            contextMenu.appendItem(blackboxData ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging"), () => {
+            contextMenu.appendItem(blackboxData ? WI.UIString("Unblackbox script to include it when debugging") : WI.UIString("Blackbox script to ignore it when debugging"), () => {
                 WI.debuggerManager.setShouldBlackboxScript(sourceCode, !blackboxData);
             });
         }

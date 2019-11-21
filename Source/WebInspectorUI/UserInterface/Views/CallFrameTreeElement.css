@@ -102,3 +102,7 @@ body[dir=rtl] .tree-outline .item.call-frame .status {
 .tree-outline.single-thread .item.call-frame.async-boundary::before {
     width: 20px;
 }
+
+.tree-outline .item.call-frame.blackboxed:not(.selected) {
+    opacity: 0.5;
+}

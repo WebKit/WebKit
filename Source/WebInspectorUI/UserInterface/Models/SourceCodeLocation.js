@@ -197,15 +197,16 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         });
     }
 
-    populateLiveDisplayLocationTooltip(element, prefix)
+    populateLiveDisplayLocationTooltip(element, prefix, suffix)
     {
         prefix = prefix || "";
+        suffix = suffix || "";
 
-        element.title = prefix + this.tooltipString();
+        element.title = prefix + this.tooltipString() + suffix;
 
         this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
             if (this.sourceCode)
-                element.title = prefix + this.tooltipString();
+                element.title = prefix + this.tooltipString() + suffix;
         }, this);
     }
 
