@@ -53,6 +53,8 @@ AXIsolatedObject::~AXIsolatedObject() = default;
 
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object)
 {
+    setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
+    setProperty(AXPropertyName::ElementRect, object.elementRect());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
@@ -199,17 +201,13 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
     return tree()->nodeForID(nodeID).get();
 }
 
-
-FloatRect AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) const
+template<typename T>
+T AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (Optional<FloatRect> typedValue) {
-            if (!typedValue)
-                return FloatRect { };
-            return typedValue.value();
-        },
-        [] (auto&) { return FloatRect { }; }
+        [] (T& typedValue) { return typedValue; },
+        [] (auto&) { return T { }; }
     );
 }
 

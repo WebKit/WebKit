@@ -29,8 +29,8 @@
 
 #include "AXIsolatedTree.h"
 #include "AccessibilityObjectInterface.h"
-#include "FloatRect.h"
 #include "IntPoint.h"
+#include "LayoutRect.h"
 #include "Path.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -176,7 +176,7 @@ private:
     bool isVisible() const override { return false; }
     bool isCollapsed() const override { return false; }
     void setIsExpanded(bool) override { }
-    FloatRect relativeFrame() const override { return rectAttributeValue(AXPropertyName::RelativeFrame); }
+    FloatRect relativeFrame() const override { return rectAttributeValue<FloatRect>(AXPropertyName::RelativeFrame); }
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
 
     bool isSelectedOptionActive() const override { return false; }
@@ -356,10 +356,8 @@ private:
     Element* anchorElement() const override { return nullptr; }
     bool supportsPressAction() const override { return false; }
     Element* actionElement() const override { return nullptr; }
-    LayoutRect boundingBoxRect() const override { return LayoutRect(); }
-    IntRect pixelSnappedBoundingBoxRect() const override { return IntRect(); }
-    LayoutRect elementRect() const override { return LayoutRect(); }
-    LayoutSize size() const override { return LayoutSize(); }
+    LayoutRect boundingBoxRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::BoundingBoxRect); }
+    LayoutRect elementRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::ElementRect); }
     IntPoint clickPoint() override { return IntPoint(); }
     Path elementPath() const override { return Path(); }
     bool supportsPath() const override { return false; }
@@ -639,7 +637,9 @@ private:
 
     enum class AXPropertyName : uint8_t {
         None = 0,
+        BoundingBoxRect,
         Description,
+        ElementRect,
         HelpText,
         IsAccessibilityIgnored,
         IsAnonymousMathOperator,
@@ -702,7 +702,7 @@ private:
     AXIsolatedObject(AXCoreObject&);
     void initializeAttributeData(AXCoreObject&);
 
-    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, Optional<FloatRect>, AXID>;
+    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, LayoutRect, AXID>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     
@@ -711,7 +711,7 @@ private:
     int intAttributeValue(AXPropertyName) const;
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
-    FloatRect rectAttributeValue(AXPropertyName) const;
+    template<typename T> T rectAttributeValue(AXPropertyName) const;
     AXCoreObject* objectAttributeValue(AXPropertyName) const;
 
     AXID m_parent;

@@ -776,9 +776,9 @@ public:
     virtual bool supportsPressAction() const = 0;
     virtual Element* actionElement() const = 0;
     virtual LayoutRect boundingBoxRect() const = 0;
-    virtual IntRect pixelSnappedBoundingBoxRect() const = 0;
+    IntRect pixelSnappedBoundingBoxRect() const { return snappedIntRect(boundingBoxRect()); }
     virtual LayoutRect elementRect() const = 0;
-    virtual LayoutSize size() const = 0;
+    LayoutSize size() const { return elementRect().size(); }
     virtual IntPoint clickPoint() = 0;
     virtual Path elementPath() const = 0;
     virtual bool supportsPath() const = 0;

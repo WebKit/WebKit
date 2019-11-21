@@ -440,9 +440,7 @@ public:
     bool supportsPressAction() const override;
     Element* actionElement() const override { return nullptr; }
     LayoutRect boundingBoxRect() const override { return LayoutRect(); }
-    IntRect pixelSnappedBoundingBoxRect() const override { return snappedIntRect(boundingBoxRect()); }
     LayoutRect elementRect() const override = 0;
-    LayoutSize size() const override { return elementRect().size(); }
     IntPoint clickPoint() override;
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
     Path elementPath() const override { return Path(); }
