@@ -131,6 +131,8 @@ public:
     void setCoreAudioActiveSource(CoreAudioCaptureSource& source) { setActiveSource(source); }
     void unsetCoreAudioActiveSource(CoreAudioCaptureSource& source) { unsetActiveSource(source); }
     CoreAudioCaptureSource* coreAudioActiveSource() { return static_cast<CoreAudioCaptureSource*>(activeSource()); }
+
+    void setAudioCapturePageState(bool interrupted, bool pageMuted) final;
 #else
     CoreAudioCaptureSource* coreAudioActiveSource() { return nullptr; }
 #endif
@@ -142,9 +144,6 @@ private:
     }
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
-#if PLATFORM(IOS_FAMILY)
-    void setAudioCapturePageState(bool interrupted, bool pageMuted) final;
-#endif
 };
 
 } // namespace WebCore

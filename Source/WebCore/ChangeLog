@@ -1,3 +1,17 @@
+2019-11-21  Youenn Fablet  <youenn@apple.com>
+
+        Regression (r252660): Layout Test platform/ios/mediastream/audio-muted-in-background-tab.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=204408
+        <rdar://problem/57364353>
+
+        Reviewed by Eric Carlson.
+
+        Covered by no longer failing test.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        Now that we are using CoreAudioCaptureSource, we need to use its factory to interrupt/uninterrupt the active source.
+
 2019-11-21  Antti Koivisto  <antti@apple.com>
 
         MediaQueryEvaluator shouldn't know about style resolver

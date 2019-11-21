@@ -41,6 +41,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
+#if PLATFORM(COCOA)
+#include "CoreAudioCaptureSource.h"
+#endif
+
 namespace WebCore {
 
 static inline Vector<MockMediaDevice> defaultDevices()
@@ -143,11 +147,7 @@ public:
     }
 private:
 #if PLATFORM(IOS_FAMILY)
-    void setAudioCapturePageState(bool interrupted, bool pageMuted) final
-    {
-        if (activeSource())
-            activeSource()->setInterrupted(interrupted, pageMuted);
-    }
+    void setAudioCapturePageState(bool interrupted, bool pageMuted) final { CoreAudioCaptureSourceFactory::singleton().setAudioCapturePageState(interrupted, pageMuted); }
 #endif
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
 };

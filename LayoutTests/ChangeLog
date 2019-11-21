@@ -1,3 +1,13 @@
+2019-11-21  Youenn Fablet  <youenn@apple.com>
+
+        Regression (r252660): Layout Test platform/ios/mediastream/audio-muted-in-background-tab.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=204408
+        <rdar://problem/57364353>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/TestExpectations:
+
 2019-11-20  Per Arne Vollan  <pvollan@apple.com>
 
         Update test expectations for flaky tests
