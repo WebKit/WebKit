@@ -34,3 +34,8 @@ search[Symbol.replace] = () => 'q';
 shouldBe('abcdefabcdefabc'.replaceAll(search, 'xyz'), 'q');
 search[Symbol.replace] = RegExp.prototype[Symbol.replace].bind(search);
 shouldBe('abcdefabcdefabc'.replaceAll(search, 'xyz'), 'abcxyzabcxyzabc');
+
+shouldBe('abc'.replaceAll('', 'z'), 'zazbzcz');
+shouldBe(''.replaceAll('', 'z'), 'z');
+shouldBe('abc'.replaceAll('', ''), 'abc');
+shouldBe(''.replaceAll('', ''), '');

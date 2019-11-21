@@ -776,7 +776,9 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* 
         vm, globalObject, callFrame, string, searchValue, callData, callType, replacementString, replaceValue));
 }
 
-static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSString* jsString, JSValue searchValue, JSValue replaceValue, bool isGlobal)
+enum class ReplaceMode : bool { Single, Global };
+
+static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSString* jsString, JSValue searchValue, JSValue replaceValue, ReplaceMode mode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -813,8 +815,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
             cachedCall->appendArgument(substring);
             cachedCall->appendArgument(jsNumber(matchStart));
             cachedCall->appendArgument(jsString);
-            if (UNLIKELY(cachedCall->hasOverflowedArguments()))
-                OUT_OF_MEMORY(globalObject, scope);
+            ASSERT(!cachedCall->hasOverflowedArguments());
             JSValue replacement = cachedCall->call();
             RETURN_IF_EXCEPTION(scope, nullptr);
             replaceString = replacement.toWTFString(globalObject);
@@ -825,12 +826,11 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
             OUT_OF_MEMORY(globalObject, scope);
 
         size_t matchEnd = matchStart + searchStringLength;
-        int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd)};
-        if (cachedCall) {
+        if (cachedCall)
             replacements.append(replaceString);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-        } else {
+        else {
             StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
+            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
             substituteBackreferences(replacement, replaceString, string, ovector, nullptr);
             if (UNLIKELY(replacement.hasOverflowed()))
                 OUT_OF_MEMORY(globalObject, scope);
@@ -838,9 +838,9 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
         }
 
         endOfLastMatch = matchEnd;
-        if (!isGlobal)
+        if (mode == ReplaceMode::Single)
             break;
-        matchStart = string.find(searchString, UNLIKELY(!searchStringLength) ? endOfLastMatch + 1 : endOfLastMatch);
+        matchStart = string.find(searchString, !searchStringLength ? endOfLastMatch + 1 : endOfLastMatch);
     } while (matchStart != notFound);
 
     if (UNLIKELY(!sourceRanges.tryConstructAndAppend(endOfLastMatch, string.length() - endOfLastMatch)))
@@ -901,8 +901,7 @@ ALWAYS_INLINE JSString* replace(
 {
     if (searchValue.inherits<RegExpObject>(vm))
         return replaceUsingRegExpSearch(vm, globalObject, callFrame, string, searchValue, replaceValue);
-    constexpr bool isGlobal = false;
-    return replaceUsingStringSearch(vm, globalObject, callFrame, string, searchValue, replaceValue, isGlobal);
+    return replaceUsingStringSearch(vm, globalObject, callFrame, string, searchValue, replaceValue, ReplaceMode::Single);
 }
 
 ALWAYS_INLINE JSString* replace(
@@ -942,8 +941,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(JSGlobalObj
     JSString* string = callFrame->thisValue().toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    constexpr bool isGlobal = false;
-    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, globalObject, callFrame, string, callFrame->argument(0), callFrame->argument(1), isGlobal)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, globalObject, callFrame, string, callFrame->argument(0), callFrame->argument(1), ReplaceMode::Single)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceAllUsingStringSearch(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -954,8 +952,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceAllUsingStringSearch(JSGlobal
     JSString* string = callFrame->thisValue().toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    constexpr bool isGlobal = true;
-    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, globalObject, callFrame, string, callFrame->argument(0), callFrame->argument(1), isGlobal)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, globalObject, callFrame, string, callFrame->argument(0), callFrame->argument(1), ReplaceMode::Global)));
 }
 
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceGeneric(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue)

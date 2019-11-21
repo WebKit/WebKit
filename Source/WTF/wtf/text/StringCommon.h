@@ -574,7 +574,7 @@ size_t findCommon(const StringClass& haystack, const StringClass& needle, unsign
         return notFound;
 
     if (!needleLength)
-        return std::min(start, haystack.length());
+        return start;
 
     unsigned searchLength = haystack.length() - start;
     if (needleLength > searchLength)

@@ -1,3 +1,10 @@
+2019-11-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, address Darin's feedback on r252683.
+
+        * wtf/text/StringCommon.h:
+        (WTF::findCommon):
+
 2019-11-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Add ANGLE backend to GTK port
