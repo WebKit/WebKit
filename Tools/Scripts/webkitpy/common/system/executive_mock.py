@@ -88,7 +88,7 @@ class MockExecutive(object):
 
     def running_pids(self, process_name_filter):
         running_pids = []
-        for process_name, process_pid in self._running_pids.iteritems():
+        for process_name, process_pid in self._running_pids.items():
             if process_name_filter(process_name):
                 running_pids.append(process_pid)
 

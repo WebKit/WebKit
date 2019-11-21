@@ -1,3 +1,15 @@
+2019-11-21  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Clean-up simulator processes after tearing down simulators
+        https://bugs.webkit.org/show_bug.cgi?id=204416
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.running_pids): Make function Python 3 compatible.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.tear_down): Kill any CoreSimulator processes.
+
 2019-11-21  Pablo Saavedra  <psaavedra@igalia.com>
 
         Fix Tools/Scripts/run-javascriptcore-tests after r252490

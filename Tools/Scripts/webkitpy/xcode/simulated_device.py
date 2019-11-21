@@ -489,6 +489,10 @@ class SimulatedDeviceManager(object):
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = None
 
+        if SimulatedDeviceManager._managing_simulator_app:
+            for pid in host.executive.running_pids(lambda name: 'CoreSimulator.framework' in name):
+                host.executive.kill_process(pid)
+
         # If we were managing the simulator, there are some cache files we need to remove
         for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
             host.filesystem.rmtree(directory)
