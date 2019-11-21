@@ -357,7 +357,12 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
     failedTestsFormatString = "%d JSC test%s failed"
     logfiles = {"json": jsonFileName}
 
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        TestWithFailureCount.__init__(self, *args, **kwargs)
+
     def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         platform = self.getProperty('platform')
         architecture = self.getProperty("architecture")
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
@@ -674,6 +679,14 @@ class RunLLINTCLoopTests(TestWithFailureCount):
     failedTestsFormatString = "%d regression%s found."
     logfiles = {"json": jsonFileName}
 
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        TestWithFailureCount.__init__(self, *args, **kwargs)
+
+    def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        return shell.Test.start(self)
+
     def countFailures(self, cmd):
         logText = cmd.logs['stdio'].getText()
         # We're looking for the line that looks like this: 0 regressions found.
@@ -705,6 +718,14 @@ class Run32bitJSCTests(TestWithFailureCount):
     ]
     failedTestsFormatString = "%d regression%s found."
     logfiles = {"json": jsonFileName}
+
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        TestWithFailureCount.__init__(self, *args, **kwargs)
+
+    def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        return shell.Test.start(self)
 
     def countFailures(self, cmd):
         logText = cmd.logs['stdio'].getText()

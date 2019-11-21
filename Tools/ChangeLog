@@ -1,5 +1,20 @@
 2019-11-21  Jonathan Bedard  <jbedard@apple.com>
 
+        build.webkit.org: Forward results database credentials to jsc test runs
+        https://bugs.webkit.org/show_bug.cgi?id=204453
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunJavaScriptCoreTests.__init__): Do not log environment with credentials in it.
+        (RunJavaScriptCoreTests.start): Add results database API key to environment.
+        (RunLLINTCLoopTests.__init__): Do not log environment with credentials in it.
+        (RunLLINTCLoopTests.start): Add results database API key to environment.
+        (Run32bitJSCTests.__init__): Do not log environment with credentials in it.
+        (Run32bitJSCTests.start): Add results database API key to environment.
+
+2019-11-21  Jonathan Bedard  <jbedard@apple.com>
+
         run-webkit-tests: Clean-up simulator processes after tearing down simulators
         https://bugs.webkit.org/show_bug.cgi?id=204416
 
