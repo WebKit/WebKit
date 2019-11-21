@@ -1,3 +1,17 @@
+2019-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        getComputedStyle returns "auto" for zIndex property even after it has been set, on non-positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=15562
+
+        Reviewed by Antti Koivisto.
+
+        More passing tests.
+
+        * web-platform-tests/css/css-position/inheritance-expected.txt:
+        * web-platform-tests/css/css-values/calc-integer-expected.txt:
+        * web-platform-tests/css/css-values/calc-z-index-fractions-001-expected.txt:
+        * web-platform-tests/css/css-values/minmax-integer-computed-expected.txt:
+
 2019-11-19  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia echoCancellation constraint has no affect

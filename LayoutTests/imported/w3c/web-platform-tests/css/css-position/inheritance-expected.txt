@@ -17,6 +17,6 @@ FAIL Property inset-start has initial value auto assert_true: inset-start doesn'
 FAIL Property inset-start does not inherit assert_true: expected true got false
 FAIL Property inset-end has initial value auto assert_true: inset-end doesn't seem to be supported in the computed style expected true got false
 FAIL Property inset-end does not inherit assert_true: expected true got false
-FAIL Property z-index has initial value auto assert_equals: expected "auto" but got "0"
+PASS Property z-index has initial value auto 
 PASS Property z-index does not inherit 
 

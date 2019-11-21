@@ -337,8 +337,8 @@ AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle*
     // the user agent must act as if the will-change property ([css-will-change-1]) on the element additionally
     // includes all the properties animated by the animation.
     if (forceStackingContext && animatedStyle) {
-        if (animatedStyle->hasAutoZIndex())
-            animatedStyle->setZIndex(0);
+        if (animatedStyle->hasAutoUsedZIndex())
+            animatedStyle->setUsedZIndex(0);
     }
 
     return { WTFMove(animatedStyle), animationChangeRequiresRecomposite };

@@ -15,7 +15,7 @@
             var element = document.getElementById('nonPositionedDiv');
             var compStyle = element.ownerDocument.defaultView.getComputedStyle(element, null);
             log("Non-positioned Div:");
-            log("    Computed Style = " + compStyle.zIndex + " (Should be auto)");
+            log("    Computed Style = " + compStyle.zIndex + " (Should be 20)");
             log("    element.style.zIndex = " + element.style.zIndex + " (Should be 20)");
             log("");
 

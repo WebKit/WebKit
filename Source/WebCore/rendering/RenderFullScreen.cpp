@@ -67,7 +67,7 @@ static RenderStyle createFullScreenStyle()
     auto fullscreenStyle = RenderStyle::create();
 
     // Create a stacking context:
-    fullscreenStyle.setZIndex(INT_MAX);
+    fullscreenStyle.setUsedZIndex(INT_MAX);
 
     fullscreenStyle.setFontDescription({ });
     fullscreenStyle.fontCascade().update(nullptr);

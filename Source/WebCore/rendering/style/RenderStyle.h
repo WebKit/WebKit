@@ -1029,10 +1029,31 @@ public:
     PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(m_inheritedFlags.printColorAdjust); }
     void setPrintColorAdjust(PrintColorAdjust value) { m_inheritedFlags.printColorAdjust = static_cast<unsigned>(value); }
 
-    bool hasAutoZIndex() const { return m_boxData->hasAutoZIndex(); }
-    void setHasAutoZIndex() { SET_VAR(m_boxData, m_hasAutoZIndex, true); SET_VAR(m_boxData, m_zIndex, 0); }
-    int zIndex() const { return m_boxData->zIndex(); }
-    void setZIndex(int v) { SET_VAR(m_boxData, m_hasAutoZIndex, false); SET_VAR(m_boxData, m_zIndex, v); }
+    int specifiedZIndex() const { return m_boxData->specifiedZIndex(); }
+    bool hasAutoSpecifiedZIndex() const { return m_boxData->hasAutoSpecifiedZIndex(); }
+    void setSpecifiedZIndex(int v)
+    {
+        SET_VAR(m_boxData, m_hasAutoSpecifiedZIndex, false);
+        SET_VAR(m_boxData, m_specifiedZIndex, v);
+    }
+    void setHasAutoSpecifiedZIndex()
+    {
+        SET_VAR(m_boxData, m_hasAutoSpecifiedZIndex, true);
+        SET_VAR(m_boxData, m_specifiedZIndex, 0);
+    }
+
+    int usedZIndex() const { return m_boxData->usedZIndex(); }
+    bool hasAutoUsedZIndex() const { return m_boxData->hasAutoUsedZIndex(); }
+    void setUsedZIndex(int v)
+    {
+        SET_VAR(m_boxData, m_hasAutoUsedZIndex, false);
+        SET_VAR(m_boxData, m_usedZIndex, v);
+    }
+    void setHasAutoUsedZIndex()
+    {
+        SET_VAR(m_boxData, m_hasAutoUsedZIndex, true);
+        SET_VAR(m_boxData, m_usedZIndex, 0);
+    }
 
     void setHasAutoWidows() { SET_VAR(m_rareInheritedData, hasAutoWidows, true); SET_VAR(m_rareInheritedData, widows, initialWidows()); }
     void setWidows(short w) { SET_VAR(m_rareInheritedData, hasAutoWidows, false); SET_VAR(m_rareInheritedData, widows, w); }

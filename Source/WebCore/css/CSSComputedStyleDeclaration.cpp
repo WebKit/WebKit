@@ -3226,9 +3226,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyFontVariantEastAsian:
             return fontVariantEastAsianPropertyValue(style.fontDescription().variantEastAsianVariant(), style.fontDescription().variantEastAsianWidth(), style.fontDescription().variantEastAsianRuby());
         case CSSPropertyZIndex:
-            if (style.hasAutoZIndex())
+            if (style.hasAutoSpecifiedZIndex())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.zIndex(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.specifiedZIndex(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyZoom:
             return cssValuePool.createValue(style.zoom(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyBoxSizing:

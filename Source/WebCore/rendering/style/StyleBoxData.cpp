@@ -29,7 +29,7 @@ namespace WebCore {
 
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
     Length length[7];
-    int m_zIndex;
+    int m_zIndex[2];
     uint32_t bitfields;
 };
 
@@ -40,8 +40,10 @@ StyleBoxData::StyleBoxData()
     , m_maxWidth(RenderStyle::initialMaxSize())
     , m_minHeight(RenderStyle::initialMinSize())
     , m_maxHeight(RenderStyle::initialMaxSize())
-    , m_zIndex(0)
-    , m_hasAutoZIndex(true)
+    , m_specifiedZIndex(0)
+    , m_usedZIndex(0)
+    , m_hasAutoSpecifiedZIndex(true)
+    , m_hasAutoUsedZIndex(true)
     , m_boxSizing(static_cast<unsigned>(BoxSizing::ContentBox))
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(static_cast<unsigned>(BoxDecorationBreak::Slice))
@@ -58,8 +60,10 @@ inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_minHeight(o.m_minHeight)
     , m_maxHeight(o.m_maxHeight)
     , m_verticalAlign(o.m_verticalAlign)
-    , m_zIndex(o.m_zIndex)
-    , m_hasAutoZIndex(o.m_hasAutoZIndex)
+    , m_specifiedZIndex(o.m_specifiedZIndex)
+    , m_usedZIndex(o.m_usedZIndex)
+    , m_hasAutoSpecifiedZIndex(o.m_hasAutoSpecifiedZIndex)
+    , m_hasAutoUsedZIndex(o.m_hasAutoUsedZIndex)
     , m_boxSizing(o.m_boxSizing)
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(o.m_boxDecorationBreak)
@@ -75,19 +79,21 @@ Ref<StyleBoxData> StyleBoxData::copy() const
 bool StyleBoxData::operator==(const StyleBoxData& o) const
 {
     return m_width == o.m_width
-           && m_height == o.m_height
-           && m_minWidth == o.m_minWidth
-           && m_maxWidth == o.m_maxWidth
-           && m_minHeight == o.m_minHeight
-           && m_maxHeight == o.m_maxHeight
-           && m_verticalAlign == o.m_verticalAlign
-           && m_zIndex == o.m_zIndex
-           && m_hasAutoZIndex == o.m_hasAutoZIndex
-           && m_boxSizing == o.m_boxSizing
+        && m_height == o.m_height
+        && m_minWidth == o.m_minWidth
+        && m_maxWidth == o.m_maxWidth
+        && m_minHeight == o.m_minHeight
+        && m_maxHeight == o.m_maxHeight
+        && m_verticalAlign == o.m_verticalAlign
+        && m_specifiedZIndex == o.m_specifiedZIndex
+        && m_hasAutoSpecifiedZIndex == o.m_hasAutoSpecifiedZIndex
+        && m_usedZIndex == o.m_usedZIndex
+        && m_hasAutoUsedZIndex == o.m_hasAutoUsedZIndex
+        && m_boxSizing == o.m_boxSizing
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-           && m_boxDecorationBreak == o.m_boxDecorationBreak
+        && m_boxDecorationBreak == o.m_boxDecorationBreak
 #endif
-            ;
+        ;
 }
 
 } // namespace WebCore

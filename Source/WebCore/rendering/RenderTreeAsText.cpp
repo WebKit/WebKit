@@ -176,8 +176,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << " " << static_cast<const void*>(&o);
 
-    if (o.style().zIndex())
-        ts << " zI: " << o.style().zIndex();
+    if (o.style().usedZIndex()) // FIXME: This should use !hasAutoUsedZIndex().
+        ts << " zI: " << o.style().usedZIndex();
 
     if (o.node()) {
         String tagName = getTagName(o.node());

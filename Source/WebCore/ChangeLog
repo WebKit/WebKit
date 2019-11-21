@@ -1,3 +1,77 @@
+2019-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        getComputedStyle returns "auto" for zIndex property even after it has been set, on non-positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=15562
+
+        Reviewed by Antti Koivisto.
+
+        The computed value of z-index should be the specified value, but Style::Adjuster::adjust() set z-index
+        to auto on non-positioned elements, so we reported the incorrect computed value.
+
+        Fix by storing the specified value in RenderStyle as "zIndex", and the used value as "effectiveZIndex", and
+        converting all rendering code to use the "effective" variants. getComputedStyle reads "zIndex".
+
+        Style::Adjuster::adjust() copies zIndex to effectiveZIndex for positioned elements.
+
+        Tests: fast/css/getComputedStyle/getComputedStyle-zIndex-auto.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * rendering/RenderBox.cpp:
+        (WebCore::isCandidateForOpaquenessTest):
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::shouldBeCSSStackingContext const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::specifiedZIndex const):
+        (WebCore::RenderStyle::hasAutoSpecifiedZIndex const):
+        (WebCore::RenderStyle::setSpecifiedZIndex):
+        (WebCore::RenderStyle::setHasAutoSpecifiedZIndex):
+        (WebCore::RenderStyle::usedZIndex const):
+        (WebCore::RenderStyle::hasAutoUsedZIndex const):
+        (WebCore::RenderStyle::setUsedZIndex):
+        (WebCore::RenderStyle::setHasAutoUsedZIndex):
+        (WebCore::RenderStyle::hasAutoZIndex const): Deleted.
+        (WebCore::RenderStyle::setHasAutoZIndex): Deleted.
+        (WebCore::RenderStyle::zIndex const): Deleted.
+        (WebCore::RenderStyle::setZIndex): Deleted.
+        * rendering/style/StyleBoxData.cpp:
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleBoxData::operator== const):
+        * rendering/style/StyleBoxData.h:
+        (WebCore::StyleBoxData::specifiedZIndex const):
+        (WebCore::StyleBoxData::hasAutoSpecifiedZIndex const):
+        (WebCore::StyleBoxData::usedZIndex const):
+        (WebCore::StyleBoxData::hasAutoUsedZIndex const):
+        (WebCore::StyleBoxData::zIndex const): Deleted.
+        (WebCore::StyleBoxData::hasAutoZIndex const): Deleted.
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
 2019-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         MicrotaskQueue should be accessed via EventLoop

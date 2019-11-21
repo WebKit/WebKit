@@ -132,8 +132,8 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
             // When a layout hint happens, we do a repaint of the layer, since the layer could end up being destroyed.
             if (hasLayer()) {
                 if (oldStyle->position() != newStyle.position()
-                    || oldStyle->zIndex() != newStyle.zIndex()
-                    || oldStyle->hasAutoZIndex() != newStyle.hasAutoZIndex()
+                    || oldStyle->usedZIndex() != newStyle.usedZIndex()
+                    || oldStyle->hasAutoUsedZIndex() != newStyle.hasAutoUsedZIndex()
                     || !(oldStyle->clip() == newStyle.clip())
                     || oldStyle->hasClip() != newStyle.hasClip()
                     || oldStyle->opacity() != newStyle.opacity()

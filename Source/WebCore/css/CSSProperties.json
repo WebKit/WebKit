@@ -4356,7 +4356,8 @@
         },
         "z-index": {
             "codegen-properties": {
-                "auto-functions": true
+                "auto-functions": true,
+                "name-for-methods": "SpecifiedZIndex"
             },
             "specification": {
                 "category": "css-22",

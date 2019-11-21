@@ -294,13 +294,15 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == PositionType::Static && !m_parentBoxStyle.isDisplayFlexibleOrGridBox())
-        style.setHasAutoZIndex();
+    if (style.hasAutoSpecifiedZIndex() || (style.position() == PositionType::Static && !m_parentBoxStyle.isDisplayFlexibleOrGridBox()))
+        style.setHasAutoUsedZIndex();
+    else
+        style.setUsedZIndex(style.specifiedZIndex());
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
-    if (style.hasAutoZIndex()) {
+    if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
             || style.opacity() < 1.0f
             || style.hasTransformRelatedProperty()
@@ -316,7 +318,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.position() == PositionType::Sticky
             || style.position() == PositionType::Fixed
             || style.willChangeCreatesStackingContext())
-            style.setZIndex(0);
+            style.setUsedZIndex(0);
     }
 
     if (m_element) {
@@ -385,8 +387,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     // Touch overflow scrolling creates a stacking context.
-    if (style.hasAutoZIndex() && style.useTouchOverflowScrolling() && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY())))
-        style.setZIndex(0);
+    if (style.hasAutoUsedZIndex() && style.useTouchOverflowScrolling() && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY())))
+        style.setUsedZIndex(0);
 #endif
 
     // Cull out any useless layers and also repeat patterns into additional layers.

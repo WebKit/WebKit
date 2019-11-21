@@ -1060,8 +1060,8 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent
     // must act as if the will-change property ([css-will-change-1]) on the target element includes the property.
-    if (m_triggersStackingContext && targetStyle.hasAutoZIndex())
-        targetStyle.setZIndex(0);
+    if (m_triggersStackingContext && targetStyle.hasAutoUsedZIndex())
+        targetStyle.setUsedZIndex(0);
 }
 
 void KeyframeEffect::invalidate()

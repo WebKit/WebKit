@@ -1,9 +1,9 @@
 
-FAIL Sanity assert_equals: expected "2" but got "auto"
-FAIL Basic division works assert_equals: expected "2" but got "auto"
-FAIL Rounds up if fractional part is >= 0.5 assert_equals: expected "1" but got "auto"
-FAIL Accepts numbers, and rounds assert_equals: expected "1" but got "auto"
-FAIL Operation between <integer> and <number> works assert_equals: expected "3" but got "auto"
-FAIL Rounds down if fractional part is < 0.5 assert_equals: expected "0" but got "auto"
-FAIL Only rounds at the end of the conversion assert_equals: expected "1" but got "auto"
+PASS Sanity 
+PASS Basic division works 
+PASS Rounds up if fractional part is >= 0.5 
+PASS Accepts numbers, and rounds 
+PASS Operation between <integer> and <number> works 
+PASS Rounds down if fractional part is < 0.5 
+PASS Only rounds at the end of the conversion 
 

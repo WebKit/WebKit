@@ -648,7 +648,7 @@ public:
     LayoutPoint convertToLayerCoords(const RenderLayer* ancestorLayer, const LayoutPoint&, ColumnOffsetAdjustment adjustForColumns = DontAdjustForColumns) const;
     LayoutSize offsetFromAncestor(const RenderLayer*, ColumnOffsetAdjustment = DontAdjustForColumns) const;
 
-    int zIndex() const { return renderer().style().zIndex(); }
+    int zIndex() const { return renderer().style().usedZIndex(); }
 
     enum PaintLayerFlag {
         PaintLayerHaveTransparency                      = 1 << 0,

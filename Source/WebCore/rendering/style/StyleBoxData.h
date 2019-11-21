@@ -53,9 +53,12 @@ public:
     
     const Length& verticalAlign() const { return m_verticalAlign; }
     
-    int zIndex() const { return m_zIndex; }
-    bool hasAutoZIndex() const { return m_hasAutoZIndex; }
-    
+    int specifiedZIndex() const { return m_specifiedZIndex; }
+    bool hasAutoSpecifiedZIndex() const { return m_hasAutoSpecifiedZIndex; }
+
+    int usedZIndex() const { return m_usedZIndex; }
+    bool hasAutoUsedZIndex() const { return m_hasAutoUsedZIndex; }
+
     BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
@@ -78,8 +81,10 @@ private:
 
     Length m_verticalAlign;
 
-    int m_zIndex;
-    unsigned m_hasAutoZIndex : 1;
+    int m_specifiedZIndex;
+    int m_usedZIndex;
+    unsigned m_hasAutoSpecifiedZIndex : 1;
+    unsigned m_hasAutoUsedZIndex : 1;
     unsigned m_boxSizing : 1; // BoxSizing
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
