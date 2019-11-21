@@ -1,5 +1,16 @@
 2019-11-20  Jonathan Bedard  <jbedard@apple.com>
 
+        run-webkit-tests: Make usability test on booting simulators more robust
+        https://bugs.webkit.org/show_bug.cgi?id=204423
+        <rdar://problem/57364735>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.is_usable): Use regular expressions to find home-screen service.
+
+2019-11-20  Jonathan Bedard  <jbedard@apple.com>
+
         run-webkit-tests: Do not create global SystemHost objects
         https://bugs.webkit.org/show_bug.cgi?id=204426
 
