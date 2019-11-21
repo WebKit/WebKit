@@ -1,3 +1,12 @@
+2019-11-21  Matt Lewis  <jlewis3@apple.com>
+
+        Fix triggers for catalina debug and webgl testers.
+        https://bugs.webkit.org/show_bug.cgi?id=204456
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2019-11-21  Jonathan Bedard  <jbedard@apple.com>
 
         build.webkit.org: Forward results database credentials to jsc test runs
