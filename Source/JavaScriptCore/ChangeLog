@@ -1,3 +1,36 @@
+2019-11-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Extend MacroAssemblerARM64::load/store for datasize = 16
+        https://bugs.webkit.org/show_bug.cgi?id=204442
+        <rdar://problem/57366761>
+
+        Reviewed by Mark Lam.
+
+        Our `void load16(const void* address, RegisterID dest)` and `void store16(RegisterID src, const void* address)` are not aware of
+        the condition that passed register can be memoryTempRegister, while `MacroAssemblerARM64::{load,store}` handles it correctly, e.g.
+        `load` invalidates `cachedMemoryTempRegister` if destination register is memoryTempRegister. As a result, when we are emitting
+        `or16(TrustedImm32 imm, AbsoluteAddress address)` with address where the address's value does not fit in imm, the generated code
+        is reusing memoryTempRegister incorrectly.
+
+            0xedf8d4fb4: mov    x17, #0x7af0
+            0xedf8d4fb8: movk   x17, #0xd5a, lsl #16
+            0xedf8d4fbc: movk   x17, #0x1, lsl #32        // Construct imm register on x17.
+            0xedf8d4fc0: ldrh   w17, [x17]                // Load half word from x17 to w17 (we should invalidate x17 memoryTempRegister here).
+            0xedf8d4fc4: mov    w16, #0x1b
+            0xedf8d4fc8: orr    w16, w17, w16
+            0xedf8d4fcc: strh   w16, [x17]                // x17 memoryTempRegister is reused while its content is invalid.
+
+        The problem is that `load` and `store` functions are not supporting datasize = 16 case. This patch extends `MacroAssemblerARM64::{load,store}`
+        to support 16 so that `or16` implementation looks is similar to `or32` etc.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::load):
+        (JSC::MacroAssemblerARM64::store):
+        * assembler/testmasm.cpp:
+        (JSC::testOrImmMem):
+
 2019-11-20  Saam Barati  <sbarati@apple.com>
 
         Baseline JIT should fill in StructureStubInfo's propertyIsInt32 and the slow path should update the array profile more frequently

@@ -1127,6 +1127,16 @@ void testOrImmMem()
     });
     invoke<void>(or16);
     CHECK_EQ(memoryLocation, 0x12341234 | 42);
+
+    memoryLocation = 0x12341234;
+    auto or16InvalidLogicalImmInARM64 = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.or16(CCallHelpers::TrustedImm32(0), CCallHelpers::AbsoluteAddress(&memoryLocation));
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    invoke<void>(or16InvalidLogicalImmInARM64);
+    CHECK_EQ(memoryLocation, 0x12341234);
 }
 
 void testByteSwap()

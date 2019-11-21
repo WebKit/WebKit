@@ -1254,8 +1254,7 @@ public:
 
     void load16(const void* address, RegisterID dest)
     {
-        moveToCachedReg(TrustedImmPtr(address), cachedMemoryTempRegister());
-        m_assembler.ldrh(dest, memoryTempRegister, 0);
+        load<16>(address, dest);
     }
 
     void load16Unaligned(ImplicitAddress address, RegisterID dest)
@@ -1568,8 +1567,7 @@ public:
 
     void store16(RegisterID src, const void* address)
     {
-        moveToCachedReg(TrustedImmPtr(address), cachedMemoryTempRegister());
-        m_assembler.strh(src, memoryTempRegister, 0);
+        store<16>(src, address);
     }
 
     void store16(TrustedImm32 imm, const void* address)
@@ -4220,12 +4218,12 @@ protected:
 
             if (isInt<32>(addressDelta)) {
                 if (Assembler::canEncodeSImmOffset(addressDelta)) {
-                    m_assembler.ldur<datasize>(dest,  memoryTempRegister, addressDelta);
+                    loadUnscaledImmediate<datasize>(dest, memoryTempRegister, addressDelta);
                     return;
                 }
 
                 if (Assembler::canEncodePImmOffset<datasize>(addressDelta)) {
-                    m_assembler.ldr<datasize>(dest,  memoryTempRegister, addressDelta);
+                    loadUnsignedImmediate<datasize>(dest, memoryTempRegister, addressDelta);
                     return;
                 }
             }
@@ -4233,7 +4231,10 @@ protected:
             if ((addressAsInt & (~maskHalfWord0)) == (currentRegisterContents & (~maskHalfWord0))) {
                 m_assembler.movk<64>(memoryTempRegister, addressAsInt & maskHalfWord0, 0);
                 cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
-                m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
+                if constexpr (datasize == 16)
+                    m_assembler.ldrh(dest, memoryTempRegister, ARM64Registers::zr);
+                else
+                    m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
                 return;
             }
         }
@@ -4243,7 +4244,10 @@ protected:
             cachedMemoryTempRegister().invalidate();
         else
             cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
-        m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
+        if constexpr (datasize == 16)
+            m_assembler.ldrh(dest, memoryTempRegister, ARM64Registers::zr);
+        else
+            m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
     template<int datasize>
@@ -4257,12 +4261,12 @@ protected:
 
             if (isInt<32>(addressDelta)) {
                 if (Assembler::canEncodeSImmOffset(addressDelta)) {
-                    m_assembler.stur<datasize>(src, memoryTempRegister, addressDelta);
+                    storeUnscaledImmediate<datasize>(src, memoryTempRegister, addressDelta);
                     return;
                 }
 
                 if (Assembler::canEncodePImmOffset<datasize>(addressDelta)) {
-                    m_assembler.str<datasize>(src, memoryTempRegister, addressDelta);
+                    storeUnsignedImmediate<datasize>(src, memoryTempRegister, addressDelta);
                     return;
                 }
             }
@@ -4270,14 +4274,20 @@ protected:
             if ((addressAsInt & (~maskHalfWord0)) == (currentRegisterContents & (~maskHalfWord0))) {
                 m_assembler.movk<64>(memoryTempRegister, addressAsInt & maskHalfWord0, 0);
                 cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
-                m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
+                if constexpr (datasize == 16)
+                    m_assembler.strh(src, memoryTempRegister, ARM64Registers::zr);
+                else
+                    m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
                 return;
             }
         }
 
         move(TrustedImmPtr(address), memoryTempRegister);
         cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
-        m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
+        if constexpr (datasize == 16)
+            m_assembler.strh(src, memoryTempRegister, ARM64Registers::zr);
+        else
+            m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
     }
 
     template <int dataSize>
