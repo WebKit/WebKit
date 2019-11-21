@@ -1,3 +1,15 @@
+2019-11-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r234440): [Mac WK2 ] Layout Test http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html is flaky timeout (194164)
+        <https://bugs.webkit.org/show_bug.cgi?id=194164>
+        <rdar://problem/48011649>
+
+        Reviewed by John Wilander.
+
+        Test no longer flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-11-21  Youenn Fablet  <youenn@apple.com>
 
         Regression (r252660): Layout Test platform/ios/mediastream/audio-muted-in-background-tab.html is failing
