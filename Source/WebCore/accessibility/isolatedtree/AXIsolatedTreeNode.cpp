@@ -74,6 +74,27 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object)
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
 
+    setProperty(AXPropertyName::IsChecked, object.isChecked());
+    setProperty(AXPropertyName::IsEnabled, object.isEnabled());
+    setProperty(AXPropertyName::IsSelected, object.isSelected());
+    setProperty(AXPropertyName::IsFocused, object.isFocused());
+    setProperty(AXPropertyName::IsHovered, object.isHovered());
+    setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
+    setProperty(AXPropertyName::IsLoaded, object.isLoaded());
+    setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
+    setProperty(AXPropertyName::IsOnScreen, object.isOnScreen());
+    setProperty(AXPropertyName::IsOffScreen, object.isOffScreen());
+    setProperty(AXPropertyName::IsPressed, object.isPressed());
+    setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
+    setProperty(AXPropertyName::IsVisited, object.isVisited());
+    setProperty(AXPropertyName::IsRequired, object.isRequired());
+    setProperty(AXPropertyName::SupportsRequiredAttribute, object.supportsRequiredAttribute());
+    setProperty(AXPropertyName::IsLinked, object.isLinked());
+    setProperty(AXPropertyName::IsExpanded, object.isExpanded());
+    setProperty(AXPropertyName::IsVisible, object.isVisible());
+    setProperty(AXPropertyName::IsCollapsed, object.isCollapsed());
+    setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
+
     if (bool isMathElement = object.isMathElement()) {
         setProperty(AXPropertyName::IsMathElement, isMathElement);
         setProperty(AXPropertyName::IsAnonymousMathOperator, object.isAnonymousMathOperator());

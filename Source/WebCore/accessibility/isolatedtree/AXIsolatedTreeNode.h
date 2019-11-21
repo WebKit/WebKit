@@ -156,31 +156,31 @@ private:
     bool isSummary() const override { return false; }
     bool isOutput() const override { return false; }
 
-    bool isChecked() const override { return false; }
-    bool isEnabled() const override { return false; }
-    bool isSelected() const override { return false; }
-    bool isFocused() const override { return false; }
-    bool isHovered() const override { return false; }
-    bool isIndeterminate() const override { return false; }
-    bool isLoaded() const override { return false; }
-    bool isMultiSelectable() const override { return false; }
-    bool isOnScreen() const override { return false; }
-    bool isOffScreen() const override { return !isOnScreen(); }
-    bool isPressed() const override { return false; }
-    bool isUnvisited() const override { return false; }
-    bool isVisited() const override { return false; }
-    bool isRequired() const override { return false; }
-    bool supportsRequiredAttribute() const override { return false; }
-    bool isLinked() const override { return false; }
-    bool isExpanded() const override { return false; }
-    bool isVisible() const override { return false; }
-    bool isCollapsed() const override { return false; }
-    void setIsExpanded(bool) override { }
+    bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
+    bool isEnabled() const override { return boolAttributeValue(AXPropertyName::IsEnabled); }
+    bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
+    bool isFocused() const override { return boolAttributeValue(AXPropertyName::IsFocused); }
+    bool isHovered() const override { return boolAttributeValue(AXPropertyName::IsHovered); }
+    bool isIndeterminate() const override { return boolAttributeValue(AXPropertyName::IsIndeterminate); }
+    bool isLoaded() const override { return boolAttributeValue(AXPropertyName::IsLoaded); }
+    bool isMultiSelectable() const override { return boolAttributeValue(AXPropertyName::IsMultiSelectable); }
+    bool isOnScreen() const override { return boolAttributeValue(AXPropertyName::IsOnScreen); }
+    bool isOffScreen() const override { return boolAttributeValue(AXPropertyName::IsOffScreen); }
+    bool isPressed() const override { return boolAttributeValue(AXPropertyName::IsPressed); }
+    bool isUnvisited() const override { return boolAttributeValue(AXPropertyName::IsUnvisited); }
+    bool isVisited() const override { return boolAttributeValue(AXPropertyName::IsVisited); }
+    bool isRequired() const override { return boolAttributeValue(AXPropertyName::IsRequired); }
+    bool supportsRequiredAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
+    bool isLinked() const override { return boolAttributeValue(AXPropertyName::IsLinked); }
+    bool isExpanded() const override { return boolAttributeValue(AXPropertyName::IsExpanded); }
+    bool isVisible() const override { return boolAttributeValue(AXPropertyName::IsVisible); }
+    bool isCollapsed() const override { return boolAttributeValue(AXPropertyName::IsCollapsed); }
     FloatRect relativeFrame() const override { return rectAttributeValue<FloatRect>(AXPropertyName::RelativeFrame); }
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
 
-    bool isSelectedOptionActive() const override { return false; }
+    bool isSelectedOptionActive() const override { return boolAttributeValue(AXPropertyName::IsSelectedOptionActive); }
 
+    void setIsExpanded(bool) override { }
     bool hasBoldFont() const override { return false; }
     bool hasItalicFont() const override { return false; }
     bool hasMisspelling() const override { return false; }
@@ -644,10 +644,19 @@ private:
         IsAccessibilityIgnored,
         IsAnonymousMathOperator,
         IsAttachment,
+        IsChecked,
+        IsCollapsed,
+        IsEnabled,
+        IsExpanded,
         IsFileUploadButton,
+        IsFocused,
         IsImage,
         IsImageMapLink,
+        IsIndeterminate,
         IsLink,
+        IsLinked,
+        IsLoaded,
+        IsHovered,
         IsMathElement,
         IsMathFraction,
         IsMathFenced,
@@ -669,9 +678,19 @@ private:
         IsMathToken,
         IsMathScriptObject,
         IsMediaControlLabel,
+        IsMultiSelectable,
+        IsOffScreen,
+        IsOnScreen,
+        IsPressed,
+        IsRequired,
         IsScrollbar,
+        IsSelected,
+        IsSelectedOptionActive,
         IsTree,
         IsTreeItem,
+        IsUnvisited,
+        IsVisible,
+        IsVisited,
         MathFencedOpenString,
         MathFencedCloseString,
         MathLineThickness,
@@ -690,6 +709,7 @@ private:
         RoleDescription,
         ARIALandmarkRoleDescription,
         SpeechHint,
+        SupportsRequiredAttribute,
         Title,
     };
 
