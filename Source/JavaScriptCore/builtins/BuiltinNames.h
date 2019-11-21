@@ -132,7 +132,6 @@ namespace JSC {
     macro(isRegExp) \
     macro(replaceUsingRegExp) \
     macro(replaceUsingStringSearch) \
-    macro(replaceAllUsingStringSearch) \
     macro(makeTypeError) \
     macro(mapBucket) \
     macro(mapBucketHead) \

@@ -259,30 +259,6 @@ function replace(search, replace)
     return thisString.@replaceUsingStringSearch(searchString, replace);
 }
 
-function replaceAll(search, replace)
-{
-    "use strict";
-
-    if (@isUndefinedOrNull(this))
-        @throwTypeError("String.prototype.replaceAll requires |this| not to be null nor undefined");
-
-    if (search != null) {
-        if (@isRegExp(search) && !@stringIncludesInternal.@call(@toString(search.flags), "g"))
-            @throwTypeError("String.prototype.replaceAll argument must not be a non-global regular expression");
-
-        var replacer = search.@replaceSymbol;
-        if (replacer !== @undefined) {
-            if (!@hasObservableSideEffectsForStringReplace(search, replacer))
-                return @toString(this).@replaceUsingRegExp(search, replace);
-            return replacer.@call(search, this, replace);
-        }
-    }
-
-    var thisString = @toString(this);
-    var searchString = @toString(search);
-    return thisString.@replaceAllUsingStringSearch(searchString, replace);
-}
-
 function search(regexp)
 {
     "use strict";

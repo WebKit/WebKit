@@ -1,3 +1,20 @@
+2019-11-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r252683 and r252721.
+        https://bugs.webkit.org/show_bug.cgi?id=204475
+
+        13% regression in JetStream2/prepack-wtb (Requested by
+        yusukesuzuki on #webkit).
+
+        Reverted changesets:
+
+        "Implement String.prototype.replaceAll"
+        https://bugs.webkit.org/show_bug.cgi?id=202471
+        https://trac.webkit.org/changeset/252683
+
+        "Unreviewed, address Darin's feedback on r252683."
+        https://trac.webkit.org/changeset/252721
+
 2019-11-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: removing the blackbox for a specific script doesn't actually remove the blackbox
