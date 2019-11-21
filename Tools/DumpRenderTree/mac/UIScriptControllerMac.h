@@ -50,7 +50,7 @@ public:
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     NSUndoManager *platformUndoManager() const override;
     void copyText(JSStringRef) override;
-    void activateDataListSuggestion(long, JSValueRef) override;
+    void activateDataListSuggestion(unsigned, JSValueRef) override;
 };
 
 }

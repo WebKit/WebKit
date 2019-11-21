@@ -43,7 +43,7 @@ public:
     double zoomScale() const override;
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
-    void activateDataListSuggestion(long index, JSValueRef callback) override;
+    void activateDataListSuggestion(unsigned index, JSValueRef callback) override;
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
     void playBackEventStream(JSStringRef, JSValueRef) override;

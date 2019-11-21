@@ -1032,7 +1032,7 @@ void UIScriptControllerIOS::completeBackSwipe(JSValueRef callback)
     [webView() _completeBackSwipeForTesting];
 }
 
-void UIScriptControllerIOS::activateDataListSuggestion(long index, JSValueRef callback)
+void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRef callback)
 {
     // FIXME: Not implemented.
     UNUSED_PARAM(index);

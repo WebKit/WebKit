@@ -100,7 +100,7 @@ bool UIScriptControllerMac::isShowingDataListSuggestions() const
     return dataListSuggestionsTableView();
 }
 
-void UIScriptControllerMac::activateDataListSuggestion(long index, JSValueRef callback)
+void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 

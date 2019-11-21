@@ -1,3 +1,24 @@
+2019-11-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Correct argument types in UIScriptController::activateDataListSuggestion after r252062
+        https://bugs.webkit.org/show_bug.cgi?id=203116
+
+        Reviewed by Tim Horton.
+
+        Use `unsigned` to represent `unsigned long` arguments declared in the IDL.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::activateDataListSuggestion):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+
 2019-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-api-tests reports AssertionError os.pathsep not in value in _append_value_colon_separated in Cygwin Python

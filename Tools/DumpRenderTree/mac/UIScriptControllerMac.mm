@@ -100,7 +100,7 @@ JSObjectRef UIScriptControllerMac::contentsOfUserInterfaceItem(JSStringRef inter
 #endif
 }
 
-void UIScriptControllerMac::activateDataListSuggestion(long index, JSValueRef callback)
+void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRef callback)
 {
     // FIXME: Not implemented.
     UNUSED_PARAM(index);

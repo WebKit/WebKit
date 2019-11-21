@@ -129,7 +129,7 @@ public:
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
-    void activateDataListSuggestion(long, JSValueRef) override;
+    void activateDataListSuggestion(unsigned, JSValueRef) override;
     void drawSquareInEditableImage() override;
     long numberOfStrokesInEditableImage() override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
