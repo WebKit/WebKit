@@ -2007,9 +2007,17 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject* globalObj
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue subscript = JSValue::decode(encodedSubscript);
 
+    CodeBlock* codeBlock = callFrame->codeBlock();
+
     if (baseValue.isCell() && subscript.isInt32()) {
-        if (stubInfo->considerCaching(vm, callFrame->codeBlock(), baseValue.structureOrNull()))
-            repatchArrayGetByVal(globalObject, callFrame->codeBlock(), baseValue, subscript, *stubInfo);
+        Structure* structure = baseValue.asCell()->structure(vm);
+        if (stubInfo->considerCaching(vm, codeBlock, structure)) {
+            if (profile) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                profile->computeUpdatedPrediction(locker, codeBlock, structure);
+            }
+            repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo);
+        }
     }
 
     if (baseValue.isCell() && isStringOrSymbol(subscript)) {
@@ -2020,7 +2028,6 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject* globalObj
             return JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, [&] (bool found, PropertySlot& slot) -> JSValue {
                 LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(vm), propertyName, baseValue == slot.slotBase())); 
                 
-                CodeBlock* codeBlock = callFrame->codeBlock();
                 if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
                     repatchGetBy(globalObject, codeBlock, baseValue, propertyName, slot, *stubInfo, GetByKind::NormalByVal);
                 return found ? slot.getValue(globalObject, propertyName) : jsUndefined();

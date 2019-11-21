@@ -1,3 +1,18 @@
+2019-11-20  Saam Barati  <sbarati@apple.com>
+
+        Baseline JIT should fill in StructureStubInfo's propertyIsInt32 and the slow path should update the array profile more frequently
+        https://bugs.webkit.org/show_bug.cgi?id=204432
+
+        Reviewed by Tadeu Zagallo.
+
+        When I added inline caching for get by val, I removed code which updated the
+        ArrayProfile with some frequency. This patch adds code that does that back,
+        which recovers some of the JetStream2 regressions we are seeing.
+
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+
 2019-11-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, address Darin's feedback on r252683.

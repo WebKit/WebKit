@@ -70,6 +70,8 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
     JITGetByValGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
+    if (isOperandConstantInt(property))
+        gen.stubInfo()->propertyIsInt32 = true;
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByVals.append(gen);
