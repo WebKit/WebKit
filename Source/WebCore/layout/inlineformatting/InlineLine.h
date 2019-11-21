@@ -61,7 +61,7 @@ public:
     bool hasContent() const { return !isVisuallyEmpty(); }
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
-    LayoutUnit trailingTrimmableWidth() const;
+    LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
 
     const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
@@ -152,13 +152,32 @@ private:
 
     const InlineFormattingContext& m_inlineFormattingContext;
     Vector<std::unique_ptr<InlineItemRun>, 50> m_inlineItemRuns;
-    Vector<InlineItemRun*, 5> m_trimmableRuns;
+    struct TrimmableContent {
+        void append(InlineItemRun&);
+        void clear();
+
+        LayoutUnit width() const { return m_width; }
+        using TrimmableList = Vector<InlineItemRun*, 5>;
+        TrimmableList& runs() { return m_inlineItemRuns; }
+        bool isEmpty() const { return m_inlineItemRuns.isEmpty(); }
+
+    private:
+        TrimmableList m_inlineItemRuns;
+        LayoutUnit m_width;
+    };
+    TrimmableContent m_trimmableContent;
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_skipAlignment { false };
     LineBox m_lineBox;
 };
+
+inline void Line::TrimmableContent::clear()
+{
+    m_inlineItemRuns.clear();
+    m_width = { };
+}
 
 }
 }

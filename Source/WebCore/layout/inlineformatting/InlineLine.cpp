@@ -426,16 +426,17 @@ void Line::alignContentHorizontally(RunList& runList, IsLastLineWithInlineConten
 
 void Line::removeTrailingTrimmableContent()
 {
+    if (m_trimmableContent.isEmpty() || m_inlineItemRuns.isEmpty())
+        return;
+
     // Collapse trimmable trailing content
-    LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableRuns) {
+    for (auto* trimmableRun : m_trimmableContent.runs()) {
         ASSERT(trimmableRun->isText());
         // FIXME: We might need to be able to differentiate between trimmed and collapsed runs.
-        trimmableWidth += trimmableRun->logicalRect().width();
         trimmableRun->setCollapsesToZeroAdvanceWidth();
     }
-    m_lineBox.shrinkHorizontally(trimmableWidth);
-    m_trimmableRuns.clear();
+    m_lineBox.shrinkHorizontally(m_trimmableContent.width());
+    m_trimmableContent.clear();
 }
 
 void Line::moveLogicalLeft(LayoutUnit delta)
@@ -451,14 +452,6 @@ void Line::moveLogicalRight(LayoutUnit delta)
 {
     ASSERT(delta > 0);
     m_lineLogicalWidth -= delta;
-}
-
-LayoutUnit Line::trailingTrimmableWidth() const
-{
-    LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableRuns)
-        trimmableWidth += trimmableRun->logicalRect().width();
-    return trimmableWidth;
 }
 
 void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -507,7 +500,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 {
     auto isTrimmable = !shouldPreserveTrailingContent(inlineItem);
     if (!isTrimmable)
-        m_trimmableRuns.clear();
+        m_trimmableContent.clear();
 
     auto willCollapseCompletely = [&] {
         // Empty run.
@@ -560,7 +553,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
-        m_trimmableRuns.append(lineRun.get());
+        m_trimmableContent.append(*lineRun);
 
     m_lineBox.expandHorizontally(lineRun->logicalRect().width());
     m_inlineItemRuns.append(WTFMove(lineRun));
@@ -583,7 +576,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_lineBox.setIsConsideredNonEmpty();
-    m_trimmableRuns.clear();
+    m_trimmableContent.clear();
 }
 
 void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -710,6 +703,13 @@ LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
 
     // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
     return boxGeometry.marginBoxHeight();
+}
+
+void Line::TrimmableContent::append(InlineItemRun& inlineItemRun)
+{
+    ASSERT(inlineItemRun.logicalRect().width() >= 0);
+    m_width += inlineItemRun.logicalRect().width();
+    m_inlineItemRuns.append(&inlineItemRun);
 }
 
 LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

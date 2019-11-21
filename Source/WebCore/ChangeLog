@@ -1,3 +1,26 @@
+2019-11-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Cache trailing trimmable width.
+        https://bugs.webkit.org/show_bug.cgi?id=204466
+        <rdar://problem/57403888>
+
+        Reviewed by Antti Koivisto.
+
+        Line::trailingTrimmableWidth() is called every time we pass a run to the line breaker because their accumulated widths are part of the "available width context".
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::TrimmableContent::append):
+        (WebCore::Layout::Line::trailingTrimmableWidth const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::trailingTrimmableWidth const):
+        (WebCore::Layout::Line::TrimmableContent::width const):
+        (WebCore::Layout::Line::TrimmableContent::runs):
+        (WebCore::Layout::Line::TrimmableContent::isEmpty const):
+        (WebCore::Layout::Line::TrimmableContent::clear):
+
 2019-11-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: support more attributes for AXIsolatedTreeNode
