@@ -380,13 +380,13 @@ sub configurationForUpload()
     } elsif (isGtk()) {
         $platform = 'GTK';
         if (!$version) {
-            chomp($version = `/usr/bin/uname -r`);
+            chomp($version = `uname -r`);
             $version = splitVersionString($version);
         }
     } elsif (isWPE()) {
         $platform = 'WPE';
         if (!$version) {
-            chomp($version = `/usr/bin/uname -r`);
+            chomp($version = `uname -r`);
             $version = splitVersionString($version);
         }
     } elsif (isAnyWindows()) {
