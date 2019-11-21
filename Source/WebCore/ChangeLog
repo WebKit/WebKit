@@ -1,3 +1,22 @@
+2019-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web process crashes when attempting to request document context in a textarea
+        https://bugs.webkit.org/show_bug.cgi?id=204455
+        <rdar://problem/57383975>
+
+        Reviewed by Tim Horton.
+
+        Make `WebCore::rangesOverlap` robust in the case where the ranges' container nodes are in different tree scopes.
+        Currently, `compareBoundaryPoints` returns an exception in this scenario, which `rangesOverlap` does not expect.
+        As a result, we crash when releasing the return value after boundary point comparison. To fix this, just upgrade
+        the `ownerDocument` check in `rangesOverlap` to check for tree scopes instead, via the
+        `areNodesConnectedInSameTreeScope` helper function.
+
+        Test: WebKit.DocumentEditingContextSpatialRequestInTextField
+
+        * dom/Range.cpp:
+        (WebCore::rangesOverlap):
+
 2019-11-21  Antti Koivisto  <antti@apple.com>
 
         Tighten ScrollingTreeNode tree mutations

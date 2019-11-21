@@ -1573,7 +1573,7 @@ bool rangesOverlap(const Range* a, const Range* b)
     if (a == b)
         return true;
 
-    if (a->commonAncestorContainer()->ownerDocument() != b->commonAncestorContainer()->ownerDocument())
+    if (!areNodesConnectedInSameTreeScope(a->commonAncestorContainer(), b->commonAncestorContainer()))
         return false;
 
     short startToStart = a->compareBoundaryPoints(Range::START_TO_START, *b).releaseReturnValue();

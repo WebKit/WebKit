@@ -37,6 +37,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 #define EXPECT_NSSTRING_EQ(expected, actual) \
     EXPECT_TRUE([actual isKindOfClass:[NSString class]]); \
@@ -64,6 +65,7 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 
 @interface UIWKDocumentContext (TestRunner)
 @property (nonatomic, readonly) NSArray<NSValue *> *markedTextRects;
+@property (nonatomic, readonly) NSArray<NSValue *> *textRects;
 @end
 
 @implementation UIWKDocumentContext (TestRunner)
@@ -71,12 +73,29 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 - (NSArray<NSValue *> *)markedTextRects
 {
     // This should ideally be equivalent to [self characterRectsForCharacterRange:self.markedTextRange]. However, the implementation
-    // of -characterRectsForCharacterRange: in UIKit doesn't guarantee any order to the returned character rects.
+    // of -characterRectsForCharacterRange: in UIKit doesn't guarantee any order to the returned character rects. See: <rdar://57338528>.
     NSRange range = self.markedTextRange;
     NSMutableArray *rects = [NSMutableArray arrayWithCapacity:range.length];
     for (auto location = range.location; location < range.location + range.length; ++location)
         [rects addObject:[self characterRectsForCharacterRange:NSMakeRange(location, 1)].firstObject];
     return rects;
+}
+
+- (NSArray<NSValue *> *)textRects
+{
+    Vector<std::pair<NSRange, CGRect>> rangesAndRects;
+    [self enumerateLayoutRects:[&](NSRange characterRange, CGRect layoutRect, BOOL *) {
+        rangesAndRects.append(std::make_pair(characterRange, layoutRect));
+    }];
+
+    std::sort(rangesAndRects.begin(), rangesAndRects.end(), [](auto& a, auto& b) {
+        return a.first.location < b.first.location;
+    });
+
+    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:rangesAndRects.size()]);
+    for (auto& rangeAndRect : rangesAndRects)
+        [result addObject:[NSValue valueWithCGRect:rangeAndRect.second]];
+    return result.autorelease();
 }
 
 @end
@@ -348,6 +367,31 @@ TEST(WebKit, DocumentEditingContextWithMarkedText)
             EXPECT_EQ(CGRectMake(37, 8, 8, 19), [rectValues[1] CGRectValue]);
             EXPECT_EQ(CGRectMake(44, 8, 6, 19), [rectValues[2] CGRectValue]);
         }
+    }
+}
+
+TEST(WebKit, DocumentEditingContextSpatialRequestInTextField)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<span style='-webkit-text-size-adjust: none;'>Hello<input type='text' value='foo bar' />world</span>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
+
+    auto request = retainPtr(makeRequest(UIWKDocumentRequestRects | UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityCharacter, 0, [webView textInputContentView].bounds));
+    auto context = retainPtr([webView synchronouslyRequestDocumentContext:request.get()]);
+    auto *textRects = [context textRects];
+    EXPECT_EQ(10U, textRects.count);
+    if (textRects.count >= 10) {
+        EXPECT_EQ(CGRectMake(8, 9, 12, 19), textRects[0].CGRectValue);
+        EXPECT_EQ(CGRectMake(19, 9, 8, 19), textRects[1].CGRectValue);
+        EXPECT_EQ(CGRectMake(26, 9, 6, 19), textRects[2].CGRectValue);
+        EXPECT_EQ(CGRectMake(31, 9, 5, 19), textRects[3].CGRectValue);
+        EXPECT_EQ(CGRectMake(35, 9, 9, 19), textRects[4].CGRectValue);
+        EXPECT_EQ(CGRectMake(182, 9, 13, 19), textRects[5].CGRectValue);
+        EXPECT_EQ(CGRectMake(194, 9, 9, 19), textRects[6].CGRectValue);
+        EXPECT_EQ(CGRectMake(202, 9, 6, 19), textRects[7].CGRectValue);
+        EXPECT_EQ(CGRectMake(207, 9, 6, 19), textRects[8].CGRectValue);
+        EXPECT_EQ(CGRectMake(212, 9, 9, 19), textRects[9].CGRectValue);
     }
 }
 

@@ -138,6 +138,7 @@ WTF_EXTERN_C_END
 @property (nonatomic, copy) NSAttributedString *annotatedText;
 @property (nonatomic, readonly) NSRange markedTextRange;
 
+- (void)enumerateLayoutRects:(void (^)(NSRange characterRange, CGRect layoutRect, BOOL *stop))block;
 - (NSArray<NSValue *> *)characterRectsForCharacterRange:(NSRange)range;
 
 @end
