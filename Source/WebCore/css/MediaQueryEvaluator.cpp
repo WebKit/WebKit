@@ -46,7 +46,6 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "StyleResolver.h"
 #include "Theme.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -146,7 +145,7 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Style::Resolver* styleResolver) const
+bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults) const
 {
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
 
@@ -170,12 +169,15 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Style::Resolve
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
                 bool expressionResult = evaluate(expressions[j]);
-                if (styleResolver && isViewportDependent(expressions[j].mediaFeature()))
-                    styleResolver->addViewportDependentMediaQueryResult(expressions[j], expressionResult);
-                if (styleResolver && isAccessibilitySettingsDependent(expressions[j].mediaFeature()))
-                    styleResolver->addAccessibilitySettingsDependentMediaQueryResult(expressions[j], expressionResult);
-                if (styleResolver && isAppearanceDependent(expressions[j].mediaFeature()))
-                    styleResolver->addAppearanceDependentMediaQueryResult(expressions[j], expressionResult);
+                if (dynamicResults) {
+                    if (isViewportDependent(expressions[j].mediaFeature()))
+                        dynamicResults->viewport.append({ expressions[j], expressionResult });
+                    if (isAppearanceDependent(expressions[j].mediaFeature()))
+                        dynamicResults->appearance.append({ expressions[j], expressionResult });
+                    if (isAccessibilitySettingsDependent(expressions[j].mediaFeature()))
+                        dynamicResults->accessibilitySettings.append({ expressions[j], expressionResult });
+                }
+
                 if (!expressionResult)
                     break;
             }
@@ -187,39 +189,6 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Style::Resolve
     }
 
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate " << querySet << " returning " << result);
-    return result;
-}
-
-bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, Vector<MediaQueryResult>& viewportDependentResults, Vector<MediaQueryResult>& appearanceDependentResults) const
-{
-    auto& queries = querySet.queryVector();
-    if (!queries.size())
-        return true;
-
-    bool result = false;
-    for (size_t i = 0; i < queries.size() && !result; ++i) {
-        auto& query = queries[i];
-
-        if (query.ignored())
-            continue;
-
-        if (mediaTypeMatch(query.mediaType())) {
-            auto& expressions = query.expressions();
-            size_t j = 0;
-            for (; j < expressions.size(); ++j) {
-                bool expressionResult = evaluate(expressions[j]);
-                if (isViewportDependent(expressions[j].mediaFeature()))
-                    viewportDependentResults.append({ expressions[j], expressionResult });
-                if (isAppearanceDependent(expressions[j].mediaFeature()))
-                    appearanceDependentResults.append({ expressions[j], expressionResult });
-                if (!expressionResult)
-                    break;
-            }
-            result = applyRestrictor(query.restrictor(), expressions.size() == j);
-        } else
-            result = applyRestrictor(query.restrictor(), false);
-    }
-
     return result;
 }
 

@@ -38,13 +38,11 @@ public:
 
     void sourcesChanged();
 
-    void clearViewportDependentResults() { m_viewportDependentMediaQueryResults.clear(); }
-    bool hasViewportDependentResults() const { return m_viewportDependentMediaQueryResults.size(); }
-    Vector<MediaQueryResult>& viewportDependentResults() { return m_viewportDependentMediaQueryResults; }
 
-    void clearAppearanceDependentResults() { m_appearanceDependentMediaQueryResults.clear(); }
-    bool hasAppearanceDependentResults() const { return m_appearanceDependentMediaQueryResults.size(); }
-    Vector<MediaQueryResult>& appearanceDependentResults() { return m_appearanceDependentMediaQueryResults; }
+    void setMediaQueryDynamicResults(MediaQueryDynamicResults&& results) { m_mediaQueryDynamicResults = results; }
+
+    bool hasViewportDependentResults() const { return m_mediaQueryDynamicResults.viewport.size(); }
+    bool hasAppearanceDependentResults() const { return m_mediaQueryDynamicResults.appearance.size(); }
 
     bool viewportChangeAffectedPicture() const;
     bool appearanceChangeAffectedPicture() const;
@@ -58,8 +56,7 @@ private:
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
-    Vector<MediaQueryResult> m_appearanceDependentMediaQueryResults;
+    MediaQueryDynamicResults m_mediaQueryDynamicResults;
 };
 
 } // namespace WebCore

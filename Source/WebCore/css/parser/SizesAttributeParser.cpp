@@ -115,7 +115,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondi
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, const_cast<Style::Scope&>(m_document.styleScope()).resolverIfExists());
+    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)

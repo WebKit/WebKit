@@ -35,6 +35,7 @@ namespace WebCore {
 class CSSSelector;
 class MediaQueryEvaluator;
 class StyleSheetContents;
+struct MediaQueryDynamicResults;
 
 namespace Style {
 
@@ -61,7 +62,7 @@ public:
     typedef Vector<RuleData, 1> RuleDataVector;
     typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
-    void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, Style::Resolver* = 0);
+    void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, Style::Resolver* = nullptr);
 
     void addStyleRule(StyleRule*);
     void addRule(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex);
@@ -94,7 +95,7 @@ public:
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
 private:
-    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, Style::Resolver*, bool isInitiatingElementInUserAgentShadowTree);
+    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, Style::Resolver*, MediaQueryDynamicResults&);
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;

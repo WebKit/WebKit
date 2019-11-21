@@ -74,7 +74,7 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, Resolver*);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&);
 
     void resetUserAgentMediaQueryStyle();
 
@@ -84,7 +84,7 @@ public:
 
 private:
     void collectFeatures() const;
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, Resolver&);
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
     std::unique_ptr<RuleSet> m_authorStyle;

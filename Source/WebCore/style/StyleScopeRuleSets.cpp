@@ -77,6 +77,7 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
     m_userAgentMediaQueryStyle = makeUnique<RuleSet>();
+    
     m_userAgentMediaQueryStyle->addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet, mediaQueryEvaluator, &m_styleResolver);
 
     // Viewport dependent queries are currently too inefficient to allow on UA sheet.
@@ -97,17 +98,17 @@ void ScopeRuleSets::initializeUserStyle()
     auto tempUserStyle = makeUnique<RuleSet>();
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), mediaQueryEvaluator, &m_styleResolver);
-    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator, m_styleResolver);
-    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator, m_styleResolver);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = WTFMove(tempUserStyle);
 }
 
-void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, Resolver& resolver)
+void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium)
 {
     for (unsigned i = 0; i < userSheets.size(); ++i) {
         ASSERT(userSheets[i]->contents().isUserStyleSheet());
-        userStyle.addRulesFromSheet(userSheets[i]->contents(), medium, &resolver);
+        userStyle.addRulesFromSheet(userSheets[i]->contents(), medium, &m_styleResolver);
     }
 }
 
@@ -135,17 +136,22 @@ void ScopeRuleSets::resetUserAgentMediaQueryStyle()
     m_userAgentMediaQueryStyle = nullptr;
 }
 
-void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, Resolver* resolver)
+void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
     // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
     // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
+    MediaQueryDynamicResults mediaQueryDynamicResults;
+
     for (auto& cssSheet : styleSheets) {
         ASSERT(!cssSheet->disabled());
-        if (cssSheet->mediaQueries() && !medium->evaluate(*cssSheet->mediaQueries(), resolver))
+        if (cssSheet->mediaQueries() && !medium->evaluate(*cssSheet->mediaQueries(), &mediaQueryDynamicResults))
             continue;
-        m_authorStyle->addRulesFromSheet(cssSheet->contents(), *medium, resolver);
+        m_authorStyle->addRulesFromSheet(cssSheet->contents(), *medium, &m_styleResolver);
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
+
+    m_styleResolver.addMediaQueryDynamicResults(mediaQueryDynamicResults);
+
     m_authorStyle->shrinkToFit();
     collectFeatures();
 }

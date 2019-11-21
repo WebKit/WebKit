@@ -137,7 +137,7 @@ void Resolver::addCurrentSVGFontFaceRules()
 
 void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
 {
-    m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers, this);
+    m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers);
 
     if (auto renderView = document().renderView())
         renderView->style().fontCascade().update(&document().fontSelector());
@@ -602,45 +602,35 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
 }
 
-void Resolver::addViewportDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)
+void Resolver::addMediaQueryDynamicResults(const MediaQueryDynamicResults& results)
 {
-    m_viewportDependentMediaQueryResults.append(MediaQueryResult { expression, result });
+    m_mediaQueryDynamicResults.append(results);
 }
 
 bool Resolver::hasMediaQueriesAffectedByViewportChange() const
 {
     LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByViewportChange evaluating queries");
-    for (auto& result : m_viewportDependentMediaQueryResults) {
+    for (auto& result : m_mediaQueryDynamicResults.viewport) {
         if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
             return true;
     }
     return false;
-}
-
-void Resolver::addAccessibilitySettingsDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)
-{
-    m_accessibilitySettingsDependentMediaQueryResults.append(MediaQueryResult { expression, result });
 }
 
 bool Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange() const
 {
     LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange evaluating queries");
-    for (auto& result : m_accessibilitySettingsDependentMediaQueryResults) {
+    for (auto& result : m_mediaQueryDynamicResults.accessibilitySettings) {
         if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
             return true;
     }
     return false;
 }
 
-void Resolver::addAppearanceDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)
-{
-    m_appearanceDependentMediaQueryResults.append(MediaQueryResult { expression, result });
-}
-
 bool Resolver::hasMediaQueriesAffectedByAppearanceChange() const
 {
     LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByAppearanceChange evaluating queries");
-    for (auto& result : m_appearanceDependentMediaQueryResults) {
+    for (auto& result : m_mediaQueryDynamicResults.appearance) {
         if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
             return true;
     }

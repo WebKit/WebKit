@@ -131,16 +131,14 @@ public:
     ViewportStyleResolver* viewportStyleResolver() { return m_viewportStyleResolver.get(); }
 #endif
 
-    void addViewportDependentMediaQueryResult(const MediaQueryExpression&, bool result);
-    bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
+    void addMediaQueryDynamicResults(const MediaQueryDynamicResults&);
+    bool hasViewportDependentMediaQueries() const { return !m_mediaQueryDynamicResults.viewport.isEmpty(); }
     bool hasMediaQueriesAffectedByViewportChange() const;
 
-    void addAccessibilitySettingsDependentMediaQueryResult(const MediaQueryExpression&, bool result);
-    bool hasAccessibilitySettingsDependentMediaQueries() const { return !m_accessibilitySettingsDependentMediaQueryResults.isEmpty(); }
+    bool hasAccessibilitySettingsDependentMediaQueries() const { return !m_mediaQueryDynamicResults.accessibilitySettings.isEmpty(); }
     bool hasMediaQueriesAffectedByAccessibilitySettingsChange() const;
 
-    void addAppearanceDependentMediaQueryResult(const MediaQueryExpression&, bool result);
-    bool hasAppearanceDependentMediaQueries() const { return !m_appearanceDependentMediaQueryResults.isEmpty(); }
+    bool hasAppearanceDependentMediaQueries() const { return !m_mediaQueryDynamicResults.appearance.isEmpty(); }
     bool hasMediaQueriesAffectedByAppearanceChange() const;
 
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
@@ -202,9 +200,7 @@ private:
 
     RenderStyle* m_overrideDocumentElementStyle { nullptr };
 
-    Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
-    Vector<MediaQueryResult> m_accessibilitySettingsDependentMediaQueryResults;
-    Vector<MediaQueryResult> m_appearanceDependentMediaQueryResults;
+    MediaQueryDynamicResults m_mediaQueryDynamicResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;

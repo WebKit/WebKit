@@ -71,7 +71,7 @@ bool HTMLPictureElement::viewportChangeAffectedPicture() const
 {
     auto documentElement = makeRefPtr(document().documentElement());
     MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
-    for (auto& result : m_viewportDependentMediaQueryResults) {
+    for (auto& result : m_mediaQueryDynamicResults.viewport) {
         LOG(MediaQueries, "HTMLPictureElement %p viewportChangeAffectedPicture evaluating media queries", this);
         if (evaluator.evaluate(result.expression) != result.result)
             return true;
@@ -83,7 +83,7 @@ bool HTMLPictureElement::appearanceChangeAffectedPicture() const
 {
     auto documentElement = makeRefPtr(document().documentElement());
     MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
-    for (auto& result : m_appearanceDependentMediaQueryResults) {
+    for (auto& result : m_mediaQueryDynamicResults.appearance) {
         LOG(MediaQueries, "HTMLPictureElement %p appearanceChangeAffectedPicture evaluating media queries", this);
         if (evaluator.evaluate(result.expression) != result.result)
             return true;

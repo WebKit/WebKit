@@ -265,7 +265,7 @@ void RuleSet::addPageRule(StyleRulePage* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Resolver* resolver, bool isInitiatingElementInUserAgentShadowTree)
+void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Resolver* resolver, MediaQueryDynamicResults& mediaQueryDynamicResults)
 {
     for (auto& rule : rules) {
         if (is<StyleRule>(*rule))
@@ -274,16 +274,16 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             addPageRule(downcast<StyleRulePage>(rule.get()));
         else if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if ((!mediaRule.mediaQueries() || medium.evaluate(*mediaRule.mediaQueries(), resolver)))
-                addChildRules(mediaRule.childRules(), medium, resolver, isInitiatingElementInUserAgentShadowTree);
+            if ((!mediaRule.mediaQueries() || medium.evaluate(*mediaRule.mediaQueries(), &mediaQueryDynamicResults)))
+                addChildRules(mediaRule.childRules(), medium, resolver, mediaQueryDynamicResults);
         } else if (is<StyleRuleFontFace>(*rule) && resolver) {
             // Add this font face to our set.
-            resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), isInitiatingElementInUserAgentShadowTree);
+            resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), false);
             resolver->invalidateMatchedDeclarationsCache();
         } else if (is<StyleRuleKeyframes>(*rule) && resolver)
             resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
         else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
-            addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, isInitiatingElementInUserAgentShadowTree);
+            addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, mediaQueryDynamicResults);
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         else if (is<StyleRuleViewport>(*rule) && resolver)
             resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
@@ -291,17 +291,22 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
     }
 }
 
-void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& medium, Resolver* resolver)
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& mediaQueryEvaluator, Resolver* resolver)
 {
+    MediaQueryDynamicResults mediaQueryDynamicResults;
+
     for (auto& rule : sheet.importRules()) {
-        if (rule->styleSheet() && (!rule->mediaQueries() || medium.evaluate(*rule->mediaQueries(), resolver)))
-            addRulesFromSheet(*rule->styleSheet(), medium, resolver);
+        if (!rule->styleSheet())
+            continue;
+        if (rule->mediaQueries() && !mediaQueryEvaluator.evaluate(*rule->mediaQueries(), &mediaQueryDynamicResults))
+            continue;
+        addRulesFromSheet(*rule->styleSheet(), mediaQueryEvaluator, resolver);
     }
 
-    // FIXME: Skip Content Security Policy check when stylesheet is in a user agent shadow tree.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
-    bool isInitiatingElementInUserAgentShadowTree = false;
-    addChildRules(sheet.childRules(), medium, resolver, isInitiatingElementInUserAgentShadowTree);
+    addChildRules(sheet.childRules(), mediaQueryEvaluator, resolver, mediaQueryDynamicResults);
+
+    if (resolver)
+        resolver->addMediaQueryDynamicResults(mediaQueryDynamicResults);
 
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
