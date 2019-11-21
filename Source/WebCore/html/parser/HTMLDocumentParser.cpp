@@ -31,6 +31,7 @@
 #include "CustomElementReactionQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
+#include "EventLoop.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLParserScheduler.h"
@@ -40,7 +41,6 @@
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "LinkLoader.h"
-#include "Microtasks.h"
 #include "NavigationScheduler.h"
 #include "ScriptElement.h"
 #include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
@@ -216,7 +216,7 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
             // Prevent document.open/write during reactions by allocating the incrementer before the reactions stack.
             ThrowOnDynamicMarkupInsertionCountIncrementer incrementer(*document());
 
-            MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+            document()->eventLoop().performMicrotaskCheckpoint();
 
             CustomElementReactionStack reactionStack(document()->execState());
             auto& elementInterface = constructionData->elementInterface.get();

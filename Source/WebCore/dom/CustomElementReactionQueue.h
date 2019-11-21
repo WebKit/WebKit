@@ -80,7 +80,7 @@ public:
 
 private:
     static void enqueueElementOnAppropriateElementQueue(Element&);
-    static ElementQueue& ensureBackupQueue();
+    static ElementQueue& ensureBackupQueue(Document&);
     static ElementQueue& backupElementQueue();
 
     Ref<JSCustomElementInterface> m_interface;

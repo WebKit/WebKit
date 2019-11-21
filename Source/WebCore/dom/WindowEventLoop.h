@@ -39,13 +39,14 @@ class WindowEventLoop final : public EventLoop {
 public:
     static Ref<WindowEventLoop> ensureForRegistrableDomain(const RegistrableDomain&);
 
-    ~WindowEventLoop();
+    virtual ~WindowEventLoop();
 
 private:
     WindowEventLoop(const RegistrableDomain&);
 
     void scheduleToRun() final;
     bool isContextThread() const final;
+    MicrotaskQueue& microtaskQueue() final;
 
     RegistrableDomain m_domain;
 };

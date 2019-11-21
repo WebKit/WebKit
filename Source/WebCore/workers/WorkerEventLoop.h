@@ -42,11 +42,19 @@ public:
     static Ref<WorkerEventLoop> create(WorkletGlobalScope&);
 #endif
 
+    virtual ~WorkerEventLoop();
+
+    // FIXME: This should be removed once MicrotaskQueue is integrated with EventLoopTaskGroup.
+    void clearMicrotaskQueue();
+
 private:
     explicit WorkerEventLoop(ScriptExecutionContext&);
 
     void scheduleToRun() final;
     bool isContextThread() const;
+    MicrotaskQueue& microtaskQueue() final;
+
+    std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
 };
 
 } // namespace WebCore

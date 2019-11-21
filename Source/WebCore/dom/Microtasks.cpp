@@ -43,24 +43,6 @@ MicrotaskQueue::MicrotaskQueue(JSC::VM& vm)
 
 MicrotaskQueue::~MicrotaskQueue() = default;
 
-MicrotaskQueue& MicrotaskQueue::mainThreadQueue()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<MicrotaskQueue> queue(commonVM());
-    return queue;
-}
-
-MicrotaskQueue& MicrotaskQueue::contextQueue(ScriptExecutionContext& context)
-{
-    // While main thread has many ScriptExecutionContexts, WorkerGlobalScope and worker thread have
-    // one on one correspondence. The lifetime of MicrotaskQueue is aligned to this semantics.
-    // While main thread MicrotaskQueue is persistently held, worker's MicrotaskQueue is held by
-    // WorkerGlobalScope.
-    if (isMainThread())
-        return mainThreadQueue();
-    return downcast<WorkerGlobalScope>(context).microtaskQueue();
-}
-
 void MicrotaskQueue::append(std::unique_ptr<Microtask>&& task)
 {
     m_microtaskQueue.append(WTFMove(task));

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerEventLoop.h"
 
+#include "Microtasks.h"
 #include "WorkerGlobalScope.h"
 #include "WorkletGlobalScope.h"
 
@@ -48,6 +49,10 @@ WorkerEventLoop::WorkerEventLoop(ScriptExecutionContext& context)
 {
 }
 
+WorkerEventLoop::~WorkerEventLoop()
+{
+}
+
 void WorkerEventLoop::scheduleToRun()
 {
     ASSERT(scriptExecutionContext());
@@ -59,6 +64,19 @@ void WorkerEventLoop::scheduleToRun()
 bool WorkerEventLoop::isContextThread() const
 {
     return scriptExecutionContext()->isContextThread();
+}
+
+MicrotaskQueue& WorkerEventLoop::microtaskQueue()
+{
+    ASSERT(scriptExecutionContext());
+    if (!m_microtaskQueue)
+        m_microtaskQueue = makeUnique<MicrotaskQueue>(scriptExecutionContext()->vm());
+    return *m_microtaskQueue;
+}
+
+void WorkerEventLoop::clearMicrotaskQueue()
+{
+    m_microtaskQueue = nullptr;
 }
 
 } // namespace WebCore

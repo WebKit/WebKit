@@ -31,6 +31,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
 #include "Element.h"
+#include "EventLoop.h"
 #include "Frame.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
@@ -453,8 +454,8 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
     // covered by the initial microtask until the next frame.
     if (!inspectorCanvas->currentFrameHasData()) {
         if (auto* scriptExecutionContext = inspectorCanvas->scriptExecutionContext()) {
-            auto& queue = MicrotaskQueue::mainThreadQueue();
-            queue.append(makeUnique<ActiveDOMCallbackMicrotask>(queue, *scriptExecutionContext, [&, protectedInspectorCanvas = inspectorCanvas.copyRef()] {
+            auto& eventLoop = scriptExecutionContext->eventLoop();
+            auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(eventLoop.microtaskQueue(), *scriptExecutionContext, [&, protectedInspectorCanvas = inspectorCanvas.copyRef()] {
                 if (auto* canvasElement = protectedInspectorCanvas->canvasElement()) {
                     if (canvasElement->isDescendantOf(canvasElement->document()))
                         return;
@@ -462,7 +463,8 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
 
                 if (canvasRenderingContext.callTracingActive())
                     didFinishRecordingCanvasFrame(canvasRenderingContext);
-            }));
+            });
+            eventLoop.queueMicrotaskCallback(WTFMove(microtask));
         }
     }
 

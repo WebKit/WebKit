@@ -29,6 +29,7 @@
 
 #include "Element.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLInputStream.h"
@@ -36,7 +37,6 @@
 #include "HTMLScriptRunnerHost.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "InlineClassicScript.h"
-#include "Microtasks.h"
 #include "MutationObserver.h"
 #include "NestingLevelIncrementer.h"
 #include "ScriptElement.h"
@@ -106,8 +106,8 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
     if (pendingScript.watchingForLoad())
         stopWatchingForLoad(pendingScript);
 
-    if (!isExecutingScript())
-        MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+    if (!isExecutingScript() && m_document)
+        m_document->eventLoop().performMicrotaskCheckpoint();
 
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
@@ -241,8 +241,8 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
     // every script element, even if it's not ready to execute yet. There's
     // unfortunately no obvious way to tell if prepareScript is going to
     // execute the script before calling it.
-    if (!isExecutingScript())
-        MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+    if (!isExecutingScript() && m_document)
+        m_document->eventLoop().performMicrotaskCheckpoint();
 
     InsertionPointRecord insertionPointRecord(m_host.inputStream());
     NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);

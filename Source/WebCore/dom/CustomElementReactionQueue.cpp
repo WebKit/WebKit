@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
+#include "EventLoop.h"
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
@@ -293,7 +294,7 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
 {
     ASSERT(element.reactionQueue());
     if (!CustomElementReactionStack::s_currentProcessingStack) {
-        auto& queue = ensureBackupQueue();
+        auto& queue = ensureBackupQueue(element.document());
         queue.add(element);
         return;
     }
@@ -318,23 +319,16 @@ void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
     m_queue = nullptr;
 }
 
-class BackupElementQueueMicrotask final : public Microtask {
-    WTF_MAKE_FAST_ALLOCATED;
-private:
-    Result run() final
-    {
-        CustomElementReactionQueue::processBackupQueue();
-        return Result::Done;
-    }
-};
-
 static bool s_processingBackupElementQueue = false;
 
-CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBackupQueue()
+// FIXME: BackupQueue must be per event loop.
+CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBackupQueue(Document& document)
 {
     if (!s_processingBackupElementQueue) {
         s_processingBackupElementQueue = true;
-        MicrotaskQueue::mainThreadQueue().append(makeUnique<BackupElementQueueMicrotask>());
+        document.eventLoop().queueMicrotask([] {
+            CustomElementReactionQueue::processBackupQueue();
+        });
     }
     return backupElementQueue();
 }

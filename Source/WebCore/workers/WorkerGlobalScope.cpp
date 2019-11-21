@@ -68,7 +68,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
     , m_thread(thread)
     , m_script(makeUnique<WorkerScriptController>(this))
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
-    , m_microtaskQueue(makeUnique<MicrotaskQueue>(m_script->vm()))
     , m_isOnline(isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
@@ -143,7 +142,8 @@ void WorkerGlobalScope::prepareForTermination()
     removeAllEventListeners();
 
     // MicrotaskQueue and RejectedPromiseTracker reference Heap.
-    m_microtaskQueue = nullptr;
+    if (m_eventLoop)
+        m_eventLoop->clearMicrotaskQueue();
     removeRejectedPromiseTracker();
 }
 

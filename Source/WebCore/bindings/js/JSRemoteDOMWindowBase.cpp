@@ -39,7 +39,7 @@ const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable =
     nullptr, // shellSupportsRichSourceInfo
     nullptr, // shouldInterruptScript
     &javaScriptRuntimeFlags,
-    nullptr, // queueTaskToEventLoop
+    nullptr, // queueMicrotaskToEventLoop
     nullptr, // shouldInterruptScriptBeforeTimeout
     nullptr, // moduleLoaderImportModule
     nullptr, // moduleLoaderResolve

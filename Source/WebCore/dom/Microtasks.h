@@ -52,31 +52,11 @@ protected:
     void removeSelfFromQueue(MicrotaskQueue&);
 };
 
-class VoidMicrotask final : public Microtask {
-public:
-    explicit VoidMicrotask(Function<void()>&& function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-private:
-    Result run() final
-    {
-        m_function();
-        return Result::Done;
-    }
-
-    Function<void()> m_function;
-};
-
 class MicrotaskQueue final {
     WTF_MAKE_FAST_ALLOCATED;
     friend NeverDestroyed<MicrotaskQueue>;
     friend class Microtask;
 public:
-    WEBCORE_EXPORT static MicrotaskQueue& mainThreadQueue();
-    WEBCORE_EXPORT static MicrotaskQueue& contextQueue(ScriptExecutionContext&);
-
     WEBCORE_EXPORT MicrotaskQueue(JSC::VM&);
     WEBCORE_EXPORT ~MicrotaskQueue();
 

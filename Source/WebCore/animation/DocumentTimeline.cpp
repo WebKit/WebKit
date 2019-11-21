@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
@@ -388,7 +389,8 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     removeReplacedAnimations();
 
     // 3. Perform a microtask checkpoint.
-    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+    if (auto document = makeRefPtr(this->document()))
+        document->eventLoop().performMicrotaskCheckpoint();
 
     // 4. Let events to dispatch be a copy of doc's pending animation event queue.
     // 5. Clear doc's pending animation event queue.

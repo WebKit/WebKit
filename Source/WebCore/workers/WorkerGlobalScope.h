@@ -45,7 +45,6 @@ namespace WebCore {
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class EventLoopTaskGroup;
-class MicrotaskQueue;
 class Performance;
 class ScheduledAction;
 class WorkerEventLoop;
@@ -89,8 +88,6 @@ public:
     void clearScript() { m_script = nullptr; }
 
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
-
-    MicrotaskQueue& microtaskQueue() const { return *m_microtaskQueue; }
 
     WorkerThread& thread() const { return m_thread; }
 
@@ -191,7 +188,6 @@ private:
     WorkerThread& m_thread;
     std::unique_ptr<WorkerScriptController> m_script;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
-    std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
 
     bool m_closing { false };
     bool m_isOnline;

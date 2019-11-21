@@ -1,3 +1,88 @@
+2019-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MicrotaskQueue should be accessed via EventLoop
+        https://bugs.webkit.org/show_bug.cgi?id=204397
+
+        Reviewed by Antti Koivisto.
+
+        This patch refactors the existing code so that a microtask is always queued via EventLoopTaskGroup.
+        It preserves all other (broken) semantics and behavior like all origins sharing a single microtask queue.
+
+        The singleton MicrotaskQueue for the main thread has been moved from MicrotaskQueue::mainThreadQueue
+        to WindowEventLoop, and an instance of MicrotaskQueue for each worker has been moved from WorkerGlobalScope
+        to WorkerEventLoop.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::internalUpdateAnimationsAndSendEvents):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::updateFinishedState):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueMicrotaskToEventLoop): Renamed from queueTaskToEventLoop.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSExecState.cpp:
+        (WebCore::JSExecState::didLeaveScriptContext):
+        * bindings/js/JSRemoteDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop): Renamed from queueTaskToEventLoop.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        * bindings/js/JSWorkletGlobalScopeBase.h:
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::BackupElementQueueMicrotask): Deleted.
+        (WebCore::CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue):
+        (WebCore::CustomElementReactionQueue::ensureBackupQueue):
+        * dom/CustomElementReactionQueue.h:
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        * dom/EventLoop.cpp:
+        (WebCore::EventLoop::queueMicrotask): Added.
+        (WebCore::EventLoop::performMicrotaskCheckpoint): Added.
+        (WebCore::EventLoopTaskGroup::queueMicrotaskCallback): Added.
+        (WebCore::EventLoopTaskGroup::queueMicrotask): Added.
+        (WebCore::EventLoopTaskGroup::performMicrotaskCheckpoint): Added.
+        * dom/EventLoop.h:
+        (WebCore::EventLoopTaskGroup::microtaskQueue):
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::mainThreadQueue): Deleted.
+        (WebCore::MicrotaskQueue::contextQueue): Deleted.
+        * dom/Microtasks.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserverMicrotask): Deleted.
+        (WebCore::MutationObserver::queueMutationObserverCompoundMicrotask): Made this a member function
+        so that it can call notifyMutationObservers in its lambda.
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::enqueueSlotChangeEvent):
+        (WebCore::MutationObserver::setHasTransientRegistration):
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::microtaskQueue):
+        * dom/WindowEventLoop.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        (WebCore::HTMLScriptRunner::runScript):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        * testing/Internals.cpp:
+        (WebCore::Internals::queueMicroTask):
+        * workers/WorkerEventLoop.cpp:
+        (WebCore::WorkerEventLoop::~WorkerEventLoop):
+        (WebCore::WorkerEventLoop::microtaskQueue):
+        (WebCore::WorkerEventLoop::clearMicrotaskQueue):
+        * workers/WorkerEventLoop.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::prepareForTermination):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::microtaskQueue const): Deleted.
+
 2019-11-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, remove an unnecessary null check after r252561

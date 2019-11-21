@@ -80,8 +80,10 @@ void WorkletGlobalScope::prepareForDestruction()
     if (m_defaultTaskGroup)
         m_defaultTaskGroup->stopAndDiscardAllTasks();
     stopActiveDOMObjects();
-    removeRejectedPromiseTracker();
     removeAllEventListeners();
+    if (m_eventLoop)
+        m_eventLoop->clearMicrotaskQueue();
+    removeRejectedPromiseTracker();
     m_script->vm().notifyNeedTermination();
     m_script = nullptr;
 }

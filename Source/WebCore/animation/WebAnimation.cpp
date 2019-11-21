@@ -796,12 +796,14 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             // Otherwise, if synchronously notify is false, queue a microtask to run finish notification steps for animation unless there
             // is already a microtask queued to run those steps for animation.
             m_finishNotificationStepsMicrotaskPending = true;
-            MicrotaskQueue::mainThreadQueue().append(makeUnique<VoidMicrotask>([this, protectedThis = makeRef(*this)] () {
-                if (m_finishNotificationStepsMicrotaskPending) {
-                    m_finishNotificationStepsMicrotaskPending = false;
-                    finishNotificationSteps();
-                }
-            }));
+            if (auto* context = scriptExecutionContext()) {
+                context->eventLoop().queueMicrotask([this, protectedThis = makeRef(*this)] {
+                    if (m_finishNotificationStepsMicrotaskPending) {
+                        m_finishNotificationStepsMicrotaskPending = false;
+                        finishNotificationSteps();
+                    }
+                });
+            }
         }
     }
 

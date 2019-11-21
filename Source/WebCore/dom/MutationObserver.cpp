@@ -34,6 +34,7 @@
 #include "MutationObserver.h"
 
 #include "Document.h"
+#include "EventLoop.h"
 #include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
@@ -158,35 +159,30 @@ static Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList()
     return list;
 }
 
-static bool mutationObserverCompoundMicrotaskQueuedFlag;
+// This state must be per event loop.
+static bool mutationObserverCompoundMicrotaskQueuedFlag = false;
 
-class MutationObserverMicrotask final : public Microtask {
-    WTF_MAKE_FAST_ALLOCATED;
-private:
-    Result run() final
-    {
-        MutationObserver::notifyMutationObservers();
-        return Result::Done;
-    }
-};
-
-static void queueMutationObserverCompoundMicrotask()
+void MutationObserver::queueMutationObserverCompoundMicrotask(Document& document)
 {
     if (mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     mutationObserverCompoundMicrotaskQueuedFlag = true;
-    MicrotaskQueue::mainThreadQueue().append(makeUnique<MutationObserverMicrotask>());
+    document.eventLoop().queueMicrotask([] {
+        notifyMutationObservers();
+    });
 }
 
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
     ASSERT(mutation->target());
+    auto document = makeRef(mutation->target()->document());
+
     m_pendingTargets.add(*mutation->target());
     m_records.append(WTFMove(mutation));
     activeMutationObservers().add(this);
 
-    queueMutationObserverCompoundMicrotask();
+    queueMutationObserverCompoundMicrotask(document.get());
 }
 
 void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
@@ -195,15 +191,15 @@ void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
     ASSERT(signalSlotList().findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
     signalSlotList().append(slot);
 
-    queueMutationObserverCompoundMicrotask();
+    queueMutationObserverCompoundMicrotask(slot.document());
 }
 
-void MutationObserver::setHasTransientRegistration()
+void MutationObserver::setHasTransientRegistration(Document& document)
 {
     ASSERT(isMainThread());
     activeMutationObservers().add(this);
 
-    queueMutationObserverCompoundMicrotask();
+    queueMutationObserverCompoundMicrotask(document);
 }
 
 HashSet<Node*> MutationObserver::observedNodes() const

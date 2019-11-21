@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WindowEventLoop.h"
 
+#include "CommonVM.h"
 #include "Document.h"
+#include "Microtasks.h"
 
 namespace WebCore {
 
@@ -69,6 +71,13 @@ void WindowEventLoop::scheduleToRun()
 bool WindowEventLoop::isContextThread() const
 {
     return isMainThread();
+}
+
+MicrotaskQueue& WindowEventLoop::microtaskQueue()
+{
+    // MicrotaskQueue must be one per event loop.
+    static NeverDestroyed<MicrotaskQueue> queue(commonVM());
+    return queue;
 }
 
 } // namespace WebCore

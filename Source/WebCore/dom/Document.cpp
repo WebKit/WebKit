@@ -5793,7 +5793,7 @@ void Document::finishedParsing()
 
     if (!page() || !page()->isForSanitizingWebContent()) {
         // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
-        MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+        eventLoop().performMicrotaskCheckpoint();
     }
 
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));

@@ -4327,11 +4327,12 @@ void Internals::queueMicroTask(int testNumber)
     if (!document)
         return;
 
-    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *document, [document, testNumber]() {
+    ScriptExecutionContext* context = document;
+    auto& eventLoop = context->eventLoop();
+    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(eventLoop.microtaskQueue(), *document, [document, testNumber]() {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", testNumber, " has run."));
     });
-
-    MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
+    eventLoop.queueMicrotaskCallback(WTFMove(microtask));
 }
 
 #if ENABLE(CONTENT_FILTERING)

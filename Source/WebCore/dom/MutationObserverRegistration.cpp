@@ -65,7 +65,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
         return;
 
     node.registerTransientMutationObserver(*this);
-    m_observer->setHasTransientRegistration();
+    m_observer->setHasTransientRegistration(node.document());
 
     if (!m_transientRegistrationNodes) {
         m_transientRegistrationNodes = makeUnique<HashSet<GCReachableRef<Node>>>();
