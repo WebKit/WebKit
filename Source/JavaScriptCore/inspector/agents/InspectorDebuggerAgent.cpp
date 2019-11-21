@@ -911,12 +911,13 @@ void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, cons
     else
         m_blackboxedURLs.removeAll(config);
 
-    auto blackboxType = shouldBlackbox ? Optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Deferred) : WTF::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
         if (isWebKitInjectedScript(script.sourceURL))
             continue;
-        if (!shouldBlackboxURL(script.sourceURL) && !shouldBlackboxURL(script.url))
-            continue;
+
+        Optional<JSC::Debugger::BlackboxType> blackboxType;
+        if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
+            blackboxType = JSC::Debugger::BlackboxType::Deferred;
         m_scriptDebugServer.setBlackboxType(sourceID, blackboxType);
     }
 }

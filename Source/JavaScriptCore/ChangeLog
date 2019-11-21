@@ -1,3 +1,21 @@
+2019-11-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: removing the blackbox for a specific script doesn't actually remove the blackbox
+        https://bugs.webkit.org/show_bug.cgi?id=204428
+
+        Reviewed by Timothy Hatcher.
+
+        Previously, when updating the blackbox state of each existing script, we would only tell the
+        `Debugger` about when scripts should be blackboxed, not when they shouldn't. This means that
+        when a given script is un-blackboxed, the `Debugger` would never get told about it and would
+        therefore still defer pauses as if it was blackboxed.
+
+        The solution to this is simple; update the blackboxed state of every script, not just those
+        that should be blackboxed, and tell the `Debugger` about each.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setShouldBlackboxURL):
+
 2019-11-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Extend MacroAssemblerARM64::load/store for datasize = 16

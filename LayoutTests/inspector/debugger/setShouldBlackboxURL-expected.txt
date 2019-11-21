@@ -302,6 +302,52 @@ PASS: Should pause in 'CaseSensitiveRegex_PauseInCallee_Middle'.
 PASS: Should not pause in 'CaseSensitiveRegex_PauseInCallee_Outer'.
 
 
+-- Running test case: Debugger.setShouldBlackboxURL.Toggle
+Evaluating 'createScripts("Toggle")'...
+Setting breakpoint in 'Toggle_Inner.js'...
+
+Blackboxing 'toggle_middle.js'...
+Evaluating 'Toggle_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'Toggle_Inner:3:1'.
+{
+  "breakpointId": "Toggle_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'Toggle_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "Toggle_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'Toggle_Middle'.
+
+Removing blackbox for 'toggle_middle.js'...
+Evaluating 'Toggle_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'Toggle_Inner:3:1'.
+{
+  "breakpointId": "Toggle_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'other' at 'Toggle_Middle:3:1'.
+Stepping over...
+
+PAUSED: 'other' at 'Toggle_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'Toggle_Middle'.
+
+
 -- Running test case: Debugger.setShouldBlackboxURL.Invalid.emptyURL
 PASS: Should produce an exception.
 {

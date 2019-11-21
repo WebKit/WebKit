@@ -460,6 +460,57 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Toggle",
+        description: "Check that the URL does not remain blackboxed if it's blackboxed state is toggled on and then off.",
+        async test() {
+            let resumePromise = null;
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/Toggle_Inner\.js$/),
+                listenForSourceParsed(/Toggle_Middle\.js$/),
+                listenForSourceParsed(/Toggle_Outer\.js$/),
+                evaluate(`createScripts("Toggle")`),
+            ]);
+            await setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+
+            ProtocolTest.newline();
+
+            resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("Toggle_Middle"), "Should not pause in 'Toggle_Middle'.");
+                    resolve();
+                };
+            });
+
+            await setBlackbox(middleSourceURL);
+            await evaluate(`Toggle_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+
+            resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("Toggle_Middle"), "Should pause in 'Toggle_Middle'.");
+                    resolve();
+                };
+            });
+
+            ProtocolTest.log(`Removing blackbox for '${middleSourceURL.toLowerCase()}'...`);
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: middleSourceURL.toLowerCase(), shouldBlackbox: false},
+            });
+
+            await evaluate(`Toggle_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
         name: "Debugger.setShouldBlackboxURL.Invalid.emptyURL",
         description: "Check that an error is thrown if the given url is empty.",
         async test() {
