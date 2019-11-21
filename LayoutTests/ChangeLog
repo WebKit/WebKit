@@ -1,3 +1,18 @@
+2019-11-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ Jazz ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=203813
+        <rdar://problem/54316765>
+
+        Reviewed by John Wilander.
+
+        Added random dummy value to the end of the cookie-redirect query to ensure
+        the third party url isn't failing to set the cookie and redirect back
+        to the correct file because the url is already in the cache from previous runs.
+
+        * http/tests/resourceLoadStatistics/cookie-deletion-expected.txt:
+        * http/tests/resourceLoadStatistics/cookie-deletion.html:
+
 2019-11-20  Zalan Bujtas  <zalan@apple.com>
 
         Flexbox sizing logic triggers full repaint on the flex items.

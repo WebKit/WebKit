@@ -15,6 +15,7 @@
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+    const subPathToSetFirstPartyCookieRandom = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value&dummyParam=" + Math.random();
     const thirdPartyCookieName = "thirdPartyCookie";
     const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=value";
     const fragmentWithReturnUrl = "http://" + partitionHost + "/resourceLoadStatistics/cookie-deletion.html";
@@ -60,7 +61,7 @@
             case "#step1":
                 console.log("step1. About to set a cookie")
                 // Set first-party cookie for localhost.
-                document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + fragmentWithReturnUrl + "#step2";
+                document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookieRandom + "#" + fragmentWithReturnUrl + "#step2";
                 break;
             case "#step2":
                 console.log("step2. About to open an iFrame to test for third party cookie access (should be successful)")
