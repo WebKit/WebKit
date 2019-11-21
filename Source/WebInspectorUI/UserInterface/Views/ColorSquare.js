@@ -44,6 +44,10 @@ WI.ColorSquare = class ColorSquare
         let lightnessGradientElement = this._element.appendChild(document.createElement("div"));
         lightnessGradientElement.className = "lightness-gradient fill";
 
+        this._srgbLabelElement = null;
+        this._svgElement = null;
+        this._polylineElement = null;
+
         this._element.addEventListener("mousedown", this);
 
         this._crosshairElement = this._element.appendChild(document.createElement("div"));
@@ -106,6 +110,8 @@ WI.ColorSquare = class ColorSquare
             let x = hsv[1] / 100 * this._dimension;
             let y = (1 - (hsv[2] / 100)) * this._dimension;
             this._setCrosshairPosition(new WI.Point(x, y));
+            if (this._gamut === WI.Color.Gamut.DisplayP3)
+                this._drawSRGBOutline();
         } else {
             let hsl = tintedColor.hsl;
             let saturation = Number.constrain(hsl[1], 0, 100);
@@ -207,10 +213,72 @@ WI.ColorSquare = class ColorSquare
             this._element.style.backgroundColor = `hsl(${this._hue}, 100%, 50%)`;
 
         this._updateCrosshairBackground();
+
+        if (this._gamut === WI.Color.Gamut.DisplayP3)
+            this._drawSRGBOutline();
     }
 
     _updateCrosshairBackground()
     {
         this._crosshairElement.style.backgroundColor = this.tintedColor.toString();
+    }
+
+    _drawSRGBOutline()
+    {
+        if (!this._svgElement) {
+            this._srgbLabelElement = this._element.appendChild(document.createElement("span"));
+            this._srgbLabelElement.className = "srgb-label";
+            this._srgbLabelElement.textContent = WI.unlocalizedString("sRGB");
+            this._srgbLabelElement.title = WI.UIString("This line marks the edge of sRGB color space", "Label for a guide within the color picker");
+
+            const svgNamespace = "http://www.w3.org/2000/svg";
+            this._svgElement = document.createElementNS(svgNamespace, "svg");
+            this._svgElement.classList.add("svg-root");
+            this._element.append(this._svgElement);
+
+            this._polylineElement = this._svgElement.appendChild(document.createElementNS(svgNamespace, "polyline"));
+            this._polylineElement.classList.add("srgb-edge");
+        }
+
+        let points = [];
+        let step = 1 / window.devicePixelRatio;
+        let x = 0;
+        for (let y = 0; y < this._dimension; y += step) {
+            let value = 100 - (y / this._dimension) * 100;
+
+            // Optimization: instead of starting from x = 0, we can benefit from the fact that the next point
+            // always has x >= of the current x. This minimizes processing time over 100 times.
+            for (; x < this._dimension; x += step) {
+                let saturation = x / this._dimension * 100;
+                let rgb = WI.Color.hsv2rgb(this._hue, saturation, value);
+                let srgb = WI.Color.displayP3toSRGB(rgb[0], rgb[1], rgb[2]);
+                if (srgb.some((value) => value > 1 || value < 0)) {
+                    // The point is outside of sRGB.
+                    points.push({x, y});
+                    break;
+                }
+            }
+        }
+
+        if (points.lastValue.y < this._dimension * 0.95) {
+            // For `color(display-p3 0 0 1)`, the line is almost horizontal.
+            // Position the label directly under the line.
+            points.push({x: this._dimension, y: points.lastValue.y});
+            this._srgbLabelElement.style.removeProperty("bottom");
+            this._srgbLabelElement.style.top = `${points.lastValue.y}px`;
+        } else {
+            this._srgbLabelElement.style.removeProperty("top");
+            this._srgbLabelElement.style.bottom = "0px";
+        }
+
+        this._srgbLabelElement.style.right = `${this._dimension - points.lastValue.x}px`;
+
+        this._polylineElement.points.clear();
+        for (let point of points) {
+            let svgPoint = this._svgElement.createSVGPoint();
+            svgPoint.x = point.x;
+            svgPoint.y = point.y;
+            this._polylineElement.points.appendItem(svgPoint);
+        }
     }
 };

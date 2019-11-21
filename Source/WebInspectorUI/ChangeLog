@@ -1,3 +1,41 @@
+2019-11-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Outline sRGB-safe areas on P3 color picker
+        https://bugs.webkit.org/show_bug.cgi?id=203533
+        <rdar://problem/56688057>
+
+        Reviewed by Brian Burg.
+
+        Visualize the edge of sRGB gamut as a white line.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/Color.js:
+        (WI.Color.displayP3toSRGB.multiplyMatrixByVector):
+        (WI.Color.displayP3toSRGB):
+        (WI.Color._toLinearLight):
+        (WI.Color._gammaCorrect):
+        Use equations from CSS Color Module Level 4.
+
+        * UserInterface/Views/ColorSquare.css:
+        (.color-square):
+        (.color-square > .crosshair):
+        Place the crosshair above the sRGB edge line.
+
+        (.color-square .svg-root):
+        (.color-square .srgb-edge):
+        (.color-square .srgb-label):
+        (.color-square .srgb-label:hover):
+        (.color-square .srgb-label:hover + .svg-root > .srgb-edge):
+        (@media (-webkit-device-pixel-ratio: 1)):
+        Make the optical weight of the line on non-retina screens the same as on retina screens.
+
+        * UserInterface/Views/ColorSquare.js:
+        (WI.ColorSquare):
+        (WI.ColorSquare.prototype.set tintedColor):
+        (WI.ColorSquare.prototype._updateBaseColor):
+        (WI.ColorSquare.prototype._drawSRGBOutline):
+
 2019-11-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: call frames from blackboxed scripts should be visually distinct

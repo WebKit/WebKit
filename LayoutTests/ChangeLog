@@ -1,3 +1,17 @@
+2019-11-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Outline sRGB-safe areas on P3 color picker
+        https://bugs.webkit.org/show_bug.cgi?id=203533
+        <rdar://problem/56688057>
+
+        Reviewed by Brian Burg.
+
+        Test WI.Color.displayP3toSRGB.
+
+        LayoutTests:
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2019-11-21  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r234440): [Mac WK2 ] Layout Test http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html is flaky timeout (194164)

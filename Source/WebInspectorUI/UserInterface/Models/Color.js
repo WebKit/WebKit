@@ -348,6 +348,73 @@ WI.Color = class Color
         return [fraction(5), fraction(3), fraction(1)];
     }
 
+    // https://www.w3.org/TR/css-color-4/#color-conversion-code
+    static displayP3toSRGB(r, g, b)
+    {
+        r = Number.constrain(r, 0, 1);
+        g = Number.constrain(g, 0, 1);
+        b = Number.constrain(b, 0, 1);
+
+        let linearP3 = WI.Color._toLinearLight([r, g, b]);
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web#Multiplying_a_matrix_and_a_point
+        function multiplyMatrixByVector(matrix, vector) {
+            let height = matrix.length;
+            let width = matrix[0].length;
+            console.assert(width === vector.length);
+
+            let result = Array(width).fill(0);
+            for (let i = 0; i < width; i++)
+                for (let rowIndex = 0; rowIndex < height; rowIndex++)
+                    result[i] += vector[rowIndex] * matrix[i][rowIndex];
+
+            return result;
+        }
+
+        // Convert an array of linear-light display-p3 values to CIE XYZ
+        // using D65 (no chromatic adaptation).
+        // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+        let matrix = [
+            [0.4865709486482162, 0.26566769316909306, 0.1982172852343625],
+            [0.2289745640697488, 0.6917385218365064,  0.079286914093745],
+            [0.0000000000000000, 0.04511338185890264, 1.043944368900976]
+        ];
+        let xyz = multiplyMatrixByVector(matrix, linearP3);
+
+        // Convert XYZ to linear-light sRGB.
+        matrix = [
+            [ 3.2404542, -1.5371385, -0.4985314],
+            [-0.9692660,  1.8760108,  0.0415560],
+            [ 0.0556434, -0.2040259,  1.0572252]
+        ];
+        let linearSRGB = multiplyMatrixByVector(matrix, xyz);
+
+        return WI.Color._gammaCorrect(linearSRGB);
+    }
+
+    // Convert gamma-corrected sRGB or Display-P3 to linear light form.
+    static _toLinearLight(rgb)
+    {
+        return rgb.map(function(value) {
+            if (value < 0.04045)
+                return value / 12.92;
+
+            return Math.pow((value + 0.055) / 1.055, 2.4);
+        });
+    }
+
+    // Convert linear-light sRGB or Display-P3 to gamma corrected form.
+    // Inverse of `toLinearLight`.
+    static _gammaCorrect(rgb)
+    {
+        return rgb.map(function(value) {
+            if (value > 0.0031308)
+                return 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+
+            return 12.92 * value;
+        });
+    }
+
     static cmyk2rgb(c, m, y, k)
     {
         c = Number.constrain(c, 0, 1);

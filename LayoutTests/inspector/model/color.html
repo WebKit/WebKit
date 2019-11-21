@@ -612,6 +612,24 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "WI.Color.displayP3toSRGB",
+        description: "Test conversion from display-P3 gamut to sRGB.",
+        test() {
+            testColorConversion(WI.Color.displayP3toSRGB, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.displayP3toSRGB, [1, 1, 1], [0.9999300658875597, 1.0000101408119602, 1.0001054916006267]);
+            testColorConversion(WI.Color.displayP3toSRGB, [1, 0, 0], [1.0929902391315327, -0.5433883521407902, -0.2537782522695441]);
+            testColorConversion(WI.Color.displayP3toSRGB, [0, 1, 0], [-2.9057643199691516, 1.0182759798644396, -1.0162215225472337]);
+            testColorConversion(WI.Color.displayP3toSRGB, [0, 0, 1], [2.3902361583783006e-7, -2.0487738563140788e-7, 1.0421313171983129]);
+
+            // Out-of-bounds inputs.
+            testColorConversion(WI.Color.displayP3toSRGB, [2, 0, 0], [1.0929902391315327, -0.5433883521407902, -0.2537782522695441]);
+            testColorConversion(WI.Color.displayP3toSRGB, [-1, 0, 0], [0, 0, 0]);
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -1175,6 +1175,8 @@ localizedStrings["This is what the result of a passing test with no data looks l
 localizedStrings["This is what the result of a test that threw an error with no data looks like."] = "This is what the result of a test that threw an error with no data looks like.";
 localizedStrings["This is what the result of a warning test with no data looks like."] = "This is what the result of a warning test with no data looks like.";
 localizedStrings["This is what the result of an unsupported test with no data looks like."] = "This is what the result of an unsupported test with no data looks like.";
+/* Label for a guide within the color picker */
+localizedStrings["This line marks the edge of sRGB color space"] = "This line marks the edge of sRGB color space";
 localizedStrings["This object is a root"] = "This object is a root";
 localizedStrings["This object is referenced by internal objects"] = "This object is referenced by internal objects";
 localizedStrings["This test will pass with a variety of accessibility information about the <body> element."] = "This test will pass with a variety of accessibility information about the <body> element.";

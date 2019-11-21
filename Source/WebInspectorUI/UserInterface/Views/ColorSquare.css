@@ -25,6 +25,8 @@
 
 .color-square {
     position: relative;
+
+    --stroke-opacity: 0.8;
 }
 
 .color-square > .saturation-gradient {
@@ -53,7 +55,46 @@
     box-shadow: 0 0 2px black;
     border-radius: 3px;
     pointer-events: none;
+    z-index: 9;
 
     --border-width: 1px;
     --crosshair-size: 7px;
+}
+
+.color-square .svg-root {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.color-square .srgb-edge {
+    fill: none;
+    stroke: white;
+    stroke-width: 0.5px;
+    stroke-opacity: var(--stroke-opacity);
+}
+
+.color-square .srgb-label {
+    position: absolute;
+    padding-right: 3px;
+    color: hsla(0, 0%, 100%, var(--stroke-opacity));
+    font-size: 10px;
+}
+
+.color-square .srgb-label:hover {
+    color: white;
+}
+
+.color-square .srgb-label:hover + .svg-root > .srgb-edge {
+    stroke-width: 1px;
+}
+
+@media (-webkit-device-pixel-ratio: 1) {
+    .color-square .srgb-edge {
+        stroke-width: 1px;
+        stroke-opacity: var(--stroke-opacity) / 2;
+    }
 }

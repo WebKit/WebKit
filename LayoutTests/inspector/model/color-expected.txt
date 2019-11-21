@@ -518,3 +518,12 @@ PASS: Should convert [0.24,0.25,0.26] to [61,64,66].
 PASS: Should convert [2,0,0] to [255,0,0].
 PASS: Should convert [-1,0,0] to [0,0,0].
 
+-- Running test case: WI.Color.displayP3toSRGB
+PASS: Should convert [0,0,0] to [0,0,0].
+PASS: Should convert [1,1,1] to [0.9999300658875597,1.0000101408119602,1.0001054916006267].
+PASS: Should convert [1,0,0] to [1.0929902391315327,-0.5433883521407902,-0.2537782522695441].
+PASS: Should convert [0,1,0] to [-2.9057643199691516,1.0182759798644396,-1.0162215225472337].
+PASS: Should convert [0,0,1] to [2.3902361583783006e-7,-2.0487738563140788e-7,1.0421313171983129].
+PASS: Should convert [2,0,0] to [1.0929902391315327,-0.5433883521407902,-0.2537782522695441].
+PASS: Should convert [-1,0,0] to [0,0,0].
+
