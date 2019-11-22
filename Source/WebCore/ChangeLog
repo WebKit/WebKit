@@ -1,3 +1,12 @@
+2019-11-22  Antti Koivisto  <antti@apple.com>
+
+        Try to fix build on an old MacOS version
+
+        Unreviewed.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+
 2019-11-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::inlineItemContentHeight should only call FormattingContext::geometryForBox when needed
