@@ -81,6 +81,12 @@ bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo
     return true;
 }
 
+bool SubresourceInfo::isFirstParty() const
+{
+    RegistrableDomain firstPartyDomain { m_firstPartyForCookies };
+    return firstPartyDomain.matches(URL(URL(), key().identifier()));
+}
+
 Storage::Record SubresourcesEntry::encodeAsStorageRecord() const
 {
     WTF::Persistence::Encoder encoder;

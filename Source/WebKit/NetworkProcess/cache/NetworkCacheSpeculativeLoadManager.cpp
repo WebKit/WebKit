@@ -33,6 +33,7 @@
 #include "NetworkCacheSpeculativeLoad.h"
 #include "NetworkCacheSubresourcesEntry.h"
 #include "NetworkProcess.h"
+#include "PreconnectTask.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/HashCountedSet.h>
@@ -203,6 +204,16 @@ public:
         saveToDiskIfReady();
     }
 
+    bool didReceiveMainResourceResponse() const { return m_didReceiveMainResourceResponse; }
+    void markMainResourceResponseAsReceived()
+    {
+        m_didReceiveMainResourceResponse = true;
+        for (auto& task : m_postMainResourceResponseTasks)
+            task();
+    }
+
+    void addPostMainResourceResponseTask(Function<void()>&& task) { m_postMainResourceResponseTasks.append(WTFMove(task)); }
+
 private:
     PendingFrameLoad(Storage& storage, const Key& mainResourceKey, WTF::Function<void()>&& loadCompletionHandler)
         : m_storage(storage)
@@ -242,8 +253,10 @@ private:
     WTF::Function<void()> m_loadCompletionHandler;
     PAL::HysteresisActivity m_loadHysteresisActivity;
     std::unique_ptr<SubresourcesEntry> m_existingEntry;
+    Vector<Function<void()>> m_postMainResourceResponseTasks;
     bool m_didFinishLoad { false };
     bool m_didRetrieveExistingEntry { false };
+    bool m_didReceiveMainResourceResponse { false };
 };
 
 SpeculativeLoadManager::SpeculativeLoadManager(Cache& cache, Storage& storage)
@@ -323,14 +336,21 @@ void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionH
     addResult.iterator->value->append(WTFMove(completionHandler));
 }
 
+bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& request)
+{
+    if (request.httpMethod() != "GET")
+        return false;
+    if (!request.httpHeaderField(HTTPHeaderName::Range).isEmpty())
+        return false;
+    return true;
+}
+
 void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(request.url().protocolIsInHTTPFamily());
 
-    if (request.httpMethod() != "GET")
-        return;
-    if (!request.httpHeaderField(HTTPHeaderName::Range).isEmpty())
+    if (!shouldRegisterLoad(request))
         return;
 
     auto isMainResource = request.requester() == ResourceRequest::Requester::Main;
@@ -360,6 +380,18 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
 
     if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))
         pendingFrameLoad->registerSubresourceLoad(request, resourceKey);
+}
+
+void SpeculativeLoadManager::registerMainResourceLoadResponse(const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
+{
+    if (!shouldRegisterLoad(request))
+        return;
+
+    if (response.isRedirection())
+        return;
+
+    if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))
+        pendingFrameLoad->markMainResourceResponseAsReceived();
 }
 
 void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, const GlobalFrameID& frameID, Optional<ResourceRequest>&& revalidationRequest)
@@ -417,6 +449,26 @@ bool SpeculativeLoadManager::satisfyPendingRequests(const Key& key, Entry* entry
     return true;
 }
 
+void SpeculativeLoadManager::preconnectForSubresource(const SubresourceInfo& subresourceInfo, Entry* entry, const GlobalFrameID& frameID)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    NetworkLoadParameters parameters;
+    parameters.webPageProxyID = frameID.webPageProxyID;
+    parameters.webPageID = frameID.webPageID;
+    parameters.webFrameID = frameID.frameID;
+    parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
+    parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+    parameters.request = constructRevalidationRequest(subresourceInfo.key(), subresourceInfo, entry);
+    new PreconnectTask(m_cache.networkProcess(), m_cache.sessionID(), WTFMove(parameters), [](const WebCore::ResourceError&) { });
+#else
+    UNUSED_PARAM(subresourceInfo);
+    UNUSED_PARAM(entry);
+    UNUSED_PARAM(frameID);
+#endif
+}
+
 void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subresourceInfo, std::unique_ptr<Entry> entry, const GlobalFrameID& frameID)
 {
     ASSERT(!entry || entry->needsValidation());
@@ -426,6 +478,18 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
     // Range is not supported.
     if (!key.range().isEmpty())
         return;
+
+    auto* pendingLoad = m_pendingFrameLoads.get(frameID);
+
+    // Delay first-party speculative loads until we've received the response for the main resource, in case the main resource
+    // response sets cookies that are needed for subsequent loads.
+    if (pendingLoad && !pendingLoad->didReceiveMainResourceResponse() && subresourceInfo.isFirstParty()) {
+        preconnectForSubresource(subresourceInfo, entry.get(), frameID);
+        pendingLoad->addPostMainResourceResponseTask([this, subresourceInfo, entry = WTFMove(entry), frameID]() mutable {
+            revalidateSubresource(subresourceInfo, WTFMove(entry), frameID);
+        });
+        return;
+    }
 
     ResourceRequest revalidationRequest = constructRevalidationRequest(key, subresourceInfo, entry.get());
 

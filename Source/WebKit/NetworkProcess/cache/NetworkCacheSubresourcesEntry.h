@@ -58,6 +58,8 @@ public:
 
     void setNonTransient() { m_isTransient = false; }
 
+    bool isFirstParty() const;
+
 private:
     Key m_key;
     WallTime m_lastSeen;

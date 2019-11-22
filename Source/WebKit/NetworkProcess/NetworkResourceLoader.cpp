@@ -30,6 +30,7 @@
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkCache.h"
+#include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
@@ -466,6 +467,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", httpStatusCode = %d, length = %" PRId64 ")", m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.toUInt64(), m_parameters.identifier, receivedResponse.httpStatusCode(), receivedResponse.expectedContentLength());
 
+    if (isMainResource())
+        didReceiveMainResourceResponse(receivedResponse);
+
     m_response = WTFMove(receivedResponse);
 
     if (shouldCaptureExtraNetworkLoadMetrics() && m_networkLoadChecker) {
@@ -900,9 +904,20 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     });
 }
 
+void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::ResourceResponse& response)
+{
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    if (auto* speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
+        speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
+#endif
+}
+
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
     auto response = entry->response();
+
+    if (isMainResource())
+        didReceiveMainResourceResponse(response);
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);

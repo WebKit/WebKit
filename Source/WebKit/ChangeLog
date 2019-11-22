@@ -1,3 +1,39 @@
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
+        Speculative loading sometimes happens too early and is missing login cookies
+        https://bugs.webkit.org/show_bug.cgi?id=204305
+        <rdar://problem/57063840>
+
+        Reviewed by Antti Koivisto.
+
+        Speculative loads were issued before receiving the response from the main resource. However,
+        the main resource may set important cookies that are thus missing from the speculative requests.
+
+        To address the issue we now delay speculative loads for first-party subresources until we've
+        received the response from the main resource. To avoid regressing PLT, we still warm up the
+        first-party subresources from disk right away and preconnect to the server.
+
+        No new tests, extended existing test.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveMainResourceResponse):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::didReceiveMainResourceResponse const):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::markMainResourceResponseAsReceived):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::addPostMainResourceResponseTask):
+        (WebKit::NetworkCache::SpeculativeLoadManager::shouldRegisterLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerMainResourceLoadResponse):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::isFirstParty const):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] RemoteInspector: use sockets instead of DBus

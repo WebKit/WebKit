@@ -37,6 +37,8 @@ function frameLoaded()
     if (state == "speculativeRevalidation") {
         // Validate the HTTP headers of the speculative validation request.
         shouldBeEqualToString("validationRequestHeader('If-None-Match')", "123456789");
+        isCookieHeaderCorrect = validationRequestHeader('Cookie') === document.getElementById("testFrame").contentWindow.sentSetCookieHeader;
+        shouldBeTrue("isCookieHeaderCorrect");
 
         for (var i = 0; i < headersToCheck.length; i++) {
             headerToCheck = headersToCheck[i];
