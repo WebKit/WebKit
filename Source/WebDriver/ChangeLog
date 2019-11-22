@@ -1,5 +1,12 @@
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK/WPE debug build after r252770
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::setupConnection):
+
+2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] RemoteInspector: use sockets instead of DBus
         https://bugs.webkit.org/show_bug.cgi?id=204503
 
