@@ -1,3 +1,106 @@
+2019-11-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Improve Wasm::LLIntGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=204092
+
+        Reviewed by Saam Barati.
+
+        This improves the Wasm::LLIntGenerator by:
+        - Changing LLIntGenerator::ExpressionType from RefPtr<RegisterID> to VirtualRegister: Instead of allocating and retaining
+          RegisterIDs we use VirtualRegisters directly and ensure that they match the WebAssembly stack, i.e. the parser's expression
+          stack should match the virtual registers.
+        - Removing redundant moves when materializing constants and performing local.get: instead of creating a new temporary
+          for each constant and local.get, we return the VirtualRegister for the constant/local slot directly. In order for this
+          to work, we still allocate the stack slot for the temporaries, since we have to materialize them before loops and branches.
+        - Adding a constructor to ControlType that takes the results ExpressionList as an rvalue instead of copying it
+        - Optimizing callInformationFor, which is now split into two functions. The callee does not care about arguments, and should
+          never allocate temporaries, and the caller case was optimized by avoiding unnecessary calls to newTemporary
+        - Delay holding the lock in LLintPlan::compileFunction, since we do not need to hold it while compiling the js-to-wasm entrypoint
+
+        * bytecode/BytecodeList.rb:
+        * bytecompiler/Label.h:
+        (JSC::GenericLabel::location const):
+        (JSC::GenericLabel::unresolvedJumps const):
+        * generator/Wasm.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::endTopLevel):
+        (JSC::Wasm::AirIRGenerator::didPopValueFromStack):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::endTopLevel):
+        (JSC::Wasm::B3IRGenerator::didPopValueFromStack):
+        * wasm/WasmFunctionCodeBlock.cpp:
+        (JSC::Wasm::FunctionCodeBlock::addJumpTable):
+        * wasm/WasmFunctionCodeBlock.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::expressionStack):
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::loop):
+        (JSC::Wasm::LLIntGenerator::ControlType::topLevel):
+        (JSC::Wasm::LLIntGenerator::ControlType::block):
+        (JSC::Wasm::LLIntGenerator::ControlType::if_):
+        (JSC::Wasm::LLIntGenerator::ControlType::targetArity const):
+        (JSC::Wasm::LLIntGenerator::ControlType::stackSize const):
+        (JSC::Wasm::LLIntGenerator::ControlType::ControlType):
+        (JSC::Wasm::LLIntGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::LLIntGenerator::push):
+        (JSC::Wasm::LLIntGenerator::didPopValueFromStack):
+        (JSC::Wasm::LLIntGenerator::emptyExpression):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        (JSC::Wasm::LLIntGenerator::dump):
+        (JSC::Wasm::LLIntGenerator::virtualRegisterForWasmLocal):
+        (JSC::Wasm::LLIntGenerator::jsNullConstant):
+        (JSC::Wasm::LLIntGenerator::zeroConstant):
+        (JSC::Wasm::LLIntGenerator::getDropKeepCount):
+        (JSC::Wasm::LLIntGenerator::dropKeep):
+        (JSC::Wasm::LLIntGenerator::walkExpressionStack):
+        (JSC::Wasm::LLIntGenerator::checkConsistency):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::LLIntGenerator::materializeLocals):
+        (JSC::Wasm::LLIntGenerator::ConstantMapHashTraits::constructDeletedValue):
+        (JSC::Wasm::LLIntGenerator::ConstantMapHashTraits::isDeletedValue):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        (JSC::Wasm::LLIntGenerator::didFinishParsingLocals):
+        (JSC::Wasm::LLIntGenerator::addConstant):
+        (JSC::Wasm::LLIntGenerator::getLocal):
+        (JSC::Wasm::LLIntGenerator::setLocal):
+        (JSC::Wasm::LLIntGenerator::getGlobal):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTopLevel):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addElse):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addReturn):
+        (JSC::Wasm::LLIntGenerator::addBranch):
+        (JSC::Wasm::LLIntGenerator::addSwitch):
+        (JSC::Wasm::LLIntGenerator::endBlock):
+        (JSC::Wasm::LLIntGenerator::endTopLevel):
+        (JSC::Wasm::LLIntGenerator::addCall):
+        (JSC::Wasm::LLIntGenerator::addCallIndirect):
+        (JSC::Wasm::LLIntGenerator::addRefIsNull):
+        (JSC::Wasm::LLIntGenerator::addRefFunc):
+        (JSC::Wasm::LLIntGenerator::addTableGet):
+        (JSC::Wasm::LLIntGenerator::addTableSize):
+        (JSC::Wasm::LLIntGenerator::addTableGrow):
+        (JSC::Wasm::LLIntGenerator::addCurrentMemory):
+        (JSC::Wasm::LLIntGenerator::addGrowMemory):
+        (JSC::Wasm::LLIntGenerator::addSelect):
+        (JSC::Wasm::LLIntGenerator::load):
+        (JSC::GenericLabel<Wasm::GeneratorTraits>::setLocation):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::endTopLevel):
+        (JSC::Wasm::Validate::didPopValueFromStack):
+
 2019-11-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG terminal's liveness should respect caller's opcodeID

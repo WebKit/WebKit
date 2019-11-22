@@ -297,7 +297,7 @@ macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     btiz ws1, .zeroInitializeLocalsDone
     negi ws1
     sxi2q ws1, ws1
-    leap (NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters) * -8[cfr], ws0
+    leap (NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters + 1) * -8[cfr], ws0
 .zeroInitializeLocalsLoop:
     addq 1, ws1
     storeq 0, [ws0, ws1, 8]
@@ -588,14 +588,23 @@ wasmOp(switch, WasmSwitch, macro(ctx)
     addp t1, t2
 
     loadi VectorSizeOffset[t2], t3
-    biaeq t0, t3, .default
+    bib t0, t3, .inBounds
+
+.outOfBounds:
+    subi t3, 1, t0
+
+.inBounds:
     loadp VectorBufferOffset[t2], t2
-    loadi [t2, t0, 4], t3
+    muli sizeof Wasm::FunctionCodeBlock::JumpTableEntry, t0
+
+    loadi Wasm::FunctionCodeBlock::JumpTableEntry::startOffset[t2, t0], t1
+    loadi Wasm::FunctionCodeBlock::JumpTableEntry::dropCount[t2, t0], t3
+    loadi Wasm::FunctionCodeBlock::JumpTableEntry::keepCount[t2, t0], t5
+    dropKeep(t1, t3, t5)
+
+    loadis Wasm::FunctionCodeBlock::JumpTableEntry::target[t2, t0], t3
     assert(macro(ok) btinz t3, .ok end)
     wasmDispatchIndirect(t3)
-
-.default:
-    jump(ctx, m_defaultTarget)
 end)
 
 unprefixedWasmOp(wasm_jmp, WasmJmp, macro(ctx)
@@ -1992,4 +2001,31 @@ wasmOp(i64_reinterpret_f64, WasmI64ReinterpretF64, macro(ctx)
     mloadd(ctx, m_operand, ft0)
     fd2q ft0, t0
     returnq(ctx, t0)
+end)
+
+macro dropKeep(startOffset, drop, keep)
+    lshifti 3, startOffset
+    subp cfr, startOffset, startOffset
+    negi drop
+    sxi2q drop, drop
+
+.copyLoop:
+    btiz keep, .done
+    loadq [startOffset, drop, 8], t6
+    storeq t6, [startOffset]
+    subi 1, keep
+    subp 8, startOffset
+    jmp .copyLoop
+
+.done:
+end
+
+wasmOp(drop_keep, WasmDropKeep, macro(ctx)
+    wgetu(ctx, m_startOffset, t0)
+    wgetu(ctx, m_dropCount, t1)
+    wgetu(ctx, m_keepCount, t2)
+
+    dropKeep(t0, t1, t2)
+
+    dispatch(ctx)
 end)

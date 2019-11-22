@@ -80,10 +80,10 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
 
     if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
-        auto locker = holdLock(m_lock);
         EmbederToWasmFunction entry;
         entry.jit = makeUnique<CCallHelpers>();
         entry.function = m_createEmbedderWrapper(*entry.jit, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
+        auto locker = holdLock(m_lock);
         auto result = m_embedderToWasmInternalFunctions.add(functionIndex, WTFMove(entry));
         ASSERT_UNUSED(result, result.isNewEntry);
     }

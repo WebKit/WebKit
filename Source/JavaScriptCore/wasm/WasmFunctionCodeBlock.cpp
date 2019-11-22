@@ -75,11 +75,7 @@ const Signature& FunctionCodeBlock::signature(unsigned index) const
 
 auto FunctionCodeBlock::addJumpTable(size_t numberOfEntries) -> JumpTable&
 {
-#if !ASSERT_DISABLED
-    m_jumpTables.append(JumpTable(numberOfEntries, 0));
-#else
     m_jumpTables.append(JumpTable(numberOfEntries));
-#endif
     return m_jumpTables.last();
 }
 

@@ -235,6 +235,8 @@ public:
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, const Stack& = { });
 
+    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
+
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
@@ -244,6 +246,7 @@ public:
     void dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
     void didFinishParsingLocals() { }
+    void didPopValueFromStack() { }
 
     Value* constant(B3::Type, uint64_t bits, Optional<Origin> = WTF::nullopt);
     Value* framePointer();

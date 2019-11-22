@@ -1,3 +1,14 @@
+2019-11-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Improve Wasm::LLIntGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=204092
+
+        Reviewed by Saam Barati.
+
+        * wasm/stress/set-local-enclosed-stack.js: Added.
+        (assert.eq.instance.exports.foo):
+        (assert.eq):
+
 2019-11-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG terminal's liveness should respect caller's opcodeID

@@ -1299,13 +1299,19 @@ op :switch,
     args: {
         scrutinee: VirtualRegister,
         tableIndex: unsigned,
-        defaultTarget: WasmBoundLabel,
     }
 
 # Wasm specific bytecodes
 
 op :unreachable
 op :ret_void
+
+op :drop_keep,
+    args: {
+        startOffset: unsigned,
+        dropCount: unsigned,
+        keepCount: unsigned,
+    }
 
 op :ref_is_null,
     args: {

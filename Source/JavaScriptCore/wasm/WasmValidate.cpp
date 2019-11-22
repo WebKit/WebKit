@@ -161,6 +161,7 @@ public:
     Result WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
 
     Result WARN_UNUSED_RETURN addUnreachable() { return { }; }
+    Result WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
 
     // Calls
     Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ResultList&);
@@ -176,6 +177,7 @@ public:
     void dump(const Vector<ControlEntry>&, const Stack*);
     void setParser(FunctionParser<Validate>*) { }
     void didFinishParsingLocals() { }
+    void didPopValueFromStack() { }
 
 private:
     Result WARN_UNUSED_RETURN unify(const Stack&, const ControlData&);

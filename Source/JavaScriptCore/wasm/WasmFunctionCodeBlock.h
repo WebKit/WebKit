@@ -105,7 +105,14 @@ public:
     unsigned addSignature(const Signature&);
     const Signature& signature(unsigned index) const;
 
-    using JumpTable = Vector<InstructionStream::Offset>;
+    struct JumpTableEntry {
+        int target { 0 };
+        unsigned startOffset;
+        unsigned dropCount;
+        unsigned keepCount;
+    };
+
+    using JumpTable = Vector<JumpTableEntry>;
     JumpTable& addJumpTable(size_t numberOfEntries);
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;

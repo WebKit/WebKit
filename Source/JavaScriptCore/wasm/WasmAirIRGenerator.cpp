@@ -285,6 +285,8 @@ public:
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, const Stack& expressionStack = { });
 
+    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
+
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results);
@@ -299,6 +301,7 @@ public:
     void dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack);
     void setParser(FunctionParser<AirIRGenerator>* parser) { m_parser = parser; };
     void didFinishParsingLocals() { }
+    void didPopValueFromStack() { }
 
     static Vector<Tmp> toTmpVector(const Vector<TypedTmp>& vector)
     {
