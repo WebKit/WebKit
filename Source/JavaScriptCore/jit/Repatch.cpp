@@ -159,6 +159,7 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind
     case GetByKind::NormalByVal:
         return operationGetByValOptimize;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
@@ -175,6 +176,7 @@ inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
     case GetByKind::NormalByVal:
         return operationGetByValGeneric;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByKind kind)

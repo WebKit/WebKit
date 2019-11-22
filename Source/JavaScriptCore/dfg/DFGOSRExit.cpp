@@ -695,8 +695,8 @@ void OSRExit::executeOSRExit(Context& context)
     saveCalleeSavesFor(context, baselineCodeBlock);
 
 #if USE(JSVALUE64)
-    cpu.gpr(GPRInfo::numberTagRegister) = JSValue::NumberTag;
-    cpu.gpr(GPRInfo::notCellMaskRegister) = JSValue::NotCellMask;
+    cpu.gpr(GPRInfo::numberTagRegister) = static_cast<JSC::UCPURegister>(JSValue::NumberTag);
+    cpu.gpr(GPRInfo::notCellMaskRegister) = static_cast<JSC::UCPURegister>(JSValue::NotCellMask);
 #endif
 
     if (exit.isExceptionHandler())

@@ -1,3 +1,28 @@
+2019-11-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix Win64 compile errors
+        https://bugs.webkit.org/show_bug.cgi?id=204471
+
+        Reviewed by Brent Fulgham.
+
+        Fix warnings being treated as errors.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::requiresIdentifierNameMatch const):
+        (JSC::AccessCase::requiresInt32PropertyCheck const):
+        (JSC::AccessCase::needsScratchFPR const):
+        (JSC::AccessCase::doesCalls const):
+        (JSC::AccessCase::canReplace const):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        * jit/JITOperations.cpp:
+        (JSC::profiledAdd):
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByFunction):
+        (JSC::appropriateGetByFunction):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCallWithStackSize):
+
 2019-11-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in again, regression is not caused by it

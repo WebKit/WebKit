@@ -2092,7 +2092,9 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
     );
 #else
     UNUSED_PARAM(function);
+#if !COMPILER(MSVC)
     UNUSED_PARAM(callWithStackSizeProbeFunction);
+#endif
 #endif // OS(DARWIN) && CPU(X86_64)
 
     Options::maxPerThreadStackUsage() = originalMaxPerThreadStackUsage;

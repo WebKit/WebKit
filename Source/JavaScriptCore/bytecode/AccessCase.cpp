@@ -294,6 +294,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedStringLoad:
         return false;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool AccessCase::requiresInt32PropertyCheck() const
@@ -340,6 +341,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedStringLoad:
         return true;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool AccessCase::needsScratchFPR() const
@@ -386,6 +388,7 @@ bool AccessCase::needsScratchFPR() const
     case IndexedTypedArrayUint32Load:
         return true;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 template<typename Functor>
@@ -469,7 +472,7 @@ void AccessCase::forEachDependentCell(const Functor& functor) const
 
 bool AccessCase::doesCalls(Vector<JSCell*>* cellsToMarkIfDoesCalls) const
 {
-    bool doesCalls;
+    bool doesCalls = false;
     switch (type()) {
     case Transition:
         doesCalls = newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity() && structure()->couldHaveIndexingHeader();
@@ -634,6 +637,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
 
         return structure() == other.structure();
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void AccessCase::dump(PrintStream& out) const

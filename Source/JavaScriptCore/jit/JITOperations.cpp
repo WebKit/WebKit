@@ -85,6 +85,14 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC {
 
+ALWAYS_INLINE JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSValue op2, BinaryArithProfile& arithProfile)
+{
+    arithProfile.observeLHSAndRHS(op1, op2);
+    JSValue result = jsAdd(globalObject, op1, op2);
+    arithProfile.observeResult(result);
+    return result;
+}
+
 extern "C" {
 
 #if COMPILER(MSVC)
@@ -2548,14 +2556,6 @@ void JIT_OPERATION operationExceptionFuzz(JSGlobalObject* globalObject)
     void* returnPC = __builtin_return_address(0);
     doExceptionFuzzing(globalObject, scope, "JITOperations", returnPC);
 #endif // COMPILER(GCC_COMPATIBLE)
-}
-
-ALWAYS_INLINE static JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSValue op2, BinaryArithProfile& arithProfile)
-{
-    arithProfile.observeLHSAndRHS(op1, op2);
-    JSValue result = jsAdd(globalObject, op1, op2);
-    arithProfile.observeResult(result);
-    return result;
 }
 
 EncodedJSValue JIT_OPERATION operationValueAdd(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
