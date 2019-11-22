@@ -77,7 +77,8 @@ InspectorFrontendAPI = {
 
     setDiagnosticLoggingAvailable: function(available)
     {
-        // FIXME: update diagnostic availability and start/stop diagnostic recorders.
+        if (WI.diagnosticController)
+            WI.diagnosticController.diagnosticLoggingAvailable = available;
     },
 
     showConsole: function()

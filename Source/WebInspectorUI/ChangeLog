@@ -1,3 +1,88 @@
+2019-11-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add support for new kinds of diagnostic events
+        https://bugs.webkit.org/show_bug.cgi?id=204430
+
+        Reviewed by Devin Rousso.
+
+        This patch restructures the existing DiagnosticController to support multiple
+        self-contained event recorders. The first such recorder is for the TabActivity
+        diagnostic event. More will be added later.
+
+        Add two engineering settings: one which auto-logs diagnostic events to Inspector^2 console,
+        and another which forces DiagnosticController to be active or inactive regardless of
+        whether a diagnostic logging delegate is actually installed. This is for manual testing.
+
+        This patch does not introduce any functionality changes to diagnostic event collection.
+        The TabActivityDiagnosticeventRecorder still needs some changes for it to sample correctly. 
+
+        New Test: inspector/unit-tests/diagnostic-controller.html
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+
+        * UserInterface/Controllers/DiagnosticController.js:
+        (WI.DiagnosticController):
+        (WI.DiagnosticController.prototype.set diagnosticLoggingAvailable):
+        (WI.DiagnosticController.prototype.addRecorder):
+        (WI.DiagnosticController.prototype.logDiagnosticEvent):
+        (WI.DiagnosticController.prototype._debugEnableDiagnosticLoggingSettingDidChange):
+        (WI.DiagnosticController.prototype._debugAutoLogDiagnosticEventsSettingDidChange):
+        (WI.DiagnosticController.prototype._updateRecorderStates):
+        (WI.DiagnosticController.supportsDiagnosticLogging): Deleted.
+        (WI.DiagnosticController.prototype.logDiagnosticMessage): Deleted.
+        (WI.DiagnosticController.prototype._didInteractWithTabContent): Deleted.
+        (WI.DiagnosticController.prototype._clearTabActivityTimeout): Deleted.
+        (WI.DiagnosticController.prototype._beginTabActivityTimeout): Deleted.
+        (WI.DiagnosticController.prototype._stopTrackingTabActivity): Deleted.
+        (WI.DiagnosticController.prototype._handleWindowFocus): Deleted.
+        (WI.DiagnosticController.prototype._handleWindowBlur): Deleted.
+        (WI.DiagnosticController.prototype._handleWindowKeyDown): Deleted.
+        (WI.DiagnosticController.prototype._handleWindowMouseDown): Deleted.
+        (WI.DiagnosticController.prototype._handleTabBrowserSelectedTabContentViewDidChange): Deleted.
+        Restructure DiagnosticController to be dumber. It holds on to a list of recorders and
+        turns them on and off. All event logging goes through one funnel method, which does not
+        use InspectorFrontendHost at all when running a Web Inspector layout test.
+
+        * UserInterface/Controllers/DiagnosticEventRecorder.js: Added.
+        (WI.DiagnosticEventRecorder):
+        (WI.DiagnosticEventRecorder.prototype.get name):
+        (WI.DiagnosticEventRecorder.prototype.get active):
+        (WI.DiagnosticEventRecorder.prototype.set active):
+        (WI.DiagnosticEventRecorder.prototype.setup):
+        (WI.DiagnosticEventRecorder.prototype.teardown):
+        Add base class for all individual diagnostic event recorders.
+
+        * UserInterface/Controllers/TabActivityDiagnosticEventRecorder.js: Copied from Source/WebInspectorUI/UserInterface/Controllers/DiagnosticController.js.
+        (WI.TabActivityDiagnosticEventRecorder):
+        (WI.TabActivityDiagnosticEventRecorder.prototype.setup):
+        (WI.TabActivityDiagnosticEventRecorder.prototype.teardown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype.handleEvent):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._didInteractWithTabContent):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._clearTabActivityTimeout):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._beginTabActivityTimeout):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._stopTrackingTabActivity):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowFocus):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowBlur):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowKeyDown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowMouseDown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleTabBrowserSelectedTabContentViewDidChange):
+        Move all user activity tracking to here. Restructure so that the recorder can be
+        turned on and off (this adds/removes its listeners and timers).
+
+        * UserInterface/Main.html: Add new files.
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setDiagnosticLoggingAvailable):
+        Adjust the name, as WI.diagnosticController is no longer underscore-prefixed.
+
+        * UserInterface/Base/Setting.js:
+        Add new settings. Add getter 'valueRespectingDebugUIAvailability' which only
+        returns default values for Debug/Engineering settings if DebugUI is not enabled.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+        Add new settings to Settings Tab UI.
+
 2019-11-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Outline sRGB-safe areas on P3 color picker

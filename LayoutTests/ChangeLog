@@ -1,3 +1,15 @@
+2019-11-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add support for new kinds of diagnostic events
+        https://bugs.webkit.org/show_bug.cgi?id=204430
+
+        Reviewed by Devin Rousso.
+
+        Add new test cases for WI.DiagnosticController.
+
+        * inspector/unit-tests/diagnostic-controller-expected.txt: Added.
+        * inspector/unit-tests/diagnostic-controller.html: Added.
+
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
         Speculative loading sometimes happens too early and is missing login cookies

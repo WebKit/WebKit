@@ -27,115 +27,69 @@ WI.DiagnosticController = class DiagnosticController
 {
     constructor()
     {
-        this._shouldLogTabContentActivity = true;
-        this._tabActivityTimeoutIdentifier = 0;
+        this._diagnosticLoggingAvailable = false;
+        this._recorders = new Set;
 
-        WI.TabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._handleTabBrowserSelectedTabContentViewDidChange, this);
+        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.valueRespectingDebugUIAvailability;
+        this._logToConsoleMethod = window.InspectorTest ? InspectorTest.log.bind(InspectorTest) : console.log;
 
-        const options = {
-            capture: true,
-        };
-        window.addEventListener("focus", this._handleWindowFocus.bind(this), options);
-        window.addEventListener("blur", this._handleWindowBlur.bind(this), options);
-        window.addEventListener("keydown", this._handleWindowKeyDown.bind(this), options);
-        window.addEventListener("mousedown", this._handleWindowMouseDown.bind(this), options);
-    }
-
-    // Static
-
-    static supportsDiagnosticLogging()
-    {
-        return InspectorFrontendHost.supportsDiagnosticLogging;
+        WI.settings.debugEnableDiagnosticLogging.addEventListener(WI.Setting.Event.Changed, this._debugEnableDiagnosticLoggingSettingDidChange, this);
+        WI.settings.debugAutoLogDiagnosticEvents.addEventListener(WI.Setting.Event.Changed, this._debugAutoLogDiagnosticEventsSettingDidChange, this);
     }
 
     // Public
 
-    logDiagnosticMessage(eventName, payload)
+    get diagnosticLoggingAvailable()
     {
-        console.assert(DiagnosticController.supportsDiagnosticLogging());
-        console.assert(Object.values(DiagnosticController.EventName).includes(eventName), "Unexpected diagnostic event name " + eventName);
+        return this._diagnosticLoggingAvailable;
+    }
+
+    set diagnosticLoggingAvailable(available)
+    {
+        if (this._diagnosticLoggingAvailable === available)
+            return;
+
+        this._diagnosticLoggingAvailable = available;
+        this._updateRecorderStates();
+    }
+
+    addRecorder(recorder)
+    {
+        console.assert(!this._recorders.has(recorder), "Tried to add the same diagnostic recorder more than once.");
+        this._recorders.add(recorder);
+        this._updateRecorderStates();
+    }
+
+    logDiagnosticEvent(eventName, payload)
+    {
+        // Don't rely on a diagnostic logging delegate to unit test frontend diagnostics code.
+        if (window.InspectorTest) {
+            this._logToConsoleMethod(`Received diagnostic event: ${eventName} => ${JSON.stringify(payload)}`);
+            return;
+        }
+
+        if (this._autoLogDiagnosticEventsToConsole)
+            this._logToConsoleMethod(eventName, payload);
 
         InspectorFrontendHost.logDiagnosticEvent(eventName, JSON.stringify(payload));
     }
 
     // Private
 
-    _didInteractWithTabContent()
+    _debugEnableDiagnosticLoggingSettingDidChange()
     {
-        if (!this._shouldLogTabContentActivity)
-            return;
-
-        let selectedTabContentView = WI.tabBrowser.selectedTabContentView;
-        console.assert(selectedTabContentView);
-        if (!selectedTabContentView)
-            return;
-
-        let tabType = selectedTabContentView.type;
-        let interval = DiagnosticController.ActivityTimingResolution;
-        this.logDiagnosticMessage(DiagnosticController.EventName.TabActivity, {tabType, interval});
-
-        this._beginTabActivityTimeout();
+        this._updateRecorderStates();
     }
 
-    _clearTabActivityTimeout()
+    _debugAutoLogDiagnosticEventsSettingDidChange()
     {
-        if (this._tabActivityTimeoutIdentifier) {
-            clearTimeout(this._tabActivityTimeoutIdentifier);
-            this._tabActivityTimeoutIdentifier = 0;
-        }
+        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.valueRespectingDebugUIAvailability;
     }
 
-    _beginTabActivityTimeout()
+    _updateRecorderStates()
     {
-        this._stopTrackingTabActivity();
-
-        this._tabActivityTimeoutIdentifier = setTimeout(() => {
-            this._shouldLogTabContentActivity = true;
-            this._tabActivityTimeoutIdentifier = 0;
-        }, DiagnosticController.ActivityTimingResolution);
-    }
-
-    _stopTrackingTabActivity()
-    {
-        this._clearTabActivityTimeout();
-        this._shouldLogTabContentActivity = false;
-    }
-
-    _handleWindowFocus(event)
-    {
-        if (event.target !== window)
-            return;
-
-        this._shouldLogTabContentActivity = true;
-    }
-
-    _handleWindowBlur(event)
-    {
-        if (event.target !== window)
-            return;
-
-        this._stopTrackingTabActivity();
-    }
-
-    _handleWindowKeyDown(event)
-    {
-        this._didInteractWithTabContent();
-    }
-
-    _handleWindowMouseDown(event)
-    {
-        this._didInteractWithTabContent();
-    }
-
-    _handleTabBrowserSelectedTabContentViewDidChange(event)
-    {
-        this._clearTabActivityTimeout();
-        this._shouldLogTabContentActivity = true;
+        let isActive = this._diagnosticLoggingAvailable && WI.settings.debugEnableDiagnosticLogging.valueRespectingDebugUIAvailability;
+        for (let recorder of this._recorders)
+            recorder.active = isActive;
     }
 };
-
-WI.DiagnosticController.EventName = {
-    TabActivity: "TabActivity",
-};
-
-WI.DiagnosticController.ActivityTimingResolution = 60 * 1000;

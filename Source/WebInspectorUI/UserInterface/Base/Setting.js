@@ -116,6 +116,14 @@ WI.Setting = class Setting extends WI.Object
         this.save();
     }
 
+    get valueRespectingDebugUIAvailability()
+    {
+        if (this._name.startsWith("debug-") || this._name.startsWith("engineering-"))
+            return WI.isDebugUIEnabled() ? this.value : this._defaultValue;
+
+        return this.value;
+    }
+
     save()
     {
         if (!window.InspectorTest && window.localStorage) {
@@ -208,6 +216,8 @@ WI.settings = {
     debugEnableLayoutFlashing: new WI.Setting("debug-enable-layout-flashing", false),
     debugEnableStyleEditingDebugMode: new WI.Setting("debug-enable-style-editing-debug-mode", false),
     debugEnableUncaughtExceptionReporter: new WI.Setting("debug-enable-uncaught-exception-reporter", true),
+    debugEnableDiagnosticLogging: new WI.Setting("debug-enable-diagnostic-logging", true),
+    debugAutoLogDiagnosticEvents: new WI.Setting("debug-auto-log-diagnostic-events", false),
     debugLayoutDirection: new WI.Setting("debug-layout-direction-override", "system"),
 };
 
