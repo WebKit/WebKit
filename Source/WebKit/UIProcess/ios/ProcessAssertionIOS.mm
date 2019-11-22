@@ -112,8 +112,16 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 {
     ASSERT(RunLoop::isMain());
 
-    for (auto* assertion : copyToVector(_assertionsNeedingBackgroundTask))
-        assertion->uiAssertionWillExpireImminently();
+    Vector<WeakPtr<ProcessAndUIAssertion>> assertionsNeedingBackgroundTask = WTF::map(_assertionsNeedingBackgroundTask, [](auto* assertion) {
+        return makeWeakPtr(*assertion);
+    });
+
+    // Note that we don't expect clients to register new assertions when getting notified that the UI assertion will expire imminently.
+    // If clients were to do so, then those new assertions would not get notified of the imminent suspension.
+    for (auto assertion : assertionsNeedingBackgroundTask) {
+        if (assertion)
+            assertion->uiAssertionWillExpireImminently();
+    }
 }
 
 

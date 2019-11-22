@@ -1,3 +1,20 @@
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Copy assertions before iterating over them in _notifyAssertionsOfImminentSuspension
+        https://bugs.webkit.org/show_bug.cgi?id=204524
+        <rdar://problem/57265830>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Copy assertions before iterating over them in _notifyAssertionsOfImminentSuspension and use WeakPtr
+        to make sure the assertions are still alive before calling uiAssertionWillExpireImminently() on
+        them. It is common for process assertions to get released when uiAssertionWillExpireImminently()
+        gets called, which would remove them from the _assertionsNeedingBackgroundTask vector we were
+        iterating on.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _notifyAssertionsOfImminentSuspension]):
+
 2019-11-22  Alex Christensen  <achristensen@webkit.org>
 
         Null check callback in NetworkConnectionToWebProcess::didDeliverMessagePortMessages
