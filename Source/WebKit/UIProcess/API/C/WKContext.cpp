@@ -419,8 +419,9 @@ void WKContextResetServiceWorkerFetchTimeoutForTesting(WKContextRef contextRef)
     WebKit::toImpl(contextRef)->resetServiceWorkerTimeoutForTesting();
 }
 
-void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef, bool)
+void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, bool value)
 {
+    WebKit::toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
 }
 
 void WKContextPreconnectToServer(WKContextRef, WKURLRef)

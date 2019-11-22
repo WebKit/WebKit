@@ -1,5 +1,30 @@
 2019-11-22  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r250421
+        https://bugs.webkit.org/show_bug.cgi?id=202290
+
+        This is needed for rdar://problem/56760896
+        I left the soup parts of the original change untouched, which leaves speculative validation on for soup ports.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDiskCacheSpeculativeValidationEnabled):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration diskCacheSpeculativeValidationEnabled]):
+        (-[_WKProcessPoolConfiguration setDiskCacheSpeculativeValidationEnabled:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
+2019-11-22  Alex Christensen  <achristensen@webkit.org>
+
         Revert r250422
         https://bugs.webkit.org/show_bug.cgi?id=202285
 
