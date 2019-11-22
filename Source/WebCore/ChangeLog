@@ -1,3 +1,16 @@
+2019-11-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Merge "insert inline runs" and "setup display runs" loops in InlineFormattingContext::setDisplayBoxesForLine
+        https://bugs.webkit.org/show_bug.cgi?id=204537
+        <rdar://problem/57440394>
+
+        Reviewed by Antti Koivisto.
+
+        Let's loop the new Line::Run list only once.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
         Bindings generator fails to add includes for iterable<> key / value types

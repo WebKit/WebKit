@@ -427,20 +427,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         }
     }
 
-    // Add final display runs to state.
     formattingState.addLineBox(lineContent.lineBox);
-    // FIXME: This is tempoary.
     auto& currentLine = *formattingState.lineBoxes().last();
-    for (auto& lineRun : lineContent.runList) {
-        // Inline level containers (<span>) don't generate display runs.
-        if (lineRun.isContainerStart() || lineRun.isContainerEnd())
-            continue;
-        // Completely collapsed line runs don't generate display runs either.
-        if (lineRun.isCollapsedToVisuallyEmpty())
-            continue;
-        formattingState.addInlineRun(makeUnique<Display::Run>(lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext()), currentLine);
-    }
-
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -448,6 +436,12 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         auto& logicalRect = lineRun.logicalRect();
         auto& layoutBox = lineRun.layoutBox();
         auto& displayBox = formattingState.displayBox(layoutBox);
+
+        // Add final display runs to state first.
+        // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
+        auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd() && !lineRun.isCollapsedToVisuallyEmpty();
+        if (initiatesInlineRun)
+            formattingState.addInlineRun(makeUnique<Display::Run>(lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext()), currentLine);
 
         if (lineRun.isForcedLineBreak()) {
             displayBox.setTopLeft(logicalRect.topLeft());
