@@ -1,3 +1,14 @@
+2019-11-22  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Failure to determine configuration for reporting is fatal
+        https://bugs.webkit.org/show_bug.cgi?id=204526
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Return empty hash if no configuration is available.
+        (uploadResults): Soft-fail upload if configuration is empty.
+
 2019-11-22  Aakash Jain  <aakash_jain@apple.com>
 
         Setup EWS queue for JSConly i386
