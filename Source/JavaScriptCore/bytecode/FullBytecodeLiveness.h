@@ -44,7 +44,7 @@ public:
         case LivenessCalculationPoint::AfterUse:
             return m_afterUseVector[bytecodeIndex.offset()];
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     bool operandIsLive(int operand, BytecodeIndex bytecodeIndex, LivenessCalculationPoint point) const

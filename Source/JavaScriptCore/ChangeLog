@@ -1,3 +1,16 @@
+2019-11-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix compile error in release mode
+        https://bugs.webkit.org/show_bug.cgi?id=204534
+
+        Reviewed by Mark Lam.
+
+        A compiler error is thrown in release mode when compiling FullBytecodeLiveness::getLiveness,
+        since not all paths are returning a value.
+
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness const):
+
 2019-11-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Improve Wasm::LLIntGenerator
