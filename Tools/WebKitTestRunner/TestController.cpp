@@ -981,6 +981,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     clearServiceWorkerRegistrations();
     clearDOMCaches();
 
+    resetQuota();
+
     WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(platformContext(), true);
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
@@ -3139,6 +3141,13 @@ void TestController::syncLocalStorage()
 {
     StorageVoidCallbackContext context(*this);
     WKContextSyncLocalStorage(platformContext(), &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::resetQuota()
+{
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreResetQuota(TestController::websiteDataStore(), &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

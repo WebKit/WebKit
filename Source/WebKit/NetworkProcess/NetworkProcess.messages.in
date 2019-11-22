@@ -164,4 +164,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
+
+    ResetQuota(PAL::SessionID sessionID) -> () Async
 }

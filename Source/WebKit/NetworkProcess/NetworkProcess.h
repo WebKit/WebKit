@@ -286,6 +286,7 @@ public:
     void clearLegacyPrivateBrowsingLocalStorage();
 
     void updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID, const WebCore::ClientOrigin&);
+    void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);
@@ -329,7 +330,7 @@ public:
     void setAdClickAttributionConversionURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
     void markAdClickAttributionsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 
-    WebCore::StorageQuotaManager& storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
+    RefPtr<WebCore::StorageQuotaManager> storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
@@ -445,6 +446,7 @@ private:
     void collectIndexedDatabaseOriginsForVersion(const String&, HashSet<WebCore::SecurityOriginData>&);
     HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
     Ref<WebCore::IDBServer::IDBServer> createIDBServer(PAL::SessionID);
+    void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -464,8 +466,44 @@ private:
     void performNextStorageTask();
     void ensurePathExists(const String& path);
 
-    void clearStorageQuota(PAL::SessionID);
-    void initializeStorageQuota(const WebsiteDataStoreParameters&);
+    class SessionStorageQuotaManager {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        SessionStorageQuotaManager(const String& cacheRootPath, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota)
+            : m_cacheRootPath(cacheRootPath)
+            , m_defaultQuota(defaultQuota)
+            , m_defaultThirdPartyQuota(defaultThirdPartyQuota)
+        {
+        }
+        uint64_t defaultQuota(const WebCore::ClientOrigin& origin) const { return origin.topOrigin == origin.clientOrigin ? m_defaultQuota : m_defaultThirdPartyQuota; }
+
+        Ref<WebCore::StorageQuotaManager> ensureOriginStorageQuotaManager(WebCore::ClientOrigin origin, uint64_t quota, WebCore::StorageQuotaManager::UsageGetter&& usageGetter, WebCore::StorageQuotaManager::QuotaIncreaseRequester&& quotaIncreaseRequester)
+        {
+            auto [iter, isNewEntry] = m_storageQuotaManagers.ensure(origin, [quota, usageGetter = WTFMove(usageGetter), quotaIncreaseRequester = WTFMove(quotaIncreaseRequester)]() mutable {
+                return WebCore::StorageQuotaManager::create(quota, WTFMove(usageGetter), WTFMove(quotaIncreaseRequester));
+            });
+            return makeRef(*iter->value);
+        }
+
+        auto existingStorageQuotaManagers() { return m_storageQuotaManagers.values(); }
+
+        const String& cacheRootPath() const { return m_cacheRootPath; }
+#if ENABLE(INDEXED_DATABASE)
+        void setIDBRootPath(const String& idbRootPath) { m_idbRootPath = idbRootPath; }
+        const String& idbRootPath() const { return m_idbRootPath; }
+#endif
+
+    private:
+        String m_cacheRootPath;
+#if ENABLE(INDEXED_DATABASE)
+        String m_idbRootPath;
+#endif
+        uint64_t m_defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
+        uint64_t m_defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
+        HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_storageQuotaManagers;
+    };
+    void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
+    void removeSessionStorageQuotaManager(PAL::SessionID);
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
@@ -537,23 +575,8 @@ private:
     bool m_isITPDatabaseEnabled { false };
 #endif
     
-    class StorageQuotaManagers {
-    public:
-        uint64_t defaultQuota(const WebCore::ClientOrigin& origin) const { return origin.topOrigin == origin.clientOrigin ? m_defaultQuota : m_defaultThirdPartyQuota; }
-        void setDefaultQuotas(uint64_t defaultQuota, uint64_t defaultThirdPartyQuota)
-        {
-            m_defaultQuota = defaultQuota;
-            m_defaultThirdPartyQuota = defaultThirdPartyQuota;
-        }
-
-        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>>& managersPerOrigin() { return m_managersPerOrigin; }
-
-    private:
-        uint64_t m_defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
-        uint64_t m_defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
-        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> m_managersPerOrigin;
-    };
-    HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
+    Lock m_sessionStorageQuotaManagersLock;
+    HashMap<PAL::SessionID, std::unique_ptr<SessionStorageQuotaManager>> m_sessionStorageQuotaManagers;
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
     WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;

@@ -196,13 +196,68 @@ void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID
     });
 }
 
-void Engine::initializeQuotaUser(NetworkProcess& networkProcess, PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void()>&& completionHandler)
+static uint64_t getDirectorySize(const String& directoryPath)
 {
-    from(networkProcess, sessionID, [clientOrigin, completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
-        engine.readCachesFromDisk(clientOrigin, [completionHandler = WTFMove(completionHandler)](auto&& cachesOrError) mutable {
-            completionHandler();
-        });
-    });
+    ASSERT(!isMainThread());
+
+    uint64_t directorySize = 0;
+    Deque<String> paths;
+    paths.append(directoryPath);
+    while (!paths.isEmpty()) {
+        auto path = paths.takeFirst();
+        if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::No)) {
+            auto newPaths = FileSystem::listDirectory(path, "*"_s);
+            for (auto& newPath : newPaths) {
+                // Files in /Blobs directory are hard link.
+                auto fileName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(newPath);
+                if (fileName == "Blobs")
+                    continue;
+                paths.append(newPath);
+            }
+            continue;
+        }
+
+        long long fileSize = 0;
+        FileSystem::getFileSize(path, fileSize);
+        directorySize += fileSize;
+    }
+    return directorySize;
+}
+
+uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& origin)
+{
+    ASSERT(!isMainThread());
+
+    if (rootPath.isEmpty())
+        return 0;
+
+    String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
+    auto salt = readOrMakeSalt(saltPath);
+    if (!salt)
+        return 0;
+
+    Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, *salt);
+    String directoryPath = FileSystem::pathByAppendingComponent(rootPath, key.hashAsString());
+
+    String sizeFilePath = Caches::cachesSizeFilename(directoryPath);
+    if (auto recordedSize = readSizeFile(sizeFilePath))
+        return *recordedSize;
+
+    return getDirectorySize(directoryPath);
+}
+
+void Engine::requestSpace(const ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&& callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_networkProcess)
+        callback(WebCore::StorageQuotaManager::Decision::Deny);
+
+    RefPtr<WebCore::StorageQuotaManager> storageQuotaManager = m_networkProcess->storageQuotaManager(m_sessionID, origin);
+    if (!storageQuotaManager)
+        callback(WebCore::StorageQuotaManager::Decision::Deny);
+
+    storageQuotaManager->requestSpaceOnMainThread(spaceRequested, WTFMove(callback));
 }
 
 Engine::Engine(PAL::SessionID sessionID, NetworkProcess& process, String&& rootPath)
@@ -341,7 +396,7 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
 
         auto& caches = m_caches.ensure(origin, [&origin, this] {
             auto path = cachesRootPath(origin);
-            return Caches::create(*this, WebCore::ClientOrigin { origin }, WTFMove(path), m_networkProcess->storageQuotaManager(m_sessionID, origin));
+            return Caches::create(*this, WebCore::ClientOrigin { origin }, WTFMove(path));
         }).iterator->value;
 
         if (caches->isInitialized()) {
@@ -473,12 +528,13 @@ void Engine::removeFile(const String& filename)
     });
 }
 
-void Engine::writeSizeFile(const String& path, uint64_t size)
+void Engine::writeSizeFile(const String& path, uint64_t size, CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
     if (!shouldPersist())
         return;
 
-    m_ioQueue->dispatch([path = path.isolatedCopy(), size]() {
+    m_ioQueue->dispatch([path = path.isolatedCopy(), size, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
         LockHolder locker(globalSizeFileLock);
         auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
         auto closeFileHandler = makeScopeExit([&] {
@@ -489,6 +545,8 @@ void Engine::writeSizeFile(const String& path, uint64_t size)
 
         FileSystem::truncateFile(fileHandle, 0);
         FileSystem::writeToFile(fileHandle, String::number(size).utf8().data(), String::number(size).utf8().length());
+
+        RunLoop::main().dispatch([completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable { });
     });
 }
 
@@ -513,8 +571,8 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
     if (!WTF::convertSafely(fileSize, bytesToRead))
         return WTF::nullopt;
 
-    Vector<char> buffer(bytesToRead);
-    size_t totalBytesRead = FileSystem::readFromFile(fileHandle, buffer.data(), buffer.size());
+    Vector<unsigned char> buffer(bytesToRead);
+    size_t totalBytesRead = FileSystem::readFromFile(fileHandle, reinterpret_cast<char*>(buffer.data()), buffer.size());
     if (totalBytesRead != bytesToRead)
         return WTF::nullopt;
 

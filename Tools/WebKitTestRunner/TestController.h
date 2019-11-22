@@ -269,6 +269,8 @@ public:
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
 
+    void resetQuota();
+
     void removeAllSessionCredentials();
 
     void clearIndexedDatabases();

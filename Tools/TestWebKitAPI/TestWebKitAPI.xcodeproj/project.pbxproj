@@ -737,7 +737,6 @@
 		9399BA062371114F008392BF /* IndexedDBNotInPageCache.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9399BA03237110BF008392BF /* IndexedDBNotInPageCache.html */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
-		93B62054234EA62C00D49B97 /* StorageQuotaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B62053234EA32B00D49B97 /* StorageQuotaManager.cpp */; };
 		93CFA8671CEB9E38000565A8 /* autofocused-text-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */; };
 		93D119FC22C680F7009BE3C7 /* localstorage-open-window-private.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D119FB22C57112009BE3C7 /* localstorage-open-window-private.html */; };
 		93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2C5541FD3204100E1DF6A /* LineEnding.cpp */; };
@@ -1142,7 +1141,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				CD8394DF232AF7C000149495 /* media-loading.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1375,6 +1373,7 @@
 				930AD402150698D00067970F /* lots-of-text.html in Copy Resources */,
 				AD57AC221DA7466E00FF1BDE /* many-iframes.html in Copy Resources */,
 				7772ECE122FE06C60009A799 /* many-same-origin-iframes.html in Copy Resources */,
+				CD8394DF232AF7C000149495 /* media-loading.html in Copy Resources */,
 				CDA3159A1ED548F1009F60D3 /* MediaPlaybackSleepAssertion.html in Copy Resources */,
 				CDC9442F1EF205D60059C3C4 /* mediastreamtrack-detached.html in Copy Resources */,
 				E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */,
@@ -2147,7 +2146,6 @@
 		93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages.cpp; sourceTree = "<group>"; };
 		93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp; sourceTree = "<group>"; };
 		93AF4ECF1506F123007FD57E /* lots-of-images.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "lots-of-images.html"; sourceTree = "<group>"; };
-		93B62053234EA32B00D49B97 /* StorageQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageQuotaManager.cpp; sourceTree = "<group>"; };
 		93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autofocused-text-input.html"; sourceTree = "<group>"; };
 		93CFA8681CEBCFED000565A8 /* CandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CandidateTests.mm; sourceTree = "<group>"; };
 		93D119FB22C57112009BE3C7 /* localstorage-open-window-private.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "localstorage-open-window-private.html"; sourceTree = "<group>"; };
@@ -3124,7 +3122,6 @@
 				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
 				A17991891E1CA24100A505ED /* SharedBufferTest.cpp */,
 				A179918A1E1CA24100A505ED /* SharedBufferTest.h */,
-				93B62053234EA32B00D49B97 /* StorageQuotaManager.cpp */,
 				ECA680CD1E68CC0900731D20 /* StringUtilities.mm */,
 				CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */,
 				93A258981F92FF15003E510C /* TextCodec.cpp */,
@@ -3852,6 +3849,7 @@
 				930AD401150698B30067970F /* lots-of-text.html */,
 				AD57AC1D1DA7463800FF1BDE /* many-iframes.html */,
 				7772ECE022FE05E10009A799 /* many-same-origin-iframes.html */,
+				CD8394DE232AF15E00149495 /* media-loading.html */,
 				CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */,
 				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
@@ -3883,7 +3881,6 @@
 				07CD32F72065B72A0064A4BE /* video.html */,
 				1C2B81841C8924A200A5529F /* webfont.html */,
 				468F2F932368DAA700F4B864 /* window-open-then-document-open.html */,
-				CD8394DE232AF15E00149495 /* media-loading.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -4864,7 +4861,6 @@
 				7CCE7ECF1A411A7E00447C4C /* StopLoadingFromDidReceiveResponse.mm in Sources */,
 				CDC0932E21C993440030C4B0 /* StopSuspendResumeAllMedia.mm in Sources */,
 				414AD6862285D1C000777F2D /* StorageQuota.mm in Sources */,
-				93B62054234EA62C00D49B97 /* StorageQuotaManager.cpp in Sources */,
 				515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */,
 				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
 				7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */,

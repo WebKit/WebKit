@@ -1,3 +1,143 @@
+2019-11-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Cross-thread version StorageQuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=203971
+        <rdar://problem/57290349>
+
+        Reviewed by Chris Dumez.
+
+        Implement a lock-based StorageQuotaManager so that quota check can be done on different threads.
+        If space request is made on a background thread, it needs to hold a lock until it is finished, so no request
+        from different threads can be performed at the same time.
+        If space request is made on the main thread, we will dispatch it to a background thread and schedule a calllback
+        to the main thread when result is available, so the main thread will not be blocked.
+
+        Covered by existing quota related tests.
+
+        * Headers.cmake:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::create):
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::didPerformCloseAndDeleteDatabases):
+        (WebCore::IDBServer::IDBServer::requestSpace):
+        (WebCore::IDBServer::IDBServer::diskUsage):
+        (WebCore::IDBServer::IDBServer::QuotaUser::QuotaUser): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::~QuotaUser): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::resetSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::computeSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::increaseSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::decreaseSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::whenInitialized): Deleted.
+        (WebCore::IDBServer::IDBServer::QuotaUser::initializeSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::ensureQuotaUser): Deleted.
+        (WebCore::IDBServer::IDBServer::startComputingSpaceUsedForOrigin): Deleted.
+        (WebCore::IDBServer::IDBServer::computeSpaceUsedForOrigin): Deleted.
+        (WebCore::IDBServer::IDBServer::finishComputingSpaceUsedForOrigin): Deleted.
+        (WebCore::IDBServer::IDBServer::resetSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::increaseSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::decreaseSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::increasePotentialSpaceUsed): Deleted.
+        (WebCore::IDBServer::IDBServer::decreasePotentialSpaceUsed): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::initializeQuotaUser): Deleted.
+        (): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::requestSpace): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::waitForRequestSpaceCompletion): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::startSpaceIncreaseTask): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::finishSpaceIncreaseTask): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStoreAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStoreAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStoreAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStoreAfetQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndexAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndexAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndexAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAddAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecordAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecordsAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::getCountAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecordAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursorAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursorAfterQuotaCheck): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransactionAfterQuotaCheck): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::abortTransactionWithoutCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abort):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::quotaManager):
+        (WebCore::storageQuotaManagerSpaceRequester):
+        (WebCore::InProcessIDBServer::InProcessIDBServer):
+        (WebCore::storageQuotaManagerGetter): Deleted.
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::create):
+        (WebCore::StorageQuotaManager::StorageQuotaManager):
+        (WebCore::StorageQuotaManager::requestSpaceOnMainThread):
+        (WebCore::StorageQuotaManager::requestSpaceOnBackgroundThread):
+        (WebCore::StorageQuotaManager::tryGrantRequest):
+        (WebCore::StorageQuotaManager::updateQuotaBasedOnUsage):
+        (WebCore::StorageQuotaManager::resetQuotaUpdatedBasedOnUsageForTesting):
+        (WebCore::StorageQuotaManager::resetQuotaForTesting):
+        (WebCore::StorageQuotaManager::~StorageQuotaManager): Deleted.
+        (WebCore::StorageQuotaManager::spaceUsage const): Deleted.
+        (WebCore::StorageQuotaManager::updateQuotaBasedOnSpaceUsage): Deleted.
+        (WebCore::StorageQuotaManager::initializeUsersIfNeeded): Deleted.
+        (WebCore::StorageQuotaManager::askUserToInitialize): Deleted.
+        (WebCore::StorageQuotaManager::addUser): Deleted.
+        (WebCore::StorageQuotaManager::shouldAskForMoreSpace const): Deleted.
+        (WebCore::StorageQuotaManager::removeUser): Deleted.
+        (WebCore::StorageQuotaManager::requestSpace): Deleted.
+        (WebCore::StorageQuotaManager::askForMoreSpace): Deleted.
+        (WebCore::StorageQuotaManager::processPendingRequests): Deleted.
+        * storage/StorageQuotaManager.h:
+        (WebCore::StorageQuotaManager::defaultThirdPartyQuotaFromPerOriginQuota):
+        (WebCore::StorageQuotaManager::StorageQuotaManager): Deleted.
+        (WebCore::StorageQuotaManager::resetQuota): Deleted.
+        (WebCore::StorageQuotaManager::state const): Deleted.
+        * storage/StorageQuotaUser.h: Removed.
+
 2019-11-22  Eric Carlson  <eric.carlson@apple.com>
 
         ( r251737 ) media/remoteplayback-prompt.html is a flakey timeout
