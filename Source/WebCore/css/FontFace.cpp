@@ -37,7 +37,6 @@
 #include "CSSValuePool.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
-#include "FontVariantBuilder.h"
 #include "JSFontFace.h"
 #include "Quirks.h"
 #include "StyleProperties.h"
@@ -101,9 +100,6 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
     auto setUnicodeRangeResult = result->setUnicodeRange(descriptors.unicodeRange.isEmpty() ? "U+0-10FFFF"_s : descriptors.unicodeRange);
     if (setUnicodeRangeResult.hasException())
         return setUnicodeRangeResult.releaseException();
-    auto setVariantResult = result->setVariant(descriptors.variant.isEmpty() ? "normal"_s : descriptors.variant);
-    if (setVariantResult.hasException())
-        return setVariantResult.releaseException();
     auto setFeatureSettingsResult = result->setFeatureSettings(descriptors.featureSettings.isEmpty() ? "normal"_s : descriptors.featureSettings);
     if (setFeatureSettingsResult.hasException())
         return setFeatureSettingsResult.releaseException();
@@ -215,61 +211,6 @@ ExceptionOr<void> FontFace::setUnicodeRange(const String& unicodeRange)
         success = m_backing->setUnicodeRange(*value);
     if (!success)
         return Exception { SyntaxError };
-    return { };
-}
-
-ExceptionOr<void> FontFace::setVariant(const String& variant)
-{
-    if (variant.isEmpty())
-        return Exception { SyntaxError };
-
-    auto style = MutableStyleProperties::create();
-    auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, HTMLStandardMode);
-    if (result == CSSParser::ParseResult::Error)
-        return Exception { SyntaxError };
-
-    // FIXME: Would be much better to stage the new settings and set them all at once
-    // instead of this dance where we make a backup and revert to it if something fails.
-    FontVariantSettings backup = m_backing->variantSettings();
-
-    auto normal = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-    bool success = true;
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantLigatures))
-        success &= m_backing->setVariantLigatures(*value);
-    else
-        m_backing->setVariantLigatures(normal);
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantPosition))
-        success &= m_backing->setVariantPosition(*value);
-    else
-        m_backing->setVariantPosition(normal);
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantCaps))
-        success &= m_backing->setVariantCaps(*value);
-    else
-        m_backing->setVariantCaps(normal);
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantNumeric))
-        success &= m_backing->setVariantNumeric(*value);
-    else
-        m_backing->setVariantNumeric(normal);
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantAlternates))
-        success &= m_backing->setVariantAlternates(*value);
-    else
-        m_backing->setVariantAlternates(normal);
-
-    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantEastAsian))
-        success &= m_backing->setVariantEastAsian(*value);
-    else
-        m_backing->setVariantEastAsian(normal);
-
-    if (!success) {
-        m_backing->setVariantSettings(backup);
-        return Exception { SyntaxError };
-    }
-
     return { };
 }
 
@@ -400,12 +341,6 @@ String FontFace::unicodeRange() const
     for (auto& range : m_backing->ranges())
         values->append(CSSUnicodeRangeValue::create(range.from, range.to));
     return values->cssText();
-}
-
-String FontFace::variant() const
-{
-    m_backing->updateStyleIfNeeded();
-    return computeFontVariant(m_backing->variantSettings())->cssText();
 }
 
 String FontFace::featureSettings() const

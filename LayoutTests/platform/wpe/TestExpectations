@@ -1585,7 +1585,6 @@ Bug(WPE) css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure 
 Bug(WPE) css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-all.html [ ImageOnlyFailure ]
-Bug(WPE) css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 Bug(WPE) css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]

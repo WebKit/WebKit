@@ -12,9 +12,6 @@ PASS fontface.weight = '' threw exception SyntaxError: The string did not match 
 PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {unicodeRange: ''}) did not throw exception.
 PASS fontface.unicodeRange is "U+0-10ffff"
 PASS fontface.unicodeRange = '' threw exception SyntaxError: The string did not match the expected pattern..
-PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {variant: ''}) did not throw exception.
-PASS fontface.variant is "normal"
-PASS fontface.variant = '' threw exception SyntaxError: The string did not match the expected pattern..
 PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {featureSettings: ''}) did not throw exception.
 PASS fontface.featureSettings is "normal"
 PASS fontface.featureSettings = '' threw exception SyntaxError: The string did not match the expected pattern..

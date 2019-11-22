@@ -37,7 +37,6 @@ dictionary FontFaceDescriptors {
     DOMString weight = "normal";
     DOMString stretch = "normal";
     DOMString unicodeRange = "U+0-10FFFF";
-    DOMString variant = "normal";
     DOMString featureSettings = "normal";
     DOMString display = "auto";
 };
@@ -52,7 +51,6 @@ dictionary FontFaceDescriptors {
     attribute DOMString weight;
     attribute DOMString stretch;
     attribute DOMString unicodeRange;
-    attribute DOMString variant;
     attribute DOMString featureSettings;
     attribute DOMString display;
 

@@ -69,12 +69,6 @@ public:
     void setWeight(CSSValue&);
     void setStretch(CSSValue&);
     bool setUnicodeRange(CSSValue&);
-    bool setVariantLigatures(CSSValue&);
-    bool setVariantPosition(CSSValue&);
-    bool setVariantCaps(CSSValue&);
-    bool setVariantNumeric(CSSValue&);
-    bool setVariantAlternates(CSSValue&);
-    bool setVariantEastAsian(CSSValue&);
     void setFeatureSettings(CSSValue&);
     void setLoadingBehavior(CSSValue&);
 
@@ -87,9 +81,7 @@ public:
     FontSelectionCapabilities fontSelectionCapabilities() const { return m_fontSelectionCapabilities.computeFontSelectionCapabilities(); }
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
     const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
-    const FontVariantSettings& variantSettings() const { return m_variantSettings; }
     FontLoadingBehavior loadingBehavior() const { return m_loadingBehavior; }
-    void setVariantSettings(const FontVariantSettings& variantSettings) { m_variantSettings = variantSettings; }
     void setWeight(FontSelectionRange weight) { m_fontSelectionCapabilities.weight = weight; }
     void setStretch(FontSelectionRange stretch) { m_fontSelectionCapabilities.width = stretch; }
     void setStyle(FontSelectionRange italic) { m_fontSelectionCapabilities.slope = italic; }
@@ -185,7 +177,6 @@ private:
     Vector<UnicodeRange> m_ranges;
 
     FontFeatureSettings m_featureSettings;
-    FontVariantSettings m_variantSettings;
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;

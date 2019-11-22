@@ -162,12 +162,6 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr<CSSValue> src = style.getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
     RefPtr<CSSValue> featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings);
-    RefPtr<CSSValue> variantLigatures = style.getPropertyCSSValue(CSSPropertyFontVariantLigatures);
-    RefPtr<CSSValue> variantPosition = style.getPropertyCSSValue(CSSPropertyFontVariantPosition);
-    RefPtr<CSSValue> variantCaps = style.getPropertyCSSValue(CSSPropertyFontVariantCaps);
-    RefPtr<CSSValue> variantNumeric = style.getPropertyCSSValue(CSSPropertyFontVariantNumeric);
-    RefPtr<CSSValue> variantAlternates = style.getPropertyCSSValue(CSSPropertyFontVariantAlternates);
-    RefPtr<CSSValue> variantEastAsian = style.getPropertyCSSValue(CSSPropertyFontVariantEastAsian);
     RefPtr<CSSValue> loadingBehavior = style.getPropertyCSSValue(CSSPropertyFontDisplay);
     if (!is<CSSValueList>(fontFamily) || !is<CSSValueList>(src) || (unicodeRange && !is<CSSValueList>(*unicodeRange)))
         return;
@@ -194,18 +188,6 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (fontStretch)
         fontFace->setStretch(*fontStretch);
     if (rangeList && !fontFace->setUnicodeRange(*rangeList))
-        return;
-    if (variantLigatures && !fontFace->setVariantLigatures(*variantLigatures))
-        return;
-    if (variantPosition && !fontFace->setVariantPosition(*variantPosition))
-        return;
-    if (variantCaps && !fontFace->setVariantCaps(*variantCaps))
-        return;
-    if (variantNumeric && !fontFace->setVariantNumeric(*variantNumeric))
-        return;
-    if (variantAlternates && !fontFace->setVariantAlternates(*variantAlternates))
-        return;
-    if (variantEastAsian && !fontFace->setVariantEastAsian(*variantEastAsian))
         return;
     if (featureSettings)
         fontFace->setFeatureSettings(*featureSettings);

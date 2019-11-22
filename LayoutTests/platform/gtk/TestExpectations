@@ -846,7 +846,6 @@ webkit.org/b/152618 fast/text/international/system-language/declarative-language
 
 # This port doesn't support small-caps synthesis.
 webkit.org/b/152620 css3/font-variant-all.html [ ImageOnlyFailure ]
-webkit.org/b/152620 css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]

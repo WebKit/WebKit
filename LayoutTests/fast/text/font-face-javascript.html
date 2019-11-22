@@ -10,7 +10,6 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).style"
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).weight", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).stretch", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).unicodeRange", "U+0-10ffff");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).variant", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).featureSettings", "normal");
 
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'normal'}).style", "normal");
@@ -27,17 +26,13 @@ shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'inherit'
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'stretch': 'ultra-expanded'}).stretch", "ultra-expanded");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+0-7F'}).unicodeRange", "U+0-7f");
-shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'variant_name'}).variant");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps'}).variant", "small-caps");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps common-ligatures'}).variant", "common-ligatures small-caps");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'featureSettings': '\\'titl\\''}).featureSettings", "\"titl\"");
 
-var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic', 'weight': 'bold', 'stretch': 'extra-expanded', 'unicodeRange': 'U+26', 'variant': 'small-caps', 'featureSettings': '\'titl\''});
+var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic', 'weight': 'bold', 'stretch': 'extra-expanded', 'unicodeRange': 'U+26', 'featureSettings': '\'titl\''});
 shouldBeEqualToString("everything.style", "italic");
 shouldBeEqualToString("everything.weight", "bold");
 shouldBeEqualToString("everything.stretch", "extra-expanded");
 shouldBeEqualToString("everything.unicodeRange", "U+26");
-shouldBeEqualToString("everything.variant", "small-caps");
 shouldBeEqualToString("everything.featureSettings", "\"titl\"");
 
 everything.family = "other_family_name";
@@ -50,8 +45,6 @@ everything.stretch = "condensed";
 shouldBeEqualToString("everything.stretch", "condensed");
 everything.unicodeRange = "U+0-7F";
 shouldBeEqualToString("everything.unicodeRange", "U+0-7f");
-everything.variant = "stacked-fractions";
-shouldBeEqualToString("everything.variant", "stacked-fractions");
 everything.featureSettings = "'smcp'";
 shouldBeEqualToString("everything.featureSettings", "\"smcp\"");
 

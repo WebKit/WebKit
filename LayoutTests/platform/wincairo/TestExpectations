@@ -1172,7 +1172,6 @@ css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
 webkit.org/b/149771 css3/font-feature-settings-font-face-rendering.html [ Skip ]
-webkit.org/b/149771 css3/font-variant-font-face-all.html [ Skip ]
 webkit.org/b/149771 css3/font-variant-font-face-override.html [ Skip ]
 webkit.org/b/149774 css3/font-variant-petite-caps-synthesis-coverage.html [ Skip ]
 webkit.org/b/149774 css3/font-variant-petite-caps-synthesis.html [ Skip ]

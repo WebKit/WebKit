@@ -48,7 +48,6 @@ public:
         String weight;
         String stretch;
         String unicodeRange;
-        String variant;
         String featureSettings;
         String display;
     };
@@ -63,7 +62,6 @@ public:
     ExceptionOr<void> setWeight(const String&);
     ExceptionOr<void> setStretch(const String&);
     ExceptionOr<void> setUnicodeRange(const String&);
-    ExceptionOr<void> setVariant(const String&);
     ExceptionOr<void> setFeatureSettings(const String&);
     ExceptionOr<void> setDisplay(const String&);
 
@@ -72,7 +70,6 @@ public:
     String weight() const;
     String stretch() const;
     String unicodeRange() const;
-    String variant() const;
     String featureSettings() const;
     String display() const;
 

@@ -1,3 +1,65 @@
+2019-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove font-variant @font-face descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=203179
+
+        Reviewed by Simon Fraser.
+
+        As per https://github.com/w3c/csswg-drafts/issues/2531
+
+        Deleted relevant tests.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        (WebCore::CSSFontFace::setVariantLigatures): Deleted.
+        (WebCore::CSSFontFace::setVariantPosition): Deleted.
+        (WebCore::CSSFontFace::setVariantCaps): Deleted.
+        (WebCore::CSSFontFace::setVariantNumeric): Deleted.
+        (WebCore::CSSFontFace::setVariantAlternates): Deleted.
+        (WebCore::CSSFontFace::setVariantEastAsian): Deleted.
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::setVariant): Deleted.
+        (WebCore::FontFace::variant const): Deleted.
+        * css/FontFace.h:
+        * css/FontFace.idl:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createFont):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont):
+        (WebCore::CachedSVGFont::platformDataFromCustomData):
+        * loader/cache/CachedSVGFont.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator== const):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::createFontPlatformDataForTesting):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+
 2019-11-21  Peng Liu  <peng.liu6@apple.com>
 
         Ignore the requests to enter/exit video fullscreen/picture-in-picture if the requesting mode is the same as the current mode

@@ -40,7 +40,6 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "FontFace.h"
-#include "FontVariantBuilder.h"
 #include "Settings.h"
 #include "StyleBuilderConverter.h"
 #include "StyleProperties.h"
@@ -270,147 +269,6 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
 
     if (m_cssConnection)
         m_cssConnection->mutableProperties().setProperty(CSSPropertyUnicodeRange, &unicodeRange);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantLigatures(CSSValue& variantLigatures)
-{
-    auto ligatures = extractFontVariantLigatures(variantLigatures);
-
-    if (m_variantSettings.commonLigatures == ligatures.commonLigatures
-        && m_variantSettings.discretionaryLigatures == ligatures.discretionaryLigatures
-        && m_variantSettings.historicalLigatures == ligatures.historicalLigatures
-        && m_variantSettings.contextualAlternates == ligatures.contextualAlternates)
-        return true;
-
-    m_variantSettings.commonLigatures = ligatures.commonLigatures;
-    m_variantSettings.discretionaryLigatures = ligatures.discretionaryLigatures;
-    m_variantSettings.historicalLigatures = ligatures.historicalLigatures;
-    m_variantSettings.contextualAlternates = ligatures.contextualAlternates;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantLigatures, &variantLigatures);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantPosition(CSSValue& variantPosition)
-{
-    if (!is<CSSPrimitiveValue>(variantPosition))
-        return false;
-
-    FontVariantPosition position = downcast<CSSPrimitiveValue>(variantPosition);
-
-    if (m_variantSettings.position == position)
-        return true;
-
-    m_variantSettings.position = position;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantPosition, &variantPosition);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
-{
-    if (!is<CSSPrimitiveValue>(variantCaps))
-        return false;
-
-    FontVariantCaps caps = downcast<CSSPrimitiveValue>(variantCaps);
-
-    if (m_variantSettings.caps == caps)
-        return true;
-
-    m_variantSettings.caps = caps;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantCaps, &variantCaps);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantNumeric(CSSValue& variantNumeric)
-{
-    auto numeric = extractFontVariantNumeric(variantNumeric);
-
-    if (m_variantSettings.numericFigure == numeric.figure
-        && m_variantSettings.numericSpacing == numeric.spacing
-        && m_variantSettings.numericFraction == numeric.fraction
-        && m_variantSettings.numericOrdinal == numeric.ordinal
-        && m_variantSettings.numericSlashedZero == numeric.slashedZero)
-        return true;
-
-    m_variantSettings.numericFigure = numeric.figure;
-    m_variantSettings.numericSpacing = numeric.spacing;
-    m_variantSettings.numericFraction = numeric.fraction;
-    m_variantSettings.numericOrdinal = numeric.ordinal;
-    m_variantSettings.numericSlashedZero = numeric.slashedZero;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantNumeric, &variantNumeric);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
-{
-    if (!is<CSSPrimitiveValue>(variantAlternates))
-        return false;
-
-    FontVariantAlternates alternates = downcast<CSSPrimitiveValue>(variantAlternates);
-
-    if (m_variantSettings.alternates == alternates)
-        return true;
-
-    m_variantSettings.alternates = alternates;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantAlternates, &variantAlternates);
-
-    iterateClients(m_clients, [&](Client& client) {
-        client.fontPropertyChanged(*this);
-    });
-
-    return true;
-}
-
-bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
-{
-    auto eastAsian = extractFontVariantEastAsian(variantEastAsian);
-
-    if (m_variantSettings.eastAsianVariant == eastAsian.variant
-        && m_variantSettings.eastAsianWidth == eastAsian.width
-        && m_variantSettings.eastAsianRuby == eastAsian.ruby)
-        return true;
-
-    m_variantSettings.eastAsianVariant = eastAsian.variant;
-    m_variantSettings.eastAsianWidth = eastAsian.width;
-    m_variantSettings.eastAsianRuby = eastAsian.ruby;
-
-    if (m_cssConnection)
-        m_cssConnection->mutableProperties().setProperty(CSSPropertyFontVariantEastAsian, &variantEastAsian);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
@@ -813,7 +671,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             return Font::create(FontCache::singleton().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success:
-            if (RefPtr<Font> result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_variantSettings, m_fontSelectionCapabilities))
+            if (RefPtr<Font> result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_fontSelectionCapabilities))
                 return result;
             break;
         case CSSFontFaceSource::Status::Failure:

@@ -70,7 +70,7 @@ public:
     void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
 
     void load(CSSFontSelector*);
-    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
+    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities);
 
     bool requiresExternalResource() const { return m_font; }
 

@@ -1,3 +1,21 @@
+2019-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove font-variant @font-face descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=203179
+
+        Reviewed by Simon Fraser.
+
+        Delete tests for the removed feature.
+
+        * css3/font-variant-font-face-all-expected.html: Deleted.
+        * css3/font-variant-font-face-all.html: Deleted.
+        * css3/font-variant-font-face-override-expected.html:
+        * css3/font-variant-font-face-override.html:
+        * fast/text/font-face-empty-string-expected.txt:
+        * fast/text/font-face-empty-string.html:
+        * fast/text/font-face-javascript-expected.txt:
+        * fast/text/font-face-javascript.html:
+
 2019-11-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in again, regression is not caused by it

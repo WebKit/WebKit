@@ -529,7 +529,6 @@ fast/css/draggable-region-parser.html [ Skip ]
 css3/font-feature-settings-rendering.html [ Skip ]
 
 webkit.org/b/149771 css3/font-feature-settings-font-face-rendering.html [ Skip ] # WontFix
-webkit.org/b/149771 css3/font-variant-font-face-all.html [ Skip ] # WontFix
 webkit.org/b/149771 css3/font-variant-font-face-override.html [ Skip ] # WontFix
 webkit.org/b/149774 css3/font-variant-petite-caps-synthesis-coverage.html [ Skip ] # WontFix
 webkit.org/b/149774 css3/font-variant-petite-caps-synthesis.html [ Skip ] # WontFix
