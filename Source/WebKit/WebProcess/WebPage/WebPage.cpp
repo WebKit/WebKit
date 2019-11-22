@@ -2075,6 +2075,11 @@ void WebPage::accessibilitySettingsDidChange()
     m_page->accessibilitySettingsDidChange();
 }
 
+void WebPage::screenPropertiesDidChange()
+{
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
 void WebPage::setUseFixedLayout(bool fixed)
 {
     // Do not overwrite current settings if initially setting it to false.

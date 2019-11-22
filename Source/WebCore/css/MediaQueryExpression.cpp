@@ -57,7 +57,8 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
     || (mediaFeature == MediaFeatureNames::prefersColorScheme)
 #endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
-    || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)));
+    || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
+    || mediaFeature == MediaFeatureNames::dynamicRange;
 }
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSPrimitiveValue& value)

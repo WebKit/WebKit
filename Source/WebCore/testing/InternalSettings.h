@@ -122,6 +122,8 @@ public:
     void setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
+    ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue() const;
+    void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
     // RuntimeEnabledFeatures.
     static void setIndexedDBWorkersEnabled(bool);

@@ -632,6 +632,10 @@ forcedDisplayIsMonochromeAccessibilityValue:
 forcedPrefersReducedMotionAccessibilityValue:
   type: ForcedAccessibilityValue
   initial: defaultForcedPrefersReducedMotionAccessibilityValue
+forcedSupportsHighDynamicRangeValue:
+  type: ForcedAccessibilityValue
+  initial: defaultForcedSupportsHighDynamicRangeValue
+  onChange: setNeedsRecalcStyleInAllFrames
 
 largeImageAsyncDecodingEnabled:
   initial: true

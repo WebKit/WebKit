@@ -1,3 +1,13 @@
+2019-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Experimental support for HDR media query
+        https://bugs.webkit.org/show_bug.cgi?id=204422
+
+        Reviewed by Eric Carlson.
+
+        * fast/media/mq-highdynamicrange-live-update-expected.txt: Added.
+        * fast/media/mq-highdynamicrange-live-update.html: Added.
+
 2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Scrolling to fragment shouldn't happen as a part of updating style

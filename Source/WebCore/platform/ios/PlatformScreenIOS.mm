@@ -38,6 +38,7 @@
 #import "IntRect.h"
 #import "WAKWindow.h"
 #import "Widget.h"
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
@@ -69,6 +70,15 @@ bool screenHasInvertedColors()
 bool screenSupportsExtendedColor(Widget*)
 {
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+}
+
+bool screenSupportsHighDynamicRange(Widget*)
+{
+#if USE(MEDIATOOLBOX)
+    if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+        return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo(nullptr);
+#endif
+    return false;
 }
 
 CGColorSpaceRef screenColorSpace(Widget* widget)

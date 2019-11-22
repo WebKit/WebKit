@@ -1798,6 +1798,8 @@ bool WebProcess::removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrat
 void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     WebCore::setScreenProperties(properties);
+    for (auto& page : m_pageMap.values())
+        page->screenPropertiesDidChange();
 }
 #endif
 

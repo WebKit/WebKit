@@ -112,6 +112,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 
     [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
     [MayThrowException] void setCustomPasteboardDataEnabled(boolean enabled);

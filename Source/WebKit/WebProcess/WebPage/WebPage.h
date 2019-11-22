@@ -494,6 +494,7 @@ public:
     void clearHistory();
 
     void accessibilitySettingsDidChange();
+    void screenPropertiesDidChange();
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates);

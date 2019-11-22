@@ -5,6 +5,7 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
+    cocoa/MediaToolboxSoftLink.h
     cocoa/PassKitSoftLink.h
 
     mac/LookupSoftLink.h
@@ -118,6 +119,7 @@ list(APPEND PAL_SOURCES
     cocoa/AVFoundationSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/Gunzip.cpp
+    cocoa/MediaToolboxSoftLink.cpp
     cocoa/PassKitSoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp

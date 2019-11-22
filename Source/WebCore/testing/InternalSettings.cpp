@@ -1020,6 +1020,16 @@ void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(InternalS
     settings().setForcedPrefersReducedMotionAccessibilityValue(internalSettingsToSettingsValue(value));
 }
 
+InternalSettings::ForcedAccessibilityValue InternalSettings::forcedSupportsHighDynamicRangeValue() const
+{
+    return settingsToInternalSettingsValue(settings().forcedSupportsHighDynamicRangeValue());
+}
+
+void InternalSettings::setForcedSupportsHighDynamicRangeValue(InternalSettings::ForcedAccessibilityValue value)
+{
+    settings().setForcedSupportsHighDynamicRangeValue(internalSettingsToSettingsValue(value));
+}
+
 bool InternalSettings::webAnimationsCSSIntegrationEnabled()
 {
     return RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled();

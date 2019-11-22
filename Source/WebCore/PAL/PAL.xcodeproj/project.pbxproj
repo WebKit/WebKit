@@ -162,6 +162,8 @@
 		A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */; };
 		A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */; };
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
+		CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */; };
+		CDACB361238742740018D7CE /* MediaToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */; };
 		CDF91113220E4EEC001EA39E /* CelestialSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF91112220E4EEC001EA39E /* CelestialSPI.h */; };
 		CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5673862151A7B9002F92D7 /* IOKitSPI.h */; };
 		E5D45D122106A07400D2B738 /* NSColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D112106A07400D2B738 /* NSColorWellSPI.h */; };
@@ -334,6 +336,8 @@
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
+		CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaToolboxSoftLink.cpp; sourceTree = "<group>"; };
+		CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSoftLink.h; sourceTree = "<group>"; };
 		CDF91112220E4EEC001EA39E /* CelestialSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestialSPI.h; sourceTree = "<group>"; };
 		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
@@ -600,6 +604,8 @@
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
 				F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */,
 				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
+				CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */,
+				CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
 				A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */,
 			);
@@ -804,6 +810,7 @@
 				570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */,
 				0C2DA1581F3BEB4900DBC317 /* ServersSPI.h in Headers */,
 				A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */,
+				CDACB361238742740018D7CE /* MediaToolboxSoftLink.h in Headers */,
 				A3AB6E561F3D1DDB009C14B1 /* SleepDisabler.h in Headers */,
 				A3AB6E611F3D1E39009C14B1 /* SleepDisablerCocoa.h in Headers */,
 				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
@@ -928,6 +935,7 @@
 				A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */,
 				A3AB6E601F3D1E39009C14B1 /* SleepDisablerCocoa.cpp in Sources */,
 				A3788E9C1F05B78200679425 /* Sound.cpp in Sources */,
+				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
 				A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */,
 				A3AB6E571F3D1DDB009C14B1 /* SystemSleepListener.cpp in Sources */,
 				A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */,

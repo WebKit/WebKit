@@ -75,6 +75,12 @@ FloatRect screenAvailableRect(Widget*);
 
 WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
 
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+bool screenSupportsHighDynamicRange(Widget* = nullptr);
+#else
+constexpr bool screenSupportsHighDynamicRange(Widget* = nullptr) { return false; }
+#endif
+
 #if USE(CG)
 WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
 #endif

@@ -36,6 +36,10 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/ProcessPrivilege.h>
 
+#if USE(MEDIATOOLBOX)
+#import <pal/cocoa/MediaToolboxSoftLink.h>
+#endif
+
 extern "C" {
 bool CGDisplayUsesInvertedPolarity(void);
 bool CGDisplayUsesForceToGray(void);
@@ -128,11 +132,17 @@ ScreenProperties collectScreenProperties()
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
         uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
         IORegistryGPUID gpuID = 0;
+        bool screenSupportsHighDynamicRange = false;
+
+#if USE(MEDIATOOLBOX)
+        if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+            screenSupportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
+#endif
 
         if (displayMask)
             gpuID = gpuIDForDisplayMask(displayMask);
 
-        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome, displayMask, gpuID });
+        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome, screenSupportsHighDynamicRange, displayMask, gpuID });
 
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;
@@ -346,6 +356,21 @@ bool screenSupportsExtendedColor(Widget* widget)
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
+}
+
+bool screenSupportsHighDynamicRange(Widget* widget)
+{
+    if (!screenProperties().screenDataMap.isEmpty())
+        return getScreenProperties(widget).screenSupportsHighDynamicRange;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+#if USE(MEDIATOOLBOX)
+    if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo()) {
+        auto displayID = WebCore::displayID(screen(widget));
+        return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
+    }
+#endif
+    return false;
 }
 
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)

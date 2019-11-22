@@ -419,6 +419,33 @@ static bool resolutionEvaluate(CSSValue* value, const CSSToLengthConversionData&
 #endif
 }
 
+static bool dynamicRangeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    if (!value)
+        return false;
+
+    if (!frame.settings().hdrMediaCapabilitiesEnabled())
+        return false;
+
+    bool supportsHighDynamicRange;
+
+    if (frame.settings().forcedSupportsHighDynamicRangeValue() == Settings::ForcedAccessibilityValue::On)
+        supportsHighDynamicRange = true;
+    else if (frame.settings().forcedSupportsHighDynamicRangeValue() == Settings::ForcedAccessibilityValue::Off)
+        supportsHighDynamicRange = false;
+    else
+        supportsHighDynamicRange = screenSupportsHighDynamicRange(frame.mainFrame().view());
+
+    switch (downcast<CSSPrimitiveValue>(*value).valueID()) {
+    case CSSValueHigh:
+        return supportsHighDynamicRange;
+    case CSSValueStandard:
+        return true;
+    default:
+        return false; // Any unknown value should not be considered a match.
+    }
+}
+
 static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix op)
 {
     return zeroEvaluate(value, op);

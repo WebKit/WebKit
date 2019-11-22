@@ -1441,3 +1441,7 @@ browser
 
 // text-decoration-thickness, text-underline-offset
 from-font
+
+// dynamic-range
+standard
+high

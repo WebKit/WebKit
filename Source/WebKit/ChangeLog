@@ -1,3 +1,25 @@
+2019-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Experimental support for HDR media query
+        https://bugs.webkit.org/show_bug.cgi?id=204422
+
+        Reviewed by Eric Carlson.
+
+        Notify the WebContent process of updated screen properties when the screen's
+        color space changes.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKWindowVisibilityObserver startObserving:]):
+        (-[WKWindowVisibilityObserver stopObserving:]):
+        (-[WKWindowVisibilityObserver _screenDidChangeColorSpace:]):
+        (WebKit::WebViewImpl::screenDidChangeColorSpace):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::screenPropertiesDidChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setScreenProperties):
+
 2019-11-21  Brian Burg  <bburg@apple.com>
 
         Unreviewed, sort WebKit's project file after changes in r252702 and r252637.
