@@ -1,3 +1,12 @@
+2019-11-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add KillOldProcesses step before running JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=204525
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2019-11-22  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Hide the output of binaries behind --verbose
