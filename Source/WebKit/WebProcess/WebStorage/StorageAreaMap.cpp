@@ -107,7 +107,10 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::SetItem(*m_storageMapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
+    if (m_storageMapID)
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::SetItem(*m_storageMapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
+    else
+        LOG_ERROR("StorageAreaMap::setItem fails because storage map ID is invalid");
 }
 
 void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key)
@@ -123,7 +126,10 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::RemoveItem(*m_storageMapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url()), 0);
+    if (m_storageMapID)
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::RemoveItem(*m_storageMapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url()), 0);
+    else
+        LOG_ERROR("StorageAreaMap::removeItem fails because storage map ID is invalid");
 }
 
 void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea)
@@ -134,7 +140,11 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
 
     m_hasPendingClear = true;
     m_storageMap = StorageMap::create(m_quotaInBytes);
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::Clear(*m_storageMapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url()), 0);
+
+    if (m_storageMapID)
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::Clear(*m_storageMapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url()), 0);
+    else
+        LOG_ERROR("StorageAreaMap::removeItem fails because storage map ID is invalid");
 }
 
 bool StorageAreaMap::contains(const String& key)
@@ -160,12 +170,15 @@ void StorageAreaMap::loadValuesIfNeeded()
     if (m_storageMap)
         return;
 
-    // The StorageManagerSet::GetValues() IPC may be very slow because it may need to fetch the values from disk and there may be a lot
-    // of data.
-    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
-
     HashMap<String, String> values;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::GetValues(*m_storageMapID), Messages::StorageManagerSet::GetValues::Reply(values), 0);
+
+    if (m_storageMapID) {
+        // The StorageManagerSet::GetValues() IPC may be very slow because it may need to fetch the values from disk and there may be a lot
+        // of data.
+        IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::GetValues(*m_storageMapID), Messages::StorageManagerSet::GetValues::Reply(values), 0);
+    } else
+        LOG_ERROR("StorageAreaMap::loadValuesIfNeeded fails to load from network process because storage map ID is invalid");
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(WTFMove(values));

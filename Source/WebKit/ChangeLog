@@ -1,3 +1,19 @@
+2019-11-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash in com.apple.WebKit.WebContent at WebKit: WebKit::StorageAreaMap::loadValuesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=204459
+        <rdar://problem/57383446>
+
+        Reviewed by Geoffrey Garen.
+
+        If m_storageMapID can be null if connect() fails.
+
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+
 2019-11-21  Peng Liu  <peng.liu6@apple.com>
 
         Ignore the requests to enter/exit video fullscreen/picture-in-picture if the requesting mode is the same as the current mode
