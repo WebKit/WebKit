@@ -1,5 +1,5 @@
-//@ runDefault("--disableOptionsFreezingForTesting")
 //@ skip if $hostOS != "darwin" or $architecture != "x86-64"
+//@ runDefault("--disableOptionsFreezingForTesting")
 //@ slow!
 
 function foo() {
