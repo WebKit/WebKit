@@ -1,3 +1,13 @@
+2019-11-21  Mark Lam  <mark.lam@apple.com>
+
+        replaceUsingStringSearch() should not use CachedCall with host functions.
+        https://bugs.webkit.org/show_bug.cgi?id=204494
+        <rdar://problem/57421078>
+
+        Reviewed by Ross Kirsling.
+
+        * stress/string-replaceAll-2.js:
+
 2019-11-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed test262 gardening following r252680.

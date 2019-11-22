@@ -793,12 +793,9 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
     if (callType == CallType::None) {
         replaceString = replaceValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-    } else {
-        JSFunction* function = jsDynamicCast<JSFunction*>(vm, replaceValue);
-        if (function) {
-            cachedCall.emplace(globalObject, callFrame, function, 3);
-            cachedCall->setThis(jsUndefined());
-        }
+    } else if (callType == CallType::JS) {
+        cachedCall.emplace(globalObject, callFrame, jsCast<JSFunction*>(replaceValue), 3);
+        cachedCall->setThis(jsUndefined());
     }
 
     size_t matchStart = string.find(searchString);

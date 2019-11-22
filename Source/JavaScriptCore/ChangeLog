@@ -1,3 +1,16 @@
+2019-11-21  Mark Lam  <mark.lam@apple.com>
+
+        replaceUsingStringSearch() should not use CachedCall with host functions.
+        https://bugs.webkit.org/show_bug.cgi?id=204494
+        <rdar://problem/57421078>
+
+        Reviewed by Ross Kirsling.
+
+        The CachedCall mechanism does not support calling hist functions.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingStringSearch):
+
 2019-11-21  Saam Barati  <sbarati@apple.com>
 
         GetByStatus should not say it took the slow path for multiple identifiers and should have a way to indicate if the StructureStubInfo it saw took the slow path

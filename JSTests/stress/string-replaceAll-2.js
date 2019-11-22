@@ -112,6 +112,18 @@ test("function foo", foo, [
     { result: '12324', visits: 0 }, // replaceAll '0'
 ]);
 
+test("function parseInt", parseInt, [
+    { result: '1NaN324', visits: 0 }, // replace '2'
+    { result: '1NaN324', visits: 0 }, // replace /2/g
+    { result: '1NaN324', visits: 0 }, // replaceAll '2'
+    { result: 'NaN12324', visits: 0 }, // replace ''
+    { result: 'NaN1NaN2NaN3NaN2NaN4NaN', visits: 0 }, // replace /(?:)/g
+    { result: 'NaN1NaN2NaN3NaN2NaN4NaN', visits: 0 }, // replaceAll ''
+    { result: '12324', visits: 0 }, // replace '0'
+    { result: '12324', visits: 0 }, // replace /0/g
+    { result: '12324', visits: 0 }, // replaceAll '0'
+]);
+
 var proxy = new Proxy(foo, {
     apply() {
         visits++;
