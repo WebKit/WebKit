@@ -1,3 +1,14 @@
+2019-11-22  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Failing to run spindump shouldn't be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=204518
+        <rdar://problem/57397417>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Catch script error.
+
 2019-11-22  Paulo Matos  <pmatos@igalia.com>
 
         Remove JSC 32bit ARMv7 and MipsEl old EWS queues
