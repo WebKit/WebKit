@@ -795,6 +795,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
         RETURN_IF_EXCEPTION(scope, nullptr);
     } else if (callType == CallType::JS) {
         cachedCall.emplace(globalObject, callFrame, jsCast<JSFunction*>(replaceValue), 3);
+        RETURN_IF_EXCEPTION(scope, nullptr);
         cachedCall->setThis(jsUndefined());
     }
 

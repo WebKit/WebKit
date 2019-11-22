@@ -2102,6 +2102,7 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
     RELEASE_ASSERT(vm.softStackLimit() == originalVMSoftStackLimit);
     RELEASE_ASSERT(vm.stackLimit() == originalVMStackLimit);
 
+    throwScope.release();
     return encodedJSUndefined();
 
 #else // not ENABLE(MASM_PROBE)

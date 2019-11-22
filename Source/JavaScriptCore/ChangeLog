@@ -1,3 +1,20 @@
+2019-11-22  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception check in replaceUsingStringSearch().
+        https://bugs.webkit.org/show_bug.cgi?id=204496
+
+        Reviewed by Yusuke Suzuki.
+
+        The CachedCall constructor can throw OutOfMemory or StackOverflow errors.
+        This was caught by existing JSC stress tests when we run with a debug build.
+
+        Also placate the exception check validator in $vm's functionCallWithStackSize().
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingStringSearch):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCallWithStackSize):
+
 2019-11-21  Mark Lam  <mark.lam@apple.com>
 
         replaceUsingStringSearch() should not use CachedCall with host functions.
