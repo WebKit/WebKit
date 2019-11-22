@@ -399,6 +399,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     if (pathsChanged) {
         // This call may cause destruction of this instance.
         // input instance is safe since it is ref-counted.
+        protectedInputElement->dispatchInputEvent();
         protectedInputElement->dispatchChangeEvent();
     }
     protectedInputElement->setChangedSinceLastFormControlChangeEvent(false);

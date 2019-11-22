@@ -1,3 +1,15 @@
+2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        File input should fire an 'input' event before the 'change' event
+        https://bugs.webkit.org/show_bug.cgi?id=204292
+
+        Reviewed by Wenson Hsieh.
+
+        Add new test to check both events are fired now.
+
+        * fast/forms/file/file-input-user-selection-events-expected.txt: Added.
+        * fast/forms/file/file-input-user-selection-events.html: Added.
+
 2019-11-21  Jer Noble  <jer.noble@apple.com>
 
         Experimental support for HDR media query
