@@ -1,3 +1,14 @@
+2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Scrolling to fragment shouldn't happen as a part of updating style
+        https://bugs.webkit.org/show_bug.cgi?id=203982
+
+        Reviewed by Simon Fraser.
+
+        Made an existing test more robust.
+
+        * fast/parser/adoption-agency-unload-iframe-4.html: Made the iframe's data URL not cachable.
+
 2019-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove font-variant @font-face descriptor

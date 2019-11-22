@@ -37,7 +37,7 @@ test.step(() => {
 
     doc.write(`<div><b><p><script>
         parent.p = document.querySelector('p');
-        document.write('<link rel="stylesheet" href="data:,a">');
+        document.write('<link rel="stylesheet" href="data:,a${(new Date).toISOString() + Math.random()}">');
         location.hash = 'target';
     <\/script></b></p></div></body>`);
 });

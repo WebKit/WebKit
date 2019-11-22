@@ -1,3 +1,29 @@
+2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Scrolling to fragment shouldn't happen as a part of updating style
+        https://bugs.webkit.org/show_bug.cgi?id=203982
+
+        Reviewed by Simon Fraser.
+
+        Don't scroll to the current URL's fragment at the end of resolveStyle. Instead, schedule a task
+        to scroll to the current URL's fragment when all pending stylesheets have finished loading.
+
+        This patch also moves the code which sets a Document's m_gotoAnchorNeededAfterStylesheetsLoadflag
+        from FrameView to FrameLoader as FrameView shouldn't be relying on the states of pending stylesheets.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle): Removed the code to scroll to the current URL's fragment.
+        (WebCore::Document::didRemoveAllPendingStylesheet): Added a code to schedule a task to scoll.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scrollToFragmentWithParentBoundary): Moved the code to trigger the code
+        in didRemoveAllPendingStylesheet from FrameView.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragment):
+        (WebCore::FrameView::scrollToFragmentInternal): Renamed from scrollToAnchor since this function sets
+        the current anchor. Also removed the code which defers the scrolling based on pending stylesheets'
+        states since such a code doesn't belong in FrameView.
+        * page/FrameView.h:
+
 2019-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove font-variant @font-face descriptor

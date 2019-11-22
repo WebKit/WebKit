@@ -2169,12 +2169,12 @@ void FrameView::restoreScrollbar()
 bool FrameView::scrollToFragment(const URL& url)
 {
     String fragmentIdentifier = url.fragmentIdentifier();
-    if (scrollToAnchor(fragmentIdentifier))
+    if (scrollToFragmentInternal(fragmentIdentifier))
         return true;
 
     // Try again after decoding the ref, based on the document's encoding.
     if (TextResourceDecoder* decoder = frame().document()->decoder()) {
-        if (scrollToAnchor(decodeURLEscapeSequences(fragmentIdentifier, decoder->encoding())))
+        if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier, decoder->encoding())))
             return true;
     }
 
@@ -2182,7 +2182,7 @@ bool FrameView::scrollToFragment(const URL& url)
     return false;
 }
 
-bool FrameView::scrollToAnchor(const String& fragmentIdentifier)
+bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
 {
     LOG(Scrolling, "FrameView::scrollToAnchor %s", fragmentIdentifier.utf8().data());
 
@@ -2192,13 +2192,7 @@ bool FrameView::scrollToAnchor(const String& fragmentIdentifier)
 
     ASSERT(frame().document());
     auto& document = *frame().document();
-
-    if (!document.haveStylesheetsLoaded()) {
-        document.setGotoAnchorNeededAfterStylesheetsLoad(true);
-        return false;
-    }
-
-    document.setGotoAnchorNeededAfterStylesheetsLoad(false);
+    RELEASE_ASSERT(document.haveStylesheetsLoaded());
 
     Element* anchorElement = document.findAnchor(fragmentIdentifier);
 

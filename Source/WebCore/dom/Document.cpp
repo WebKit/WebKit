@@ -2001,9 +2001,6 @@ void Document::resolveStyle(ResolveStyleType type)
     // check if they need to be resumed after layout.
     if (updatedCompositingLayers && !frameView.needsLayout())
         frameView.viewportContentsChanged();
-
-    if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
-        frameView.scrollToFragment(m_url);
 }
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
@@ -3472,6 +3469,20 @@ void Document::didRemoveAllPendingStylesheet()
 {
     if (auto* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheetsSoon();
+
+    if (m_gotoAnchorNeededAfterStylesheetsLoad) {
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
+        eventLoop().queueTask(TaskSource::Networking, [protectedThis = makeRef(*this), this] {
+            auto frameView = makeRefPtr(view());
+            if (!frameView)
+                return;
+            if (!haveStylesheetsLoaded()) {
+                m_gotoAnchorNeededAfterStylesheetsLoad = true;
+                return;
+            }
+            frameView->scrollToFragment(m_url);
+        });
+    }
 }
 
 bool Document::usesStyleBasedEditability() const

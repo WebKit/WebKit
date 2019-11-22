@@ -3250,12 +3250,19 @@ static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
 
 void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewNavigation)
 {
-    FrameView* view = m_frame.view();
-    if (!view)
+    auto view = makeRefPtr(m_frame.view());
+    auto document = makeRefPtr(m_frame.document());
+    if (!view || !document)
         return;
 
-    if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem()))
-        view->scrollToFragment(url);
+    if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem())) {
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
+        if (!document->haveStylesheetsLoaded())
+            document->setGotoAnchorNeededAfterStylesheetsLoad(true);
+        else
+            view->scrollToFragment(url);
+    }
+
 }
 
 bool FrameLoader::shouldClose()
