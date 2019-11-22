@@ -36,11 +36,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#define REMOTE_INSPECTOR_DBUS_INTERFACE "org.webkit.RemoteInspector"
-#define REMOTE_INSPECTOR_DBUS_OBJECT_PATH "/org/webkit/RemoteInspector"
-#define INSPECTOR_DBUS_INTERFACE "org.webkit.Inspector"
-#define INSPECTOR_DBUS_OBJECT_PATH "/org/webkit/Inspector"
-
 namespace Inspector {
 
 RemoteInspector& RemoteInspector::singleton()
@@ -65,22 +60,16 @@ void RemoteInspector::start()
     m_enabled = true;
     m_cancellable = adoptGRef(g_cancellable_new());
 
-    GUniquePtr<char> inspectorAddress(g_strdup(g_getenv("WEBKIT_INSPECTOR_SERVER")));
-    char* portPtr = g_strrstr(inspectorAddress.get(), ":");
-    ASSERT(portPtr);
-    *portPtr = '\0';
-    portPtr++;
-    unsigned port = g_ascii_strtoull(portPtr, nullptr, 10);
-    GUniquePtr<char> dbusAddress(g_strdup_printf("tcp:host=%s,port=%u", inspectorAddress.get(), port));
-    g_dbus_connection_new_for_address(dbusAddress.get(), G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, m_cancellable.get(),
-        [](GObject*, GAsyncResult* result, gpointer userData) {
+    GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+    g_socket_client_connect_to_host_async(socketClient.get(), g_getenv("WEBKIT_INSPECTOR_SERVER"), 0, m_cancellable.get(),
+        [](GObject* client, GAsyncResult* result, gpointer userData) {
             RemoteInspector* inspector = static_cast<RemoteInspector*>(userData);
             GUniqueOutPtr<GError> error;
-            if (GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr())))
-                inspector->setupConnection(WTFMove(connection));
+            if (GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr())))
+                inspector->setupConnection(SocketConnection::create(WTFMove(connection), s_messageHandlers, inspector));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", g_getenv("WEBKIT_INSPECTOR_SERVER"), error->message);
-    }, this);
+        }, this);
 }
 
 void RemoteInspector::stopInternal(StopSource)
@@ -100,85 +89,59 @@ void RemoteInspector::stopInternal(StopSource)
     updateHasActiveDebugSession();
 
     m_automaticInspectionPaused = false;
-    m_dbusConnection = nullptr;
+    m_socketConnection = nullptr;
 }
 
-static const char introspectionXML[] =
-    "<node>"
-    "  <interface name='" REMOTE_INSPECTOR_DBUS_INTERFACE "'>"
-    "    <method name='GetTargetList'>"
-    "    </method>"
-    "    <method name='Setup'>"
-    "      <arg type='t' name='target' direction='in'/>"
-    "    </method>"
-    "    <method name='SendMessageToTarget'>"
-    "      <arg type='t' name='target' direction='in'/>"
-    "      <arg type='s' name='message' direction='in'/>"
-    "    </method>"
-    "    <method name='FrontendDidClose'>"
-    "      <arg type='t' name='target' direction='in'/>"
-    "    </method>"
-    "  </interface>"
-    "</node>";
-
-const GDBusInterfaceVTable RemoteInspector::s_interfaceVTable = {
-    // method_call
-    [] (GDBusConnection*, const gchar* /*sender*/, const gchar* /*objectPath*/, const gchar* /*interfaceName*/, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
-        auto* inspector = static_cast<RemoteInspector*>(userData);
-        if (!g_strcmp0(methodName, "GetTargetList")) {
-            inspector->receivedGetTargetListMessage();
-            g_dbus_method_invocation_return_value(invocation, nullptr);
-        } else if (!g_strcmp0(methodName, "Setup")) {
+const SocketConnection::MessageHandlers RemoteInspector::s_messageHandlers = {
+    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+        [](SocketConnection&, GVariant*, gpointer userData) {
+            auto& inspector = *static_cast<RemoteInspector*>(userData);
+            inspector.stop();
+        }}
+    },
+    { "GetTargetList", std::pair<CString, SocketConnection::MessageCallback> { { },
+        [](SocketConnection&, GVariant*, gpointer userData) {
+            auto& inspector = *static_cast<RemoteInspector*>(userData);
+            inspector.receivedGetTargetListMessage();
+        }}
+    },
+    { "Setup", std::pair<CString, SocketConnection::MessageCallback> { "(t)",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
             g_variant_get(parameters, "(t)", &targetID);
-            inspector->receivedSetupMessage(targetID);
-            g_dbus_method_invocation_return_value(invocation, nullptr);
-        } else if (!g_strcmp0(methodName, "SendMessageToTarget")) {
+            inspector.receivedSetupMessage(targetID);
+        }}
+    },
+    { "SendMessageToTarget", std::pair<CString, SocketConnection::MessageCallback> { "(ts)",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
             const char* message;
             g_variant_get(parameters, "(t&s)", &targetID, &message);
-            inspector->receivedDataMessage(targetID, message);
-            g_dbus_method_invocation_return_value(invocation, nullptr);
-        } else if (!g_strcmp0(methodName, "FrontendDidClose")) {
+            inspector.receivedDataMessage(targetID, message);
+        }}
+    },
+    { "FrontendDidClose", std::pair<CString, SocketConnection::MessageCallback> { "(t)",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& inspector = *static_cast<RemoteInspector*>(userData);
             guint64 targetID;
             g_variant_get(parameters, "(t)", &targetID);
-            inspector->receivedCloseMessage(targetID);
-            g_dbus_method_invocation_return_value(invocation, nullptr);
-        }
-    },
-    // get_property
-    nullptr,
-    // set_property
-    nullptr,
-    // padding
-    { 0 }
+            inspector.receivedCloseMessage(targetID);
+        }}
+    }
 };
 
-void RemoteInspector::setupConnection(GRefPtr<GDBusConnection>&& connection)
+void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
 {
     LockHolder lock(m_mutex);
 
     ASSERT(connection);
-    ASSERT(!m_dbusConnection);
-    m_dbusConnection = WTFMove(connection);
+    ASSERT(!m_socketConnection);
 
-    static GDBusNodeInfo* introspectionData = nullptr;
-    if (!introspectionData)
-        introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
-
-    g_dbus_connection_register_object(m_dbusConnection.get(), REMOTE_INSPECTOR_DBUS_OBJECT_PATH,
-        introspectionData->interfaces[0], &s_interfaceVTable, this, nullptr, nullptr);
-
+    m_socketConnection = WTFMove(connection);
     if (!m_targetMap.isEmpty())
         pushListingsSoon();
-}
-
-static void dbusConnectionCallAsyncReadyCallback(GObject* source, GAsyncResult* result, gpointer)
-{
-    GUniqueOutPtr<GError> error;
-    GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
-    if (!resultVariant && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-        g_warning("RemoteInspector failed to send DBus message: %s", error->message);
 }
 
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
@@ -205,7 +168,7 @@ TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomation
 
 void RemoteInspector::pushListingsNow()
 {
-    if (!m_dbusConnection)
+    if (!m_socketConnection)
         return;
 
     m_pushScheduled = false;
@@ -217,15 +180,12 @@ void RemoteInspector::pushListingsNow()
         g_variant_builder_add_value(&builder, listing.get());
     g_variant_builder_close(&builder);
     g_variant_builder_add(&builder, "b", m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed);
-    g_dbus_connection_call(m_dbusConnection.get(), nullptr,
-        INSPECTOR_DBUS_OBJECT_PATH, INSPECTOR_DBUS_INTERFACE, "SetTargetList",
-        g_variant_builder_end(&builder), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+    m_socketConnection->sendMessage("SetTargetList", g_variant_builder_end(&builder));
 }
 
 void RemoteInspector::pushListingsSoon()
 {
-    if (!m_dbusConnection)
+    if (!m_socketConnection)
         return;
 
     if (m_pushScheduled)
@@ -246,21 +206,17 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
     ASSERT(m_automaticInspectionEnabled);
     ASSERT(m_automaticInspectionPaused);
     ASSERT(m_automaticInspectionCandidateTargetIdentifier);
-    ASSERT(m_dbusConnection);
+    ASSERT(m_socketConnection);
     // FIXME: Implement automatic inspection.
 }
 
 void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
     LockHolder lock(m_mutex);
-    if (!m_dbusConnection)
+    if (!m_socketConnection)
         return;
 
-    g_dbus_connection_call(m_dbusConnection.get(), nullptr,
-        INSPECTOR_DBUS_OBJECT_PATH, INSPECTOR_DBUS_INTERFACE, "SendMessageToFrontend",
-        g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().data()),
-        nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+    m_socketConnection->sendMessage("SendMessageToFrontend", g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().data()));
 }
 
 void RemoteInspector::receivedGetTargetListMessage()

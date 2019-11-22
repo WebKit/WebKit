@@ -30,11 +30,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/SocketConnection.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GCancellable GCancellable;
-typedef struct _GDBusConnection GDBusConnection;
-typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 
 namespace WebKit {
 
@@ -72,11 +71,10 @@ public:
     void closeFromFrontend(uint64_t connectionID, uint64_t targetID);
 
 private:
-    static void connectionClosedCallback(GDBusConnection*, gboolean remotePeerVanished, GError*, RemoteInspectorClient*);
-    void setupConnection(GRefPtr<GDBusConnection>&&);
-    void connectionClosed();
+    static const SocketConnection::MessageHandlers s_messageHandlers;
+    void setupConnection(Ref<SocketConnection>&&);
+    void connectionDidClose();
 
-    static const GDBusInterfaceVTable s_interfaceVTable;
     void setBackendCommands(const char*);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char*);
@@ -84,7 +82,7 @@ private:
     String m_hostAndPort;
     String m_backendCommandsURL;
     RemoteInspectorObserver& m_observer;
-    GRefPtr<GDBusConnection> m_dbusConnection;
+    RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
     HashMap<uint64_t, Vector<Target>> m_targets;
     HashMap<std::pair<uint64_t, uint64_t>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;

@@ -51,7 +51,7 @@
 #endif
 
 #if USE(GLIB)
-#include "GSocketMonitor.h"
+#include <wtf/glib/GSocketMonitor.h>
 #endif
 
 namespace IPC {

@@ -22,20 +22,23 @@
 #include "TestMain.h"
 #include <gio/gio.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/SocketConnection.h>
 #include <wtf/text/StringBuilder.h>
 
 class AutomationTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(AutomationTest);
 
+    static const SocketConnection::MessageHandlers s_messageHandlers;
+
     AutomationTest()
         : m_mainLoop(adoptGRef(g_main_loop_new(nullptr, TRUE)))
     {
-        g_dbus_connection_new_for_address("tcp:host=127.0.0.1,port=2229",
-            G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
-                GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, nullptr));
-                static_cast<AutomationTest*>(userData)->setConnection(WTFMove(connection));
-            }, this);
+        GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+        g_socket_client_connect_to_host_async(socketClient.get(), "127.0.0.1:2229", 0, nullptr, [](GObject* client, GAsyncResult* result, gpointer userData) {
+            GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, nullptr));
+            static_cast<AutomationTest*>(userData)->setConnection(SocketConnection::create(WTFMove(connection), s_messageHandlers, userData));
+        }, this);
         g_main_loop_run(m_mainLoop.get());
     }
 
@@ -57,69 +60,10 @@ public:
         bool isPaired { false };
     };
 
-    const GDBusInterfaceVTable s_interfaceVTable = {
-        // method_call
-        [](GDBusConnection* connection, const gchar* sender, const gchar* objectPath, const gchar* interfaceName, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
-            auto* test = static_cast<AutomationTest*>(userData);
-            if (!g_strcmp0(methodName, "SetTargetList")) {
-                guint64 connectionID;
-                GUniqueOutPtr<GVariantIter> iter;
-                g_variant_get(parameters, "(ta(tsssb))", &connectionID, &iter.outPtr());
-                guint64 targetID;
-                const char* type;
-                const char* name;
-                const char* dummy;
-                gboolean isPaired;
-                while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
-                    if (!g_strcmp0(type, "Automation")) {
-                        test->setTarget(connectionID, Target(targetID, name, isPaired));
-                        break;
-                    }
-                }
-                g_dbus_method_invocation_return_value(invocation, nullptr);
-            } else if (!g_strcmp0(methodName, "SendMessageToFrontend")) {
-                guint64 connectionID, targetID;
-                const char* message;
-                g_variant_get(parameters, "(tt&s)", &connectionID, &targetID, &message);
-                test->receivedMessage(connectionID, targetID, message);
-                g_dbus_method_invocation_return_value(invocation, nullptr);
-            }
-        },
-        // get_property
-        nullptr,
-        // set_property
-        nullptr,
-        // padding
-        { 0 }
-    };
-
-    void registerDBusObject()
+    void setConnection(Ref<SocketConnection>&& connection)
     {
-        static const char introspectionXML[] =
-            "<node>"
-            "  <interface name='org.webkit.RemoteInspectorClient'>"
-            "    <method name='SetTargetList'>"
-            "      <arg type='t' name='connectionID' direction='in'/>"
-            "      <arg type='a(tsssb)' name='list' direction='in'/>"
-            "    </method>"
-            "    <method name='SendMessageToFrontend'>"
-            "      <arg type='t' name='connectionID' direction='in'/>"
-            "      <arg type='t' name='target' direction='in'/>"
-            "      <arg type='s' name='message' direction='in'/>"
-            "    </method>"
-            "  </interface>"
-            "</node>";
-        static GDBusNodeInfo* introspectionData = nullptr;
-        if (!introspectionData)
-            introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
-        g_dbus_connection_register_object(m_connection.get(), "/org/webkit/RemoteInspectorClient", introspectionData->interfaces[0], &s_interfaceVTable, this, nullptr, nullptr);
-    }
-
-    void setConnection(GRefPtr<GDBusConnection>&& connection)
-    {
-        g_assert_true(G_IS_DBUS_CONNECTION(connection.get()));
+        g_assert_true(connection.ptr());
         m_connection = WTFMove(connection);
-        registerDBusObject();
         g_main_loop_quit(m_mainLoop.get());
     }
 
@@ -155,9 +99,7 @@ public:
             messageBuilder.append(parameters);
         }
         messageBuilder.append('}');
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
-            "SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().data()),
-            nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
+        m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().data()));
     }
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
@@ -209,26 +151,24 @@ public:
         return GUniquePtr<char>(g_strdup_printf("%u.%u.%u", major, minor, micro));
     }
 
+    void didStartAutomationSession(GVariant* capabilities)
+    {
+        if (!m_session)
+            return;
+
+        g_assert_nonnull(capabilities);
+        const char* browserName;
+        const char* browserVersion;
+        g_variant_get(capabilities, "(&s&s)", &browserName, &browserVersion);
+        g_assert_cmpstr(browserName, ==, "AutomationTestBrowser");
+        GUniquePtr<char> versionString = toVersionString(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
+        g_assert_cmpstr(browserVersion, ==, versionString.get());
+    }
+
     WebKitAutomationSession* requestSession(const char* sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
-            "StartAutomationSession", g_variant_new("(sa{sv})", sessionID, nullptr), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr,
-            [](GObject* source, GAsyncResult* result, gpointer userData) {
-                auto* test = static_cast<AutomationTest*>(userData);
-                if (!test->m_session)
-                    return;
-
-                GRefPtr<GVariant> capabilities = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, nullptr));
-                g_assert_nonnull(capabilities.get());
-                const char* browserName;
-                const char* browserVersion;
-                g_variant_get(capabilities.get(), "(&s&s)", &browserName, &browserVersion);
-                g_assert_cmpstr(browserName, ==, "AutomationTestBrowser");
-                GUniquePtr<char> versionString = toVersionString(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
-                g_assert_cmpstr(browserVersion, ==, versionString.get());
-            }, this
-        );
+        m_connection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", sessionID, nullptr));
         auto timeoutID = g_timeout_add(1000, [](gpointer userData) -> gboolean {
             g_main_loop_quit(static_cast<GMainLoop*>(userData));
             return G_SOURCE_REMOVE;
@@ -247,8 +187,7 @@ public:
         if (m_target.isPaired)
             return;
         g_assert_cmpuint(m_target.id, !=, 0);
-        g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
-            "Setup", g_variant_new("(tt)", m_connectionID, m_target.id), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
+        m_connection->sendMessage("Setup", g_variant_new("(tt)", m_connectionID, m_target.id));
         g_main_loop_run(m_mainLoop.get());
         g_assert_true(m_target.isPaired);
     }
@@ -311,7 +250,7 @@ public:
     }
 
     GRefPtr<GMainLoop> m_mainLoop;
-    GRefPtr<GDBusConnection> m_connection;
+    RefPtr<SocketConnection> m_connection;
     WebKitAutomationSession* m_session;
     guint64 m_connectionID { 0 };
     Target m_target;
@@ -321,6 +260,49 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     CString m_message;
+};
+
+const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
+    { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
+        [](SocketConnection&, GVariant*, gpointer userData) {
+            auto& test = *static_cast<AutomationTest*>(userData);
+            test.m_connection = nullptr;
+        }}
+    },
+    { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& test = *static_cast<AutomationTest*>(userData);
+            test.didStartAutomationSession(parameters);
+        }}
+    },
+    { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& test = *static_cast<AutomationTest*>(userData);
+            guint64 connectionID;
+            GUniqueOutPtr<GVariantIter> iter;
+            g_variant_get(parameters, "(ta(tsssb))", &connectionID, &iter.outPtr());
+            guint64 targetID;
+            const char* type;
+            const char* name;
+            const char* dummy;
+            gboolean isPaired;
+            while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
+                if (!g_strcmp0(type, "Automation")) {
+                    test.setTarget(connectionID, Target(targetID, name, isPaired));
+                    break;
+                }
+            }
+        }}
+    },
+    { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto& test = *static_cast<AutomationTest*>(userData);
+            guint64 connectionID, targetID;
+            const char* message;
+            g_variant_get(parameters, "(tt&s)", &connectionID, &targetID, &message);
+            test.receivedMessage(connectionID, targetID, message);
+        }}
+    }
 };
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)

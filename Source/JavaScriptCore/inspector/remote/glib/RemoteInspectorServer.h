@@ -31,14 +31,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/SocketConnection.h>
 
-typedef struct _GCancellable GCancellable;
-typedef struct _GDBusConnection GDBusConnection;
-typedef struct _GDBusInterfaceInfo GDBusInterfaceInfo;
-typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
-typedef struct _GDBusNodeInfo GDBusNodeInfo;
-typedef struct _GDBusServer GDBusServer;
-typedef struct _GVariant GVariant;
+typedef struct _GSocketConnection GSocketConnection;
+typedef struct _GSocketService GSocketService;
 
 namespace Inspector {
 
@@ -48,37 +44,29 @@ public:
     ~RemoteInspectorServer();
 
     bool start(const char* address, unsigned port);
-    bool isRunning() const { return !!m_dbusServer; }
+    bool isRunning() const { return !!m_service; }
 
 private:
-    GDBusInterfaceInfo* interfaceInfo();
+    static gboolean incomingConnectionCallback(GSocketService*, GSocketConnection*, GObject*, RemoteInspectorServer*);
+    void incomingConnection(Ref<SocketConnection>&&);
 
-    static gboolean newConnectionCallback(GDBusServer*, GDBusConnection*, RemoteInspectorServer*);
-    static void connectionClosedCallback(GDBusConnection*, gboolean remotePeerVanished, GError*, RemoteInspectorServer*);
-    void newConnection(GDBusConnection*);
-    void connectionClosed(GDBusConnection*);
+    static const SocketConnection::MessageHandlers s_messageHandlers;
+    void connectionDidClose(SocketConnection&);
+    void setTargetList(SocketConnection&, GVariant*);
+    GVariant* setupInspectorClient(SocketConnection&, const char* clientBackendCommandsHash);
+    void setup(SocketConnection&, uint64_t connectionID, uint64_t targetID);
+    void close(SocketConnection&, uint64_t connectionID, uint64_t targetID);
+    void sendMessageToFrontend(SocketConnection&, uint64_t target, const char*);
+    void sendMessageToBackend(SocketConnection&, uint64_t connectionID, uint64_t targetID, const char*);
+    void startAutomationSession(SocketConnection&, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
 
-    static const GDBusInterfaceVTable s_interfaceVTable;
-    void setTargetList(GDBusConnection*, GVariant*);
-    GVariant* setupInspectorClient(GDBusConnection*, const char* clientBackendCommandsHash);
-    void setup(GDBusConnection*, uint64_t connectionID, uint64_t targetID);
-    void close(GDBusConnection*, uint64_t connectionID, uint64_t targetID);
-    void clientConnectionClosed(GDBusConnection*);
-    void sendMessageToFrontend(GDBusConnection*, uint64_t target, const char*);
-    void sendMessageToBackend(GDBusConnection*, uint64_t connectionID, uint64_t targetID, const char*);
-    void startAutomationSession(GDBusConnection*, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
-
-    static void clientConnectionClosedCallback(GDBusConnection*, gboolean remotePeerVanished, GError*, RemoteInspectorServer*);
-
-    GDBusNodeInfo* m_introspectionData { nullptr };
-    GRefPtr<GDBusServer> m_dbusServer;
-    GRefPtr<GCancellable> m_cancellable;
-    HashSet<GRefPtr<GDBusConnection>> m_connections;
-    HashMap<GDBusConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
-    HashMap<uint64_t, GDBusConnection*> m_idToRemoteInspectorConnectionMap;
-    GRefPtr<GDBusConnection> m_clientConnection;
+    GRefPtr<GSocketService> m_service;
+    HashSet<RefPtr<SocketConnection>> m_connections;
+    HashMap<SocketConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
+    HashMap<uint64_t, SocketConnection*> m_idToRemoteInspectorConnectionMap;
+    SocketConnection* m_clientConnection { nullptr };
+    SocketConnection* m_automationConnection { nullptr };
     HashSet<std::pair<uint64_t, uint64_t>> m_inspectionTargets;
-    GRefPtr<GDBusConnection> m_automationConnection;
     HashSet<std::pair<uint64_t, uint64_t>> m_automationTargets;
 };
 

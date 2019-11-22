@@ -1,3 +1,30 @@
+2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] RemoteInspector: use sockets instead of DBus
+        https://bugs.webkit.org/show_bug.cgi?id=204503
+
+        Reviewed by Žan Doberšek.
+
+        Use GSockets API instead of DBus.
+
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::sendCommandToBackend):
+        * SessionHost.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::~SessionHost):
+        (WebDriver::SessionHost::isConnected const):
+        (WebDriver::ConnectToBrowserAsyncData::ConnectToBrowserAsyncData):
+        (WebDriver::SessionHost::launchBrowser):
+        (WebDriver::SessionHost::connectToBrowser):
+        (WebDriver::SessionHost::connectionDidClose):
+        (WebDriver::SessionHost::setupConnection):
+        (WebDriver::SessionHost::startAutomationSession):
+        (WebDriver::SessionHost::didStartAutomationSession):
+        (WebDriver::SessionHost::setTargetList):
+        (WebDriver::SessionHost::sendMessageToBackend):
+        * socket/SessionHostSocket.cpp:
+        (WebDriver::SessionHost::sendMessageToBackend):
+
 2019-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: duration can be undefined in pause actions

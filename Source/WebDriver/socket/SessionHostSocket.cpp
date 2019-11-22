@@ -45,7 +45,7 @@ void SessionHost::startAutomationSession(Function<void (bool, Optional<String>)>
 {
 }
 
-void SessionHost::sendMessageToBackend(long messageID, const String& message)
+void SessionHost::sendMessageToBackend(const String& message)
 {
 }
 

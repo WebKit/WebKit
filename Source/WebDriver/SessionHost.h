@@ -31,8 +31,7 @@
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
-typedef struct _GDBusConnection GDBusConnection;
-typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
+#include <wtf/glib/SocketConnection.h>
 typedef struct _GSubprocess GSubprocess;
 #endif
 
@@ -71,17 +70,18 @@ private:
     };
 
     void inspectorDisconnected();
-    void sendMessageToBackend(long, const String&);
+    void sendMessageToBackend(const String&);
     void dispatchMessage(const String&);
 
 #if USE(GLIB)
-    static void dbusConnectionClosedCallback(SessionHost*);
-    static const GDBusInterfaceVTable s_interfaceVTable;
+    static const SocketConnection::MessageHandlers s_messageHandlers;
+    void connectionDidClose();
     void launchBrowser(Function<void (Optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     bool matchCapabilities(GVariant*);
     bool buildSessionCapabilities(GVariantBuilder*) const;
-    void setupConnection(GRefPtr<GDBusConnection>&&);
+    void setupConnection(Ref<SocketConnection>&&);
+    void didStartAutomationSession(GVariant*);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
 #endif
@@ -97,7 +97,7 @@ private:
 #if USE(GLIB)
     Function<void (bool, Optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
-    GRefPtr<GDBusConnection> m_dbusConnection;
+    RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
 #endif
 };

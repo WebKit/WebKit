@@ -1,3 +1,14 @@
+2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] RemoteInspector: use sockets instead of DBus
+        https://bugs.webkit.org/show_bug.cgi?id=204503
+
+        Reviewed by Žan Doberšek.
+
+        Update the unit tests to not use DBus.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+
 2019-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web process crashes when attempting to request document context in a textarea

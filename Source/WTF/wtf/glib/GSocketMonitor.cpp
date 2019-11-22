@@ -29,7 +29,7 @@
 #include <gio/gio.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
-namespace IPC {
+namespace WTF {
 
 GSocketMonitor::~GSocketMonitor()
 {
@@ -43,7 +43,7 @@ gboolean GSocketMonitor::socketSourceCallback(GSocket*, GIOCondition condition, 
     return monitor->m_callback(condition);
 }
 
-void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, Function<gboolean (GIOCondition)>&& callback)
+void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, Function<gboolean(GIOCondition)>&& callback)
 {
     stop();
 
@@ -68,4 +68,4 @@ void GSocketMonitor::stop()
     m_callback = nullptr;
 }
 
-} // namespace IPC
+} // namespace WTF

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GSocketMonitor_h
-#define GSocketMonitor_h
+#pragma once
 
 #include <glib.h>
 #include <wtf/Forward.h>
@@ -34,7 +33,7 @@
 
 typedef struct _GSocket GSocket;
 
-namespace IPC {
+namespace WTF {
 
 class GSocketMonitor {
     WTF_MAKE_NONCOPYABLE(GSocketMonitor);
@@ -42,17 +41,18 @@ public:
     GSocketMonitor() = default;
     ~GSocketMonitor();
 
-    void start(GSocket*, GIOCondition, RunLoop&, Function<gboolean (GIOCondition)>&&);
+    void start(GSocket*, GIOCondition, RunLoop&, Function<gboolean(GIOCondition)>&&);
     void stop();
+    bool isActive() const { return !!m_source; }
 
 private:
     static gboolean socketSourceCallback(GSocket*, GIOCondition, GSocketMonitor*);
 
     GRefPtr<GSource> m_source;
     GRefPtr<GCancellable> m_cancellable;
-    Function<gboolean (GIOCondition)> m_callback;
+    Function<gboolean(GIOCondition)> m_callback;
 };
 
-} // namespace IPC
+} // namespace WTF
 
-#endif // GSocketMonitor_h
+using WTF::GSocketMonitor;
