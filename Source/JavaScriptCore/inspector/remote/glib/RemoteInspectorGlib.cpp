@@ -136,9 +136,7 @@ void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
 {
     LockHolder lock(m_mutex);
 
-    ASSERT(connection.ptr());
     ASSERT(!m_socketConnection);
-
     m_socketConnection = WTFMove(connection);
     if (!m_targetMap.isEmpty())
         pushListingsSoon();

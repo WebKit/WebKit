@@ -2,6 +2,15 @@
 
         Unreviewed. Fix GTK/WPE debug build after r252770
 
+        Just remove the ASSERT instead, since it now always receive a newly created Ref.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::setupConnection):
+
+2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK/WPE debug build after r252770
+
         * inspector/remote/glib/RemoteInspectorGlib.cpp:
         (Inspector::RemoteInspector::setupConnection):
 

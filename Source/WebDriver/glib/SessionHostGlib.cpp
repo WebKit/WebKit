@@ -207,7 +207,6 @@ void SessionHost::connectionDidClose()
 void SessionHost::setupConnection(Ref<SocketConnection>&& connection)
 {
     ASSERT(!m_socketConnection);
-    ASSERT(connection.ptr());
     m_socketConnection = WTFMove(connection);
 }
 
