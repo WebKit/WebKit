@@ -51,9 +51,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (strong, nonatomic) NSColor *overrideBackgroundColor;
 
-// This should be removed when all clients go away; it is always YES now.
-@property (nonatomic) BOOL usesSnapshot;
-
 - (void)requestSnapshot;
 
 @end

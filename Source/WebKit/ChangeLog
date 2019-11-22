@@ -1,3 +1,18 @@
+2019-11-22  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Remove -[_WKThumbnailView usesSnapshot/setUsesSnapshot:]
+        https://bugs.webkit.org/show_bug.cgi?id=150099
+
+        Reviewed by Tim Horton.
+
+        Remove some unused, no-op SPI. While we're here, remove a couple unneeded explicit
+        property syntheses.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView setUsesSnapshot:]): Deleted.
+        (-[_WKThumbnailView usesSnapshot]): Deleted.
+
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
         Speculative loading sometimes happens too early and is missing login cookies
