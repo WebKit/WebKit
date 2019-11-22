@@ -473,7 +473,7 @@ imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credent
 imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
-http/tests/navigation/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
+http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker.html [ DumpJSConsoleLogInStdErr ]

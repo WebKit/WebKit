@@ -7,8 +7,7 @@ pageshow - not from cache
 pagehide - entering cache
 pageshow - from cache
 PASS Page was restored from Page Cache
-PASS Cache.add() succeeded
-PASS !!restoredFromPageCache is true
+PASS Cache.add() succeeded after restoring from the cache
 PASS successfullyParsed is true
 
 TEST COMPLETE

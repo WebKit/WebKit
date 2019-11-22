@@ -1,3 +1,23 @@
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Release ]: Layout Test http/tests/navigation/page-cache-domcache-pending-promise.html is a Flaky Timeout
+        https://bugs.webkit.org/show_bug.cgi?id=203373
+        <rdar://problem/56590038>
+
+        Reviewed by Youenn Fablet.
+
+        I am not able to reproduce the flakiness so this includes speculative fixes and better error handling so
+        that the test would hopefully fail with a message instead of timing out.
+
+        Speculative fixes:
+        1. If the promise is resolved before we've navigated away, retry it asynchronously.
+        2. If the promise is rejected before we've navigated away, retry it asynchronously instead of synchronously.
+           I believe it is possible to prevent the navigation otherwise, in cases where the promise is rejected
+           synchronously.
+
+        * http/tests/navigation/page-cache-domcache-pending-promise-expected.txt:
+        * http/tests/navigation/page-cache-domcache-pending-promise.html:
+
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         File input should fire an 'input' event before the 'change' event

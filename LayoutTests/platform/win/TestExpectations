@@ -3804,8 +3804,6 @@ webkit.org/b/174801 fast/text/line-height-minimumFontSize.html [ Failure ]
 # No service worker implementation for WK1
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cache-storage [ Skip ]
-http/tests/navigation/page-cache-domcache-pending-promise.html [ Skip ]
-http/tests/navigation/page-cache-domcachestorage-pending-promise.html [ Skip ]
 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 http/tests/workers/service [ Skip ]
 http/wpt/cache-storage [ Skip ]

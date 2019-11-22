@@ -6,7 +6,7 @@
 </head>
 <body>
 <script>
-description('Tests that a page with pending DOMCache activity goes into the page cache.');
+description('Tests that a page with pending DOMCacheStorage activity goes into the page cache.');
 jsTestIsAsync = true;
 let restoredFromPageCache = false;
 
@@ -18,17 +18,6 @@ window.addEventListener("pageshow", function(event) {
     }
 });
 
-function tryCache()
-{
-    cache.add('resources/blank.txt').then(() => {
-        testPassed("Cache.add() succeeded");
-        shouldBeTrue("!!restoredFromPageCache");
-        finishJSTest();
-    }, (e) => {
-        tryCache();
-    });
-}
-
 window.addEventListener("pagehide", function(event) {
     debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
     if (!event.persisted) {
@@ -36,18 +25,22 @@ window.addEventListener("pagehide", function(event) {
         finishJSTest();
     }
 
-    tryCache();
+    caches.open('test').then(() => {
+       testPassed("Opened the cache");
+       shouldBeTrue("!!restoredFromPageCache");
+       finishJSTest();
+    }, () => {
+       testFailed("Failed to open the cache");
+       finishJSTest();
+    });
 });
 
 onload = () => {
     setTimeout(() => {
-        caches.open('test').then((_cache) => {
-            cache = _cache;
-            testLink.click();
-        });
+        testLink.click();
     }, 0);
 }
 </script>
-<a id="testLink" href="resources/page-cache-helper.html" style="display: none">Link</a>
+<a id="testLink" href="../navigation/resources/page-cache-helper.html" style="display: none">Link</a>
 </body>
 </html>
