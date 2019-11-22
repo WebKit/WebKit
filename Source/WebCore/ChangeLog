@@ -1,3 +1,21 @@
+2019-11-22  Eric Carlson  <eric.carlson@apple.com>
+
+        ( r251737 ) media/remoteplayback-prompt.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=204362
+        <rdar://problem/57327870>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this fixes a flakey test.
+
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock):
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        (WebCore::MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMock::setState):
+        (WebCore::MediaPlaybackTargetPickerMock::timerFired): Deleted.
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
 2019-11-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: adjust `InspectorCanvasAgent::recordCanvasAction` to actually check that the `CanvasRenderingContext` still exists

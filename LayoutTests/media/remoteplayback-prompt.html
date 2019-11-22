@@ -3,12 +3,10 @@
         <script src='media-file.js'></script>
         <script src='video-test.js'></script>
         <script>
-            var video;
-            var callbackId;
 
-            var nextStep;
+            let pendingTimeout;
 
-            function start()
+            async function start()
             {
                 findMediaElement();
 
@@ -19,54 +17,74 @@
 
                 consoleWrite('<br>** prompt() when disableRemotePlayback is set should fail');
                 run('video.disableRemotePlayback = true');
-                video.remote.prompt().then(failTest).catch(handleDisabledError);
-            }
 
-            function handleDisabledError(error)
-            {
-                consoleWrite(`EXPECTED ERROR: ${ error }`);
+                try {
+                    await video.remote.prompt();
+                    failTest('prompt() succeeded when remote playback is disabled');
+                } catch(error) {
+                    consoleWrite(`EXPECTED ERROR: ${ error }`);
+                }
+
                 run('video.disableRemotePlayback = false');
+
                 consoleWrite('<br>** prompt() outside of a user action should fail');
-                video.remote.prompt().then(failTest).catch(handleUserGestureError);
-            }
+                try {
+                    await video.remote.prompt();
+                    failTest('prompt() succeeded outside of a user action');
+                } catch(error) {
+                    consoleWrite(`EXPECTED ERROR: ${ error }`);
+                }
 
-            function handleUserGestureError(error)
-            {
-                consoleWrite(`EXPECTED ERROR: ${ error }`);
                 consoleWrite('<br>** prompt() when no targets are available should fail');
-                runWithKeyDown(() => { video.remote.prompt().then(failTest).catch(handleNoTargetError); });
+                runWithKeyDown(() => { 
+                    video.remote.prompt().then(failTest).catch(handleNoTargetError);
+                });
             }
 
-            function handleNoTargetError(error)
+            async function handleNoTargetError(error)
             {
                 consoleWrite(`EXPECTED ERROR: ${ error }`);
                 consoleWrite('<br>** Simulate a device becoming available')
 
-                video.remote.watchAvailability(availabilityChanged).catch(failTest);
+                pendingTimeout = setTimeout(_ => {
+                    failTest(`<br>Remote device not available after 8 seconds!`);
+                }, 8000);
+
                 if (window.internals)
                     internals.setMockMediaPlaybackTargetPickerState('', 'DeviceAvailable');
+
+                try {
+                    await video.remote.watchAvailability(availabilityChanged);
+                } catch (error) {
+                    failTest(`<br>'watchAvailability' threw error ${error}`);
+                }
             }
 
-            function availabilityChanged(available)
+            async function availabilityChanged(available)
             {
                 if (!available)
                     return;
+
+                video.remote.cancelWatchAvailability();
+                clearTimeout(pendingTimeout);
 
                 if (video.src)
                     return;
 
                 run('video.src = findMediaFile("video", "content/test")');
-                waitForEvent('canplaythrough', canplaythrough);
-            }
+                await waitForEventWithTimeout(video, 'canplaythrough', 8000, "'canplaythrough' not fired after 8 seconds");
 
-            function canplaythrough()
-            {
                 consoleWrite('<br>** Simulate a device becoming selected');
-                runWithKeyDown(() => { video.remote.prompt().catch(failTest); });
+                runWithKeyDown(() => { 
+                    video.remote.prompt().catch(failTest); 
+                });
                 if (window.internals)
                     internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
-                waitForEventOn(video.remote, 'connecting');
-                waitForEventOn(video.remote, 'connect', endTest);
+
+                await waitForEventWithTimeout(video.remote, 'connecting', 8000, "'connecting' not fired after 8 seconds");
+                await waitForEventWithTimeout(video.remote, 'connect', 8000, "'connect' not fired after 8 seconds");
+
+                endTest();
             }
 
         </script>

@@ -186,6 +186,30 @@ function run(testFuncString)
     }
 }
 
+function waitForEventWithTimeout(element, type, time, message) {
+    let listener = new Promise(resolve => {
+        element.addEventListener(type, event => {
+            resolve(event);
+        }, { once: true });
+    });
+    let timeout = new Promise((resolve) => {
+        setTimeout(resolve, time, 'timeout');
+    });
+
+    return Promise.race([
+        listener, 
+        timeout,
+    ]).then(result => {
+        if (result === 'timeout') {
+            Promise.reject(new Error(message));
+            return;
+        }
+        
+        consoleWrite(`EVENT(${result.type})`);
+        Promise.resolve(result);
+    });
+}
+
 function waitFor(element, type, silent) {
     return new Promise(resolve => {
         element.addEventListener(type, event => {

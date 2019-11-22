@@ -1,3 +1,16 @@
+2019-11-22  Eric Carlson  <eric.carlson@apple.com>
+
+        ( r251737 ) media/remoteplayback-prompt.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=204362
+        <rdar://problem/57327870>
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/only-bcp47-language-tags-accepted-as-valid-expected.txt:
+        * media/remoteplayback-prompt.html: Update to make debugging timeouts easier.
+        * media/video-test.js:
+        (waitForEventWithTimeout):
+
 2019-11-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add support for new kinds of diagnostic events

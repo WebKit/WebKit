@@ -39,7 +39,6 @@ static const Seconds timerInterval { 100_ms };
 
 MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)
-    , m_timer(RunLoop::main(), this, &MediaPlaybackTargetPickerMock::timerFired)
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock");
 }
@@ -62,12 +61,6 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMock::playbackTarget()
     return WebCore::MediaPlaybackTargetMock::create(m_deviceName, m_state);
 }
 
-void MediaPlaybackTargetPickerMock::timerFired()
-{
-    m_showingMenu = false;
-    currentDeviceDidChange();
-}
-
 void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDarkAppearance)
 {
     if (!client() || m_showingMenu)
@@ -77,21 +70,27 @@ void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, b
     UNUSED_PARAM(checkActiveRoute);
     UNUSED_PARAM(useDarkAppearance);
 #endif
+
     LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDarkAppearance = %i", (int)checkActiveRoute, (int)useDarkAppearance);
 
     m_showingMenu = true;
-    m_timer.startOneShot(timerInterval);
+    m_taskQueue.enqueueTask([this] {
+        m_showingMenu = false;
+        currentDeviceDidChange();
+    });
 }
 
 void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets");
 
-    if (m_state == MediaPlaybackTargetContext::OutputDeviceAvailable)
-        availableDevicesDidChange();
+    m_taskQueue.enqueueTask([this] {
+        if (m_state == MediaPlaybackTargetContext::OutputDeviceAvailable)
+            availableDevicesDidChange();
 
-    if (!m_deviceName.isEmpty() && m_state != MediaPlaybackTargetContext::Unknown)
-        currentDeviceDidChange();
+        if (!m_deviceName.isEmpty() && m_state != MediaPlaybackTargetContext::Unknown)
+            currentDeviceDidChange();
+    });
 }
 
 void MediaPlaybackTargetPickerMock::stopMonitoringPlaybackTargets()
@@ -109,15 +108,17 @@ void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlay
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().data(), (unsigned)state);
 
-    if (deviceName != m_deviceName && state != MediaPlaybackTargetContext::Unknown) {
-        m_deviceName = deviceName;
-        currentDeviceDidChange();
-    }
+    m_taskQueue.enqueueTask([this, state, deviceName] {
+        if (deviceName != m_deviceName && state != MediaPlaybackTargetContext::Unknown) {
+            m_deviceName = deviceName;
+            currentDeviceDidChange();
+        }
 
-    if (m_state != state) {
-        m_state = state;
-        availableDevicesDidChange();
-    }
+        if (m_state != state) {
+            m_state = state;
+            availableDevicesDidChange();
+        }
+    });
 }
 
 void MediaPlaybackTargetPickerMock::dismissPopup()
