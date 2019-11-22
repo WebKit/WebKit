@@ -38,6 +38,7 @@
     ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable
 ] interface TestInterface {
+    iterable<TestNode, TestObj>;
 };
 
 TestInterface implements TestImplements;

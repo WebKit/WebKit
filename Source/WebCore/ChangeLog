@@ -1,3 +1,26 @@
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
+        Bindings generator fails to add includes for iterable<> key / value types
+        https://bugs.webkit.org/show_bug.cgi?id=204530
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIterableDefinition):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfacePrototype::finishCreation):
+        (WebCore::jsTestInterfacePrototypeFunctionEntriesCaller):
+        (WebCore::jsTestInterfacePrototypeFunctionEntries):
+        (WebCore::jsTestInterfacePrototypeFunctionKeysCaller):
+        (WebCore::jsTestInterfacePrototypeFunctionKeys):
+        (WebCore::jsTestInterfacePrototypeFunctionValuesCaller):
+        (WebCore::jsTestInterfacePrototypeFunctionValues):
+        (WebCore::jsTestInterfacePrototypeFunctionForEachCaller):
+        (WebCore::jsTestInterfacePrototypeFunctionForEach):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/TestInterface.idl:
+
 2019-11-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::Run::expand should take a range of runs to merge

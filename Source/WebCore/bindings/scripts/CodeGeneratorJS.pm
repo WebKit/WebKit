@@ -6407,6 +6407,9 @@ sub GenerateIterableDefinition
     my $iteratorTraitsType = $interface->iterable->isKeyValue ? "JSDOMIteratorType::Map" : "JSDOMIteratorType::Set";
     my $iteratorTraitsKeyType = $interface->iterable->isKeyValue ? GetIDLType($interface, $interface->iterable->keyType) : "void";
     my $iteratorTraitsValueType = GetIDLType($interface, $interface->iterable->valueType);
+    
+    AddToImplIncludesForIDLType($interface->iterable->keyType) if $interface->iterable->isKeyValue;
+    AddToImplIncludesForIDLType($interface->iterable->valueType);
 
     push(@implContent,  <<END);
 struct ${iteratorTraitsName} {
