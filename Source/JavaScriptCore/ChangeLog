@@ -1,3 +1,70 @@
+2019-11-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG terminal's liveness should respect caller's opcodeID
+        https://bugs.webkit.org/show_bug.cgi?id=204317
+
+        Reviewed by Saam Barati.
+
+        Let's consider the following example, which is freqneutly seen in Speedometer2/EmberJS-Debug.
+
+            "use strict";
+
+            function assertImpl(cond)
+            {
+                if (!cond)
+                    throw new Error();
+            }
+
+            function assert()
+            {
+                assertImpl.apply(undefined, arguments);
+            }
+            noInline(assert);
+
+        When compiling `throw`, we emit a terminal node and put Phantom/PhantomLocal based on the bytecode liveness.
+        When collecting liveness for each frame, we use the liveness information of the bytecode `op_call_varargs` in assert function.
+        This means that op_call_varargs's uses are considered as live (like, `arguments` in this example).
+        But it is not necessary to mark it "live": if we are in assertImpl, `arguments` is already loaded into the stack, and we no longer
+        use `arguments` when exiting, and the execution after the exit. Marking this `arguments` live makes this `arguments` allocated
+        in DFG, but this is wasteful.
+
+        In this patch, we introduce BeforeUse and AfterUse concept into bytecode liveness information. And use AfterUse information when
+        collecting liveness in the caller's frame in DFG. We only enable this for varargs for now since (1) applying this to the other ones
+        is not profitable, and (2) we need to be careful to make stack arguments live to allow materialization of arguments objects.
+        In op_call_varargs / op_tail_call_varargs / op_construct_varargs cases, uses are happen only for |callee|, |this|, and |arguments|.
+        And these are no longer necessary after calling.
+
+        We don't use liveness information in the next bytecode since it misses uses marked by exception handlers.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        (JSC::BytecodeLivenessAnalysis::graph):
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionDef):
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionUse):
+        (JSC::BytecodeLivenessPropagation::stepOverInstructionUseInExceptionHandler):
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        (JSC::computeDefsForBytecodeIndex):
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness const):
+        (JSC::FullBytecodeLiveness::operandIsLive const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ForInContext::finalize):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        (JSC::DFG::Graph::appropriateLivenessCalculationPoint):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK/WPE debug build after r252770

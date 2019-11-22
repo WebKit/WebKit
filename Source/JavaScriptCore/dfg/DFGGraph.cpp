@@ -1139,6 +1139,7 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
     
     if (verbose)
         dataLog("Checking of operand is live: ", operand, "\n");
+    bool isCallerOrigin = false;
     CodeOrigin* codeOriginPtr = &codeOrigin;
     for (;;) {
         VirtualRegister reg = VirtualRegister(
@@ -1172,7 +1173,10 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 
             if (verbose)
                 dataLog("Asking the bytecode liveness.\n");
-            return livenessFor(inlineCallFrame).operandIsLive(reg.offset(), codeOriginPtr->bytecodeIndex());
+            CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
+            FullBytecodeLiveness& fullLiveness = livenessFor(codeBlock);
+            BytecodeIndex bytecodeIndex = codeOriginPtr->bytecodeIndex();
+            return fullLiveness.operandIsLive(reg.offset(), bytecodeIndex, appropriateLivenessCalculationPoint(*codeOriginPtr, isCallerOrigin));
         }
 
         if (!inlineCallFrame) {
@@ -1193,6 +1197,7 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
         // We need to handle tail callers because we may decide to exit to the
         // the return bytecode following the tail call.
         codeOriginPtr = &inlineCallFrame->directCaller;
+        isCallerOrigin = true;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

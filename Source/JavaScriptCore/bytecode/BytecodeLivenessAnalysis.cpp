@@ -67,7 +67,8 @@ void BytecodeLivenessAnalysis::computeFullLiveness(CodeBlock* codeBlock, FullByt
 {
     FastBitVector out;
 
-    result.m_map.resize(codeBlock->instructions().size());
+    result.m_beforeUseVector.resize(codeBlock->instructions().size());
+    result.m_afterUseVector.resize(codeBlock->instructions().size());
     
     for (std::unique_ptr<BytecodeBasicBlock>& block : m_graph.basicBlocksInReverseOrder()) {
         if (block->isEntryBlock() || block->isExitBlock())
@@ -75,10 +76,25 @@ void BytecodeLivenessAnalysis::computeFullLiveness(CodeBlock* codeBlock, FullByt
         
         out = block->out();
         
+        auto use = [&] (unsigned bitIndex) {
+            // This is the use functor, so we set the bit.
+            out[bitIndex] = true;
+        };
+
+        auto def = [&] (unsigned bitIndex) {
+            // This is the def functor, so we clear the bit.
+            out[bitIndex] = false;
+        };
+
+        auto& instructions = codeBlock->instructions();
         for (unsigned i = block->offsets().size(); i--;) {
-            unsigned bytecodeOffset = block->offsets()[i];
-            stepOverInstruction(codeBlock, codeBlock->instructions(), m_graph, BytecodeIndex(bytecodeOffset), out);
-            result.m_map[bytecodeOffset] = out;
+            BytecodeIndex bytecodeIndex = BytecodeIndex(block->offsets()[i]);
+
+            stepOverInstructionDef(codeBlock, instructions, m_graph, bytecodeIndex, def);
+            stepOverInstructionUseInExceptionHandler(codeBlock, instructions, m_graph, bytecodeIndex, use);
+            result.m_afterUseVector[bytecodeIndex.offset()] = out; // AfterUse point.
+            stepOverInstructionUse(codeBlock, instructions, m_graph, bytecodeIndex, use);
+            result.m_beforeUseVector[bytecodeIndex.offset()] = out; // BeforeUse point.
         }
     }
 }

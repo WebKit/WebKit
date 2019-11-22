@@ -58,6 +58,42 @@ inline bool isValidRegisterForLiveness(VirtualRegister operand)
     return operand.isLocal();
 }
 
+template<typename CodeBlockType, typename DefFunctor>
+inline void BytecodeLivenessPropagation::stepOverInstructionDef(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, const DefFunctor& def)
+{
+    auto* instruction = instructions.at(bytecodeIndex).ptr();
+    computeDefsForBytecodeIndex(
+        codeBlock, instruction,
+        [&] (VirtualRegister operand) {
+            if (isValidRegisterForLiveness(operand))
+                def(operand.toLocal());
+        });
+}
+
+template<typename CodeBlockType, typename UseFunctor>
+inline void BytecodeLivenessPropagation::stepOverInstructionUse(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph&, BytecodeIndex bytecodeIndex, const UseFunctor& use)
+{
+    auto* instruction = instructions.at(bytecodeIndex).ptr();
+    computeUsesForBytecodeIndex(
+        codeBlock, instruction,
+        [&] (VirtualRegister operand) {
+            if (isValidRegisterForLiveness(operand))
+                use(operand.toLocal());
+        });
+}
+
+template<typename CodeBlockType, typename UseFunctor>
+inline void BytecodeLivenessPropagation::stepOverInstructionUseInExceptionHandler(CodeBlockType* codeBlock, const InstructionStream&, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, const UseFunctor& use)
+{
+    // If we have an exception handler, we want the live-in variables of the 
+    // exception handler block to be included in the live-in of this particular bytecode.
+    if (auto* handler = codeBlock->handlerForBytecodeIndex(bytecodeIndex)) {
+        BytecodeBasicBlock* handlerBlock = graph.findBasicBlockWithLeaderOffset(handler->target);
+        ASSERT(handlerBlock);
+        handlerBlock->in().forEachSetBit(use);
+    }
+}
+
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
 template<typename CodeBlockType, typename UseFunctor, typename DefFunctor>
@@ -78,30 +114,9 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
     // uses before defs, then the add operation above would appear to not have loc1 live, since we'd
     // first add it to the out set (the use), and then we'd remove it (the def).
 
-    auto* instruction = instructions.at(bytecodeIndex).ptr();
-    OpcodeID opcodeID = instruction->opcodeID();
-
-    computeDefsForBytecodeIndex(
-        codeBlock, opcodeID, instruction,
-        [&] (VirtualRegister operand) {
-            if (isValidRegisterForLiveness(operand))
-                def(operand.toLocal());
-        });
-
-    computeUsesForBytecodeIndex(
-        codeBlock, opcodeID, instruction,
-        [&] (VirtualRegister operand) {
-            if (isValidRegisterForLiveness(operand))
-                use(operand.toLocal());
-        });
-
-    // If we have an exception handler, we want the live-in variables of the 
-    // exception handler block to be included in the live-in of this particular bytecode.
-    if (auto* handler = codeBlock->handlerForBytecodeIndex(bytecodeIndex)) {
-        BytecodeBasicBlock* handlerBlock = graph.findBasicBlockWithLeaderOffset(handler->target);
-        ASSERT(handlerBlock);
-        handlerBlock->in().forEachSetBit(use);
-    }
+    stepOverInstructionDef(codeBlock, instructions, graph, bytecodeIndex, def);
+    stepOverInstructionUseInExceptionHandler(codeBlock, instructions, graph, bytecodeIndex, use);
+    stepOverInstructionUse(codeBlock, instructions, graph, bytecodeIndex, use);
 }
 
 template<typename CodeBlockType>

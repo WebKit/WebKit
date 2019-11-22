@@ -91,6 +91,7 @@ macro makeReturnProfiled(opcodeStruct, get, metadata, dispatch, fn)
 end
 
 
+# After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterCall(size, opcodeStruct, dispatch)
     loadi ArgumentCount + TagOffset[cfr], PC
     get(size, opcodeStruct, m_dst, t3)

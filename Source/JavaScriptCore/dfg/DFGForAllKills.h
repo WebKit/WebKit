@@ -73,8 +73,8 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
         int stackOffset = beforeInlineCallFrame ? beforeInlineCallFrame->stackOffset : 0;
         CodeBlock* codeBlock = graph.baselineCodeBlockFor(beforeInlineCallFrame);
         FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
-        const FastBitVector& liveBefore = fullLiveness.getLiveness(before.bytecodeIndex());
-        const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex());
+        const FastBitVector& liveBefore = fullLiveness.getLiveness(before.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
+        const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
         
         (liveBefore & ~liveAfter).forEachSetBit(
             [&] (size_t relativeLocal) {

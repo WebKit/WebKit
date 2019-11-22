@@ -4891,10 +4891,8 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* cod
 
     for (unsigned offset = bodyBytecodeStartOffset(); isValid() && offset < bodyBytecodeEndOffset;) {
         auto instruction = generator.instructions().at(offset);
-        OpcodeID opcodeID = instruction->opcodeID();
-
-        ASSERT(opcodeID != op_enter);
-        computeDefsForBytecodeIndex(codeBlock, opcodeID, instruction.ptr(), [&] (VirtualRegister operand) {
+        ASSERT(!instruction->is<OpEnter>());
+        computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), [&] (VirtualRegister operand) {
             if (local()->virtualRegister() == operand)
                 invalidate();
         });

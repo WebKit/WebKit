@@ -33,6 +33,7 @@
 #include "BasicBlockLocation.h"
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
+#include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -74,6 +75,7 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
@@ -565,6 +567,7 @@ private:
     template<typename AddFlushDirectFunc, typename AddPhantomLocalDirectFunc>
     void flushForTerminalImpl(CodeOrigin origin, const AddFlushDirectFunc& addFlushDirect, const AddPhantomLocalDirectFunc& addPhantomLocalDirect)
     {
+        bool isCallerOrigin = false;
         origin.walkUpInlineStack(
             [&] (CodeOrigin origin) {
                 BytecodeIndex bytecodeIndex = origin.bytecodeIndex();
@@ -573,12 +576,12 @@ private:
 
                 CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
                 FullBytecodeLiveness& fullLiveness = m_graph.livenessFor(codeBlock);
-                const FastBitVector& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex);
-
+                const auto& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex, m_graph.appropriateLivenessCalculationPoint(origin, isCallerOrigin));
                 for (unsigned local = codeBlock->numCalleeLocals(); local--;) {
                     if (livenessAtBytecode[local])
                         addPhantomLocalDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
                 }
+                isCallerOrigin = true;
             });
     }
 

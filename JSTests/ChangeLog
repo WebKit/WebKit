@@ -1,3 +1,46 @@
+2019-11-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG terminal's liveness should respect caller's opcodeID
+        https://bugs.webkit.org/show_bug.cgi?id=204317
+
+        Reviewed by Saam Barati.
+
+        * stress/call-var-args-phantom-arguments-handler-strict.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/call-var-args-phantom-arguments-handler.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/call-var-args-phantom-arguments-strict.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/call-var-args-phantom-arguments.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/derived-class-construct-varargs.js: Added.
+        (shouldThrow):
+        (B):
+        * stress/tail-call-var-args-phantom-arguments-handler-strict.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/tail-call-var-args-phantom-arguments-handler.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/tail-call-var-args-phantom-arguments-strict.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+        * stress/tail-call-var-args-phantom-arguments.js: Added.
+        (shouldBe):
+        (inlined):
+        (test):
+
 2019-11-22  Guillaume Emont  <guijemont@igalia.com>
 
         Skip tests that fail on arm and mips devices

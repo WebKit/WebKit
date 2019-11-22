@@ -46,8 +46,9 @@ namespace JSC {
 #define DEFS USES_OR_DEFS
 
 template<typename Block, typename Functor>
-void computeUsesForBytecodeIndex(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+void computeUsesForBytecodeIndex(Block* codeBlock, const Instruction* instruction, const Functor& functor)
 {
+    OpcodeID opcodeID = instruction->opcodeID();
     if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
         functor(codeBlock->scopeRegister());
 
@@ -298,9 +299,9 @@ void computeUsesForBytecodeIndex(Block* codeBlock, OpcodeID opcodeID, const Inst
 }
 
 template<typename Block, typename Functor>
-void computeDefsForBytecodeIndex(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+void computeDefsForBytecodeIndex(Block* codeBlock, const Instruction* instruction, const Functor& functor)
 {
-    switch (opcodeID) {
+    switch (instruction->opcodeID()) {
     case op_wide16:
     case op_wide32:
         RELEASE_ASSERT_NOT_REACHED();

@@ -90,6 +90,7 @@ macro valueProfile(opcodeStruct, metadata, value)
     storeq value, %opcodeStruct%::Metadata::m_profile.m_buckets[metadata]
 end
 
+# After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterCall(size, opcodeStruct, dispatch)
     loadi ArgumentCount + TagOffset[cfr], PC
     loadp CodeBlock[cfr], PB
