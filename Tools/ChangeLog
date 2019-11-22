@@ -1,3 +1,13 @@
+2019-11-22  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Hide the output of binaries behind --verbose
+        https://bugs.webkit.org/show_bug.cgi?id=204386
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (runTest): Do not log binary output by default, always log test failures.
+
 2019-11-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add basic commit-queue support in new EWS

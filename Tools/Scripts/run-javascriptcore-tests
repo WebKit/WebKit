@@ -525,7 +525,7 @@ sub runTest {
     open(TEST, "-|", "@command 2>&1") or die "Failed to run @command";
     while ( my $line = <TEST> ) {
         my $subTestName;
-        print $line;
+        print $line if ($verbose);
 
         # e.g.: 'O2: testRotRWithImmShift(uint64-max, uint32-min): OK!''
         if ($line =~ /(O\d): (\S+)(\(.*\)): ([A-Za-z]+)!\n/) {
@@ -588,7 +588,7 @@ sub runTest {
         }
 
         if (!defined $reportData{$subTestName}) {
-            print("$subTestName $failureFlag\n") if $failureFlag;
+            print "$subTestName failed\n" if ($failureFlag && !$verbose);
             $reportData{$subTestName} = $failureFlag ? {actual => "FAIL"} : {actual => "PASS"};
         }
         $failureFlag = 0;
