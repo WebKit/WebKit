@@ -4479,3 +4479,5 @@ webkit.org/b/204413 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFai
 webkit.org/b/204438 http/tests/misc/repeat-open-cancel.html [ Pass Timeout ]
 webkit.org/b/204439 fast/repaint/backgroundSizeRepaint.html [ Pass ImageOnlyFailure ]
 webkit.org/b/204440 imported/blink/fast/events/panScroll-crash.html [ Pass Crash ]
+
+webkit.org/b/204489 storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
