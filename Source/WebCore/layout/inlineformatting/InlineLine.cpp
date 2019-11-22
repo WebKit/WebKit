@@ -85,10 +85,99 @@ void InlineItemRun::setCollapsesToZeroAdvanceWidth()
     m_logicalRect.setWidth({ });
 }
 
-Line::Run::Run(const Box& layoutBox, InlineItem::Type type, const Display::Rect& logicalRect)
-    : m_layoutBox(&layoutBox)
-    , m_type(type)
+struct ContinousContent {
+public:
+    ContinousContent(const InlineItemRun&, bool textIsAlignJustify);
+
+    bool append(const InlineItemRun&);
+    Line::Run close();
+
+private:
+    static bool canBeExpanded(const InlineItemRun& run) { return run.isText() && !run.isCollapsed() && !run.isCollapsedToZeroAdvanceWidth(); }
+    bool canBeMerged(const InlineItemRun& run) const { return run.isText() && !run.isCollapsedToZeroAdvanceWidth() && &m_initialInlineRun.layoutBox() == &run.layoutBox(); }
+
+    const InlineItemRun& m_initialInlineRun;
+    const bool m_textIsAlignJustify { false };
+    unsigned m_expandedLength { 0 };
+    LayoutUnit m_expandedWidth;
+    bool m_trailingRunCanBeExpanded { false };
+    bool m_hasTrailingExpansionOpportunity { false };
+    unsigned m_expansionOpportunityCount { 0 };
+};
+
+ContinousContent::ContinousContent(const InlineItemRun& initialInlineRun, bool textIsAlignJustify)
+    : m_initialInlineRun(initialInlineRun)
+    , m_textIsAlignJustify(textIsAlignJustify)
+    , m_trailingRunCanBeExpanded(canBeExpanded(initialInlineRun))
+{
+}
+
+bool ContinousContent::append(const InlineItemRun& inlineItemRun)
+{
+    // Merged content needs to be continuous.
+    if (!m_trailingRunCanBeExpanded)
+        return false;
+    if (!canBeMerged(inlineItemRun))
+        return false;
+
+    m_trailingRunCanBeExpanded = canBeExpanded(inlineItemRun);
+
+    ASSERT(inlineItemRun.isText());
+    m_expandedLength += inlineItemRun.textContext()->length();
+    m_expandedWidth += inlineItemRun.logicalRect().width();
+
+    if (m_textIsAlignJustify) {
+        m_hasTrailingExpansionOpportunity = inlineItemRun.hasExpansionOpportunity();
+        if (m_hasTrailingExpansionOpportunity)
+            ++m_expansionOpportunityCount;
+    }
+    return true;
+}
+
+Line::Run ContinousContent::close()
+{
+    if (!m_expandedLength)
+        return { m_initialInlineRun };
+    // Expand the text content and set the expansion opportunities.
+    ASSERT(m_initialInlineRun.isText());
+    auto logicalRect = m_initialInlineRun.logicalRect();
+    logicalRect.expandHorizontally(m_expandedWidth);
+
+    auto textContext = *m_initialInlineRun.textContext();
+    auto length = textContext.length() + m_expandedLength;
+    textContext.expand(m_initialInlineRun.layoutBox().textContext().content.substring(textContext.start(), length), length);
+
+    if (m_textIsAlignJustify) {
+        // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
+        ExpansionBehavior expansionBehavior = m_hasTrailingExpansionOpportunity ? (ForbidLeadingExpansion | AllowTrailingExpansion) : (AllowLeadingExpansion | AllowTrailingExpansion);
+        if (m_initialInlineRun.hasExpansionOpportunity())
+            ++m_expansionOpportunityCount;
+        textContext.setExpansion({ expansionBehavior, { } });
+    }
+    return { m_initialInlineRun, logicalRect, textContext, m_expansionOpportunityCount };
+}
+
+Line::Run::Run(const InlineItemRun& inlineItemRun)
+    : m_layoutBox(&inlineItemRun.layoutBox())
+    , m_type(inlineItemRun.type())
+    , m_logicalRect(inlineItemRun.logicalRect())
+    , m_textContext(inlineItemRun.textContext())
+    , m_isCollapsedToVisuallyEmpty(inlineItemRun.isCollapsedToZeroAdvanceWidth())
+{
+    if (inlineItemRun.hasExpansionOpportunity()) {
+        m_expansionOpportunityCount = 1;
+        ASSERT(m_textContext);
+        m_textContext->setExpansion({ DefaultExpansion, { } });
+    }
+}
+
+Line::Run::Run(const InlineItemRun& inlineItemRun, const Display::Rect& logicalRect, const Display::Run::TextContext& textContext, unsigned expansionOpportunityCount)
+    : m_layoutBox(&inlineItemRun.layoutBox())
+    , m_type(inlineItemRun.type())
     , m_logicalRect(logicalRect)
+    , m_textContext(textContext)
+    , m_expansionOpportunityCount(expansionOpportunityCount)
+    , m_isCollapsedToVisuallyEmpty(inlineItemRun.isCollapsedToZeroAdvanceWidth())
 {
 }
 
@@ -107,44 +196,12 @@ inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
     return { };
 }
 
-void Line::Run::setHasExpansionOpportunity(ExpansionBehavior expansionBehavior)
-{
-    ASSERT(isText());
-    ASSERT(!hasExpansionOpportunity());
-    m_expansionOpportunityCount = 1;
-    m_textContext->setExpansion({ expansionBehavior, { } });
-}
-
 void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
 {
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());
     m_logicalRect.expandHorizontally(logicalExpansion);
     m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
-}
-
-void Line::Run::expand(const InlineItemRun& nextRun)
-{
-    ASSERT(isText());
-    ASSERT(nextRun.isText());
-    ASSERT(!isCollapsedToVisuallyEmpty());
-
-    m_logicalRect.expandHorizontally(nextRun.logicalRect().width());
-    auto expandedLength = m_textContext->length() + nextRun.textContext()->length();
-    m_textContext->expand(layoutBox().textContext().content.substring(m_textContext->start(), expandedLength), expandedLength);
-
-    // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount. 
-    if (hasExpansionOpportunity() && nextRun.hasExpansionOpportunity()) {
-        // Run is expanded with a whitespace content.
-        adjustExpansionBehavior(ForbidLeadingExpansion | AllowTrailingExpansion);
-        ++m_expansionOpportunityCount;
-    } else if (!hasExpansionOpportunity() && nextRun.hasExpansionOpportunity()) {
-        // Nonwhitespace runs is expanded with whitespace.
-        setHasExpansionOpportunity(ForbidLeadingExpansion | AllowTrailingExpansion);
-    } else if (hasExpansionOpportunity() && !nextRun.hasExpansionOpportunity()) {
-        // Run is expanded with a nonwhitespace content.
-        adjustExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
-    }
 }
 
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
@@ -231,49 +288,15 @@ Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineConten
     // 3. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
     RunList runList;
-    for (unsigned i = 0; i < m_inlineItemRuns.size(); ++i) {
-
-        auto constructRun = [&] (const auto& inlineItemRun) {
-            runList.append(Run { inlineItemRun.layoutBox(), inlineItemRun.type(), inlineItemRun.logicalRect() });
-            if (!inlineItemRun.isText())
-                return;
-
-            auto& run = runList.last();
-            if (inlineItemRun.isCollapsedToZeroAdvanceWidth())
-                run.setIsCollapsedToVisuallyEmpty();
-            if (auto textContext = inlineItemRun.textContext()) {
-                run.setTextContext(*textContext);
-                if (isTextAlignJustify() && inlineItemRun.hasExpansionOpportunity())
-                    run.setHasExpansionOpportunity(DefaultExpansion);
-            }
-        };
-
-        constructRun(*m_inlineItemRuns[i]);
+    unsigned runIndex = 0;
+    while (runIndex < m_inlineItemRuns.size()) {
         // Merge eligible runs.
-        while (i < m_inlineItemRuns.size() - 1) {
-            auto canMergeRuns = [] (const auto& currentRun, const auto& nextRun) {
-                // Do not merge runs across inline boxes (<span>foo</span><span>bar</span>)
-                if (&currentRun.layoutBox() != &nextRun.layoutBox())
-                    return false;
-                // Only text content can be merged.
-                if (!currentRun.isText() || !nextRun.isText())
-                    return false;
-                // Merged content needs to be continuous.
-                if (currentRun.isCollapsed())
-                    return false;
-                // Visually empty runs are ignored.
-                if (currentRun.isCollapsedToZeroAdvanceWidth() || nextRun.isCollapsedToZeroAdvanceWidth())
-                    return false;
-                return true;
-            };
-            auto& currentRun = m_inlineItemRuns[i];
-            auto& nextRun = m_inlineItemRuns[i + 1];
-            if (!canMergeRuns(*currentRun, *nextRun))
+        auto continousContent = ContinousContent { *m_inlineItemRuns[runIndex], isTextAlignJustify() };
+        while (++runIndex < m_inlineItemRuns.size()) {
+            if (!continousContent.append(*m_inlineItemRuns[runIndex]))
                 break;
-            runList.last().expand(*nextRun);
-            // Skip the merged run.
-            ++i;
         }
+        runList.append(continousContent.close());
     }
 
     if (!m_skipAlignment) {

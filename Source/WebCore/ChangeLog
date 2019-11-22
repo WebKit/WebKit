@@ -1,3 +1,29 @@
+2019-11-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::Run::expand should take a range of runs to merge
+        https://bugs.webkit.org/show_bug.cgi?id=204514
+        <rdar://problem/57428139>
+
+        Reviewed by Antti Koivisto.
+
+        As part of Line::close, we iterate through the runs and merge them if possible.
+        e.g [text][ ][content][ ][and][         ][more] -> [text content and ][more] (note the whitespace collapsing)
+        Instead of taking and expanding the runs one by one, let's collect the continuous neighboring runs first
+        and expand the current run with the continuous range in one go. This shaves off ~2% on line-layout-simple.html.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::ContinousContent::isEmpty const):
+        (WebCore::Layout::ContinousContent::length const):
+        (WebCore::Layout::ContinousContent::width const):
+        (WebCore::Layout::ContinousContent::hasTrailingExpansionOpportunity const):
+        (WebCore::Layout::ContinousContent::expansionOpportunityCount const):
+        (WebCore::Layout::ContinousContent::ContinousContent):
+        (WebCore::Layout::ContinousContent::append):
+        (WebCore::Layout::ContinousContent::canMergeRuns):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+
 2019-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Rename some internal names for system fonts

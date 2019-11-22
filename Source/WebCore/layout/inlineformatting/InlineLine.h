@@ -36,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+struct ContinousContent;
 class InlineFormattingContext;
 class InlineItemRun;
 
@@ -68,6 +69,8 @@ public:
     void moveLogicalRight(LayoutUnit);
 
     struct Run {
+        Run(const InlineItemRun&);
+        Run(const InlineItemRun&, const Display::Rect&, const Display::Run::TextContext&, unsigned expansionOpportunityCount);
         Run(Run&&) = default;
         Run& operator=(Run&& other) = default;
 
@@ -84,17 +87,11 @@ public:
 
     private:
         friend class Line;
-        Run(const Box&, InlineItem::Type, const Display::Rect&);
 
-        void expand(const InlineItemRun&);
         void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
         void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
 
-        void setTextContext(const Display::Run::TextContext textContext) { m_textContext = textContext; }
-        void setIsCollapsedToVisuallyEmpty() { m_isCollapsedToVisuallyEmpty = true; }
-
-        void setHasExpansionOpportunity(ExpansionBehavior);
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
         Optional<ExpansionBehavior> expansionBehavior() const;
         unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
