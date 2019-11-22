@@ -61,17 +61,17 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const Cascad
 }
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createDesignSystemUIFont(ClientUse clientUse, const CascadeListParameters& parameters)
+RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFontKind systemFontKind, const CascadeListParameters& parameters)
 {
     CFStringRef design = kCTFontUIFontDesignDefault;
-    switch (clientUse) {
-    case ClientUse::ForSystemUISerif:
+    switch (systemFontKind) {
+    case SystemFontKind::UISerif:
         design = kCTFontUIFontDesignSerif;
         break;
-    case ClientUse::ForSystemUIMonospace:
+    case SystemFontKind::UIMonospace:
         design = kCTFontUIFontDesignMonospaced;
         break;
-    case ClientUse::ForSystemUIRounded:
+    case SystemFontKind::UIRounded:
         design = kCTFontUIFontDesignRounded;
         break;
     default:
@@ -97,24 +97,24 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const Casca
 #endif
 }
 
-Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const CascadeListParameters& parameters, ClientUse clientUse)
+Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const CascadeListParameters& parameters, SystemFontKind systemFontKind)
 {
     ASSERT(!parameters.fontName.isNull());
     return m_systemFontCache.ensure(parameters, [&] {
         auto localeString = parameters.locale.string().createCFString();
         RetainPtr<CTFontRef> systemFont;
-        switch (clientUse) {
-        case ClientUse::ForSystemUI:
+        switch (systemFontKind) {
+        case SystemFontKind::SystemUI:
             systemFont = createSystemUIFont(parameters, localeString.get());
             break;
-        case ClientUse::ForSystemUISerif:
-        case ClientUse::ForSystemUIMonospace:
-        case ClientUse::ForSystemUIRounded:
+        case SystemFontKind::UISerif:
+        case SystemFontKind::UIMonospace:
+        case SystemFontKind::UIRounded:
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-            systemFont = createDesignSystemUIFont(clientUse, parameters);
+            systemFont = createSystemDesignFont(systemFontKind, parameters);
 #endif
             break;
-        case ClientUse::ForTextStyle:
+        case SystemFontKind::TextStyle:
             systemFont = createTextStyleFont(parameters);
             break;
         }
@@ -179,7 +179,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::computeCascad
     return result;
 }
 
-SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontDescription& description, const AtomString& familyName, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontDescription& description, const AtomString& familyName, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     CascadeListParameters result;
     result.locale = description.locale();
@@ -210,28 +210,28 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     else
         result.weight = kCTFontWeightBlack;
 
-    switch (clientUse) {
-    case ClientUse::ForSystemUI: {
+    switch (systemFontKind) {
+    case SystemFontKind::SystemUI: {
         static NeverDestroyed<AtomString> systemUI = AtomString("system-ui", AtomString::ConstructFromLiteral);
         result.fontName = systemUI.get();
         break;
     }
-    case ClientUse::ForSystemUISerif: {
+    case SystemFontKind::UISerif: {
         static NeverDestroyed<AtomString> systemUISerif = AtomString("ui-serif", AtomString::ConstructFromLiteral);
         result.fontName = systemUISerif.get();
         break;
     }
-    case ClientUse::ForSystemUIMonospace: {
+    case SystemFontKind::UIMonospace: {
         static NeverDestroyed<AtomString> systemUIMonospace = AtomString("ui-monospace", AtomString::ConstructFromLiteral);
         result.fontName = systemUIMonospace.get();
         break;
     }
-    case ClientUse::ForSystemUIRounded: {
+    case SystemFontKind::UIRounded: {
         static NeverDestroyed<AtomString> systemUIRounded = AtomString("ui-rounded", AtomString::ConstructFromLiteral);
         result.fontName = systemUIRounded.get();
         break;
     }
-    case ClientUse::ForTextStyle:
+    case SystemFontKind::TextStyle:
         result.fontName = familyName;
         break;
     }
@@ -239,9 +239,9 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     return result;
 }
 
-Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontDescription& description, const AtomString& cssFamily, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    return cascadeList(systemFontParameters(description, cssFamily, clientUse, allowUserInstalledFonts), clientUse);
+    return cascadeList(systemFontParameters(description, cssFamily, systemFontKind, allowUserInstalledFonts), systemFontKind);
 }
 
 #endif // USE(PLATFORM_SYSTEM_FALLBACK_LIST)

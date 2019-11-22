@@ -1267,24 +1267,24 @@ static void invalidateFontCache()
 
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    Optional<SystemFontDatabaseCoreText::ClientUse> designSystemUI;
+    Optional<SystemFontKind> systemDesign;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(family, "ui-serif"))
-        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
+        systemDesign = SystemFontKind::UISerif;
     else if (equalLettersIgnoringASCIICase(family, "ui-monospace"))
-        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospace;
+        systemDesign = SystemFontKind::UIMonospace;
     else if (equalLettersIgnoringASCIICase(family, "ui-rounded"))
-        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
+        systemDesign = SystemFontKind::UIRounded;
 #endif
 
     if (equalLettersIgnoringASCIICase(family, "ui-sans-serif")) {
-        ASSERT(!designSystemUI);
-        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
+        ASSERT(!systemDesign);
+        systemDesign = SystemFontKind::SystemUI;
     }
 
-    if (designSystemUI) {
-        auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *designSystemUI, allowUserInstalledFonts);
+    if (systemDesign) {
+        auto cascadeList = SystemFontDatabaseCoreText::singleton().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
         if (!cascadeList.isEmpty())
             return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
     }

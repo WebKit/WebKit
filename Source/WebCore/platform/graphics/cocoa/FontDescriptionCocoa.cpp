@@ -47,22 +47,22 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
 }
 #endif
 
-static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse(const AtomString& string)
+static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
 {
     if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
         || equalLettersIgnoringASCIICase(string, "-apple-system")
         || equalLettersIgnoringASCIICase(string, "-apple-system-font")
         || equalLettersIgnoringASCIICase(string, "system-ui")
         || equalLettersIgnoringASCIICase(string, "ui-sans-serif"))
-        return SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
+        return SystemFontKind::SystemUI;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(string, "ui-serif"))
-        return SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
+        return SystemFontKind::UISerif;
     if (equalLettersIgnoringASCIICase(string, "ui-monospace"))
-        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospace;
+        return SystemFontKind::UIMonospace;
     if (equalLettersIgnoringASCIICase(string, "ui-rounded"))
-        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
+        return SystemFontKind::UIRounded;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -90,15 +90,15 @@ static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse
     
     static auto strings { makeNeverDestroyed(convertArray<AtomString>(styles)) };
     if (std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end())
-        return SystemFontDatabaseCoreText::ClientUse::ForTextStyle;
+        return SystemFontKind::TextStyle;
 #endif
 
     return WTF::nullopt;
 }
 
-static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontDatabaseCoreText::ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
+static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    return SystemFontDatabaseCoreText::singleton().cascadeList(description, cssFamily, clientUse, allowUserInstalledFonts);
+    return SystemFontDatabaseCoreText::singleton().cascadeList(description, cssFamily, systemFontKind, allowUserInstalledFonts);
 }
 
 unsigned FontCascadeDescription::effectiveFamilyCount() const

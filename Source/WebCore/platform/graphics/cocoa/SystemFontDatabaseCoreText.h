@@ -34,6 +34,14 @@
 
 namespace WebCore {
 
+enum class SystemFontKind : uint8_t {
+    SystemUI,
+    UISerif,
+    UIMonospace,
+    UIRounded,
+    TextStyle
+};
+
 class SystemFontDatabaseCoreText {
 public:
     struct CascadeListParameters {
@@ -96,15 +104,7 @@ public:
 
     static SystemFontDatabaseCoreText& singleton();
 
-    enum class ClientUse : uint8_t {
-        ForSystemUI,
-        ForSystemUISerif,
-        ForSystemUIMonospace,
-        ForSystemUIRounded,
-        ForTextStyle
-    };
-
-    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontDescription&, const AtomString& cssFamily, ClientUse, AllowUserInstalledFonts);
+    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontDescription&, const AtomString& cssFamily, SystemFontKind, AllowUserInstalledFonts);
 
     String serifFamily(const String& locale);
     String sansSerifFamily(const String& locale);
@@ -117,16 +117,16 @@ public:
 private:
     SystemFontDatabaseCoreText();
 
-    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const CascadeListParameters&, ClientUse);
+    Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const CascadeListParameters&, SystemFontKind);
 
     RetainPtr<CTFontRef> createSystemUIFont(const CascadeListParameters&, CFStringRef locale);
-    RetainPtr<CTFontRef> createDesignSystemUIFont(ClientUse, const CascadeListParameters&);
+    RetainPtr<CTFontRef> createSystemDesignFont(SystemFontKind, const CascadeListParameters&);
     RetainPtr<CTFontRef> createTextStyleFont(const CascadeListParameters&);
 
     static RetainPtr<CTFontRef> createFontByApplyingWeightItalicsAndFallbackBehavior(CTFontRef, CGFloat weight, bool italic, float size, AllowUserInstalledFonts, CFStringRef design = nullptr);
     static RetainPtr<CTFontDescriptorRef> removeCascadeList(CTFontDescriptorRef);
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
-    static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, ClientUse, AllowUserInstalledFonts);
+    static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);
 
     HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::CascadeListParametersHash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
