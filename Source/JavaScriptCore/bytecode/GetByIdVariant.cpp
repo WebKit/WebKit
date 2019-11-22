@@ -181,13 +181,13 @@ void GetByIdVariant::dump(PrintStream& out) const
 
 void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
+    out.print("<");
+    out.print("id='", m_identifier ? *m_identifier : Identifier(), "', ");
     if (!isSet()) {
-        out.print("<empty>");
+        out.print("empty>");
         return;
     }
-    
-    out.print(
-        "<", inContext(structureSet(), context), ", ", inContext(m_conditionSet, context));
+    out.print(inContext(structureSet(), context), ", ", inContext(m_conditionSet, context));
     out.print(", offset = ", offset());
     if (m_callLinkStatus)
         out.print(", call = ", *m_callLinkStatus);

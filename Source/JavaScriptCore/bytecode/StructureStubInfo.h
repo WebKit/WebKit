@@ -94,7 +94,7 @@ public:
     // This returns true if it has marked everything that it will ever mark.
     bool propagateTransitions(SlotVisitor&);
         
-    ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure)
+    ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure, UniquedStringImpl* impl = nullptr)
     {
         DisallowGC disallowGC;
 
@@ -154,7 +154,7 @@ public:
             // NOTE: This will behave oddly for InstanceOf if the user varies the prototype but not
             // the base's structure. That seems unlikely for the canonical use of instanceof, where
             // the prototype is fixed.
-            bool isNewlyAdded = bufferedStructures.add(structure);
+            bool isNewlyAdded = bufferedStructures.add({ structure, impl }).isNewEntry;
             if (isNewlyAdded)
                 vm.heap.writeBarrier(codeBlock);
             return isNewlyAdded;
@@ -188,11 +188,13 @@ public:
         return m_getByIdSelfIdentifier;
     }
     
+private:
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
     // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
     // structure again during this buffering countdown, we will create an AccessCase object for it.
     // That's not so bad - we'll get rid of the redundant ones once we regenerate.
-    StructureSet bufferedStructures;
+    HashSet<std::pair<Structure*, RefPtr<UniquedStringImpl>>> bufferedStructures;
+public:
     
     struct {
         CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.

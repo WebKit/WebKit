@@ -283,9 +283,10 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
     
-    bufferedStructures.genericFilter(
-        [&] (Structure* structure) -> bool {
-            return vm.heap.isMarked(structure);
+    bufferedStructures.removeIf(
+        [&] (auto& pair) -> bool {
+            Structure* structure = pair.first;
+            return !vm.heap.isMarked(structure);
         });
 
     switch (m_cacheType) {

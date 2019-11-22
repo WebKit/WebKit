@@ -1,3 +1,68 @@
+2019-11-21  Saam Barati  <sbarati@apple.com>
+
+        GetByStatus should not say it took the slow path for multiple identifiers and should have a way to indicate if the StructureStubInfo it saw took the slow path
+        https://bugs.webkit.org/show_bug.cgi?id=204435
+
+        Reviewed by Tadeu Zagallo.
+
+        I discovered some issues with get by val ICs when re-running the microbenchmarks
+        I wrote. I noticed that we were faster when not running with the DFG. The reason
+        for this is that we were only emitting a get by val IC in the DFG/FTL when we
+        observe the GetByStatus says it didn't "go to the slow path". The logic in GetByStatus
+        for building up a variant list was wrong for ICs with multiple identifiers. We have
+        a consistency check when building up the list to ensure that no two variants have
+        structure sets which overlap, because we wouldn't know which one to choose. However,
+        we were accidentally saying two GetByIdVariants overlap when they had different identifiers.
+        This patch fixes that bug by also doing an identifier comparison check. Two GetByIdVariants
+        with different identifiers do not overlap.
+        
+        We also used to say a GetByStatus "goes to the slow path" if any of the cases were an
+        array-like load. I wrote that code thinking that ArrayProfile would just handle it.
+        However, sometimes we have a get by val IC that both has string properties and int32 properties.
+        In these kinds of scenarios, an IC is super profitable. This patch now distinguishes
+        between a GetByStatus saying "we're a slow path" and if we actually observed the StructureStubInfo
+        go to the slow path. In the DFG/FTL, we only forgo emitting a get by val IC when observing a
+        prior StructureStubInfo that went to the slow path.
+        
+        I also realized are call to StructureStubInfo::considerCaching was wrong for get by val ICs.
+        We were only considering the Structure in isolation, not the { Structure, Identifier }
+        pair. For get by val, we need to  consider the pair together, since {s1, "a"}
+        and {s1, "b"} will be two different access cases.
+        
+        This patch demonstrates that on these microbenchmarks, get by val ICs can
+        be between 50-200% faster.
+
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::dumpInContext const):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::overlaps):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::GetByStatus):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::makesCalls const):
+        (JSC::GetByStatus::slowVersion const):
+        (JSC::GetByStatus::merge):
+        (JSC::GetByStatus::dump const):
+        * bytecode/GetByStatus.h:
+        (JSC::GetByStatus::GetByStatus):
+        (JSC::GetByStatus::takesSlowPath const):
+        (JSC::GetByStatus::observedStructureStubInfoSlowPath const):
+        * bytecode/ICStatusUtils.h:
+        (JSC::appendICStatusVariant):
+        * bytecode/InByIdVariant.h:
+        (JSC::InByIdVariant::overlaps):
+        * bytecode/InstanceOfVariant.h:
+        (JSC::InstanceOfVariant::overlaps):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::overlaps):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOperations.cpp:
+
 2019-11-21  Mark Lam  <mark.lam@apple.com>
 
         Fix broken String.prototype.replace() and replaceAll().

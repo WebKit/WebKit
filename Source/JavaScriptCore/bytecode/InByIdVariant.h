@@ -63,6 +63,11 @@ public:
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
+    bool overlaps(const InByIdVariant& other)
+    {
+        return structureSet().overlaps(other.structureSet());
+    }
+
 private:
     friend class InByIdStatus;
 

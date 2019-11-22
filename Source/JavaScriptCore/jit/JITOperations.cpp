@@ -2036,7 +2036,7 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject* globalObj
             return JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, [&] (bool found, PropertySlot& slot) -> JSValue {
                 LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(vm), propertyName, baseValue == slot.slotBase())); 
                 
-                if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
+                if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull(), propertyName.impl()))
                     repatchGetBy(globalObject, codeBlock, baseValue, propertyName, slot, *stubInfo, GetByKind::NormalByVal);
                 return found ? slot.getValue(globalObject, propertyName) : jsUndefined();
             }));

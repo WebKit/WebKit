@@ -1,3 +1,54 @@
+2019-11-21  Saam Barati  <sbarati@apple.com>
+
+        GetByStatus should not say it took the slow path for multiple identifiers and should have a way to indicate if the StructureStubInfo it saw took the slow path
+        https://bugs.webkit.org/show_bug.cgi?id=204435
+
+        Reviewed by Tadeu Zagallo.
+
+        * microbenchmarks/get-by-val-polymorphic-ic-1.js: Added.
+        (assert):
+        (test1.foo):
+        (test1):
+        * microbenchmarks/get-by-val-polymorphic-ic-2.js: Added.
+        (assert):
+        (test2.foo):
+        (test2):
+        * microbenchmarks/get-by-val-polymorphic-ic-3.js: Added.
+        (assert):
+        (test3.foo):
+        (test3.args):
+        (test3):
+        * microbenchmarks/get-by-val-polymorphic-ic-4.js: Added.
+        (assert):
+        (test4.foo):
+        (test4.capture):
+        (test4.args):
+        (test4):
+        * microbenchmarks/get-by-val-polymorphic-ic-5.js: Added.
+        (assert):
+        (test5.foo):
+        (test5.capture):
+        (test5.args):
+        (test5):
+        * microbenchmarks/get-by-val-polymorphic-ic-6.js: Added.
+        (assert):
+        (test6.foo):
+        (test6.capture):
+        (test6.args):
+        (test6):
+        * microbenchmarks/get-by-val-polymorphic-ic-7.js: Added.
+        (assert):
+        (test7.foo):
+        (test7):
+        * microbenchmarks/get-by-val-polymorphic-ic-8.js: Added.
+        (assert):
+        (test7.foo):
+        (test7):
+        * microbenchmarks/get-by-val-polymorphic-ic-9.js: Added.
+        (assert):
+        (test7.foo):
+        (test7):
+
 2019-11-21  Mark Lam  <mark.lam@apple.com>
 
         Fix broken String.prototype.replace() and replaceAll().

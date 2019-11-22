@@ -56,10 +56,19 @@ public:
         Custom,
         // It's cached for an access to a module namespace object's binding.
         ModuleNamespace,
-        // It's known to often take slow path.
-        TakesSlowPath,
-        // It's known to take paths that make calls.
+        // It will likely take the slow path.
+        LikelyTakesSlowPath,
+        // It's known to take slow path. We also observed that the slow path was taken on StructureStubInfo.
+        ObservedTakesSlowPath,
+        // It will likely take the slow path and will make calls.
         MakesCalls,
+        // It known to take paths that make calls. We also observed that the slow path was taken on StructureStubInfo.
+        ObservedSlowPathAndMakesCalls ,
+    };
+
+    enum class TrackIdentifiers : uint8_t {
+        No,  // Used for get_by_id
+        Yes, // Used for get_by_val
     };
 
     GetByStatus()
@@ -70,29 +79,10 @@ public:
     explicit GetByStatus(State state)
         : m_state(state)
     {
-        ASSERT(state == NoInformation || state == TakesSlowPath || state == MakesCalls);
+        ASSERT(state == NoInformation || state == LikelyTakesSlowPath || state == ObservedTakesSlowPath || state == MakesCalls || state == ObservedSlowPathAndMakesCalls);
     }
     
-    explicit GetByStatus(StubInfoSummary summary)
-        : m_wasSeenInJIT(true)
-    {
-        switch (summary) {
-        case StubInfoSummary::NoInformation:
-            m_state = NoInformation;
-            return;
-        case StubInfoSummary::Simple:
-        case StubInfoSummary::MakesCalls:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
-        case StubInfoSummary::TakesSlowPath:
-            m_state = TakesSlowPath;
-            return;
-        case StubInfoSummary::TakesSlowPathAndMakesCalls:
-            m_state = MakesCalls;
-            return;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    explicit GetByStatus(StubInfoSummary, StructureStubInfo&);
     
     GetByStatus(
         State state, bool wasSeenInJIT)
@@ -101,7 +91,7 @@ public:
     {
     }
     
-    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin);
+    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, TrackIdentifiers);
     static GetByStatus computeFor(const StructureSet&, UniquedStringImpl*);
 
     State state() const { return m_state; }
@@ -117,14 +107,13 @@ public:
     const GetByIdVariant& at(size_t index) const { return m_variants[index]; }
     const GetByIdVariant& operator[](size_t index) const { return at(index); }
 
-    bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls || m_state == Custom || m_state == ModuleNamespace; }
+    bool takesSlowPath() const { return m_state == LikelyTakesSlowPath || m_state == ObservedTakesSlowPath || m_state == MakesCalls || m_state == ObservedSlowPathAndMakesCalls || m_state == Custom || m_state == ModuleNamespace; }
+    bool observedStructureStubInfoSlowPath() const { return m_state == ObservedTakesSlowPath || m_state == ObservedSlowPathAndMakesCalls; }
     bool makesCalls() const;
     
     GetByStatus slowVersion() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
-    
-    void merge(const GetByStatus&);
     
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
@@ -143,13 +132,15 @@ public:
     Box<Identifier> singleIdentifier() const;
     
 private:
+    void merge(const GetByStatus&);
+    
 #if ENABLE(JIT)
     GetByStatus(const ModuleNamespaceAccessCase&);
     static GetByStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData);
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, TrackIdentifiers);
 #endif
-    static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);
-    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData);
+    static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex, TrackIdentifiers);
+    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData, TrackIdentifiers);
 
     struct ModuleNamespaceData {
         JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };

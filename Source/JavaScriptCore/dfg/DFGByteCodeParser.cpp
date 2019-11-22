@@ -4713,7 +4713,7 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     GetByStatus getByStatus = GetByStatus::computeFor(
         m_inlineStackTop->m_profiledBlock,
         m_inlineStackTop->m_baselineMap, m_icContextStack,
-        currentCodeOrigin());
+        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No);
 
     AccessType type = AccessType::GetById;
     unsigned opcodeLength = currentInstruction->size();
@@ -5622,7 +5622,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
             bool shouldCompileAsGetById = false;
-            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin(), GetByStatus::TrackIdentifiers::Yes);
             unsigned identifierNumber = 0;
             {
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
@@ -5655,7 +5655,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
-                if (getByStatus.takesSlowPath())
+                if (getByStatus.observedStructureStubInfoSlowPath())
                     m_graph.m_slowGetByVal.add(getByVal);
             }
 

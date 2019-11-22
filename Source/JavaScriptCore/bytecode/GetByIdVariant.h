@@ -83,6 +83,17 @@ public:
     void dumpInContext(PrintStream&, DumpContext*) const;
 
     Box<Identifier> identifier() const { return m_identifier; }
+
+    bool overlaps(const GetByIdVariant& other)
+    {
+        if (!!m_identifier != !!other.m_identifier)
+            return true;
+        if (m_identifier) {
+            if (m_identifier->impl() != other.m_identifier->impl())
+                return false;
+        }
+        return structureSet().overlaps(other.structureSet());
+    }
     
 private:
     friend class GetByStatus;

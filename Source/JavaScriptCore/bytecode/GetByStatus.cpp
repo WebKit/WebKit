@@ -52,7 +52,7 @@ bool GetByStatus::appendVariant(const GetByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex)
+GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, TrackIdentifiers trackIdentifiers)
 {
     VM& vm = profiledBlock->vm();
     
@@ -91,6 +91,8 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     }
     }
 
+    ASSERT_UNUSED(trackIdentifiers, trackIdentifiers == TrackIdentifiers::No); // We could make this work in the future, but nobody needs it right now.
+
     if (!structureID)
         return GetByStatus(NoInformation, false);
 
@@ -111,7 +113,7 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     return result;
 }
 
-GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
+GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData, TrackIdentifiers trackIdentifiers)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
@@ -119,7 +121,7 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
 
 #if ENABLE(DFG_JIT)
     result = computeForStubInfoWithoutExitSiteFeedback(
-        locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo, callExitSiteData);
+        locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo, callExitSiteData, trackIdentifiers);
     
     if (didExit)
         return result.slowVersion();
@@ -130,12 +132,33 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
 #endif
 
     if (!result)
-        return computeFromLLInt(profiledBlock, bytecodeIndex);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, trackIdentifiers);
     
     return result;
 }
 
 #if ENABLE(JIT)
+GetByStatus::GetByStatus(StubInfoSummary summary, StructureStubInfo& stubInfo)
+    : m_wasSeenInJIT(true)
+{
+    switch (summary) {
+    case StubInfoSummary::NoInformation:
+        m_state = NoInformation;
+        return;
+    case StubInfoSummary::Simple:
+    case StubInfoSummary::MakesCalls:
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
+    case StubInfoSummary::TakesSlowPath:
+        m_state = stubInfo.tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
+        return;
+    case StubInfoSummary::TakesSlowPathAndMakesCalls:
+        m_state = stubInfo.tookSlowPath ? ObservedSlowPathAndMakesCalls : MakesCalls;
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
     : m_moduleNamespaceData(Box<ModuleNamespaceData>::create(ModuleNamespaceData { accessCase.moduleNamespaceObject(), accessCase.moduleEnvironment(), accessCase.scopeOffset(), accessCase.identifier() }))
     , m_state(ModuleNamespace)
@@ -144,11 +167,11 @@ GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
 }
 
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
-    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData)
+    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, TrackIdentifiers trackIdentifiers)
 {
     StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
     if (!isInlineable(summary))
-        return GetByStatus(summary);
+        return GetByStatus(summary, *stubInfo);
     
     // Finally figure out if we can derive an access strategy.
     GetByStatus result;
@@ -161,17 +184,19 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     case CacheType::GetByIdSelf: {
         Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
-            return GetByStatus(JSC::slowVersion(summary));
+            return GetByStatus(JSC::slowVersion(summary), *stubInfo);
         Box<Identifier> identifier = stubInfo->getByIdSelfIdentifier();
         UniquedStringImpl* uid = identifier->impl();
         RELEASE_ASSERT(uid);
+        if (trackIdentifiers == TrackIdentifiers::No)
+            identifier = nullptr;
         GetByIdVariant variant(WTFMove(identifier));
         unsigned attributes;
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
-            return GetByStatus(JSC::slowVersion(summary));
+            return GetByStatus(JSC::slowVersion(summary), *stubInfo);
         if (attributes & PropertyAttribute::CustomAccessorOrValue)
-            return GetByStatus(JSC::slowVersion(summary));
+            return GetByStatus(JSC::slowVersion(summary), *stubInfo);
         
         variant.m_structureSet.add(structure);
         bool didAppend = result.appendVariant(variant);
@@ -194,16 +219,16 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
             if (access.viaProxy())
-                return GetByStatus(JSC::slowVersion(summary));
+                return GetByStatus(JSC::slowVersion(summary), *stubInfo);
 
             if (access.usesPolyProto())
-                return GetByStatus(JSC::slowVersion(summary));
+                return GetByStatus(JSC::slowVersion(summary), *stubInfo);
 
             if (!access.requiresIdentifierNameMatch()) {
                 // FIXME: We could use this for indexed loads in the future. This is pretty solid profiling
                 // information, and probably better than ArrayProfile when it's available.
                 // https://bugs.webkit.org/show_bug.cgi?id=204215
-                return GetByStatus(JSC::slowVersion(summary));
+                return GetByStatus(JSC::slowVersion(summary), *stubInfo);
             }
             
             Structure* structure = access.structure();
@@ -214,7 +239,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 // shouldn't have to use value profiling to discover something that the AccessCase
                 // could have told us. But, it works well enough. So, our only concern here is to not
                 // crash on null structure.
-                return GetByStatus(JSC::slowVersion(summary));
+                return GetByStatus(JSC::slowVersion(summary), *stubInfo);
             }
             
             ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
@@ -225,7 +250,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 continue;
                  
             case ComplexGetStatus::TakesSlowPath:
-                return GetByStatus(JSC::slowVersion(summary));
+                return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                  
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
@@ -255,7 +280,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 case AccessCase::CustomAccessorGetter: {
                     customAccessorGetter = access.as<GetterSetterAccessCase>().customAccessor();
                     if (!access.as<GetterSetterAccessCase>().domAttribute())
-                        return GetByStatus(JSC::slowVersion(summary));
+                        return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                     domAttribute = WTF::makeUnique<DOMAttributeAnnotation>(*access.as<GetterSetterAccessCase>().domAttribute());
                     haveDOMAttribute = true;
                     result.m_state = Custom;
@@ -264,28 +289,28 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 default: {
                     // FIXME: It would be totally sweet to support more of these at some point in the
                     // future. https://bugs.webkit.org/show_bug.cgi?id=133052
-                    return GetByStatus(JSC::slowVersion(summary));
+                    return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                 } }
 
                 ASSERT((AccessCase::Miss == access.type()) == (access.offset() == invalidOffset));
                 GetByIdVariant variant(
-                    access.identifier(), StructureSet(structure), complexGetStatus.offset(),
+                    trackIdentifiers == TrackIdentifiers::Yes ? access.identifier() : Box<Identifier>(nullptr), StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
                     intrinsicFunction,
                     customAccessorGetter,
                     WTFMove(domAttribute));
 
                 if (!result.appendVariant(variant))
-                    return GetByStatus(JSC::slowVersion(summary));
+                    return GetByStatus(JSC::slowVersion(summary), *stubInfo);
 
                 if (haveDOMAttribute) {
                     // Give up when custom accesses are not merged into one.
                     if (result.numVariants() != 1)
-                        return GetByStatus(JSC::slowVersion(summary));
+                        return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                 } else {
                     // Give up when custom access and simple access are mixed.
                     if (result.m_state == Custom)
-                        return GetByStatus(JSC::slowVersion(summary));
+                        return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                 }
                 break;
             } }
@@ -295,7 +320,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     }
         
     default:
-        return GetByStatus(JSC::slowVersion(summary));
+        return GetByStatus(JSC::slowVersion(summary), *stubInfo);
     }
     
     RELEASE_ASSERT_NOT_REACHED();
@@ -304,7 +329,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
 
 GetByStatus GetByStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
-    ICStatusContextStack& icContextStack, CodeOrigin codeOrigin)
+    ICStatusContextStack& icContextStack, CodeOrigin codeOrigin, TrackIdentifiers trackIdentifiers)
 {
     BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex);
@@ -319,7 +344,7 @@ GetByStatus GetByStatus::computeFor(
                 // inlined and not-inlined.
                 GetByStatus baselineResult = computeFor(
                     profiledBlock, baselineMap, bytecodeIndex, didExit,
-                    callExitSiteData);
+                    callExitSiteData, trackIdentifiers);
                 baselineResult.merge(result);
                 return baselineResult;
             }
@@ -333,7 +358,7 @@ GetByStatus GetByStatus::computeFor(
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
                 result = computeForStubInfoWithoutExitSiteFeedback(
-                    locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData);
+                    locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData, trackIdentifiers);
             }
             if (result.isSet())
                 return bless(result);
@@ -343,7 +368,7 @@ GetByStatus GetByStatus::computeFor(
             return bless(*status.getStatus);
     }
     
-    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, callExitSiteData);
+    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, callExitSiteData, trackIdentifiers);
 }
 
 GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* uid)
@@ -359,7 +384,7 @@ GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* 
         return GetByStatus();
 
     if (parseIndex(*uid))
-        return GetByStatus(TakesSlowPath);
+        return GetByStatus(LikelyTakesSlowPath);
     
     GetByStatus result;
     result.m_state = Simple;
@@ -367,22 +392,22 @@ GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* 
     for (unsigned i = 0; i < set.size(); ++i) {
         Structure* structure = set[i];
         if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
-            return GetByStatus(TakesSlowPath);
+            return GetByStatus(LikelyTakesSlowPath);
         
         if (!structure->propertyAccessesAreCacheable())
-            return GetByStatus(TakesSlowPath);
+            return GetByStatus(LikelyTakesSlowPath);
         
         unsigned attributes;
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(offset))
-            return GetByStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
+            return GetByStatus(LikelyTakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & PropertyAttribute::Accessor)
             return GetByStatus(MakesCalls); // We could be smarter here, like strength-reducing this to a Call.
         if (attributes & PropertyAttribute::CustomAccessorOrValue)
-            return GetByStatus(TakesSlowPath);
+            return GetByStatus(LikelyTakesSlowPath);
         
         if (!result.appendVariant(GetByIdVariant(nullptr, structure, offset)))
-            return GetByStatus(TakesSlowPath);
+            return GetByStatus(LikelyTakesSlowPath);
     }
     
     return result;
@@ -393,7 +418,8 @@ bool GetByStatus::makesCalls() const
 {
     switch (m_state) {
     case NoInformation:
-    case TakesSlowPath:
+    case LikelyTakesSlowPath:
+    case ObservedTakesSlowPath:
     case Custom:
     case ModuleNamespace:
         return false;
@@ -404,6 +430,7 @@ bool GetByStatus::makesCalls() const
         }
         return false;
     case MakesCalls:
+    case ObservedSlowPathAndMakesCalls:
         return true;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -413,7 +440,9 @@ bool GetByStatus::makesCalls() const
 
 GetByStatus GetByStatus::slowVersion() const
 {
-    return GetByStatus(makesCalls() ? MakesCalls : TakesSlowPath, wasSeenInJIT());
+    if (observedStructureStubInfoSlowPath())
+        return GetByStatus(makesCalls() ? ObservedSlowPathAndMakesCalls : ObservedTakesSlowPath, wasSeenInJIT());
+    return GetByStatus(makesCalls() ? MakesCalls : LikelyTakesSlowPath, wasSeenInJIT());
 }
 
 void GetByStatus::merge(const GetByStatus& other)
@@ -422,7 +451,10 @@ void GetByStatus::merge(const GetByStatus& other)
         return;
     
     auto mergeSlow = [&] () {
-        *this = GetByStatus((makesCalls() || other.makesCalls()) ? MakesCalls : TakesSlowPath);
+        if (observedStructureStubInfoSlowPath() || other.observedStructureStubInfoSlowPath())
+            *this = GetByStatus((makesCalls() || other.makesCalls()) ? ObservedSlowPathAndMakesCalls : ObservedTakesSlowPath);
+        else
+            *this = GetByStatus((makesCalls() || other.makesCalls()) ? MakesCalls : LikelyTakesSlowPath);
     };
     
     switch (m_state) {
@@ -456,8 +488,10 @@ void GetByStatus::merge(const GetByStatus& other)
         
         return;
         
-    case TakesSlowPath:
+    case LikelyTakesSlowPath:
+    case ObservedTakesSlowPath:
     case MakesCalls:
+    case ObservedSlowPathAndMakesCalls:
         return mergeSlow();
     }
     
@@ -537,11 +571,17 @@ void GetByStatus::dump(PrintStream& out) const
     case ModuleNamespace:
         out.print("ModuleNamespace");
         break;
-    case TakesSlowPath:
-        out.print("TakesSlowPath");
+    case LikelyTakesSlowPath:
+        out.print("LikelyTakesSlowPath");
+        break;
+    case ObservedTakesSlowPath:
+        out.print("ObservedTakesSlowPath");
         break;
     case MakesCalls:
         out.print("MakesCalls");
+        break;
+    case ObservedSlowPathAndMakesCalls:
+        out.print("ObservedSlowPathAndMakesCalls");
         break;
     }
     out.print(", ", listDump(m_variants), ", seenInJIT = ", m_wasSeenInJIT, ")");
