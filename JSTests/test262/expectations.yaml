@@ -3064,9 +3064,6 @@ test/language/expressions/postfix-decrement/S11.3.2_A5_T5.js:
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/postfix-decrement/bigint.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/postfix-increment/S11.3.1_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-increment/S11.3.1_A5_T2.js:
@@ -3081,9 +3078,6 @@ test/language/expressions/postfix-increment/S11.3.1_A5_T5.js:
 test/language/expressions/postfix-increment/S11.3.1_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/postfix-increment/bigint.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/prefix-decrement/S11.4.5_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-decrement/S11.4.5_A5_T2.js:
@@ -3098,9 +3092,6 @@ test/language/expressions/prefix-decrement/S11.4.5_A5_T5.js:
 test/language/expressions/prefix-decrement/S11.4.5_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-decrement/bigint.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/prefix-increment/S11.4.4_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-increment/S11.4.4_A5_T2.js:
@@ -3115,9 +3106,6 @@ test/language/expressions/prefix-increment/S11.4.4_A5_T5.js:
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-increment/bigint.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/super/call-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
