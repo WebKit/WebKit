@@ -11,6 +11,17 @@
         * media/video-test.js:
         (waitForEventWithTimeout):
 
+2019-11-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Regression (r252701): imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht and multicol-rule-fraction-003.xht are failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=204505
+
+        Unreviewed test gardening.
+
+        Two multicol tests still fail on iOS.
+
+        * platform/ios/TestExpectations:
+
 2019-11-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add support for new kinds of diagnostic events

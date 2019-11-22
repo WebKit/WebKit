@@ -1653,6 +1653,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.h
 # Ref-test imported form W3C that is failing because the test is off by a couple of pixels on iOS.
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-001.xht [ ImageOnlyFailure ]
 
+webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
+webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
+
 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
 fast/flexbox/flex-hang.html [ Failure ]
 fast/flexbox/overhanging-floats-removed.html [ Failure ]
