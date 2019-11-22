@@ -994,9 +994,9 @@ void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIden
 
 void NetworkConnectionToWebProcess::didDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
 {
-    auto callback = m_messageBatchDeliveryCompletionHandlers.take(messageBatchIdentifier);
-    ASSERT(callback);
-    callback();
+    // Null check only necessary for rare condition where network process crashes during message port connection establishment.
+    if (auto callback = m_messageBatchDeliveryCompletionHandlers.take(messageBatchIdentifier))
+        callback();
 }
 
 void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& port)
