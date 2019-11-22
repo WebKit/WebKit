@@ -184,3 +184,8 @@ class ServicesFactory(Factory):
         self.addStep(RunEWSUnitTests())
         self.addStep(RunEWSBuildbotCheckConfig())
         self.addStep(RunBuildWebKitOrgUnitTests())
+
+
+class CommitQueueFactory(Factory):
+    pass
+    # TODO: add appropriate build-steps for commit-queue
