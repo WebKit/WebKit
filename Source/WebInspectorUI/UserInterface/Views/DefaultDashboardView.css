@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body.web .toolbar.collapsed .dashboard.default > :matches(.resourcesSize, .time, .logs) {
+body:matches(.page, .web-page) .toolbar.collapsed .dashboard.default > :matches(.resourcesSize, .time, .logs) {
     display: none;
 }
 
-body:not(.web) .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time) {
+body:not(.page, .web-page) .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time) {
     display: none;
 }
 

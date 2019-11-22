@@ -32,12 +32,12 @@
     overflow: hidden;
 }
 
-body.web .toolbar .dashboard-container {
+body:matches(.page, .web-page) .toolbar .dashboard-container {
     width: 36vw;
     min-width: 350px;
 }
 
-body:not(.web) .toolbar .dashboard-container {
+body:not(.page, .web-page) .toolbar .dashboard-container {
     width: 25vw;
     min-width: 175px;
 }
