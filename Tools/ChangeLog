@@ -1,3 +1,15 @@
+2019-11-22  Paulo Matos  <pmatos@igalia.com>
+
+        Support JSCOnly platform in test reporting
+        https://bugs.webkit.org/show_bug.cgi?id=204495
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add JSCOnly to possible platforms.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload):
+
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] RemoteInspector: use sockets instead of DBus

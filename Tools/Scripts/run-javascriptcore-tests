@@ -389,6 +389,12 @@ sub configurationForUpload()
             chomp($version = `uname -r`);
             $version = splitVersionString($version);
         }
+    } elsif (isJSCOnly()) {
+        $platform = 'jsc-only';
+        if (!$version) {
+            chomp($version = `uname -r`);
+            $version = splitVersionString($version);
+        }
     } elsif (isAnyWindows()) {
         $platform = 'win';
         if (!$version) {
