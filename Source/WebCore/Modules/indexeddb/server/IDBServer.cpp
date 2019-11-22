@@ -853,14 +853,11 @@ void IDBServer::tryStop(ShouldForceStop shouldForceStop)
     if (m_sessionID.isEphemeral())
         return;
 
-    suspendAndWait();
-    if (shouldForceStop == ShouldForceStop::No && SQLiteDatabaseTracker::hasTransactionInProgress()) {
-        CrossThreadTaskHandler::resume();
+    if (shouldForceStop == ShouldForceStop::No && SQLiteDatabaseTracker::hasTransactionInProgress())
         return;
-    }
 
-    for (auto& database : m_uniqueIDBDatabaseMap.values())
-        database->finishActiveTransactions();
+    for (auto& database : m_allUniqueIDBDatabases)
+        database.suspend();
 }
 
 void IDBServer::resume()
@@ -868,7 +865,8 @@ void IDBServer::resume()
     if (m_sessionID.isEphemeral())
         return;
 
-    CrossThreadTaskHandler::resume();
+    for (auto& database : m_allUniqueIDBDatabases)
+        database.resume();
 }
 
 } // namespace IDBServer
