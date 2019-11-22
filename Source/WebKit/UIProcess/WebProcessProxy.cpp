@@ -381,10 +381,6 @@ void WebProcessProxy::shutDown()
         frame->webProcessWillShutDown();
     m_frameMap.clear();
 
-    for (auto* visitedLinkStore : m_visitedLinkStoresWithUsers.keys())
-        visitedLinkStore->removeProcess(*this);
-    m_visitedLinkStoresWithUsers.clear();
-
     for (auto* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
     m_webUserContentControllerProxies.clear();
@@ -489,7 +485,7 @@ void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore
     ASSERT(!users.contains(pageID));
     users.add(pageID);
 
-    if (users.size() == 1 && state() == State::Running)
+    if (users.size() == 1)
         visitedLinkStore.addProcess(*this);
 }
 
@@ -857,9 +853,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     m_processPool->processDidFinishLaunching(this);
     m_backgroundResponsivenessTimer.updateState();
-
-    for (auto* visitedLinkStore : m_visitedLinkStoresWithUsers.keys())
-        visitedLinkStore->addProcess(*this);
 
 #if PLATFORM(IOS_FAMILY)
     if (connection()) {

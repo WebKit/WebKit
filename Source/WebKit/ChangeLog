@@ -1,5 +1,35 @@
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
+        Simplify VisitedLinkStore process registration logic
+        https://bugs.webkit.org/show_bug.cgi?id=204472
+
+        Reviewed by Geoffrey Garen.
+
+        Simplify VisitedLinkStore process registration logic:
+        1. WebProcessProxy objects no longer delay their registration with the VisitedLinkStore until
+           after they are done launching. There is no need to do this because AuxiliaxyProcessProxy::send()
+           will correctly queue the IPC message if the process is not done launching when the VisitedLinkStore
+           tries to send its IPC.
+        2. Switch VisitedLinkStore to using a WeakHashSet to store the WebProcessProxy object pointers. This
+           is safer and this also makes it so that the WebProcessProxy no longer need to unregister themselves
+           when shutting down. Note that AuxiliaxyProcessProxy::send() properly discards IPC messages to
+           a terminated process anyway.
+
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::~VisitedLinkStore):
+        (WebKit::VisitedLinkStore::addProcess):
+        (WebKit::VisitedLinkStore::removeProcess):
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::didInvalidateSharedMemory):
+        (WebKit::VisitedLinkStore::didUpdateSharedStringHashes):
+        * UIProcess/VisitedLinkStore.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::addVisitedLinkStoreUser):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Copy assertions before iterating over them in _notifyAssertionsOfImminentSuspension
         https://bugs.webkit.org/show_bug.cgi?id=204524
         <rdar://problem/57265830>

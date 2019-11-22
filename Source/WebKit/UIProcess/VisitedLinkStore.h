@@ -30,9 +30,9 @@
 #include "SharedStringHashStore.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -65,7 +65,7 @@ private:
 
     void sendStoreHandleToProcess(WebProcessProxy&);
 
-    HashSet<WebProcessProxy*> m_processes;
+    WeakHashSet<WebProcessProxy> m_processes;
     SharedStringHashStore m_linkHashStore;
 };
 
