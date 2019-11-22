@@ -31,12 +31,13 @@ namespace WebCore {
 
 class CSSUnsetValue final : public CSSValue {
 public:
+    static Ref<CSSUnsetValue> create() { return adoptRef(*new CSSUnsetValue()); }
+
     String customCSSText() const;
 
     bool equals(const CSSUnsetValue&) const { return true; }
 
 private:
-    friend LazyNeverDestroyed<CSSUnsetValue>;
     CSSUnsetValue()
         : CSSValue(UnsetClass)
     {

@@ -37,6 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -48,6 +49,8 @@ enum class FromSystemFontID { No, Yes };
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    CSSValuePool();
+
     static CSSValuePool& singleton();
 
     RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
@@ -69,8 +72,6 @@ public:
     void drain();
 
 private:
-    CSSValuePool();
-
     typedef HashMap<Color, RefPtr<CSSPrimitiveValue>> ColorValueCache;
     ColorValueCache m_colorValueCache;
 
@@ -82,22 +83,22 @@ private:
 
     friend class WTF::NeverDestroyed<CSSValuePool>;
 
-    LazyNeverDestroyed<CSSInheritedValue> m_inheritedValue;
-    LazyNeverDestroyed<CSSInitialValue> m_implicitInitialValue;
-    LazyNeverDestroyed<CSSInitialValue> m_explicitInitialValue;
-    LazyNeverDestroyed<CSSUnsetValue> m_unsetValue;
-    LazyNeverDestroyed<CSSRevertValue> m_revertValue;
+    Ref<CSSInheritedValue> m_inheritedValue;
+    Ref<CSSInitialValue> m_implicitInitialValue;
+    Ref<CSSInitialValue> m_explicitInitialValue;
+    Ref<CSSUnsetValue> m_unsetValue;
+    Ref<CSSRevertValue> m_revertValue;
 
-    LazyNeverDestroyed<CSSPrimitiveValue> m_transparentColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_whiteColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_blackColor;
+    Ref<CSSPrimitiveValue> m_transparentColor;
+    Ref<CSSPrimitiveValue> m_whiteColor;
+    Ref<CSSPrimitiveValue> m_blackColor;
 
     static const int maximumCacheableIntegerValue = 255;
 
-    LazyNeverDestroyed<CSSPrimitiveValue> m_pixelValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_percentValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_numberValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
+    Vector<Ref<CSSPrimitiveValue>> m_pixelValues;
+    Vector<Ref<CSSPrimitiveValue>> m_percentValues;
+    Vector<Ref<CSSPrimitiveValue>> m_numberValues;
+    Vector<Ref<CSSPrimitiveValue>> m_identifierValues;
 };
 
 } // namespace WebCore

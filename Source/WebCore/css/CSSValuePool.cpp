@@ -35,29 +35,32 @@ namespace WebCore {
 
 CSSValuePool& CSSValuePool::singleton()
 {
+    ASSERT(isMainThread());
     static NeverDestroyed<CSSValuePool> pool;
     return pool;
 }
 
 CSSValuePool::CSSValuePool()
+    : m_inheritedValue(CSSInheritedValue::create())
+    , m_implicitInitialValue(CSSInitialValue::createImplicit())
+    , m_explicitInitialValue(CSSInitialValue::createExplicit())
+    , m_unsetValue(CSSUnsetValue::create())
+    , m_revertValue(CSSRevertValue::create())
+    , m_transparentColor(CSSPrimitiveValue::create(Color(Color::transparent)))
+    , m_whiteColor(CSSPrimitiveValue::create(Color(Color::white)))
+    , m_blackColor(CSSPrimitiveValue::create(Color(Color::black)))
 {
-    m_inheritedValue.construct();
-    m_implicitInitialValue.construct(true);
-    m_explicitInitialValue.construct(false);
-    m_unsetValue.construct();
-    m_revertValue.construct();
+    m_identifierValues.reserveInitialCapacity(numCSSValueKeywords);
+    for (unsigned i = 0; i < numCSSValueKeywords; ++i)
+        m_identifierValues.uncheckedAppend(CSSPrimitiveValue::create(static_cast<CSSValueID>(i)));
 
-    m_transparentColor.construct(Color(Color::transparent));
-    m_whiteColor.construct(Color(Color::white));
-    m_blackColor.construct(Color(Color::black));
-
-    for (unsigned i = firstCSSValueKeyword; i <= lastCSSValueKeyword; ++i)
-        m_identifierValues[i].construct(static_cast<CSSValueID>(i));
-
+    m_pixelValues.reserveInitialCapacity(maximumCacheableIntegerValue + 1);
+    m_percentValues.reserveInitialCapacity(maximumCacheableIntegerValue + 1);
+    m_numberValues.reserveInitialCapacity(maximumCacheableIntegerValue + 1);
     for (unsigned i = 0; i < (maximumCacheableIntegerValue + 1); ++i) {
-        m_pixelValues[i].construct(i, CSSUnitType::CSS_PX);
-        m_percentValues[i].construct(i, CSSUnitType::CSS_PERCENTAGE);
-        m_numberValues[i].construct(i, CSSUnitType::CSS_NUMBER);
+        m_pixelValues.uncheckedAppend(CSSPrimitiveValue::create(i, CSSUnitType::CSS_PX));
+        m_percentValues.uncheckedAppend(CSSPrimitiveValue::create(i, CSSUnitType::CSS_PERCENTAGE));
+        m_numberValues.uncheckedAppend(CSSPrimitiveValue::create(i, CSSUnitType::CSS_NUMBER));
     }
 }
 

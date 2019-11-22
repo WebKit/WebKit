@@ -26,12 +26,13 @@ namespace WebCore {
 
 class CSSInheritedValue final : public CSSValue {
 public:
+    static Ref<CSSInheritedValue> create() { return adoptRef(*new CSSInheritedValue()); }
+
     String customCSSText() const;
 
     bool equals(const CSSInheritedValue&) const { return true; }
 
 private:
-    friend LazyNeverDestroyed<CSSInheritedValue>;
     CSSInheritedValue()
         : CSSValue(InheritedClass)
     {
