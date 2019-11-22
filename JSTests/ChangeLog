@@ -1,3 +1,16 @@
+2019-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken String.prototype.replace() and replaceAll().
+        https://bugs.webkit.org/show_bug.cgi?id=204479
+        <rdar://problem/57354854>
+
+        Reviewed by Ross Kirsling and Yusuke Suzuki.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/Strings/replace.baseline-jsc: Removed.
+        - We no longer need this because we've fixed the spec compliance issue in replace().
+        * stress/string-replaceAll-2.js: Added.
+
 2019-11-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in again, regression is not caused by it

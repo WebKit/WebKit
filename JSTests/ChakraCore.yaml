@@ -1302,7 +1302,7 @@
 - path: ChakraCore/test/Strings/compare.js
   cmd: runChakra :baseline, "NoException", "compare.baseline", []
 - path: ChakraCore/test/Strings/replace.js
-  cmd: runChakra :baseline, "NoException", "replace.baseline-jsc", []
+  cmd: runChakra :baseline, "NoException", "replace.baseline", []
 - path: ChakraCore/test/Strings/trim.js
   cmd: runChakra :baseline, "NoException", "trim.baseline", []
 - path: ChakraCore/test/Strings/lastindexof.js

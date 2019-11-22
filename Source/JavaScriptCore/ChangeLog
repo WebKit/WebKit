@@ -1,3 +1,39 @@
+2019-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken String.prototype.replace() and replaceAll().
+        https://bugs.webkit.org/show_bug.cgi?id=204479
+        <rdar://problem/57354854>
+
+        Reviewed by Ross Kirsling and Yusuke Suzuki.
+
+        String.prototype.replace() regressed due to r252683: <https://trac.webkit.org/r252683>
+        for webkit.org/b/202471.  The patch failed to handle InternalFunctions.
+
+        This patch also fixed a spec compliance bug for String.prototype.replace() i.e.
+        the replaceValue needs to be evaluated before we check if there's a match in the
+        source string.
+        Ref: 21.1.3.16-6 at https://www.ecma-international.org/ecma-262/10.0/#sec-string.prototype.replace
+
+        For String.prototype.replaceAll(), make sure it "behaves just like
+        String.prototype.replace if searchValue is a global regular expression".
+        Ref: https://github.com/tc39/proposal-string-replaceall
+
+        r252683 also made replaceUsingStringSearch() work the same way as
+        replaceUsingRegExpSearch().  I think this is the wrong trade off to make.
+        replaceUsingRegExpSearch() expects each search leg to do a RegExp search, which
+        is inherently expensive.  We shouldn't make string searches slower just because
+        the RegExp search does it that way.
+
+        However, at https://bugs.webkit.org/show_bug.cgi?id=202471#c22, Ross pointed out
+        that JetStream 2 results appeared to be neutral.  I think we should double check
+        with a micro-benchmark as well.  I'll leave this for a later patch.  For now, the
+        goal of this patch is simply to achieve correctness.
+        Ref: https://bugs.webkit.org/show_bug.cgi?id=204481
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+
 2019-11-21  Per Arne Vollan  <pvollan@apple.com>
 
         Fix Win64 compile errors

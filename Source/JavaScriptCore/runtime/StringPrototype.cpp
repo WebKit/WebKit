@@ -664,7 +664,6 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                         if (!groupName.isEmpty())
                             groups->putDirect(vm, Identifier::fromString(vm, groupName), patternValue);
                     }
-
                 }
 
                 args.append(jsNumber(result.start));
@@ -787,10 +786,6 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
     String searchString = searchValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    size_t matchStart = string.find(searchString);
-    if (matchStart == notFound)
-        return jsString;
-
     CallData callData;
     CallType callType = getCallData(vm, replaceValue, callData);
     Optional<CachedCall> cachedCall;
@@ -799,24 +794,43 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
         replaceString = replaceValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
     } else {
-        cachedCall.emplace(globalObject, callFrame, jsCast<JSFunction*>(replaceValue), 3);
-        cachedCall->setThis(jsUndefined());
+        JSFunction* function = jsDynamicCast<JSFunction*>(vm, replaceValue);
+        if (function) {
+            cachedCall.emplace(globalObject, callFrame, function, 3);
+            cachedCall->setThis(jsUndefined());
+        }
     }
+
+    size_t matchStart = string.find(searchString);
+    if (matchStart == notFound)
+        return jsString;
 
     size_t endOfLastMatch = 0;
     size_t searchStringLength = searchString.length();
     Vector<StringRange, 16> sourceRanges;
     Vector<String, 16> replacements;
     do {
-        if (cachedCall) {
-            auto* substring = jsSubstring(vm, string, matchStart, searchStringLength);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-            cachedCall->clearArguments();
-            cachedCall->appendArgument(substring);
-            cachedCall->appendArgument(jsNumber(matchStart));
-            cachedCall->appendArgument(jsString);
-            ASSERT(!cachedCall->hasOverflowedArguments());
-            JSValue replacement = cachedCall->call();
+        if (callType != CallType::None) {
+            JSValue replacement;
+            if (cachedCall) {
+                auto* substring = jsSubstring(vm, string, matchStart, searchStringLength);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                cachedCall->clearArguments();
+                cachedCall->appendArgument(substring);
+                cachedCall->appendArgument(jsNumber(matchStart));
+                cachedCall->appendArgument(jsString);
+                ASSERT(!cachedCall->hasOverflowedArguments());
+                replacement = cachedCall->call();
+            } else {
+                MarkedArgumentBuffer args;
+                auto* substring = jsSubstring(vm, string, matchStart, searchString.impl()->length());
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                args.append(substring);
+                args.append(jsNumber(matchStart));
+                args.append(jsString);
+                ASSERT(!args.hasOverflowed());
+                replacement = call(globalObject, replaceValue, callType, callData, jsUndefined(), args);
+            }
             RETURN_IF_EXCEPTION(scope, nullptr);
             replaceString = replacement.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
@@ -826,7 +840,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
             OUT_OF_MEMORY(globalObject, scope);
 
         size_t matchEnd = matchStart + searchStringLength;
-        if (cachedCall)
+        if (callType != CallType::None)
             replacements.append(replaceString);
         else {
             StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
