@@ -420,8 +420,7 @@ sub configurationForUpload()
             }
         }
     } else {
-        print "Cannot determine platform\n";
-        return {};
+        die "Cannot determine platform\n";
     }
 
     my $result = {
@@ -460,6 +459,7 @@ if ($showHelp) {
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+configurationForUpload() if (defined($report));
 
 if (defined($jsonFileName)) {
     $jsonFileName = File::Spec->rel2abs($jsonFileName);
@@ -876,12 +876,6 @@ sub uploadResults
         return 0;
     }
 
-    my $configuration = configurationForUpload();
-    if (!keys $configuration) {
-        print "Invalid configuration, failed to upload to $report\n";
-        return 1;
-    }
-
     my %upload = (
         version => 0,
         suite => 'javascriptcore-tests',
@@ -891,7 +885,7 @@ sub uploadResults
             repository_id => 'webkit',
             id => determineCurrentSVNRevision(),
         }],
-        configuration => $configuration,
+        configuration => configurationForUpload(),
         test_results => {
             run_stats => {
                 start_time => $startTime,
