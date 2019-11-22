@@ -14,6 +14,10 @@
       "platform": "jsc-only"
     },
     {
+      "name": "igalia-jsc32-i386-ews",
+      "platform": "jsc-only"
+    },
+    {
       "name": "igalia1-gtk-wk2-ews",
       "platform": "gtk"
     },
@@ -459,6 +463,18 @@
       "remotes": "../../EWS-test-devices.json"
     },
     {
+      "name": "JSC-i386-32bits-EWS",
+      "shortname": "jsc-i386",
+      "icon": "buildOnly",
+      "factory": "JSCTestsFactory",
+      "platform": "jsc-only",
+      "configuration": "release",
+      "architectures": ["x86"],
+      "runTests": "false",
+      "workernames": ["igalia-jsc32-i386-ews"],
+      "remotes": "../../EWS-test-devices.json"
+    },
+    {
       "name": "Bindings-Tests-EWS",
       "shortname": "bindings",
       "icon": "testOnly",
@@ -523,7 +539,7 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
-                       "JSC-ARMv7-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
+                       "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
                        "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
     },
     {

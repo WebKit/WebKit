@@ -1,5 +1,14 @@
 2019-11-22  Aakash Jain  <aakash_jain@apple.com>
 
+        Setup EWS queue for JSConly i386
+        https://bugs.webkit.org/show_bug.cgi?id=204523
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
+2019-11-22  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Add KillOldProcesses step before running JSC tests
         https://bugs.webkit.org/show_bug.cgi?id=204525
 
