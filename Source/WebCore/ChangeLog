@@ -1,3 +1,27 @@
+2019-11-21  Peng Liu  <peng.liu6@apple.com>
+
+        Ignore the requests to enter/exit video fullscreen/picture-in-picture if the requesting mode is the same as the current mode
+        https://bugs.webkit.org/show_bug.cgi?id=204461
+
+        Reviewed by Jer Noble.
+
+        Change the order of enum VideoPresentationMode and add some log messages regarding presentation mode change.
+        Those changes make the debugging easier.
+
+        Covered by existing test cases.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement):
+        (WebCore::HTMLMediaElement::waitForPreparedForInlineThen):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitSetPresentationMode):
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+
 2019-11-21  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Fix framebufferTexture2D with DEPTH_STENCIL_ATTACHMENT on ANGLE

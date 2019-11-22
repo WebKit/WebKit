@@ -452,12 +452,13 @@ static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(HTMLVi
 
 void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, mode);
+    INFO_LOG(LOGIDENTIFIER, ", mode = ",  mode);
     setFullscreenMode(toFullscreenMode(mode));
 }
 
 void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
+    INFO_LOG(LOGIDENTIFIER, ", mode = ", mode);
 #if ENABLE(PICTURE_IN_PICTURE_API)
     if (m_pictureInPictureAPITestEnabled) {
         if (mode == VideoFullscreenModePictureInPicture) {
@@ -510,7 +511,7 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
 {
     if (mode != fullscreenMode()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
+        INFO_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
         scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

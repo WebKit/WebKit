@@ -248,6 +248,10 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     ASSERT(addResult.iterator->value == contextId);
 
     auto [model, interface] = ensureModelAndInterface(contextId);
+    HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
+    if (oldMode == mode)
+        return;
+
     addClientForContext(contextId);
     if (!interface->layerHostingContext())
         interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
@@ -255,7 +259,6 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     auto videoRect = inlineVideoFrame(videoElement);
     FloatRect videoLayerFrame = FloatRect(0, 0, videoRect.width(), videoRect.height());
 
-    HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
     interface->setTargetIsFullscreen(true);
     interface->setFullscreenMode(mode);
     interface->setFullscreenStandby(standby);
@@ -296,6 +299,9 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
 
     uint64_t contextId = m_videoElements.get(&videoElement);
     auto& interface = ensureInterface(contextId);
+    HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface.fullscreenMode();
+    if (oldMode == HTMLMediaElementEnums::VideoFullscreenModeNone)
+        return;
 
     interface.setTargetIsFullscreen(false);
 

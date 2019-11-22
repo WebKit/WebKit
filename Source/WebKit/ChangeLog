@@ -1,3 +1,17 @@
+2019-11-21  Peng Liu  <peng.liu6@apple.com>
+
+        Ignore the requests to enter/exit video fullscreen/picture-in-picture if the requesting mode is the same as the current mode
+        https://bugs.webkit.org/show_bug.cgi?id=204461
+
+        Reviewed by Jer Noble.
+
+        In enterVideoFullscreenForVideoElement() and exitVideoFullscreenForVideoElement(),
+        we can ignore the request if the targeting mode is the same as the current one.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+
 2019-11-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Add ANGLE backend to GTK port

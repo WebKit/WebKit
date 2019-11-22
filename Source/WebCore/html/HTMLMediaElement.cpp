@@ -6049,7 +6049,7 @@ void HTMLMediaElement::toggleStandardFullscreenState()
 
 void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 {
-    INFO_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER, ", m_videoFullscreenMode = ", m_videoFullscreenMode, ", mode = ", mode);
     ASSERT(mode != VideoFullscreenModeNone);
 
     if (m_videoFullscreenMode == mode)
@@ -6078,6 +6078,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         if (is<HTMLVideoElement>(*this)) {
             HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
             if (document().page()->chrome().client().supportsVideoFullscreen(m_videoFullscreenMode)) {
+                INFO_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", m_videoFullscreenMode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
                 document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
                 scheduleEvent(eventNames().webkitbeginfullscreenEvent);
             }
@@ -6196,6 +6197,7 @@ void HTMLMediaElement::willBecomeFullscreenElement()
 
 void HTMLMediaElement::didBecomeFullscreenElement()
 {
+    INFO_LOG(LOGIDENTIFIER, ", fullscreen mode = ", fullscreenMode());
     m_waitingToEnterFullscreen = false;
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
@@ -6227,6 +6229,7 @@ void HTMLMediaElement::setPreparedToReturnVideoLayerToInline(bool value)
 
 void HTMLMediaElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
 {
+    INFO_LOG(LOGIDENTIFIER);
     ASSERT(!m_preparedForInlineCompletionHandler);
     if (m_preparedForInline)  {
         completionHandler();
@@ -6251,6 +6254,7 @@ bool HTMLMediaElement::isVideoLayerInline()
 
 void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, WTF::Function<void()>&& completionHandler)
 {
+    INFO_LOG(LOGIDENTIFIER);
     m_videoFullscreenLayer = platformLayer;
     if (!m_player) {
         completionHandler();
