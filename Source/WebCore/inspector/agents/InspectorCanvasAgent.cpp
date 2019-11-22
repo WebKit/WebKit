@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InspectorCanvasAgent.h"
 
-#include "ActiveDOMCallbackMicrotask.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
@@ -40,7 +39,6 @@
 #include "InspectorShaderProgram.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
-#include "Microtasks.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -450,23 +448,34 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
     if (!canvasRenderingContext.callTracingActive())
         return;
 
-    // Only enqueue a microtask for the first action of each frame. Any subsequent actions will be
-    // covered by the initial microtask until the next frame.
-    if (!inspectorCanvas->currentFrameHasData()) {
+    // Only enqueue one microtask for all actively recording canvases.
+    if (m_recordingCanvasIdentifiers.isEmpty()) {
         if (auto* scriptExecutionContext = inspectorCanvas->scriptExecutionContext()) {
-            auto& eventLoop = scriptExecutionContext->eventLoop();
-            auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(eventLoop.microtaskQueue(), *scriptExecutionContext, [&, protectedInspectorCanvas = inspectorCanvas.copyRef()] {
-                if (auto* canvasElement = protectedInspectorCanvas->canvasElement()) {
-                    if (canvasElement->isDescendantOf(canvasElement->document()))
-                        return;
+            scriptExecutionContext->eventLoop().queueMicrotask([weakThis = makeWeakPtr(*this)] {
+                if (!weakThis)
+                    return;
+
+                auto& canvasAgent = *weakThis;
+
+                for (auto& identifier : canvasAgent.m_recordingCanvasIdentifiers) {
+                    auto inspectorCanvas = canvasAgent.m_identifierToInspectorCanvas.get(identifier);
+                    if (!inspectorCanvas)
+                        continue;
+
+                    auto* canvasRenderingContext = inspectorCanvas->canvasContext();
+                    ASSERT(canvasRenderingContext);
+                    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
+
+                    if (canvasRenderingContext->callTracingActive())
+                        canvasAgent.didFinishRecordingCanvasFrame(*canvasRenderingContext);
                 }
 
-                if (canvasRenderingContext.callTracingActive())
-                    didFinishRecordingCanvasFrame(canvasRenderingContext);
+                canvasAgent.m_recordingCanvasIdentifiers.clear();
             });
-            eventLoop.queueMicrotaskCallback(WTFMove(microtask));
         }
     }
+
+    m_recordingCanvasIdentifiers.add(inspectorCanvas->identifier());
 
     inspectorCanvas->recordAction(name, WTFMove(parameters));
 
@@ -516,6 +525,7 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
         if (forceDispatch) {
             m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), nullptr);
             inspectorCanvas->resetRecordingData();
+            ASSERT(!m_recordingCanvasIdentifiers.contains(inspectorCanvas->identifier()));
         }
         return;
     }
@@ -531,6 +541,8 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
         return;
 
     m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), inspectorCanvas->releaseObjectForRecording());
+
+    m_recordingCanvasIdentifiers.remove(inspectorCanvas->identifier());
 }
 
 void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::JSGlobalObject& exec, JSC::JSObject* options)
@@ -742,6 +754,8 @@ void InspectorCanvasAgent::reset()
     m_removedProgramIdentifiers.clear();
     if (m_programDestroyedTimer.isActive())
         m_programDestroyedTimer.stop();
+
+    m_recordingCanvasIdentifiers.clear();
 }
 
 InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& context, bool captureBacktrace)

@@ -1,3 +1,25 @@
+2019-11-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: adjust `InspectorCanvasAgent::recordCanvasAction` to actually check that the `CanvasRenderingContext` still exists
+        https://bugs.webkit.org/show_bug.cgi?id=204395
+        <rdar://problem/57347504>
+
+        Reviewed by Ryosuke Niwa.
+
+        The microtask we create to handle marking the end of a frame for a detached canvas doesn't
+        actually check that the `CanvasRenderingContext` still exists, such as if it gets GCd during
+        a recording.
+
+        Instead of creating a microtask per-canvas, create a microtask per-`InspectorCanvasAgent`
+        and save a list of `canvasId` that are actively recording, which can then be iterated to
+        handle marking the end of a frame for each once the microtask fires. If the `canvasId` can't
+        be re-found, then the related `CanvasRenderingContext` must have been removed.
+
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::reset):
+
 2019-11-22  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: lock-based implementation of suspension
