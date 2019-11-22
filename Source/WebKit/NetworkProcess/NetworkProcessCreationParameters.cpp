@@ -40,6 +40,7 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters() = default;
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(cacheModel);
+    encoder << canHandleHTTPSServerTrustEvaluation;
 #if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
@@ -86,6 +87,9 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
 {
     if (!decoder.decodeEnum(result.cacheModel))
+        return false;
+
+    if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
 
 #if PLATFORM(MAC)
