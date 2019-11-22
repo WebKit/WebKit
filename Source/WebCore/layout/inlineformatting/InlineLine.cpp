@@ -692,14 +692,13 @@ LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
     if (inlineItem.isForcedLineBreak() || is<InlineTextItem>(inlineItem))
         return fontMetrics.height();
 
-    auto& layoutBox = inlineItem.layoutBox();
-    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-
-    if (layoutBox.replaced() || layoutBox.isFloatingPositioned())
-        return boxGeometry.contentBoxHeight();
-
     if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
         return fontMetrics.height();
+
+    auto& layoutBox = inlineItem.layoutBox();
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+    if (layoutBox.replaced() || layoutBox.isFloatingPositioned())
+        return boxGeometry.contentBoxHeight();
 
     // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
     return boxGeometry.marginBoxHeight();

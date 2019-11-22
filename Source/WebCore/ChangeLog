@@ -1,3 +1,16 @@
+2019-11-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::inlineItemContentHeight should only call FormattingContext::geometryForBox when needed
+        https://bugs.webkit.org/show_bug.cgi?id=204516
+        <rdar://problem/57429153>
+
+        Reviewed by Antti Koivisto.
+
+        Line::inlineItemContentHeight is hot and geometryForBox() is a hash lookup. Let's not call it unless we need to.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+
 2019-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         File input should fire an 'input' event before the 'change' event
