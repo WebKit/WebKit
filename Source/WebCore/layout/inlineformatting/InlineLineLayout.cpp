@@ -166,7 +166,6 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
 {
     auto currentLogicalRight = m_line.lineBox().logicalRight();
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
-    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasIntrusiveFloat;
 
     // Floats are special, they are intrusive but they don't really participate in the line layout context.
     if (inlineItem.isFloat()) {
@@ -178,6 +177,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
             if (processUncommittedContent() == IsEndOfLine::Yes)
                 return IsEndOfLine::Yes;
         }
+        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasIntrusiveFloat;
         if (LineBreaker().shouldWrapFloatBox(itemLogicalWidth, m_line.availableWidth() + m_line.trailingTrimmableWidth(), lineIsConsideredEmpty))
             return IsEndOfLine::Yes;
 
