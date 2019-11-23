@@ -1,3 +1,18 @@
+2019-11-23  Antti Koivisto  <antti@apple.com>
+
+        Media queries in img sizes attribute don't evaluate dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=204521
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/sizes-dynamic-001-expected.html: Added.
+        * fast/images/sizes-dynamic-001.html: Added.
+        * fast/images/sizes-dynamic-002-expected.html: Added.
+        * fast/images/sizes-dynamic-002.html: Added.
+
+        Copied and modified from imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-*
+        because we don't support reftest-wait (webkit.org/b/186045).
+
 2019-11-22  Per Arne Vollan  <pvollan@apple.com>
 
         Some tests are failing on Win64

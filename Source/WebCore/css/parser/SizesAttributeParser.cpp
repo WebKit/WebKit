@@ -69,10 +69,9 @@ float SizesAttributeParser::computeLength(double value, CSSUnitType type, const 
     return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value));
 }
     
-SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document)
+SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document, MediaQueryDynamicResults* mediaQueryDynamicResults)
     : m_document(document)
-    , m_length(0)
-    , m_lengthWasSet(false)
+    , m_mediaQueryDynamicResults(mediaQueryDynamicResults)
 {
     m_isValid = parse(CSSTokenizer(attribute).tokenRange());
 }
@@ -115,7 +114,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondi
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition);
+    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, m_mediaQueryDynamicResults);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)

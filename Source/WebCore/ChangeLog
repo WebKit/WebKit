@@ -1,3 +1,69 @@
+2019-11-23  Antti Koivisto  <antti@apple.com>
+
+        Media queries in img sizes attribute don't evaluate dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=204521
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/images/sizes-dynamic-001.html
+               fast/images/sizes-dynamic-002.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::evaluateForChanges const):
+
+        Add a helper function for evaluating dynamic results for changes.
+
+        * css/MediaQueryEvaluator.h:
+        (WebCore::MediaQueryDynamicResults::isEmpty const):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::SizesAttributeParser):
+        (WebCore::SizesAttributeParser::mediaConditionMatches):
+
+        Gather MediaQueryDynamicResults
+
+        * css/parser/SizesAttributeParser.h:
+        * dom/Document.cpp:
+        (WebCore::Document::updateElementsAffectedByMediaQueries):
+        (WebCore::Document::addDynamicMediaQueryDependentImage):
+        (WebCore::Document::removeDynamicMediaQueryDependentImage):
+
+        Replace viewport/appearance specific mechanism with a unified one (they were all invoked together anyway).
+        Make it about HTMLImageElement rather than HTMLPictureElement since that is the only client in this patch.
+
+        (WebCore::Document::checkViewportDependentPictures): Deleted.
+        (WebCore::Document::checkAppearanceDependentPictures): Deleted.
+        (WebCore::Document::addViewportDependentPicture): Deleted.
+        (WebCore::Document::removeViewportDependentPicture): Deleted.
+        (WebCore::Document::addAppearanceDependentPicture): Deleted.
+        (WebCore::Document::removeAppearanceDependentPicture): Deleted.
+        * dom/Document.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::~HTMLImageElement):
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        (WebCore::HTMLImageElement::evaluateDynamicMediaQueryDependencies):
+        (WebCore::HTMLImageElement::selectImageSource):
+
+        Gather MediaQueryDynamicResults from all paths.
+
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::~HTMLPictureElement):
+        (WebCore::HTMLPictureElement::didMoveToNewDocument):
+        (WebCore::HTMLPictureElement::viewportChangeAffectedPicture const): Deleted.
+        (WebCore::HTMLPictureElement::appearanceChangeAffectedPicture const): Deleted.
+
+        Move the media query dependency code to HTMLImageElement since thats where it is actually needed.
+
+        * html/HTMLPictureElement.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageDevicePixelRatio):
+
+        Update rendering also if only the pixel ratio changes.
+
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::setImageDevicePixelRatio): Deleted.
+
 2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use the event loop instead of DocumentEventQueue and WorkerEventQueue

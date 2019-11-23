@@ -66,7 +66,7 @@ public:
     const String& altText() const { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
 
-    inline void setImageDevicePixelRatio(float factor) { m_imageDevicePixelRatio = factor; }
+    void setImageDevicePixelRatio(float factor);
     float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
 
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }

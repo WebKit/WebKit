@@ -95,6 +95,8 @@ Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Doc
 
 HTMLImageElement::~HTMLImageElement()
 {
+    document().removeDynamicMediaQueryDependentImage(*this);
+
     if (m_form)
         m_form->removeImgElement(this);
     setPictureElement(nullptr);
@@ -160,10 +162,6 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
     if (!picture)
         return { };
 
-    document().removeViewportDependentPicture(*picture);
-    document().removeAppearanceDependentPicture(*picture);
-
-    MediaQueryDynamicResults mediaQueryDynamicResults;
     ImageCandidate candidate;
 
     for (RefPtr<Node> child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
@@ -189,38 +187,50 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
-        auto evaluation = !queries || evaluator.evaluate(*queries, &mediaQueryDynamicResults);
+        auto evaluation = !queries || evaluator.evaluate(*queries, &m_mediaQueryDynamicResults);
         if (!evaluation)
             continue;
 
-        auto sourceSize = SizesAttributeParser(source.attributeWithoutSynchronization(sizesAttr).string(), document()).length();
+        SizesAttributeParser sizesParser(source.attributeWithoutSynchronization(sizesAttr).string(), document(), &m_mediaQueryDynamicResults);
+        auto sourceSize = sizesParser.length();
+
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom(), srcset, sourceSize);
         if (!candidate.isEmpty())
             break;
     }
 
-    picture->setMediaQueryDynamicResults(WTFMove(mediaQueryDynamicResults));
-
-    // FIXME: This is not handling accessibility settings dependent media queries.
-    if (picture->hasViewportDependentResults())
-        document().addViewportDependentPicture(*picture);
-    if (picture->hasAppearanceDependentResults())
-        document().addAppearanceDependentPicture(*picture);
-
     return candidate;
+}
+
+void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
+{
+    auto documentElement = makeRefPtr(document().documentElement());
+    MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
+
+    if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
+        return;
+
+    selectImageSource();
 }
 
 void HTMLImageElement::selectImageSource()
 {
+    m_mediaQueryDynamicResults = { };
+    document().removeDynamicMediaQueryDependentImage(*this);
+
     // First look for the best fit source from our <picture> parent if we have one.
     ImageCandidate candidate = bestFitSourceFromPictureElement();
     if (candidate.isEmpty()) {
         // If we don't have a <picture> or didn't find a source, then we use our own attributes.
-        auto sourceSize = SizesAttributeParser(attributeWithoutSynchronization(sizesAttr).string(), document()).length();
+        SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document(), &m_mediaQueryDynamicResults);
+        auto sourceSize = sizesParser.length();
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
     m_imageLoader->updateFromElementIgnoringPreviousError();
+
+    if (!m_mediaQueryDynamicResults.isEmpty())
+        document().addDynamicMediaQueryDependentImage(*this);
 }
 
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -671,6 +681,8 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    oldDocument.removeDynamicMediaQueryDependentImage(*this);
+
     m_imageLoader->elementDidMoveToNewDocument();
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }

@@ -57,6 +57,7 @@ struct MediaQueryDynamicResults {
         appearance.appendVector(other.appearance);
         accessibilitySettings.appendVector(other.accessibilitySettings);
     }
+    bool isEmpty() const { return viewport.isEmpty() && appearance.isEmpty() && accessibilitySettings.isEmpty(); }
 };
 
 // Some of the constructors are used for cases where the device characteristics are not known.
@@ -80,6 +81,7 @@ public:
 
     // Evaluates media query subexpression, ie "and (media-feature: value)" part.
     bool evaluate(const MediaQueryExpression&) const;
+    bool evaluateForChanges(const MediaQueryDynamicResults&) const;
 
     WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, MediaQueryDynamicResults* = nullptr) const;
 

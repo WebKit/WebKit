@@ -380,6 +380,15 @@ void RenderImage::notifyFinished(CachedResource& newImage)
         page().didFinishLoadingImageForElement(downcast<HTMLImageElement>(*element()));
 }
 
+void RenderImage::setImageDevicePixelRatio(float factor)
+{
+    if (m_imageDevicePixelRatio == factor)
+        return;
+
+    m_imageDevicePixelRatio = factor;
+    intrinsicSizeChanged();
+}
+
 bool RenderImage::isShowingMissingOrImageError() const
 {
     return !imageResource().cachedImage() || imageResource().errorOccurred();

@@ -192,6 +192,19 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDyna
     return result;
 }
 
+bool MediaQueryEvaluator::evaluateForChanges(const MediaQueryDynamicResults& dynamicResults) const
+{
+    auto hasChanges = [&](auto& dynamicResultsVector) {
+        for (auto& dynamicResult : dynamicResultsVector) {
+            if (evaluate(dynamicResult.expression) != dynamicResult.result)
+                return true;
+        }
+        return false;
+    };
+
+    return hasChanges(dynamicResults.viewport) || hasChanges(dynamicResults.appearance) || hasChanges(dynamicResults.accessibilitySettings);
+}
+
 template<typename T, typename U> bool compareValue(T a, U b, MediaFeaturePrefix op)
 {
     switch (op) {

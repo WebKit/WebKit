@@ -26,7 +26,6 @@
 #pragma once
 
 #include "HTMLElement.h"
-#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
@@ -38,15 +37,6 @@ public:
 
     void sourcesChanged();
 
-
-    void setMediaQueryDynamicResults(MediaQueryDynamicResults&& results) { m_mediaQueryDynamicResults = results; }
-
-    bool hasViewportDependentResults() const { return m_mediaQueryDynamicResults.viewport.size(); }
-    bool hasAppearanceDependentResults() const { return m_mediaQueryDynamicResults.appearance.size(); }
-
-    bool viewportChangeAffectedPicture() const;
-    bool appearanceChangeAffectedPicture() const;
-
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
 #endif
@@ -55,8 +45,6 @@ private:
     HTMLPictureElement(const QualifiedName&, Document&);
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-
-    MediaQueryDynamicResults m_mediaQueryDynamicResults;
 };
 
 } // namespace WebCore
