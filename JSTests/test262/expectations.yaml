@@ -1492,12 +1492,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-length.js:
 test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-matched.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«foo[toString value]barÂ») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/subst-capture-idx-1.js:
-  default: 'Test262Error: Expected SameValue(Â«a[cd]eÂ», Â«a[cd$4$0]eÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«a[cd]eÂ», Â«a[cd$4$0]eÂ») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/subst-capture-idx-2.js:
-  default: 'Test262Error: Expected SameValue(Â«a[cd]eÂ», Â«a[cd$04$00]eÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«a[cd]eÂ», Â«a[cd$04$00]eÂ») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(Â«1Â», Â«-1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«-1Â») to be true'

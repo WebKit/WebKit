@@ -222,10 +222,15 @@ function replace(strArg, replace)
                 default:
                     let chCode = ch.charCodeAt(0);
                     if (chCode >= 0x30 && chCode <= 0x39) {
+                        let originalStart = start - 1;
                         start++;
+
                         let n = chCode - 0x30;
-                        if (n > m)
+                        if (n > m) {
+                            result = result + replacement.substring(originalStart, start);
                             break;
+                        }
+
                         if (start < replacementLength) {
                             let nextChCode = replacement.charCodeAt(start);
                             if (nextChCode >= 0x30 && nextChCode <= 0x39) {
@@ -237,11 +242,14 @@ function replace(strArg, replace)
                             }
                         }
 
-                        if (n == 0)
+                        if (n == 0) {
+                            result = result + replacement.substring(originalStart, start);
                             break;
+                        }
 
-                        if (captures[n] != @undefined)
-                            result = result + captures[n];
+                        let capture = captures[n - 1];
+                        if (capture !== @undefined)
+                            result = result + capture;
                     } else
                         result = result + "$";
                     break;
@@ -313,13 +321,13 @@ function replace(strArg, replace)
             let capN = result[n];
             if (capN !== @undefined)
                 capN = @toString(capN);
-            captures[n] = capN;
+            captures.@push(capN);
         }
 
         let replacement;
 
         if (functionalReplace) {
-            let replacerArgs = [ matched ].concat(captures.slice(1));
+            let replacerArgs = [ matched ].concat(captures);
             replacerArgs.@push(position);
             replacerArgs.@push(str);
 
