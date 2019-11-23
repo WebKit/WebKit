@@ -389,12 +389,6 @@ sub configurationForUpload()
             chomp($version = `uname -r`);
             $version = splitVersionString($version);
         }
-    } elsif (isJSCOnly()) {
-        $platform = 'jsc-only';
-        if (!$version) {
-            chomp($version = `uname -r`);
-            $version = splitVersionString($version);
-        }
     } elsif (isAnyWindows()) {
         $platform = 'win';
         if (!$version) {
@@ -420,7 +414,14 @@ sub configurationForUpload()
             }
         }
     } else {
-        die "Cannot determine platform\n";
+        # FIXME: This will be the kernel version, which is not always exactly what we want, but it will at least
+        # always give us something to work with
+        chomp($platform = `uname`);
+        $platform = lc $platform;
+        if (!$version) {
+            chomp($version = `uname -r`);
+            $version = splitVersionString($version);
+        }
     }
 
     my $result = {

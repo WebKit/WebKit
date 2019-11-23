@@ -1,5 +1,15 @@
 2019-11-22  Jonathan Bedard  <jbedard@apple.com>
 
+        run-javascriptcore-tests: Failure to determine configuration for reporting is fatal
+        https://bugs.webkit.org/show_bug.cgi?id=204526
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Use uname as the default upload configuration 
+
+2019-11-22  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org/api/failures should return an error when no test-run is found for specified criteria
         https://bugs.webkit.org/show_bug.cgi?id=204385
         <rdar://problem/57334389>
