@@ -145,7 +145,7 @@ Line::Run ContinousContent::close()
 
     auto textContext = *m_initialInlineRun.textContext();
     auto length = textContext.length() + m_expandedLength;
-    textContext.expand(m_initialInlineRun.layoutBox().textContext().content.substring(textContext.start(), length), length);
+    textContext.expand(m_initialInlineRun.layoutBox().textContext()->content.substring(textContext.start(), length), length);
 
     if (m_textIsAlignJustify) {
         // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
@@ -565,7 +565,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
-    auto lineRun = makeUnique<InlineItemRun>(inlineItem, logicalRect, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext().content.substring(contentStart, contentLength) });
+    auto lineRun = makeUnique<InlineItemRun>(inlineItem, logicalRect, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content.substring(contentStart, contentLength) });
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)

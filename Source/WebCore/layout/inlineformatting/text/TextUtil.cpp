@@ -46,7 +46,7 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (!font.size() || from == to)
         return 0;
 
-    auto& textContext = inlineBox.textContext();
+    auto& textContext = *inlineBox.textContext();
     auto& text = textContext.content;
     ASSERT(to <= text.length());
 

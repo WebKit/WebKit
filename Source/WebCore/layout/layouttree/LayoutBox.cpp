@@ -57,7 +57,8 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
 Box::Box(TextContext&& textContext, RenderStyle&& style)
     : Box({ }, WTFMove(style), BaseTypeFlag::BoxFlag)
 {
-    setTextContext(WTFMove(textContext));
+    ASSERT(isInlineLevelBox());
+    m_textContext = makeUnique<TextContext>(WTFMove(textContext));
 }
 
 Box::~Box()
@@ -384,25 +385,6 @@ bool Box::isPaddingApplicable() const
         && !isTableRow()
         && !isTableColumnGroup()
         && !isTableColumn();
-}
-
-void Box::setTextContext(TextContext&& textContext)
-{
-    ASSERT(isInlineLevelBox());
-    ensureRareData().textContext = WTFMove(textContext);
-}
-
-bool Box::hasTextContent() const
-{
-    ASSERT(isInlineLevelBox());
-    return hasRareData() && !rareData().textContext.content.isNull();
-}
-
-const TextContext& Box::textContext() const
-{
-    ASSERT(hasRareData());
-    ASSERT(isInlineLevelBox());
-    return rareData().textContext;
 }
 
 const Replaced* Box::replaced() const

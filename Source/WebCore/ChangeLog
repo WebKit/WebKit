@@ -1,3 +1,30 @@
+2019-11-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Text content is not exactly rare data.
+        https://bugs.webkit.org/show_bug.cgi?id=204539
+        <rdar://problem/57442263>
+
+        Reviewed by Antti Koivisto.
+
+        If it turns out to be a memory consumption issue, we can always subclass Layout::Box. Let's go with the m_textContext member for now.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::ContinousContent::close):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::setTextContext): Deleted.
+        (WebCore::Layout::Box::hasTextContent const): Deleted.
+        (WebCore::Layout::Box::textContext const): Deleted.
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::hasTextContent const):
+        (WebCore::Layout::Box::textContext const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
         HTTPHeaderMap's operator== is not fully correct

@@ -143,8 +143,8 @@ public:
     const Replaced* replaced() const;
     // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
     Replaced* replaced();
-    bool hasTextContent() const;
-    const TextContext& textContext() const;
+    bool hasTextContent() const { return !!m_textContext; }
+    const TextContext* textContext() const { return m_textContext.get(); }
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
@@ -166,14 +166,11 @@ protected:
     Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
 private:
-    void setTextContext(TextContext&&);
-
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         BoxRareData() = default;
 
-        TextContext textContext;
         std::unique_ptr<Replaced> replaced;
         unsigned rowSpan { 1 };
         unsigned columnSpan { 1 };
@@ -196,6 +193,8 @@ private:
     Container* m_parent { nullptr };
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
+    
+    std::unique_ptr<const TextContext> m_textContext;
 
     unsigned m_baseTypeFlags : 6;
     bool m_hasRareData : 1;

@@ -82,7 +82,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 
 void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const Box& inlineBox)
 {
-    auto text = inlineBox.textContext().content;
+    auto text = inlineBox.textContext()->content;
     if (!text.length())
         return inlineContent.append(InlineTextItem::createEmptyItem(inlineBox));
 
@@ -91,7 +91,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     unsigned currentPosition = 0;
 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<LayoutUnit> {
-        if (!inlineBox.textContext().canUseSimplifiedContentMeasuring)
+        if (!inlineBox.textContext()->canUseSimplifiedContentMeasuring)
             return { };
         return TextUtil::width(inlineBox, startPosition, startPosition + length);
     };

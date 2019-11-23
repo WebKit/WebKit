@@ -388,7 +388,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
     stream << " layout box->(" << &layoutBox << ")";
     if (layoutBox.isInlineLevelBox() && layoutBox.isAnonymous())
-        stream << " text content [\"" << layoutBox.textContext().content.utf8().data() << "\"]";
+        stream << " text content [\"" << layoutBox.textContext()->content.utf8().data() << "\"]";
 
     stream.nextLine();
 }
