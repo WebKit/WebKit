@@ -4488,4 +4488,4 @@ webkit.org/b/204545 css2.1/20110323/border-conflict-element-001d.htm [ ImageOnly
 webkit.org/b/204545 css3/filters/blur-various-radii.html [ Pass ImageOnlyFailure ]
 webkit.org/b/204545 fast/masking/clip-path-inset-large-radii.html [ ImageOnlyFailure ]
 webkit.org/b/204545 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
-
+webkit.org/b/204545 svg/as-image/svg-nested.html [ Pass Timeout Crash ]
