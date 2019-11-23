@@ -1,3 +1,50 @@
+2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Associate each microtask with a task group and remove ActiveDOMCallbackMicrotask
+        https://bugs.webkit.org/show_bug.cgi?id=204491
+
+        Reviewed by Antti Koivisto.
+
+        This patch associates each microtask with a EventLoopTaskGroup by making MicrotaskQueue
+        use EventLoopTaskGroup in place of Microtask, eliminating the latter.
+
+        This allows microtasks associated with each script execution context's test group to be
+        suspsned or stopped along with the script execution context without having to wrap each
+        microtask in ActiveDOMCallbackMicrotask, which is now redundant and therefore deleted.
+
+        No new tests since there should be no observable behavioral change here.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueMicrotaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop):
+        * dom/ActiveDOMCallbackMicrotask.cpp: Removed.
+        * dom/ActiveDOMCallbackMicrotask.h: Removed.
+        * dom/EventLoop.cpp:
+        (WebCore::EventLoop::queueTask):
+        (WebCore::EventLoop::queueMicrotask):
+        (WebCore::EventLoopTaskGroup::queueMicrotask):
+        (WebCore::EventLoopTaskGroup::queueMicrotaskCallback): Deleted.
+        * dom/EventLoop.h:
+        * dom/Microtasks.cpp:
+        (WebCore::Microtask::removeSelfFromQueue): Deleted.
+        (WebCore::MicrotaskQueue::append):
+        (WebCore::MicrotaskQueue::remove): Deleted.
+        (WebCore::MicrotaskQueue::performMicrotaskCheckpoint): Like EventLoop::run, skip any task
+        associated with a stopped group (script execution context) and add back any task associated
+        with a suspened group; these are tasks which used to return Microtask::Result::KeepInQueue.
+        * dom/Microtasks.h:
+        (WebCore::Microtask): Deleted.
+        (WebCore::Microtask::~Microtask): Deleted.
+        * dom/TaskSource.h:
+        (WebCore::TaskSource): Added Microtask as a new task source.
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        * testing/Internals.cpp:
+        (WebCore::Internals::queueMicroTask):
+
 2019-11-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Text content is not exactly rare data.

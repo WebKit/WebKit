@@ -70,7 +70,7 @@ public:
     void queueTask(std::unique_ptr<EventLoopTask>&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
-    void queueMicrotask(std::unique_ptr<Microtask>&&);
+    void queueMicrotask(std::unique_ptr<EventLoopTask>&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
     void performMicrotaskCheckpoint();
@@ -141,11 +141,8 @@ public:
     WEBCORE_EXPORT void queueTask(TaskSource, EventLoop::TaskFunction&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
-    void queueMicrotask(EventLoop::TaskFunction&&);
+    WEBCORE_EXPORT void queueMicrotask(EventLoop::TaskFunction&&);
     MicrotaskQueue& microtaskQueue() { return m_eventLoop->microtaskQueue(); }
-
-    // FIXME: This function and ActiveDOMCallbackMicrotask should go away.
-    WEBCORE_EXPORT void queueMicrotaskCallback(std::unique_ptr<ActiveDOMCallbackMicrotask>&&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
     void performMicrotaskCheckpoint();

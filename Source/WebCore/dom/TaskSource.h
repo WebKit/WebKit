@@ -32,6 +32,7 @@ enum class TaskSource : uint8_t {
     FileReading,
     FontLoading,
     IdleTask,
+    Microtask,
     Networking,
     PostedMessageQueue,
     UserInteraction

@@ -2307,7 +2307,6 @@
 		7CC69941191EC5F500AF2270 /* JSWebKitNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC6993F191EC5F500AF2270 /* JSWebKitNamespace.h */; };
 		7CC9722E1F93E3360004D4CF /* SettingsBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC660991F93057800D500E9 /* SettingsBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CCEBFC01DD8F6AB002C40B8 /* SVGLengthValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D531DD7B09300128552 /* SVGLengthValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7CD0BA051B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */; };
 		7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2B51F80A4820016A4CE /* AbortController.h */; };
 		7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */; };
 		7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9959,8 +9958,6 @@
 		7CC6609B1F93057900D500E9 /* SettingsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsBase.cpp; sourceTree = "<group>"; };
 		7CC6993E191EC5F500AF2270 /* JSWebKitNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitNamespace.cpp; sourceTree = "<group>"; };
 		7CC6993F191EC5F500AF2270 /* JSWebKitNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitNamespace.h; sourceTree = "<group>"; };
-		7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallbackMicrotask.cpp; sourceTree = "<group>"; };
-		7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMCallbackMicrotask.h; sourceTree = "<group>"; };
 		7CD0E2B51F80A4820016A4CE /* AbortController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortController.h; sourceTree = "<group>"; };
 		7CD0E2B61F80A4820016A4CE /* AbortController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortController.cpp; sourceTree = "<group>"; };
 		7CD0E2B71F80A4820016A4CE /* AbortController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AbortController.idl; sourceTree = "<group>"; };
@@ -27815,8 +27812,6 @@
 				7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */,
 				7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */,
 				7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */,
-				7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */,
-				7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */,
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				E3AE6CD12252F27000C70B50 /* AllDescendantsCollection.cpp */,
@@ -28822,7 +28817,6 @@
 				A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */,
 				A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */,
 				7C5222991E1DAE1C002CB8F7 /* ActiveDOMCallback.h in Headers */,
-				7CD0BA051B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
 				724EE5501DC80D7F00A91FFB /* ActivityState.h in Headers */,
 				724EE5511DC80D8400A91FFB /* ActivityStateChangeObserver.h in Headers */,

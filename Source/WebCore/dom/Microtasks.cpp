@@ -23,17 +23,13 @@
 #include "Microtasks.h"
 
 #include "CommonVM.h"
+#include "EventLoop.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
-
-void Microtask::removeSelfFromQueue(MicrotaskQueue& queue)
-{
-    queue.remove(*this);
-}
 
 MicrotaskQueue::MicrotaskQueue(JSC::VM& vm)
     : m_vm(makeRef(vm))
@@ -43,21 +39,11 @@ MicrotaskQueue::MicrotaskQueue(JSC::VM& vm)
 
 MicrotaskQueue::~MicrotaskQueue() = default;
 
-void MicrotaskQueue::append(std::unique_ptr<Microtask>&& task)
+void MicrotaskQueue::append(std::unique_ptr<EventLoopTask>&& task)
 {
     m_microtaskQueue.append(WTFMove(task));
 
     m_timer.startOneShot(0_s);
-}
-
-void MicrotaskQueue::remove(const Microtask& task)
-{
-    for (size_t i = 0; i < m_microtaskQueue.size(); ++i) {
-        if (m_microtaskQueue[i].get() == &task) {
-            m_microtaskQueue.remove(i);
-            return;
-        }
-    }
 }
 
 void MicrotaskQueue::timerFired()
@@ -73,18 +59,17 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     SetForScope<bool> change(m_performingMicrotaskCheckpoint, true);
     JSC::JSLockHolder locker(vm());
 
-    Vector<std::unique_ptr<Microtask>> toKeep;
+    Vector<std::unique_ptr<EventLoopTask>> toKeep;
     while (!m_microtaskQueue.isEmpty()) {
-        Vector<std::unique_ptr<Microtask>> queue = WTFMove(m_microtaskQueue);
+        Vector<std::unique_ptr<EventLoopTask>> queue = WTFMove(m_microtaskQueue);
         for (auto& task : queue) {
-            auto result = task->run();
-            switch (result) {
-            case Microtask::Result::Done:
-                break;
-            case Microtask::Result::KeepInQueue:
+            auto* group = task->group();
+            if (!group || group->isStoppedPermanently())
+                continue;
+            if (group->isSuspended())
                 toKeep.append(WTFMove(task));
-                break;
-            }
+            else
+                task->execute();
         }
     }
 

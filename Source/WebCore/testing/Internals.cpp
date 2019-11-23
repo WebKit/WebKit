@@ -28,7 +28,6 @@
 #include "Internals.h"
 
 #include "AXObjectCache.h"
-#include "ActiveDOMCallbackMicrotask.h"
 #include "ActivityState.h"
 #include "AnimationTimeline.h"
 #include "ApplicationCacheStorage.h"
@@ -4329,10 +4328,9 @@ void Internals::queueMicroTask(int testNumber)
 
     ScriptExecutionContext* context = document;
     auto& eventLoop = context->eventLoop();
-    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(eventLoop.microtaskQueue(), *document, [document, testNumber]() {
+    eventLoop.queueMicrotask([document = makeRef(*document), testNumber]() {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", testNumber, " has run."));
     });
-    eventLoop.queueMicrotaskCallback(WTFMove(microtask));
 }
 
 #if ENABLE(CONTENT_FILTERING)

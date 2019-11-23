@@ -26,21 +26,22 @@
 #include "config.h"
 #include "EventLoop.h"
 
-#include "ActiveDOMCallbackMicrotask.h"
 #include "Microtasks.h"
 
 namespace WebCore {
 
 void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
 {
+    ASSERT(task->taskSource() != TaskSource::Microtask);
     ASSERT(task->group());
     ASSERT(isContextThread());
     scheduleToRunIfNeeded();
     m_tasks.append(WTFMove(task));
 }
 
-void EventLoop::queueMicrotask(std::unique_ptr<Microtask>&& microtask)
+void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
 {
+    ASSERT(microtask->taskSource() == TaskSource::Microtask);
     microtaskQueue().append(WTFMove(microtask));
 }
 
@@ -133,35 +134,11 @@ void EventLoopTaskGroup::queueTask(TaskSource source, EventLoop::TaskFunction&& 
     return queueTask(makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
 }
 
-void EventLoopTaskGroup::queueMicrotaskCallback(std::unique_ptr<ActiveDOMCallbackMicrotask>&& microtask)
-{
-    if (m_state == State::Stopped || !m_eventLoop)
-        return;
-    m_eventLoop->queueMicrotask(WTFMove(microtask));
-}
-
-class VoidMicrotask final : public Microtask {
-public:
-    explicit VoidMicrotask(Function<void()>&& function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-private:
-    Result run() final
-    {
-        m_function();
-        return Result::Done;
-    }
-
-    Function<void()> m_function;
-};
-
 void EventLoopTaskGroup::queueMicrotask(EventLoop::TaskFunction&& function)
 {
     if (m_state == State::Stopped || !m_eventLoop)
         return;
-    m_eventLoop->queueMicrotask(makeUnique<VoidMicrotask>(WTFMove(function)));
+    m_eventLoop->queueMicrotask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::Microtask, *this, WTFMove(function)));
 }
 
 void EventLoopTaskGroup::performMicrotaskCheckpoint()

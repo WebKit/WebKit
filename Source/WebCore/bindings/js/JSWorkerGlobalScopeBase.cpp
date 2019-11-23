@@ -28,7 +28,6 @@
 #include "config.h"
 #include "JSWorkerGlobalScopeBase.h"
 
-#include "ActiveDOMCallbackMicrotask.h"
 #include "DOMWrapperWorld.h"
 #include "EventLoop.h"
 #include "JSDOMGlobalObjectTask.h"
@@ -137,10 +136,9 @@ void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, 
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
     auto& context = thisObject.wrapped();
-    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(context.eventLoop().microtaskQueue(), context, [callback = WTFMove(callback)]() mutable {
+    context.eventLoop().queueMicrotask([callback = WTFMove(callback)]() mutable {
         callback->call();
     });
-    context.eventLoop().queueMicrotaskCallback(WTFMove(microtask));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)

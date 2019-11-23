@@ -818,7 +818,6 @@ cssjit/SelectorCompiler.cpp
 dom/AbortController.cpp
 dom/AbortSignal.cpp
 dom/ActiveDOMCallback.cpp
-dom/ActiveDOMCallbackMicrotask.cpp
 dom/ActiveDOMObject.cpp
 dom/AllDescendantsCollection.cpp
 dom/AnimationEvent.cpp

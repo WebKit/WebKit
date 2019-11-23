@@ -31,47 +31,25 @@ class VM;
 
 namespace WebCore {
 
-class MicrotaskQueue;
+class EventLoopTask;
 class ScriptExecutionContext;
-
-class Microtask {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~Microtask()
-    {
-    }
-
-    enum class Result {
-        Done,
-        KeepInQueue
-    };
-
-    virtual Result run() = 0;
-
-protected:
-    void removeSelfFromQueue(MicrotaskQueue&);
-};
 
 class MicrotaskQueue final {
     WTF_MAKE_FAST_ALLOCATED;
-    friend NeverDestroyed<MicrotaskQueue>;
-    friend class Microtask;
 public:
     WEBCORE_EXPORT MicrotaskQueue(JSC::VM&);
     WEBCORE_EXPORT ~MicrotaskQueue();
 
-    WEBCORE_EXPORT void append(std::unique_ptr<Microtask>&&);
+    WEBCORE_EXPORT void append(std::unique_ptr<EventLoopTask>&&);
     WEBCORE_EXPORT void performMicrotaskCheckpoint();
 
     JSC::VM& vm() const { return m_vm.get(); }
 
 private:
-    WEBCORE_EXPORT void remove(const Microtask&);
-
     void timerFired();
 
     bool m_performingMicrotaskCheckpoint { false };
-    Vector<std::unique_ptr<Microtask>> m_microtaskQueue;
+    Vector<std::unique_ptr<EventLoopTask>> m_microtaskQueue;
     // For the main thread the VM lives forever. For workers it's lifetime is tied to our owning WorkerGlobalScope. Regardless, we retain the VM here to be safe.
     Ref<JSC::VM> m_vm;
 

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "JSDOMWindowBase.h"
 
-#include "ActiveDOMCallbackMicrotask.h"
 #include "Chrome.h"
 #include "CommonVM.h"
 #include "DOMWindow.h"
@@ -211,10 +210,9 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
     auto& eventLoop = thisObject.scriptExecutionContext()->eventLoop();
-    auto microtask = makeUnique<ActiveDOMCallbackMicrotask>(eventLoop.microtaskQueue(), *thisObject.scriptExecutionContext(), [callback = WTFMove(callback)]() mutable {
+    eventLoop.queueMicrotask([callback = WTFMove(callback)]() mutable {
         callback->call();
     });
-    eventLoop.queueMicrotaskCallback(WTFMove(microtask));
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()
