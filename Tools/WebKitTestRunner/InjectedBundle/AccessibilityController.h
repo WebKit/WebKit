@@ -62,6 +62,10 @@ public:
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
+#if PLATFORM(COCOA)
+    void execute(Function<void()>&&);
+#endif
+
     bool addNotificationListener(JSValueRef functionCallback);
     bool removeNotificationListener();
 

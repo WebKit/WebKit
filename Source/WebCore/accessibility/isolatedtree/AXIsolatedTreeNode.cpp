@@ -30,8 +30,6 @@
 
 #include "AccessibilityObject.h"
 
-extern "C" bool _AXUIElementRequestServicedBySecondaryAXThread(void);
-
 namespace WebCore {
 
 AXIsolatedObject::AXIsolatedObject(AXCoreObject& object)
@@ -171,7 +169,8 @@ void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
 {
-    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
+    ASSERT(!isMainThread());
+    if (!isMainThread()) {
         m_children.clear();
         m_children.reserveInitialCapacity(m_childrenIDs.size());
         auto tree = this->tree();
@@ -279,8 +278,8 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 
 void AXIsolatedObject::updateBackingStore()
 {
-    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
-        RELEASE_ASSERT(!isMainThread());
+    ASSERT(!isMainThread());
+    if (!isMainThread()) {
         if (auto tree = this->tree())
             tree->applyPendingChanges();
     }

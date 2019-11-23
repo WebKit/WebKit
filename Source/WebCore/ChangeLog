@@ -1,3 +1,20 @@
+2019-11-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Run LayoutTests/accessibility/mac/primary-screen-height.html on secondary accessibility thread.
+        https://bugs.webkit.org/show_bug.cgi?id=204391
+
+        Reviewed by Chris Fleizach.
+
+        LayoutTests/accessibility/mac/primary-screen-height.html tests this
+        change when isolated tree is enabled.
+
+        Use ASSERT(!isMainThread()) instead of HIServices call to detect
+        whether not running in the secondary thread during LayoutTests.
+
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::children):
+        (WebCore::AXIsolatedObject::updateBackingStore):
+
 2019-11-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove unnecessary Line::hasContent() calls in LineLayout::placeInlineItem

@@ -1,3 +1,22 @@
+2019-11-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Run LayoutTests/accessibility/mac/primary-screen-height.html on secondary accessibility thread.
+        https://bugs.webkit.org/show_bug.cgi?id=204391
+
+        Reviewed by Chris Fleizach.
+
+        Added AccessibilityController::execute to execute any
+        AccessibilityUIElement call into AccessibilityObjectWrapper on the
+        secondary accessibility thread.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::rootElement): leftover from previous review.
+        (WTR::AccessibilityController::execute): added this to execute any AccessibilityUIElement method on the appropriate thread.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::getChildrenWithRange): Runs on secondary thread.
+        (WTR::AccessibilityUIElement::numberAttributeValue): Runs on secondary thread.
+
 2019-11-22  Per Arne Vollan  <pvollan@apple.com>
 
         Set 64-bit as default architecture on Windows

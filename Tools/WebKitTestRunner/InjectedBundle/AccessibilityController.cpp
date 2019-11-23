@@ -88,10 +88,9 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
     } else {
         root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
-        if (WKAccessibilityCanUseSecondaryAXThread(page)) {
-            // Set m_useAXThread to true for next request.
+        // Set m_useAXThread to true for next request.
+        if (WKAccessibilityCanUseSecondaryAXThread(page))
             m_useAXThread = true;
-        }
     }
 
     return AccessibilityUIElement::create(root);
@@ -103,6 +102,19 @@ Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
     void* root = WKAccessibilityFocusedObject(page);
     
     return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
+}
+
+void AccessibilityController::execute(Function<void()>&& function)
+{
+    if (m_useAXThread) {
+        AXThread::dispatch([&function, this] {
+            function();
+            m_semaphore.signal();
+        });
+
+        m_semaphore.wait();
+    } else
+        function();
 }
 #endif
 
