@@ -495,7 +495,6 @@ sub argumentsForConfiguration()
     push(@args, '--maccatalyst') if (defined $xcodeSDK && $xcodeSDK =~ /^maccatalyst/);
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
-    push(@args, '--64-bit') if (isFTW());
     push(@args, '--ftw') if isFTW();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
@@ -1292,7 +1291,7 @@ sub isWin64()
 sub determineIsWin64()
 {
     return if defined($isWin64);
-    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || ((isFTW() || isWinCairo() || isJSCOnly()) && !shouldBuild32Bit());
+    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || ((isAnyWindows() || isJSCOnly()) && !shouldBuild32Bit());
 }
 
 sub determineIsWin64FromArchitecture($)

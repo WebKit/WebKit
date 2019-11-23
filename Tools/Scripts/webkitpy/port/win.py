@@ -62,6 +62,8 @@ class WinPort(ApplePort):
 
     ARCHITECTURES = ['x86', 'x86_64']
 
+    DEFAULT_ARCHITECTURE = 'x86_64'
+
     CRASH_LOG_PREFIX = "CrashLog"
 
     if sys.platform.startswith('win'):

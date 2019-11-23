@@ -1,3 +1,17 @@
+2019-11-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Set 64-bit as default architecture on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=204477
+
+        Reviewed by Ross Kirsling.
+
+        This will make 64-bit building and testing the default.
+
+        * Scripts/webkitdirs.pm:
+        (determineIsWin64):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+
 2019-11-22  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Failure to determine configuration for reporting is fatal
