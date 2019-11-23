@@ -161,7 +161,7 @@ def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=Fa
         command += [directoryToZip, archiveFile]
         return subprocess.call(command) or addFilesToArchive(archiveFile, PATH_TO_LAUNCHER, PATH_TO_README) 
     elif sys.platform == 'cygwin':
-        return subprocess.call(["zip", "-r", archiveFile, "bin32"], cwd=directoryToZip)
+        return subprocess.call(["zip", "-r", archiveFile, "bin64"], cwd=directoryToZip)
     elif sys.platform == 'win32':
         createZipManually(directoryToZip, archiveFile)
         return 0

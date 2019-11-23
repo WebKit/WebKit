@@ -1,3 +1,15 @@
+2019-11-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Archive step is failing after r252827
+        https://bugs.webkit.org/show_bug.cgi?id=204548
+
+        Reviewed by Alexey Proskuryakov.
+
+        After https://trac.webkit.org/changeset/252827/webkit, the archive step is failing.
+
+        * BuildSlaveSupport/built-product-archive:
+        (createZip):
+
 2019-11-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Run LayoutTests/accessibility/mac/primary-screen-height.html on secondary accessibility thread.
