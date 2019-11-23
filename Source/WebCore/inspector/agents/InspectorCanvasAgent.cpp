@@ -457,7 +457,8 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
 
                 auto& canvasAgent = *weakThis;
 
-                for (auto& identifier : canvasAgent.m_recordingCanvasIdentifiers) {
+                auto identifiers = copyToVector(canvasAgent.m_recordingCanvasIdentifiers);
+                for (auto& identifier : identifiers) {
                     auto inspectorCanvas = canvasAgent.m_identifierToInspectorCanvas.get(identifier);
                     if (!inspectorCanvas)
                         continue;
