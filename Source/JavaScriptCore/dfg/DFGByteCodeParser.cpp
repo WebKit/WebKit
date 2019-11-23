@@ -5627,21 +5627,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             bool shouldCompileAsGetById = false;
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin(), GetByStatus::TrackIdentifiers::Yes);
             unsigned identifierNumber = 0;
-            {
-                // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
-                // At that time, there is no information.
-                if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
 
-                    // FIXME: In the future, we should be able to do something like MultiGetByOffset in a multi identifier mode.
-                    // That way, we could both switch on multiple structures and multiple identifiers (or int 32 properties).
-                    // https://bugs.webkit.org/show_bug.cgi?id=204216
-                    if (Box<Identifier> impl = getByStatus.singleIdentifier()) {
-                        identifierNumber = m_graph.identifiers().ensure(impl);
-                        shouldCompileAsGetById = true;
-                        addToGraph(CheckIdent, OpInfo(impl->impl()), property);
-                    }
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+
+                // FIXME: In the future, we should be able to do something like MultiGetByOffset in a multi identifier mode.
+                // That way, we could both switch on multiple structures and multiple identifiers (or int 32 properties).
+                // https://bugs.webkit.org/show_bug.cgi?id=204216
+                if (Box<Identifier> impl = getByStatus.singleIdentifier()) {
+                    identifierNumber = m_graph.identifiers().ensure(impl);
+                    shouldCompileAsGetById = true;
+                    addToGraph(CheckIdent, OpInfo(impl->impl()), property);
                 }
             }
 
@@ -5658,7 +5655,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
-                if (getByStatus.observedStructureStubInfoSlowPath())
+                if (getByStatus.observedStructureStubInfoSlowPath() || bytecode.metadata(codeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers())
                     m_graph.m_slowGetByVal.add(getByVal);
             }
 

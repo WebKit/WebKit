@@ -85,7 +85,6 @@ EncodedJSValue JIT_OPERATION operationArithRound(JSGlobalObject*, EncodedJSValue
 EncodedJSValue JIT_OPERATION operationArithFloor(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArithCeil(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArithTrunc(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByVal(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValObjectInt(JSGlobalObject*, JSObject*, int32_t) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValStringInt(JSGlobalObject*, JSString*, int32_t) WTF_INTERNAL;

@@ -989,6 +989,25 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
     auto bytecode = pc->as<OpGetByVal>();
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
+
+    if (subscript.isString() || subscript.isSymbol()) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        if (metadata.m_seenIdentifiers.count() <= Options::getByValICMaxNumberOfIdentifiers()) {
+            const UniquedStringImpl* impl = nullptr;
+            if (subscript.isSymbol())
+                impl = &jsCast<Symbol*>(subscript)->privateName().uid();
+            else {
+                JSString* string = asString(subscript);
+                if (auto* maybeUID = string->tryGetValueImpl()) {
+                    if (maybeUID->isAtom())
+                        impl = static_cast<const UniquedStringImpl*>(maybeUID);
+                }
+            }
+
+            metadata.m_seenIdentifiers.observe(impl);
+        }
+    }
+    
     LLINT_RETURN_PROFILED(getByVal(vm, globalObject, codeBlock, baseValue, subscript, bytecode));
 }
 

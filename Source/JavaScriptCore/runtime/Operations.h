@@ -519,4 +519,18 @@ inline void scribble(void* base, size_t size)
     }
 }
 
+ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSCell* base, uint32_t index)
+{
+    if (base->isObject()) {
+        JSObject* object = asObject(base);
+        if (object->canGetIndexQuickly(index))
+            return JSValue::encode(object->getIndexQuickly(index));
+    }
+
+    if (isJSString(base) && asString(base)->canGetIndex(index))
+        return JSValue::encode(asString(base)->getIndex(globalObject, index));
+
+    return JSValue::encode(JSValue(base).get(globalObject, index));
+}
+
 } // namespace JSC

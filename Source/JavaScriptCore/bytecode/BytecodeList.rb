@@ -30,6 +30,7 @@ types [
     :ErrorType,
     :GetByIdMode,
     :GetByIdModeMetadata,
+    :GetByValHistory,
     :GetPutInfo,
     :IndexingType,
     :JSCell,
@@ -534,6 +535,7 @@ op :get_by_val,
     metadata: {
         profile: ValueProfile,
         arrayProfile: ArrayProfile,
+        seenIdentifiers: GetByValHistory,
     }
 
 op :put_by_val,

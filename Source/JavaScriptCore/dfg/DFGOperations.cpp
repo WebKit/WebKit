@@ -804,62 +804,6 @@ EncodedJSValue JIT_OPERATION operationArithTrunc(JSGlobalObject* globalObject, E
     return JSValue::encode(jsNumber(truncatedValueOfArgument));
 }
 
-static ALWAYS_INLINE EncodedJSValue getByVal(JSGlobalObject* globalObject, JSCell* base, uint32_t index)
-{
-    if (base->isObject()) {
-        JSObject* object = asObject(base);
-        if (object->canGetIndexQuickly(index))
-            return JSValue::encode(object->getIndexQuickly(index));
-    }
-
-    if (isJSString(base) && asString(base)->canGetIndex(index))
-        return JSValue::encode(asString(base)->getIndex(globalObject, index));
-
-    return JSValue::encode(JSValue(base).get(globalObject, index));
-}
-
-EncodedJSValue JIT_OPERATION operationGetByVal(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue baseValue = JSValue::decode(encodedBase);
-    JSValue property = JSValue::decode(encodedProperty);
-
-    if (LIKELY(baseValue.isCell())) {
-        JSCell* base = baseValue.asCell();
-
-        if (property.isUInt32())
-            RELEASE_AND_RETURN(scope, getByVal(globalObject, base, property.asUInt32()));
-
-        if (property.isDouble()) {
-            double propertyAsDouble = property.asDouble();
-            uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-            if (propertyAsUInt32 == propertyAsDouble && isIndex(propertyAsUInt32))
-                RELEASE_AND_RETURN(scope, getByVal(globalObject, base, propertyAsUInt32));
-
-        } else if (property.isString()) {
-            Structure& structure = *base->structure(vm);
-            if (JSCell::canUseFastGetOwnProperty(structure)) {
-                RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(globalObject);
-                RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                if (existingAtomString) {
-                    if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomString.get()))
-                        return JSValue::encode(result);
-                }
-            }
-        }
-    }
-
-    baseValue.requireObjectCoercible(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto propertyName = property.toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName)));
-}
-
 EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject* globalObject, JSCell* base, EncodedJSValue encodedProperty)
 {
     VM& vm = globalObject->vm();
@@ -870,13 +814,13 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject* globalObject,
     JSValue property = JSValue::decode(encodedProperty);
 
     if (property.isUInt32())
-        RELEASE_AND_RETURN(scope, getByVal(globalObject, base, property.asUInt32()));
+        RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, property.asUInt32()));
 
     if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsUInt32 == propertyAsDouble)
-            RELEASE_AND_RETURN(scope, getByVal(globalObject, base, propertyAsUInt32));
+            RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, propertyAsUInt32));
 
     } else if (property.isString()) {
         Structure& structure = *base->structure(vm);

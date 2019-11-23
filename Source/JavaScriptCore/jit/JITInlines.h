@@ -179,6 +179,13 @@ ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& 
         linkSlowCase(iter);
 }
 
+ALWAYS_INLINE bool JIT::hasAnySlowCases(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
+{
+    if (iter != slowCases.end() && iter->to == bytecodeIndex)
+        return true;
+    return false;
+}
+
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.

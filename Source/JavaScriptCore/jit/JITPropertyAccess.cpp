@@ -64,37 +64,47 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    emitJumpSlowCaseIfNotJSCell(regT0, base);
-    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
 
-    JITGetByValGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
-    if (isOperandConstantInt(property))
-        gen.stubInfo()->propertyIsInt32 = true;
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
-    m_getByVals.append(gen);
+    if (metadata.m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
+        auto notCell = branchIfNotCell(regT0);
+        emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+        notCell.link(this);
+        callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByVal, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
+    } else {
+        emitJumpSlowCaseIfNotJSCell(regT0, base);
+        emitArrayProfilingSiteWithCell(regT0, regT2, profile);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(dst);
+        JITGetByValGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+            JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
+        if (isOperandConstantInt(property))
+            gen.stubInfo()->propertyIsInt32 = true;
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByVals.append(gen);
+
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitPutVirtualRegister(dst);
+    }
+
 }
 
 void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    auto bytecode = currentInstruction->as<OpGetByVal>();
-    int dst = bytecode.m_dst.offset();
-    auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    if (hasAnySlowCases(iter)) {
+        auto bytecode = currentInstruction->as<OpGetByVal>();
+        int dst = bytecode.m_dst.offset();
+        auto& metadata = bytecode.metadata(m_codeBlock);
+        ArrayProfile* profile = &metadata.m_arrayProfile;
 
-    JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
-    ++m_getByValIndex;
+        linkAllSlowCases(iter);
 
-    linkAllSlowCases(iter);
-
-    Label coldPathBegin = label();
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, regT0, regT1);
-    gen.reportSlowPathCall(coldPathBegin, call);
+        JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
+        ++m_getByValIndex;
+        Label coldPathBegin = label();
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, regT0, regT1);
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
 }
 
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)

@@ -31,19 +31,21 @@ typedef uintptr_t Bits;
 
 class TinyBloomFilter {
 public:
-    TinyBloomFilter();
+    TinyBloomFilter() = default;
+    TinyBloomFilter(Bits);
 
     void add(Bits);
     void add(TinyBloomFilter&);
     bool ruleOut(Bits) const; // True for 0.
     void reset();
+    Bits bits() const { return m_bits; }
 
 private:
-    Bits m_bits;
+    Bits m_bits { 0 };
 };
 
-inline TinyBloomFilter::TinyBloomFilter()
-    : m_bits(0)
+inline TinyBloomFilter::TinyBloomFilter(Bits bits)
+    : m_bits(bits)
 {
 }
 

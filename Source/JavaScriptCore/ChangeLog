@@ -1,3 +1,44 @@
+2019-11-22  Saam Barati  <sbarati@apple.com>
+
+        Use LLInt profiling to rule out generating an IC for get_by_val
+        https://bugs.webkit.org/show_bug.cgi?id=204536
+
+        Reviewed by Yusuke Suzuki.
+
+        When I landed the get_by_val polymorphic inline caching patch, the prepack
+        benchmark in JetStream2 slowed down by 10%. Through some analysis, I found
+        out that we were slowing down because of the time we spent in the JITs
+        actually generating inline caches. This patch skips generating an inline
+        cache when it seems like it won't be profitable. The heuristic for doing this
+        is simple:
+        - If we see more than 4 identifiers in the LLInt, we won't generate an IC
+        in the upper tiers.
+        - If we see a non-identifier JSString in the LLInt, we won't generate an IC
+        in the upper tiers.
+        
+        This patch recovers the regression on prepack.
+
+        * bytecode/BytecodeList.rb:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * generator/main.rb:
+        * heap/TinyBloomFilter.h:
+        (JSC::TinyBloomFilter::bits const):
+        (JSC::TinyBloomFilter::TinyBloomFilter):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Operations.h:
+        (JSC::getByValWithIndex):
+        * runtime/OptionsList.h:
+
 2019-11-22  Per Arne Vollan  <pvollan@apple.com>
 
         Fix compile error in release mode
