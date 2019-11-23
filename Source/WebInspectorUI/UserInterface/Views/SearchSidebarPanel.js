@@ -109,7 +109,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             this.updateEmptyContentPlaceholder(searchingPlaceholder);
         };
 
-        if (!WI.targetsAvailable()) {
+        if (!WI.targetsAvailable() && WI.sharedApp.isWebDebuggable()) {
             createSearchingPlaceholder();
             WI.whenTargetsAvailable().then(() => {
                 if (this._searchQuerySetting.value === searchQuery)

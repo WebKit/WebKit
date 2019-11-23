@@ -77,8 +77,10 @@ WI.loaded = function()
 
     // Targets.
     WI.backendTarget = null;
+    WI._backendTargetAvailablePromise = new WI.WrappedPromise;
+
     WI.pageTarget = null;
-    WI._targetsAvailablePromise = new WI.WrappedPromise;
+    WI._pageTargetAvailablePromise = new WI.WrappedPromise;
 
     if (InspectorBackend.hasDomain("Target"))
         WI.targetManager.createMultiplexingBackendTarget();
@@ -99,7 +101,7 @@ WI.contentLoaded = function()
     WI.timelineManager.enable();
 
     // Signal that the frontend is now ready to receive messages.
-    WI.whenTargetsAvailable().then(() => {
+    WI._backendTargetAvailablePromise.promise.then(() => {
         InspectorFrontendAPI.loadCompleted();
     });
 
@@ -128,12 +130,12 @@ WI.initializeTarget = function(target)
 
 WI.targetsAvailable = function()
 {
-    return WI._targetsAvailablePromise.settled;
+    return WI._pageTargetAvailablePromise.settled;
 };
 
 WI.whenTargetsAvailable = function()
 {
-    return WI._targetsAvailablePromise.promise;
+    return WI._pageTargetAvailablePromise.promise;
 };
 
 Object.defineProperty(WI, "mainTarget",

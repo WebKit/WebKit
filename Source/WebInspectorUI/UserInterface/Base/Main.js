@@ -185,8 +185,10 @@ WI.loaded = function()
 
     // Targets.
     WI.backendTarget = null;
+    WI._backendTargetAvailablePromise = new WI.WrappedPromise;
+
     WI.pageTarget = null;
-    WI._targetsAvailablePromise = new WI.WrappedPromise;
+    WI._pageTargetAvailablePromise = new WI.WrappedPromise;
 
     // COMPATIBILITY (iOS 13.0): Target.exists was "replaced" by differentiating "web" debuggables
     // into "page" (direct) and "web-page" debuggables (multiplexing).
@@ -527,7 +529,7 @@ WI.contentLoaded = function()
     updateConsoleSavedResultPrefixCSSVariable();
 
     // Signal that the frontend is now ready to receive messages.
-    WI.whenTargetsAvailable().then(() => {
+    WI._backendTargetAvailablePromise.promise.then(() => {
         InspectorFrontendAPI.loadCompleted();
     });
 
@@ -590,12 +592,12 @@ WI.initializeTarget = function(target)
 
 WI.targetsAvailable = function()
 {
-    return WI._targetsAvailablePromise.settled;
+    return WI._pageTargetAvailablePromise.settled;
 };
 
 WI.whenTargetsAvailable = function()
 {
-    return WI._targetsAvailablePromise.promise;
+    return WI._pageTargetAvailablePromise.promise;
 };
 
 WI.isTabTypeAllowed = function(tabType)

@@ -258,7 +258,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 
         this._resetMainExecutionContext();
 
-        WI._targetsAvailablePromise.resolve();
+        WI._backendTargetAvailablePromise.resolve();
     }
 
     _initializePageTarget(target)
@@ -269,6 +269,8 @@ WI.TargetManager = class TargetManager extends WI.Object
         WI.pageTarget = target;
 
         this._resetMainExecutionContext();
+
+        WI._pageTargetAvailablePromise.resolve();
     }
 
     _transitionPageTarget(target)

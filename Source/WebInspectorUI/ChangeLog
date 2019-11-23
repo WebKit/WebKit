@@ -1,5 +1,36 @@
 2019-11-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'target.PageAgent.getCompositingBordersVisible')
+        https://bugs.webkit.org/show_bug.cgi?id=204473
+
+        Reviewed by Brian Burg.
+
+        Change the definition of `WI.targetsAvailable` and `WI.whenTargetsAvailable` to instead
+        resolve based on when a page target is created, not the backend target, as the latter can
+        be a multiplexing target which only has a `Target` domain.
+
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype._initializeBackendTarget):
+        (WI.TargetManager.prototype._initializePageTarget):
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        (WI.targetsAvailable):
+        (WI.whenTargetsAvailable):
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        (WI.targetsAvailable):
+        (WI.whenTargetsAvailable):
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        Only wait for targets if inspecting a web debuggable, as non-web debuggables don't have a
+        different page target vs the backend target (which is guaranteed to exist anyways).
+
+2019-11-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r251227): dashboard no longer shows page weight
         https://bugs.webkit.org/show_bug.cgi?id=204528
 
