@@ -1,3 +1,20 @@
+2019-11-22  Chris Dumez  <cdumez@apple.com>
+
+        HTTPHeaderMap's operator== is not fully correct
+        https://bugs.webkit.org/show_bug.cgi?id=204361
+
+        Reviewed by Alex Christensen.
+
+        If headers are added in a different order, HTTPHeaderMap's operator==() would wrongly
+        return false because it is using a Vector internally to store the headers. Also, it
+        would incorrectly return false if the case of the headers did not match.
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::get const):
+        (WebCore::HTTPHeaderMap::getUncommonHeader const):
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::operator==):
+
 2019-11-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Merge "insert inline runs" and "setup display runs" loops in InlineFormattingContext::setDisplayBoxesForLine

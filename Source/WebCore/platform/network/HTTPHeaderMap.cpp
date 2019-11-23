@@ -55,6 +55,11 @@ String HTTPHeaderMap::get(const String& name) const
     if (findHTTPHeaderName(name, headerName))
         return get(headerName);
 
+    return getUncommonHeader(name);
+}
+
+String HTTPHeaderMap::getUncommonHeader(const String& name) const
+{
     auto index = m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
