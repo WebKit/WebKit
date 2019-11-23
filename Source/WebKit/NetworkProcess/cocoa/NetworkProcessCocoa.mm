@@ -115,11 +115,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
 
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        m_cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
-#endif
-
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
     [NSURLCache setSharedURLCache:urlCache.get()];

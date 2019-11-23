@@ -498,10 +498,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    parameters.shouldEnableNetworkCacheSpeculativeRevalidation = m_configuration->diskCacheSpeculativeValidationEnabled();
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory();
     if (!cookieStorageDirectory.isEmpty())

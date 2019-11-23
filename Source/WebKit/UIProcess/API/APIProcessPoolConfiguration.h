@@ -68,9 +68,6 @@ public:
     bool clientWouldBenefitFromAutomaticProcessPrewarming() const { return m_clientWouldBenefitFromAutomaticProcessPrewarming; }
     void setClientWouldBenefitFromAutomaticProcessPrewarming(bool value) { m_clientWouldBenefitFromAutomaticProcessPrewarming = value; }
 
-    bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
-    void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
-
     void setUsesBackForwardCache(bool value) { m_usesBackForwardCache = value; }
     bool usesBackForwardCache() const { return m_usesBackForwardCache; }
 
@@ -151,7 +148,6 @@ public:
 #endif
 
 private:
-    bool m_diskCacheSpeculativeValidationEnabled { false };
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_customClassesForParameterCoder;
     Vector<WTF::String> m_cachePartitionedURLSchemes;

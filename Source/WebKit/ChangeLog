@@ -1,3 +1,16 @@
+2019-11-22  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r252798.
+
+        Turns out my reverting earlier today wasn't so necessary after all.
+        This is effectively re-landing r250421.
+
+        Reverted changeset:
+
+        "Revert r250421"
+        https://bugs.webkit.org/show_bug.cgi?id=202290
+        https://trac.webkit.org/changeset/252798
+
 2019-11-22  Kate Cheney  <katherine_cheney@apple.com>
 
         ITP Database crashes if table schema is not correct

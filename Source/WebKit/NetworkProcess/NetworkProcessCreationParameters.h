@@ -57,9 +57,6 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
-#endif
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
