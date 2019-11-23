@@ -99,10 +99,20 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(f'{self.URL}/api/failures/layout-tests?platform=iOS&style=Debug&recent=False&after_time={time.time() - 60 * 60}&collapsed=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
-        print(response.json())
         for i in range(2):
             self.assertEqual(len(response.json()[i]['results']), 5)
             last_start_time = 0
             for result in response.json()[i]['results']:
                 self.assertGreaterEqual(result['start_time'], last_start_time)
                 last_start_time = result['start_time']
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_no_runs(self, client, **kwargs):
+        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=iOS&style=Debug&recent=False&before_uuid=0')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), dict(
+            status='error',
+            error='Not Found',
+            description='No test runs found with the specified criteria',
+        ))

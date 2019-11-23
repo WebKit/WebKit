@@ -81,13 +81,15 @@ class FailureController(HasCommitContext):
                 def sort_function(result):
                     return result['start_time']
 
+            failures = find_function(**query_dict)
+            if failures is None:
+                abort(404, description='No test runs found with the specified criteria')
+
             if collapsed:
-                response = set()
-                response.update(find_function(**query_dict))
-                return jsonify(sorted(response))
+                return jsonify(sorted(set(failures)))
 
             response = []
-            for config, results in find_function(**query_dict).items():
+            for config, results in failures.items():
                 response.append(dict(
                     configuration=Configuration.Encoder().default(config),
                     results=sorted(results, key=sort_function),

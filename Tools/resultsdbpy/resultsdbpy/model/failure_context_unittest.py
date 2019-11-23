@@ -121,3 +121,12 @@ class FailureContextTest(WaitForDockerTestCase):
             suite='layout-tests', recent=True, collapsed=False, unexpected=False,
         )
         self.assertEqual(len(results), 0)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_test_runs(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        results = self.model.failure_context.failures_by_commit(
+            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            suite='layout-tests', recent=True, end=0,
+        )
+        self.assertEqual(results, None)

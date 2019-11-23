@@ -164,6 +164,7 @@ class FailureContext(UploadCallbackContext):
             return None
 
         with self:
+            has_test_runs = False
             if collapsed:
                 result = set()
             else:
@@ -180,12 +181,15 @@ class FailureContext(UploadCallbackContext):
                 ).items():
                     if collapsed:
                         for value in values:
+                            has_test_runs = True
                             for test in value.unpack():
                                 if test not in ['uuid', 'start_time']:
                                     result.add(test)
                     else:
                         runs = []
                         for value in values:
+                            has_test_runs = True
+
                             # uuid and start_time are not in the unpacked values
                             unpacked = value.unpack()
                             if len(unpacked) > 2:
@@ -193,7 +197,7 @@ class FailureContext(UploadCallbackContext):
                         if runs:
                             result.update({config: runs})
 
-            return result
+            return result if has_test_runs else None
 
     def failures_by_commit(self, *args, **kwargs):
         return self._failures(self.TestFailuresByCommit, self.UnexpectedTestFailuresByCommit, *args, **kwargs)

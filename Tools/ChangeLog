@@ -1,3 +1,22 @@
+2019-11-22  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org/api/failures should return an error when no test-run is found for specified criteria
+        https://bugs.webkit.org/show_bug.cgi?id=204385
+        <rdar://problem/57334389>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/controller/failure_controller.py:
+        (FailureController.failures): Return a 404 error if no test runs are found.
+        * resultsdbpy/resultsdbpy/controller/failure_controller_unittest.py:
+        (FailureControllerTest):
+        (FailureControllerTest.test_no_runs):
+        * resultsdbpy/resultsdbpy/model/failure_context.py:
+        (FailureContext._failures): Return 'None' if no test runs are found.
+        * resultsdbpy/resultsdbpy/model/failure_context_unittest.py:
+        (FailureContextTest):
+        (FailureContextTest.test_no_test_runs):
+
 2019-11-22  Chris Dumez  <cdumez@apple.com>
 
         HTTPHeaderMap's operator== is not fully correct
