@@ -122,6 +122,20 @@ constexpr auto findExpiredUserInteractionQuery = "SELECT domainID FROM ObservedD
 constexpr auto getResourceDataByDomainNameQuery = "SELECT * FROM ObservedDomains WHERE registrableDomain = ?";
 constexpr auto getAllDomainsQuery = "SELECT registrableDomain FROM ObservedDomains"_s;
 
+const char* tables[] = {
+    "ObservedDomains",
+    "TopLevelDomains",
+    "StorageAccessUnderTopFrameDomains",
+    "TopFrameUniqueRedirectsTo",
+    "TopFrameUniqueRedirectsFrom",
+    "TopFrameLinkDecorationsFrom",
+    "TopFrameLoadedThirdPartyScripts",
+    "SubframeUnderTopFrameDomains",
+    "SubresourceUnderTopFrameDomains",
+    "SubresourceUniqueRedirectsTo",
+    "SubresourceUniqueRedirectsFrom"
+};
+
 // CREATE TABLE Queries
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
@@ -288,9 +302,46 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
     }
 }
 
+static void resetStatement(SQLiteStatement& statement)
+{
+    int resetResult = statement.reset();
+    ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
+}
+
+bool ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema()
+{
+    SQLiteStatement statement(m_database, "SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?");
+    if (statement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
+        return false;
+    }
+
+    bool hasAllTables = true;
+    for (auto table : tables) {
+        if (statement.bindText(1, table) != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to bind, error message: %{public}s", this, m_database.lastErrorMsg());
+            return false;
+        }
+        if (statement.step() != SQLITE_ROW) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema schema is missing table: %s", this, table);
+            hasAllTables = false;
+        }
+        resetStatement(statement);
+    }
+    return hasAllTables;
+}
+
 void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
 {
     openITPDatabase();
+
+    if (!isCorrectTableSchema()) {
+        m_database.close();
+        // FIXME: Migrate existing data to new database file instead of deleting it (204482).
+        FileSystem::deleteFile(m_storageDirectoryPath);
+        openITPDatabase();
+        return;
+    }
 
     String currentSchema;
     {
@@ -322,12 +373,6 @@ void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
         FileSystem::deleteFile(m_storageDirectoryPath);
         openITPDatabase();
     }
-}
-
-static void resetStatement(SQLiteStatement& statement)
-{
-    int resetResult = statement.reset();
-    ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isEmpty() const

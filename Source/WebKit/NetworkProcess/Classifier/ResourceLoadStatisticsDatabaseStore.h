@@ -136,6 +136,7 @@ public:
 
 private:
     void openITPDatabase();
+    bool isCorrectTableSchema();
     void openAndDropOldDatabaseIfNecessary();
     String getDomainStringFromDomainID(unsigned) const;
     String getSubStatisticStatement(const String&) const;
