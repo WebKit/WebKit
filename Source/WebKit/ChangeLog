@@ -1,5 +1,18 @@
 2019-11-22  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, rolling out r252796.
+
+        Turns out my reverting earlier today wasn't so necessary after all.
+        This is effectively re-landing r250422.
+
+        Reverted changeset:
+
+        "Revert r250422"
+        https://bugs.webkit.org/show_bug.cgi?id=202285
+        https://trac.webkit.org/changeset/252796
+
+2019-11-22  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, rolling out r252798.
 
         Turns out my reverting earlier today wasn't so necessary after all.

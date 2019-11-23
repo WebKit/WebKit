@@ -381,7 +381,6 @@ void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef contextRef, 
 
 void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bool value)
 {
-    WebKit::toImpl(contextRef)->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
 void WKContextSetPrewarmsProcessesAutomatically(WKContextRef contextRef, bool value)

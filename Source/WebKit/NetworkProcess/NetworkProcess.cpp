@@ -306,8 +306,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCacheModel(parameters.cacheModel, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory);
 
-    setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
 #endif
@@ -2199,11 +2197,6 @@ void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
 void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
-}
-
-void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
-{
-    m_canHandleHTTPSServerTrustEvaluation = value;
 }
 
 void NetworkProcess::didSyncAllCookies()

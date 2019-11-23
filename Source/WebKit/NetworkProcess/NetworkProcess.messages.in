@@ -67,7 +67,6 @@ messages -> NetworkProcess LegacyReceiver {
     SyncAllCookies()
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
-    SetCanHandleHTTPSServerTrustEvaluation(bool value)
     
     ClearCacheForAllOrigins(uint32_t cachesToClear)
     SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel, String overrideCacheStorageDirectory)

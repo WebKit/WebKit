@@ -269,7 +269,6 @@ public:
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
     
-    void setCanHandleHTTPSServerTrustEvaluation(bool);
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&);
@@ -792,7 +791,6 @@ private:
     bool m_isDelayedWebProcessLaunchDisabled { false };
 #endif
     bool m_useSeparateServiceWorkerProcess { false };
-    bool m_canHandleHTTPSServerTrustEvaluation { true };
 };
 
 template<typename T>

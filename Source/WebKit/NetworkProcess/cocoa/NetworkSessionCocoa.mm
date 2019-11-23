@@ -642,7 +642,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, Se
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
-        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation() || sessionCocoa->fastServerTrustEvaluationEnabled()) {
+        if (sessionCocoa->fastServerTrustEvaluationEnabled()) {
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
             auto* networkDataTask = [self existingTask:task];
             ASSERT(networkDataTask);
