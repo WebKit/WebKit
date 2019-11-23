@@ -91,6 +91,7 @@ public:
         void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
         void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+        void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
 
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
         Optional<ExpansionBehavior> expansionBehavior() const;
@@ -135,10 +136,10 @@ private:
 
     void removeTrailingTrimmableContent();
     void alignContentHorizontally(RunList&, IsLastLineWithInlineContent) const;
-    void alignContentVertically(RunList&) const;
+    void alignContentVertically(RunList&);
 
-    void adjustBaselineAndLineHeight(const InlineItem&);
-    LayoutUnit inlineItemContentHeight(const InlineItem&) const;
+    void adjustBaselineAndLineHeight(const Run&);
+    LayoutUnit runContentHeight(const Run&) const;
     bool isVisuallyEmpty() const;
 
     bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };

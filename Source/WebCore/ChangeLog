@@ -1,3 +1,31 @@
+2019-11-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Defer run height/baseline adjustment computation until Line::close
+        https://bugs.webkit.org/show_bug.cgi?id=204550
+        <rdar://problem/57454497>
+
+        Reviewed by Antti Koivisto.
+
+        Currently we measure run height and adjust the line's baseline/height on every append.
+        We could do all that in Line::close after we've merged the neighboring runs.
+        ([text][ ][content] vs. [text content])
+        This is about ~5% win on line-layout-simple.html
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::alignContentVertically):
+        (WebCore::Layout::Line::append):
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendInlineContainerEnd):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendLineBreak):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::runContentHeight const):
+        (WebCore::Layout::Line::alignContentVertically const): Deleted.
+        (WebCore::Layout::Line::inlineItemContentHeight const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::setLogicalHeight):
+
 2019-11-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Run LayoutTests/accessibility/mac/primary-screen-height.html on secondary accessibility thread.
