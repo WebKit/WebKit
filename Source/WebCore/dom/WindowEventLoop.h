@@ -28,6 +28,7 @@
 #include "DocumentIdentifier.h"
 #include "EventLoop.h"
 #include "RegistrableDomain.h"
+#include "Timer.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ private:
     MicrotaskQueue& microtaskQueue() final;
 
     RegistrableDomain m_domain;
+    Timer m_timer;
 };
 
 } // namespace WebCore

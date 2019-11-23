@@ -52,6 +52,7 @@ Ref<WindowEventLoop> WindowEventLoop::ensureForRegistrableDomain(const Registrab
 
 inline WindowEventLoop::WindowEventLoop(const RegistrableDomain& domain)
     : m_domain(domain)
+    , m_timer(*this, &WindowEventLoop::run)
 {
 }
 
@@ -63,9 +64,7 @@ WindowEventLoop::~WindowEventLoop()
 
 void WindowEventLoop::scheduleToRun()
 {
-    callOnMainThread([eventLoop = makeRef(*this)] () {
-        eventLoop->run();
-    });
+    m_timer.startOneShot(0_s);
 }
 
 bool WindowEventLoop::isContextThread() const

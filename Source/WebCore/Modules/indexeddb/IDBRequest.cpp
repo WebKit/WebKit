@@ -290,8 +290,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
     if (m_contextStopped)
         return;
 
-    event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
 }
 
 void IDBRequest::dispatchEvent(Event& event)

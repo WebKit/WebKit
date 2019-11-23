@@ -554,7 +554,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_xmlVersion("1.0"_s)
     , m_constantPropertyMap(makeUnique<ConstantPropertyMap>(*this))
     , m_documentClasses(documentClasses)
-    , m_eventQueue(*this)
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenManager { makeUniqueRef<FullscreenManager>(*this) }
 #endif
@@ -1707,7 +1706,8 @@ void Document::unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClie
 
 void Document::visibilityStateChanged()
 {
-    enqueueDocumentEvent(Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    // // https://w3c.github.io/page-visibility/#reacting-to-visibilitychange-changes
+    queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 
@@ -2532,7 +2532,6 @@ void Document::prepareForDestruction()
     InspectorInstrumentation::documentDetached(*this);
 
     stopActiveDOMObjects();
-    m_eventQueue.close();
 #if ENABLE(FULLSCREEN_API)
     m_fullscreenManager->emptyEventQueue();
 #endif
@@ -4737,21 +4736,32 @@ void Document::dispatchWindowLoadEvent()
     m_cachedResourceLoader->documentDidFinishLoadEvent();
 }
 
-void Document::enqueueWindowEvent(Ref<Event>&& event)
+void Document::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 {
-    event->setTarget(m_domWindow.get());
-    m_eventQueue.enqueueEvent(WTFMove(event));
+    eventLoop().queueTask(source, [document = makeRef(*this), event = WTFMove(event)] {
+        document->dispatchEvent(event);
+    });
 }
 
-void Document::enqueueDocumentEvent(Ref<Event>&& event)
+void Document::queueTaskToDispatchEventOnWindow(TaskSource source, Ref<Event>&& event)
 {
-    event->setTarget(this);
-    m_eventQueue.enqueueEvent(WTFMove(event));
+    eventLoop().queueTask(source, [this, protectedThis = makeRef(*this), event = WTFMove(event)] {
+        if (!m_domWindow)
+            return;
+        m_domWindow->dispatchEvent(event);
+    });
 }
 
 void Document::enqueueOverflowEvent(Ref<Event>&& event)
 {
-    m_eventQueue.enqueueEvent(WTFMove(event));
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/overflow_event
+    // FIXME: This event is totally unspecified.
+    auto* target = event->target();
+    RELEASE_ASSERT(target);
+    RELEASE_ASSERT(is<Node>(target));
+    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedTarget = GCReachableRef<Node>(downcast<Node>(*target)), event = WTFMove(event)] {
+        protectedTarget->dispatchEvent(event);
+    });
 }
 
 ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
@@ -6372,12 +6382,13 @@ void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
 
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
 {
-    enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
+    queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
 }
 
 void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
 {
-    enqueueWindowEvent(HashChangeEvent::create(oldURL, newURL));
+    // FIXME: popstate event and hashchange event are supposed to fire in a single task.
+    queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, HashChangeEvent::create(oldURL, newURL));
 }
 
 void Document::dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject)

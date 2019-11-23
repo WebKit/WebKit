@@ -29,6 +29,7 @@ namespace WebCore {
 
 enum class TaskSource : uint8_t {
     DOMManipulation,
+    DatabaseAccess,
     FileReading,
     FontLoading,
     IdleTask,

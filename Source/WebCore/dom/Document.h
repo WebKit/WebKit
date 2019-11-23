@@ -1168,14 +1168,13 @@ public:
     bool isSecureContext() const final;
     bool isJSExecutionForbidden() const final { return false; }
 
-    void enqueueWindowEvent(Ref<Event>&&);
-    void enqueueDocumentEvent(Ref<Event>&&);
+    void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
+    void queueTaskToDispatchEventOnWindow(TaskSource, Ref<Event>&&);
     void enqueueOverflowEvent(Ref<Event>&&);
     void dispatchPageshowEvent(PageshowEventPersistence);
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
-    DocumentEventQueue& eventQueue() const final { return m_eventQueue; }
 
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener&);
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener&);
@@ -1825,7 +1824,6 @@ private:
     DocumentClassFlags m_documentClasses;
 
     RenderPtr<RenderView> m_renderView;
-    mutable DocumentEventQueue m_eventQueue;
 
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 

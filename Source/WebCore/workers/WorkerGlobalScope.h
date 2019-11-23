@@ -34,7 +34,6 @@
 #include "Supplementable.h"
 #include <wtf/URL.h>
 #include "WorkerCacheStorageConnection.h"
-#include "WorkerEventQueue.h"
 #include "WorkerMessagePortChannelProvider.h"
 #include "WorkerScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
@@ -161,7 +160,6 @@ private:
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;
     EventTarget* errorEventTarget() final;
-    WorkerEventQueue& eventQueue() const final;
     String resourceRequestIdentifier() const final { return m_identifier; }
     SocketProvider* socketProvider() final;
 
@@ -195,8 +193,6 @@ private:
 
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
-
-    mutable WorkerEventQueue m_eventQueue;
 
     Ref<SecurityOrigin> m_topOrigin;
 

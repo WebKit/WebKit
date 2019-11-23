@@ -217,7 +217,6 @@ public:
     void didChangeTimerAlignmentInterval();
     virtual Seconds domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const;
 
-    virtual EventQueue& eventQueue() const = 0;
     virtual EventTarget* errorEventTarget() = 0;
 
     DatabaseContext* databaseContext() { return m_databaseContext.get(); }

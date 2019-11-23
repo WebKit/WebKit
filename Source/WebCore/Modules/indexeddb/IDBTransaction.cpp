@@ -625,8 +625,7 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
     if (!scriptExecutionContext() || m_contextStopped)
         return;
 
-    event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
 }
 
 void IDBTransaction::dispatchEvent(Event& event)
@@ -636,7 +635,6 @@ void IDBTransaction::dispatchEvent(Event& event)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(scriptExecutionContext());
     ASSERT(!m_contextStopped);
-    ASSERT(event.target() == this);
     ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
 
     auto protectedThis = makeRef(*this);

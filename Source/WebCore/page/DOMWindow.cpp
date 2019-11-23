@@ -2124,8 +2124,9 @@ bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& 
 
 void DOMWindow::languagesChanged()
 {
-    if (auto* document = this->document())
-        document->enqueueWindowEvent(Event::create(eventNames().languagechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    // https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator-languages
+    if (auto document = makeRefPtr(this->document()))
+        document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, Event::create(eventNames().languagechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void DOMWindow::dispatchLoadEvent()

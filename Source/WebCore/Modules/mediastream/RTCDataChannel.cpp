@@ -230,8 +230,8 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
     if (m_stopped)
         return;
 
-    event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
+    // https://w3c.github.io/webrtc-pc/#operation
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(event));
 }
 
 } // namespace WebCore

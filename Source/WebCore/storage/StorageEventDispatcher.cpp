@@ -85,11 +85,10 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
     InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
-        auto result = frame->document()->domWindow()->sessionStorage();
-        if (!frame->document())
-            continue;
-        if (!result.hasException())
-            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
+        auto document = makeRefPtr(frame->document());
+        auto result = document->domWindow()->sessionStorage();
+        if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
+            document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
 }
 
@@ -99,11 +98,10 @@ void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageG
         InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, StorageType::Local, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
-        auto result = frame->document()->domWindow()->localStorage();
-        if (!frame->document())
-            continue;
-        if (!result.hasException())
-            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
+        auto document = makeRefPtr(frame->document());
+        auto result = document->domWindow()->localStorage();
+        if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
+            document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
 }
 

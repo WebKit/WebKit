@@ -215,8 +215,9 @@ void PointerLockController::enqueueEvent(const AtomString& type, Element* elemen
 
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
 {
-    if (document)
-        document->enqueueDocumentEvent(Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
+    // FIXME: Spec doesn't specify which task source use.
+    if (auto protectedDocument = makeRefPtr(document))
+        protectedDocument->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 } // namespace WebCore

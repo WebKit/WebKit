@@ -128,7 +128,9 @@ void SQLTransaction::performPendingCallback()
 void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
 {
     callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
-        callErrorCallbackDueToInterruption();
+        m_database->document().eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = protectedThis.copyRef()]() mutable {
+            callErrorCallbackDueToInterruption();
+        });
     });
 
     m_backend.notifyDatabaseThreadIsShuttingDown();

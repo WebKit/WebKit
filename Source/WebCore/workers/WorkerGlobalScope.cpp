@@ -70,7 +70,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
     , m_isOnline(isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
-    , m_eventQueue(*this)
     , m_topOrigin(WTFMove(topOrigin))
 #if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
@@ -412,11 +411,6 @@ bool WorkerGlobalScope::isContextThread() const
 bool WorkerGlobalScope::isJSExecutionForbidden() const
 {
     return m_script->isExecutionForbidden();
-}
-
-WorkerEventQueue& WorkerGlobalScope::eventQueue() const
-{
-    return m_eventQueue;
 }
 
 #if ENABLE(WEB_CRYPTO)

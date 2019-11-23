@@ -117,7 +117,6 @@ private:
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
 
     EventTarget* errorEventTarget() final { return this; }
-    EventQueue& eventQueue() const final { ASSERT_NOT_REACHED(); return m_eventQueue; }
 
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return false; }
@@ -136,10 +135,6 @@ private:
 
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
-
-    // FIXME: This is not implemented properly, it just satisfies the compiler.
-    // https://bugs.webkit.org/show_bug.cgi?id=191136
-    mutable WorkerEventQueue m_eventQueue;
 
     JSC::RuntimeFlags m_jsRuntimeFlags;
     ScriptSourceCode m_code;

@@ -1,3 +1,79 @@
+2019-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use the event loop instead of DocumentEventQueue and WorkerEventQueue
+        https://bugs.webkit.org/show_bug.cgi?id=204447
+        <rdar://problem/57420691>
+
+        Reviewed by Antti Koivisto.
+
+        This patch replaces every use of DocumentEventQueue and WorkerEventQueue by the integration
+        with the event loop.
+
+        Because this changes the order by which some of the affected events fire and tasks run,
+        this patch also makes WindowEventLoop::scheduleToRun use a Timer instead of callOnMainThread
+        in order to avoid introducing new test failures.
+
+        In addition, WebSQL needed a code change to scheudle tasks via the event loop after moving
+        to the event loop as callOnMainThread could run before or after a 0s timer fires depending
+        on whether it was called during another timer or not; meaning that it could change the order
+        of operations with respect to other tasks scheduled via event loops in some cases.
+
+        Finally, added the links to various specifications where appropriate.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::connectionToServerLost):
+        (WebCore::IDBDatabase::fireVersionChangeEvent):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::enqueueEvent):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::enqueueEvent):
+        (WebCore::IDBTransaction::dispatchEvent):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::scheduleDispatchEvent):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::scheduleTransactionCallback): Schedule a task on the event loop once
+        we're in the main thread as the order of operation could change with respect to other tasks
+        scheduled via the event loop otherwise.
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::notifyDatabaseThreadIsShuttingDown): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::enqueueWindowEvent): Deleted.
+        (WebCore::Document::queueTaskToDispatchEvent): Added.
+        (WebCore::Document::enqueueDocumentEvent): Deleted.
+        (WebCore::Document::queueTaskToDispatchEventOnWindow): Added.
+        (WebCore::Document::enqueueOverflowEvent):
+        (WebCore::Document::enqueueSecurityPolicyViolationEvent):
+        (WebCore::Document::enqueueHashchangeEvent): Rewritten. Keep the target node alive until
+        the overflow event fires.
+        fired on an overflow element 
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * dom/TaskSource.h:
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::WindowEventLoop):
+        (WebCore::WindowEventLoop::scheduleToRun):
+        * dom/WindowEventLoop.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::languagesChanged):
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::elementWasRemoved):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::enqueueEvent):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::eventQueue const): Deleted.
+        * workers/WorkerGlobalScope.h:
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        * worklets/WorkletGlobalScope.h:
+
 2019-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r252792?): 6 inspector/canvas tests crashing

@@ -51,7 +51,6 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& co
     : m_document(makeWeakPtr(document))
     , m_script(makeUnique<WorkletScriptController>(this))
     , m_topOrigin(SecurityOrigin::createUnique())
-    , m_eventQueue(*this)
     , m_code(WTFMove(code))
 {
     auto addResult = allWorkletGlobalScopesSet().add(this);
