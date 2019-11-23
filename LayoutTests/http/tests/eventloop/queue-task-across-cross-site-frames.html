@@ -52,6 +52,8 @@ async function startTest()
         startingNumber: 10,
     }, '*');
 
+    await new Promise((resolve) => { window.resolveCrossOriginLogs = resolve; });
+
     setTimeout(() => {
         shouldBeEqualToString('logs.join(", ")', '1, 2, 3, 4, 5');
         shouldBeEqualToString('crossOriginLogs.join(", ")', '10, 11, 12');
@@ -67,8 +69,10 @@ onmessage = (event) => {
             resolve();
         else
             loadedFrames.set(event.source, null);
-    } else if (event.data.type == 'logs')
+    } else if (event.data.type == 'logs') {
         crossOriginLogs = event.data.logs;
+        resolveCrossOriginLogs();
+    }
 }
 
 function waitForLoad(frame)

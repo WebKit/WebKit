@@ -1,3 +1,18 @@
+2019-11-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        http/tests/eventloop/queue-task-across-cross-site-frames.html is flaky failure on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=204510
+
+        Reviewed by Chris Dumez.
+
+        There are two issues with this test. First, queue-task-across-cross-site-frames.html wasn't waiting
+        for the helper file to post logs, and secondly, eventloop-helper.html was relying on setTimeout(~, 0)
+        to always happen after queued tasks had run, which is not always true if there had already been
+        another 0s timer scheduled.
+
+        * http/tests/eventloop/queue-task-across-cross-site-frames.html:
+        * http/tests/eventloop/resources/eventloop-helper.html:
+
 2019-11-22  Eric Carlson  <eric.carlson@apple.com>
 
         ( r251737 ) media/remoteplayback-prompt.html is a flakey timeout
