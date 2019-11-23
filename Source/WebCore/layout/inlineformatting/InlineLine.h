@@ -59,7 +59,7 @@ public:
     ~Line();
 
     void append(const InlineItem&, LayoutUnit logicalWidth);
-    bool hasContent() const { return !isVisuallyEmpty(); }
+    bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
     LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
@@ -140,7 +140,6 @@ private:
 
     void adjustBaselineAndLineHeight(const Run&);
     LayoutUnit runContentHeight(const Run&) const;
-    bool isVisuallyEmpty() const;
 
     bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
     void justifyRuns(RunList&) const;

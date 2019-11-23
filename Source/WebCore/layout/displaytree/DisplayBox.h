@@ -52,6 +52,7 @@ public:
     LayoutSize size() const { return { width(), height() }; }
     LayoutUnit width() const { return borderLeft() + paddingBoxWidth() + borderRight(); }
     LayoutUnit height() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
+    bool isEmpty() const { return size().isEmpty(); }
     Rect rect() const { return { top(), left(), width(), height() }; }
     Rect rectWithMargin() const;
 

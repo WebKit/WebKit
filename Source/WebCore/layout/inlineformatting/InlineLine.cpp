@@ -223,13 +223,6 @@ Line::~Line()
 {
 }
 
-static bool isInlineContainerConsideredEmpty(const FormattingContext& formattingContext, const Box& layoutBox)
-{
-    // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered empty.
-    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
-    return !(boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()));
-}
-
 static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)
 {
     if (!inlineTextItem.isWhitespace())
@@ -244,41 +237,6 @@ static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
         return true;
     auto whitespace = inlineTextItem.style().whiteSpace();
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
-}
-
-bool Line::isVisuallyEmpty() const
-{
-    // FIXME: This should be cached instead -as the inline items are being added.
-    // Return true for empty inline containers like <span></span>.
-    auto& formattingContext = this->formattingContext();
-    for (auto& run : m_inlineItemRuns) {
-        if (run->isText()) {
-            if (!run->isCollapsedToZeroAdvanceWidth())
-                return false;
-            continue;
-        }
-        if (run->isContainerStart()) {
-            if (!isInlineContainerConsideredEmpty(formattingContext, run->layoutBox()))
-                return false;
-            continue;
-        }
-        if (run->isContainerEnd())
-            continue;
-        if (run->isBox()) {
-            if (!run->layoutBox().establishesFormattingContext())
-                return false;
-            ASSERT(run->layoutBox().isInlineBlockBox());
-            auto& boxGeometry = formattingContext.geometryForBox(run->layoutBox());
-            if (!boxGeometry.width())
-                continue;
-            if (m_skipAlignment || boxGeometry.height())
-                return false;
-            continue;
-        }
-        if (run->isForcedLineBreak())
-            return false;
-    }
-    return true;
 }
 
 Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
@@ -575,11 +533,15 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto horizontalMargin = formattingContext().geometryForBox(inlineItem.layoutBox()).horizontalMargin();
+    auto& layoutBox = inlineItem.layoutBox();
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+    auto horizontalMargin = boxGeometry.horizontalMargin();
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, Display::Rect { 0, contentLogicalWidth() + horizontalMargin.start, logicalWidth, { } }));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_lineBox.setIsConsideredNonEmpty();
     m_trimmableContent.clear();
+    if (!layoutBox.establishesFormattingContext() || !boxGeometry.isEmpty())
+        m_lineBox.setIsConsideredNonEmpty();
 }
 
 void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)

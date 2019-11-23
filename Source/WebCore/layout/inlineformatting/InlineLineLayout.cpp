@@ -177,7 +177,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
             if (processUncommittedContent() == IsEndOfLine::Yes)
                 return IsEndOfLine::Yes;
         }
-        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasIntrusiveFloat;
+        auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_lineHasIntrusiveFloat;
         if (LineBreaker().shouldWrapFloatBox(itemLogicalWidth, m_line.availableWidth() + m_line.trailingTrimmableWidth(), lineIsConsideredEmpty))
             return IsEndOfLine::Yes;
 
@@ -213,7 +213,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
 LineLayout::IsEndOfLine LineLayout::processUncommittedContent()
 {
     // Check if the pending content fits.
-    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasIntrusiveFloat;
+    auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_lineHasIntrusiveFloat;
     auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent.runs(), m_uncommittedContent.width(), m_line.availableWidth(), lineIsConsideredEmpty);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
