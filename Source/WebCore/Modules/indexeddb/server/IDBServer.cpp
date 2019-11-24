@@ -46,28 +46,28 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, StorageQuotaManagerSpaceRequester&& quotaManagerGetter)
+Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, QuotaManagerGetter&& quotaManagerGetter)
 {
     return adoptRef(*new IDBServer(sessionID, WTFMove(quotaManagerGetter)));
 }
 
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& quotaManagerGetter)
+Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, QuotaManagerGetter&& quotaManagerGetter)
 {
     return adoptRef(*new IDBServer(sessionID, databaseDirectoryPath, WTFMove(quotaManagerGetter)));
 }
 
-IDBServer::IDBServer(PAL::SessionID sessionID, StorageQuotaManagerSpaceRequester&& spaceRequester)
+IDBServer::IDBServer(PAL::SessionID sessionID, QuotaManagerGetter&& quotaManagerGetter)
     : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
-    , m_spaceRequester(WTFMove(spaceRequester))
+    , m_quotaManagerGetter(WTFMove(quotaManagerGetter))
 {
 }
 
-IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester)
+IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, QuotaManagerGetter&& quotaManagerGetter)
     : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
     , m_databaseDirectoryPath(databaseDirectoryPath)
-    , m_spaceRequester(WTFMove(spaceRequester))
+    , m_quotaManagerGetter(WTFMove(quotaManagerGetter))
 {
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
     postDatabaseTask(createCrossThreadTask(*this, &IDBServer::upgradeFilesIfNecessary));
@@ -683,24 +683,157 @@ void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOr
 
 void IDBServer::didPerformCloseAndDeleteDatabases(uint64_t callbackID)
 {
+    for (auto& user : m_quotaUsers.values())
+        user->resetSpaceUsed();
+
     auto callback = m_deleteDatabaseCompletionHandlers.take(callbackID);
     ASSERT(callback);
     callback();
 }
 
-StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize)
+IDBServer::QuotaUser::QuotaUser(IDBServer& server, StorageQuotaManager* manager, ClientOrigin&& origin)
+    : m_server(server)
+    , m_manager(makeWeakPtr(manager))
+    , m_origin(WTFMove(origin))
+    , m_isInitialized(m_server.m_sessionID.isEphemeral())
 {
-    ASSERT(!isMainThread());
-    return m_spaceRequester(origin, taskSize);
+    if (manager)
+        manager->addUser(*this);
 }
 
-uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin)
+IDBServer::QuotaUser::~QuotaUser()
+{
+    if (m_manager)
+        m_manager->removeUser(*this);
+}
+
+void IDBServer::QuotaUser::resetSpaceUsed()
+{
+    m_spaceUsed = 0;
+
+    if (!m_manager)
+        return;
+
+    if (m_server.m_sessionID.isEphemeral())
+        return;
+
+    if (!m_isInitialized)
+        return;
+
+    ASSERT(!m_initializationCallback);
+
+    m_isInitialized = false;
+
+    // Do add/remove to trigger call to whenInitialized.
+    m_manager->removeUser(*this);
+    m_manager->addUser(*this);
+}
+
+void IDBServer::QuotaUser::computeSpaceUsed()
+{
+    resetSpaceUsed();
+}
+
+void IDBServer::QuotaUser::increaseSpaceUsed(uint64_t size)
+{
+    if (!m_isInitialized)
+        return;
+    ASSERT(m_spaceUsed + size > m_spaceUsed);
+    m_spaceUsed += size;
+}
+void IDBServer::QuotaUser::decreaseSpaceUsed(uint64_t size)
+{
+    if (!m_isInitialized)
+        return;
+    ASSERT(m_spaceUsed >= size);
+    m_spaceUsed -= size;
+}
+
+void IDBServer::QuotaUser::whenInitialized(CompletionHandler<void()>&& callback)
+{
+    if (m_isInitialized) {
+        callback();
+        return;
+    }
+    m_initializationCallback = WTFMove(callback);
+    m_server.startComputingSpaceUsedForOrigin(m_origin);
+}
+
+void IDBServer::QuotaUser::initializeSpaceUsed(uint64_t spaceUsed)
+{
+    ASSERT(m_isInitialized || !m_estimatedSpaceIncrease);
+    m_spaceUsed = spaceUsed;
+    m_isInitialized = true;
+
+    if (auto callback = WTFMove(m_initializationCallback))
+        callback();
+}
+
+IDBServer::QuotaUser& IDBServer::ensureQuotaUser(const ClientOrigin& origin)
+{
+    return *m_quotaUsers.ensure(origin, [this, &origin] {
+        return makeUnique<QuotaUser>(*this, m_quotaManagerGetter(m_sessionID, origin), ClientOrigin { origin });
+    }).iterator->value;
+}
+
+void IDBServer::startComputingSpaceUsedForOrigin(const ClientOrigin& origin)
+{
+    ASSERT(!m_sessionID.isEphemeral());
+    postDatabaseTask(createCrossThreadTask(*this, &IDBServer::computeSpaceUsedForOrigin, origin));
+}
+
+void IDBServer::computeSpaceUsedForOrigin(const ClientOrigin& origin)
 {
     ASSERT(!isMainThread());
 
-    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v0"_str);
-    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v1"_str);
-    return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
+    auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
+    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v0");
+    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, databaseDirectoryPath, "v1");
+    auto size = SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
+
+    postDatabaseTaskReply(createCrossThreadTask(*this, &IDBServer::finishComputingSpaceUsedForOrigin, origin, size));
+}
+
+void IDBServer::finishComputingSpaceUsedForOrigin(const ClientOrigin& origin, uint64_t spaceUsed)
+{
+    ensureQuotaUser(origin).initializeSpaceUsed(spaceUsed);
+}
+
+void IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize, CompletionHandler<void(StorageQuotaManager::Decision)>&& callback)
+{
+    auto* quotaManager = ensureQuotaUser(origin).manager();
+    if (!quotaManager) {
+        callback(StorageQuotaManager::Decision::Deny);
+        return;
+    }
+
+    quotaManager->requestSpace(taskSize, WTFMove(callback));
+}
+
+void IDBServer::resetSpaceUsed(const ClientOrigin& origin)
+{
+    if (auto* user = m_quotaUsers.get(origin))
+        user->resetSpaceUsed();
+}
+
+void IDBServer::increaseSpaceUsed(const ClientOrigin& origin, uint64_t size)
+{
+    ensureQuotaUser(origin).increaseSpaceUsed(size);
+}
+
+void IDBServer::decreaseSpaceUsed(const ClientOrigin& origin, uint64_t size)
+{
+    ensureQuotaUser(origin).decreaseSpaceUsed(size);
+}
+
+void IDBServer::increasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t taskSize)
+{
+    ensureQuotaUser(origin).increasePotentialSpaceUsed(taskSize);
+}
+
+void IDBServer::decreasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t spaceUsed)
+{
+    ensureQuotaUser(origin).decreasePotentialSpaceUsed(spaceUsed);
 }
 
 void IDBServer::upgradeFilesIfNecessary()

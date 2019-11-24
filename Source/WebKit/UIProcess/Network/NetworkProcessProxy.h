@@ -56,7 +56,6 @@ enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 class SecurityOrigin;
 struct SecurityOriginData;
-struct ClientOrigin;
 }
 
 namespace WebKit {
@@ -196,8 +195,6 @@ public:
 
     void registerSchemeForLegacyCustomProtocol(const String&);
     void unregisterSchemeForLegacyCustomProtocol(const String&);
-
-    void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
 private:
     // AuxiliaryProcessProxy

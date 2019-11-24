@@ -686,11 +686,3 @@ void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteDataStoreRe
 {
     WebKit::toImpl(dataStoreRef)->setCacheModelSynchronouslyForTesting(WebKit::toCacheModel(cacheModel));
 }
-
-void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreResetQuotaCallback callback)
-{
-    WebKit::toImpl(dataStoreRef)->resetQuota([context, callback] {
-        if (callback)
-            callback(context);
-    });
-}

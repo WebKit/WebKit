@@ -30,6 +30,7 @@
 #include "IDBConnectionToClient.h"
 #include "IDBDatabaseIdentifier.h"
 #include "StorageQuotaManager.h"
+#include "StorageQuotaUser.h"
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include <pal/HysteresisActivity.h>
@@ -57,9 +58,9 @@ enum class ShouldForceStop : bool { No, Yes };
 
 class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
 public:
-    using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
-    static Ref<IDBServer> create(PAL::SessionID, StorageQuotaManagerSpaceRequester&&);
-    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
+    using QuotaManagerGetter = WTF::Function<StorageQuotaManager*(PAL::SessionID, const ClientOrigin&)>;
+    static Ref<IDBServer> create(PAL::SessionID, QuotaManagerGetter&&);
+    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, QuotaManagerGetter&&);
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
     WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
@@ -110,8 +111,14 @@ public:
     WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime, Function<void ()>&& completionHandler);
     WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
 
-    StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
-    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
+    void requestSpace(const ClientOrigin&, uint64_t taskSize, CompletionHandler<void(StorageQuotaManager::Decision)>&&);
+    void increasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
+    void decreasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
+    void increaseSpaceUsed(const ClientOrigin&, uint64_t size);
+    void decreaseSpaceUsed(const ClientOrigin&, uint64_t size);
+    void resetSpaceUsed(const ClientOrigin&);
+
+    void initializeQuotaUser(const ClientOrigin& origin) { ensureQuotaUser(origin); }
 
     WEBCORE_EXPORT void tryStop(ShouldForceStop);
     WEBCORE_EXPORT void resume();
@@ -120,8 +127,8 @@ public:
     void removeDatabase(UniqueIDBDatabase& database) { m_allUniqueIDBDatabases.remove(database); }
 
 private:
-    IDBServer(PAL::SessionID, StorageQuotaManagerSpaceRequester&&);
-    IDBServer(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
+    IDBServer(PAL::SessionID, QuotaManagerGetter&&);
+    IDBServer(PAL::SessionID, const String& databaseDirectoryPath, QuotaManagerGetter&&);
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
     
@@ -138,6 +145,51 @@ private:
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
     void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
 
+    class QuotaUser final : public StorageQuotaUser {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        QuotaUser(IDBServer&, StorageQuotaManager*, ClientOrigin&&);
+        ~QuotaUser();
+
+        StorageQuotaManager* manager() { return m_manager.get(); }
+
+        void setSpaceUsed(uint64_t spaceUsed) { m_spaceUsed = spaceUsed; }
+        void resetSpaceUsed();
+
+        void increasePotentialSpaceUsed(uint64_t increase) { m_estimatedSpaceIncrease += increase; }
+        void decreasePotentialSpaceUsed(uint64_t decrease)
+        {
+            ASSERT(m_estimatedSpaceIncrease >= decrease);
+            m_estimatedSpaceIncrease -= decrease;
+        }
+        void increaseSpaceUsed(uint64_t size);
+        void decreaseSpaceUsed(uint64_t size);
+
+        void initializeSpaceUsed(uint64_t spaceUsed);
+
+    private:
+        uint64_t spaceUsed() const final
+        {
+            ASSERT(m_isInitialized);
+            return m_spaceUsed + m_estimatedSpaceIncrease;
+        }
+        void computeSpaceUsed() final;
+        void whenInitialized(CompletionHandler<void()>&&) final;
+
+        IDBServer& m_server;
+        WeakPtr<StorageQuotaManager> m_manager;
+        ClientOrigin m_origin;
+        bool m_isInitialized { false };
+        uint64_t m_spaceUsed { 0 };
+        uint64_t m_estimatedSpaceIncrease { 0 };
+        CompletionHandler<void()> m_initializationCallback;
+    };
+
+    WEBCORE_EXPORT QuotaUser& ensureQuotaUser(const ClientOrigin&);
+    void startComputingSpaceUsedForOrigin(const ClientOrigin&);
+    void computeSpaceUsedForOrigin(const ClientOrigin&);
+    void finishComputingSpaceUsedForOrigin(const ClientOrigin&, uint64_t spaceUsed);
+
     PAL::SessionID m_sessionID;
     HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
@@ -150,7 +202,8 @@ private:
 
     String m_databaseDirectoryPath;
 
-    StorageQuotaManagerSpaceRequester m_spaceRequester;
+    HashMap<ClientOrigin, std::unique_ptr<QuotaUser>> m_quotaUsers;
+    QuotaManagerGetter m_quotaManagerGetter;
 };
 
 } // namespace IDBServer

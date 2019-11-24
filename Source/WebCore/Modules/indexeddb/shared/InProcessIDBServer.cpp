@@ -64,35 +64,30 @@ InProcessIDBServer::~InProcessIDBServer() = default;
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
 {
     return m_quotaManagers.ensure(origin, [] {
-        return StorageQuotaManager::create(StorageQuotaManager::defaultQuota(), [] {
-            return 0;
-        }, [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+        return makeUnique<StorageQuotaManager>(StorageQuotaManager::defaultQuota(), [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             callback(quota + currentSpace + spaceIncrease);
         });
     }).iterator->value.get();
 }
 
-static inline IDBServer::IDBServer::StorageQuotaManagerSpaceRequester storageQuotaManagerSpaceRequester(InProcessIDBServer& server)
+static inline IDBServer::IDBServer::QuotaManagerGetter storageQuotaManagerGetter(InProcessIDBServer& server)
 {
-    return [server = &server, weakServer = makeWeakPtr(server)](const ClientOrigin& origin, uint64_t spaceRequested) mutable {
-        auto* storageQuotaManager = weakServer ? server->quotaManager(origin) : nullptr;
-        return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
+    return [weakServer = makeWeakPtr(server)](PAL::SessionID, const auto& origin) {
+        return weakServer ? weakServer->quotaManager(origin) : nullptr;
     };
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID)
-    : m_server(IDBServer::IDBServer::create(sessionID, storageQuotaManagerSpaceRequester(*this)))
+    : m_server(IDBServer::IDBServer::create(sessionID, storageQuotaManagerGetter(*this)))
 {
-    ASSERT(isMainThread());
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
     m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
-    : m_server(IDBServer::IDBServer::create(sessionID, databaseDirectoryPath, storageQuotaManagerSpaceRequester(*this)))
+    : m_server(IDBServer::IDBServer::create(sessionID, databaseDirectoryPath, storageQuotaManagerGetter(*this)))
 {
-    ASSERT(isMainThread());
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
     m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);

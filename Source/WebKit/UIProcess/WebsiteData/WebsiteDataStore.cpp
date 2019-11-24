@@ -2083,12 +2083,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
     }
 
-    auto cacheStorageDirectory = this->cacheStorageDirectory();
-    if (!cacheStorageDirectory.isEmpty()) {
-        SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
-        parameters.cacheStorageDirectory = cacheStorageDirectory;
-    }
-
 #if ENABLE(INDEXED_DATABASE)
     parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
     if (!parameters.indexedDatabaseDirectory.isEmpty())
@@ -2173,15 +2167,6 @@ void WebsiteDataStore::getLocalStorageDetails(Function<void(Vector<LocalStorageD
         break;
     }
     ASSERT(!completionHandler);
-}
-
-void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& processPool : processPools()) {
-        if (auto* process = processPool->networkProcess())
-            process->resetQuota(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
-    }
 }
 
 #if !PLATFORM(COCOA)

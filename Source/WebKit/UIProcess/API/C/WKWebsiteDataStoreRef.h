@@ -155,9 +155,6 @@ WK_EXPORT void WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemov
 
 WK_EXPORT void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteDataStoreRef dataStoreRef, WKCacheModel cacheModel);
 
-typedef void (*WKWebsiteDataStoreResetQuotaCallback)(void* functionContext);
-WK_EXPORT void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreResetQuotaCallback callback);
-
 #ifdef __cplusplus
 }
 #endif

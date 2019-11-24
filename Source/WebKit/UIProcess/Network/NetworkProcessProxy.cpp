@@ -1367,11 +1367,6 @@ void NetworkProcessProxy::updateProcessAssertion()
     m_activityFromWebProcesses = nullptr;
 }
 
-void NetworkProcessProxy::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::ResetQuota(sessionID), WTFMove(completionHandler));
-}
-
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

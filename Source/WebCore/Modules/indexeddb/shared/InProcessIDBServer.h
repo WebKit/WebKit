@@ -64,6 +64,7 @@ public:
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer& connectionToServer() const;
     IDBServer::IDBConnectionToClient& connectionToClient() const;
     IDBServer::IDBServer& server() { return m_server.get(); }
+
     IDBServer::IDBServer& idbServer() { return m_server.get(); }
 
     // IDBConnectionToServer
@@ -134,7 +135,7 @@ private:
     RefPtr<IDBClient::IDBConnectionToServer> m_connectionToServer;
     RefPtr<IDBServer::IDBConnectionToClient> m_connectionToClient;
 
-    HashMap<ClientOrigin, RefPtr<StorageQuotaManager>> m_quotaManagers;
+    HashMap<ClientOrigin, std::unique_ptr<StorageQuotaManager>> m_quotaManagers;
 };
 
 } // namespace WebCore
