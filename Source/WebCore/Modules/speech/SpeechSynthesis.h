@@ -98,7 +98,7 @@ private:
     
     std::unique_ptr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<Ref<SpeechSynthesisVoice>> m_voiceList;
-    SpeechSynthesisUtterance* m_currentSpeechUtterance;
+    RefPtr<SpeechSynthesisUtterance> m_currentSpeechUtterance;
     Deque<Ref<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
 #if PLATFORM(IOS_FAMILY)

@@ -149,9 +149,10 @@ void SpeechSynthesis::cancel()
     // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
     RefPtr<SpeechSynthesisUtterance> current = m_currentSpeechUtterance;
     m_utteranceQueue.clear();
-    if (m_speechSynthesisClient)
+    if (m_speechSynthesisClient) {
         m_speechSynthesisClient->cancel();
-    else if (m_platformSpeechSynthesizer) {
+        m_currentSpeechUtterance = nullptr;
+    } else if (m_platformSpeechSynthesizer) {
         m_platformSpeechSynthesizer->cancel();
         // The platform should have called back immediately and cleared the current utterance.
         ASSERT(!m_currentSpeechUtterance);
