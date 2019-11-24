@@ -863,7 +863,6 @@ runtime/JSSourceCode.cpp
 runtime/JSString.cpp
 runtime/JSStringIterator.cpp
 runtime/JSStringJoiner.cpp
-runtime/JSStringHeapCellType.cpp
 runtime/JSSymbolTableObject.cpp
 runtime/JSTemplateObjectDescriptor.cpp
 runtime/JSType.cpp
@@ -1042,7 +1041,6 @@ wasm/js/JSToWasm.h
 wasm/js/JSToWasmICCallee.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyCodeBlock.cpp
-wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp
 wasm/js/JSWebAssemblyCompileError.cpp
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/JSWebAssemblyLinkError.cpp
@@ -1056,7 +1054,6 @@ wasm/js/WebAssemblyCompileErrorConstructor.cpp
 wasm/js/WebAssemblyCompileErrorPrototype.cpp
 wasm/js/WebAssemblyFunction.cpp
 wasm/js/WebAssemblyFunctionBase.cpp
-wasm/js/WebAssemblyFunctionHeapCellType.cpp
 wasm/js/WebAssemblyInstanceConstructor.cpp
 wasm/js/WebAssemblyInstancePrototype.cpp
 wasm/js/WebAssemblyLinkErrorConstructor.cpp

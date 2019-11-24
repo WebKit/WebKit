@@ -69,6 +69,7 @@
 #include "IntlDateTimeFormatConstructor.h"
 #include "IntlNumberFormatConstructor.h"
 #include "IntlPluralRulesConstructor.h"
+#include "IsoHeapCellType.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
@@ -96,14 +97,12 @@
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "JSSourceCode.h"
-#include "JSStringHeapCellType.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
 #include "JSWeakSet.h"
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyCodeBlock.h"
-#include "JSWebAssemblyCodeBlockHeapCellType.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWithScope.h"
 #include "LLIntData.h"
@@ -151,7 +150,6 @@
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WebAssemblyFunction.h"
-#include "WebAssemblyFunctionHeapCellType.h"
 #include "WebAssemblyWrapperFunction.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
@@ -263,11 +261,13 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
     , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
-    , stringHeapCellType(makeUnique<JSStringHeapCellType>())
+    , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
+    , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
+    , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
     , destructibleObjectHeapCellType(makeUnique<JSDestructibleObjectHeapCellType>())
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyCodeBlockHeapCellType(makeUnique<JSWebAssemblyCodeBlockHeapCellType>())
-    , webAssemblyFunctionHeapCellType(makeUnique<WebAssemblyFunctionHeapCellType>())
+    , webAssemblyCodeBlockHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyCodeBlock>>())
+    , webAssemblyFunctionHeapCellType(makeUnique<IsoHeapCellType<WebAssemblyFunction>>())
 #endif
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
     , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x241e946
@@ -1307,8 +1307,8 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedEvalCodeBlockSpace, destructible
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedFunctionCodeBlockSpace, destructibleCellHeapCellType.get(), UnlinkedFunctionCodeBlock)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedModuleProgramCodeBlockSpace, destructibleCellHeapCellType.get(), UnlinkedModuleProgramCodeBlock)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedProgramCodeBlockSpace, destructibleCellHeapCellType.get(), UnlinkedProgramCodeBlock)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, destructibleObjectHeapCellType.get(), JSWeakMap) // Hash:0x662b12a3
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, destructibleObjectHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, weakMapHeapCellType.get(), JSWeakMap) // Hash:0x662b12a3
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, weakSetHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef) // Hash:0x8ec68f1f
 #if JSC_OBJC_API_ENABLED
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, destructibleObjectHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8

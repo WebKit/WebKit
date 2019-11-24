@@ -127,8 +127,9 @@ class JSObject;
 class JSPromise;
 class JSPropertyNameEnumerator;
 class JSRunLoopTimer;
-class JSStringHeapCellType;
-class JSWebAssemblyCodeBlockHeapCellType;
+class JSWeakMap;
+class JSWeakSet;
+class JSWebAssemblyCodeBlock;
 class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
@@ -162,7 +163,9 @@ class TopLevelGlobalObjectScope;
 class Watchdog;
 class Watchpoint;
 class WatchpointSet;
-class WebAssemblyFunctionHeapCellType;
+class WebAssemblyFunction;
+
+template<typename CellType> class IsoHeapCellType;
 
 #if ENABLE(FTL_JIT)
 namespace FTL {
@@ -339,11 +342,13 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
-    std::unique_ptr<JSStringHeapCellType> stringHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
 #if ENABLE(WEBASSEMBLY)
-    std::unique_ptr<JSWebAssemblyCodeBlockHeapCellType> webAssemblyCodeBlockHeapCellType;
-    std::unique_ptr<WebAssemblyFunctionHeapCellType> webAssemblyFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
+    std::unique_ptr<IsoHeapCellType<WebAssemblyFunction>> webAssemblyFunctionHeapCellType;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.

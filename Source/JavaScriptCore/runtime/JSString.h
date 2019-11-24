@@ -92,7 +92,10 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis;
 
     static constexpr bool needsDestruction = true;
-    static void destroy(JSCell*);
+    static ALWAYS_INLINE void destroy(JSCell* cell)
+    {
+        static_cast<JSString*>(cell)->JSString::~JSString();
+    }
     
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
     // necessary if JSString didn't have a destructor.

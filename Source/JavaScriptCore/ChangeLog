@@ -1,3 +1,34 @@
+2019-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce IsoHeapCellType
+        https://bugs.webkit.org/show_bug.cgi?id=204555
+
+        Reviewed by Mark Lam.
+
+        We introduce IsoHeapCellType<CellType>, which destroys cell based on CellType information, which should be in IsoSubspace.
+        By using this, we can avoid inheriting JSDestructibleObject. For each IsoSubspace, we know how to destroy cells if we use
+        IsoHeapCellType<CellType> without using methodTable. We start using it for, JSString, JSWeakMap, JSWeakSet, WebAssemblyFunction,
+        and JSWebAssemblyCodeBlock. And we use JSNonFinalObject for the base of JSWeakMap and JSWeakSet, which shrinks size of them
+        from 48 to 32.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/IsoHeapCellType.h: Renamed from Source/JavaScriptCore/wasm/js/WebAssemblyFunctionHeapCellType.h.
+        * runtime/JSString.cpp:
+        (JSC::JSString::destroy): Deleted.
+        * runtime/JSString.h:
+        (JSC::JSString::destroy):
+        * runtime/JSStringHeapCellType.cpp: Removed.
+        * runtime/JSStringHeapCellType.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapImpl.h:
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp: Removed.
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.h: Removed.
+        * wasm/js/WebAssemblyFunctionHeapCellType.cpp: Removed.
+
 2019-11-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] GetSubstitution is performed incorrectly via RegExp.prototype[@@replace]

@@ -64,11 +64,6 @@ void JSRopeString::RopeBuilder<RecordOverflow>::expand()
     m_strings.append(string);
 }
 
-void JSString::destroy(JSCell* cell)
-{
-    static_cast<JSString*>(cell)->JSString::~JSString();
-}
-
 void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     VM& vm = cell->vm();
