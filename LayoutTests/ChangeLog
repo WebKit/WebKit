@@ -1,3 +1,28 @@
+2019-11-23  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Allow multiple third-party cookie blocking settings
+        https://bugs.webkit.org/show_bug.cgi?id=204389
+        <rdar://problem/57344054>
+
+        Reviewed by Brent Fulgham.
+
+        The added tests existed before and are not re-introduced to test their dedicated setting.
+
+        The changed tests have been expanded to cover the new code paths.
+
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html: Added.
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-database-expected.txt:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-database.html:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-expected.txt:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-database-expected.txt:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-database.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-expected.txt:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html:
+
 2019-11-23  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Garden dedicated queue (Part 2)

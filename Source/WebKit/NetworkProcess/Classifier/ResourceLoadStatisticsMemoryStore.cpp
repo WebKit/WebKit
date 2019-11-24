@@ -212,12 +212,26 @@ void ResourceLoadStatisticsMemoryStore::syncStorageImmediately()
         m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
 }
 
-CookieAccess ResourceLoadStatisticsMemoryStore::cookieAccess(const ResourceLoadStatistics& resourceStatistic) const
+bool ResourceLoadStatisticsMemoryStore::areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain& topFrameDomain)
 {
-    if (!isThirdPartyCookieBlockingEnabled() && !resourceStatistic.isPrevalentResource)
+    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All)
+        return true;
+
+    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction && !hasHadUserInteraction(topFrameDomain, OperatingDatesWindow::Long))
+        return true;
+
+    return false;
+}
+
+CookieAccess ResourceLoadStatisticsMemoryStore::cookieAccess(const ResourceLoadStatistics& resourceStatistic, const TopFrameDomain& topFrameDomain)
+{
+    bool isPrevalent = resourceStatistic.isPrevalentResource;
+    bool hadUserInteraction = resourceStatistic.hadUserInteraction;
+
+    if (!areAllThirdPartyCookiesBlockedUnder(topFrameDomain) && !isPrevalent)
         return CookieAccess::BasedOnCookiePolicy;
 
-    if (!resourceStatistic.hadUserInteraction)
+    if (!hadUserInteraction)
         return CookieAccess::CannotRequest;
     
     return CookieAccess::OnlyIfGranted;
@@ -228,7 +242,7 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    switch (cookieAccess(subFrameStatistic)) {
+    switch (cookieAccess(subFrameStatistic, topFrameDomain)) {
     case CookieAccess::CannotRequest:
         completionHandler(false);
         return;
@@ -260,7 +274,7 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& su
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    switch (cookieAccess(subFrameStatistic)) {
+    switch (cookieAccess(subFrameStatistic, topFrameDomain)) {
     case CookieAccess::CannotRequest:
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Cannot grant storage access to %{public}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::CannotRequestAccess);
@@ -439,13 +453,19 @@ void ResourceLoadStatisticsMemoryStore::logCrossSiteLoadWithLinkDecoration(const
         toStatistics.gotLinkDecorationFromPrevalentResource = true;
 }
 
-void ResourceLoadStatisticsMemoryStore::clearUserInteraction(const RegistrableDomain& domain)
+void ResourceLoadStatisticsMemoryStore::clearUserInteraction(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(domain);
+    bool didHavePreviousUserInteraction = statistics.hadUserInteraction;
     statistics.hadUserInteraction = false;
     statistics.mostRecentUserInteractionTime = { };
+    if (!didHavePreviousUserInteraction) {
+        completionHandler();
+        return;
+    }
+    updateCookieBlocking(WTFMove(completionHandler));
 }
 
 bool ResourceLoadStatisticsMemoryStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)

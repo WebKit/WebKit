@@ -538,10 +538,10 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTestin
 #endif
 }
 
-void WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTestingFunction completionHandler)
+void WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(WKWebsiteDataStoreRef dataStoreRef, bool enabled, bool onlyOnSitesWithoutUserInteraction, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTestingFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(enabled, [context, completionHandler] {
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(enabled, onlyOnSitesWithoutUserInteraction, [context, completionHandler] {
         completionHandler(context);
     });
 #else
@@ -561,7 +561,7 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
     store.resetCacheMaxAgeCapForPrevalentResources([callbackAggregator = callbackAggregator.copyRef()] { });
     store.resetCrossSiteLoadsWithLinkDecorationForTesting([callbackAggregator = callbackAggregator.copyRef()] { });
     store.setResourceLoadStatisticsShouldDowngradeReferrerForTesting(true, [callbackAggregator = callbackAggregator.copyRef()] { });
-    store.setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(false, [callbackAggregator = callbackAggregator.copyRef()] { });
+    store.setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(false, false, [callbackAggregator = callbackAggregator.copyRef()] { });
     store.resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
     store.scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [callbackAggregator = callbackAggregator.copyRef()] { });
     store.setUseITPDatabase(false, [callbackAggregator = callbackAggregator.copyRef()] { });

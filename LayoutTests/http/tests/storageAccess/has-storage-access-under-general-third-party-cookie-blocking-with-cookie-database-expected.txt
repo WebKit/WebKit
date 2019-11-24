@@ -8,6 +8,7 @@ PASS Has storage access. document.cookie == firstPartyCookie=value, cookies seen
 PASS Has storage access. document.cookie == firstPartyCookie=value, cookies seen server-side == {"firstPartyCookie":"value"}
 PASS No storage access. document.cookie == , cookies seen server-side == "No cookies"
 PASS No storage access. document.cookie == , cookies seen server-side == "No cookies"
+PASS No storage access. document.cookie == , cookies seen server-side == "No cookies"
 PASS successfullyParsed is true
 
 TEST COMPLETE

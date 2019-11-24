@@ -1257,7 +1257,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
 
     ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
 
-    switch (cookieAccess(subFrameDomain)) {
+    switch (cookieAccess(subFrameDomain, topFrameDomain)) {
     case CookieAccess::CannotRequest:
         completionHandler(false);
         return;
@@ -1290,7 +1290,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
 
     auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
     
-    switch (cookieAccess(subFrameDomain)) {
+    switch (cookieAccess(subFrameDomain, topFrameDomain)) {
     case CookieAccess::CannotRequest:
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Cannot grant storage access to %{private}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::CannotRequestAccess);
@@ -1499,7 +1499,7 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
     updateCookieBlocking(WTFMove(completionHandler));
 }
 
-void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const RegistrableDomain& domain)
+void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1513,6 +1513,11 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
+
+    // Update cookie blocking unconditionally since a call to hasHadUserInteraction()
+    // to check the previous user interaction status could call clearUserInteraction(),
+    // blowing the call stack.
+    updateCookieBlocking(WTFMove(completionHandler));
 }
 
 bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
@@ -1541,7 +1546,7 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
-        clearUserInteraction(domain);
+        clearUserInteraction(domain, [] { });
         hadUserInteraction = false;
     }
     
@@ -1852,29 +1857,35 @@ void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& comp
     updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
-CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const RegistrableDomain& domain) const
+bool ResourceLoadStatisticsDatabaseStore::areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain& topFrameDomain)
+{
+    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All)
+        return true;
+
+    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction && !hasHadUserInteraction(topFrameDomain, OperatingDatesWindow::Long))
+        return true;
+
+    return false;
+}
+
+CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain)
 {
     ASSERT(!RunLoop::isMain());
 
     SQLiteStatement statement(m_database, "SELECT isPrevalent, hadUserInteraction FROM ObservedDomains WHERE registrableDomain = ?");
     if (statement.prepare() != SQLITE_OK
-        || statement.bindText(1, domain.string()) != SQLITE_OK) {
+        || statement.bindText(1, subresourceDomain.string()) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::cookieAccess failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
-    
+
     bool hasNoEntry = statement.step() != SQLITE_ROW;
-    if (hasNoEntry) {
-        if (isThirdPartyCookieBlockingEnabled())
-            return CookieAccess::OnlyIfGranted;
-        return CookieAccess::BasedOnCookiePolicy;
-    }
+    bool isPrevalent = !hasNoEntry && !!statement.getColumnInt(0);
+    bool hadUserInteraction = !hasNoEntry && statement.getColumnInt(1) ? true : false;
 
-    bool isPrevalent = !!statement.getColumnInt(0);
-    if (!isPrevalent && !isThirdPartyCookieBlockingEnabled())
+    if (!areAllThirdPartyCookiesBlockedUnder(topFrameDomain) && !isPrevalent)
         return CookieAccess::BasedOnCookiePolicy;
 
-    bool hadUserInteraction = statement.getColumnInt(1) ? true : false;
     if (!hadUserInteraction)
         return CookieAccess::CannotRequest;
 
@@ -2062,7 +2073,7 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
 bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(const DomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
 {
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow)) {
-        clearUserInteraction(resourceStatistic.registrableDomain);
+        clearUserInteraction(resourceStatistic.registrableDomain, [] { });
         return false;
     }
 

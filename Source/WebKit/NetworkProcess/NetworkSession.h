@@ -30,6 +30,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BlobRegistryImpl.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
@@ -97,7 +98,7 @@ public:
     virtual void clearIsolatedSessions() { }
     void setShouldDowngradeReferrerForTesting(bool);
     bool shouldDowngradeReferrer() const;
-    void setIsThirdPartyCookieBlockingEnabled(bool);
+    void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -144,7 +145,7 @@ protected:
     WebCore::RegistrableDomain m_resourceLoadStatisticsManualPrevalentResource;
     bool m_enableResourceLoadStatisticsLogTestingEvent;
     bool m_downgradeReferrer { true };
-    bool m_thirdPartyCookieBlockingEnabled { false };
+    WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction };
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;

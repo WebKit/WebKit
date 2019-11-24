@@ -1057,14 +1057,14 @@ void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, Com
     sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, enabled), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, blockingMode), WTFMove(completionHandler));
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

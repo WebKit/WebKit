@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SandboxExtension.h"
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
@@ -85,7 +86,7 @@ struct NetworkSessionCreationParameters {
     bool enableResourceLoadStatisticsLogTestingEvent { false };
     bool shouldIncludeLocalhostInResourceLoadStatistics { true };
     bool enableResourceLoadStatisticsDebugMode { false };
-    bool enableThirdPartyCookieBlocking { false };
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction };
     bool deviceManagementRestrictionsEnabled { false };
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };

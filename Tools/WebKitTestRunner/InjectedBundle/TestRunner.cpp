@@ -33,6 +33,7 @@
 #include "StringFunctions.h"
 #include "TestController.h"
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundleBackForwardList.h>
@@ -2223,13 +2224,15 @@ void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
     m_hasSetDowngradeReferrerCallback = false;
 }
 
-void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef completionHandler)
+void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef completionHandler, bool onlyOnSitesWithoutUserInteraction)
 {
     if (m_hasSetBlockThirdPartyCookiesCallback)
         return;
-    
+
     cacheTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID, completionHandler);
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldBlockThirdPartyCookies"));
+    if (onlyOnSitesWithoutUserInteraction)
+        messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
     m_hasSetBlockThirdPartyCookiesCallback = true;

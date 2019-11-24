@@ -1,3 +1,30 @@
+2019-11-23  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Allow multiple third-party cookie blocking settings
+        https://bugs.webkit.org/show_bug.cgi?id=204389
+        <rdar://problem/57344054>
+
+        Reviewed by Brent Fulgham.
+
+        This change introduces an enum ThirdPartyCookieBlockingMode for how third-party
+        cookie blocking should be carried out. It then uses the set mode in 
+        NetworkStorageSession::shouldBlockCookies().
+
+        The reason for supporting three different modes is that what is now named
+        OnlyAccordingToPerDomainPolicy is shipping, AllOnSitesWithoutUserInteraction is
+        in beta, and All is behind an experimental flag.
+
+        Tests: http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html
+               http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html
+
+        * page/Settings.yaml:
+            Flipped the isThirdPartyCookieBlockingEnabled flag to on by default.
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::setThirdPartyCookieBlockingMode):
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::setIsThirdPartyCookieBlockingEnabled): Deleted.
+
 2019-11-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r252805.

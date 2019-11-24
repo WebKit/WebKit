@@ -881,7 +881,7 @@ webRTCEncryptionEnabled:
   inspectorOverride: true
 
 isThirdPartyCookieBlockingEnabled:
-  initial: false
+  initial: true
 
 isLoggedInAPIEnabled:
   initial: false

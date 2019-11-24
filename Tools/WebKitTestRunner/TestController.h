@@ -253,7 +253,7 @@ public:
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(WKStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool value);
-    void setStatisticsShouldBlockThirdPartyCookies(bool value);
+    void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

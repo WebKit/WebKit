@@ -588,6 +588,7 @@ def headers_for_type(type):
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextCheckingType': ['<WebCore/TextChecking.h>'],
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
+        'WebCore::ThirdPartyCookieBlockingMode': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::SelectionRect': ['"EditorState.h"'],

@@ -97,7 +97,8 @@ public:
 
     void calculateAndSubmitTelemetry() const override;
 
-    CookieAccess cookieAccess(const ResourceLoadStatistics&) const;
+    bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) override;
+    CookieAccess cookieAccess(const ResourceLoadStatistics&, const TopFrameDomain&);
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;
     void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) override;
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) override;
@@ -106,7 +107,7 @@ public:
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&) override;
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
-    void clearUserInteraction(const RegistrableDomain&) override;
+    void clearUserInteraction(const RegistrableDomain&, CompletionHandler<void()>&&) override;
     bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;

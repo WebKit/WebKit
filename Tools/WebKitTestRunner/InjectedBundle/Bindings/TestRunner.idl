@@ -342,7 +342,7 @@ interface TestRunner {
     void statisticsResetToConsistentState(object completionHandler);
     boolean hasStatisticsIsolatedSession(DOMString hostName);
     void setStatisticsShouldDowngradeReferrer(boolean value, object callback);
-    void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback);
+    void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

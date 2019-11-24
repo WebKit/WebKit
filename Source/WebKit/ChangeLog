@@ -1,3 +1,105 @@
+2019-11-23  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Allow multiple third-party cookie blocking settings
+        https://bugs.webkit.org/show_bug.cgi?id=204389
+        <rdar://problem/57344054>
+
+        Reviewed by Brent Fulgham.
+
+        This change make the third-party cookie blocking setting go from a boolean to
+        the new enum WebCore::ThirdPartyCookieBlockingMode with three different settings.
+        Functions and member variables are renamed accordingly.
+
+        The reason for supporting three different modes is that what is now named
+        OnlyAccordingToPerDomainPolicy is shipping, AllOnSitesWithoutUserInteraction is
+        in beta, and All is behind an experimental flag.
+
+        The change also updates the test API to map the TestRunner call to the enum.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+            Now makes use of a completion handler and updates the cookie blocking state.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::areAllThirdPartyCookiesBlockedUnder):
+            New convenience function to check the cookie blocking status per first-party domain.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+            Restructured the code to make it very clear that the logic is the same as the
+            corresponding function in ResourceLoadStatisticsMemoryStore.
+            Can no longer be const since it calls areAllThirdPartyCookiesBlockedUnder() which
+            in turn calls hasHadUserInteraction() and that function may clear user interaction data.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess const): Deleted.
+            See comment above on the non-const version of this function.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::areAllThirdPartyCookiesBlockedUnder):
+            New convenience function to check the cookie blocking status per first-party domain.
+        (WebKit::ResourceLoadStatisticsMemoryStore::cookieAccess):
+            Restructured the code to make it very clear that the logic is the same as the
+            corresponding function in ResourceLoadStatisticsDatabaseStore.
+            Can no longer be const since it calls areAllThirdPartyCookiesBlockedUnder() which
+            in turn calls hasHadUserInteraction() and that function may clear user interaction data.
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearUserInteraction):
+            Now makes use of a completion handler and updates the cookie blocking state.
+        (WebKit::ResourceLoadStatisticsMemoryStore::cookieAccess const): Deleted.
+            See comment above on the non-const version of this function.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode):
+        (WebKit::ResourceLoadStatisticsStore::thirdPartyCookieBlockingMode const):
+        (WebKit::ResourceLoadStatisticsStore::setIsThirdPartyCookieBlockingEnabled): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::isThirdPartyCookieBlockingEnabled const): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+            Now forwards the completion handler.
+        (WebKit::WebResourceLoadStatisticsStore::setIsThirdPartyCookieBlockingEnabled): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setShouldBlockThirdPartyCookiesForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            The SetShouldBlockThirdPartyCookiesForTesting message now uses an enum instead of a
+            boolean.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+            Now forwards the enum value instead of a boolean.
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+            Now makes sure the cookie blocking setting is forwarded to the recreated store.
+        (WebKit::NetworkSession::setThirdPartyCookieBlockingMode):
+        (WebKit::NetworkSession::setIsThirdPartyCookieBlockingEnabled): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+            Support for the new enum.
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Scripts/webkit/messages.py:
+            Tells the IPC code generator where to find WebCore::ThirdPartyCookieBlockingMode.
+        * Shared/WebPreferences.yaml:
+            Flipped the IsThirdPartyCookieBlockingEnabled flag to on by default.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+            Makes use of the enum in the NetworkSessionCreationParameters.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-11-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r252805.

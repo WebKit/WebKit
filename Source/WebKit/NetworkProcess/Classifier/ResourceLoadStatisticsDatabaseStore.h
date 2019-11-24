@@ -127,7 +127,7 @@ public:
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&) override;
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
-    void clearUserInteraction(const RegistrableDomain&) override;
+    void clearUserInteraction(const RegistrableDomain&, CompletionHandler<void()>&&) override;
     bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
@@ -194,8 +194,9 @@ private:
 
     bool predicateValueForDomain(WebCore::SQLiteStatement&, const RegistrableDomain&) const;
 
-    CookieAccess cookieAccess(const RegistrableDomain&) const;
-    
+    bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) override;
+    CookieAccess cookieAccess(const SubResourceDomain&, const TopFrameDomain&);
+
     void setPrevalentResource(const RegistrableDomain&, ResourceLoadPrevalence);
     unsigned recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(unsigned primaryDomainID, StdSet<unsigned>& nonPrevalentRedirectionSources, unsigned numberOfRecursiveCalls);
     void setDomainsAsPrevalent(StdSet<unsigned>&&);

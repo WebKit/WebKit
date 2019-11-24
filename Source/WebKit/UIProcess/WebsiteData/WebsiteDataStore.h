@@ -194,7 +194,7 @@ public:
     void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
     void hasIsolatedSessionForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
     void setResourceLoadStatisticsShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
-    void setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool, CompletionHandler<void()>&&);
+    void setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void()>&&);
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);

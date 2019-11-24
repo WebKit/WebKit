@@ -49,6 +49,7 @@
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
@@ -1787,13 +1788,16 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTestin
     ASSERT(!completionHandler);
 }
 
-void WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    
+    WebCore::ThirdPartyCookieBlockingMode blockingMode = WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy;
+    if (enabled)
+        blockingMode = onlyOnSitesWithoutUserInteraction ? WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction : WebCore::ThirdPartyCookieBlockingMode::All;
+
     for (auto& processPool : processPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
-            networkProcess->setShouldBlockThirdPartyCookiesForTesting(m_sessionID, enabled, [callbackAggregator = callbackAggregator.copyRef()] { });
+            networkProcess->setShouldBlockThirdPartyCookiesForTesting(m_sessionID, blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
             ASSERT(processPools().size() == 1);
             break;
         }

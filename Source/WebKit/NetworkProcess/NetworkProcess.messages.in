@@ -136,7 +136,7 @@ messages -> NetworkProcess LegacyReceiver {
     DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> () Async
     HasIsolatedSession(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> (bool hasIsolatedSession) Async
     SetShouldDowngradeReferrerForTesting(bool enabled) -> () Async
-    SetShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, bool enabled) -> () Async
+    SetShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> () Async
 #endif
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);

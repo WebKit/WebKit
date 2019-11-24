@@ -1253,10 +1253,10 @@ void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, Completi
     completionHandler();
 }
 
-void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, WebCore::ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID))
-        networkSession->setIsThirdPartyCookieBlockingEnabled(enabled);
+        networkSession->setThirdPartyCookieBlockingMode(blockingMode);
     else
         ASSERT_NOT_REACHED();
     completionHandler();

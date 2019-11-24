@@ -1795,7 +1795,7 @@ LazyImageLoadingEnabled:
 
 IsThirdPartyCookieBlockingEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Block All 3rd-Party Cookies (ITP)"
   humanReadableDescription: "Block all third-party cookies when Intelligent Tracking Prevention is enabled"
   category: experimental

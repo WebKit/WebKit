@@ -19,9 +19,24 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
-                setEnableFeature(false, finishJSTest);
-            });
+
+            switch (document.location.hash) {
+                case "#firstTest":
+                    document.location.hash = "secondTest";
+                    // Clear all data so that the previous grant doesn't count toward the next test.
+                    testRunner.statisticsClearInMemoryAndPersistentStore(runTest);
+                    break;
+                case "#secondTest":
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        setEnableFeature(false, finishJSTest);
+                    });
+                    break;
+                default:
+                    testFailed("Message handler called under unknown circumstances.");
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        setEnableFeature(false, finishJSTest);
+                    });
+            }
         }
 
         window.addEventListener("message", receiveMessage, false);
@@ -51,30 +66,51 @@
         }
 
         function runTest() {
-            if (document.location.hash !== "#cookieSet") {
-                setEnableFeature(true, function() {
-                    document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html#cookieSet";
-                });
-            } else {
-                testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
-                    if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
-                        testFailed("Third-party set as prevalent resource.");
-                    testRunner.setStatisticsHasHadUserInteraction(firstPartyUrl, true, function() {
-                        if (!testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
-                            testFailed("First-party did not get logged for user interaction.");
+            switch (document.location.hash) {
+                case "":
+                    setEnableFeature(true, function() {
+                        document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?dummy=" + Math.random() + "&name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html#firstTest";
+                    });
+                    break;
+                case "#firstTest":
+                    // Test that the request is granted if third-party cookies are blocked under first-parties without
+                    // user interaction.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
+                            testFailed("Third-party set as prevalent resource.");
+                            if (testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
+                                testFailed("First-party was logged for user interaction.");
+                            testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
+                                if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyUrl))
+                                    testFailed("Third-party did not get logged for user interaction.");
+                                let iframeElement = document.createElement("iframe");
+                                iframeElement.onload = function() {
+                                    activateElement("TheFirstIframeThatRequestsStorageAccess");
+                                };
+                                iframeElement.id = "TheFirstIframeThatRequestsStorageAccess";
+                                iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html?dummy=" + Math.random() + "#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                                document.body.appendChild(iframeElement);
+                            });
+                    }, true);
+                    break;
+                case "#secondTest":
+                    // Test that the request is granted if third-party cookies are blocked unconditionally.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
+                            testFailed("Third-party set as prevalent resource.");
                         testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
                             if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyUrl))
                                 testFailed("Third-party did not get logged for user interaction.");
                             let iframeElement = document.createElement("iframe");
                             iframeElement.onload = function() {
-                                activateElement("TheIframeThatRequestsStorageAccess");
+                                activateElement("TheSecondIframeThatRequestsStorageAccess");
                             };
-                            iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                            iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                            iframeElement.id = "TheSecondIframeThatRequestsStorageAccess";
+                            iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html?dummy=" + Math.random() + "#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
                             document.body.appendChild(iframeElement);
                         });
-                    });
-                });
+                    }, false);
+                    break;
             }
         }
     </script>

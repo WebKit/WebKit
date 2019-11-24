@@ -20,6 +20,7 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
+
             if (document.location.hash === "#lastStep") {
                 testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
                     setEnableFeature(false, finishJSTest);
@@ -49,7 +50,7 @@
                     document.location.hash = "step2";
                     // No general third-party cookie blocking, no user interaction, not prevalent.
                     let iframeElement = document.createElement("iframe");
-                    iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+                    iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldGrantAccess";
                     document.body.appendChild(iframeElement);
                     break;
                 case "#step2":
@@ -59,7 +60,7 @@
                         if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyUrl))
                             testFailed("Third-party did not get logged for user interaction.");
                         let iframeElement = document.createElement("iframe");
-                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldGrantAccess";
                         document.body.appendChild(iframeElement);
                     });
                     break;
@@ -70,20 +71,37 @@
                         if (!testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
                             testFailed("First-party did not get logged for user interaction.");
                         let iframeElement = document.createElement("iframe");
-                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldGrantAccess";
                         document.body.appendChild(iframeElement);
                     });
                     break;
                 case "#step4":
                     document.location.hash = "step5";
-                    // General third-party cookie blocking, first- and third-party user interaction, not prevalent.
+                    // Third-party cookie blocking under first-parties without user interaction, only third-party user interaction, not prevalent.
                     testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
-                        let iframeElement = document.createElement("iframe");
-                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html#policyShouldNotGrantAccess";
-                        document.body.appendChild(iframeElement);
-                    });
+                        testRunner.setStatisticsHasHadUserInteraction(firstPartyUrl, false, function() {
+                            if (testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
+                                testFailed("First-party got logged for user interaction.");
+                            let iframeElement = document.createElement("iframe");
+                            iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldNotGrantAccess";
+                            document.body.appendChild(iframeElement);
+                        });
+                    }, true);
                     break;
                 case "#step5":
+                    document.location.hash = "step6";
+                    // General third-party cookie blocking, first- and third-party user interaction, not prevalent.
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                        testRunner.setStatisticsHasHadUserInteraction(firstPartyUrl, true, function() {
+                            if (!testRunner.isStatisticsHasHadUserInteraction(firstPartyUrl))
+                                testFailed("First-party did not get logged for user interaction.");
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldNotGrantAccess";
+                        document.body.appendChild(iframeElement);
+                        });
+                    }, false);
+                    break;
+                case "#step6":
                     document.location.hash = "lastStep";
                     // General third-party cookie blocking, first- and third-party user interaction, prevalent.
                     testRunner.setStatisticsPrevalentResource(thirdPartyUrl, true, function() {
@@ -91,7 +109,7 @@
                             testFailed("Third-party not set as prevalent resource.");
                         testRunner.statisticsUpdateCookieBlocking(function() {
                             let iframeElement = document.createElement("iframe");
-                            iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html#policyShouldNotGrantAccess";
+                            iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldNotGrantAccess";
                             document.body.appendChild(iframeElement);
                         });
                     });

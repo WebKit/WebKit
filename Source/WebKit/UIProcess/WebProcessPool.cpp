@@ -562,7 +562,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     bool enableResourceLoadStatisticsLogTestingEvent = false;
     bool shouldIncludeLocalhost = true;
     bool enableResourceLoadStatisticsDebugMode = false;
-    bool enableThirdPartyCookieBlocking = false;
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
     WebCore::RegistrableDomain manualPrevalentResource { };
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
@@ -573,7 +573,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             auto networkSessionParameters = withWebsiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
-            enableThirdPartyCookieBlocking = networkSessionParameters.enableThirdPartyCookieBlocking;
+            thirdPartyCookieBlockingMode = networkSessionParameters.thirdPartyCookieBlockingMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
         }
 
@@ -594,7 +594,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             auto networkSessionParameters = m_websiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
-            enableThirdPartyCookieBlocking = networkSessionParameters.enableThirdPartyCookieBlocking;
+            thirdPartyCookieBlockingMode = networkSessionParameters.thirdPartyCookieBlockingMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
         }
 
@@ -618,7 +618,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsLogTestingEvent = enableResourceLoadStatisticsLogTestingEvent;
     parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsDebugMode = enableResourceLoadStatisticsDebugMode;
-    parameters.defaultDataStoreParameters.networkSessionParameters.enableThirdPartyCookieBlocking = enableThirdPartyCookieBlocking;
+    parameters.defaultDataStoreParameters.networkSessionParameters.thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
     parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsManualPrevalentResource = manualPrevalentResource;
 
     // Add any platform specific parameters

@@ -39,7 +39,6 @@
 #include "WebSocketTask.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceRequest.h>
 
 #if PLATFORM(COCOA)
@@ -175,7 +174,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     // This should always be forwarded since debug mode may be enabled at runtime.
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
-    m_resourceLoadStatistics->setIsThirdPartyCookieBlockingEnabled(m_thirdPartyCookieBlockingEnabled);
+    m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
 }
 
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
@@ -183,6 +182,7 @@ void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()
     destroyResourceLoadStatistics();
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
     m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
+    m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
 }
 
 bool NetworkSession::isResourceLoadStatisticsEnabled() const
@@ -225,12 +225,12 @@ bool NetworkSession::shouldDowngradeReferrer() const
     return m_downgradeReferrer;
 }
 
-void NetworkSession::setIsThirdPartyCookieBlockingEnabled(bool enabled)
+void NetworkSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode blockingMode)
 {
     ASSERT(m_resourceLoadStatistics);
-    m_thirdPartyCookieBlockingEnabled = enabled;
+    m_thirdPartyCookieBlockingMode = blockingMode;
     if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->setIsThirdPartyCookieBlockingEnabled(m_thirdPartyCookieBlockingEnabled);
+        m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(blockingMode);
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

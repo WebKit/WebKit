@@ -442,7 +442,7 @@ public:
     bool hasStatisticsIsolatedSession(JSStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool, JSValueRef callback);
     void statisticsCallDidSetShouldDowngradeReferrerCallback();
-    void setStatisticsShouldBlockThirdPartyCookies(bool, JSValueRef callback);
+    void setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef callback, bool onlyOnSitesWithoutUserInteraction);
     void statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();

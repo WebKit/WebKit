@@ -32,6 +32,7 @@
 #import "WebPreferencesKeys.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/RuntimeEnabledFeatures.h>
@@ -69,14 +70,17 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
     bool enableResourceLoadStatisticsDebugMode = false;
-    bool enableThirdPartyCookieBlocking = false;
+    auto thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy;
     bool enableLegacyTLS = true;
     if (id value = [defaults objectForKey:@"WebKitEnableLegacyTLS"])
         enableLegacyTLS = [value boolValue];
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
-    enableThirdPartyCookieBlocking = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingEnabledKey().createCFString().get()]];
+    if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingEnabledKey().createCFString().get()]])
+        thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
+    else
+        thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
         URL url { URL(), manualPrevalentResource };
@@ -140,7 +144,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         hasStatisticsTestingCallback(),
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
-        enableThirdPartyCookieBlocking,
+        thirdPartyCookieBlockingMode,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
