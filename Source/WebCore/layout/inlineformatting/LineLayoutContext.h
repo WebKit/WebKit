@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineLine.h"
+#include "InlineLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
@@ -44,10 +44,10 @@ public:
         Optional<unsigned> trailingInlineItemIndex;
         Optional<PartialContent> trailingPartialContent;
         Vector<WeakPtr<InlineItem>> floats;
-        const Line::RunList runList;
+        const LineBuilder::RunList runList;
         const LineBox lineBox;
     };
-    LineContent layoutLine(Line&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
+    LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
     struct Run {
         const InlineItem& inlineItem;
@@ -59,11 +59,11 @@ public:
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
-    IsEndOfLine placeInlineItem(Line&, const InlineItem&);
-    void commitPendingContent(Line&);
-    LineContent close(Line&, unsigned leadingInlineItemIndex);
+    IsEndOfLine placeInlineItem(LineBuilder&, const InlineItem&);
+    void commitPendingContent(LineBuilder&);
+    LineContent close(LineBuilder&, unsigned leadingInlineItemIndex);
     bool shouldProcessUncommittedContent(const InlineItem&) const;
-    IsEndOfLine processUncommittedContent(Line&);
+    IsEndOfLine processUncommittedContent(LineBuilder&);
     
     struct UncommittedContent {
         void add(const InlineItem&, LayoutUnit logicalWidth);

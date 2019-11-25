@@ -95,12 +95,12 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
     unsigned leadingInlineItemIndex = 0;
     Optional<LineLayoutContext::PartialContent> leadingPartialContent;
-    auto line = Line { *this, root().style().textAlign(), Line::SkipAlignment::No };
+    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::No };
     auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
 
     while (leadingInlineItemIndex < inlineItems.size()) {
-        line.initialize(constraintsForLine(usedHorizontalValues, lineLogicalTop));
-        auto lineContent = lineLayoutContext.layoutLine(line, leadingInlineItemIndex, leadingPartialContent);
+        lineBuilder.initialize(constraintsForLine(usedHorizontalValues, lineLogicalTop));
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, leadingPartialContent);
         setDisplayBoxesForLine(lineContent, usedHorizontalValues);
 
         leadingPartialContent = { };
@@ -116,7 +116,7 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
             // Floats prevented us placing any content on the line.
-            ASSERT(line.hasIntrusiveFloat());
+            ASSERT(lineBuilder.hasIntrusiveFloat());
             // Move the next line below the intrusive float.
             auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
             auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
@@ -233,12 +233,12 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const Us
     auto& inlineItems = formattingState().inlineItems();
     LayoutUnit maximumLineWidth;
     unsigned leadingInlineItemIndex = 0;
-    auto line = Line { *this, root().style().textAlign(), Line::SkipAlignment::Yes };
+    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
-        line.initialize(Line::Constraints { { }, usedHorizontalValues.constraints.width, false, { } });
-        auto lineContent = lineLayoutContext.layoutLine(line, leadingInlineItemIndex, { });
+        lineBuilder.initialize(LineBuilder::Constraints { { }, usedHorizontalValues.constraints.width, false, { } });
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, { });
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         LayoutUnit floatsWidth;
@@ -371,7 +371,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-Line::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const LayoutUnit lineLogicalTop)
+LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const LayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
     auto availableWidth = usedHorizontalValues.constraints.width;
@@ -404,7 +404,7 @@ Line::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizont
             availableWidth = floatConstraints.right->x - lineLogicalLeft;
         }
     }
-    return Line::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
+    return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
 }
 
 void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const UsedHorizontalValues& usedHorizontalValues)

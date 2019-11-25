@@ -85,7 +85,7 @@ LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormat
 {
 }
 
-LineLayoutContext::LineContent LineLayoutContext::layoutLine(Line& line, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
+LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
 {
     auto initialize = [&] {
         m_committedInlineItemCount = 0;
@@ -121,7 +121,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(Line& line, unsigne
     return close(line, leadingInlineItemIndex);
 }
 
-void LineLayoutContext::commitPendingContent(Line& line)
+void LineLayoutContext::commitPendingContent(LineBuilder& line)
 {
     if (m_uncommittedContent.isEmpty())
         return;
@@ -131,7 +131,7 @@ void LineLayoutContext::commitPendingContent(Line& line)
     m_uncommittedContent.reset();
 }
 
-LineLayoutContext::LineContent LineLayoutContext::close(Line& line, unsigned leadingInlineItemIndex)
+LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsigned leadingInlineItemIndex)
 {
     ASSERT(m_committedInlineItemCount || line.hasIntrusiveFloat());
     m_uncommittedContent.reset();
@@ -145,21 +145,21 @@ LineLayoutContext::LineContent LineLayoutContext::close(Line& line, unsigned lea
 
     auto isLastLineWithInlineContent = [&] {
         if (overflowContent)
-            return Line::IsLastLineWithInlineContent::No;
+            return LineBuilder::IsLastLineWithInlineContent::No;
         // Skip floats backwards to see if this is going to be the last line with inline content.
         for (auto i = m_inlineItems.size(); i--;) {
             if (!m_inlineItems[i]->isFloat())
-                return i == trailingInlineItemIndex ? Line::IsLastLineWithInlineContent::Yes : Line::IsLastLineWithInlineContent::No;
+                return i == trailingInlineItemIndex ? LineBuilder::IsLastLineWithInlineContent::Yes : LineBuilder::IsLastLineWithInlineContent::No;
         }
         // There has to be at least one non-float item.
         ASSERT_NOT_REACHED();
-        return Line::IsLastLineWithInlineContent::No;
+        return LineBuilder::IsLastLineWithInlineContent::No;
     };
 
     return LineContent { trailingInlineItemIndex, overflowContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
 }
 
-LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(Line& line, const InlineItem& inlineItem)
+LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& line, const InlineItem& inlineItem)
 {
     auto currentLogicalRight = line.lineBox().logicalRight();
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
@@ -207,7 +207,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(Line& line, co
     return isEndOfLine;
 }
 
-LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line& line)
+LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(LineBuilder& line)
 {
     // Check if the pending content fits.
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineLine.h"
+#include "InlineLineBuilder.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -34,8 +34,6 @@
 
 namespace WebCore {
 namespace Layout {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
 class InlineItemRun {
 WTF_MAKE_ISO_ALLOCATED_INLINE(InlineItemRun);
@@ -90,7 +88,7 @@ public:
     ContinousContent(const InlineItemRun&, bool textIsAlignJustify);
 
     bool append(const InlineItemRun&);
-    Line::Run close();
+    LineBuilder::Run close();
 
 private:
     static bool canBeExpanded(const InlineItemRun& run) { return run.isText() && !run.isCollapsed() && !run.isCollapsedToZeroAdvanceWidth(); }
@@ -134,7 +132,7 @@ bool ContinousContent::append(const InlineItemRun& inlineItemRun)
     return true;
 }
 
-Line::Run ContinousContent::close()
+LineBuilder::Run ContinousContent::close()
 {
     if (!m_expandedLength)
         return { m_initialInlineRun };
@@ -157,7 +155,7 @@ Line::Run ContinousContent::close()
     return { m_initialInlineRun, logicalRect, textContext, m_expansionOpportunityCount };
 }
 
-Line::Run::Run(const InlineItemRun& inlineItemRun)
+LineBuilder::Run::Run(const InlineItemRun& inlineItemRun)
     : m_layoutBox(&inlineItemRun.layoutBox())
     , m_type(inlineItemRun.type())
     , m_logicalRect(inlineItemRun.logicalRect())
@@ -171,7 +169,7 @@ Line::Run::Run(const InlineItemRun& inlineItemRun)
     }
 }
 
-Line::Run::Run(const InlineItemRun& inlineItemRun, const Display::Rect& logicalRect, const Display::Run::TextContext& textContext, unsigned expansionOpportunityCount)
+LineBuilder::Run::Run(const InlineItemRun& inlineItemRun, const Display::Rect& logicalRect, const Display::Run::TextContext& textContext, unsigned expansionOpportunityCount)
     : m_layoutBox(&inlineItemRun.layoutBox())
     , m_type(inlineItemRun.type())
     , m_logicalRect(logicalRect)
@@ -181,14 +179,14 @@ Line::Run::Run(const InlineItemRun& inlineItemRun, const Display::Rect& logicalR
 {
 }
 
-void Line::Run::adjustExpansionBehavior(ExpansionBehavior expansionBehavior)
+void LineBuilder::Run::adjustExpansionBehavior(ExpansionBehavior expansionBehavior)
 {
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());
     m_textContext->setExpansion({ expansionBehavior, m_textContext->expansion()->horizontalExpansion });
 }
 
-inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
+inline Optional<ExpansionBehavior> LineBuilder::Run::expansionBehavior() const
 {
     ASSERT(isText());
     if (auto expansionContext = m_textContext->expansion())
@@ -196,7 +194,7 @@ inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
     return { };
 }
 
-void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
+void LineBuilder::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
 {
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());
@@ -204,18 +202,18 @@ void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
     m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
 }
 
-Line::Line(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_horizontalAlignment(horizontalAlignment)
     , m_skipAlignment(skipAlignment == SkipAlignment::Yes)
 {
 }
 
-Line::~Line()
+LineBuilder::~LineBuilder()
 {
 }
 
-void Line::initialize(const Constraints& constraints)
+void LineBuilder::initialize(const Constraints& constraints)
 {
     ASSERT(m_skipAlignment || constraints.heightAndBaseline);
 
@@ -254,7 +252,7 @@ static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
-Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
+LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
     // 1. Remove trimmable trailing content.
     // 2. Join text runs together when possible [foo][ ][bar] -> [foo bar].
@@ -288,7 +286,7 @@ Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineConten
     return runList;
 }
 
-void Line::alignContentVertically(RunList& runList)
+void LineBuilder::alignContentVertically(RunList& runList)
 {
     ASSERT(!m_skipAlignment);
     for (auto& run : runList) {
@@ -351,7 +349,7 @@ void Line::alignContentVertically(RunList& runList)
     }
 }
 
-void Line::justifyRuns(RunList& runList) const
+void LineBuilder::justifyRuns(RunList& runList) const
 {
     ASSERT(!runList.isEmpty());
     ASSERT(availableWidth() > 0);
@@ -383,7 +381,7 @@ void Line::justifyRuns(RunList& runList) const
     }
 }
 
-void Line::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
+void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
 {
     ASSERT(!m_skipAlignment);
     if (runList.isEmpty() || availableWidth() <= 0)
@@ -425,7 +423,7 @@ void Line::alignContentHorizontally(RunList& runList, IsLastLineWithInlineConten
         run.moveHorizontally(*adjustment);
 }
 
-void Line::removeTrailingTrimmableContent()
+void LineBuilder::removeTrailingTrimmableContent()
 {
     if (m_trimmableContent.isEmpty() || m_inlineItemRuns.isEmpty())
         return;
@@ -440,7 +438,7 @@ void Line::removeTrailingTrimmableContent()
     m_trimmableContent.clear();
 }
 
-void Line::moveLogicalLeft(LayoutUnit delta)
+void LineBuilder::moveLogicalLeft(LayoutUnit delta)
 {
     if (!delta)
         return;
@@ -449,13 +447,13 @@ void Line::moveLogicalLeft(LayoutUnit delta)
     m_lineLogicalWidth -= delta;
 }
 
-void Line::moveLogicalRight(LayoutUnit delta)
+void LineBuilder::moveLogicalRight(LayoutUnit delta)
 {
     ASSERT(delta > 0);
     m_lineLogicalWidth -= delta;
 }
 
-void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
         return appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
@@ -470,7 +468,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
 }
 
-void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
+void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
     m_lineBox.expandHorizontally(logicalRect.width());
@@ -478,19 +476,19 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
         m_lineBox.setIsConsideredNonEmpty();
 }
 
-void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
     appendNonBreakableSpace(inlineItem, Display::Rect { 0, contentLogicalWidth(), logicalWidth, { } });
 }
 
-void Line::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline level container </span>.
     appendNonBreakableSpace(inlineItem, Display::Rect { 0, contentLogicalRight(), logicalWidth, { } });
 }
 
-void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logicalWidth)
 {
     auto isTrimmable = !shouldPreserveTrailingContent(inlineItem);
     if (!isTrimmable)
@@ -546,7 +544,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     m_inlineItemRuns.append(WTFMove(lineRun));
 }
 
-void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     auto& layoutBox = inlineItem.layoutBox();
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -559,7 +557,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
         m_lineBox.setIsConsideredNonEmpty();
 }
 
-void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplaced());
     // FIXME: Surely replaced boxes behave differently.
@@ -567,13 +565,13 @@ void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logi
     m_lineBox.setIsConsideredNonEmpty();
 }
 
-void Line::appendLineBreak(const InlineItem& inlineItem)
+void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
 {
     m_lineBox.setIsConsideredNonEmpty();
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, Display::Rect { 0, contentLogicalWidth(), { }, { } }));
 }
 
-void Line::adjustBaselineAndLineHeight(const Run& run)
+void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
 {
     auto& baseline = m_lineBox.baseline();
     if (run.isText() || run.isForcedLineBreak()) {
@@ -661,7 +659,7 @@ void Line::adjustBaselineAndLineHeight(const Run& run)
     ASSERT_NOT_REACHED();
 }
 
-LayoutUnit Line::runContentHeight(const Run& run) const
+LayoutUnit LineBuilder::runContentHeight(const Run& run) const
 {
     ASSERT(!m_skipAlignment);
     auto& fontMetrics = run.layoutBox().style().fontMetrics();
@@ -680,14 +678,14 @@ LayoutUnit Line::runContentHeight(const Run& run) const
     return boxGeometry.marginBoxHeight();
 }
 
-void Line::TrimmableContent::append(InlineItemRun& inlineItemRun)
+void LineBuilder::TrimmableContent::append(InlineItemRun& inlineItemRun)
 {
     ASSERT(inlineItemRun.logicalRect().width() >= 0);
     m_width += inlineItemRun.logicalRect().width();
     m_inlineItemRuns.append(&inlineItemRun);
 }
 
-LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)
+LineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();
@@ -699,12 +697,12 @@ LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, Layou
     return { adjustedAscent, adjustedDescent };
 }
 
-LayoutState& Line::layoutState() const
+LayoutState& LineBuilder::layoutState() const
 { 
     return formattingContext().layoutState();
 }
 
-const InlineFormattingContext& Line::formattingContext() const
+const InlineFormattingContext& LineBuilder::formattingContext() const
 {
     return m_inlineFormattingContext;
 } 

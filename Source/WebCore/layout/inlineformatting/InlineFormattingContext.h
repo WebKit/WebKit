@@ -50,8 +50,8 @@ private:
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        bool lineDescentNeedsCollapsing(const Line::RunList&) const;
-        Line::Constraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
+        bool lineDescentNeedsCollapsing(const LineBuilder::RunList&) const;
+        LineBuilder::Constraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
 
     private:
         friend class InlineFormattingContext;
@@ -89,14 +89,14 @@ private:
     void computeWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
     void collectInlineContentIfNeeded();
-    Line::Constraints constraintsForLine(const UsedHorizontalValues&, const LayoutUnit lineLogicalTop);
+    LineBuilder::Constraints constraintsForLine(const UsedHorizontalValues&, const LayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const UsedHorizontalValues&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     // FIXME: Come up with a structure that requires no friending.
-    friend class Line;
+    friend class LineBuilder;
 };
 
 inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)

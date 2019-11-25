@@ -31,7 +31,6 @@
 #include "InlineItem.h"
 #include "InlineLineBox.h"
 #include "InlineTextItem.h"
-#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -40,8 +39,7 @@ struct ContinousContent;
 class InlineFormattingContext;
 class InlineItemRun;
 
-class Line {
-    WTF_MAKE_ISO_ALLOCATED(Line);
+class LineBuilder {
 public:
     struct Constraints {
         LayoutPoint logicalTopLeft;
@@ -55,8 +53,8 @@ public:
         Optional<HeightAndBaseline> heightAndBaseline;
     };
     enum class SkipAlignment { No, Yes };
-    Line(const InlineFormattingContext&, Optional<TextAlignMode>, SkipAlignment);
-    ~Line();
+    LineBuilder(const InlineFormattingContext&, Optional<TextAlignMode>, SkipAlignment);
+    ~LineBuilder();
 
     void initialize(const Constraints&);
     void append(const InlineItem&, LayoutUnit logicalWidth);
@@ -89,7 +87,7 @@ public:
         bool isCollapsedToVisuallyEmpty() const { return m_isCollapsedToVisuallyEmpty; }
 
     private:
-        friend class Line;
+        friend class LineBuilder;
 
         void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
@@ -174,7 +172,7 @@ private:
     LineBox m_lineBox;
 };
 
-inline void Line::TrimmableContent::clear()
+inline void LineBuilder::TrimmableContent::clear()
 {
     m_inlineItemRuns.clear();
     m_width = { };

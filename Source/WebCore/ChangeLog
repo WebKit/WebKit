@@ -1,3 +1,121 @@
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Rename Line to LineBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=204584
+        <rdar://problem/57474964>
+
+        Reviewed by Antti Koivisto.
+
+        It really is a line builder.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        * layout/inlineformatting/InlineLineBuilder.cpp: Renamed from Source/WebCore/layout/inlineformatting/InlineLine.cpp.
+        (WebCore::Layout::InlineItemRun::layoutBox const):
+        (WebCore::Layout::InlineItemRun::logicalRect const):
+        (WebCore::Layout::InlineItemRun::textContext const):
+        (WebCore::Layout::InlineItemRun::isText const):
+        (WebCore::Layout::InlineItemRun::isBox const):
+        (WebCore::Layout::InlineItemRun::isContainerStart const):
+        (WebCore::Layout::InlineItemRun::isContainerEnd const):
+        (WebCore::Layout::InlineItemRun::isForcedLineBreak const):
+        (WebCore::Layout::InlineItemRun::type const):
+        (WebCore::Layout::InlineItemRun::setIsCollapsed):
+        (WebCore::Layout::InlineItemRun::isCollapsed const):
+        (WebCore::Layout::InlineItemRun::isCollapsedToZeroAdvanceWidth const):
+        (WebCore::Layout::InlineItemRun::isCollapsible const):
+        (WebCore::Layout::InlineItemRun::isWhitespace const):
+        (WebCore::Layout::InlineItemRun::hasExpansionOpportunity const):
+        (WebCore::Layout::InlineItemRun::InlineItemRun):
+        (WebCore::Layout::InlineItemRun::setCollapsesToZeroAdvanceWidth):
+        (WebCore::Layout::ContinousContent::canBeExpanded):
+        (WebCore::Layout::ContinousContent::canBeMerged const):
+        (WebCore::Layout::ContinousContent::ContinousContent):
+        (WebCore::Layout::ContinousContent::append):
+        (WebCore::Layout::ContinousContent::close):
+        (WebCore::Layout::LineBuilder::Run::Run):
+        (WebCore::Layout::LineBuilder::Run::adjustExpansionBehavior):
+        (WebCore::Layout::LineBuilder::Run::expansionBehavior const):
+        (WebCore::Layout::LineBuilder::Run::setComputedHorizontalExpansion):
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::~LineBuilder):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::shouldPreserveTrailingContent):
+        (WebCore::Layout::shouldPreserveLeadingContent):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        (WebCore::Layout::LineBuilder::justifyRuns const):
+        (WebCore::Layout::LineBuilder::alignContentHorizontally const):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::moveLogicalLeft):
+        (WebCore::Layout::LineBuilder::moveLogicalRight):
+        (WebCore::Layout::LineBuilder::append):
+        (WebCore::Layout::LineBuilder::appendNonBreakableSpace):
+        (WebCore::Layout::LineBuilder::appendInlineContainerStart):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::appendReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::appendLineBreak):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineBuilder::runContentHeight const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics):
+        (WebCore::Layout::LineBuilder::layoutState const):
+        (WebCore::Layout::LineBuilder::formattingContext const):
+        * layout/inlineformatting/InlineLineBuilder.h: Renamed from Source/WebCore/layout/inlineformatting/InlineLine.h.
+        (WebCore::Layout::LineBuilder::isVisuallyEmpty const):
+        (WebCore::Layout::LineBuilder::hasIntrusiveFloat const):
+        (WebCore::Layout::LineBuilder::availableWidth const):
+        (WebCore::Layout::LineBuilder::trailingTrimmableWidth const):
+        (WebCore::Layout::LineBuilder::lineBox const):
+        (WebCore::Layout::LineBuilder::setHasIntrusiveFloat):
+        (WebCore::Layout::LineBuilder::Run::isText const):
+        (WebCore::Layout::LineBuilder::Run::isBox const):
+        (WebCore::Layout::LineBuilder::Run::isForcedLineBreak const):
+        (WebCore::Layout::LineBuilder::Run::isContainerStart const):
+        (WebCore::Layout::LineBuilder::Run::isContainerEnd const):
+        (WebCore::Layout::LineBuilder::Run::layoutBox const):
+        (WebCore::Layout::LineBuilder::Run::logicalRect const):
+        (WebCore::Layout::LineBuilder::Run::textContext const):
+        (WebCore::Layout::LineBuilder::Run::isCollapsedToVisuallyEmpty const):
+        (WebCore::Layout::LineBuilder::Run::adjustLogicalTop):
+        (WebCore::Layout::LineBuilder::Run::moveHorizontally):
+        (WebCore::Layout::LineBuilder::Run::moveVertically):
+        (WebCore::Layout::LineBuilder::Run::setLogicalHeight):
+        (WebCore::Layout::LineBuilder::Run::hasExpansionOpportunity const):
+        (WebCore::Layout::LineBuilder::Run::expansionOpportunityCount const):
+        (WebCore::Layout::LineBuilder::logicalTop const):
+        (WebCore::Layout::LineBuilder::logicalBottom const):
+        (WebCore::Layout::LineBuilder::logicalLeft const):
+        (WebCore::Layout::LineBuilder::logicalRight const):
+        (WebCore::Layout::LineBuilder::logicalWidth const):
+        (WebCore::Layout::LineBuilder::logicalHeight const):
+        (WebCore::Layout::LineBuilder::contentLogicalWidth const):
+        (WebCore::Layout::LineBuilder::contentLogicalRight const):
+        (WebCore::Layout::LineBuilder::baselineOffset const):
+        (WebCore::Layout::LineBuilder::isTextAlignJustify const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::width const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::runs):
+        (WebCore::Layout::LineBuilder::TrimmableContent::isEmpty const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::clear):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::commitPendingContent):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2019-11-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Support OffscreenCanvas as a CanvasImageSource type in CanvasDrawImage, CanvasFillStrokeStyles
