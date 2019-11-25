@@ -35,25 +35,12 @@ namespace Layout {
 
 class LineLayout {
 public:
-    struct LineInput;
-    LineLayout(const InlineFormattingContext&, const LineInput&, Line&);
-
-    struct LineContent;
-    LineContent layout();
+    LineLayout(const InlineFormattingContext&, const InlineItems&);
 
     struct PartialContent {
         // This will potentially gain some more members. 
         unsigned length;
     };
-    struct LineInput {
-        LineInput(const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
-
-        const InlineItems& inlineItems;
-        unsigned leadingInlineItemIndex { 0 };
-        Optional<PartialContent> leadingPartialContent;
-        Optional<LayoutUnit> floatMinimumLogicalBottom;
-    };
-
     struct LineContent {
         Optional<unsigned> trailingInlineItemIndex;
         Optional<PartialContent> trailingPartialContent;
@@ -61,6 +48,7 @@ public:
         const Line::RunList runList;
         const LineBox lineBox;
     };
+    LineContent layout(Line&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
     struct Run {
         const InlineItem& inlineItem;
@@ -72,11 +60,11 @@ public:
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
-    IsEndOfLine placeInlineItem(const InlineItem&);
-    void commitPendingContent();
-    LineContent close();
+    IsEndOfLine placeInlineItem(Line&, const InlineItem&);
+    void commitPendingContent(Line&);
+    LineContent close(Line&, unsigned leadingInlineItemIndex);
     bool shouldProcessUncommittedContent(const InlineItem&) const;
-    IsEndOfLine processUncommittedContent();
+    IsEndOfLine processUncommittedContent(Line&);
     
     struct UncommittedContent {
         void add(const InlineItem&, LayoutUnit logicalWidth);
@@ -95,8 +83,7 @@ private:
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    const LineInput& m_lineInput;
-    Line& m_line;
+    const InlineItems& m_inlineItems;
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
