@@ -51,7 +51,7 @@ private:
     class Quirks : public FormattingContext::Quirks {
     public:
         bool lineDescentNeedsCollapsing(const Line::RunList&) const;
-        Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
+        Line::Constraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
 
     private:
         friend class InlineFormattingContext;
@@ -89,7 +89,7 @@ private:
     void computeWidthAndMargin(const Box&, UsedHorizontalValues);
 
     void collectInlineContentIfNeeded();
-    Line::InitialConstraints initialConstraintsForLine(UsedHorizontalValues, const LayoutUnit lineLogicalTop);
+    Line::Constraints constraintsForLine(UsedHorizontalValues, const LayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayout::LineContent&, UsedHorizontalValues);
     void invalidateFormattingState(const InvalidationState&);
 

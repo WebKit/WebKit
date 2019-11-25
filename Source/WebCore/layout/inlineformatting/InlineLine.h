@@ -43,7 +43,7 @@ class InlineItemRun;
 class Line {
     WTF_MAKE_ISO_ALLOCATED(Line);
 public:
-    struct InitialConstraints {
+    struct Constraints {
         LayoutPoint logicalTopLeft;
         LayoutUnit availableLogicalWidth;
         bool lineIsConstrainedByFloat { false };
@@ -55,11 +55,13 @@ public:
         Optional<HeightAndBaseline> heightAndBaseline;
     };
     enum class SkipAlignment { No, Yes };
-    Line(const InlineFormattingContext&, const InitialConstraints&, Optional<TextAlignMode>, SkipAlignment);
+    Line(const InlineFormattingContext&, Optional<TextAlignMode>, SkipAlignment);
     ~Line();
 
+    void initialize(const Constraints&);
     void append(const InlineItem&, LayoutUnit logicalWidth);
     bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
+    bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
     LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
@@ -67,6 +69,7 @@ public:
     const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
     void moveLogicalRight(LayoutUnit);
+    void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
 
     struct Run {
         Run(const InlineItemRun&);
@@ -167,6 +170,7 @@ private:
     LayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_skipAlignment { false };
+    bool m_hasIntrusiveFloat { false };
     LineBox m_lineBox;
 };
 

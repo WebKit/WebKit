@@ -204,23 +204,38 @@ void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
     m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
 }
 
-Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
+Line::Line(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_initialStrut(initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->strut : WTF::nullopt)
-    , m_lineLogicalWidth(initialConstraints.availableLogicalWidth)
     , m_horizontalAlignment(horizontalAlignment)
     , m_skipAlignment(skipAlignment == SkipAlignment::Yes)
 {
-    ASSERT(m_skipAlignment || initialConstraints.heightAndBaseline);
-    auto initialLineHeight = initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->height : LayoutUnit();
-    auto initialBaselineOffset = initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->baselineOffset : LayoutUnit();
-    auto lineRect = Display::Rect { initialConstraints.logicalTopLeft, { }, initialLineHeight };
-    auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
-    m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
 }
 
 Line::~Line()
 {
+}
+
+void Line::initialize(const Constraints& constraints)
+{
+    ASSERT(m_skipAlignment || constraints.heightAndBaseline);
+
+    LayoutUnit initialLineHeight;
+    LayoutUnit initialBaselineOffset;
+    if (constraints.heightAndBaseline) {
+        m_initialStrut = constraints.heightAndBaseline->strut;
+        initialLineHeight = constraints.heightAndBaseline->height;
+        initialBaselineOffset = constraints.heightAndBaseline->baselineOffset;
+    } else
+        m_initialStrut = { };
+
+    auto lineRect = Display::Rect { constraints.logicalTopLeft, { }, initialLineHeight };
+    auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
+    m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
+    m_lineLogicalWidth = constraints.availableLogicalWidth;
+    m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
+
+    m_inlineItemRuns.clear();
+    m_trimmableContent.clear();
 }
 
 static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)

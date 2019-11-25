@@ -67,10 +67,8 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
     return boxGeometry.width();
 }
 
-LineLayout::LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, TextAlignMode horizontalAlignment, const InlineItems& inlineItems, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
-    : initialConstraints(initialLineConstraints)
-    , horizontalAlignment(horizontalAlignment)
-    , inlineItems(inlineItems)
+LineLayout::LineInput::LineInput(const InlineItems& inlineItems, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
+    : inlineItems(inlineItems)
     , leadingInlineItemIndex(leadingInlineItemIndex)
     , leadingPartialContent(leadingPartialContent)
 {
@@ -88,11 +86,10 @@ void LineLayout::UncommittedContent::reset()
     m_width = 0;
 }
 
-LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, Line::SkipAlignment skipAlignment, const LineInput& lineInput)
+LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, const LineInput& lineInput, Line& line)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineInput(lineInput)
-    , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.horizontalAlignment, skipAlignment)
-    , m_lineHasIntrusiveFloat(lineInput.initialConstraints.lineIsConstrainedByFloat)
+    , m_line(line)
 {
 }
 
@@ -136,7 +133,7 @@ void LineLayout::commitPendingContent()
 
 LineLayout::LineContent LineLayout::close()
 {
-    ASSERT(m_committedInlineItemCount || m_lineHasIntrusiveFloat);
+    ASSERT(m_committedInlineItemCount || m_line.hasIntrusiveFloat());
     m_uncommittedContent.reset();
     if (!m_committedInlineItemCount)
         return LineContent { { }, { }, WTFMove(m_floats), m_line.close(), m_line.lineBox() };
@@ -177,7 +174,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
             if (processUncommittedContent() == IsEndOfLine::Yes)
                 return IsEndOfLine::Yes;
         }
-        auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_lineHasIntrusiveFloat;
+        auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_line.hasIntrusiveFloat();
         if (LineBreaker().shouldWrapFloatBox(itemLogicalWidth, m_line.availableWidth() + m_line.trailingTrimmableWidth(), lineIsConsideredEmpty))
             return IsEndOfLine::Yes;
 
@@ -187,7 +184,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
         floatBox.isLeftFloatingPositioned() ? m_line.moveLogicalLeft(itemLogicalWidth) : m_line.moveLogicalRight(itemLogicalWidth);
         m_floats.append(makeWeakPtr(inlineItem));
         ++m_committedInlineItemCount;
-        m_lineHasIntrusiveFloat = true;
+        m_line.setHasIntrusiveFloat();
         return IsEndOfLine::No;
     }
     // Forced line breaks are also special.
@@ -213,7 +210,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
 LineLayout::IsEndOfLine LineLayout::processUncommittedContent()
 {
     // Check if the pending content fits.
-    auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_lineHasIntrusiveFloat;
+    auto lineIsConsideredEmpty = m_line.isVisuallyEmpty() && !m_line.hasIntrusiveFloat();
     auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent.runs(), m_uncommittedContent.width(), m_line.availableWidth(), lineIsConsideredEmpty);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
@@ -257,6 +254,10 @@ bool LineLayout::shouldProcessUncommittedContent(const InlineItem& inlineItem) c
         // any content' ' -> whitespace is always a commit boundary.
         if (downcast<InlineTextItem>(inlineItem).isWhitespace())
             return true;
+        // texttext -> continuous content.
+        // ' 'text -> commit boundary.
+        if (lastUncomittedContent->isText())
+            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
         // <span>text -> the inline container start and the text content form an unbreakable continuous content.
         if (lastUncomittedContent->isContainerStart())
             return false;
@@ -278,10 +279,6 @@ bool LineLayout::shouldProcessUncommittedContent(const InlineItem& inlineItem) c
             if (lastUncomittedContent->isContainerEnd())
                 return false;
         }
-        // texttext -> continuous content.
-        // ' 'text -> commit boundary.
-        if (lastUncomittedContent->isText())
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
         // <img>text -> the inline box is on a commit boundary.
         if (lastUncomittedContent->isBox())
             return true;

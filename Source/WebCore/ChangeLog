@@ -1,3 +1,37 @@
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Decouple LineLayout and Line
+        https://bugs.webkit.org/show_bug.cgi?id=204560
+        <rdar://problem/57463295>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for constructing only one LineLayout/Line object for an inline formatting context and not
+        one per line.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::initialConstraintsForLine): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::initialize):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::hasIntrusiveFloat const):
+        (WebCore::Layout::Line::setHasIntrusiveFloat):
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::LineLayout::LineInput::LineInput):
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::LineLayout::processUncommittedContent):
+        (WebCore::Layout::LineLayout::shouldProcessUncommittedContent const):
+        * layout/inlineformatting/InlineLineLayout.h:
+
 2019-11-25  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
 
         Basic OffscreenCanvas functionality

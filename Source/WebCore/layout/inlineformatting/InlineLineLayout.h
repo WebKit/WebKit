@@ -36,7 +36,7 @@ namespace Layout {
 class LineLayout {
 public:
     struct LineInput;
-    LineLayout(const InlineFormattingContext&, Line::SkipAlignment, const LineInput&);
+    LineLayout(const InlineFormattingContext&, const LineInput&, Line&);
 
     struct LineContent;
     LineContent layout();
@@ -46,10 +46,8 @@ public:
         unsigned length;
     };
     struct LineInput {
-        LineInput(const Line::InitialConstraints&, TextAlignMode horizontalAlignment, const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
+        LineInput(const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
-        Line::InitialConstraints initialConstraints;
-        TextAlignMode horizontalAlignment;
         const InlineItems& inlineItems;
         unsigned leadingInlineItemIndex { 0 };
         Optional<PartialContent> leadingPartialContent;
@@ -98,8 +96,7 @@ private:
 
     const InlineFormattingContext& m_inlineFormattingContext;
     const LineInput& m_lineInput;
-    Line m_line;
-    bool m_lineHasIntrusiveFloat { false };
+    Line& m_line;
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
