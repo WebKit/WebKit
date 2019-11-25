@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "InlineLineLayout.h"
+#include "LineLayoutContext.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -90,7 +90,7 @@ private:
 
     void collectInlineContentIfNeeded();
     Line::Constraints constraintsForLine(const UsedHorizontalValues&, const LayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineLayout::LineContent&, const UsedHorizontalValues&);
+    void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const UsedHorizontalValues&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

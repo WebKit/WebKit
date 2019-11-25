@@ -1,5 +1,47 @@
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Rename LineLayout to LineLayoutContext
+        https://bugs.webkit.org/show_bug.cgi?id=204582
+        <rdar://problem/57474018>
+
+        Reviewed by Antti Koivisto.
+
+        LineLayoutContext is the context for the inline content and not just for a single line.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp: Renamed from Source/WebCore/layout/inlineformatting/InlineLineLayout.cpp.
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::add):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::reset):
+        (WebCore::Layout::LineLayoutContext::LineLayoutContext):
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::commitPendingContent):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        (WebCore::Layout::LineLayoutContext::shouldProcessUncommittedContent const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::trim):
+        * layout/inlineformatting/LineLayoutContext.h: Renamed from Source/WebCore/layout/inlineformatting/InlineLineLayout.h.
+        (WebCore::Layout::LineLayoutContext::formattingContext const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::isEmpty const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::size const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::width const):
+
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Pass UsedHorizontal/VerticalValues in by const reference
         https://bugs.webkit.org/show_bug.cgi?id=204563
         <rdar://problem/57464129>

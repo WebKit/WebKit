@@ -1440,8 +1440,8 @@ layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineItem.cpp
 layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
-layout/inlineformatting/InlineLineLayout.cpp
 layout/inlineformatting/InlineTextItem.cpp
+layout/inlineformatting/LineLayoutContext.cpp
 layout/inlineformatting/text/TextUtil.cpp
 layout/invalidation/InvalidationContext.cpp
 layout/invalidation/InvalidationState.cpp

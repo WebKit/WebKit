@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineLineLayout.h"
 #include "LayoutUnit.h"
+#include "LineLayoutContext.h"
 
 namespace WebCore {
 namespace Layout {
@@ -48,18 +48,18 @@ public:
         };
         Optional<TrailingPartialContent> trailingPartialContent;
     };
-    BreakingContext breakingContextForInlineContent(const LineLayout::RunList&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    BreakingContext breakingContextForInlineContent(const LineLayoutContext::RunList&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
 
-    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const LineLayout::RunList&, LayoutUnit availableWidth) const;
+    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const LineLayoutContext::RunList&, LayoutUnit availableWidth) const;
 
     struct SplitLengthAndWidth {
         unsigned length { 0 };
         LayoutUnit leftLogicalWidth;
     };
-    Optional<SplitLengthAndWidth> tryBreakingTextRun(const LineLayout::Run overflowRun, LayoutUnit availableWidth) const;
+    Optional<SplitLengthAndWidth> tryBreakingTextRun(const LineLayoutContext::Run overflowRun, LayoutUnit availableWidth) const;
 };
 
 }

@@ -94,13 +94,13 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
     auto& inlineItems = formattingState().inlineItems();
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
     unsigned leadingInlineItemIndex = 0;
-    Optional<LineLayout::PartialContent> leadingPartialContent;
+    Optional<LineLayoutContext::PartialContent> leadingPartialContent;
     auto line = Line { *this, root().style().textAlign(), Line::SkipAlignment::No };
-    auto lineLayout = LineLayout { *this, inlineItems };
+    auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
 
     while (leadingInlineItemIndex < inlineItems.size()) {
         line.initialize(constraintsForLine(usedHorizontalValues, lineLogicalTop));
-        auto lineContent = lineLayout.layout(line, leadingInlineItemIndex, leadingPartialContent);
+        auto lineContent = lineLayoutContext.layoutLine(line, leadingInlineItemIndex, leadingPartialContent);
         setDisplayBoxesForLine(lineContent, usedHorizontalValues);
 
         leadingPartialContent = { };
@@ -111,7 +111,7 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
                 // Turn previous line's overflow content length into the next line's leading content partial length.
                 // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
-                leadingPartialContent = LineLayout::PartialContent { lineContent.trailingPartialContent->length };
+                leadingPartialContent = LineLayoutContext::PartialContent { lineContent.trailingPartialContent->length };
             } else
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
@@ -234,11 +234,11 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const Us
     LayoutUnit maximumLineWidth;
     unsigned leadingInlineItemIndex = 0;
     auto line = Line { *this, root().style().textAlign(), Line::SkipAlignment::Yes };
-    auto lineLayout = LineLayout { *this, inlineItems };
+    auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         line.initialize(Line::Constraints { { }, usedHorizontalValues.constraints.width, false, { } });
-        auto lineContent = lineLayout.layout(line, leadingInlineItemIndex, { });
+        auto lineContent = lineLayoutContext.layoutLine(line, leadingInlineItemIndex, { });
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         LayoutUnit floatsWidth;
@@ -407,7 +407,7 @@ Line::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizont
     return Line::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
 }
 
-void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineContent& lineContent, const UsedHorizontalValues& usedHorizontalValues)
+void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const UsedHorizontalValues& usedHorizontalValues)
 {
     auto& formattingState = this->formattingState();
 

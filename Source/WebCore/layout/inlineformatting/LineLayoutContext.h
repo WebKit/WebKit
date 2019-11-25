@@ -28,14 +28,13 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineLine.h"
-#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
-class LineLayout {
+class LineLayoutContext {
 public:
-    LineLayout(const InlineFormattingContext&, const InlineItems&);
+    LineLayoutContext(const InlineFormattingContext&, const InlineItems&);
 
     struct PartialContent {
         // This will potentially gain some more members. 
@@ -48,7 +47,7 @@ public:
         const Line::RunList runList;
         const LineBox lineBox;
     };
-    LineContent layout(Line&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
+    LineContent layoutLine(Line&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
     struct Run {
         const InlineItem& inlineItem;

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineLineLayout.h"
+#include "LineLayoutContext.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -67,25 +67,25 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
     return boxGeometry.width();
 }
 
-void LineLayout::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineLayoutContext::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     m_uncommittedRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
 }
 
-void LineLayout::UncommittedContent::reset()
+void LineLayoutContext::UncommittedContent::reset()
 {
     m_uncommittedRuns.clear();
     m_width = 0;
 }
 
-LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems)
+LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineItems(inlineItems)
 {
 }
 
-LineLayout::LineContent LineLayout::layout(Line& line, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
+LineLayoutContext::LineContent LineLayoutContext::layoutLine(Line& line, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
 {
     auto initialize = [&] {
         m_committedInlineItemCount = 0;
@@ -121,7 +121,7 @@ LineLayout::LineContent LineLayout::layout(Line& line, unsigned leadingInlineIte
     return close(line, leadingInlineItemIndex);
 }
 
-void LineLayout::commitPendingContent(Line& line)
+void LineLayoutContext::commitPendingContent(Line& line)
 {
     if (m_uncommittedContent.isEmpty())
         return;
@@ -131,7 +131,7 @@ void LineLayout::commitPendingContent(Line& line)
     m_uncommittedContent.reset();
 }
 
-LineLayout::LineContent LineLayout::close(Line& line, unsigned leadingInlineItemIndex)
+LineLayoutContext::LineContent LineLayoutContext::close(Line& line, unsigned leadingInlineItemIndex)
 {
     ASSERT(m_committedInlineItemCount || line.hasIntrusiveFloat());
     m_uncommittedContent.reset();
@@ -159,7 +159,7 @@ LineLayout::LineContent LineLayout::close(Line& line, unsigned leadingInlineItem
     return LineContent { trailingInlineItemIndex, overflowContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
 }
 
-LineLayout::IsEndOfLine LineLayout::placeInlineItem(Line& line, const InlineItem& inlineItem)
+LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(Line& line, const InlineItem& inlineItem)
 {
     auto currentLogicalRight = line.lineBox().logicalRight();
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
@@ -207,7 +207,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(Line& line, const InlineItem
     return isEndOfLine;
 }
 
-LineLayout::IsEndOfLine LineLayout::processUncommittedContent(Line& line)
+LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line& line)
 {
     // Check if the pending content fits.
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
@@ -238,7 +238,7 @@ LineLayout::IsEndOfLine LineLayout::processUncommittedContent(Line& line)
     return breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
 }
 
-bool LineLayout::shouldProcessUncommittedContent(const InlineItem& inlineItem) const
+bool LineLayoutContext::shouldProcessUncommittedContent(const InlineItem& inlineItem) const
 {
     // https://drafts.csswg.org/css-text-3/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on commit boundary.
@@ -317,7 +317,7 @@ bool LineLayout::shouldProcessUncommittedContent(const InlineItem& inlineItem) c
     return true;
 }
 
-void LineLayout::UncommittedContent::trim(unsigned newSize)
+void LineLayoutContext::UncommittedContent::trim(unsigned newSize)
 {
     for (auto i = m_uncommittedRuns.size(); i--;)
         m_width -= m_uncommittedRuns[i].logicalWidth;
