@@ -1,3 +1,16 @@
+2019-11-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r252770): [GTK][WPE] Remove inspector broken in debug builds after r252770
+        https://bugs.webkit.org/show_bug.cgi?id=204569
+
+        Reviewed by Žan Doberšek.
+
+        We need to call relaxAdoptionRequirement() in SocketConnection constructor because we are taking a reference for
+        the read monitor lambda.
+
+        * wtf/glib/SocketConnection.cpp:
+        (WTF::SocketConnection::SocketConnection):
+
 2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Ran sort-Xcode-project-file.
