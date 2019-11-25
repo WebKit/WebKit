@@ -89,7 +89,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayout(UsedHorizontalValues usedHorizontalValues)
+void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizontalValues)
 {
     auto& inlineItems = formattingState().inlineItems();
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
@@ -129,7 +129,7 @@ void InlineFormattingContext::lineLayout(UsedHorizontalValues usedHorizontalValu
     }
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingContextRoot, InvalidationState& invalidationState, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingContextRoot, InvalidationState& invalidationState, const UsedHorizontalValues& usedHorizontalValues, const UsedVerticalValues& usedVerticalValues)
 {
     ASSERT(formattingContextRoot.isFloatingPositioned() || formattingContextRoot.isInlineBlockBox());
 
@@ -148,7 +148,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
         computeHeightAndMargin(formattingContextRoot, usedHorizontalValues, usedVerticalValues);
 }
 
-void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues, const UsedVerticalValues& usedVerticalValues)
 {
     if (is<Container>(layoutBox)) {
         // Inline containers (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
@@ -228,7 +228,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     return constraints;
 }
 
-LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(UsedHorizontalValues usedHorizontalValues) const
+LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const UsedHorizontalValues& usedHorizontalValues) const
 {
     auto& inlineItems = formattingState().inlineItems();
     LayoutUnit maximumLineWidth;
@@ -249,7 +249,7 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(UsedHori
     return maximumLineWidth;
 }
 
-void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot, UsedHorizontalValues usedHorizontalValues)
+void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot, const UsedHorizontalValues& usedHorizontalValues)
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
@@ -266,7 +266,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
     formattingState().setIntrinsicWidthConstraintsForBox(formattingRoot, constraints);
 }
 
-void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues)
+void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues)
 {
     auto computedHorizontalMargin = geometry().computedHorizontalMargin(layoutBox, usedHorizontalValues);
     auto& displayBox = formattingState().displayBox(layoutBox);
@@ -274,7 +274,7 @@ void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, Used
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
-void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues)
+void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues)
 {
     ContentWidthAndMargin contentWidthAndMargin;
     if (layoutBox.isFloatingPositioned())
@@ -292,7 +292,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHo
     displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
-void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues, const UsedVerticalValues& usedVerticalValues)
 {
     ContentHeightAndMargin contentHeightAndMargin;
     if (layoutBox.isFloatingPositioned())
@@ -309,7 +309,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, UsedH
     displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin, { } });
 }
 
-void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues, const UsedVerticalValues& usedVerticalValues)
 {
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
@@ -371,7 +371,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-Line::Constraints InlineFormattingContext::constraintsForLine(UsedHorizontalValues usedHorizontalValues, const LayoutUnit lineLogicalTop)
+Line::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const LayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
     auto availableWidth = usedHorizontalValues.constraints.width;
@@ -407,7 +407,7 @@ Line::Constraints InlineFormattingContext::constraintsForLine(UsedHorizontalValu
     return Line::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
 }
 
-void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineContent& lineContent, UsedHorizontalValues usedHorizontalValues)
+void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineContent& lineContent, const UsedHorizontalValues& usedHorizontalValues)
 {
     auto& formattingState = this->formattingState();
 

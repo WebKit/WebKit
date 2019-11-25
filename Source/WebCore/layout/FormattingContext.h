@@ -109,25 +109,25 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues);
+        VerticalGeometry outOfFlowVerticalGeometry(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
 
-        ContentHeightAndMargin floatingHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        ContentWidthAndMargin floatingWidthAndMargin(const Box&, UsedHorizontalValues);
+        ContentHeightAndMargin floatingHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        ContentWidthAndMargin floatingWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
-        ContentHeightAndMargin inlineReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        ContentWidthAndMargin inlineReplacedWidthAndMargin(const Box&, UsedHorizontalValues, Optional<UsedVerticalValues> = WTF::nullopt) const;
+        ContentHeightAndMargin inlineReplacedHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        ContentWidthAndMargin inlineReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&, Optional<UsedVerticalValues> = WTF::nullopt) const;
 
-        LayoutSize inFlowPositionedPositionOffset(const Box&, UsedHorizontalValues) const;
+        LayoutSize inFlowPositionedPositionOffset(const Box&, const UsedHorizontalValues&) const;
 
-        ContentHeightAndMargin complicatedCases(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
+        ContentHeightAndMargin complicatedCases(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
         LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth);
 
         Edges computedBorder(const Box&) const;
-        Optional<Edges> computedPadding(const Box&, UsedHorizontalValues) const;
+        Optional<Edges> computedPadding(const Box&, const UsedHorizontalValues&) const;
 
-        ComputedHorizontalMargin computedHorizontalMargin(const Box&, UsedHorizontalValues) const;
-        ComputedVerticalMargin computedVerticalMargin(const Box&, UsedHorizontalValues) const;
+        ComputedHorizontalMargin computedHorizontalMargin(const Box&, const UsedHorizontalValues&) const;
+        ComputedVerticalMargin computedVerticalMargin(const Box&, const UsedHorizontalValues&) const;
 
         Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
         Optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
@@ -156,19 +156,19 @@ protected:
         const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     private:
-        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
+        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
 
-        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, UsedHorizontalValues);
+        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, const UsedHorizontalValues&);
 
-        ContentHeightAndMargin floatingReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        ContentWidthAndMargin floatingReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        ContentHeightAndMargin floatingReplacedHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        ContentWidthAndMargin floatingReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
 
-        ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues);
+        ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
-        LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&, UsedVerticalValues) const;
-        LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, UsedHorizontalValues) const;
+        LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&, const UsedVerticalValues&) const;
+        LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const UsedHorizontalValues&) const;
 
         const FormattingContext& m_formattingContext;
     };

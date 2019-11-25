@@ -74,12 +74,12 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
-        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
+        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
+        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
-        Point staticPosition(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        LayoutUnit staticVerticalPosition(const Box&, UsedVerticalValues) const;
-        LayoutUnit staticHorizontalPosition(const Box&, UsedHorizontalValues) const;
+        Point staticPosition(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
+        LayoutUnit staticVerticalPosition(const Box&, const UsedVerticalValues&) const;
+        LayoutUnit staticHorizontalPosition(const Box&, const UsedHorizontalValues&) const;
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
@@ -87,9 +87,9 @@ private:
         friend class BlockFormattingContext;
         Geometry(const BlockFormattingContext&);
 
-        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
-        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
-        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
+        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
+        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }

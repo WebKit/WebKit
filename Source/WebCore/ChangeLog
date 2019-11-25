@@ -1,5 +1,64 @@
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Pass UsedHorizontal/VerticalValues in by const reference
+        https://bugs.webkit.org/show_bug.cgi?id=204563
+        <rdar://problem/57464129>
+
+        Reviewed by Antti Koivisto.
+
+        UsedHorizontal/VerticalValues have grown a bit so let's pass them in by reference.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalAndVerticalGeometry):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin const):
+
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Construct only one LineLayout object per inline formatting context
         https://bugs.webkit.org/show_bug.cgi?id=204561
         <rdar://problem/57463666>
