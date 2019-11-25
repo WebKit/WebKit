@@ -7,6 +7,7 @@ PASS e.style['grid-auto-rows'] = "5fr" should set the property value
 PASS e.style['grid-auto-rows'] = "min-content" should set the property value 
 PASS e.style['grid-auto-rows'] = "max-content" should set the property value 
 PASS e.style['grid-auto-rows'] = "auto" should set the property value 
+PASS e.style['grid-auto-rows'] = "auto /**/" should set the property value 
 PASS e.style['grid-auto-rows'] = "minmax(1px, 5fr)" should set the property value 
 PASS e.style['grid-auto-rows'] = "minmax(2em, min-content)" should set the property value 
 PASS e.style['grid-auto-rows'] = "minmax(calc(2em + 3ex), max-content)" should set the property value 
@@ -24,6 +25,8 @@ PASS e.style['grid-auto-rows'] = "0%" should set the property value
 PASS e.style['grid-auto-rows'] = "0fr" should set the property value 
 PASS e.style['grid-auto-rows'] = "minmax(auto, 0%)" should set the property value 
 PASS e.style['grid-auto-rows'] = "fit-content(0px)" should set the property value 
+PASS e.style['grid-auto-rows'] = "auto auto" should set the property value 
+PASS e.style['grid-auto-rows'] = "auto 10px" should set the property value 
 PASS e.style['grid-auto-rows'] = "1px 2px 3px 0px" should set the property value 
 PASS e.style['grid-auto-rows'] = "fit-content(1px) minmax(2px, 3px) 4px" should set the property value 
 

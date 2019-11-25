@@ -1,3 +1,59 @@
+2019-11-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Updating WPT parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=204585
+
+        Reviewed by Javier Fernandez.
+
+        Update parsing tests from WPT and generate new test results.
+
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-shorthand.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-columns-valid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-flow-valid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-auto-rows-valid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-valid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-invalid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand.html: Added.
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log:
+
 2019-11-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Support OffscreenCanvas as a CanvasImageSource type in CanvasDrawImage, CanvasFillStrokeStyles
