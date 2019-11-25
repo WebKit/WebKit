@@ -1,5 +1,20 @@
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Do not run layout when setNeedsLayout is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=204586
+        <rdar://problem/57475333>
+
+        Reviewed by Antti Koivisto.
+
+        setNeedsLayout is disabled while the content size is set on the ScrollView. It triggers a forced layout in WebkitLegacy.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Rename Line to LineBuilder
         https://bugs.webkit.org/show_bug.cgi?id=204584
         <rdar://problem/57474964>

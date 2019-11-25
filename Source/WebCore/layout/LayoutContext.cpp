@@ -59,6 +59,11 @@ LayoutContext::LayoutContext(LayoutState& layoutState)
 void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationState& invalidationState)
 {
     PhaseScope scope(Phase::Type::Layout);
+
+    auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
+    if (formattingContextRootsForLayout.computesEmpty())
+        return;
+
     // Set the geometry on the root.
     // Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
     // ICB establishes the initial BFC, but it does not live in a formatting context and while a non-ICB root(subtree layout) has to have a formatting context,
@@ -72,9 +77,6 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationSta
     displayBox.setTopLeft({ });
     displayBox.setContentBoxHeight(rootContentBoxSize.height());
     displayBox.setContentBoxWidth(rootContentBoxSize.width());
-
-    auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
-    ASSERT(!formattingContextRootsForLayout.computesEmpty());
     for (auto& formattingContextRoot : formattingContextRootsForLayout)
         layoutFormattingContextSubtree(formattingContextRoot, invalidationState);
 }

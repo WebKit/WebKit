@@ -73,7 +73,10 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
     // FIXME: This is not the real invalidation yet.
     auto invalidationState = Layout::InvalidationState { };
     auto invalidationContext = Layout::InvalidationContext { invalidationState };
-    invalidationContext.styleChanged(*m_layoutState->root().firstChild(), StyleDifference::Layout);
+
+    // FrameView::setContentsSize temporary disables layout.
+    if (!m_disableSetNeedsLayoutCount)
+        invalidationContext.styleChanged(*m_layoutState->root().firstChild(), StyleDifference::Layout);
 
     auto layoutContext = Layout::LayoutContext { *m_layoutState };
     layoutContext.layout(view().layoutSize(), invalidationState);
