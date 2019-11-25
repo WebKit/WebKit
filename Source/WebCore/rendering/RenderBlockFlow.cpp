@@ -152,8 +152,8 @@ void RenderBlockFlow::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
-    if (m_complexLineLayout)
-        m_complexLineLayout->lineBoxes().deleteLineBoxes();
+    if (complexLineLayout())
+        complexLineLayout()->lineBoxes().deleteLineBoxes();
 
     blockWillBeDestroyed();
 
@@ -675,12 +675,10 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         return;
     }
 
-    m_simpleLineLayout = nullptr;
+    if (!complexLineLayout())
+        m_lineLayout = makeUnique<ComplexLineLayout>(*this);
 
-    if (!m_complexLineLayout)
-        m_complexLineLayout = makeUnique<ComplexLineLayout>(*this);
-
-    m_complexLineLayout->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    complexLineLayout()->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -2071,7 +2069,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (diff >= StyleDifference::Repaint) {
         // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
-        if (selfNeedsLayout() || !m_simpleLineLayout || !SimpleLineLayout::canUseFor(*this))
+        if (selfNeedsLayout() || !simpleLineLayout() || !SimpleLineLayout::canUseFor(*this))
             invalidateLineLayoutPath();
     }
 
@@ -2108,11 +2106,10 @@ void RenderBlockFlow::deleteLines()
     if (containsFloats())
         m_floatingObjects->clearLineBoxTreePointers();
 
-    if (m_simpleLineLayout) {
-        ASSERT(!m_complexLineLayout);
-        m_simpleLineLayout = nullptr;
-    } else if (m_complexLineLayout)
-        m_complexLineLayout->lineBoxes().deleteLineBoxTree();
+    if (complexLineLayout())
+        complexLineLayout()->lineBoxes().deleteLineBoxTree();
+    else
+        m_lineLayout = nullptr;
 
     RenderBlock::deleteLines();
 }
@@ -2949,7 +2946,7 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
     if (auto simpleLineLayout = this->simpleLineLayout())
         return SimpleLineLayout::hitTestFlow(*this, *simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 
-    return m_complexLineLayout && m_complexLineLayout->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return complexLineLayout() && complexLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
@@ -2960,7 +2957,7 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         return;
     }
 
-    m_complexLineLayout->addOverflowFromInlineChildren();
+    complexLineLayout()->addOverflowFromInlineChildren();
 }
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
@@ -3041,7 +3038,7 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
         return;
 
     // Floats currently affect the choice whether to use simple line layout path.
-    if (m_simpleLineLayout) {
+    if (simpleLineLayout()) {
         invalidateLineLayoutPath();
         return;
     }
@@ -3128,7 +3125,7 @@ void RenderBlockFlow::setSelectionState(SelectionState state)
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    ASSERT(!m_simpleLineLayout);
+    ASSERT(!simpleLineLayout());
 
     GapRects result;
 
@@ -3543,8 +3540,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
         return;
     }
 
-    if (m_complexLineLayout)
-        m_complexLineLayout->lineBoxes().paint(this, paintInfo, paintOffset);
+    if (complexLineLayout())
+        complexLineLayout()->lineBoxes().paint(this, paintInfo, paintOffset);
 }
 
 bool RenderBlockFlow::relayoutForPagination()
@@ -3599,7 +3596,7 @@ bool RenderBlockFlow::hasLines() const
     if (auto simpleLineLayout = this->simpleLineLayout())
         return simpleLineLayout->lineCount();
 
-    return m_complexLineLayout && m_complexLineLayout->lineBoxes().firstLineBox();
+    return complexLineLayout() && complexLineLayout()->lineBoxes().firstLineBox();
 }
 
 void RenderBlockFlow::invalidateLineLayoutPath()
@@ -3607,15 +3604,15 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     switch (lineLayoutPath()) {
     case UndeterminedPath:
     case ForceLineBoxesPath:
-        ASSERT(!m_simpleLineLayout);
+        ASSERT(!simpleLineLayout());
         return;
     case LineBoxesPath:
-        ASSERT(!m_simpleLineLayout);
+        ASSERT(!simpleLineLayout());
         setLineLayoutPath(UndeterminedPath);
         return;
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
-        m_simpleLineLayout = nullptr;
+        m_lineLayout = nullptr;
         setLineLayoutPath(UndeterminedPath);
         if (needsLayout())
             return;
@@ -3628,19 +3625,22 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 
 void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    bool needsLayout = selfNeedsLayout() || relayoutChildren || !m_simpleLineLayout;
+    bool needsLayout = selfNeedsLayout() || relayoutChildren || !simpleLineLayout();
     if (needsLayout) {
         deleteLineBoxesBeforeSimpleLineLayout();
-        m_simpleLineLayout = SimpleLineLayout::create(*this);
+        m_lineLayout = SimpleLineLayout::create(*this);
     }
+    auto& simpleLineLayout = *this->simpleLineLayout();
+
     if (view().frameView().layoutContext().layoutState() && view().frameView().layoutContext().layoutState()->isPaginated()) {
-        m_simpleLineLayout->setIsPaginated();
-        SimpleLineLayout::adjustLinePositionsForPagination(*m_simpleLineLayout, *this);
+        simpleLineLayout.setIsPaginated();
+        SimpleLineLayout::adjustLinePositionsForPagination(simpleLineLayout, *this);
     }
+
     for (auto& renderer : childrenOfType<RenderObject>(*this))
         renderer.clearNeedsLayout();
-    ASSERT(!m_complexLineLayout);
-    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLineLayout);
+
+    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
     repaintLogicalTop = lineLayoutTop;
     repaintLogicalBottom = needsLayout ? repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter() : repaintLogicalTop;
@@ -3651,8 +3651,8 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
     ASSERT(lineLayoutPath() == SimpleLinesPath);
 
-    if (m_complexLineLayout)
-        m_complexLineLayout->lineBoxes().deleteLineBoxes();
+    if (complexLineLayout())
+        complexLineLayout()->lineBoxes().deleteLineBoxes();
 
     for (auto& renderer : childrenOfType<RenderObject>(*this)) {
         if (is<RenderText>(renderer))
@@ -3663,7 +3663,7 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
             ASSERT_NOT_REACHED();
     }
 
-    m_complexLineLayout = nullptr;
+    m_lineLayout = nullptr;
 }
 
 void RenderBlockFlow::ensureLineBoxes()
@@ -3673,19 +3673,19 @@ void RenderBlockFlow::ensureLineBoxes()
 
     setLineLayoutPath(ForceLineBoxesPath);
 
-    if (!m_simpleLineLayout)
+    if (!simpleLineLayout())
         return;
 
-    ASSERT(!m_complexLineLayout);
-    m_complexLineLayout = makeUnique<ComplexLineLayout>(*this);
+    auto simpleLineLayout = makeRef(*this->simpleLineLayout());
 
-    if (SimpleLineLayout::canUseForLineBoxTree(*this, *m_simpleLineLayout)) {
-        SimpleLineLayout::generateLineBoxTree(*this, *m_simpleLineLayout);
-        m_simpleLineLayout = nullptr;
+    m_lineLayout = makeUnique<ComplexLineLayout>(*this);
+
+    if (SimpleLineLayout::canUseForLineBoxTree(*this, simpleLineLayout.get())) {
+        SimpleLineLayout::generateLineBoxTree(*this, simpleLineLayout.get());
         return;
     }
-    bool isPaginated = m_simpleLineLayout->isPaginated();
-    m_simpleLineLayout = nullptr;
+
+    auto& complexLineLayout = *this->complexLineLayout();
 
 #if !ASSERT_DISABLED
     LayoutUnit oldHeight = logicalHeight();
@@ -3695,16 +3695,16 @@ void RenderBlockFlow::ensureLineBoxes()
     bool relayoutChildren = false;
     LayoutUnit repaintLogicalTop;
     LayoutUnit repaintLogicalBottom;
-    if (isPaginated) {
+    if (simpleLineLayout->isPaginated()) {
         PaginatedLayoutStateMaintainer state(*this);
-        m_complexLineLayout->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.
         if (shouldBreakAtLineToAvoidWidow())
-            m_complexLineLayout->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+            complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
         repaint();
     } else
-        m_complexLineLayout->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     updateLogicalHeight();
     ASSERT(didNeedLayout || logicalHeight() == oldHeight);

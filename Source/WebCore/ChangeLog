@@ -1,3 +1,37 @@
+2019-11-25  Antti Koivisto  <antti@apple.com>
+
+        User Variant for RenderBlockFlow line layout
+        https://bugs.webkit.org/show_bug.cgi?id=204591
+
+        Reviewed by Zalan Bujtas.
+
+        Move complex and simple line layout structures into a Variant to avoid wasting memory, and to allow easy expansion with an LFC path
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::deleteLines):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::markLinesDirtyInBlockRange):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::hasLines const):
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::firstRootBox const):
+        (WebCore::RenderBlockFlow::lastRootBox const):
+        (WebCore::RenderBlockFlow::hasComplexLineLayout const):
+        (WebCore::RenderBlockFlow::complexLineLayout const):
+        (WebCore::RenderBlockFlow::complexLineLayout):
+        (WebCore::RenderBlockFlow::hasSimpleLineLayout const):
+        (WebCore::RenderBlockFlow::simpleLineLayout const):
+        (WebCore::RenderBlockFlow::simpleLineLayout):
+
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Do not run layout when setNeedsLayout is disabled

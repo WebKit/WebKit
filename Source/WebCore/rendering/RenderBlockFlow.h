@@ -72,8 +72,8 @@ protected:
 
     void dirtyLinesFromChangedChild(RenderObject& child) final
     {
-        if (m_complexLineLayout)
-            m_complexLineLayout->lineBoxes().dirtyLinesFromChangedChild(*this, child);
+        if (complexLineLayout())
+            complexLineLayout()->lineBoxes().dirtyLinesFromChangedChild(*this, child);
     }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
@@ -332,8 +332,8 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RootInlineBox* firstRootBox() const { return m_complexLineLayout ? m_complexLineLayout->firstRootBox() : nullptr; }
-    RootInlineBox* lastRootBox() const { return m_complexLineLayout ? m_complexLineLayout->lastRootBox() : nullptr; }
+    RootInlineBox* firstRootBox() const { return complexLineLayout() ? complexLineLayout()->firstRootBox() : nullptr; }
+    RootInlineBox* lastRootBox() const { return complexLineLayout() ? complexLineLayout()->lastRootBox() : nullptr; }
 
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
@@ -354,6 +354,10 @@ public:
     bool containsNonZeroBidiLevel() const;
 
     const SimpleLineLayout::Layout* simpleLineLayout() const;
+    SimpleLineLayout::Layout* simpleLineLayout();
+    const ComplexLineLayout* complexLineLayout() const;
+    ComplexLineLayout* complexLineLayout();
+
     void deleteLineBoxesBeforeSimpleLineLayout();
     void ensureLineBoxes();
     void generateLineBoxTree();
@@ -523,12 +527,13 @@ private:
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) override;
 
 public:
-    ComplexLineLayout* complexLineLayout() { return m_complexLineLayout.get(); }
-
     virtual Optional<TextAlignMode> overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const { return { }; }
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
 private:
+    bool hasSimpleLineLayout() const;
+    bool hasComplexLineLayout() const;
+
     void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
@@ -567,19 +572,42 @@ protected:
     std::unique_ptr<FloatingObjects> m_floatingObjects;
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
 
-    // FIXME: Only one of these should be needed at any given time.
-    std::unique_ptr<ComplexLineLayout> m_complexLineLayout;
-    RefPtr<SimpleLineLayout::Layout> m_simpleLineLayout;
+private:
+    Variant<std::nullptr_t, std::unique_ptr<ComplexLineLayout>, Ref<SimpleLineLayout::Layout>> m_lineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
     friend class ComplexLineLayout;
 };
 
+inline bool RenderBlockFlow::hasComplexLineLayout() const
+{
+    return WTF::holds_alternative<std::unique_ptr<ComplexLineLayout>>(m_lineLayout);
+}
+
+inline const ComplexLineLayout* RenderBlockFlow::complexLineLayout() const
+{
+    return hasComplexLineLayout() ? WTF::get<std::unique_ptr<ComplexLineLayout>>(m_lineLayout).get() : nullptr;
+}
+
+inline ComplexLineLayout* RenderBlockFlow::complexLineLayout()
+{
+    return hasComplexLineLayout() ? WTF::get<std::unique_ptr<ComplexLineLayout>>(m_lineLayout).get() : nullptr;
+}
+
+inline bool RenderBlockFlow::hasSimpleLineLayout() const
+{
+    return WTF::holds_alternative<Ref<SimpleLineLayout::Layout>>(m_lineLayout);
+}
+
 inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
 {
-    ASSERT(lineLayoutPath() == SimpleLinesPath || !m_simpleLineLayout);
-    return m_simpleLineLayout.get();
+    return hasSimpleLineLayout() ? WTF::get<Ref<SimpleLineLayout::Layout>>(m_lineLayout).ptr() : nullptr;
+}
+
+inline SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout()
+{
+    return hasSimpleLineLayout() ? WTF::get<Ref<SimpleLineLayout::Layout>>(m_lineLayout).ptr() : nullptr;
 }
 
 } // namespace WebCore
