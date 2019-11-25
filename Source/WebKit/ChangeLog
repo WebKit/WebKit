@@ -1,3 +1,21 @@
+2019-11-25  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Check EGL image extension by using native gl API in AcceleratedBackingStoreWayland
+        https://bugs.webkit.org/show_bug.cgi?id=204446
+
+        Reviewed by Carlos Garcia Campos.
+
+        This change is part of efforts bringing ANGLE backend for WebGL to the gtk port.
+        When ANGLE WebGL is enabled, we face a dilemma of choosing either Extensions3DANGLE
+        or Extensions3DOpenGL in AcceleratedBackingStoreWayland.cpp. Since they cannot
+        coexist, we chose Extensions3DANGLE even if what we really want is Extensions3DOepnGL.
+        We address this problem by directly checking egl image extension availability
+        via native GL API rather than relying on Extensions3D* classes in the file.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::isEGLImageAvailable):
+        (WebKit::AcceleratedBackingStoreWayland::checkRequirements):
+
 2019-11-25  Youenn Fablet  <youenn@apple.com>
 
         Crash in WebCore::ServiceWorkerRegistrationKey::hash() const

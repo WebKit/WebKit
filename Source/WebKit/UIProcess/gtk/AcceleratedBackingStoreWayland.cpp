@@ -38,15 +38,10 @@
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GLContext.h>
 
-#if USE(ANGLE)
-#include <WebCore/Extensions3DANGLE.h>
-#include <WebCore/OpenGLShims.h>
-#elif USE(OPENGL_ES)
+#if USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <WebCore/Extensions3DOpenGLES.h>
 #else
-#include <WebCore/Extensions3DOpenGL.h>
 #include <WebCore/OpenGLShims.h>
 #endif
 
@@ -67,6 +62,32 @@ static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glImageTargetTexture2D;
 namespace WebKit {
 using namespace WebCore;
 
+bool isEGLImageAvailable(bool useIndexedGetString)
+{
+#if USE(OPENGL_ES)
+    UNUSED_PARAM(useIndexedGetString);
+#else
+    if (useIndexedGetString) {
+        GLint numExtensions = 0;
+        ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+        for (GLint i = 0; i < numExtensions; ++i) {
+            String extension = String(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
+                return true;
+        }
+    } else
+#endif
+    {
+        String extensionsString = String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+        for (auto& extension : extensionsString.split(' ')) {
+            if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
+                return true;
+        }
+    }
+
+    return false;
+}
+
 bool AcceleratedBackingStoreWayland::checkRequirements()
 {
 #if USE(WPE_RENDERER)
@@ -81,14 +102,11 @@ bool AcceleratedBackingStoreWayland::checkRequirements()
         if (!eglContext->makeContextCurrent())
             return false;
 
-#if USE(ANGLE)
-        std::unique_ptr<Extensions3DANGLE> glExtensions = makeUnique<Extensions3DANGLE>(nullptr, GLContext::current()->version() >= 320);
-#elif USE(OPENGL_ES)
-        std::unique_ptr<Extensions3DOpenGLES> glExtensions = makeUnique<Extensions3DOpenGLES>(nullptr,  false);
+#if USE(OPENGL_ES)
+        if (isEGLImageAvailable(false))
 #else
-        std::unique_ptr<Extensions3DOpenGL> glExtensions = makeUnique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);
+        if (isEGLImageAvailable(GLContext::current()->version() >= 320))
 #endif
-        if (glExtensions->supports("GL_OES_EGL_image") || glExtensions->supports("GL_OES_EGL_image_external"))
             glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
     }
 
