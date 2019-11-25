@@ -6,10 +6,10 @@ msgstr ""
 "Project-Id-Version: webkit 1.1.22\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?product=WebKit"
 "&component=WebKitGTK\n"
-"POT-Creation-Date: 2019-06-25 15:29+0000\n"
-"PO-Revision-Date: 2019-08-17 19:08+0300\n"
+"POT-Creation-Date: 2019-11-08 15:36+0000\n"
+"PO-Revision-Date: 2019-11-10 12:53+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
-"Language-Team: Ukrainian <translation@linux.org.ua>\n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -67,8 +67,6 @@ msgid "Select _All"
 msgstr "Позначити _все"
 
 #: ../LocalizedStringsGtk.cpp:103
-#| msgctxt "Undo action name"
-#| msgid "Insert List"
 msgid "Insert _Emoji"
 msgstr "Вставити _емодзі"
 
@@ -515,485 +513,581 @@ msgstr "числове поле"
 msgid "week and year field"
 msgstr "поле тижня і року"
 
-#: ../../LocalizedStrings.cpp:585
+#: ../../LocalizedStrings.cpp:586
+msgid "alert"
+msgstr "попередження"
+
+#: ../../LocalizedStrings.cpp:588
+#| msgid "Allow modal dialogs"
+msgid "web alert dialog"
+msgstr "вікно вебпопередження"
+
+#: ../../LocalizedStrings.cpp:590
+msgid "web dialog"
+msgstr "вебвікно"
+
+#: ../../LocalizedStrings.cpp:592
+msgid "log"
+msgstr "журнал"
+
+#: ../../LocalizedStrings.cpp:594
+msgid "marquee"
+msgstr "область"
+
+#: ../../LocalizedStrings.cpp:596
+msgid "application status"
+msgstr "стан програм"
+
+#: ../../LocalizedStrings.cpp:598
+msgid "timer"
+msgstr "таймер"
+
+#: ../../LocalizedStrings.cpp:600
+msgid "document"
+msgstr "документ"
+
+#: ../../LocalizedStrings.cpp:602
+msgid "article"
+msgstr "стаття"
+
+#: ../../LocalizedStrings.cpp:604
+msgid "note"
+msgstr "примітка"
+
+#: ../../LocalizedStrings.cpp:606
+msgid "web application"
+msgstr "вебпрограма"
+
+#: ../../LocalizedStrings.cpp:608
+msgid "banner"
+msgstr "банер"
+
+#: ../../LocalizedStrings.cpp:610
+msgid "complementary"
+msgstr "доповнення"
+
+#: ../../LocalizedStrings.cpp:612
+#| msgid "contact info AutoFill"
+msgid "content information"
+msgstr "дані щодо вмісту"
+
+#: ../../LocalizedStrings.cpp:614
+msgid "main"
+msgstr "основний"
+
+#: ../../LocalizedStrings.cpp:616
+#| msgid "Navigation type"
+msgid "navigation"
+msgstr "навігація"
+
+#: ../../LocalizedStrings.cpp:618
+msgid "region"
+msgstr "область"
+
+#: ../../LocalizedStrings.cpp:620
+#| msgid "Search"
+msgid "search"
+msgstr "пошук"
+
+#: ../../LocalizedStrings.cpp:622
+msgid "tooltip"
+msgstr "підказка"
+
+#: ../../LocalizedStrings.cpp:624
+msgid "tab panel"
+msgstr "панель вкладки"
+
+#: ../../LocalizedStrings.cpp:626
+msgid "math"
+msgstr "математика"
+
+#: ../../LocalizedStrings.cpp:632
+msgid "separator"
+msgstr "Роздільник"
+
+#: ../../LocalizedStrings.cpp:637
+msgid "highlighted"
+msgstr "підсвічення"
+
+#: ../../LocalizedStrings.cpp:642
 msgid "press"
 msgstr "натиснути"
 
-#: ../../LocalizedStrings.cpp:590
+#: ../../LocalizedStrings.cpp:647
 msgid "select"
 msgstr "вибрати"
 
-#: ../../LocalizedStrings.cpp:595
+#: ../../LocalizedStrings.cpp:652
 msgid "activate"
 msgstr "задіяти"
 
-#: ../../LocalizedStrings.cpp:600
+#: ../../LocalizedStrings.cpp:657
 msgid "uncheck"
 msgstr "зняти позначку"
 
-#: ../../LocalizedStrings.cpp:605
+#: ../../LocalizedStrings.cpp:662
 msgid "check"
 msgstr "позначити"
 
-#: ../../LocalizedStrings.cpp:610
+#: ../../LocalizedStrings.cpp:667
 msgid "jump"
 msgstr "перейти"
 
-#: ../../LocalizedStrings.cpp:634
+#: ../../LocalizedStrings.cpp:691
 msgid "Apple Pay"
 msgstr "Apple Pay"
 
-#: ../../LocalizedStrings.cpp:639
+#: ../../LocalizedStrings.cpp:696
 msgid "Buy with Apple Pay"
 msgstr "Придбати за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:644
+#: ../../LocalizedStrings.cpp:701
 msgid "Set up with Apple Pay"
 msgstr "Налаштувати за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:649
+#: ../../LocalizedStrings.cpp:706
 msgid "Donate with Apple Pay"
 msgstr "Підтримати за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:654
+#: ../../LocalizedStrings.cpp:711
 msgid "Check out with Apple Pay"
 msgstr "Розрахуватися за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:659
+#: ../../LocalizedStrings.cpp:716
 msgid "Book with Apple Pay"
 msgstr "Забронювати за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:664
+#: ../../LocalizedStrings.cpp:721
 msgid "Subscribe with Apple Pay"
 msgstr "Передплатити за допомогою Apple Pay"
 
-#: ../../LocalizedStrings.cpp:670
+#: ../../LocalizedStrings.cpp:727
 msgid "password AutoFill"
 msgstr "автозаповнення пароля"
 
-#: ../../LocalizedStrings.cpp:675
+#: ../../LocalizedStrings.cpp:732
 msgid "contact info AutoFill"
 msgstr "автозаповнення контактних даних"
 
-#: ../../LocalizedStrings.cpp:680
+#: ../../LocalizedStrings.cpp:737
 msgid "strong password AutoFill"
 msgstr "автозаповнення складного пароля"
 
-#: ../../LocalizedStrings.cpp:685
+#: ../../LocalizedStrings.cpp:742
 msgid "credit card AutoFill"
 msgstr "автозаповнення даних кредитної картки"
 
-#: ../../LocalizedStrings.cpp:690
+#: ../../LocalizedStrings.cpp:747
 msgid "Strong Password"
 msgstr "Складний пароль"
 
-#: ../../LocalizedStrings.cpp:695
+#: ../../LocalizedStrings.cpp:752
 msgid "Missing Plug-in"
 msgstr "Не виявлено додатка"
 
-#: ../../LocalizedStrings.cpp:700
+#: ../../LocalizedStrings.cpp:757
 msgid "Plug-in Failure"
 msgstr "Помилка додатка"
 
-#: ../../LocalizedStrings.cpp:705
+#: ../../LocalizedStrings.cpp:762
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Заблокований додаток"
 
-#: ../../LocalizedStrings.cpp:710
+#: ../../LocalizedStrings.cpp:767
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Заблокований додаток"
 
-#: ../../LocalizedStrings.cpp:715
+#: ../../LocalizedStrings.cpp:772
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Непідтримуваний додаток"
 
-#: ../../LocalizedStrings.cpp:720
+#: ../../LocalizedStrings.cpp:777
 msgctxt ""
 "Label text to be used when a plug-in was blocked from loading because it was "
 "too small"
 msgid "Plug-In too small"
 msgstr "Додаток є надто малим"
 
-#: ../../LocalizedStrings.cpp:725
+#: ../../LocalizedStrings.cpp:782
 #, c-format
 msgid "%d files"
 msgstr "%d файлів"
 
-#: ../../LocalizedStrings.cpp:730
+#: ../../LocalizedStrings.cpp:787
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Невідомий"
 
-#: ../../LocalizedStrings.cpp:749
+#: ../../LocalizedStrings.cpp:806
 #, c-format
 msgid "%s %d×%d pixels"
 msgstr "%s, %d×%d пікселів"
 
-#: ../../LocalizedStrings.cpp:751
+#: ../../LocalizedStrings.cpp:808
 #, c-format
 msgid "<filename> %d×%d pixels"
 msgstr "<filename>, %d×%d пікселів"
 
-#: ../../LocalizedStrings.cpp:757
+#: ../../LocalizedStrings.cpp:814
 msgid "Loading…"
 msgstr "Завантаження…"
 
-#: ../../LocalizedStrings.cpp:762
+#: ../../LocalizedStrings.cpp:819
 msgid "Live Broadcast"
 msgstr "Трансляція"
 
-#: ../../LocalizedStrings.cpp:768
+#: ../../LocalizedStrings.cpp:825
 msgid "audio playback"
 msgstr "відтворення звуку"
 
-#: ../../LocalizedStrings.cpp:770
+#: ../../LocalizedStrings.cpp:827
 msgid "video playback"
 msgstr "відтворення відео"
 
-#: ../../LocalizedStrings.cpp:772
+#: ../../LocalizedStrings.cpp:829
 msgid "mute"
 msgstr "вимкнути звук"
 
-#: ../../LocalizedStrings.cpp:774
+#: ../../LocalizedStrings.cpp:831
 msgid "unmute"
 msgstr "увімкнути звук"
 
-#: ../../LocalizedStrings.cpp:776
+#: ../../LocalizedStrings.cpp:833
 msgid "play"
 msgstr "відтворити"
 
-#: ../../LocalizedStrings.cpp:778
+#: ../../LocalizedStrings.cpp:835
 msgid "pause"
 msgstr "призупинити"
 
-#: ../../LocalizedStrings.cpp:780
+#: ../../LocalizedStrings.cpp:837
 msgid "movie time"
 msgstr "час відтворення відео"
 
-#: ../../LocalizedStrings.cpp:782
+#: ../../LocalizedStrings.cpp:839
 msgid "timeline slider thumb"
 msgstr "повзунок лінійки запису"
 
-#: ../../LocalizedStrings.cpp:784
+#: ../../LocalizedStrings.cpp:841
 msgid "back 30 seconds"
 msgstr "назад на 30 секунд"
 
-#: ../../LocalizedStrings.cpp:786
-msgid "return to realtime"
-msgstr "повернутися до режиму реального часу"
+#: ../../LocalizedStrings.cpp:843
+#| msgid "return to realtime"
+msgid "return to real time"
+msgstr "повернення до до режиму реального часу"
 
-#: ../../LocalizedStrings.cpp:788
+#: ../../LocalizedStrings.cpp:845
 msgid "elapsed time"
 msgstr "час, що минув"
 
-#: ../../LocalizedStrings.cpp:790
+#: ../../LocalizedStrings.cpp:847
 msgid "remaining time"
 msgstr "час, що залишився:"
 
-#: ../../LocalizedStrings.cpp:792
+#: ../../LocalizedStrings.cpp:849
 msgid "status"
 msgstr "стан"
 
-#: ../../LocalizedStrings.cpp:794
+#: ../../LocalizedStrings.cpp:851
 msgid "enter full screen"
 msgstr "увійти до повноекранного режиму"
 
-#: ../../LocalizedStrings.cpp:796
+#: ../../LocalizedStrings.cpp:853
 msgid "exit full screen"
 msgstr "вийти з повноекранного режиму"
 
-#: ../../LocalizedStrings.cpp:798
+#: ../../LocalizedStrings.cpp:855
 msgid "fast forward"
 msgstr "повний вперед"
 
-#: ../../LocalizedStrings.cpp:800
+#: ../../LocalizedStrings.cpp:857
 msgid "fast reverse"
 msgstr "повний назад"
 
-#: ../../LocalizedStrings.cpp:802
+#: ../../LocalizedStrings.cpp:859
 msgid "show closed captions"
 msgstr "показати вбудовані субтитри"
 
-#: ../../LocalizedStrings.cpp:804
+#: ../../LocalizedStrings.cpp:861
 msgid "hide closed captions"
 msgstr "приховати вбудовані субтитри"
 
-#: ../../LocalizedStrings.cpp:817
+#: ../../LocalizedStrings.cpp:874
 msgid "audio element playback controls and status display"
 msgstr "елементи керування відтворенням та показом стану аудіо"
 
-#: ../../LocalizedStrings.cpp:819
+#: ../../LocalizedStrings.cpp:876
 msgid "video element playback controls and status display"
 msgstr "елементи керування відтворенням та показом стану відео"
 
-#: ../../LocalizedStrings.cpp:821
+#: ../../LocalizedStrings.cpp:878
 msgid "mute audio tracks"
 msgstr "вимкнути звукові доріжки"
 
-#: ../../LocalizedStrings.cpp:823
+#: ../../LocalizedStrings.cpp:880
 msgid "unmute audio tracks"
 msgstr "увімкнути звукові доріжки"
 
-#: ../../LocalizedStrings.cpp:825
+#: ../../LocalizedStrings.cpp:882
 msgid "begin playback"
 msgstr "почати відтворення"
 
-#: ../../LocalizedStrings.cpp:827
+#: ../../LocalizedStrings.cpp:884
 msgid "pause playback"
 msgstr "призупинити відтворення"
 
-#: ../../LocalizedStrings.cpp:829
+#: ../../LocalizedStrings.cpp:886
 msgid "movie time scrubber"
 msgstr "зміна часу відтворення відео"
 
-#: ../../LocalizedStrings.cpp:831
+#: ../../LocalizedStrings.cpp:888
 msgid "movie time scrubber thumb"
 msgstr "позначка пересування часом відтворення відео"
 
-#: ../../LocalizedStrings.cpp:833
+#: ../../LocalizedStrings.cpp:890
 msgid "seek movie back 30 seconds"
 msgstr "перехід на 30 секунд назад"
 
-#: ../../LocalizedStrings.cpp:835
-msgid "return streaming movie to real time"
-msgstr "повернути відтворення потокового відео у режим реального часу"
+#: ../../LocalizedStrings.cpp:892
+msgid "resume real time streaming"
+msgstr "відновити інтерактивне потокове передавання"
 
-#: ../../LocalizedStrings.cpp:837
+#: ../../LocalizedStrings.cpp:894
 msgid "current movie time in seconds"
 msgstr "поточний час відтворення відео у секундах"
 
-#: ../../LocalizedStrings.cpp:839
+#: ../../LocalizedStrings.cpp:896
 msgid "number of seconds of movie remaining"
 msgstr "кількість секунд до завершення відтворення відео"
 
-#: ../../LocalizedStrings.cpp:841
+#: ../../LocalizedStrings.cpp:898
 msgid "current movie status"
 msgstr "поточний стан відео"
 
-#: ../../LocalizedStrings.cpp:843
+#: ../../LocalizedStrings.cpp:900
 msgid "seek quickly back"
 msgstr "швидке перемотування назад"
 
-#: ../../LocalizedStrings.cpp:845
+#: ../../LocalizedStrings.cpp:902
 msgid "seek quickly forward"
 msgstr "швидке перемотування вперед"
 
-#: ../../LocalizedStrings.cpp:847
+#: ../../LocalizedStrings.cpp:904
 msgid "Play movie in full screen mode"
 msgstr "Відтворити відео у повноекранному режимі"
 
-#: ../../LocalizedStrings.cpp:849
+#: ../../LocalizedStrings.cpp:906
 msgid "start displaying closed captions"
 msgstr "почати показ вбудованих субтитрів"
 
-#: ../../LocalizedStrings.cpp:851
+#: ../../LocalizedStrings.cpp:908
 msgid "stop displaying closed captions"
 msgstr "припинити показ вбудованих субтитрів"
 
-#: ../../LocalizedStrings.cpp:864
+#: ../../LocalizedStrings.cpp:921
 msgid "indefinite time"
 msgstr "невизначений час"
 
-#: ../../LocalizedStrings.cpp:873
+#: ../../LocalizedStrings.cpp:930
 #, c-format
 msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
 msgstr "%1$d днів %2$d годин %3$d хвилин %4$d секунд"
 
-#: ../../LocalizedStrings.cpp:875
+#: ../../LocalizedStrings.cpp:932
 #, c-format
 msgid "%1$d hours %2$d minutes %3$d seconds"
 msgstr "%1$d годин %2$d хвилин %3$d секунд"
 
-#: ../../LocalizedStrings.cpp:877
+#: ../../LocalizedStrings.cpp:934
 #, c-format
 msgid "%1$d minutes %2$d seconds"
 msgstr "%1$d хвилин %2$d секунд"
 
-#: ../../LocalizedStrings.cpp:878
+#: ../../LocalizedStrings.cpp:935
 #, c-format
 msgid "%1$d seconds"
 msgstr "%1$d секунд"
 
-#: ../../LocalizedStrings.cpp:883
+#: ../../LocalizedStrings.cpp:940
 msgid "Fill out this field"
 msgstr "Заповніть це поле"
 
-#: ../../LocalizedStrings.cpp:888
+#: ../../LocalizedStrings.cpp:945
 msgid "Select this checkbox"
 msgstr "Позначте цей пункт"
 
-#: ../../LocalizedStrings.cpp:893
+#: ../../LocalizedStrings.cpp:950
 msgid "Select a file"
 msgstr "Виберіть файл"
 
-#: ../../LocalizedStrings.cpp:903
+#: ../../LocalizedStrings.cpp:960
 msgid "Select one of these options"
 msgstr "Позначте один з цих пунктів"
 
-#: ../../LocalizedStrings.cpp:908
+#: ../../LocalizedStrings.cpp:965
 msgid "Select an item in the list"
 msgstr "Позначте пункт у списку"
 
-#: ../../LocalizedStrings.cpp:913
+#: ../../LocalizedStrings.cpp:970
 msgid "Invalid value"
 msgstr "Некоректне значення"
 
-#: ../../LocalizedStrings.cpp:918
+#: ../../LocalizedStrings.cpp:975
 msgid "Enter an email address"
 msgstr "Введіть адресу ел. пошти"
 
-#: ../../LocalizedStrings.cpp:928
+#: ../../LocalizedStrings.cpp:985
 msgid "Enter a URL"
 msgstr "Введіть адресу"
 
-#: ../../LocalizedStrings.cpp:933
+#: ../../LocalizedStrings.cpp:990
 msgid "Match the requested format"
 msgstr "Відповідає вказаному формату"
 
-#: ../../LocalizedStrings.cpp:939
+#: ../../LocalizedStrings.cpp:996
 #, c-format
 msgid "Use at least %d characters"
 msgstr "Використайте принаймні %d символів"
 
-#: ../../LocalizedStrings.cpp:945
+#: ../../LocalizedStrings.cpp:1002
 #, c-format
 msgid "Use no more than %d characters"
 msgstr "Використайте не більше %d символів"
 
-#: ../../LocalizedStrings.cpp:955
+#: ../../LocalizedStrings.cpp:1012
 #, c-format
 msgid "Value must be greater than or equal to %s"
 msgstr "Значення має бути більшим або рівним %s"
 
-#: ../../LocalizedStrings.cpp:958
+#: ../../LocalizedStrings.cpp:1015
 msgid "range underflow"
 msgstr "від’ємне переповнення діапазону"
 
-#: ../../LocalizedStrings.cpp:967
+#: ../../LocalizedStrings.cpp:1024
 #, c-format
 msgid "Value must be less than or equal to %s"
 msgstr "Значення має бути меншим або рівним %s"
 
-#: ../../LocalizedStrings.cpp:970
+#: ../../LocalizedStrings.cpp:1027
 msgid "range overflow"
 msgstr "переповнення діапазону"
 
-#: ../../LocalizedStrings.cpp:976
+#: ../../LocalizedStrings.cpp:1033
 msgid "Enter a valid value"
 msgstr "Введіть коректне значення"
 
-#: ../../LocalizedStrings.cpp:981
+#: ../../LocalizedStrings.cpp:1038
 msgid "Enter a number"
 msgstr "Введіть число"
 
-#: ../../LocalizedStrings.cpp:986
+#: ../../LocalizedStrings.cpp:1043
 msgid "Click to Exit Full Screen"
 msgstr "Натисніть, щоб вийти з повноекранного режиму"
 
-#: ../../LocalizedStrings.cpp:993
+#: ../../LocalizedStrings.cpp:1050
 msgid "Subtitles"
 msgstr "Субтитри"
 
-#: ../../LocalizedStrings.cpp:998
+#: ../../LocalizedStrings.cpp:1055
 msgid "Off"
 msgstr "Вимкнено"
 
-#: ../../LocalizedStrings.cpp:1003
+#: ../../LocalizedStrings.cpp:1060
 msgid "Auto (Recommended)"
 msgstr "Авто (рекомендовано)"
 
-#: ../../LocalizedStrings.cpp:1008
+#: ../../LocalizedStrings.cpp:1065
 msgctxt "Menu item label for a text track that has no other name"
 msgid "Unknown"
 msgstr "Невідомий"
 
-#: ../../LocalizedStrings.cpp:1013
+#: ../../LocalizedStrings.cpp:1070
 msgctxt "Menu item label for an audio track that has no other name"
 msgid "Unknown"
 msgstr "Невідома"
 
-#: ../../LocalizedStrings.cpp:1059
+#: ../../LocalizedStrings.cpp:1116
 msgid "Snapshotted Plug-In"
 msgstr "Знятий додаток"
 
-#: ../../LocalizedStrings.cpp:1064
+#: ../../LocalizedStrings.cpp:1121
 msgid "Click to restart"
 msgstr "Натисніть, щоб перезапустити"
 
-#: ../../LocalizedStrings.cpp:1069
+#: ../../LocalizedStrings.cpp:1126
 msgid "Show in blocked plug-in"
 msgstr "Показати у заблокованому додатку"
 
-#: ../../LocalizedStrings.cpp:1079
+#: ../../LocalizedStrings.cpp:1136
 #, c-format
 msgid "%s WebCrypto Master Key"
 msgstr "Основний ключ WebCrypto %s"
 
-#: ../../LocalizedStrings.cpp:1087
+#: ../../LocalizedStrings.cpp:1144
 msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "Використовується для шифрування ключів WebCrypto у постійному сховищі, "
 "зокрема IndexedDB"
 
-#: ../../LocalizedStrings.cpp:1096
+#: ../../LocalizedStrings.cpp:1153
 msgctxt "Title of the OK button for the number pad in zoomed form controls."
 msgid "OK"
 msgstr "Гаразд"
 
-#: ../../LocalizedStrings.cpp:1101
+#: ../../LocalizedStrings.cpp:1158
 msgid "Done"
 msgstr "Виконано"
 
-#: ../../LocalizedStrings.cpp:1106
+#: ../../LocalizedStrings.cpp:1163
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: ../../LocalizedStrings.cpp:1111
+#: ../../LocalizedStrings.cpp:1168
 msgid "Hide"
 msgstr "Сховати"
 
-#: ../../LocalizedStrings.cpp:1116
+#: ../../LocalizedStrings.cpp:1173
 msgid "Go"
 msgstr "Перейти"
 
-#: ../../LocalizedStrings.cpp:1121
+#: ../../LocalizedStrings.cpp:1178
 msgid "Search"
 msgstr "Шукати"
 
-#: ../../LocalizedStrings.cpp:1126
+#: ../../LocalizedStrings.cpp:1183
 msgctxt "Set button below date picker"
 msgid "Set"
 msgstr "Встановити"
 
-#: ../../LocalizedStrings.cpp:1131
+#: ../../LocalizedStrings.cpp:1188
 msgctxt "Day label in date picker"
 msgid "DAY"
 msgstr "ДЕНЬ"
 
-#: ../../LocalizedStrings.cpp:1136
+#: ../../LocalizedStrings.cpp:1193
 msgctxt "Month label in date picker"
 msgid "MONTH"
 msgstr "МІСЯЦЬ"
 
-#: ../../LocalizedStrings.cpp:1141
+#: ../../LocalizedStrings.cpp:1198
 msgctxt "Year label in date picker"
 msgid "YEAR"
 msgstr "РІК"
 
-#: ../../LocalizedStrings.cpp:1149
+#: ../../LocalizedStrings.cpp:1206
 msgid "Unacceptable TLS certificate"
 msgstr "Неприйнятний сертифікат TLS"
 
-#: ../../network/soup/NetworkStorageSessionSoup.cpp:266
-#| msgid "WebKitGTK+ password"
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:236
 msgid "WebKitGTK password"
 msgstr "Пароль WebKitGTK"
 
@@ -1109,105 +1203,110 @@ msgstr "підкреслення"
 
 #: ../../../editing/EditAction.cpp:88
 msgctxt "Undo action name"
+msgid "StrikeThrough"
+msgstr "закреслення"
+
+#: ../../../editing/EditAction.cpp:90
+msgctxt "Undo action name"
 msgid "Outline"
 msgstr "контур"
 
-#: ../../../editing/EditAction.cpp:90
+#: ../../../editing/EditAction.cpp:92
 msgctxt "Undo action name"
 msgid "Unscript"
 msgstr "скасування нахилу"
 
-#: ../../../editing/EditAction.cpp:92
+#: ../../../editing/EditAction.cpp:94
 msgctxt "Undo action name"
 msgid "Drag"
 msgstr "перетягування"
 
-#: ../../../editing/EditAction.cpp:94
+#: ../../../editing/EditAction.cpp:96
 msgctxt "Undo action name"
 msgid "Cut"
 msgstr "вирізання"
 
-#: ../../../editing/EditAction.cpp:96
+#: ../../../editing/EditAction.cpp:98
 msgctxt "Undo action name"
 msgid "Bold"
 msgstr "жирний"
 
-#: ../../../editing/EditAction.cpp:98
+#: ../../../editing/EditAction.cpp:100
 msgctxt "Undo action name"
 msgid "Italics"
 msgstr "курсив"
 
-#: ../../../editing/EditAction.cpp:100
+#: ../../../editing/EditAction.cpp:102
 msgctxt "Undo action name"
 msgid "Delete"
 msgstr "вилучення"
 
-#: ../../../editing/EditAction.cpp:102
+#: ../../../editing/EditAction.cpp:104
 msgctxt "Undo action name"
 msgid "Dictation"
 msgstr "диктування"
 
-#: ../../../editing/EditAction.cpp:104
+#: ../../../editing/EditAction.cpp:106
 msgctxt "Undo action name"
 msgid "Paste"
 msgstr "вставлення"
 
-#: ../../../editing/EditAction.cpp:106
+#: ../../../editing/EditAction.cpp:108
 msgctxt "Undo action name"
 msgid "Paste Font"
 msgstr "вставлення шрифту"
 
-#: ../../../editing/EditAction.cpp:108
+#: ../../../editing/EditAction.cpp:110
 msgctxt "Undo action name"
 msgid "Paste Ruler"
 msgstr "вставлення лінійки"
 
-#: ../../../editing/EditAction.cpp:123
+#: ../../../editing/EditAction.cpp:125
 msgctxt "Undo action name"
 msgid "Typing"
 msgstr "введення даних"
 
-#: ../../../editing/EditAction.cpp:125
+#: ../../../editing/EditAction.cpp:127
 msgctxt "Undo action name"
 msgid "Create Link"
 msgstr "створення посилання"
 
-#: ../../../editing/EditAction.cpp:127
+#: ../../../editing/EditAction.cpp:129
 msgctxt "Undo action name"
 msgid "Unlink"
 msgstr "від’єднання"
 
-#: ../../../editing/EditAction.cpp:130
+#: ../../../editing/EditAction.cpp:132
 msgctxt "Undo action name"
 msgid "Insert List"
 msgstr "вставлення списку"
 
-#: ../../../editing/EditAction.cpp:132
+#: ../../../editing/EditAction.cpp:134
 msgctxt "Undo action name"
 msgid "Formatting"
 msgstr "форматування"
 
-#: ../../../editing/EditAction.cpp:134
+#: ../../../editing/EditAction.cpp:136
 msgctxt "Undo action name"
 msgid "Indent"
 msgstr "відступ"
 
-#: ../../../editing/EditAction.cpp:136
+#: ../../../editing/EditAction.cpp:138
 msgctxt "Undo action name"
 msgid "Outdent"
 msgstr "зменшення відступу"
 
-#: ../../../editing/EditAction.cpp:140
+#: ../../../editing/EditAction.cpp:142
 msgctxt "Undo action name"
 msgid "Convert to Ordered List"
 msgstr "перетворення на упорядкований список"
 
-#: ../../../editing/EditAction.cpp:142
+#: ../../../editing/EditAction.cpp:144
 msgctxt "Undo action name"
 msgid "Convert to Unordered List"
 msgstr "перетворення на неупорядкований список"
 
-#: ../../../editing/EditAction.cpp:144
+#: ../../../editing/EditAction.cpp:146
 msgctxt "Undo action name"
 msgid "Insert Drawing"
 msgstr "вставлення креслення"
@@ -1271,8 +1370,8 @@ msgstr "Адреса даних"
 #: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:96
 #: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1065
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:444
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1095
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:448
 msgid "URI"
 msgstr "URI"
 
@@ -1321,8 +1420,36 @@ msgid "HTTP Headers"
 msgstr "HTTP-заголовки"
 
 #: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:173
-msgid "The The HTTP headers of the response"
+#| msgid "The The HTTP headers of the response"
+msgid "The HTTP headers of the response"
 msgstr "Заголовки HTTP відповіді"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:132
+msgid "Name"
+msgstr "Назва"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:133
+#| msgid "The user agent string"
+msgid "The user message name"
+msgstr "Назва повідомлення користувача"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:151
+msgid "Parameters"
+msgstr "Параметри"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:152
+#| msgid "The user agent string"
+msgid "The user message parameters"
+msgstr "Параметри повідомлень користувача"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:169
+#| msgid "description list"
+msgid "File Descriptor List"
+msgstr "Список дескрипторів файлів"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:170
+msgid "The user message list of file descriptors"
+msgstr "Список повідомлень користувача для дескрипторів файлів"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:42
 msgid "Not allowed to use restricted network port"
@@ -1337,7 +1464,6 @@ msgid "The URL can’t be shown"
 msgstr "Показ даних за вказаною адресою неможливий"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:57
-#| msgid "The URL was blocked by a content filter"
 msgid "The URL was blocked by device restrictions"
 msgstr "Адресу заблоковано через обмеження пристрою"
 
@@ -1367,7 +1493,7 @@ msgid "WebKit encountered an internal error"
 msgstr "Сталася внутрішня помилка WebKit"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:98
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2095
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2168
 msgid "Load request cancelled"
 msgstr "Запит щодо завантаження скасовано"
 
@@ -1387,11 +1513,11 @@ msgstr "Некоректний діапазон сторінок"
 msgid "User cancelled the download"
 msgstr "Отримання даних скасовано користувачем"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:263
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:264
 msgid "Identifier"
 msgstr "Ідентифікатор"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:264
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:265
 msgid "The automation session identifier"
 msgstr "Ідентифікатор сеансу автоматизації"
 
@@ -1436,21 +1562,19 @@ msgstr "Атрибути введення"
 msgid "Flags with the typing attributes"
 msgstr "Прапорці із атрибутами введення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:148
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:433
-#, c-format
-msgid "Unknown favicon for page %s"
-msgstr "Невідома піктограма для сторінки %s"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:169
+msgid "Favicons database not initialized yet"
+msgstr "Базу даних піктограм ще не ініціалізовано"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:153
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:389
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "У сторінки %s немає піктограми"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:383
-msgid "Favicons database not initialized yet"
-msgstr "Базу даних піктограм ще не ініціалізовано"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:185
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "Невідома піктограма для сторінки %s"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
 msgid "MIME types filter"
@@ -1584,7 +1708,7 @@ msgid "The unique id for the notification"
 msgstr "Унікальний ідентифікатор для сповіщення"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1018
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1048
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
 msgid "Title"
 msgstr "Заголовок"
@@ -1625,110 +1749,110 @@ msgstr "Відповідь адреси"
 msgid "The URI response that is associated with this policy decision"
 msgstr "Відповідь адреси, яку пов’язано із цим рішенням за правилами"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:612
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:611
 msgid "Enable JavaScript"
 msgstr "Увімкнути JavaScript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:613
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:612
 msgid "Enable JavaScript."
 msgstr "Увімкнути JavaScript."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:626
 msgid "Auto load images"
 msgstr "Автоматично завантажувати зображення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:628
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
 msgid "Load images automatically."
 msgstr "Завантажувати зображення у автоматичному режимі."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:641
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:640
 msgid "Load icons ignoring image load setting"
 msgstr ""
 "Завантажувати піктограми без врахування параметра завантаження зображень"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:642
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:641
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 "Визначає, чи слід завантажувати піктограми сайта без врахування параметра "
 "завантаження зображень."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:659
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:658
 msgid "Enable offline web application cache"
 msgstr "Увімкнути автономний кеш вебпрограм"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:660
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:659
 msgid "Whether to enable offline web application cache."
 msgstr "Визначає, чи слід увімкнути автономний кеш вебпрограм."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:676
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:675
 msgid "Enable HTML5 local storage"
 msgstr "Увімкнути локальне сховище HTML5"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:677
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:676
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "Визначає, чи слід вмикати підтримку локальних сховищ у HTML5."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:689
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:688
 msgid "Enable HTML5 database"
 msgstr "Увімкнути базу даних HTML5"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:690
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:689
 msgid "Whether to enable HTML5 database support."
 msgstr "Визначає, чи слід вмикати підтримку бази даних у HTML5."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:703
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:702
 msgid "Enable XSS auditor"
 msgstr "Увімкнути аудитор XSS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:703
 msgid "Whether to enable the XSS auditor."
 msgstr "Визначає, чи слід вмикати аудитор XSS."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:719
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:718
 msgid "Enable frame flattening"
 msgstr "Увімкнути спрощення фреймів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:720
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:719
 msgid "Whether to enable frame flattening."
 msgstr "Визначає, чи слід увімкнути спрощення фреймів."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:732
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:731
 msgid "Enable plugins"
 msgstr "Увімкнути додатки"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:733
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:732
 msgid "Enable embedded plugin objects."
 msgstr "Увімкнути вбудовані об’єкти додатків."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:745
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:744
 msgid "Enable Java"
 msgstr "Увімкнути Java"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:746
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:745
 msgid "Whether Java support should be enabled."
 msgstr "Визначає, чи має бути увімкнено підтримку Java."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:759
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:758
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript може відкривати вікна у автоматичному режимі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:760
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:759
 msgid "Whether JavaScript can open windows automatically."
 msgstr "Визначає, чи може JavaScript відкривати вікна у автоматичному режимі."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:775
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:774
 msgid "Enable hyperlink auditing"
 msgstr "Увімкнути перевірку гіперпосилань"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:776
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:775
 msgid "Whether <a ping> should be able to send pings."
 msgstr "Визначає, чи зможе <a ping> надсилати луна-імпульси (пінги)."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:788
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:787
 msgid "Default font family"
 msgstr "Типова гарнітура шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:789
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:788
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -1736,96 +1860,96 @@ msgstr ""
 "Гарнітура шрифту, яка вважатиметься типовою для даних, для яких не вказано "
 "гарнітури шрифту."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:802
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:801
 msgid "Monospace font family"
 msgstr "Гарнітура моноширинного шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:803
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:802
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із моноширинним "
 "шрифтом."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:815
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:814
 msgid "Serif font family"
 msgstr "Гарнітура шрифту з засічками"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:816
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:815
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із шрифтом із "
 "засічками."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:828
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:827
 msgid "Sans-serif font family"
 msgstr "Гарнітура шрифту без засічок"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:829
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:828
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із шрифтом без "
 "засічок."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:841
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:840
 msgid "Cursive font family"
 msgstr "Гарнітура рукописного шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:842
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:841
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із рукописним "
 "шрифтом."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:854
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:853
 msgid "Fantasy font family"
 msgstr "Гарнітура декоративного шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:855
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:854
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із декоративним "
 "шрифтом."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:867
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:866
 msgid "Pictograph font family"
 msgstr "Гарнітура піктографічного шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:868
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:867
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Гарнітура шрифту, яку буде типово використано для даних із піктографічним "
 "шрифтом."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:881
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:880
 msgid "Default font size"
 msgstr "Типовий розмір символів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:882
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:881
 msgid "The default font size used to display text."
 msgstr "Типовий розмір символів шрифту для показу текстових даних."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:895
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:894
 msgid "Default monospace font size"
 msgstr "Типовий розмір моноширинного шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:896
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:895
 msgid "The default font size used to display monospace text."
 msgstr ""
 "Типовий розмір символів шрифту для показу моноширинних текстових даних."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:909
 msgid "Minimum font size"
 msgstr "Мінімальний розмір шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:911
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
 msgid "The minimum font size used to display text."
 msgstr "Мінімальний розмір символів шрифту для показу текстових даних."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:923
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:922
 msgid "Default charset"
 msgstr "Стандартний набір символів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:924
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:923
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -1833,287 +1957,287 @@ msgstr ""
 "Типовий набір символів, який використовуватиметься для даних, для яких не "
 "вказано набору символів."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:940
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:939
 msgid "Enable private browsing"
 msgstr "Увімкнути конфіденційний перегляд"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:941
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:940
 msgid "Whether to enable private browsing"
 msgstr "Визначає, чи слід вмикати конфіденційний перегляд"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:954
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:953
 msgid "Enable developer extras"
 msgstr "Увімкнути додатки розробника"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:955
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:954
 msgid "Whether to enable developer extras"
 msgstr "Визначає, чи слід вмикати додатки розробника"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:967
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:966
 msgid "Enable resizable text areas"
 msgstr "Увімкнути текстові області змінного розміру"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:968
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:967
 msgid "Whether to enable resizable text areas"
 msgstr "Визначає, чи слід вмикати текстові області змінного розміру"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:983
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:982
 msgid "Enable tabs to links"
 msgstr "Увімкнути вкладки за посиланнями"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:984
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:983
 msgid "Whether to enable tabs to links"
 msgstr "Визначає, чи слід вмикати вкладки за посиланнями"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:997
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:996
 msgid "Enable DNS prefetching"
 msgstr "Увімкнути попереднє отримання DNS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:998
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:997
 msgid "Whether to enable DNS prefetching"
 msgstr "Визначає, чи слід вмикати попереднє отримання DNS"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1010
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1009
 msgid "Enable Caret Browsing"
 msgstr "Увімкнути режим активного вказівника"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1011
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1010
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Визначає, чи слід вмикати розширену навігацію за допомогою клавіатури для "
 "доступності"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1026
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1025
 msgid "Enable Fullscreen"
 msgstr "Повноекранний режим"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1027
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1026
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr ""
 "Визначає, чи слід вмикати повноекранний програмний інтерфейс Javascript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1039
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1038
 msgid "Print Backgrounds"
 msgstr "Друкувати тло"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1040
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1039
 msgid "Whether background images should be drawn during printing"
 msgstr "Визначає, чи слід показувати зображення тла під час друку"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1058
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1057
 msgid "Enable WebAudio"
 msgstr "Увімкнути WebAudio"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1059
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1058
 msgid "Whether WebAudio content should be handled"
 msgstr "Визначає, чи слід обробляти дані WebAudio"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1073
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1072
 msgid "Enable WebGL"
 msgstr "Увімкнути WebGL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1074
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1073
 msgid "Whether WebGL content should be rendered"
 msgstr "Визначає, чи слід обробляти дані WebGL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1090
 msgid "Allow modal dialogs"
 msgstr "Дозволяти модальні вікна"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1092
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Визначає, чи можна створювати модальні діалогові вікна"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1107
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1106
 msgid "Zoom Text Only"
 msgstr "Масштабувати лише текст"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1108
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1107
 msgid "Whether zoom level of web view changes only the text size"
 msgstr ""
 "Визначає, чи змінює масштабування вебпанелі лише розмір символів шрифту"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1122
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1121
 msgid "JavaScript can access clipboard"
 msgstr "Скрипти JavaScript можуть отримувати доступ до буфера обміну даними"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1123
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1122
 msgid "Whether JavaScript can access Clipboard"
 msgstr "Чи можуть скрипти JavaScript отримувати доступ до буфера обміну даними"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1138
 msgid "Media playback requires user gesture"
 msgstr "Відтворення мультимедіа потребує жесту користувача"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1140
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
 msgid "Whether media playback requires user gesture"
 msgstr ""
 "Визначає, чи потребуватиме відтворення мультимедіа жесту від користувача"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1154
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1153
 msgid "Media playback allows inline"
 msgstr "Дозвіл вбудованого відтворення мультимедіа"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1155
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1154
 msgid "Whether media playback allows inline"
 msgstr "Визначає, чи слід дозволяти вбудоване відтворення мультимедіа"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1168
 msgid "Draw compositing indicators"
 msgstr "Малювання композитних індикаторів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1169
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr ""
 "Визначає, чи слід малювати композитні рамки і перемальовувати лічильники"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1189
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1188
 msgid "Enable Site Specific Quirks"
 msgstr "Увімкнути підтримку особливостей сайта"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1190
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1189
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Увімкнути специфічну для сайта зміну параметрів перегляду"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1210
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1209
 msgid "Enable page cache"
 msgstr "Увімкнути кеш сторінок"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1211
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1210
 msgid "Whether the page cache should be used"
 msgstr "Чи слід використовувати кешування сторінок"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1229
 msgid "User agent string"
 msgstr "Рядок агента користувача"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1231
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
 msgid "The user agent string"
 msgstr "Рядок агента користувача"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1243
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1242
 msgid "Enable smooth scrolling"
 msgstr "Увімкнути плавне гортання"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1244
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1243
 msgid "Whether to enable smooth scrolling"
 msgstr "Визначає, чи слід вмикати плавне гортання"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1261
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1260
 msgid "Enable accelerated 2D canvas"
 msgstr "Увімкнути пришвидшення обробки плоских полотен"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1262
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1261
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Визначає, чи слід вмикати пришвидшення обробки плоских полотен"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1277
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1276
 msgid "Write console messages on stdout"
 msgstr "Записувати консольні повідомлення до стандартного виведення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1277
 msgid "Whether to write console messages on stdout"
 msgstr ""
 "Визначає, чи слід записувати консольні повідомлення до стандартного виведення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1296
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1295
 msgid "Enable MediaStream"
 msgstr "Увімкнути MediaStream"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1297
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1296
 msgid "Whether MediaStream content should be handled"
 msgstr "Визначає, чи слід обробляти дані MediaStream"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1312
 msgid "Enable mock capture devices"
 msgstr "Увімкнути фіктивні пристрої захоплення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
 msgid "Whether we expose mock capture devices or not"
 msgstr "Визначає, чи слід надавати доступ до фіктивних пристроїв захоплення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1333
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1332
 msgid "Enable Spatial Navigation"
 msgstr "Увімкнути просторову навігацію"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1334
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1333
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Визначає, чи слід вмикати підтримку просторової навігації."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1352
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1351
 msgid "Enable MediaSource"
 msgstr "Увімкнути MediaSource"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1353
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1352
 msgid "Whether MediaSource should be enabled."
 msgstr "Визначає, чи слід вмикати MediaSource."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1373
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1372
 msgid "Enable EncryptedMedia"
 msgstr "Увімкнути EncryptedMedia"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1374
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1373
 msgid "Whether EncryptedMedia should be enabled."
 msgstr "Визначає, чи слід вмикати EncryptedMedia."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1395
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1394
 msgid "Enable MediaCapabilities"
 msgstr "Увімкнути MediaCapabilities"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1396
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1395
 msgid "Whether MediaCapabilities should be enabled."
 msgstr "Визначає, чи слід вмикати MediaCapabilities."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1414
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1413
 msgid "Allow file access from file URLs"
 msgstr "Дозволити доступ до файлів із адрес файлів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1415
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1414
 msgid "Whether file access is allowed from file URLs."
 msgstr "Визначає, чи слід дозволяти доступ до файлів із адрес файлів."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1434
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1433
 msgid "Allow universal access from the context of file scheme URLs"
 msgstr "Дозволити універсальний доступ з контексту файлових адрес"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1435
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1434
 msgid ""
 "Whether or not universal access is allowed from the context of file scheme "
 "URLs"
 msgstr ""
 "Визначає, чи слід дозволяти універсальний доступ з контексту файлових адрес"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1460
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1459
 msgid "Hardware Acceleration Policy"
 msgstr "Правила апаратного прискорення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1461
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1460
 msgid "The policy to decide how to enable and disable hardware acceleration"
 msgstr "Правила щодо того, як вмикати і вимикати апаратне прискорення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1476
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1475
 msgid "Enable back-forward navigation gestures"
 msgstr "Увімкнути навігаційні жести назад-вперед"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1477
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1476
 msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
 msgstr ""
 "Визначає, чи використовуватиметься горизонтальний рух пальцем для навігації "
 "назад-вперед"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1493
 msgid "Enable JavaScript Markup"
 msgstr "Увімкнути розмітку JavaScript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1495
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
 msgid "Enable JavaScript in document markup."
 msgstr "Увімкнути JavaScript у розмітці документів."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1511
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1510
 msgid "Enable media"
 msgstr "Увімкнути мультимедіа"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1512
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1511
 msgid "Whether media content should be handled"
 msgstr "Визначає, чи слід обробляти мультимедійні дані"
 
@@ -2149,22 +2273,31 @@ msgstr ""
 "Визначає, чи має медіапристрій, для доступу до якого потрібен дозвіл, "
 "можливості із захоплення відео"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:421
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:260
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:462
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:271
 msgid "Local Storage Directory"
 msgstr "Каталог локального сховища"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:422
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:463
 msgid "The directory where local storage data will be saved"
 msgstr "Каталог, у якому зберігатимуться дані локального сховища даних"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:439
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:480
 msgid "Website Data Manager"
 msgstr "Керування даними сайта"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:440
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:481
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager, який пов’язано із цим контекстом"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:504
+msgid "Swap Processes on Cross-Site Navigation"
+msgstr "Міняти місцями процеси при навігації між сайтами"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:505
+msgid "Whether swap Web processes on cross-site navigations is enabled"
+msgstr ""
+"Визначає, чи увімкнено зміну процесів місцями при навігації між сайтами"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
 msgid "The current active URI of the resource"
@@ -2175,95 +2308,109 @@ msgid "The response of the resource"
 msgstr "Відповідь ресурсу"
 
 #. This fails when the page is closed or frame is destroyed, so we can just cancel the operation.
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:350
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:349
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4329
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:298
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:897
 msgid "Operation was cancelled"
 msgstr "Дію було скасовано"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:186
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:189
 msgid "Local files"
 msgstr "Локальні файли"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:225
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:236
 msgid "Base Data Directory"
 msgstr "Базовий каталог даних"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:226
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:237
 msgid "The base directory for Website data"
 msgstr "Базовий каталог для даних сайта"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:243
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:254
 msgid "Base Cache Directory"
 msgstr "Базовий каталог кешу"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:244
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:255
 msgid "The base directory for Website cache"
 msgstr "Базовий каталог кешу сайта"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:261
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:272
 msgid "The directory where local storage data will be stored"
 msgstr "Каталог, у якому зберігатимуться дані локального сховища даних"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:277
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:288
 msgid "Disk Cache Directory"
 msgstr "Каталог кешування на диску"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:278
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:289
 msgid "The directory where HTTP disk cache will be stored"
 msgstr "Каталог, у якому зберігатиметься кеш HTTP на диску"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:294
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:305
 msgid "Offline Web Application Cache Directory"
 msgstr "Каталог кешу автономних вебпрограм"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:295
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:306
 msgid "The directory where offline web application cache will be stored"
 msgstr "Каталог, у якому зберігатимуться дані кешу автономних вебпрограм"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:311
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:322
 msgid "IndexedDB Directory"
 msgstr "Каталог IndexedDB"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:312
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:323
 msgid "The directory where IndexedDB databases will be stored"
 msgstr "Каталог, до якого зберігатимуться бази даних IndexedDB"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:330
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:341
 msgid "WebSQL Directory"
 msgstr "Каталог WebSQL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:331
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:342
 msgid "The directory where WebSQL databases will be stored"
 msgstr "Каталог, до якого зберігатимуться бази даних WebSQL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:351
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
+#| msgid "Base Cache Directory"
+msgid "HSTS Cache Directory"
+msgstr "Каталог кешування HSTS"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:359
+#| msgid "The directory where HTTP disk cache will be stored"
+msgid ""
+"The directory where the HTTP Strict-Transport-Security cache will be stored"
+msgstr "Каталог, у якому зберігатиметься кеш HTTP Strict-Transport-Security"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:379
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Визначає, чи є WebKitWebsiteDataManager тимчасовим"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:682
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:709
 msgid "Acknowledge"
 msgstr "Підтвердження"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:938
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:968
 msgid "Backend"
 msgstr "Модуль"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:939
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:969
 msgid "The backend for the web view"
 msgstr "Модуль для перегляду сторінок інтернету"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:952
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:982
 msgid "Web Context"
 msgstr "Вебконтекст"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:953
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:983
 msgid "The web context for the view"
 msgstr "Вебконтекст панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:970
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1000
 msgid "Related WebView"
 msgstr "Пов’язана вебпанель"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:971
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1001
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -2271,85 +2418,102 @@ msgstr ""
 "Пов’язаний WebKitWebView, який використовуватиметься, якщо створено панель "
 "із тим самим вебпроцесом"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:987
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1017
 msgid "WebView settings"
 msgstr "Параметри вебпанелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:988
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1018
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1004
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1034
 msgid "WebView user content manager"
 msgstr "Засіб керування даними користувача на вебпанелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1005
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1035
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1019
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1049
 msgid "Main frame document title"
 msgstr "Заголовок основного фрейма документа"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1037
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1067
 msgid "Estimated Load Progress"
 msgstr "Оцінка поступу завантаження"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1038
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1068
 msgid "An estimate of the percent completion for a document load"
 msgstr "Оцінка частки завантаження документа у відсотках"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1051
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1081
 msgid "Favicon"
 msgstr "Піктограма"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1052
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1082
 msgid "The favicon associated to the view, if any"
 msgstr "Піктограма, пов’язана із цією панеллю, якщо таку встановлено"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1066
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1096
 msgid "The current active URI of the view"
 msgstr "Поточна активна адреса панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1081
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1111
 msgid "Zoom level"
 msgstr "Масштабування"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1082
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1112
 msgid "The zoom level of the view content"
 msgstr "Масштаб вмісту панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1101
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1131
 msgid "Is Loading"
 msgstr "Завантажується"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1102
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1132
 msgid "Whether the view is loading a page"
 msgstr "Визначає, чи завантажує панель сторінку"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1122
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1152
 msgid "Whether the view is playing audio"
 msgstr "Визначає, чи відтворює панель звукові дані"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1145
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1175
 msgid "Whether the web view is ephemeral"
 msgstr "Визначає, чи є панель тимчасовою"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1164
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1194
 msgid "Whether the web view is controlled by automation"
 msgstr "Визначає, чи керуватиметься панель перегляду автоматично"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1181
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1211
 msgid "Editable"
 msgstr "Можна редагувати"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1212
 msgid "Whether the content can be modified by the user."
 msgstr "Визначає, чи може бути дані змінено користувачем."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:3930
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1228
+#| msgid "Identifier"
+msgid "Page Identifier"
+msgstr "Ідентифікатор сторінки"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1229
+#| msgid "The automation session identifier"
+msgid "The page identifier."
+msgstr "Ідентифікатор сторінки."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4042
 msgid "There was an error creating the snapshot"
 msgstr "Під час створення знімка сталася помилка"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4335
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:304
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:903
+#, c-format
+msgid "Message %s was not handled"
+msgstr "Обробки повідомлення %s не виконано"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
 msgid "Geometry"
@@ -2468,12 +2632,10 @@ msgid "Recent"
 msgstr "Нещодавні"
 
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:398
-#| msgid "No Guesses Found"
 msgid "No Results Found"
 msgstr "Нічого не знайдено"
 
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:407
-#| msgid "No recent searches"
 msgid "Try a different search"
 msgstr "Спробувати інші критерії пошуку"
 
@@ -2498,7 +2660,6 @@ msgid "Travel & Places"
 msgstr "Подорожі і місця"
 
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:482
-#| msgid "activate"
 msgid "Activities"
 msgstr "Діяльність"
 
@@ -2598,7 +2759,7 @@ msgstr ""
 "Визначає, чи може бути долучено ревізор до того самого вікна, що містить "
 "ревізовану панель"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1526
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1564
 msgid "Website running in fullscreen mode"
 msgstr "Сайт працює у повноекранному режимі"
 
@@ -2641,6 +2802,9 @@ msgstr "Вузол"
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:445
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:449
 msgid "The current active URI of the web page"
 msgstr "Поточна активна адреса сторінки"
+
+#~ msgid "return streaming movie to real time"
+#~ msgstr "повернути відтворення потокового відео у режим реального часу"
