@@ -1,3 +1,13 @@
+2019-11-25  youenn fablet  <youenn@apple.com>
+
+        Mark imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html as Slow
+        https://bugs.webkit.org/show_bug.cgi?id=204567
+
+        Unreviewed.
+
+        * TestExpectations:
+        Mark above test as slow as it takes at least 20 seconds to run.
+
 2019-11-24  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Garden dedicated queue (Part 4)
