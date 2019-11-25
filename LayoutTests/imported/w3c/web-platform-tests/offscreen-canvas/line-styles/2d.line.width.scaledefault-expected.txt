@@ -3,5 +3,5 @@
 Default lineWidth strokes are affected by scale transformations
 
 
-FAIL Default lineWidth strokes are affected by scale transformations null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Default lineWidth strokes are affected by scale transformations 
 

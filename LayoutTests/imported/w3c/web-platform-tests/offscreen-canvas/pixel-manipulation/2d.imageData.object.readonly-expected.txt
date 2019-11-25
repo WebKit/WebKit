@@ -3,5 +3,5 @@
 ImageData objects properties are read-only
 
 
-FAIL ImageData objects properties are read-only null is not an object (evaluating 'ctx.getImageData')
+PASS ImageData objects properties are read-only 
 

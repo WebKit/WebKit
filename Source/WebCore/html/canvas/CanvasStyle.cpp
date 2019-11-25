@@ -35,6 +35,9 @@
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 #include "StyleProperties.h"
 
 #if USE(CG)
@@ -43,25 +46,33 @@
 
 namespace WebCore {
 
-static bool isCurrentColorString(const String& colorString)
+bool isCurrentColorString(const String& colorString)
 {
     return equalLettersIgnoringASCIICase(colorString, "currentcolor");
 }
 
-static Color parseColor(const String& colorString)
+Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
+#if ENABLE(OFFSCREEN_CANVAS)
+    if (canvasBase.isOffscreenCanvas()) {
+        auto& canvas = downcast<OffscreenCanvas>(canvasBase);
+        return CSSParser::parseColorWorkerSafe(colorString, canvas.cssValuePool());
+    }
+#else
+    UNUSED_PARAM(canvasBase);
+#endif
     Color color = CSSParser::parseColor(colorString);
     if (color.isValid())
         return color;
     return CSSParser::parseSystemColor(colorString, nullptr);
 }
 
-Color currentColor(CanvasBase* canvasBase)
+Color currentColor(CanvasBase& canvasBase)
 {
     if (!is<HTMLCanvasElement>(canvasBase))
         return Color::black;
 
-    auto& canvas = downcast<HTMLCanvasElement>(*canvasBase);
+    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
     if (!canvas.isConnected() || !canvas.inlineStyle())
         return Color::black;
     Color color = CSSParser::parseColor(canvas.inlineStyle()->getPropertyValue(CSSPropertyColor));
@@ -70,12 +81,12 @@ Color currentColor(CanvasBase* canvasBase)
     return color;
 }
 
-Color parseColorOrCurrentColor(const String& colorString, CanvasBase* canvasBase)
+Color parseColorOrCurrentColor(const String& colorString, CanvasBase& canvasBase)
 {
     if (isCurrentColorString(colorString))
         return currentColor(canvasBase);
 
-    return parseColor(colorString);
+    return parseColor(colorString, canvasBase);
 }
 
 CanvasStyle::CanvasStyle(Color color)
@@ -113,24 +124,24 @@ inline CanvasStyle::CanvasStyle(CurrentColor color)
 {
 }
 
-CanvasStyle CanvasStyle::createFromString(const String& colorString)
+CanvasStyle CanvasStyle::createFromString(const String& colorString, CanvasBase& canvasBase)
 {
     if (isCurrentColorString(colorString))
         return CurrentColor { WTF::nullopt };
 
-    Color color = parseColor(colorString);
+    Color color = parseColor(colorString, canvasBase);
     if (!color.isValid())
         return { };
 
     return color;
 }
 
-CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& colorString, float alpha)
+CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& colorString, float alpha, CanvasBase& canvasBase)
 {
     if (isCurrentColorString(colorString))
         return CurrentColor { alpha };
 
-    Color color = parseColor(colorString);
+    Color color = parseColor(colorString, canvasBase);
     if (!color.isValid())
         return { };
 

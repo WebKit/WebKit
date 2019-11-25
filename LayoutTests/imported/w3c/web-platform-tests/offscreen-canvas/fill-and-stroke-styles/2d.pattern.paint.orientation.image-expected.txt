@@ -3,5 +3,5 @@
 Image patterns do not get flipped when painted
 
 
-FAIL Image patterns do not get flipped when painted null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Image patterns do not get flipped when painted 
 

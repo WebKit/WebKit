@@ -3,5 +3,5 @@
 arc() with zero radius draws a line to the start point
 
 
-FAIL arc() with zero radius draws a line to the start point null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arc() with zero radius draws a line to the start point 
 

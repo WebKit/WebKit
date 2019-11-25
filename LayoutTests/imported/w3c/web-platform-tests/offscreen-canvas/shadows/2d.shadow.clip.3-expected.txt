@@ -3,5 +3,5 @@
 Shadows of clipped shapes are still drawn within the clipping region
 
 
-FAIL Shadows of clipped shapes are still drawn within the clipping region null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadows of clipped shapes are still drawn within the clipping region 
 

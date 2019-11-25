@@ -3,5 +3,5 @@
 lineTo() with Infinity/NaN is ignored
 
 
-FAIL lineTo() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+PASS lineTo() with Infinity/NaN is ignored 
 

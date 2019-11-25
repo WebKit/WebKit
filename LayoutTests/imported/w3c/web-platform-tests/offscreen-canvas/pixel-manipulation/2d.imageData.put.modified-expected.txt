@@ -3,5 +3,5 @@
 putImageData() puts modified image data correctly
 
 
-FAIL putImageData() puts modified image data correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS putImageData() puts modified image data correctly 
 

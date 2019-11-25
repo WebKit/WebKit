@@ -3,5 +3,5 @@
 isPointInPath() works on arcs
 
 
-FAIL isPointInPath() works on arcs null is not an object (evaluating 'ctx.arc')
+PASS isPointInPath() works on arcs 
 

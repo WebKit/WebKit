@@ -3,5 +3,5 @@
 Shadows are not drawn for transparent canvases
 
 
-FAIL Shadows are not drawn for transparent canvases null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+FAIL Shadows are not drawn for transparent canvases Type error
 

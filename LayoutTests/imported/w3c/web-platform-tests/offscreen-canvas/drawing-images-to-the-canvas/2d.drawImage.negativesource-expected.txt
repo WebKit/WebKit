@@ -3,5 +3,5 @@
 Negative source width/height represents the correct rectangle
 
 
-FAIL Negative source width/height represents the correct rectangle null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Negative source width/height represents the correct rectangle 
 

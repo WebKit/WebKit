@@ -3,5 +3,5 @@
 Negative dimensions do not affect the direction of the image
 
 
-FAIL Negative dimensions do not affect the direction of the image null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Negative dimensions do not affect the direction of the image 
 

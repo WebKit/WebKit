@@ -28,10 +28,13 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "JSDOMPromiseDeferred.h"
+#include "OffscreenCanvasRenderingContext2D.h"
 #include "WebGLRenderingContext.h"
+#include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -67,27 +70,49 @@ void OffscreenCanvas::setHeight(unsigned newHeight)
     setSize(IntSize(width(), newHeight));
 }
 
-#if ENABLE(WEBGL)
+void OffscreenCanvas::setSize(const IntSize& newSize)
+{
+    CanvasBase::setSize(newSize);
+    reset();
+}
+
 ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_context && contextType == RenderingContextType::Webgl)
-        return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
+    if (contextType == RenderingContextType::_2d) {
+        if (m_context) {
+            if (!is<OffscreenCanvasRenderingContext2D>(*m_context))
+                return Exception { InvalidStateError };
+            return { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } };
+        }
 
+        m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this);
+        if (!m_context)
+            return { RefPtr<OffscreenCanvasRenderingContext2D> { nullptr } };
+
+        return { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } };
+    }
+#if ENABLE(WEBGL)
     if (contextType == RenderingContextType::Webgl) {
+        if (m_context) {
+            if (!is<WebGLRenderingContext>(*m_context))
+                return Exception { InvalidStateError };
+            return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
+        }
+
         auto scope = DECLARE_THROW_SCOPE(state.vm());
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         m_context = WebGLRenderingContextBase::create(*this, attributes, "webgl");
         if (!m_context)
-            return { nullptr };
+            return { RefPtr<WebGLRenderingContext> { nullptr } };
 
         return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
     }
-
-    return { nullptr };
-}
 #endif
+
+    return Exception { NotSupportedError };
+}
 
 RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
 {
@@ -127,8 +152,41 @@ RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
 #endif
 }
 
+void OffscreenCanvas::didDraw(const FloatRect& rect)
+{
+    notifyObserversCanvasChanged(rect);
+}
+
+CSSValuePool& OffscreenCanvas::cssValuePool()
+{
+    auto* context = canvasBaseScriptExecutionContext();
+    if (context->isWorkerGlobalScope())
+        return downcast<WorkerGlobalScope>(*context).cssValuePool();
+
+    ASSERT(context->isDocument());
+    return CSSValuePool::singleton();
+}
+
 void OffscreenCanvas::createImageBuffer() const
 {
+    m_hasCreatedImageBuffer = true;
+
+    if (!width() || !height())
+        return;
+
+    setImageBuffer(ImageBuffer::create(size(), Unaccelerated));
+}
+
+void OffscreenCanvas::reset()
+{
+    resetGraphicsContextState();
+    if (is<OffscreenCanvasRenderingContext2D>(m_context.get()))
+        downcast<OffscreenCanvasRenderingContext2D>(*m_context).reset();
+
+    m_hasCreatedImageBuffer = false;
+    setImageBuffer(nullptr);
+
+    notifyObserversCanvasResized();
 }
 
 }

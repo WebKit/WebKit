@@ -3,5 +3,5 @@
 save()/restore() can be nested as a stack
 
 
-FAIL save()/restore() can be nested as a stack null is not an object (evaluating 'ctx.lineWidth = 1')
+PASS save()/restore() can be nested as a stack 
 

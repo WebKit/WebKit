@@ -3,5 +3,5 @@
 rotate() with Infinity/NaN is ignored
 
 
-FAIL rotate() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS rotate() with Infinity/NaN is ignored 
 

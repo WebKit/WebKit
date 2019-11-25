@@ -3,5 +3,5 @@
 getImageData() works for sizes smaller than one pixel
 
 
-FAIL getImageData() works for sizes smaller than one pixel null is not an object (evaluating 'ctx.getImageData')
+PASS getImageData() works for sizes smaller than one pixel 
 

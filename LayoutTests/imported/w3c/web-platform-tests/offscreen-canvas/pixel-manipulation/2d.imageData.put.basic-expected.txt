@@ -3,5 +3,5 @@
 putImageData() puts image data from getImageData() onto the canvas
 
 
-FAIL putImageData() puts image data from getImageData() onto the canvas null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS putImageData() puts image data from getImageData() onto the canvas 
 

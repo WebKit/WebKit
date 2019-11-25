@@ -3,5 +3,5 @@
 arcTo() with zero radius draws a straight line from P0 to P1
 
 
-FAIL arcTo() with zero radius draws a straight line from P0 to P1 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arcTo() with zero radius draws a straight line from P0 to P1 
 

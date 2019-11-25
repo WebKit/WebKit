@@ -3,5 +3,5 @@ initial.reset.2dstate
 Resetting the canvas state resets 2D state variables
 
 
-FAIL Resetting the canvas state resets 2D state variables null is not an object (evaluating 'ctx.strokeStyle')
+PASS Resetting the canvas state resets 2D state variables 
 

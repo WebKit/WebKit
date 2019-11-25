@@ -3,5 +3,5 @@
 Zero-length line segments are removed before stroking with miters
 
 
-FAIL Zero-length line segments are removed before stroking with miters null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS Zero-length line segments are removed before stroking with miters 
 

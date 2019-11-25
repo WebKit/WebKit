@@ -3,5 +3,5 @@
 getImageData() returns values in the range [0, 255]
 
 
-FAIL getImageData() returns values in the range [0, 255] null is not an object (evaluating 'ctx.fillStyle = '#000'')
+PASS getImageData() returns values in the range [0, 255] 
 

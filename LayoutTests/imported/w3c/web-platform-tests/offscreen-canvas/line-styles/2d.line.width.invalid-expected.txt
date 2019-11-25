@@ -3,5 +3,5 @@
 Setting lineWidth to invalid values is ignored
 
 
-FAIL Setting lineWidth to invalid values is ignored null is not an object (evaluating 'ctx.lineWidth = 1.5')
+PASS Setting lineWidth to invalid values is ignored 
 

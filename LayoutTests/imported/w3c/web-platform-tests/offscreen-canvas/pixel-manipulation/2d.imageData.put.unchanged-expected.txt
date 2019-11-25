@@ -3,5 +3,5 @@
 putImageData(getImageData(...), ...) has no effect
 
 
-FAIL putImageData(getImageData(...), ...) has no effect null is not an object (evaluating 'ctx.fillStyle = 'rgba(' + i + ',' + (Math.floor(i*1.5) % 256) + ',' + (Math.floor(i*23.3) % 256) + ',' + (i/256) + ')'')
+PASS putImageData(getImageData(...), ...) has no effect 
 

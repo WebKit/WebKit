@@ -3,5 +3,5 @@
 putImageData() accepts image data got from a different canvas
 
 
-FAIL putImageData() accepts image data got from a different canvas null is not an object (evaluating 'ctx2.fillStyle = '#0f0'')
+PASS putImageData() accepts image data got from a different canvas 
 

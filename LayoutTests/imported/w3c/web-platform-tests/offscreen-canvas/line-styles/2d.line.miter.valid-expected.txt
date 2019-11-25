@@ -3,5 +3,5 @@
 Setting miterLimit to valid values works
 
 
-FAIL Setting miterLimit to valid values works null is not an object (evaluating 'ctx.miterLimit = 1.5')
+PASS Setting miterLimit to valid values works 
 

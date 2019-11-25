@@ -3,5 +3,5 @@
 rotate() by 0 does nothing
 
 
-FAIL rotate() by 0 does nothing null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS rotate() by 0 does nothing 
 

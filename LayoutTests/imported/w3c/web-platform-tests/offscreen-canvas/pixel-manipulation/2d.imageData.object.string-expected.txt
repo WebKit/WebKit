@@ -3,5 +3,5 @@
 ImageData.data converts strings to numbers with ToNumber
 
 
-FAIL ImageData.data converts strings to numbers with ToNumber null is not an object (evaluating 'ctx.getImageData')
+PASS ImageData.data converts strings to numbers with ToNumber 
 

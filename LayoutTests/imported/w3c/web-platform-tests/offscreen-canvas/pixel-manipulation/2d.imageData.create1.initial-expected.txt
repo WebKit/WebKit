@@ -3,5 +3,5 @@
 createImageData(imgdata) returns transparent black data of the right size
 
 
-FAIL createImageData(imgdata) returns transparent black data of the right size null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS createImageData(imgdata) returns transparent black data of the right size 
 

@@ -3,5 +3,5 @@
 textBaseline middle is the middle of the em square (not the bounding box)
 
 
-FAIL textBaseline middle is the middle of the em square (not the bounding box) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS textBaseline middle is the middle of the em square (not the bounding box) 
 

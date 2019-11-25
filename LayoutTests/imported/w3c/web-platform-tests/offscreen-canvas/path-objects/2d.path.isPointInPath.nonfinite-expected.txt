@@ -3,5 +3,5 @@
 isPointInPath() returns false for non-finite arguments
 
 
-FAIL isPointInPath() returns false for non-finite arguments null is not an object (evaluating 'ctx.rect')
+PASS isPointInPath() returns false for non-finite arguments 
 

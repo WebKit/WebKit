@@ -3,5 +3,5 @@
 rotate() wraps large negative values correctly
 
 
-FAIL rotate() wraps large negative values correctly null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS rotate() wraps large negative values correctly 
 

@@ -3,5 +3,5 @@
 strokeRect of 0x0 pixels draws nothing
 
 
-FAIL strokeRect of 0x0 pixels draws nothing null is not an object (evaluating 'ctx.strokeStyle = '#f00'')
+PASS strokeRect of 0x0 pixels draws nothing 
 

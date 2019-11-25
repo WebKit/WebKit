@@ -3,5 +3,5 @@
 Setting lineCap to valid values works
 
 
-FAIL Setting lineCap to valid values works null is not an object (evaluating 'ctx.lineCap = 'butt'')
+PASS Setting lineCap to valid values works 
 

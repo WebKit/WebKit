@@ -3,5 +3,5 @@
 isPointInPath() works on paths outside the canvas
 
 
-FAIL isPointInPath() works on paths outside the canvas null is not an object (evaluating 'ctx.rect')
+PASS isPointInPath() works on paths outside the canvas 
 

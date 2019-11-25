@@ -3,5 +3,5 @@
 putImageData() handles negative-sized dirty rectangles correctly
 
 
-FAIL putImageData() handles negative-sized dirty rectangles correctly null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS putImageData() handles negative-sized dirty rectangles correctly 
 

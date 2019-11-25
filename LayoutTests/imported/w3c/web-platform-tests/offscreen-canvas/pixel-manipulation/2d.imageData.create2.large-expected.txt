@@ -3,5 +3,5 @@
 createImageData(sw, sh) works for sizes much larger than the canvas
 
 
-FAIL createImageData(sw, sh) works for sizes much larger than the canvas null is not an object (evaluating 'ctx.createImageData')
+PASS createImageData(sw, sh) works for sizes much larger than the canvas 
 

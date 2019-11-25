@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: OffscreenCanvas
+Harness Error (FAIL), message = TypeError: offscreenCanvas.convertToBlob is not a function. (In 'offscreenCanvas.convertToBlob({type: typeVal, quality: qualityVal})', 'offscreenCanvas.convertToBlob' is undefined)
 
 FAIL Test that convertToBlob with default arguments produces correct result in a worker assert_unreached: error Reached unreachable code
 FAIL Test that convertToBlob with default type/1.0 quality produces correct result in a worker assert_unreached: error Reached unreachable code

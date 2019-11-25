@@ -3,5 +3,5 @@
 strokeRect of Nx0 pixels draws a straight line
 
 
-FAIL strokeRect of Nx0 pixels draws a straight line null is not an object (evaluating 'ctx.strokeStyle = '#0f0'')
+PASS strokeRect of Nx0 pixels draws a straight line 
 

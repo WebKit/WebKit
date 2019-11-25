@@ -3,5 +3,5 @@
 Setting lineWidth to valid values works
 
 
-FAIL Setting lineWidth to valid values works null is not an object (evaluating 'ctx.lineWidth = 1.5')
+PASS Setting lineWidth to valid values works 
 

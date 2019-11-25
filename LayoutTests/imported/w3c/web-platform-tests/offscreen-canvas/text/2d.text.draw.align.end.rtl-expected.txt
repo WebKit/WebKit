@@ -3,5 +3,5 @@
 textAlign end with rtl is the left edge
 
 
-FAIL textAlign end with rtl is the left edge null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS textAlign end with rtl is the left edge 
 

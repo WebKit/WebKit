@@ -3,5 +3,5 @@
 textAlign start with rtl is the right edge
 
 
-FAIL textAlign start with rtl is the right edge null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS textAlign start with rtl is the right edge 
 

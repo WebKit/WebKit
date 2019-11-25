@@ -3,5 +3,5 @@
 Non-uniformly scaled arcs are the right shape
 
 
-FAIL Non-uniformly scaled arcs are the right shape null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Non-uniformly scaled arcs are the right shape 
 

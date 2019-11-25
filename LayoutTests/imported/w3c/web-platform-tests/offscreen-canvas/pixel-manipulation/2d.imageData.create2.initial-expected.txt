@@ -3,5 +3,5 @@
 createImageData(sw, sh) returns transparent black data of the right size
 
 
-FAIL createImageData(sw, sh) returns transparent black data of the right size null is not an object (evaluating 'ctx.createImageData')
+PASS createImageData(sw, sh) returns transparent black data of the right size 
 

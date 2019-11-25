@@ -3,5 +3,5 @@
 Radial gradient transforms do not experience broken caching effects
 
 
-FAIL Radial gradient transforms do not experience broken caching effects null is not an object (evaluating 'ctx.createRadialGradient')
+PASS Radial gradient transforms do not experience broken caching effects 
 

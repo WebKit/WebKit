@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CSSParserObserver;
 class CSSSelectorList;
+class CSSValuePool;
 class Color;
 class Element;
 class ImmutableStyleProperties;
@@ -84,6 +85,7 @@ public:
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
     static Color parseColor(const String&, bool strict = false);
+    static Color parseColorWorkerSafe(const String&, CSSValuePool&, bool strict = false);
     static Color parseSystemColor(const String&, const CSSParserContext*);
 
 private:

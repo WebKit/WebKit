@@ -3,5 +3,5 @@
 rect() with Infinity/NaN is ignored
 
 
-FAIL rect() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+PASS rect() with Infinity/NaN is ignored 
 

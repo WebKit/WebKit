@@ -3,5 +3,5 @@
 arc() from 0 to -pi/2 draws stuff in the right quadrant
 
 
-FAIL arc() from 0 to -pi/2 draws stuff in the right quadrant null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arc() from 0 to -pi/2 draws stuff in the right quadrant 
 

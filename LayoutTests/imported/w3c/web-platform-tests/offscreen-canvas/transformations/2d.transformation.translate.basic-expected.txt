@@ -3,5 +3,5 @@
 translate() works
 
 
-FAIL translate() works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS translate() works 
 

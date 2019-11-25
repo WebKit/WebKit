@@ -27,17 +27,20 @@
 #include "config.h"
 #include "CanvasGradient.h"
 
+#include "CanvasBase.h"
 #include "CanvasStyle.h"
 
 namespace WebCore {
 
-CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
+CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasBase& canvasBase)
     : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }))
+    , m_canvas(canvasBase)
 {
 }
 
-CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
+CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase& canvasBase)
     : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }))
+    , m_canvas(canvasBase)
 {
 }
 
@@ -46,9 +49,8 @@ ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorS
     if (!(value >= 0 && value <= 1))
         return Exception { IndexSizeError };
 
-    // Passing null for canvas ensures that currentColor is treated as black,
-    // as required by the standard.
-    Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
+    // Treat currentColor as black, as required by the standard.
+    Color color = isCurrentColorString(colorString) ? Color::black : parseColor(colorString, m_canvas);
     if (!color.isValid())
         return Exception { SyntaxError };
 

@@ -3,5 +3,5 @@
 save()/restore() does not affect the current path
 
 
-FAIL save()/restore() does not affect the current path null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS save()/restore() does not affect the current path 
 

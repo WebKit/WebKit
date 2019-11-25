@@ -3,5 +3,5 @@
 Shadow offsets are not affected by transformations
 
 
-FAIL Shadow offsets are not affected by transformations null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadow offsets are not affected by transformations 
 

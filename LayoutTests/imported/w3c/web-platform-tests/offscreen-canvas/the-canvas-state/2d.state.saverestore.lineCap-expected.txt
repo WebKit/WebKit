@@ -3,5 +3,5 @@
 save()/restore() works for lineCap
 
 
-FAIL save()/restore() works for lineCap null is not an object (evaluating 'ctx.lineCap')
+PASS save()/restore() works for lineCap 
 

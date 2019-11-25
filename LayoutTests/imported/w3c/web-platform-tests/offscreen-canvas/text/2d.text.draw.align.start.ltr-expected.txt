@@ -3,5 +3,5 @@
 textAlign start with ltr is the left edge
 
 
-FAIL textAlign start with ltr is the left edge null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS textAlign start with ltr is the left edge 
 

@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class EventLoopTaskGroup;
@@ -133,6 +134,8 @@ public:
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
+    CSSValuePool& cssValuePool();
+
 protected:
     WorkerGlobalScope(const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
@@ -211,6 +214,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
 #endif
+    std::unique_ptr<CSSValuePool> m_cssValuePool;
 };
 
 } // namespace WebCore

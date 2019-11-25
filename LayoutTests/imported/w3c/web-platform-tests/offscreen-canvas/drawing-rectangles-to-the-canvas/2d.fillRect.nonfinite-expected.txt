@@ -3,5 +3,5 @@
 fillRect() with Infinity/NaN is ignored
 
 
-FAIL fillRect() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS fillRect() with Infinity/NaN is ignored 
 

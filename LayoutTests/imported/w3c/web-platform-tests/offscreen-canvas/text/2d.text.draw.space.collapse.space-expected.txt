@@ -3,5 +3,5 @@
 Space characters are converted to U+0020, and collapsed (per CSS)
 
 
-FAIL Space characters are converted to U+0020, and collapsed (per CSS) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS Space characters are converted to U+0020, and collapsed (per CSS) 
 

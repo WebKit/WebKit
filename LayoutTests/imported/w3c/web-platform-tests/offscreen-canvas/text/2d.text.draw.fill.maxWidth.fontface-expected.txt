@@ -3,5 +3,5 @@
 fillText works on @font-face fonts
 
 
-FAIL fillText works on @font-face fonts null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS fillText works on @font-face fonts 
 

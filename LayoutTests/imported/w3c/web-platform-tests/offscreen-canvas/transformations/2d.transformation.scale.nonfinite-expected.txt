@@ -3,5 +3,5 @@
 scale() with Infinity/NaN is ignored
 
 
-FAIL scale() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS scale() with Infinity/NaN is ignored 
 

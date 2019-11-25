@@ -3,5 +3,5 @@
 createImageData(sw, sh) exists and returns something
 
 
-FAIL createImageData(sw, sh) exists and returns something null is not an object (evaluating 'ctx.createImageData')
+PASS createImageData(sw, sh) exists and returns something 
 

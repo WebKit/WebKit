@@ -63,7 +63,7 @@ CanvasBase::~CanvasBase()
 GraphicsContext* CanvasBase::drawingContext() const
 {
     auto* context = renderingContext();
-    if (context && !context->is2d())
+    if (context && !context->is2d() && !context->isOffscreen2d())
         return nullptr;
 
     return buffer() ? &m_imageBuffer->context() : nullptr;

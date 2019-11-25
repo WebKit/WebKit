@@ -3,5 +3,5 @@
 Shadows are drawn correctly for partially-transparent gradient fills
 
 
-FAIL Shadows are drawn correctly for partially-transparent gradient fills null is not an object (evaluating 'ctx.createLinearGradient')
+PASS Shadows are drawn correctly for partially-transparent gradient fills 
 

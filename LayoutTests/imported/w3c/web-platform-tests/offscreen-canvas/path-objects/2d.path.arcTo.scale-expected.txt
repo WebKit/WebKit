@@ -3,5 +3,5 @@
 arcTo scales the curve, not just the control points
 
 
-FAIL arcTo scales the curve, not just the control points null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arcTo scales the curve, not just the control points 
 

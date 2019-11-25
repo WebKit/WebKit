@@ -3,5 +3,5 @@
 arc() from 0 to 5pi does not draw crazy things
 
 
-FAIL arc() from 0 to 5pi does not draw crazy things null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS arc() from 0 to 5pi does not draw crazy things 
 

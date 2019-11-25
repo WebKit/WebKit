@@ -3,5 +3,5 @@
 Shadow colour alpha components are used
 
 
-FAIL Shadow colour alpha components are used null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS Shadow colour alpha components are used 
 

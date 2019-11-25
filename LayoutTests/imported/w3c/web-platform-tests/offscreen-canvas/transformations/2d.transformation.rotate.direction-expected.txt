@@ -3,5 +3,5 @@
 rotate() is clockwise
 
 
-FAIL rotate() is clockwise null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS rotate() is clockwise 
 

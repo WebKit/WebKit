@@ -3,5 +3,5 @@
 save()/restore() works for shadowBlur
 
 
-FAIL save()/restore() works for shadowBlur null is not an object (evaluating 'ctx.shadowBlur')
+PASS save()/restore() works for shadowBlur 
 

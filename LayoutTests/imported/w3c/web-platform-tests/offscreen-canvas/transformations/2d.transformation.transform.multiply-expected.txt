@@ -3,5 +3,5 @@
 transform() multiplies the CTM
 
 
-FAIL transform() multiplies the CTM null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS transform() multiplies the CTM 
 

@@ -3,5 +3,5 @@
 fillRect of zero pixels has no effect
 
 
-FAIL fillRect of zero pixels has no effect null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS fillRect of zero pixels has no effect 
 

@@ -1,5 +1,5 @@
 2d.text.align.invalid
 
 
-FAIL OffscreenCanvas test: 2d.text.align.invalid null is not an object (evaluating 'ctx.textAlign = 'start'')
+FAIL OffscreenCanvas test: 2d.text.align.invalid assert_equals: ctx.textAlign === 'start' (got bogus[string], expected start[string]) expected "start" but got "bogus"
 

@@ -3,5 +3,5 @@
 Space characters at the end of a line are collapsed (per CSS)
 
 
-FAIL Space characters at the end of a line are collapsed (per CSS) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS Space characters at the end of a line are collapsed (per CSS) 
 

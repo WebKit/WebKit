@@ -3,5 +3,5 @@
 createImageData(sw, sh) takes the absolute magnitude of the size arguments
 
 
-FAIL createImageData(sw, sh) takes the absolute magnitude of the size arguments null is not an object (evaluating 'ctx.createImageData')
+PASS createImageData(sw, sh) takes the absolute magnitude of the size arguments 
 

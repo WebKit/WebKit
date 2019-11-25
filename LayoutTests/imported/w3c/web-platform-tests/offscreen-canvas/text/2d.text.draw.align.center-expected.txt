@@ -3,5 +3,5 @@
 textAlign center is the center of the em squares (not the bounding box)
 
 
-FAIL textAlign center is the center of the em squares (not the bounding box) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+PASS textAlign center is the center of the em squares (not the bounding box) 
 

@@ -3,5 +3,5 @@
 lineTo() with Infinity/NaN for first arg still converts the second arg
 
 
-FAIL lineTo() with Infinity/NaN for first arg still converts the second arg null is not an object (evaluating 'ctx.lineTo')
+PASS lineTo() with Infinity/NaN for first arg still converts the second arg 
 

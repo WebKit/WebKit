@@ -3,5 +3,5 @@
 quadraticCurveTo() with Infinity/NaN is ignored
 
 
-FAIL quadraticCurveTo() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+PASS quadraticCurveTo() with Infinity/NaN is ignored 
 

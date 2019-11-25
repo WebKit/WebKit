@@ -3,5 +3,5 @@
 fillRect draws shadows
 
 
-FAIL fillRect draws shadows null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS fillRect draws shadows 
 

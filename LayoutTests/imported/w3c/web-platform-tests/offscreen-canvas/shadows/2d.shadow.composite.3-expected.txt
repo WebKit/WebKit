@@ -3,5 +3,5 @@
 Areas outside shadows are drawn correctly with destination-out
 
 
-FAIL Areas outside shadows are drawn correctly with destination-out null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS Areas outside shadows are drawn correctly with destination-out 
 

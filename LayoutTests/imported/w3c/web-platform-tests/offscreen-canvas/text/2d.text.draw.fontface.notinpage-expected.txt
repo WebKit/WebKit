@@ -3,5 +3,5 @@
 @font-face fonts should work even if they are not used in the page
 
 
-FAIL @font-face fonts should work even if they are not used in the page null is not an object (evaluating 'ctx.font = '67px CanvasTest'')
+PASS @font-face fonts should work even if they are not used in the page 
 

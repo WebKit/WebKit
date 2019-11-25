@@ -42,11 +42,15 @@
 namespace WebCore {
 
 class CanvasRenderingContext;
+class CSSValuePool;
 class ImageBitmap;
+class OffscreenCanvasRenderingContext2D;
 class WebGLRenderingContext;
 
 #if ENABLE(WEBGL)
-using OffscreenRenderingContext = RefPtr<WebGLRenderingContext>;
+using OffscreenRenderingContext = Variant<RefPtr<OffscreenCanvasRenderingContext2D>, RefPtr<WebGLRenderingContext>>;
+#else
+using OffscreenRenderingContext = Variant<RefPtr<OffscreenCanvasRenderingContext2D>>;
 #endif
 
 class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData, private ContextDestructionObserver {
@@ -77,9 +81,11 @@ public:
     RefPtr<ImageBitmap> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);
 
-    void didDraw(const FloatRect&) final { }
+    void didDraw(const FloatRect&) final;
 
     Image* copiedImage() const final { return nullptr; }
+
+    CSSValuePool& cssValuePool();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -100,9 +106,15 @@ private:
     void refCanvasBase() final { ref(); }
     void derefCanvasBase() final { deref(); }
 
+    void setSize(const IntSize&) final;
     void createImageBuffer() const final;
+    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
+    void reset();
 
     std::unique_ptr<CanvasRenderingContext> m_context;
+
+    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
+    mutable bool m_hasCreatedImageBuffer { false };
 };
 
 }

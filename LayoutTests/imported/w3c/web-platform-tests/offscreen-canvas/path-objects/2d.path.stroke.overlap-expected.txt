@@ -3,5 +3,5 @@
 Stroked subpaths are combined before being drawn
 
 
-FAIL Stroked subpaths are combined before being drawn null is not an object (evaluating 'ctx.fillStyle = '#000'')
+PASS Stroked subpaths are combined before being drawn 
 

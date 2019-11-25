@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class CSSValue;
+class CSSValuePool;
 class StyleSheetContents;
 struct CSSParserContext;
 
@@ -50,7 +51,7 @@ public:
     static bool isKeywordPropertyID(CSSPropertyID);
     static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
-    static RefPtr<CSSValue> parseColor(const String&, CSSParserMode);
+    static RefPtr<CSSValue> parseColor(const String&, CSSParserMode, CSSValuePool&);
 };
 
 } // namespace WebCore

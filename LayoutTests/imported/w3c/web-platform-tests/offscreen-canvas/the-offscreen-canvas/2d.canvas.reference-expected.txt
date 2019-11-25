@@ -3,5 +3,5 @@
 canvas refers back to its canvas
 
 
-FAIL canvas refers back to its canvas null is not an object (evaluating 'ctx.canvas')
+PASS canvas refers back to its canvas 
 

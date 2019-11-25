@@ -405,9 +405,9 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
     if (style.isCurrentColor()) {
         if (style.hasOverrideAlpha()) {
             // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvasBase()).rgb(), style.overrideAlpha()));
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvasBase()).rgb(), style.overrideAlpha()));
         } else
-            style = CanvasStyle(currentColor(&canvasBase()));
+            style = CanvasStyle(currentColor(canvasBase()));
     } else
         checkOrigin(style.canvasPattern().get());
 
@@ -432,9 +432,9 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     if (style.isCurrentColor()) {
         if (style.hasOverrideAlpha()) {
             // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvasBase()).rgb(), style.overrideAlpha()));
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvasBase()).rgb(), style.overrideAlpha()));
         } else
-            style = CanvasStyle(currentColor(&canvasBase()));
+            style = CanvasStyle(currentColor(canvasBase()));
     } else
         checkOrigin(style.canvasPattern().get());
 
@@ -667,7 +667,7 @@ String CanvasRenderingContext2DBase::shadowColor() const
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
 {
-    Color color = parseColorOrCurrentColor(colorString, &canvasBase());
+    Color color = parseColorOrCurrentColor(colorString, canvasBase());
     if (!color.isValid())
         return;
     if (state().shadowColor == color)
@@ -936,7 +936,7 @@ void CanvasRenderingContext2DBase::resetTransform()
 void CanvasRenderingContext2DBase::setStrokeColor(const String& color, Optional<float> alpha)
 {
     if (alpha) {
-        setStrokeStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value()));
+        setStrokeStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value(), canvasBase()));
         return;
     }
 
@@ -944,7 +944,7 @@ void CanvasRenderingContext2DBase::setStrokeColor(const String& color, Optional<
         return;
 
     realizeSaves();
-    setStrokeStyle(CanvasStyle::createFromString(color));
+    setStrokeStyle(CanvasStyle::createFromString(color, canvasBase()));
     modifiableState().unparsedStrokeColor = color;
 }
 
@@ -972,7 +972,7 @@ void CanvasRenderingContext2DBase::setStrokeColor(float c, float m, float y, flo
 void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<float> alpha)
 {
     if (alpha) {
-        setFillStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value()));
+        setFillStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value(), canvasBase()));
         return;
     }
 
@@ -980,7 +980,7 @@ void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<fl
         return;
 
     realizeSaves();
-    setFillStyle(CanvasStyle::createFromString(color));
+    setFillStyle(CanvasStyle::createFromString(color, canvasBase()));
     modifiableState().unparsedFillColor = color;
 }
 
@@ -1334,7 +1334,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
 {
     Color color = Color::transparent;
     if (!colorString.isNull()) {
-        color = parseColorOrCurrentColor(colorString, &canvasBase());
+        color = parseColorOrCurrentColor(colorString, canvasBase());
         if (!color.isValid())
             return;
     }
@@ -1913,7 +1913,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createLinearGradi
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1))
         return Exception { NotSupportedError };
 
-    return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
+    return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1), canvasBase());
 }
 
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
@@ -1924,7 +1924,7 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradi
     if (r0 < 0 || r1 < 0)
         return Exception { IndexSizeError };
 
-    return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
+    return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1, canvasBase());
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)

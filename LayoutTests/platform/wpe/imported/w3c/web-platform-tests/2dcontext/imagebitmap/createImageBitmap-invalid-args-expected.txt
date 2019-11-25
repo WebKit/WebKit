@@ -21,9 +21,9 @@ FAIL createImageBitmap with a a bitmap SVGImageElement source and oversized (una
 FAIL createImageBitmap with a a vector SVGImageElement source and sw set to 0 assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
 FAIL createImageBitmap with a a vector SVGImageElement source and sh set to 0 assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
 FAIL createImageBitmap with a a vector SVGImageElement source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-FAIL createImageBitmap with a an OffscreenCanvas source and sw set to 0 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
-FAIL createImageBitmap with a an OffscreenCanvas source and sh set to 0 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
-FAIL createImageBitmap with a an OffscreenCanvas source and oversized (unallocatable) crop region promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+FAIL createImageBitmap with a an OffscreenCanvas source and sw set to 0 assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL createImageBitmap with a an OffscreenCanvas source and sh set to 0 assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL createImageBitmap with a an OffscreenCanvas source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
 PASS createImageBitmap with a an ImageData source and sw set to 0 
 PASS createImageBitmap with a an ImageData source and sh set to 0 
 FAIL createImageBitmap with a an ImageData source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")

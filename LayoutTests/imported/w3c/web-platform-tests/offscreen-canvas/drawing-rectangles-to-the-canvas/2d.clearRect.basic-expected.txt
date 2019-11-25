@@ -3,5 +3,5 @@
 clearRect clears to transparent black
 
 
-FAIL clearRect clears to transparent black null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS clearRect clears to transparent black 
 

@@ -3,5 +3,5 @@
 Missing arguments cause TypeError
 
 
-FAIL Missing arguments cause TypeError null is not an object (evaluating 'ctx.transform')
+FAIL Missing arguments cause TypeError assert_throws: function "function () { ctx.setTransform(); }" did not throw
 

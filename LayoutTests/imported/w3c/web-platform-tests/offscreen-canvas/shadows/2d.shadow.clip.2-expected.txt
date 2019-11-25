@@ -3,5 +3,5 @@
 Shadows are not drawn outside the clipping region
 
 
-FAIL Shadows are not drawn outside the clipping region null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadows are not drawn outside the clipping region 
 

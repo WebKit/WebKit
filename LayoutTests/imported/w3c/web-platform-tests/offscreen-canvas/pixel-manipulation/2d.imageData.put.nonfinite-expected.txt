@@ -3,5 +3,5 @@
 putImageData() throws TypeError if arguments are not finite
 
 
-FAIL putImageData() throws TypeError if arguments are not finite null is not an object (evaluating 'ctx.getImageData')
+PASS putImageData() throws TypeError if arguments are not finite 
 

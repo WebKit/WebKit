@@ -3,5 +3,5 @@
 setTransform() with Infinity/NaN is ignored
 
 
-FAIL setTransform() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS setTransform() with Infinity/NaN is ignored 
 

@@ -3,5 +3,5 @@
 Linear gradient coordinates are relative to the coordinate space at the time of filling
 
 
-FAIL Linear gradient coordinates are relative to the coordinate space at the time of filling null is not an object (evaluating 'ctx.translate')
+PASS Linear gradient coordinates are relative to the coordinate space at the time of filling 
 

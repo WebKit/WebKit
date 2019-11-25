@@ -3,5 +3,5 @@
 moveTo() with Infinity/NaN is ignored
 
 
-FAIL moveTo() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+PASS moveTo() with Infinity/NaN is ignored 
 

@@ -3,5 +3,5 @@
 arc() draws -3pi/2 .. -pi anticlockwise correctly
 
 
-FAIL arc() draws -3pi/2 .. -pi anticlockwise correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS arc() draws -3pi/2 .. -pi anticlockwise correctly 
 

@@ -3,5 +3,5 @@
 arc() with a non-empty path does draw a straight line to the start point
 
 
-FAIL arc() with a non-empty path does draw a straight line to the start point null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arc() with a non-empty path does draw a straight line to the start point 
 

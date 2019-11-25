@@ -3,5 +3,5 @@
 strokeRect works
 
 
-FAIL strokeRect works null is not an object (evaluating 'ctx.strokeStyle = '#0f0'')
+PASS strokeRect works 
 

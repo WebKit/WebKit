@@ -3,5 +3,5 @@
 ImageData objects have the right properties
 
 
-FAIL ImageData objects have the right properties null is not an object (evaluating 'ctx.getImageData')
+PASS ImageData objects have the right properties 
 

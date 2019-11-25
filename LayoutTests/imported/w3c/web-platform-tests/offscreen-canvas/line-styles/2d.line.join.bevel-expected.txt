@@ -3,5 +3,5 @@
 lineJoin 'bevel' is rendered correctly
 
 
-FAIL lineJoin 'bevel' is rendered correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS lineJoin 'bevel' is rendered correctly 
 

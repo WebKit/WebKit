@@ -3,5 +3,5 @@
 putImageData() puts image data from createImageData() onto the canvas
 
 
-FAIL putImageData() puts image data from createImageData() onto the canvas null is not an object (evaluating 'ctx.createImageData')
+PASS putImageData() puts image data from createImageData() onto the canvas 
 

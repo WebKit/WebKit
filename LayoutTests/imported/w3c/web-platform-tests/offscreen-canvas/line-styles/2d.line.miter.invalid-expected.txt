@@ -3,5 +3,5 @@
 Setting miterLimit to invalid values is ignored
 
 
-FAIL Setting miterLimit to invalid values is ignored null is not an object (evaluating 'ctx.miterLimit = 1.5')
+PASS Setting miterLimit to invalid values is ignored 
 

@@ -3,5 +3,5 @@
 Shadows with alpha components are correctly affected by globalAlpha
 
 
-FAIL Shadows with alpha components are correctly affected by globalAlpha null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadows with alpha components are correctly affected by globalAlpha 
 

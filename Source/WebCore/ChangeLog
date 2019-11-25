@@ -1,3 +1,66 @@
+2019-11-25  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
+
+        Basic OffscreenCanvas functionality
+        https://bugs.webkit.org/show_bug.cgi?id=182686
+
+        Reviewed by Antti Koivisto.
+
+        Enable context creation and retrieval on OffscreenCanvas, and creation
+        of OffscreenCanvas in a worker. To allow for Canvas fill/stroke
+        styles in workers, parseColorWorkerSafe has been added, which relies
+        on CSSParserFastPaths::parseColor. That function has also been given
+        a CSSValuePool parameter, so that a value pool that is safe to use on
+        the calling thread can be provided.
+
+        No new tests. Covered by existing tests.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseColorWorkerSafe):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::parseColor):
+        (WebCore::parseCaretColor):
+        (WebCore::CSSParserFastPaths::maybeParseValue):
+        * css/parser/CSSParserFastPaths.h:
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::drawingContext const):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::setSize):
+        (WebCore::OffscreenCanvas::getContext):
+        (WebCore::OffscreenCanvas::didDraw):
+        (WebCore::OffscreenCanvas::cssValuePool):
+        (WebCore::OffscreenCanvas::createImageBuffer const):
+        (WebCore::OffscreenCanvas::reset):
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::m_canvas):
+        (WebCore::CanvasGradient::addColorStop):
+        * html/canvas/CanvasGradient.h:
+        (WebCore::CanvasGradient::create):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+        (WebCore::CanvasRenderingContext2DBase::setShadowColor):
+        (WebCore::CanvasRenderingContext2DBase::setStrokeColor):
+        (WebCore::CanvasRenderingContext2DBase::setFillColor):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        (WebCore::CanvasRenderingContext2DBase::createLinearGradient):
+        (WebCore::CanvasRenderingContext2DBase::createRadialGradient):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::isCurrentColorString):
+        (WebCore::parseColor):
+        (WebCore::currentColor):
+        (WebCore::parseColorOrCurrentColor):
+        (WebCore::CanvasStyle::createFromString):
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        * html/canvas/CanvasStyle.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::cssValuePool):
+        * workers/WorkerGlobalScope.h:
+
 2019-11-25  Youenn Fablet  <youenn@apple.com>
 
         Enable legacy getUserMedia as a quirk

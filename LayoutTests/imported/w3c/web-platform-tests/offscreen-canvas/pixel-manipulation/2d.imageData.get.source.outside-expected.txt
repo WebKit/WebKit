@@ -3,5 +3,5 @@
 getImageData() returns transparent black outside the canvas
 
 
-FAIL getImageData() returns transparent black outside the canvas null is not an object (evaluating 'ctx.fillStyle = '#08f'')
+PASS getImageData() returns transparent black outside the canvas 
 

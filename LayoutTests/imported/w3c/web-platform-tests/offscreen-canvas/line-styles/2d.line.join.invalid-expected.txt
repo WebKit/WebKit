@@ -3,5 +3,5 @@
 Setting lineJoin to invalid values is ignored
 
 
-FAIL Setting lineJoin to invalid values is ignored null is not an object (evaluating 'ctx.lineJoin = 'bevel'')
+PASS Setting lineJoin to invalid values is ignored 
 

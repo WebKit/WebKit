@@ -3,5 +3,5 @@
 arc() draws a full circle when anticlockwise and start > end+2pi
 
 
-FAIL arc() draws a full circle when anticlockwise and start > end+2pi null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arc() draws a full circle when anticlockwise and start > end+2pi 
 

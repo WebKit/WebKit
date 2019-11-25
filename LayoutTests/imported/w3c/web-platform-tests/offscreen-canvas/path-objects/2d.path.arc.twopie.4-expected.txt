@@ -3,5 +3,5 @@
 arc() draws nothing when end = start + 2pi+e and clockwise
 
 
-FAIL arc() draws nothing when end = start + 2pi+e and clockwise null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS arc() draws nothing when end = start + 2pi+e and clockwise 
 

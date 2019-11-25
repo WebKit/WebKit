@@ -3,5 +3,5 @@
 lineCap 'butt' is rendered correctly
 
 
-FAIL lineCap 'butt' is rendered correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS lineCap 'butt' is rendered correctly 
 

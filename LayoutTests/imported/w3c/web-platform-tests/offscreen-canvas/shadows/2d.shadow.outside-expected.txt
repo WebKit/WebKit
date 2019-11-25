@@ -3,5 +3,5 @@
 Shadows of shapes outside the visible area can be offset onto the visible area
 
 
-FAIL Shadows of shapes outside the visible area can be offset onto the visible area null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadows of shapes outside the visible area can be offset onto the visible area 
 

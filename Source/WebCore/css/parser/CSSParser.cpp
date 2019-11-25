@@ -32,11 +32,14 @@
 #include "CSSKeyframeRule.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
+#include "CSSParserTokenRange.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSSelectorParser.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
+#include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"
@@ -100,11 +103,32 @@ Color CSSParser::parseColor(const String& string, bool strict)
         return namedColor;
     
     // Try the fast path to parse hex and rgb.
-    RefPtr<CSSValue> value = CSSParserFastPaths::parseColor(string, strict ? HTMLStandardMode : HTMLQuirksMode);
-    
+    RefPtr<CSSValue> value = CSSParserFastPaths::parseColor(string, strict ? HTMLStandardMode : HTMLQuirksMode, CSSValuePool::singleton());
+
     // If that fails, try the full parser.
     if (!value)
         value = parseSingleValue(CSSPropertyColor, string, strictCSSParserContext());
+    if (!value || !value->isPrimitiveValue())
+        return Color();
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (!primitiveValue.isRGBColor())
+        return Color();
+    return primitiveValue.color();
+}
+
+Color CSSParser::parseColorWorkerSafe(const String& string, CSSValuePool& valuePool, bool strict)
+{
+    if (string.isEmpty())
+        return Color();
+
+    // Try named colors first.
+    Color namedColor { string };
+    if (namedColor.isValid())
+        return namedColor;
+
+    // Try the fast path to parse hex and rgb.
+    RefPtr<CSSValue> value = CSSParserFastPaths::parseColor(string, strict ? HTMLStandardMode : HTMLQuirksMode, valuePool);
+
     if (!value || !value->isPrimitiveValue())
         return Color();
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);

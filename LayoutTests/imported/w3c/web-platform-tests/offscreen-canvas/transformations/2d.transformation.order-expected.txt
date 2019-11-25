@@ -3,5 +3,5 @@
 Transformations are applied in the right order
 
 
-FAIL Transformations are applied in the right order null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Transformations are applied in the right order 
 

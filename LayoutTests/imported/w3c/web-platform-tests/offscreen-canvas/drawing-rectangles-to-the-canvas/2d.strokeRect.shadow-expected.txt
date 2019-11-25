@@ -3,5 +3,5 @@
 strokeRect draws shadows
 
 
-FAIL strokeRect draws shadows null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS strokeRect draws shadows 
 

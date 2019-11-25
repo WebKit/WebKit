@@ -499,14 +499,14 @@ static Color fastParseColorInternal(const CharacterType* characters, unsigned le
     return Color();
 }
 
-RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode)
+RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode, CSSValuePool& valuePool)
 {
     ASSERT(!string.isEmpty());
     CSSValueID valueID = cssValueKeywordID(string);
     if (StyleColor::isColorKeyword(valueID)) {
         if (!isValueAllowedInMode(valueID, parserMode))
             return nullptr;
-        return CSSValuePool::singleton().createIdentifierValue(valueID);
+        return valuePool.createIdentifierValue(valueID);
     }
 
     bool quirksMode = isQuirksModeBehavior(parserMode);
@@ -519,7 +519,7 @@ RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserM
         color = fastParseColorInternal(string.characters16(), string.length(), quirksMode);
     if (!color.isValid())
         return nullptr;
-    return CSSValuePool::singleton().createColorValue(color);
+    return valuePool.createColorValue(color);
 }
 
 bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, const CSSParserContext& context)
@@ -1302,7 +1302,7 @@ static RefPtr<CSSValue> parseCaretColor(const String& string, CSSParserMode pars
     CSSValueID valueID = cssValueKeywordID(string);
     if (valueID == CSSValueAuto)
         return CSSValuePool::singleton().createIdentifierValue(valueID);
-    return CSSParserFastPaths::parseColor(string, parserMode);
+    return CSSParserFastPaths::parseColor(string, parserMode, CSSValuePool::singleton());
 }
 
 RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)
@@ -1312,7 +1312,7 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, c
     if (propertyID == CSSPropertyCaretColor)
         return parseCaretColor(string, context.mode);
     if (isColorPropertyID(propertyID))
-        return parseColor(string, context.mode);
+        return parseColor(string, context.mode, CSSValuePool::singleton());
     if (auto result = parseKeywordValue(propertyID, string, context))
         return result;
     return parseSimpleTransform(propertyID, string);

@@ -3,5 +3,5 @@
 clearRect is affected by transforms
 
 
-FAIL clearRect is affected by transforms null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS clearRect is affected by transforms 
 

@@ -3,5 +3,5 @@
 Shadows are drawn correctly for partially-transparent images
 
 
-FAIL Shadows are drawn correctly for partially-transparent images null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS Shadows are drawn correctly for partially-transparent images 
 

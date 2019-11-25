@@ -3,5 +3,5 @@
 transform() with the identity matrix does nothing
 
 
-FAIL transform() with the identity matrix does nothing null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+PASS transform() with the identity matrix does nothing 
 

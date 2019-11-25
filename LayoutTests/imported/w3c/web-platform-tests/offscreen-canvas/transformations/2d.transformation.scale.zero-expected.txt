@@ -3,5 +3,5 @@
 scale() with a scale factor of zero works
 
 
-FAIL scale() with a scale factor of zero works null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+PASS scale() with a scale factor of zero works 
 

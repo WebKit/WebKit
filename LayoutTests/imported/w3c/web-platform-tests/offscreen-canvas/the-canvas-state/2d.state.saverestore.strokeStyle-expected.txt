@@ -3,5 +3,5 @@
 save()/restore() works for strokeStyle
 
 
-FAIL save()/restore() works for strokeStyle null is not an object (evaluating 'ctx.strokeStyle')
+PASS save()/restore() works for strokeStyle 
 

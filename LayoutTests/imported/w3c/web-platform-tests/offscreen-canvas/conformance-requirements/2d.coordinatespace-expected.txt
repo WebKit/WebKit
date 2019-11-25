@@ -5,5 +5,5 @@ Coordinate space goes from top-left to bottom-right
 This should not be upside down.
 
 
-FAIL Coordinate space goes from top-left to bottom-right null is not an object (evaluating 'ctx.fillStyle = '#00f'')
+PASS Coordinate space goes from top-left to bottom-right 
 
