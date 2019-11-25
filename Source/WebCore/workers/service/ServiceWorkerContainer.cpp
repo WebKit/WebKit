@@ -392,7 +392,11 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
             m_ongoingSettledRegistrations.add(++m_lastOngoingSettledRegistrationIdentifier, registration->data().key);
             promise->whenSettled([this, protectedThis = WTFMove(protectedThis), identifier = m_lastOngoingSettledRegistrationIdentifier] {
-                notifyRegistrationIsSettled(m_ongoingSettledRegistrations.take(identifier));
+                auto iterator = m_ongoingSettledRegistrations.find(identifier);
+                if (iterator == m_ongoingSettledRegistrations.end())
+                    return;
+                notifyRegistrationIsSettled(iterator->value);
+                m_ongoingSettledRegistrations.remove(iterator);
             });
         }
 

@@ -73,6 +73,8 @@ private:
 template<class Encoder>
 void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
 {
+    RELEASE_ASSERT(!m_topOrigin.isEmpty());
+    RELEASE_ASSERT(!m_scope.isNull());
     encoder << m_topOrigin << m_scope;
 }
 
