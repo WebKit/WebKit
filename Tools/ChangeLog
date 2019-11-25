@@ -1,3 +1,23 @@
+2019-11-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] libgpg-error fails to build with gawk 5
+        https://bugs.webkit.org/show_bug.cgi?id=204568
+
+        Reviewed by Frédéric Wang.
+
+        Gawk 5 throws errors when compiling libgpg-error. To avoid those, we
+        have to bump libgpg-error to the latest 1.36 version and have the
+        upstream fix applied on top of that.
+
+        Autoreconf has to be invoked to regenerate automake files. Because
+        autogen.sh script (which is present in the release tarballs) falters
+        under jhbuild, we invoke autoreconf directly for libgpg-error builds.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/libgpg-error-prepare-for-gawk-5-0.patch: Added.
+        * wpe/jhbuild.modules:
+        * wpe/patches/libgpg-error-prepare-for-gawk-5-0.patch: Added.
+
 2019-11-23  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Allow multiple third-party cookie blocking settings
