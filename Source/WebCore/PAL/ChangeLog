@@ -1,3 +1,11 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Ran sort-Xcode-project-file.
+
+        Unreviewed.
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2019-11-21  Jer Noble  <jer.noble@apple.com>
 
         Experimental support for HDR media query

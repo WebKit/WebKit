@@ -1372,8 +1372,8 @@
 		CE46516C19DB1FB4003ECA05 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				CEA072A7236FFA160018839C /* CrashReporterClientSPI.h */,
 				9384B73E20DEA284005B73B2 /* CFXPCBridgeSPI.h */,
+				CEA072A7236FFA160018839C /* CrashReporterClientSPI.h */,
 				E31BDE2822E913CC0029B105 /* MachVMSPI.h */,
 				93D191CF20CAECE800C51B8E /* objcSPI.h */,
 				A5098B011C16A4F900087797 /* SecuritySPI.h */,
@@ -1433,6 +1433,8 @@
 			children = (
 				1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */,
 				E38C41241EB4E04C0042957D /* CPUTimeCocoa.cpp */,
+				CEA072A9236FFBF70018839C /* CrashReporter.cpp */,
+				CEA072A8236FFBF70018839C /* CrashReporter.h */,
 				143DDE9720C8BE99007F76FA /* Entitlements.h */,
 				143DDE9520C8BC37007F76FA /* Entitlements.mm */,
 				A331D95E21F249F6009F02AA /* FileSystemCocoa.mm */,
@@ -1446,8 +1448,6 @@
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
-				CEA072A8236FFBF70018839C /* CrashReporter.h */,
-				CEA072A9236FFBF70018839C /* CrashReporter.cpp */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1546,6 +1546,7 @@
 				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
 				E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */,
 				E38C41251EB4E04C0042957D /* CPUTimeCocoa.cpp in Sources */,
+				CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */,
 				515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */,
 				517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */,
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
@@ -1587,7 +1588,6 @@
 				53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */,
 				7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
-				CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadCocoa.mm in Sources */,
 				A8A473E9151A825B004123FF /* MD5.cpp in Sources */,
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,

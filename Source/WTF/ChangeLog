@@ -1,3 +1,11 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Ran sort-Xcode-project-file.
+
+        Unreviewed.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2019-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Try to fix the GTK WebDriver tests in the bots after r252770

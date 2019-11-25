@@ -1,3 +1,11 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Ran sort-Xcode-project-file.
+
+        Unreviewed.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
 2019-11-18  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] Some chunks have unused region in the tail of its memory block.
