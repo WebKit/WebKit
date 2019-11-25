@@ -416,9 +416,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
 
 void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey& registrationKey)
 {
-    callOnMainThread([registrationKey = registrationKey.isolatedCopy()] {
-        mainThreadConnection().didResolveRegistrationPromise(registrationKey);
-    });
+    ensureSWClientConnection().didResolveRegistrationPromise(registrationKey);
 }
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
@@ -473,9 +471,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
-    callOnMainThread([jobDataIdentifier = job.data().identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), script = script.isolatedCopy(), contentSecurityPolicy = contentSecurityPolicy.isolatedCopy(), referrerPolicy = referrerPolicy.isolatedCopy()] {
-        mainThreadConnection().finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, script, contentSecurityPolicy, referrerPolicy, { } });
-    });
+    ensureSWClientConnection().finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, contentSecurityPolicy, referrerPolicy, { } });
 }
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)
@@ -499,9 +495,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
 {
-    callOnMainThread([jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), error = error.isolatedCopy()] {
-        mainThreadConnection().failedFetchingScript(jobIdentifier, registrationKey, error);
-    });
+    ensureSWClientConnection().finishFetchingScriptInServer(serviceWorkerFetchError(job.data().identifier(), ServiceWorkerRegistrationKey { job.data().registrationKey() }, ResourceError { error }));
 }
 
 void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)

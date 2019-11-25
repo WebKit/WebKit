@@ -1,5 +1,27 @@
 2019-11-25  Youenn Fablet  <youenn@apple.com>
 
+        Use SWClientConnection instead of hopping to main thread in ServiceWorkerContainer
+        https://bugs.webkit.org/show_bug.cgi?id=204499
+
+        Reviewed by Chris Dumez.
+
+        Make use of SWClientConnection instead of callOnMainThread.
+        This removes the callOnMainThread call if we are already on the main thread.
+        No observable change of behavior.
+        Remove failedFetchingScript since it is just a call to finishFetchingScriptInServer.
+
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::startScriptFetchForServer):
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::notifyRegistrationIsSettled):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::notifyFailedFetchingScript):
+        * workers/service/ServiceWorkerFetchResult.h:
+        (WebCore::serviceWorkerFetchError):
+
+2019-11-25  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION (Safari 13): WebSocket payload is truncated when x-webkit-deflate-frame is used
         https://bugs.webkit.org/show_bug.cgi?id=202401
         <rdar://problem/55922632>
