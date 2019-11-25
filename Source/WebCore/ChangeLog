@@ -1,3 +1,26 @@
+2019-11-25  Youenn Fablet  <youenn@apple.com>
+
+        Enable legacy getUserMedia as a quirk
+        https://bugs.webkit.org/show_bug.cgi?id=204403
+        <rdar://problem/56421276>
+
+        Reviewed by Eric Carlson.
+
+        Add a shim for legacy getUserMedia to cover uses of this legacy API for existing web pages.
+        Add a corresponding settings and quirk.
+        Covered by manual test.
+
+        * Modules/mediastream/NavigatorMediaDevices.idl:
+        * bindings/js/JSDOMBindingInternals.js:
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::getUserMedia):
+        * dom/Document.cpp:
+        (WebCore::m_undoManager):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldEnableLegacyGetUserMedia const):
+        * page/Quirks.h:
+        * page/Settings.yaml:
+
 2019-11-25  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Flatten MediaPlayerPrivateGStreamer into MediaPlayerPrivateGStreamerBase

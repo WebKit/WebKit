@@ -26,11 +26,32 @@
 #include "config.h"
 #include "JSNavigator.h"
 
+#include "WebCoreJSClientData.h"
+#include <JavaScriptCore/CatchScope.h>
+
 namespace WebCore {
 
 void JSNavigator::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(static_cast<NavigatorBase*>(&wrapped()));
 }
+
+#if ENABLE(MEDIA_STREAM)
+JSValue JSNavigator::getUserMedia(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+{
+    auto* function = globalObject()->builtinInternalFunctions().jsDOMBindingInternals().m_getUserMediaShimFunction.get();
+    ASSERT(function);
+
+    JSC::CallData callData;
+    JSC::CallType callType = JSC::getCallData(lexicalGlobalObject.vm(), function, callData);
+    ASSERT(callType != JSC::CallType::None);
+    JSC::MarkedArgumentBuffer arguments;
+    for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
+        arguments.append(callFrame.uncheckedArgument(cptr));
+    ASSERT(!arguments.hasOverflowed());
+    JSC::call(&lexicalGlobalObject, function, callType, callData, this, arguments);
+    return jsUndefined();
+}
+#endif
 
 }

@@ -32,3 +32,8 @@ function mapLikeForEach(callback)
         callback(value, key, this);
     });
 }
+
+function getUserMediaShim(constraints, successCallback, errorCallback)
+{
+    this.mediaDevices.getUserMedia(constraints).then(successCallback, errorCallback);
+}

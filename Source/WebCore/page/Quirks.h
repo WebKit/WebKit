@@ -84,6 +84,10 @@ public:
 
     bool shouldBypassBackForwardCache() const;
 
+#if ENABLE(MEDIA_STREAM)
+    bool shouldEnableLegacyGetUserMedia() const;
+#endif
+
 private:
     bool needsQuirks() const;
 

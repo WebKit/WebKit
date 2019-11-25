@@ -33,4 +33,5 @@
     EnabledAtRuntime=MediaDevices,
 ] partial interface Navigator {
     [SameObject, SecureContext, ContextAllowsMediaDevices] readonly attribute MediaDevices mediaDevices;
+    [Custom, EnabledBySetting=LegacyGetUserMedia] void getUserMedia(object constraints, object? successCallback, object? errorCallback);
 };

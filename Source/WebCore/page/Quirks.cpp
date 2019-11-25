@@ -629,4 +629,14 @@ bool Quirks::shouldBypassBackForwardCache() const
     return false;
 }
 
+#if ENABLE(MEDIA_STREAM)
+bool Quirks::shouldEnableLegacyGetUserMedia() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return m_document->url().protocolIs("https") && equalLettersIgnoringASCIICase(m_document-> url().host(), "www.baidu.com");
+}
+#endif
+
 }

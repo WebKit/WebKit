@@ -889,6 +889,10 @@ isLoggedInAPIEnabled:
 enterKeyHintEnabled:
   initial: false
 
+legacyGetUserMediaEnabled:
+  initial: false
+  conditional: MEDIA_STREAM
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

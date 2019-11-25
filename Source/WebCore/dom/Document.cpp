@@ -607,6 +607,9 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
         nodeListAndCollectionCount = 0;
 
     InspectorInstrumentation::addEventListenersToNode(*this);
+#if ENABLE(MEDIA_STREAM)
+    m_settings->setLegacyGetUserMediaEnabled(quirks().shouldEnableLegacyGetUserMedia());
+#endif
 }
 
 Ref<Document> Document::create(Document& contextDocument)
