@@ -1,6 +1,26 @@
 2019-11-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
-        REGRESSION(r252770): [GTK][WPE] Remove inspector broken in debug builds after r252770
+        REGRESSION(r252770): [GTK][WPE] Remote inspector no longer works if debugger is in a different kind of system
+        https://bugs.webkit.org/show_bug.cgi?id=204572
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds the following changes:
+
+         - Use uint32_t instead of size_t to store the body size in the message header, because size_t has a different
+           size in 32 and 64 bit platforms.
+         - Use htonl/ntohl to write/read the body size in the header.
+         - Add a flags byte to the header to include the message byte order. The sender always uses the host byter order
+           and the receiver does the byte swapping if needed.
+
+        * wtf/glib/SocketConnection.cpp:
+        (WTF::messageIsByteSwapped):
+        (WTF::SocketConnection::readMessage):
+        (WTF::SocketConnection::sendMessage):
+
+2019-11-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r252770): [GTK][WPE] Remote inspector broken in debug builds after r252770
         https://bugs.webkit.org/show_bug.cgi?id=204569
 
         Reviewed by Žan Doberšek.

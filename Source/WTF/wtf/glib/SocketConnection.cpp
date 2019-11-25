@@ -22,6 +22,8 @@
 
 #include <cstring>
 #include <gio/gio.h>
+#include <wtf/ByteOrder.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RunLoop.h>
 
@@ -93,54 +95,77 @@ bool SocketConnection::read()
     return G_SOURCE_CONTINUE;
 }
 
+enum {
+    ByteOrderLittleEndian = 1 << 0
+};
+typedef uint8_t MessageFlags;
+
+static inline bool messageIsByteSwapped(MessageFlags flags)
+{
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    return !(flags & ByteOrderLittleEndian);
+#else
+    return (flags & ByteOrderLittleEndian);
+#endif
+}
+
 bool SocketConnection::readMessage()
 {
-    if (m_readBuffer.size() < sizeof(size_t))
+    if (m_readBuffer.size() < sizeof(uint32_t))
         return false;
 
     auto* messageData = m_readBuffer.data();
-    size_t bodySize;
-    memcpy(&bodySize, messageData, sizeof(size_t));
-    messageData += sizeof(size_t);
-    auto messageSize = sizeof(size_t) + bodySize;
-    if (m_readBuffer.size() < messageSize)
+    uint32_t bodySizeHeader;
+    memcpy(&bodySizeHeader, messageData, sizeof(uint32_t));
+    messageData += sizeof(uint32_t);
+    bodySizeHeader = ntohl(bodySizeHeader);
+    Checked<size_t> bodySize = bodySizeHeader;
+    MessageFlags flags;
+    memcpy(&flags, messageData, sizeof(MessageFlags));
+    messageData += sizeof(MessageFlags);
+    auto messageSize = sizeof(uint32_t) + sizeof(MessageFlags) + bodySize;
+    if (m_readBuffer.size() < messageSize.unsafeGet())
         return false;
 
-    auto messageNameLength = strlen(messageData) + 1;
-    if (m_readBuffer.size() < messageNameLength) {
+    Checked<size_t> messageNameLength = strlen(messageData);
+    messageNameLength++;
+    if (m_readBuffer.size() < messageNameLength.unsafeGet()) {
         ASSERT_NOT_REACHED();
         return false;
     }
 
     const auto it = m_messageHandlers.find(messageData);
     if (it != m_messageHandlers.end()) {
-        messageData += messageNameLength;
+        messageData += messageNameLength.unsafeGet();
         GRefPtr<GVariant> parameters;
         if (!it->value.first.isNull()) {
             GUniquePtr<GVariantType> variantType(g_variant_type_new(it->value.first.data()));
+            size_t parametersSize = bodySize.unsafeGet() - messageNameLength.unsafeGet();
             // g_variant_new_from_data() requires the memory to be properly aligned for the type being loaded,
             // but it's not possible to know the alignment because g_variant_type_info_query() is not public API.
             // Since GLib 2.60 g_variant_new_from_data() already checks the alignment and reallocates the buffer
             // in aligned memory only if needed. For older versions we can simply ensure the memory is 8 aligned.
 #if GLIB_CHECK_VERSION(2, 60, 0)
-            parameters = g_variant_new_from_data(variantType.get(), messageData, bodySize - messageNameLength, FALSE, nullptr, nullptr);
+            parameters = g_variant_new_from_data(variantType.get(), messageData, parametersSize, FALSE, nullptr, nullptr);
 #else
-            auto* alignedMemory = fastAlignedMalloc(8, bodySize - messageNameLength);
-            memcpy(alignedMemory, messageData, bodySize - messageNameLength);
-            GRefPtr<GBytes> bytes = g_bytes_new_with_free_func(alignedMemory, bodySize - messageNameLength, [](gpointer data) {
+            auto* alignedMemory = fastAlignedMalloc(8, parametersSize);
+            memcpy(alignedMemory, messageData, parametersSize);
+            GRefPtr<GBytes> bytes = g_bytes_new_with_free_func(alignedMemory, parametersSize, [](gpointer data) {
                 fastAlignedFree(data);
             }, alignedMemory);
             parameters = g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
 #endif
+            if (messageIsByteSwapped(flags))
+                parameters = adoptGRef(g_variant_byteswap(parameters.get()));
         }
         it->value.second(*this, parameters.get(), m_userData);
         if (isClosed())
             return false;
     }
 
-    if (m_readBuffer.size() > messageSize) {
-        std::memmove(m_readBuffer.data(), m_readBuffer.data() + messageSize, m_readBuffer.size() - messageSize);
-        m_readBuffer.shrink(m_readBuffer.size() - messageSize);
+    if (m_readBuffer.size() > messageSize.unsafeGet()) {
+        std::memmove(m_readBuffer.data(), m_readBuffer.data() + messageSize.unsafeGet(), m_readBuffer.size() - messageSize.unsafeGet());
+        m_readBuffer.shrink(m_readBuffer.size() - messageSize.unsafeGet());
     } else
         m_readBuffer.shrink(0);
 
@@ -154,16 +179,32 @@ void SocketConnection::sendMessage(const char* messageName, GVariant* parameters
 {
     GRefPtr<GVariant> adoptedParameters = parameters;
     size_t parametersSize = parameters ? g_variant_get_size(parameters) : 0;
-    auto messageNameLength = strlen(messageName) + 1;
-    size_t bodySize = messageNameLength + parametersSize;
+    Checked<size_t, RecordOverflow> messageNameLength = strlen(messageName);
+    messageNameLength++;
+    if (UNLIKELY(messageNameLength.hasOverflowed())) {
+        g_warning("Trying to send message with invalid too long name");
+        return;
+    }
+    Checked<uint32_t, RecordOverflow> bodySize = messageNameLength + parametersSize;
+    if (UNLIKELY(bodySize.hasOverflowed())) {
+        g_warning("Trying to send message '%s' with invalid too long body", messageName);
+        return;
+    }
     size_t previousBufferSize = m_writeBuffer.size();
-    m_writeBuffer.grow(previousBufferSize + sizeof(size_t) + bodySize);
+    m_writeBuffer.grow(previousBufferSize + sizeof(uint32_t) + sizeof(MessageFlags) + bodySize.unsafeGet());
 
     auto* messageData = m_writeBuffer.data() + previousBufferSize;
-    memcpy(messageData, &bodySize, sizeof(size_t));
-    messageData += sizeof(size_t);
-    memcpy(messageData, messageName, messageNameLength);
-    messageData += messageNameLength;
+    uint32_t bodySizeHeader = htonl(bodySize.unsafeGet());
+    memcpy(messageData, &bodySizeHeader, sizeof(uint32_t));
+    messageData += sizeof(uint32_t);
+    MessageFlags flags = 0;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    flags |= ByteOrderLittleEndian;
+#endif
+    memcpy(messageData, &flags, sizeof(MessageFlags));
+    messageData += sizeof(MessageFlags);
+    memcpy(messageData, messageName, messageNameLength.unsafeGet());
+    messageData += messageNameLength.unsafeGet();
     if (parameters)
         memcpy(messageData, g_variant_get_data(parameters), parametersSize);
 
