@@ -69,7 +69,7 @@
   <repository type="git" name="freedesktop-git"
       href="http://anongit.freedesktop.org/git"/>
  <repository type="tarball" name="dri.freedesktop.org"
-      href="http://dri.freedesktop.org"/>
+      href="https://dri.freedesktop.org"/>
   <repository type="tarball" name="mesa.freedesktop.org"
       href="https://mesa.freedesktop.org"/>
   <repository type="tarball" name="wayland.freedesktop.org"
@@ -307,6 +307,7 @@
   <autotools id="xserver" autogenargs="--disable-selective-werror --disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --disable-present --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
     <dependencies>
       <dep package="pixman"/>
+      <dep package="mesa"/>
     </dependencies>
     <branch module="/releases/individual/xserver/xorg-server-${version}.tar.bz2" version="1.19.6"
             repo="xorg"
@@ -355,9 +356,9 @@
 
   <autotools id="libdrm" autogen-sh="configure">
     <pkg-config>libdrm.pc</pkg-config>
-    <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.89"
+    <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.100"
             repo="dri.freedesktop.org"
-            hash="sha256:629f9782aabbb4809166de5f24d26fe0766055255038f16935602d89f136a02e"/>
+            hash="sha256:c77cc828186c9ceec3e56ae202b43ee99eb932b4a87255038a80e8a1060d0a5d"/>
   </autotools>
 
   <autotools id="mesa"

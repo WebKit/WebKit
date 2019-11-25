@@ -1,3 +1,13 @@
+2019-11-25  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] xserver build fails
+        https://bugs.webkit.org/show_bug.cgi?id=204577
+
+        Reviewed by Žan Doberšek.
+
+        * gtk/jhbuild.modules: Bump libdrm and add implicit dependency to
+        it via mesa for the xserver recipe.
+
 2019-11-25  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Flatten MediaPlayerPrivateGStreamer into MediaPlayerPrivateGStreamerBase
