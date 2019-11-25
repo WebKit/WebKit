@@ -3,5 +3,5 @@
 Shadows are not drawn for transparent canvases
 
 
-FAIL Shadows are not drawn for transparent canvases Type error
+PASS Shadows are not drawn for transparent canvases 
 

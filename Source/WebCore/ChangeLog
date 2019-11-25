@@ -1,3 +1,24 @@
+2019-11-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Support OffscreenCanvas as a CanvasImageSource type in CanvasDrawImage, CanvasFillStrokeStyles
+        https://bugs.webkit.org/show_bug.cgi?id=182921
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. Covered by existing tests.
+
+        * bindings/js/CallTracerTypes.h:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::InspectorCanvas::buildAction):
+        * inspector/InspectorCanvas.h:
+
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename LineLayout to LineLayoutContext

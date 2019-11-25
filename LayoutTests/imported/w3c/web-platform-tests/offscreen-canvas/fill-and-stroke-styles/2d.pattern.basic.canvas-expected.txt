@@ -1,5 +1,5 @@
 2d.pattern.basic.canvas
 
 
-FAIL OffscreenCanvas test: 2d.pattern.basic.canvas Type error
+PASS OffscreenCanvas test: 2d.pattern.basic.canvas 
 

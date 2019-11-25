@@ -757,6 +757,18 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             array->addItem(static_cast<int>(scriptCallFrame.columnNumber()));
             item = WTFMove(array);
         },
+#if ENABLE(OFFSCREEN_CANVAS)
+        [&] (const RefPtr<OffscreenCanvas> offscreenCanvas) {
+            String dataURL = "data:,"_s;
+
+            if (offscreenCanvas->originClean() && offscreenCanvas->hasCreatedImageBuffer()) {
+                if (auto *buffer = offscreenCanvas->buffer())
+                    dataURL = buffer->toDataURL("image/png");
+            }
+
+            index = indexForData(dataURL);
+        },
+#endif
         [&] (const String& value) { item = JSON::Value::create(value); }
     );
 
@@ -1033,6 +1045,12 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
                 if (value)
                     addParameter(indexForData(value), RecordingSwizzleTypes::Image);
             },
+#if ENABLE(OFFSCREEN_CANVAS)
+            [&] (const RefPtr<OffscreenCanvas>& value) {
+                if (value)
+                    addParameter(indexForData(value), RecordingSwizzleTypes::Image);
+            },
+#endif
 #if ENABLE(VIDEO)
             [&] (const RefPtr<HTMLVideoElement>& value) {
                 if (value)

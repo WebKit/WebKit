@@ -1,3 +1,74 @@
+2019-11-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Support OffscreenCanvas as a CanvasImageSource type in CanvasDrawImage, CanvasFillStrokeStyles
+        https://bugs.webkit.org/show_bug.cgi?id=182921
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvascopy-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvascopy.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.copy-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.copy.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.destination-atop-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.destination-atop.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.destination-in-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.destination-in.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.source-in-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.source-in.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.source-out-expected.txt:
+        * web-platform-tests/offscreen-canvas/compositing/2d.composite.uncovered.nocontext.source-out.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/conformance-requirements/2d.voidreturn-expected.txt:
+        * web-platform-tests/offscreen-canvas/conformance-requirements/2d.voidreturn.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.canvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.canvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.self.1-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.self.1.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.self.2-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.self.2.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.zerocanvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.zerocanvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.zerocanvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.zerocanvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.case-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.case.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.nullsuffix-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.nullsuffix.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.undefined-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.undefined.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.unrecognised-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.unrecognised.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.unrecognisednull-expected.txt:
+        * web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.unrecognisednull.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing-expected.txt:
+        * web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.alpha-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.alpha.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.basic-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.basic.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.transparent.1-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.transparent.1.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.transparent.2-expected.txt:
+        * web-platform-tests/offscreen-canvas/shadows/2d.shadow.canvas.transparent.2.worker-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker-expected.txt:
+
 2019-11-25  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord <clord@igalia.com>
 
         Basic OffscreenCanvas functionality

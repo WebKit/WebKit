@@ -3,5 +3,5 @@
 Shadows are drawn correctly for partially-transparent canvases
 
 
-FAIL Shadows are drawn correctly for partially-transparent canvases Type error
+PASS Shadows are drawn correctly for partially-transparent canvases 
 

@@ -3,5 +3,5 @@
 void methods return undefined
 
 
-FAIL void methods return undefined Type error
+PASS void methods return undefined 
 

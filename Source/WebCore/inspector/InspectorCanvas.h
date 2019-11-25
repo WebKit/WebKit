@@ -51,6 +51,9 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
+#if ENABLE(OFFSCREEN_CANVAS)
+class OffscreenCanvas;
+#endif
 #if ENABLE(CSS_TYPED_OM)
 class TypedOMCSSImageValue;
 #endif
@@ -129,6 +132,9 @@ private:
         RefPtr<TypedOMCSSImageValue>,
 #endif
         Inspector::ScriptCallFrame,
+#if ENABLE(OFFSCREEN_CANVAS)
+        RefPtr<OffscreenCanvas>,
+#endif
         String
     >;
 

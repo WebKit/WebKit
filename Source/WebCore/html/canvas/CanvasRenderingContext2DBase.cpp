@@ -1407,9 +1407,9 @@ static LayoutSize size(HTMLImageElement& element, ImageSizeType sizeType = Image
     return size;
 }
 
-static inline FloatSize size(HTMLCanvasElement& canvasElement)
+static inline FloatSize size(CanvasBase& canvas)
 {
-    return canvasElement.size();
+    return canvas.size();
 }
 
 static inline FloatSize size(ImageBitmap& imageBitmap)
@@ -1595,7 +1595,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     return { };
 }
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLCanvasElement& sourceCanvas, const FloatRect& srcRect, const FloatRect& dstRect)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanvas, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     FloatRect srcCanvasRect = FloatRect(FloatPoint(), sourceCanvas.size());
 

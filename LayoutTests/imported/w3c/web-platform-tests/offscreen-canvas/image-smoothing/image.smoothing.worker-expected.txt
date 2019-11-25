@@ -1,11 +1,11 @@
 
 PASS When the context is created, imageSmoothingEnabled must be set to true. 
 PASS On getting imageSmoothingEnabled, the user agent must return the last value it was set to. 
-FAIL Test that image smoothing is actually on by default. Type error
-FAIL Test that image smoothing works when imageSmoothingEnabled is set to true Type error
-FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). Type error
-FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). Type error
-FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). Type error
-FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). Type error
-FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. Type error
+PASS Test that image smoothing is actually on by default. 
+PASS Test that image smoothing works when imageSmoothingEnabled is set to true 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). 
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). assert_array_equals: property 0, expected 0 but got 176
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). assert_array_equals: property 0, expected 0 but got 176
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). assert_array_equals: property 0, expected 0 but got 176
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. 
 

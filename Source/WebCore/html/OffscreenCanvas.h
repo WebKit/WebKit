@@ -84,6 +84,7 @@ public:
     void didDraw(const FloatRect&) final;
 
     Image* copiedImage() const final { return nullptr; }
+    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
 
     CSSValuePool& cssValuePool();
 
@@ -108,7 +109,6 @@ private:
 
     void setSize(const IntSize&) final;
     void createImageBuffer() const final;
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
     void reset();
 
     std::unique_ptr<CanvasRenderingContext> m_context;

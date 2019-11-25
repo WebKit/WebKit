@@ -1,5 +1,5 @@
 2d.drawImage.canvas
 
 
-FAIL OffscreenCanvas test: 2d.drawImage.canvas Type error
+PASS OffscreenCanvas test: 2d.drawImage.canvas 
 

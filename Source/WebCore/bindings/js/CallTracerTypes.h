@@ -34,6 +34,9 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 #include "Path2D.h"
 #include "TypedOMCSSImageValue.h"
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -117,6 +120,9 @@ using RecordCanvasActionVariant = Variant<
     RefPtr<TypedOMCSSImageValue>,
 #endif
     RefPtr<ImageData>,
+#if ENABLE(OFFSCREEN_CANVAS)
+    RefPtr<OffscreenCanvas>,
+#endif
     RefPtr<Int32Array>,
     RefPtr<Uint32Array>,
 

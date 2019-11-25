@@ -62,6 +62,7 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
+class OffscreenCanvas;
 class Path2D;
 class RenderStyle;
 class RenderObject;
@@ -69,13 +70,17 @@ class TextMetrics;
 
 struct DOMMatrix2DInit;
 
-#if ENABLE(VIDEO) && ENABLE(CSS_TYPED_OM)
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>, RefPtr<TypedOMCSSImageValue>>;
-#elif ENABLE(VIDEO)
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>>;
-#else
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>>;
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+#if ENABLE(CSS_TYPED_OM)
+    , RefPtr<TypedOMCSSImageValue>
 #endif
+#if ENABLE(OFFSCREEN_CANVAS)
+    , RefPtr<OffscreenCanvas>
+#endif
+#if ENABLE(VIDEO)
+    , RefPtr<HTMLVideoElement>
+#endif
+    >;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
@@ -333,7 +338,7 @@ protected:
 
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
-    ExceptionOr<void> drawImage(HTMLCanvasElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(CanvasBase&, const FloatRect& srcRect, const FloatRect& dstRect);
     ExceptionOr<void> drawImage(Document&, CachedImage*, const RenderObject*, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
 #if ENABLE(VIDEO)
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
