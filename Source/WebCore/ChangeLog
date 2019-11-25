@@ -1,3 +1,196 @@
+2019-11-25  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Flatten MediaPlayerPrivateGStreamer into MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=204352
+
+        Reviewed by Philippe Normand.
+
+        The inheritance link between the base player and the private player no
+        longer serves a purpose. The only user of the base class is the private
+        player.
+
+        Squashing these toghether makes it easy to do further refactorings,
+        since everything can be seen in one place rather than being arbitrarily
+        split into two classes and having to do derived-to-base conversions in
+        your head for no gain in clarity elsewhere.
+
+        Aside from merging the classes, the only other change here is switching
+        to in-class initialization of many member variables, rather than a long
+        list of initializations in the constructor that gets fiddly with
+        -Wreorder.
+
+        These classes are much too large and could use some redesign, this is
+        only a first step toward that goal.
+
+        This is a refactoring, hopefully well covered by our existing tests!
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::greatestCommonDivisor):
+        (WebCore::busMessageCallback):
+        (WebCore::convertToInternalProtocol):
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::~GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::waitForCPUSync):
+        (WebCore::GstVideoFrameHolder::size const):
+        (WebCore::GstVideoFrameHolder::hasAlphaChannel const):
+        (WebCore::GstVideoFrameHolder::flags const):
+        (WebCore::GstVideoFrameHolder::textureID const):
+        (WebCore::GstVideoFrameHolder::hasMappedTextures const):
+        (WebCore::GstVideoFrameHolder::videoFrame const):
+        (WebCore::GstVideoFrameHolder::updateTexture):
+        (WebCore::GstVideoFrameHolder::platformLayerBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::initializeDebugCategory):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::paused const):
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::platformDuration const):
+        (WebCore::MediaPlayerPrivateGStreamer::durationMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::rate const):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const):
+        (WebCore::MediaPlayerPrivateGStreamer::maxMediaTimeSeekable const):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes const):
+        (WebCore::MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin const):
+        (WebCore::MediaPlayerPrivateGStreamer::wouldTaintOrigin const):
+        (WebCore::MediaPlayerPrivateGStreamer::simulateAudioInterruption):
+        (WebCore::MediaPlayerPrivateGStreamer::ensureAudioSourceProvider):
+        (WebCore::MediaPlayerPrivateGStreamer::audioSourceProvider):
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamPropertiesCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetupCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::setPlaybinURL):
+        (WebCore::setSyncOnClock):
+        (WebCore::MediaPlayerPrivateGStreamer::syncOnClock):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::textChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText):
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSampleCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSample):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::loadStateChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::timeChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed):
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::audioSink const):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::clearTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::videoChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::setPipeline):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::requestGLContext):
+        (WebCore::MediaPlayerPrivateGStreamer::ensureGstGLContext):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamer::setVolume):
+        (WebCore::MediaPlayerPrivateGStreamer::volume const):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange):
+        (WebCore::MediaPlayerPrivateGStreamer::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::networkState const):
+        (WebCore::MediaPlayerPrivateGStreamer::readyState const):
+        (WebCore::MediaPlayerPrivateGStreamer::sizeChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamer::muted const):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfMute):
+        (WebCore::MediaPlayerPrivateGStreamer::muteChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats):
+        (WebCore::MediaPlayerPrivateGStreamer::updateMaxTimeLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::updateBufferingStatus):
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents):
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidTextTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeOldDownloadFiles):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::mediaLocationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::didPassCORSAccessCheck const):
+        (WebCore::MediaPlayerPrivateGStreamer::canSaveMediaData const):
+        (WebCore::MediaPlayerPrivateGStreamer::readyTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::platformLayer const):
+        (WebCore::MediaPlayerPrivateGStreamer::swapBuffersIfNeeded):
+        (WebCore::MediaPlayerPrivateGStreamer::proxy const):
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::repaint):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::repaintCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::repaintCancelledCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::newSampleCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::newPrerollCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::setSize):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        (WebCore::MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamer::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::setVideoSourceOrientation):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTextureMapperFlags):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsFullscreen const):
+        (WebCore::MediaPlayerPrivateGStreamer::movieLoadType const):
+        (WebCore::MediaPlayerPrivateGStreamer::createGLAppSink):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSinkGL):
+        (WebCore::MediaPlayerPrivateGStreamer::ensureGLVideoSinkContext):
+        (WebCore::setRectangleToVideoSink):
+        (WebCore::GStreamerHolePunchClient::GStreamerHolePunchClient):
+        (WebCore::MediaPlayerPrivateGStreamer::createHolePunchVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamer::setStreamVolumeElement):
+        (WebCore::MediaPlayerPrivateGStreamer::decodedFrameCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::droppedFrameCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::audioDecodedByteCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::videoDecodedByteCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::initializationDataEncountered):
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateGStreamer::attemptToDecryptWithInstance):
+        (WebCore::MediaPlayerPrivateGStreamer::attemptToDecryptWithLocalInstance):
+        (WebCore::MediaPlayerPrivateGStreamer::handleProtectionEvent):
+        (WebCore::MediaPlayerPrivateGStreamer::setWaitingForKey):
+        (WebCore::MediaPlayerPrivateGStreamer::waitingForKey const):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsKeySystem):
+        (WebCore::MediaPlayerPrivateGStreamer::extendedSupportsType):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::mediaPlayer const):
+        (WebCore::MediaPlayerPrivateGStreamer::pipeline const):
+        (WebCore::MediaPlayerPrivateGStreamer::isLiveStream const):
+        (WebCore::MediaPlayerPrivateGStreamer::configurePlaySink):
+        (WebCore::MediaPlayerPrivateGStreamer::gstGLContext const):
+        (WebCore::MediaPlayerPrivateGStreamer::gstGLDisplay const):
+        (WebCore::MediaPlayerPrivateGStreamer::videoSink const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp: Removed.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h: Removed.
+
 2019-11-25  Youenn Fablet  <youenn@apple.com>
 
         Crash in WebCore::ServiceWorkerRegistrationKey::hash() const
