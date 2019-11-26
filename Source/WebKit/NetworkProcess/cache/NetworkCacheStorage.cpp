@@ -177,6 +177,7 @@ static String makeSaltFilePath(const String& baseDirectoryPath)
 RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!baseCachePath.isNull());
 
     auto cachePath = makeCachePath(baseCachePath);
 

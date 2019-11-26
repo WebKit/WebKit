@@ -1,3 +1,20 @@
+2019-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(2.27.2): [GTK] Incognito mode is broken under flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=203460
+
+        Reviewed by Youenn Fablet.
+
+        The problem is that in ephemeral sessions the base disk cache directory is null, and Storage::open() ends up
+        building a cache path with only the version part (/Version n). For some reason g_mkdir_with_parents() doesn't
+        return -1 in flatpak when it fails to create the directory due to write permission, like in this case. But the
+        network process ends up crashing later trying to open a directory that doesn't exist.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession): Do not create the cache if networkCacheDirectory is null.
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::open): Add an ASSERT to ensure we don't receive a null baseCachePath.
+
 2019-11-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] InternalFunction should be non-destructible
