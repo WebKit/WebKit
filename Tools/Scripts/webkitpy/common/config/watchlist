@@ -415,7 +415,7 @@
         "DOMAttributes": [ "cmarcelo@webkit.org", "cdumez@apple.com" ],
         "Editing": [ "mifenton@blackberry.com" ],
         "Filters": [ "dino@apple.com", "kondapallykalyan@gmail.com" ],
-        "Forms": [ "tkent@chromium.org", "mifenton@blackberry.com", "cdumez@apple.com", "dbates@webkit.org" ],
+        "Forms": [ "mifenton@blackberry.com", "cdumez@apple.com", "dbates@webkit.org" ],
         "FrameLoader": [ "japhet@chromium.org", "cdumez@apple.com", "dbates@webkit.org" ],
         "Geolocation": [ "benjamin@webkit.org" ],
         "GraphicsLayer": [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com", "sergio@correia.cc" ],

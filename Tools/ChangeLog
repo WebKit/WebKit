@@ -1,3 +1,12 @@
+2019-11-25  Kent Tamura  <tkent@chromium.org>
+
+        Remove tkent@ from watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=204599
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/common/config/watchlist: Remove tkent@
+
 2019-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Dragged images are only available as .tiff when dropping onto macCatalyst apps
