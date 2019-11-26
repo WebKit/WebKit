@@ -1,5 +1,50 @@
 2019-11-26  Antti Koivisto  <antti@apple.com>
 
+        [LFC][Render tree] Add LFC line layout path to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=204613
+
+        Reviewed by Zalan Bujtas.
+
+        Add a basic LFC line layout implementation for RenderBlockFlow.
+        It can layout lines and do simple painting but doesn't do anything else (like hit testing) yet.
+
+        Add a new layoutFormattingContextRenderTreeIntegrationEnabled feature flag, default to false.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/RenderBlockFlowLineLayout.cpp: Added.
+        (WebCore::Layout::RenderBlockFlowLineLayout::RenderBlockFlowLineLayout):
+        (WebCore::Layout::RenderBlockFlowLineLayout::canUseFor):
+        (WebCore::Layout::RenderBlockFlowLineLayout::layout):
+        (WebCore::Layout::RenderBlockFlowLineLayout::height const):
+        (WebCore::Layout::RenderBlockFlowLineLayout::paint):
+        * layout/RenderBlockFlowLineLayout.h: Copied from Source/WebCore/layout/displaytree/DisplayPainter.h.
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::Painter::paintInlineFlow):
+        * layout/displaytree/DisplayPainter.h:
+        * layout/invalidation/InvalidationState.cpp:
+        (WebCore::Layout::InvalidationState::markNeedsUpdate):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildLayoutTree):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLayoutFormattingContextRenderTreeIntegrationEnabled):
+        (WebCore::RuntimeEnabledFeatures::layoutFormattingContextRenderTreeIntegrationEnabled const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        (WebCore::RenderBlockFlow::layoutLFCLines):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::hasLFCLineLayout const):
+        (WebCore::RenderBlockFlow::lfcLineLayout const):
+        (WebCore::RenderBlockFlow::lfcLineLayout):
+    
+2019-11-26  Antti Koivisto  <antti@apple.com>
+
         Destroy linebox tree from ComplexLineLayout destructor
         https://bugs.webkit.org/show_bug.cgi?id=204620
 

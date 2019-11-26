@@ -140,6 +140,16 @@ std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const Re
     return layoutTreeContent;
 }
 
+std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const RenderBlockFlow& renderBlockFlow)
+{
+    PhaseScope scope(Phase::Type::TreeBuilding);
+
+    auto style = RenderStyle::clone(renderBlockFlow.style());
+    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderBlockFlow, makeUnique<Container>(WTF::nullopt, WTFMove(style)));
+    TreeBuilder(*layoutTreeContent).buildTree();
+    return layoutTreeContent;
+}
+
 TreeBuilder::TreeBuilder(LayoutTreeContent& layoutTreeContent)
     : m_layoutTreeContent(layoutTreeContent)
 {

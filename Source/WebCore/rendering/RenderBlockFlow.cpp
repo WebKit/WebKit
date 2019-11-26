@@ -37,6 +37,7 @@
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
 #include "Logging.h"
+#include "RenderBlockFlowLineLayout.h"
 #include "RenderCombineText.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
@@ -667,13 +668,30 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
+    auto computeLineLayoutPath = [&] {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (Layout::RenderBlockFlowLineLayout::canUseFor(*this))
+            return LFCPath;
+#endif
+        if (SimpleLineLayout::canUseFor(*this))
+            return SimpleLinesPath;
+        return LineBoxesPath;
+    };
+
     if (lineLayoutPath() == UndeterminedPath)
-        setLineLayoutPath(SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath);
+        setLineLayoutPath(computeLineLayoutPath());
 
     if (lineLayoutPath() == SimpleLinesPath) {
         layoutSimpleLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (lineLayoutPath() == LFCPath) {
+        layoutLFCLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        return;
+    }
+#endif
 
     if (!complexLineLayout())
         m_lineLayout = makeUnique<ComplexLineLayout>(*this);
@@ -3530,6 +3548,13 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
 {
     ASSERT(childrenInline());
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (lfcLineLayout()) {
+        lfcLineLayout()->paint(paintInfo, paintOffset);
+        return;
+    }
+#endif
+
     if (auto simpleLineLayout = this->simpleLineLayout()) {
         SimpleLineLayout::paintFlow(*this, *simpleLineLayout, paintInfo, paintOffset);
         return;
@@ -3602,6 +3627,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         ASSERT(!simpleLineLayout());
         return;
     case LineBoxesPath:
+    case LFCPath:
         ASSERT(!simpleLineLayout());
         setLineLayoutPath(UndeterminedPath);
         return;
@@ -3640,6 +3666,27 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
     repaintLogicalBottom = needsLayout ? repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter() : repaintLogicalTop;
     setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
 }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+{
+    if (!lfcLineLayout())
+        m_lineLayout = makeUnique<Layout::RenderBlockFlowLineLayout>(*this);
+
+    auto& lfcLineLayout = *this->lfcLineLayout();
+
+    for (auto& renderer : childrenOfType<RenderObject>(*this))
+        renderer.clearNeedsLayout();
+
+    lfcLineLayout.layout();
+
+    LayoutUnit lineLayoutHeight = lfcLineLayout.contentBoxHeight();
+    LayoutUnit lineLayoutTop = borderAndPaddingBefore();
+    repaintLogicalTop = lineLayoutTop;
+    repaintLogicalBottom = repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter();
+    setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
+}
+#endif
 
 void RenderBlockFlow::ensureLineBoxes()
 {

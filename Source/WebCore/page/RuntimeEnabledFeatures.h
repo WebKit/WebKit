@@ -188,6 +188,9 @@ public:
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     void setLayoutFormattingContextEnabled(bool isEnabled) { m_layoutFormattingContextEnabled = isEnabled; }
     bool layoutFormattingContextEnabled() const { return m_layoutFormattingContextEnabled; }
+    
+    void setLayoutFormattingContextRenderTreeIntegrationEnabled(bool isEnabled) { m_layoutFormattingContextRenderTreeIntegrationEnabled = isEnabled; }
+    bool layoutFormattingContextRenderTreeIntegrationEnabled() const { return m_layoutFormattingContextRenderTreeIntegrationEnabled; }
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
@@ -443,6 +446,7 @@ private:
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };
+    bool m_layoutFormattingContextRenderTreeIntegrationEnabled { false };
 #endif
 
 #if ENABLE(CSS_PAINTING_API)

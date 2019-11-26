@@ -27,23 +27,40 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutPoint.h"
+
 namespace WebCore {
 
 class GraphicsContext;
-class IntRect;
+class RenderBlockFlow;
+struct PaintInfo;
 
 namespace Layout {
+
+class LayoutTreeContent;
 class LayoutState;
-}
 
-namespace Display {
-
-class Painter {
+class RenderBlockFlowLineLayout {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void paint(const Layout::LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
-    static void paintInlineFlow(const Layout::LayoutState&, GraphicsContext&);
+    RenderBlockFlowLineLayout(const RenderBlockFlow&);
+    ~RenderBlockFlowLineLayout();
+
+    static bool canUseFor(const RenderBlockFlow&);
+
+    void layout();
+    
+    LayoutUnit contentBoxHeight() const;
+
+    void paint(PaintInfo&, const LayoutPoint& paintOffset);
+
+private:
+    const RenderBlockFlow& m_flow;
+    std::unique_ptr<LayoutTreeContent> m_treeContent;
+    std::unique_ptr<LayoutState> m_layoutState;
 };
 
 }
 }
+
 #endif

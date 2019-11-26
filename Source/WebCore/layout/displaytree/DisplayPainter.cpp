@@ -196,6 +196,17 @@ void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& con
     }
 }
 
+void Painter::paintInlineFlow(const Layout::LayoutState& layoutState, GraphicsContext& context)
+{
+    auto& layoutRoot = layoutState.root();
+
+    ASSERT(layoutRoot.establishesInlineFormattingContext());
+
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
+
+    paintInlineContent(context, displayBox, downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(layoutRoot)));
+}
+
 }
 }
 

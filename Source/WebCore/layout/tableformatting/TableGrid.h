@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingContext.h"
 #include "IntPointHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>

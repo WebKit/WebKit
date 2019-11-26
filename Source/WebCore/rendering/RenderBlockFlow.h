@@ -37,6 +37,12 @@ class LineBreaker;
 class RenderMultiColumnFlow;
 class RenderRubyRun;
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+namespace Layout {
+class RenderBlockFlowLineLayout;
+}
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
@@ -338,7 +344,7 @@ public:
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
 
-    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, ForceLineBoxesPath };
+    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, LFCPath, ForceLineBoxesPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
@@ -357,6 +363,10 @@ public:
     SimpleLineLayout::Layout* simpleLineLayout();
     const ComplexLineLayout* complexLineLayout() const;
     ComplexLineLayout* complexLineLayout();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    const Layout::RenderBlockFlowLineLayout* lfcLineLayout() const;
+    Layout::RenderBlockFlowLineLayout* lfcLineLayout();
+#endif
 
     void ensureLineBoxes();
     void generateLineBoxTree();
@@ -535,6 +545,11 @@ private:
 
     void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    bool hasLFCLineLayout() const;
+    void layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+#endif
+
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset);
@@ -572,7 +587,14 @@ protected:
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
 
 private:
-    Variant<std::nullptr_t, std::unique_ptr<ComplexLineLayout>, Ref<SimpleLineLayout::Layout>> m_lineLayout;
+    Variant<
+        std::nullptr_t,
+        Ref<SimpleLineLayout::Layout>,
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        std::unique_ptr<Layout::RenderBlockFlowLineLayout>,
+#endif
+        std::unique_ptr<ComplexLineLayout>
+    > m_lineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
@@ -608,6 +630,23 @@ inline SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout()
 {
     return hasSimpleLineLayout() ? WTF::get<Ref<SimpleLineLayout::Layout>>(m_lineLayout).ptr() : nullptr;
 }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+inline bool RenderBlockFlow::hasLFCLineLayout() const
+{
+    return WTF::holds_alternative<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout);
+}
+
+inline const Layout::RenderBlockFlowLineLayout* RenderBlockFlow::lfcLineLayout() const
+{
+    return hasLFCLineLayout() ? WTF::get<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout).get() : nullptr;
+}
+
+inline Layout::RenderBlockFlowLineLayout* RenderBlockFlow::lfcLineLayout()
+{
+    return hasLFCLineLayout() ? WTF::get<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout).get() : nullptr;
+}
+#endif
 
 } // namespace WebCore
 

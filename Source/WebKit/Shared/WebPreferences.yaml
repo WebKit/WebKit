@@ -1642,8 +1642,17 @@ DataListElementEnabled:
 LayoutFormattingContextEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Next-gen layout"
-  humanReadableDescription: "Enable next-gen layout"
+  humanReadableName: "Next-generation layout"
+  humanReadableDescription: "Enable next-generation layout"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+LayoutFormattingContextRenderTreeIntegrationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Next-generation inline layout in render tree"
+  humanReadableDescription: "Enable next-generation inline layout in render tree"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)

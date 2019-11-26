@@ -1,3 +1,14 @@
+2019-11-26  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Render tree] Add LFC line layout path to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=204613
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2019-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.27.3 release

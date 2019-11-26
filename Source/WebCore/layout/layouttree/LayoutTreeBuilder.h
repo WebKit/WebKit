@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class RenderBlockFlow;
 class RenderElement;
 class RenderObject;
 class RenderTable;
@@ -70,6 +71,7 @@ private:
 class TreeBuilder {
 public:
     static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderView&);
+    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderBlockFlow&);
 
 private:
     TreeBuilder(LayoutTreeContent&);
