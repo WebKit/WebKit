@@ -1,3 +1,20 @@
+2019-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Avoid serializing [] in grid-template* specified values
+        https://bugs.webkit.org/show_bug.cgi?id=204501
+
+        Reviewed by Javier Fernandez.
+
+        Update tests results, several tests are now passing.
+        Other are still failing due to different bugs like webkit.org/b/204508.
+
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid-expected.txt:
+
 2019-11-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Updating WPT parsing tests

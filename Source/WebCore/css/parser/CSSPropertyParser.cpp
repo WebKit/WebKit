@@ -3341,7 +3341,7 @@ static RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange& range, CSSPars
     return consumeGridBreadth(range, cssParserMode);
 }
 
-// Appends to the passed in CSSGridLineNamesValue if any, otherwise creates a new one.
+// Appends to the passed in CSSGridLineNamesValue if any, otherwise creates a new one. Returns nullptr if an empty list is consumed.
 static RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, CSSGridLineNamesValue* lineNames = nullptr)
 {
     CSSParserTokenRange rangeCopy = range;
@@ -3356,7 +3356,7 @@ static RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& r
     if (rangeCopy.consumeIncludingWhitespace().type() != RightBracketToken)
         return nullptr;
     range = rangeCopy;
-    return result;
+    return result->length() ? result : nullptr;
 }
 
 static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSValueList& list, bool& isAutoRepeat, bool& allTracksAreFixedSized)
@@ -3419,12 +3419,11 @@ static RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSSPars
 {
     bool allowGridLineNames = trackListType != GridAuto;
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    if (!allowGridLineNames && range.peek().type() == LeftBracketToken)
+        return nullptr;
     RefPtr<CSSGridLineNamesValue> lineNames = consumeGridLineNames(range);
-    if (lineNames) {
-        if (!allowGridLineNames)
-            return nullptr;
+    if (lineNames)
         values->append(lineNames.releaseNonNull());
-    }
     
     bool allowRepeat = trackListType == GridTemplate;
     bool seenAutoRepeat = false;
@@ -3448,12 +3447,11 @@ static RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, CSSPars
         }
         if (seenAutoRepeat && !allTracksAreFixedSized)
             return nullptr;
+        if (!allowGridLineNames && range.peek().type() == LeftBracketToken)
+            return nullptr;
         lineNames = consumeGridLineNames(range);
-        if (lineNames) {
-            if (!allowGridLineNames)
-                return nullptr;
+        if (lineNames)
             values->append(lineNames.releaseNonNull());
-        }
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
     return values;
 }

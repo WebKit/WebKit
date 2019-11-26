@@ -1,3 +1,23 @@
+2019-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Avoid serializing [] in grid-template-* specified values
+        https://bugs.webkit.org/show_bug.cgi?id=204501
+
+        Reviewed by Javier Fernandez.
+
+        Based on Blink r699101 by <ericwilligers@chromium.org>.
+
+        This patch discards empty list of line names when parsing grid-template-* properties.
+        That way we avoid these empty lists "[]" during serialization.
+
+        This was discussed at: https://github.com/w3c/csswg-drafts/issues/4173.
+
+        Several WPT tests are passing thanks to this change.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeGridLineNames):
+        (WebCore::consumeGridTrackList):
+
 2019-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Cache the CString returned by String::utf8()
