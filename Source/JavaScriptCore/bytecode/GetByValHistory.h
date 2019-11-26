@@ -33,7 +33,7 @@ namespace JSC {
 struct GetByValHistory {
     void observeNonUID()
     {
-        uint64_t count = Options::getByValICMaxNumberOfIdentifiers() + 1;
+        uintptr_t count = Options::getByValICMaxNumberOfIdentifiers() + 1;
         update(count, filter());
     }
 
@@ -44,24 +44,23 @@ struct GetByValHistory {
             return;
         }
 
-        uint64_t count = this->count();
-        uint64_t filter = this->filter();
+        uintptr_t count = this->count();
+        uintptr_t filter = this->filter();
 
         TinyBloomFilter bloomFilter(filter);
-        uint64_t implBits = static_cast<uint64_t>(bitwise_cast<uintptr_t>(impl));
-        ASSERT(((implBits << 8) >> 8) == implBits);
+        uintptr_t implBits = bitwise_cast<uintptr_t>(impl);
+        ASSERT(((static_cast<uint64_t>(implBits) << 8) >> 8) == static_cast<uint64_t>(implBits));
         if (bloomFilter.ruleOut(implBits)) {
             bloomFilter.add(implBits);
             ++count;
+            update(count, bloomFilter.bits());
         }
-
-        update(count, bloomFilter.bits());
     }
 
-    uint64_t count() const { return m_payload >> 56; }
+    uintptr_t count() const { return static_cast<uintptr_t>(m_payload >> 56); }
 
 private:
-    uint64_t filter() const { return (m_payload << 8) >> 8; }
+    uintptr_t filter() const { return static_cast<uintptr_t>((m_payload << 8) >> 8); }
 
     void update(uint64_t count, uint64_t filter)
     {

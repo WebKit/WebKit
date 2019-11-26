@@ -1,3 +1,13 @@
+2019-11-25  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix 32-bit build.
+
+        * bytecode/GetByValHistory.h:
+        (JSC::GetByValHistory::observeNonUID):
+        (JSC::GetByValHistory::observe):
+        (JSC::GetByValHistory::count const):
+        (JSC::GetByValHistory::filter const):
+
 2019-11-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce IsoHeapCellType
