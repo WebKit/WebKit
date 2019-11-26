@@ -1,5 +1,14 @@
 2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Update KeyboardEvent as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=202183
+
+        Reviewed by Ross Kirsling.
+
+        * wtf/FeatureDefines.h:
+
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Add DefaultHash<OptionSet<T>> and HashTrait<OptionSet<T>> specializations
         https://bugs.webkit.org/show_bug.cgi?id=204562
 

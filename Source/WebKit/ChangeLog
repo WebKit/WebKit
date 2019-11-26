@@ -1,3 +1,17 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Update KeyboardEvent as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=202183
+
+        Reviewed by Ross Kirsling.
+
+        * Shared/WebEvent.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::windowsKeyNames):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2019-11-25  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Check EGL image extension by using native gl API in AcceleratedBackingStoreWayland

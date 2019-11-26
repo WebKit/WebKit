@@ -1636,7 +1636,6 @@ fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnl
 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 fast/dom/adopt-attribute-crash.svg [ Failure ]
 fast/dom/navigator-property-gc-after-frame-detach.html [ Failure ]
-fast/events/arrow-keys-on-body.html [ Failure ]
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ] # UIScript
 fast/events/autoscroll-with-software-keyboard.html [ Skip ] # UIScript
@@ -1672,9 +1671,7 @@ fast/events/input-event-insert-replacement.html [ Skip ] # UIScript
 fast/events/input-events-paste-data.html [ Pass Failure ]
 fast/events/input-events-paste-rich-datatransfer.html [ Failure ]
 fast/events/key-events-in-input-button.html [ Failure ]
-fast/events/key-events-in-input-text.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
-fast/events/keyboardevent-key.html [ Failure ]
 fast/events/keydown-numpad-keys.html [ Failure ]
 fast/events/mouse-cursor-image-set.html [ Failure ]
 fast/events/mouseover-button.html [ Failure ]

@@ -1,3 +1,42 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Update KeyboardEvent as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=202183
+
+        Reviewed by Ross Kirsling.
+
+        Add 'key' and 'code' properties of KeyboardEvent for Windows. The
+        implementation is copied from Chromium for Windows.
+
+        For implementing 'key' properties, ToUnicodeEx API is used to
+        convert a virtual key code to a character information.
+        Unfortunately, ToUnicodeEx alters the stored previous typed dead
+        key in the driver, it can't be used for each key event. So,
+        ToUnicodeEx is used to convert all virtual keys with all modifier
+        combinations beforehand.
+
+        This change turns on ENABLE_KEYBOARD_KEY_ATTRIBUTE and
+        ENABLE_KEYBOARD_CODE_ATTRIBUTE macros for all ports. A follow-up
+        patch will remove the macros.
+
+        Existing tests covers.
+
+        * PlatformWin.cmake:
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::windowsKeyNames):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/WindowsKeyNames.cpp: Added.
+        (hasControlAndAlt):
+        (getModifierFlags):
+        (nonPrintableVirtualKeyToDomKey):
+        (WindowsKeyNames::WindowsKeyNames):
+        (WindowsKeyNames::domKeyFromLParam):
+        (singleCharacterString):
+        (WindowsKeyNames::domKeyFromChar):
+        (WindowsKeyNames::domCodeFromLParam):
+        (WindowsKeyNames::updateLayout):
+        * platform/win/WindowsKeyNames.h: Added.
+
 2019-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use FontCascade::spaceWidth to measure single or collapsed whitespace content

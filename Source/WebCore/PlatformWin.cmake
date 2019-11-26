@@ -107,6 +107,7 @@ list(APPEND WebCore_SOURCES
     platform/win/WheelEventWin.cpp
     platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
+    platform/win/WindowsKeyNames.cpp
 
     rendering/RenderThemeWin.cpp
 )
@@ -142,6 +143,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/WebCoreTextRenderer.h
     platform/win/WindowMessageBroadcaster.h
     platform/win/WindowMessageListener.h
+    platform/win/WindowsKeyNames.h
     platform/win/WindowsTouch.h
 )
 

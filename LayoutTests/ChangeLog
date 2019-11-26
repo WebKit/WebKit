@@ -1,3 +1,14 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Update KeyboardEvent as per the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=202183
+
+        Reviewed by Ross Kirsling.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Unskipped fast/events/arrow-keys-on-body.html, fast/events/keyboardevent-key.html, and fast/events/key-events-in-input-text.html.
+
 2019-11-25  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord <clord@igalia.com>
 
         Basic OffscreenCanvas functionality
