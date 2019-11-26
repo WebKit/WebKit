@@ -1,3 +1,21 @@
+2019-11-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Ensure MiniBrowser can be built with !ENABLE(WEBKIT_LEGACY)
+        https://bugs.webkit.org/show_bug.cgi?id=204592
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/win/Common.cpp:
+        (parseCommandLine):
+        * MiniBrowser/win/Common.h:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::init):
+        (MainWindow::WndProc):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+        * PlatformWin.cmake:
+
 2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add DefaultHash<OptionSet<T>> and HashTrait<OptionSet<T>> specializations

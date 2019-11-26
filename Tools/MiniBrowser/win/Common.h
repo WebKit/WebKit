@@ -27,7 +27,6 @@
 
 #include "stdafx.h"
 #include "MainWindow.h"
-#include "WebKitLegacyBrowserWindow.h"
 
 enum class BrowserWindowType {
     WebKit,

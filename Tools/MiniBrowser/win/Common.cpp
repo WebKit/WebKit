@@ -271,8 +271,10 @@ CommandLineOptions parseCommandLine()
             options.usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
             options.useFullDesktop = true;
+#if ENABLE(WEBKIT_LEGACY)
         else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
             options.windowType = BrowserWindowType::WebKitLegacy;
+#endif
 #if ENABLE(WEBKIT)
         else if (!wcsicmp(argv[i], L"--wk2") || !wcsicmp(argv[i], L"--webkit"))
             options.windowType = BrowserWindowType::WebKit;

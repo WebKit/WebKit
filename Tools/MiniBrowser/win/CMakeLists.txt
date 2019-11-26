@@ -1,22 +1,13 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
     ${PAL_FRAMEWORK_HEADERS_DIR}
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-    ${WebKit_FRAMEWORK_HEADERS_DIR}
-    ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(MiniBrowser_SOURCES
-    AccessibilityDelegate.cpp
     BrowserWindow.cpp
     Common.cpp
     MainWindow.cpp
-    PrintWebUIDelegate.cpp
-    ResourceLoadDelegate.cpp
-    WebDownloadDelegate.cpp
     MiniBrowserLib.rc
-    MiniBrowserWebHost.cpp
-    WebKitLegacyBrowserWindow.cpp
     WinMain.cpp
     stdafx.cpp
 )
@@ -24,8 +15,6 @@ set(MiniBrowser_SOURCES
 set(MiniBrowser_LIBRARIES
     DbgHelp
     WebKit::WTF
-    WebKitLegacy
-    WebKitLegacyGUID
     comctl32
     comsupp
     comsuppw
@@ -38,12 +27,37 @@ if (USE_CF)
     )
 endif ()
 
+if (ENABLE_WEBKIT_LEGACY)
+    add_definitions(-DENABLE_WEBKIT_LEGACY)
+    list(APPEND MiniBrowser_INCLUDE_DIRECTORIES
+        ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
+    )
+    list(APPEND MiniBrowser_SOURCES
+        AccessibilityDelegate.cpp
+        MiniBrowserWebHost.cpp
+        PrintWebUIDelegate.cpp
+        ResourceLoadDelegate.cpp
+        WebDownloadDelegate.cpp
+        WebKitLegacyBrowserWindow.cpp
+    )
+    list(APPEND MiniBrowser_LIBRARIES
+        WebKitLegacy
+        WebKitLegacyGUID
+    )
+endif ()
+
 if (ENABLE_WEBKIT)
     add_definitions(-DENABLE_WEBKIT)
+    list(APPEND MiniBrowser_INCLUDE_DIRECTORIES
+        ${WebKit_FRAMEWORK_HEADERS_DIR}
+        ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    )
     list(APPEND MiniBrowser_SOURCES
         WebKitBrowserWindow.cpp
     )
-    list(APPEND MiniBrowser_LIBRARIES WebKit)
+    list(APPEND MiniBrowser_LIBRARIES
+        WebKit
+    )
 endif ()
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
