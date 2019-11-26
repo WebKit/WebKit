@@ -67,7 +67,11 @@ UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& requ
 {
 }
 
-UserMediaRequest::~UserMediaRequest() = default;
+UserMediaRequest::~UserMediaRequest()
+{
+    if (m_allowCompletionHandler)
+        m_allowCompletionHandler();
+}
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {
@@ -230,10 +234,10 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
-
-    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto callback = [this, protector = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
-            auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
+    m_allowCompletionHandler = WTFMove(completionHandler);
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)]() mutable {
+        auto callback = [this, protector = makePendingActivity(*this)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+            auto scopeExit = makeScopeExit([completionHandler = WTFMove(m_allowCompletionHandler)]() mutable {
                 completionHandler();
             });
             if (isContextStopped())
