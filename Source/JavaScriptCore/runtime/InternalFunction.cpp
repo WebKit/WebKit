@@ -35,7 +35,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(InternalFunction);
 const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction functionForCall, NativeFunction functionForConstruct)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
     , m_functionForCall(functionForCall)
     , m_functionForConstruct(functionForConstruct ? functionForConstruct : callHostFunctionAsConstructor)
     , m_globalObject(vm, this, structure->globalObject())

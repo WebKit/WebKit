@@ -3748,7 +3748,7 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (!isTypedView(type))
         return false;
     
-    if (function->classInfo() != constructorClassInfoForType(type))
+    if (function->classInfo(*m_vm) != constructorClassInfoForType(type))
         return false;
     
     if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
@@ -3818,7 +3818,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
             return false;
     }
 
-    if (function->classInfo() == ArrayConstructor::info()) {
+    if (function->classInfo(*m_vm) == ArrayConstructor::info()) {
         if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
             return false;
         
@@ -3836,7 +3836,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo() == NumberConstructor::info()) {
+    if (function->classInfo(*m_vm) == NumberConstructor::info()) {
         if (kind == CodeForConstruct)
             return false;
 
@@ -3849,7 +3849,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
     
-    if (function->classInfo() == StringConstructor::info()) {
+    if (function->classInfo(*m_vm) == StringConstructor::info()) {
         insertChecks();
         
         Node* resultNode;
@@ -3866,7 +3866,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo() == SymbolConstructor::info() && kind == CodeForCall) {
+    if (function->classInfo(*m_vm) == SymbolConstructor::info() && kind == CodeForCall) {
         insertChecks();
 
         Node* resultNode;
@@ -3881,7 +3881,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
     }
 
     // FIXME: This should handle construction as well. https://bugs.webkit.org/show_bug.cgi?id=155591
-    if (function->classInfo() == ObjectConstructor::info() && kind == CodeForCall) {
+    if (function->classInfo(*m_vm) == ObjectConstructor::info() && kind == CodeForCall) {
         insertChecks();
 
         Node* resultNode;

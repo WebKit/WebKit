@@ -62,7 +62,7 @@ void JSNPMethod::finishCreation(VM& vm, const String& name)
 
 IsoSubspace* JSNPMethod::subspaceForImpl(VM& vm)
 {
-    static NeverDestroyed<IsoSubspacePerVM> perVM([] (VM& vm) { return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType.get(), JSNPMethod); });
+    static NeverDestroyed<IsoSubspacePerVM> perVM([] (VM& vm) { return ISO_SUBSPACE_PARAMETERS(vm.cellHeapCellType.get(), JSNPMethod); });
     return &perVM.get().forVM(vm);
 }
 

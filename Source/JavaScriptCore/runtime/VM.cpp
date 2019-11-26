@@ -172,6 +172,10 @@
 #include "RegExp.h"
 #endif
 
+#ifdef JSC_GLIB_API_ENABLED
+#include "JSCCallbackFunction.h"
+#endif
+
 namespace JSC {
 
 #if ENABLE(JIT)
@@ -265,6 +269,12 @@ VM::VM(VMType vmType, HeapType heapType)
     , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
     , destructibleObjectHeapCellType(makeUnique<JSDestructibleObjectHeapCellType>())
+#if JSC_OBJC_API_ENABLED
+    , objCCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<ObjCCallbackFunction>>())
+#endif
+#ifdef JSC_GLIB_API_ENABLED
+    , jscCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<JSCCallbackFunction>>())
+#endif
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyCodeBlock>>())
     , webAssemblyFunctionHeapCellType(makeUnique<IsoHeapCellType<WebAssemblyFunction>>())
@@ -280,7 +290,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
     , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
-    , internalFunctionSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), InternalFunction) // Hash:0xf845c464
+    , internalFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), InternalFunction) // Hash:0xf845c464
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
     , ropeStringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSRopeString)
@@ -1295,13 +1305,13 @@ void VM::ensureShadowChicken()
 
 
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, destructibleObjectHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, destructibleObjectHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get(), ProxyObject)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, destructibleObjectHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedEvalCodeBlockSpace, destructibleCellHeapCellType.get(), UnlinkedEvalCodeBlock)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedFunctionCodeBlockSpace, destructibleCellHeapCellType.get(), UnlinkedFunctionCodeBlock)
@@ -1311,7 +1321,10 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, weakMapHeapCellType.get(),
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, weakSetHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef) // Hash:0x8ec68f1f
 #if JSC_OBJC_API_ENABLED
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, destructibleObjectHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, objCCallbackFunctionHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8
+#endif
+#ifdef JSC_GLIB_API_ENABLED
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jscCallbackFunctionSpace, jscCallbackFunctionHeapCellType.get(), JSCCallbackFunction)
 #endif
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd

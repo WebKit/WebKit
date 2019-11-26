@@ -120,6 +120,7 @@ class HasOwnPropertyCache;
 class HeapProfiler;
 class Identifier;
 class Interpreter;
+class JSCCallbackFunction;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
@@ -133,6 +134,7 @@ class JSWebAssemblyCodeBlock;
 class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
+class ObjCCallbackFunction;
 class PromiseTimer;
 class RegExp;
 class RegExpCache;
@@ -346,6 +348,12 @@ public:
     std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
+#if JSC_OBJC_API_ENABLED
+    std::unique_ptr<IsoHeapCellType<ObjCCallbackFunction>> objCCallbackFunctionHeapCellType;
+#endif
+#ifdef JSC_GLIB_API_ENABLED
+    std::unique_ptr<IsoHeapCellType<JSCCallbackFunction>> jscCallbackFunctionHeapCellType;
+#endif
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
     std::unique_ptr<IsoHeapCellType<WebAssemblyFunction>> webAssemblyFunctionHeapCellType;
@@ -410,6 +418,9 @@ public:
 
 #if JSC_OBJC_API_ENABLED
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(objCCallbackFunctionSpace)
+#endif
+#ifdef JSC_GLIB_API_ENABLED
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jscCallbackFunctionSpace)
 #endif
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(boundFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)

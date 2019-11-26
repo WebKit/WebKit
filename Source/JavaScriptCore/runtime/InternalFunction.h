@@ -30,11 +30,11 @@ namespace JSC {
 
 class FunctionPrototype;
 
-class InternalFunction : public JSDestructibleObject {
+class InternalFunction : public JSNonFinalObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | OverridesGetCallData;
 
     template<typename CellType, SubspaceAccess>

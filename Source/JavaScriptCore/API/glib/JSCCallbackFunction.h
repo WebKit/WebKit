@@ -35,15 +35,15 @@ typedef struct _JSCClass JSCClass;
 
 namespace JSC {
 
-class JSCCallbackFunction : public InternalFunction {
+class JSCCallbackFunction final : public InternalFunction {
     friend struct APICallbackFunction;
 public:
     typedef InternalFunction Base;
 
-    template<typename CellType, SubspaceAccess>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return subspaceForImpl(vm);
+        return vm.jscCallbackFunctionSpace<mode>();
     }
 
     enum class Type {
@@ -53,6 +53,7 @@ public:
     };
 
     static JSCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, Type, JSCClass*, GRefPtr<GClosure>&&, GType, Optional<Vector<GType>>&&);
+    static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -67,8 +68,6 @@ public:
     JSObjectRef construct(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 private:
-    static IsoSubspace* subspaceForImpl(VM&);
-    
     JSCCallbackFunction(VM&, Structure*, Type, JSCClass*, GRefPtr<GClosure>&&, GType, Optional<Vector<GType>>&&);
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_functionCallback; }

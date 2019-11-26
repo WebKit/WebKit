@@ -1,3 +1,13 @@
+2019-11-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] InternalFunction should be non-destructible
+        https://bugs.webkit.org/show_bug.cgi?id=204556
+
+        Reviewed by Mark Lam.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::subspaceForImpl):
+
 2019-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Dragged images are only available as .tiff when dropping onto macCatalyst apps
