@@ -1,3 +1,15 @@
+2019-11-26  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] New tests crashing after added in the r251377
+        https://bugs.webkit.org/show_bug.cgi?id=204112
+
+        Unreviewed test gardening, add new tests crashing because we do
+        not have an implementation of WTR::UIScriptController::copyText,
+        the test was added in r252450.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-11-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Layout of children of element with forwards-filling opacity animation may be incorrect after removal
