@@ -58,7 +58,13 @@ ComplexLineLayout::ComplexLineLayout(RenderBlockFlow& flow)
 {
 }
 
-ComplexLineLayout::~ComplexLineLayout() = default;
+ComplexLineLayout::~ComplexLineLayout()
+{
+    if (m_flow.containsFloats())
+        m_flow.floatingObjects()->clearLineBoxTreePointers();
+
+    lineBoxes().deleteLineBoxTree();
+};
 
 static void determineDirectionality(TextDirection& dir, InlineIterator iter)
 {

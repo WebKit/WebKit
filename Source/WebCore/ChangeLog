@@ -1,3 +1,40 @@
+2019-11-26  Antti Koivisto  <antti@apple.com>
+
+        Destroy linebox tree from ComplexLineLayout destructor
+        https://bugs.webkit.org/show_bug.cgi?id=204620
+
+        Reviewed by Zalan Bujtas.
+
+        Make linebox tree destuction simpler and more robust.
+
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::~ComplexLineLayout):
+
+        Destroy linebox tree.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::deleteLines):
+
+        Always destroy the line layout.
+
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout): Deleted.
+
+        No need for special path, ComplexLineLayout destruction takes care of this now.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::deleteLineBoxesBeforeSimpleLineLayout): Deleted.
+
+        No need for special path, InlineBox destruction clears the pointers in associated RenderLineBreaks and RenderTexts.
+
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::deleteLineBoxesBeforeSimpleLineLayout): Deleted.
+        * rendering/RenderText.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::removeLineBoxFromRenderObject):
+
 2019-11-26  youenn fablet  <youenn@apple.com>
 
         Update capturing document media state when entering b/f cache

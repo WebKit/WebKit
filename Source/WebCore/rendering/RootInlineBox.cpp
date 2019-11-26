@@ -828,7 +828,9 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 
 void RootInlineBox::removeLineBoxFromRenderObject()
 {
-    blockFlow().complexLineLayout()->lineBoxes().removeLineBox(this);
+    // Null if we are destroying ComplexLineLayout.
+    if (auto* complexLineLayout = blockFlow().complexLineLayout())
+        complexLineLayout->lineBoxes().removeLineBox(this);
 }
 
 void RootInlineBox::extractLineBoxFromRenderObject()

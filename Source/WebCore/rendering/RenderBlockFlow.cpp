@@ -2103,13 +2103,7 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
 
 void RenderBlockFlow::deleteLines()
 {
-    if (containsFloats())
-        m_floatingObjects->clearLineBoxTreePointers();
-
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().deleteLineBoxTree();
-    else
-        m_lineLayout = nullptr;
+    m_lineLayout = nullptr;
 
     RenderBlock::deleteLines();
 }
@@ -2957,7 +2951,8 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         return;
     }
 
-    complexLineLayout()->addOverflowFromInlineChildren();
+    if (complexLineLayout())
+        complexLineLayout()->addOverflowFromInlineChildren();
 }
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
@@ -3626,10 +3621,9 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     bool needsLayout = selfNeedsLayout() || relayoutChildren || !simpleLineLayout();
-    if (needsLayout) {
-        deleteLineBoxesBeforeSimpleLineLayout();
+    if (needsLayout)
         m_lineLayout = SimpleLineLayout::create(*this);
-    }
+
     auto& simpleLineLayout = *this->simpleLineLayout();
 
     if (view().frameView().layoutContext().layoutState() && view().frameView().layoutContext().layoutState()->isPaginated()) {
@@ -3645,25 +3639,6 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
     repaintLogicalTop = lineLayoutTop;
     repaintLogicalBottom = needsLayout ? repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter() : repaintLogicalTop;
     setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
-}
-
-void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
-{
-    ASSERT(lineLayoutPath() == SimpleLinesPath);
-
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().deleteLineBoxes();
-
-    for (auto& renderer : childrenOfType<RenderObject>(*this)) {
-        if (is<RenderText>(renderer))
-            downcast<RenderText>(renderer).deleteLineBoxesBeforeSimpleLineLayout();
-        else if (is<RenderLineBreak>(renderer))
-            downcast<RenderLineBreak>(renderer).deleteLineBoxesBeforeSimpleLineLayout();
-        else
-            ASSERT_NOT_REACHED();
-    }
-
-    m_lineLayout = nullptr;
 }
 
 void RenderBlockFlow::ensureLineBoxes()

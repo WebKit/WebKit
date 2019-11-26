@@ -126,12 +126,6 @@ void RenderLineBreak::ensureLineBoxes()
     downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
 }
 
-void RenderLineBreak::deleteLineBoxesBeforeSimpleLineLayout()
-{
-    delete m_inlineBoxWrapper;
-    m_inlineBoxWrapper = nullptr;
-}
-
 int RenderLineBreak::caretMinOffset() const
 {
     return 0;

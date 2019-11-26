@@ -307,11 +307,6 @@ void RenderText::willBeDestroyed()
     RenderObject::willBeDestroyed();
 }
 
-void RenderText::deleteLineBoxesBeforeSimpleLineLayout()
-{
-    m_lineBoxes.deleteAll();
-}
-
 String RenderText::originalText() const
 {
     return m_originalTextDiffersFromRendered ? originalTextMap().get(this) : m_text;

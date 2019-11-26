@@ -358,7 +358,6 @@ public:
     const ComplexLineLayout* complexLineLayout() const;
     ComplexLineLayout* complexLineLayout();
 
-    void deleteLineBoxesBeforeSimpleLineLayout();
     void ensureLineBoxes();
     void generateLineBoxTree();
 

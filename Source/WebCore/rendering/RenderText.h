@@ -164,7 +164,6 @@ public:
 #endif
 
     void ensureLineBoxes();
-    void deleteLineBoxesBeforeSimpleLineLayout();
     const SimpleLineLayout::Layout* simpleLineLayout() const;
 
     StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;
