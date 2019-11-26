@@ -1,3 +1,17 @@
+2019-11-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Layout of children of element with forwards-filling opacity animation may be incorrect after removal
+        https://bugs.webkit.org/show_bug.cgi?id=204602
+        <rdar://problem/45311541>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new ref test that checks that removing a forwards-filling animation that triggers a stacking context (for instance, animating opacity)
+        after it has completed from an element affecting layout yields the correct layout.
+
+        * webanimations/child-layer-position-after-removal-of-animation-triggering-stacking-context-with-fill-forwards-expected.html: Added.
+        * webanimations/child-layer-position-after-removal-of-animation-triggering-stacking-context-with-fill-forwards.html: Added.
+
 2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Update KeyboardEvent as per the latest specification

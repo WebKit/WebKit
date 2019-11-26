@@ -1,3 +1,29 @@
+2019-11-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Layout of children of element with forwards-filling opacity animation may be incorrect after removal
+        https://bugs.webkit.org/show_bug.cgi?id=204602
+        <rdar://problem/45311541>
+
+        Reviewed by Antti Koivisto.
+
+        Test: webanimations/child-layer-position-after-removal-of-animation-triggering-stacking-context-with-fill-forwards.html
+
+        In the case where we animate a property that affects whether an element establishes a stacking context, for instance `opacity`, the animation code,
+        specifically KeyframeEffect::apply(), forces a stacking context by setting setUsedZIndex(0) on the animated RenderStyle in case the element otherwise
+        has an "auto" z-index. This is required by the Web Animations specification (https://w3c.github.io/web-animations/#side-effects-section).
+
+        This means that a fill-forwards animation will still force the element to establish a stacking context after the animation is no longer "active". When
+        we remove such an animation, it may go from having a z-index to not having one, unless it had an explicit z-index provided through style. When this change
+        happens, RenderStyle::diff() will merely return "RepaintLayer" and thus will not foce a layout. However, updating the positions of child layers may be
+        necessary as the animation being removed may mean that there may not be a RenderLayer associated with that element's renderer anymore, and if that RenderLayer
+        had a position, then the position of child layers will no longer be correct.
+
+        Now, in the case where we destroy a layer in RenderLayerModelObject::styleDidChange(), we check whether the layer had a position before it is removed, and
+        update the position of child layers if it did.
+
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+
 2019-11-26  youenn fablet  <youenn@apple.com>
 
         Queuing a task in EventLoop is not working with UserMediaRequest allow completion handler

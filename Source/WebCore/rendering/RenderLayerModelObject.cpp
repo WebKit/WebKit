@@ -184,7 +184,12 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
         if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && hasRepaintLayoutRects())
             repaintUsingContainer(containerForRepaint(), repaintLayoutRects().m_repaintRect);
+        // If the layer we're about to destroy had a position, then the positions of the current children will no longer be correct.
+        auto* parentLayer = layer()->parent();
+        bool layerHadLocation = !layer()->location().isZero();
         layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
+        if (layerHadLocation && parentLayer && !parentLayer->renderer().needsLayout())
+            parentLayer->updateLayerPositionsAfterStyleChange();
         if (s_wasFloating && isFloating())
             setChildNeedsLayout();
         if (s_hadTransform)
