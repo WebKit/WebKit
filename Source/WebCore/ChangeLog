@@ -1,3 +1,14 @@
+2019-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use FontCascade::spaceWidth to measure single or collapsed whitespace content
+        https://bugs.webkit.org/show_bug.cgi?id=204594
+        <rdar://problem/57478360>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+
 2019-11-25  Antti Koivisto  <antti@apple.com>
 
         User Variant for RenderBlockFlow line layout

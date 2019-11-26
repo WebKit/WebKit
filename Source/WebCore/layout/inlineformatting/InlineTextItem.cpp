@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BreakLines.h"
+#include "FontCascade.h"
 
 namespace WebCore {
 namespace Layout {
@@ -82,16 +83,18 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 
 void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const Box& inlineBox)
 {
-    auto text = inlineBox.textContext()->content;
+    auto& textContext = *inlineBox.textContext();
+    auto text = textContext.content;
     if (!text.length())
         return inlineContent.append(InlineTextItem::createEmptyItem(inlineBox));
 
     auto& style = inlineBox.style();
+    auto& font = style.fontCascade();
     LazyLineBreakIterator lineBreakIterator(text);
     unsigned currentPosition = 0;
 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<LayoutUnit> {
-        if (!inlineBox.textContext()->canUseSimplifiedContentMeasuring)
+        if (!textContext.canUseSimplifiedContentMeasuring)
             return { };
         return TextUtil::width(inlineBox, startPosition, startPosition + length);
     };
@@ -111,7 +114,9 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 
         if (isWhitespaceCharacter(text[currentPosition])) {
             auto length = moveToNextNonWhitespacePosition(text, currentPosition);
-            inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
+            auto simpleSingleWhitespaceContent = textContext.canUseSimplifiedContentMeasuring && (length == 1 || style.collapseWhiteSpace());
+            auto width = simpleSingleWhitespaceContent ? makeOptional(LayoutUnit { font.spaceWidth() }) : inlineItemWidth(currentPosition, length);
+            inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length, width));
             currentPosition += length;
             continue;
         }
