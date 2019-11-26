@@ -1,3 +1,27 @@
+2019-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Dragged images are only available as .tiff when dropping onto macCatalyst apps
+        https://bugs.webkit.org/show_bug.cgi?id=204598
+        <rdar://problem/57093920>
+
+        Reviewed by Tim Horton.
+
+        On macOS, writing dragged images to the pasteboard only as file promises is mostly sufficient for the purposes
+        of dropping into Finder, Photos, and other apps. However, when dropping into a macCatalyst app, the contents of
+        NSPasteboard will only contain a file URL, which most Catalyst apps aren't able to handle. The only other valid
+        image representation that is written to the pasteboard in this case is "public.tiff", which loses fidelity in
+        the case of animated GIFs.
+
+        Instead, if the dragged image has a corresponding UTI and corresponding decoded image data, declare the UTI when
+        writing promised data to the pasteboard, and later provide data for the UTI, if the drop destination asks, by
+        using the promised image's data.
+
+        Test: DragAndDropTests.ProvideImageDataAsTypeIdentifiers
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPromisedDataForImage):
+        (WebKit::WebViewImpl::provideDataForPasteboard):
+
 2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Update KeyboardEvent as per the latest specification

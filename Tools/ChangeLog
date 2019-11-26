@@ -1,3 +1,16 @@
+2019-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Dragged images are only available as .tiff when dropping onto macCatalyst apps
+        https://bugs.webkit.org/show_bug.cgi?id=204598
+        <rdar://problem/57093920>
+
+        Reviewed by Tim Horton.
+
+        Verify that WKWebView is able to provide data in non-TIFF formats when dragging several types of images using a
+        new API test.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+
 2019-11-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Ensure MiniBrowser can be built with !ENABLE(WEBKIT_LEGACY)

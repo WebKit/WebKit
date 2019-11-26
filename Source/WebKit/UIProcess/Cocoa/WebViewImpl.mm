@@ -4237,6 +4237,9 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardType(), nil]);
 
+    if (image && !image->uti().isEmpty() && image->data() && !image->data()->isEmpty())
+        [types addObject:image->uti()];
+
     [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
     [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
     setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
@@ -4264,8 +4267,16 @@ void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
 
 void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *type)
 {
+    if (!m_promisedImage)
+        return;
+
+    if ([type isEqual:m_promisedImage->uti()] && m_promisedImage->data()) {
+        if (auto platformData = m_promisedImage->data()->createNSData())
+            [pasteboard setData:(__bridge NSData *)platformData.get() forType:type];
+    }
+
     // FIXME: Need to support NSRTFDPboardType.
-    if ([type isEqual:WebCore::legacyTIFFPasteboardType()] && m_promisedImage)
+    if ([type isEqual:WebCore::legacyTIFFPasteboardType()])
         [pasteboard setData:(__bridge NSData *)m_promisedImage->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
 }
 
