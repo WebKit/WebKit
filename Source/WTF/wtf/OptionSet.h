@@ -39,9 +39,10 @@ namespace WTF {
 template<typename T> class OptionSet {
     WTF_MAKE_FAST_ALLOCATED;
     static_assert(std::is_enum<T>::value, "T is not an enum type");
-    typedef typename std::make_unsigned<typename std::underlying_type<T>::type>::type StorageType;
 
 public:
+    using StorageType = std::make_unsigned_t<std::underlying_type_t<T>>;
+
     template<typename StorageType> class Iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:

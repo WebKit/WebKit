@@ -1,3 +1,20 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add DefaultHash<OptionSet<T>> and HashTrait<OptionSet<T>> specializations
+        https://bugs.webkit.org/show_bug.cgi?id=204562
+
+        Reviewed by Daniel Bates.
+
+        * WTF.xcodeproj/project.pbxproj: Added OptionSetHash.h
+        * wtf/CMakeLists.txt: Ditto.
+        * wtf/OptionSet.h: Made StorageType public, and use C++14 types.
+        * wtf/OptionSetHash.h: Added.
+        (WTF::DefaultHash<OptionSet<T>>::Hash::hash):
+        (WTF::DefaultHash<OptionSet<T>>::Hash::equal):
+        (WTF::HashTraits<OptionSet<T>>::emptyValue):
+        (WTF::HashTraits<OptionSet<T>>::constructDeletedValue):
+        (WTF::HashTraits<OptionSet<T>>::isDeletedValue):
+
 2019-11-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r252770): [GTK][WPE] Remote inspector no longer works if debugger is in a different kind of system

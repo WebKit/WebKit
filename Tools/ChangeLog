@@ -1,3 +1,13 @@
+2019-11-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add DefaultHash<OptionSet<T>> and HashTrait<OptionSet<T>> specializations
+        https://bugs.webkit.org/show_bug.cgi?id=204562
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        Added a new test WTF_OptionSet.HashSet.
+
 2019-11-25  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] xserver build fails

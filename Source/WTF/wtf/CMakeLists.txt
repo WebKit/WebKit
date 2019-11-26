@@ -151,6 +151,7 @@ set(WTF_PUBLIC_HEADERS
     ObjCRuntimeExtras.h
     ObjectIdentifier.h
     OptionSet.h
+    OptionSetHash.h
     Optional.h
     OrderMaker.h
     Packed.h
