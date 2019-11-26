@@ -498,12 +498,6 @@ const char* RTCPeerConnection::activeDOMObjectName() const
     return "RTCPeerConnection";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool RTCPeerConnection::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    return m_iceConnectionState == RTCIceConnectionState::Completed || m_iceConnectionState == RTCIceConnectionState::Connected;
-}
-
 void RTCPeerConnection::suspend(ReasonForSuspension reason)
 {
     if (reason != ReasonForSuspension::BackForwardCache)

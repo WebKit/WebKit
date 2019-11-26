@@ -1,3 +1,16 @@
+2019-11-26  youenn fablet  <youenn@apple.com>
+
+        Allow b/f cache in case of connected peer connections
+        https://bugs.webkit.org/show_bug.cgi?id=204583
+
+        Reviewed by Chris Dumez.
+
+        * fast/history/resources/page-cache-helper-10000ms.html: Added.
+        * webrtc/peerconnection-page-cache-expected.txt: Added.
+        * webrtc/peerconnection-page-cache-long-expected.txt: Added.
+        * webrtc/peerconnection-page-cache-long.html: Added.
+        * webrtc/peerconnection-page-cache.html: Added.
+
 2019-11-26  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] New tests crashing after added in the r251377

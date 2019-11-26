@@ -95,9 +95,6 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
 
-    // FIXME: This should never prevent entering the back/forward cache.
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return m_readyState == RTCDataChannelState::Open; }
-
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
