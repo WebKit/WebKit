@@ -67,6 +67,8 @@ LayoutTreeContent::LayoutTreeContent(const RenderBox& rootRenderer, std::unique_
 {
 }
 
+LayoutTreeContent::~LayoutTreeContent() = default;
+
 static void appendChild(Container& parent, Box& newChild)
 {
     if (!parent.hasChild()) {
@@ -263,8 +265,7 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
         appendChild(tableWrapperBox, *captionBox);
         auto& captionContainer = downcast<Container>(*captionBox);
         buildSubTree(downcast<RenderElement>(captionRenderer), captionContainer);
-        // Temporary
-        captionBox.release();
+        m_layoutTreeContent.addBox(WTFMove(captionBox));
         tableChild = tableChild->nextSibling();
     }
 
@@ -276,11 +277,10 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
         appendChild(*tableBox, *sectionBox);
         auto& sectionContainer = downcast<Container>(*sectionBox);
         buildSubTree(downcast<RenderElement>(*sectionRenderer), sectionContainer);
-        sectionBox.release();
+        m_layoutTreeContent.addBox(WTFMove(sectionBox));
         sectionRenderer = sectionRenderer->nextSibling();
     }
-    // Temporary
-    tableBox.release();
+    m_layoutTreeContent.addBox(WTFMove(tableBox));
 }
 
 void TreeBuilder::buildSubTree(const RenderElement& rootRenderer, Container& rootContainer)
@@ -292,8 +292,8 @@ void TreeBuilder::buildSubTree(const RenderElement& rootRenderer, Container& roo
             buildTableStructure(downcast<RenderTable>(childRenderer), downcast<Container>(*childLayoutBox));
         else if (is<Container>(*childLayoutBox))
             buildSubTree(downcast<RenderElement>(childRenderer), downcast<Container>(*childLayoutBox));
-        // Temporary
-        childLayoutBox.release();
+
+        m_layoutTreeContent.addBox(WTFMove(childLayoutBox));
     }
 }
 

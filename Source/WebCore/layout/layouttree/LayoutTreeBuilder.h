@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,10 +48,13 @@ class LayoutTreeContent : public CanMakeWeakPtr<LayoutTreeContent> {
     WTF_MAKE_ISO_ALLOCATED(LayoutTreeContent);
 public:
     LayoutTreeContent(const RenderBox&, std::unique_ptr<Container>);
+    ~LayoutTreeContent();
 
     const Container& rootLayoutBox() const { return *m_rootLayoutBox; }
     Container& rootLayoutBox() { return *m_rootLayoutBox; }
     const RenderBox& rootRenderer() const { return m_rootRenderer; }
+
+    void addBox(std::unique_ptr<Box> box) { m_boxes.add(WTFMove(box)); }
 
     using RenderObjectToLayoutBoxMap = HashMap<const RenderObject*, Box*>;
     Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
@@ -59,6 +63,7 @@ public:
 private:
     const RenderBox& m_rootRenderer;
     std::unique_ptr<Container> m_rootLayoutBox;
+    HashSet<std::unique_ptr<Box>> m_boxes;
     RenderObjectToLayoutBoxMap m_renderObjectToLayoutBox;
 };
 

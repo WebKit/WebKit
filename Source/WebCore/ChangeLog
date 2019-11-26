@@ -1,3 +1,20 @@
+2019-11-26  Antti Koivisto  <antti@apple.com>
+
+        [LFC] Don't leak Boxes
+        https://bugs.webkit.org/show_bug.cgi?id=204616
+
+        Reviewed by Zalan Bujtas.
+
+        Store Boxes to LayoutTreeContent instead of leaking them.
+        
+        This is probably not the final memory management model.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+        (WebCore::Layout::TreeBuilder::buildSubTree):
+        * layout/layouttree/LayoutTreeBuilder.h:
+        (WebCore::Layout::LayoutTreeContent::addBox):
+
 2019-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Avoid serializing [] in grid-template-* specified values
