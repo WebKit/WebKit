@@ -1,3 +1,19 @@
+2019-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Document::needsStyleRecalc() shouldn't return true for fragment scrolling (m_gotoAnchorNeededAfterStylesheetsLoad)
+        https://bugs.webkit.org/show_bug.cgi?id=204593
+
+        Reviewed by Antti Koivisto.
+
+        After r252761, we no longer triggers a fragment scrolling as a part of style resolution.
+        Consequently, there is no need for Document::needsStyleRecalc() to return true
+        even when m_gotoAnchorNeededAfterStylesheetsLoad is set and there are no more pending stylesheets.
+
+        No new tests since there shouldn't really be any observable behavior difference.
+
+        * dom/Document.cpp:
+        (WebCore::Document::needsStyleRecalc const):
+
 2019-11-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Layout of children of element with forwards-filling opacity animation may be incorrect after removal

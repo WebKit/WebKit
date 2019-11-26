@@ -2032,10 +2032,6 @@ bool Document::needsStyleRecalc() const
     if (styleScope().hasPendingUpdate())
         return true;
 
-    // Ensure this happens eventually as it is currently in resolveStyle. This can be removed if the code moves.
-    if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
-        return true;
-
     return false;
 }
 
