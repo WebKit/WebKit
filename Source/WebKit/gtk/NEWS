@@ -1,4 +1,23 @@
 ================
+WebKitGTK 2.27.3
+================
+
+What's new in WebKitGTK 2.27.3?
+
+  - Add support for Pointer Lock API.
+  - Improve performance when falling back to system fonts.
+  - Stop using DBus for the remote inspector implementation to improve the performance of both
+    WebDriver and remote inspector.
+  - Implement support for new ARIA roles: code, strong, emphasis, generic.
+  - Fix handling of content type with new custom protocols implementation.
+  - Make image decoders fully thread safe.
+  - Add support for get page source command in WebDriver.
+  - Add support for network proxy capabilities in WebDriver.
+  - Add support for new window command in WebDriver.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese, Ukrainian.
+
+================
 WebKitGTK 2.27.2
 ================
 
