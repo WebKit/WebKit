@@ -17,6 +17,9 @@ window.addEventListener("pageshow", function(event) {
         testPassed("Page did enter and was restored from the page cache");
         restoredFromPageCache = true;
 
+        if (window.internals)
+            debug("page media state is '" + internals.pageMediaState() + "'");
+
         if (!canvasStream.active)
             testFailed("Canvas stream is not active");
 

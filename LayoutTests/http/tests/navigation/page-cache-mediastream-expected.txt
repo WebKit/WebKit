@@ -7,6 +7,7 @@ pageshow - not from cache
 pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the page cache
+page media state is 'IsNotPlaying'
 PASS successfullyParsed is true
 
 TEST COMPLETE

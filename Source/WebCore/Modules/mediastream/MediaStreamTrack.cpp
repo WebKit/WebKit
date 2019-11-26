@@ -70,7 +70,6 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
-    , m_taskQueue(context)
     , m_isCaptureTrack(m_private->isCaptureTrack())
     , m_mediaSession(PlatformMediaSession::create(*this))
 {
@@ -535,22 +534,14 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::configureTrackRendering()
 {
-    m_taskQueue.enqueueTask([this] {
-        if (m_mediaSession && m_private->type() == RealtimeMediaSource::Type::Audio)
-            m_mediaSession->canProduceAudioChanged();
+    if (m_mediaSession && m_private->type() == RealtimeMediaSource::Type::Audio)
+        m_mediaSession->canProduceAudioChanged();
 
-        if (auto document = this->document())
-            document->updateIsPlayingMedia();
-    });
+    if (auto document = this->document())
+        document->updateIsPlayingMedia();
 
     // 4.3.1
     // ... media from the source only flows when a MediaStreamTrack object is both unmuted and enabled
-}
-
-void MediaStreamTrack::stop()
-{
-    stopTrack();
-    m_taskQueue.close();
 }
 
 const char* MediaStreamTrack::activeDOMObjectName() const

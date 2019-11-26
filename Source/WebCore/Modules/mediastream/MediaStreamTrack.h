@@ -175,7 +175,7 @@ private:
     Document* document() const;
 
     // ActiveDOMObject API.
-    void stop() final;
+    void stop() final { stopTrack(); }
     const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) final;
 
@@ -216,7 +216,6 @@ private:
 
     MediaTrackConstraints m_constraints;
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
-    GenericTaskQueue<ScriptExecutionContext> m_taskQueue;
     GenericTaskQueue<Timer> m_eventTaskQueue;
 
     bool m_ended { false };

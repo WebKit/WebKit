@@ -1,5 +1,15 @@
 2019-11-26  youenn fablet  <youenn@apple.com>
 
+        Update capturing document media state when entering b/f cache
+        https://bugs.webkit.org/show_bug.cgi?id=204589
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/navigation/page-cache-mediastream-expected.txt:
+        * http/tests/navigation/page-cache-mediastream.html:
+
+2019-11-26  youenn fablet  <youenn@apple.com>
+
         Allow b/f cache in case of connected peer connections
         https://bugs.webkit.org/show_bug.cgi?id=204583
 

@@ -1,5 +1,23 @@
 2019-11-26  youenn fablet  <youenn@apple.com>
 
+        Update capturing document media state when entering b/f cache
+        https://bugs.webkit.org/show_bug.cgi?id=204589
+
+        Reviewed by Chris Dumez.
+
+        Remove enqueuing the task in configureTrackRendering.
+        This allows stopTrack to trigger the track rendering configuration and document media state computation.
+        Covered by updated test.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::configureTrackRendering):
+        (WebCore::MediaStreamTrack::suspend):
+        (WebCore::MediaStreamTrack::stop): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+
+2019-11-26  youenn fablet  <youenn@apple.com>
+
         Allow b/f cache in case of connected peer connections
         https://bugs.webkit.org/show_bug.cgi?id=204583
 
