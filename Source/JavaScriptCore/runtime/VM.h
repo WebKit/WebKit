@@ -303,6 +303,7 @@ public:
     FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }
     void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
     {
+        RELEASE_ASSERT_WITH_MESSAGE(!m_fuzzerAgent, "Only one FuzzerAgent can be specified at a time.");
         m_fuzzerAgent = WTFMove(fuzzerAgent);
     }
 

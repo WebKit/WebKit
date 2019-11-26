@@ -461,7 +461,7 @@ VM::VM(VMType vmType, HeapType heapType)
 
     if (Options::useRandomizingFuzzerAgent())
         setFuzzerAgent(makeUnique<RandomizingFuzzerAgent>(*this));
-    else if (Options::useDoublePredictionFuzzerAgent())
+    if (Options::useDoublePredictionFuzzerAgent())
         setFuzzerAgent(makeUnique<DoublePredictionFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())

@@ -1,3 +1,13 @@
+2019-11-26  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        Attempting to enable more than one FuzzerAgent should result in an error
+        https://bugs.webkit.org/show_bug.cgi?id=204607
+
+        Reviewed by Antti Koivisto.
+
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2019-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] The API lock should be held before calling JSC::createTypeError
