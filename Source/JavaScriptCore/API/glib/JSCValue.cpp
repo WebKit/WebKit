@@ -472,8 +472,11 @@ JSCValue* jsc_value_new_array(JSCContext* context, GType firstItemType, ...)
 {
     g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
 
-    JSValueRef exception = nullptr;
     auto* jsContext = jscContextGetJSContext(context);
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
+    JSC::JSLockHolder locker(globalObject);
+
+    JSValueRef exception = nullptr;
     auto* jsArray = JSObjectMakeArray(jsContext, 0, nullptr, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return nullptr;
@@ -491,7 +494,7 @@ JSCValue* jsc_value_new_array(JSCContext* context, GType firstItemType, ...)
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&item, itemType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(toJS(jsContext), makeString("failed to collect array item: ", error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: ", error.get())));
             jscContextHandleExceptionIfNeeded(context, exception);
             jsArray = nullptr;
             break;
@@ -878,6 +881,8 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
 {
     JSCValuePrivate* priv = value->priv;
     auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
+    JSC::JSLockHolder locker(globalObject);
 
     JSValueRef exception = nullptr;
     Vector<JSValueRef> arguments;
@@ -887,7 +892,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&parameter, parameterType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(toJS(jsContext), makeString("failed to collect function paramater: ", error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: ", error.get())));
             jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
             return adoptGRef(jsc_value_new_undefined(priv->context.get()));
         }

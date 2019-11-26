@@ -271,6 +271,9 @@ void jscContextPopCallback(JSCContext* context, CallbackData&& data)
 JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
+    JSC::JSGlobalObject* globalObject = toJS(priv->jsContext.get());
+    JSC::JSLockHolder locker(globalObject);
+
     auto* jsArray = JSObjectMakeArray(priv->jsContext.get(), 0, nullptr, exception);
     if (*exception)
         return JSValueMakeUndefined(priv->jsContext.get());
@@ -289,7 +292,7 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
         else if (JSC_IS_VALUE(item))
             JSObjectSetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, jscValueGetJSValue(JSC_VALUE(item)), exception);
         else
-            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid item type in GPtrArray")));
+            *exception = toRef(JSC::createTypeError(globalObject, makeString("invalid item type in GPtrArray")));
 
         if (*exception)
             return JSValueMakeUndefined(priv->jsContext.get());
@@ -301,11 +304,14 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
 static GRefPtr<GPtrArray> jscContextJSArrayToGArray(JSCContext* context, JSValueRef jsArray, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
+    JSC::JSGlobalObject* globalObject = toJS(priv->jsContext.get());
+    JSC::JSLockHolder locker(globalObject);
+
     if (JSValueIsNull(priv->jsContext.get(), jsArray))
         return nullptr;
 
     if (!JSValueIsArray(priv->jsContext.get(), jsArray)) {
-        *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid js type for GPtrArray")));
+        *exception = toRef(JSC::createTypeError(globalObject, makeString("invalid js type for GPtrArray")));
         return nullptr;
     }
 
@@ -337,11 +343,14 @@ static GRefPtr<GPtrArray> jscContextJSArrayToGArray(JSCContext* context, JSValue
 GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArray, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
+    JSC::JSGlobalObject* globalObject = toJS(priv->jsContext.get());
+    JSC::JSLockHolder locker(globalObject);
+
     if (JSValueIsNull(priv->jsContext.get(), jsArray))
         return nullptr;
 
     if (!JSValueIsArray(priv->jsContext.get(), jsArray)) {
-        *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid js type for GStrv")));
+        *exception = toRef(JSC::createTypeError(globalObject, makeString("invalid js type for GStrv")));
         return nullptr;
     }
 
@@ -366,7 +375,7 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
 
         auto jsValueItem = jscContextGetOrCreateValue(context, jsItem);
         if (!jsc_value_is_string(jsValueItem.get())) {
-            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid js type for GStrv: item ", String::number(i), " is not a string")));
+            *exception = toRef(JSC::createTypeError(globalObject, makeString("invalid js type for GStrv: item ", String::number(i), " is not a string")));
             return nullptr;
         }
 
@@ -379,6 +388,8 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
 JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
+    JSC::JSGlobalObject* globalObject = toJS(priv->jsContext.get());
+    JSC::JSLockHolder locker(globalObject);
 
     switch (g_type_fundamental(G_VALUE_TYPE(value))) {
     case G_TYPE_BOOLEAN:
@@ -446,15 +457,17 @@ JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, J
         break;
     }
 
-    *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("unsupported type ", g_type_name(G_VALUE_TYPE(value)))));
+    *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type ", g_type_name(G_VALUE_TYPE(value)))));
     return JSValueMakeUndefined(priv->jsContext.get());
 }
 
 void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType type, GValue* value, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
-    g_value_init(value, type);
+    JSC::JSGlobalObject* globalObject = toJS(priv->jsContext.get());
+    JSC::JSLockHolder locker(globalObject);
 
+    g_value_init(value, type);
     auto fundamentalType = g_type_fundamental(G_VALUE_TYPE(value));
     switch (fundamentalType) {
     case G_TYPE_INT:
@@ -528,7 +541,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
                     return;
                 }
 
-                *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), "invalid pointer type"_s));
+                *exception = toRef(JSC::createTypeError(globalObject, "invalid pointer type"_s));
                 return;
             }
         }
@@ -539,7 +552,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
         else if (G_IS_OBJECT(wrappedObject))
             g_value_set_object(value, wrappedObject);
         else
-            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), "wrapped object is not a GObject"_s));
+            *exception = toRef(JSC::createTypeError(globalObject, "wrapped object is not a GObject"_s));
         break;
     }
     case G_TYPE_LONG:
@@ -564,7 +577,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
     case G_TYPE_INTERFACE:
     case G_TYPE_VARIANT:
     default:
-        *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("unsupported type ", g_type_name(G_VALUE_TYPE(value)))));
+        *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type ", g_type_name(G_VALUE_TYPE(value)))));
         break;
     }
 }

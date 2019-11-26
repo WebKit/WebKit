@@ -1,3 +1,21 @@
+2019-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] The API lock should be held before calling JSC::createTypeError
+        https://bugs.webkit.org/show_bug.cgi?id=204573
+
+        Reviewed by Mark Lam.
+
+        We are missing it in several places. This is causing a crash in test /jsc/object after r252298.
+
+        * API/glib/JSCContext.cpp:
+        (jscContextGArrayToJSArray):
+        (jscContextJSArrayToGArray):
+        (jscContextGValueToJSValue):
+        (jscContextJSValueToGValue):
+        * API/glib/JSCValue.cpp:
+        (jsc_value_new_array):
+        (jscValueCallFunction):
+
 2019-11-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] InternalFunction should be non-destructible
