@@ -459,7 +459,7 @@ class RunWebKitTests(shell.Test):
         self.setCommand(self.command + ['--debug-rwt-logging'])
 
         if platform == "win":
-            self.setCommand(self.command + ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin32")])
+            self.setCommand(self.command + ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin64")])
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
