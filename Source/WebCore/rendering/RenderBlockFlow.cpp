@@ -2121,7 +2121,7 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
 
 void RenderBlockFlow::deleteLines()
 {
-    m_lineLayout = nullptr;
+    m_lineLayout = WTF::Monostate();
 
     RenderBlock::deleteLines();
 }
@@ -3633,7 +3633,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         return;
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
-        m_lineLayout = nullptr;
+        m_lineLayout = WTF::Monostate();
         setLineLayoutPath(UndeterminedPath);
         if (needsLayout())
             return;
@@ -3695,16 +3695,18 @@ void RenderBlockFlow::ensureLineBoxes()
 
     setLineLayoutPath(ForceLineBoxesPath);
 
-    if (!simpleLineLayout())
+    if (complexLineLayout() || !hasLineLayout())
         return;
 
-    auto simpleLineLayout = makeRef(*this->simpleLineLayout());
+    auto simpleLineLayout = makeRefPtr(this->simpleLineLayout());
 
     m_lineLayout = makeUnique<ComplexLineLayout>(*this);
 
-    if (SimpleLineLayout::canUseForLineBoxTree(*this, simpleLineLayout.get())) {
-        SimpleLineLayout::generateLineBoxTree(*this, simpleLineLayout.get());
-        return;
+    if (simpleLineLayout) {
+        if (SimpleLineLayout::canUseForLineBoxTree(*this, *simpleLineLayout)) {
+            SimpleLineLayout::generateLineBoxTree(*this, *simpleLineLayout);
+            return;
+        }
     }
 
     auto& complexLineLayout = *this->complexLineLayout();
@@ -3717,7 +3719,7 @@ void RenderBlockFlow::ensureLineBoxes()
     bool relayoutChildren = false;
     LayoutUnit repaintLogicalTop;
     LayoutUnit repaintLogicalBottom;
-    if (simpleLineLayout->isPaginated()) {
+    if (simpleLineLayout && simpleLineLayout->isPaginated()) {
         PaginatedLayoutStateMaintainer state(*this);
         complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.

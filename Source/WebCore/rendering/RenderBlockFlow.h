@@ -540,6 +540,7 @@ public:
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
 private:
+    bool hasLineLayout() const;
     bool hasSimpleLineLayout() const;
     bool hasComplexLineLayout() const;
 
@@ -588,7 +589,7 @@ protected:
 
 private:
     Variant<
-        std::nullptr_t,
+        WTF::Monostate,
         Ref<SimpleLineLayout::Layout>,
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         std::unique_ptr<Layout::RenderBlockFlowLineLayout>,
@@ -600,6 +601,11 @@ private:
     friend class LineWidth; // Needs to know FloatingObject
     friend class ComplexLineLayout;
 };
+
+inline bool RenderBlockFlow::hasLineLayout() const
+{
+    return !WTF::holds_alternative<WTF::Monostate>(m_lineLayout);
+}
 
 inline bool RenderBlockFlow::hasComplexLineLayout() const
 {
