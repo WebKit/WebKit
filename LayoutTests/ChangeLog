@@ -1,3 +1,15 @@
+2019-11-27  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION(r252455): imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html fails on iOS and WK1
+        https://bugs.webkit.org/show_bug.cgi?id=204272
+        <rdar://problem/57253742>
+
+        Reviewed by Dean Jackson.
+
+        Removing this specific expectation for WK1 since it now behaves just like the other configurations.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements-expected.txt: Removed.
+
 2019-11-27  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Garden dedicated queue (Part 7)

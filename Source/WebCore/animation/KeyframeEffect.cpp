@@ -996,21 +996,43 @@ void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
         return;
 
     if (timeline)
-        m_target->ensureKeyframeEffectStack().addEffect(*this);
-    else
+        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
+    else {
         m_target->ensureKeyframeEffectStack().removeEffect(*this);
+        m_inTargetEffectStack = false;
+    }
+}
+
+void KeyframeEffect::animationTimingDidChange()
+{
+    updateEffectStackMembership();
+}
+
+void KeyframeEffect::updateEffectStackMembership()
+{
+    if (!m_target)
+        return;
+
+    bool isRelevant = animation() && animation()->isRelevant();
+    if (isRelevant && !m_inTargetEffectStack)
+        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
+    else if (!isRelevant && m_inTargetEffectStack) {
+        m_target->ensureKeyframeEffectStack().removeEffect(*this);
+        m_inTargetEffectStack = false;
+    }
 }
 
 void KeyframeEffect::setAnimation(WebAnimation* animation)
 {
     bool animationChanged = animation != this->animation();
     AnimationEffect::setAnimation(animation);
-    if (m_target && animationChanged) {
-        if (animation)
-            m_target->ensureKeyframeEffectStack().addEffect(*this);
-        else
-            m_target->ensureKeyframeEffectStack().removeEffect(*this);
-    }
+
+    if (!animationChanged)
+        return;
+
+    if (animation)
+        animation->updateRelevance();
+    updateEffectStackMembership();
 }
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
@@ -1033,10 +1055,12 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     // any animated styles are removed immediately.
     invalidateElement(previousTarget.get());
 
-    if (previousTarget)
+    if (previousTarget) {
         previousTarget->ensureKeyframeEffectStack().removeEffect(*this);
+        m_inTargetEffectStack = false;
+    }
     if (m_target)
-        m_target->ensureKeyframeEffectStack().addEffect(*this);
+        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
 }
 
 void KeyframeEffect::apply(RenderStyle& targetStyle)

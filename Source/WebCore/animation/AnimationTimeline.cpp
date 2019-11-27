@@ -62,13 +62,21 @@ void AnimationTimeline::forgetAnimation(WebAnimation* animation)
 
 void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
+    updateGlobalPosition(animation);
+
     if (m_animations.add(&animation)) {
-        animation.setGlobalPosition(m_allAnimations.size());
         m_allAnimations.append(makeWeakPtr(&animation));
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
             timeline->removeAnimation(animation);
     }
+}
+
+void AnimationTimeline::updateGlobalPosition(WebAnimation& animation)
+{
+    static uint64_t s_globalPosition = 0;
+    if (!animation.globalPosition() && animation.canHaveGlobalPosition())
+        animation.setGlobalPosition(++s_globalPosition);
 }
 
 void AnimationTimeline::removeAnimation(WebAnimation& animation)
@@ -156,9 +164,11 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
         if (iterator != m_elementToCSSAnimationByName.end()) {
             auto& cssAnimationsByName = iterator->value;
             auto& name = downcast<CSSAnimation>(animation).animationName();
-            cssAnimationsByName.remove(name);
-            if (cssAnimationsByName.isEmpty())
-                m_elementToCSSAnimationByName.remove(&element);
+            if (cssAnimationsByName.get(name) == &animation) {
+                cssAnimationsByName.remove(name);
+                if (cssAnimationsByName.isEmpty())
+                    m_elementToCSSAnimationByName.remove(&element);
+            }
         }
     } else if (is<CSSTransition>(animation)) {
         auto& transition = downcast<CSSTransition>(animation);
@@ -252,7 +262,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     if (currentStyle && currentStyle->hasAnimations() && currentStyle->display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
         if (m_elementToCSSAnimationByName.contains(&element)) {
             for (const auto& cssAnimationsByNameMapItem : m_elementToCSSAnimationByName.take(&element))
-                cancelDeclarativeAnimation(*cssAnimationsByNameMapItem.value);
+                cssAnimationsByNameMapItem.value->cancelFromStyle();
         }
         element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
         return;
@@ -281,16 +291,17 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         for (size_t i = 0; i < currentAnimations->size(); ++i) {
             auto& currentAnimation = currentAnimations->animation(i);
             auto& name = currentAnimation.name();
-            animationNames.append(name);
             if (namesOfPreviousAnimations.contains(name)) {
                 // We've found the name of this animation in our list of previous animations, this means we've already
                 // created a CSSAnimation object for it and need to ensure that this CSSAnimation is backed by the current
                 // animation object for this animation name.
                 if (auto cssAnimation = cssAnimationsByName.get(name))
                     cssAnimation->setBackingAnimation(currentAnimation);
+                animationNames.append(name);
             } else if (shouldConsiderAnimation(element, currentAnimation)) {
                 // Otherwise we are dealing with a new animation name and must create a CSSAnimation for it.
                 cssAnimationsByName.set(name, CSSAnimation::create(element, currentAnimation, currentStyle, afterChangeStyle));
+                animationNames.append(name);
             }
             // Remove the name of this animation from our list since it's now known to be current.
             namesOfPreviousAnimations.remove(name);
@@ -301,7 +312,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     // remove the CSSAnimation object created for them.
     for (const auto& nameOfAnimationToRemove : namesOfPreviousAnimations) {
         if (auto animation = cssAnimationsByName.take(nameOfAnimationToRemove))
-            cancelDeclarativeAnimation(*animation);
+            animation->cancelFromStyle();
     }
 
     element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
@@ -472,15 +483,15 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         if (CSSPropertyAnimation::propertiesEqual(property, &previouslyRunningTransitionCurrentStyle, &afterChangeStyle) || !CSSPropertyAnimation::canPropertyBeInterpolated(property, &currentStyle, &afterChangeStyle)) {
             // 1. If the current value of the property in the running transition is equal to the value of the property in the after-change style,
             //    or if these two values cannot be interpolated, then implementations must cancel the running transition.
-            cancelDeclarativeAnimation(*previouslyRunningTransition);
+            previouslyRunningTransition->cancelFromStyle();
         } else if (transitionCombinedDuration(matchingBackingAnimation) <= 0.0 || !CSSPropertyAnimation::canPropertyBeInterpolated(property, &previouslyRunningTransitionCurrentStyle, &afterChangeStyle)) {
             // 2. Otherwise, if the combined duration is less than or equal to 0s, or if the current value of the property in the running transition
             //    cannot be interpolated with the value of the property in the after-change style, then implementations must cancel the running transition.
-            cancelDeclarativeAnimation(*previouslyRunningTransition);
+            previouslyRunningTransition->cancelFromStyle();
         } else if (CSSPropertyAnimation::propertiesEqual(property, &previouslyRunningTransition->reversingAdjustedStartStyle(), &afterChangeStyle)) {
             // 3. Otherwise, if the reversing-adjusted start value of the running transition is the same as the value of the property in the after-change
             //    style (see the section on reversing of transitions for why these case exists), implementations must cancel the running transition
-            cancelDeclarativeAnimation(*previouslyRunningTransition);
+            previouslyRunningTransition->cancelFromStyle();
 
             // and start a new transition whose:
             //   - reversing-adjusted start value is the end value of the running transition,
@@ -506,7 +517,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             ensureRunningTransitionsByProperty(element).set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         } else {
             // 4. Otherwise, implementations must cancel the running transition
-            cancelDeclarativeAnimation(*previouslyRunningTransition);
+            previouslyRunningTransition->cancelFromStyle();
 
             // and start a new transition whose:
             //   - start time is the time of the style change event plus the matching transition delay,
@@ -530,7 +541,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
     if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
         if (m_elementToRunningCSSTransitionByCSSPropertyID.contains(&element)) {
             for (const auto& cssTransitionsByCSSPropertyIDMapItem : m_elementToRunningCSSTransitionByCSSPropertyID.take(&element))
-                cancelDeclarativeAnimation(*cssTransitionsByCSSPropertyIDMapItem.value);
+                cssTransitionsByCSSPropertyIDMapItem.value->cancelFromStyle();
         }
         return;
     }
@@ -566,13 +577,6 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 
     for (auto property : transitionProperties)
         updateCSSTransitionsForElementAndProperty(element, property, currentStyle, afterChangeStyle, runningTransitionsByProperty, completedTransitionsByProperty, generationTime);
-}
-
-void AnimationTimeline::cancelDeclarativeAnimation(DeclarativeAnimation& animation)
-{
-    animation.cancelFromStyle();
-    removeAnimation(animation);
-    m_allAnimations.removeFirst(&animation);
 }
 
 } // namespace WebCore

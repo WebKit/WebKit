@@ -67,6 +67,8 @@ public:
     bool needsTick() const override;
     void tick() override;
 
+    bool canHaveGlobalPosition() final;
+
 protected:
     DeclarativeAnimation(Element&, const Animation&);
 

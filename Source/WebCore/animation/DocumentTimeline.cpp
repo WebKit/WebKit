@@ -182,6 +182,10 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
         return false;
     });
 
+    std::sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {
+        return lhs->globalPosition() < rhs->globalPosition();
+    });
+
     // Finally, we can concatenate the sorted CSS Transitions, CSS Animations and Web Animations in their relative composite order.
     Vector<RefPtr<WebAnimation>> animations;
     animations.appendRange(cssTransitions.begin(), cssTransitions.end());

@@ -116,6 +116,7 @@ public:
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
+    void animationTimingDidChange();
     void applyPendingAcceleratedActions();
     bool isRunningAccelerated() const { return m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
     bool hasPendingAcceleratedAction() const { return !m_pendingAcceleratedActions.isEmpty() && isRunningAccelerated(); }
@@ -147,6 +148,7 @@ private:
     enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
 
+    void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
@@ -188,6 +190,7 @@ private:
     bool m_backdropFilterFunctionListsMatch { false };
 #endif
     bool m_colorFilterFunctionListsMatch { false };
+    bool m_inTargetEffectStack { false };
 };
 
 } // namespace WebCore

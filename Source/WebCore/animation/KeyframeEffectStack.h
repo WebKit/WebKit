@@ -38,7 +38,7 @@ public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();
 
-    void addEffect(KeyframeEffect&);
+    bool addEffect(KeyframeEffect&);
     void removeEffect(KeyframeEffect&);
     bool hasEffects() const { return !m_effects.isEmpty(); }
     Vector<WeakPtr<KeyframeEffect>> sortedEffects();

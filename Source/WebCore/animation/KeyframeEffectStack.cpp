@@ -42,15 +42,16 @@ KeyframeEffectStack::~KeyframeEffectStack()
     ASSERT(m_effects.isEmpty());
 }
 
-void KeyframeEffectStack::addEffect(KeyframeEffect& effect)
+bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 {
-    // To qualify for membership in an effect stack, an effect must have a target, an animation and a timeline.
+    // To qualify for membership in an effect stack, an effect must have a target, an animation, a timeline and be relevant.
     // This method will be called in WebAnimation and KeyframeEffect as those properties change.
-    if (!effect.target() || !effect.animation() || !effect.animation()->timeline())
-        return;
+    if (!effect.target() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
+        return false;
 
     m_effects.append(makeWeakPtr(&effect));
     m_isSorted = false;
+    return true;
 }
 
 void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
@@ -76,9 +77,12 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
         ASSERT(lhsAnimation);
         ASSERT(rhsAnimation);
 
+        bool lhsHasOwningElement = is<DeclarativeAnimation>(lhsAnimation) && downcast<DeclarativeAnimation>(lhsAnimation)->owningElement();
+        bool rhsHasOwningElement = is<DeclarativeAnimation>(rhsAnimation) && downcast<DeclarativeAnimation>(rhsAnimation)->owningElement();
+
         // CSS Transitions sort first.
-        bool lhsIsCSSTransition = is<CSSTransition>(lhsAnimation);
-        bool rhsIsCSSTransition = is<CSSTransition>(rhsAnimation);
+        bool lhsIsCSSTransition = lhsHasOwningElement && is<CSSTransition>(lhsAnimation);
+        bool rhsIsCSSTransition = rhsHasOwningElement && is<CSSTransition>(rhsAnimation);
         if (lhsIsCSSTransition || rhsIsCSSTransition) {
             if (lhsIsCSSTransition == rhsIsCSSTransition) {
                 // Sort transitions first by their generation time, and then by transition-property.
@@ -93,8 +97,8 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
         }
 
         // CSS Animations sort next.
-        bool lhsIsCSSAnimation = is<CSSAnimation>(lhsAnimation);
-        bool rhsIsCSSAnimation = is<CSSAnimation>(rhsAnimation);
+        bool lhsIsCSSAnimation = lhsHasOwningElement && is<CSSAnimation>(lhsAnimation);
+        bool rhsIsCSSAnimation = rhsHasOwningElement && is<CSSAnimation>(rhsAnimation);
         if (lhsIsCSSAnimation || rhsIsCSSAnimation) {
             if (lhsIsCSSAnimation == rhsIsCSSAnimation) {
                 // https://drafts.csswg.org/css-animations-2/#animation-composite-order

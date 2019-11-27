@@ -721,6 +721,12 @@ void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchron
 {
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
     updateFinishedState(didSeek, synchronouslyNotify);
+
+    if (is<KeyframeEffect>(m_effect)) {
+        updateRelevance();
+        downcast<KeyframeEffect>(*m_effect).animationTimingDidChange();
+    }
+
     if (m_timeline)
         m_timeline->animationTimingDidChange(*this);
 };

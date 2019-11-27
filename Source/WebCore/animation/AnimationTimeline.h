@@ -82,10 +82,10 @@ protected:
     HashMap<Element*, PropertyToTransitionMap> m_elementToCompletedCSSTransitionByCSSPropertyID;
 
 private:
+    void updateGlobalPosition(WebAnimation&);
     RefPtr<WebAnimation> cssAnimationForElementAndProperty(Element&, CSSPropertyID);
     PropertyToTransitionMap& ensureRunningTransitionsByProperty(Element&);
     void updateCSSTransitionsForElementAndProperty(Element&, CSSPropertyID, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, PropertyToTransitionMap&, PropertyToTransitionMap&, const MonotonicTime);
-    void cancelDeclarativeAnimation(DeclarativeAnimation&);
 
     ElementToAnimationsMap m_elementToAnimationsMap;
     ElementToAnimationsMap m_elementToCSSAnimationsMap;

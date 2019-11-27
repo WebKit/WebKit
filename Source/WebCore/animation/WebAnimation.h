@@ -120,6 +120,7 @@ public:
 
     bool isRunningAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
+    void updateRelevance();
     void effectTimingDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
@@ -129,10 +130,12 @@ public:
     virtual void remove();
     void enqueueAnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
 
-    unsigned globalPosition() const { return m_globalPosition; }
-    void setGlobalPosition(unsigned globalPosition) { m_globalPosition = globalPosition; }
+    uint64_t globalPosition() const { return m_globalPosition; }
+    void setGlobalPosition(uint64_t globalPosition) { m_globalPosition = globalPosition; }
 
     bool hasPendingActivity() const final;
+
+    virtual bool canHaveGlobalPosition() { return true; }
 
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -169,7 +172,6 @@ private:
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
     bool isEffectInvalidationSuspended() { return m_suspendCount; }
     bool computeRelevance();
-    void updateRelevance();
     void invalidateEffect();
     double effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
@@ -194,7 +196,7 @@ private:
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
-    unsigned m_globalPosition;
+    uint64_t m_globalPosition { 0 };
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;

@@ -71,6 +71,17 @@ void DeclarativeAnimation::tick()
     }
 }
 
+bool DeclarativeAnimation::canHaveGlobalPosition()
+{
+    // https://drafts.csswg.org/css-animations-2/#animation-composite-order
+    // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
+    // CSS Animations and CSS Transitions generated using the markup defined in this specification are not added
+    // to the global animation list when they are created. Instead, these animations are appended to the global
+    // animation list at the first moment when they transition out of the idle play state after being disassociated
+    // from their owning element.
+    return !m_owningElement && playState() != WebAnimation::PlayState::Idle;
+}
+
 void DeclarativeAnimation::disassociateFromOwningElement()
 {
     if (!m_owningElement)

@@ -1,3 +1,72 @@
+2019-11-27  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION(r252455): imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html fails on iOS and WK1
+        https://bugs.webkit.org/show_bug.cgi?id=204272
+        <rdar://problem/57253742>
+
+        Reviewed by Dean Jackson.
+
+        Events for declarative animations are dispatched using a MainThreadGenericEventQueue which dispatches enqueued events asynchronously. When a declarative
+        animation would be canceled, AnimationTimeline::cancelDeclarativeAnimation() would be called and would enqueue a "transitioncancel" or "animationcancel"
+        event (depending on the animation type) by virtue of calling DeclarativeAnimation::cancelFromStyle(), and would also call AnimationTimeline::removeAnimation()
+        right after. However, calling AnimationTimeline::removeAnimation() could have the side effect of removing the last reference to the DeclarativeAnimation
+        object, which would destroy its attached MainThreadGenericEventQueue before it had the time to dispatch the queued "transitioncancel" or "animationcancel"
+        event.
+
+        The call to AnimationTimeline::removeAnimation() in AnimationTimeline::cancelDeclarativeAnimation() is actually unnecessary. Simply canceling the animation
+        via DeclarativeAnimation::cancelFromStyle() will end up calling AnimationTimeline::removeAnimation() the next time animations are updated, which will leave
+        time for the cancel events to be dispatched. So all we need to do is remove AnimationTimeline::cancelDeclarativeAnimation() and replace its call sites with
+        simple calls to DeclarativeAnimation::cancelFromStyle().
+
+        Making this change broke a test however: imported/w3c/web-platform-tests/css/css-animations/Document-getAnimations.tentative.html. We actually passed that
+        test by chance without implementing the feature required to make it work. We now implement the correct way to track a global position for an animation by
+        only setting one for declarative animations once they are disassociated with their owning element and have a non-idle play state.
+
+        And a few other tests broke: animations/animation-shorthand-name-order.html, imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html
+        and webanimations/css-animations.html. The reason for those tests being broken was that not calling AnimationTimeline::removeAnimation() instantly as CSS
+        Animations were canceled also meant that the KeyframeEffectStack for the targeted element wasn't updated. To solve this, we added the animationTimingDidChange()
+        method on KeyframeEffect which is called whenever timing on the owning Animation changes, so for instance when cancel() is called as we cancel a CSS
+        Animation. That way we ensure we add and remove KeyframeEffect instances from the KeyframeEffectStack as the animation becomes relevant, which is now
+        an added condition checked by KeyframeEffectStack::addEffect().
+
+        Finally, this revealed an issue in KeyframeEffectStack::ensureEffectsAreSorted() where we would consider CSSTransition and CSSAnimation objects to be
+        representative of a CSS Transition or CSS Animation even after the relationship with their owning element had been severed. We now correctly check that
+        relationship is intact and otherwise consider those animations just like any other animation.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationTimingDidChange):
+        (WebCore::AnimationTimeline::updateGlobalPosition):
+        (WebCore::AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement):
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimation): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::setTimingProperties):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::canHaveGlobalPosition):
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::animationTimelineDidChange):
+        (WebCore::KeyframeEffect::animationTimingDidChange):
+        (WebCore::KeyframeEffect::updateEffectStackMembership):
+        (WebCore::KeyframeEffect::setAnimation):
+        (WebCore::KeyframeEffect::setTarget):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::addEffect):
+        (WebCore::KeyframeEffectStack::ensureEffectsAreSorted):
+        * animation/KeyframeEffectStack.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timingDidChange):
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::canHaveGlobalPosition):
+
 2019-11-27  James Darpinian  <jdarpinian@chromium.org>
 
         Enable GPU switching with ANGLE
