@@ -1,3 +1,9 @@
+2019-11-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.3 release
+
+        * wpe/NEWS: Add release notes for 2.27.3.
+
 2019-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: moving toplevel windows is not supported under wayland
