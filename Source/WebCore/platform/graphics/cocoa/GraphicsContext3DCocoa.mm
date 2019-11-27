@@ -57,7 +57,6 @@
 #import <pal/spi/ios/OpenGLESSPI.h>
 #elif USE(OPENGL)
 #import <IOKit/IOKitLib.h>
-#import <OpenGL/CGLRenderers.h>
 #import <OpenGL/gl.h>
 #elif USE(ANGLE)
 #define EGL_EGL_PROTOTYPES 0
@@ -84,6 +83,9 @@ typedef void* GLeglContext;
 
 #if PLATFORM(MAC)
 #import "ScreenProperties.h"
+#if USE(OPENGL) || USE(ANGLE)
+#import <OpenGL/CGLRenderers.h>
+#endif
 #endif
 
 namespace WebCore {
@@ -131,9 +133,9 @@ Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& shared
     return context;
 }
 
-#if PLATFORM(MAC) && USE(OPENGL) // FIXME: This probably should be just USE(OPENGL) - see <rdar://53062794>.
+#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE)) // FIXME: This probably should be just (USE(OPENGL) || USE(ANGLE)) - see <rdar://53062794>.
 
-static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
+static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
 {
     // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU is connected to a display.
     // On 10.13+, find the virtual screen that corresponds to the preferred GPU by its registryID.
@@ -289,8 +291,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
 #elif USE(ANGLE)
 
-    UNUSED_PARAM(hostWindow);
-
     m_displayObj = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
     if (m_displayObj == EGL_NO_DISPLAY)
         return;
@@ -372,6 +372,17 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
         extensions.ensureEnabled(requiredExtensions[i]);
     }
+
+    EGLDeviceEXT device = nullptr;
+    EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
+    CGLContextObj cglContext = nullptr;
+    CGLPixelFormatObj pixelFormat = nullptr;
+    EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
+    EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
+    auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
+    setGPUByRegistryID(cglContext, pixelFormat, gpuID);
+#else
+    UNUSED_PARAM(hostWindow);
 #endif // PLATFORM(MAC)
 
 #endif // #elif USE(ANGLE)
@@ -716,6 +727,26 @@ void GraphicsContext3D::setContextVisibility(bool isVisible)
 #endif // USE(OPENGL) || USE(ANGLE)
 
 #if USE(ANGLE)
+
+#if PLATFORM(MAC)
+void GraphicsContext3D::updateCGLContext()
+{
+    if (!m_contextObj)
+        return;
+
+    LOG(WebGL, "Detected a mux switch or display reconfiguration. Call CGLUpdateContext. (%p)", this);
+
+    makeContextCurrent();
+    EGLDeviceEXT device = nullptr;
+    EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
+    CGLContextObj cglContext = nullptr;
+    EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
+
+    CGLUpdateContext(cglContext);
+    m_hasSwitchedToHighPerformanceGPU = true;
+}
+#endif
+
 void GraphicsContext3D::allocateIOSurfaceBackingStore(IntSize size)
 {
 #if HAVE(IOSURFACE)
@@ -784,9 +815,16 @@ void GraphicsContext3D::screenDidChange(PlatformDisplayID displayID)
     if (!m_contextObj)
         return;
 #if USE(ANGLE)
-    UNUSED_PARAM(displayID);
+    if (!m_hasSwitchedToHighPerformanceGPU) {
+        EGLDeviceEXT device = nullptr;
+        EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
+        CGLContextObj cglContext = nullptr;
+        CGLPixelFormatObj pixelFormat = nullptr;
+        EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
+        EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
+        setGPUByRegistryID(cglContext, pixelFormat, gpuIDForDisplay(displayID));
+    }
 #else
-    // FIXME: figure out whether to integrate more code into ANGLE to have this effect.
 #if USE(OPENGL)
     if (!m_hasSwitchedToHighPerformanceGPU)
         setGPUByRegistryID(m_contextObj, CGLGetPixelFormat(m_contextObj), gpuIDForDisplay(displayID));

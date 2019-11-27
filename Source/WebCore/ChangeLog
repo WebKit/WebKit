@@ -1,3 +1,22 @@
+2019-11-27  James Darpinian  <jdarpinian@chromium.org>
+
+        Enable GPU switching with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=203916
+
+        This enables the same GPU switching code that we use with OpenGL on ANGLE
+        contexts. ANGLE contexts can now be switched to the high power GPU.
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DManager.cpp:
+        (WebCore::GraphicsContext3DManager::updateAllContexts):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::setGPUByRegistryID):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::updateCGLContext):
+        (WebCore::GraphicsContext3D::screenDidChange):
+
 2019-11-27  Antti Koivisto  <antti@apple.com>
 
         [LFC][Render tree] PerformanceTests/Layout/line-layout-simple.html does not update properly with LFC enabled

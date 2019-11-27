@@ -134,8 +134,7 @@ void GraphicsContext3DManager::displayWasReconfigured(CGDirectDisplayID, CGDispl
 
 void GraphicsContext3DManager::updateAllContexts()
 {
-    // FIXME: determine whether to do anything when using ANGLE.
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
     for (const auto& context : m_contexts) {
         context->updateCGLContext();
         context->dispatchContextChangedNotification();

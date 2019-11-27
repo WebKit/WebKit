@@ -1199,15 +1199,12 @@ public:
     void presentRenderbuffer();
 #endif
 
-#if USE(OPENGL)
+#if USE(OPENGL) || USE(ANGLE)
     void allocateIOSurfaceBackingStore(IntSize);
     void updateFramebufferTextureBackingStoreFromLayer();
+#if PLATFORM(MAC)
     void updateCGLContext();
 #endif
-
-#if USE(ANGLE)
-    void allocateIOSurfaceBackingStore(IntSize);
-    void updateFramebufferTextureBackingStoreFromLayer();
 #endif
 #endif // PLATFORM(COCOA)
 
