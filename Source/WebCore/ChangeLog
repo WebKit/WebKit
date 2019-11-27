@@ -1,3 +1,18 @@
+2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Using char* instead of String for StyleProperties::getShorthandValue()
+        https://bugs.webkit.org/show_bug.cgi?id=204644
+
+        Reviewed by Darin Adler.
+
+        This is follow-up patch for r252901. We don't need to create a String object
+        just for the separator and can use char* instead.
+        This was suggested by Darin Adler in webkit.org/b/204508.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getShorthandValue const):
+        * css/StyleProperties.h:
+
 2019-11-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Run layout on the root when InvalidationState is empty.

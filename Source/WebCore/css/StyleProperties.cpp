@@ -655,7 +655,7 @@ String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shor
     return getShorthandValue(shorthand, " / ");
 }
 
-String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand, const String& separator) const
+String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand, const char* separator) const
 {
     String commonValue;
     StringBuilder result;

@@ -160,7 +160,7 @@ protected:
 
 private:
     String getGridShorthandValue(const StylePropertyShorthand&) const;
-    String getShorthandValue(const StylePropertyShorthand&, const String& separator = " ") const;
+    String getShorthandValue(const StylePropertyShorthand&, const char* separator = " ") const;
     String getCommonValue(const StylePropertyShorthand&) const;
     String getAlignmentShorthandValue(const StylePropertyShorthand&) const;
     String borderPropertyValue(const StylePropertyShorthand&, const StylePropertyShorthand&, const StylePropertyShorthand&) const;
