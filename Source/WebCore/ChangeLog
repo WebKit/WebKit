@@ -1,5 +1,17 @@
 2019-11-27  Antti Koivisto  <antti@apple.com>
 
+        [LFC][Render tree] PerformanceTests/Layout/line-layout-simple.html does not update properly with LFC enabled
+        https://bugs.webkit.org/show_bug.cgi?id=204646
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+
+        Destroy LFC layout here, for now. 
+
+2019-11-27  Antti Koivisto  <antti@apple.com>
+
         [LFC][Render tree] RenderBlockFlow::ensureLineBoxes should work with lfc layout
         https://bugs.webkit.org/show_bug.cgi?id=204633
 

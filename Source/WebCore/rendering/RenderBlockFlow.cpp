@@ -3627,10 +3627,10 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         ASSERT(!simpleLineLayout());
         return;
     case LineBoxesPath:
-    case LFCPath:
         ASSERT(!simpleLineLayout());
         setLineLayoutPath(UndeterminedPath);
         return;
+    case LFCPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
         m_lineLayout = WTF::Monostate();
