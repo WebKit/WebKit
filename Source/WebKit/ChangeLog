@@ -1,3 +1,16 @@
+2019-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: moving toplevel windows is not supported under wayland
+        https://bugs.webkit.org/show_bug.cgi?id=204614
+
+        Reviewed by Alejandro G. Castro.
+
+        So we can stop trying and simply ignore the requests to move the window.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::windowConfigureEventCallback): Ensure we only move or resize when actually required and reduce the
+        time we wait for configure events to 200ms (1 second was too long).
+
 2019-11-26  Antti Koivisto  <antti@apple.com>
 
         [LFC][Render tree] Add LFC line layout path to RenderBlockFlow

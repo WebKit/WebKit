@@ -35,6 +35,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/PlatformDisplay.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -142,11 +143,18 @@ private:
     static gboolean windowConfigureEventCallback(GtkWindow* window, GdkEventConfigure*, GdkRectangle* targetGeometry)
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
-        gtk_window_get_position(window, &geometry.x, &geometry.y);
-        gtk_window_get_size(window, &geometry.width, &geometry.height);
-        if (geometry.x == targetGeometry->x && geometry.y == targetGeometry->y && geometry.width == targetGeometry->width && geometry.height == targetGeometry->height)
-            RunLoop::current().stop();
+        // Position a toplevel window is not supported under wayland.
+        if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland) {
+            gtk_window_get_position(window, &geometry.x, &geometry.y);
+            if (geometry.x != targetGeometry->x || geometry.y != targetGeometry->y)
+                return FALSE;
+        }
 
+        gtk_window_get_size(window, &geometry.width, &geometry.height);
+        if (geometry.width != targetGeometry->width || geometry.height != targetGeometry->height)
+            return FALSE;
+
+        RunLoop::current().stop();
         return FALSE;
     }
 
@@ -162,20 +170,37 @@ private:
         GdkRectangle geometry = WebCore::IntRect(frame);
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
         if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
-            if ((geometry.x < 0 || geometry.y < 0) && (geometry.width <= 0 || geometry.height <= 0))
+            bool needsMove = false;
+            // Position a toplevel window is not supported under wayland.
+            if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland) {
+                if (geometry.x >= 0 && geometry.y >= 0) {
+                    int x, y;
+                    gtk_window_get_position(GTK_WINDOW(window), &x, &y);
+                    needsMove = x != geometry.x || y != geometry.y;
+                }
+            }
+
+            bool needsResize = false;
+            if (geometry.width > 0 && geometry.height > 0) {
+                int width, height;
+                gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+                needsResize = width != geometry.width || height != geometry.height;
+            }
+
+            if (!needsMove && !needsResize)
                 return;
 
             auto signalID = g_signal_connect(window, "configure-event", G_CALLBACK(windowConfigureEventCallback), &geometry);
-            if (geometry.x >= 0 && geometry.y >= 0)
+            if (needsMove)
                 gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-            if (geometry.width > 0 && geometry.height > 0)
+            if (needsResize)
                 gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
 
             // We need the move/resize to happen synchronously in automation mode, so we use a nested RunLoop
-            // to wait, up top 1 second, for the configure events.
+            // to wait, up top 200 milliseconds, for the configure events.
             auto timer = makeUnique<RunLoop::Timer<UIClient>>(RunLoop::main(), this, &UIClient::setWindowFrameTimerFired);
             timer->setPriority(RunLoopSourcePriority::RunLoopTimer);
-            timer->startOneShot(1_s);
+            timer->startOneShot(200_ms);
             RunLoop::run();
             timer = nullptr;
             g_signal_handler_disconnect(window, signalID);
