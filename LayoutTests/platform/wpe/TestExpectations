@@ -1505,10 +1505,8 @@ webkit.org/b/173419 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ F
 webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-should-not-stop-on-keypress.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Timeout ]
-webkit.org/b/173419 fast/events/before-input-prevent-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/clipboard-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
-webkit.org/b/173419 fast/events/input-event-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
@@ -1523,7 +1521,6 @@ webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
 webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/173419 fast/events/wheel-event-destroys-frame.html [ Timeout ]
 webkit.org/b/173419 fast/events/wheel-event-destroys-overflow.html [ Timeout ]
-webkit.org/b/173419 fast/events/wheelevent-basic.html [ Timeout ]
 webkit.org/b/173419 fast/events/wheelevent-in-text-node.html [ Timeout ]
 webkit.org/b/173419 fast/events/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
 
@@ -1822,9 +1819,6 @@ webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
 webkit.org/b/188968 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
 
-webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
-webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
-
 webkit.org/b/188970 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
@@ -1870,7 +1864,6 @@ webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
 webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
-webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
 
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 
@@ -1886,8 +1879,6 @@ webkit.org/b/193629 fast/css3-text/css3-text-decoration/text-underline-style.htm
 
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-005.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-bo-000.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ ImageOnlyFailure ]
 
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
 

@@ -1,5 +1,17 @@
 2019-11-27  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
+        Update test expectations for GTK/WPE ports
+
+        Unreviewed test gardening.
+
+        Get rid of outdated expectations referring to not-existing tests, remove duplicates, etc.
+        Mark Gtk tests as passing that are reported by the bots to pas.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2019-11-27  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
         Update test expectations for WPE port
 
         Unreviewed test gardening.

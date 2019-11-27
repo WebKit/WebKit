@@ -450,16 +450,11 @@ webkit.org/b/169917 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.h
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-attachment-formats.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-mips.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-npot.html [ Failure Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
 webkit.org/b/169917 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 # WebGL flaky tests
 webkit.org/b/169917 webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure Pass ]
@@ -577,7 +572,6 @@ webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
-webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure Pass ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 # Crash is bug #176801
@@ -3178,8 +3172,6 @@ webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispa
 
 webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 
-webkit.org/b/153709 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure ]
-
 webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
 webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Failure ]
 webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
@@ -3340,8 +3332,6 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ Image
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
 
-webkit.org/b/175420 fullscreen/requestFullscreen-escape-key.html [ Failure ]
-
 webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
@@ -3497,7 +3487,6 @@ webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-re
 
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
-webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
 webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure Timeout ]
@@ -3747,15 +3736,12 @@ webkit.org/b/199872 http/tests/inspector/network/resource-sizes-network.html [ F
 
 webkit.org/b/199873 imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Failure Pass ]
 
-webkit.org/b/199874 imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker.html [ Failure ]
-
 webkit.org/b/199876 webaudio/oscillator-custom.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-sawtooth.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-sine.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-square.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-triangle.html [ Failure ]
 
-webkit.org/b/201254 fast/mediastream/device-change-event-2.html [ Failure ]
 webkit.org/b/201257 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure ]
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
@@ -3788,8 +3774,6 @@ webkit.org/b/202229 css-dark-mode/color-scheme-css.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
-
-webkit.org/b/202231 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 
 webkit.org/b/202234 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 webkit.org/b/202234 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
