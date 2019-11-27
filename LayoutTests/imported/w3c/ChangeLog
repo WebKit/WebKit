@@ -1,3 +1,19 @@
+2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Serialization of grid-area, grid-row and grid-column should include "/" separator
+        https://bugs.webkit.org/show_bug.cgi?id=204508
+
+        Reviewed by Javier Fernandez.
+
+        After this patch several test cases are passing.
+        There are still failures as the serialization is still not the right one in all the cases,
+        but this makes WebKit behave like Chromium for these shorthands.
+
+        * web-platform-tests/css/css-grid/grid-layout-properties-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid-expected.txt:
+
 2019-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Avoid serializing [] in grid-template* specified values

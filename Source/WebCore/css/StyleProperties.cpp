@@ -218,15 +218,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyFlexFlow:
         return getShorthandValue(flexFlowShorthand());
     case CSSPropertyGridArea:
-        return getShorthandValue(gridAreaShorthand());
+        return getGridShorthandValue(gridAreaShorthand());
     case CSSPropertyGridTemplate:
-        return getShorthandValue(gridTemplateShorthand());
+        return getGridShorthandValue(gridTemplateShorthand());
     case CSSPropertyGrid:
-        return getShorthandValue(gridShorthand());
+        return getGridShorthandValue(gridShorthand());
     case CSSPropertyGridColumn:
-        return getShorthandValue(gridColumnShorthand());
+        return getGridShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
-        return getShorthandValue(gridRowShorthand());
+        return getGridShorthandValue(gridRowShorthand());
     case CSSPropertyPageBreakAfter:
         return pageBreakPropertyValue(pageBreakAfterShorthand());
     case CSSPropertyPageBreakBefore:
@@ -650,7 +650,12 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
     return result.toString();
 }
 
-String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand) const
+String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shorthand) const
+{
+    return getShorthandValue(shorthand, " / ");
+}
+
+String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand, const String& separator) const
 {
     String commonValue;
     StringBuilder result;
@@ -667,7 +672,7 @@ String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthan
             if (value->isInitialValue())
                 continue;
             if (!result.isEmpty())
-                result.append(' ');
+                result.append(separator);
             result.append(valueText);
         } else
             commonValue = String();

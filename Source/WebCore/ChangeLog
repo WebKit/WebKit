@@ -1,3 +1,23 @@
+2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Serialization of grid-area, grid-row and grid-column should include "/" separator
+        https://bugs.webkit.org/show_bug.cgi?id=204508
+
+        Reviewed by Javier Fernandez.
+
+        Just use "/" separator instead of a white space when serializing the grid shorthands.
+        There are still failures because serialization of grid shorthands still needs some extra work
+        (see webkit.org/b/204611), however this change puts WebKit in the same status than Chromium
+        regarding this topic.
+
+        Several WPT test cases are passing thanks to this change.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::getGridShorthandValue const):
+        (WebCore::StyleProperties::getShorthandValue const):
+        * css/StyleProperties.h:
+
 2019-11-27  youenn fablet  <youenn@apple.com>
 
         Protect ServiceWorkerThreadProxy while being stopped
