@@ -44,12 +44,12 @@ struct Run {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
         struct ExpansionContext;
-        TextContext(unsigned position, unsigned length, StringView content, Optional<ExpansionContext> = { });
+        TextContext(unsigned position, unsigned length, const String&, Optional<ExpansionContext> = { });
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
         unsigned length() const { return m_length; }
-        StringView content() const { return m_content; }
+        StringView content() const { return StringView(m_contentString).substring(m_start, m_length); }
 
         struct ExpansionContext {
             ExpansionBehavior behavior;
@@ -58,14 +58,13 @@ struct Run {
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
-        void expand(StringView, unsigned expandedLength);
+        void expand(unsigned expandedLength);
 
     private:
         unsigned m_start { 0 };
         unsigned m_length { 0 };
+        String m_contentString;
         Optional<ExpansionContext> m_expansionContext;
-        // FIXME: This is temporary. We should have some mapping setup to identify associated text content instead.
-        StringView m_content;
     };
 
     Run(const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
@@ -90,9 +89,8 @@ struct Run {
     void expandVertically(LayoutUnit delta) { m_logicalRect.expandVertically(delta); }
     void expandHorizontally(LayoutUnit delta) { m_logicalRect.expandHorizontally(delta); }
 
-    void setTextContext(TextContext textContext) { m_textContext.emplace(textContext); }
-    Optional<TextContext>& textContext() { return m_textContext; }
-    Optional<TextContext> textContext() const { return m_textContext; }
+    void setTextContext(const TextContext&& textContext) { m_textContext.emplace(textContext); }
+    const Optional<TextContext>& textContext() const { return m_textContext; }
 
     void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
@@ -114,18 +112,17 @@ inline Run::Run(const RenderStyle& style, const Rect& logicalRect, Optional<Text
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length, StringView content, Optional<ExpansionContext> expansionContext)
+inline Run::TextContext::TextContext(unsigned start, unsigned length, const String& contentString, Optional<ExpansionContext> expansionContext)
     : m_start(start)
     , m_length(length)
+    , m_contentString(contentString)
     , m_expansionContext(expansionContext)
-    , m_content(content)
 {
 }
 
-inline void Run::TextContext::expand(StringView text, unsigned expandedLength)
+inline void Run::TextContext::expand(unsigned expandedLength)
 {
     m_length = expandedLength;
-    m_content = text;
 }
 
 }

@@ -83,7 +83,7 @@ public:
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const Display::Rect& logicalRect() const { return m_logicalRect; }
-        Optional<Display::Run::TextContext> textContext() const { return m_textContext; }
+        const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
         bool isCollapsedToVisuallyEmpty() const { return m_isCollapsedToVisuallyEmpty; }
 
     private:

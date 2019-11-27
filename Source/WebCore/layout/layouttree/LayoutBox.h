@@ -144,7 +144,7 @@ public:
     // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
     Replaced* replaced();
     bool hasTextContent() const { return !!m_textContext; }
-    const TextContext* textContext() const { return m_textContext.get(); }
+    const Optional<TextContext>& textContext() const { return m_textContext; }
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
@@ -163,7 +163,7 @@ public:
     void setIsAnonymous() { m_isAnonymous = true; }
 
 protected:
-    Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
+    Box(Optional<ElementAttributes>, Optional<TextContext>, RenderStyle&&, BaseTypeFlags);
 
 private:
     class BoxRareData {
@@ -194,7 +194,7 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
     
-    std::unique_ptr<const TextContext> m_textContext;
+    const Optional<TextContext> m_textContext;
 
     unsigned m_baseTypeFlags : 6;
     bool m_hasRareData : 1;

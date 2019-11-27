@@ -35,7 +35,7 @@ namespace Layout {
 struct TextContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StringView content;
+    String content;
     bool canUseSimplifiedContentMeasuring { false };
 };
 

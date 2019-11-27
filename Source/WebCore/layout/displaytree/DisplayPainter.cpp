@@ -117,7 +117,7 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
         return;
 
     for (auto& run : inlineRuns) {
-        if (auto textContext = run->textContext()) {
+        if (auto& textContext = run->textContext()) {
             auto& style = run->style();
             context.setStrokeColor(style.color());
             context.setFillColor(style.color());

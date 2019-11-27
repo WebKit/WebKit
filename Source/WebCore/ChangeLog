@@ -1,3 +1,43 @@
+2019-11-27  Antti Koivisto  <antti@apple.com>
+
+        [LFC] Make strings safe
+        https://bugs.webkit.org/show_bug.cgi?id=204645
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::TextContext):
+        (WebCore::Display::Run::TextContext::content const):
+
+        - Use String instead of StringView so the underlying StringImpl gets reffed.
+        - Make it point the full content string instead of the current range so we don't create unncessary short strings.
+        - Construct StringView on fly based on start/end.
+
+        (WebCore::Display::Run::setTextContext):
+        (WebCore::Display::Run::textContext const):
+        (WebCore::Display::Run::TextContext::expand):
+        (WebCore::Display::Run::textContext): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::InlineItemRun::textContext const):
+        (WebCore::Layout::ContinousContent::close):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::Run::textContext const):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::textContext const):
+
+        Use Optional<TextContext> since it is small
+
+        * layout/layouttree/LayoutContainer.cpp:
+        (WebCore::Layout::Container::Container):
+        * layout/layouttree/TextContext.h:
+
+        Use String instead of StringView so the underlying StringImpl gets reffed.
+
 2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Serialization of grid-area, grid-row and grid-column should include "/" separator

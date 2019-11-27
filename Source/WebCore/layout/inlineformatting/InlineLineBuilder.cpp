@@ -42,7 +42,7 @@ public:
 
     const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
     const Display::Rect& logicalRect() const { return m_logicalRect; }
-    Optional<Display::Run::TextContext> textContext() const { return m_textContext; }
+    const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
 
     bool isText() const { return m_inlineItem.isText(); }
     bool isBox() const { return m_inlineItem.isBox(); }
@@ -143,7 +143,7 @@ LineBuilder::Run ContinousContent::close()
 
     auto textContext = *m_initialInlineRun.textContext();
     auto length = textContext.length() + m_expandedLength;
-    textContext.expand(m_initialInlineRun.layoutBox().textContext()->content.substring(textContext.start(), length), length);
+    textContext.expand(length);
 
     if (m_textIsAlignJustify) {
         // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
@@ -527,7 +527,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
     auto lineRun = makeUnique<InlineItemRun>(inlineItem, Display::Rect { 0, contentLogicalWidth(), logicalWidth, { } },
-        Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content.substring(contentStart, contentLength) });
+        Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content });
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
