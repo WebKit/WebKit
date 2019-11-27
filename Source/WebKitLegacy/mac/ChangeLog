@@ -1,3 +1,13 @@
+2019-11-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop ActiveDOMObject::shouldPreventEnteringBackForwardCache_DEPRECATED()
+        https://bugs.webkit.org/show_bug.cgi?id=204626
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+
 2019-11-21  Daniel Bates  <dabates@apple.com>
 
         Remove unneeded code that annotated DOMHTMLElement as conforming to UITextInputTraits protocol

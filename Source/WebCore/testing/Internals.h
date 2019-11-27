@@ -172,7 +172,7 @@ public:
 
     void clearBackForwardCache();
     unsigned backForwardCacheSize() const;
-    void preventDocumentForEnteringBackForwardCache();
+    void preventDocumentFromEnteringBackForwardCache();
 
     void disableTileSizeUpdateDelay();
 
@@ -926,8 +926,6 @@ private:
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
-
-    RefPtr<UnsuspendableActiveDOMObject> m_unsuspendableActiveDOMObject;
 };
 
 } // namespace WebCore

@@ -96,6 +96,11 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         return false;
     }
 
+    if (frame.document()->shouldPreventEnteringBackForwardCacheForTesting()) {
+        PCLOG("   -Back/Forward caching is disabled for testing");
+        return false;
+    }
+
     if (!frame.document()->frame()) {
         PCLOG("   -Document is detached from frame");
         ASSERT_NOT_REACHED();
@@ -158,18 +163,6 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
     if (documentLoader->isStopping()) {
         PCLOG("   -DocumentLoader is in the middle of stopping");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::documentLoaderStoppingKey());
-        isCacheable = false;
-    }
-
-    Vector<ActiveDOMObject*> unsuspendableObjects;
-    if (frame.document() && !frame.document()->canSuspendActiveDOMObjectsForDocumentSuspension(&unsuspendableObjects)) {
-        PCLOG("   -The document cannot suspend its active DOM Objects");
-        for (auto* activeDOMObject : unsuspendableObjects) {
-            PCLOG("    - Unsuspendable: ", activeDOMObject->activeDOMObjectName());
-            diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::unsuspendableDOMObjectKey(), activeDOMObject->activeDOMObjectName(), ShouldSample::No);
-            UNUSED_PARAM(activeDOMObject);
-        }
-        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey());
         isCacheable = false;
     }
 

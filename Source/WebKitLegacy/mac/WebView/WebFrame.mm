@@ -2059,8 +2059,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (auto* document = _private->coreFrame->document()) {
         if (WebCore::DatabaseManager::singleton().hasOpenDatabases(*document))
             [result setObject:@YES forKey:WebFrameUsesDatabases];
-        if (!document->canSuspendActiveDOMObjectsForDocumentSuspension())
-            [result setObject:@YES forKey:WebFrameCanSuspendActiveDOMObjects];
     }
     
     return result;

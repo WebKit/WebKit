@@ -61,9 +61,8 @@ function runTest()
           
           clearInterval(interval_id);
 
-          // Prevent entering PageCache.
           if (w.internals)
-            w.internals.preventDocumentForEnteringBackForwardCache();
+            w.internals.preventDocumentFromEnteringBackForwardCache();
 
           child_frame = w.document.body.appendChild(document.createElement('iframe'));
           child_frame.contentWindow.onunload = () => {

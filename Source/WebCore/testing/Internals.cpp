@@ -580,8 +580,6 @@ Internals::Internals(Document& document)
     }
 #endif
 
-    m_unsuspendableActiveDOMObject = nullptr;
-
 #if PLATFORM(COCOA) &&  ENABLE(WEB_AUDIO)
     AudioDestinationCocoa::createOverride = nullptr;
 #endif
@@ -938,25 +936,10 @@ unsigned Internals::backForwardCacheSize() const
     return BackForwardCache::singleton().pageCount();
 }
 
-class UnsuspendableActiveDOMObject final : public ActiveDOMObject, public RefCounted<UnsuspendableActiveDOMObject> {
-public:
-    static Ref<UnsuspendableActiveDOMObject> create(ScriptExecutionContext& context) { return adoptRef(*new UnsuspendableActiveDOMObject { &context }); }
-
-private:
-    explicit UnsuspendableActiveDOMObject(ScriptExecutionContext* context)
-        : ActiveDOMObject(context)
-    {
-        suspendIfNeeded();
-    }
-
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return true; }
-    const char* activeDOMObjectName() const { return "UnsuspendableActiveDOMObject"; }
-};
-
-void Internals::preventDocumentForEnteringBackForwardCache()
+void Internals::preventDocumentFromEnteringBackForwardCache()
 {
-    if (auto* context = contextDocument())
-        m_unsuspendableActiveDOMObject = UnsuspendableActiveDOMObject::create(*context);
+    if (auto* document = contextDocument())
+        document->preventEnteringBackForwardCacheForTesting();
 }
 
 void Internals::disableTileSizeUpdateDelay()
