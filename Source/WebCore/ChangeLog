@@ -1,3 +1,23 @@
+2019-11-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Run layout on the root when InvalidationState is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=204651
+        <rdar://problem/57509616>
+
+        Reviewed by Antti Koivisto.
+
+        InvalidationState captures style/tree mutation related changes. An empty InvalidationState indicates that the horizontal constraint changed
+        and we need to initiate a layout on the ICB (and the layout logic will propagate the damage down on the tree). 
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        * layout/RenderBlockFlowLineLayout.cpp:
+        (WebCore::Layout::RenderBlockFlowLineLayout::layout):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
 2019-11-27  Antoine Quint  <graouts@apple.com>
 
         REGRESSION(r252455): imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html fails on iOS and WK1

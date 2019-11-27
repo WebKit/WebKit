@@ -74,15 +74,8 @@ void RenderBlockFlowLineLayout::layout()
         m_layoutState = makeUnique<LayoutState>(*m_treeContent);
 
     auto& rootContainer = m_layoutState->root();
-
-    if (!rootContainer.firstChild())
-        return;
-
-    InvalidationState invalidationState;
-    // FIXME: Find some better way to do this.
-    invalidationState.markNeedsUpdate(*rootContainer.firstChild());
-
-    LayoutContext layoutContext(*m_layoutState);
+    auto layoutContext = LayoutContext { *m_layoutState };
+    auto invalidationState = InvalidationState { };
     layoutContext.layout(m_flow.contentSize(), invalidationState);
 
     auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootContainer)).lineBoxes();

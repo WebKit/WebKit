@@ -450,9 +450,6 @@ void printLayoutTreeForLiveDocuments()
 
         auto& layoutRoot = layoutState.root();
         auto invalidationState = InvalidationState { };
-        auto invalidationContext = InvalidationContext { invalidationState };
-        invalidationContext.styleChanged(*layoutRoot.firstChild(), StyleDifference::Layout);
-
         LayoutContext(layoutState).layout(renderView.size(), invalidationState);
         showLayoutTree(layoutRoot, &layoutState);
     }
