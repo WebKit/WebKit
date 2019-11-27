@@ -106,7 +106,9 @@ private:
     void startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch);
     NO_RETURN_DUE_TO_CRASH void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
 
-    HashMap<ServiceWorkerIdentifier, RefPtr<ServiceWorkerThreadProxy>> m_workerMap;
+    void stopWorker(ServiceWorkerThreadProxy&, Seconds, Function<void()>&&);
+
+    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> m_workerMap;
     std::unique_ptr<Connection> m_connection;
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
 
