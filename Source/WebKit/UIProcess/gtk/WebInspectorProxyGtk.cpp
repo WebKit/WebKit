@@ -478,22 +478,17 @@ void WebInspectorProxy::platformSave(const String& filename, const String& conte
     if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
         return;
 
-    gssize dataLength = 0;
-    const char* data;
-
+    Vector<char> dataVector;
+    CString dataString;
     if (base64Encoded) {
-        Vector<char> out;
-        if (!base64Decode(content, out, Base64ValidatePadding))
+        if (!base64Decode(content, dataVector, Base64ValidatePadding))
             return;
+        dataVector.shrinkToFit();
+    } else
+        dataString = content.utf8();
 
-        out.shrinkToFit();
-        data = out.data();
-        dataLength = out.size();
-    } else {
-        data = content.utf8().data();
-        dataLength = content.utf8().length();
-    }
-
+    const char* data = !dataString.isNull() ? dataString.data() : dataVector.data();
+    size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
     GUniquePtr<char> path(g_file_get_path(file.get()));
     if (g_file_set_contents(path.get(), data, dataLength, nullptr))
