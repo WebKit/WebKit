@@ -1187,6 +1187,9 @@ webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Crash P
 
 webkit.org/b/135050 animations/animation-end-event-short-iterations.html [ Crash Pass ]
 webkit.org/b/135050 legacy-animation-engine/animations/animation-end-event-short-iterations.html [ Crash Pass ]
+webkit.org/b/204637 legacy-animation-engine/animations/fill-mode-transform.html [ Failure Pass ]
+
+webkit.org/b/163826 storage/domstorage/events/basic-body-attribute.html [ Failure Pass ]
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
@@ -1548,6 +1551,7 @@ webkit.org/b/132277 fast/images/imagemap-dynamic-area-updates.html [ Failure Pas
 webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
 webkit.org/b/132425 fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure Pass ]
 
+webkit.org/b/171947 transitions/extra-transition.html [ Failure Pass ]
 webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
 webkit.org/b/132995 legacy-animation-engine/transitions/cancel-transition.html [ Failure Pass ]
 webkit.org/b/132996 js/slow-stress/fold-strict-eq.html [ Pass Timeout ]
@@ -1895,6 +1899,7 @@ webkit.org/b/186847 http/tests/inspector/network/resource-sizes-memory-cache.htm
 webkit.org/b/192407 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 webkit.org/b/191497 http/tests/inspector/network/resource-security-certificate.html [ Skip ]
 webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
+webkit.org/b/179173 http/tests/inspector/network/har/har-page.html [ Failure Pass ]
 
 webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata.htm [ Pass Failure ]
 webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata-blob.htm [ Pass Failure ]
@@ -2247,6 +2252,7 @@ Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
+webkit.org/b/204635 http/tests/navigation/image-load-in-pagehide-handler.html [ Failure Pass ]
 
 webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/clearMessages.html [ Pass Slow ]
@@ -2497,8 +2503,6 @@ webkit.org/b/194629 http/tests/websocket/connection-refusal-in-frame-resource-lo
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]
 
 webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass ]
-
-webkit.org/b/196069 inspector/indexeddb/requestData.html [ Timeout ]
 
 webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout ]
 
@@ -2925,6 +2929,10 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation.html [ Failure Pass ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-margin-interpolation.html [ Failure Pass ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-outside-interpolation.html [ Failure Pass ]
 
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 
@@ -3807,6 +3815,7 @@ webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
+webkit.org/b/204636 http/wpt/service-workers/header-filtering.https.html [ Failure Pass ]
 
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
 
@@ -4076,6 +4085,27 @@ webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
 webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
+
+webkit.org/b/204638 imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.worker.html [ Failure Pass ]
+
+webkit.org/b/204639 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation.html [ Failure Pass ]
+webkit.org/b/204639 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-margin-interpolation.html [ Failure Pass ]
+webkit.org/b/204639 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-outside-interpolation.html [ Failure Pass ]
+
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/activation-after-registration.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/active.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/claim-affect-other-registration.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/claim-fetch-with-appcache.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/claim-fetch.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/claim-not-using-registration.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/claim-worker-fetch.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-reload.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/getregistration.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https.html [ Failure Pass ]
+webkit.org/b/204640 imported/w3c/web-platform-tests/service-workers/service-worker/waiting.https.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
