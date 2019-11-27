@@ -62,7 +62,6 @@ webkit.org/b/203146 imported/w3c/web-platform-tests/offscreen-canvas [ Pass ]
 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
 webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
-webkit.org/b/187064 webrtc/video-with-receiver.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
 webkit.org/b/187064 webrtc/video-remote-mute.html
 webkit.org/b/187064 webrtc/video-addTransceiver.html
@@ -111,7 +110,6 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-sing
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
-webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
 # Crash is bug #176801
@@ -605,7 +603,6 @@ Bug(WPE) fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
 Bug(WPE) fast/history/page-cache-geolocation-active-watcher.html [ Skip ]
 Bug(WPE) fast/history/page-cache-geolocation.html [ Skip ]
 
-Bug(WPE) fast/history/page-cache-notification-non-suspendable.html [ Skip ]
 Bug(WPE) fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 Bug(WPE) fast/dom/HTMLAnchorElement [ Skip ]
@@ -887,8 +884,6 @@ webkit.org/b/188053 http/wpt/service-workers/update-service-worker.https.html [ 
 
 webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pass ]
 
-webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure Pass ]
-
 webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
 
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
@@ -973,7 +968,6 @@ webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-throws-after-respond-with.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html [ Failure Crash Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-header-visibility.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html [ Failure Pass ]
@@ -1030,7 +1024,6 @@ webkit.org/b/201981 http/tests/workers/service/registration-clear-redundant-work
 webkit.org/b/201981 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Timeout Pass ]
 webkit.org/b/201981 http/tests/workers/service/service-worker-request-with-body.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html [ Failure Crash Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html [ Failure Pass ]
 webkit.org/b/201981 http/tests/workers/service/basic-fetch.https.html [ Failure Pass ]
@@ -1057,7 +1050,7 @@ webkit.org/b/202732 http/tests/adClickAttribution/send-attribution-conversion-re
 webkit.org/b/202732 http/tests/adClickAttribution/expired-attributions-removed.html [ Crash Pass ]
 webkit.org/b/202732 http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html [ Crash Pass ]
 webkit.org/b/202732 http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html [ Crash Pass ]
-webkit.org/b/202732 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Crash Pass]
+webkit.org/b/202732 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Crash Pass ]
 
 webkit.org/b/202736 http/tests/appcache/document-cookie-http-only.php [ Failure Pass ]
 webkit.org/b/202736 http/tests/appcache/history-test.html [ Failure Pass ]
@@ -1112,8 +1105,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS TIMING OUT
 #////////////////////////////////////////////////////////////////////////////////////////
-
-imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
@@ -1388,7 +1379,6 @@ webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/sel
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html [ Failure ]
 webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
@@ -1405,7 +1395,6 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.ht
 webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
 
 Bug(WPE) fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
-Bug(WPE) fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
 Bug(WPE) fast/css-intrinsic-dimensions/height-css-tables.html [ ImageOnlyFailure ]
 Bug(WPE) fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
 
@@ -1418,7 +1407,6 @@ Bug(WPE) fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]
 
 Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-clip-path-selection.html [ Failure ]
 
-Bug(WPE) fast/viewport/ios [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-mobileoptimized-2.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-mobileoptimized-3.html [ Failure ]

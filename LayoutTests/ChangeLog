@@ -1,3 +1,13 @@
+2019-11-27  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Update test expectations for WPE port
+
+        Unreviewed test gardening.
+
+        Get rid of outdated expectations referring to not-existing tests, remove duplicates, etc.
+
+        * platform/wpe/TestExpectations:
+
 2019-11-26  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Garden dedicated queue (Part 6)
