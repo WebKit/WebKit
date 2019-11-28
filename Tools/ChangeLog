@@ -1,5 +1,14 @@
 2019-11-28  Aakash Jain  <aakash_jain@apple.com>
 
+        Rename 'submit to new EWS' to 'Submit for EWS analysis'
+        https://bugs.webkit.org/show_bug.cgi?id=204692
+
+        Unreviewed minor fix.
+
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html:
+
+2019-11-28  Aakash Jain  <aakash_jain@apple.com>
+
         Old EWS is showing 'Submit to old EWS' button on every patch
         https://bugs.webkit.org/show_bug.cgi?id=204691
 
