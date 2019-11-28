@@ -25,6 +25,8 @@
 #include "GLContext.h"
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include <gst/app/gstappsink.h>
+#include <wtf/glib/WTFGType.h>
 
 #if USE(GLX)
 #include "GLContextGLX.h"
@@ -54,8 +56,6 @@
 #undef None
 #endif // PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
 
-#include <gst/app/gstappsink.h>
-
 using namespace WebCore;
 
 struct _WebKitGLVideoSinkPrivate {
@@ -73,16 +73,15 @@ GST_DEBUG_CATEGORY_STATIC(webkit_gl_video_sink_debug);
 #define GST_GL_CAPS_FORMAT "{ RGBx, RGBA, I420, Y444, YV12, Y41B, Y42B, NV12, NV21, VUYA }"
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS_ANY);
 
-#define WEBKIT_GL_VIDEO_SINK_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_GL_VIDEO_SINK, WebKitGLVideoSinkPrivate))
-
 #define webkit_gl_video_sink_parent_class parent_class
-#define WEBKIT_GL_VIDEO_SINK_CATEGORY_INIT GST_DEBUG_CATEGORY_INIT(webkit_gl_video_sink_debug, "webkitglvideosink", 0, "GL video sink element");
-G_DEFINE_TYPE_WITH_CODE(WebKitGLVideoSink, webkit_gl_video_sink, GST_TYPE_BIN, WEBKIT_GL_VIDEO_SINK_CATEGORY_INIT);
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitGLVideoSink, webkit_gl_video_sink, GST_TYPE_BIN,
+    GST_DEBUG_CATEGORY_INIT(webkit_gl_video_sink_debug, "webkitglvideosink", 0, "GL video sink element"))
 
-static void webkit_gl_video_sink_init(WebKitGLVideoSink* sink)
+static void webKitGLVideoSinkConstructed(GObject* object)
 {
-    sink->priv = WEBKIT_GL_VIDEO_SINK_GET_PRIVATE(sink);
-    new (sink->priv) WebKitGLVideoSinkPrivate();
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+
+    WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
 
     sink->priv->appSink = gst_element_factory_make("appsink", "webkit-gl-video-appsink");
     ASSERT(sink->priv->appSink);
@@ -124,16 +123,13 @@ static void webkit_gl_video_sink_init(WebKitGLVideoSink* sink)
 
 void webKitGLVideoSinkFinalize(GObject* object)
 {
-    ASSERT(WTF::isMainThread());
+    ASSERT(isMainThread());
 
     WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
     WebKitGLVideoSinkPrivate* priv = sink->priv;
 
     if (priv->mediaPlayerPrivate)
         g_signal_handlers_disconnect_by_data(priv->appSink.get(), priv->mediaPlayerPrivate);
-
-    // We used a placement new for construction, the destructor won't be called automatically.
-    priv->~_WebKitGLVideoSinkPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
@@ -294,14 +290,13 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
     GObjectClass* objectClass = G_OBJECT_CLASS(klass);
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
 
+    objectClass->constructed = webKitGLVideoSinkConstructed;
     objectClass->finalize = webKitGLVideoSinkFinalize;
 
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
-
     gst_element_class_set_static_metadata(elementClass, "WebKit GL video sink", "Sink/Video", "Renders video", "Philippe Normand <philn@igalia.com>");
 
     elementClass->change_state = GST_DEBUG_FUNCPTR(webKitGLVideoSinkChangeState);
-    g_type_class_add_private(klass, sizeof(WebKitGLVideoSinkPrivate));
 }
 
 void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayerPrivateGStreamer* player)
