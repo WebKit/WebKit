@@ -1,5 +1,84 @@
 2019-11-28  Antti Koivisto  <antti@apple.com>
 
+        [LFC][IFC] Vector allocate InlineItemRuns
+        https://bugs.webkit.org/show_bug.cgi?id=204680
+
+        Reviewed by Zalan Bujtas.
+
+        Reduce heap allocations during inline layout.
+
+        This is ~15% speedup in PerformanceTests/Layout/line-layout-simple.html with LFC-in-render-tree enabled.
+        With other improvements it makes LFC path faster than simple line layout in this test.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::ContinousContent::ContinousContent):
+        (WebCore::Layout::LineBuilder::ContinousContent::append):
+        (WebCore::Layout::LineBuilder::ContinousContent::close):
+
+        Move to LineBuilder namespace.
+
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::appendNonBreakableSpace):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::appendLineBreak):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        (WebCore::Layout::LineBuilder::formattingContext const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::InlineItemRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth):
+        (WebCore::Layout::InlineItemRun::layoutBox const): Deleted.
+        (WebCore::Layout::InlineItemRun::logicalRect const): Deleted.
+        (WebCore::Layout::InlineItemRun::textContext const): Deleted.
+        (WebCore::Layout::InlineItemRun::isText const): Deleted.
+        (WebCore::Layout::InlineItemRun::isBox const): Deleted.
+        (WebCore::Layout::InlineItemRun::isContainerStart const): Deleted.
+        (WebCore::Layout::InlineItemRun::isContainerEnd const): Deleted.
+        (WebCore::Layout::InlineItemRun::isForcedLineBreak const): Deleted.
+        (WebCore::Layout::InlineItemRun::type const): Deleted.
+        (WebCore::Layout::InlineItemRun::setIsCollapsed): Deleted.
+        (WebCore::Layout::InlineItemRun::isCollapsed const): Deleted.
+        (WebCore::Layout::InlineItemRun::isCollapsedToZeroAdvanceWidth const): Deleted.
+        (WebCore::Layout::InlineItemRun::isCollapsible const): Deleted.
+        (WebCore::Layout::InlineItemRun::isWhitespace const): Deleted.
+        (WebCore::Layout::InlineItemRun::hasExpansionOpportunity const): Deleted.
+        (WebCore::Layout::InlineItemRun::InlineItemRun): Deleted.
+        (WebCore::Layout::InlineItemRun::setCollapsesToZeroAdvanceWidth): Deleted.
+
+        Move InlineItemRun to header in LineBuilder namespace so we can use directly in m_inlineItemRuns vector.
+
+        (WebCore::Layout::ContinousContent::canBeExpanded): Deleted.
+        (WebCore::Layout::ContinousContent::canBeMerged const): Deleted.
+        (WebCore::Layout::ContinousContent::ContinousContent): Deleted.
+        (WebCore::Layout::ContinousContent::append): Deleted.
+        (WebCore::Layout::ContinousContent::close): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::InlineItemRun::layoutBox const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalRect const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::textContext const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isText const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isBox const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isContainerStart const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isContainerEnd const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isForcedLineBreak const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::type const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::setIsCollapsed):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isCollapsed const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isCollapsedToZeroAdvanceWidth const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isCollapsible const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isWhitespace const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::hasExpansionOpportunity const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::runIndexes):
+
+        Make TrimmableContent collect indexes to InlineItemRun vector instead of pointer.
+        We only ever append to the vector so the indexes stay valid for TrimmableContent lifetime.
+
+        (WebCore::Layout::LineBuilder::TrimmableContent::isEmpty const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::clear):
+        (WebCore::Layout::LineBuilder::TrimmableContent::runs): Deleted.
+
+2019-11-28  Antti Koivisto  <antti@apple.com>
+
         Cache integer font metrics for performance
         https://bugs.webkit.org/show_bug.cgi?id=204668
 

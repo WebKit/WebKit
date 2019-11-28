@@ -35,11 +35,12 @@
 namespace WebCore {
 namespace Layout {
 
-struct ContinousContent;
 class InlineFormattingContext;
-class InlineItemRun;
 
 class LineBuilder {
+    class InlineItemRun;
+    struct ContinousContent;
+
 public:
     struct Constraints {
         LayoutPoint logicalTopLeft;
@@ -52,6 +53,7 @@ public:
         };
         Optional<HeightAndBaseline> heightAndBaseline;
     };
+
     enum class SkipAlignment { No, Yes };
     LineBuilder(const InlineFormattingContext&, Optional<TextAlignMode>, SkipAlignment);
     ~LineBuilder();
@@ -148,23 +150,57 @@ private:
     bool isVisuallyNonEmpty(const InlineItemRun&) const;
 
     LayoutState& layoutState() const;
-    const InlineFormattingContext& formattingContext() const; 
+    const InlineFormattingContext& formattingContext() const;
 
-    const InlineFormattingContext& m_inlineFormattingContext;
-    Vector<std::unique_ptr<InlineItemRun>, 50> m_inlineItemRuns;
+    class InlineItemRun {
+    public:
+        InlineItemRun(const InlineItem&, const Display::Rect&, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
+
+        const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
+        const Display::Rect& logicalRect() const { return m_logicalRect; }
+        const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
+
+        bool isText() const { return m_inlineItem.isText(); }
+        bool isBox() const { return m_inlineItem.isBox(); }
+        bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
+        bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
+        bool isForcedLineBreak() const { return m_inlineItem.isForcedLineBreak(); }
+        InlineItem::Type type() const { return m_inlineItem.type(); }
+
+        void setIsCollapsed() { m_isCollapsed = true; }
+        bool isCollapsed() const { return m_isCollapsed; }
+
+        void setCollapsesToZeroAdvanceWidth();
+        bool isCollapsedToZeroAdvanceWidth() const { return m_collapsedToZeroAdvanceWidth; }
+
+        bool isCollapsible() const { return is<InlineTextItem>(m_inlineItem) && downcast<InlineTextItem>(m_inlineItem).isCollapsible(); }
+        bool isWhitespace() const { return is<InlineTextItem>(m_inlineItem) && downcast<InlineTextItem>(m_inlineItem).isWhitespace(); }
+
+        bool hasExpansionOpportunity() const { return isWhitespace() && !isCollapsedToZeroAdvanceWidth(); }
+
+    private:
+        const InlineItem& m_inlineItem;
+        Display::Rect m_logicalRect;
+        const Optional<Display::Run::TextContext> m_textContext;
+        bool m_isCollapsed { false };
+        bool m_collapsedToZeroAdvanceWidth { false };
+    };
+
     struct TrimmableContent {
-        void append(InlineItemRun&);
+        void append(LayoutUnit itemRunWidth, size_t runIndex);
         void clear();
 
         LayoutUnit width() const { return m_width; }
-        using TrimmableList = Vector<InlineItemRun*, 5>;
-        TrimmableList& runs() { return m_inlineItemRuns; }
-        bool isEmpty() const { return m_inlineItemRuns.isEmpty(); }
+        Vector<size_t, 5>& runIndexes() { return m_runIndexes; }
+        bool isEmpty() const { return m_runIndexes.isEmpty(); }
 
     private:
-        TrimmableList m_inlineItemRuns;
+        Vector<size_t, 5> m_runIndexes;
         LayoutUnit m_width;
     };
+
+    const InlineFormattingContext& m_inlineFormattingContext;
+    Vector<InlineItemRun, 50> m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
@@ -177,7 +213,7 @@ private:
 
 inline void LineBuilder::TrimmableContent::clear()
 {
-    m_inlineItemRuns.clear();
+    m_runIndexes.clear();
     m_width = { };
 }
 
