@@ -1,5 +1,17 @@
 2019-11-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] adjustBaselineAndLineHeight should be called before resetting the line in quirk mode
+        https://bugs.webkit.org/show_bug.cgi?id=204662
+        <rdar://problem/57513178>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+
+2019-11-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Fix LineLayoutContext::shouldProcessUncommittedContent logic
         https://bugs.webkit.org/show_bug.cgi?id=204656
         <rdar://problem/57511221>

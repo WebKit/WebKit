@@ -271,6 +271,10 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     }
 
     if (!m_skipAlignment) {
+        for (auto& run : runList) {
+            adjustBaselineAndLineHeight(run);
+            run.setLogicalHeight(runContentHeight(run));
+        }
         if (isVisuallyEmpty()) {
             m_lineBox.resetBaseline();
             m_lineBox.setLogicalHeight({ });
@@ -289,11 +293,6 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
 void LineBuilder::alignContentVertically(RunList& runList)
 {
     ASSERT(!m_skipAlignment);
-    for (auto& run : runList) {
-        adjustBaselineAndLineHeight(run);
-        run.setLogicalHeight(runContentHeight(run));
-    }
-
     for (auto& run : runList) {
         LayoutUnit logicalTop;
         auto& layoutBox = run.layoutBox();
