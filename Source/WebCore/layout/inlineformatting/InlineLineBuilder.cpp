@@ -234,6 +234,7 @@ void LineBuilder::initialize(const Constraints& constraints)
 
     m_inlineItemRuns.clear();
     m_trimmableContent.clear();
+    m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
 static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)
@@ -435,6 +436,23 @@ void LineBuilder::removeTrailingTrimmableContent()
     }
     m_lineBox.shrinkHorizontally(m_trimmableContent.width());
     m_trimmableContent.clear();
+    // If we trimmed the first visible run on the line, we need to re-check the visibility status.
+    ASSERT(m_lineIsVisuallyEmptyBeforeTrimmableContent.hasValue());
+    if (*m_lineIsVisuallyEmptyBeforeTrimmableContent) {
+        // Just because the line was visually empty before the trimmed content, it does not necessarily mean it is still visually empty.
+        // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
+        auto lineIsVisuallyEmpty = [&] {
+            for (auto& run : m_inlineItemRuns) {
+                if (isVisuallyNonEmpty(*run))
+                    return false;
+            }
+            return true;
+        };
+        // We could only go from visually non empty -> to visually empty. Trimming runs should never make the line visible.
+        if (lineIsVisuallyEmpty())
+            m_lineBox.setIsConsideredEmpty();
+        m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
+    }
 }
 
 void LineBuilder::moveLogicalLeft(LayoutUnit delta)
@@ -540,8 +558,12 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
 
     if (collapsedRun)
         lineRun->setIsCollapsed();
-    if (isTrimmable)
+    if (isTrimmable) {
+        // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
+        if (m_trimmableContent.isEmpty())
+            m_lineIsVisuallyEmptyBeforeTrimmableContent = isVisuallyEmpty();
         m_trimmableContent.append(*lineRun);
+    }
 
     m_lineBox.expandHorizontally(lineRun->logicalRect().width());
     m_inlineItemRuns.append(WTFMove(lineRun));

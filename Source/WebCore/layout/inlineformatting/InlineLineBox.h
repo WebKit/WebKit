@@ -115,6 +115,7 @@ public:
     // and must be treated as not existing for any other purpose.
     // Note that it does not necessarily mean visually non-empty line. <span style="font-size: 0px">this is still considered non-empty</span>
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
+    void setIsConsideredEmpty() { m_isConsideredEmpty = true; }
     void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
 
 private:

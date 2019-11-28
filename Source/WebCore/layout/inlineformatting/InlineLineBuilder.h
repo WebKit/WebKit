@@ -172,6 +172,7 @@ private:
     bool m_skipAlignment { false };
     bool m_hasIntrusiveFloat { false };
     LineBox m_lineBox;
+    Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableContent;
 };
 
 inline void LineBuilder::TrimmableContent::clear()
