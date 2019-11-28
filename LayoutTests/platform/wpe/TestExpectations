@@ -1126,6 +1126,8 @@ webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Tim
 webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
 webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
+webkit.org/b/204670 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1189,19 +1191,9 @@ Bug(WPE) loader/stateobjects/pushstate-size-iframe.html [ Skip ]
 Bug(WPE) loader/stateobjects/pushstate-size.html [ Skip ]
 
 # webgl/1.0.3:
-
-#  Failing
+#  Failing:
 Bug(WPE) webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-#  Timing out
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/texture-size-limit.html [ Timeout Failure ]
-
-#  Failing:
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Failure ]
@@ -1211,9 +1203,27 @@ Bug(WPE) webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/extensions/get-extension.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
 #  Timing out:
 Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
 Bug(WPE) webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/texture-size-limit.html [ Timeout Failure ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Timeout ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Timeout ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec2.html [ Timeout ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
+webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Timeout ]
 #  One of these tests is DDoS-ing Mesa AMD drivers.
 Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
 Bug(WPE) webgl/2.0.0/conformance/glsl/bugs [ Skip ]
@@ -2002,6 +2012,26 @@ webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-
 webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
 webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
 
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
+webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/filter/offscreencanvas.filter.w.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

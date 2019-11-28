@@ -1,3 +1,24 @@
+2019-11-28  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK and WPE gardening after r252916.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/blending/svg-blend-hard-light-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-18-f-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-20-f-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polygon-03-t-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-07-f-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-svg-02-f-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/svgdom-over-01-f-manual-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/absolute-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/relative-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/zero-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/closepath/segment-completing-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-001-visual-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2019-11-27  Jonathan Bedard  <jbedard@apple.com>
 
         [WebGL] Garden dedicated queue (Part 8)
