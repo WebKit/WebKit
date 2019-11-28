@@ -33,7 +33,6 @@ from datetime import timedelta
 all_queue_names = [
     "commit-queue",
     "jsc-i386-ews",
-    "win-ews",
 ]
 
 # If the patch is still active after this much time, then a bot must have frozen or rebooted,

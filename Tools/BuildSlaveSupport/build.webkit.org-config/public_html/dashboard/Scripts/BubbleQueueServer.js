@@ -27,7 +27,6 @@ BubbleQueueServer = function()
 {
     const queueInfo = {
         "commit-queue": {platform: Dashboard.Platform.macOSHighSierra, shortName: "commit", title: "Commit Queue"},
-        "win-ews": {platform: Dashboard.Platform.Windows10, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
     };
 
     BaseObject.call(this);
