@@ -401,14 +401,6 @@ sub main {
         $_->close();
     }
 
-    my $count = 0;
-    for my $parent (@parents) {
-        my $child = $children[$count];
-        print $child "END\n";
-        $parent->close();
-        $count++;
-    }
-
     $pm->wait_all_children;
 
     # Read results from file into @results and close

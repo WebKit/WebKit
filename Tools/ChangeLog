@@ -1,3 +1,13 @@
+2019-11-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        test262-runner ends with SIGPIPE signal
+        https://bugs.webkit.org/show_bug.cgi?id=194816
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+
 2019-11-28  Aakash Jain  <aakash_jain@apple.com>
 
         Removed ENABLED_QUEUES logic from ews-app
