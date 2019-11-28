@@ -23,6 +23,7 @@
 
 #if USE(GSTREAMER)
 
+#include "GLVideoSinkGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "SharedBuffer.h"
@@ -296,6 +297,9 @@ bool initializeGStreamerAndRegisterWebKitElements()
 
 #if ENABLE(VIDEO)
         gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+#if USE(GSTREAMER_GL)
+        gst_element_register(0, "webkitglvideosink", GST_RANK_PRIMARY, WEBKIT_TYPE_GL_VIDEO_SINK);
+#endif
 #endif
     });
     return true;
@@ -377,6 +381,14 @@ Ref<SharedBuffer> GstMappedBuffer::createSharedBuffer()
     RELEASE_ASSERT(isSharable());
 
     return SharedBuffer::create(*this);
+}
+
+bool isGStreamerPluginAvailable(const char* name)
+{
+    GRefPtr<GstPlugin> plugin = adoptGRef(gst_registry_find_plugin(gst_registry_get(), name));
+    if (!plugin)
+        GST_WARNING("Plugin %s not found. Please check your GStreamer installation", name);
+    return plugin;
 }
 
 }

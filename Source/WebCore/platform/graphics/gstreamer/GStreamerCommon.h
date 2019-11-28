@@ -221,6 +221,8 @@ void disconnectSimpleBusMessageCallback(GstElement* pipeline);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux };
 
+bool isGStreamerPluginAvailable(const char* name);
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

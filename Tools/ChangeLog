@@ -1,3 +1,12 @@
+2019-11-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Move GL video sink to its own GstBin sub-class
+        https://bugs.webkit.org/show_bug.cgi?id=204624
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitpy/style/checker.py: White-list the new GLVideoSinkGStreamer GObject implementation.
+
 2019-11-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Unreviewed test gardening.

@@ -123,40 +123,10 @@
 #endif // ENABLE(VIDEO_TRACK)
 
 #if USE(GSTREAMER_GL)
-#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::NoConvert
-#define GST_GL_CAPS_FORMAT "{ RGBx, RGBA, I420, Y444, YV12, Y41B, Y42B, NV12, NV21, VUYA }"
-
-#include <gst/app/gstappsink.h>
-
-#include "GLContext.h"
-#if USE(GLX)
-#include "GLContextGLX.h"
-#include <gst/gl/x11/gstgldisplay_x11.h>
-#endif
-
-#if USE(EGL)
-#include "GLContextEGL.h"
-#include <gst/gl/egl/gstgldisplay_egl.h>
-#endif
-
-#if PLATFORM(X11)
-#include "PlatformDisplayX11.h"
-#endif
-
-#if PLATFORM(WAYLAND)
-#include "PlatformDisplayWayland.h"
-#endif
-
-#if USE(WPE_RENDERER)
-#include "PlatformDisplayLibWPE.h"
-#endif
-
-// gstglapi.h may include eglplatform.h and it includes X.h, which
-// defines None, breaking MediaPlayer::None enum
-#if PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
-#undef None
-#endif // PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
+#include "GLVideoSinkGStreamer.h"
 #include "VideoTextureCopierGStreamer.h"
+
+#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::NoConvert
 #endif // USE(GSTREAMER_GL)
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -459,15 +429,8 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     m_notifier->invalidate();
 
-    if (m_videoSink) {
+    if (m_videoSink)
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-#if USE(GSTREAMER_GL)
-        if (GST_IS_BIN(m_videoSink.get())) {
-            GRefPtr<GstElement> appsink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_videoSink.get()), "webkit-gl-video-sink"));
-            g_signal_handlers_disconnect_by_data(appsink.get(), this);
-        }
-#endif
-    }
 
     if (m_volumeElement)
         g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
@@ -574,9 +537,6 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
     loadFull(String("mediastream://") + stream.id(), pipelineName);
     syncOnClock(false);
 
-#if USE(GSTREAMER_GL)
-    ensureGLVideoSinkContext();
-#endif
     m_player->play();
 }
 #endif
@@ -1182,11 +1142,6 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     GST_DEBUG_OBJECT(pipeline(), "Changing state change to %s from %s with %s pending", gst_element_state_get_name(newState),
         gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
 
-#if USE(GSTREAMER_GL)
-    if (currentState <= GST_STATE_READY && newState >= GST_STATE_PAUSED)
-        ensureGLVideoSinkContext();
-#endif
-
     GstStateChangeReturn setStateResult = gst_element_set_state(m_pipeline.get(), newState);
     GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
     if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE)
@@ -1778,14 +1733,6 @@ bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
         return true;
     }
 
-#if USE(GSTREAMER_GL)
-    GRefPtr<GstContext> elementContext = adoptGRef(requestGLContext(contextType));
-    if (elementContext) {
-        gst_element_set_context(GST_ELEMENT(message->src), elementContext.get());
-        return true;
-    }
-#endif // USE(GSTREAMER_GL)
-
 #if ENABLE(ENCRYPTED_MEDIA)
     if (!g_strcmp0(contextType, "drm-preferred-decryption-system-id")) {
         if (isMainThread()) {
@@ -1829,125 +1776,10 @@ bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
         return true;
     }
 #endif // ENABLE(ENCRYPTED_MEDIA)
+
+    GST_DEBUG_OBJECT(pipeline(), "Unhandled %s need-context message for %s", contextType, GST_MESSAGE_SRC_NAME(message));
     return false;
 }
-
-#if USE(GSTREAMER_GL)
-GstContext* MediaPlayerPrivateGStreamer::requestGLContext(const char* contextType)
-{
-    if (!ensureGstGLContext())
-        return nullptr;
-
-    if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
-        GstContext* displayContext = gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
-        gst_context_set_gl_display(displayContext, gstGLDisplay());
-        return displayContext;
-    }
-
-    if (!g_strcmp0(contextType, "gst.gl.app_context")) {
-        GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
-        GstStructure* structure = gst_context_writable_structure(appContext);
-#if GST_CHECK_VERSION(1, 12, 0)
-        gst_structure_set(structure, "context", GST_TYPE_GL_CONTEXT, gstGLContext(), nullptr);
-#else
-        gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, gstGLContext(), nullptr);
-#endif
-        return appContext;
-    }
-
-    return nullptr;
-}
-
-bool MediaPlayerPrivateGStreamer::ensureGstGLContext()
-{
-    if (m_glContext)
-        return true;
-
-    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
-
-    // The floating ref removal support was added in https://bugzilla.gnome.org/show_bug.cgi?id=743062.
-    bool shouldAdoptRef = webkitGstCheckVersion(1, 14, 0);
-    if (!m_glDisplay) {
-#if PLATFORM(X11)
-#if USE(GLX)
-        if (is<PlatformDisplayX11>(sharedDisplay)) {
-            GST_DEBUG_OBJECT(pipeline(), "Creating X11 shared GL display");
-            if (shouldAdoptRef)
-                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native())));
-            else
-                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
-        }
-#elif USE(EGL)
-        if (is<PlatformDisplayX11>(sharedDisplay)) {
-            GST_DEBUG_OBJECT(pipeline(), "Creating X11 shared EGL display");
-            if (shouldAdoptRef)
-                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay())));
-            else
-                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
-        }
-#endif
-#endif
-
-#if PLATFORM(WAYLAND)
-        if (is<PlatformDisplayWayland>(sharedDisplay)) {
-            GST_DEBUG_OBJECT(pipeline(), "Creating Wayland shared display");
-            if (shouldAdoptRef)
-                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay())));
-            else
-                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
-        }
-#endif
-
-#if USE(WPE_RENDERER)
-        if (is<PlatformDisplayLibWPE>(sharedDisplay)) {
-            GST_DEBUG_OBJECT(pipeline(), "Creating WPE shared EGL display");
-            if (shouldAdoptRef)
-                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay())));
-            else
-                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay()));
-        }
-#endif
-
-        ASSERT(m_glDisplay);
-    }
-
-    GLContext* webkitContext = sharedDisplay.sharingGLContext();
-    // EGL and GLX are mutually exclusive, no need for ifdefs here.
-    GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
-
-#if USE(OPENGL_ES)
-    GstGLAPI glAPI = GST_GL_API_GLES2;
-#elif USE(OPENGL)
-    GstGLAPI glAPI = GST_GL_API_OPENGL;
-#else
-    ASSERT_NOT_REACHED();
-#endif
-
-    PlatformGraphicsContext3D contextHandle = webkitContext->platformContext();
-    if (!contextHandle)
-        return false;
-
-    if (shouldAdoptRef)
-        m_glContext = adoptGRef(gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
-    else
-        m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
-
-    // Activate and fill the GStreamer wrapped context with the Webkit's shared one.
-    auto previousActiveContext = GLContext::current();
-    webkitContext->makeContextCurrent();
-    if (gst_gl_context_activate(m_glContext.get(), TRUE)) {
-        GUniqueOutPtr<GError> error;
-        if (!gst_gl_context_fill_info(m_glContext.get(), &error.outPtr()))
-            GST_WARNING("Failed to fill in GStreamer context: %s", error->message);
-        gst_gl_context_activate(m_glContext.get(), FALSE);
-    } else
-        GST_WARNING("Failed to activate GStreamer context %" GST_PTR_FORMAT, m_glContext.get());
-    if (previousActiveContext)
-        previousActiveContext->makeContextCurrent();
-
-    return true;
-}
-#endif // USE(GSTREAMER_GL)
 
 // Returns the size of the video
 FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
@@ -3359,20 +3191,6 @@ void MediaPlayerPrivateGStreamer::repaintCancelledCallback(MediaPlayerPrivateGSt
 }
 
 #if USE(GSTREAMER_GL)
-GstFlowReturn MediaPlayerPrivateGStreamer::newSampleCallback(GstElement* sink, MediaPlayerPrivateGStreamer* player)
-{
-    GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-    player->triggerRepaint(sample.get());
-    return GST_FLOW_OK;
-}
-
-GstFlowReturn MediaPlayerPrivateGStreamer::newPrerollCallback(GstElement* sink, MediaPlayerPrivateGStreamer* player)
-{
-    GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
-    player->triggerRepaint(sample.get());
-    return GST_FLOW_OK;
-}
-
 void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
     auto sampleLocker = holdLock(m_sampleMutex);
@@ -3595,118 +3413,17 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
 }
 
 #if USE(GSTREAMER_GL)
-GstElement* MediaPlayerPrivateGStreamer::createGLAppSink()
-{
-    GstElement* appsink = gst_element_factory_make("appsink", "webkit-gl-video-sink");
-    if (!appsink)
-        return nullptr;
-
-    g_object_set(appsink, "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
-    g_signal_connect(appsink, "new-sample", G_CALLBACK(newSampleCallback), this);
-    g_signal_connect(appsink, "new-preroll", G_CALLBACK(newPrerollCallback), this);
-
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appsink, "sink"));
-    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH), [] (GstPad*, GstPadProbeInfo* info,  gpointer userData) -> GstPadProbeReturn {
-        // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
-        // pipeline has to be drained before a frame with the new resolution can be decoded.
-        // In this context, it's important that we don't hold references to any previous frame
-        // (e.g. m_sample) so that decoding can continue.
-        // We are also not supposed to keep the original frame after a flush.
-        if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM) {
-            if (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) != GST_QUERY_DRAIN)
-                return GST_PAD_PROBE_OK;
-            GST_DEBUG("Acting upon DRAIN query");
-        }
-        if (info->type & GST_PAD_PROBE_TYPE_EVENT_FLUSH) {
-            if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) != GST_EVENT_FLUSH_START)
-                return GST_PAD_PROBE_OK;
-            GST_DEBUG("Acting upon flush-start event");
-        }
-
-        auto* player = static_cast<MediaPlayerPrivateGStreamer*>(userData);
-        player->flushCurrentBuffer();
-        return GST_PAD_PROBE_OK;
-    }, this, nullptr);
-
-    return appsink;
-}
-
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
-    gboolean result = TRUE;
-    GstElement* videoSink = gst_bin_new(nullptr);
-    GstElement* upload = gst_element_factory_make("glupload", nullptr);
-    GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
-    GstElement* appsink = createGLAppSink();
-
-    // glsinkbin is not used because it includes glcolorconvert which only process RGBA,
-    // but we can display YUV formats too.
-
-    if (!appsink || !upload || !colorconvert) {
-        GST_WARNING("Failed to create GstGL elements");
-        gst_object_unref(videoSink);
-
-        if (upload)
-            gst_object_unref(upload);
-        if (colorconvert)
-            gst_object_unref(colorconvert);
-        if (appsink)
-            gst_object_unref(appsink);
-
-        g_warning("WebKit wasn't able to find the GStreamer opengl plugin. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");
+    if (!webKitGLVideoSinkProbePlatform()) {
+        g_warning("WebKit wasn't able to find the GL video sink dependencies. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");
         return nullptr;
     }
 
-    gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
-
-    // Workaround until we can depend on GStreamer 1.16.2.
-    // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
-    // Forcing a color conversion to RGBA here allows glupload to internally use
-    // an uploader that adds a VideoMeta, through the TextureUploadMeta caps
-    // feature, without needing the patch above. However this specific caps
-    // feature is going to be removed from GStreamer so it is considered a
-    // short-term workaround. This code path most likely will have a negative
-    // performance impact on embedded platforms as well. Downstream embedders
-    // are highly encouraged to cherry-pick the patch linked above in their BSP
-    // and set the WEBKIT_GST_NO_RGBA_CONVERSION environment variable until
-    // GStreamer 1.16.2 is released.
-    // See also https://bugs.webkit.org/show_bug.cgi?id=201422
-    GRefPtr<GstCaps> caps;
-    if (webkitGstCheckVersion(1, 16, 2) || getenv("WEBKIT_GST_NO_RGBA_CONVERSION"))
-        caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
-    else {
-        GST_INFO_OBJECT(pipeline(), "Forcing RGBA as GStreamer is not new enough.");
-        caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) RGBA"));
-    }
-    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
-    g_object_set(appsink, "caps", caps.get(), nullptr);
-
-    result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
-
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
-    gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
-
-    if (!result) {
-        GST_WARNING("Failed to link GstGL elements");
-        gst_object_unref(videoSink);
-        videoSink = nullptr;
-    }
-    return videoSink;
-}
-
-void MediaPlayerPrivateGStreamer::ensureGLVideoSinkContext()
-{
-    if (!m_glDisplayElementContext)
-        m_glDisplayElementContext = adoptGRef(requestGLContext(GST_GL_DISPLAY_CONTEXT_TYPE));
-
-    if (m_glDisplayElementContext)
-        gst_element_set_context(m_videoSink.get(), m_glDisplayElementContext.get());
-
-    if (!m_glAppElementContext)
-        m_glAppElementContext = adoptGRef(requestGLContext("gst.gl.app_context"));
-
-    if (m_glAppElementContext)
-        gst_element_set_context(m_videoSink.get(), m_glAppElementContext.get());
+    GstElement* sink = gst_element_factory_make("webkitglvideosink", nullptr);
+    ASSERT(sink);
+    webKitGLVideoSinkSetMediaPlayerPrivate(WEBKIT_GL_VIDEO_SINK(sink), this);
+    return sink;
 }
 #endif // USE(GSTREAMER_GL)
 

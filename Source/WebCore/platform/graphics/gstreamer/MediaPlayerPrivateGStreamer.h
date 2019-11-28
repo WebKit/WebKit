@@ -160,10 +160,6 @@ public:
     void setVolume(float) override;
     float volume() const override;
 
-#if USE(GSTREAMER_GL)
-    bool ensureGstGLContext();
-    GstContext* requestGLContext(const char* contextType);
-#endif
     void setMuted(bool) override;
     bool muted() const;
 
@@ -255,6 +251,11 @@ public:
     bool handleSyncMessage(GstMessage*);
     void handleMessage(GstMessage*);
 
+    void triggerRepaint(GstSample*);
+#if USE(GSTREAMER_GL)
+    void flushCurrentBuffer();
+#endif
+
 protected:
     enum MainThreadNotification {
         VideoChanged = 1 << 0,
@@ -285,14 +286,7 @@ protected:
 #endif
 
 #if USE(GSTREAMER_GL)
-    static GstFlowReturn newSampleCallback(GstElement*, MediaPlayerPrivateGStreamer*);
-    static GstFlowReturn newPrerollCallback(GstElement*, MediaPlayerPrivateGStreamer*);
-    void flushCurrentBuffer();
-    GstElement* createGLAppSink();
     GstElement* createVideoSinkGL();
-    GstGLContext* gstGLContext() const { return m_glContext.get(); }
-    GstGLDisplay* gstGLDisplay() const { return m_glDisplay.get(); }
-    void ensureGLVideoSinkContext();
 #endif
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -311,7 +305,6 @@ protected:
 
     void setPipeline(GstElement*);
 
-    void triggerRepaint(GstSample*);
     void repaint();
     void cancelRepaint(bool destroying = false);
 
@@ -404,12 +397,7 @@ protected:
     bool m_destroying { false };
 
 #if USE(GSTREAMER_GL)
-    GRefPtr<GstGLContext> m_glContext;
-    GRefPtr<GstGLDisplay> m_glDisplay;
-    GRefPtr<GstContext> m_glDisplayElementContext;
-    GRefPtr<GstContext> m_glAppElementContext;
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
-
     GRefPtr<GstGLColorConvert> m_colorConvert;
     GRefPtr<GstCaps> m_colorConvertInputCaps;
     GRefPtr<GstCaps> m_colorConvertOutputCaps;

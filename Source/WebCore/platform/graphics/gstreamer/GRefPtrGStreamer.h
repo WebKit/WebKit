@@ -34,6 +34,10 @@ typedef struct _GstGLContext GstGLContext;
 
 namespace WTF {
 
+template<> GRefPtr<GstPlugin> adoptGRef(GstPlugin* ptr);
+template<> GstPlugin* refGPtr<GstPlugin>(GstPlugin* ptr);
+template<> void derefGPtr<GstPlugin>(GstPlugin* ptr);
+
 template<> GRefPtr<GstElement> adoptGRef(GstElement* ptr);
 template<> GstElement* refGPtr<GstElement>(GstElement* ptr);
 template<> void derefGPtr<GstElement>(GstElement* ptr);
