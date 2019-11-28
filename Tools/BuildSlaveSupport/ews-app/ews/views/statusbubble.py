@@ -41,8 +41,6 @@ class StatusBubble(View):
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-debug', 'gtk', 'wpe', 'wincairo', 'win',
                   'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-debug-wk1', 'api-ios', 'api-mac', 'bindings', 'jsc', 'jsc-armv7', 'jsc-mips', 'webkitperl', 'webkitpy', 'services']
-    ENABLED_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-debug', 'gtk', 'wpe', 'wincairo', 'win',
-                      'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-debug-wk1', 'api-ios', 'api-mac', 'bindings', 'jsc', 'jsc-armv7', 'jsc-mips', 'webkitperl', 'webkitpy', 'services']
     # FIXME: Auto-generate the queue's trigger relationship
     QUEUE_TRIGGERS = {
         'api-ios': 'ios-sim',
@@ -249,9 +247,6 @@ class StatusBubble(View):
             return False
         return True
 
-    def _should_show_bubble_for_queue(self, queue):
-        return queue in StatusBubble.ENABLED_QUEUES
-
     def _queue_position(self, patch, queue, parent_queue=None):
         # FIXME: Handle retried builds and cancelled build-requests as well.
         from_timestamp = timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)
@@ -290,9 +285,6 @@ class StatusBubble(View):
             return (None, show_submit_to_ews, failed_to_apply, show_retry)
 
         for queue in StatusBubble.ALL_QUEUES:
-            if not self._should_show_bubble_for_queue(queue):
-                continue
-
             bubble = self._build_bubble(patch, queue, hide_icons)
             if bubble:
                 show_submit_to_ews = False

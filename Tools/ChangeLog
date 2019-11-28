@@ -1,5 +1,17 @@
 2019-11-28  Aakash Jain  <aakash_jain@apple.com>
 
+        Removed ENABLED_QUEUES logic from ews-app
+        https://bugs.webkit.org/show_bug.cgi?id=204683
+
+        Unreviewed minor fix.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Removed ENABLED_QUEUES.
+        (StatusBubble._build_bubbles_for_patch):
+        (StatusBubble._should_show_bubble_for_queue): Deleted.
+
+2019-11-28  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Enable Windows queue on new EWS
         https://bugs.webkit.org/show_bug.cgi?id=204243
 
