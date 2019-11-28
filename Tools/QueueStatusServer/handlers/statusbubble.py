@@ -222,7 +222,7 @@ class StatusBubble(webapp.RequestHandler):
         template_values = {
             "bubbles": bubbles,
             "attachment_id": attachment_id,
-            "show_submit_to_ews": show_submit_to_ews,
+            "show_submit_to_ews": False,  # Disabled Submit to old EWS button for now.
             "show_failure_to_apply": show_failure_to_apply,
         }
         self.response.out.write(template.render("templates/statusbubble.html", template_values))

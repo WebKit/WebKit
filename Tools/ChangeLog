@@ -1,3 +1,14 @@
+2019-11-28  Aakash Jain  <aakash_jain@apple.com>
+
+        Old EWS is showing 'Submit to old EWS' button on every patch
+        https://bugs.webkit.org/show_bug.cgi?id=204691
+
+        Unreviewed minor fix.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble.get): Disabled Submit to old EWS button since almost all the queues
+        have been removed from old EWS.
+
 2019-11-28  Diego Pino Garcia  <dpino@igalia.com>
 
         test262-runner ends with SIGPIPE signal
