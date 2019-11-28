@@ -1,3 +1,9 @@
+2019-11-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Unreviewed test gardening.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt: These tests were passing accidentally.
+
 2019-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [AppleWin] run-webkit-tests is failing to find bin32/DumpRenderTree since r252834

@@ -1,7 +1,6 @@
 fast/block/abspos-child-container-changes-from-relative-to-static.html
 fast/block/assert-when-layout-root-is-not-cleared.html
 fast/block/block-with-inline-replaced-child.html
-fast/block/block-with-inline-replaced-children-in-inline-flows.html
 fast/block/collapse-anon-block-with-float-siblings-only.html
 fast/block/containing-block-changes.html
 fast/block/crash-when-anonymous-blocks-are-merged-with-simple-line-layout.html
@@ -674,14 +673,11 @@ fast/text/bidi-isolate-hang-with-neutral.html
 fast/text/bidi-isolate-nextlinebreak-failure.html
 fast/text/bidi-override-isolate.html
 fast/text/break-word.html
-fast/text/capitalize-empty-generated-string.html
-fast/text/capitalize-preserve-nbsp.html
 fast/text/cg-vs-atsui.html
 fast/text/chinese-font-name-aliases.html
 fast/text/chromium-linux-fallback-crash.html
 fast/text/click-ellipsis-assertion-failure.html
 fast/text/combining-character-sequence-fallback-crash.html
-fast/text/complex-initial-advance.html
 fast/text/complex-long-text-crash.html
 fast/text/complex-mixed-direction-line-breaking.html
 fast/text/complex-preferred-logical-widths.html
@@ -1175,7 +1171,6 @@ css2.1/t1601-c547-indent-00-b-a.html
 css2.1/t1602-c43-center-00-d-ag.html
 css2.1/t1604-c542-letter-sp-00-b-a.html
 css2.1/t1604-c542-letter-sp-01-b-a.html
-css2.1/t1605-c545-txttrans-00-b-ag.html
 css2.1/t010403-shand-border-00-c.html
 css2.1/t010403-shand-font-00-b.html
 css2.1/t010403-shand-font-01-b.html
@@ -1466,8 +1461,6 @@ css2.1/20110323/floats-wrap-top-below-bfc-002l.htm
 css2.1/20110323/floats-wrap-top-below-bfc-002r.htm
 css2.1/20110323/floats-wrap-top-below-bfc-003l.htm
 css2.1/20110323/floats-wrap-top-below-bfc-003r.htm
-css2.1/20110323/floats-wrap-top-below-inline-002l.htm
-css2.1/20110323/floats-wrap-top-below-inline-002r.htm
 css2.1/20110323/floats-zero-height-wrap-001.htm
 css2.1/20110323/floats-zero-height-wrap-002.htm
 css2.1/20110323/height-percentage-005.htm
@@ -1529,12 +1522,10 @@ css2.1/tables/table-anonymous-objects-121.xht
 css2.1/tables/table-anonymous-objects-122.xht
 css3/autoclose-braces-and-parentheses.html
 css3/calculated-word-spacing.html
-css3/css-variable-definition.html
 css3/font-feature-settings-calc.html
 css3/font-feature-settings-font-face-rendering.html
 css3/font-feature-settings-rendering.html
 css3/font-variant-font-face-override.html
-css3/style-zoomed-image.html
 css3/supports-crash.html
 css3/supports-not-selector.html
 css3/background/background-repeat-round-auto1.html
