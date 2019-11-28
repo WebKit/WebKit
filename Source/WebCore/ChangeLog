@@ -1,3 +1,19 @@
+2019-11-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Generate fewer InlineItems when new lines are not preserved
+        https://bugs.webkit.org/show_bug.cgi?id=204653
+        <rdar://problem/57510133>
+
+        Reviewed by Antti Koivisto.
+
+        This patch reduces the number of InlineItems by merging (non-preserved)new lines with neighboring whitespace characters.
+        [text\n\n text] -> [text][   ][text]
+
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::isWhitespaceCharacter):
+        (WebCore::Layout::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+
 2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Using char* instead of String for StyleProperties::getShorthandValue()

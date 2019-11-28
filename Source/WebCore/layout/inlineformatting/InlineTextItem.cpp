@@ -34,15 +34,15 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isWhitespaceCharacter(char character)
+static inline bool isWhitespaceCharacter(char character, bool preserveNewline)
 {
-    return character == ' ' || character == '\t';
+    return character == ' ' || character == '\t' || (character == '\n' && !preserveNewline);
 }
 
-static unsigned moveToNextNonWhitespacePosition(const StringView& textContent, unsigned startPosition)
+static unsigned moveToNextNonWhitespacePosition(const StringView& textContent, unsigned startPosition, bool preserveNewline)
 {
     auto nextNonWhiteSpacePosition = startPosition;
-    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition]))
+    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition], preserveNewline))
         ++nextNonWhiteSpacePosition;
     return nextNonWhiteSpacePosition - startPosition;
 }
@@ -104,16 +104,15 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             return character == '\n';
         };
 
-        if (isSegmentBreakCandidate(text[currentPosition])) {
-            // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.  
-            inlineContent.append(style.preserveNewline() ? makeUnique<InlineItem>(inlineBox, Type::ForcedLineBreak)
-                : InlineTextItem::createSegmentBreakItem(inlineBox, currentPosition));
+        // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
+        if (isSegmentBreakCandidate(text[currentPosition]) && style.preserveNewline()) {
+            inlineContent.append(makeUnique<InlineItem>(inlineBox, Type::ForcedLineBreak));
             ++currentPosition;
             continue;
         }
 
-        if (isWhitespaceCharacter(text[currentPosition])) {
-            auto length = moveToNextNonWhitespacePosition(text, currentPosition);
+        if (isWhitespaceCharacter(text[currentPosition], style.preserveNewline())) {
+            auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline());
             auto simpleSingleWhitespaceContent = textContext.canUseSimplifiedContentMeasuring && (length == 1 || style.collapseWhiteSpace());
             auto width = simpleSingleWhitespaceContent ? makeOptional(LayoutUnit { font.spaceWidth() }) : inlineItemWidth(currentPosition, length);
             inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length, width));
