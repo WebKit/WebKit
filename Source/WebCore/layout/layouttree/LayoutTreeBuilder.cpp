@@ -114,7 +114,7 @@ static String applyTextTransform(const String& text, const RenderStyle& style)
 
 static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& font, bool whitespaceIsCollapsed)
 {
-    if (!content.is8Bit() && !content.isAllASCII() && FontCascade::characterRangeCodePath(content.characters16(), content.length()) != FontCascade::Simple)
+    if (font.codePath(TextRun(content)) == FontCascade::Complex)
         return false;
 
     if (font.wordSpacing() || font.letterSpacing())

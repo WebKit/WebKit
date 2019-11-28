@@ -1,3 +1,14 @@
+2019-11-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] canUseSimplifiedTextMeasuring should check for FontCascade::Complex
+        https://bugs.webkit.org/show_bug.cgi?id=204663
+        <rdar://problem/57513642>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::canUseSimplifiedTextMeasuring):
+
 2019-11-28  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Convert GLVideoSink and WebKitWebSrc to WEBKIT_DEFINE_TYPE
