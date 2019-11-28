@@ -455,24 +455,30 @@ void LineBuilder::moveLogicalRight(LayoutUnit delta)
 void LineBuilder::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
-        return appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
-    if (inlineItem.isForcedLineBreak())
-        return appendLineBreak(inlineItem);
-    if (inlineItem.isContainerStart())
-        return appendInlineContainerStart(inlineItem, logicalWidth);
-    if (inlineItem.isContainerEnd())
-        return appendInlineContainerEnd(inlineItem, logicalWidth);
-    if (inlineItem.layoutBox().replaced())
-        return appendReplacedInlineBox(inlineItem, logicalWidth);
-    appendNonReplacedInlineBox(inlineItem, logicalWidth);
+        appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
+    else if (inlineItem.isForcedLineBreak())
+        appendLineBreak(inlineItem);
+    else if (inlineItem.isContainerStart())
+        appendInlineContainerStart(inlineItem, logicalWidth);
+    else if (inlineItem.isContainerEnd())
+        appendInlineContainerEnd(inlineItem, logicalWidth);
+    else if (inlineItem.layoutBox().replaced())
+        appendReplacedInlineBox(inlineItem, logicalWidth);
+    else if (inlineItem.isBox())
+        appendNonReplacedInlineBox(inlineItem, logicalWidth);
+    else
+        ASSERT_NOT_REACHED();
+
+    // Check if this freshly appended content makes the line visually non-empty.
+    ASSERT(!m_inlineItemRuns.isEmpty());
+    if (m_lineBox.isConsideredEmpty() && isVisuallyNonEmpty(*m_inlineItemRuns.last()))
+        m_lineBox.setIsConsideredNonEmpty();
 }
 
 void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, logicalRect));
     m_lineBox.expandHorizontally(logicalRect.width());
-    if (logicalRect.width())
-        m_lineBox.setIsConsideredNonEmpty();
 }
 
 void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -531,8 +537,6 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
         lineRun->setCollapsesToZeroAdvanceWidth();
-    else
-        m_lineBox.setIsConsideredNonEmpty();
 
     if (collapsedRun)
         lineRun->setIsCollapsed();
@@ -550,10 +554,7 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Layou
     auto horizontalMargin = boxGeometry.horizontalMargin();
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, Display::Rect { 0, contentLogicalWidth() + horizontalMargin.start, logicalWidth, { } }));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
-    m_lineBox.setIsConsideredNonEmpty();
     m_trimmableContent.clear();
-    if (!layoutBox.establishesFormattingContext() || !boxGeometry.isEmpty())
-        m_lineBox.setIsConsideredNonEmpty();
 }
 
 void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -561,12 +562,10 @@ void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUn
     ASSERT(inlineItem.layoutBox().isReplaced());
     // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
-    m_lineBox.setIsConsideredNonEmpty();
 }
 
 void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
 {
-    m_lineBox.setIsConsideredNonEmpty();
     m_inlineItemRuns.append(makeUnique<InlineItemRun>(inlineItem, Display::Rect { 0, contentLogicalWidth(), { }, { } }));
 }
 
@@ -675,6 +674,40 @@ LayoutUnit LineBuilder::runContentHeight(const Run& run) const
 
     // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
     return boxGeometry.marginBoxHeight();
+}
+
+bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
+{
+    if (run.isText())
+        return !run.isCollapsedToZeroAdvanceWidth();
+
+    // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered non-empty.
+    if (run.isContainerStart() || run.isContainerEnd()) {
+        if (!run.logicalRect().width())
+            return false;
+        // Margin does not make the container visually non-empty. Check if it has border or padding.
+        auto& boxGeometry = formattingContext().geometryForBox(run.layoutBox());
+        if (run.isContainerStart())
+            return boxGeometry.borderLeft() || (boxGeometry.paddingLeft() && boxGeometry.paddingLeft().value());
+        return boxGeometry.borderRight() || (boxGeometry.paddingRight() && boxGeometry.paddingRight().value());
+    }
+
+    if (run.isForcedLineBreak())
+        return true;
+
+    if (run.isBox()) {
+        if (!run.layoutBox().establishesFormattingContext())
+            return true;
+        ASSERT(run.layoutBox().isInlineBlockBox());
+        if (!run.logicalRect().width())
+            return false;
+        if (m_skipAlignment || formattingContext().geometryForBox(run.layoutBox()).height())
+            return true;
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void LineBuilder::TrimmableContent::append(InlineItemRun& inlineItemRun)

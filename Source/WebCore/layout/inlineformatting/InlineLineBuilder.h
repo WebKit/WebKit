@@ -145,6 +145,8 @@ private:
     bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
     void justifyRuns(RunList&) const;
 
+    bool isVisuallyNonEmpty(const InlineItemRun&) const;
+
     LayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const; 
 
