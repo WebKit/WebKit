@@ -1,3 +1,33 @@
+2019-11-28  Antti Koivisto  <antti@apple.com>
+
+        Cache integer font metrics for performance
+        https://bugs.webkit.org/show_bug.cgi?id=204668
+
+        Reviewed by Zalan Bujtas.
+
+        Line layout uses integer metrics and queries them a lot. Avoid repeated rounding.
+
+        This is >10% speedup in PerformanceTests/Layout/line-layout-simple.html with LFC.
+
+        * platform/graphics/FontMetrics.h:
+        (WebCore::FontMetrics::floatAscent const):
+        (WebCore::FontMetrics::setAscent):
+        (WebCore::FontMetrics::floatDescent const):
+        (WebCore::FontMetrics::setDescent):
+        (WebCore::FontMetrics::floatLineGap const):
+        (WebCore::FontMetrics::setLineGap):
+        (WebCore::FontMetrics::floatLineSpacing const):
+        (WebCore::FontMetrics::setLineSpacing):
+        (WebCore::FontMetrics::hasCapHeight const):
+        (WebCore::FontMetrics::floatCapHeight const):
+        (WebCore::FontMetrics::setCapHeight):
+        (WebCore::FontMetrics::ascent const):
+        (WebCore::FontMetrics::descent const):
+        (WebCore::FontMetrics::lineGap const):
+        (WebCore::FontMetrics::lineSpacing const):
+        (WebCore::FontMetrics::capHeight const):
+        (WebCore::FontMetrics::reset):
+
 2019-11-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust the line's is-visually-empty status after trimming the trailing whitespace content

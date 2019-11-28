@@ -35,52 +35,72 @@ public:
     float floatAscent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return m_ascent;
+            return m_floatAscent;
         return floatHeight() / 2;
     }
 
-    void setAscent(float ascent) { m_ascent = ascent; }
+    void setAscent(float ascent)
+    {
+        m_floatAscent = ascent;
+        m_intAscent = lroundf(ascent);
+    }
 
     float floatDescent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return m_descent;
+            return m_floatDescent;
         return floatHeight() / 2;
     }
 
-    void setDescent(float descent) { m_descent = descent; }
+    void setDescent(float descent)
+    {
+        m_floatDescent = descent;
+        m_intDescent = lroundf(descent);
+    }
 
     float floatHeight(FontBaseline baselineType = AlphabeticBaseline) const
     {
         return floatAscent(baselineType) + floatDescent(baselineType);
     }
 
-    float floatLineGap() const { return m_lineGap; }
-    void setLineGap(float lineGap) { m_lineGap = lineGap; }
+    float floatLineGap() const { return m_floatLineGap; }
+    void setLineGap(float lineGap)
+    {
+        m_floatLineGap = lineGap;
+        m_intLineGap = lroundf(lineGap);
+    }
 
-    float floatLineSpacing() const { return m_lineSpacing; }
-    void setLineSpacing(float lineSpacing) { m_lineSpacing = lineSpacing; }
+    float floatLineSpacing() const { return m_floatLineSpacing; }
+    void setLineSpacing(float lineSpacing)
+    {
+        m_floatLineSpacing = lineSpacing;
+        m_intLineSpacing = lroundf(lineSpacing);
+    }
 
     float xHeight() const { return m_xHeight; }
     void setXHeight(float xHeight) { m_xHeight = xHeight; }
     bool hasXHeight() const { return m_xHeight > 0; }
     
-    bool hasCapHeight() const { return m_capHeight > 0; }
-    float floatCapHeight() const { return m_capHeight; }
-    void setCapHeight(float capHeight) { m_capHeight = capHeight; }
+    bool hasCapHeight() const { return m_floatCapHeight > 0; }
+    float floatCapHeight() const { return m_floatCapHeight; }
+    void setCapHeight(float capHeight)
+    {
+        m_floatCapHeight = capHeight;
+        m_intCapHeight = lroundf(capHeight);
+    }
     
     // Integer variants of certain metrics, used for HTML rendering.
     int ascent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return lroundf(m_ascent);
+            return m_intAscent;
         return height() - height() / 2;
     }
     
     int descent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return lroundf(m_descent);
+            return m_intDescent;
         return height() / 2;
     }
 
@@ -89,10 +109,10 @@ public:
         return ascent(baselineType) + descent(baselineType);
     }
 
-    int lineGap() const { return lroundf(m_lineGap); }
-    int lineSpacing() const { return lroundf(m_lineSpacing); }
+    int lineGap() const { return m_intLineGap; }
+    int lineSpacing() const { return m_intLineSpacing; }
     
-    int capHeight() const { return lroundf(m_capHeight); }
+    int capHeight() const { return m_intCapHeight; }
     
     bool hasIdenticalAscentDescentAndLineGap(const FontMetrics& other) const
     {
@@ -114,23 +134,39 @@ private:
     void reset()
     {
         m_unitsPerEm = defaultUnitsPerEm;
-        m_ascent = 0;
-        m_descent = 0;
-        m_lineGap = 0;
-        m_lineSpacing = 0;
+        m_floatAscent = 0;
+        m_floatDescent = 0;
+        m_floatLineGap = 0;
+        m_floatLineSpacing = 0;
+        m_floatCapHeight = 0;
+        m_intAscent = 0;
+        m_intDescent = 0;
+        m_intLineGap = 0;
+        m_intLineSpacing = 0;
+        m_intCapHeight = 0;
         m_xHeight = 0;
-        m_capHeight = 0;
         m_zeroWidth = 0;
+        m_underlinePosition = 0;
+        m_underlineThickness = 0;
     }
 
     unsigned m_unitsPerEm { defaultUnitsPerEm };
-    float m_ascent { 0 };
-    float m_descent { 0 };
-    float m_lineGap { 0 };
-    float m_lineSpacing { 0 };
+
+    float m_floatAscent { 0 };
+    float m_floatDescent { 0 };
+    float m_floatLineGap { 0 };
+    float m_floatLineSpacing { 0 };
+    float m_floatCapHeight { 0 };
+
+    // Also cached as integers for performance.
+    int m_intAscent { 0 };
+    int m_intDescent { 0 };
+    int m_intLineGap { 0 };
+    int m_intLineSpacing { 0 };
+    int m_intCapHeight { 0 };
+
     float m_zeroWidth { 0 };
     float m_xHeight { 0 };
-    float m_capHeight { 0 };
     float m_underlinePosition { 0 };
     float m_underlineThickness { 0 };
 };
