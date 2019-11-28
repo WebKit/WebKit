@@ -1,5 +1,26 @@
 2019-11-28  Antti Koivisto  <antti@apple.com>
 
+        [LFC][IFC] Remove m_inlineRunToLineMap
+        https://bugs.webkit.org/show_bug.cgi?id=204688
+
+        Reviewed by Zalan Bujtas.
+
+        Add line index to Display::Run and use it to locate the line it is on.
+
+        This is 4-5% progression in PerformanceTests/Layout/line-layout-simple.html
+
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::lineIndex const):
+        (WebCore::Display::Run::Run):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lineBoxForRun const):
+        (WebCore::Layout::InlineFormattingState::addInlineRun):
+        (WebCore::Layout::InlineFormattingState::resetInlineRuns):
+
+2019-11-28  Antti Koivisto  <antti@apple.com>
+
         [LFC][IFC] Vector allocate InlineItemRuns
         https://bugs.webkit.org/show_bug.cgi?id=204680
 

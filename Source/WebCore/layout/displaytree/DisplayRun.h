@@ -67,7 +67,9 @@ struct Run {
         Optional<ExpansionContext> m_expansionContext;
     };
 
-    Run(const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
+
+    size_t lineIndex() const { return m_lineIndex; }
 
     const Rect& logicalRect() const { return m_logicalRect; }
 
@@ -99,14 +101,16 @@ struct Run {
 
 private:
     // FIXME: Find out the Display::Run <-> paint style setup.
+    const size_t m_lineIndex;
     const RenderStyle& m_style;
     CachedImage* m_cachedImage { nullptr };
     Rect m_logicalRect;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(const RenderStyle& style, const Rect& logicalRect, Optional<TextContext> textContext)
-    : m_style(style)
+inline Run::Run(size_t lineIndex, const RenderStyle& style, const Rect& logicalRect, Optional<TextContext> textContext)
+    : m_lineIndex(lineIndex)
+    , m_style(style)
     , m_logicalRect(logicalRect)
     , m_textContext(textContext)
 {

@@ -54,26 +54,23 @@ public:
 
     const InlineRuns& inlineRuns() const { return m_inlineRuns; }
     InlineRuns& inlineRuns() { return m_inlineRuns; }
-    void addInlineRun(std::unique_ptr<Display::Run>&&, const LineBox&);
+    void addInlineRun(std::unique_ptr<Display::Run>&&);
     void resetInlineRuns();
 
     const LineBoxes& lineBoxes() const { return m_lineBoxes; }
     LineBoxes& lineBoxes() { return m_lineBoxes; }
     void addLineBox(const LineBox& lineBox) { m_lineBoxes.append(makeUnique<LineBox>(lineBox)); }
 
-    const LineBox& lineBoxForRun(const Display::Run& inlineRun) const { return *m_inlineRunToLineMap.get(&inlineRun); }
+    const LineBox& lineBoxForRun(const Display::Run& inlineRun) const { return *m_lineBoxes[inlineRun.lineIndex()]; }
 
 private:
     InlineItems m_inlineItems;
     InlineRuns m_inlineRuns;
     LineBoxes m_lineBoxes;
-    // This is temporary until after we figure out the display run/line relationships.
-    HashMap<const Display::Run*, const LineBox*> m_inlineRunToLineMap;
 };
 
-inline void InlineFormattingState::addInlineRun(std::unique_ptr<Display::Run>&& displayRun, const LineBox& line)
+inline void InlineFormattingState::addInlineRun(std::unique_ptr<Display::Run>&& displayRun)
 {
-    m_inlineRunToLineMap.set(displayRun.get(), &line);
     m_inlineRuns.append(WTFMove(displayRun));
 }
 
@@ -82,7 +79,6 @@ inline void InlineFormattingState::resetInlineRuns()
     m_inlineRuns.clear();
     // Resetting the runs means no more line boxes either.
     m_lineBoxes.clear();
-    m_inlineRunToLineMap.clear();
 
 }
 

@@ -426,8 +426,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
     }
 
+    auto lineIndex = formattingState.lineBoxes().size();
     formattingState.addLineBox(lineContent.lineBox);
-    auto& currentLine = *formattingState.lineBoxes().last();
+
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -440,7 +441,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
         auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd() && !lineRun.isCollapsedToVisuallyEmpty();
         if (initiatesInlineRun)
-            formattingState.addInlineRun(makeUnique<Display::Run>(lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext()), currentLine);
+            formattingState.addInlineRun(makeUnique<Display::Run>(lineIndex, lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext()));
 
         if (lineRun.isForcedLineBreak()) {
             displayBox.setTopLeft(logicalRect.topLeft());
