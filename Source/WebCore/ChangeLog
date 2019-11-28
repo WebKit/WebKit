@@ -1,5 +1,19 @@
 2019-11-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Fix LineLayoutContext::shouldProcessUncommittedContent logic
+        https://bugs.webkit.org/show_bug.cgi?id=204656
+        <rdar://problem/57511221>
+
+        Reviewed by Antti Koivisto.
+
+        Move the [text][text] and [ ][text] checks further down because we adjust the "lastUncomittedContent" by skipping [container start][container end] items.  
+        (This was recently regressed at r252859)
+
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::shouldProcessUncommittedContent const):
+
+2019-11-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] canUseSimplifiedTextMeasuring should check for FontCascade::Complex
         https://bugs.webkit.org/show_bug.cgi?id=204663
         <rdar://problem/57513642>

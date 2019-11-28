@@ -254,10 +254,6 @@ bool LineLayoutContext::shouldProcessUncommittedContent(const InlineItem& inline
         // any content' ' -> whitespace is always a commit boundary.
         if (downcast<InlineTextItem>(inlineItem).isWhitespace())
             return true;
-        // texttext -> continuous content.
-        // ' 'text -> commit boundary.
-        if (lastUncomittedContent->isText())
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
         // <span>text -> the inline container start and the text content form an unbreakable continuous content.
         if (lastUncomittedContent->isContainerStart())
             return false;
@@ -279,6 +275,10 @@ bool LineLayoutContext::shouldProcessUncommittedContent(const InlineItem& inline
             if (lastUncomittedContent->isContainerEnd())
                 return false;
         }
+        // texttext -> continuous content.
+        // ' 'text -> commit boundary.
+        if (lastUncomittedContent->isText())
+            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
         // <img>text -> the inline box is on a commit boundary.
         if (lastUncomittedContent->isBox())
             return true;
