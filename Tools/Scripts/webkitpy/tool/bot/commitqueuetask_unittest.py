@@ -545,6 +545,14 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
 
         self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail1", "Fail2"])
 
+    def test_mildly_flaky_patch_with_some_tree_redness_and_flakiness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1"],
+            second_test_failures=["PreExistingFail1", "PreExistingFail2"],
+            clean_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail2"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail1"])
+
     def test_tree_more_red_than_patch(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
             first_test_failures=["Fail1", "Fail2", "Fail3"],

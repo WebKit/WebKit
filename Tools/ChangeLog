@@ -1,3 +1,12 @@
+2019-11-29  Aakash Jain  <aakash_jain@apple.com>
+
+        Add a unit-test to old EWS for scenario when there is flakiness with patch and also on clean tree
+        https://bugs.webkit.org/show_bug.cgi?id=204707
+
+        Unreviewed unit-test.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+
 2019-11-29  Paulo Matos  <pmatos@igalia.com>
 
         Move jsc-i386 from old to new EWS
