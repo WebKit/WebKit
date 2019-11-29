@@ -1,3 +1,17 @@
+2019-11-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Forward-filling animations should not schedule updates while filling
+        https://bugs.webkit.org/show_bug.cgi?id=204697
+
+        Reviewed by Dean Jackson.
+
+        Adding tests checking that we don't schedule animation updates while filling for accelerated and non-accelerated animations alike.
+
+        * webanimations/no-scheduling-while-filling-accelerated-expected.txt: Added.
+        * webanimations/no-scheduling-while-filling-accelerated.html: Added.
+        * webanimations/no-scheduling-while-filling-non-accelerated-expected.txt: Added.
+        * webanimations/no-scheduling-while-filling-non-accelerated.html: Added.
+
 2019-11-28  Simon Fraser  <simon.fraser@apple.com>
 
         Element jumps to wrong position after perspective change on ancestor

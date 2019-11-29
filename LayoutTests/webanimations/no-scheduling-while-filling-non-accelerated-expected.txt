@@ -1,0 +1,3 @@
+
+PASS There should not be any updates made to the timeline after a forward-filling animation completes. 
+
