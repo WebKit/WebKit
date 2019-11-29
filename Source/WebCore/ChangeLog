@@ -1,3 +1,47 @@
+2019-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move and rename LineLayoutContext::UncommittedContent
+        https://bugs.webkit.org/show_bug.cgi?id=204693
+        <rdar://problem/57523727>
+
+        Reviewed by Antti Koivisto.
+
+        LineBreaker::Content represents the amount of content we commit to line breaking at a time.
+        Normally it holds only one InlineItem e.g [text][ ][content] <- we submit 3 entries to line breaking, but
+        with (mostly)inline containers, it can hold a long list of InlineItems e.g
+        <span>1</span>2<span>3</span>4<span>5</span>6
+        [container start][1][container end][2][container start][3][container end][4][container start][5][container end][6]
+        <- this is one entry to submit.
+        This patch is also in preparation for fixing trailing trimmable content handling.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::Content::isAtContentBoundary):
+        (WebCore::Layout::LineBreaker::Content::append):
+        (WebCore::Layout::LineBreaker::Content::reset):
+        (WebCore::Layout::LineBreaker::Content::trim):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::Content::runs):
+        (WebCore::Layout::LineBreaker::Content::runs const):
+        (WebCore::Layout::LineBreaker::Content::isEmpty const):
+        (WebCore::Layout::LineBreaker::Content::size const):
+        (WebCore::Layout::LineBreaker::Content::width const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::add): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::reset): Deleted.
+        (WebCore::Layout::LineLayoutContext::shouldProcessUncommittedContent const): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::trim): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs const): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::isEmpty const): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::size const): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::width const): Deleted.
+
 2019-11-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r252937.

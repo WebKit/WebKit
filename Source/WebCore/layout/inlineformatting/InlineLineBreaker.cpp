@@ -48,12 +48,13 @@ static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInl
     return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const LineLayoutContext::RunList& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& content, LayoutUnit availableWidth, bool lineIsEmpty)
 {
-    if (logicalWidth <= availableWidth)
+    if (content.width() <= availableWidth)
         return { BreakingContext::ContentBreak::Keep, { } };
 
-    auto isTextContent = [](auto& runs) {
+    auto& runs = content.runs();
+    auto isTextContent = [&] {
         // <span>text</span> is considered a text run even with the [container start][container end] inline items.
         for (auto& run : runs) {
             auto& inlineItem = run.inlineItem;
@@ -64,7 +65,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         }
         return false;
     };
-    if (isTextContent(runs)) {
+    if (isTextContent()) {
         if (auto trailingPartialContent = wordBreakingBehavior(runs, availableWidth))
             return { BreakingContext::ContentBreak::Split, trailingPartialContent };
         // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
@@ -88,7 +89,7 @@ bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit av
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const LineLayoutContext::RunList& runs, LayoutUnit availableWidth) const
+Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, LayoutUnit availableWidth) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -121,7 +122,7 @@ Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::word
     return { };
 }
 
-Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const LineLayoutContext::Run overflowRun, LayoutUnit availableWidth) const
+Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto breakWords = overflowRun.inlineItem.style().wordBreak();
@@ -135,6 +136,107 @@ Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const
     }
     // FIXME: Find first soft wrap opportunity (e.g. hyphenation)
     return { };
+}
+
+bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)
+{
+    // https://drafts.csswg.org/css-text-3/#line-break-details
+    // Figure out if the new incoming content puts the uncommitted content on commit boundary.
+    // e.g. <span>continuous</span> <- uncomitted content ->
+    // [inline container start][text content][inline container end]
+    // An incoming <img> box would enable us to commit the "<span>continuous</span>" content
+    // while additional text content would not.
+    ASSERT(!inlineItem.isFloat() && !inlineItem.isForcedLineBreak());
+    if (content.isEmpty()) {
+        // Can't decide it yet.
+        return false;
+    }
+
+    auto* lastUncomittedContent = &content.runs().last().inlineItem;
+    if (inlineItem.isText()) {
+        // any content' ' -> whitespace is always a commit boundary.
+        if (downcast<InlineTextItem>(inlineItem).isWhitespace())
+            return true;
+        // <span>text -> the inline container start and the text content form an unbreakable continuous content.
+        if (lastUncomittedContent->isContainerStart())
+            return false;
+        // </span>text -> need to check what's before the </span>.
+        // text</span>text -> continuous content
+        // <img></span>text -> commit bounday
+        if (lastUncomittedContent->isContainerEnd()) {
+            auto& runs = content.runs();
+            // text</span><span></span></span>text -> check all the way back until we hit either a box or some text
+            for (auto i = content.size(); i--;) {
+                auto& previousInlineItem = runs[i].inlineItem;
+                if (previousInlineItem.isContainerStart() || previousInlineItem.isContainerEnd())
+                    continue;
+                ASSERT(previousInlineItem.isText() || previousInlineItem.isBox());
+                lastUncomittedContent = &previousInlineItem;
+                break;
+            }
+            // Did not find any content (e.g. <span></span>text)
+            if (lastUncomittedContent->isContainerEnd())
+                return false;
+        }
+        // texttext -> continuous content.
+        // ' 'text -> commit boundary.
+        if (lastUncomittedContent->isText())
+            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
+        // <img>text -> the inline box is on a commit boundary.
+        if (lastUncomittedContent->isBox())
+            return true;
+        ASSERT_NOT_REACHED();
+    }
+
+    if (inlineItem.isBox()) {
+        // <span><img> -> the inline container start and the content form an unbreakable continuous content.
+        if (lastUncomittedContent->isContainerStart())
+            return false;
+        // </span><img> -> ok to commit the </span>.
+        if (lastUncomittedContent->isContainerEnd())
+            return true;
+        // <img>text and <img><img> -> these combinations are ok to commit.
+        if (lastUncomittedContent->isText() || lastUncomittedContent->isBox())
+            return true;
+        ASSERT_NOT_REACHED();
+    }
+
+    if (inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
+        // <span><span> or </span><span> -> can't commit the previous content yet.
+        if (lastUncomittedContent->isContainerStart() || lastUncomittedContent->isContainerEnd())
+            return false;
+        // ' '<span> -> let's commit the whitespace
+        // text<span> -> but not yet the non-whitespace; we need to know what comes next (e.g. text<span>text or text<span><img>).
+        if (lastUncomittedContent->isText())
+            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
+        // <img><span> -> it's ok to commit the inline box content.
+        // <img></span> -> the inline box and the closing inline container form an unbreakable continuous content.
+        if (lastUncomittedContent->isBox())
+            return inlineItem.isContainerStart();
+        ASSERT_NOT_REACHED();
+    }
+
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void LineBreaker::Content::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+{
+    m_continousRuns.append({ inlineItem, logicalWidth });
+    m_width += logicalWidth;
+}
+
+void LineBreaker::Content::reset()
+{
+    m_continousRuns.clear();
+    m_width = 0;
+}
+
+void LineBreaker::Content::trim(unsigned newSize)
+{
+    for (auto i = m_continousRuns.size(); i--;)
+        m_width -= m_continousRuns[i].logicalWidth;
+    m_continousRuns.shrink(newSize);
 }
 
 }

@@ -67,18 +67,6 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
     return boxGeometry.width();
 }
 
-void LineLayoutContext::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
-{
-    m_uncommittedRuns.append({ inlineItem, logicalWidth });
-    m_width += logicalWidth;
-}
-
-void LineLayoutContext::UncommittedContent::reset()
-{
-    m_uncommittedRuns.clear();
-    m_width = 0;
-}
-
 LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -192,18 +180,19 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
         auto isEndOfLine = !m_uncommittedContent.isEmpty() ? processUncommittedContent(line) : IsEndOfLine::No;
         // When the uncommitted content fits(or the line is empty), add the line break to this line as well.
         if (isEndOfLine == IsEndOfLine::No) {
-            m_uncommittedContent.add(inlineItem, itemLogicalWidth);
+            m_uncommittedContent.append(inlineItem, itemLogicalWidth);
             commitPendingContent(line);
         }
         return IsEndOfLine::Yes;
     }
     //
     auto isEndOfLine = IsEndOfLine::No;
-    if (!m_uncommittedContent.isEmpty() && shouldProcessUncommittedContent(inlineItem))
+    // Can we commit the pending content already?
+    if (LineBreaker::Content::isAtContentBoundary(inlineItem, m_uncommittedContent))
         isEndOfLine = processUncommittedContent(line);
     // The current item might fit as well.
     if (isEndOfLine == IsEndOfLine::No)
-        m_uncommittedContent.add(inlineItem, itemLogicalWidth);
+        m_uncommittedContent.append(inlineItem, itemLogicalWidth);
     return isEndOfLine;
 }
 
@@ -211,7 +200,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
 {
     // Check if the pending content fits.
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent.runs(), m_uncommittedContent.width(), line.availableWidth(), lineIsConsideredEmpty);
+    auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent, line.availableWidth(), lineIsConsideredEmpty);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
         commitPendingContent(line);
@@ -229,7 +218,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         m_overflowTextLength = overflowInlineTextItem.length() - trailingContentLength;
         // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
         m_uncommittedContent.trim(overflowInlineTextItemIndex);
-        m_uncommittedContent.add(*m_trailingPartialTextItem, breakingContext.trailingPartialContent->logicalWidth);
+        m_uncommittedContent.append(*m_trailingPartialTextItem, breakingContext.trailingPartialContent->logicalWidth);
         commitPendingContent(line);
     } else if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Wrap)
         m_uncommittedContent.reset();
@@ -237,93 +226,6 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         ASSERT_NOT_REACHED();
     return breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
 }
-
-bool LineLayoutContext::shouldProcessUncommittedContent(const InlineItem& inlineItem) const
-{
-    // https://drafts.csswg.org/css-text-3/#line-break-details
-    // Figure out if the new incoming content puts the uncommitted content on commit boundary.
-    // e.g. <span>continuous</span> <- uncomitted content ->
-    // [inline container start][text content][inline container end]
-    // An incoming <img> box would enable us to commit the "<span>continuous</span>" content
-    // while additional text content would not.
-    ASSERT(!inlineItem.isFloat() && !inlineItem.isForcedLineBreak());
-    ASSERT(!m_uncommittedContent.isEmpty());
-
-    auto* lastUncomittedContent = &m_uncommittedContent.runs().last().inlineItem;
-    if (inlineItem.isText()) {
-        // any content' ' -> whitespace is always a commit boundary.
-        if (downcast<InlineTextItem>(inlineItem).isWhitespace())
-            return true;
-        // <span>text -> the inline container start and the text content form an unbreakable continuous content.
-        if (lastUncomittedContent->isContainerStart())
-            return false;
-        // </span>text -> need to check what's before the </span>.
-        // text</span>text -> continuous content
-        // <img></span>text -> commit bounday
-        if (lastUncomittedContent->isContainerEnd()) {
-            auto& runs = m_uncommittedContent.runs();
-            // text</span><span></span></span>text -> check all the way back until we hit either a box or some text
-            for (auto i = m_uncommittedContent.size(); i--;) {
-                auto& previousInlineItem = runs[i].inlineItem;
-                if (previousInlineItem.isContainerStart() || previousInlineItem.isContainerEnd())
-                    continue;
-                ASSERT(previousInlineItem.isText() || previousInlineItem.isBox());
-                lastUncomittedContent = &previousInlineItem;
-                break;
-            }
-            // Did not find any content (e.g. <span></span>text)
-            if (lastUncomittedContent->isContainerEnd())
-                return false;
-        }
-        // texttext -> continuous content.
-        // ' 'text -> commit boundary.
-        if (lastUncomittedContent->isText())
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
-        // <img>text -> the inline box is on a commit boundary.
-        if (lastUncomittedContent->isBox())
-            return true;
-        ASSERT_NOT_REACHED();
-    }
-
-    if (inlineItem.isBox()) {
-        // <span><img> -> the inline container start and the content form an unbreakable continuous content.
-        if (lastUncomittedContent->isContainerStart())
-            return false;
-        // </span><img> -> ok to commit the </span>.
-        if (lastUncomittedContent->isContainerEnd())
-            return true;
-        // <img>text and <img><img> -> these combinations are ok to commit.
-        if (lastUncomittedContent->isText() || lastUncomittedContent->isBox())
-            return true;
-        ASSERT_NOT_REACHED();
-    }
-
-    if (inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
-        // <span><span> or </span><span> -> can't commit the previous content yet.
-        if (lastUncomittedContent->isContainerStart() || lastUncomittedContent->isContainerEnd())
-            return false;
-        // ' '<span> -> let's commit the whitespace
-        // text<span> -> but not yet the non-whitespace; we need to know what comes next (e.g. text<span>text or text<span><img>).
-        if (lastUncomittedContent->isText())
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
-        // <img><span> -> it's ok to commit the inline box content.
-        // <img></span> -> the inline box and the closing inline container form an unbreakable continuous content.
-        if (lastUncomittedContent->isBox())
-            return inlineItem.isContainerStart();
-        ASSERT_NOT_REACHED();
-    }
-
-    ASSERT_NOT_REACHED();
-    return true;
-}
-
-void LineLayoutContext::UncommittedContent::trim(unsigned newSize)
-{
-    for (auto i = m_uncommittedRuns.size(); i--;)
-        m_width -= m_uncommittedRuns[i].logicalWidth;
-    m_uncommittedRuns.shrink(newSize);
-}
-
 
 }
 }

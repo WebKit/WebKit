@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineLineBreaker.h"
 #include "InlineLineBuilder.h"
 
 namespace WebCore {
@@ -49,13 +50,6 @@ public:
     };
     LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
-    struct Run {
-        const InlineItem& inlineItem;
-        LayoutUnit logicalWidth;
-    };
-
-    using RunList = Vector<Run, 30>;
-
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
@@ -64,26 +58,10 @@ private:
     LineContent close(LineBuilder&, unsigned leadingInlineItemIndex);
     bool shouldProcessUncommittedContent(const InlineItem&) const;
     IsEndOfLine processUncommittedContent(LineBuilder&);
-    
-    struct UncommittedContent {
-        void add(const InlineItem&, LayoutUnit logicalWidth);
-        void reset();
-        void trim(unsigned newSize);
-
-        RunList& runs() { return m_uncommittedRuns; }
-        const RunList& runs() const { return m_uncommittedRuns; }
-        bool isEmpty() const { return m_uncommittedRuns.isEmpty(); }
-        unsigned size() const { return m_uncommittedRuns.size(); }
-        LayoutUnit width() const { return m_width; }
-
-    private:
-        RunList m_uncommittedRuns;
-        LayoutUnit m_width;
-    };
 
     const InlineFormattingContext& m_inlineFormattingContext;
     const InlineItems& m_inlineItems;
-    UncommittedContent m_uncommittedContent;
+    LineBreaker::Content m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
     std::unique_ptr<InlineTextItem> m_leadingPartialTextItem;

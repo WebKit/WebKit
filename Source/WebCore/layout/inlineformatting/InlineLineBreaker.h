@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutUnit.h"
-#include "LineLayoutContext.h"
 
 namespace WebCore {
 namespace Layout {
@@ -48,18 +47,52 @@ public:
         };
         Optional<TrailingPartialContent> trailingPartialContent;
     };
-    BreakingContext breakingContextForInlineContent(const LineLayoutContext::RunList&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+
+    // This struct represents the amount of content committed to line breaking at a time e.g.
+    // text content <span>span1</span>between<span>span2</span>
+    // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
+    // -> content chunks ->
+    // [text]
+    // [ ]
+    // [content]
+    // [container start][span1][container end][between][container start][span2][container end]
+    // see https://drafts.csswg.org/css-text-3/#line-break-details
+    struct Content {
+        void append(const InlineItem&, LayoutUnit logicalWidth);
+        void reset();
+        void trim(unsigned newSize);
+
+        static bool isAtContentBoundary(const InlineItem&, const Content&);
+
+        struct Run {
+            const InlineItem& inlineItem;
+            LayoutUnit logicalWidth;
+        };
+        using RunList = Vector<Run, 30>;
+
+        RunList& runs() { return m_continousRuns; }
+        const RunList& runs() const { return m_continousRuns; }
+        bool isEmpty() const { return m_continousRuns.isEmpty(); }
+        unsigned size() const { return m_continousRuns.size(); }
+        LayoutUnit width() const { return m_width; }
+
+    private:
+        RunList m_continousRuns;
+        LayoutUnit m_width;
+    };
+
+    BreakingContext breakingContextForInlineContent(const Content&, LayoutUnit availableWidth, bool lineIsEmpty);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
 
-    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const LineLayoutContext::RunList&, LayoutUnit availableWidth) const;
+    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const Content::RunList&, LayoutUnit availableWidth) const;
 
     struct SplitLengthAndWidth {
         unsigned length { 0 };
         LayoutUnit leftLogicalWidth;
     };
-    Optional<SplitLengthAndWidth> tryBreakingTextRun(const LineLayoutContext::Run overflowRun, LayoutUnit availableWidth) const;
+    Optional<SplitLengthAndWidth> tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const;
 };
 
 }
