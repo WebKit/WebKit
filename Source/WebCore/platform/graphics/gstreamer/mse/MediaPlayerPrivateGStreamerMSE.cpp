@@ -132,14 +132,13 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& url, MediaSourcePrivateC
 
 void MediaPlayerPrivateGStreamerMSE::pause()
 {
-    // FIXME: Should not need direct access to this member. This override is probably not needed.
-    m_isPaused = true;
+    m_paused = true;
     MediaPlayerPrivateGStreamer::pause();
 }
 
 MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 {
-    if (UNLIKELY(!m_pipeline || m_didErrorOccur))
+    if (UNLIKELY(!m_pipeline || m_errorOccured))
         return MediaTime();
 
     return m_mediaTimeDuration;
@@ -147,7 +146,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 
 void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
 {
-    if (UNLIKELY(!m_pipeline || m_didErrorOccur))
+    if (UNLIKELY(!m_pipeline || m_errorOccured))
         return;
 
     GST_INFO("[Seek] seek attempt to %s secs", toString(time).utf8().data());
@@ -155,15 +154,15 @@ void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
     // Avoid useless seeking.
     MediaTime current = currentMediaTime();
     if (time == current) {
-        if (!m_isSeeking)
+        if (!m_seeking)
             timeChanged();
         return;
     }
 
-    if (m_isLiveStream)
+    if (isLiveStream())
         return;
 
-    if (m_isSeeking && m_isSeekPending) {
+    if (m_seeking && m_seekIsPending) {
         m_seekTime = time;
         return;
     }
@@ -180,7 +179,7 @@ void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
     }
 
     m_isEndReached = false;
-    GST_DEBUG("m_isSeeking=%s, m_seekTime=%s", boolForPrinting(m_isSeeking), toString(m_seekTime).utf8().data());
+    GST_DEBUG("m_seeking=%s, m_seekTime=%s", boolForPrinting(m_seeking), toString(m_seekTime).utf8().data());
 }
 
 void MediaPlayerPrivateGStreamerMSE::configurePlaySink()
@@ -233,7 +232,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
     GstSeekFlags seekType = static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE);
 
     // Always move to seeking state to report correct 'currentTime' while pending for actual seek to complete.
-    m_isSeeking = true;
+    m_seeking = true;
 
     // Check if playback pipeline is ready for seek.
     GstState state, newState;
@@ -241,7 +240,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
     if (getStateResult == GST_STATE_CHANGE_FAILURE || getStateResult == GST_STATE_CHANGE_NO_PREROLL) {
         GST_DEBUG("[Seek] cannot seek, current state change is %s", gst_element_state_change_return_get_name(getStateResult));
         webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
-        m_isSeeking = false;
+        m_seeking = false;
         return false;
     }
     if ((getStateResult == GST_STATE_CHANGE_ASYNC
@@ -263,19 +262,19 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
 
         GST_DEBUG("[Seek] Delaying the seek: %s", reason.data());
 
-        m_isSeekPending = true;
+        m_seekIsPending = true;
 
         if (m_isEndReached) {
             GST_DEBUG("[Seek] reset pipeline");
-            m_shouldResetPipeline = true;
-            m_isSeeking = false;
+            m_resetPipeline = true;
+            m_seeking = false;
             if (!changePipelineState(GST_STATE_PAUSED))
                 loadingFailed(MediaPlayer::Empty);
             else
-                m_isSeeking = true;
+                m_seeking = true;
         }
 
-        return m_isSeeking;
+        return m_seeking;
     }
 
     // Stop accepting new samples until actual seek is finished.
@@ -301,7 +300,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         if (setStateResult == GST_STATE_CHANGE_FAILURE) {
             GST_DEBUG("[Seek] Cannot seek, failed to pause playback pipeline.");
             webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
-            m_isSeeking = false;
+            m_seeking = false;
             return false;
         }
         m_readyState = MediaPlayer::HaveMetadata;
@@ -315,7 +314,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         m_mediaSource->monitorSourceBuffers();
         ASSERT(m_mseSeekCompleted);
         // Note: seekCompleted will recursively call us.
-        return m_isSeeking;
+        return m_seeking;
     }
 
     GST_DEBUG("We can seek now");
@@ -338,7 +337,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
     m_gstSeekCompleted = false;
     if (!gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekType, GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime))) {
         webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
-        m_isSeeking = false;
+        m_seeking = false;
         m_gstSeekCompleted = true;
         GST_DEBUG("doSeek(): gst_element_seek() failed, returning false");
         return false;
@@ -351,7 +350,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
 
 void MediaPlayerPrivateGStreamerMSE::maybeFinishSeek()
 {
-    if (!m_isSeeking || !m_mseSeekCompleted || !m_gstSeekCompleted)
+    if (!m_seeking || !m_mseSeekCompleted || !m_gstSeekCompleted)
         return;
 
     GstState state, newState;
@@ -363,9 +362,9 @@ void MediaPlayerPrivateGStreamerMSE::maybeFinishSeek()
         return;
     }
 
-    if (m_isSeekPending) {
+    if (m_seekIsPending) {
         GST_DEBUG("[Seek] Committing pending seek to %s", toString(m_seekTime).utf8().data());
-        m_isSeekPending = false;
+        m_seekIsPending = false;
         if (!doSeek()) {
             GST_WARNING("[Seek] Seeking to %s failed", toString(m_seekTime).utf8().data());
             m_cachedPosition = MediaTime::invalidTime();
@@ -376,7 +375,7 @@ void MediaPlayerPrivateGStreamerMSE::maybeFinishSeek()
     GST_DEBUG("[Seek] Seeked to %s", toString(m_seekTime).utf8().data());
 
     webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
-    m_isSeeking = false;
+    m_seeking = false;
     m_cachedPosition = MediaTime::invalidTime();
     // The pipeline can still have a pending state. In this case a position query will fail.
     // Right now we can use m_seekTime as a fallback.
@@ -391,7 +390,7 @@ void MediaPlayerPrivateGStreamerMSE::updatePlaybackRate()
 
 bool MediaPlayerPrivateGStreamerMSE::seeking() const
 {
-    return m_isSeeking;
+    return m_seeking;
 }
 
 // FIXME: MediaPlayerPrivateGStreamer manages the ReadyState on its own. We shouldn't change it manually.
@@ -429,7 +428,7 @@ void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState ready
 
 void MediaPlayerPrivateGStreamerMSE::waitForSeekCompleted()
 {
-    if (!m_isSeeking)
+    if (!m_seeking)
         return;
 
     GST_DEBUG("Waiting for MSE seek completed");
@@ -480,7 +479,7 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 
 void MediaPlayerPrivateGStreamerMSE::updateStates()
 {
-    if (UNLIKELY(!m_pipeline || m_didErrorOccur))
+    if (UNLIKELY(!m_pipeline || m_errorOccured))
         return;
 
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
@@ -499,8 +498,8 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         if (m_isEndReached && state == GST_STATE_READY)
             break;
 
-        m_shouldResetPipeline = (state <= GST_STATE_READY);
-        if (m_shouldResetPipeline)
+        m_resetPipeline = (state <= GST_STATE_READY);
+        if (m_resetPipeline)
             m_mediaTimeDuration = MediaTime::zeroTime();
 
         // Update ready and network states.
@@ -539,25 +538,25 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
 
         // Sync states where needed.
         if (state == GST_STATE_PAUSED) {
-            if (!m_areVolumeAndMuteInitialized) {
+            if (!m_volumeAndMuteInitialized) {
                 notifyPlayerOfVolumeChange();
                 notifyPlayerOfMute();
-                m_areVolumeAndMuteInitialized = true;
+                m_volumeAndMuteInitialized = true;
             }
 
-            if (!seeking() && !m_isPaused && m_playbackRate) {
+            if (!seeking() && !m_paused && m_playbackRate) {
                 GST_DEBUG("[Buffering] Restarting playback.");
                 changePipelineState(GST_STATE_PLAYING);
             }
         } else if (state == GST_STATE_PLAYING) {
-            m_isPaused = false;
+            m_paused = false;
 
             if (!m_playbackRate) {
                 GST_DEBUG("[Buffering] Pausing stream for buffering.");
                 changePipelineState(GST_STATE_PAUSED);
             }
         } else
-            m_isPaused = true;
+            m_paused = true;
 
         if (m_requestedState == GST_STATE_PAUSED && state == GST_STATE_PAUSED) {
             shouldUpdatePlaybackState = true;
@@ -578,7 +577,7 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         GST_DEBUG("No preroll: State: %s, pending: %s", gst_element_state_get_name(state), gst_element_state_get_name(pending));
 
         // Live pipelines go in PAUSED without prerolling.
-        m_isLiveStream = true;
+        m_isStreaming = true;
 
         if (state == GST_STATE_READY) {
             m_readyState = MediaPlayer::HaveNothing;
@@ -586,11 +585,11 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         } else if (state == GST_STATE_PAUSED) {
             m_readyState = MediaPlayer::HaveEnoughData;
             GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-            m_isPaused = true;
+            m_paused = true;
         } else if (state == GST_STATE_PLAYING)
-            m_isPaused = false;
+            m_paused = false;
 
-        if (!m_isPaused && m_playbackRate)
+        if (!m_paused && m_playbackRate)
             changePipelineState(GST_STATE_PLAYING);
 
         m_networkState = MediaPlayer::Loading;
@@ -621,10 +620,10 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
 }
 void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
 {
-    if (UNLIKELY(!m_pipeline || m_didErrorOccur))
+    if (UNLIKELY(!m_pipeline || m_errorOccured))
         return;
 
-    if (m_isSeeking)
+    if (m_seeking)
         maybeFinishSeek();
     else
         updateStates();
@@ -775,7 +774,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::currentMediaTime() const
 
 MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
 {
-    if (UNLIKELY(m_didErrorOccur))
+    if (UNLIKELY(m_errorOccured))
         return MediaTime::zeroTime();
 
     GST_DEBUG("maxMediaTimeSeekable");
