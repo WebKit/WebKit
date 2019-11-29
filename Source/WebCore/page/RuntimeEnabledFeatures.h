@@ -414,7 +414,7 @@ private:
     bool m_isWebShareEnabled { false };
     bool m_inputEventsEnabled { true };
     bool m_areWebAnimationsEnabled { true };
-    bool m_isWebAnimationsCSSIntegrationEnabled { false };
+    bool m_isWebAnimationsCSSIntegrationEnabled { true };
     bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };
