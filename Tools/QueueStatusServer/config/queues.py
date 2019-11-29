@@ -32,7 +32,6 @@ from datetime import timedelta
 # Eventually the list of queues may be stored in the data store.
 all_queue_names = [
     "commit-queue",
-    "jsc-i386-ews",
 ]
 
 # If the patch is still active after this much time, then a bot must have frozen or rebooted,
