@@ -262,7 +262,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
                 auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
                 // Spec makes us generate at least one line -even if it is empty.
                 ASSERT(!formattingState.lineBoxes().isEmpty());
-                auto inlineBlockBaselineOffset = formattingState.lineBoxes().last()->baselineOffset();
+                auto inlineBlockBaselineOffset = formattingState.lineBoxes().last().baselineOffset();
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
                 //   inline-block
                 //              \
@@ -595,7 +595,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
                 auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
                 // Spec makes us generate at least one line -even if it is empty.
                 ASSERT(!formattingState.lineBoxes().isEmpty());
-                auto& lastLineBox = *formattingState.lineBoxes().last();
+                auto& lastLineBox = formattingState.lineBoxes().last();
                 auto inlineBlockBaseline = lastLineBox.baseline();
                 auto beforeHeight = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
 

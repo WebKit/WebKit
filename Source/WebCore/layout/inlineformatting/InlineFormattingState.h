@@ -37,10 +37,8 @@
 namespace WebCore {
 namespace Layout {
 
-// Temp
 using InlineItems = Vector<std::unique_ptr<InlineItem>, 30>;
-using InlineRuns = Vector<std::unique_ptr<Display::Run>, 10>;
-using LineBoxes = Vector<std::unique_ptr<LineBox>, 5>;
+
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
@@ -52,31 +50,37 @@ public:
     const InlineItems& inlineItems() const { return m_inlineItems; }
     void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
-    const InlineRuns& inlineRuns() const { return m_inlineRuns; }
-    InlineRuns& inlineRuns() { return m_inlineRuns; }
-    void addInlineRun(std::unique_ptr<Display::Run>&&);
-    void resetInlineRuns();
+    using DisplayRuns = Vector<Display::Run, 10>;
+    using LineBoxes = Vector<LineBox, 5>;
+
+    const DisplayRuns& displayRuns() const { return m_displayRuns; }
+    DisplayRuns& displayRuns() { return m_displayRuns; }
+    void addDisplayRun(Display::Run&&);
+    void resetDisplayRuns();
 
     const LineBoxes& lineBoxes() const { return m_lineBoxes; }
     LineBoxes& lineBoxes() { return m_lineBoxes; }
-    void addLineBox(const LineBox& lineBox) { m_lineBoxes.append(makeUnique<LineBox>(lineBox)); }
+    void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(lineBox); }
 
-    const LineBox& lineBoxForRun(const Display::Run& inlineRun) const { return *m_lineBoxes[inlineRun.lineIndex()]; }
+    const LineBox& lineBoxForRun(const Display::Run& displayRun) const { return m_lineBoxes[displayRun.lineIndex()]; }
 
 private:
+    // Cacheable input to line layout.
     InlineItems m_inlineItems;
-    InlineRuns m_inlineRuns;
+
+    // Line layout results
+    DisplayRuns m_displayRuns;
     LineBoxes m_lineBoxes;
 };
 
-inline void InlineFormattingState::addInlineRun(std::unique_ptr<Display::Run>&& displayRun)
+inline void InlineFormattingState::addDisplayRun(Display::Run&& displayRun)
 {
-    m_inlineRuns.append(WTFMove(displayRun));
+    m_displayRuns.append(WTFMove(displayRun));
 }
 
-inline void InlineFormattingState::resetInlineRuns()
+inline void InlineFormattingState::resetDisplayRuns()
 {
-    m_inlineRuns.clear();
+    m_displayRuns.clear();
     // Resetting the runs means no more line boxes either.
     m_lineBoxes.clear();
 

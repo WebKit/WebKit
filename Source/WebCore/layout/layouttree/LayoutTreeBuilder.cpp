@@ -311,7 +311,7 @@ void TreeBuilder::buildSubTree(const RenderElement& rootRenderer, Container& roo
 static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const Container& inlineFormattingRoot, unsigned depth)
 {
     auto& inlineFormattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(inlineFormattingRoot));
-    auto& inlineRuns = inlineFormattingState.inlineRuns();
+    auto& displayRuns = inlineFormattingState.displayRuns();
     auto& lineBoxes = inlineFormattingState.lineBoxes();
 
     unsigned printedCharacters = 0;
@@ -321,21 +321,21 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
 
     stream << "lines are -> ";
     for (auto& lineBox : lineBoxes)
-        stream << "[" << lineBox->logicalLeft() << "," << lineBox->logicalTop() << " " << lineBox->logicalWidth() << "x" << lineBox->logicalHeight() << "] ";
+        stream << "[" << lineBox.logicalLeft() << "," << lineBox.logicalTop() << " " << lineBox.logicalWidth() << "x" << lineBox.logicalHeight() << "] ";
     stream.nextLine();
 
-    for (auto& inlineRun : inlineRuns) {
+    for (auto& displayRun : displayRuns) {
         unsigned printedCharacters = 0;
         while (++printedCharacters <= depth * 2)
             stream << " ";
         stream << "  ";
-        if (inlineRun->textContext())
+        if (displayRun.textContext())
             stream << "inline text box";
         else
             stream << "inline box";
-        stream << " at (" << inlineRun->logicalLeft() << "," << inlineRun->logicalTop() << ") size " << inlineRun->logicalWidth() << "x" << inlineRun->logicalHeight();
-        if (inlineRun->textContext())
-            stream << " run(" << inlineRun->textContext()->start() << ", " << inlineRun->textContext()->end() << ")";
+        stream << " at (" << displayRun.logicalLeft() << "," << displayRun.logicalTop() << ") size " << displayRun.logicalWidth() << "x" << displayRun.logicalHeight();
+        if (displayRun.textContext())
+            stream << " run(" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
         stream.nextLine();
     }
 }

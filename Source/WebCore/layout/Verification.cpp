@@ -77,10 +77,10 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
 
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
     ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    auto& inlineRunList = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
+    auto& displayRuns = downcast<InlineFormattingState>(inlineFormattingState).displayRuns();
 
-    if (inlineRunList.size() != lineLayoutData->runCount()) {
-        stream << "Mismatching number of runs: simple runs(" << lineLayoutData->runCount() << ") inline runs(" << inlineRunList.size() << ")";
+    if (displayRuns.size() != lineLayoutData->runCount()) {
+        stream << "Mismatching number of runs: simple runs(" << lineLayoutData->runCount() << ") inline runs(" << displayRuns.size() << ")";
         stream.nextLine();
         return true;
     }
@@ -88,23 +88,23 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
     auto mismatched = false;
     for (unsigned i = 0; i < lineLayoutData->runCount(); ++i) {
         auto& simpleRun = lineLayoutData->runAt(i);
-        auto& inlineRun = *inlineRunList[i];
+        auto& displayRun = displayRuns[i];
 
-        auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, inlineRun.logicalRight());
-        if (matchingRuns && inlineRun.textContext()) {
-            matchingRuns = simpleRun.start == inlineRun.textContext()->start() && simpleRun.end == inlineRun.textContext()->end();
+        auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, displayRun.logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, displayRun.logicalRight());
+        if (matchingRuns && displayRun.textContext()) {
+            matchingRuns = simpleRun.start == displayRun.textContext()->start() && simpleRun.end == displayRun.textContext()->end();
             // SLL handles strings in a more concatenated format <div>foo<br>bar</div> -> foo -> 0,3 bar -> 3,6 vs. 0,3 and 0,3
             if (!matchingRuns)
-                matchingRuns = (simpleRun.end - simpleRun.start) == (inlineRun.textContext()->end() - inlineRun.textContext()->start()); 
+                matchingRuns = (simpleRun.end - simpleRun.start) == (displayRun.textContext()->end() - displayRun.textContext()->start());
         }
         if (matchingRuns)
             continue;
 
         stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ")";
         stream << " inline run";
-        if (inlineRun.textContext())
-            stream << " (" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->end() << ")";
-        stream << " (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << ") (" << inlineRun.logicalWidth() << "x" << inlineRun.logicalHeight() << ")";
+        if (displayRun.textContext())
+            stream << " (" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
+        stream << " (" << displayRun.logicalLeft() << ", " << displayRun.logicalTop() << ") (" << displayRun.logicalWidth() << "x" << displayRun.logicalHeight() << ")";
         stream.nextLine();
         mismatched = true;
     }
@@ -158,7 +158,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
 {
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
     ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    auto& inlineRunList = downcast<InlineFormattingState>(inlineFormattingState).inlineRuns();
+    auto& displayRuns = downcast<InlineFormattingState>(inlineFormattingState).displayRuns();
 
     // Collect inlineboxes.
     Vector<WebCore::InlineBox*> inlineBoxes;
@@ -167,16 +167,16 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     auto mismatched = false;
     unsigned runIndex = 0;
 
-    if (inlineBoxes.size() != inlineRunList.size()) {
-        stream << "Warning: mismatching number of runs: inlineboxes(" << inlineBoxes.size() << ") vs. inline runs(" << inlineRunList.size() << ")";
+    if (inlineBoxes.size() != displayRuns.size()) {
+        stream << "Warning: mismatching number of runs: inlineboxes(" << inlineBoxes.size() << ") vs. inline runs(" << displayRuns.size() << ")";
         stream.nextLine();
     }
 
-    for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < inlineRunList.size(); ++inlineBoxIndex) {
-        auto& inlineRun = *inlineRunList[runIndex];
+    for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < displayRuns.size(); ++inlineBoxIndex) {
+        auto& displayRun = displayRuns[runIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
         auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
-        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(inlineRun, *inlineTextBox) : matchingRuns = checkForMatchingNonTextRuns(inlineRun, *inlineBox);
+        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(displayRun, *inlineTextBox) : matchingRuns = checkForMatchingNonTextRuns(displayRun, *inlineBox);
 
         if (!matchingRuns) {
             
@@ -194,9 +194,9 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
             stream << " inline run";
-            if (inlineRun.textContext())
-                stream << " (" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->end() << ")";
-            stream << " (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << ") (" << inlineRun.logicalWidth() << "x" << inlineRun.logicalHeight() << ")";
+            if (displayRun.textContext())
+                stream << " (" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
+            stream << " (" << displayRun.logicalLeft() << ", " << displayRun.logicalTop() << ") (" << displayRun.logicalWidth() << "x" << displayRun.logicalHeight() << ")";
             stream.nextLine();
             mismatched = true;
         }

@@ -79,7 +79,7 @@ void RenderBlockFlowLineLayout::layout()
     layoutContext.layout(m_flow.contentSize(), invalidationState);
 
     auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootContainer)).lineBoxes();
-    auto height = lineBoxes.last()->logicalBottom();
+    auto height = lineBoxes.last().logicalBottom();
 
     auto& displayBox = m_layoutState->displayBoxForLayoutBox(rootContainer);
     displayBox.setContentBoxHeight(height);

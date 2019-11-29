@@ -112,26 +112,26 @@ static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisp
 
 static void paintInlineContent(GraphicsContext& context, const Box& rootAbsoluteDisplayBox, const Layout::InlineFormattingState& formattingState)
 {
-    auto& inlineRuns = formattingState.inlineRuns();
-    if (inlineRuns.isEmpty())
+    auto& displayRuns = formattingState.displayRuns();
+    if (displayRuns.isEmpty())
         return;
 
-    for (auto& run : inlineRuns) {
-        if (auto& textContext = run->textContext()) {
-            auto& style = run->style();
+    for (auto& run : displayRuns) {
+        if (auto& textContext = run.textContext()) {
+            auto& style = run.style();
             context.setStrokeColor(style.color());
             context.setFillColor(style.color());
 
-            auto logicalLeft = rootAbsoluteDisplayBox.left() + run->logicalLeft();
+            auto logicalLeft = rootAbsoluteDisplayBox.left() + run.logicalLeft();
             // FIXME: Add non-baseline align painting
-            auto& lineBox = formattingState.lineBoxForRun(*run);
+            auto& lineBox = formattingState.lineBoxForRun(run);
             auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset();
             if (auto expansionContext = textContext->expansion())
                 context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft, expansionContext->horizontalExpansion, expansionContext->behavior }, { logicalLeft, baselineOffset });
             else
                 context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft }, { logicalLeft, baselineOffset });
-        } else if (auto* cachedImage = run->image()) {
-            auto runAbsoluteRect = FloatRect { rootAbsoluteDisplayBox.left() + run->logicalLeft(), rootAbsoluteDisplayBox.top() + run->logicalTop(), run->logicalWidth(), run->logicalHeight() };
+        } else if (auto* cachedImage = run.image()) {
+            auto runAbsoluteRect = FloatRect { rootAbsoluteDisplayBox.left() + run.logicalLeft(), rootAbsoluteDisplayBox.top() + run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
             context.drawImage(*cachedImage->image(), runAbsoluteRect);
         }
     }
