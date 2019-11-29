@@ -122,7 +122,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
             : "d0", "d1", "memory"
         );
 #else
-#error "Unknown architecture."
+    slowPathForwardMemcpy();
 #endif // CPU(X86_64)
     } else {
         RELEASE_ASSERT(isX86_64());
@@ -238,7 +238,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
             : "d0", "d1", "memory"
         );
 #else
-#error "Unknown architecture."
+        slowPathBackwardsMemmove();
 #endif // CPU(X86_64)
     }
 #else
@@ -296,7 +296,9 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
         : "d0", "d1", "memory"
     );
 #else
-#error "Unknown architecture."
+    size_t count = bytes / 8;
+    for (size_t i = 0; i < count; ++i)
+        bitwise_cast<volatile uint64_t*>(dst)[i] = 0;
 #endif // CPU(X86_64)
 #else
     size_t count = bytes / 8;

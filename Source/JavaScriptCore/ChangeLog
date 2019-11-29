@@ -1,3 +1,19 @@
+2019-11-29  Eike Rathke  <erack@redhat.com>
+
+        Use default implementation for JSVALUE64 with GCC on unknown platform.
+        https://bugs.webkit.org/show_bug.cgi?id=204701
+
+        Building on ppc64le and s390x failed with
+        #error "Unknown architecture."
+        Use the default implementation as fallback in these cases.
+
+        Reviewed by Saam Barati.
+
+        * heap/GCMemoryOperations.h:
+        (JSC::gcSafeMemcpy):
+        (JSC::gcSafeMemmove):
+        (JSC::gcSafeZeroMemory):
+
 2019-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_KEYBOARD_CODE_ATTRIBUTE and ENABLE_KEYBOARD_KEY_ATTRIBUTE macros
