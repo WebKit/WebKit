@@ -95,7 +95,6 @@ LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& 
 
 TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
 {
-    // FIXME This should take hypens into account.
     ASSERT(availableWidth >= 0);
     auto left = startPosition;
     // Pathological case of (extremely)long string and narrow lines.

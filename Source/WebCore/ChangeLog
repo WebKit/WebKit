@@ -1,3 +1,20 @@
+2019-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for simple hyphenation
+        https://bugs.webkit.org/show_bug.cgi?id=204706
+        <rdar://problem/57533803>
+
+        Reviewed by Antti Koivisto.
+
+        This is just -webkit-hyphens: auto, no limit-before/after/lines support yet.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::split):
+
 2019-11-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Enable WebAnimationsCSSIntegrationEnabled by default

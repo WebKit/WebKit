@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontCascade.h"
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
@@ -130,7 +131,8 @@ Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::word
 Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const
 {
     ASSERT(overflowRun.inlineItem.isText());
-    auto breakWords = overflowRun.inlineItem.style().wordBreak();
+    auto& style = overflowRun.inlineItem.style();
+    auto breakWords = style.wordBreak();
     if (breakWords == WordBreak::KeepAll)
         return { };
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
@@ -139,8 +141,26 @@ Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const
         auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
         return SplitLengthAndWidth { splitData.length, splitData.logicalWidth };
     }
-    // FIXME: Find first soft wrap opportunity (e.g. hyphenation)
-    return { };
+    // Find the hyphen position as follows:
+    // 1. Split the text by taking the hyphen width into account
+    // 2. Find the last hyphen position before the split position
+    if (style.hyphens() != Hyphens::Auto || !canHyphenate(style.locale()))
+        return { };
+
+    auto& fontCascade = style.fontCascade();
+    // FIXME: We might want to cache the hyphen width.
+    auto hyphenWidth = LayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+    auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
+    if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
+        return { };
+
+    auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidthExcludingHyphen, { });
+    auto textContent = inlineTextItem.layoutBox().textContext()->content;
+    auto hyphenBefore = inlineTextItem.start() + splitData.length;
+    unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
+    if (!hyphenLocation)
+        return { };
+    return SplitLengthAndWidth { hyphenLocation, TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), hyphenLocation) };
 }
 
 bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)
