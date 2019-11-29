@@ -106,12 +106,8 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
         key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
     , m_underlyingPlatformEvent(makeUnique<PlatformKeyboardEvent>(key))
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key.key())
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(key.code())
-#endif
     , m_keyIdentifier(key.keyIdentifier())
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
@@ -127,12 +123,8 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
 
 inline KeyboardEvent::KeyboardEvent(const AtomString& eventType, const Init& initializer)
     : UIEventWithKeyState(eventType, initializer)
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(initializer.key)
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(initializer.code)
-#endif
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.keyLocation ? *initializer.keyLocation : initializer.location)
     , m_repeat(initializer.repeat)
@@ -179,14 +171,8 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
     m_repeat = false;
     m_underlyingPlatformEvent = nullptr;
     m_which = WTF::nullopt;
-
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     m_code = { };
-#endif
-
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     m_key = { };
-#endif
 
 #if PLATFORM(COCOA)
     m_handledByInputMethod = false;

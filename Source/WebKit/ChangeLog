@@ -1,3 +1,24 @@
+2019-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_KEYBOARD_CODE_ATTRIBUTE and ENABLE_KEYBOARD_KEY_ATTRIBUTE macros
+        https://bugs.webkit.org/show_bug.cgi?id=204666
+
+        No behavior change.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebEvent.h:
+        (WebKit::WebKeyboardEvent::unmodifiedText const):
+        (WebKit::WebKeyboardEvent::key const):
+        (WebKit::WebKeyboardEvent::code const):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::encode const):
+        (WebKit::WebKeyboardEvent::decode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::generateSyntheticEditingCommand):
+
 2019-11-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WebInspector] Use CString to store exported data

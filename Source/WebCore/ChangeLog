@@ -1,3 +1,24 @@
+2019-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_KEYBOARD_CODE_ATTRIBUTE and ENABLE_KEYBOARD_KEY_ATTRIBUTE macros
+        https://bugs.webkit.org/show_bug.cgi?id=204666
+
+        Reviewed by Ross Kirsling and Don Olmstead.
+
+        No behavior change.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::initKeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::keyIdentifier const):
+        (WebCore::PlatformKeyboardEvent::key const):
+        (WebCore::PlatformKeyboardEvent::code const):
+
 2019-11-28  Simon Fraser  <simon.fraser@apple.com>
 
         Element jumps to wrong position after perspective change on ancestor

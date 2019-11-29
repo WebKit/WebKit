@@ -268,12 +268,8 @@ public:
 
     const String& text() const { return m_text; }
     const String& unmodifiedText() const { return m_unmodifiedText; }
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     const String& key() const { return m_key; }
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     const String& code() const { return m_code; }
-#endif
     const String& keyIdentifier() const { return m_keyIdentifier; }
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
@@ -298,12 +294,8 @@ public:
 private:
     String m_text;
     String m_unmodifiedText;
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     String m_key;
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     String m_code;
-#endif
     String m_keyIdentifier;
     int32_t m_windowsVirtualKeyCode;
     int32_t m_nativeVirtualKeyCode;

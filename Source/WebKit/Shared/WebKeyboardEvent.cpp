@@ -41,12 +41,8 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(unmodifiedText)
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
-#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
@@ -87,12 +83,8 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(unmodifiedText)
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
-#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
@@ -113,12 +105,8 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(text)
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
-#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
@@ -161,12 +149,8 @@ void WebKeyboardEvent::encode(IPC::Encoder& encoder) const
 
     encoder << m_text;
     encoder << m_unmodifiedText;
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     encoder << m_key;
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     encoder << m_code;
-#endif
     encoder << m_keyIdentifier;
     encoder << m_windowsVirtualKeyCode;
     encoder << m_nativeVirtualKeyCode;
@@ -191,14 +175,10 @@ bool WebKeyboardEvent::decode(IPC::Decoder& decoder, WebKeyboardEvent& result)
         return false;
     if (!decoder.decode(result.m_unmodifiedText))
         return false;
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     if (!decoder.decode(result.m_key))
         return false;
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     if (!decoder.decode(result.m_code))
         return false;
-#endif
     if (!decoder.decode(result.m_keyIdentifier))
         return false;
     if (!decoder.decode(result.m_windowsVirtualKeyCode))

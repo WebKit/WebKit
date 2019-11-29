@@ -373,12 +373,6 @@ my @features = (
     { option => "jit", desc => "Enable JustInTime JavaScript support",
       define => "ENABLE_JIT", value => \$jitSupport },
 
-    { option => "keyboard-code-attribute", desc => "Toggle keyboard code attribute support",
-      define => "ENABLE_KEYBOARD_CODE_ATTRIBUTE", value => \$keyboardCodeAttributeSupport },
-
-    { option => "keyboard-key-attribute", desc => "Toggle keyboard key attribute support",
-      define => "ENABLE_KEYBOARD_KEY_ATTRIBUTE", value => \$keyboardKeyAttributeSupport },
-
     { option => "layout-formatting-context", desc => "Toggle Layout Formatting Context support",
       define => "ENABLE_LAYOUT_FORMATTING_CONTEXT", value => \$layoutFormattingContextSupport },
 

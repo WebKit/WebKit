@@ -27,8 +27,8 @@
     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
 
-    [Conditional=KEYBOARD_KEY_ATTRIBUTE] readonly attribute DOMString key;
-    [Conditional=KEYBOARD_CODE_ATTRIBUTE] readonly attribute DOMString code;
+    readonly attribute DOMString key;
+    readonly attribute DOMString code;
     readonly attribute unsigned long location;
 
     readonly attribute boolean ctrlKey;

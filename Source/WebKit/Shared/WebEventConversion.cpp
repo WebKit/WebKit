@@ -213,12 +213,8 @@ public:
         // PlatformKeyboardEvent
         m_text = webEvent.text();
         m_unmodifiedText = webEvent.unmodifiedText();
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         m_key = webEvent.key();
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
         m_code = webEvent.code();
-#endif
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)

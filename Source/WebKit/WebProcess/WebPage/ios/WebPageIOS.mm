@@ -613,52 +613,27 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
     switch (command) {
     case SyntheticEditingCommandType::Undo:
         keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "z", "z",
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        "z",
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        "KeyZ"_s,
-#endif
+        "z", "KeyZ"_s,
         @"U+005A", 90, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::Redo:
         keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "y", "y",
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        "y",
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        "KeyY"_s,
-#endif
+        "y", "KeyY"_s,
         @"U+0059", 89, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleBoldface:
         keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "b", "b",
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        "b",
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        "KeyB"_s,
-#endif
+        "b", "KeyB"_s,
         @"U+0042", 66, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleItalic:
         keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "i", "i",
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        "i",
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        "KeyI"_s,
-#endif
+        "i", "KeyI"_s,
         @"U+0049", 73, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleUnderline:
         keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "u", "u",
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        "u",
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        "KeyU"_s,
-#endif
+        "u", "KeyU"_s,
         @"U+0055", 85, false, false, false, modifiers, WallTime::now());
         break;
     default:

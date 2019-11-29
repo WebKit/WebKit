@@ -54,23 +54,13 @@ namespace WebCore {
         {
         }
 
-        PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText,
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
-        const String& key,
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
-        const String& code,
-#endif
+        PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code,
         const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
             : PlatformEvent(type, modifiers, timestamp)
             , m_text(text)
             , m_unmodifiedText(unmodifiedText)
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
             , m_key(key)
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
             , m_code(code)
-#endif
             , m_keyIdentifier(keyIdentifier)
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
             , m_autoRepeat(isAutoRepeat)
@@ -95,13 +85,8 @@ namespace WebCore {
         String unmodifiedText() const { return m_unmodifiedText; }
 
         String keyIdentifier() const { return m_keyIdentifier; }
-
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         const String& key() const { return m_key; }
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
         const String& code() const { return m_code; }
-#endif
 
         // Most compatible Windows virtual key code associated with the event.
         // Zero for Char events.
@@ -162,12 +147,8 @@ namespace WebCore {
     protected:
         String m_text;
         String m_unmodifiedText;
-#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         String m_key;
-#endif
-#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
         String m_code;
-#endif
         String m_keyIdentifier;
         int m_windowsVirtualKeyCode;
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)

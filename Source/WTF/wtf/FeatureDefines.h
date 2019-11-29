@@ -333,14 +333,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_FILE_REPLACEMENT 1
 #endif
 
-#if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
-#define ENABLE_KEYBOARD_KEY_ATTRIBUTE 1
-#endif
-
-#if !defined(ENABLE_KEYBOARD_CODE_ATTRIBUTE)
-#define ENABLE_KEYBOARD_CODE_ATTRIBUTE 1
-#endif
-
 #if !defined(ENABLE_PAYMENT_REQUEST)
 #define ENABLE_PAYMENT_REQUEST 1
 #endif
@@ -395,17 +387,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 #endif /* PLATFORM(WIN_CAIRO) */
-
-/* --------- Gtk port (Unix, Windows, Mac) and WPE --------- */
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
-#define ENABLE_KEYBOARD_KEY_ATTRIBUTE 1
-#endif
-
-#if !defined(ENABLE_KEYBOARD_CODE_ATTRIBUTE)
-#define ENABLE_KEYBOARD_CODE_ATTRIBUTE 1
-#endif
-#endif /* PLATFORM(GTK) || PLATFORM(WPE) */
 
 /* ENABLE macro defaults for WebCore */
 /* Do not use PLATFORM() tests in this section ! */
@@ -748,14 +729,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_XSLT)
 #define ENABLE_XSLT 1
-#endif
-
-#if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
-#define ENABLE_KEYBOARD_KEY_ATTRIBUTE 1
-#endif
-
-#if !defined(ENABLE_KEYBOARD_CODE_ATTRIBUTE)
-#define ENABLE_KEYBOARD_CODE_ATTRIBUTE 1
 #endif
 
 #if !defined(ENABLE_DATA_INTERACTION)
