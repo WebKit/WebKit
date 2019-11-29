@@ -523,6 +523,14 @@ class Driver(object):
             cmd.append('--allowed-host')
             cmd.append(allowed_host)
 
+        for feature in self._port.internal_feature():
+            cmd.append('--internal-feature')
+            cmd.append(feature)
+
+        for feature in self._port.experimental_feature():
+            cmd.append('--experimental-feature')
+            cmd.append(feature)
+
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.extend(self._port.additional_drt_flag())
 

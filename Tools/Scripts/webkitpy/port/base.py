@@ -1193,6 +1193,12 @@ class Port(object):
     def allowed_hosts(self):
         return self.get_option("allowed_host", [])
 
+    def internal_feature(self):
+        return self.get_option("internal_feature", [])
+
+    def experimental_feature(self):
+        return self.get_option("experimental_feature", [])
+
     def default_configuration(self):
         return self._config.default_configuration()
 

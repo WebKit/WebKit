@@ -118,6 +118,10 @@ def parse_args(args):
             help="Use accelerated drawing (OS X only)"),
         optparse.make_option("--remote-layer-tree", action="store_true", default=False,
             help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
+        optparse.make_option("--internal-feature", type="string", action="append",
+            default=[], help="Enable internal feature"),
+        optparse.make_option("--experimental-feature", type="string", action="append",
+            default=[], help="Enable experimental feature"),
     ]))
 
     option_group_definitions.append(("WebKit Options", [

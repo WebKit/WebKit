@@ -472,6 +472,8 @@ void TestController::initialize(int argc, const char* argv[])
     m_shouldShowTouches = options.shouldShowTouches;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
+    m_internalFeatures = options.internalFeatures;
+    m_experimentalFeatures = options.experimentalFeatures;
 
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
     if (m_usingServerMode)
@@ -1452,6 +1454,11 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 
     options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
     options.shouldShowWebView = m_shouldShowWebView;
+
+    for (auto& feature : m_internalFeatures)
+        options.internalDebugFeatures.add(feature.c_str(), true);
+    for (auto& feature : m_experimentalFeatures)
+        options.experimentalFeatures.add(feature.c_str(), true);
 
     updatePlatformSpecificTestOptionsForTest(options, command.pathOrURL);
     updateTestOptionsFromTestHeader(options, command.pathOrURL, command.absolutePath);

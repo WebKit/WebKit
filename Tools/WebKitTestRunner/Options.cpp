@@ -105,6 +105,18 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
+static bool handleOptionExperimentalFeature(Options& options, const char*, const char* feature)
+{
+    options.experimentalFeatures.insert(feature);
+    return true;
+}
+
+static bool handleOptionInternalFeature(Options& options, const char*, const char* feature)
+{
+    options.internalFeatures.insert(feature);
+    return true;
+}
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -129,6 +141,8 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--show-webview", "Show the WebView during test runs (for debugging)", handleOptionShowWebView));
     optionList.append(Option("--show-touches", "Show the touches during test runs (for debugging)", handleOptionShowTouches));
     optionList.append(Option("--world-leaks", "Check for leaks of world objects (currently, documents)", handleOptionCheckForWorldLeaks));
+    optionList.append(Option("--experimental-feature", "Enable experimental feature", handleOptionExperimentalFeature, true));
+    optionList.append(Option("--internal-feature", "Enable internal feature", handleOptionInternalFeature, true));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }

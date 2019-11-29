@@ -51,6 +51,8 @@ struct Options {
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
+    std::set<std::string> internalFeatures;
+    std::set<std::string> experimentalFeatures;
 };
 
 class Option {
