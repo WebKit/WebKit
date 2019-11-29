@@ -1,3 +1,97 @@
+2019-11-29  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] MediaPlayerPrivateGStreamer style cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=204617
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Follow-up commit to bug 204352 addressing style issues in the
+        existing player code. The main issues addressed are naming
+        violations, adding final to types not overridden and organizing
+        better the scope of names in the classes.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::initializeDebugCategory):
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::paused const):
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamer::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const):
+        (WebCore::MediaPlayerPrivateGStreamer::maxMediaTimeSeekable const):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes const):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText):
+        (WebCore::MediaPlayerPrivateGStreamer::platformDuration const):
+        (WebCore::MediaPlayerPrivateGStreamer::isMuted const):
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamer::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::updateBufferingStatus):
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::canSaveMediaData const):
+        (WebCore::MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        (WebCore::MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamer::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::movieLoadType const):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamer::decodedFrameCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::droppedFrameCount const):
+        (WebCore::MediaPlayerPrivateGStreamer::attemptToDecryptWithLocalInstance):
+        (WebCore::MediaPlayerPrivateGStreamer::setWaitingForKey):
+        (WebCore::MediaPlayerPrivateGStreamer::initializeDebugCategory): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::sizeChanged): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::muted const): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::pipeline const):
+        (WebCore::MediaPlayerPrivateGStreamer::mediaPlayer const): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::isLiveStream const): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::pause):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maybeFinishSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seeking const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::waitForSeekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable const):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::flush):
+
 2019-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for simple hyphenation
