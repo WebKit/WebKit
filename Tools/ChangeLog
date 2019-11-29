@@ -1,5 +1,16 @@
 2019-11-29  Aakash Jain  <aakash_jain@apple.com>
 
+        Add a unit-test to new EWS for scenario when there is flakiness with patch and also on clean tree
+        https://bugs.webkit.org/show_bug.cgi?id=204707
+        <rdar://problem/57533998>
+
+        Unreviewed unit-test.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeLayoutTestsResults.test_mildly_flaky_patch_with_some_tree_redness_and_flakiness):
+
+2019-11-29  Aakash Jain  <aakash_jain@apple.com>
+
         Add a unit-test to old EWS for scenario when there is flakiness with patch and also on clean tree
         https://bugs.webkit.org/show_bug.cgi?id=204707
 
