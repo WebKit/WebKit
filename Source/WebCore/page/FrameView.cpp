@@ -799,6 +799,18 @@ void FrameView::willRecalcStyle()
     renderView->compositor().willRecalcStyle();
 }
 
+void FrameView::styleDidChange()
+{
+    ScrollView::styleDidChange();
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayer* layerTreeMutationRoot = renderView->takeStyleChangeLayerTreeMutationRoot();
+    if (layerTreeMutationRoot && !needsLayout())
+        layerTreeMutationRoot->updateLayerPositionsAfterStyleChange();
+}
+
 bool FrameView::updateCompositingLayersAfterStyleChange()
 {
     // If we expect to update compositing after an incipient layout, don't do so here.

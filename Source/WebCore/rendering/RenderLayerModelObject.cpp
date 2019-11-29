@@ -97,7 +97,7 @@ void RenderLayerModelObject::createLayer()
     ASSERT(!m_layer);
     m_layer = makeUnique<RenderLayer>(*this);
     setHasLayer(true);
-    m_layer->insertOnlyThisLayer();
+    m_layer->insertOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange);
 }
 
 bool RenderLayerModelObject::hasSelfPaintingLayer() const
@@ -169,27 +169,21 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout();
             createLayer();
-            if (parent() && !needsLayout() && containingBlock()) {
+            if (parent() && !needsLayout() && containingBlock())
                 layer()->setRepaintStatus(NeedsFullRepaint);
-                layer()->updateLayerPositionsAfterStyleChange();
-            }
         }
     } else if (layer() && layer()->parent()) {
 #if ENABLE(CSS_COMPOSITING)
         if (oldStyle->hasBlendMode())
             layer()->willRemoveChildWithBlendMode();
 #endif
-        setHasTransformRelatedProperty(false); // All transform-related propeties force layers, so we know we don't have one or the object doesn't support them.
+        setHasTransformRelatedProperty(false); // All transform-related properties force layers, so we know we don't have one or the object doesn't support them.
         setHasReflection(false);
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
         if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && hasRepaintLayoutRects())
             repaintUsingContainer(containerForRepaint(), repaintLayoutRects().m_repaintRect);
-        // If the layer we're about to destroy had a position, then the positions of the current children will no longer be correct.
-        auto* parentLayer = layer()->parent();
-        bool layerHadLocation = !layer()->location().isZero();
-        layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
-        if (layerHadLocation && parentLayer && !parentLayer->renderer().needsLayout())
-            parentLayer->updateLayerPositionsAfterStyleChange();
+
+        layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
             setChildNeedsLayout();
         if (s_hadTransform)

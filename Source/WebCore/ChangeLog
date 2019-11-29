@@ -1,3 +1,43 @@
+2019-11-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Element jumps to wrong position after perspective change on ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=202505
+        <rdar://problem/55930710>
+
+        Reviewed by Antti Koivisto.
+        
+        This modifies the fix in r252879 to be better-performing and to avoid a new call site for updateLayerPositions*.
+
+        Style can change in a way that creates or destroys RenderLayers, but does not result in a layout; this can happen
+        with changes of properties like opacity or perspective. When this happens, something needs to trigger a call to
+        RenderLayer::updateLayerPositions() on the root of the changed subtree. This is best done after the style update,
+        to avoid multiple updateLayerPositions traversals.
+
+        Implement this by storing on RenderView the rootmost changed layer, and having FrameView::styleDidChange()
+        call updateLayerPositionsAfterStyleChange() if we're after a style change with no pending layout.
+
+        Test: compositing/geometry/layer-position-after-removing-perspective.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::styleDidChange):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::didAttachChild):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::findCommonAncestor):
+        (WebCore::RenderLayer::commonAncestorWithLayer const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::createLayer):
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layerChildrenChangedDuringStyleChange):
+        (WebCore::RenderView::takeStyleChangeLayerTreeMutationRoot):
+        * rendering/RenderView.h:
+
 2019-11-28  Antti Koivisto  <antti@apple.com>
 
         [LFC][IFC] Remove m_inlineRunToLineMap

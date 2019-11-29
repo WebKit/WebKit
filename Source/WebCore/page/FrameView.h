@@ -138,6 +138,7 @@ public:
 #endif
 
     void willRecalcStyle();
+    void styleDidChange() override;
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
 

@@ -184,6 +184,9 @@ public:
 
     void scheduleLazyRepaint(RenderBox&);
     void unscheduleLazyRepaint(RenderBox&);
+    
+    void layerChildrenChangedDuringStyleChange(RenderLayer&);
+    RenderLayer* takeStyleChangeLayerTreeMutationRoot();
 
     void protectRenderWidgetUntilLayoutIsDone(RenderWidget& widget) { m_protectedRenderWidgets.append(&widget); }
     void releaseProtectedRenderWidgets() { m_protectedRenderWidgets.clear(); }
@@ -218,6 +221,8 @@ private:
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     SelectionRangeData m_selection;
+
+    WeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {

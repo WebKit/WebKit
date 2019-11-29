@@ -470,7 +470,7 @@ void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
     // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
     // and stop creating layers at all for these cases - they're not used anyways.
     if (child.hasLayer() && !layerCreationAllowedForSubtree())
-        downcast<RenderLayerModelObject>(child).layer()->removeOnlyThisLayer();
+        downcast<RenderLayerModelObject>(child).layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::RenderTreeConstruction);
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
