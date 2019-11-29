@@ -48,24 +48,29 @@ static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInl
     return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& content, LayoutUnit availableWidth, bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& content, LayoutUnit availableWidth, LayoutUnit trailingTrimmableWidth,  bool lineIsEmpty)
 {
+    ASSERT(!content.isEmpty());
     if (content.width() <= availableWidth)
         return { BreakingContext::ContentBreak::Keep, { } };
+    // Check if it fits without the trailing trimmable content.
+    if (!TextUtil::shouldPreserveTrailingWhitespace(content.runs()[0].inlineItem.style())) {
+        auto adjustedAvailableWidth = availableWidth;
+        auto adjustedContentWidth = content.width() - content.trailingTrimmableWidth();
+        // When the uncommitted content has trailing trimmable width, it also means that it does not have any other non-trimmable _content_ ([text][ ] <- [text] is on commit boundary)
+        // so placing it on the line with trimmable trailing content means that we'v got adjacent trimmable content.
+        // [text][ ] <- existing content on the line with trailing trimmable
+        // [container start][ ][container end] <- new content
+        // <- adjacent trimmable _content_ [text][][container start][][container end]
+        if (trailingTrimmableWidth && !content.hasNonWhitespaceOrInlineBox())
+            adjustedAvailableWidth += trailingTrimmableWidth;
 
-    auto& runs = content.runs();
-    auto isTextContent = [&] {
-        // <span>text</span> is considered a text run even with the [container start][container end] inline items.
-        for (auto& run : runs) {
-            auto& inlineItem = run.inlineItem;
-            // Skip "typeless" inline items.
-            if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
-                continue;
-            return inlineItem.isText();
-        }
-        return false;
-    };
-    if (isTextContent()) {
+        if (adjustedContentWidth <= adjustedAvailableWidth)
+            return { BreakingContext::ContentBreak::Keep, { } };
+    }
+
+    if (content.hasTextContentOnly()) {
+        auto& runs = content.runs();
         if (auto trailingPartialContent = wordBreakingBehavior(runs, availableWidth))
             return { BreakingContext::ContentBreak::Split, trailingPartialContent };
         // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
@@ -151,7 +156,6 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
         // Can't decide it yet.
         return false;
     }
-
     auto* lastUncomittedContent = &content.runs().last().inlineItem;
     if (inlineItem.isText()) {
         // any content' ' -> whitespace is always a commit boundary.
@@ -222,6 +226,7 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
 
 void LineBreaker::Content::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
+    ASSERT(inlineItem.isForcedLineBreak() || !isAtContentBoundary(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
 }
@@ -237,6 +242,49 @@ void LineBreaker::Content::trim(unsigned newSize)
     for (auto i = m_continousRuns.size(); i--;)
         m_width -= m_continousRuns[i].logicalWidth;
     m_continousRuns.shrink(newSize);
+}
+
+bool LineBreaker::Content::hasNonWhitespaceOrInlineBox() const
+{
+    // <span><img></span> is considered a inline box run even with the [container start][container end] inline items.
+    for (auto& run : m_continousRuns) {
+        auto& inlineItem = run.inlineItem;
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isForcedLineBreak())
+            continue;
+        return !is<InlineTextItem>(inlineItem) || !downcast<InlineTextItem>(inlineItem).isWhitespace();
+    }
+    return false;
+}
+
+bool LineBreaker::Content::hasTextContentOnly() const
+{
+    // <span>text</span> is considered a text run even with the [container start][container end] inline items.
+    // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
+    for (auto& run : m_continousRuns) {
+        auto& inlineItem = run.inlineItem;
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+            continue;
+        return inlineItem.isText();
+    }
+    return false;
+}
+
+LayoutUnit LineBreaker::Content::trailingTrimmableWidth() const
+{
+    LayoutUnit trailingWhitespaceWidth;
+    for (auto i = m_continousRuns.size(); i--;) {
+        auto& inlineItem = m_continousRuns[i].inlineItem;
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+            continue;
+        if (inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace()) {
+            trailingWhitespaceWidth += m_continousRuns[i].logicalWidth;
+            continue;
+        }
+        // Can't have [text content][whitespace] as [whitespace] is always a commit boundary when it is adjacent to some other inline content. See UncommittedContent::add.
+        ASSERT(!trailingWhitespaceWidth);
+        return trailingWhitespaceWidth;
+    }
+    return trailingWhitespaceWidth;
 }
 
 }

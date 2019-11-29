@@ -193,8 +193,7 @@ static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)
 {
     if (!inlineTextItem.isWhitespace())
         return true;
-    auto whitespace = inlineTextItem.style().whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap;
+    return TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
 }
 
 static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)

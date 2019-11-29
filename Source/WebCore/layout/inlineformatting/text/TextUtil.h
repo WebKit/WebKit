@@ -30,6 +30,9 @@
 #include "InlineItem.h"
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Layout {
 
 class TextUtil {
@@ -42,6 +45,7 @@ public:
         LayoutUnit logicalWidth;
     };
     static SplitData split(const Box&, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft);
+    static bool shouldPreserveTrailingWhitespace(const RenderStyle&);
 
 private:
     static LayoutUnit fixedPitchWidth(const StringView&, const RenderStyle&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);

@@ -121,6 +121,12 @@ TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition
     return { startPosition, right - startPosition, leftSideWidth };
 }
 
+bool TextUtil::shouldPreserveTrailingWhitespace(const RenderStyle& style)
+{
+    auto whitespace = style.whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap;
+}
+
 }
 }
 #endif

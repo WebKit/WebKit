@@ -200,7 +200,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
 {
     // Check if the pending content fits.
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent, line.availableWidth(), lineIsConsideredEmpty);
+    auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent, line.availableWidth(), line.trailingTrimmableWidth(), lineIsConsideredEmpty);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
         commitPendingContent(line);

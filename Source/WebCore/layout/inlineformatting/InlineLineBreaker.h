@@ -73,15 +73,18 @@ public:
         RunList& runs() { return m_continousRuns; }
         const RunList& runs() const { return m_continousRuns; }
         bool isEmpty() const { return m_continousRuns.isEmpty(); }
+        bool hasNonWhitespaceOrInlineBox() const;
+        bool hasTextContentOnly() const;
         unsigned size() const { return m_continousRuns.size(); }
         LayoutUnit width() const { return m_width; }
+        LayoutUnit trailingTrimmableWidth() const;
 
     private:
         RunList m_continousRuns;
         LayoutUnit m_width;
     };
 
-    BreakingContext breakingContextForInlineContent(const Content&, LayoutUnit availableWidth, bool lineIsEmpty);
+    BreakingContext breakingContextForInlineContent(const Content&, LayoutUnit availableWidth, LayoutUnit trailingTrimmableWidth, bool lineIsEmpty);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
