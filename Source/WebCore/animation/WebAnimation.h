@@ -154,7 +154,7 @@ private:
     enum class AutoRewind : uint8_t { Yes, No };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
-    void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
+    void timingDidChange(DidSeek, SynchronouslyNotify);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();

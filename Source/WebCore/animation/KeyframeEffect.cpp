@@ -663,10 +663,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
 ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
-    auto processKeyframesResult = processKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
-    if (!processKeyframesResult.hasException() && animation())
-        animation()->effectTimingDidChange();
-    return processKeyframesResult;
+    return processKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
 }
 
 ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
@@ -1345,9 +1342,6 @@ void KeyframeEffect::updateAcceleratedAnimationState()
 
 void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 {
-    if (action == m_lastRecordedAcceleratedAction)
-        return;
-
     if (action == AcceleratedAction::Stop)
         m_pendingAcceleratedActions.clear();
     m_pendingAcceleratedActions.append(action);
@@ -1387,13 +1381,8 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         return;
 
     auto* renderer = this->renderer();
-    if (!renderer || !renderer->isComposited()) {
-        // The renderer may no longer be composited because the accelerated animation ended before we had a chance to update it,
-        // in which case if we asked for the animation to stop, we can discard the current set of accelerated actions.
-        if (m_lastRecordedAcceleratedAction == AcceleratedAction::Stop)
-            m_pendingAcceleratedActions.clear();
+    if (!renderer || !renderer->isComposited())
         return;
-    }
 
     auto pendingAcceleratedActions = m_pendingAcceleratedActions;
     m_pendingAcceleratedActions.clear();

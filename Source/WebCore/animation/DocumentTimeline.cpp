@@ -350,15 +350,11 @@ void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timesta
     if (m_isSuspended || !m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
-    // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
-    // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
-    m_animationResolutionScheduled = false;
-
     internalUpdateAnimationsAndSendEvents();
     applyPendingAcceleratedAnimations();
 
-    if (!m_animationResolutionScheduled)
-        scheduleNextTick();
+    m_animationResolutionScheduled = false;
+    scheduleNextTick();
 }
 
 void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
@@ -532,6 +528,13 @@ void DocumentTimeline::scheduleNextTick()
     // There is no tick to schedule if we don't have any relevant animations.
     if (m_animations.isEmpty())
         return;
+
+    for (const auto& animation : m_animations) {
+        if (!animation->isRunningAccelerated()) {
+            scheduleAnimationResolution();
+            return;
+        }
+    }
 
     Seconds scheduleDelay = Seconds::infinity();
 

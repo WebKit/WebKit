@@ -1,3 +1,17 @@
+2019-11-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r252944.
+        https://bugs.webkit.org/show_bug.cgi?id=204709
+
+        Broke Windows Build (Requested by aakashja_ on #webkit).
+
+        Reverted changeset:
+
+        "[Web Animations] Forward-filling animations should not
+        schedule updates while filling"
+        https://bugs.webkit.org/show_bug.cgi?id=204697
+        https://trac.webkit.org/changeset/252944
+
 2019-11-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Forward-filling animations should not schedule updates while filling
