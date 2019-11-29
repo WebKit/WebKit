@@ -54,7 +54,6 @@ public:
 
     void updateDownloadBufferingFlag() override { };
 
-    bool isLiveStream() const override { return false; }
     MediaTime currentMediaTime() const override;
 
     void pause() override;

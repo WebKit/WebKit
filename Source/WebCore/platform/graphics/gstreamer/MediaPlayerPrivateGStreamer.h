@@ -120,17 +120,14 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface, public C
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void initializeDebugCategory();
-
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
 
-    static bool isAvailable();
     static void registerMediaEngine(MediaEngineRegistrar);
+    static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
 
-    bool hasVideo() const override { return m_hasVideo; }
-    bool hasAudio() const override { return m_hasAudio; }
-
+    bool hasVideo() const final { return m_hasVideo; }
+    bool hasAudio() const final { return m_hasAudio; }
     void load(const String &url) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const String& url, MediaSourcePrivateClient*) override;
@@ -138,81 +135,57 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
 #endif
-    void commitLoad();
-    void cancelLoad() override;
-
-    void prepareToPlay() override;
-    void play() override;
+    void cancelLoad() final;
+    void prepareToPlay() final;
+    void play() final;
     void pause() override;
-    bool paused() const override;
-    bool seeking() const override { return m_seeking; }
+    bool paused() const final;
+    bool seeking() const override { return m_isSeeking; }
     void seek(const MediaTime&) override;
-
-    MediaTime platformDuration() const;
-
     void setRate(float) override;
-    double rate() const override;
-    void setPreservesPitch(bool) override;
-    void setPreload(MediaPlayer::Preload) override;
-
+    double rate() const final;
+    void setPreservesPitch(bool) final; 
+    void setPreload(MediaPlayer::Preload) final;
     FloatSize naturalSize() const final;
-
-    void setVolume(float) override;
-    float volume() const override;
-
-    void setMuted(bool) override;
-    bool muted() const;
-
-    MediaPlayer::NetworkState networkState() const override;
-    MediaPlayer::ReadyState readyState() const override;
-
-    void setVisible(bool) override { }
-    void setSize(const IntSize&) override;
-    void sizeChanged();
-
+    void setVolume(float) final;
+    float volume() const final;
+    void setMuted(bool) final;
+    MediaPlayer::NetworkState networkState() const final;
+    MediaPlayer::ReadyState readyState() const final;
+    void setVisible(bool) final { }
+    void setSize(const IntSize&) final;
     // Prefer MediaTime based methods over float based.
-
-    float duration() const override { return durationMediaTime().toFloat(); }
-    double durationDouble() const override { return durationMediaTime().toDouble(); }
-    MediaTime durationMediaTime() const override;
-    float currentTime() const override { return currentMediaTime().toFloat(); }
-    double currentTimeDouble() const override { return currentMediaTime().toDouble(); }
+    float duration() const final { return durationMediaTime().toFloat(); }
+    double durationDouble() const final { return durationMediaTime().toDouble(); }
+    MediaTime durationMediaTime() const;
+    float currentTime() const final { return currentMediaTime().toFloat(); }
+    double currentTimeDouble() const final { return currentMediaTime().toDouble(); }
     MediaTime currentMediaTime() const override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
-    void seek(float time) override { seek(MediaTime::createWithFloat(time)); }
-    void seekDouble(double time) override { seek(MediaTime::createWithDouble(time)); }
-
-    float maxTimeSeekable() const override { return maxMediaTimeSeekable().toFloat(); }
+    void seek(float time) final { seek(MediaTime::createWithFloat(time)); }
+    void seekDouble(double time) final { seek(MediaTime::createWithDouble(time)); }
+    float maxTimeSeekable() const final { return maxMediaTimeSeekable().toFloat(); }
     MediaTime maxMediaTimeSeekable() const override;
-    double minTimeSeekable() const override { return minMediaTimeSeekable().toFloat(); }
-    MediaTime minMediaTimeSeekable() const override { return MediaTime::zeroTime(); }
-
-    bool didLoadingProgress() const override;
-    unsigned long long totalBytes() const override;
-
-    bool hasSingleSecurityOrigin() const override;
-    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const override;
-
-    void simulateAudioInterruption() override;
-
+    double minTimeSeekable() const final { return minMediaTimeSeekable().toFloat(); }
+    MediaTime minMediaTimeSeekable() const final { return MediaTime::zeroTime(); }
+    bool didLoadingProgress() const final;
+    unsigned long long totalBytes() const final;
+    bool hasSingleSecurityOrigin() const final;
+    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    void simulateAudioInterruption() final;
 #if ENABLE(WEB_AUDIO)
-    AudioSourceProvider* audioSourceProvider() override;
+    AudioSourceProvider* audioSourceProvider() final;
 #endif
+    void paint(GraphicsContext&, const FloatRect&) final;
+    bool supportsFullscreen() const final;
+    MediaPlayer::MovieLoadType movieLoadType() const final;
 
-    void paint(GraphicsContext&, const FloatRect&) override;
+    unsigned decodedFrameCount() const final;
+    unsigned droppedFrameCount() const final;
+    unsigned audioDecodedByteCount() const final;
+    unsigned videoDecodedByteCount() const final;
 
-    bool supportsFullscreen() const override;
-
-    MediaPlayer::MovieLoadType movieLoadType() const override;
-
-    MediaPlayer* mediaPlayer() const { return m_player; }
-
-    unsigned decodedFrameCount() const override;
-    unsigned droppedFrameCount() const override;
-    unsigned audioDecodedByteCount() const override;
-    unsigned videoDecodedByteCount() const override;
-
-    void acceleratedRenderingStateChanged() override;
+    void acceleratedRenderingStateChanged() final;
 
 #if USE(TEXTURE_MAPPER_GL)
     PlatformLayer* platformLayer() const override;
@@ -225,29 +198,23 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void cdmInstanceAttached(CDMInstance&) override;
-    void cdmInstanceDetached(CDMInstance&) override;
-    void handleProtectionEvent(GstEvent*);
-    virtual void attemptToDecryptWithLocalInstance();
+    void cdmInstanceAttached(CDMInstance&) final;
+    void cdmInstanceDetached(CDMInstance&) final;
     void attemptToDecryptWithInstance(CDMInstance&) final;
-    void initializationDataEncountered(InitData&&);
-    void setWaitingForKey(bool);
-    bool waitingForKey() const override;
-#endif
+    bool waitingForKey() const final;
 
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-    static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
+    void handleProtectionEvent(GstEvent*);
+#endif
 
 #if USE(GSTREAMER_GL)
     bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) override;
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
-    void setVideoSourceOrientation(ImageOrientation);
-    GstElement* pipeline() const { return m_pipeline.get(); }
     void enableTrack(TrackPrivateBaseGStreamer::TrackType, unsigned index);
 
     // Append pipeline interface
+    // FIXME: Use the client interface pattern, AppendPipeline does not need the full interface to this class just for these two functions.
     bool handleSyncMessage(GstMessage*);
     void handleMessage(GstMessage*);
 
@@ -270,14 +237,15 @@ protected:
         StreamCollectionChanged = 1 << 7
     };
 
-    virtual bool isLiveStream() const { return m_isStreaming; }
-    MediaTime maxTimeLoaded() const;
+    static bool isAvailable();
+#if ENABLE(ENCRYPTED_MEDIA)
+    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
+#endif
 
     virtual void durationChanged();
     virtual void sourceSetup(GstElement*);
     virtual void configurePlaySink() { }
     virtual bool changePipelineState(GstState);
-
 
 #if USE(GSTREAMER_HOLEPUNCH)
     GstElement* createHolePunchVideoSink();
@@ -292,10 +260,10 @@ protected:
 #if USE(TEXTURE_MAPPER_GL)
     void pushTextureToCompositor();
 #if USE(NICOSIA)
-    void swapBuffersIfNeeded() override;
+    void swapBuffersIfNeeded() final;
 #else
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
-    void swapBuffersIfNeeded() override;
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const final;
+    void swapBuffersIfNeeded() final;
 #endif
 #endif
 
@@ -316,9 +284,6 @@ protected:
 
     static void volumeChangedCallback(MediaPlayerPrivateGStreamer*);
     static void muteChangedCallback(MediaPlayerPrivateGStreamer*);
-
-    // FIXME: Where is this used?
-    void handlePluginInstallerResult(GstInstallPluginsReturn);
 
     void readyTimerFired();
 
@@ -358,22 +323,22 @@ protected:
     mutable MediaTime m_cachedPosition;
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
-    bool m_changingRate { false };
-    bool m_downloadFinished { false };
-    bool m_errorOccured { false };
+    bool m_isChangingRate { false };
+    bool m_didDownloadFinish { false };
+    bool m_didErrorOccur { false };
     mutable bool m_isEndReached { false };
-    mutable bool m_isStreaming { false };
-    bool m_paused { true };
+    mutable bool m_isLiveStream { false };
+    bool m_isPaused { true };
     float m_playbackRate { 1 };
     GstState m_currentState;
     GstState m_oldState;
     GstState m_requestedState { GST_STATE_VOID_PENDING };
-    bool m_resetPipeline { false };
-    bool m_seeking { false };
-    bool m_seekIsPending { false };
+    bool m_shouldResetPipeline { false };
+    bool m_isSeeking { false };
+    bool m_isSeekPending { false };
     MediaTime m_seekTime;
     GRefPtr<GstElement> m_source { nullptr };
-    bool m_volumeAndMuteInitialized { false };
+    bool m_areVolumeAndMuteInitialized { false };
 
 #if USE(TEXTURE_MAPPER_GL)
     TextureMapperGL::Flags m_textureMapperFlags;
@@ -391,10 +356,10 @@ protected:
     GRefPtr<GstSample> m_sample;
 
     mutable FloatSize m_videoSize;
-    bool m_usingFallbackVideoSink { false };
-    bool m_renderingCanBeAccelerated { false };
+    bool m_isUsingFallbackVideoSink { false };
+    bool m_canRenderingBeAccelerated { false };
 
-    bool m_destroying { false };
+    bool m_isBeingDestroyed { false };
 
 #if USE(GSTREAMER_GL)
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
@@ -412,16 +377,20 @@ protected:
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
     HashSet<uint32_t> m_handledProtectionEvents;
 
-    bool m_waitingForKey { false };
+    bool m_isWaitingForKey { false };
 #endif
 
     Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
+    MediaTime maxTimeLoaded() const;
+    GstElement* pipeline() const { return m_pipeline.get(); }
+    void setVideoSourceOrientation(ImageOrientation);
+    MediaTime platformDuration() const;
+    bool isMuted() const;
+    void commitLoad();
     void fillTimerFired();
-
     void didEnd();
-
 
     GstElement* createVideoSink();
     GstElement* createAudioSink();
@@ -475,20 +444,26 @@ private:
     void updateTracks();
     void clearTracks();
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void attemptToDecryptWithLocalInstance();
+    void initializationDataEncountered(InitData&&);
+    void setWaitingForKey(bool);
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;
     GRefPtr<GstPad> m_textAppSinkPad;
 #endif
     GstStructure* m_mediaLocations { nullptr };
     int m_mediaLocationCurrentIndex { 0 };
-    bool m_playbackRatePause { false };
+    bool m_isPlaybackRatePaused { false };
     MediaTime m_timeOfOverlappingSeek;
     float m_lastPlaybackRate { 1 };
     Timer m_fillTimer;
     MediaTime m_maxTimeLoaded;
     bool m_loadingStalled { false };
     MediaPlayer::Preload m_preload;
-    bool m_delayingLoad { false };
+    bool m_isDelayingLoad { false };
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     bool m_hasVideo { false };
     bool m_hasAudio { false };
@@ -503,11 +478,11 @@ private:
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif
 #endif
-    bool m_buffering { false };
+    bool m_isBuffering { false };
     int m_bufferingPercentage { 0 };
     mutable unsigned long long m_totalBytes { 0 };
     URL m_url;
-    bool m_preservesPitch { false };
+    bool m_shouldPreservePitch { false };
     mutable Optional<Seconds> m_lastQueryTime;
     bool m_isLegacyPlaybin;
     GRefPtr<GstStreamCollection> m_streamCollection;
