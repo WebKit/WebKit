@@ -1,3 +1,10 @@
+2019-11-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK LTS build fix after r252950.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        supportsKeySystem can't be ifdeffed.
+
 2019-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for hyphenate-limit-before and hyphenate-limit-after

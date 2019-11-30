@@ -238,9 +238,6 @@ protected:
     };
 
     static bool isAvailable();
-#if ENABLE(ENCRYPTED_MEDIA)
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-#endif
 
     virtual void durationChanged();
     virtual void sourceSetup(GstElement*);
@@ -398,6 +395,8 @@ private:
 
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
+
     void syncOnClock(bool sync);
 
     MediaTime playbackPosition() const;
