@@ -147,18 +147,31 @@ Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const
     if (style.hyphens() != Hyphens::Auto || !canHyphenate(style.locale()))
         return { };
 
+    auto runLength = inlineTextItem.length();
+    unsigned limitBefore = style.hyphenationLimitBefore() == RenderStyle::initialHyphenationLimitBefore() ? 0 : style.hyphenationLimitBefore();
+    unsigned limitAfter = style.hyphenationLimitAfter() == RenderStyle::initialHyphenationLimitAfter() ? 0 : style.hyphenationLimitAfter();
+    // Check if this run can accommodate the before/after limits at all before start measuring text.
+    if (limitBefore >= runLength || limitAfter >= runLength || limitBefore + limitAfter > runLength)
+        return { };
+
     auto& fontCascade = style.fontCascade();
     // FIXME: We might want to cache the hyphen width.
     auto hyphenWidth = LayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
     auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
-    if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
+
+    // For spaceWidth() see webkit.org/b/169613
+    if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen + fontCascade.spaceWidth(), fontCascade.pixelSize()))
         return { };
 
-    auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidthExcludingHyphen, { });
+    auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { });
+    if (splitData.length < limitBefore)
+        return { };
+
     auto textContent = inlineTextItem.layoutBox().textContext()->content;
-    auto hyphenBefore = inlineTextItem.start() + splitData.length;
+    // Adjust before index to accommodate the limit-after value (it's the last potential hyphen location in this run).
+    auto hyphenBefore = std::min(splitData.length, runLength - limitAfter) + 1;
     unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
-    if (!hyphenLocation)
+    if (!hyphenLocation || hyphenLocation < limitBefore)
         return { };
     return SplitLengthAndWidth { hyphenLocation, TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), hyphenLocation) };
 }

@@ -1,3 +1,13 @@
+2019-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for hyphenate-limit-before and hyphenate-limit-after
+        https://bugs.webkit.org/show_bug.cgi?id=204710
+        <rdar://problem/57535210>
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-11-29  Antti Koivisto  <antti@apple.com>
 
         Add mechanism for enabling internal and experimental features from run-webkit-test command line
