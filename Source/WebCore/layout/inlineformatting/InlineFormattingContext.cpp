@@ -96,7 +96,7 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
     unsigned leadingInlineItemIndex = 0;
     Optional<LineLayoutContext::PartialContent> leadingPartialContent;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::No };
-    auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
+    auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
     while (leadingInlineItemIndex < inlineItems.size()) {
         lineBuilder.initialize(constraintsForLine(usedHorizontalValues, lineLogicalTop));
@@ -107,11 +107,11 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
         if (lineContent.trailingInlineItemIndex) {
             lineLogicalTop = lineContent.lineBox.logicalBottom();
             // When the trailing content is partial, we need to reuse the last InlinItem.
-            if (lineContent.trailingPartialContent) {
+            if (lineContent.overflowPartialContent) {
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
                 // Turn previous line's overflow content length into the next line's leading content partial length.
                 // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
-                leadingPartialContent = LineLayoutContext::PartialContent { lineContent.trailingPartialContent->length };
+                leadingPartialContent = LineLayoutContext::PartialContent { lineContent.overflowPartialContent->length };
             } else
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
@@ -234,7 +234,7 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const Us
     LayoutUnit maximumLineWidth;
     unsigned leadingInlineItemIndex = 0;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::Yes };
-    auto lineLayoutContext = LineLayoutContext { *this, inlineItems };
+    auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         lineBuilder.initialize(LineBuilder::Constraints { { }, usedHorizontalValues.constraints.width, false, { } });

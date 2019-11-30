@@ -842,6 +842,7 @@ fast/text/system-font-zero-size.html
 fast/text/system-ui-chinese-bold-fallback.html
 fast/text/simple-line-layout-hyphen-limit-after.html
 fast/text/simple-line-layout-hyphen-limit-before.html
+fast/text/simple-line-layout-hyphen-limit-lines.html
 fast/text/tab-with-kerning.html
 fast/text/text-combine-first-line-crash.html
 fast/text/text-combine-rendering.html

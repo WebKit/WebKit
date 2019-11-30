@@ -44,6 +44,7 @@ public:
             unsigned runIndex { 0 };
             unsigned length { 0 };
             LayoutUnit logicalWidth;
+            bool hasHyphen { false };
         };
         Optional<TrailingPartialContent> trailingPartialContent;
     };
@@ -87,15 +88,18 @@ public:
     BreakingContext breakingContextForInlineContent(const Content&, LayoutUnit availableWidth, LayoutUnit trailingTrimmableWidth, bool lineIsEmpty);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
+    void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
+
 private:
-
     Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const Content::RunList&, LayoutUnit availableWidth) const;
-
-    struct SplitLengthAndWidth {
+    struct LeftSide {
         unsigned length { 0 };
-        LayoutUnit leftLogicalWidth;
+        LayoutUnit logicalWidth;
+        bool hasHyphen { false };
     };
-    Optional<SplitLengthAndWidth> tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const;
+    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const;
+
+    bool n_hyphenationIsDisabled { false };
 };
 
 }

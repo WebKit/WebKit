@@ -35,15 +35,15 @@ namespace Layout {
 
 class LineLayoutContext {
 public:
-    LineLayoutContext(const InlineFormattingContext&, const InlineItems&);
+    LineLayoutContext(const InlineFormattingContext&, const Container& formattingContextRoot, const InlineItems&);
 
     struct PartialContent {
         // This will potentially gain some more members. 
-        unsigned length;
+        unsigned length { 0 };
     };
     struct LineContent {
         Optional<unsigned> trailingInlineItemIndex;
-        Optional<PartialContent> trailingPartialContent;
+        Optional<PartialContent> overflowPartialContent;
         Vector<WeakPtr<InlineItem>> floats;
         const LineBuilder::RunList runList;
         const LineBox lineBox;
@@ -60,13 +60,15 @@ private:
     IsEndOfLine processUncommittedContent(LineBuilder&);
 
     const InlineFormattingContext& m_inlineFormattingContext;
+    const Container& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
     LineBreaker::Content m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
     std::unique_ptr<InlineTextItem> m_leadingPartialTextItem;
     std::unique_ptr<InlineTextItem> m_trailingPartialTextItem;
-    Optional<unsigned> m_overflowTextLength;
+    Optional<PartialContent> m_overflowPartialContent;
+    unsigned m_successiveHyphenatedLineCount { 0 };
 };
 
 }

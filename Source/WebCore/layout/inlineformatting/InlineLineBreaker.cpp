@@ -121,14 +121,15 @@ Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::word
         // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
         // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
         auto adjustedAvailableWidth = std::max(LayoutUnit { }, availableWidth - runsWidth + run.logicalWidth);
-        if (auto splitLengthAndWidth = tryBreakingTextRun(run, adjustedAvailableWidth))
-            return BreakingContext::TrailingPartialContent { i, splitLengthAndWidth->length, splitLengthAndWidth->leftLogicalWidth };
+        if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
+            return BreakingContext::TrailingPartialContent { i, leftSide->length, leftSide->logicalWidth, leftSide->hasHyphen };
+        return { };
     }
     // We did not manage to break in this sequence of runs.
     return { };
 }
 
-Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const
+Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& style = overflowRun.inlineItem.style();
@@ -139,12 +140,12 @@ Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const
     if (breakWords == WordBreak::BreakAll) {
         // FIXME: Pass in the content logical left to be able to measure tabs.
         auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
-        return SplitLengthAndWidth { splitData.length, splitData.logicalWidth };
+        return LeftSide { splitData.length, splitData.logicalWidth, false };
     }
     // Find the hyphen position as follows:
     // 1. Split the text by taking the hyphen width into account
     // 2. Find the last hyphen position before the split position
-    if (style.hyphens() != Hyphens::Auto || !canHyphenate(style.locale()))
+    if (n_hyphenationIsDisabled || style.hyphens() != Hyphens::Auto || !canHyphenate(style.locale()))
         return { };
 
     auto runLength = inlineTextItem.length();
@@ -173,7 +174,7 @@ Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const
     unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
     if (!hyphenLocation || hyphenLocation < limitBefore)
         return { };
-    return SplitLengthAndWidth { hyphenLocation, TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), hyphenLocation) };
+    return LeftSide { hyphenLocation, TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), hyphenLocation), true };
 }
 
 bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)

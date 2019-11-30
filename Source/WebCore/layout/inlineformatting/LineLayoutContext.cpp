@@ -67,8 +67,9 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
     return boxGeometry.width();
 }
 
-LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems)
+LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const Container& formattingContextRoot, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_formattingContextRoot(formattingContextRoot)
     , m_inlineItems(inlineItems)
 {
 }
@@ -80,7 +81,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
         m_uncommittedContent.reset();
         m_leadingPartialTextItem = { };
         m_trailingPartialTextItem = { };
-        m_overflowTextLength = { };
+        m_overflowPartialContent = { };
     };
     initialize();
     // Iterate through the inline content and place the inline boxes on the current line.
@@ -126,13 +127,9 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
     if (!m_committedInlineItemCount)
         return LineContent { { }, { }, WTFMove(m_floats), line.close(), line.lineBox() };
 
-    Optional<PartialContent> overflowContent;
-    if (m_overflowTextLength)
-        overflowContent = PartialContent { *m_overflowTextLength };
     auto trailingInlineItemIndex = leadingInlineItemIndex + m_committedInlineItemCount - 1;
-
     auto isLastLineWithInlineContent = [&] {
-        if (overflowContent)
+        if (m_overflowPartialContent)
             return LineBuilder::IsLastLineWithInlineContent::No;
         // Skip floats backwards to see if this is going to be the last line with inline content.
         for (auto i = m_inlineItems.size(); i--;) {
@@ -144,7 +141,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
         return LineBuilder::IsLastLineWithInlineContent::No;
     };
 
-    return LineContent { trailingInlineItemIndex, overflowContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
+    return LineContent { trailingInlineItemIndex, m_overflowPartialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
 }
 
 LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& line, const InlineItem& inlineItem)
@@ -198,9 +195,18 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
 
 LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(LineBuilder& line)
 {
+    auto shouldDisableHyphenation = [&] {
+        auto& style = m_formattingContextRoot.style();
+        unsigned limitLines = style.hyphenationLimitLines() == RenderStyle::initialHyphenationLimitLines() ? std::numeric_limits<unsigned>::max() : style.hyphenationLimitLines();
+        return m_successiveHyphenatedLineCount >= limitLines;
+    };
+
     // Check if the pending content fits.
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    auto breakingContext = LineBreaker().breakingContextForInlineContent(m_uncommittedContent, line.availableWidth(), line.trailingTrimmableWidth(), lineIsConsideredEmpty);
+    auto lineBreaker = LineBreaker { };
+    if (shouldDisableHyphenation())
+        lineBreaker.setHyphenationDisabled();
+    auto breakingContext = lineBreaker.breakingContextForInlineContent(m_uncommittedContent, line.availableWidth(), line.trailingTrimmableWidth(), lineIsConsideredEmpty);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
         commitPendingContent(line);
@@ -215,7 +221,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         ASSERT(!m_trailingPartialTextItem);
         auto trailingContentLength = breakingContext.trailingPartialContent->length;
         m_trailingPartialTextItem = overflowInlineTextItem.left(trailingContentLength);
-        m_overflowTextLength = overflowInlineTextItem.length() - trailingContentLength;
+        m_overflowPartialContent = PartialContent { overflowInlineTextItem.length() - trailingContentLength };
         // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
         m_uncommittedContent.trim(overflowInlineTextItemIndex);
         m_uncommittedContent.append(*m_trailingPartialTextItem, breakingContext.trailingPartialContent->logicalWidth);
@@ -224,6 +230,8 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         m_uncommittedContent.reset();
     else
         ASSERT_NOT_REACHED();
+    // Adjust hyphenated line count
+    m_successiveHyphenatedLineCount = breakingContext.trailingPartialContent && breakingContext.trailingPartialContent->hasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     return breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
 }
 
