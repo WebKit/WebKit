@@ -1,3 +1,104 @@
+2019-11-30  Antti Koivisto  <antti@apple.com>
+
+        Move path implementation functions in LineLayoutTraversal to *Path classes
+        https://bugs.webkit.org/show_bug.cgi?id=204714
+
+        Reviewed by Sam Weinig.
+
+        Simplify LineLayoutTraversal and make it easier to extend.
+
+        - Turn SimplePath and ComplexPath structs into classes
+        - Move them to separate files
+        - Make path implementation functions class members, called via generic lambdas
+        - Instead of inheriting Box/TextBox to iterators, make it a member variable.
+        - Move the path variant to Box, avoiding use of templates.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextBox):
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::traverseNextInVisualOrder):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::traverseNextInTextOrder):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::atEnd const):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::ElementBoxIterator):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::atEnd const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::ComplexPath::nextInlineTextBoxInTextOrder const): Deleted.
+        * rendering/line/LineLayoutTraversal.h:
+        (WebCore::LineLayoutTraversal::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator* const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator-> const):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::ElementBoxIterator):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::operator* const):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::operator-> const):
+        (WebCore::LineLayoutTraversal::Box::Box):
+        (WebCore::LineLayoutTraversal::Box::rect const):
+        (WebCore::LineLayoutTraversal::Box::logicalRect const):
+        (WebCore::LineLayoutTraversal::Box::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::Box::dirOverride const):
+        (WebCore::LineLayoutTraversal::Box::isLineBreak const):
+        (WebCore::LineLayoutTraversal::TextBox::hasHyphen const):
+        (WebCore::LineLayoutTraversal::TextBox::TextBox):
+        (WebCore::LineLayoutTraversal::TextBox::text const):
+        (WebCore::LineLayoutTraversal::TextBox::localStartOffset const):
+        (WebCore::LineLayoutTraversal::TextBox::localEndOffset const):
+        (WebCore::LineLayoutTraversal::TextBox::length const):
+        (WebCore::LineLayoutTraversal::TextBox::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::TextBox::isLast const):
+        (): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::rect const): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::logicalRect const): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::isLeftToRightDirection const): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::dirOverride const): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::isLineBreak const): Deleted.
+        (WebCore::LineLayoutTraversal::Box<Iterator>::iterator const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::hasHyphen const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::text const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::localStartOffset const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::localEndOffset const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::length const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::isLastOnLine const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::isLast const): Deleted.
+        * rendering/line/LineLayoutTraversalComplexPath.h: Added.
+        (WebCore::LineLayoutTraversal::ComplexPath::ComplexPath):
+        (WebCore::LineLayoutTraversal::ComplexPath::rect const):
+        (WebCore::LineLayoutTraversal::ComplexPath::logicalRect const):
+        (WebCore::LineLayoutTraversal::ComplexPath::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::ComplexPath::dirOverride const):
+        (WebCore::LineLayoutTraversal::ComplexPath::isLineBreak const):
+        (WebCore::LineLayoutTraversal::ComplexPath::hasHyphen const):
+        (WebCore::LineLayoutTraversal::ComplexPath::text const):
+        (WebCore::LineLayoutTraversal::ComplexPath::localStartOffset const):
+        (WebCore::LineLayoutTraversal::ComplexPath::localEndOffset const):
+        (WebCore::LineLayoutTraversal::ComplexPath::length const):
+        (WebCore::LineLayoutTraversal::ComplexPath::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::ComplexPath::isLast const):
+        (WebCore::LineLayoutTraversal::ComplexPath::traverseNextTextBoxInVisualOrder):
+        (WebCore::LineLayoutTraversal::ComplexPath::traverseNextTextBoxInTextOrder):
+        (WebCore::LineLayoutTraversal::ComplexPath::operator== const):
+        (WebCore::LineLayoutTraversal::ComplexPath::atEnd const):
+        (WebCore::LineLayoutTraversal::ComplexPath::inlineTextBox const):
+        (WebCore::LineLayoutTraversal::ComplexPath::nextInlineTextBoxInTextOrder const):
+        * rendering/line/LineLayoutTraversalSimplePath.h: Added.
+        (WebCore::LineLayoutTraversal::SimplePath::SimplePath):
+        (WebCore::LineLayoutTraversal::SimplePath::rect const):
+        (WebCore::LineLayoutTraversal::SimplePath::logicalRect const):
+        (WebCore::LineLayoutTraversal::SimplePath::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::SimplePath::dirOverride const):
+        (WebCore::LineLayoutTraversal::SimplePath::isLineBreak const):
+        (WebCore::LineLayoutTraversal::SimplePath::hasHyphen const):
+        (WebCore::LineLayoutTraversal::SimplePath::text const):
+        (WebCore::LineLayoutTraversal::SimplePath::localStartOffset const):
+        (WebCore::LineLayoutTraversal::SimplePath::localEndOffset const):
+        (WebCore::LineLayoutTraversal::SimplePath::length const):
+        (WebCore::LineLayoutTraversal::SimplePath::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::SimplePath::isLast const):
+        (WebCore::LineLayoutTraversal::SimplePath::traverseNextTextBoxInVisualOrder):
+        (WebCore::LineLayoutTraversal::SimplePath::traverseNextTextBoxInTextOrder):
+        (WebCore::LineLayoutTraversal::SimplePath::operator== const):
+        (WebCore::LineLayoutTraversal::SimplePath::atEnd const):
+
 2019-11-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for hyphenate-limit-lines

@@ -4794,6 +4794,8 @@
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E42E76DC1C7AF77600E3614D /* StyleUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E76DB1C7AF77600E3614D /* StyleUpdate.h */; };
 		E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E43105BA16750F1600DB2FB8 /* NodeTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4343D232392778400EBBB66 /* LineLayoutTraversalSimplePath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4343D242392778F00EBBB66 /* LineLayoutTraversalComplexPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A023A17EB370A004CDD25 /* RenderElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E43AF8E51AC5B7DD00CA717E /* CacheValidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */; };
@@ -15107,6 +15109,8 @@
 		E42E76DB1C7AF77600E3614D /* StyleUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleUpdate.h; sourceTree = "<group>"; };
 		E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeTraversal.cpp; sourceTree = "<group>"; };
 		E43105BA16750F1600DB2FB8 /* NodeTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeTraversal.h; sourceTree = "<group>"; };
+		E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutTraversalSimplePath.h; sourceTree = "<group>"; };
+		E4343D242392778F00EBBB66 /* LineLayoutTraversalComplexPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutTraversalComplexPath.h; sourceTree = "<group>"; };
 		E43A023A17EB370A004CDD25 /* RenderElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderElement.h; sourceTree = "<group>"; };
 		E43A023C17EB3713004CDD25 /* RenderElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderElement.cpp; sourceTree = "<group>"; };
 		E43AF8E41AC5B7DD00CA717E /* CacheValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheValidation.cpp; sourceTree = "<group>"; };
@@ -28725,6 +28729,8 @@
 				FFEFAB2918380DA000514534 /* LineLayoutState.h */,
 				E484A33D23055303009ADE6A /* LineLayoutTraversal.cpp */,
 				E484A33B23055303009ADE6A /* LineLayoutTraversal.h */,
+				E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */,
+				E4343D242392778F00EBBB66 /* LineLayoutTraversalComplexPath.h */,
 				FFDBC046183D27B700407109 /* LineWidth.cpp */,
 				FFDBC045183D27B700407109 /* LineWidth.h */,
 				FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */,
@@ -30535,6 +30541,7 @@
 				837056901F50915C00D93425 /* JSFileSystemEntryCallback.h in Headers */,
 				833B9E361F508D8500E0E428 /* JSFileSystemFileEntry.h in Headers */,
 				712BE4881FE8686A002031CC /* JSFillMode.h in Headers */,
+				E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */,
 				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
 				C280833F1C6DC26F001451B6 /* JSFontFace.h in Headers */,
 				1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */,
@@ -31682,6 +31689,7 @@
 				57DCED74214305F00016B847 /* PublicKeyCredentialData.h in Headers */,
 				57303BEF200980C600355965 /* PublicKeyCredentialDescriptor.h in Headers */,
 				57303C0A20099BAD00355965 /* PublicKeyCredentialRequestOptions.h in Headers */,
+				E4343D232392778400EBBB66 /* LineLayoutTraversalSimplePath.h in Headers */,
 				57303BEB20097F4000355965 /* PublicKeyCredentialType.h in Headers */,
 				0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,

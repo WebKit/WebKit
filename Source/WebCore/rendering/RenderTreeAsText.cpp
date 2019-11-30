@@ -477,7 +477,7 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     }
 }
 
-static void writeTextBox(TextStream& ts, const RenderText& o, const LineLayoutTraversal::TextBoxIterator::BoxType& textBox)
+static void writeTextBox(TextStream& ts, const RenderText& o, const LineLayoutTraversal::TextBox& textBox)
 {
     auto rect = textBox.rect();
     auto logicalRect = textBox.logicalRect();
