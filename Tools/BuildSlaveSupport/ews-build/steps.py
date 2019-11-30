@@ -1452,8 +1452,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
                 if failures_introduced_by_patch:
                     return self.report_failure(failures_introduced_by_patch)
 
-            # At this point we know that at least one test flaked, but no consistent failures
-            # were introduced. This is a bit of a grey-zone.
+            new_failing_or_flaky_tests = first_results_failing_tests.union(second_results_failing_tests) - clean_tree_results_failing_tests
+            if not new_failing_or_flaky_tests:
+                return self.report_pre_existing_failures(clean_tree_results_failing_tests)
+
+            # At this point we know that at least one test flaked, and those flaky tests passed on clean tree,
+            # and no consistent failures were introduced. This is a bit of a grey-zone. So, we retry the build.
             return self.retry_build()
 
         if clean_tree_results_did_exceed_test_failure_limit:
