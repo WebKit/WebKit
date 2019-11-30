@@ -1,3 +1,23 @@
+2019-11-30  youenn fablet  <youenn@apple.com>
+
+        MockAudioSharedUnit should reset its last render time on start/stop/reconfigure
+        https://bugs.webkit.org/show_bug.cgi?id=204600
+        <rdar://problem/57438874>
+
+        Reviewed by Eric Carlson.
+
+        MockAudioSharedUnit was not resetting its last render time on stop/start/reconfigure.
+        If stopping for a long time and then restarting, the unit would flood the audio pipe with lots of data
+        and confuse the pipe.
+        Remove some member variables inherited from MockRealtimeAudioSource which are no longer needed.
+
+        Covered by imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html being no longer flaky.
+
+        * platform/mediastream/mac/MockAudioSharedUnit.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockAudioSharedUnit::reconfigureAudioUnit):
+        (WebCore::MockAudioSharedUnit::startInternal):
+
 2019-11-30  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, follow-up to r252938, now fixing the MSE/EME build
