@@ -717,7 +717,7 @@ ExceptionOr<void> WebAnimation::finish()
     return { };
 }
 
-void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchronouslyNotify)
+void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchronouslyNotify, Silently silently)
 {
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
     updateFinishedState(didSeek, synchronouslyNotify);
@@ -727,7 +727,7 @@ void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchron
         downcast<KeyframeEffect>(*m_effect).animationTimingDidChange();
     }
 
-    if (m_timeline)
+    if (silently == Silently::No && m_timeline)
         m_timeline->animationTimingDidChange(*this);
 };
 
@@ -979,7 +979,7 @@ void WebAnimation::runPendingPlayTask()
         m_readyPromise->resolve(*this);
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
-    timingDidChange(DidSeek::No, SynchronouslyNotify::No);
+    timingDidChange(DidSeek::No, SynchronouslyNotify::No, Silently::Yes);
 
     invalidateEffect();
 }
@@ -1105,7 +1105,7 @@ void WebAnimation::runPendingPauseTask()
 
     // 6. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the
     //    synchronously notify flag set to false.
-    timingDidChange(DidSeek::No, SynchronouslyNotify::No);
+    timingDidChange(DidSeek::No, SynchronouslyNotify::No, Silently::Yes);
 
     invalidateEffect();
 }
@@ -1289,37 +1289,39 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
 Seconds WebAnimation::timeToNextTick() const
 {
-    ASSERT(isRunningAccelerated());
-
+    // Any animation that is pending needs immediate resolution.
     if (pending())
         return 0_s;
 
-    // If we're not running, there's no telling when we'll end.
-    if (playState() != PlayState::Running)
+    // If we're not running, or time is not advancing for this animation, there's no telling when we'll end.
+    auto playbackRate = effectivePlaybackRate();
+    if (playState() != PlayState::Running || !playbackRate)
         return Seconds::infinity();
 
-    // CSS Animations dispatch events for each iteration, so compute the time until
-    // the end of this iteration. Any other animation only cares about remaning total time.
-    if (isCSSAnimation()) {
-        auto* animationEffect = effect();
-        auto timing = animationEffect->getComputedTiming();
-        // If we're actively running, we need the time until the next iteration.
-        if (auto iterationProgress = timing.simpleIterationProgress)
-            return animationEffect->iterationDuration() * (1 - *iterationProgress);
-
-        // Otherwise we're probably in the before phase waiting to reach our start time.
-        if (auto animationCurrentTime = currentTime()) {
-            // If our current time is negative, we need to be scheduled to be resolved at the inverse
-            // of our current time, unless we fill backwards, in which case we want to invalidate as
-            // soon as possible.
-            auto localTime = animationCurrentTime.value();
-            if (localTime < 0_s)
-                return -localTime;
-            if (localTime < animationEffect->delay())
-                return animationEffect->delay() - localTime;
+    auto& effect = *this->effect();
+    auto timing = effect.getBasicTiming();
+    switch (timing.phase) {
+    case AnimationEffectPhase::Before:
+        // The animation is in its "before" phase, in this case we can wait until it enters its "active" phase.
+        return (effect.delay() - timing.localTime.value()) / playbackRate;
+    case AnimationEffectPhase::Active:
+        // Non-accelerated animations in the "active" phase will need to update their animated value at the immediate next opportunity.
+        if (!isRunningAccelerated())
+            return 0_s;
+        // Accelerated CSS Animations need to trigger "animationiteration" events, in this case we can wait until the next iteration.
+        if (isCSSAnimation()) {
+            if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress)
+                return effect.iterationDuration() * (1 - *iterationProgress);
         }
-    } else if (auto animationCurrentTime = currentTime())
-        return effect()->endTime() - *animationCurrentTime;
+        // Accelerated animations in the "active" phase can wait until they ended.
+        return (effect.endTime() - timing.localTime.value()) / playbackRate;
+    case AnimationEffectPhase::After:
+        // The animation is in its after phase, which means it will no longer update its value, so it doens't need a tick.
+        return Seconds::infinity();
+    case AnimationEffectPhase::Idle:
+        ASSERT_NOT_REACHED();
+        return Seconds::infinity();
+    }
 
     ASSERT_NOT_REACHED();
     return Seconds::infinity();
