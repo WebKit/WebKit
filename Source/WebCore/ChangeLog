@@ -1,3 +1,17 @@
+2019-11-30  youenn fablet  <youenn@apple.com>
+
+        Update RealtimeOutgoingAudioSourceCocoa::m_writeCount when sampleRate changes
+        https://bugs.webkit.org/show_bug.cgi?id=204606
+
+        Reviewed by Eric Carlson.
+
+        Update m_writeCount to make sure our high/low buffer computation is done right.
+
+        Test: webrtc/audio-samplerate-change.html
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable):
+
 2019-11-30  Antti Koivisto  <antti@apple.com>
 
         Move path implementation functions in LineLayoutTraversal to *Path classes

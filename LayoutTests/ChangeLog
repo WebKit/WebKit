@@ -1,3 +1,13 @@
+2019-11-30  youenn fablet  <youenn@apple.com>
+
+        Update RealtimeOutgoingAudioSourceCocoa::m_writeCount when sampleRate changes
+        https://bugs.webkit.org/show_bug.cgi?id=204606
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-samplerate-change-expected.txt: Added.
+        * webrtc/audio-samplerate-change.html: Added.
+
 2019-11-30  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Forward-filling animations should not schedule updates while filling

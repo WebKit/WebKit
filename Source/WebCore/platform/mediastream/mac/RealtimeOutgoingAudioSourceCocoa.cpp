@@ -91,6 +91,11 @@ bool RealtimeOutgoingAudioSourceCocoa::hasBufferedEnoughData()
 void RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
     if (m_inputStreamDescription != streamDescription) {
+        if (m_writeCount && m_inputStreamDescription.sampleRate()) {
+            // Update m_writeCount to be valid according the new sampleRate.
+            m_writeCount = (m_writeCount * streamDescription.sampleRate()) / m_inputStreamDescription.sampleRate();
+        }
+
         m_inputStreamDescription = toCAAudioStreamDescription(streamDescription);
         auto status  = m_sampleConverter->setInputFormat(m_inputStreamDescription);
         ASSERT_UNUSED(status, !status);
@@ -110,8 +115,6 @@ void RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable(const MediaTime&, c
         return;
     }
 
-    // If we change the audio track or its sample rate changes, the timestamp based on m_writeCount may be wrong.
-    // FIXME: We should update m_writeCount to be valid according the new sampleRate.
     m_sampleConverter->pushSamples(MediaTime(m_writeCount, static_cast<uint32_t>(m_inputStreamDescription.sampleRate())), audioData, sampleCount);
     m_writeCount += sampleCount;
 

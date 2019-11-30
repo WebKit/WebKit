@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing replacing an audio track during a WebRTC call</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src ="routines.js"></script>
+</head>
+<body>
+    <video id=video autoplay controls></video>
+    <script>
+var usesLowSampleRate = false;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    setInterval(() => {
+        usesLowSampleRate = !usesLowSampleRate;
+        const rate = usesLowSampleRate ? 44100 : 48000;
+        localStream.getAudioTracks()[0].applyConstraints({sampleRate: rate});
+    }, 200);
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => { resolve(trackEvent.streams[0]); };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = remoteStream;
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    localStream.getAudioTracks()[0].stop();
+}, "Audio connection with track changing sample rate");
+    </script>
+</body>
+</html>
