@@ -1,5 +1,13 @@
 2019-11-30  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, follow-up to r252938, now fixing the MSE/EME build
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        supportsKeySystem needs to be public because it's referenced from
+        the MSE MediaPlayerPrivate sub-class.
+
+2019-11-30  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK LTS build fix after r252950.
 
         * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:

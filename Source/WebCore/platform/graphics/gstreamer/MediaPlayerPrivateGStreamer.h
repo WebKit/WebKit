@@ -125,6 +125,7 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
+    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     bool hasVideo() const final { return m_hasVideo; }
     bool hasAudio() const final { return m_hasAudio; }
@@ -395,7 +396,6 @@ private:
 
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     void syncOnClock(bool sync);
 
