@@ -62,10 +62,6 @@ public:
 
     CMClockRef timebaseClock();
 
-    void beginInterruption();
-    void endInterruption();
-    void scheduleReconfiguration();
-
 protected:
     CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID);
     virtual ~CoreAudioCaptureSource();
@@ -103,15 +99,6 @@ private:
     Optional<RealtimeMediaSourceCapabilities> m_capabilities;
     Optional<RealtimeMediaSourceSettings> m_currentSettings;
 
-    enum class SuspensionType { None, WhilePaused, WhilePlaying };
-    SuspensionType m_suspendType { SuspensionType::None };
-
-    enum class ReconfigurationState { None, Required, Ongoing };
-    ReconfigurationState m_reconfigurationState { ReconfigurationState::None };
-
-    bool m_reconfigurationRequired { false };
-    bool m_suspendPending { false };
-    bool m_resumePending { false };
     bool m_isReadyToStart { false };
     
     BaseAudioSharedUnit* m_overrideUnit { nullptr };

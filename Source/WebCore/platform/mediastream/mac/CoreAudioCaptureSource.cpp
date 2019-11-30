@@ -277,7 +277,6 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         return err;
     }
     m_ioUnitInitialized = true;
-    setSuspended(false);
 
     unduck();
 
@@ -647,12 +646,6 @@ void CoreAudioCaptureSourceFactory::beginInterruption()
         });
         return;
     }
-    ASSERT(isMainThread());
-
-    if (auto* source = coreAudioActiveSource()) {
-        source->beginInterruption();
-        return;
-    }
     CoreAudioSharedUnit::singleton().suspend();
 }
 
@@ -664,13 +657,7 @@ void CoreAudioCaptureSourceFactory::endInterruption()
         });
         return;
     }
-    ASSERT(isMainThread());
-
-    if (auto* source = coreAudioActiveSource()) {
-        source->endInterruption();
-        return;
-    }
-    CoreAudioSharedUnit::singleton().reconfigureAudioUnit();
+    CoreAudioSharedUnit::singleton().resume();
 }
 
 void CoreAudioCaptureSourceFactory::scheduleReconfiguration()
@@ -681,13 +668,7 @@ void CoreAudioCaptureSourceFactory::scheduleReconfiguration()
         });
         return;
     }
-    ASSERT(isMainThread());
-
-    if (auto* source = coreAudioActiveSource()) {
-        source->scheduleReconfiguration();
-        return;
-    }
-    CoreAudioSharedUnit::singleton().reconfigureAudioUnit();
+    CoreAudioSharedUnit::singleton().reconfigure();
 }
 
 AudioCaptureFactory& CoreAudioCaptureSource::factory()
@@ -736,7 +717,7 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     unit.setVolume(volume());
 
     if (shouldReconfigure)
-        scheduleReconfiguration();
+        unit.reconfigure();
 
     unit.addClient(*this);
 }
@@ -756,33 +737,13 @@ void CoreAudioCaptureSource::startProducingData()
     CoreAudioCaptureSourceFactory::singleton().setCoreAudioActiveSource(*this);
 #endif
 
-    auto& unit = this->unit();
-
-    auto isSuspended = unit.isSuspended();
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, isSuspended);
-
-    if (isSuspended) {
-        m_suspendType = SuspensionType::WhilePlaying;
-        return;
-    }
-
     initializeToStartProducingData();
-    unit.startProducingData();
+    unit().startProducingData();
 }
 
 void CoreAudioCaptureSource::stopProducingData()
 {
-    auto& unit = this->unit();
-
-    auto isSuspended = unit.isSuspended();
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, isSuspended);
-
-    if (isSuspended) {
-        m_suspendType = SuspensionType::WhilePaused;
-        return;
-    }
-
-    unit.stopProducingData();
+    unit().stopProducingData();
 }
 
 const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
@@ -822,82 +783,19 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
 
 void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
+    bool shouldReconfigure = false;
     if (settings.contains(RealtimeMediaSourceSettings::Flag::EchoCancellation)) {
         unit().setEnableEchoCancellation(echoCancellation());
-        scheduleReconfiguration();
+        shouldReconfigure = true;
     }
     if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
         unit().setSampleRate(sampleRate());
-        scheduleReconfiguration();
+        shouldReconfigure = true;
     }
+    if (shouldReconfigure)
+        unit().reconfigure();
 
     m_currentSettings = WTF::nullopt;
-}
-
-void CoreAudioCaptureSource::scheduleReconfiguration()
-{
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-
-    ASSERT(isMainThread());
-    auto& unit = this->unit();
-    if (!unit.hasAudioUnit() || m_reconfigurationState != ReconfigurationState::None)
-        return;
-
-    m_reconfigurationState = ReconfigurationState::Ongoing;
-    scheduleDeferredTask([this, &unit] {
-        if (unit.isSuspended()) {
-            m_reconfigurationState = ReconfigurationState::Required;
-            return;
-        }
-
-        unit.reconfigureAudioUnit();
-        m_reconfigurationState = ReconfigurationState::None;
-    });
-}
-
-void CoreAudioCaptureSource::beginInterruption()
-{
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-
-    ASSERT(isMainThread());
-    auto& unit = this->unit();
-    if (!unit.hasAudioUnit() || unit.isSuspended() || m_suspendPending)
-        return;
-
-    m_suspendPending = true;
-    scheduleDeferredTask([this, &unit] {
-        m_suspendType = unit.isProducingData() ? SuspensionType::WhilePlaying : SuspensionType::WhilePaused;
-        unit.suspend();
-        notifyMutedChange(true);
-        m_suspendPending = false;
-    });
-}
-
-void CoreAudioCaptureSource::endInterruption()
-{
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-
-    ASSERT(isMainThread());
-    auto& unit = this->unit();
-    if (!unit.hasAudioUnit() || !unit.isSuspended() || m_resumePending)
-        return;
-
-    auto type = m_suspendType;
-    m_suspendType = SuspensionType::None;
-    if (type != SuspensionType::WhilePlaying && m_reconfigurationState != ReconfigurationState::Required)
-        return;
-
-    m_resumePending = true;
-    scheduleDeferredTask([this, type, &unit] {
-        if (m_reconfigurationState == ReconfigurationState::Required)
-            unit.reconfigureAudioUnit();
-        if (type == SuspensionType::WhilePlaying) {
-            unit.resume();
-            notifyMutedChange(false);
-        }
-        m_reconfigurationState = ReconfigurationState::None;
-        m_resumePending = false;
-    });
 }
 
 bool CoreAudioCaptureSource::interrupted() const

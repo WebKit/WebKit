@@ -41,6 +41,7 @@ public:
 
     void startProducingData();
     void stopProducingData();
+    void reconfigure();
     virtual bool isProducingData() const = 0;
 
     virtual void delaySamples(Seconds) { }
@@ -66,7 +67,6 @@ public:
 
     virtual bool hasAudioUnit() const = 0;
     virtual void setCaptureDevice(String&&, uint32_t) = 0;
-    virtual OSStatus reconfigureAudioUnit() = 0;
 
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
 
@@ -78,6 +78,7 @@ protected:
     virtual void cleanupAudioUnit() = 0;
     virtual OSStatus startInternal() = 0;
     virtual void stopInternal() = 0;
+    virtual OSStatus reconfigureAudioUnit() = 0;
 
     void setSuspended(bool value) { m_suspended = value; }
 
@@ -88,6 +89,7 @@ private:
     double m_volume { 1 };
     int m_sampleRate;
     bool m_suspended { false };
+    bool m_needsReconfiguration { false };
 
     int32_t m_producingCount { 0 };
 
