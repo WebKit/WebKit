@@ -1,3 +1,14 @@
+2019-12-01  Antti Koivisto  <antti@apple.com>
+
+        Regression (r252893): loader/stateobjects/pushstate-size.html is crashing on mac debug
+        https://bugs.webkit.org/show_bug.cgi?id=204725
+
+        Unreviewed followup to r252893.
+
+        * rendering/RenderElement.h:
+
+        Increase bitfield size to fit the enum.
+
 2019-12-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for word-spacing property
