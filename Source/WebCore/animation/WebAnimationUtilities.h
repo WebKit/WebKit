@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class WebAnimation;
+
 inline double secondsToWebAnimationsAPITime(const Seconds time)
 {
     // Precision of time values
@@ -59,6 +61,8 @@ struct WebAnimationsMarkableDoubleTraits {
 };
 
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
+
+bool compareAnimationsByCompositeOrder(WebAnimation&, WebAnimation&, Vector<String>& cssAnimationNames);
 
 } // namespace WebCore
 

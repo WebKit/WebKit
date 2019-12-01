@@ -9497,6 +9497,7 @@
 		71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSAnimation.h; sourceTree = "<group>"; };
 		71B5AB2421F1D9E200376E5C /* PointerCaptureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerCaptureController.h; sourceTree = "<group>"; };
 		71B5AB2521F1D9E300376E5C /* PointerCaptureController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerCaptureController.cpp; sourceTree = "<group>"; };
+		71C25AF52392BF3C00D5C098 /* WebAnimationUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAnimationUtilities.cpp; sourceTree = "<group>"; };
 		71C29E2E203CE76B008F36D2 /* CSSAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAnimation.cpp; sourceTree = "<group>"; };
 		71C29E30203CE76B008F36D2 /* CSSAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimation.h; sourceTree = "<group>"; };
 		71C29E31203CE76C008F36D2 /* CSSAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSAnimation.idl; sourceTree = "<group>"; };
@@ -16642,8 +16643,8 @@
 				115CA83023328B1E00FD3B08 /* LayoutUnits.cpp */,
 				6F73918C2106CEDD006AF262 /* LayoutUnits.h */,
 				6FE7AA2621C37B6300296DCD /* MarginTypes.h */,
-				E4ABABDB236088FD00FA4345 /* RenderBlockFlowLineLayout.h */,
 				E4ABABDE2360893D00FA4345 /* RenderBlockFlowLineLayout.cpp */,
+				E4ABABDB236088FD00FA4345 /* RenderBlockFlowLineLayout.h */,
 				11FF02D520BA3C810083F25B /* Verification.cpp */,
 			);
 			path = layout;
@@ -20913,6 +20914,7 @@
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
 				71025EC21F99F096004A250C /* WebAnimation.h */,
 				71025EC81F99F096004A250C /* WebAnimation.idl */,
+				71C25AF52392BF3C00D5C098 /* WebAnimationUtilities.cpp */,
 				7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */,
 			);
 			path = animation;
@@ -31755,6 +31757,7 @@
 				7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */,
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */,
+				E4ABABDD236088FE00FA4345 /* RenderBlockFlowLineLayout.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxFragmentInfo.h in Headers */,
 				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
@@ -32470,7 +32473,6 @@
 				088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */,
 				081093DC1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.h in Headers */,
 				081668DA125603D5006F25DE /* SVGTextLayoutEngine.h in Headers */,
-				E4ABABDD236088FE00FA4345 /* RenderBlockFlowLineLayout.h in Headers */,
 				080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */,
 				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,

@@ -1,3 +1,29 @@
+2019-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement Animation.commitStyles()
+        https://bugs.webkit.org/show_bug.cgi?id=202193
+        <rdar://problem/55697790>
+
+        Reviewed by Dean Jackson.
+
+        We implement the Animation.commitStyles() method following the spec to the letter. We fail a few tests still because we don't support animation
+        composite operations and because of rounding errors when blending opacity styles.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::ensureEffectsAreSorted): Remove the animation sorting logic since it's now made available in WebAnimationUtilities.h.
+        * animation/KeyframeEffectStack.h:
+        (WebCore::KeyframeEffectStack::cssAnimationNames const): New function needed to call compareAnimationsByCompositeOrder() in WebAnimation::commitStyles().
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::commitStyles): Implement the spec steps as specified in https://drafts.csswg.org/web-animations-1/#commit-computed-styles. We use
+        a CSSStyleDeclaration to copy the content of the existing inline "style" attribute, add the animated values and then serialize it into the "style" attribute.
+        Even though it would have been more convenient to use StyledElement::setInlineStyleProperty(), we do this to ensure mutation observers get notified of such
+        a change.
+        * animation/WebAnimationUtilities.cpp: Added.
+        (WebCore::compareAnimationsByCompositeOrder): Copied the animation sorting logic previously implemented in KeyframeEffectStack::ensureEffectsAreSorted().
+        * animation/WebAnimationUtilities.h:
+
 2019-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Make CompositeOperator and BlendMode encodable

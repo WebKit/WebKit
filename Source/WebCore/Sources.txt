@@ -457,6 +457,7 @@ animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/WebAnimation.cpp
+animation/WebAnimationUtilities.cpp
 
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp

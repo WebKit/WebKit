@@ -29,6 +29,7 @@
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "DOMPromiseProxy.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
@@ -40,6 +41,8 @@
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Microtasks.h"
+#include "RenderElement.h"
+#include "StyledElement.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
@@ -1284,6 +1287,71 @@ void WebAnimation::persist()
 
 ExceptionOr<void> WebAnimation::commitStyles()
 {
+    // https://drafts.csswg.org/web-animations-1/#commit-computed-styles
+
+    // 1. Let targets be the set of all effect targets for animation effects associated with animation.
+    auto* effect = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get()) : nullptr;
+    auto* target = effect ? effect->target() : nullptr;
+
+    // 2. For each target in targets:
+    //
+    // 2.1 If target is not an element capable of having a style attribute (for example, it is a pseudo-element or is an element in a
+    // document format for which style attributes are not defined) throw a "NoModificationAllowedError" DOMException and abort these steps.
+    if (!is<StyledElement>(target))
+        return Exception { NoModificationAllowedError };
+
+    auto& styledElement = downcast<StyledElement>(*target);
+
+    // 2.2 If, after applying any pending style changes, target is not being rendered, throw an "InvalidStateError" DOMException and abort these steps.
+    styledElement.document().updateStyleIfNeeded();
+    auto* renderer = styledElement.renderer();
+    if (!renderer)
+        return Exception { InvalidStateError };
+
+    // 2.3 Let inline style be the result of getting the CSS declaration block corresponding to target’s style attribute. If target does not have a style
+    // attribute, let inline style be a new empty CSS declaration block with the readonly flag unset and owner node set to target.
+
+    // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one animation effect associated with
+    // animation whose effect target is target.
+
+    auto& style = renderer->style();
+    auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
+    auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
+    inlineStyle->setCssText(styledElement.getAttribute("style"));
+
+    auto& keyframeStack = styledElement.ensureKeyframeEffectStack();
+    auto cssAnimationNames = keyframeStack.cssAnimationNames();
+
+    // 2.5 For each property, property, in targeted properties:
+    for (auto property : effect->animatedProperties()) {
+        // 1. Let partialEffectStack be a copy of the effect stack for property on target.
+        // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
+        // property as a target property to partialEffectStack.
+        // 3. Remove from partialEffectStack any animation effects whose associated animation has a higher composite order than animation.
+        // 4. Let effect value be the result of calculating the result of partialEffectStack for property using target's computed style (see § 5.4.3 Calculating
+        // the result of an effect stack).
+        // 5. Set a CSS declaration property for effect value in inline style.
+        // 6. Update style attribute for inline style.
+
+        // We actually perform those steps in a different way: instead of building a copy of the effect stack and then removing stuff, we iterate through the
+        // effect stack and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
+        auto animatedStyle = RenderStyle::clonePtr(style);
+        for (const auto& effectInStack : keyframeStack.sortedEffects()) {
+            if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this, cssAnimationNames))
+                break;
+            if (effectInStack->animatedProperties().contains(property))
+                effectInStack->animation()->resolve(*animatedStyle);
+            if (effectInStack->animation() == this)
+                break;
+        }
+        if (m_replaceState == ReplaceState::Removed)
+            effect->animation()->resolve(*animatedStyle);
+        if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, property, renderer))
+            inlineStyle->setPropertyInternal(property, cssValue->cssText(), false);
+    }
+
+    styledElement.setAttribute("style", inlineStyle->cssText());
+
     return { };
 }
 

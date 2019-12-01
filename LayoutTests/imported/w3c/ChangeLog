@@ -1,3 +1,15 @@
+2019-11-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement Animation.commitStyles()
+        https://bugs.webkit.org/show_bug.cgi?id=202193
+        <rdar://problem/55697790>
+
+        Reviewed by Dean Jackson.
+
+        WPT test for Animation.commitStyles() now has 11 more PASS results.
+
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+
 2019-11-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Serialization of grid-area, grid-row and grid-column should include "/" separator
