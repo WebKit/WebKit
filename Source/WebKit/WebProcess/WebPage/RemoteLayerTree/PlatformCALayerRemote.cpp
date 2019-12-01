@@ -891,7 +891,7 @@ Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALaye
     return PlatformCALayerRemote::create(layerType, client, *m_context);
 }
 
-void PlatformCALayerRemote::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+void PlatformCALayerRemote::enumerateRectsBeingDrawn(WebCore::GraphicsContext& context, void (^block)(WebCore::FloatRect))
 {
     m_properties.backingStore->enumerateRectsBeingDrawn(context, block);
 }

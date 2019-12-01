@@ -1,3 +1,39 @@
+2019-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Reimplement some PlatformCALayer methods using GraphicsContext instead of CGContextRef
+        https://bugs.webkit.org/show_bug.cgi?id=204698
+
+        Reviewed by Sam Weinig.
+
+        In order to make PlatformCALayer-level DisplayList recording possible,
+        reimplement a few methods in terms of WebCore::GraphicsContext instead
+        of CGContextRef directly. Namely, collectRectsToPaint, drawLayerContents,
+        and drawRepaintIndicator.
+
+        In the drawLayerContents case, there are operations (like setting the
+        AppKit global graphics context) that cannot be done without a platform
+        context. In those cases, we skip that operation if we don't have a
+        platform context.
+
+        Anything depending on this downstream will break and need to be
+        implemented a different way in the DisplayList case.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::collectRectsToPaint):
+        (WebCore::PlatformCALayer::drawLayerContents):
+        (WebCore::PlatformCALayerCocoa::enumerateRectsBeingDrawn):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::collectRectsToPaint):
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+
 2019-11-30  youenn fablet  <youenn@apple.com>
 
         Simplify CoreAudioCaptureSource suspension logic

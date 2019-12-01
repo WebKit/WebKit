@@ -101,7 +101,7 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     return layerIntern ? layerIntern->owner() : nullptr;
 }
 
-PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextRef, PlatformCALayer*)
+PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(GraphicsContext&, PlatformCALayer*)
 {
     // FIXME: We should actually collect rects to use instead of defaulting to Windows'
     // normal drawing path.
@@ -109,9 +109,9 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextR
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList&, GraphicsLayerPaintBehavior)
+void PlatformCALayer::drawLayerContents(GraphicsContext& context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList&, GraphicsLayerPaintBehavior)
 {
-    intern(platformCALayer)->displayCallback(platformCALayer->platformLayer(), context);
+    intern(platformCALayer)->displayCallback(platformCALayer->platformLayer(), context.platformContext());
 }
 
 CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)

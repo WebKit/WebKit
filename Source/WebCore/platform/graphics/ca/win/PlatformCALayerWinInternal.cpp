@@ -129,7 +129,8 @@ void PlatformCALayerWinInternal::drawRepaintCounters(CACFLayerRef caLayer, CGCon
     else
         backgroundColor = cachedCGColor(Color(255, 0, 0));
 
-    PlatformCALayer::drawRepaintIndicator(context, owner(), drawCount, backgroundColor);
+    GraphicsContext graphicsContext(context);
+    PlatformCALayer::drawRepaintIndicator(graphicsContext, owner(), drawCount, backgroundColor);
 }
 
 void PlatformCALayerWinInternal::internalSetNeedsDisplay(const FloatRect* dirtyRect)

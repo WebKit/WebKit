@@ -353,13 +353,13 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, C
         break;
     case WebCore::PlatformCALayer::LayerTypeWebLayer:
     case WebCore::PlatformCALayer::LayerTypeBackdropLayer:
-        WebCore::PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
+        WebCore::PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, flags);
         break;
     case WebCore::PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
     case WebCore::PlatformCALayer::LayerTypeLightSystemBackdropLayer:
         // FIXME: These have a more complicated layer hierarchy. We need to paint into
         // a child layer in order to see the rendered results.
-        WebCore::PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
+        WebCore::PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, flags);
         break;
     case WebCore::PlatformCALayer::LayerTypeLayer:
     case WebCore::PlatformCALayer::LayerTypeTransformLayer:
@@ -382,9 +382,9 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, C
     m_frontContextPendingFlush = context.platformContext();
 }
 
-void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+void RemoteLayerBackingStore::enumerateRectsBeingDrawn(WebCore::GraphicsContext& context, void (^block)(WebCore::FloatRect))
 {
-    CGAffineTransform inverseTransform = CGAffineTransformInvert(CGContextGetCTM(context));
+    CGAffineTransform inverseTransform = CGAffineTransformInvert(context.getCTM());
 
     // We don't want to un-apply the flipping or contentsScale,
     // because they're not applied to repaint rects.

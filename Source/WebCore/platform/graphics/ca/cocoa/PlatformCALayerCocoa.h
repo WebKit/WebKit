@@ -178,7 +178,7 @@ public:
 
     Ref<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
 
-    void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
+    void enumerateRectsBeingDrawn(GraphicsContext&, void (^block)(FloatRect)) override;
 
     unsigned backingStoreBytesPerPixel() const override;
 

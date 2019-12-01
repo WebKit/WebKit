@@ -71,7 +71,7 @@ public:
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
 
-    void enumerateRectsBeingDrawn(CGContextRef, void (^)(CGRect));
+    void enumerateRectsBeingDrawn(WebCore::GraphicsContext&, void (^)(WebCore::FloatRect));
 
     bool hasFrontBuffer() const
     {

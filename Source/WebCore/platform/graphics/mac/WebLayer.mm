@@ -51,8 +51,9 @@
 {
     WebCore::PlatformCALayer* layer = WebCore::PlatformCALayer::platformCALayer((__bridge void*)self);
     if (layer) {
-        WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(context, layer);
-        WebCore::PlatformCALayer::drawLayerContents(context, layer, rectsToPaint, self.isRenderingInContext ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal);
+        WebCore::GraphicsContext graphicsContext(context);
+        WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(graphicsContext, layer);
+        WebCore::PlatformCALayer::drawLayerContents(graphicsContext, layer, rectsToPaint, self.isRenderingInContext ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal);
     }
 }
 
