@@ -44,12 +44,12 @@
 static const int maxExpressionDepth = 100;
 
 namespace WebCore {
-class CSSCalcPrimitiveValue;
-class CSSCalcOperation;
+class CSSCalcPrimitiveValueNode;
+class CSSCalcOperationNode;
 }
 
-SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcPrimitiveValue, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcPrimitiveValue)
-SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcOperation, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcOperation)
+SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcPrimitiveValueNode, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcPrimitiveValue)
+SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcOperationNode, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcOperation)
 
 namespace WebCore {
 
@@ -177,19 +177,19 @@ static String prettyPrintNodes(const Vector<Ref<CSSCalcExpressionNode>>& nodes)
 }
 #endif
 
-class CSSCalcPrimitiveValue final : public CSSCalcExpressionNode {
+class CSSCalcPrimitiveValueNode final : public CSSCalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CSSCalcPrimitiveValue> create(Ref<CSSPrimitiveValue>&& value, bool isInteger)
+    static Ref<CSSCalcPrimitiveValueNode> create(Ref<CSSPrimitiveValue>&& value, bool isInteger)
     {
-        return adoptRef(*new CSSCalcPrimitiveValue(WTFMove(value), isInteger));
+        return adoptRef(*new CSSCalcPrimitiveValueNode(WTFMove(value), isInteger));
     }
 
-    static RefPtr<CSSCalcPrimitiveValue> create(double value, CSSUnitType type, bool isInteger)
+    static RefPtr<CSSCalcPrimitiveValueNode> create(double value, CSSUnitType type, bool isInteger)
     {
         if (!std::isfinite(value))
             return nullptr;
-        return adoptRef(new CSSCalcPrimitiveValue(CSSPrimitiveValue::create(value, type), isInteger));
+        return adoptRef(new CSSCalcPrimitiveValueNode(CSSPrimitiveValue::create(value, type), isInteger));
     }
 
 private:
@@ -221,7 +221,7 @@ private:
     void dump(TextStream&) const final;
 
 private:
-    explicit CSSCalcPrimitiveValue(Ref<CSSPrimitiveValue>&& value, bool isInteger)
+    explicit CSSCalcPrimitiveValueNode(Ref<CSSPrimitiveValue>&& value, bool isInteger)
         : CSSCalcExpressionNode(calcUnitCategory(value->primitiveType()), isInteger)
         , m_value(WTFMove(value))
     {
@@ -230,7 +230,7 @@ private:
     Ref<CSSPrimitiveValue> m_value;
 };
 
-std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValue::createCalcExpression(const CSSToLengthConversionData& conversionData) const
+std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValueNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
 {
     switch (category()) {
     case CalculationCategory::Number:
@@ -254,7 +254,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValue::createCalcExpression(
     return nullptr;
 }
 
-double CSSCalcPrimitiveValue::doubleValue() const
+double CSSCalcPrimitiveValueNode::doubleValue() const
 {
     if (hasDoubleValue(primitiveType()))
         return m_value->doubleValue();
@@ -262,7 +262,7 @@ double CSSCalcPrimitiveValue::doubleValue() const
     return 0;
 }
 
-double CSSCalcPrimitiveValue::computeLengthPx(const CSSToLengthConversionData& conversionData) const
+double CSSCalcPrimitiveValueNode::computeLengthPx(const CSSToLengthConversionData& conversionData) const
 {
     switch (category()) {
     case CalculationCategory::Length:
@@ -283,25 +283,25 @@ double CSSCalcPrimitiveValue::computeLengthPx(const CSSToLengthConversionData& c
     return 0;
 }
 
-void CSSCalcPrimitiveValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcPrimitiveValueNode::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
     m_value->collectDirectComputationalDependencies(values);
 }
 
-void CSSCalcPrimitiveValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcPrimitiveValueNode::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
     m_value->collectDirectRootComputationalDependencies(values);
 }
 
-bool CSSCalcPrimitiveValue::equals(const CSSCalcExpressionNode& other) const
+bool CSSCalcPrimitiveValueNode::equals(const CSSCalcExpressionNode& other) const
 {
     if (type() != other.type())
         return false;
 
-    return compareCSSValue(m_value, static_cast<const CSSCalcPrimitiveValue&>(other).m_value);
+    return compareCSSValue(m_value, static_cast<const CSSCalcPrimitiveValueNode&>(other).m_value);
 }
 
-void CSSCalcPrimitiveValue::dump(TextStream& ts) const
+void CSSCalcPrimitiveValueNode::dump(TextStream& ts) const
 {
     ts << "value " << m_value->customCSSText();
 }
@@ -400,15 +400,15 @@ static bool isSamePair(CalculationCategory a, CalculationCategory b, Calculation
     return (a == x && b == y) || (a == y && b == x);
 }
 
-class CSSCalcOperation final : public CSSCalcExpressionNode {
+class CSSCalcOperationNode final : public CSSCalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSCalcOperation> create(CalcOperator, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide);
-    static RefPtr<CSSCalcOperation> createMinOrMax(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
+    static RefPtr<CSSCalcOperationNode> create(CalcOperator, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide);
+    static RefPtr<CSSCalcOperationNode> createMinOrMax(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
     static RefPtr<CSSCalcExpressionNode> createSimplified(CalcOperator, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide);
 
 private:
-    CSSCalcOperation(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
+    CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
         : CSSCalcExpressionNode(category, isIntegerResult(op, leftSide.get(), rightSide.get()))
         , m_operator(op)
     {
@@ -417,7 +417,7 @@ private:
         m_children.uncheckedAppend(WTFMove(rightSide));
     }
 
-    CSSCalcOperation(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)
+    CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)
         : CSSCalcExpressionNode(category, isIntegerResult(op, children))
         , m_operator(op)
         , m_children(WTFMove(children))
@@ -467,7 +467,7 @@ private:
     Vector<Ref<CSSCalcExpressionNode>> m_children;
 };
 
-RefPtr<CSSCalcOperation> CSSCalcOperation::create(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::create(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
 {
     if (!leftSide || !rightSide)
         return nullptr;
@@ -477,14 +477,14 @@ RefPtr<CSSCalcOperation> CSSCalcOperation::create(CalcOperator op, RefPtr<CSSCal
 
     auto newCategory = determineCategory(*leftSide, *rightSide, op);
     if (newCategory == CalculationCategory::Other) {
-        LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperation " << op << " node because unable to determine category from " << prettyPrintNode(*leftSide) << " and " << *rightSide);
+        LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperationNode " << op << " node because unable to determine category from " << prettyPrintNode(*leftSide) << " and " << *rightSide);
         return nullptr;
     }
 
-    return adoptRef(new CSSCalcOperation(newCategory, op, leftSide.releaseNonNull(), rightSide.releaseNonNull()));
+    return adoptRef(new CSSCalcOperationNode(newCategory, op, leftSide.releaseNonNull(), rightSide.releaseNonNull()));
 }
 
-RefPtr<CSSCalcOperation> CSSCalcOperation::createMinOrMax(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMax(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
 {
     ASSERT(op == CalcOperator::Min || op == CalcOperator::Max);
 
@@ -495,7 +495,7 @@ RefPtr<CSSCalcOperation> CSSCalcOperation::createMinOrMax(CalcOperator op, Vecto
         ASSERT(valueCategory < CalculationCategory::Other);
         if (!category) {
             if (valueCategory == CalculationCategory::Other) {
-                LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperation " << op << " node because unable to determine category from " << prettyPrintNodes(values));
+                LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperationNode " << op << " node because unable to determine category from " << prettyPrintNodes(values));
                 return nullptr;
             }
             category = valueCategory;
@@ -514,10 +514,10 @@ RefPtr<CSSCalcOperation> CSSCalcOperation::createMinOrMax(CalcOperator op, Vecto
         }
     }
 
-    return adoptRef(new CSSCalcOperation(category.value(), op, WTFMove(values)));
+    return adoptRef(new CSSCalcOperationNode(category.value(), op, WTFMove(values)));
 }
 
-RefPtr<CSSCalcExpressionNode> CSSCalcOperation::createSimplified(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
+RefPtr<CSSCalcExpressionNode> CSSCalcOperationNode::createSimplified(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
 {
     if (!leftSide || !rightSide)
         return nullptr;
@@ -532,7 +532,7 @@ RefPtr<CSSCalcExpressionNode> CSSCalcOperation::createSimplified(CalcOperator op
     // Simplify numbers.
     if (leftCategory == CalculationCategory::Number && rightCategory == CalculationCategory::Number) {
         CSSUnitType evaluationType = CSSUnitType::CSS_NUMBER;
-        return CSSCalcPrimitiveValue::create(evaluateOperator(op, { leftSide->doubleValue(), rightSide->doubleValue() }), evaluationType, isInteger);
+        return CSSCalcPrimitiveValueNode::create(evaluateOperator(op, { leftSide->doubleValue(), rightSide->doubleValue() }), evaluationType, isInteger);
     }
 
     // Simplify addition and subtraction between same types.
@@ -542,14 +542,14 @@ RefPtr<CSSCalcExpressionNode> CSSCalcOperation::createSimplified(CalcOperator op
             if (hasDoubleValue(leftType)) {
                 CSSUnitType rightType = rightSide->primitiveType();
                 if (leftType == rightType)
-                    return CSSCalcPrimitiveValue::create(evaluateOperator(op, { leftSide->doubleValue(), rightSide->doubleValue() }), leftType, isInteger);
+                    return CSSCalcPrimitiveValueNode::create(evaluateOperator(op, { leftSide->doubleValue(), rightSide->doubleValue() }), leftType, isInteger);
                 CSSUnitCategory leftUnitCategory = unitCategory(leftType);
                 if (leftUnitCategory != CSSUnitCategory::Other && leftUnitCategory == unitCategory(rightType)) {
                     CSSUnitType canonicalType = CSSPrimitiveValue::canonicalUnitTypeForCategory(leftUnitCategory);
                     if (canonicalType != CSSUnitType::CSS_UNKNOWN) {
                         double leftValue = leftSide->doubleValue() * CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(leftType);
                         double rightValue = rightSide->doubleValue() * CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(rightType);
-                        return CSSCalcPrimitiveValue::create(evaluateOperator(op, { leftValue, rightValue }), canonicalType, isInteger);
+                        return CSSCalcPrimitiveValueNode::create(evaluateOperator(op, { leftValue, rightValue }), canonicalType, isInteger);
                     }
                 }
             }
@@ -572,13 +572,13 @@ RefPtr<CSSCalcExpressionNode> CSSCalcOperation::createSimplified(CalcOperator op
 
         auto otherType = otherSide.primitiveType();
         if (hasDoubleValue(otherType))
-            return CSSCalcPrimitiveValue::create(evaluateOperator(op, { otherSide.doubleValue(), number }), otherType, isInteger);
+            return CSSCalcPrimitiveValueNode::create(evaluateOperator(op, { otherSide.doubleValue(), number }), otherType, isInteger);
     }
 
     return create(op, leftSide.releaseNonNull(), rightSide.releaseNonNull());
 }
 
-CSSUnitType CSSCalcOperation::primitiveType() const
+CSSUnitType CSSCalcOperationNode::primitiveType() const
 {
     switch (category()) {
     case CalculationCategory::Number:
@@ -619,7 +619,7 @@ CSSUnitType CSSCalcOperation::primitiveType() const
     return CSSUnitType::CSS_UNKNOWN;
 }
 
-std::unique_ptr<CalcExpressionNode> CSSCalcOperation::createCalcExpression(const CSSToLengthConversionData& conversionData) const
+std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
 {
     Vector<std::unique_ptr<CalcExpressionNode>> nodes;
     nodes.reserveInitialCapacity(m_children.size());
@@ -633,7 +633,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperation::createCalcExpression(const
     return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator);
 }
 
-double CSSCalcOperation::doubleValue() const
+double CSSCalcOperationNode::doubleValue() const
 {
     Vector<double> doubleValues;
     for (auto& child : m_children)
@@ -641,7 +641,7 @@ double CSSCalcOperation::doubleValue() const
     return evaluate(doubleValues);
 }
 
-double CSSCalcOperation::computeLengthPx(const CSSToLengthConversionData& conversionData) const
+double CSSCalcOperationNode::computeLengthPx(const CSSToLengthConversionData& conversionData) const
 {
     Vector<double> doubleValues;
     for (auto& child : m_children)
@@ -649,19 +649,19 @@ double CSSCalcOperation::computeLengthPx(const CSSToLengthConversionData& conver
     return evaluate(doubleValues);
 }
 
-void CSSCalcOperation::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcOperationNode::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
     for (auto& child : m_children)
         child->collectDirectComputationalDependencies(values);
 }
 
-void CSSCalcOperation::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcOperationNode::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
     for (auto& child : m_children)
         child->collectDirectRootComputationalDependencies(values);
 }
 
-String CSSCalcOperation::buildCssText(Vector<String> childExpressions, CalcOperator op)
+String CSSCalcOperationNode::buildCssText(Vector<String> childExpressions, CalcOperator op)
 {
     StringBuilder result;
     result.append('(');
@@ -695,7 +695,7 @@ String CSSCalcOperation::buildCssText(Vector<String> childExpressions, CalcOpera
     return result.toString();
 }
 
-String CSSCalcOperation::customCSSText() const
+String CSSCalcOperationNode::customCSSText() const
 {
     Vector<String> cssTexts;
     for (auto& child : m_children)
@@ -703,7 +703,7 @@ String CSSCalcOperation::customCSSText() const
     return buildCssText(cssTexts, m_operator);
 }
 
-void CSSCalcOperation::dump(TextStream& ts) const
+void CSSCalcOperationNode::dump(TextStream& ts) const
 {
     ts << "calc operation " << m_operator << " category " << category();
 
@@ -713,12 +713,12 @@ void CSSCalcOperation::dump(TextStream& ts) const
         ts.dumpProperty("node", child);
 }
 
-bool CSSCalcOperation::equals(const CSSCalcExpressionNode& exp) const
+bool CSSCalcOperationNode::equals(const CSSCalcExpressionNode& exp) const
 {
     if (type() != exp.type())
         return false;
 
-    const CSSCalcOperation& other = static_cast<const CSSCalcOperation&>(exp);
+    const CSSCalcOperationNode& other = static_cast<const CSSCalcOperationNode&>(exp);
 
     if (m_children.size() != other.m_children.size() || m_operator != other.m_operator)
         return false;
@@ -730,7 +730,7 @@ bool CSSCalcOperation::equals(const CSSCalcExpressionNode& exp) const
     return true;
 }
 
-double CSSCalcOperation::evaluateOperator(CalcOperator op, const Vector<double>& children)
+double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<double>& children)
 {
     switch (op) {
     case CalcOperator::Add:
@@ -828,7 +828,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, Value*
         return false;
     
     bool isInteger = token.numericValueType() == IntegerValueType || (token.numericValueType() == NumberValueType && token.numericValue() == trunc(token.numericValue()));
-    result->value = CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(token.numericValue(), type), isInteger);
+    result->value = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(token.numericValue(), type), isInteger);
     
     return true;
 }
@@ -891,7 +891,7 @@ bool CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression(CSSParserTo
         if (!parseValueTerm(tokens, depth, &rhs))
             return false;
         
-        result->value = CSSCalcOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
+        result->value = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
 
         if (!result->value)
             return false;
@@ -923,7 +923,7 @@ bool CSSCalcExpressionNodeParser::parseAdditiveValueExpression(CSSParserTokenRan
         if (!parseValueMultiplicativeExpression(tokens, depth, &rhs))
             return false;
         
-        result->value = CSSCalcOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
+        result->value = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
         if (!result->value)
             return false;
     }
@@ -957,7 +957,7 @@ bool CSSCalcExpressionNodeParser::parseMinMaxExpression(CSSParserTokenRange& tok
         nodes.append(value.value.releaseNonNull());
     }
 
-    result->value = CSSCalcOperation::createMinOrMax(op, WTFMove(nodes), m_destinationCategory);
+    result->value = CSSCalcOperationNode::createMinOrMax(op, WTFMove(nodes), m_destinationCategory);
     return result->value;
 }
 
@@ -967,10 +967,10 @@ bool CSSCalcExpressionNodeParser::parseValueExpression(CSSParserTokenRange& toke
 }
 
 
-static inline RefPtr<CSSCalcOperation> createBlendHalf(const Length& length, const RenderStyle& style, float progress)
+static inline RefPtr<CSSCalcOperationNode> createBlendHalf(const Length& length, const RenderStyle& style, float progress)
 {
-    return CSSCalcOperation::create(CalcOperator::Multiply, createCSS(length, style),
-        CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(progress, CSSUnitType::CSS_NUMBER), !progress || progress == 1));
+    return CSSCalcOperationNode::create(CalcOperator::Multiply, createCSS(length, style),
+        CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(progress, CSSUnitType::CSS_NUMBER), !progress || progress == 1));
 }
 
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, const RenderStyle& style)
@@ -978,7 +978,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     switch (node.type()) {
     case CalcExpressionNodeType::Number: {
         float value = downcast<CalcExpressionNumber>(node).value();
-        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER), value == std::trunc(value));
+        return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER), value == std::trunc(value));
     }
     case CalcExpressionNodeType::Length:
         return createCSS(downcast<CalcExpressionLength>(node).length(), style);
@@ -995,11 +995,11 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                     return nullptr;
                 values.uncheckedAppend(*cssNode);
             }
-            return CSSCalcOperation::createMinOrMax(operationNode.getOperator(), WTFMove(values), CalculationCategory::Other);
+            return CSSCalcOperationNode::createMinOrMax(operationNode.getOperator(), WTFMove(values), CalculationCategory::Other);
         }
 
         if (operationChildren.size() == 2)
-            return CSSCalcOperation::create(operationNode.getOperator(), createCSS(*operationChildren[0], style), createCSS(*operationChildren[1], style));
+            return CSSCalcOperationNode::create(operationNode.getOperator(), createCSS(*operationChildren[0], style), createCSS(*operationChildren[1], style));
 
         return nullptr;
     }
@@ -1007,7 +1007,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
         // FIXME: (http://webkit.org/b/122036) Create a CSSCalcExpressionNode equivalent of CalcExpressionBlendLength.
         auto& blend = downcast<CalcExpressionBlendLength>(node);
         float progress = blend.progress();
-        return CSSCalcOperation::create(CalcOperator::Add, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
+        return CSSCalcOperationNode::create(CalcOperator::Add, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
     }
     case CalcExpressionNodeType::Undefined:
         ASSERT_NOT_REACHED();
@@ -1020,7 +1020,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
     switch (length.type()) {
     case Percent:
     case Fixed:
-        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(length, style), length.value() == trunc(length.value()));
+        return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(length, style), length.value() == trunc(length.value()));
     case Calculated:
         return createCSS(length.calculationValue().expression(), style);
     case Auto:

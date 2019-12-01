@@ -1,5 +1,64 @@
 2019-12-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename CSSCalcPrimitiveValue to CSSCalcPrimitiveValueNode, and CSSCalcOperation to CSSCalcOperationNode
+        https://bugs.webkit.org/show_bug.cgi?id=204730
+
+        Reviewed by Dean Jackson.
+
+        Pure rename. These are both subclasses of CSSCalcExpressionNode, so are better with Node in the name.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcPrimitiveValueNode::createCalcExpression const):
+        (WebCore::CSSCalcPrimitiveValueNode::doubleValue const):
+        (WebCore::CSSCalcPrimitiveValueNode::computeLengthPx const):
+        (WebCore::CSSCalcPrimitiveValueNode::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValueNode::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValueNode::equals const):
+        (WebCore::CSSCalcPrimitiveValueNode::dump const):
+        (WebCore::CSSCalcOperationNode::create):
+        (WebCore::CSSCalcOperationNode::createMinOrMax):
+        (WebCore::CSSCalcOperationNode::createSimplified):
+        (WebCore::CSSCalcOperationNode::primitiveType const):
+        (WebCore::CSSCalcOperationNode::createCalcExpression const):
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        (WebCore::CSSCalcOperationNode::computeLengthPx const):
+        (WebCore::CSSCalcOperationNode::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcOperationNode::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcOperationNode::buildCssText):
+        (WebCore::CSSCalcOperationNode::customCSSText const):
+        (WebCore::CSSCalcOperationNode::dump const):
+        (WebCore::CSSCalcOperationNode::equals const):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression):
+        (WebCore::createBlendHalf):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcPrimitiveValue::createCalcExpression const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::doubleValue const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::collectDirectComputationalDependencies const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::collectDirectRootComputationalDependencies const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::equals const): Deleted.
+        (WebCore::CSSCalcPrimitiveValue::dump const): Deleted.
+        (WebCore::CSSCalcOperation::create): Deleted.
+        (WebCore::CSSCalcOperation::createMinOrMax): Deleted.
+        (WebCore::CSSCalcOperation::createSimplified): Deleted.
+        (WebCore::CSSCalcOperation::primitiveType const): Deleted.
+        (WebCore::CSSCalcOperation::createCalcExpression const): Deleted.
+        (WebCore::CSSCalcOperation::doubleValue const): Deleted.
+        (WebCore::CSSCalcOperation::computeLengthPx const): Deleted.
+        (WebCore::CSSCalcOperation::collectDirectComputationalDependencies const): Deleted.
+        (WebCore::CSSCalcOperation::collectDirectRootComputationalDependencies const): Deleted.
+        (WebCore::CSSCalcOperation::buildCssText): Deleted.
+        (WebCore::CSSCalcOperation::customCSSText const): Deleted.
+        (WebCore::CSSCalcOperation::dump const): Deleted.
+        (WebCore::CSSCalcOperation::equals const): Deleted.
+        (WebCore::CSSCalcOperation::evaluateOperator): Deleted.
+
+2019-12-01  Simon Fraser  <simon.fraser@apple.com>
+
         Add a Calc log channel, and support type traits for calc-related classes
         https://bugs.webkit.org/show_bug.cgi?id=204729
 
