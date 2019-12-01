@@ -383,14 +383,15 @@ void LineBuilder::removeTrailingTrimmableContent()
     for (auto trimmableRunIndex : m_trimmableContent.runIndexes()) {
         auto& trimmableRun = m_inlineItemRuns[trimmableRunIndex];
         ASSERT(trimmableRun.isText());
-        // FIXME: We might need to be able to differentiate between trimmed and collapsed runs.
-        trimmableRun.setCollapsesToZeroAdvanceWidth();
+        if (trimmableRun.isWhitespace())
+            trimmableRun.setCollapsesToZeroAdvanceWidth();
+        else
+            trimmableRun.removeTrailingLetterSpacing();
     }
     m_lineBox.shrinkHorizontally(m_trimmableContent.width());
     m_trimmableContent.clear();
     // If we trimmed the first visible run on the line, we need to re-check the visibility status.
-    ASSERT(m_lineIsVisuallyEmptyBeforeTrimmableContent.hasValue());
-    if (*m_lineIsVisuallyEmptyBeforeTrimmableContent) {
+    if (m_lineIsVisuallyEmptyBeforeTrimmableContent) {
         // Just because the line was visually empty before the trimmed content, it does not necessarily mean it is still visually empty.
         // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
         auto lineIsVisuallyEmpty = [&] {
@@ -403,8 +404,8 @@ void LineBuilder::removeTrailingTrimmableContent()
         // We could only go from visually non empty -> to visually empty. Trimming runs should never make the line visible.
         if (lineIsVisuallyEmpty())
             m_lineBox.setIsConsideredEmpty();
-        m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
     }
+    m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
 void LineBuilder::moveLogicalLeft(LayoutUnit delta)
@@ -465,10 +466,6 @@ void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutU
 
 void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto isTrimmable = !shouldPreserveTrailingContent(inlineItem);
-    if (!isTrimmable)
-        m_trimmableContent.clear();
-
     auto willCollapseCompletely = [&] {
         // Empty run.
         if (!inlineItem.length()) {
@@ -512,12 +509,20 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
         lineRun.setIsCollapsed();
 
     auto lineRunWidth = lineRun.logicalRect().width();
-    if (isTrimmable) {
+    // Trailing whitespace content is fully trimmable so as the trailing letter space.
+    auto isFullyTrimmable = !shouldPreserveTrailingContent(inlineItem);
+    auto isPartiallyTrimmable = !inlineItem.isWhitespace() && inlineItem.style().letterSpacing();
+    auto isTrimmable = isFullyTrimmable || isPartiallyTrimmable;
+    // Reset the trimmable content if needed.
+    if (!isTrimmable || isPartiallyTrimmable || (isFullyTrimmable && !m_trimmableContent.isTrailingContentFullyTrimmable()))
+        m_trimmableContent.clear();
+    if (isFullyTrimmable) {
         // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
         if (m_trimmableContent.isEmpty())
             m_lineIsVisuallyEmptyBeforeTrimmableContent = isVisuallyEmpty();
-        m_trimmableContent.append(lineRunWidth, m_inlineItemRuns.size());
-    }
+        m_trimmableContent.append(lineRunWidth, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::Yes);
+    } else if (isPartiallyTrimmable)
+        m_trimmableContent.append(LayoutUnit { inlineItem.style().letterSpacing() }, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::No);
 
     m_lineBox.expandHorizontally(lineRunWidth);
     m_inlineItemRuns.append(WTFMove(lineRun));
@@ -708,11 +713,12 @@ const InlineFormattingContext& LineBuilder::formattingContext() const
     return m_inlineFormattingContext;
 }
 
-void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIndex)
+void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIndex, IsFullyTrimmable isFullyTrimmable)
 {
     // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
     itemRunWidth = std::max(0_lu, itemRunWidth);
     m_width += itemRunWidth;
+    m_lastRunIsFullyTrimmable = isFullyTrimmable == IsFullyTrimmable::Yes;
     m_runIndexes.append(runIndex);
 }
 
@@ -727,6 +733,12 @@ void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 {
     m_collapsedToZeroAdvanceWidth = true;
     m_logicalRect.setWidth({ });
+}
+
+void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()
+{
+    ASSERT(m_inlineItem.style().letterSpacing());
+    m_logicalRect.expandHorizontally(LayoutUnit { -m_inlineItem.style().letterSpacing() });
 }
 
 }

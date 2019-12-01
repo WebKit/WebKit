@@ -1,3 +1,38 @@
+2019-12-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Trim trailing letter spacing.
+        https://bugs.webkit.org/show_bug.cgi?id=204731
+        <rdar://problem/57545763>
+
+        Reviewed by Antti Koivisto.
+
+        Refactor trailing trimmable content to support partial, non-whitespace trimmable content e.g. letter spacing.
+        https://drafts.csswg.org/css-text-3/#letter-spacing-property -> UAs therefore must not append letter spacing to the right or trailing edge of a line.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::Content::append):
+        (WebCore::Layout::LineBreaker::Content::reset):
+        (WebCore::Layout::LineBreaker::Content::TrailingTrimmableContent::reset):
+        (WebCore::Layout::LineBreaker::Content::hasNonWhitespaceOrInlineBox const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::trailingTrimmableWidth const): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::Content::isEmpty const):
+        (WebCore::Layout::LineBreaker::Content::nonTrimmableWidth const):
+        (WebCore::Layout::LineBreaker::Content::hasTrailingTrimmableContent const):
+        (WebCore::Layout::LineBreaker::Content::isTrailingContentFullyTrimmable const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        (WebCore::Layout::LineBuilder::InlineItemRun::removeTrailingLetterSpacing):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::isTrailingContentFullyTrimmable const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingContentFullyTrimmable const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::clear):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Rename CSSCalcPrimitiveValue to CSSCalcPrimitiveValueNode, and CSSCalcOperation to CSSCalcOperationNode

@@ -49,29 +49,24 @@ static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInl
     return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& content, LayoutUnit availableWidth, LayoutUnit trailingTrimmableWidth,  bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& newContent, LayoutUnit availableWidth, bool lineHasFullyTrimmableTrailingContent,  bool lineIsEmpty)
 {
-    ASSERT(!content.isEmpty());
-    if (content.width() <= availableWidth)
+    ASSERT(!newContent.isEmpty());
+    if (newContent.width() <= availableWidth)
         return { BreakingContext::ContentBreak::Keep, { } };
-    // Check if it fits without the trailing trimmable content.
-    if (!TextUtil::shouldPreserveTrailingWhitespace(content.runs()[0].inlineItem.style())) {
-        auto adjustedAvailableWidth = availableWidth;
-        auto adjustedContentWidth = content.width() - content.trailingTrimmableWidth();
-        // When the uncommitted content has trailing trimmable width, it also means that it does not have any other non-trimmable _content_ ([text][ ] <- [text] is on commit boundary)
-        // so placing it on the line with trimmable trailing content means that we'v got adjacent trimmable content.
-        // [text][ ] <- existing content on the line with trailing trimmable
-        // [container start][ ][container end] <- new content
-        // <- adjacent trimmable _content_ [text][][container start][][container end]
-        if (trailingTrimmableWidth && !content.hasNonWhitespaceOrInlineBox())
-            adjustedAvailableWidth += trailingTrimmableWidth;
-
-        if (adjustedContentWidth <= adjustedAvailableWidth)
+    if (newContent.hasTrailingTrimmableContent()) {
+        // First check if the content fits without the trailing trimmable part.
+        if (newContent.nonTrimmableWidth() <= availableWidth)
             return { BreakingContext::ContentBreak::Keep, { } };
+        // Now check if we can trim the line too.
+        if (lineHasFullyTrimmableTrailingContent && newContent.isTrailingContentFullyTrimmable()) {
+            // If this new content is fully trimmable, it shoud surely fit.
+            return { BreakingContext::ContentBreak::Keep, { } };
+        }
     }
 
-    if (content.hasTextContentOnly()) {
-        auto& runs = content.runs();
+    if (newContent.hasTextContentOnly()) {
+        auto& runs = newContent.runs();
         if (auto trailingPartialContent = wordBreakingBehavior(runs, availableWidth))
             return { BreakingContext::ContentBreak::Split, trailingPartialContent };
         // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
@@ -260,14 +255,33 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
 
 void LineBreaker::Content::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
+    ASSERT(!inlineItem.isFloat());
     ASSERT(inlineItem.isForcedLineBreak() || !isAtContentBoundary(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
+    // Figure out the trailing trimmable state.
+    if (inlineItem.isBox() || inlineItem.isForcedLineBreak())
+        m_trailingTrimmableContent.reset();
+    else if (inlineItem.isText()) {
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto isFullyTrimmable = [&] {
+            return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
+        };
+        if (isFullyTrimmable()) {
+            m_trailingTrimmableContent.width += logicalWidth;
+            m_trailingTrimmableContent.isFullyTrimmable = true;
+        } else if (auto trimmableWidth = inlineTextItem.style().letterSpacing()) {
+            m_trailingTrimmableContent.width = trimmableWidth;
+            m_trailingTrimmableContent.isFullyTrimmable = false;
+        } else
+            m_trailingTrimmableContent.reset();
+    }
 }
 
 void LineBreaker::Content::reset()
 {
     m_continousRuns.clear();
+    m_trailingTrimmableContent.reset();
     m_width = 0;
 }
 
@@ -276,18 +290,6 @@ void LineBreaker::Content::trim(unsigned newSize)
     for (auto i = m_continousRuns.size(); i--;)
         m_width -= m_continousRuns[i].logicalWidth;
     m_continousRuns.shrink(newSize);
-}
-
-bool LineBreaker::Content::hasNonWhitespaceOrInlineBox() const
-{
-    // <span><img></span> is considered a inline box run even with the [container start][container end] inline items.
-    for (auto& run : m_continousRuns) {
-        auto& inlineItem = run.inlineItem;
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isForcedLineBreak())
-            continue;
-        return !is<InlineTextItem>(inlineItem) || !downcast<InlineTextItem>(inlineItem).isWhitespace();
-    }
-    return false;
 }
 
 bool LineBreaker::Content::hasTextContentOnly() const
@@ -303,23 +305,12 @@ bool LineBreaker::Content::hasTextContentOnly() const
     return false;
 }
 
-LayoutUnit LineBreaker::Content::trailingTrimmableWidth() const
+void LineBreaker::Content::TrailingTrimmableContent::reset()
 {
-    LayoutUnit trailingWhitespaceWidth;
-    for (auto i = m_continousRuns.size(); i--;) {
-        auto& inlineItem = m_continousRuns[i].inlineItem;
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
-            continue;
-        if (inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace()) {
-            trailingWhitespaceWidth += m_continousRuns[i].logicalWidth;
-            continue;
-        }
-        // Can't have [text content][whitespace] as [whitespace] is always a commit boundary when it is adjacent to some other inline content. See UncommittedContent::add.
-        ASSERT(!trailingWhitespaceWidth);
-        return trailingWhitespaceWidth;
-    }
-    return trailingWhitespaceWidth;
+    isFullyTrimmable = false;
+    width = { };
 }
+
 
 }
 }

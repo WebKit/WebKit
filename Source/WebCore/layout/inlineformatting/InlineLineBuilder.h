@@ -65,6 +65,7 @@ public:
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
     LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
+    bool isTrailingContentFullyTrimmable() const { return m_trimmableContent.isTrailingContentFullyTrimmable(); }
 
     const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
@@ -170,6 +171,7 @@ private:
         void setIsCollapsed() { m_isCollapsed = true; }
         bool isCollapsed() const { return m_isCollapsed; }
 
+        void removeTrailingLetterSpacing();
         void setCollapsesToZeroAdvanceWidth();
         bool isCollapsedToZeroAdvanceWidth() const { return m_collapsedToZeroAdvanceWidth; }
 
@@ -187,16 +189,19 @@ private:
     };
 
     struct TrimmableContent {
-        void append(LayoutUnit itemRunWidth, size_t runIndex);
+        enum class IsFullyTrimmable { No, Yes };
+        void append(LayoutUnit itemRunWidth, size_t runIndex, IsFullyTrimmable);
         void clear();
 
         LayoutUnit width() const { return m_width; }
         Vector<size_t, 5>& runIndexes() { return m_runIndexes; }
         bool isEmpty() const { return m_runIndexes.isEmpty(); }
+        bool isTrailingContentFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
 
     private:
         Vector<size_t, 5> m_runIndexes;
         LayoutUnit m_width;
+        bool m_lastRunIsFullyTrimmable { false };
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
@@ -215,6 +220,7 @@ inline void LineBuilder::TrimmableContent::clear()
 {
     m_runIndexes.clear();
     m_width = { };
+    m_lastRunIsFullyTrimmable = false;
 }
 
 }
