@@ -34,12 +34,17 @@
 #include "CSSPropertyNames.h"
 #include "CalculationValue.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class RenderStyle;
 
+// FIXME: Unify with CSSPrimitiveValue::UnitCategory.
 enum class CalculationCategory : uint8_t {
     Number = 0,
     Length,
@@ -75,6 +80,8 @@ public:
     CalculationCategory category() const { return m_category; }
     bool isInteger() const { return m_isInteger; }
 
+    virtual void dump(TextStream&) const = 0;
+
 protected:
     CSSCalcExpressionNode(CalculationCategory category, bool isInteger)
         : m_category(category)
@@ -109,6 +116,10 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
+    
+    static bool isCalcFunction(CSSValueID);
+
+    void dump(TextStream&) const;
 
 private:
     CSSCalcValue(Ref<CSSCalcExpressionNode>&&, bool shouldClampToNonNegative);
@@ -147,6 +158,14 @@ inline void CSSCalcValue::collectDirectRootComputationalDependencies(HashSet<CSS
     m_expression->collectDirectRootComputationalDependencies(values);
 }
 
+WTF::TextStream& operator<<(WTF::TextStream&, CalculationCategory);
+WTF::TextStream& operator<<(WTF::TextStream&, const CSSCalcValue&);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCalcValue, isCalcValue())
+
+#define SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::CSSCalcExpressionNode& node) { return node.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

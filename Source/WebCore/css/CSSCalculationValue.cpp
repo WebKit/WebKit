@@ -35,22 +35,32 @@
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "Logging.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 static const int maxExpressionDepth = 100;
 
-enum ParseState {
-    OK,
-    TooDeep,
-    NoMoreTokens
-};
+namespace WebCore {
+class CSSCalcPrimitiveValue;
+class CSSCalcOperation;
+}
+
+SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcPrimitiveValue, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcPrimitiveValue)
+SPECIALIZE_TYPE_TRAITS_CSSCALCEXPRESSION_NODE(CSSCalcOperation, type() == WebCore::CSSCalcExpressionNode::Type::CssCalcOperation)
 
 namespace WebCore {
 
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode&, const RenderStyle&);
 static RefPtr<CSSCalcExpressionNode> createCSS(const Length&, const RenderStyle&);
+
+static TextStream& operator<<(TextStream& ts, const CSSCalcExpressionNode& node)
+{
+    node.dump(ts);
+    return ts;
+}
 
 static CalculationCategory calcUnitCategory(CSSUnitType type)
 {
@@ -151,6 +161,21 @@ static bool hasDoubleValue(CSSUnitType type)
     return false;
 }
 
+#if !LOG_DISABLED
+static String prettyPrintNode(const CSSCalcExpressionNode& node)
+{
+    TextStream multilineStream;
+    multilineStream << node;
+    return multilineStream.release();
+}
+
+static String prettyPrintNodes(const Vector<Ref<CSSCalcExpressionNode>>& nodes)
+{
+    TextStream multilineStream;
+    multilineStream << nodes;
+    return multilineStream.release();
+}
+#endif
 
 class CSSCalcPrimitiveValue final : public CSSCalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
@@ -192,6 +217,8 @@ private:
     {
         return m_value->cssText();
     }
+
+    void dump(TextStream&) const final;
 
 private:
     explicit CSSCalcPrimitiveValue(Ref<CSSPrimitiveValue>&& value, bool isInteger)
@@ -274,8 +301,10 @@ bool CSSCalcPrimitiveValue::equals(const CSSCalcExpressionNode& other) const
     return compareCSSValue(m_value, static_cast<const CSSCalcPrimitiveValue&>(other).m_value);
 }
 
-
-
+void CSSCalcPrimitiveValue::dump(TextStream& ts) const
+{
+    ts << "value " << m_value->customCSSText();
+}
 
 
 static const CalculationCategory addSubtractResult[static_cast<unsigned>(CalculationCategory::Angle)][static_cast<unsigned>(CalculationCategory::Angle)] = {
@@ -415,6 +444,8 @@ private:
 
     String customCSSText() const final;
 
+    void dump(TextStream&) const final;
+
     static CSSCalcExpressionNode* getNumberSide(CSSCalcExpressionNode& leftSide, CSSCalcExpressionNode& rightSide)
     {
         if (leftSide.category() == CalculationCategory::Number)
@@ -445,8 +476,10 @@ RefPtr<CSSCalcOperation> CSSCalcOperation::create(CalcOperator op, RefPtr<CSSCal
     ASSERT(rightSide->category() < CalculationCategory::Other);
 
     auto newCategory = determineCategory(*leftSide, *rightSide, op);
-    if (newCategory == CalculationCategory::Other)
+    if (newCategory == CalculationCategory::Other) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperation " << op << " node because unable to determine category from " << prettyPrintNode(*leftSide) << " and " << *rightSide);
         return nullptr;
+    }
 
     return adoptRef(new CSSCalcOperation(newCategory, op, leftSide.releaseNonNull(), rightSide.releaseNonNull()));
 }
@@ -461,8 +494,10 @@ RefPtr<CSSCalcOperation> CSSCalcOperation::createMinOrMax(CalcOperator op, Vecto
 
         ASSERT(valueCategory < CalculationCategory::Other);
         if (!category) {
-            if (valueCategory == CalculationCategory::Other)
+            if (valueCategory == CalculationCategory::Other) {
+                LOG_WITH_STREAM(Calc, stream << "Failed to create CSSCalcOperation " << op << " node because unable to determine category from " << prettyPrintNodes(values));
                 return nullptr;
+            }
             category = valueCategory;
         }
 
@@ -668,6 +703,16 @@ String CSSCalcOperation::customCSSText() const
     return buildCssText(cssTexts, m_operator);
 }
 
+void CSSCalcOperation::dump(TextStream& ts) const
+{
+    ts << "calc operation " << m_operator << " category " << category();
+
+    TextStream::GroupScope scope(ts);
+    ts << m_children.size() << " children";
+    for (auto& child : m_children)
+        ts.dumpProperty("node", child);
+}
+
 bool CSSCalcOperation::equals(const CSSCalcExpressionNode& exp) const
 {
     if (type() != exp.type())
@@ -766,6 +811,9 @@ RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTo
         ok = parseMinMaxExpression(tokens, function, 0, &result);
     if (!ok || !tokens.atEnd())
         return nullptr;
+
+    LOG_WITH_STREAM(Calc, stream << "CSSCalcExpressionNodeParser::parseCalc " << prettyPrintNode(*result.value));
+
     return result.value;
 }
 
@@ -784,6 +832,12 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, Value*
     
     return true;
 }
+
+enum ParseState {
+    OK,
+    TooDeep,
+    NoMoreTokens
+};
 
 static ParseState checkDepthAndIndex(int* depth, CSSParserTokenRange tokens)
 {
@@ -923,13 +977,13 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 {
     switch (node.type()) {
     case CalcExpressionNodeType::Number: {
-        float value = toCalcExpressionNumber(node).value();
+        float value = downcast<CalcExpressionNumber>(node).value();
         return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER), value == std::trunc(value));
     }
     case CalcExpressionNodeType::Length:
-        return createCSS(toCalcExpressionLength(node).length(), style);
+        return createCSS(downcast<CalcExpressionLength>(node).length(), style);
     case CalcExpressionNodeType::Operation: {
-        auto& operationNode = toCalcExpressionOperation(node);
+        auto& operationNode = downcast<CalcExpressionOperation>(node);
         auto& operationChildren = operationNode.children();
         CalcOperator op = operationNode.getOperator();
         if (op == CalcOperator::Min || op == CalcOperator::Max) {
@@ -951,7 +1005,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     }
     case CalcExpressionNodeType::BlendLength: {
         // FIXME: (http://webkit.org/b/122036) Create a CSSCalcExpressionNode equivalent of CalcExpressionBlendLength.
-        auto& blend = toCalcExpressionBlendLength(node);
+        auto& blend = downcast<CalcExpressionBlendLength>(node);
         float progress = blend.progress();
         return CSSCalcOperation::create(CalcOperator::Add, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
     }
@@ -1011,13 +1065,30 @@ double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversion
     return clampToPermittedRange(m_expression->computeLengthPx(conversionData));
 }
 
+void CSSCalcValue::dump(TextStream& ts) const
+{
+    ts << indent << "(" << "CSSCalcValue";
+
+    TextStream multilineStream;
+    multilineStream.setIndent(ts.indent() + 2);
+
+    multilineStream.dumpProperty("should clamp non-negative", m_shouldClampToNonNegative);
+    multilineStream.dumpProperty("expression", m_expression.get());
+
+    ts << multilineStream.release();
+    ts << ")\n";
+}
+
 RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range)
 {
     CSSCalcExpressionNodeParser parser(destinationCategory);
     auto expression = parser.parseCalc(tokens, function);
     if (!expression)
         return nullptr;
-    return adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll));
+
+    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll));
+    LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create from tokens: " << *result);
+    return result;
 }
     
 RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const RenderStyle& style)
@@ -1025,7 +1096,32 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const R
     auto expression = createCSS(value.expression(), style);
     if (!expression)
         return nullptr;
-    return adoptRef(new CSSCalcValue(expression.releaseNonNull(), value.shouldClampToNonNegative()));
+    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), value.shouldClampToNonNegative()));
+    LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create from CalculationValue: " << *result);
+    return result;
+}
+
+TextStream& operator<<(TextStream& ts, CalculationCategory category)
+{
+    switch (category) {
+    case CalculationCategory::Number: ts << "number"; break;
+    case CalculationCategory::Length: ts << "length"; break;
+    case CalculationCategory::Percent: ts << "percent"; break;
+    case CalculationCategory::PercentNumber: ts << "percent-number"; break;
+    case CalculationCategory::PercentLength: ts << "percent-length"; break;
+    case CalculationCategory::Angle: ts << "angle"; break;
+    case CalculationCategory::Time: ts << "time"; break;
+    case CalculationCategory::Frequency: ts << "frequency"; break;
+    case CalculationCategory::Other: ts << "other"; break;
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const CSSCalcValue& value)
+{
+    value.dump(ts);
+    return ts;
 }
 
 } // namespace WebCore

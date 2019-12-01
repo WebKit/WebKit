@@ -181,12 +181,6 @@ inline bool operator==(const CalcExpressionNumber& a, const CalcExpressionNumber
     return a.value() == b.value();
 }
 
-inline const CalcExpressionNumber& toCalcExpressionNumber(const CalcExpressionNode& value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Number);
-    return static_cast<const CalcExpressionNumber&>(value);
-}
-
 inline CalcExpressionLength::CalcExpressionLength(Length length)
     : CalcExpressionNode(CalcExpressionNodeType::Length)
     , m_length(length)
@@ -198,12 +192,6 @@ inline bool operator==(const CalcExpressionLength& a, const CalcExpressionLength
     return a.length() == b.length();
 }
 
-inline const CalcExpressionLength& toCalcExpressionLength(const CalcExpressionNode& value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Length);
-    return static_cast<const CalcExpressionLength&>(value);
-}
-
 inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator op)
     : CalcExpressionNode(CalcExpressionNodeType::Operation)
     , m_children(WTFMove(children))
@@ -213,21 +201,9 @@ inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<C
 
 bool operator==(const CalcExpressionOperation&, const CalcExpressionOperation&);
 
-inline const CalcExpressionOperation& toCalcExpressionOperation(const CalcExpressionNode& value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Operation);
-    return static_cast<const CalcExpressionOperation&>(value);
-}
-
 inline bool operator==(const CalcExpressionBlendLength& a, const CalcExpressionBlendLength& b)
 {
     return a.progress() == b.progress() && a.from() == b.from() && a.to() == b.to();
-}
-
-inline const CalcExpressionBlendLength& toCalcExpressionBlendLength(const CalcExpressionNode& value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::BlendLength);
-    return static_cast<const CalcExpressionBlendLength&>(value);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const CalculationValue&);
@@ -235,3 +211,13 @@ WTF::TextStream& operator<<(WTF::TextStream&, const CalcExpressionNode&);
 WTF::TextStream& operator<<(WTF::TextStream&, CalcOperator);
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::CalcExpressionNode& node) { return node.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionNumber, type() == WebCore::CalcExpressionNodeType::Number)
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionLength, type() == WebCore::CalcExpressionNodeType::Length)
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionOperation, type() == WebCore::CalcExpressionNodeType::Operation)
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionBlendLength, type() == WebCore::CalcExpressionNodeType::BlendLength)

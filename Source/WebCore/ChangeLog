@@ -1,3 +1,40 @@
+2019-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a Calc log channel, and support type traits for calc-related classes
+        https://bugs.webkit.org/show_bug.cgi?id=204729
+
+        Reviewed by Dean Jackson.
+
+        Add type traits support for CalculationValue and CSSCalculationValue classes.
+        
+        Add a Calc logging channel and dump post-parsing values, and in some error cases.s
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::operator<<):
+        (WebCore::prettyPrintNode):
+        (WebCore::prettyPrintNodes):
+        (WebCore::CSSCalcPrimitiveValue::dump const):
+        (WebCore::CSSCalcOperation::create):
+        (WebCore::CSSCalcOperation::createMinOrMax):
+        (WebCore::CSSCalcOperation::dump const):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::dump const):
+        (WebCore::CSSCalcValue::create):
+        * css/CSSCalculationValue.h:
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionNumber::operator== const):
+        (WebCore::CalcExpressionOperation::operator== const):
+        (WebCore::CalcExpressionLength::operator== const):
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::operator== const):
+        * platform/CalculationValue.h:
+        (WebCore::toCalcExpressionNumber): Deleted.
+        (WebCore::toCalcExpressionLength): Deleted.
+        (WebCore::toCalcExpressionOperation): Deleted.
+        (WebCore::toCalcExpressionBlendLength): Deleted.
+        * platform/Logging.h:
+
 2019-12-01  Antti Koivisto  <antti@apple.com>
 
         Regression (r252893): loader/stateobjects/pushstate-size.html is crashing on mac debug

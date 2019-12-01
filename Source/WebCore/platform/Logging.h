@@ -43,6 +43,7 @@ namespace WebCore {
     M(ApplePay) \
     M(Archives) \
     M(BackForwardCache) \
+    M(Calc) \
     M(ClipRects) \
     M(Compositing) \
     M(CompositingOverlap) \

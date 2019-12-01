@@ -55,7 +55,7 @@ void CalcExpressionNumber::dump(TextStream& ts) const
 
 bool CalcExpressionNumber::operator==(const CalcExpressionNode& other) const
 {
-    return other.type() == CalcExpressionNodeType::Number && *this == toCalcExpressionNumber(other);
+    return is<CalcExpressionNumber>(other) && *this == downcast<CalcExpressionNumber>(other);
 }
 
 float CalculationValue::evaluate(float maxValue) const
@@ -120,7 +120,7 @@ float CalcExpressionOperation::evaluate(float maxValue) const
 
 bool CalcExpressionOperation::operator==(const CalcExpressionNode& other) const
 {
-    return other.type() == CalcExpressionNodeType::Operation && *this == toCalcExpressionOperation(other);
+    return is<CalcExpressionOperation>(other) && *this == downcast<CalcExpressionOperation>(other);
 }
 
 bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)
@@ -159,7 +159,7 @@ float CalcExpressionLength::evaluate(float maxValue) const
 
 bool CalcExpressionLength::operator==(const CalcExpressionNode& other) const
 {
-    return other.type() == CalcExpressionNodeType::Length && *this == toCalcExpressionLength(other);
+    return is<CalcExpressionLength>(other) && *this == downcast<CalcExpressionLength>(other);
 }
 
 void CalcExpressionLength::dump(TextStream& ts) const
@@ -176,9 +176,9 @@ CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, flo
     // Flatten nesting of CalcExpressionBlendLength as a speculative fix for rdar://problem/30533005.
     // CalcExpressionBlendLength is only used as a result of animation and they don't nest in normal cases.
     if (m_from.isCalculated() && m_from.calculationValue().expression().type() == CalcExpressionNodeType::BlendLength)
-        m_from = toCalcExpressionBlendLength(m_from.calculationValue().expression()).from();
+        m_from = downcast<CalcExpressionBlendLength>(m_from.calculationValue().expression()).from();
     if (m_to.isCalculated() && m_to.calculationValue().expression().type() == CalcExpressionNodeType::BlendLength)
-        m_to = toCalcExpressionBlendLength(m_to.calculationValue().expression()).to();
+        m_to = downcast<CalcExpressionBlendLength>(m_to.calculationValue().expression()).to();
 }
 
 float CalcExpressionBlendLength::evaluate(float maxValue) const
@@ -188,7 +188,7 @@ float CalcExpressionBlendLength::evaluate(float maxValue) const
 
 bool CalcExpressionBlendLength::operator==(const CalcExpressionNode& other) const
 {
-    return other.type() == CalcExpressionNodeType::BlendLength && *this == toCalcExpressionBlendLength(other);
+    return is<CalcExpressionBlendLength>(other) && *this == downcast<CalcExpressionBlendLength>(other);
 }
 
 void CalcExpressionBlendLength::dump(TextStream& ts) const
