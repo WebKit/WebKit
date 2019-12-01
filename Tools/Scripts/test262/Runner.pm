@@ -60,9 +60,49 @@ BEGIN {
     $ENV{LOAD_ROUTES} = 1;
 }
 
-use YAML qw(Load LoadFile Dump DumpFile Bless);
+use YAML qw(Load Dump Bless);
 use Parallel::ForkManager;
 use Getopt::Long qw(GetOptions);
+
+# Tweaked versions of YAML::DumpFile and YAML::LoadFile.
+# The library versions unconditionally and erroneously assume that a UTF-8 encoding needs to be performed,
+# meaning that the output file ends up double-encoded.
+sub DumpFile {
+    my $OUT;
+    my $filename = shift;
+    if (Scalar::Util::openhandle $filename) {
+        $OUT = $filename;
+    }
+    else {
+        my $mode = '>';
+        if ($filename =~ /^\s*(>{1,2})\s*(.*)$/) {
+            ($mode, $filename) = ($1, $2);
+        }
+        open $OUT, $mode, $filename
+          or YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, "$!");
+    }
+    local $/ = "\n"; # reset special to "sane"
+    print $OUT Dump(@_);
+    unless (ref $filename eq 'GLOB') {
+        close $OUT
+          or do {
+              my $errsav = $!;
+              YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT_CLOSE', $filename, $errsav);
+          }
+    }
+}
+sub LoadFile {
+    my $IN;
+    my $filename = shift;
+    if (Scalar::Util::openhandle $filename) {
+        $IN = $filename;
+    }
+    else {
+        open $IN, '<', $filename
+          or YAML::Mo::Object->die('YAML_LOAD_ERR_FILE_INPUT', $filename, "$!");
+    }
+    return Load(do { local $/; <$IN> });
+}
 
 my $webkitdirIsAvailable;
 if (eval {require webkitdirs; 1;}) {

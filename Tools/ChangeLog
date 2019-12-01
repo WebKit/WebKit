@@ -1,3 +1,21 @@
+2019-11-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        test262-runner should dump YAML with correct encoding
+        https://bugs.webkit.org/show_bug.cgi?id=204493
+
+        Reviewed by Saam Barati.
+
+        Even though we spit out correctly-encoded output to the terminal, Perl's YAML module insists upon *re*-encoding
+        to UTF-8 when dumping to file. This works out in the end because an analogous double-decode occurs when loading
+        from file. Still, it's really annoying that expectations.yaml has garbled (i.e. double-encoded) text.
+
+        We shouldn't modify libraries directly, but we can copy-paste DumpFile/LoadFile into Runner.pm and tweak!
+
+        * Scripts/test262/Runner.pm:
+        (DumpFile):
+        (LoadFile):
+        Add custom versions of DumpFile/LoadFile which do not execute `binmode $OUT, ':utf8';`.
+
 2019-11-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Expand tests coverage (2648 new tests -> 3980).
