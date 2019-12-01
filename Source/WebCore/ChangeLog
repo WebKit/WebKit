@@ -1,3 +1,16 @@
+2019-12-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for word-spacing property
+        https://bugs.webkit.org/show_bug.cgi?id=204723
+        <rdar://problem/57541871>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::inlineItemWidth):
+
 2019-11-30  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement Animation.commitStyles()

@@ -710,7 +710,8 @@ const InlineFormattingContext& LineBuilder::formattingContext() const
 
 void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIndex)
 {
-    ASSERT(itemRunWidth >= 0);
+    // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
+    itemRunWidth = std::max(0_lu, itemRunWidth);
     m_width += itemRunWidth;
     m_runIndexes.append(runIndex);
 }

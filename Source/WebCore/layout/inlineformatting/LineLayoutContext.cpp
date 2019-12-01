@@ -38,14 +38,17 @@ namespace Layout {
 static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
 {
     if (inlineItem.isForcedLineBreak())
-        return 0;
+        return { };
 
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (auto contentWidth = inlineTextItem.width())
-            return *contentWidth;
-        auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
-        return TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
+        auto contentWidth = inlineTextItem.width();
+        if (!contentWidth) {
+            auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
+            contentWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
+        }
+        auto wordSpacing = inlineTextItem.isWhitespace() ? LayoutUnit(inlineTextItem.style().fontCascade().wordSpacing()) : 0_lu;
+        return *contentWidth + wordSpacing;
     }
 
     auto& layoutBox = inlineItem.layoutBox();
