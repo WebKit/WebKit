@@ -1589,7 +1589,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     bool pushTransparencyLayer = false;
     bool compositedMask = hasLayer() && layer()->hasCompositedMask();
     bool flattenCompositingLayers = paintInfo.paintBehavior.contains(PaintBehavior::FlattenCompositingLayers);
-    CompositeOperator compositeOp = CompositeSourceOver;
+    CompositeOperator compositeOp = CompositeOperator::SourceOver;
 
     bool allMaskImagesLoaded = true;
     
@@ -1602,9 +1602,9 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
         allMaskImagesLoaded &= style().maskLayers().imagesAreLoaded();
 
-        paintInfo.context().setCompositeOperation(CompositeDestinationIn);
+        paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
         paintInfo.context().beginTransparencyLayer(1);
-        compositeOp = CompositeSourceOver;
+        compositeOp = CompositeOperator::SourceOver;
     }
 
     if (allMaskImagesLoaded) {

@@ -638,7 +638,7 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     if (layer.isolatesBlending())
         ts << " isolatesBlending";
     if (layer.hasBlendMode())
-        ts << " blendMode: " << compositeOperatorName(CompositeSourceOver, layer.blendMode());
+        ts << " blendMode: " << compositeOperatorName(CompositeOperator::SourceOver, layer.blendMode());
 #endif
     
     ts << "\n";

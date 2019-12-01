@@ -537,7 +537,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     graphicsContext.clearShadow();
 
     // Clear out the holes.
-    graphicsContext.setCompositeOperation(CompositeClear);
+    graphicsContext.setCompositeOperation(CompositeOperator::Clear);
     for (auto& path : whiteFramePaths)
         graphicsContext.fillPath(path);
 

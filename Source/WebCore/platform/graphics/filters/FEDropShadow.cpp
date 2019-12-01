@@ -108,9 +108,9 @@ void FEDropShadow::platformApplySoftware()
 
     resultImage->putByteArray(*srcPixelArray, AlphaPremultiplication::Premultiplied, shadowArea.size(), shadowArea, IntPoint(), ImageBuffer::BackingStoreCoordinateSystem);
 
-    resultContext.setCompositeOperation(CompositeSourceIn);
+    resultContext.setCompositeOperation(CompositeOperator::SourceIn);
     resultContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor);
-    resultContext.setCompositeOperation(CompositeDestinationOver);
+    resultContext.setCompositeOperation(CompositeOperator::DestinationOver);
 
     resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
 }

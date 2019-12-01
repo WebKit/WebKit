@@ -825,7 +825,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 [&image](GraphicsContext& context)
                 {
                     IntRect rect { { }, IntSize { image.size() } };
-                    context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeCopy));
+                    context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
                 });
             layerState.nativeImageID = nativeImageID;
             layerState.update.buffer = WTFMove(buffer);

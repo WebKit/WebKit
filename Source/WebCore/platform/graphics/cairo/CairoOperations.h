@@ -118,7 +118,7 @@ struct ShadowState {
     bool ignoreTransforms { false };
 
     float globalAlpha { 1.0 };
-    CompositeOperator globalCompositeOperator { CompositeSourceOver };
+    CompositeOperator globalCompositeOperator { CompositeOperator::SourceOver };
 };
 
 void setLineCap(PlatformContextCairo&, LineCap);

@@ -1438,16 +1438,16 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     bool pushTransparencyLayer = false;
     bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
     bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
-    CompositeOperator compositeOp = CompositeSourceOver;
+    CompositeOperator compositeOp = CompositeOperator::SourceOver;
     if (!compositedMask || flattenCompositingLayers) {
         if ((maskBoxImage && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
             pushTransparencyLayer = true;
         
-        compositeOp = CompositeDestinationIn;
+        compositeOp = CompositeOperator::DestinationIn;
         if (pushTransparencyLayer) {
-            paintInfo.context().setCompositeOperation(CompositeDestinationIn);
+            paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
             paintInfo.context().beginTransparencyLayer(1.0f);
-            compositeOp = CompositeSourceOver;
+            compositeOp = CompositeOperator::SourceOver;
         }
     }
 

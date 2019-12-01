@@ -339,7 +339,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
         context.setFillColor(replacementTextColor());
         context.fillEllipse(arrowRect);
 
-        context.setCompositeOperation(CompositeClear);
+        context.setCompositeOperation(CompositeOperator::Clear);
         drawReplacementArrow(context, arrowRect);
         context.endTransparencyLayer();
     }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WindRule.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WTF {
@@ -34,24 +35,24 @@ class TextStream;
 
 namespace WebCore {
 
-enum CompositeOperator {
-    CompositeClear,
-    CompositeCopy,
-    CompositeSourceOver,
-    CompositeSourceIn,
-    CompositeSourceOut,
-    CompositeSourceAtop,
-    CompositeDestinationOver,
-    CompositeDestinationIn,
-    CompositeDestinationOut,
-    CompositeDestinationAtop,
-    CompositeXOR,
-    CompositePlusDarker,
-    CompositePlusLighter,
-    CompositeDifference
+enum class CompositeOperator : uint8_t {
+    Clear,
+    Copy,
+    SourceOver,
+    SourceIn,
+    SourceOut,
+    SourceAtop,
+    DestinationOver,
+    DestinationIn,
+    DestinationOut,
+    DestinationAtop,
+    XOR,
+    PlusDarker,
+    PlusLighter,
+    Difference
 };
 
-enum class BlendMode {
+enum class BlendMode : uint8_t {
     Normal = 1, // Start with 1 to match SVG's blendmode enumeration.
     Multiply,
     Screen,
@@ -146,3 +147,50 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AlphaPremultiplicat
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CompositeOperator> {
+    using values = EnumValues<
+    WebCore::CompositeOperator,
+    WebCore::CompositeOperator::Clear,
+    WebCore::CompositeOperator::Copy,
+    WebCore::CompositeOperator::SourceOver,
+    WebCore::CompositeOperator::SourceIn,
+    WebCore::CompositeOperator::SourceOut,
+    WebCore::CompositeOperator::SourceAtop,
+    WebCore::CompositeOperator::DestinationOver,
+    WebCore::CompositeOperator::DestinationIn,
+    WebCore::CompositeOperator::DestinationOut,
+    WebCore::CompositeOperator::DestinationAtop,
+    WebCore::CompositeOperator::XOR,
+    WebCore::CompositeOperator::PlusDarker,
+    WebCore::CompositeOperator::PlusLighter,
+    WebCore::CompositeOperator::Difference
+    >;
+};
+
+template<> struct EnumTraits<WebCore::BlendMode> {
+    using values = EnumValues<
+    WebCore::BlendMode,
+    WebCore::BlendMode::Normal,
+    WebCore::BlendMode::Multiply,
+    WebCore::BlendMode::Screen,
+    WebCore::BlendMode::Darken,
+    WebCore::BlendMode::Lighten,
+    WebCore::BlendMode::Overlay,
+    WebCore::BlendMode::ColorDodge,
+    WebCore::BlendMode::ColorBurn,
+    WebCore::BlendMode::HardLight,
+    WebCore::BlendMode::SoftLight,
+    WebCore::BlendMode::Difference,
+    WebCore::BlendMode::Exclusion,
+    WebCore::BlendMode::Hue,
+    WebCore::BlendMode::Saturation,
+    WebCore::BlendMode::Color,
+    WebCore::BlendMode::Luminosity,
+    WebCore::BlendMode::PlusDarker,
+    WebCore::BlendMode::PlusLighter
+    >;
+};
+
+} // namespace WTF

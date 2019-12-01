@@ -1,5 +1,113 @@
 2019-11-30  Tim Horton  <timothy_horton@apple.com>
 
+        Make CompositeOperator and BlendMode encodable
+        https://bugs.webkit.org/show_bug.cgi?id=204722
+
+        Reviewed by Eric Carlson.
+
+        Make CompositeOperator an `enum class`, and fix the fallout.
+        Add EnumTraits for CompositeOperator and BlendMode, so that they can be encoded.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CompositeOperator const):
+        * dom/Document.cpp:
+        (WebCore::Document::compositeOperatorForBackgroundColor const):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::State::State):
+        (WebCore::CanvasRenderingContext2DBase::setGlobalCompositeOperation):
+        (WebCore::CanvasRenderingContext2DBase::isFullCanvasCompositeMode):
+        (WebCore::CanvasRenderingContext2DBase::fillInternal):
+        (WebCore::CanvasRenderingContext2DBase::strokeInternal):
+        (WebCore::CanvasRenderingContext2DBase::clearRect):
+        (WebCore::CanvasRenderingContext2DBase::fillRect):
+        (WebCore::CanvasRenderingContext2DBase::strokeRect):
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::drawImageFromRect):
+        (WebCore::CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawOutlinedQuadWithClip):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::parseCompositeAndBlendOperator):
+        (WebCore::compositeOperatorName):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::fillWithSolidColor):
+        * platform/graphics/ImagePaintingOptions.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurAndColorShadowBuffer):
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawNativeImage):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::toCairoCompositeOperator):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::selectCGBlendMode):
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::platformApplySoftware):
+        (WebCore::FEBlend::externalRepresentation const):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::platformApplySoftware):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        * platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp:
+        (Nicosia::PaintingEngineBasic::paint):
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp:
+        (Nicosia::paintLayer):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::State::setCompositeOperation):
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::supportsDirectlyCompositedBoxDecorations):
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::hasOpaqueImage const):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::initialFillComposite):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImage):
+        (WebCore::SVGImage::draw):
+
+2019-11-30  Tim Horton  <timothy_horton@apple.com>
+
         Reimplement some PlatformCALayer methods using GraphicsContext instead of CGContextRef
         https://bugs.webkit.org/show_bug.cgi?id=204698
 

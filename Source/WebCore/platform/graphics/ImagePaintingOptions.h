@@ -69,7 +69,7 @@ private:
     void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
 
-    CompositeOperator m_compositeOperator { CompositeSourceOver };
+    CompositeOperator m_compositeOperator { CompositeOperator::SourceOver };
     BlendMode m_blendMode { BlendMode::Normal };
     DecodingMode m_decodingMode { DecodingMode::Synchronous };
     ImageOrientation m_orientation { ImageOrientation::None };

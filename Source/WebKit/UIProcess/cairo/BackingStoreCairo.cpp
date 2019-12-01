@@ -87,8 +87,8 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
     GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(cairoContext.get()));
 
     // When m_webPageProxy.drawsBackground() is false, bitmap contains transparent parts as a background of the webpage.
-    // For such case, bitmap must be drawn using CompositeCopy to overwrite the existing surface.
-    graphicsContext.setCompositeOperation(WebCore::CompositeCopy);
+    // For such case, bitmap must be drawn using CompositeOperator::Copy to overwrite the existing surface.
+    graphicsContext.setCompositeOperation(WebCore::CompositeOperator::Copy);
 
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;

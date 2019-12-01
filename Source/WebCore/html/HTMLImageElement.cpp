@@ -74,7 +74,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_imageLoader(WTF::makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
     , m_formSetByParser(makeWeakPtr(form))
-    , m_compositeOperator(CompositeSourceOver)
+    , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
     , m_experimentalImageMenuEnabled(false)
     , m_createdByParser(createdByParser)
@@ -252,7 +252,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendMode::Normal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
-            m_compositeOperator = CompositeSourceOver;
+            m_compositeOperator = CompositeOperator::SourceOver;
 #if ENABLE(SERVICE_CONTROLS)
     } else if (name == webkitimagemenuAttr) {
         m_experimentalImageMenuEnabled = !value.isNull();

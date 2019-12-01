@@ -645,7 +645,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
     ImagePaintingOptions options = {
-        imageElement ? imageElement->compositeOperator() : CompositeSourceOver,
+        imageElement ? imageElement->compositeOperator() : CompositeOperator::SourceOver,
         decodingModeForImageDraw(*image, paintInfo),
         imageOrientation(),
         image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationDefault

@@ -421,7 +421,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         const Color& backgroundColor = (settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView().baseBackgroundColor();
         if (backgroundColor.isVisible()) {
             CompositeOperator previousOperator = paintInfo.context().compositeOperation();
-            paintInfo.context().setCompositeOperation(CompositeCopy);
+            paintInfo.context().setCompositeOperation(CompositeOperator::Copy);
             paintInfo.context().fillRect(paintInfo.rect, backgroundColor);
             paintInfo.context().setCompositeOperation(previousOperator);
         } else

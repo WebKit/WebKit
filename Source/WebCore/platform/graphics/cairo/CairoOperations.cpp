@@ -870,8 +870,8 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
     platformContext.save();
 
     // Set the compositing operation.
-    if (options.compositeOperator() == CompositeSourceOver && options.blendMode() == BlendMode::Normal && !cairoSurfaceHasAlpha(surface))
-        Cairo::State::setCompositeOperation(platformContext, CompositeCopy, BlendMode::Normal);
+    if (options.compositeOperator() == CompositeOperator::SourceOver && options.blendMode() == BlendMode::Normal && !cairoSurfaceHasAlpha(surface))
+        Cairo::State::setCompositeOperation(platformContext, CompositeOperator::Copy, BlendMode::Normal);
     else
         Cairo::State::setCompositeOperation(platformContext, options.compositeOperator(), options.blendMode());
 

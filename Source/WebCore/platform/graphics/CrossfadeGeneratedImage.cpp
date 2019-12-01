@@ -81,8 +81,8 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
     context.clip(FloatRect(FloatPoint(), m_crossfadeSize));
     context.beginTransparencyLayer(1);
 
-    drawCrossfadeSubimage(context, m_fromImage.get(), CompositeSourceOver, 1 - m_percentage, m_crossfadeSize);
-    drawCrossfadeSubimage(context, m_toImage.get(), CompositePlusLighter, m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_fromImage.get(), CompositeOperator::SourceOver, 1 - m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_toImage.get(), CompositeOperator::PlusLighter, m_percentage, m_crossfadeSize);
 
     context.endTransparencyLayer();
 }

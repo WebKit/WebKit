@@ -926,14 +926,14 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (baseColor.isVisible()) {
                 if (!baseBgColorOnly && bgColor.isVisible())
                     baseColor = baseColor.blend(bgColor);
-                context.fillRect(backgroundRectForPainting, baseColor, CompositeCopy);
+                context.fillRect(backgroundRectForPainting, baseColor, CompositeOperator::Copy);
             } else if (!baseBgColorOnly && bgColor.isVisible()) {
                 auto operation = context.compositeOperation();
                 if (shouldClearBackground) {
-                    if (op == CompositeDestinationOut) // We're punching out the background.
+                    if (op == CompositeOperator::DestinationOut) // We're punching out the background.
                         operation = op;
                     else
-                        operation = CompositeCopy;
+                        operation = CompositeOperator::Copy;
                 }
                 context.fillRect(backgroundRectForPainting, bgColor, operation);
             } else if (shouldClearBackground)
@@ -953,7 +953,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             ImagePaintingOptions options = {
-                op == CompositeSourceOver ? bgLayer.composite() : op,
+                op == CompositeOperator::SourceOver ? bgLayer.composite() : op,
                 bgLayer.blendMode(),
                 decodingModeForImageDraw(*image, paintInfo),
                 ImageOrientation::FromImage,
@@ -969,7 +969,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     if (maskImage && bgLayer.clip() == FillBox::Text) {
-        context.drawConsumingImageBuffer(WTFMove(maskImage), maskRect, CompositeDestinationIn);
+        context.drawConsumingImageBuffer(WTFMove(maskImage), maskRect, CompositeOperator::DestinationIn);
         context.endTransparencyLayer();
     }
 }

@@ -899,7 +899,7 @@ void ShadowBlur::blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize
     // Mask the image with the shadow color.
     GraphicsContext& shadowContext = layerImage.context();
     GraphicsContextStateSaver stateSaver(shadowContext);
-    shadowContext.setCompositeOperation(CompositeSourceIn);
+    shadowContext.setCompositeOperation(CompositeOperator::SourceIn);
     shadowContext.setFillColor(m_color);
     shadowContext.fillRect(FloatRect(0, 0, templateSize.width(), templateSize.height()));
 }

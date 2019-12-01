@@ -60,7 +60,7 @@ void SourceAlpha::platformApplySoftware()
 
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
     filterContext.fillRect(imageRect, Color::black);
-    filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeDestinationIn);
+    filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
 }
 
 TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const

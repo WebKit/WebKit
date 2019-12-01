@@ -2279,7 +2279,7 @@ static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObjec
         return false;
 
     // FIXME: we should be able to allow backgroundComposite; However since this is not a common use case it has been deferred for now.
-    if (style.backgroundComposite() != CompositeSourceOver)
+    if (style.backgroundComposite() != CompositeOperator::SourceOver)
         return false;
 
     return true;

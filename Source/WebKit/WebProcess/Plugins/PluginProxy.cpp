@@ -215,7 +215,7 @@ void PluginProxy::paint(GraphicsContext& graphicsContext, const IntRect& dirtyRe
         auto graphicsContext = m_backingStore->createGraphicsContext();
         if (graphicsContext) {
             graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
-            graphicsContext->setCompositeOperation(CompositeCopy);
+            graphicsContext->setCompositeOperation(CompositeOperator::Copy);
 
             m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), IntPoint(), pluginBounds());
 
@@ -727,7 +727,7 @@ void PluginProxy::update(const IntRect& paintedRect)
         auto graphicsContext = m_backingStore->createGraphicsContext();
         if (graphicsContext) {
             graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
-            graphicsContext->setCompositeOperation(CompositeCopy);
+            graphicsContext->setCompositeOperation(CompositeOperator::Copy);
             m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRect.location(), paintedRect);
         }
     }

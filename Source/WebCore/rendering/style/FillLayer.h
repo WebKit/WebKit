@@ -163,7 +163,7 @@ public:
     static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }
     static FillRepeat initialFillRepeatX(FillLayerType) { return FillRepeat::Repeat; }
     static FillRepeat initialFillRepeatY(FillLayerType) { return FillRepeat::Repeat; }
-    static CompositeOperator initialFillComposite(FillLayerType) { return CompositeSourceOver; }
+    static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }
     static FillSize initialFillSize(FillLayerType) { return { }; }
     static Length initialFillXPosition(FillLayerType) { return Length(0.0f, Percent); }

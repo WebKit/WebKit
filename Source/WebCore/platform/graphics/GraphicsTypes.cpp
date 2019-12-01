@@ -71,8 +71,8 @@ static const char* const blendOperatorNames[] = {
     "plus-darker",
     "plus-lighter"
 };
-const int numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
-const unsigned numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
+const uint8_t numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
+const uint8_t numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
 
 bool parseBlendMode(const String& s, BlendMode& blendMode)
 {
@@ -98,7 +98,7 @@ bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, Blen
     
     if (parseBlendMode(s, blendOp)) {
         // For now, blending will always assume source-over. This will be fixed in the future
-        op = CompositeSourceOver;
+        op = CompositeOperator::SourceOver;
         return true;
     }
     
@@ -109,13 +109,13 @@ bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, Blen
 // this routine needs to be updated.
 String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
 {
-    ASSERT(op >= 0);
-    ASSERT(op < numCompositeOperatorNames);
+    ASSERT(op >= CompositeOperator::Clear);
+    ASSERT(static_cast<uint8_t>(op) < numCompositeOperatorNames);
     ASSERT(blendOp >= BlendMode::Normal);
-    ASSERT(static_cast<unsigned>(blendOp) <= numBlendOperatorNames);
+    ASSERT(static_cast<uint8_t>(blendOp) <= numBlendOperatorNames);
     if (blendOp > BlendMode::Normal)
         return blendOperatorNames[static_cast<unsigned>(blendOp) - static_cast<unsigned>(BlendMode::Normal)];
-    return compositeOperatorNames[op];
+    return compositeOperatorNames[static_cast<unsigned>(op)];
 }
 
 String blendModeName(BlendMode blendOp)

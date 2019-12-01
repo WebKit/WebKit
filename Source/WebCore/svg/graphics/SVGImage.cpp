@@ -247,7 +247,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     PlatformContextDirect2D platformContext(nativeImageTarget.get());
     GraphicsContext localContext(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
-    draw(localContext, rect(), rect(), { CompositeSourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None });
+    draw(localContext, rect(), rect(), { CompositeOperator::SourceOver, BlendMode::Normal, DecodingMode::Synchronous, ImageOrientation::None });
 
     COMPtr<ID2D1Bitmap> nativeImage;
     HRESULT hr = nativeImageTarget->GetBitmap(&nativeImage);
@@ -313,10 +313,10 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     context.clip(enclosingIntRect(dstRect));
 
     float alpha = context.alpha();
-    bool compositingRequiresTransparencyLayer = options.compositeOperator() != CompositeSourceOver || options.blendMode() != BlendMode::Normal || alpha < 1;
+    bool compositingRequiresTransparencyLayer = options.compositeOperator() != CompositeOperator::SourceOver || options.blendMode() != BlendMode::Normal || alpha < 1;
     if (compositingRequiresTransparencyLayer) {
         context.beginTransparencyLayer(alpha);
-        context.setCompositeOperation(CompositeSourceOver, BlendMode::Normal);
+        context.setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
     }
 
     FloatSize scale(dstRect.size() / srcRect.size());

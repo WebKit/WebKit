@@ -194,7 +194,7 @@ struct GraphicsContextState {
     WindRule fillRule { WindRule::NonZero };
 
     float alpha { 1 };
-    CompositeOperator compositeOperator { CompositeSourceOver };
+    CompositeOperator compositeOperator { CompositeOperator::SourceOver };
     BlendMode blendMode { BlendMode::Normal };
     InterpolationQuality imageInterpolationQuality { InterpolationDefault };
 

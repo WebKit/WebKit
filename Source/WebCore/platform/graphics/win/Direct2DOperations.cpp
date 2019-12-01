@@ -189,46 +189,46 @@ void setCompositeOperation(PlatformContextDirect2D& platformContext, CompositeOp
         }
     } else {
         switch (compositeOperation) {
-        case CompositeClear:
+        case CompositeOperator::Clear:
             // FIXME: targetBlendMode = D2D1_BLEND_MODE_CLEAR;
             break;
-        case CompositeCopy:
+        case CompositeOperator::Copy:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_COPY;
             break;
-        case CompositeSourceOver:
+        case CompositeOperator::SourceOver:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER;
             break;
-        case CompositeSourceIn:
+        case CompositeOperator::SourceIn:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_IN;
             break;
-        case CompositeSourceOut:
+        case CompositeOperator::SourceOut:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_OUT;
             break;
-        case CompositeSourceAtop:
+        case CompositeOperator::SourceAtop:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_ATOP;
             break;
-        case CompositeDestinationOver:
+        case CompositeOperator::DestinationOver:
             targetCompositeMode = D2D1_COMPOSITE_MODE_DESTINATION_OVER;
             break;
-        case CompositeDestinationIn:
+        case CompositeOperator::DestinationIn:
             targetCompositeMode = D2D1_COMPOSITE_MODE_DESTINATION_IN;
             break;
-        case CompositeDestinationOut:
+        case CompositeOperator::DestinationOut:
             targetCompositeMode = D2D1_COMPOSITE_MODE_DESTINATION_OUT;
             break;
-        case CompositeDestinationAtop:
+        case CompositeOperator::DestinationAtop:
             targetCompositeMode = D2D1_COMPOSITE_MODE_DESTINATION_ATOP;
             break;
-        case CompositeXOR:
+        case CompositeOperator::XOR:
             targetCompositeMode = D2D1_COMPOSITE_MODE_XOR;
             break;
-        case CompositePlusDarker:
+        case CompositeOperator::PlusDarker:
             targetBlendMode = D2D1_BLEND_MODE_DARKEN;
             break;
-        case CompositePlusLighter:
+        case CompositeOperator::PlusLighter:
             targetBlendMode = D2D1_BLEND_MODE_LIGHTEN;
             break;
-        case CompositeDifference:
+        case CompositeOperator::Difference:
             targetBlendMode = D2D1_BLEND_MODE_DIFFERENCE;
             break;
         }

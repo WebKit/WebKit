@@ -1,3 +1,16 @@
+2019-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Make CompositeOperator and BlendMode encodable
+        https://bugs.webkit.org/show_bug.cgi?id=204722
+
+        Reviewed by Eric Carlson.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+        * WebView.cpp:
+        (WebView::paintWithDirect2D):
+        (WebView::paintIntoBackingStore):
+
 2019-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix attempt after r251798.

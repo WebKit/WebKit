@@ -128,33 +128,33 @@ void appendRegionToCairoContext(cairo_t* to, const cairo_region_t* region)
 static cairo_operator_t toCairoCompositeOperator(CompositeOperator op)
 {
     switch (op) {
-    case CompositeClear:
+    case CompositeOperator::Clear:
         return CAIRO_OPERATOR_CLEAR;
-    case CompositeCopy:
+    case CompositeOperator::Copy:
         return CAIRO_OPERATOR_SOURCE;
-    case CompositeSourceOver:
+    case CompositeOperator::SourceOver:
         return CAIRO_OPERATOR_OVER;
-    case CompositeSourceIn:
+    case CompositeOperator::SourceIn:
         return CAIRO_OPERATOR_IN;
-    case CompositeSourceOut:
+    case CompositeOperator::SourceOut:
         return CAIRO_OPERATOR_OUT;
-    case CompositeSourceAtop:
+    case CompositeOperator::SourceAtop:
         return CAIRO_OPERATOR_ATOP;
-    case CompositeDestinationOver:
+    case CompositeOperator::DestinationOver:
         return CAIRO_OPERATOR_DEST_OVER;
-    case CompositeDestinationIn:
+    case CompositeOperator::DestinationIn:
         return CAIRO_OPERATOR_DEST_IN;
-    case CompositeDestinationOut:
+    case CompositeOperator::DestinationOut:
         return CAIRO_OPERATOR_DEST_OUT;
-    case CompositeDestinationAtop:
+    case CompositeOperator::DestinationAtop:
         return CAIRO_OPERATOR_DEST_ATOP;
-    case CompositeXOR:
+    case CompositeOperator::XOR:
         return CAIRO_OPERATOR_XOR;
-    case CompositePlusDarker:
+    case CompositeOperator::PlusDarker:
         return CAIRO_OPERATOR_DARKEN;
-    case CompositePlusLighter:
+    case CompositeOperator::PlusLighter:
         return CAIRO_OPERATOR_ADD;
-    case CompositeDifference:
+    case CompositeOperator::Difference:
         return CAIRO_OPERATOR_DIFFERENCE;
     default:
         return CAIRO_OPERATOR_SOURCE;

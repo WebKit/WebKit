@@ -161,33 +161,33 @@ static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendM
     switch (blendMode) {
     case BlendMode::Normal:
         switch (compositeOperator) {
-        case CompositeClear:
+        case CompositeOperator::Clear:
             return kCGBlendModeClear;
-        case CompositeCopy:
+        case CompositeOperator::Copy:
             return kCGBlendModeCopy;
-        case CompositeSourceOver:
+        case CompositeOperator::SourceOver:
             return kCGBlendModeNormal;
-        case CompositeSourceIn:
+        case CompositeOperator::SourceIn:
             return kCGBlendModeSourceIn;
-        case CompositeSourceOut:
+        case CompositeOperator::SourceOut:
             return kCGBlendModeSourceOut;
-        case CompositeSourceAtop:
+        case CompositeOperator::SourceAtop:
             return kCGBlendModeSourceAtop;
-        case CompositeDestinationOver:
+        case CompositeOperator::DestinationOver:
             return kCGBlendModeDestinationOver;
-        case CompositeDestinationIn:
+        case CompositeOperator::DestinationIn:
             return kCGBlendModeDestinationIn;
-        case CompositeDestinationOut:
+        case CompositeOperator::DestinationOut:
             return kCGBlendModeDestinationOut;
-        case CompositeDestinationAtop:
+        case CompositeOperator::DestinationAtop:
             return kCGBlendModeDestinationAtop;
-        case CompositeXOR:
+        case CompositeOperator::XOR:
             return kCGBlendModeXOR;
-        case CompositePlusDarker:
+        case CompositeOperator::PlusDarker:
             return kCGBlendModePlusDarker;
-        case CompositePlusLighter:
+        case CompositeOperator::PlusLighter:
             return kCGBlendModePlusLighter;
-        case CompositeDifference:
+        case CompositeOperator::Difference:
             return kCGBlendModeDifference;
         }
         break;

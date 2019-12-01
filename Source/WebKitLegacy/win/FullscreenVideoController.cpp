@@ -501,7 +501,7 @@ void FullscreenVideoController::draw()
     IntRect innerRect(borderThickness, borderThickness, windowWidth - borderThickness * 2, windowHeight - borderThickness * 2);
 
     context.fillRoundedRect(FloatRoundedRect(outerRect, outerRadius, outerRadius, outerRadius, outerRadius), Color(borderColor));
-    context.setCompositeOperation(CompositeCopy);
+    context.setCompositeOperation(CompositeOperator::Copy);
     context.fillRoundedRect(FloatRoundedRect(innerRect, innerRadius, innerRadius, innerRadius, innerRadius), Color(backgroundColor));
 
     // Draw the widgets
