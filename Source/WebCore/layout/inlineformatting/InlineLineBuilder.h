@@ -194,12 +194,12 @@ private:
         void clear();
 
         LayoutUnit width() const { return m_width; }
-        Vector<size_t, 5>& runIndexes() { return m_runIndexes; }
-        bool isEmpty() const { return m_runIndexes.isEmpty(); }
+        Optional<size_t> firstRunIndex() { return m_firstRunIndex; }
+        bool isEmpty() const { return !m_firstRunIndex.hasValue(); }
         bool isTrailingContentFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
 
     private:
-        Vector<size_t, 5> m_runIndexes;
+        Optional<size_t> m_firstRunIndex;
         LayoutUnit m_width;
         bool m_lastRunIsFullyTrimmable { false };
     };
@@ -218,7 +218,7 @@ private:
 
 inline void LineBuilder::TrimmableContent::clear()
 {
-    m_runIndexes.clear();
+    m_firstRunIndex = { };
     m_width = { };
     m_lastRunIsFullyTrimmable = false;
 }

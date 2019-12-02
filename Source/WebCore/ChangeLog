@@ -1,3 +1,22 @@
+2019-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] TrimmableContent only needs to keep track of the first trimmable run index
+        https://bugs.webkit.org/show_bug.cgi?id=204747
+        <rdar://problem/57557732>
+
+        Reviewed by Antti Koivisto.
+
+        Every run after the first trimmable run should either also be trimmable (more whitespace) or skippable (</span>).
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::TrimmableContent::firstRunIndex):
+        (WebCore::Layout::LineBuilder::TrimmableContent::isEmpty const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::clear):
+        (WebCore::Layout::LineBuilder::TrimmableContent::runIndexes): Deleted.
+
 2019-12-02  Alex Christensen  <achristensen@webkit.org>
 
         Incorrect association of the URL object with the value port

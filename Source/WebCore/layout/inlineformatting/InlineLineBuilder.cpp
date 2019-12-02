@@ -376,14 +376,27 @@ void LineBuilder::removeTrailingTrimmableContent()
     if (m_trimmableContent.isEmpty() || m_inlineItemRuns.isEmpty())
         return;
 
-    // Collapse trimmable trailing content
-    for (auto trimmableRunIndex : m_trimmableContent.runIndexes()) {
-        auto& trimmableRun = m_inlineItemRuns[trimmableRunIndex];
-        ASSERT(trimmableRun.isText());
-        if (trimmableRun.isWhitespace())
-            trimmableRun.setCollapsesToZeroAdvanceWidth();
-        else
-            trimmableRun.removeTrailingLetterSpacing();
+#ifndef NDEBUG
+    auto hasSeenNonWhitespaceTextContent = false;
+#endif
+    // Collapse trimmable trailing content.
+    for (auto index = *m_trimmableContent.firstRunIndex(); index < m_inlineItemRuns.size(); ++index) {
+        auto& run = m_inlineItemRuns[index];
+        if (!run.isText()) {
+            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isForcedLineBreak());
+            continue;
+        }
+        if (run.isWhitespace())
+            run.setCollapsesToZeroAdvanceWidth();
+        else {
+            ASSERT(!hasSeenNonWhitespaceTextContent);
+#ifndef NDEBUG
+            hasSeenNonWhitespaceTextContent = true;
+#endif
+            // Must be a letter spacing trim.
+            ASSERT(run.layoutBox().style().letterSpacing());
+            run.removeTrailingLetterSpacing();
+        }
     }
     m_lineBox.shrinkHorizontally(m_trimmableContent.width());
     m_trimmableContent.clear();
@@ -714,8 +727,8 @@ void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIn
     // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
     itemRunWidth = std::max(0_lu, itemRunWidth);
     m_width += itemRunWidth;
+    m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
     m_lastRunIsFullyTrimmable = isFullyTrimmable == IsFullyTrimmable::Yes;
-    m_runIndexes.append(runIndex);
 }
 
 LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, const Display::Rect& logicalRect, WTF::Optional<Display::Run::TextContext> textContext)
