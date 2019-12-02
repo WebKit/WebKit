@@ -1,3 +1,14 @@
+2019-12-02  Truitt Savell  <tsavell@apple.com>
+
+        Update expectations for two tests after https://trac.webkit.org/changeset/252363/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=204756
+        https://bugs.webkit.org/show_bug.cgi?id=204757
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-12-02  youenn fablet  <youenn@apple.com>
 
         Service Worker should correctly set its document first party for cookies URL
