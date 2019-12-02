@@ -18,6 +18,11 @@ addEventListener('message', async (e) => {
             e.source.postMessage(JSON.stringify(result));
             return;
         }
+        if (e.data === 'set-cookie') {
+            await fetch("/WebKit/service-workers/resources/set-cookie.py?name=mycookie&path=%2F");
+            e.source.postMessage('cookie-is-set');
+            return;
+        }
         e.source.postMessage('error');
     } catch (e) {
         e.source.postMessage('Got error:' + e);

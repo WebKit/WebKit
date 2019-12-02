@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Service Worker third party cookie setting</title>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<div id="restart" onclick="window.location = 'http://localhost:8800/WebKit/service-workers/third-party-cookie.html'">Click to restart test</div>
+<br>
+<div id="log"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function setCookie()
+{
+    var iframe = await with_iframe("http://127.0.0.1:8800/WebKit/service-workers/resources/third-party-cookie-iframe.html");
+    var result = await new Promise((resolve) => {
+        window.onmessage = (e) => {
+            resolve(e.data);
+        };
+        iframe.contentWindow.postMessage("set-cookie", '*');
+    });
+    if (result !== "cookie-is-set") {
+        document.body.innerHTML = "Fail setting cookie";
+        if (window.testRunner)
+             testRunner.notifyDone();
+        return;
+    }
+    iframe.remove();
+    window.location = "http://127.0.0.1:8800/WebKit/service-workers/third-party-cookie.html?second-step#report";
+}
+
+function reportCookie()
+{
+    window.location = "http://localhost:8800/WebKit/service-workers/third-party-cookie.html?third-step#cookie='" + document.cookie + "'";
+}
+
+function checkCookie()
+{
+    log.innerHTML = window.location.hash === "#cookie=''"? "PASS" : "FAIL, got :" + window.location.hash;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+const shouldSetCookie = !window.location.hash;
+const shouldReportCookie = window.location.hostname === "127.0.0.1";
+
+if (shouldSetCookie)
+    setCookie();
+else if (shouldReportCookie)
+    reportCookie();
+else
+    checkCookie();
+</script>
+</body>
+</html>

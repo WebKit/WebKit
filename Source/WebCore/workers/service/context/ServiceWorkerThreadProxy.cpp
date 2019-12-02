@@ -69,7 +69,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
     origin->setStorageBlockingPolicy(storageBlockingPolicy);
 
     document->setSiteForCookies(topOriginURL(origin));
-    document->setFirstPartyForCookies(data.scriptURL);
+    document->setFirstPartyForCookies(topOriginURL(origin));
     document->setDomainForCachePartition(origin->domainForCachePartition());
 
     if (auto policy = parseReferrerPolicy(data.referrerPolicy, ReferrerPolicySource::HTTPHeader))
