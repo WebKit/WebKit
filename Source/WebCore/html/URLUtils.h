@@ -232,12 +232,9 @@ void URLUtils<T>::setPort(const String& value)
     if (!url.canSetHostOrPort())
         return;
 
-    // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes
-    // specifically goes against RFC 3986 (p3.2) and
-    // requires setting the port to "0" if it is set to empty string.
-    // FIXME: http://url.spec.whatwg.org/ doesn't appear to require this; test what browsers do
-    unsigned port = value.toUInt();
-    if (WTF::isDefaultPortForProtocol(port, url.protocol()))
+    bool success = true;
+    unsigned port = value.toUInt(&success);
+    if (!success || WTF::isDefaultPortForProtocol(port, url.protocol()))
         url.removePort();
     else
         url.setPort(port);

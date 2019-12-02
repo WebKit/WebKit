@@ -1,3 +1,15 @@
+2019-12-02  Alex Christensen  <achristensen@webkit.org>
+
+        Incorrect association of the URL object with the value port
+        https://bugs.webkit.org/show_bug.cgi?id=204414
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/DOMURL/set-href-attribute-port-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-port.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-port.html:
+
 2019-12-02  Truitt Savell  <tsavell@apple.com>
 
         Update expectations for two tests after https://trac.webkit.org/changeset/252363/webkit
