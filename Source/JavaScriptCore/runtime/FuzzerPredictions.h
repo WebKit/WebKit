@@ -23,28 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RandomizingFuzzerAgent.h"
+#pragma once
 
-#include "CodeBlock.h"
-#include <wtf/Locker.h>
+#include <bytecode/CodeBlock.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
-RandomizingFuzzerAgent::RandomizingFuzzerAgent(VM&)
-    : m_random(Options::seedOfRandomizingFuzzerAgent())
-{
-}
+class FuzzerPredictions {
+public:
+    JS_EXPORT_PRIVATE FuzzerPredictions(const char*);
 
-SpeculatedType RandomizingFuzzerAgent::getPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType original)
-{
-    auto locker = holdLock(m_lock);
-    uint32_t high = m_random.getUint32();
-    uint32_t low = m_random.getUint32();
-    SpeculatedType generated = static_cast<SpeculatedType>((static_cast<uint64_t>(high) << 32) | low) & SpecFullTop;
-    if (Options::dumpFuzzerAgentPredictions())
-        dataLogLn("getPrediction name:(", codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), "),bytecodeIndex:(", codeOrigin.bytecodeIndex(), "),original:(", SpeculationDump(original), "),generated:(", SpeculationDump(generated), ")");
-    return generated;
-}
+    Optional<SpeculatedType> predictionFor(const String&);
+
+private:
+    HashMap<String, SpeculatedType> m_predictions;
+};
+
+JS_EXPORT_PRIVATE FuzzerPredictions& ensureGlobalFuzzerPredictions();
 
 } // namespace JSC

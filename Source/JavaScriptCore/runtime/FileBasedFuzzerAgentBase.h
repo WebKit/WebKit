@@ -23,28 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RandomizingFuzzerAgent.h"
+#pragma once
 
-#include "CodeBlock.h"
-#include <wtf/Locker.h>
+#include "FuzzerAgent.h"
+#include "Opcode.h"
+#include <wtf/Lock.h>
 
 namespace JSC {
 
-RandomizingFuzzerAgent::RandomizingFuzzerAgent(VM&)
-    : m_random(Options::seedOfRandomizingFuzzerAgent())
-{
-}
+class VM;
 
-SpeculatedType RandomizingFuzzerAgent::getPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType original)
-{
-    auto locker = holdLock(m_lock);
-    uint32_t high = m_random.getUint32();
-    uint32_t low = m_random.getUint32();
-    SpeculatedType generated = static_cast<SpeculatedType>((static_cast<uint64_t>(high) << 32) | low) & SpecFullTop;
-    if (Options::dumpFuzzerAgentPredictions())
-        dataLogLn("getPrediction name:(", codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), "),bytecodeIndex:(", codeOrigin.bytecodeIndex(), "),original:(", SpeculationDump(original), "),generated:(", SpeculationDump(generated), ")");
-    return generated;
-}
+struct PredictionTarget {
+    BytecodeIndex bytecodeIndex;
+    int divot;
+    int startOffset;
+    int endOffset;
+    unsigned line;
+    unsigned column;
+    OpcodeID opcodeId;
+    String sourceFilename;
+    String lookupKey;
+};
+
+class FileBasedFuzzerAgentBase : public FuzzerAgent {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    FileBasedFuzzerAgentBase(VM&);
+
+protected:
+    Lock m_lock;
+    virtual SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) = 0;
+
+public:
+    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType original) final;
+
+protected:
+    static String createLookupKey(const String& sourceFilename, OpcodeID, int startLocation, int endLocation);
+    static OpcodeID opcodeAliasForLookupKey(const OpcodeID&);
+};
 
 } // namespace JSC

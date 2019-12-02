@@ -50,6 +50,7 @@
 #include "ExecutableToCodeBlockEdge.h"
 #include "FTLThunks.h"
 #include "FastMallocAlignedMemoryAllocator.h"
+#include "FileBasedFuzzerAgent.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionConstructor.h"
 #include "FunctionExecutable.h"
@@ -117,6 +118,7 @@
 #include "Nodes.h"
 #include "ObjCCallbackFunction.h"
 #include "Parser.h"
+#include "PredictionFileCreatingFuzzerAgent.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "ProgramExecutable.h"
@@ -463,6 +465,10 @@ VM::VM(VMType vmType, HeapType heapType)
         setFuzzerAgent(makeUnique<RandomizingFuzzerAgent>(*this));
     if (Options::useDoublePredictionFuzzerAgent())
         setFuzzerAgent(makeUnique<DoublePredictionFuzzerAgent>(*this));
+    if (Options::useFileBasedFuzzerAgent())
+        setFuzzerAgent(makeUnique<FileBasedFuzzerAgent>(*this));
+    if (Options::usePredictionFileCreatingFuzzerAgent())
+        setFuzzerAgent(makeUnique<PredictionFileCreatingFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();

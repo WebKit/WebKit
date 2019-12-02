@@ -448,7 +448,7 @@ static void recomputeDependentOptions()
         || Options::verboseCFA()
         || Options::verboseDFGFailure()
         || Options::verboseFTLFailure()
-        || Options::dumpRandomizingFuzzerAgentPredictions())
+        || Options::dumpFuzzerAgentPredictions())
         Options::alwaysComputeHash() = true;
     
     if (!Options::useConcurrentGC())

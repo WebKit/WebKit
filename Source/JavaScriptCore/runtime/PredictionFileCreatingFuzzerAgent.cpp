@@ -24,27 +24,48 @@
  */
 
 #include "config.h"
-#include "RandomizingFuzzerAgent.h"
-
-#include "CodeBlock.h"
-#include <wtf/Locker.h>
+#include "PredictionFileCreatingFuzzerAgent.h"
 
 namespace JSC {
 
-RandomizingFuzzerAgent::RandomizingFuzzerAgent(VM&)
-    : m_random(Options::seedOfRandomizingFuzzerAgent())
+PredictionFileCreatingFuzzerAgent::PredictionFileCreatingFuzzerAgent(VM& vm)
+    : FileBasedFuzzerAgentBase(vm)
 {
 }
 
-SpeculatedType RandomizingFuzzerAgent::getPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType original)
+SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBlock*, PredictionTarget& predictionTarget, SpeculatedType original)
 {
-    auto locker = holdLock(m_lock);
-    uint32_t high = m_random.getUint32();
-    uint32_t low = m_random.getUint32();
-    SpeculatedType generated = static_cast<SpeculatedType>((static_cast<uint64_t>(high) << 32) | low) & SpecFullTop;
-    if (Options::dumpFuzzerAgentPredictions())
-        dataLogLn("getPrediction name:(", codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), "),bytecodeIndex:(", codeOrigin.bytecodeIndex(), "),original:(", SpeculationDump(original), "),generated:(", SpeculationDump(generated), ")");
-    return generated;
+    switch (predictionTarget.opcodeId) {
+    case op_to_this:
+    case op_bitand:
+    case op_bitor:
+    case op_bitxor:
+    case op_bitnot:
+    case op_lshift:
+    case op_rshift:
+    case op_get_by_val:
+    case op_get_argument:
+    case op_get_from_arguments:
+    case op_get_from_scope:
+    case op_to_number:
+    case op_get_by_id:
+    case op_get_by_id_with_this:
+    case op_get_by_val_with_this:
+    case op_get_direct_pname:
+    case op_construct:
+    case op_construct_varargs:
+    case op_call:
+    case op_call_eval:
+    case op_call_varargs:
+    case op_tail_call:
+    case op_tail_call_varargs:
+        dataLogF("%s:%llx\n", predictionTarget.lookupKey.utf8().data(), original);
+        break;
+
+    default:
+        RELEASE_ASSERT_WITH_MESSAGE(false, "unhandled opcode: %s", toString(predictionTarget.opcodeId).utf8().data());
+    }
+    return original;
 }
 
 } // namespace JSC

@@ -1,3 +1,30 @@
+2019-12-01  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        Add FuzzerAgent that reads predictions from a file
+        https://bugs.webkit.org/show_bug.cgi?id=203898
+
+        Reviewed by Mark Lam.
+
+        This patch adds a FuzzerAgent that reads predictions from a file. The predictions in the file are
+        correlated with the prediction sites using the name of the JavaScript source file, the opcode, and
+        start and end offsets in the source. There is also a separate FuzzerAgent that can be used to create
+        the prediction files.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/FileBasedFuzzerAgent.cpp: Added.
+        * runtime/FileBasedFuzzerAgent.h: Copied from Source/JavaScriptCore/runtime/RandomizingFuzzerAgent.cpp.
+        * runtime/FileBasedFuzzerAgentBase.cpp: Added.
+        * runtime/FileBasedFuzzerAgentBase.h: Copied from Source/JavaScriptCore/runtime/RandomizingFuzzerAgent.cpp.
+        * runtime/FuzzerPredictions.cpp: Added.
+        * runtime/FuzzerPredictions.h: Copied from Source/JavaScriptCore/runtime/RandomizingFuzzerAgent.cpp.
+        * runtime/Options.cpp:
+        * runtime/OptionsList.h:
+        * runtime/PredictionFileCreatingFuzzerAgent.cpp: Copied from Source/JavaScriptCore/runtime/RandomizingFuzzerAgent.cpp.
+        * runtime/PredictionFileCreatingFuzzerAgent.h: Copied from Source/JavaScriptCore/runtime/RandomizingFuzzerAgent.cpp.
+        * runtime/RandomizingFuzzerAgent.cpp:
+        * runtime/VM.cpp:
+
 2019-12-01  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][MIPS] CallFrame is being clobbered on InternalFunction execution

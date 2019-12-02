@@ -766,6 +766,8 @@ runtime/ExceptionFuzz.cpp
 runtime/ExceptionHelpers.cpp
 runtime/ExceptionScope.cpp
 runtime/ExecutableBase.cpp
+runtime/FileBasedFuzzerAgent.cpp
+runtime/FileBasedFuzzerAgentBase.cpp
 runtime/FunctionConstructor.cpp
 runtime/FunctionExecutable.cpp
 runtime/FunctionExecutableDump.cpp
@@ -773,6 +775,7 @@ runtime/FunctionHasExecutedCache.cpp
 runtime/FunctionPrototype.cpp
 runtime/FunctionRareData.cpp
 runtime/FuzzerAgent.cpp
+runtime/FuzzerPredictions.cpp
 runtime/GeneratorFunctionConstructor.cpp
 runtime/GeneratorFunctionPrototype.cpp
 runtime/GeneratorPrototype.cpp
@@ -903,6 +906,7 @@ runtime/ObjectPrototype.cpp
 runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
+runtime/PredictionFileCreatingFuzzerAgent.cpp
 runtime/ProgramExecutable.cpp
 runtime/PromiseTimer.cpp
 runtime/PropertyDescriptor.cpp
