@@ -198,17 +198,6 @@ private:
 #endif
     }
 
-    void didReceiveMessage(InjectedBundle&, const String& messageName, API::Object* messageBody) override
-    {
-        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
-        API::Dictionary& message = *static_cast<API::Dictionary*>(messageBody);
-        if (messageName == String::fromUTF8("PrefetchDNS")) {
-            API::String* hostname = static_cast<API::String*>(message.get(String::fromUTF8("Hostname")));
-            WebProcess::singleton().prefetchDNS(hostname->string());
-        } else
-            ASSERT_NOT_REACHED();
-    }
-
     void didReceiveMessageToPage(InjectedBundle&, WebPage& page, const String& messageName, API::Object* messageBody) override
     {
         ASSERT(messageBody->type() == API::Object::Type::Dictionary);

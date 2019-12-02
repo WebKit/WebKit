@@ -27,10 +27,12 @@
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
 #include "LegacyGlobalSettings.h"
+#include "NetworkProcessMessages.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
 #include "WebCertificateInfo.h"
+#include "WebKit2Initialize.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
@@ -59,8 +61,10 @@
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
+#include <pal/HysteresisActivity.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
@@ -191,6 +195,11 @@ typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
 class WebKitAutomationClient;
 
 struct _WebKitWebContextPrivate {
+    _WebKitWebContextPrivate()
+        : dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) dnsPrefetchedHosts.clear(); })
+    {
+    }
+
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
 #if PLATFORM(GTK)
@@ -222,6 +231,9 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitAutomationSession> automationSession;
 #endif
     std::unique_ptr<WebKitProtocolHandler> webkitProtocolHandler;
+
+    HashSet<String> dnsPrefetchedHosts;
+    PAL::HysteresisActivity dnsPrefetchHystereris;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -438,6 +450,8 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
 
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+
+    InitializeWebKit2();
 
     gObjectClass->get_property = webkitWebContextGetProperty;
     gObjectClass->set_property = webkitWebContextSetProperty;
@@ -1552,9 +1566,9 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(hostname);
 
-    API::Dictionary::MapType message;
-    message.set(String::fromUTF8("Hostname"), API::String::create(String::fromUTF8(hostname)));
-    context->priv->processPool->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTFMove(message)).ptr());
+    if (context->priv->dnsPrefetchedHosts.add(hostname).isNewEntry)
+        context->priv->processPool->sendToNetworkingProcess(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)));
+    context->priv->dnsPrefetchHystereris.impulse();
 }
 
 /**
