@@ -131,7 +131,7 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
-        auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).lineBoxes();
+        auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).displayInlineContent()->lineBoxes;
         // Even empty containers generate one line. 
         ASSERT(!lineBoxes.isEmpty());
         top = lineBoxes.first().logicalTop();

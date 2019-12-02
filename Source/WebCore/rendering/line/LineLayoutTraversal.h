@@ -27,6 +27,7 @@
 
 #include "InlineElementBox.h"
 #include "LineLayoutTraversalComplexPath.h"
+#include "LineLayoutTraversalDisplayRunPath.h"
 #include "LineLayoutTraversalSimplePath.h"
 #include "RenderText.h"
 #include <wtf/HashMap.h>
@@ -47,7 +48,13 @@ struct EndIterator { };
 
 class Box {
 public:
-    using PathVariant = Variant<SimplePath, ComplexPath>;
+    using PathVariant = Variant<
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        DisplayRunPath,
+#endif
+        ComplexPath,
+        SimplePath
+    >;
 
     Box(PathVariant&&);
 
@@ -84,10 +91,7 @@ public:
 class TextBoxIterator {
 public:
     TextBoxIterator() : m_textBox(ComplexPath { nullptr, { } }) { };
-
-    explicit TextBoxIterator(const InlineTextBox*);
-    TextBoxIterator(Vector<const InlineTextBox*>&& sorted, size_t index);
-    TextBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
+    TextBoxIterator(Box::PathVariant&&);
 
     TextBoxIterator& operator++() { return traverseNextInVisualOrder(); }
     TextBoxIterator& traverseNextInVisualOrder();
@@ -113,9 +117,7 @@ private:
 class ElementBoxIterator {
 public:
     ElementBoxIterator() : m_box(ComplexPath { nullptr, { } }) { };
-
-    explicit ElementBoxIterator(const InlineElementBox*);
-    ElementBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
+    ElementBoxIterator(Box::PathVariant&&);
 
     explicit operator bool() const { return !atEnd(); }
 

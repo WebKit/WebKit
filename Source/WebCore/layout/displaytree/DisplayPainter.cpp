@@ -112,7 +112,11 @@ static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisp
 
 static void paintInlineContent(GraphicsContext& context, const Box& rootAbsoluteDisplayBox, const Layout::InlineFormattingState& formattingState)
 {
-    auto& displayRuns = formattingState.displayRuns();
+    auto* displayInlineContent = formattingState.displayInlineContent();
+    if (!displayInlineContent)
+        return;
+
+    auto& displayRuns = displayInlineContent->runs;
     if (displayRuns.isEmpty())
         return;
 
@@ -124,7 +128,7 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
 
             auto logicalLeft = rootAbsoluteDisplayBox.left() + run.logicalLeft();
             // FIXME: Add non-baseline align painting
-            auto& lineBox = formattingState.lineBoxForRun(run);
+            auto& lineBox = displayInlineContent->lineBoxForRun(run);
             auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset();
             if (auto expansionContext = textContext->expansion())
                 context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft, expansionContext->horizontalExpansion, expansionContext->behavior }, { logicalLeft, baselineOffset });

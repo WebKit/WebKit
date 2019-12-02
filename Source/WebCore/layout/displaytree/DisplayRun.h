@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayRect.h"
+#include "LayoutBox.h"
 #include "LayoutUnit.h"
 #include "RenderStyle.h"
 #include "TextFlags.h"
@@ -67,7 +68,7 @@ struct Run {
         Optional<ExpansionContext> m_expansionContext;
     };
 
-    Run(size_t lineIndex, const RenderStyle&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -97,20 +98,21 @@ struct Run {
     void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
 
-    const RenderStyle& style() const { return m_style; }
+    const Layout::Box& layoutBox() const { return *m_layoutBox; }
+    const RenderStyle& style() const { return m_layoutBox->style(); }
 
 private:
     // FIXME: Find out the Display::Run <-> paint style setup.
     const size_t m_lineIndex;
-    const RenderStyle& m_style;
+    WeakPtr<const Layout::Box> m_layoutBox;
     CachedImage* m_cachedImage { nullptr };
     Rect m_logicalRect;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(size_t lineIndex, const RenderStyle& style, const Rect& logicalRect, Optional<TextContext> textContext)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const Rect& logicalRect, Optional<TextContext> textContext)
     : m_lineIndex(lineIndex)
-    , m_style(style)
+    , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)
     , m_textContext(textContext)
 {

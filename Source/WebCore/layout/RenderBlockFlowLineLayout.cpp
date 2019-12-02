@@ -36,6 +36,7 @@
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderLineBreak.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SimpleLineLayout.h"
 
@@ -78,7 +79,7 @@ void RenderBlockFlowLineLayout::layout()
     auto invalidationState = InvalidationState { };
     layoutContext.layout(m_flow.contentSize(), invalidationState);
 
-    auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootContainer)).lineBoxes();
+    auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootContainer)).displayInlineContent()->lineBoxes;
     auto height = lineBoxes.last().logicalBottom();
 
     auto& displayBox = m_layoutState->displayBoxForLayoutBox(rootContainer);
@@ -88,6 +89,11 @@ void RenderBlockFlowLineLayout::layout()
 LayoutUnit RenderBlockFlowLineLayout::contentBoxHeight() const
 {
     return m_layoutState ? m_layoutState->displayBoxForLayoutBox(m_layoutState->root()).contentBoxHeight() : 0_lu;
+}
+
+const Display::InlineContent* RenderBlockFlowLineLayout::displayInlineContent() const
+{
+    return downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(m_treeContent->rootLayoutBox())).displayInlineContent();
 }
 
 void RenderBlockFlowLineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -100,6 +106,47 @@ void RenderBlockFlowLineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& p
     Display::Painter::paintInlineFlow(*m_layoutState, paintInfo.context());
 
     graphicsContext.restore();
+}
+
+LineLayoutTraversal::TextBoxIterator RenderBlockFlowLineLayout::textBoxesFor(const RenderText& renderText) const
+{
+    auto* inlineContent = displayInlineContent();
+    if (!inlineContent)
+        return { };
+    auto* layoutBox = m_treeContent->layoutBoxForRenderer(renderText);
+    ASSERT(layoutBox);
+
+    Optional<size_t> firstIndex = 0;
+    size_t lastIndex = 0;
+    for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
+        auto& run =  inlineContent->runs[i];
+        if (&run.layoutBox() == layoutBox) {
+            if (!firstIndex)
+                firstIndex = i;
+            lastIndex = i;
+        }
+    }
+    if (!firstIndex)
+        return { };
+
+    return { LineLayoutTraversal::DisplayRunPath(*inlineContent, *firstIndex, lastIndex + 1) };
+}
+
+LineLayoutTraversal::ElementBoxIterator RenderBlockFlowLineLayout::elementBoxFor(const RenderLineBreak& renderLineBreak) const
+{
+    auto* inlineContent = displayInlineContent();
+    if (!inlineContent)
+        return { };
+    auto* layoutBox = m_treeContent->layoutBoxForRenderer(renderLineBreak);
+    ASSERT(layoutBox);
+
+    for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
+        auto& run =  inlineContent->runs[i];
+        if (&run.layoutBox() == layoutBox)
+            return { LineLayoutTraversal::DisplayRunPath(*inlineContent, i, i + 1) };
+    }
+
+    return { };
 }
 
 }

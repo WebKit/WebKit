@@ -27,46 +27,21 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutPoint.h"
-#include "LineLayoutTraversal.h"
+#include "DisplayRun.h"
+#include "InlineLineBox.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
-
-class GraphicsContext;
-class RenderBlockFlow;
-class RenderLineBreak;
-struct PaintInfo;
-
 namespace Display {
-struct InlineContent;
-}
 
-namespace Layout {
+struct InlineContent : public RefCounted<InlineContent> {
+    using Runs = Vector<Run, 10>;
+    using LineBoxes = Vector<Layout::LineBox, 5>;
 
-class LayoutTreeContent;
-class LayoutState;
+    Runs runs;
+    LineBoxes lineBoxes;
 
-class RenderBlockFlowLineLayout {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    RenderBlockFlowLineLayout(const RenderBlockFlow&);
-    ~RenderBlockFlowLineLayout();
-
-    static bool canUseFor(const RenderBlockFlow&);
-
-    void layout();
-    LayoutUnit contentBoxHeight() const;
-    const Display::InlineContent* displayInlineContent() const;
-
-    void paint(PaintInfo&, const LayoutPoint& paintOffset);
-
-    LineLayoutTraversal::TextBoxIterator textBoxesFor(const RenderText&) const;
-    LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;
-
-private:
-    const RenderBlockFlow& m_flow;
-    std::unique_ptr<LayoutTreeContent> m_treeContent;
-    std::unique_ptr<LayoutState> m_layoutState;
+    const Layout::LineBox& lineBoxForRun(const Run& run) const { return lineBoxes[run.lineIndex()]; }
 };
 
 }

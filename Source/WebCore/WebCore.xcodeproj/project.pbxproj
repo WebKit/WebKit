@@ -2042,7 +2042,7 @@
 		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB11B5921783FCF00E2A574 /* TextUtil.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FB47E632277425A00C7BCB0 /* InlineLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB47E612277425A00C7BCB0 /* InlineLineBox.h */; };
+		6FB47E632277425A00C7BCB0 /* InlineLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB47E612277425A00C7BCB0 /* InlineLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB5E212221F2447003989CF /* ContentChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FCE1A1A22618ABD004F0343 /* DisplayRun.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FCE1A1822618AB3004F0343 /* DisplayRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FD9CD54227E21C800E53957 /* DisplayRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FD9CD52227E21C800E53957 /* DisplayRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4818,6 +4818,10 @@
 		E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E340CBFB60900AF2ECE /* RenderVideo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */; };
+		E451C628239293EC00993190 /* LineLayoutTraversalDisplayRunPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E451C627239293EB00993190 /* LineLayoutTraversalDisplayRunPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E451C6312394027900993190 /* LayoutUnits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F73918C2106CEDD006AF262 /* LayoutUnits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E451C6322394031A00993190 /* MarginTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE7AA2621C37B6300296DCD /* MarginTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E451C6332394058E00993190 /* DisplayInlineContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
 		E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E45BA6A82374926B004DFC07 /* MatchedDeclarationsCache.h */; };
 		E45BA6B6237622A3004DFC07 /* StyleAdjuster.h in Headers */ = {isa = PBXBuildFile; fileRef = E45BA6B52376229F004DFC07 /* StyleAdjuster.h */; };
@@ -15149,6 +15153,8 @@
 		E44EE3A717576E5500EEE8CF /* FontGenericFamilies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontGenericFamilies.h; sourceTree = "<group>"; };
 		E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposedTreeIterator.h; sourceTree = "<group>"; };
 		E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComposedTreeIterator.cpp; sourceTree = "<group>"; };
+		E451C627239293EB00993190 /* LineLayoutTraversalDisplayRunPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutTraversalDisplayRunPath.h; sourceTree = "<group>"; };
+		E451C6332394058E00993190 /* DisplayInlineContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayInlineContent.h; sourceTree = "<group>"; };
 		E45322A9140CE267005A0F92 /* SelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorQuery.cpp; sourceTree = "<group>"; };
 		E45322AA140CE267005A0F92 /* SelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorQuery.h; sourceTree = "<group>"; };
 		E45390190EAFCACA003695C8 /* PasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardIOS.mm; sourceTree = "<group>"; };
@@ -16714,6 +16720,7 @@
 			children = (
 				1199FA5A208E3C7F002358CC /* DisplayBox.cpp */,
 				1199FA59208E3C7F002358CC /* DisplayBox.h */,
+				E451C6332394058E00993190 /* DisplayInlineContent.h */,
 				6F77868523491AC6004D9636 /* DisplayPainter.cpp */,
 				6F77868723491AD7004D9636 /* DisplayPainter.h */,
 				6FD9CD52227E21C800E53957 /* DisplayRect.h */,
@@ -28731,8 +28738,9 @@
 				FFEFAB2918380DA000514534 /* LineLayoutState.h */,
 				E484A33D23055303009ADE6A /* LineLayoutTraversal.cpp */,
 				E484A33B23055303009ADE6A /* LineLayoutTraversal.h */,
-				E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */,
 				E4343D242392778F00EBBB66 /* LineLayoutTraversalComplexPath.h */,
+				E451C627239293EB00993190 /* LineLayoutTraversalDisplayRunPath.h */,
+				E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */,
 				FFDBC046183D27B700407109 /* LineWidth.cpp */,
 				FFDBC045183D27B700407109 /* LineWidth.h */,
 				FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */,
@@ -30040,6 +30048,7 @@
 				A871DB2B0A150BD600B12A68 /* HTMLTableCaptionElement.h in Headers */,
 				A871DB2A0A150BD600B12A68 /* HTMLTableCellElement.h in Headers */,
 				A871DB2F0A150BD600B12A68 /* HTMLTableColElement.h in Headers */,
+				E451C628239293EC00993190 /* LineLayoutTraversalDisplayRunPath.h in Headers */,
 				A871DB270A150BD600B12A68 /* HTMLTableElement.h in Headers */,
 				A871DB2C0A150BD600B12A68 /* HTMLTablePartElement.h in Headers */,
 				A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */,
@@ -30151,6 +30160,7 @@
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
 				72283F0E230B268C00F5D828 /* ImagePaintingOptions.h in Headers */,
+				E451C6322394031A00993190 /* MarginTypes.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
 				CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */,
@@ -32486,6 +32496,7 @@
 				B2227ADA0D00BF220071B782 /* SVGTransformable.h in Headers */,
 				B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */,
 				B2227ADF0D00BF220071B782 /* SVGTransformList.h in Headers */,
+				E451C6312394027900993190 /* LayoutUnits.h in Headers */,
 				7CE58D581DD7D96D00128552 /* SVGTransformValue.h in Headers */,
 				B2227AE20D00BF220071B782 /* SVGTRefElement.h in Headers */,
 				B2227AE50D00BF220071B782 /* SVGTSpanElement.h in Headers */,
@@ -32815,6 +32826,7 @@
 				49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */,
 				D3F3D36A1A69B7B90059FC2B /* WebGLRenderingContextBase.h in Headers */,
 				6F995A221A7078B100A735F4 /* WebGLSampler.h in Headers */,
+				E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */,
 				49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 				01D3CF8714BD0A3000FE9970 /* WebGLSharedObject.h in Headers */,

@@ -311,8 +311,12 @@ void TreeBuilder::buildSubTree(const RenderElement& rootRenderer, Container& roo
 static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const Container& inlineFormattingRoot, unsigned depth)
 {
     auto& inlineFormattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(inlineFormattingRoot));
-    auto& displayRuns = inlineFormattingState.displayRuns();
-    auto& lineBoxes = inlineFormattingState.lineBoxes();
+    auto* displayInlineContent = inlineFormattingState.displayInlineContent();
+    if (!displayInlineContent)
+        return;
+
+    auto& displayRuns = displayInlineContent->runs;
+    auto& lineBoxes = displayInlineContent->lineBoxes;
 
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)

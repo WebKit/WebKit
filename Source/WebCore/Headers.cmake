@@ -1321,6 +1321,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     rendering/line/LineLayoutTraversal.h
     rendering/line/LineLayoutTraversalComplexPath.h
+    rendering/line/LineLayoutTraversalDisplayRunPath.h
     rendering/line/LineLayoutTraversalSimplePath.h
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h

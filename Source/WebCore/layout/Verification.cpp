@@ -76,8 +76,13 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
     }
 
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
-    ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    auto& displayRuns = downcast<InlineFormattingState>(inlineFormattingState).displayRuns();
+    auto* displayInlineContent = downcast<InlineFormattingState>(inlineFormattingState).displayInlineContent();
+    if (!displayInlineContent) {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+
+    auto& displayRuns = displayInlineContent->runs;
 
     if (displayRuns.size() != lineLayoutData->runCount()) {
         stream << "Mismatching number of runs: simple runs(" << lineLayoutData->runCount() << ") inline runs(" << displayRuns.size() << ")";
@@ -157,8 +162,13 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Inli
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
-    ASSERT(is<InlineFormattingState>(inlineFormattingState));
-    auto& displayRuns = downcast<InlineFormattingState>(inlineFormattingState).displayRuns();
+
+    auto* displayInlineContent = downcast<InlineFormattingState>(inlineFormattingState).displayInlineContent();
+    if (!displayInlineContent) {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+    auto& displayRuns = displayInlineContent->runs;
 
     // Collect inlineboxes.
     Vector<WebCore::InlineBox*> inlineBoxes;

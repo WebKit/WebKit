@@ -395,7 +395,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
 
             auto isConsideredEmpty = [&] {
                 auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer));
-                for (auto& lineBox : formattingState.lineBoxes()) {
+                for (auto& lineBox : formattingState.displayInlineContent()->lineBoxes) {
                     if (!lineBox.isConsideredEmpty())
                         return false;
                 }

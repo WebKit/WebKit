@@ -1,3 +1,102 @@
+2019-12-02  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Render tree] Support LFC in LineLayoutTraversal
+        https://bugs.webkit.org/show_bug.cgi?id=204727
+
+        Reviewed by Zalan Bujtas.
+
+        Add support for traversing LFC inline layout to TextBoxIterator and ElementBoxIterator.
+        This makes render tree dumps and TextIterator work with LFC layout.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/RenderBlockFlowLineLayout.cpp:
+        (WebCore::Layout::RenderBlockFlowLineLayout::layout):
+        (WebCore::Layout::RenderBlockFlowLineLayout::inlineResults const):
+        (WebCore::Layout::RenderBlockFlowLineLayout::textBoxesFor const):
+        (WebCore::Layout::RenderBlockFlowLineLayout::elementBoxFor const):
+        * layout/RenderBlockFlowLineLayout.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::layoutBox const):
+
+        Replace style with layout box weak pointer. This allows finding runs for a given box.
+
+        (WebCore::Display::Run::style const):
+
+        Get style from the layout box.
+
+        (WebCore::Display::Run::Run):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::results const):
+        (WebCore::Layout::InlineFormattingState::clearResults):
+        (WebCore::Layout::InlineFormattingState::ensureResults):
+        (WebCore::Layout::InlineFormattingState::displayRuns const): Deleted.
+        (WebCore::Layout::InlineFormattingState::displayRuns): Deleted.
+        (WebCore::Layout::InlineFormattingState::lineBoxes const): Deleted.
+        (WebCore::Layout::InlineFormattingState::lineBoxes): Deleted.
+        (WebCore::Layout::InlineFormattingState::addLineBox): Deleted.
+        (WebCore::Layout::InlineFormattingState::lineBoxForRun const): Deleted.
+        (WebCore::Layout::InlineFormattingState::addDisplayRun): Deleted.
+        (WebCore::Layout::InlineFormattingState::resetDisplayRuns): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        * layout/displaytree/DisplayInlineContent.h: Copied from Source/WebCore/layout/RenderBlockFlowLineLayout.h.
+        (WebCore::Display::InlineContent::lineBoxForRun const):
+
+        Factor into a struct. Make it refcounted for safe access from line layout iterators.
+
+        (WebCore::Layout::outputInlineRuns):
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutTraversal::flowForText):
+        (WebCore::LineLayoutTraversal::firstTextBoxFor):
+        (WebCore::LineLayoutTraversal::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::ElementBoxIterator):
+        (WebCore::LineLayoutTraversal::elementBoxFor):
+        * rendering/line/LineLayoutTraversal.h:
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h: Added.
+        (WebCore::LineLayoutTraversal::linePosition):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::DisplayRunPath):
+
+        New path for traversing display runs.
+
+        (WebCore::LineLayoutTraversal::DisplayRunPath::rect const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::logicalRect const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::dirOverride const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isLineBreak const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::hasHyphen const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::text const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::localStartOffset const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::localEndOffset const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::length const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isLast const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::traverseNextTextBoxInVisualOrder):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::traverseNextTextBoxInTextOrder):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::operator== const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::atEnd const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::displayRuns const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::firstRun const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::run const):
+
 2019-12-01  Tim Horton  <timothy_horton@apple.com>
 
         Disable LocalCurrentGraphicsContext when doing DisplayList recording

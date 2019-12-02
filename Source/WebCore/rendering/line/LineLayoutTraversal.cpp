@@ -26,22 +26,14 @@
 #include "config.h"
 #include "LineLayoutTraversal.h"
 
+#include "RenderBlockFlowLineLayout.h"
 #include "RenderLineBreak.h"
 
 namespace WebCore {
 namespace LineLayoutTraversal {
 
-TextBoxIterator::TextBoxIterator(const InlineTextBox* inlineTextBox)
-    : m_textBox(ComplexPath { inlineTextBox, { } })
-{
-}
-TextBoxIterator::TextBoxIterator(Vector<const InlineTextBox*>&& sorted, size_t index)
-    : m_textBox(ComplexPath { index < sorted.size() ? sorted[index] : nullptr, WTFMove(sorted), index })
-{
-}
-
-TextBoxIterator::TextBoxIterator(SimpleLineLayout::RunResolver::Iterator iterator, SimpleLineLayout::RunResolver::Iterator end)
-    : m_textBox(SimplePath { iterator, end })
+TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
+    : m_textBox(WTFMove(pathVariant))
 {
 }
 
@@ -78,24 +70,39 @@ bool TextBoxIterator::atEnd() const
     });
 }
 
+static const RenderBlockFlow& flowForText(const RenderText& text)
+{
+    return downcast<RenderBlockFlow>(*text.containingBlockForObjectInFlow());
+}
+
 TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
-    if (auto* simpleLineLayout = text.simpleLineLayout()) {
+    auto& flow = flowForText(text);
+
+    if (auto* simpleLineLayout = flow.simpleLineLayout()) {
         auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
-        return { range.begin(), range.end() };
+        return { SimplePath { range.begin(), range.end() } };
     }
 
-    return TextBoxIterator { text.firstTextBox() };
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lfcLineLayout = flow.lfcLineLayout())
+        return lfcLineLayout->textBoxesFor(text);
+#endif
+
+    return { ComplexPath { text.firstTextBox() } };
 }
 
 TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
 {
-    if (!text.simpleLineLayout() && text.containsReversedText()) {
+    auto& flow = flowForText(text);
+
+    if (flow.complexLineLayout() && text.containsReversedText() && text.firstTextBox()) {
         Vector<const InlineTextBox*> sortedTextBoxes;
         for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
             sortedTextBoxes.append(textBox);
         std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), InlineTextBox::compareByStart);
-        return TextBoxIterator { WTFMove(sortedTextBoxes), 0 };
+        auto* first = sortedTextBoxes[0];
+        return { ComplexPath { first, WTFMove(sortedTextBoxes), 0 } };
     }
 
     return firstTextBoxFor(text);
@@ -106,12 +113,8 @@ TextBoxRange textBoxesFor(const RenderText& text)
     return { firstTextBoxFor(text) };
 }
 
-ElementBoxIterator::ElementBoxIterator(const InlineElementBox* inlineElementBox)
-    : m_box(ComplexPath { inlineElementBox, { } })
-{
-}
-ElementBoxIterator::ElementBoxIterator(SimpleLineLayout::RunResolver::Iterator iterator, SimpleLineLayout::RunResolver::Iterator end)
-    : m_box(SimplePath { iterator, end })
+ElementBoxIterator::ElementBoxIterator(Box::PathVariant&& pathVariant)
+    : m_box(WTFMove(pathVariant))
 {
 }
 
@@ -124,14 +127,23 @@ bool ElementBoxIterator::atEnd() const
 
 ElementBoxIterator elementBoxFor(const RenderLineBreak& renderElement)
 {
-    if (auto& parent = *renderElement.parent(); is<RenderBlockFlow>(parent)) {
-        if (auto* simpleLineLayout = downcast<RenderBlockFlow>(parent).simpleLineLayout()) {
-            auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
-            return { range.begin(), range.end() };
-        }
+    auto* containingBlock = renderElement.containingBlock();
+    if (!is<RenderBlockFlow>(containingBlock))
+        return { };
+
+    auto& flow = downcast<RenderBlockFlow>(*containingBlock);
+
+    if (auto* simpleLineLayout = flow.simpleLineLayout()) {
+        auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
+        return { SimplePath(range.begin(), range.end()) };
     }
 
-    return ElementBoxIterator { renderElement.inlineBoxWrapper() };
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lfcLineLayout = flow.lfcLineLayout())
+        return lfcLineLayout->elementBoxFor(renderElement);
+#endif
+
+    return { ComplexPath(renderElement.inlineBoxWrapper()) };
 }
 
 }

@@ -426,8 +426,10 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
     }
 
-    auto lineIndex = formattingState.lineBoxes().size();
-    formattingState.addLineBox(LineBox { lineContent.lineBox });
+    auto& inlineContent = formattingState.ensureDisplayInlineContent();
+
+    auto lineIndex = inlineContent.lineBoxes.size();
+    inlineContent.lineBoxes.append(LineBox { lineContent.lineBox });
 
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
@@ -441,7 +443,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
         auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd() && !lineRun.isCollapsedToVisuallyEmpty();
         if (initiatesInlineRun)
-            formattingState.addDisplayRun({ lineIndex, lineRun.layoutBox().style(), lineRun.logicalRect(), lineRun.textContext() });
+            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), lineRun.logicalRect(), lineRun.textContext() });
 
         if (lineRun.isForcedLineBreak()) {
             displayBox.setTopLeft(logicalRect.topLeft());
@@ -501,7 +503,7 @@ void InlineFormattingContext::invalidateFormattingState(const InvalidationState&
 {
     // Find out what we need to invalidate. This is where we add some smarts to do partial line layout.
     // For now let's just clear the runs.
-    formattingState().resetDisplayRuns();
+    formattingState().clearDisplayInlineContent();
     // FIXME: This is also where we would delete inline items if their content changed.
 }
 
