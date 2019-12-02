@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKTextManipulationItem.h"
 
+#import "_WKTextManipulationToken.h"
 #import <wtf/RetainPtr.h>
 
 @implementation _WKTextManipulationItem {
@@ -51,6 +52,60 @@
 - (NSArray<_WKTextManipulationToken *> *)tokens
 {
     return _tokens.get();
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+        return YES;
+
+    if (![object isKindOfClass:[self class]])
+        return NO;
+
+    return [self isEqualToTextManipulationItem:object includingContentEquality:YES];
+}
+
+- (BOOL)isEqualToTextManipulationItem:(_WKTextManipulationItem *)otherItem includingContentEquality:(BOOL)includingContentEquality
+{
+    if (!otherItem)
+        return NO;
+
+    if (!(self.identifier == otherItem.identifier || [self.identifier isEqualToString:otherItem.identifier]) || self.tokens.count != otherItem.tokens.count)
+        return NO;
+
+    __block BOOL tokensAreEqual = YES;
+    NSUInteger count = std::min(self.tokens.count, otherItem.tokens.count);
+    [self.tokens enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, count)] options:0 usingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
+        _WKTextManipulationToken *otherToken = otherItem.tokens[index];
+        if (![token isEqualToTextManipulationToken:otherToken includingContentEquality:includingContentEquality]) {
+            tokensAreEqual = NO;
+            *stop = YES;
+        }
+    }];
+
+    return tokensAreEqual;
+}
+
+- (NSString *)description
+{
+    return [self _descriptionPreservingPrivacy:YES];
+}
+
+- (NSString *)debugDescription
+{
+    return [self _descriptionPreservingPrivacy:NO];
+}
+
+- (NSString *)_descriptionPreservingPrivacy:(BOOL)preservePrivacy
+{
+    NSMutableArray<NSString *> *recursiveDescriptions = [NSMutableArray array];
+    [self.tokens enumerateObjectsUsingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
+        NSString *description = preservePrivacy ? token.description : token.debugDescription;
+        [recursiveDescriptions addObject:description];
+    }];
+    NSString *tokenDescription = [NSString stringWithFormat:@"[\n\t%@\n]", [recursiveDescriptions componentsJoinedByString:@",\n\t"]];
+    NSString *description = [NSString stringWithFormat:@"<%@: %p; identifier = %@ tokens = %@>", self.class, self, self.identifier, tokenDescription];
+    return description;
 }
 
 @end

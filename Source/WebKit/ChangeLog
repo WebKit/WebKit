@@ -1,3 +1,61 @@
+2019-12-02  Louie Livon-Bemel  <llivonbemel@apple.com>
+
+        Add helper methods for description and equality to text manipulation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=204758
+        <rdar://problem/57438200>
+
+        Reviewed by Wenson Hsieh.
+
+        I originally added some category methods to _WKTextManipulationItem and _WKTextManipulationToken within Safari
+        to make working with these classes easier. However it makes more sense to just move these methods into
+        the main class. One method is for checking if two instances are equal (including identifiers) and optionally
+        checking if the content itself is equal. The other methods are for debug descriptions for lldb, and a
+        method to get a description that preserves privacy; when logging the instance, the content of the webpage
+        should be redacted.
+
+        Tests: Tests are added as API tests.
+
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.h:
+            - Assume everything is non-null unless otherwise specified.
+            - Allow the identifier to be nil, but not the array of tokens.
+            - Add a method to check the equality to another item, optionally including a check for the content of each
+              token being equal.
+            - Add a -debugDescription method that includes the content of tokens for use in lldb. This NSObject
+              declaration is marked optional, so redeclare it here.
+            - No need to add a -description declaration since it exists on NSObject already.
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.mm:
+        (-[_WKTextManipulationItem isEqual:]):
+            The standard NSObject equality check should call our method with equal content.
+        (-[_WKTextManipulationItem isEqualToTextManipulationItem:includingContentEquality:]):
+            - If the other item is nil, the identifiers aren't equal or the number of tokens are mismatched, these
+              items aren't equal.
+            - Just to be safe, only iterate the smaller of the token arrays so we don't crash.
+            - Check if each token is equal, passing along the `includingContentEquality` parameter.
+        (-[_WKTextManipulationItem description]):
+            The general description should not include the webpage content.
+        (-[_WKTextManipulationItem debugDescription]):
+            Include the webpage content, since this is for lldb.
+        (-[_WKTextManipulationItem _descriptionPreservingPrivacy:]):
+            Include the standard description format, and each token on its own line. If we're including the content
+            then use `token.debugDescription`.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h:
+            - Also assume everything is non-null.
+            - Identifier and Content can be nil.
+            - Declare a -debugDescription method.
+            - Declare a method to check equality, with or without the content.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.mm:
+        (isEqualOrBothNil):
+            Helper that checks equality but considers two nil values to be equal as well.
+        (-[_WKTextManipulationToken isEqual:]):
+            The standard NSObject equality check should call our method with equal content.
+        (-[_WKTextManipulationToken isEqualToTextManipulationToken:includingContentEquality:]):
+            Check that the exclusions are equal, the identifiers are equal (considering two nils to be equal), and the
+            content if necessary.
+        (-[_WKTextManipulationToken description]):
+        (-[_WKTextManipulationToken debugDescription]):
+        (-[_WKTextManipulationToken _descriptionPreservingPrivacy:]):
+            If we're preserving privacy, log the content length rather than the content string itself.
+
 2019-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Introduce a gesture recognizer that can be used to defer recognition of other gestures

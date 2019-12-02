@@ -1,3 +1,22 @@
+2019-12-02  Louie Livon-Bemel  <llivonbemel@apple.com>
+
+        Add helper methods for description and equality to text manipulation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=204758
+        <rdar://problem/57438200>
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests for the new methods. Most are equality tests for various situations, and are moved over from the
+        Safari unit tests I had for the category methods that had the same purpose.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+            - Add test to make sure the content isn't included in the regular -description, but the identifier is. And
+              That -debugDescription does include the contents.
+            - Add many tests equality for various situations, testing both with and without content equality.
+        (TestWebKitAPI::createTextManipulationToken):
+            Add a helper for creating a token in one line.
+
 2019-12-02  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r195080): prepare-ChangeLog does not emit function list for file paths that contain a space

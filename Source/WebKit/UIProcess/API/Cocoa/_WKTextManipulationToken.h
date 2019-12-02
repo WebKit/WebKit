@@ -27,11 +27,18 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKTextManipulationToken : NSObject
 
-@property (nonatomic, copy) NSString *identifier;
-@property (nonatomic, copy) NSString *content;
+@property (nonatomic, nullable, copy) NSString *identifier;
+@property (nonatomic, nullable, copy) NSString *content;
 @property (nonatomic, getter=isExcluded) BOOL excluded;
 
+- (BOOL)isEqualToTextManipulationToken:(nullable _WKTextManipulationToken *)otherToken includingContentEquality:(BOOL)includingContentEquality;
+@property (nonatomic, copy, readonly) NSString *debugDescription;
+
 @end
+
+NS_ASSUME_NONNULL_END

@@ -424,5 +424,495 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExclusionIsViolated)
     EXPECT_WK_STREQ("<p>hi, <em>WebKitten</em></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+// MARK: - _WKTextManipulationToken Tests
+
+TEST(TextManipulation, TextManipulationTokenDebugDescription)
+{
+    auto token = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token setIdentifier:@"foo_is_the_identifier"];
+    [token setContent:@"bar_is_the_content"];
+
+    NSString *description = [token description];
+    EXPECT_TRUE([description containsString:@"foo_is_the_identifier"]);
+    EXPECT_FALSE([description containsString:@"bar_is_the_content"]);
+
+    NSString *debugDescription = [token debugDescription];
+    EXPECT_TRUE([debugDescription containsString:@"foo_is_the_identifier"]);
+    EXPECT_TRUE([debugDescription containsString:@"bar_is_the_content"]);
+}
+
+TEST(TextManipulation, TextManipulationTokenNotEqualToNil)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    [tokenA setContent:@"A"];
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:nil includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:nil includingContentEquality:NO]);
+
+    [tokenA setIdentifier:nil];
+    [tokenA setContent:nil];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:nil includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:nil includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenEqualityWithEqualIdentifiers)
+{
+    auto token1 = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token1 setIdentifier:@"A"];
+    auto token2 = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token2 setIdentifier:@"A"];
+
+    EXPECT_TRUE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:YES]);
+    EXPECT_TRUE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:NO]);
+
+    // Same identifiers, different content.
+    [token1 setContent:@"1"];
+    [token2 setContent:@"2"];
+    EXPECT_FALSE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:YES]);
+    EXPECT_TRUE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:NO]);
+
+    // Same identifiers, different exclusion.
+    [token1 setExcluded:NO];
+    [token2 setExcluded:YES];
+    [token1 setContent:nil];
+    [token2 setContent:nil];
+    EXPECT_FALSE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:YES]);
+    EXPECT_FALSE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:NO]);
+
+    // Same identifiers, different exclusion and different content.
+    [token1 setContent:@"1"];
+    [token2 setContent:@"2"];
+    EXPECT_FALSE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:YES]);
+    EXPECT_FALSE([token1 isEqualToTextManipulationToken:token2.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenEqualityWithDifferentIdentifiers)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"B"];
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    // Different identifiers, same content.
+    [tokenA setContent:@"content"];
+    [tokenB setContent:@"content"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    // Different identifiers, same exclusion.
+    [tokenA setContent:nil];
+    [tokenB setContent:nil];
+    [tokenA setExcluded:YES];
+    [tokenB setExcluded:YES];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    // Different identifiers, same content and same exclusion.
+    [tokenA setContent:@"content"];
+    [tokenB setContent:@"content"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenEqualityWithNilIdentifiers)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    EXPECT_NULL([tokenA identifier]);
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"B"];
+    auto tokenC = adoptNS([[_WKTextManipulationToken alloc] init]);
+    EXPECT_NULL([tokenC identifier]);
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+
+    // Equal content.
+    [tokenA setContent:@"content"];
+    [tokenB setContent:@"content"];
+    [tokenC setContent:@"content"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+
+    // Different content.
+    [tokenA setContent:@"contentA"];
+    [tokenB setContent:@"contentB"];
+    [tokenC setContent:@"contentC"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenEqualityWithEmptyIdentifiers)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@""];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"B"];
+    auto tokenC = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenC setIdentifier:@""];
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+
+    // Equal content.
+    [tokenA setContent:@"content"];
+    [tokenB setContent:@"content"];
+    [tokenC setContent:@"content"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+
+    // Different content.
+    [tokenA setContent:@"contentA"];
+    [tokenB setContent:@"contentB"];
+    [tokenC setContent:@"contentC"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenWithNilContent)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+
+    EXPECT_NULL([tokenA content]);
+    EXPECT_NULL([tokenB content]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    [tokenB setContent:@""];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    [tokenB setContent:@"B"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenWithEmptyContent)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    [tokenA setContent:@""];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+    [tokenB setContent:@""];
+
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    [tokenB setContent:nil];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+
+    [tokenB setContent:@"B"];
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenWithIdenticalContent)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    [tokenA setContent:@"content"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+    [tokenB setContent:@"content"];
+
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenWithPointerEqualContent)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+
+    NSString *contentString = @"content";
+    [tokenA setContent:contentString];
+    [tokenB setContent:contentString];
+
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenWithTrailingSpace)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    [tokenA setContent:@"content"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+    [tokenB setContent:@"content "];
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationTokenEqualToSelf)
+{
+    auto token = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token setIdentifier:@"A"];
+    [token setContent:@"content"];
+
+    EXPECT_TRUE([token isEqualToTextManipulationToken:token.get() includingContentEquality:YES]);
+    EXPECT_TRUE([token isEqualToTextManipulationToken:token.get() includingContentEquality:NO]);
+    EXPECT_TRUE([token isEqual:token.get()]);
+}
+
+TEST(TextManipulation, TextManipulationTokenNSObjectEqualityWithOtherToken)
+{
+    auto tokenA = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenA setIdentifier:@"A"];
+    [tokenA setContent:@"content"];
+    auto tokenB = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenB setIdentifier:@"A"];
+    [tokenB setContent:@"content"];
+    auto tokenC = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [tokenC setIdentifier:@"A"];
+    [tokenC setContent:@"content "];
+
+    EXPECT_TRUE([tokenA isEqualToTextManipulationToken:tokenB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([tokenA isEqual:tokenB.get()]);
+
+    EXPECT_FALSE([tokenA isEqualToTextManipulationToken:tokenC.get() includingContentEquality:YES]);
+    EXPECT_FALSE([tokenA isEqual:tokenC.get()]);
+}
+
+TEST(TextManipulation, TextManipulationTokenNSObjectEqualityWithNonToken)
+{
+    auto token = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token setIdentifier:@"A"];
+    [token setContent:@"content"];
+    NSString *string = @"content";
+
+    EXPECT_FALSE([token isEqual:string]);
+    EXPECT_FALSE([token isEqual:nil]);
+}
+
+// MARK: - _WKTextManipulationItem Tests
+
+static RetainPtr<_WKTextManipulationToken> createTextManipulationToken(NSString *identifier, BOOL excluded, NSString *content)
+{
+    auto token = adoptNS([[_WKTextManipulationToken alloc] init]);
+    [token setIdentifier:identifier];
+    [token setExcluded:excluded];
+    [token setContent:content];
+    return token;
+}
+
+TEST(TextManipulation, TextManipulationItemDebugDescription)
+{
+    auto tokenA = createTextManipulationToken(@"public_identifier_A", NO, @"private_content_A");
+    auto tokenB = createTextManipulationToken(@"public_identifier_B", NO, @"private_content_B");
+    auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"public_item_identifier" tokens:@[ tokenA.get(), tokenB.get() ]]);
+
+    NSString *debugDescription = [item debugDescription];
+    EXPECT_TRUE([debugDescription containsString:@"public_identifier_A"]);
+    EXPECT_TRUE([debugDescription containsString:@"public_identifier_B"]);
+    EXPECT_TRUE([debugDescription containsString:@"private_content_A"]);
+    EXPECT_TRUE([debugDescription containsString:@"private_content_B"]);
+    EXPECT_TRUE([debugDescription containsString:@"public_item_identifier"]);
+
+    NSString *description = [item description];
+    EXPECT_TRUE([description containsString:@"public_identifier_A"]);
+    EXPECT_TRUE([description containsString:@"public_identifier_B"]);
+    EXPECT_FALSE([description containsString:@"private_content_A"]);
+    EXPECT_FALSE([description containsString:@"private_content_B"]);
+    EXPECT_TRUE([description containsString:@"public_item_identifier"]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityToNilItem)
+{
+    auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ ]]);
+
+    EXPECT_FALSE([item isEqualToTextManipulationItem:nil includingContentEquality:YES]);
+    EXPECT_FALSE([item isEqualToTextManipulationItem:nil includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityToSelf)
+{
+    auto token = createTextManipulationToken(@"A", NO, @"token");
+    auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"B" tokens:@[ token.get() ]]);
+
+    EXPECT_TRUE([item isEqualToTextManipulationItem:item.get() includingContentEquality:YES]);
+    EXPECT_TRUE([item isEqualToTextManipulationItem:item.get() includingContentEquality:NO]);
+    EXPECT_TRUE([item isEqual:item.get()]);
+}
+
+TEST(TextManipulation, TextManipulationItemBasicEquality)
+{
+    auto token1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto token2 = createTextManipulationToken(@"1", NO, @"token1");
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token1.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token2.get() ]]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemBasicEqualityWithMultipleTokens)
+{
+    auto tokenA1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenA2 = createTextManipulationToken(@"2", NO, @"token2");
+    auto tokenB1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenB2 = createTextManipulationToken(@"2", NO, @"token2");
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA1.get(), tokenA2.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB1.get(), tokenB2.get() ]]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualitySimilarTokensWithDifferentContent)
+{
+    auto token1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto token2 = createTextManipulationToken(@"1", NO, @"token2");
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token1.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token2.get() ]]);
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithOutOfOrderTokens)
+{
+    auto tokenA1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenA2 = createTextManipulationToken(@"2", NO, @"token2");
+    auto tokenB1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenB2 = createTextManipulationToken(@"2", NO, @"token2");
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA1.get(), tokenA2.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB2.get(), tokenB1.get() ]]);
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithPointerEqualTokens)
+{
+    auto token1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto token2 = createTextManipulationToken(@"2", NO, @"token2");
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token1.get(), token2.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token1.get(), token2.get() ]]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithPointerEqualTokenArrays)
+{
+    auto token1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto token2 = createTextManipulationToken(@"2", NO, @"token2");
+    NSArray<_WKTextManipulationToken *> *tokens = @[ token1.get(), token2.get() ];
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:tokens]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:tokens]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithMismatchedTokenCounts)
+{
+    auto tokenA1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenA2 = createTextManipulationToken(@"2", NO, @"token2");
+    auto tokenA3 = createTextManipulationToken(@"3", NO, @"token3");
+    auto tokenB1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenB2 = createTextManipulationToken(@"2", NO, @"token2");
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA1.get(), tokenA2.get(), tokenA3.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB1.get(), tokenB2.get() ]]);
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+
+    EXPECT_FALSE([itemB isEqualToTextManipulationItem:itemA.get() includingContentEquality:YES]);
+    EXPECT_FALSE([itemB isEqualToTextManipulationItem:itemA.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithDifferentTokenIdentifiers)
+{
+    auto tokenA = createTextManipulationToken(@"A", NO, @"token");
+    auto tokenB = createTextManipulationToken(@"B", NO, @"token");
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB.get() ]]);
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithNilIdentifiers)
+{
+    auto token = createTextManipulationToken(@"A", NO, @"token");
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:nil tokens:@[ token.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:nil tokens:@[ token.get() ]]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemEqualityWithDifferentTokenExclusions)
+{
+    auto tokenA = createTextManipulationToken(@"1", NO, @"token");
+    auto tokenB = createTextManipulationToken(@"1", YES, @"token");
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB.get() ]]);
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+}
+
+TEST(TextManipulation, TextManipulationItemNSObjectEqualityWithOtherItem)
+{
+    auto tokenA1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenA2 = createTextManipulationToken(@"2", NO, @"token2");
+    auto tokenB1 = createTextManipulationToken(@"1", NO, @"token1");
+    auto tokenB2 = createTextManipulationToken(@"2", NO, @"token2");
+
+    auto itemA = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenA1.get(), tokenA2.get() ]]);
+    auto itemB = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ tokenB1.get(), tokenB2.get() ]]);
+
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+    EXPECT_TRUE([itemA isEqual:itemB.get()]);
+
+    [tokenB2 setContent:@"something else"];
+
+    EXPECT_FALSE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:YES]);
+    EXPECT_TRUE([itemA isEqualToTextManipulationItem:itemB.get() includingContentEquality:NO]);
+    EXPECT_FALSE([itemA isEqual:itemB.get()]);
+}
+
+TEST(TextManipulation, TextManipulationItemNSObjectEqualityWithNonToken)
+{
+    auto token = createTextManipulationToken(@"1", NO, @"token1");
+    auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:@"A" tokens:@[ token.get() ]]);
+    NSString *string = @"content";
+
+    EXPECT_FALSE([token isEqual:string]);
+    EXPECT_FALSE([token isEqual:nil]);
+}
+
 } // namespace TestWebKitAPI
 

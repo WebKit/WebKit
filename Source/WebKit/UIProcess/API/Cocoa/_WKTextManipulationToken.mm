@@ -27,4 +27,59 @@
 #import "_WKTextManipulationToken.h"
 
 @implementation _WKTextManipulationToken
+
+static BOOL isEqualOrBothNil(id a, id b)
+{
+    if (a == b)
+        return YES;
+
+    return [a isEqual:b];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+        return YES;
+
+    if (![object isKindOfClass:[self class]])
+        return NO;
+
+    return [self isEqualToTextManipulationToken:object includingContentEquality:YES];
+}
+
+- (BOOL)isEqualToTextManipulationToken:(_WKTextManipulationToken *)otherToken includingContentEquality:(BOOL)includingContentEquality
+{
+    if (!otherToken)
+        return NO;
+
+    BOOL equalIdentifiers = isEqualOrBothNil(self.identifier, otherToken.identifier);
+    BOOL equalExclusion = self.isExcluded == otherToken.isExcluded;
+    BOOL equalContent = !includingContentEquality || isEqualOrBothNil(self.content, otherToken.content);
+
+    return equalIdentifiers && equalExclusion && equalContent;
+}
+
+- (NSString *)description
+{
+    return [self _descriptionPreservingPrivacy:YES];
+}
+
+- (NSString *)debugDescription
+{
+    return [self _descriptionPreservingPrivacy:NO];
+}
+
+- (NSString *)_descriptionPreservingPrivacy:(BOOL)preservePrivacy
+{
+    NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: %p; identifier = %@; isExcluded = %i", self.class, self, self.identifier, self.isExcluded];
+    if (preservePrivacy)
+        [description appendFormat:@"; content length = %lu", (unsigned long)self.content.length];
+    else
+        [description appendFormat:@"; content = %@", self.content];
+
+    [description appendString:@">"];
+
+    return [[description copy] autorelease];
+}
+
 @end

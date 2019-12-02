@@ -29,13 +29,20 @@
 
 @class _WKTextManipulationToken;
 
+NS_ASSUME_NONNULL_BEGIN
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKTextManipulationItem : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens;
+- (instancetype)initWithIdentifier:(nullable NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens;
 
-@property (nonatomic, readonly, copy) NSString *identifier;
+@property (nonatomic, readonly, nullable, copy) NSString *identifier;
 @property (nonatomic, readonly, copy) NSArray<_WKTextManipulationToken *> *tokens;
 
+- (BOOL)isEqualToTextManipulationItem:(nullable _WKTextManipulationItem *)otherItem includingContentEquality:(BOOL)includingContentEquality;
+@property (nonatomic, readonly, copy) NSString *debugDescription;
+
 @end
+
+NS_ASSUME_NONNULL_END
