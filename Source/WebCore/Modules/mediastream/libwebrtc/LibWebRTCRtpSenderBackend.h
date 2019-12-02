@@ -54,66 +54,26 @@ public:
     }
 
     using Source = Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSource>, Ref<RealtimeOutgoingVideoSource>>;
-    LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
-        : m_peerConnectionBackend(makeWeakPtr(&backend))
-        , m_rtcSender(WTFMove(rtcSender))
-        , m_source(WTFMove(source))
-    {
-    }
+    LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend&, rtc::scoped_refptr<webrtc::RtpSenderInterface>&&, Source&&);
     ~LibWebRTCRtpSenderBackend();
 
     void setRTCSender(rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender) { m_rtcSender = WTFMove(rtcSender); }
     webrtc::RtpSenderInterface* rtcSender() { return m_rtcSender.get(); }
 
-    RealtimeOutgoingAudioSource* audioSource()
-    {
-        return WTF::switchOn(m_source,
-            [] (Ref<RealtimeOutgoingAudioSource>& source) { return source.ptr(); },
-            [] (const auto&) -> RealtimeOutgoingAudioSource* { return nullptr; }
-        );
-    }
-
-    RealtimeOutgoingVideoSource* videoSource()
-    {
-        return WTF::switchOn(m_source,
-            [] (Ref<RealtimeOutgoingVideoSource>& source) { return source.ptr(); },
-            [] (const auto&) -> RealtimeOutgoingVideoSource* { return nullptr; }
-        );
-    }
-
-    bool hasSource() const
-    {
-        return WTF::switchOn(m_source,
-            [] (const std::nullptr_t&) { return false; },
-            [] (const auto&) { return true; }
-        );
-    }
-
-    void clearSource()
-    {
-        ASSERT(hasSource());
-        m_source = nullptr;
-    }
-
-    void setSource(Source&& source)
-    {
-        ASSERT(!hasSource());
-        m_source = WTFMove(source);
-        ASSERT(hasSource());
-    }
-
-    void takeSource(LibWebRTCRtpSenderBackend& backend)
-    {
-        ASSERT(backend.hasSource());
-        setSource(WTFMove(backend.m_source));
-        backend.m_source = nullptr;
-    }
+    RealtimeOutgoingVideoSource* videoSource();
+    void clearSource() { setSource(nullptr); }
+    void setSource(Source&&);
+    void takeSource(LibWebRTCRtpSenderBackend&);
 
 private:
     void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
     RTCRtpSendParameters getParameters() const final;
     void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) final;
     std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() final;
+
+    void startSource();
+    void stopSource();
+    bool hasSource() const;
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;

@@ -50,10 +50,7 @@ RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa(Ref<MediaStre
 {
 }
 
-RealtimeOutgoingAudioSourceCocoa::~RealtimeOutgoingAudioSourceCocoa()
-{
-    unobserveSource();
-}
+RealtimeOutgoingAudioSourceCocoa::~RealtimeOutgoingAudioSourceCocoa() = default;
 
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
 {

@@ -38,7 +38,6 @@ RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<M
 
 RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
 {
-    unobserveSource();
     m_sampleConverter = nullptr;
 }
 

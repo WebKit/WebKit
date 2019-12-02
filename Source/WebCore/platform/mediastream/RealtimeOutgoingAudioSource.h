@@ -64,15 +64,14 @@ public:
 
     ~RealtimeOutgoingAudioSource();
 
+    void start() { observeSource(); }
     void stop() { unobserveSource(); }
 
-    bool setSource(Ref<MediaStreamTrackPrivate>&&);
+    void setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_audioSource.get(); }
 
 protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
-
-    void unobserveSource();
 
     bool isSilenced() const { return m_muted || !m_enabled; }
 
@@ -105,6 +104,7 @@ private:
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
 
     void observeSource();
+    void unobserveSource();
 
     void sourceMutedChanged();
     void sourceEnabledChanged();

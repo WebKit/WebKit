@@ -59,8 +59,9 @@ public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<MediaStreamTrackPrivate>&& videoSource);
     ~RealtimeOutgoingVideoSource();
 
+    void start() { observeSource(); }
     void stop();
-    bool setSource(Ref<MediaStreamTrackPrivate>&&);
+    void setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_videoSource.get(); }
 
     void AddRef() const final { ref(); }
@@ -128,7 +129,6 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) final { }
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
-    Optional<RealtimeMediaSourceSettings> m_initialSettings;
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
 

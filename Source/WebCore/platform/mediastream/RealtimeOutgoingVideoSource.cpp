@@ -56,13 +56,17 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
 
 RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource()
 {
-    ASSERT(!m_videoSource->hasObserver(*this));
+ASSERT(!m_videoSource->hasObserver(*this));
+#if !ASSERT_DISABLED
+    auto locker = holdLock(m_sinksLock);
+#endif
     ASSERT(m_sinks.isEmpty());
     stop();
 }
 
 void RealtimeOutgoingVideoSource::observeSource()
 {
+    ASSERT(!m_videoSource->hasObserver(*this));
     m_videoSource->addObserver(*this);
     initializeFromSource();
 }
@@ -72,21 +76,10 @@ void RealtimeOutgoingVideoSource::unobserveSource()
     m_videoSource->removeObserver(*this);
 }
 
-bool RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
+void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
-    if (!m_initialSettings)
-        m_initialSettings = m_videoSource->source().settings();
-
-    auto locker = holdLock(m_sinksLock);
-    bool hasSinks = !m_sinks.isEmpty();
-
-    if (hasSinks)
-        unobserveSource();
+    ASSERT(!m_videoSource->hasObserver(*this));
     m_videoSource = WTFMove(newSource);
-    if (hasSinks)
-        observeSource();
-
-    return true;
 }
 
 void RealtimeOutgoingVideoSource::stop()
@@ -144,32 +137,14 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
     if (sinkWants.rotation_applied)
         m_shouldApplyRotation = true;
 
-    {
     auto locker = holdLock(m_sinksLock);
-    if (!m_sinks.add(sink) || m_sinks.size() != 1)
-        return;
-    }
-
-    callOnMainThread([protectedThis = makeRef(*this)]() {
-        protectedThis->observeSource();
-    });
+    m_sinks.add(sink);
 }
 
 void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink)
 {
-    {
     auto locker = holdLock(m_sinksLock);
-
-    if (!m_sinks.remove(sink) || m_sinks.size())
-        return;
-    }
-
-    unobserveSource();
-
-    callOnMainThread([protectedThis = makeRef(*this)]() {
-        if (protectedThis->m_blackFrameTimer.isActive())
-            protectedThis->m_blackFrameTimer.stop();
-    });
+    m_sinks.remove(sink);
 }
 
 void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
