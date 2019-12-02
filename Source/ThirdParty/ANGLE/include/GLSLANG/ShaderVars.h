@@ -10,6 +10,8 @@
 #ifndef GLSLANG_SHADERVARS_H_
 #define GLSLANG_SHADERVARS_H_
 
+#include "export.h"
+
 #include <algorithm>
 #include <array>
 #include <string>
@@ -62,12 +64,12 @@ enum class BlockType
 // See https://code.google.com/p/angleproject/issues/detail?id=697
 struct ShaderVariable
 {
-    ShaderVariable();
+    ANGLE_EXPORT ShaderVariable();
     ShaderVariable(GLenum typeIn);
     ShaderVariable(GLenum typeIn, unsigned int arraySizeIn);
-    ~ShaderVariable();
-    ShaderVariable(const ShaderVariable &other);
-    ShaderVariable &operator=(const ShaderVariable &other);
+    ANGLE_EXPORT ~ShaderVariable();
+    ANGLE_EXPORT ShaderVariable(const ShaderVariable &other);
+    ANGLE_EXPORT ShaderVariable &operator=(const ShaderVariable &other);
     bool operator==(const ShaderVariable &other) const;
     bool operator!=(const ShaderVariable &other) const { return !operator==(other); }
 

@@ -195,6 +195,10 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 #endif
 
 #if !USE(ANGLE)
+    ASSERT(ANGLEWebKitBridge::angleAvailable());
+    if (!ANGLEWebKitBridge::angleAvailable())
+        return;
+
 #if USE(OPENGL_ES)
     if (m_attrs.isWebGL2)
         m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, SH_WEBGL2_SPEC);
@@ -290,6 +294,10 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
         ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART);
 
 #elif USE(ANGLE)
+
+    ASSERT(ANGLEWebKitBridge::angleAvailable());
+    if (!ANGLEWebKitBridge::angleAvailable())
+        return;
 
     m_displayObj = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
     if (m_displayObj == EGL_NO_DISPLAY)

@@ -1,3 +1,43 @@
+2019-11-30  Dean Jackson  <dino@apple.com>
+
+        Build ANGLE as a dynamic library
+        https://bugs.webkit.org/show_bug.cgi?id=204708
+        rdar://57349384
+
+        Reviewed by Tim Horton.
+
+        Modify ANGLE to build as a dynamic library. My (not thorough) testing suggests
+        this will reduce the in-flight binary size on Apple's build systems by at least
+        a factor of 10 (it was over 1G). Building release for x86_64-only:
+            - Previously: libANGLE.a -- 306 MB
+            - Now: libANGLE.dylib -- 6.7 MB
+
+        In order to do this, some symbols needed to be exported from the
+        "sh" namespace (which are used in ANGLEWebKitBridge, but not when
+        ANGLE's rendering backend is active).
+
+        While here, I turned on some more build options, like ARC.
+
+        * ANGLE.xcodeproj/project.pbxproj: Link with IOKit and IOSurface frameworks, and
+        product a dylib product.
+        * Configurations/ANGLE.xcconfig: Update the configuration for a dynamic library.
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig: Added.
+        * Configurations/WebKitTargetConditionals.xcconfig: Added.
+
+        * include/GLSLANG/ShaderLang.h: Add ANGLE_EXPORT to some functions to make
+        sure they will be visible in the exported library.
+        * include/GLSLANG/ShaderVars.h:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm: Change reinterpret_cast to a normal
+        C cast so it can be annotated with __bridge.
+        (rx::DisplayCGL::isValidNativeWindow const):
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm: Ditto.
+        (rx::WindowSurfaceCGL::WindowSurfaceCGL):
+        (rx::WindowSurfaceCGL::~WindowSurfaceCGL):
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm: Ditto.
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm: Ditto.
+
 2019-12-02  James Darpinian  <jdarpinian@chromium.org>
 
         Update ANGLE

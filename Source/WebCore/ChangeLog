@@ -1,3 +1,26 @@
+2019-11-30  Dean Jackson  <dino@apple.com>
+
+        Build ANGLE as a dynamic library
+        https://bugs.webkit.org/show_bug.cgi?id=204708
+        rdar://57349384
+
+        Reviewed by Tim Horton.
+
+        Weak link against libANGLE.dylib rather than strong link to libANGLE.a.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * platform/graphics/ANGLEWebKitBridge.cpp: Early returns if the library was not loaded.
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::cleanupCompilers):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        (WebCore::ANGLEWebKitBridge::angleAvailable): Static method to detect
+        if the library was loaded.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm: Early return if ANGLE was not
+        loaded.
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2019-12-02  youenn fablet  <youenn@apple.com>
 
         Simplify RealtimeOutgoingAudioSource and RealtimeOutgoingVideooSource observeSource/unobserveSource pattern
