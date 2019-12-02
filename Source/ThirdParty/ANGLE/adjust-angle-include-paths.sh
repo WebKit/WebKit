@@ -21,16 +21,16 @@
 
 if [ "$DEPLOYMENT_LOCATION" == "YES" ] ; then
     # Apple-internal build.
-    output_dir=$DSTROOT/$PUBLIC_HEADERS_FOLDER_PATH
+    output_dir=${DSTROOT}${PUBLIC_HEADERS_FOLDER_PATH}
 else
     # External build.
-    output_dir=$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH
+    output_dir=${BUILT_PRODUCTS_DIR}${PUBLIC_HEADERS_FOLDER_PATH}
 fi
 
 if [ $(uname) == "Linux" ]; then
-    inplace_opt="-i"
+    inplace_opt=(-i)
 else
-    inplace_opt="-i ''"
+    inplace_opt=(-i "")
 fi
 
 for i in $output_dir/*.h ; do
@@ -43,8 +43,8 @@ s/^#include [<"]GLES3\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]KHR\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]export.h[>"]/#include <ANGLE\/export.h>/
 s/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/
-' $inplace_opt $i
-        echo Postprocessed ANGLE header3 $i
+' "${inplace_opt[@]}" $i
+        echo Postprocessed ANGLE header `basename $i`
     fi
 done
 

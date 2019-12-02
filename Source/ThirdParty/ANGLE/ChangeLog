@@ -1,3 +1,21 @@
+2019-12-02  Dean Jackson  <dino@apple.com>
+
+        Clean up ANGLE header post-process script
+        https://bugs.webkit.org/show_bug.cgi?id=204711
+
+        Reviewed by Tim Horton.
+
+        Since `sed` on macOS requires the in-place argument to have a zero-length string
+        to avoid making backups, this script was attempting to pass ''. However, this was
+        being evaluated, creating a bunch of files with \'\' suffixes. Fix this by using
+        an array when expanding the arguments.
+
+        Also fix a typo where the character "3" was being printed.
+
+        Lastly, only print out the basename of the header file being converted.
+
+        * adjust-angle-include-paths.sh:
+
 2019-11-30  Dean Jackson  <dino@apple.com>
 
         Build ANGLE as a dynamic library
