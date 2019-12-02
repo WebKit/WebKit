@@ -1,5 +1,25 @@
 2019-12-01  Caio Lima  <ticaiolima@gmail.com>
 
+        [JSC][MIPS] CallFrame is being clobbered on InternalFunction execution
+        https://bugs.webkit.org/show_bug.cgi?id=203739
+
+        Reviewed by Saam Barati.
+
+        MIPS calling conventions requires that we have stack space reserved
+        for 4 (16-bytes) arguments ($a0-$a3). The caller doesn't use
+        this space, but callee can still use it in case where they need to save
+        arguments or even reuse to another allocation. Since we were not
+        allocationg it during `makeHostFunctionCall`, the caller frame slot
+        was being clobberred by `callGenericTypedArrayView` execution,
+        resulting in a corrupted call frame stack. This patch is adjusting
+        this convention into ThunkGenerator and on  `makeHostFunctionCall`.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LowLevelInterpreter32_64.asm:
+
+2019-12-01  Caio Lima  <ticaiolima@gmail.com>
+
         Implement GetByVal inline caching for 32-bit JITs
         https://bugs.webkit.org/show_bug.cgi?id=204082
 

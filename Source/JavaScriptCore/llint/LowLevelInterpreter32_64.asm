@@ -352,6 +352,14 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         push a0
         call temp1
         addp 8, sp
+    elsif MIPS
+        move sp, a1
+        # We need to allocate stack space for 16 bytes (8-byte aligned)
+        # for 4 arguments, since callee can use this space.
+        subp 16, sp 
+        loadp ProtoCallFrame::globalObject[protoCallFrame], a0
+        call temp1
+        addp 16, sp
     else
         loadp ProtoCallFrame::globalObject[protoCallFrame], a0
         move sp, a1

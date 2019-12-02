@@ -1,3 +1,13 @@
+2019-12-01  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][MIPS] CallFrame is being clobbered on InternalFunction execution
+        https://bugs.webkit.org/show_bug.cgi?id=203739
+
+        Reviewed by Saam Barati.
+
+        * stress/has-instance-exception-check.js:
+        * stress/regress-176485.js:
+
 2019-11-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         test262-runner should dump YAML with correct encoding
