@@ -1,3 +1,21 @@
+2019-12-02  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r195080): prepare-ChangeLog does not emit function list for file paths that contain a space
+        https://bugs.webkit.org/show_bug.cgi?id=204236
+
+        Reviewed by Brian Burg.
+
+        Revert the filename escape logic added in <http://trac.webkit.org/changeset/195080> as it broke
+        function list generation in file paths that contain space characters. Function list generation
+        broke because the escaping was performed after line range dictionaries were built up keyed off
+        the unescaped file path. Subsequent code would try to query these dictionaries to build up the
+        changed function list using the escaped file path and never a match. The escaping logic was not
+        necessary to fix the originally reported bug. All that was needed was to use the three-argument
+        open() call that took a mode. So, remove the escape logic.
+
+        * Scripts/prepare-ChangeLog:
+        (actuallyGenerateFunctionLists):
+
 2019-11-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         test262-runner should dump YAML with correct encoding
