@@ -34,6 +34,12 @@ class JSPromise : public JSInternalFieldObjectImpl<2> {
 public:
     using Base = JSInternalFieldObjectImpl<2>;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.promiseSpace;
+    }
+
     JS_EXPORT_PRIVATE static JSPromise* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 

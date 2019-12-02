@@ -40,6 +40,12 @@ public:
         return sizeof(JSGenerator);
     }
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.generatorSpace<mode>();
+    }
+
     enum class GeneratorResumeMode : int32_t {
         NormalMode = 0,
         ReturnMode = 1,

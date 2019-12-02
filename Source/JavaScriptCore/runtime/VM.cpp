@@ -294,6 +294,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
     , internalFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), InternalFunction) // Hash:0xf845c464
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
+    , promiseSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPromise)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
     , ropeStringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSRopeString)
     , scopedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ScopedArguments)
@@ -1310,11 +1311,13 @@ void VM::ensureShadowChicken()
     }
 
 
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(asyncGeneratorSpace, cellHeapCellType.get(), JSAsyncGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, destructibleObjectHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(generatorSpace, cellHeapCellType.get(), JSGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get(), ProxyObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939

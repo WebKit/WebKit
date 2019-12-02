@@ -41,6 +41,12 @@ public:
         return sizeof(JSAsyncGenerator);
     }
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.asyncGeneratorSpace<mode>();
+    }
+
     enum class AsyncGeneratorState : int32_t {
         Completed = -1,
         Executing = -2,

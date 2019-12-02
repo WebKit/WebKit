@@ -396,6 +396,7 @@ public:
     IsoSubspace getterSetterSpace;
     IsoSubspace internalFunctionSpace;
     IsoSubspace nativeExecutableSpace;
+    IsoSubspace promiseSpace;
     IsoSubspace propertyTableSpace;
     IsoSubspace ropeStringSpace;
     IsoSubspace scopedArgumentsSpace;
@@ -423,11 +424,13 @@ public:
 #ifdef JSC_GLIB_API_ENABLED
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jscCallbackFunctionSpace)
 #endif
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(asyncGeneratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(boundFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterSetterFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(errorInstanceSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(functionRareDataSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(generatorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
