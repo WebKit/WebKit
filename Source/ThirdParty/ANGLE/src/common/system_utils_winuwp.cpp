@@ -33,6 +33,12 @@ std::string GetEnvironmentVar(const char *variableName)
     return "";
 }
 
+const char *GetPathSeparatorForEnvironmentVar()
+{
+    // Not supported for UWP
+    return "";
+}
+
 const char *GetSharedLibraryExtension()
 {
     return "dll";

@@ -262,6 +262,15 @@ ANGLE_INLINE angle::Result ContextGL::setDrawElementsState(const gl::Context *co
         *outIndices = indices;
     }
 
+    const angle::FeaturesGL &features = getFeaturesGL();
+    if (glState.isPrimitiveRestartEnabled() && features.emulatePrimitiveRestartFixedIndex.enabled)
+    {
+        StateManagerGL *stateManager = getStateManager();
+
+        GLuint primitiveRestartIndex = gl::GetPrimitiveRestartIndex(type);
+        stateManager->setPrimitiveRestartIndex(primitiveRestartIndex);
+    }
+
 #if defined(ANGLE_STATE_VALIDATION_ENABLED)
     const VertexArrayGL *vaoGL = GetImplAs<VertexArrayGL>(vao);
     vaoGL->validateState();

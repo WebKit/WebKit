@@ -72,7 +72,6 @@ bool ValidateGetMaterialxv(Context *context,
                            GLenum face,
                            MaterialParameter pnamePacked,
                            GLfixed *params);
-bool ValidateGetPointerv(Context *context, GLenum pname, void **params);
 bool ValidateGetTexEnvfv(Context *context,
                          TextureEnvTarget targetPacked,
                          TextureEnvParameter pnamePacked,

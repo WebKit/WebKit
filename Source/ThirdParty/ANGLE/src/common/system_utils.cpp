@@ -22,7 +22,7 @@ bool PrependPathToEnvironmentVar(const char *variableName, const char *path)
     else
     {
         buf = path;
-        buf += GetPathSeparator();
+        buf += GetPathSeparatorForEnvironmentVar();
         buf += oldValue;
         newValue = buf.c_str();
     }

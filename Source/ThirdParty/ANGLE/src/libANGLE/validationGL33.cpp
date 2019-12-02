@@ -55,22 +55,6 @@ bool ValidateGetQueryObjectui64v(Context *context, QueryID id, GLenum pname, GLu
     return true;
 }
 
-bool ValidateGetSamplerParameterIiv(Context *context,
-                                    SamplerID sampler,
-                                    GLenum pname,
-                                    GLint *params)
-{
-    return true;
-}
-
-bool ValidateGetSamplerParameterIuiv(Context *context,
-                                     SamplerID sampler,
-                                     GLenum pname,
-                                     GLuint *params)
-{
-    return true;
-}
-
 bool ValidateMultiTexCoordP1ui(Context *context, GLenum texture, GLenum type, GLuint coords)
 {
     return true;
@@ -122,22 +106,6 @@ bool ValidateNormalP3uiv(Context *context, GLenum type, const GLuint *coords)
 }
 
 bool ValidateQueryCounter(Context *context, QueryID id, QueryType targetPacked)
-{
-    return true;
-}
-
-bool ValidateSamplerParameterIiv(Context *context,
-                                 SamplerID sampler,
-                                 GLenum pname,
-                                 const GLint *param)
-{
-    return true;
-}
-
-bool ValidateSamplerParameterIuiv(Context *context,
-                                  SamplerID sampler,
-                                  GLenum pname,
-                                  const GLuint *param)
 {
     return true;
 }

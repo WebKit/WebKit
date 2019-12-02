@@ -95,6 +95,7 @@ class IntelDriverVersion
     uint16_t mVersionPart;
 };
 
+bool IsIvyBridge(uint32_t DeviceId);
 bool IsHaswell(uint32_t DeviceId);
 bool IsBroadwell(uint32_t DeviceId);
 bool IsCherryView(uint32_t DeviceId);

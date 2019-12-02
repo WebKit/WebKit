@@ -455,12 +455,12 @@ inline float float10ToFloat32(unsigned short fp11)
 
 // Convers to and from float and 16.16 fixed point format.
 
-inline float FixedToFloat(uint32_t fixedInput)
+inline float ConvertFixedToFloat(uint32_t fixedInput)
 {
     return static_cast<float>(fixedInput) / 65536.0f;
 }
 
-inline uint32_t FloatToFixed(float floatInput)
+inline uint32_t ConvertFloatToFixed(float floatInput)
 {
     static constexpr uint32_t kHighest = 32767 * 65536 + 65535;
     static constexpr uint32_t kLowest  = static_cast<uint32_t>(-32768 * 65536 + 65535);

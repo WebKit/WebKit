@@ -1,0 +1,298 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE Vulkan back-end.
+
+import("//build_overrides/swiftshader.gni")
+import("../../../../gni/angle.gni")
+
+assert(angle_enable_vulkan)
+
+declare_args() {
+  # Enable custom (cpu-side) secondary command buffers
+  angle_enable_custom_vulkan_cmd_buffers = true
+
+  # Enable Vulkan GPU trace event capability
+  angle_enable_vulkan_gpu_trace_events = false
+
+  # Currently SwiftShader's Vulkan front-end doesn't build on Android.
+  # SwiftShader is not needed on Fuchsia because Vulkan is supported on all
+  # devices that run Fuchsia.
+  angle_swiftshader = !is_android && !is_fuchsia && !is_ggp
+}
+
+_vulkan_backend_sources = [
+  "BufferVk.cpp",
+  "BufferVk.h",
+  "CommandGraph.cpp",
+  "CommandGraph.h",
+  "CompilerVk.cpp",
+  "CompilerVk.h",
+  "ContextVk.cpp",
+  "ContextVk.h",
+  "DeviceVk.cpp",
+  "DeviceVk.h",
+  "DisplayVk.cpp",
+  "DisplayVk.h",
+  "FenceNVVk.cpp",
+  "FenceNVVk.h",
+  "FramebufferVk.cpp",
+  "FramebufferVk.h",
+  "GlslangWrapperVk.cpp",
+  "GlslangWrapperVk.h",
+  "ImageVk.cpp",
+  "ImageVk.h",
+  "MemoryObjectVk.cpp",
+  "MemoryObjectVk.h",
+  "OverlayVk.cpp",
+  "OverlayVk.h",
+  "PersistentCommandPool.cpp",
+  "PersistentCommandPool.h",
+  "ProgramVk.cpp",
+  "ProgramVk.h",
+  "ProgramPipelineVk.cpp",
+  "ProgramPipelineVk.h",
+  "QueryVk.cpp",
+  "QueryVk.h",
+  "RenderbufferVk.cpp",
+  "RenderbufferVk.h",
+  "RendererVk.cpp",
+  "RendererVk.h",
+  "RenderTargetVk.cpp",
+  "RenderTargetVk.h",
+  "SamplerVk.cpp",
+  "SamplerVk.h",
+  "SecondaryCommandBuffer.cpp",
+  "SecondaryCommandBuffer.h",
+  "SemaphoreVk.cpp",
+  "SemaphoreVk.h",
+  "ShaderVk.cpp",
+  "ShaderVk.h",
+  "SurfaceVk.cpp",
+  "SurfaceVk.h",
+  "SyncVk.cpp",
+  "SyncVk.h",
+  "TextureVk.cpp",
+  "TextureVk.h",
+  "TransformFeedbackVk.cpp",
+  "TransformFeedbackVk.h",
+  "UtilsVk.cpp",
+  "UtilsVk.h",
+  "VertexArrayVk.cpp",
+  "VertexArrayVk.h",
+  "vk_cache_utils.cpp",
+  "vk_cache_utils.h",
+  "vk_caps_utils.cpp",
+  "vk_caps_utils.h",
+  "vk_ext_provoking_vertex.h",
+  "vk_format_table_autogen.cpp",
+  "vk_format_utils.h",
+  "vk_format_utils.cpp",
+  "vk_helpers.cpp",
+  "vk_helpers.h",
+  "vk_internal_shaders_autogen.h",
+  "vk_internal_shaders_autogen.cpp",
+  "vk_mandatory_format_support_table_autogen.cpp",
+  "vk_utils.cpp",
+  "vk_utils.h",
+  "vk_wrapper.h",
+]
+
+if (is_android) {
+  _vulkan_backend_sources += [
+    "android/DisplayVkAndroid.cpp",
+    "android/DisplayVkAndroid.h",
+    "android/HardwareBufferImageSiblingVkAndroid.cpp",
+    "android/HardwareBufferImageSiblingVkAndroid.h",
+    "android/WindowSurfaceVkAndroid.cpp",
+    "android/WindowSurfaceVkAndroid.h",
+  ]
+}
+
+if (is_win) {
+  _vulkan_backend_sources += [
+    "win32/DisplayVkWin32.cpp",
+    "win32/DisplayVkWin32.h",
+    "win32/WindowSurfaceVkWin32.cpp",
+    "win32/WindowSurfaceVkWin32.h",
+  ]
+}
+
+if (angle_use_x11) {
+  _vulkan_backend_sources += [
+    "xcb/DisplayVkXcb.cpp",
+    "xcb/DisplayVkXcb.h",
+    "xcb/WindowSurfaceVkXcb.cpp",
+    "xcb/WindowSurfaceVkXcb.h",
+  ]
+}
+
+if (is_fuchsia) {
+  _vulkan_backend_sources += [
+    "fuchsia/DisplayVkFuchsia.cpp",
+    "fuchsia/DisplayVkFuchsia.h",
+    "fuchsia/WindowSurfaceVkFuchsia.cpp",
+    "fuchsia/WindowSurfaceVkFuchsia.h",
+  ]
+}
+
+if (is_ggp) {
+  _vulkan_backend_sources += [
+    "ggp/DisplayVkGGP.cpp",
+    "ggp/DisplayVkGGP.h",
+    "ggp/WindowSurfaceVkGGP.cpp",
+    "ggp/WindowSurfaceVkGGP.h",
+  ]
+}
+
+config("vulkan_config") {
+  _sws_icd = "./libvk_swiftshader_icd.json"
+  if (is_win) {
+    _sws_icd = ".\\\\libvk_swiftshader_icd.json"
+  }
+
+  defines = [
+    "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
+    "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",
+    "ANGLE_VK_SWIFTSHADER_ICD_JSON=\"${_sws_icd}\"",
+  ]
+  if (is_android) {
+    libs = [ "vulkan" ]
+  }
+  if (angle_enable_vulkan_validation_layers) {
+    defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT" ]
+  }
+}
+
+if (angle_swiftshader) {
+  copy("angle_swiftshader_icd_rename") {
+    sources = [
+      "$swiftshader_dir/src/Vulkan/vk_swiftshader_icd.json",
+    ]
+    outputs = [
+      "$root_gen_dir/angle/libvk_swiftshader_icd.json",
+    ]
+  }
+
+  action("angle_swiftshader_icd") {
+    deps = [
+      ":angle_swiftshader_icd_rename",
+      "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
+    ]
+    script = "$angle_root/scripts/generate_vulkan_layers_json.py"
+    sources = [
+      "$angle_root/third_party/vulkan-headers/src/include/vulkan/vulkan_core.h",
+    ]
+
+    # Must be listed after vulkan_core.h. git cl format sorts them if they
+    # are in one list. So split up the sources manually.
+    sources += [ "$root_gen_dir/angle/libvk_swiftshader_icd.json" ]
+
+    outputs = [
+      "$root_out_dir/libvk_swiftshader_icd.json",
+    ]
+    data = outputs
+
+    _raw_sws_in = rebase_path("$root_gen_dir/angle", root_build_dir)
+    _raw_sws_out = rebase_path("$root_out_dir", root_build_dir)
+
+    _sws_output = ""
+    if (is_win) {
+      _sws_output += ".\\vk_swiftshader.dll"
+    } else if (is_mac) {
+      _sws_output += "./libvk_swiftshader.dylib"
+    } else {
+      _sws_output += "./libvk_swiftshader.so"
+    }
+
+    args = [
+             "--icd",
+             "--replacement",
+             _sws_output,
+             _raw_sws_in,
+             _raw_sws_out,
+           ] + rebase_path(sources, root_build_dir)
+  }
+}
+
+# Use this target to include everything ANGLE needs for Vulkan.
+group("angle_vulkan") {
+  public_deps = [
+    "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
+  ]
+  public_configs = [ ":vulkan_config" ]
+  deps = []
+  data_deps = []
+  if (!is_android && !is_fuchsia) {
+    deps += [ "$angle_root/third_party/vulkan-loader/src:libvulkan" ]
+    data_deps += [ "$angle_root/third_party/vulkan-tools/src:VkICD_mock_icd" ]
+    public_configs +=
+        [ "$angle_root/third_party/vulkan-loader/src:vulkan_loader_config" ]
+  }
+  if (is_fuchsia) {
+    public_deps += [
+      "$angle_root/src/common/fuchsia_egl",
+      "//third_party/fuchsia-sdk:vulkan_base",
+      "//third_party/fuchsia-sdk/sdk:vulkan",
+    ]
+  }
+
+  if (angle_enable_vulkan_validation_layers) {
+    if (is_fuchsia) {
+      deps += [ "//third_party/fuchsia-sdk:vulkan_validation" ]
+    } else {
+      data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_validation_layers" ]
+      if (!is_android) {
+        data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_gen_json_files" ]
+      }
+    }
+  }
+
+  if (angle_swiftshader) {
+    data_deps += [
+      ":angle_swiftshader_icd",
+      "$swiftshader_dir/src/Vulkan:swiftshader_libvulkan",
+    ]
+  }
+}
+
+config("angle_vulkan_backend_config") {
+  defines = [ "ANGLE_ENABLE_VULKAN" ]
+  if (angle_enable_custom_vulkan_cmd_buffers) {
+    defines += [ "ANGLE_USE_CUSTOM_VULKAN_CMD_BUFFERS=1" ]
+  }
+
+  if (angle_enable_vulkan_gpu_trace_events) {
+    defines += [ "ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS=1" ]
+  }
+}
+
+angle_source_set("angle_vulkan_backend") {
+  sources = _vulkan_backend_sources
+  libs = []
+  deps = [
+    ":angle_vulkan",
+    "$angle_root:angle_image_util",
+    "$angle_spirv_tools_dir:spvtools_val",
+  ]
+  public_deps = [
+    "$angle_root:angle_glslang_wrapper",
+    "$angle_root:libANGLE_headers",
+    "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
+  ]
+  public_configs = [ ":angle_vulkan_backend_config" ]
+  if (is_fuchsia) {
+    deps += [
+      "$angle_root/src/common/fuchsia_egl",
+      "$angle_root/src/common/fuchsia_egl:backend",
+    ]
+  }
+  if (is_android) {
+    libs += [ "vulkan" ]
+  }
+
+  # Include generated shaders.
+  import("vk_internal_shaders_autogen.gni")
+  sources += angle_vulkan_internal_shaders
+}

@@ -429,7 +429,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
     {
         ASSERT(dxgiFactory2 != nullptr);
 
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.BufferCount           = 1;
         swapChainDesc.Format                = mSwapChainFormat;
         swapChainDesc.Width                 = static_cast<UINT>(mWidth);

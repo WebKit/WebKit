@@ -83,7 +83,7 @@ ANGLE_INLINE bool ValidateVertexAttribPointer(Context *context,
             return false;
         }
 
-        if (index >= caps.maxVertexAttribBindings)
+        if (index >= static_cast<GLuint>(caps.maxVertexAttribBindings))
         {
             context->validationError(GL_INVALID_VALUE, err::kExceedsMaxVertexAttribBindings);
             return false;

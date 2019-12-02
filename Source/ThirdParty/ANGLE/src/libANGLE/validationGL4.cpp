@@ -16,31 +16,6 @@ bool ValidateBeginQueryIndexed(Context *context, GLenum target, GLuint index, Qu
     return true;
 }
 
-bool ValidateBlendEquationSeparatei(Context *context, GLuint buf, GLenum modeRGB, GLenum modeAlpha)
-{
-    return true;
-}
-
-bool ValidateBlendEquationi(Context *context, GLuint buf, GLenum mode)
-{
-    return true;
-}
-
-bool ValidateBlendFuncSeparatei(Context *context,
-                                GLuint buf,
-                                GLenum srcRGB,
-                                GLenum dstRGB,
-                                GLenum srcAlpha,
-                                GLenum dstAlpha)
-{
-    return true;
-}
-
-bool ValidateBlendFunci(Context *context, GLuint buf, GLenum src, GLenum dst)
-{
-    return true;
-}
-
 bool ValidateDrawTransformFeedback(Context *context, GLenum mode, TransformFeedbackID id)
 {
     return true;
@@ -141,17 +116,7 @@ bool ValidateGetUniformdv(Context *context,
     return true;
 }
 
-bool ValidateMinSampleShading(Context *context, GLfloat value)
-{
-    return true;
-}
-
 bool ValidatePatchParameterfv(Context *context, GLenum pname, const GLfloat *values)
-{
-    return true;
-}
-
-bool ValidatePatchParameteri(Context *context, GLenum pname, GLint value)
 {
     return true;
 }

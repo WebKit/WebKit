@@ -87,6 +87,11 @@ enum flags
 constexpr size_t kArrayLen = 0x00000002;
 }  // namespace ConvertIndexIndirectLineLoop_comp
 
+namespace ConvertIndirectLineLoop_comp
+{
+constexpr size_t kArrayLen = 0x00000001;
+}  // namespace ConvertIndirectLineLoop_comp
+
 namespace ConvertVertex_comp
 {
 enum flags
@@ -95,30 +100,29 @@ enum flags
 };
 enum Conversion
 {
-    kSintToSint           = 0x00000000,
-    kUintToUint           = 0x00000002,
-    kSintToFloat          = 0x00000004,
-    kUintToFloat          = 0x00000006,
-    kSnormToFloat         = 0x00000008,
-    kUnormToFloat         = 0x0000000A,
-    kFixedToFloat         = 0x0000000C,
-    kFloatToFloat         = 0x0000000E,
-    kA2BGR10SintToSint    = 0x00000010,
-    kA2BGR10UintToUint    = 0x00000012,
-    kA2BGR10SintToFloat   = 0x00000014,
-    kA2BGR10UintToFloat   = 0x00000016,
-    kA2BGR10SnormToFloat  = 0x00000018,
-    kRGB10A2SintToFloat   = 0x0000001A,
-    kRGB10A2UintToFloat   = 0x0000001C,
-    kRGB10A2SnormToFloat  = 0x0000001E,
-    kRGB10A2UnormToFloat  = 0x00000020,
-    kRGB10X2SintToFloat   = 0x00000022,
-    kRGB10X2UintToFloat   = 0x00000024,
-    kRGB10X2SnormToFloat  = 0x00000026,
-    kRGB10X2UnormToFloat  = 0x00000028,
-    kHalfFloatToHalfFloat = 0x0000002A,
+    kSintToSint          = 0x00000000,
+    kUintToUint          = 0x00000002,
+    kSintToFloat         = 0x00000004,
+    kUintToFloat         = 0x00000006,
+    kSnormToFloat        = 0x00000008,
+    kUnormToFloat        = 0x0000000A,
+    kFixedToFloat        = 0x0000000C,
+    kFloatToFloat        = 0x0000000E,
+    kA2BGR10SintToSint   = 0x00000010,
+    kA2BGR10UintToUint   = 0x00000012,
+    kA2BGR10SintToFloat  = 0x00000014,
+    kA2BGR10UintToFloat  = 0x00000016,
+    kA2BGR10SnormToFloat = 0x00000018,
+    kRGB10A2SintToFloat  = 0x0000001A,
+    kRGB10A2UintToFloat  = 0x0000001C,
+    kRGB10A2SnormToFloat = 0x0000001E,
+    kRGB10A2UnormToFloat = 0x00000020,
+    kRGB10X2SintToFloat  = 0x00000022,
+    kRGB10X2UintToFloat  = 0x00000024,
+    kRGB10X2SnormToFloat = 0x00000026,
+    kRGB10X2UnormToFloat = 0x00000028,
 };
-constexpr size_t kArrayLen = 0x0000002C;
+constexpr size_t kArrayLen = 0x0000002A;
 }  // namespace ConvertVertex_comp
 
 namespace FullScreenQuad_vert
@@ -220,6 +224,9 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getConvertIndexIndirectLineLoop_comp(Context *context,
                                                        uint32_t shaderFlags,
                                                        RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getConvertIndirectLineLoop_comp(Context *context,
+                                                  uint32_t shaderFlags,
+                                                  RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getConvertVertex_comp(Context *context,
                                         uint32_t shaderFlags,
                                         RefCounted<ShaderAndSerial> **shaderOut);
@@ -250,6 +257,8 @@ class ShaderLibrary final : angle::NonCopyable
         mConvertIndex_comp_shaders[InternalShader::ConvertIndex_comp::kArrayLen];
     RefCounted<ShaderAndSerial> mConvertIndexIndirectLineLoop_comp_shaders
         [InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen];
+    RefCounted<ShaderAndSerial> mConvertIndirectLineLoop_comp_shaders
+        [InternalShader::ConvertIndirectLineLoop_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
         mConvertVertex_comp_shaders[InternalShader::ConvertVertex_comp::kArrayLen];
     RefCounted<ShaderAndSerial>

@@ -29,6 +29,18 @@ struct FeaturesVk : FeatureSetBase
         "rasterization rules",
         &members};
 
+    // If the VK_EXT_line_rasterization extension is available we'll use it to get
+    // Bresenham line rasterization.
+    Feature bresenhamLineRasterization = {
+        "bresenham_line_rasterization", FeatureCategory::VulkanFeatures,
+        "Enable Bresenham line rasterization via VK_EXT_line_rasterization extension", &members};
+
+    // If the VK_EXT_provoking_vertex extension is available, we'll use it to set
+    // the provoking vertex mode
+    Feature provokingVertex = {"provoking_vertex", FeatureCategory::VulkanFeatures,
+                               "Enable provoking vertex mode via VK_EXT_provoking_vertex extension",
+                               &members};
+
     // Flips the viewport to render upside-down. This has the effect to render the same way as
     // OpenGL. If this feature gets enabled, we enable the KHR_MAINTENANCE_1 extension to allow
     // negative viewports. We inverse rendering to the backbuffer by reversing the height of the
@@ -143,14 +155,6 @@ struct FeaturesVk : FeatureSetBase
         "Gaps in bound descriptor set indices causes the post-gap sets to misbehave", &members,
         "http://anglebug.com/2727"};
 
-    // When the scissor is (0,0,0,0) on Windows Intel, the driver acts as if the scissor was
-    // disabled.  Work-around this by setting the scissor to just outside of the render area
-    // (e.g. (renderArea.x, renderArea.y, 1, 1)). http://anglebug.com/3407
-    Feature forceNonZeroScissor = {
-        "force_non_zero_scissor", FeatureCategory::VulkanWorkarounds,
-        "When the scissor is (0,0,0,0), the driver acts as if the scissor was disabled", &members,
-        "http://anglebug.com/3407"};
-
     // OES_depth_texture is a commonly expected feature on Android. However it
     // requires that D16_UNORM support texture filtering
     // (e.g. VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) and some devices
@@ -194,7 +198,7 @@ struct FeaturesVk : FeatureSetBase
         "Seamful cube map emulation misbehaves on some drivers, so it's disallowed", &members,
         "http://anglebug.com/3243"};
 
-    // Qualcomm shader compiler doesn't support sampler arrays as parameters, so
+    // Qualcomm and SwiftShader shader compiler doesn't support sampler arrays as parameters, so
     // revert to old RewriteStructSamplers behavior, which produces fewer.
     Feature forceOldRewriteStructSamplers = {
         "force_old_rewrite_struct_samplers", FeatureCategory::VulkanWorkarounds,

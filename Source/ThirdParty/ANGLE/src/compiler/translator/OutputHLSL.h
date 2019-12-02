@@ -52,7 +52,7 @@ class OutputHLSL : public TIntermTraverser
                PerformanceDiagnostics *perfDiagnostics,
                const std::vector<InterfaceBlock> &shaderStorageBlocks);
 
-    ~OutputHLSL();
+    ~OutputHLSL() override;
 
     void output(TIntermNode *treeRoot, TInfoSinkBase &objSink);
 
@@ -194,6 +194,7 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesFragCoord;
     bool mUsesPointCoord;
     bool mUsesFrontFacing;
+    bool mUsesHelperInvocation;
     bool mUsesPointSize;
     bool mUsesInstanceID;
     bool mHasMultiviewExtensionEnabled;

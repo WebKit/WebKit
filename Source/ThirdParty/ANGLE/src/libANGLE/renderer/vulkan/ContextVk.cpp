@@ -269,7 +269,11 @@ angle::Result CommandQueue::checkCompletedCommands(vk::Context *context)
         ++finishedCount;
     }
 
-    mInFlightCommands.erase(mInFlightCommands.begin(), mInFlightCommands.begin() + finishedCount);
+    if (finishedCount > 0)
+    {
+        auto beginIter = mInFlightCommands.begin();
+        mInFlightCommands.erase(beginIter, beginIter + finishedCount);
+    }
 
     Serial lastCompleted = renderer->getLastCompletedQueueSerial();
 
@@ -403,13 +407,8 @@ bool CommandQueue::hasInFlightCommands() const
     return !mInFlightCommands.empty();
 }
 
-angle::Result CommandQueue::finishToSerialOrTimeout(vk::Context *context,
-                                                    Serial serial,
-                                                    uint64_t timeout,
-                                                    bool *outTimedOut)
+angle::Result CommandQueue::finishToSerial(vk::Context *context, Serial serial, uint64_t timeout)
 {
-    *outTimedOut = false;
-
     if (mInFlightCommands.empty())
     {
         return angle::Result::Continue;
@@ -430,15 +429,7 @@ angle::Result CommandQueue::finishToSerialOrTimeout(vk::Context *context,
 
     // Wait for it finish
     VkDevice device = context->getDevice();
-    VkResult status =
-        batch.fence.get().wait(device, context->getRenderer()->getMaxFenceWaitTimeNs());
-
-    // If timed out, report it as such.
-    if (status == VK_TIMEOUT)
-    {
-        *outTimedOut = true;
-        return angle::Result::Continue;
-    }
+    VkResult status = batch.fence.get().wait(device, timeout);
 
     ANGLE_VK_TRY(context, status);
 
@@ -752,7 +743,6 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     // Must be called before the command buffer is started. Can call finish.
     if (mVertexArray->getStreamingVertexAttribsMask().any())
     {
-        ASSERT(firstVertexOrInvalid != -1);
         // All client attribs & any emulated buffered attribs will be updated
         ANGLE_TRY(mVertexArray->updateStreamedAttribs(context, firstVertexOrInvalid,
                                                       vertexOrIndexCount, instanceCount,
@@ -861,21 +851,20 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
 angle::Result ContextVk::setupIndirectDraw(const gl::Context *context,
                                            gl::PrimitiveMode mode,
                                            DirtyBits dirtyBitMask,
-                                           vk::CommandBuffer **commandBufferOut,
-                                           vk::Buffer **indirectBufferOut)
+                                           vk::BufferHelper *indirectBuffer,
+                                           VkDeviceSize indirectBufferOffset,
+                                           vk::CommandBuffer **commandBufferOut)
 {
-    ASSERT(mode != gl::PrimitiveMode::LineLoop);
+    GLint firstVertex     = -1;
+    GLsizei vertexCount   = 0;
+    GLsizei instanceCount = 1;
 
-    gl::Buffer *indirectBuffer = mState.getTargetBuffer(gl::BufferBinding::DrawIndirect);
-    ASSERT(indirectBuffer);
-
-    vk::BufferHelper &buffer           = vk::GetImpl(indirectBuffer)->getBuffer();
-    *indirectBufferOut                 = const_cast<vk::Buffer *>(&buffer.getBuffer());
     vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
-    buffer.onRead(this, framebuffer, VK_ACCESS_INDIRECT_COMMAND_READ_BIT);
+    indirectBuffer->onRead(this, framebuffer, VK_ACCESS_INDIRECT_COMMAND_READ_BIT);
 
-    ANGLE_TRY(setupDraw(context, mode, -1, 0, 0, gl::DrawElementsType::InvalidEnum, nullptr,
-                        dirtyBitMask, commandBufferOut));
+    ANGLE_TRY(setupDraw(context, mode, firstVertex, vertexCount, instanceCount,
+                        gl::DrawElementsType::InvalidEnum, nullptr, dirtyBitMask,
+                        commandBufferOut));
 
     return angle::Result::Continue;
 }
@@ -883,8 +872,9 @@ angle::Result ContextVk::setupIndirectDraw(const gl::Context *context,
 angle::Result ContextVk::setupIndexedIndirectDraw(const gl::Context *context,
                                                   gl::PrimitiveMode mode,
                                                   gl::DrawElementsType indexType,
-                                                  vk::CommandBuffer **commandBufferOut,
-                                                  vk::Buffer **indirectBufferOut)
+                                                  vk::BufferHelper *indirectBuffer,
+                                                  VkDeviceSize indirectBufferOffset,
+                                                  vk::CommandBuffer **commandBufferOut)
 {
     ASSERT(mode != gl::PrimitiveMode::LineLoop);
 
@@ -894,30 +884,30 @@ angle::Result ContextVk::setupIndexedIndirectDraw(const gl::Context *context,
         setIndexBufferDirty();
     }
 
-    return setupIndirectDraw(context, mode, mIndexedDirtyBitsMask, commandBufferOut,
-                             indirectBufferOut);
+    return setupIndirectDraw(context, mode, mIndexedDirtyBitsMask, indirectBuffer,
+                             indirectBufferOffset, commandBufferOut);
 }
 
 angle::Result ContextVk::setupLineLoopIndexedIndirectDraw(const gl::Context *context,
                                                           gl::PrimitiveMode mode,
                                                           gl::DrawElementsType indexType,
-                                                          const gl::Buffer *indirectBuffer,
+                                                          vk::BufferHelper *srcIndirectBuf,
                                                           VkDeviceSize indirectBufferOffset,
-                                                          const gl::Buffer *indexBuffer,
                                                           vk::CommandBuffer **commandBufferOut,
-                                                          vk::Buffer **indirectBufferOut,
+                                                          vk::BufferHelper **indirectBufferOut,
                                                           VkDeviceSize *indirectBufferOffsetOut)
 {
     ASSERT(mode == gl::PrimitiveMode::LineLoop);
 
-    BufferVk *indirectBufferVk                = vk::GetImpl(indirectBuffer);
-    vk::BufferHelper *indirectBufferHelperOut = nullptr;
+    vk::BufferHelper *dstIndirectBuf  = nullptr;
+    VkDeviceSize dstIndirectBufOffset = 0;
 
-    ANGLE_TRY(mVertexArray->handleLineLoopIndirect(this, indirectBufferVk, indexType,
-                                                   indirectBufferOffset, &indirectBufferHelperOut,
-                                                   indirectBufferOffsetOut));
+    ANGLE_TRY(mVertexArray->handleLineLoopIndexIndirect(this, indexType, srcIndirectBuf,
+                                                        indirectBufferOffset, &dstIndirectBuf,
+                                                        &dstIndirectBufOffset));
 
-    *indirectBufferOut = const_cast<vk::Buffer *>(&indirectBufferHelperOut->getBuffer());
+    *indirectBufferOut       = dstIndirectBuf;
+    *indirectBufferOffsetOut = dstIndirectBufOffset;
 
     if (indexType != mCurrentDrawElementsType)
     {
@@ -925,11 +915,36 @@ angle::Result ContextVk::setupLineLoopIndexedIndirectDraw(const gl::Context *con
         setIndexBufferDirty();
     }
 
-    vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
-    indirectBufferHelperOut->onRead(this, framebuffer, VK_ACCESS_INDIRECT_COMMAND_READ_BIT);
+    return setupIndirectDraw(context, mode, mIndexedDirtyBitsMask, dstIndirectBuf,
+                             dstIndirectBufOffset, commandBufferOut);
+}
 
-    return setupDraw(context, mode, -1, 0, 0, gl::DrawElementsType::InvalidEnum, nullptr,
-                     mIndexedDirtyBitsMask, commandBufferOut);
+angle::Result ContextVk::setupLineLoopIndirectDraw(const gl::Context *context,
+                                                   gl::PrimitiveMode mode,
+                                                   vk::BufferHelper *indirectBuffer,
+                                                   VkDeviceSize indirectBufferOffset,
+                                                   vk::CommandBuffer **commandBufferOut,
+                                                   vk::BufferHelper **indirectBufferOut,
+                                                   VkDeviceSize *indirectBufferOffsetOut)
+{
+    ASSERT(mode == gl::PrimitiveMode::LineLoop);
+
+    vk::BufferHelper *indirectBufferHelperOut = nullptr;
+
+    ANGLE_TRY(mVertexArray->handleLineLoopIndirectDraw(
+        context, indirectBuffer, indirectBufferOffset, &indirectBufferHelperOut,
+        indirectBufferOffsetOut));
+
+    *indirectBufferOut = indirectBufferHelperOut;
+
+    if (gl::DrawElementsType::UnsignedInt != mCurrentDrawElementsType)
+    {
+        mCurrentDrawElementsType = gl::DrawElementsType::UnsignedInt;
+        setIndexBufferDirty();
+    }
+
+    return setupIndirectDraw(context, mode, mIndexedDirtyBitsMask, indirectBufferHelperOut,
+                             *indirectBufferOffsetOut, commandBufferOut);
 }
 
 angle::Result ContextVk::setupLineLoopDraw(const gl::Context *context,
@@ -1609,14 +1624,19 @@ angle::Result ContextVk::drawArraysInstanced(const gl::Context *context,
                                              GLsizei count,
                                              GLsizei instances)
 {
+    vk::CommandBuffer *commandBuffer = nullptr;
+
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        // TODO - http://anglebug.com/2672
-        ANGLE_VK_UNREACHABLE(this);
-        return angle::Result::Stop;
+        uint32_t clampedVertexCount = gl::GetClampedVertexCount<uint32_t>(count);
+        uint32_t numIndices;
+        ANGLE_TRY(setupLineLoopDraw(context, mode, first, clampedVertexCount,
+                                    gl::DrawElementsType::InvalidEnum, nullptr, &commandBuffer,
+                                    &numIndices));
+        commandBuffer->drawIndexedInstanced(numIndices, instances);
+        return angle::Result::Continue;
     }
 
-    vk::CommandBuffer *commandBuffer = nullptr;
     ANGLE_TRY(setupDraw(context, mode, first, count, instances, gl::DrawElementsType::InvalidEnum,
                         nullptr, mNonIndexedDirtyBitsMask, &commandBuffer));
     commandBuffer->drawInstanced(gl::GetClampedVertexCount<uint32_t>(count), instances, first);
@@ -1630,14 +1650,20 @@ angle::Result ContextVk::drawArraysInstancedBaseInstance(const gl::Context *cont
                                                          GLsizei instances,
                                                          GLuint baseInstance)
 {
+    vk::CommandBuffer *commandBuffer = nullptr;
+
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        // TODO - http://anglebug.com/2672
-        ANGLE_VK_UNREACHABLE(this);
-        return angle::Result::Stop;
+        uint32_t clampedVertexCount = gl::GetClampedVertexCount<uint32_t>(count);
+        uint32_t numIndices;
+        ANGLE_TRY(setupLineLoopDraw(context, mode, first, clampedVertexCount,
+                                    gl::DrawElementsType::InvalidEnum, nullptr, &commandBuffer,
+                                    &numIndices));
+        commandBuffer->drawIndexedInstancedBaseVertexBaseInstance(numIndices, instances, 0, 0,
+                                                                  baseInstance);
+        return angle::Result::Continue;
     }
 
-    vk::CommandBuffer *commandBuffer = nullptr;
     ANGLE_TRY(setupDraw(context, mode, first, count, instances, gl::DrawElementsType::InvalidEnum,
                         nullptr, mNonIndexedDirtyBitsMask, &commandBuffer));
     commandBuffer->drawInstancedBaseInstance(gl::GetClampedVertexCount<uint32_t>(count), instances,
@@ -1675,15 +1701,20 @@ angle::Result ContextVk::drawElementsInstanced(const gl::Context *context,
                                                const void *indices,
                                                GLsizei instances)
 {
+    vk::CommandBuffer *commandBuffer = nullptr;
+
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        // TODO - http://anglebug.com/2672
-        ANGLE_VK_UNREACHABLE(this);
-        return angle::Result::Stop;
+        uint32_t indexCount;
+        ANGLE_TRY(
+            setupLineLoopDraw(context, mode, 0, count, type, indices, &commandBuffer, &indexCount));
+        count = indexCount;
+    }
+    else
+    {
+        ANGLE_TRY(setupIndexedDraw(context, mode, count, instances, type, indices, &commandBuffer));
     }
 
-    vk::CommandBuffer *commandBuffer = nullptr;
-    ANGLE_TRY(setupIndexedDraw(context, mode, count, instances, type, indices, &commandBuffer));
     commandBuffer->drawIndexedInstanced(count, instances);
     return angle::Result::Continue;
 }
@@ -1697,14 +1728,18 @@ angle::Result ContextVk::drawElementsInstancedBaseVertexBaseInstance(const gl::C
                                                                      GLint baseVertex,
                                                                      GLuint baseInstance)
 {
+    vk::CommandBuffer *commandBuffer = nullptr;
+
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        // TODO - http://anglebug.com/2672
-        ANGLE_VK_UNREACHABLE(this);
-        return angle::Result::Stop;
+        uint32_t indexCount;
+        ANGLE_TRY(
+            setupLineLoopDraw(context, mode, 0, count, type, indices, &commandBuffer, &indexCount));
+        commandBuffer->drawIndexedInstancedBaseVertexBaseInstance(indexCount, instances, 0,
+                                                                  baseVertex, baseInstance);
+        return angle::Result::Continue;
     }
 
-    vk::CommandBuffer *commandBuffer = nullptr;
     ANGLE_TRY(setupIndexedDraw(context, mode, count, instances, type, indices, &commandBuffer));
     commandBuffer->drawIndexedInstancedBaseVertexBaseInstance(count, instances, 0, baseVertex,
                                                               baseInstance);
@@ -1731,19 +1766,51 @@ angle::Result ContextVk::drawArraysIndirect(const gl::Context *context,
                                             gl::PrimitiveMode mode,
                                             const void *indirect)
 {
-    if (mode == gl::PrimitiveMode::LineLoop)
+    gl::Buffer *indirectBuffer            = mState.getTargetBuffer(gl::BufferBinding::DrawIndirect);
+    vk::BufferHelper *currentIndirectBuf  = &vk::GetImpl(indirectBuffer)->getBuffer();
+    VkDeviceSize currentIndirectBufOffset = reinterpret_cast<VkDeviceSize>(indirect);
+
+    if (mVertexArray->getStreamingVertexAttribsMask().any())
     {
-        // TODO - http://anglebug.com/3564
-        ANGLE_VK_UNREACHABLE(this);
-        return angle::Result::Stop;
+        vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
+        currentIndirectBuf->onRead(this, framebuffer, VK_ACCESS_INDIRECT_COMMAND_READ_BIT);
+
+        // We have instanced vertex attributes that need to be emulated for Vulkan.
+        // invalidate any cache and map the buffer so that we can read the indirect data.
+        // Mapping the buffer will cause a flush.
+        ANGLE_TRY(currentIndirectBuf->invalidate(this, 0, sizeof(VkDrawIndirectCommand)));
+        uint8_t *buffPtr;
+        ANGLE_TRY(currentIndirectBuf->map(this, &buffPtr));
+        const VkDrawIndirectCommand *indirectData =
+            reinterpret_cast<VkDrawIndirectCommand *>(buffPtr + currentIndirectBufOffset);
+
+        ANGLE_TRY(drawArraysInstanced(context, mode, indirectData->firstVertex,
+                                      indirectData->vertexCount, indirectData->instanceCount));
+
+        currentIndirectBuf->unmap(getDevice());
+        return angle::Result::Continue;
     }
 
     vk::CommandBuffer *commandBuffer = nullptr;
-    vk::Buffer *buffer               = nullptr;
 
-    ANGLE_TRY(setupIndirectDraw(context, mode, mNonIndexedDirtyBitsMask, &commandBuffer, &buffer));
+    if (mode == gl::PrimitiveMode::LineLoop)
+    {
+        ASSERT(indirectBuffer);
+        vk::BufferHelper *dstIndirectBuf  = nullptr;
+        VkDeviceSize dstIndirectBufOffset = 0;
 
-    commandBuffer->drawIndirect(*buffer, reinterpret_cast<VkDeviceSize>(indirect), 1, 0);
+        ANGLE_TRY(setupLineLoopIndirectDraw(context, mode, currentIndirectBuf,
+                                            currentIndirectBufOffset, &commandBuffer,
+                                            &dstIndirectBuf, &dstIndirectBufOffset));
+
+        commandBuffer->drawIndexedIndirect(dstIndirectBuf->getBuffer(), dstIndirectBufOffset, 1, 0);
+        return angle::Result::Continue;
+    }
+
+    ANGLE_TRY(setupIndirectDraw(context, mode, mNonIndexedDirtyBitsMask, currentIndirectBuf,
+                                currentIndirectBufOffset, &commandBuffer));
+
+    commandBuffer->drawIndirect(currentIndirectBuf->getBuffer(), currentIndirectBufOffset, 1, 0);
     return angle::Result::Continue;
 }
 
@@ -1752,37 +1819,67 @@ angle::Result ContextVk::drawElementsIndirect(const gl::Context *context,
                                               gl::DrawElementsType type,
                                               const void *indirect)
 {
-    VkDeviceSize indirectBufferOffset = reinterpret_cast<VkDeviceSize>(indirect);
-    gl::Buffer *indirectBuffer        = mState.getTargetBuffer(gl::BufferBinding::DrawIndirect);
+    VkDeviceSize currentIndirectBufOffset = reinterpret_cast<VkDeviceSize>(indirect);
+    gl::Buffer *indirectBuffer            = mState.getTargetBuffer(gl::BufferBinding::DrawIndirect);
     ASSERT(indirectBuffer);
+    vk::BufferHelper *currentIndirectBuf = &vk::GetImpl(indirectBuffer)->getBuffer();
 
-    const gl::Buffer *indexBuffer = mVertexArray->getState().getElementArrayBuffer();
-    ASSERT(indexBuffer);
+    if (mVertexArray->getStreamingVertexAttribsMask().any())
+    {
+        vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
+        currentIndirectBuf->onRead(this, framebuffer, VK_ACCESS_INDIRECT_COMMAND_READ_BIT);
+
+        // We have instanced vertex attributes that need to be emulated for Vulkan.
+        // invalidate any cache and map the buffer so that we can read the indirect data.
+        // Mapping the buffer will cause a flush.
+        ANGLE_TRY(currentIndirectBuf->invalidate(this, 0, sizeof(VkDrawIndexedIndirectCommand)));
+        uint8_t *buffPtr;
+        ANGLE_TRY(currentIndirectBuf->map(this, &buffPtr));
+        const VkDrawIndexedIndirectCommand *indirectData =
+            reinterpret_cast<VkDrawIndexedIndirectCommand *>(buffPtr + currentIndirectBufOffset);
+
+        ANGLE_TRY(drawElementsInstanced(context, mode, indirectData->indexCount, type, nullptr,
+                                        indirectData->instanceCount));
+
+        currentIndirectBuf->unmap(getDevice());
+        return angle::Result::Continue;
+    }
 
     if (type == gl::DrawElementsType::UnsignedByte && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
     {
-        BufferVk *indexVk     = vk::GetImpl(indexBuffer);
-        BufferVk *cmdBufferVk = vk::GetImpl(indirectBuffer);
-        ANGLE_TRY(
-            mVertexArray->convertIndexBufferIndirectGPU(this, cmdBufferVk, indexVk, indirect));
+        vk::BufferHelper *dstIndirectBuf;
+        VkDeviceSize dstIndirectBufOffset;
+
+        ANGLE_TRY(mVertexArray->convertIndexBufferIndirectGPU(
+            this, currentIndirectBuf, currentIndirectBufOffset, &dstIndirectBuf,
+            &dstIndirectBufOffset));
+
+        currentIndirectBuf       = dstIndirectBuf;
+        currentIndirectBufOffset = dstIndirectBufOffset;
     }
 
     vk::CommandBuffer *commandBuffer = nullptr;
-    vk::Buffer *indirectBufferFinal  = nullptr;
 
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        ANGLE_TRY(setupLineLoopIndexedIndirectDraw(
-            context, mode, type, indirectBuffer, indirectBufferOffset, indexBuffer, &commandBuffer,
-            &indirectBufferFinal, &indirectBufferOffset));
+        vk::BufferHelper *dstIndirectBuf;
+        VkDeviceSize dstIndirectBufOffset;
+
+        ANGLE_TRY(setupLineLoopIndexedIndirectDraw(context, mode, type, currentIndirectBuf,
+                                                   currentIndirectBufOffset, &commandBuffer,
+                                                   &dstIndirectBuf, &dstIndirectBufOffset));
+
+        currentIndirectBuf       = dstIndirectBuf;
+        currentIndirectBufOffset = dstIndirectBufOffset;
     }
     else
     {
-        ANGLE_TRY(
-            setupIndexedIndirectDraw(context, mode, type, &commandBuffer, &indirectBufferFinal));
+        ANGLE_TRY(setupIndexedIndirectDraw(context, mode, type, currentIndirectBuf,
+                                           currentIndirectBufOffset, &commandBuffer));
     }
 
-    commandBuffer->drawIndexedIndirect(*indirectBufferFinal, indirectBufferOffset, 1, 0);
+    commandBuffer->drawIndexedIndirect(currentIndirectBuf->getBuffer(), currentIndirectBufOffset, 1,
+                                       0);
     return angle::Result::Continue;
 }
 
@@ -1944,19 +2041,6 @@ void ContextVk::updateScissor(const gl::State &glState)
         scissoredArea.y = renderArea.height - scissoredArea.y - scissoredArea.height;
     }
 
-    if (getRenderer()->getFeatures().forceNonZeroScissor.enabled && scissoredArea.width == 0 &&
-        scissoredArea.height == 0)
-    {
-        // There is no overlap between the app-set viewport and clippedRect.  This code works
-        // around an Intel driver bug that causes the driver to treat a (0,0,0,0) scissor as if
-        // scissoring is disabled.  In this case, set the scissor to be just outside of the
-        // renderArea.  Remove this work-around when driver version 25.20.100.6519 has been
-        // deployed.  http://anglebug.com/3407
-        scissoredArea.x      = renderArea.x;
-        scissoredArea.y      = renderArea.y;
-        scissoredArea.width  = 1;
-        scissoredArea.height = 1;
-    }
     mGraphicsPipelineDesc->updateScissor(&mGraphicsPipelineTransition,
                                          gl_vk::GetRect(scissoredArea));
 
@@ -2536,36 +2620,48 @@ angle::Result ContextVk::dispatchComputeIndirect(const gl::Context *context, GLi
 
 angle::Result ContextVk::memoryBarrier(const gl::Context *context, GLbitfield barriers)
 {
-    // Note: most of the barriers specified here don't require us to issue a memory barrier, as
-    // the relevant resources already insert the appropriate barriers.  They do however require
-    // the resource writing nodes to finish so future buffer barriers are placed correctly, as
-    // well as resource dependencies not creating a graph loop.  This is done by inserting a
-    // command graph barrier that does nothing!
-
-    VkAccessFlags srcAccess = 0;
-    VkAccessFlags dstAccess = 0;
-
-    if ((barriers & GL_COMMAND_BARRIER_BIT) != 0)
-    {
-        srcAccess |= VK_ACCESS_SHADER_WRITE_BIT;
-        dstAccess |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-    }
-
-    mCommandGraph.memoryBarrier(srcAccess, dstAccess, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+    memoryBarrierImpl(barriers, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
     return angle::Result::Continue;
 }
 
 angle::Result ContextVk::memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers)
 {
-    // There aren't any barrier bits here that aren't otherwise automatically handled.  We only
-    // need to make sure writer resources (framebuffers and the dispatcher) start a new node.
-    //
-    // Note: memoryBarrierByRegion is expected to affect only the fragment pipeline.  Specifying
-    // that here is currently unnecessary, but is a reminder of this fact in case we do need to
-    // especially handle some future barrier bit.
+    // Note: memoryBarrierByRegion is expected to affect only the fragment pipeline, but is
+    // otherwise similar to memoryBarrier.
 
-    mCommandGraph.memoryBarrier(0, 0, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    memoryBarrierImpl(barriers, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     return angle::Result::Continue;
+}
+
+void ContextVk::memoryBarrierImpl(GLbitfield barriers, VkPipelineStageFlags stageMask)
+{
+    // Note: most of the barriers specified here don't require us to issue a memory barrier, as
+    // the relevant resources already insert the appropriate barriers.  They do however require
+    // the resource writing nodes to finish so future buffer barriers are placed correctly, as
+    // well as resource dependencies not creating a graph loop.  This is done by inserting a
+    // command graph barrier that does nothing!
+    //
+    // The barriers that are necessary all have SHADER_WRITE as src access and the dst access is
+    // determined by the given bitfield.  Currently, all image-related barriers that require the
+    // image to change usage are handled through image layout transitions.  Most buffer-related
+    // barriers where the buffer usage changes are also handled automatically through dirty bits.
+    // The only barriers that are necessary are thus barriers in situations where the resource can
+    // be written to and read from without changing the bindings.
+
+    VkAccessFlags srcAccess = 0;
+    VkAccessFlags dstAccess = 0;
+
+    // Both IMAGE_ACCESS and STORAGE barrier flags translate to the same Vulkan dst access mask.
+    constexpr GLbitfield kShaderWriteBarriers =
+        GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT;
+
+    if ((barriers & kShaderWriteBarriers) != 0)
+    {
+        srcAccess |= VK_ACCESS_SHADER_WRITE_BIT;
+        dstAccess |= VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
+    }
+
+    mCommandGraph.memoryBarrier(srcAccess, dstAccess, stageMask);
 }
 
 vk::DynamicQueryPool *ContextVk::getQueryPool(gl::QueryType queryType)
@@ -2809,7 +2905,21 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context,
         }
 
         TextureVk *textureVk = vk::GetImpl(texture);
-        SamplerVk *samplerVk = (sampler != nullptr) ? vk::GetImpl(sampler) : nullptr;
+
+        SamplerVk *samplerVk;
+        Serial samplerSerial;
+        if (sampler == nullptr)
+        {
+            samplerVk     = nullptr;
+            samplerSerial = kZeroSerial;
+            textureVk->onSamplerGraphAccess(&mCommandGraph);
+        }
+        else
+        {
+            samplerVk     = vk::GetImpl(sampler);
+            samplerSerial = samplerVk->getSerial();
+            samplerVk->onSamplerGraphAccess(&mCommandGraph);
+        }
 
         vk::ImageHelper &image = textureVk->getImage();
 
@@ -2834,14 +2944,14 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context,
             image.changeLayout(aspectFlags, textureLayout, srcLayoutChange);
         }
 
+        textureVk->onImageViewGraphAccess(&mCommandGraph);
         image.addReadDependency(this, recorder);
 
         mActiveTextures[textureUnit].texture = textureVk;
         mActiveTextures[textureUnit].sampler = samplerVk;
         // Cache serials from sampler and texture, but re-use texture if no sampler bound
         ASSERT(textureVk != nullptr);
-        mActiveTexturesDesc.update(textureUnit, textureVk->getSerial(),
-                                   (samplerVk != nullptr) ? samplerVk->getSerial() : kZeroSerial);
+        mActiveTexturesDesc.update(textureUnit, textureVk->getSerial(), samplerSerial);
     }
 
     return angle::Result::Continue;
@@ -2877,7 +2987,7 @@ angle::Result ContextVk::updateActiveImages(const gl::Context *context,
         // already notified of content change).
         // Test: SimpleStateChangeTestES31.DispatchWithImageTextureTexSubImageThenDispatchAgain
         // http://anglebug.com/3539
-        ANGLE_TRY(textureVk->ensureImageInitialized(this));
+        ANGLE_TRY(textureVk->ensureImageInitialized(this, ImageMipLevels::EnabledLevels));
 
         vk::ImageLayout imageLayout = vk::ImageLayout::AllGraphicsShadersWrite;
         if (program->isCompute())
@@ -2999,21 +3109,7 @@ angle::Result ContextVk::checkCompletedCommands()
 
 angle::Result ContextVk::finishToSerial(Serial serial)
 {
-    bool timedOut = false;
-    angle::Result result =
-        finishToSerialOrTimeout(serial, mRenderer->getMaxFenceWaitTimeNs(), &timedOut);
-
-    // Don't tolerate timeout.  If such a large wait time results in timeout, something's wrong.
-    if (timedOut)
-    {
-        result = angle::Result::Stop;
-    }
-    return result;
-}
-
-angle::Result ContextVk::finishToSerialOrTimeout(Serial serial, uint64_t timeout, bool *outTimedOut)
-{
-    return mCommandQueue.finishToSerialOrTimeout(this, serial, timeout, outTimedOut);
+    return mCommandQueue.finishToSerial(this, serial, mRenderer->getMaxFenceWaitTimeNs());
 }
 
 angle::Result ContextVk::getCompatibleRenderPass(const vk::RenderPassDesc &desc,

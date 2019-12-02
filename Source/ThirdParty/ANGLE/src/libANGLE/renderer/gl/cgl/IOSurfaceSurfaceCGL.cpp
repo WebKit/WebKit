@@ -7,25 +7,25 @@
 // PBufferSurfaceCGL.cpp: an implementation of PBuffers created from IOSurfaces using
 //                        EGL_ANGLE_iosurface_client_buffer
 
-#import "common/platform.h"
+#include "common/platform.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
-#include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 
-#include "common/debug.h"
-#include "libANGLE/AttributeMap.h"
-#include "libANGLE/renderer/gl/BlitGL.h"
-#include "libANGLE/renderer/gl/FramebufferGL.h"
-#include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/RendererGL.h"
-#include "libANGLE/renderer/gl/StateManagerGL.h"
-#include "libANGLE/renderer/gl/TextureGL.h"
-#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#    include <IOSurface/IOSurface.h>
+#    include <OpenGL/CGLIOSurface.h>
+#    include <OpenGL/OpenGL.h>
 
-#include <IOSurface/IOSurface.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/CGLIOSurface.h>
+#    include "common/debug.h"
+#    include "libANGLE/AttributeMap.h"
+#    include "libANGLE/renderer/gl/BlitGL.h"
+#    include "libANGLE/renderer/gl/FramebufferGL.h"
+#    include "libANGLE/renderer/gl/FunctionsGL.h"
+#    include "libANGLE/renderer/gl/RendererGL.h"
+#    include "libANGLE/renderer/gl/StateManagerGL.h"
+#    include "libANGLE/renderer/gl/TextureGL.h"
+#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 namespace rx
 {
@@ -335,4 +335,4 @@ bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

@@ -64,7 +64,7 @@ struct UnmangledBuiltIn
 };
 
 using VarPointer        = TSymbol *(TSymbolTableBase::*);
-using ValidateExtension = int(ShBuiltInResources::*);
+using ValidateExtension = int ShBuiltInResources::*;
 
 enum class Spec
 {

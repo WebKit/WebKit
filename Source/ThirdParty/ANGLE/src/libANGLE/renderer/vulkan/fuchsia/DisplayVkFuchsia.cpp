@@ -23,12 +23,10 @@ bool DisplayVkFuchsia::isValidNativeWindow(EGLNativeWindowType window) const
 }
 
 SurfaceImpl *DisplayVkFuchsia::createWindowSurfaceVk(const egl::SurfaceState &state,
-                                                     EGLNativeWindowType window,
-                                                     EGLint width,
-                                                     EGLint height)
+                                                     EGLNativeWindowType window)
 {
     ASSERT(isValidNativeWindow(window));
-    return new WindowSurfaceVkFuchsia(state, window, width, height);
+    return new WindowSurfaceVkFuchsia(state, window);
 }
 
 egl::ConfigSet DisplayVkFuchsia::generateConfigs()

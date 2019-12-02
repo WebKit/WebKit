@@ -108,4 +108,28 @@ GLint TextureImpl::getNativeID() const
     return 0;
 }
 
+GLenum TextureImpl::getColorReadFormat(const gl::Context *context)
+{
+    UNREACHABLE();
+    return GL_NONE;
+}
+
+GLenum TextureImpl::getColorReadType(const gl::Context *context)
+{
+    UNREACHABLE();
+    return GL_NONE;
+}
+
+angle::Result TextureImpl::getTexImage(const gl::Context *context,
+                                       const gl::PixelPackState &packState,
+                                       gl::Buffer *packBuffer,
+                                       gl::TextureTarget target,
+                                       GLint level,
+                                       GLenum format,
+                                       GLenum type,
+                                       void *pixels)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
 }  // namespace rx

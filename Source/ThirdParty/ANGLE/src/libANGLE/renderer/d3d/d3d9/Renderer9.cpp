@@ -404,7 +404,7 @@ egl::Error Renderer9::initializeDevice()
 
 D3DPRESENT_PARAMETERS Renderer9::getDefaultPresentParameters()
 {
-    D3DPRESENT_PARAMETERS presentParameters = {0};
+    D3DPRESENT_PARAMETERS presentParameters = {};
 
     // The default swap chain is never actually used. Surface will create a new swap chain with the
     // proper parameters.
@@ -2350,7 +2350,7 @@ std::string Renderer9::getRendererDescription() const
 
 DeviceIdentifier Renderer9::getAdapterIdentifier() const
 {
-    DeviceIdentifier deviceIdentifier = {0};
+    DeviceIdentifier deviceIdentifier = {};
     deviceIdentifier.VendorId         = static_cast<UINT>(mAdapterIdentifier.VendorId);
     deviceIdentifier.DeviceId         = static_cast<UINT>(mAdapterIdentifier.DeviceId);
     deviceIdentifier.SubSysId         = static_cast<UINT>(mAdapterIdentifier.SubSysId);
@@ -3009,7 +3009,10 @@ void Renderer9::generateCaps(gl::Caps *outCaps,
 
 void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
 {
-    d3d9::InitializeFeatures(features);
+    if (!mDisplay->getState().featuresAllDisabled)
+    {
+        d3d9::InitializeFeatures(features);
+    }
     OverrideFeaturesWithDisplayState(features, mDisplay->getState());
 }
 
@@ -3210,14 +3213,14 @@ angle::Result Renderer9::applyTextures(const gl::Context *context, gl::ShaderTyp
     }
 
     // Set all the remaining textures to NULL
-    size_t samplerCount = (shaderType == gl::ShaderType::Fragment)
-                              ? caps.maxShaderTextureImageUnits[gl::ShaderType::Fragment]
-                              : caps.maxShaderTextureImageUnits[gl::ShaderType::Vertex];
+    int samplerCount = (shaderType == gl::ShaderType::Fragment)
+                           ? caps.maxShaderTextureImageUnits[gl::ShaderType::Fragment]
+                           : caps.maxShaderTextureImageUnits[gl::ShaderType::Vertex];
 
     // TODO(jmadill): faster way?
-    for (size_t samplerIndex = samplerRange.high(); samplerIndex < samplerCount; samplerIndex++)
+    for (int samplerIndex = samplerRange.high(); samplerIndex < samplerCount; samplerIndex++)
     {
-        ANGLE_TRY(setTexture(context, shaderType, static_cast<int>(samplerIndex), nullptr));
+        ANGLE_TRY(setTexture(context, shaderType, samplerIndex, nullptr));
     }
 
     return angle::Result::Continue;

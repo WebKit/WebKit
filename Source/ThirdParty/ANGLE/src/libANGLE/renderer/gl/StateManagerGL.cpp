@@ -138,6 +138,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mRasterizerDiscardEnabled(false),
       mLineWidth(1.0f),
       mPrimitiveRestartEnabled(false),
+      mPrimitiveRestartIndex(0),
       mClearColor(0.0f, 0.0f, 0.0f, 0.0f),
       mClearDepth(1.0f),
       mClearStencil(0),
@@ -1438,16 +1439,32 @@ void StateManagerGL::setPrimitiveRestartEnabled(bool enabled)
     {
         mPrimitiveRestartEnabled = enabled;
 
+        GLenum cap = mFeatures.emulatePrimitiveRestartFixedIndex.enabled
+                         ? GL_PRIMITIVE_RESTART
+                         : GL_PRIMITIVE_RESTART_FIXED_INDEX;
+
         if (mPrimitiveRestartEnabled)
         {
-            mFunctions->enable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+            mFunctions->enable(cap);
         }
         else
         {
-            mFunctions->disable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+            mFunctions->disable(cap);
         }
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_PRIMITIVE_RESTART_ENABLED);
+    }
+}
+
+void StateManagerGL::setPrimitiveRestartIndex(GLuint index)
+{
+    if (mPrimitiveRestartIndex != index)
+    {
+        mPrimitiveRestartIndex = index;
+
+        mFunctions->primitiveRestartIndex(index);
+
+        // No dirty bit for this state, it is not exposed to the frontend.
     }
 }
 

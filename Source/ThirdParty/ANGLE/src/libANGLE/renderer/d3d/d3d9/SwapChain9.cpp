@@ -185,7 +185,7 @@ EGLint SwapChain9::reset(DisplayD3D *displayD3D,
     EGLNativeWindowType window = mNativeWindow->getNativeWindow();
     if (window && deviceType != D3DDEVTYPE_NULLREF)
     {
-        D3DPRESENT_PARAMETERS presentParameters  = {0};
+        D3DPRESENT_PARAMETERS presentParameters  = {};
         presentParameters.AutoDepthStencilFormat = depthBufferd3dFormatInfo.renderFormat;
         presentParameters.BackBufferCount        = 1;
         presentParameters.BackBufferFormat       = backBufferd3dFormatInfo.renderFormat;

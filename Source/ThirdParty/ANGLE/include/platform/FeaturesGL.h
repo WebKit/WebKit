@@ -55,7 +55,8 @@ struct FeaturesGL : FeatureSetBase
     // Work around this by rewriting the do-while to use another GLSL construct (block + while)
     Feature doWhileGLSLCausesGPUHang = {
         "do_while_glsl_causes_gpu_hang", FeatureCategory::OpenGLWorkarounds,
-        "Some GLSL constructs involving do-while loops cause GPU hangs", &members};
+        "Some GLSL constructs involving do-while loops cause GPU hangs", &members,
+        "http://crbug.com/644669"};
 
     // On Mac AMD GPU gl_VertexID in GLSL vertex shader doesn't include base vertex value,
     // Work aronud this by replace gl_VertexID with (gl_VertexID - angle_BaseVertex) when
@@ -104,7 +105,7 @@ struct FeaturesGL : FeatureSetBase
     // Emulate abs(i) with i * sign(i).
     Feature emulateAbsIntFunction = {"emulate_abs_int_function", FeatureCategory::OpenGLWorkarounds,
                                      "abs(i) where i is an integer returns unexpected result",
-                                     &members};
+                                     &members, "http://crbug.com/642227"};
 
     // On Intel Mac, calculation of loop conditions in for and while loop has bug.
     // Add "&& true" to the end of the condition expression to work around the bug.
@@ -212,7 +213,8 @@ struct FeaturesGL : FeatureSetBase
     // On some Android devices for loops used to initialize variables hit native GLSL compiler bugs.
     Feature dontUseLoopsToInitializeVariables = {
         "dont_use_loops_to_initialize_variables", FeatureCategory::OpenGLWorkarounds,
-        "For loops used to initialize variables hit native GLSL compiler bugs", &members};
+        "For loops used to initialize variables hit native GLSL compiler bugs", &members,
+        "http://crbug.com/809422"};
 
     // On some NVIDIA drivers gl_FragDepth is not clamped correctly when rendering to a floating
     // point depth buffer. Clamp it in the translated shader to fix this.
@@ -355,6 +357,35 @@ struct FeaturesGL : FeatureSetBase
         "Mac incorrectly executes both sides of && and || expressions when they should "
         "short-circuit.",
         &members, "http://anglebug.com/482"};
+
+    Feature emulatePrimitiveRestartFixedIndex = {
+        "emulate_primitive_restart_fixed_index", FeatureCategory::OpenGLWorkarounds,
+        "When GL_PRIMITIVE_RESTART_FIXED_INDEX is not available, emulate it with "
+        "GL_PRIMITIVE_RESTART and glPrimitiveRestartIndex.",
+        &members, "http://anglebug.com/3997"};
+
+    // Dynamic indexing of swizzled l-values doesn't work correctly on various platforms.
+    Feature removeDynamicIndexingOfSwizzledVector = {
+        "remove_dynamic_indexing_of_swizzled_vector", FeatureCategory::OpenGLWorkarounds,
+        "Dynamic indexing of swizzled l-values doesn't work correctly on various platforms.",
+        &members, "http://crbug.com/709351"};
+
+    // Intel Mac drivers does not treat texelFetchOffset() correctly.
+    Feature preAddTexelFetchOffsets = {
+        "pre_add_texel_fetch_offsets", FeatureCategory::OpenGLWorkarounds,
+        "Intel Mac drivers mistakenly consider the parameter position of nagative vaule as invalid "
+        "even if the sum of position and offset is in range, so we need to add workarounds by "
+        "rewriting texelFetchOffset(sampler, position, lod, offset) into texelFetch(sampler, "
+        "position + offset, lod).",
+        &members, "http://crbug.com/642605"};
+
+    // All Mac drivers do not handle struct scopes correctly. This workaround overwrites a struct
+    // name with a unique prefix
+    Feature regenerateStructNames = {
+        "regenerate_struct_names", FeatureCategory::OpenGLWorkarounds,
+        "All Mac drivers do not handle struct scopes correctly. This workaround overwrites a struct"
+        "name with a unique prefix.",
+        &members, "http://crbug.com/403957"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

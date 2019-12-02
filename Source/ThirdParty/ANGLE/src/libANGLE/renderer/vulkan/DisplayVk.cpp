@@ -98,21 +98,14 @@ SurfaceImpl *DisplayVk::createWindowSurface(const egl::SurfaceState &state,
                                             EGLNativeWindowType window,
                                             const egl::AttributeMap &attribs)
 {
-    EGLint width  = attribs.getAsInt(EGL_WIDTH, 0);
-    EGLint height = attribs.getAsInt(EGL_HEIGHT, 0);
-
-    return createWindowSurfaceVk(state, window, width, height);
+    return createWindowSurfaceVk(state, window);
 }
 
 SurfaceImpl *DisplayVk::createPbufferSurface(const egl::SurfaceState &state,
                                              const egl::AttributeMap &attribs)
 {
     ASSERT(mRenderer);
-
-    EGLint width  = attribs.getAsInt(EGL_WIDTH, 0);
-    EGLint height = attribs.getAsInt(EGL_HEIGHT, 0);
-
-    return new OffscreenSurfaceVk(state, width, height);
+    return new OffscreenSurfaceVk(state);
 }
 
 SurfaceImpl *DisplayVk::createPbufferFromClientBuffer(const egl::SurfaceState &state,
@@ -196,8 +189,14 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->glRenderbufferImage   = true;
     outExtensions->imageNativeBuffer =
         getRenderer()->getFeatures().supportsAndroidHardwareBuffer.enabled;
+    outExtensions->surfacelessContext = true;
 
     outExtensions->noConfigContext = true;
+
+#if defined(ANGLE_PLATFORM_GGP)
+    outExtensions->ggpStreamDescriptor = true;
+    outExtensions->swapWithFrameToken  = true;
+#endif  // defined(ANGLE_PLATFORM_GGP)
 }
 
 void DisplayVk::generateCaps(egl::Caps *outCaps) const

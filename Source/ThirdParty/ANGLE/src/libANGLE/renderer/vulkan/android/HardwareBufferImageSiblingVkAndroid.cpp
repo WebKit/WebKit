@@ -99,7 +99,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                                                                         &bufferProperties));
 
     const vk::Format &vkFormat       = renderer->getFormat(internalFormat);
-    const angle::Format &imageFormat = vkFormat.imageFormat();
+    const angle::Format &imageFormat = vkFormat.actualImageFormat();
     bool isDepthOrStencilFormat      = imageFormat.depthBits > 0 || imageFormat.stencilBits > 0;
     const VkImageUsageFlags usage =
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |

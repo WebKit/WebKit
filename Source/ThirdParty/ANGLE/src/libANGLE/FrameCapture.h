@@ -162,6 +162,16 @@ class DataCounters final : angle::NonCopyable
     std::map<Counter, int> mData;
 };
 
+// Used by the CPP replay to filter out unnecessary code.
+using HasResourceTypeMap = angle::PackedEnumBitSet<ResourceIDType>;
+
+// A dictionary of sources indexed by shader type.
+using ProgramSources = gl::ShaderMap<std::string>;
+
+// Maps from IDs to sources.
+using ShaderSourceMap  = std::map<gl::ShaderProgramID, std::string>;
+using ProgramSourceMap = std::map<gl::ShaderProgramID, ProgramSources>;
+
 class FrameCapture final : angle::NonCopyable
 {
   public:
@@ -180,22 +190,28 @@ class FrameCapture final : angle::NonCopyable
 
     void reset();
     void maybeCaptureClientData(const gl::Context *context, const CallCapture &call);
-    void maybeUpdateResourceIDs(const gl::Context *context, const CallCapture &call);
-
-    template <typename IDType>
-    void captureUpdateResourceIDs(const gl::Context *context,
-                                  const CallCapture &call,
-                                  const ParamCapture &param);
-
-    std::vector<CallCapture> mCalls;
-    gl::AttribArray<int> mClientVertexArrayMap;
-    uint32_t mFrameIndex;
-    gl::AttribArray<size_t> mClientArraySizes;
-    size_t mReadBufferSize;
 
     static void ReplayCall(gl::Context *context,
                            ReplayContext *replayContext,
                            const CallCapture &call);
+
+    std::vector<CallCapture> mSetupCalls;
+    std::vector<CallCapture> mFrameCalls;
+    std::vector<CallCapture> mTearDownCalls;
+
+    bool mEnabled;
+    std::string mOutDirectory;
+    gl::AttribArray<int> mClientVertexArrayMap;
+    uint32_t mFrameIndex;
+    uint32_t mFrameStart;
+    uint32_t mFrameEnd;
+    gl::AttribArray<size_t> mClientArraySizes;
+    size_t mReadBufferSize;
+    HasResourceTypeMap mHasResourceType;
+
+    // Cache most recently compiled and linked sources.
+    ShaderSourceMap mCachedShaderSources;
+    ProgramSourceMap mCachedProgramSources;
 };
 
 template <typename CaptureFuncT, typename... ArgsT>
@@ -208,7 +224,7 @@ void CaptureCallToFrameCapture(CaptureFuncT captureFunc,
     if (!frameCapture->enabled())
         return;
 
-    CallCapture call = captureFunc(context, isCallValid, captureParams...);
+    CallCapture call = captureFunc(context->getState(), isCallValid, captureParams...);
     frameCapture->captureCall(context, std::move(call));
 }
 
@@ -237,6 +253,15 @@ std::ostream &operator<<(std::ostream &os, const ParamCapture &capture);
 // Pointer capture helpers.
 void CaptureMemory(const void *source, size_t size, ParamCapture *paramCapture);
 void CaptureString(const GLchar *str, ParamCapture *paramCapture);
+
+gl::Program *GetLinkedProgramForCapture(const gl::State &glState, gl::ShaderProgramID handle);
+
+// For GetIntegerv, GetFloatv, etc.
+void CaptureGetParameter(const gl::State &glState,
+                         GLenum pname,
+                         size_t typeSize,
+                         ParamCapture *paramCapture);
+
 void CaptureGenHandlesImpl(GLsizei n, GLuint *handles, ParamCapture *paramCapture);
 
 template <typename T>

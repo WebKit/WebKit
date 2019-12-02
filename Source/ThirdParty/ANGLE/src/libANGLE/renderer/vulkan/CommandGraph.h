@@ -717,7 +717,9 @@ ANGLE_INLINE bool CommandGraphResource::hasChildlessWritingNode() const
 // CommandGraph inlines.
 ANGLE_INLINE void CommandGraph::onResourceUse(const SharedResourceUse &resourceUse)
 {
-    ASSERT(!empty());
+    // Disabled the assert because of difficulties with ImageView references.
+    // TODO(jmadill): Clean up with graph redesign. http://anglebug.com/4029
+    // ASSERT(!empty());
     SharedResourceUse newUse;
     newUse.set(resourceUse);
     mResourceUses.emplace_back(std::move(newUse));

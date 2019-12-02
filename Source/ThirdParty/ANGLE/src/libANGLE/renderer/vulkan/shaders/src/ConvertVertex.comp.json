@@ -30,8 +30,7 @@
         "RGB10X2SintToFloat",
         "RGB10X2UintToFloat",
         "RGB10X2SnormToFloat",
-        "RGB10X2UnormToFloat",
-        "HalfFloatToHalfFloat"
+        "RGB10X2UnormToFloat"
     ]
 }
 

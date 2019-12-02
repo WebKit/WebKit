@@ -658,6 +658,34 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
+        case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
         case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
         {
             static constexpr Format info(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
@@ -725,6 +753,34 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_BC6H_UF16,
                                          GL_RGBA32F,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
                                          nullptr);
             return info;
         }
@@ -1190,6 +1246,34 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
         case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
         {
             static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,
@@ -1229,6 +1313,34 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_BC3_UNORM_SRGB,
                                          GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
                                          nullptr);
             return info;
         }

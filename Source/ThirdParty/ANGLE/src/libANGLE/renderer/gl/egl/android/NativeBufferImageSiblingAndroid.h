@@ -19,7 +19,7 @@ class NativeBufferImageSiblingAndroid : public ExternalImageSiblingEGL
 {
   public:
     NativeBufferImageSiblingAndroid(EGLClientBuffer buffer);
-    virtual ~NativeBufferImageSiblingAndroid();
+    ~NativeBufferImageSiblingAndroid() override;
 
     egl::Error initialize(const egl::Display *display) override;
 

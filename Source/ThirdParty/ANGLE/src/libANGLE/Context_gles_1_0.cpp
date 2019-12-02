@@ -25,7 +25,7 @@ angle::Mat4 FixedMatrixToMat4(const GLfixed *m)
 
     for (int i = 0; i < 16; i++)
     {
-        floatData[i] = gl::FixedToFloat(m[i]);
+        floatData[i] = gl::ConvertFixedToFloat(m[i]);
     }
 
     return matrixAsFloat;
@@ -43,7 +43,7 @@ void Context::alphaFunc(AlphaTestFunc func, GLfloat ref)
 
 void Context::alphaFuncx(AlphaTestFunc func, GLfixed ref)
 {
-    mState.gles1().setAlphaFunc(func, FixedToFloat(ref));
+    mState.gles1().setAlphaFunc(func, ConvertFixedToFloat(ref));
 }
 
 void Context::clearColorx(GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha)
@@ -70,10 +70,10 @@ void Context::clipPlanef(GLenum p, const GLfloat *eqn)
 void Context::clipPlanex(GLenum plane, const GLfixed *equation)
 {
     const GLfloat equationf[4] = {
-        FixedToFloat(equation[0]),
-        FixedToFloat(equation[1]),
-        FixedToFloat(equation[2]),
-        FixedToFloat(equation[3]),
+        ConvertFixedToFloat(equation[0]),
+        ConvertFixedToFloat(equation[1]),
+        ConvertFixedToFloat(equation[2]),
+        ConvertFixedToFloat(equation[3]),
     };
 
     mState.gles1().setClipPlane(plane - GL_CLIP_PLANE0, equationf);
@@ -93,8 +93,8 @@ void Context::color4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
 
 void Context::color4x(GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha)
 {
-    mState.gles1().setCurrentColor(
-        {FixedToFloat(red), FixedToFloat(green), FixedToFloat(blue), FixedToFloat(alpha)});
+    mState.gles1().setCurrentColor({ConvertFixedToFloat(red), ConvertFixedToFloat(green),
+                                    ConvertFixedToFloat(blue), ConvertFixedToFloat(alpha)});
 }
 
 void Context::colorPointer(GLint size, VertexAttribType type, GLsizei stride, const void *ptr)
@@ -136,7 +136,7 @@ void Context::fogx(GLenum pname, GLfixed param)
 {
     if (GetFogParameterCount(pname) == 1)
     {
-        GLfloat paramf = pname == GL_FOG_MODE ? ConvertToGLenum(param) : FixedToFloat(param);
+        GLfloat paramf = pname == GL_FOG_MODE ? ConvertToGLenum(param) : ConvertFixedToFloat(param);
         fogf(pname, paramf);
     }
     else
@@ -155,7 +155,7 @@ void Context::fogxv(GLenum pname, const GLfixed *params)
         for (int i = 0; i < paramCount; i++)
         {
             paramsf[i] =
-                pname == GL_FOG_MODE ? ConvertToGLenum(params[i]) : FixedToFloat(params[i]);
+                pname == GL_FOG_MODE ? ConvertToGLenum(params[i]) : ConvertFixedToFloat(params[i]);
         }
         fogfv(pname, paramsf);
     }
@@ -172,9 +172,9 @@ void Context::frustumf(GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GL
 
 void Context::frustumx(GLfixed l, GLfixed r, GLfixed b, GLfixed t, GLfixed n, GLfixed f)
 {
-    mState.gles1().multMatrix(angle::Mat4::Frustum(FixedToFloat(l), FixedToFloat(r),
-                                                   FixedToFloat(b), FixedToFloat(t),
-                                                   FixedToFloat(n), FixedToFloat(f)));
+    mState.gles1().multMatrix(angle::Mat4::Frustum(ConvertFixedToFloat(l), ConvertFixedToFloat(r),
+                                                   ConvertFixedToFloat(b), ConvertFixedToFloat(t),
+                                                   ConvertFixedToFloat(n), ConvertFixedToFloat(f)));
 }
 
 void Context::getClipPlanef(GLenum plane, GLfloat *equation)
@@ -190,7 +190,7 @@ void Context::getClipPlanex(GLenum plane, GLfixed *equation)
 
     for (int i = 0; i < 4; i++)
     {
-        equation[i] = FloatToFixed(equationf[i]);
+        equation[i] = ConvertFloatToFixed(equationf[i]);
     }
 }
 
@@ -211,7 +211,7 @@ void Context::getLightxv(GLenum light, LightParameter pname, GLfixed *params)
 
     for (unsigned int i = 0; i < GetLightParameterCount(pname); i++)
     {
-        params[i] = FloatToFixed(paramsf[i]);
+        params[i] = ConvertFloatToFixed(paramsf[i]);
     }
 }
 
@@ -227,7 +227,7 @@ void Context::getMaterialxv(GLenum face, MaterialParameter pname, GLfixed *param
 
     for (unsigned int i = 0; i < GetMaterialParameterCount(pname); i++)
     {
-        params[i] = FloatToFixed(paramsf[i]);
+        params[i] = ConvertFloatToFixed(paramsf[i]);
     }
 }
 
@@ -267,7 +267,7 @@ void Context::lightModelfv(GLenum pname, const GLfloat *params)
 
 void Context::lightModelx(GLenum pname, GLfixed param)
 {
-    lightModelf(pname, FixedToFloat(param));
+    lightModelf(pname, ConvertFixedToFloat(param));
 }
 
 void Context::lightModelxv(GLenum pname, const GLfixed *param)
@@ -276,7 +276,7 @@ void Context::lightModelxv(GLenum pname, const GLfixed *param)
 
     for (unsigned int i = 0; i < GetLightModelParameterCount(pname); i++)
     {
-        paramsf[i] = FixedToFloat(param[i]);
+        paramsf[i] = ConvertFixedToFloat(param[i]);
     }
 
     lightModelfv(pname, paramsf);
@@ -294,7 +294,7 @@ void Context::lightfv(GLenum light, LightParameter pname, const GLfloat *params)
 
 void Context::lightx(GLenum light, LightParameter pname, GLfixed param)
 {
-    lightf(light, pname, FixedToFloat(param));
+    lightf(light, pname, ConvertFixedToFloat(param));
 }
 
 void Context::lightxv(GLenum light, LightParameter pname, const GLfixed *params)
@@ -303,7 +303,7 @@ void Context::lightxv(GLenum light, LightParameter pname, const GLfixed *params)
 
     for (unsigned int i = 0; i < GetLightParameterCount(pname); i++)
     {
-        paramsf[i] = FixedToFloat(params[i]);
+        paramsf[i] = ConvertFixedToFloat(params[i]);
     }
 
     lightfv(light, pname, paramsf);
@@ -346,7 +346,7 @@ void Context::materialfv(GLenum face, MaterialParameter pname, const GLfloat *pa
 
 void Context::materialx(GLenum face, MaterialParameter pname, GLfixed param)
 {
-    materialf(face, pname, FixedToFloat(param));
+    materialf(face, pname, ConvertFixedToFloat(param));
 }
 
 void Context::materialxv(GLenum face, MaterialParameter pname, const GLfixed *param)
@@ -355,7 +355,7 @@ void Context::materialxv(GLenum face, MaterialParameter pname, const GLfixed *pa
 
     for (unsigned int i = 0; i < GetMaterialParameterCount(pname); i++)
     {
-        paramsf[i] = FixedToFloat(param[i]);
+        paramsf[i] = ConvertFixedToFloat(param[i]);
     }
 
     materialfv(face, pname, paramsf);
@@ -387,8 +387,8 @@ void Context::multiTexCoord4x(GLenum target, GLfixed s, GLfixed t, GLfixed r, GL
 {
     unsigned int unit = target - GL_TEXTURE0;
     ASSERT(target >= GL_TEXTURE0 && unit < getCaps().maxMultitextureUnits);
-    mState.gles1().setCurrentTextureCoords(
-        unit, {FixedToFloat(s), FixedToFloat(t), FixedToFloat(r), FixedToFloat(q)});
+    mState.gles1().setCurrentTextureCoords(unit, {ConvertFixedToFloat(s), ConvertFixedToFloat(t),
+                                                  ConvertFixedToFloat(r), ConvertFixedToFloat(q)});
 }
 
 void Context::normal3f(GLfloat nx, GLfloat ny, GLfloat nz)
@@ -398,7 +398,8 @@ void Context::normal3f(GLfloat nx, GLfloat ny, GLfloat nz)
 
 void Context::normal3x(GLfixed nx, GLfixed ny, GLfixed nz)
 {
-    mState.gles1().setCurrentNormal({FixedToFloat(nx), FixedToFloat(ny), FixedToFloat(nz)});
+    mState.gles1().setCurrentNormal(
+        {ConvertFixedToFloat(nx), ConvertFixedToFloat(ny), ConvertFixedToFloat(nz)});
 }
 
 void Context::normalPointer(VertexAttribType type, GLsizei stride, const void *ptr)
@@ -419,9 +420,9 @@ void Context::orthof(GLfloat left,
 
 void Context::orthox(GLfixed l, GLfixed r, GLfixed b, GLfixed t, GLfixed n, GLfixed f)
 {
-    mState.gles1().multMatrix(angle::Mat4::Ortho(FixedToFloat(l), FixedToFloat(r), FixedToFloat(b),
-                                                 FixedToFloat(t), FixedToFloat(n),
-                                                 FixedToFloat(f)));
+    mState.gles1().multMatrix(angle::Mat4::Ortho(ConvertFixedToFloat(l), ConvertFixedToFloat(r),
+                                                 ConvertFixedToFloat(b), ConvertFixedToFloat(t),
+                                                 ConvertFixedToFloat(n), ConvertFixedToFloat(f)));
 }
 
 void Context::pointParameterf(PointParameter pname, GLfloat param)
@@ -436,7 +437,7 @@ void Context::pointParameterfv(PointParameter pname, const GLfloat *params)
 
 void Context::pointParameterx(PointParameter pname, GLfixed param)
 {
-    GLfloat paramf = FixedToFloat(param);
+    GLfloat paramf = ConvertFixedToFloat(param);
     SetPointParameter(&mState.gles1(), pname, &paramf);
 }
 
@@ -445,7 +446,7 @@ void Context::pointParameterxv(PointParameter pname, const GLfixed *params)
     GLfloat paramsf[4] = {};
     for (unsigned int i = 0; i < GetPointParameterCount(pname); i++)
     {
-        paramsf[i] = FixedToFloat(params[i]);
+        paramsf[i] = ConvertFixedToFloat(params[i]);
     }
     SetPointParameter(&mState.gles1(), pname, paramsf);
 }
@@ -457,7 +458,7 @@ void Context::pointSize(GLfloat size)
 
 void Context::pointSizex(GLfixed size)
 {
-    SetPointSize(&mState.gles1(), FixedToFloat(size));
+    SetPointSize(&mState.gles1(), ConvertFixedToFloat(size));
 }
 
 void Context::polygonOffsetx(GLfixed factor, GLfixed units)
@@ -483,7 +484,8 @@ void Context::rotatef(float angle, float x, float y, float z)
 void Context::rotatex(GLfixed angle, GLfixed x, GLfixed y, GLfixed z)
 {
     mState.gles1().multMatrix(angle::Mat4::Rotate(
-        FixedToFloat(angle), angle::Vector3(FixedToFloat(x), FixedToFloat(y), FixedToFloat(z))));
+        ConvertFixedToFloat(angle),
+        angle::Vector3(ConvertFixedToFloat(x), ConvertFixedToFloat(y), ConvertFixedToFloat(z))));
 }
 
 void Context::sampleCoveragex(GLclampx value, GLboolean invert)
@@ -498,8 +500,8 @@ void Context::scalef(float x, float y, float z)
 
 void Context::scalex(GLfixed x, GLfixed y, GLfixed z)
 {
-    mState.gles1().multMatrix(
-        angle::Mat4::Scale(angle::Vector3(FixedToFloat(x), FixedToFloat(y), FixedToFloat(z))));
+    mState.gles1().multMatrix(angle::Mat4::Scale(
+        angle::Vector3(ConvertFixedToFloat(x), ConvertFixedToFloat(y), ConvertFixedToFloat(z))));
 }
 
 void Context::shadeModel(ShadingModel model)
@@ -568,8 +570,8 @@ void Context::translatef(float x, float y, float z)
 
 void Context::translatex(GLfixed x, GLfixed y, GLfixed z)
 {
-    mState.gles1().multMatrix(
-        angle::Mat4::Translate(angle::Vector3(FixedToFloat(x), FixedToFloat(y), FixedToFloat(z))));
+    mState.gles1().multMatrix(angle::Mat4::Translate(
+        angle::Vector3(ConvertFixedToFloat(x), ConvertFixedToFloat(y), ConvertFixedToFloat(z))));
 }
 
 void Context::vertexPointer(GLint size, VertexAttribType type, GLsizei stride, const void *ptr)
@@ -620,15 +622,16 @@ void Context::drawTexsv(const GLshort *coords)
 
 void Context::drawTexx(GLfixed x, GLfixed y, GLfixed z, GLfixed width, GLfixed height)
 {
-    mGLES1Renderer->drawTexture(this, &mState, FixedToFloat(x), FixedToFloat(y), FixedToFloat(z),
-                                FixedToFloat(width), FixedToFloat(height));
+    mGLES1Renderer->drawTexture(this, &mState, ConvertFixedToFloat(x), ConvertFixedToFloat(y),
+                                ConvertFixedToFloat(z), ConvertFixedToFloat(width),
+                                ConvertFixedToFloat(height));
 }
 
 void Context::drawTexxv(const GLfixed *coords)
 {
-    mGLES1Renderer->drawTexture(this, &mState, FixedToFloat(coords[0]), FixedToFloat(coords[1]),
-                                FixedToFloat(coords[2]), FixedToFloat(coords[3]),
-                                FixedToFloat(coords[4]));
+    mGLES1Renderer->drawTexture(this, &mState, ConvertFixedToFloat(coords[0]),
+                                ConvertFixedToFloat(coords[1]), ConvertFixedToFloat(coords[2]),
+                                ConvertFixedToFloat(coords[3]), ConvertFixedToFloat(coords[4]));
 }
 
 // GL_OES_matrix_palette

@@ -245,4 +245,14 @@ bool WindowSurfaceGLX::getWindowDimensions(Window window,
     return XGetGeometry(mDisplay, window, &root, &x, &y, width, height, &border, &depth) != 0;
 }
 
+egl::Error WindowSurfaceGLX::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+{
+    if (!mGLX.getSyncValuesOML(mGLXWindow, reinterpret_cast<int64_t *>(ust),
+                               reinterpret_cast<int64_t *>(msc), reinterpret_cast<int64_t *>(sbc)))
+    {
+        return egl::EglBadSurface() << "glXGetSyncValuesOML failed.";
+    }
+    return egl::NoError();
+}
+
 }  // namespace rx

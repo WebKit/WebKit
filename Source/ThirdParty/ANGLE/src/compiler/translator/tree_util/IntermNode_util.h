@@ -73,6 +73,23 @@ TIntermTyped *CreateBuiltInFunctionCallNode(const char *name,
                                             const TSymbolTable &symbolTable,
                                             int shaderVersion);
 
+inline void GetSwizzleIndex(TVector<int> *indexOut) {}
+
+template <typename T, typename... ArgsT>
+void GetSwizzleIndex(TVector<int> *indexOut, T arg, ArgsT... args)
+{
+    indexOut->push_back(arg);
+    GetSwizzleIndex(indexOut, args...);
+}
+
+template <typename... ArgsT>
+TIntermSwizzle *CreateSwizzle(TIntermTyped *reference, ArgsT... args)
+{
+    TVector<int> swizzleIndex;
+    GetSwizzleIndex(&swizzleIndex, args...);
+    return new TIntermSwizzle(reference, swizzleIndex);
+}
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_INTERMNODEUTIL_H_

@@ -25,12 +25,17 @@ constexpr VkBufferUsageFlags kVertexBufferUsageFlags =
     VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 constexpr VkBufferUsageFlags kIndexBufferUsageFlags =
     VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-constexpr size_t kVertexBufferAlignment = 4;
-constexpr size_t kIndexBufferAlignment  = 4;
+constexpr VkBufferUsageFlags kIndirectBufferUsageFlags =
+    VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+constexpr size_t kVertexBufferAlignment   = 4;
+constexpr size_t kIndexBufferAlignment    = 4;
+constexpr size_t kIndirectBufferAlignment = 4;
 
 constexpr VkBufferUsageFlags kStagingBufferFlags =
     VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 constexpr size_t kStagingBufferSize = 1024 * 16;
+
+using StagingBufferOffsetArray = std::array<VkDeviceSize, 2>;
 
 struct TextureUnit final
 {
@@ -424,13 +429,22 @@ class LineLoopHelper final : angle::NonCopyable
 
     angle::Result streamIndicesIndirect(ContextVk *contextVk,
                                         gl::DrawElementsType glIndexType,
-                                        vk::BufferHelper *indexBuffer,
-                                        vk::BufferHelper *indirectBuffer,
+                                        BufferHelper *indexBuffer,
+                                        BufferHelper *indirectBuffer,
                                         VkDeviceSize indirectBufferOffset,
-                                        vk::BufferHelper **indexBufferOut,
+                                        BufferHelper **indexBufferOut,
                                         VkDeviceSize *indexBufferOffsetOut,
-                                        vk::BufferHelper **indirectBufferOut,
+                                        BufferHelper **indirectBufferOut,
                                         VkDeviceSize *indirectBufferOffsetOut);
+
+    angle::Result streamArrayIndirect(ContextVk *contextVk,
+                                      size_t vertexCount,
+                                      BufferHelper *arrayIndirectBuffer,
+                                      VkDeviceSize arrayIndirectBufferOffset,
+                                      BufferHelper **indexBufferOut,
+                                      VkDeviceSize *indexBufferOffsetOut,
+                                      BufferHelper **indexIndirectBufferOut,
+                                      VkDeviceSize *indexIndirectBufferOffsetOut);
 
     void release(ContextVk *contextVk);
     void destroy(VkDevice device);
@@ -693,7 +707,7 @@ class ImageHelper final : public CommandGraphResource
                                      uint32_t baseMipLevel,
                                      uint32_t levelCount,
                                      uint32_t baseArrayLayer,
-                                     uint32_t layerCount);
+                                     uint32_t layerCount) const;
     angle::Result initImageView(Context *context,
                                 gl::TextureType textureType,
                                 VkImageAspectFlags aspectMask,
@@ -719,6 +733,8 @@ class ImageHelper final : public CommandGraphResource
     bool valid() const { return mImage.valid(); }
 
     VkImageAspectFlags getAspectFlags() const;
+    // True if image contains both depth & stencil aspects
+    bool isCombinedDepthStencilFormat() const;
     void destroy(VkDevice device);
 
     void init2DWeakReference(VkImage handle,
@@ -769,6 +785,19 @@ class ImageHelper final : public CommandGraphResource
     // Data staging
     void removeStagedUpdates(ContextVk *contextVk, const gl::ImageIndex &index);
 
+    angle::Result stageSubresourceUpdateImpl(ContextVk *contextVk,
+                                             const gl::ImageIndex &index,
+                                             const gl::Extents &glExtents,
+                                             const gl::Offset &offset,
+                                             const gl::InternalFormat &formatInfo,
+                                             const gl::PixelUnpackState &unpack,
+                                             GLenum type,
+                                             const uint8_t *pixels,
+                                             const Format &vkFormat,
+                                             const GLuint inputRowPitch,
+                                             const GLuint inputDepthPitch,
+                                             const GLuint inputSkipBytes);
+
     angle::Result stageSubresourceUpdate(ContextVk *contextVk,
                                          const gl::ImageIndex &index,
                                          const gl::Extents &glExtents,
@@ -791,10 +820,10 @@ class ImageHelper final : public CommandGraphResource
                                                    uint32_t mipLevel,
                                                    uint32_t baseArrayLayer,
                                                    uint32_t layerCount,
-                                                   const gl::Extents &glExtents,
-                                                   const gl::Offset &offset,
+                                                   const VkExtent3D &extent,
+                                                   const VkOffset3D &offset,
                                                    BufferHelper *stagingBuffer,
-                                                   VkDeviceSize stagingOffset);
+                                                   StagingBufferOffsetArray stagingOffsets);
 
     angle::Result stageSubresourceUpdateFromFramebuffer(const gl::Context *context,
                                                         const gl::ImageIndex &index,
@@ -827,7 +856,7 @@ class ImageHelper final : public CommandGraphResource
                                         size_t sizeInBytes,
                                         uint8_t **ptrOut,
                                         BufferHelper **bufferOut,
-                                        VkDeviceSize *offsetOut,
+                                        StagingBufferOffsetArray *offsetOut,
                                         bool *newBufferAllocatedOut);
 
     // Flushes staged updates to a range of levels and layers from start to (but not including) end.
@@ -869,6 +898,54 @@ class ImageHelper final : public CommandGraphResource
 
     uint32_t getBaseLevel();
     void setBaseAndMaxLevels(uint32_t baseLevel, uint32_t maxLevel);
+
+    angle::Result copyImageDataToBuffer(ContextVk *contextVk,
+                                        size_t sourceLevel,
+                                        uint32_t layerCount,
+                                        uint32_t baseLayer,
+                                        const gl::Box &sourceArea,
+                                        BufferHelper **bufferOut,
+                                        size_t *bufferSize,
+                                        StagingBufferOffsetArray *bufferOffsetsOut,
+                                        uint8_t **outDataPtr);
+
+    static angle::Result GetReadPixelsParams(ContextVk *contextVk,
+                                             const gl::PixelPackState &packState,
+                                             gl::Buffer *packBuffer,
+                                             GLenum format,
+                                             GLenum type,
+                                             const gl::Rectangle &area,
+                                             const gl::Rectangle &clippedArea,
+                                             PackPixelsParams *paramsOut,
+                                             GLuint *skipBytesOut);
+
+    angle::Result readPixelsForGetImage(ContextVk *contextVk,
+                                        const gl::PixelPackState &packState,
+                                        gl::Buffer *packBuffer,
+                                        uint32_t level,
+                                        uint32_t layer,
+                                        GLenum format,
+                                        GLenum type,
+                                        void *pixels);
+
+    angle::Result readPixels(ContextVk *contextVk,
+                             const gl::Rectangle &area,
+                             const PackPixelsParams &packPixelsParams,
+                             VkImageAspectFlagBits copyAspectFlags,
+                             uint32_t level,
+                             uint32_t layer,
+                             void *pixels,
+                             DynamicBuffer *stagingBuffer);
+
+    angle::Result CalculateBufferInfo(ContextVk *contextVk,
+                                      const gl::Extents &glExtents,
+                                      const gl::InternalFormat &formatInfo,
+                                      const gl::PixelUnpackState &unpack,
+                                      GLenum type,
+                                      bool is3D,
+                                      GLuint *inputRowPitch,
+                                      GLuint *inputDepthPitch,
+                                      GLuint *inputSkipBytes);
 
   private:
     void forceChangeLayoutAndQueue(VkImageAspectFlags aspectMask,
@@ -970,6 +1047,94 @@ class ImageHelper final : public CommandGraphResource
     // Staging buffer
     DynamicBuffer mStagingBuffer;
     std::vector<SubresourceUpdate> mSubresourceUpdates;
+};
+
+// A vector of image views, such as one per level or one per layer.
+using ImageViewVector = std::vector<ImageView>;
+
+// A vector of vector of image views.  Primary index is layer, secondary index is level.
+using LayerLevelImageViewVector = std::vector<ImageViewVector>;
+
+class ImageViewHelper : angle::NonCopyable
+{
+  public:
+    ImageViewHelper();
+    ImageViewHelper(ImageViewHelper &&other);
+    ~ImageViewHelper();
+
+    void release(RendererVk *renderer);
+    void destroy(VkDevice device);
+
+    const ImageView &getReadImageView() const { return mReadImageView; }
+    const ImageView &getFetchImageView() const { return mFetchImageView; }
+    const ImageView &getStencilReadImageView() const { return mStencilReadImageView; }
+
+    // Used when initialized RenderTargets.
+    bool hasStencilReadImageView() const { return mStencilReadImageView.valid(); }
+
+    bool hasFetchImageView() const { return mFetchImageView.valid(); }
+
+    // Store reference to usage in graph.
+    void onGraphAccess(CommandGraph *commandGraph) const { commandGraph->onResourceUse(mUse); }
+
+    // Creates views with multiple layers and levels.
+    angle::Result initReadViews(ContextVk *contextVk,
+                                gl::TextureType viewType,
+                                const ImageHelper &image,
+                                const Format &format,
+                                const gl::SwizzleState &swizzleState,
+                                uint32_t baseLevel,
+                                uint32_t levelCount,
+                                uint32_t baseLayer,
+                                uint32_t layerCount);
+
+    // Creates a view with all layers of the level.
+    angle::Result getLevelDrawImageView(ContextVk *contextVk,
+                                        gl::TextureType viewType,
+                                        const ImageHelper &image,
+                                        uint32_t level,
+                                        uint32_t layer,
+                                        const ImageView **imageViewOut);
+
+    // Creates a view with a single layer of the level.
+    angle::Result getLevelLayerDrawImageView(ContextVk *contextVk,
+                                             const ImageHelper &image,
+                                             uint32_t level,
+                                             uint32_t layer,
+                                             const ImageView **imageViewOut);
+
+  private:
+    // Lifetime.
+    SharedResourceUse mUse;
+
+    // Read views.
+    ImageView mReadImageView;
+    ImageView mFetchImageView;
+    ImageView mStencilReadImageView;
+
+    // Draw views.
+    ImageViewVector mLevelDrawImageViews;
+    LayerLevelImageViewVector mLayerLevelDrawImageViews;
+};
+
+// The SamplerHelper allows a Sampler to be coupled with a resource lifetime.
+class SamplerHelper final : angle::NonCopyable
+{
+  public:
+    SamplerHelper();
+    ~SamplerHelper();
+
+    void release(RendererVk *renderer);
+
+    bool valid() const { return mSampler.valid(); }
+    Sampler &get() { return mSampler; }
+    const Sampler &get() const { return mSampler; }
+
+    void onGraphAccess(CommandGraph *commandGraph) { commandGraph->onResourceUse(mUse); }
+
+  private:
+    SharedResourceUse mUse;
+    Sampler mSampler;
 };
 
 class FramebufferHelper : public CommandGraphResource

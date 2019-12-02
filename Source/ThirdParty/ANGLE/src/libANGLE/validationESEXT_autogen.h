@@ -34,20 +34,20 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(Context *context,
                                                               GLuint baseInstance);
 bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(Context *context,
                                                        PrimitiveMode modePacked,
-                                                       GLsizei drawcount,
+                                                       const GLint *firsts,
                                                        const GLsizei *counts,
                                                        const GLsizei *instanceCounts,
-                                                       const GLint *firsts,
-                                                       const GLuint *baseInstances);
+                                                       const GLuint *baseInstances,
+                                                       GLsizei drawcount);
 bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(Context *context,
                                                                    PrimitiveMode modePacked,
-                                                                   DrawElementsType typePacked,
-                                                                   GLsizei drawcount,
                                                                    const GLsizei *counts,
-                                                                   const GLsizei *instanceCounts,
+                                                                   DrawElementsType typePacked,
                                                                    const GLvoid *const *indices,
+                                                                   const GLsizei *instanceCounts,
                                                                    const GLint *baseVertices,
-                                                                   const GLuint *baseInstances);
+                                                                   const GLuint *baseInstances,
+                                                                   GLsizei drawcount);
 
 // GL_ANGLE_copy_texture_3d
 bool ValidateCopyTexture3DANGLE(Context *context,
@@ -101,6 +101,19 @@ bool ValidateRenderbufferStorageMultisampleANGLE(Context *context,
                                                  GLsizei width,
                                                  GLsizei height);
 
+// GL_ANGLE_get_image
+bool ValidateGetTexImageANGLE(Context *context,
+                              TextureTarget targetPacked,
+                              GLint level,
+                              GLenum format,
+                              GLenum type,
+                              void *pixels);
+bool ValidateGetRenderbufferImageANGLE(Context *context,
+                                       GLenum target,
+                                       GLenum format,
+                                       GLenum type,
+                                       void *pixels);
+
 // GL_ANGLE_instanced_arrays
 bool ValidateDrawArraysInstancedANGLE(Context *context,
                                       PrimitiveMode modePacked,
@@ -148,6 +161,7 @@ bool ValidateProvokingVertexANGLE(Context *context, ProvokingVertexConvention mo
 
 // GL_ANGLE_request_extension
 bool ValidateRequestExtensionANGLE(Context *context, const GLchar *name);
+bool ValidateDisableExtensionANGLE(Context *context, const GLchar *name);
 
 // GL_ANGLE_robust_client_memory
 bool ValidateGetBooleanvRobustANGLE(Context *context,
@@ -1004,6 +1018,8 @@ bool ValidateImportSemaphoreFdEXT(Context *context,
                                   SemaphoreID semaphorePacked,
                                   HandleType handleTypePacked,
                                   GLint fd);
+
+// GL_EXT_texture_filter_anisotropic
 
 // GL_EXT_texture_storage
 bool ValidateTexStorage1DEXT(Context *context,

@@ -513,6 +513,13 @@
                     "precision":"High",
                     "qualifier":"FragDepth"
                 }
+            },
+            "gl_HelperInvocation":{
+                "essl_level":"ESSL3_1_BUILTINS",
+                "type":{
+                    "basic":"Bool",
+                    "qualifier":"HelperInvocation"
+                }
             }
         },
         "subgroups":{

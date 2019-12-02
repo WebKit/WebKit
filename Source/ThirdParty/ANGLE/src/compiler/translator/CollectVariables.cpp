@@ -81,7 +81,7 @@ void MarkActive(ShaderVariable *variable)
             }
         }
         variable->staticUse = true;
-        variable->active = true;
+        variable->active    = true;
     }
 }
 
@@ -168,6 +168,13 @@ class CollectVariablesTraverser : public TIntermTraverser
     // Shader uniforms
     bool mDepthRangeAdded;
 
+    // Compute Shader builtins
+    bool mNumWorkGroupsAdded;
+    bool mWorkGroupIDAdded;
+    bool mLocalInvocationIDAdded;
+    bool mGlobalInvocationIDAdded;
+    bool mLocalInvocationIndexAdded;
+
     // Vertex Shader builtins
     bool mInstanceIDAdded;
     bool mVertexIDAdded;
@@ -182,6 +189,7 @@ class CollectVariablesTraverser : public TIntermTraverser
     // Fragment Shader builtins
     bool mPointCoordAdded;
     bool mFrontFacingAdded;
+    bool mHelperInvocationAdded;
     bool mFragCoordAdded;
     bool mLastFragDataAdded;
     bool mFragColorAdded;
@@ -229,6 +237,11 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mShaderStorageBlocks(shaderStorageBlocks),
       mInBlocks(inBlocks),
       mDepthRangeAdded(false),
+      mNumWorkGroupsAdded(false),
+      mWorkGroupIDAdded(false),
+      mLocalInvocationIDAdded(false),
+      mGlobalInvocationIDAdded(false),
+      mLocalInvocationIndexAdded(false),
       mInstanceIDAdded(false),
       mVertexIDAdded(false),
       mPointSizeAdded(false),
@@ -238,6 +251,7 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mPositionAdded(false),
       mPointCoordAdded(false),
       mFrontFacingAdded(false),
+      mHelperInvocationAdded(false),
       mFragCoordAdded(false),
       mLastFragDataAdded(false),
       mFragColorAdded(false),
@@ -469,8 +483,27 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqFrontFacing:
                 recordBuiltInVaryingUsed(symbol->variable(), &mFrontFacingAdded, mInputVaryings);
                 return;
+            case EvqHelperInvocation:
+                recordBuiltInVaryingUsed(symbol->variable(), &mHelperInvocationAdded,
+                                         mInputVaryings);
+                return;
             case EvqPointCoord:
                 recordBuiltInVaryingUsed(symbol->variable(), &mPointCoordAdded, mInputVaryings);
+                return;
+            case EvqNumWorkGroups:
+                recordBuiltInAttributeUsed(symbol->variable(), &mNumWorkGroupsAdded);
+                return;
+            case EvqWorkGroupID:
+                recordBuiltInAttributeUsed(symbol->variable(), &mWorkGroupIDAdded);
+                return;
+            case EvqLocalInvocationID:
+                recordBuiltInAttributeUsed(symbol->variable(), &mLocalInvocationIDAdded);
+                return;
+            case EvqGlobalInvocationID:
+                recordBuiltInAttributeUsed(symbol->variable(), &mGlobalInvocationIDAdded);
+                return;
+            case EvqLocalInvocationIndex:
+                recordBuiltInAttributeUsed(symbol->variable(), &mLocalInvocationIndexAdded);
                 return;
             case EvqInstanceID:
                 // Whenever the SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW option is set,

@@ -23,6 +23,8 @@ namespace rx
 namespace
 {
 // gen7
+const uint32_t IvyBridge[] = {0x0152, 0x0156, 0x015A, 0x0162, 0x0166, 0x016A};
+
 const uint32_t Haswell[] = {
     0x0402, 0x0406, 0x040A, 0x040B, 0x040E, 0x0C02, 0x0C06, 0x0C0A, 0x0C0B, 0x0C0E,
     0x0A02, 0x0A06, 0x0A0A, 0x0A0B, 0x0A0E, 0x0D02, 0x0D06, 0x0D0A, 0x0D0B, 0x0D0E,  // hsw_gt1
@@ -88,6 +90,11 @@ bool IntelDriverVersion::operator<(const IntelDriverVersion &version)
 bool IntelDriverVersion::operator>=(const IntelDriverVersion &version)
 {
     return !(*this < version);
+}
+
+bool IsIvyBridge(uint32_t DeviceId)
+{
+    return std::find(std::begin(IvyBridge), std::end(IvyBridge), DeviceId) != std::end(IvyBridge);
 }
 
 bool IsHaswell(uint32_t DeviceId)

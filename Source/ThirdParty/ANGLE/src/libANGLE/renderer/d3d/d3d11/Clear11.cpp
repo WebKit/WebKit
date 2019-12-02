@@ -640,7 +640,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
     // glClearBuffer* calls only clear a single renderbuffer at a time which is verified to
     // be a compatible clear type.
 
-    ASSERT(numRtvs <= mRenderer->getNativeCaps().maxDrawBuffers);
+    ASSERT(numRtvs <= static_cast<uint32_t>(mRenderer->getNativeCaps().maxDrawBuffers));
 
     // Setup BlendStateKey parameters
     mBlendStateKey.blendState.colorMaskRed   = clearParams.colorMaskRed;

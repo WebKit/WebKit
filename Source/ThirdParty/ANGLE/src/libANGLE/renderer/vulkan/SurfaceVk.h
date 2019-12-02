@@ -40,7 +40,7 @@ class SurfaceVk : public SurfaceImpl
 class OffscreenSurfaceVk : public SurfaceVk
 {
   public:
-    OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, EGLint width, EGLint height);
+    OffscreenSurfaceVk(const egl::SurfaceState &surfaceState);
     ~OffscreenSurfaceVk() override;
 
     egl::Error initialize(const egl::Display *display) override;
@@ -88,7 +88,7 @@ class OffscreenSurfaceVk : public SurfaceVk
         void destroy(const egl::Display *display);
 
         vk::ImageHelper image;
-        vk::ImageView imageView;
+        vk::ImageViewHelper imageViews;
     };
 
     angle::Result initializeImpl(DisplayVk *displayVk);
@@ -162,7 +162,7 @@ struct SwapchainImage : angle::NonCopyable
     ~SwapchainImage();
 
     vk::ImageHelper image;
-    vk::ImageView imageView;
+    vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
 
     // A circular array of semaphores used for presenting this image.
@@ -175,10 +175,7 @@ struct SwapchainImage : angle::NonCopyable
 class WindowSurfaceVk : public SurfaceVk
 {
   public:
-    WindowSurfaceVk(const egl::SurfaceState &surfaceState,
-                    EGLNativeWindowType window,
-                    EGLint width,
-                    EGLint height);
+    WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
     ~WindowSurfaceVk() override;
 
     void destroy(const egl::Display *display) override;
@@ -211,16 +208,21 @@ class WindowSurfaceVk : public SurfaceVk
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
 
-    angle::Result getCurrentFramebuffer(vk::Context *context,
+    angle::Result getCurrentFramebuffer(ContextVk *context,
                                         const vk::RenderPass &compatibleRenderPass,
                                         vk::Framebuffer **framebufferOut);
 
     vk::Semaphore getAcquireImageSemaphore();
 
   protected:
+    angle::Result swapImpl(const gl::Context *context,
+                           EGLint *rects,
+                           EGLint n_rects,
+                           const void *pNextChain);
+
     EGLNativeWindowType mNativeWindowType;
     VkSurfaceKHR mSurface;
-    VkInstance mInstance;
+    VkSurfaceCapabilitiesKHR mSurfaceCaps;
 
   private:
     virtual angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)      = 0;
@@ -243,17 +245,15 @@ class WindowSurfaceVk : public SurfaceVk
     angle::Result present(ContextVk *contextVk,
                           EGLint *rects,
                           EGLint n_rects,
+                          const void *pNextChain,
                           bool *presentOutOfDate);
 
     angle::Result updateAndDrawOverlay(ContextVk *contextVk, impl::SwapchainImage *image) const;
-
-    angle::Result swapImpl(const gl::Context *context, EGLint *rects, EGLint n_rects);
 
     angle::Result newPresentSemaphore(vk::Context *context, vk::Semaphore *semaphoreOut);
 
     bool isMultiSampled() const;
 
-    VkSurfaceCapabilitiesKHR mSurfaceCaps;
     std::vector<VkPresentModeKHR> mPresentModes;
 
     VkSwapchainKHR mSwapchain;
@@ -286,11 +286,11 @@ class WindowSurfaceVk : public SurfaceVk
 
     // Depth/stencil image.  Possibly multisampled.
     vk::ImageHelper mDepthStencilImage;
-    vk::ImageView mDepthStencilImageView;
+    vk::ImageViewHelper mDepthStencilImageViews;
 
     // Multisample color image, view and framebuffer, if multisampling enabled.
     vk::ImageHelper mColorImageMS;
-    vk::ImageView mColorImageViewMS;
+    vk::ImageViewHelper mColorImageMSViews;
     vk::Framebuffer mFramebufferMS;
 };
 

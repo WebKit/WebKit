@@ -164,7 +164,6 @@ bool ValidateGetCompressedTextureSubImage(Context *context,
                                           GLsizei depth,
                                           GLsizei bufSize,
                                           void *pixels);
-bool ValidateGetGraphicsResetStatus(Context *context);
 bool ValidateGetNamedBufferParameteri64v(Context *context,
                                          BufferID bufferPacked,
                                          GLenum pname,
@@ -345,21 +344,6 @@ bool ValidateGetnUniformdv(Context *context,
                            GLint location,
                            GLsizei bufSize,
                            GLdouble *params);
-bool ValidateGetnUniformfv(Context *context,
-                           ShaderProgramID programPacked,
-                           GLint location,
-                           GLsizei bufSize,
-                           GLfloat *params);
-bool ValidateGetnUniformiv(Context *context,
-                           ShaderProgramID programPacked,
-                           GLint location,
-                           GLsizei bufSize,
-                           GLint *params);
-bool ValidateGetnUniformuiv(Context *context,
-                            ShaderProgramID programPacked,
-                            GLint location,
-                            GLsizei bufSize,
-                            GLuint *params);
 bool ValidateInvalidateNamedFramebufferData(Context *context,
                                             FramebufferID framebufferPacked,
                                             GLsizei numAttachments,
@@ -434,15 +418,6 @@ bool ValidateNamedRenderbufferStorageMultisample(Context *context,
                                                  GLenum internalformat,
                                                  GLsizei width,
                                                  GLsizei height);
-bool ValidateReadnPixels(Context *context,
-                         GLint x,
-                         GLint y,
-                         GLsizei width,
-                         GLsizei height,
-                         GLenum format,
-                         GLenum type,
-                         GLsizei bufSize,
-                         void *data);
 bool ValidateTextureBarrier(Context *context);
 bool ValidateTextureBuffer(Context *context,
                            TextureID texturePacked,

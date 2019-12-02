@@ -26,10 +26,10 @@ To update the tables please modify the format map JSON and then run
 [`scripts/run_code_generation.py`][RunCodeGeneration].
 
 The [`vk::Format`](../vk_format_utils.h) class describes the information ANGLE needs for a particular
-`VkFormat`. The 'ANGLE' format ID is a reference to the front-end format. The 'Image' or 'Buffer'
-format are the native Vulkan formats that implement a particular front-end format for `VkImages` and
-`VkBuffers`. For the above example of `R8_UNORM` overriding `L8_UNORM`, `L8_UNORM` is the ANGLE
-format and `R8_UNORM` is the Image format.
+`VkFormat`. The 'intended' format ID is a reference to the front-end format. The 'actual Image' and
+'actual Buffer' formats are the native Vulkan formats that implement a particular front-end format
+for `VkImages` and `VkBuffers`. For the above example of `R8_UNORM` overriding `L8_UNORM`,
+`L8_UNORM` is the intended format and `R8_UNORM` is the actual Image format.
 
 For more information please see the source files.
 

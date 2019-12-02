@@ -35,8 +35,6 @@ applications map from one state to many this will slow down the transition time.
 improved in the future using a faster look up. For instance we could keep a sorted transition table
 or use a small hash map for transitions.
 
-[VkDevice]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkDevice.html
-[VkQueue]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkQueue.html
 [VkPipeline]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkPipeline.html
 [VkPipelineCache]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkPipelineCache.html
 [GraphicsPipelineCache]: https://chromium.googlesource.com/angle/angle/+/225f08bf85a368f905362cdd1366e4795680452c/src/libANGLE/renderer/vulkan/vk_cache_utils.h#498

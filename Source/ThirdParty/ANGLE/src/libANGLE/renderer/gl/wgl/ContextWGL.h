@@ -25,7 +25,7 @@ class ContextWGL : public ContextGL
     HGLRC getContext() const;
 
   private:
-    std::shared_ptr<RendererWGL> mRenderer;
+    std::shared_ptr<RendererWGL> mRendererWGL;
 };
 }  // namespace rx
 

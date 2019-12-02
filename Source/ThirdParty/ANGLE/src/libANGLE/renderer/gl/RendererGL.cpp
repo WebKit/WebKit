@@ -219,7 +219,10 @@ RendererGL::RendererGL(std::unique_ptr<FunctionsGL> functions,
       mNativeParallelCompileEnabled(false)
 {
     ASSERT(mFunctions);
-    nativegl_gl::InitializeFeatures(mFunctions.get(), &mFeatures);
+    if (!display->getState().featuresAllDisabled)
+    {
+        nativegl_gl::InitializeFeatures(mFunctions.get(), &mFeatures);
+    }
     OverrideFeaturesWithDisplayState(&mFeatures, display->getState());
     mStateManager =
         new StateManagerGL(mFunctions.get(), getNativeCaps(), getNativeExtensions(), mFeatures);

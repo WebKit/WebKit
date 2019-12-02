@@ -28,26 +28,6 @@ bool ValidateClampColor(Context *context, GLenum target, GLenum clamp)
     return true;
 }
 
-bool ValidateColorMaski(Context *context,
-                        GLuint index,
-                        GLboolean r,
-                        GLboolean g,
-                        GLboolean b,
-                        GLboolean a)
-{
-    return true;
-}
-
-bool ValidateDisablei(Context *context, GLenum target, GLuint index)
-{
-    return true;
-}
-
-bool ValidateEnablei(Context *context, GLenum target, GLuint index)
-{
-    return true;
-}
-
 bool ValidateEndConditionalRender(Context *context)
 {
     return true;
@@ -70,43 +50,6 @@ bool ValidateFramebufferTexture3D(Context *context,
                                   TextureID texture,
                                   GLint level,
                                   GLint zoffset)
-{
-    return true;
-}
-
-bool ValidateGetTexParameterIiv(Context *context,
-                                TextureType targetPacked,
-                                GLenum pname,
-                                GLint *params)
-{
-    return true;
-}
-
-bool ValidateGetTexParameterIuiv(Context *context,
-                                 TextureType targetPacked,
-                                 GLenum pname,
-                                 GLuint *params)
-{
-    return true;
-}
-
-bool ValidateIsEnabledi(Context *context, GLenum target, GLuint index)
-{
-    return true;
-}
-
-bool ValidateTexParameterIiv(Context *context,
-                             TextureType targetPacked,
-                             GLenum pname,
-                             const GLint *params)
-{
-    return true;
-}
-
-bool ValidateTexParameterIuiv(Context *context,
-                              TextureType targetPacked,
-                              GLenum pname,
-                              const GLuint *params)
 {
     return true;
 }

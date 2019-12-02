@@ -253,7 +253,7 @@ static U32 XXH_readBE32(const void* ptr)
 /* *************************************
 *  Macros
 ***************************************/
-#define XXH_STATIC_ASSERT(c)  { enum { XXH_sa = 1/(int)(!!(c)) }; }  /* use after variable declarations */
+#define XXH_STATIC_ASSERT(c)  do { enum { XXH_sa = 1/(int)(!!(c)) }; } while(0) /* use after variable declarations */
 XXH_PUBLIC_API unsigned XXH_versionNumber (void) { return XXH_VERSION_NUMBER; }
 
 
@@ -296,12 +296,12 @@ XXH32_finalize(U32 h32, const void* ptr, size_t len,
 
 #define PROCESS1               \
     h32 += (*p++) * PRIME32_5; \
-    h32 = XXH_rotl32(h32, 11) * PRIME32_1 ;
+    h32 = XXH_rotl32(h32, 11) * PRIME32_1
 
 #define PROCESS4                         \
     h32 += XXH_get32bits(p) * PRIME32_3; \
     p+=4;                                \
-    h32  = XXH_rotl32(h32, 17) * PRIME32_4 ;
+    h32  = XXH_rotl32(h32, 17) * PRIME32_4
 
     switch(len&15)  /* or switch(bEnd - p) */
     {
@@ -706,19 +706,19 @@ XXH64_finalize(U64 h64, const void* ptr, size_t len,
 
 #define PROCESS1_64            \
     h64 ^= (*p++) * PRIME64_5; \
-    h64 = XXH_rotl64(h64, 11) * PRIME64_1;
+    h64 = XXH_rotl64(h64, 11) * PRIME64_1
 
 #define PROCESS4_64          \
     h64 ^= (U64)(XXH_get32bits(p)) * PRIME64_1; \
     p+=4;                    \
-    h64 = XXH_rotl64(h64, 23) * PRIME64_2 + PRIME64_3;
+    h64 = XXH_rotl64(h64, 23) * PRIME64_2 + PRIME64_3
 
-#define PROCESS8_64 {        \
+#define PROCESS8_64 do {        \
     U64 const k1 = XXH64_round(0, XXH_get64bits(p)); \
     p+=8;                    \
     h64 ^= k1;               \
     h64  = XXH_rotl64(h64,27) * PRIME64_1 + PRIME64_4; \
-}
+} while (0)
 
     switch(len&31) {
       case 24: PROCESS8_64;

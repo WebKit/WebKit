@@ -41,7 +41,7 @@
 //     * IsBigEndian
 //   - Conversion:
 //     * SintToSint: covers byte, short and int types (distinguished by Bs and Bd).
-//     * UintToUint: covers ubyte, ushort and uint types (distinguished by Bs and Bd).
+//     * UintToUint: covers ubyte, ushort, uint and half float types (distinguished by Bs and Bd).
 //     * SintToFloat: Same types as SintToSint for source (including scaled).  Converts to float.
 //     * UintToFloat: Same types as UintToUint for source (including uscaled).  Converst to float.
 //     * SnormToFloat: Similar to IntToFloat, but normalized.
@@ -66,7 +66,6 @@
 //     * RGB10X2UintToFloat: Same types as RGB10X2UintToUint for source (including uscaled).
 //                           Converts to float.
 //     * RGB10X2SnormToFloat: Similar to IntToFloat, but normalized and only for RGB10X2.
-//     * HalfFloatToHalfFloat: covers half float type only.
 //
 // SintToSint, UintToUint and FloatToFloat correspond to CopyNativeVertexData() and
 // Copy8SintTo16SintVertexData() in renderer/copyvertex.inc, FixedToFloat corresponds to
@@ -77,7 +76,7 @@
 // RGB10A2SintToFloat, RGB10A2UintToFloat, RGB10A2SnormToFloat, and RGB10X2UnormToFloat correspond
 // to CopyW2XYZ10ToXYZW32FVertexData, and RGB10X2SintToFloat, RGB10UintToFloat,
 // RGB10X2SnormToFloat, and RGB10X2UnormToFloat correspond to CopyXYZ10ToXYZW32FVertexData with
-// the proper options. HalfFloatToHalfFloat correspond to CopyNativeVertexData().
+// the proper options.
 
 #version 450 core
 
@@ -86,7 +85,7 @@
     RGB10X2SintToFloat
 #define SrcType int
 #elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || \
-    RGB10A2UintToFloat || RGB10X2UintToFloat || HalfFloatToHalfFloat
+    RGB10A2UintToFloat || RGB10X2UintToFloat
 #define SrcType uint
 #elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || A2BGR10SnormToFloat || \
     RGB10A2SnormToFloat || RGB10A2UnormToFloat || RGB10X2SnormToFloat || RGB10X2UnormToFloat
@@ -99,7 +98,7 @@
 #if SintToSint || A2BGR10SintToSint
 #define DestType int
 #define IsDestFloat 0
-#elif UintToUint || A2BGR10UintToUint || HalfFloatToHalfFloat
+#elif UintToUint || A2BGR10UintToUint
 #define DestType uint
 #define IsDestFloat 0
 #elif SintToFloat || UintToFloat || SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || \
@@ -275,7 +274,7 @@ SrcType loadSourceComponent(uint cd)
     }
     SrcType value = SrcType(valueAsUint);
 #elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat \
-    || RGB10X2UintToFloat || HalfFloatToHalfFloat
+    || RGB10X2UintToFloat
     SrcType value = valueAsUint;
 #elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat || RGB10X2SnormToFloat
     if (valueBits < 32)
@@ -315,7 +314,7 @@ uint makeDestinationComponent(uint cd, DestType value)
     // Return valueAsUint, shifted to the right spot.  Multiple calls to this function should be |ed
     // and eventually written to the destination.
 
-#if SintToSint || UintToUint || A2BGR10SintToSint || A2BGR10UintToUint || HalfFloatToHalfFloat
+#if SintToSint || UintToUint || A2BGR10SintToSint || A2BGR10UintToUint
     uint vertex = cd / Nd;
     uint component = cd % Nd;
 

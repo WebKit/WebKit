@@ -370,21 +370,6 @@ void Context::clampColor(GLenum target, GLenum clamp)
     UNIMPLEMENTED();
 }
 
-void Context::colorMaski(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::disablei(GLenum target, GLuint index)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::enablei(GLenum target, GLuint index)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::endConditionalRender()
 {
     UNIMPLEMENTED();
@@ -397,12 +382,6 @@ void Context::framebufferTexture1D(GLenum target,
                                    GLint level)
 {
     UNIMPLEMENTED();
-}
-
-GLboolean Context::isEnabledi(GLenum target, GLuint index)
-{
-    UNIMPLEMENTED();
-    return false;
 }
 
 void Context::vertexAttribI1i(GLuint index, GLint x)
@@ -495,11 +474,6 @@ void Context::getActiveUniformName(ShaderProgramID program,
 }
 
 void Context::primitiveRestartIndex(GLuint index)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::texBuffer(GLenum target, GLenum internalformat, BufferID buffer)
 {
     UNIMPLEMENTED();
 }
@@ -1111,11 +1085,6 @@ void Context::getPolygonStipple(GLubyte *mask)
 }
 
 void Context::getTexGendv(GLenum coord, GLenum pname, GLdouble *params)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::getTexImage(GLenum target, GLint level, GLenum format, GLenum type, void *pixels)
 {
     UNIMPLEMENTED();
 }
@@ -2000,36 +1969,6 @@ void Context::texSubImage1D(GLenum target,
     UNIMPLEMENTED();
 }
 
-void Context::drawElementsBaseVertex(GLenum mode,
-                                     GLsizei count,
-                                     GLenum type,
-                                     const void *indices,
-                                     GLint basevertex)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::drawElementsInstancedBaseVertex(GLenum mode,
-                                              GLsizei count,
-                                              GLenum type,
-                                              const void *indices,
-                                              GLsizei instancecount,
-                                              GLint basevertex)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::drawRangeElementsBaseVertex(GLenum mode,
-                                          GLuint start,
-                                          GLuint end,
-                                          GLsizei count,
-                                          GLenum type,
-                                          const void *indices,
-                                          GLint basevertex)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::multiDrawElementsBaseVertex(GLenum mode,
                                           const GLsizei *count,
                                           GLenum type,
@@ -2268,30 +2207,6 @@ void Context::beginQueryIndexed(GLenum target, GLuint index, QueryID id)
     UNIMPLEMENTED();
 }
 
-void Context::blendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum modeAlpha)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::blendEquationi(GLuint buf, GLenum mode)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::blendFuncSeparatei(GLuint buf,
-                                 GLenum srcRGB,
-                                 GLenum dstRGB,
-                                 GLenum srcAlpha,
-                                 GLenum dstAlpha)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::blendFunci(GLuint buf, GLenum src, GLenum dst)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::drawTransformFeedback(GLenum mode, TransformFeedbackID id)
 {
     UNIMPLEMENTED();
@@ -2373,17 +2288,7 @@ void Context::getUniformdv(ShaderProgramID program, GLint location, GLdouble *pa
     UNIMPLEMENTED();
 }
 
-void Context::minSampleShading(GLfloat value)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::patchParameterfv(GLenum pname, const GLfloat *values)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::patchParameteri(GLenum pname, GLint value)
 {
     UNIMPLEMENTED();
 }
@@ -2804,25 +2709,6 @@ void Context::clearBufferSubData(GLenum target,
     UNIMPLEMENTED();
 }
 
-void Context::copyImageSubData(GLuint srcName,
-                               GLenum srcTarget,
-                               GLint srcLevel,
-                               GLint srcX,
-                               GLint srcY,
-                               GLint srcZ,
-                               GLuint dstName,
-                               GLenum dstTarget,
-                               GLint dstLevel,
-                               GLint dstX,
-                               GLint dstY,
-                               GLint dstZ,
-                               GLsizei srcWidth,
-                               GLsizei srcHeight,
-                               GLsizei srcDepth)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::getInternalformati64v(GLenum target,
                                     GLenum internalformat,
                                     GLenum pname,
@@ -2879,15 +2765,6 @@ void Context::multiDrawElementsIndirect(GLenum mode,
 void Context::shaderStorageBlockBinding(ShaderProgramID program,
                                         GLuint storageBlockIndex,
                                         GLuint storageBlockBinding)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::texBufferRange(GLenum target,
-                             GLenum internalformat,
-                             BufferID buffer,
-                             GLintptr offset,
-                             GLsizeiptr size)
 {
     UNIMPLEMENTED();
 }

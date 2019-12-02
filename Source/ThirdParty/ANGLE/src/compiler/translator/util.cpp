@@ -702,6 +702,7 @@ bool IsBuiltinFragmentInputVariable(TQualifier qualifier)
         case EvqFragCoord:
         case EvqPointCoord:
         case EvqFrontFacing:
+        case EvqHelperInvocation:
             return true;
         default:
             break;
@@ -756,6 +757,10 @@ bool IsOutputHLSL(ShShaderOutput output)
 bool IsOutputVulkan(ShShaderOutput output)
 {
     return output == SH_GLSL_VULKAN_OUTPUT;
+}
+bool IsOutputMetal(ShShaderOutput output)
+{
+    return output == SH_GLSL_METAL_OUTPUT;
 }
 
 bool IsInShaderStorageBlock(TIntermTyped *node)

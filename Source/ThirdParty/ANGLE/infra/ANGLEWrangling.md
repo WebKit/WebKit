@@ -77,11 +77,16 @@ Chrome with the latest ANGLE changes.
 
 We also use additional auto-rollers to roll third party libraries into ANGLE once per day:
 
- * [SPIRV-Headers into ANGLE](https://autoroll.skia.org/r/spirv-headers-angle-autoroll),
- * [SPIRV-Tools into ANGLE](https://autoroll.skia.org/r/spirv-tools-angle-autoroll) and
+ * [SPIRV-Tools into ANGLE](https://autoroll.skia.org/r/spirv-tools-angle-autoroll)
  * [glslang into ANGLE](https://autoroll.skia.org/r/glslang-angle-autoroll)
+ * [SwiftShader into ANGLE](https://autoroll.skia.org/r/swiftshader-angle-autoroll)
+ * [Vulkan-Tools into ANGLE](https://autoroll.skia.org/r/vulkan-tools-angle-autoroll)
+ * [Vulkan-Loader into ANGLE](https://autoroll.skia.org/r/vulkan-loader-angle-autoroll)
+ * [Vulkan-Headers into ANGLE](https://autoroll.skia.org/r/vulkan-headers-angle-autoroll)
+ * [Vulkan-ValidationLayers into ANGLE](https://autoroll.skia.org/r/vulkan-validation-layers-angle-autoroll)
 
-Please ensure these rollers are also healthy and unblocked.
+Please ensure these rollers are also healthy and unblocked. You can trigger manual rolls using the dashboards
+to land high-priority changes.
 
 ## Task 4: ANGLE Standalone Testing
 

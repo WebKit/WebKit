@@ -97,9 +97,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
   private:
     virtual SurfaceImpl *createWindowSurfaceVk(const egl::SurfaceState &state,
-                                               EGLNativeWindowType window,
-                                               EGLint width,
-                                               EGLint height) = 0;
+                                               EGLNativeWindowType window) = 0;
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
 

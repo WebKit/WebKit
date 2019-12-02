@@ -203,7 +203,8 @@ angle::Result InitializeRenderPassFromDesc(vk::Context *context,
 {
     // Unpack the packed and split representation into the format required by Vulkan.
     gl::DrawBuffersVector<VkAttachmentReference> colorAttachmentRefs;
-    VkAttachmentReference depthStencilAttachmentRef = {VK_ATTACHMENT_UNUSED};
+    VkAttachmentReference depthStencilAttachmentRef = {VK_ATTACHMENT_UNUSED,
+                                                       VK_IMAGE_LAYOUT_UNDEFINED};
     gl::AttachmentArray<VkAttachmentDescription> attachmentDescs;
 
     uint32_t colorAttachmentCount = 0;
@@ -699,7 +700,7 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
         // Get the corresponding VkFormat for the attrib's format.
         angle::FormatID formatID         = static_cast<angle::FormatID>(packedAttrib.format);
         const vk::Format &format         = contextVk->getRenderer()->getFormat(formatID);
-        const angle::Format &angleFormat = format.angleFormat();
+        const angle::Format &angleFormat = format.intendedFormat();
         VkFormat vkFormat                = format.vkBufferFormat;
 
         gl::ComponentType attribType =
@@ -789,6 +790,28 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     rasterState.depthBiasClamp          = rasterAndMS.depthBiasClamp;
     rasterState.depthBiasSlopeFactor    = rasterAndMS.depthBiasSlopeFactor;
     rasterState.lineWidth               = rasterAndMS.lineWidth;
+    const void **pNextPtr               = &rasterState.pNext;
+
+    VkPipelineRasterizationLineStateCreateInfoEXT rasterLineState = {};
+    rasterLineState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
+    // Always enable Bresenham line rasterization if available.
+    if (contextVk->getFeatures().bresenhamLineRasterization.enabled)
+    {
+        rasterLineState.lineRasterizationMode = VK_LINE_RASTERIZATION_MODE_BRESENHAM_EXT;
+        *pNextPtr                             = &rasterLineState;
+        pNextPtr                              = &rasterLineState.pNext;
+    }
+
+    VkPipelineRasterizationProvokingVertexStateCreateInfoEXT provokingVertexState = {};
+    provokingVertexState.sType =
+        VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT;
+    // Always set provoking vertex mode to last if available.
+    if (contextVk->getFeatures().provokingVertex.enabled)
+    {
+        provokingVertexState.provokingVertexMode = VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
+        *pNextPtr                                = &provokingVertexState;
+        pNextPtr                                 = &provokingVertexState.pNext;
+    }
 
     // Multisample state.
     multisampleState.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;

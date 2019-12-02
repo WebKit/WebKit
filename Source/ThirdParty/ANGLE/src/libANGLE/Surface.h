@@ -55,6 +55,7 @@ struct SurfaceState final : private angle::NonCopyable
     bool timestampsEnabled;
     SupportedCompositorTiming supportedCompositorTimings;
     SupportedTimestamps supportedTimestamps;
+    bool directComposition;
 };
 
 class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
@@ -72,6 +73,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     Error unMakeCurrent(const gl::Context *context);
     Error swap(const gl::Context *context);
     Error swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects);
+    Error swapWithFrameToken(const gl::Context *context, EGLFrameTokenANGLE frameToken);
     Error postSubBuffer(const gl::Context *context,
                         EGLint x,
                         EGLint y,
@@ -141,7 +143,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     }
     EGLint getOrientation() const { return mOrientation; }
 
-    bool directComposition() const { return mDirectComposition; }
+    bool directComposition() const { return mState.directComposition; }
 
     gl::InitState initState(const gl::ImageIndex &imageIndex) const override;
     void setInitState(const gl::ImageIndex &imageIndex, gl::InitState initState) override;
@@ -204,8 +206,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     bool mFixedSize;
     size_t mFixedWidth;
     size_t mFixedHeight;
-
-    bool mDirectComposition;
 
     bool mRobustResourceInitialization;
 

@@ -14,14 +14,14 @@ complete. They are templated with markers that are filled in later at link time.
 
 1. **Link-Time Translation**: During a call to `glLinkProgram` the Vulkan back-end can know the
 necessary locations and properties to write to connect the shader stage interfaces. We get the
-completed shader source using ANGLE's [GlslangWrapper][GlslangWrapper.cpp] helper class. We still
+completed shader source using ANGLE's [GlslangWrapperVk][GlslangWrapperVk.cpp] helper class. We still
 cannot generate `VkShaderModules` since some ANGLE features like [OpenGL line
 rasterization](OpenGLLineSegmentRasterization.md) emulation depend on draw-time information.
 
 1. **Draw-time SPIR-V Generation**: Once the application records a draw call we use Khronos'
 [glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V with the correct draw-time
 defines. The SPIR-V is then compiled into `VkShaderModules`. For details please see
-[GlslangWrapper.cpp][GlslangWrapper.cpp]. The `VkShaderModules` are then used by `VkPipelines`. Note
+[GlslangWrapperVk.cpp][GlslangWrapperVk.cpp]. The `VkShaderModules` are then used by `VkPipelines`. Note
 that we currently don't use [SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V optimization. This
 could be something to improve on in the future.
 
@@ -32,7 +32,7 @@ participant App
 participant "ANGLE Front-end"
 participant "Vulkan Back-end"
 participant "ANGLE Translator"
-participant "GlslangWrapper"
+participant "GlslangWrapperVk"
 participant "Glslang"
 
 App->"ANGLE Front-end": glCompileShader (VS)
@@ -51,8 +51,8 @@ App->"ANGLE Front-end": glLinkProgram
 
 Note right of "Vulkan Back-end": ProgramVk inits uniforms,\nlayouts, and descriptors.
 
-"Vulkan Back-end"->GlslangWrapper: GlslangWrapper::GetShaderSource
-GlslangWrapper- ->"Vulkan Back-end": return filled-in sources
+"Vulkan Back-end"->GlslangWrapperVk: GlslangWrapperVk::GetShaderSource
+GlslangWrapperVk- ->"Vulkan Back-end": return filled-in sources
 
 Note right of "Vulkan Back-end": Source is templated with\ndefines to be resolved at\ndraw time.
 
@@ -63,8 +63,8 @@ Note right of App: App execution continues...
 App->"ANGLE Front-end": glDrawArrays (any draw)
 "ANGLE Front-end"->"Vulkan Back-end": ContextVk::drawArrays
 
-"Vulkan Back-end"->GlslangWrapper: GlslangWrapper::GetShaderCode (with defines)
-GlslangWrapper->Glslang: GlslangToSpv
+"Vulkan Back-end"->GlslangWrapperVk: GlslangWrapperVk::GetShaderCode (with defines)
+GlslangWrapperVk->Glslang: GlslangToSpv
 Glslang- ->"Vulkan Back-end": Return SPIR-V
 
 Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nrecord the draw.
@@ -76,7 +76,7 @@ Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nr
 
 [GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/master/extensions/khr/GL_KHR_vulkan_glsl.txt
 [glslang]: https://github.com/KhronosGroup/glslang
-[GlslangWrapper.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/libANGLE/renderer/vulkan/GlslangWrapper.cpp
+[GlslangWrapperVk.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/libANGLE/renderer/vulkan/GlslangWrapperVk.cpp
 [SPIRV-Tools]: https://github.com/KhronosGroup/SPIRV-Tools
 [translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/
 [TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp

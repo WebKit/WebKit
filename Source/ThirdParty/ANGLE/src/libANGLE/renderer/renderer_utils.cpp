@@ -307,11 +307,11 @@ bool ShouldUseDebugLayers(const egl::AttributeMap &attribs)
         attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
 
     // Prefer to enable debug layers when available.
-#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+#if defined(ANGLE_ENABLE_ASSERTS)
     return (debugSetting != EGL_FALSE);
 #else
     return (debugSetting == EGL_TRUE);
-#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+#endif  // defined(ANGLE_ENABLE_ASSERTS)
 }
 
 bool ShouldUseVirtualizedContexts(const egl::AttributeMap &attribs, bool defaultValue)

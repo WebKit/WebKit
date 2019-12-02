@@ -26,9 +26,4 @@ bool ValidatePrimitiveRestartIndex(Context *context, GLuint index)
     return true;
 }
 
-bool ValidateTexBuffer(Context *context, GLenum target, GLenum internalformat, BufferID buffer)
-{
-    return true;
-}
-
 }  // namespace gl

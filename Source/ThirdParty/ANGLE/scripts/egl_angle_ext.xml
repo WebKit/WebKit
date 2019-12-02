@@ -81,6 +81,12 @@
             <param><ptype>EGLint</ptype> <name>attribute</name></param>
             <param><ptype>EGLAttrib *</ptype> <name>value</name></param>
         </command>
+        <command>
+            <proto><pytpe>EGLBoolean</pytpe> <name>eglSwapBuffersWithFrameTokenANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLSurface</ptype> <name>surface</name></param>
+            <param><ptype>EGLFrameTokenANGLE</ptype> <name>frametoken</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -113,6 +119,11 @@
                 <command name="eglProgramCacheQueryANGLE"/>
                 <command name="eglProgramCachePopulateANGLE"/>
                 <command name="eglProgramCacheResizeANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_swap_with_frame_token" supported="egl">
+            <require>
+                <command name="eglSwapBuffersWithFrameTokenANGLE"/>
             </require>
         </extension>
     </extensions>

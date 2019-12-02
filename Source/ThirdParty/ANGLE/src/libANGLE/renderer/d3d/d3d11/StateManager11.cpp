@@ -428,7 +428,7 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
         }
 
         const angle::ColorGeneric &borderColor(samplerState.getBorderColor());
-        constexpr int kBlack[4]          = {0};
+        constexpr int kBlack[4]          = {};
         const void *const intBorderColor = (borderColor.type == angle::ColorGeneric::Type::Float)
                                                ? kBlack
                                                : borderColor.colorI.data();
@@ -644,7 +644,7 @@ angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
     }
 
     // Previous buffer contents are discarded, so we need to refresh the whole buffer.
-    D3D11_MAPPED_SUBRESOURCE mapping = {0};
+    D3D11_MAPPED_SUBRESOURCE mapping = {};
     ANGLE_TRY(renderer->mapResource(context, driverConstantBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD,
                                     0, &mapping));
 
@@ -1411,8 +1411,8 @@ void StateManager11::syncViewport(const gl::Context *context)
     float actualZFar             = gl::clamp01(glState.getFarPlane());
 
     const auto &caps         = context->getCaps();
-    int dxMaxViewportBoundsX = static_cast<int>(caps.maxViewportWidth);
-    int dxMaxViewportBoundsY = static_cast<int>(caps.maxViewportHeight);
+    int dxMaxViewportBoundsX = caps.maxViewportWidth;
+    int dxMaxViewportBoundsY = caps.maxViewportHeight;
     int dxMinViewportBoundsX = -dxMaxViewportBoundsX;
     int dxMinViewportBoundsY = -dxMaxViewportBoundsY;
 
@@ -1531,7 +1531,7 @@ void StateManager11::processFramebufferInvalidation(const gl::Context *context)
         mCurDisableStencil = disableStencil;
     }
 
-    bool multiSample = (fbo->getCachedSamples(context) != 0);
+    bool multiSample = (fbo->getCachedSamples(context, gl::AttachmentSampleType::Emulated) != 0);
     if (multiSample != mCurRasterState.multiSample)
     {
         mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
@@ -1888,7 +1888,8 @@ angle::Result StateManager11::ensureInitialized(const gl::Context *context)
 
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        const GLuint maxShaderTextureImageUnits = caps.maxShaderTextureImageUnits[shaderType];
+        const GLuint maxShaderTextureImageUnits =
+            static_cast<GLuint>(caps.maxShaderTextureImageUnits[shaderType]);
 
         mCurShaderSRVs[shaderType].initialize(maxShaderTextureImageUnits);
         mForceSetShaderSamplerStates[shaderType].resize(maxShaderTextureImageUnits, true);
@@ -2591,8 +2592,7 @@ angle::Result StateManager11::setSamplerState(const gl::Context *context,
 
     auto *deviceContext = mRenderer->getDeviceContext();
 
-    ASSERT(static_cast<unsigned int>(index) <
-           mRenderer->getNativeCaps().maxShaderTextureImageUnits[type]);
+    ASSERT(index < mRenderer->getNativeCaps().maxShaderTextureImageUnits[type]);
 
     if (mForceSetShaderSamplerStates[type][index] ||
         memcmp(&samplerState, &mCurShaderSamplerStates[type][index], sizeof(gl::SamplerState)) != 0)
@@ -2665,15 +2665,13 @@ angle::Result StateManager11::setTextureForSampler(const gl::Context *context,
         textureImpl->resetDirty();
     }
 
-    ASSERT((type == gl::ShaderType::Fragment &&
-            static_cast<unsigned int>(index) <
-                mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Fragment]) ||
-           (type == gl::ShaderType::Vertex &&
-            static_cast<unsigned int>(index) <
-                mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Vertex]) ||
-           (type == gl::ShaderType::Compute &&
-            static_cast<unsigned int>(index) <
-                mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Compute]));
+    ASSERT(
+        (type == gl::ShaderType::Fragment &&
+         index < mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Fragment]) ||
+        (type == gl::ShaderType::Vertex &&
+         index < mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Vertex]) ||
+        (type == gl::ShaderType::Compute &&
+         index < mRenderer->getNativeCaps().maxShaderTextureImageUnits[gl::ShaderType::Compute]));
 
     setShaderResourceInternal(type, index, textureSRV);
     return angle::Result::Continue;
@@ -2684,8 +2682,7 @@ angle::Result StateManager11::setImageState(const gl::Context *context,
                                             int index,
                                             const gl::ImageUnit &imageUnit)
 {
-    ASSERT(static_cast<unsigned int>(index) <
-           mRenderer->getNativeCaps().maxShaderImageUniforms[type]);
+    ASSERT(index < mRenderer->getNativeCaps().maxShaderImageUniforms[type]);
 
     mShaderConstants.onImageChange(type, index, imageUnit);
 
@@ -2836,7 +2833,7 @@ angle::Result StateManager11::setTextureForImage(const gl::Context *context,
         // If we get an invalid SRV here, something went wrong in the texture class and we're
         // unexpectedly missing the shader resource view.
         ASSERT(textureSRV->valid());
-        ASSERT((static_cast<unsigned int>(index) < mRenderer->getNativeCaps().maxImageUnits));
+        ASSERT((index < mRenderer->getNativeCaps().maxImageUnits));
         setShaderResourceInternal(type, index, textureSRV);
     }
     else
@@ -2846,7 +2843,7 @@ angle::Result StateManager11::setTextureForImage(const gl::Context *context,
         // If we get an invalid UAV here, something went wrong in the texture class and we're
         // unexpectedly missing the unordered access view.
         ASSERT(textureUAV->valid());
-        ASSERT((static_cast<unsigned int>(index) < mRenderer->getNativeCaps().maxImageUnits));
+        ASSERT((index < mRenderer->getNativeCaps().maxImageUnits));
         setUnorderedAccessViewInternal(type, index, textureUAV);
     }
 
@@ -3368,7 +3365,7 @@ angle::Result StateManager11::applyDriverUniformsForShader(const gl::Context *co
     {
         size_t requiredSize = mShaderConstants.getRequiredBufferSize(shaderType);
 
-        D3D11_BUFFER_DESC constantBufferDescription = {0};
+        D3D11_BUFFER_DESC constantBufferDescription = {};
         d3d11::InitConstantBufferDesc(&constantBufferDescription, requiredSize);
         ANGLE_TRY(mRenderer->allocateResource(
             GetImplAs<Context11>(context), constantBufferDescription, &shaderDriverConstantBuffer));
@@ -3464,7 +3461,7 @@ angle::Result StateManager11::applyComputeUniforms(const gl::Context *context,
     {
         size_t requiredSize = mShaderConstants.getRequiredBufferSize(gl::ShaderType::Compute);
 
-        D3D11_BUFFER_DESC constantBufferDescription = {0};
+        D3D11_BUFFER_DESC constantBufferDescription = {};
         d3d11::InitConstantBufferDesc(&constantBufferDescription, requiredSize);
         ANGLE_TRY(
             mRenderer->allocateResource(GetImplAs<Context11>(context), constantBufferDescription,

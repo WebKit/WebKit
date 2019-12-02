@@ -1042,12 +1042,12 @@ struct ETC2Block
         // Power iteration algorithm to get the eigenvalues and eigenvector
 
         // Starts with diagonal vector
-        float vfr = static_cast<float>(max[0] - min[0]);
-        float vfg = static_cast<float>(max[1] - min[1]);
-        float vfb = static_cast<float>(max[2] - min[2]);
-        float eigenvalue;
+        float vfr        = static_cast<float>(max[0] - min[0]);
+        float vfg        = static_cast<float>(max[1] - min[1]);
+        float vfb        = static_cast<float>(max[2] - min[2]);
+        float eigenvalue = 0.0f;
 
-        static const size_t kPowerIterations = 4;
+        constexpr size_t kPowerIterations = 4;
         for (size_t i = 0; i < kPowerIterations; i++)
         {
             float r = vfr * cov[0] + vfg * cov[1] + vfb * cov[2];

@@ -32,14 +32,6 @@ bool ValidateGetQueryObjectui64v(Context *context,
                                  QueryID idPacked,
                                  GLenum pname,
                                  GLuint64 *params);
-bool ValidateGetSamplerParameterIiv(Context *context,
-                                    SamplerID samplerPacked,
-                                    GLenum pname,
-                                    GLint *params);
-bool ValidateGetSamplerParameterIuiv(Context *context,
-                                     SamplerID samplerPacked,
-                                     GLenum pname,
-                                     GLuint *params);
 bool ValidateMultiTexCoordP1ui(Context *context, GLenum texture, GLenum type, GLuint coords);
 bool ValidateMultiTexCoordP1uiv(Context *context,
                                 GLenum texture,
@@ -63,14 +55,6 @@ bool ValidateMultiTexCoordP4uiv(Context *context,
 bool ValidateNormalP3ui(Context *context, GLenum type, GLuint coords);
 bool ValidateNormalP3uiv(Context *context, GLenum type, const GLuint *coords);
 bool ValidateQueryCounter(Context *context, QueryID idPacked, QueryType targetPacked);
-bool ValidateSamplerParameterIiv(Context *context,
-                                 SamplerID samplerPacked,
-                                 GLenum pname,
-                                 const GLint *param);
-bool ValidateSamplerParameterIuiv(Context *context,
-                                  SamplerID samplerPacked,
-                                  GLenum pname,
-                                  const GLuint *param);
 bool ValidateSecondaryColorP3ui(Context *context, GLenum type, GLuint color);
 bool ValidateSecondaryColorP3uiv(Context *context, GLenum type, const GLuint *color);
 bool ValidateTexCoordP1ui(Context *context, GLenum type, GLuint coords);

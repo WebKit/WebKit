@@ -92,20 +92,20 @@ New Procedures and Functions
                                                         GLuint baseInstance);
 
     void MultiDrawArraysInstancedBaseInstanceANGLE(enum mode,
-                                                const GLsizei drawcount,
+                                                const GLint* firsts,
                                                 const GLsizei* counts,
                                                 const GLsizei* instanceCounts,
-                                                const GLint* firsts,
-                                                const GLint* baseInstances);
+                                                const GLint* baseInstances,
+                                                const GLsizei drawcount);
 
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(enum mode,
-                                                const GLsizei drawcount,
                                                 const GLint* counts,
                                                 GLenum type,
                                                 const GLvoid* const* indices,
                                                 const GLsizei* instanceCounts,
                                                 const GLint* baseVertices,
-                                                const GLint* baseInstances);
+                                                const GLint* baseInstances,
+                                                const GLsizei drawcount);
 
 New Tokens
 
@@ -132,11 +132,11 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
     The command
 
     void MultiDrawArraysInstancedBaseInstanceANGLE(GLenum mode,
-        GLsizei drawcount,
+        const GLint* firsts,
         const GLsizei* counts,
         const GLsizei* instanceCounts,
-        const GLint* firsts,
-        const GLuint* baseInstances);
+        const GLuint* baseInstances,
+        GLsizei drawcount);
 
     Behaves identically to DrawArraysInstancedBaseInstanceANGLE except that a
     list of arrays is specified instead. The number of lists is specified in
@@ -177,14 +177,14 @@ Additions to Chapter 10 of the OpenGL ES 3.2 Specification
 
     The command
 
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGL(GLenum mode,
-        GLenum type,
-        GLsizei drawcount,
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
         const GLsizei* counts,
-        const GLsizei* instanceCounts,
+        GLenum type,
         const GLvoid* const* indices,
+        const GLsizei* instanceCounts,
         const GLint* baseVertices,
-        const GLuint* baseInstances);
+        const GLuint* baseInstances,
+        GLsizei drawcount);
 
     Behaves identically to DrawElementsInstancedBaseVertexBaseInstanceANGLE
     except that a list of arrays is specified instead. The number of lists is

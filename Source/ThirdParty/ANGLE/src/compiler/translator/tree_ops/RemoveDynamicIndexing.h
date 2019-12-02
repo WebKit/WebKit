@@ -14,18 +14,28 @@
 
 #include "common/angleutils.h"
 
+#include <functional>
+
 namespace sh
 {
 
 class TCompiler;
 class TIntermNode;
+class TIntermBinary;
 class TSymbolTable;
 class PerformanceDiagnostics;
 
-ANGLE_NO_DISCARD bool RemoveDynamicIndexing(TCompiler *compiler,
-                                            TIntermNode *root,
-                                            TSymbolTable *symbolTable,
-                                            PerformanceDiagnostics *perfDiagnostics);
+ANGLE_NO_DISCARD bool RemoveDynamicIndexingOfNonSSBOVectorOrMatrix(
+    TCompiler *compiler,
+    TIntermNode *root,
+    TSymbolTable *symbolTable,
+    PerformanceDiagnostics *perfDiagnostics);
+
+ANGLE_NO_DISCARD bool RemoveDynamicIndexingOfSwizzledVector(
+    TCompiler *compiler,
+    TIntermNode *root,
+    TSymbolTable *symbolTable,
+    PerformanceDiagnostics *perfDiagnostics);
 
 }  // namespace sh
 

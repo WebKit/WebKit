@@ -120,6 +120,9 @@ struct InternalFormat
     GLenum getReadPixelsFormat() const;
     GLenum getReadPixelsType(const Version &version) const;
 
+    // Support upload a portion of image?
+    bool supportSubImage() const;
+
     // Return true if the format is a required renderbuffer format in the given version of the core
     // spec. Note that it isn't always clear whether all the rules that apply to core required
     // renderbuffer formats also apply to additional formats added by extensions. Because of this
@@ -204,6 +207,9 @@ const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, GLenum type);
 // Strip sizing information from an internal format.  Doesn't necessarily validate that the internal
 // format is valid.
 GLenum GetUnsizedFormat(GLenum internalFormat);
+
+// Return whether the compressed format requires whole image/mip level to be uploaded to texture.
+bool CompressedFormatRequiresWholeImage(GLenum internalFormat);
 
 typedef std::set<GLenum> FormatSet;
 const FormatSet &GetAllSizedInternalFormats();

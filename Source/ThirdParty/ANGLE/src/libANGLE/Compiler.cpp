@@ -187,6 +187,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.MaxGeometryShaderStorageBlocks = caps.maxShaderStorageBlocks[ShaderType::Geometry];
     mResources.MaxGeometryShaderInvocations   = caps.maxGeometryShaderInvocations;
     mResources.MaxGeometryImageUniforms       = caps.maxShaderImageUniforms[ShaderType::Geometry];
+
+    // Subpixel bits.
+    mResources.SubPixelBits = static_cast<int>(caps.subPixelBits);
 }
 
 Compiler::~Compiler()

@@ -50,7 +50,7 @@ class TInvariantQualifierWrapper final : public TQualifierWrapperBase
 {
   public:
     TInvariantQualifierWrapper(const TSourceLoc &line) : TQualifierWrapperBase(line) {}
-    ~TInvariantQualifierWrapper() {}
+    ~TInvariantQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtInvariant; }
     ImmutableString getQualifierString() const override { return ImmutableString("invariant"); }
@@ -63,7 +63,7 @@ class TInterpolationQualifierWrapper final : public TQualifierWrapperBase
     TInterpolationQualifierWrapper(TQualifier interpolationQualifier, const TSourceLoc &line)
         : TQualifierWrapperBase(line), mInterpolationQualifier(interpolationQualifier)
     {}
-    ~TInterpolationQualifierWrapper() {}
+    ~TInterpolationQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtInterpolation; }
     ImmutableString getQualifierString() const override
@@ -83,7 +83,7 @@ class TLayoutQualifierWrapper final : public TQualifierWrapperBase
     TLayoutQualifierWrapper(TLayoutQualifier layoutQualifier, const TSourceLoc &line)
         : TQualifierWrapperBase(line), mLayoutQualifier(layoutQualifier)
     {}
-    ~TLayoutQualifierWrapper() {}
+    ~TLayoutQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtLayout; }
     ImmutableString getQualifierString() const override { return ImmutableString("layout"); }
@@ -100,7 +100,7 @@ class TStorageQualifierWrapper final : public TQualifierWrapperBase
     TStorageQualifierWrapper(TQualifier storageQualifier, const TSourceLoc &line)
         : TQualifierWrapperBase(line), mStorageQualifier(storageQualifier)
     {}
-    ~TStorageQualifierWrapper() {}
+    ~TStorageQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtStorage; }
     ImmutableString getQualifierString() const override
@@ -120,7 +120,7 @@ class TPrecisionQualifierWrapper final : public TQualifierWrapperBase
     TPrecisionQualifierWrapper(TPrecision precisionQualifier, const TSourceLoc &line)
         : TQualifierWrapperBase(line), mPrecisionQualifier(precisionQualifier)
     {}
-    ~TPrecisionQualifierWrapper() {}
+    ~TPrecisionQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtPrecision; }
     ImmutableString getQualifierString() const override
@@ -140,7 +140,7 @@ class TMemoryQualifierWrapper final : public TQualifierWrapperBase
     TMemoryQualifierWrapper(TQualifier memoryQualifier, const TSourceLoc &line)
         : TQualifierWrapperBase(line), mMemoryQualifier(memoryQualifier)
     {}
-    ~TMemoryQualifierWrapper() {}
+    ~TMemoryQualifierWrapper() override {}
 
     TQualifierType getType() const override { return QtMemory; }
     ImmutableString getQualifierString() const override

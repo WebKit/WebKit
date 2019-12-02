@@ -87,6 +87,40 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 129, 47
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Waiting for debugger"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+PUSHBUTTON      "Cancel",IDCANCEL,72,26,50,14
+LTEXT           "Attach a debugger or ESC to cancel",IDC_STATIC,7,7,115,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+IDD_DIALOG1, DIALOG
+BEGIN
+LEFTMARGIN, 7
+RIGHTMARGIN, 122
+TOPMARGIN, 7
+BOTTOMMARGIN, 40
+END
+END
+#endif    // APSTUDIO_INVOKED
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

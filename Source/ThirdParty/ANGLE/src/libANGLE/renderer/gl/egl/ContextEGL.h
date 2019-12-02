@@ -25,7 +25,7 @@ class ContextEGL : public ContextGL
     EGLContext getContext() const;
 
   private:
-    std::shared_ptr<RendererEGL> mRenderer;
+    std::shared_ptr<RendererEGL> mRendererEGL;
 };
 }  // namespace rx
 

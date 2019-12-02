@@ -78,6 +78,9 @@ class FunctionsGLX
     // GLX_SGI_swap_control
     int swapIntervalSGI(int interval) const;
 
+    // GLX_OML_sync_control
+    bool getSyncValuesOML(glx::Drawable drawable, int64_t *ust, int64_t *msc, int64_t *sbc) const;
+
   private:
     // So as to isolate GLX from angle we do not include angleutils.h and cannot
     // use angle::NonCopyable so we replicated it here instead.

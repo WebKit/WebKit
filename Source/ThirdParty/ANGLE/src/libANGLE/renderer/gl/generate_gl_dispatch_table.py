@@ -111,7 +111,7 @@ dispatch_table_source_template = """// GENERATED FILE - DO NOT EDIT.
 #endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
 
 // Check for nullptr so extensions do not overwrite core imports.
-#define ASSIGN(NAME, FP) if (!FP) *reinterpret_cast<void **>(&FP) = loadProcAddress(NAME)
+#define ASSIGN(NAME, FP) if (!FP) FP = reinterpret_cast<decltype(FP)>(loadProcAddress(NAME))
 
 namespace rx
 {{

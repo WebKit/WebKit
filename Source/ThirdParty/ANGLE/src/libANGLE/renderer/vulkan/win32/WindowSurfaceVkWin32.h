@@ -18,10 +18,7 @@ namespace rx
 class WindowSurfaceVkWin32 : public WindowSurfaceVk
 {
   public:
-    WindowSurfaceVkWin32(const egl::SurfaceState &surfaceState,
-                         EGLNativeWindowType window,
-                         EGLint width,
-                         EGLint height);
+    WindowSurfaceVkWin32(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
 
   private:
     angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut) override;

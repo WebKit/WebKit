@@ -56,7 +56,7 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
     TInfoSinkBase &out = objSink();
 
     // This isn't super clean, but it gets the job done.
-    // See corresponding code in GlslangWrapper.cpp.
+    // See corresponding code in glslang_wrapper_utils.cpp.
     TIntermSymbol *symbol = variable->getAsSymbolNode();
     ASSERT(symbol);
 

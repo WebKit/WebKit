@@ -11,13 +11,6 @@
 #define ANGLE_CONTEXT_GL_3_2_AUTOGEN_H_
 
 #define ANGLE_GL_3_2_CONTEXT_API                                                               \
-    void drawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const void *indices,  \
-                                GLint basevertex);                                             \
-    void drawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type,              \
-                                         const void *indices, GLsizei instancecount,           \
-                                         GLint basevertex);                                    \
-    void drawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count,     \
-                                     GLenum type, const void *indices, GLint basevertex);      \
     void multiDrawElementsBaseVertex(GLenum mode, const GLsizei *count, GLenum type,           \
                                      const void *const *indices, GLsizei drawcount,            \
                                      const GLint *basevertex);                                 \

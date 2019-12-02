@@ -462,7 +462,9 @@ using ContextID = uintptr_t;
 
 constexpr size_t kCubeFaceCount = 6;
 
-using TextureMap = angle::PackedEnumMap<TextureType, BindingPointer<Texture>>;
+template <typename T>
+using TextureTypeMap = angle::PackedEnumMap<TextureType, T>;
+using TextureMap     = TextureTypeMap<BindingPointer<Texture>>;
 
 // ShaderVector can contain one item per shader.  It differs from ShaderMap in that the values are
 // not indexed by ShaderType.

@@ -435,7 +435,7 @@ bool ValidateGetTexGeniv(Context *context, GLenum coord, GLenum pname, GLint *pa
 }
 
 bool ValidateGetTexImage(Context *context,
-                         GLenum target,
+                         TextureTarget target,
                          GLint level,
                          GLenum format,
                          GLenum type,

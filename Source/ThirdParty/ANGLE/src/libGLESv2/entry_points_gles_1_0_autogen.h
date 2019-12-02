@@ -48,7 +48,6 @@ ANGLE_EXPORT void GL_APIENTRY GetLightfv(GLenum light, GLenum pname, GLfloat *pa
 ANGLE_EXPORT void GL_APIENTRY GetLightxv(GLenum light, GLenum pname, GLfixed *params);
 ANGLE_EXPORT void GL_APIENTRY GetMaterialfv(GLenum face, GLenum pname, GLfloat *params);
 ANGLE_EXPORT void GL_APIENTRY GetMaterialxv(GLenum face, GLenum pname, GLfixed *params);
-ANGLE_EXPORT void GL_APIENTRY GetPointerv(GLenum pname, void **params);
 ANGLE_EXPORT void GL_APIENTRY GetTexEnvfv(GLenum target, GLenum pname, GLfloat *params);
 ANGLE_EXPORT void GL_APIENTRY GetTexEnviv(GLenum target, GLenum pname, GLint *params);
 ANGLE_EXPORT void GL_APIENTRY GetTexEnvxv(GLenum target, GLenum pname, GLfixed *params);

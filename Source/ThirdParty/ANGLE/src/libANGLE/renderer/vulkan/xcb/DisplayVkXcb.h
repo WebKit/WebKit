@@ -28,9 +28,7 @@ class DisplayVkXcb : public DisplayVk
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
 
     SurfaceImpl *createWindowSurfaceVk(const egl::SurfaceState &state,
-                                       EGLNativeWindowType window,
-                                       EGLint width,
-                                       EGLint height) override;
+                                       EGLNativeWindowType window) override;
 
     egl::ConfigSet generateConfigs() override;
     bool checkConfigSupport(egl::Config *config) override;

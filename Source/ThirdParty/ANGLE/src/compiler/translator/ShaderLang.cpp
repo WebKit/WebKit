@@ -253,6 +253,8 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxGeometryShaderStorageBlocks   = 0;
     resources->MaxGeometryShaderInvocations     = 32;
     resources->MaxGeometryImageUniforms         = 0;
+
+    resources->SubPixelBits = 8;
 }
 
 //

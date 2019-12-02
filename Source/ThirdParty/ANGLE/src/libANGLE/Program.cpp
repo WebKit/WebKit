@@ -1507,7 +1507,7 @@ angle::Result Program::link(const Context *context)
         // fragment shader outputs exceeds the implementation-dependent value of
         // MAX_COMBINED_SHADER_OUTPUT_RESOURCES.
         if (combinedImageUniforms + combinedShaderStorageBlocks >
-            context->getCaps().maxCombinedShaderOutputResources)
+            static_cast<GLuint>(context->getCaps().maxCombinedShaderOutputResources))
         {
             mInfoLog
                 << "The sum of the number of active image uniforms, active shader storage blocks "
@@ -1536,8 +1536,9 @@ angle::Result Program::link(const Context *context)
         }
 
         resources.reset(new ProgramLinkedResources(
-            data.getCaps().maxVaryingVectors, packMode, &mState.mUniformBlocks, &mState.mUniforms,
-            &mState.mShaderStorageBlocks, &mState.mBufferVariables, &mState.mAtomicCounterBuffers));
+            static_cast<GLuint>(data.getCaps().maxVaryingVectors), packMode, &mState.mUniformBlocks,
+            &mState.mUniforms, &mState.mShaderStorageBlocks, &mState.mBufferVariables,
+            &mState.mAtomicCounterBuffers));
 
         if (!linkAttributes(context, mInfoLog))
         {
@@ -1768,21 +1769,39 @@ void ProgramState::updateProgramInterfaceInputs()
     ASSERT(shader);
 
     // Copy over each input varying, since the Shader could go away
-    for (const sh::ShaderVariable &varying : shader->getInputVaryings())
+    if (shader->getType() == ShaderType::Compute)
     {
-        if (varying.isStruct())
+        for (const sh::ShaderVariable &attribute : shader->getAllAttributes())
         {
-            for (const sh::ShaderVariable &field : varying.fields)
-            {
-                sh::ShaderVariable fieldVarying = sh::ShaderVariable(field);
-                fieldVarying.location           = varying.location;
-                fieldVarying.name               = varying.name + "." + field.name;
-                mProgramInputs.emplace_back(fieldVarying);
-            }
+            // Compute Shaders have the following built-in input variables.
+            //
+            // in uvec3 gl_NumWorkGroups;
+            // in uvec3 gl_WorkGroupID;
+            // in uvec3 gl_LocalInvocationID;
+            // in uvec3 gl_GlobalInvocationID;
+            // in uint  gl_LocalInvocationIndex;
+            // They are all vecs or uints, so no special handling is required.
+            mProgramInputs.emplace_back(attribute);
         }
-        else
+    }
+    else if (shader->getType() == ShaderType::Fragment)
+    {
+        for (const sh::ShaderVariable &varying : shader->getInputVaryings())
         {
-            mProgramInputs.emplace_back(varying);
+            if (varying.isStruct())
+            {
+                for (const sh::ShaderVariable &field : varying.fields)
+                {
+                    sh::ShaderVariable fieldVarying = sh::ShaderVariable(field);
+                    fieldVarying.location           = varying.location;
+                    fieldVarying.name               = varying.name + "." + field.name;
+                    mProgramInputs.emplace_back(fieldVarying);
+                }
+            }
+            else
+            {
+                mProgramInputs.emplace_back(varying);
+            }
         }
     }
 }
@@ -3644,7 +3663,7 @@ bool Program::linkAttributes(const Context *context, InfoLog &infoLog)
         mState.mProgramInputs = vertexShader->getActiveAttributes();
     }
 
-    GLuint maxAttribs = caps.maxVertexAttributes;
+    GLuint maxAttribs = static_cast<GLuint>(caps.maxVertexAttributes);
     std::vector<sh::ShaderVariable *> usedAttribMap(maxAttribs, nullptr);
 
     // Assign locations to attributes that have a binding location and check for attribute aliasing.
@@ -3794,8 +3813,8 @@ bool Program::linkInterfaceBlocks(const Caps &caps,
         if (!uniformBlocks.empty())
         {
             if (!ValidateInterfaceBlocksCount(
-                    caps.maxShaderUniformBlocks[shaderType], uniformBlocks, shaderType,
-                    sh::BlockType::BLOCK_UNIFORM, &combinedUniformBlocksCount, infoLog))
+                    static_cast<GLuint>(caps.maxShaderUniformBlocks[shaderType]), uniformBlocks,
+                    shaderType, sh::BlockType::BLOCK_UNIFORM, &combinedUniformBlocksCount, infoLog))
             {
                 return false;
             }
@@ -3805,7 +3824,7 @@ bool Program::linkInterfaceBlocks(const Caps &caps,
         }
     }
 
-    if (combinedUniformBlocksCount > caps.maxCombinedUniformBlocks)
+    if (combinedUniformBlocksCount > static_cast<GLuint>(caps.maxCombinedUniformBlocks))
     {
         infoLog << "The sum of the number of active uniform blocks exceeds "
                    "MAX_COMBINED_UNIFORM_BLOCKS ("
@@ -3836,8 +3855,9 @@ bool Program::linkInterfaceBlocks(const Caps &caps,
             if (!shaderStorageBlocks.empty())
             {
                 if (!ValidateInterfaceBlocksCount(
-                        caps.maxShaderStorageBlocks[shaderType], shaderStorageBlocks, shaderType,
-                        sh::BlockType::BLOCK_BUFFER, combinedShaderStorageBlocksCount, infoLog))
+                        static_cast<GLuint>(caps.maxShaderStorageBlocks[shaderType]),
+                        shaderStorageBlocks, shaderType, sh::BlockType::BLOCK_BUFFER,
+                        combinedShaderStorageBlocksCount, infoLog))
                 {
                     return false;
                 }
@@ -3847,7 +3867,8 @@ bool Program::linkInterfaceBlocks(const Caps &caps,
             }
         }
 
-        if (*combinedShaderStorageBlocksCount > caps.maxCombinedShaderStorageBlocks)
+        if (*combinedShaderStorageBlocksCount >
+            static_cast<GLuint>(caps.maxCombinedShaderStorageBlocks))
         {
             infoLog << "The sum of the number of active shader storage blocks exceeds "
                        "MAX_COMBINED_SHADER_STORAGE_BLOCKS ("
@@ -4135,7 +4156,7 @@ bool Program::linkValidateTransformFeedback(const Version &version,
         // TODO(jmadill): Investigate implementation limits on D3D11
         componentCount = VariableComponentCount(var->type) * elementCount;
         if (mState.mTransformFeedbackBufferMode == GL_SEPARATE_ATTRIBS &&
-            componentCount > caps.maxTransformFeedbackSeparateComponents)
+            componentCount > static_cast<GLuint>(caps.maxTransformFeedbackSeparateComponents))
         {
             infoLog << "Transform feedback varying " << tfVaryingName << " components ("
                     << componentCount << ") exceed the maximum separate components ("
@@ -4145,7 +4166,7 @@ bool Program::linkValidateTransformFeedback(const Version &version,
 
         totalComponents += componentCount;
         if (mState.mTransformFeedbackBufferMode == GL_INTERLEAVED_ATTRIBS &&
-            totalComponents > caps.maxTransformFeedbackInterleavedComponents)
+            totalComponents > static_cast<GLuint>(caps.maxTransformFeedbackInterleavedComponents))
         {
             infoLog << "Transform feedback varying total components (" << totalComponents
                     << ") exceed the maximum interleaved components ("
@@ -4480,7 +4501,7 @@ bool Program::linkOutputVariables(const Caps &caps,
         // MAX_COMBINED_SHADER_OUTPUT_RESOURCES.
         if (combinedImageUniformsCount + combinedShaderStorageBlocksCount +
                 mState.mActiveOutputVariables.count() >
-            caps.maxCombinedShaderOutputResources)
+            static_cast<GLuint>(caps.maxCombinedShaderOutputResources))
         {
             mInfoLog
                 << "The sum of the number of active image uniforms, active shader storage blocks "
@@ -4609,7 +4630,7 @@ bool Program::linkOutputVariables(const Caps &caps,
     // different arrangements of output arrays. Now we just assign the locations in the order that
     // we got the output variables. The spec isn't clear on what kind of algorithm is required for
     // finding locations for the output variables, so this should be acceptable at least for now.
-    GLuint maxLocation = caps.maxDrawBuffers;
+    GLuint maxLocation = static_cast<GLuint>(caps.maxDrawBuffers);
     if (!mState.mSecondaryOutputLocations.empty())
     {
         // EXT_blend_func_extended: Program outputs will be validated against

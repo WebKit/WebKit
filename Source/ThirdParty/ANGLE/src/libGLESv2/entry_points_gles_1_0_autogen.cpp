@@ -14,7 +14,7 @@
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/capture_gles_1_0_autogen.h"
 #include "libANGLE/entry_points_utils.h"
-#include "libANGLE/gl_enum_utils_autogen.h"
+#include "libANGLE/gl_enum_utils.h"
 #include "libANGLE/validationES1.h"
 #include "libGLESv2/global_state.h"
 
@@ -555,25 +555,6 @@ void GL_APIENTRY GetMaterialxv(GLenum face, GLenum pname, GLfixed *params)
             context->getMaterialxv(face, pnamePacked, params);
         }
         ANGLE_CAPTURE(GetMaterialxv, isCallValid, context, face, pnamePacked, params);
-    }
-}
-
-void GL_APIENTRY GetPointerv(GLenum pname, void **params)
-{
-    Context *context = GetValidGlobalContext();
-    EVENT("glGetPointerv", "context = %d, GLenum pname = %s, void **params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::GetPointervPName, pname), (uintptr_t)params);
-
-    if (context)
-    {
-        std::unique_lock<std::mutex> shareContextLock = GetShareGroupLock(context);
-        bool isCallValid =
-            (context->skipValidation() || ValidateGetPointerv(context, pname, params));
-        if (isCallValid)
-        {
-            context->getPointerv(pname, params);
-        }
-        ANGLE_CAPTURE(GetPointerv, isCallValid, context, pname, params);
     }
 }
 

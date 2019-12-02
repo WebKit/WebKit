@@ -1,3 +1,19 @@
+2019-12-02  James Darpinian  <jdarpinian@chromium.org>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=204595
+
+        Reviewed by Alex Christensen.
+
+        * ANGLE.plist: Updated commit hash.
+        * ANGLE.xcodeproj/project.pbxproj: Changes mirroring gn changes upstream.
+        * Compiler.cmake: Changes mirroring gn changes upstream.
+        * GLESv2.cmake: Changes mirroring gn changes upstream.
+        * CMakeLists.txt: Changes mirroring gn changes upstream.
+
+        * Many other files added/removed/changed from upstream.
+
+
 2019-11-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Add ANGLE backend to GTK port

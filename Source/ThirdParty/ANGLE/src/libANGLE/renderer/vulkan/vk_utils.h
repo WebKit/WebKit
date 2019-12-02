@@ -101,6 +101,18 @@ namespace vk
 {
 struct Format;
 
+// Append ptr to end of pNext chain beginning at chainStart
+template <typename VulkanStruct1, typename VulkanStruct2>
+void AppendToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
+{
+    VkBaseOutStructure *localPtr = reinterpret_cast<VkBaseOutStructure *>(chainStart);
+    while (localPtr->pNext)
+    {
+        localPtr = localPtr->pNext;
+    }
+    localPtr->pNext = reinterpret_cast<VkBaseOutStructure *>(ptr);
+}
+
 extern const char *gLoaderLayersPathEnv;
 extern const char *gLoaderICDFilenamesEnv;
 
@@ -239,12 +251,14 @@ class GarbageObject
     template <typename DerivedT, typename HandleT>
     static GarbageObject Get(WrappedObject<DerivedT, HandleT> *object)
     {
+        // Using c-style cast here to avoid conditional compile for MSVC 32-bit
+        //  which fails to compile with reinterpret_cast, requiring static_cast.
         return GarbageObject(HandleTypeHelper<DerivedT>::kHandleType,
-                             reinterpret_cast<GarbageHandle>(object->release()));
+                             (GarbageHandle)(object->release()));
     }
 
   private:
-    VK_DEFINE_HANDLE(GarbageHandle)
+    VK_DEFINE_NON_DISPATCHABLE_HANDLE(GarbageHandle)
     GarbageObject(HandleType handleType, GarbageHandle handle);
 
     HandleType mHandleType;
@@ -590,14 +604,6 @@ class Recycler final : angle::NonCopyable
     std::vector<T> mObjectFreeList;
 };
 
-bool SamplerNameContainsNonZeroArrayElement(const std::string &name);
-std::string GetMappedSamplerName(const std::string &originalName);
-
-// A vector of image views, such as one per level or one per layer.
-using ImageViewVector = std::vector<ImageView>;
-// A vector of vector of image views.  Primary index is layer, secondary index is level.
-using LayerLevelImageViewVector = std::vector<ImageViewVector>;
-
 }  // namespace vk
 
 // List of function pointers for used extensions.
@@ -614,6 +620,7 @@ extern PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
 
 // VK_KHR_get_physical_device_properties2
 extern PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
+extern PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR;
 
 // VK_KHR_external_semaphore_fd
 extern PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR;
@@ -635,6 +642,12 @@ extern PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBuffe
 extern PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID;
 void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance);
 #endif
+
+#if defined(ANGLE_PLATFORM_GGP)
+// VK_GGP_stream_descriptor_surface
+extern PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP;
+void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance);
+#endif  // defined(ANGLE_PLATFORM_GGP)
 
 void InitExternalSemaphoreFdFunctions(VkInstance instance);
 

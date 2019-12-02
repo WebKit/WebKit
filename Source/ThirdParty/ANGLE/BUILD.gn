@@ -20,7 +20,7 @@ if (angle_has_build) {
 declare_args() {
   # Use the PCI lib to collect GPU information on Linux.
   use_libpci = is_linux && (!is_chromecast || is_cast_desktop_build) &&
-               (use_x11 || use_ozone)
+               (angle_use_x11 || use_ozone)
 
   # Link in system libGL, to work with apitrace.  See doc/DebuggingTips.md.
   angle_link_glx = false
@@ -106,6 +106,19 @@ config("internal_config") {
   if (angle_enable_trace) {
     defines += [ "ANGLE_ENABLE_DEBUG_TRACE=1" ]
   }
+
+  if (is_chromeos) {
+    defines += [ "ANGLE_PLATFORM_CHROMEOS" ]
+  }
+}
+
+config("constructor_and_destructor_warnings") {
+  if (is_clang) {
+    cflags = [
+      "-Wexit-time-destructors",
+      "-Wglobal-constructors",
+    ]
+  }
 }
 
 config("extra_warnings") {
@@ -124,11 +137,16 @@ config("extra_warnings") {
   }
   if (is_clang) {
     cflags += [
-      "-Wexit-time-destructors",
+      "-Wconditional-uninitialized",
       "-Wextra-semi-stmt",
       "-Wfloat-conversion",
-      "-Wglobal-constructors",
+      "-Winconsistent-missing-destructor-override",
+      "-Wmissing-field-initializers",
       "-Wnon-virtual-dtor",
+      "-Wredundant-parens",
+      "-Wshadow-field",
+      "-Wtautological-type-limit-compare",
+      "-Wundefined-reinterpret-cast",
       "-Wunneeded-internal-declaration",
 
       # The below warnings are used by WebKit. We enable them to make rolling
@@ -255,7 +273,6 @@ angle_source_set("angle_system_utils") {
 
 angle_source_set("xxhash") {
   sources = xxhash_sources
-  configs -= [ "${angle_root}:extra_warnings" ]
 }
 
 if (angle_has_build) {
@@ -287,9 +304,8 @@ angle_static_library("angle_common") {
     ":includes",
   ]
   public_configs += [ ":angle_common_config" ]
-  all_dependent_configs = [ ":angle_release_asserts_config" ]
   if (angle_has_build && use_fuzzing_engine) {
-    all_dependent_configs += [ ":angle_disable_pool_alloc" ]
+    all_dependent_configs = [ ":angle_disable_pool_alloc" ]
   }
 }
 
@@ -364,7 +380,7 @@ angle_static_library("angle_gpu_info_util") {
   if (is_linux || is_fuchsia) {
     sources += libangle_gpu_info_util_linux_sources
 
-    if (use_x11) {
+    if (angle_use_x11) {
       sources += libangle_gpu_info_util_x11_sources
       deps += [ "src/third_party/libXNVCtrl:libXNVCtrl" ]
       defines += [ "GPU_INFO_USE_X11" ]
@@ -419,9 +435,18 @@ angle_static_library("translator") {
     defines += [ "ANGLE_ENABLE_HLSL" ]
   }
 
-  if (angle_enable_vulkan || use_fuzzing_engine) {
+  if (angle_enable_vulkan || use_fuzzing_engine || angle_enable_metal) {
+    # This translator is needed by metal backend also.
     sources += angle_translator_lib_vulkan_sources
+  }
+
+  if (angle_enable_vulkan || use_fuzzing_engine) {
     defines += [ "ANGLE_ENABLE_VULKAN" ]
+  }
+
+  if (angle_enable_metal) {
+    sources += angle_translator_lib_metal_sources
+    defines += [ "ANGLE_ENABLE_METAL" ]
   }
 
   public_configs += [ ":external_config" ]
@@ -524,6 +549,10 @@ config("angle_backend_config") {
     defines += [ "ANGLE_ENABLE_NULL" ]
   }
 
+  if (angle_enable_metal) {
+    configs = [ "src/libANGLE/renderer/metal:angle_metal_backend_config" ]
+  }
+
   if (angle_enable_vulkan) {
     configs = [ "src/libANGLE/renderer/vulkan:angle_vulkan_backend_config" ]
   }
@@ -553,7 +582,7 @@ config("libANGLE_config") {
     }
   }
 
-  if (use_x11) {
+  if (angle_use_x11) {
     defines += [ "ANGLE_USE_X11" ]
   }
 }
@@ -564,6 +593,21 @@ angle_source_set("libANGLE_headers") {
     ":angle_common",
     ":angle_translator_headers",
   ]
+}
+
+# Don't even try to build glslang if Metal and Vulkan are disabled.
+if (angle_enable_vulkan || angle_enable_metal) {
+  angle_source_set("angle_glslang_wrapper") {
+    sources = [
+      "src/libANGLE/renderer/glslang_wrapper_utils.cpp",
+      "src/libANGLE/renderer/glslang_wrapper_utils.h",
+    ]
+    deps = [
+      ":libANGLE_headers",
+      "${angle_glslang_dir}:glslang_default_resource_limits_sources",
+      "${angle_glslang_dir}:glslang_sources",
+    ]
+  }
 }
 
 angle_source_set("libANGLE_base") {
@@ -588,12 +632,26 @@ angle_source_set("libANGLE_base") {
     ":includes",
   ]
 
+  if (is_win) {
+    if (angle_enable_d3d9) {
+      libs += [ "delayimp.lib" ]
+    }
+    libs += [
+      "gdi32.lib",
+      "user32.lib",
+    ]
+  }
+
   if (angle_enable_vulkan) {
     public_deps += [ "src/libANGLE/renderer/vulkan:angle_vulkan_backend" ]
   }
 
+  if (angle_enable_metal) {
+    public_deps += [ "src/libANGLE/renderer/metal:angle_metal_backend" ]
+  }
+
   # Enable extra Chromium style warnings for libANGLE.
-  if (is_clang) {
+  if (is_clang && angle_has_build) {
     suppressed_configs -= [ "//build/config/clang:find_bad_constructs" ]
   }
 
@@ -633,7 +691,7 @@ angle_source_set("libANGLE_base") {
     if (is_win) {
       sources += libangle_gl_wgl_sources
     }
-    if (use_x11) {
+    if (angle_use_x11) {
       sources += libangle_gl_glx_sources
       deps += [ "src/third_party/libXNVCtrl:libXNVCtrl" ]
       libs += [
@@ -716,7 +774,10 @@ angle_source_set("libANGLE") {
 
   # gl_enum_utils defaults included in with_capture build
   if (angle_enable_trace || is_debug) {
-    sources += [ "src/libANGLE/gl_enum_utils_autogen.cpp" ]
+    sources += [
+      "src/libANGLE/gl_enum_utils.cpp",
+      "src/libANGLE/gl_enum_utils_autogen.cpp",
+    ]
   }
 }
 
@@ -1003,7 +1064,7 @@ angle_source_set("angle_util_loader") {
 
 config("angle_util_config") {
   include_dirs = [ "." ]
-  if (is_linux && use_x11) {
+  if (is_linux && angle_use_x11) {
     libs = [ "X11" ]
   }
 }
@@ -1053,7 +1114,7 @@ foreach(is_shared_library,
       ]
     }
 
-    if (use_x11) {
+    if (angle_use_x11) {
       sources += util_x11_sources
     }
 
@@ -1075,7 +1136,6 @@ foreach(is_shared_library,
       sources += util_fuchsia_sources
       public_deps += [
         "$angle_root/src/common/fuchsia_egl",
-        "src/libANGLE/renderer/vulkan:angle_vulkan",
         "//third_party/fuchsia-sdk/sdk:async_loop_cpp",
         "//third_party/fuchsia-sdk/sdk:async_loop_default",
         "//third_party/fuchsia-sdk/sdk:fdio",
@@ -1221,7 +1281,7 @@ if (!is_component_build && is_android && symbol_level != 0) {
   }
 }
 
-if (!is_component_build && is_android &&
+if (build_with_chromium && !is_component_build && is_android &&
     current_toolchain == default_toolchain) {
   # Package ANGLE libraries
   angle_apk("angle_chromium_apk") {

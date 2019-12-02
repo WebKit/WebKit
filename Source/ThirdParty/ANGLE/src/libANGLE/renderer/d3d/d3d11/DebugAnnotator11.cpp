@@ -10,7 +10,7 @@
 
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
-#include <VersionHelpers.h>
+#include <versionhelpers.h>
 
 namespace rx
 {

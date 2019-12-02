@@ -45,10 +45,7 @@ class ReplaceShadowingVariablesTraverser : public TIntermTraverser
 {
   public:
     ReplaceShadowingVariablesTraverser(TSymbolTable *symbolTable)
-        : TIntermTraverser(true, true, true),
-          mSymbolTable(symbolTable),
-          mParameterNames{},
-          mFunctionBody(nullptr)
+        : TIntermTraverser(true, true, true, symbolTable), mParameterNames{}, mFunctionBody(nullptr)
     {}
 
     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override
@@ -121,7 +118,6 @@ class ReplaceShadowingVariablesTraverser : public TIntermTraverser
     }
 
   private:
-    TSymbolTable *mSymbolTable;
     std::unordered_set<std::string> mParameterNames;
     TIntermBlock *mFunctionBody;
     std::vector<DeferredReplacementBlock> mReplacements;

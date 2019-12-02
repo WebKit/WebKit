@@ -669,16 +669,28 @@ void DirectiveParser::parseExtension(Token *token)
     }
     if (valid && mSeenNonPreprocessorToken)
     {
-        if (mSettings.shaderSpec == SH_WEBGL_SPEC && mShaderVersion < 300)
+        if (mShaderVersion >= 300)
         {
-            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
+            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3,
                                  token->location, token->text);
+            valid = false;
         }
         else
         {
-            mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL,
-                                 token->location, token->text);
-            valid = false;
+            if (mSettings.shaderSpec == SH_WEBGL_SPEC)
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
+                                     token->location, token->text);
+            }
+            else
+            {
+                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
+                                     token->location, token->text);
+                // This is just a warning on CHROME OS http://anglebug.com/4023
+#if !defined(ANGLE_PLATFORM_CHROMEOS)
+                valid = false;
+#endif
+            }
         }
     }
     if (valid)

@@ -23,13 +23,7 @@ SamplerVk::~SamplerVk() = default;
 void SamplerVk::onDestroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
-    contextVk->addGarbage(&mSampler);
-}
-
-const vk::Sampler &SamplerVk::getSampler() const
-{
-    ASSERT(mSampler.valid());
-    return mSampler;
+    mSampler.release(contextVk->getRenderer());
 }
 
 angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
@@ -43,7 +37,7 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
         {
             return angle::Result::Continue;
         }
-        contextVk->addGarbage(&mSampler);
+        mSampler.release(renderer);
     }
 
     const gl::Extensions &extensions = renderer->getNativeExtensions();
@@ -78,7 +72,7 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
         samplerInfo.maxLod     = 0.25f;
     }
 
-    ANGLE_VK_TRY(contextVk, mSampler.init(contextVk->getDevice(), samplerInfo));
+    ANGLE_VK_TRY(contextVk, mSampler.get().init(contextVk->getDevice(), samplerInfo));
     // Regenerate the serial on a sampler change.
     mSerial = contextVk->generateTextureSerial();
     return angle::Result::Continue;

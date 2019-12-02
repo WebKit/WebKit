@@ -68,6 +68,7 @@ class ShaderD3D : public ShaderImpl
     bool usesSecondaryColor() const { return mUsesSecondaryColor; }
     bool usesFragCoord() const { return mUsesFragCoord; }
     bool usesFrontFacing() const { return mUsesFrontFacing; }
+    bool usesHelperInvocation() const { return mUsesHelperInvocation; }
     bool usesPointSize() const { return mUsesPointSize; }
     bool usesPointCoord() const { return mUsesPointCoord; }
     bool usesDepthRange() const { return mUsesDepthRange; }
@@ -85,6 +86,7 @@ class ShaderD3D : public ShaderImpl
     bool mUsesSecondaryColor;
     bool mUsesFragCoord;
     bool mUsesFrontFacing;
+    bool mUsesHelperInvocation;
     bool mUsesPointSize;
     bool mUsesPointCoord;
     bool mUsesDepthRange;

@@ -6,12 +6,11 @@
 
 // RendererCGL.mm: Implements the class methods for RendererCGL.
 
-#import "common/platform.h"
+#include "libANGLE/renderer/gl/cgl/RendererCGL.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
-#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
-#include "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 namespace rx
 {
@@ -31,4 +30,4 @@ WorkerContext *RendererCGL::createWorkerContext(std::string *infoLog)
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

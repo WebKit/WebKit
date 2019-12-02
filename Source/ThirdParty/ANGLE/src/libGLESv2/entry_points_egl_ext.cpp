@@ -1500,4 +1500,28 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
     return result;
 }
 
+EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
+                                                          EGLSurface surface,
+                                                          EGLFrameTokenANGLE frametoken)
+{
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLFrameTokenANGLE frametoken = 0x%llX",
+               (uintptr_t)dpy, (uintptr_t)surface, (unsigned long long)frametoken);
+
+    egl::Display *display    = static_cast<egl::Display *>(dpy);
+    egl::Surface *eglSurface = static_cast<egl::Surface *>(surface);
+    Thread *thread           = egl::GetCurrentThread();
+
+    ANGLE_EGL_TRY_RETURN(
+        thread, ValidateSwapBuffersWithFrameTokenANGLE(display, eglSurface, frametoken),
+        "eglSwapBuffersWithFrameTokenANGLE", GetDisplayIfValid(display), EGL_FALSE);
+
+    ANGLE_EGL_TRY_RETURN(thread, eglSurface->swapWithFrameToken(thread->getContext(), frametoken),
+                         "eglSwapBuffersWithFrameTokenANGLE", GetDisplayIfValid(display),
+                         EGL_FALSE);
+
+    thread->setSuccess();
+    return EGL_TRUE;
+}
 }  // extern "C"

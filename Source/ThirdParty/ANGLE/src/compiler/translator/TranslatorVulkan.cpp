@@ -438,7 +438,7 @@ TVariable *AddANGLEPositionVaryingDeclaration(TIntermBlock *root,
     insertSequence->push_back(GenerateLineRasterIfDef());
 
     // Define a driver varying vec2 "ANGLEPosition".
-    TType *varyingType               = new TType(EbtFloat, EbpMedium, qualifier, 4);
+    TType *varyingType               = new TType(EbtFloat, EbpMedium, qualifier, 2);
     TVariable *varyingVar            = new TVariable(symbolTable, ImmutableString("ANGLEPosition"),
                                           varyingType, SymbolType::AngleInternal);
     TIntermSymbol *varyingDeclarator = new TIntermSymbol(varyingVar);
@@ -455,22 +455,72 @@ TVariable *AddANGLEPositionVaryingDeclaration(TIntermBlock *root,
     return varyingVar;
 }
 
-void AddANGLEPositionVarying(TIntermBlock *root, TSymbolTable *symbolTable)
+ANGLE_NO_DISCARD bool AddBresenhamEmulationVS(TCompiler *compiler,
+                                              TIntermBlock *root,
+                                              TSymbolTable *symbolTable,
+                                              const TVariable *driverUniforms)
 {
     TVariable *anglePosition = AddANGLEPositionVaryingDeclaration(root, symbolTable, EvqVaryingOut);
 
-    // Create an assignment "ANGLEPosition = gl_Position".
-    const TVariable *position = BuiltInVariable::gl_Position();
-    TIntermSymbol *varyingRef = new TIntermSymbol(anglePosition);
-    TIntermBinary *assignment =
-        new TIntermBinary(EOpAssign, varyingRef, new TIntermSymbol(position));
+    // Clamp position to subpixel grid.
+    // Do perspective divide (get normalized device coords)
+    // "vec2 ndc = gl_Position.xy / gl_Position.w"
+    const TType *vec2Type        = StaticType::GetBasic<EbtFloat, 2>();
+    TIntermBinary *viewportRef   = CreateDriverUniformRef(driverUniforms, kViewport);
+    TIntermSymbol *glPos         = new TIntermSymbol(BuiltInVariable::gl_Position());
+    TIntermSwizzle *glPosXY      = CreateSwizzle(glPos, 0, 1);
+    TIntermSwizzle *glPosW       = CreateSwizzle(glPos->deepCopy(), 3);
+    TVariable *ndc               = CreateTempVariable(symbolTable, vec2Type);
+    TIntermBinary *noPerspective = new TIntermBinary(EOpDiv, glPosXY, glPosW);
+    TIntermDeclaration *ndcDecl  = CreateTempInitDeclarationNode(ndc, noPerspective);
 
-    // Ensure the assignment runs at the end of the main() function.
+    // Convert NDC to window coordinates. According to Vulkan spec.
+    // "vec2 window = 0.5 * viewport.wh * (ndc + 1) + viewport.xy"
+    TIntermBinary *ndcPlusOne =
+        new TIntermBinary(EOpAdd, CreateTempSymbolNode(ndc), CreateFloatNode(1.0f));
+    TIntermSwizzle *viewportZW = CreateSwizzle(viewportRef, 2, 3);
+    TIntermBinary *ndcViewport = new TIntermBinary(EOpMul, viewportZW, ndcPlusOne);
+    TIntermBinary *ndcViewportHalf =
+        new TIntermBinary(EOpVectorTimesScalar, ndcViewport, CreateFloatNode(0.5f));
+    TIntermSwizzle *viewportXY     = CreateSwizzle(viewportRef->deepCopy(), 0, 1);
+    TIntermBinary *ndcToWindow     = new TIntermBinary(EOpAdd, ndcViewportHalf, viewportXY);
+    TVariable *windowCoords        = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *windowDecl = CreateTempInitDeclarationNode(windowCoords, ndcToWindow);
+
+    // Clamp to subpixel grid.
+    // "vec2 clamped = round(window * 2^{subpixelBits}) / 2^{subpixelBits}"
+    int subpixelBits                    = compiler->getResources().SubPixelBits;
+    TIntermConstantUnion *scaleConstant = CreateFloatNode(static_cast<float>(1 << subpixelBits));
+    TIntermBinary *windowScaled =
+        new TIntermBinary(EOpVectorTimesScalar, CreateTempSymbolNode(windowCoords), scaleConstant);
+    TIntermUnary *windowRounded = new TIntermUnary(EOpRound, windowScaled, nullptr);
+    TIntermBinary *windowRoundedBack =
+        new TIntermBinary(EOpDiv, windowRounded, scaleConstant->deepCopy());
+    TVariable *clampedWindowCoords = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *clampedDecl =
+        CreateTempInitDeclarationNode(clampedWindowCoords, windowRoundedBack);
+
+    // Set varying.
+    // "ANGLEPosition = 2 * (clamped - viewport.xy) / viewport.wh - 1"
+    TIntermBinary *clampedOffset = new TIntermBinary(
+        EOpSub, CreateTempSymbolNode(clampedWindowCoords), viewportXY->deepCopy());
+    TIntermBinary *clampedOff2x =
+        new TIntermBinary(EOpVectorTimesScalar, clampedOffset, CreateFloatNode(2.0f));
+    TIntermBinary *clampedDivided = new TIntermBinary(EOpDiv, clampedOff2x, viewportZW->deepCopy());
+    TIntermBinary *clampedNDC    = new TIntermBinary(EOpSub, clampedDivided, CreateFloatNode(1.0f));
+    TIntermSymbol *varyingRef    = new TIntermSymbol(anglePosition);
+    TIntermBinary *varyingAssign = new TIntermBinary(EOpAssign, varyingRef, clampedNDC);
+
+    // Ensure the statements run at the end of the main() function.
     TIntermFunctionDefinition *main = FindMain(root);
     TIntermBlock *mainBody          = main->getBody();
     mainBody->appendStatement(GenerateLineRasterIfDef());
-    mainBody->appendStatement(assignment);
+    mainBody->appendStatement(ndcDecl);
+    mainBody->appendStatement(windowDecl);
+    mainBody->appendStatement(clampedDecl);
+    mainBody->appendStatement(varyingAssign);
     mainBody->appendStatement(GenerateEndIf());
+    return compiler->validateAST(root);
 }
 
 ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
@@ -498,133 +548,105 @@ ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
 // formula to test if the line segment crosses the pixel center. gl_FragCoord is used along with an
 // internal position varying to determine the inputs to the formula.
 //
-// The implementation of the test code is similar to the following pseudocode:
+// The implementation of the test is similar to the following pseudocode:
 //
 // void main()
 // {
-//     vec2 b = (((position.xy / position.w) * 0.5) + 0.5) * gl_Viewport.zw + gl_Viewport.xy;
-//     vec2 ba = abs(b - gl_FragCoord.xy);
-//     vec2 ba2 = 2.0 * (ba * ba);
-//     vec2 bp = ba2 + ba2.yx - ba;
-//     if (bp.x > epsilon && bp.y > epsilon)
-//         discard;
+//    vec2 p  = (((((ANGLEPosition.xy) * 0.5) + 0.5) * viewport.zw) + viewport.xy);
+//    vec2 d  = dFdx(p) + dFdy(p);
+//    vec2 f  = gl_FragCoord.xy;
+//    vec2 p_ = p.yx;
+//    vec2 d_ = d.yx;
+//    vec2 f_ = f.yx;
+//
+//    vec2 i = abs(p - f + (d / d_) * (f_ - p_));
+//
+//    if (i.x > (0.5 + e) && i.y > (0.5 + e))
+//        discard;
 //     <otherwise run fragment shader main>
 // }
-ANGLE_NO_DISCARD bool AddLineSegmentRasterizationEmulation(TCompiler *compiler,
-                                                           TInfoSinkBase &sink,
-                                                           TIntermBlock *root,
-                                                           TSymbolTable *symbolTable,
-                                                           const TVariable *driverUniforms,
-                                                           bool usesFragCoord)
+//
+// Note this emulation can not provide fully correct rasterization. See the docs more more info.
+
+ANGLE_NO_DISCARD bool AddBresenhamEmulationFS(TCompiler *compiler,
+                                              TInfoSinkBase &sink,
+                                              TIntermBlock *root,
+                                              TSymbolTable *symbolTable,
+                                              const TVariable *driverUniforms,
+                                              bool usesFragCoord)
 {
     TVariable *anglePosition = AddANGLEPositionVaryingDeclaration(root, symbolTable, EvqVaryingIn);
+    const TType *vec2Type    = StaticType::GetBasic<EbtFloat, 2>();
+    TIntermBinary *viewportRef = CreateDriverUniformRef(driverUniforms, kViewport);
 
-    const TType *vec2Type = StaticType::GetBasic<EbtFloat, 2>();
-
-    // Create a swizzle to "ANGLEUniforms.viewport.xy".
-    TIntermBinary *viewportRef   = CreateDriverUniformRef(driverUniforms, kViewport);
-    TVector<int> swizzleOffsetXY = {0, 1};
-    TIntermSwizzle *viewportXY   = new TIntermSwizzle(viewportRef->deepCopy(), swizzleOffsetXY);
-
-    // Create a swizzle to "ANGLEUniforms.viewport.zw".
-    TVector<int> swizzleOffsetZW = {2, 3};
-    TIntermSwizzle *viewportZW   = new TIntermSwizzle(viewportRef, swizzleOffsetZW);
-
-    // ANGLEPosition.xy / ANGLEPosition.w
-    TIntermSymbol *position     = new TIntermSymbol(anglePosition);
-    TIntermSwizzle *positionXY  = new TIntermSwizzle(position, swizzleOffsetXY);
-    TVector<int> swizzleOffsetW = {3};
-    TIntermSwizzle *positionW   = new TIntermSwizzle(position->deepCopy(), swizzleOffsetW);
-    TIntermBinary *positionNDC  = new TIntermBinary(EOpDiv, positionXY, positionW);
-
-    // ANGLEPosition * 0.5
+    // vec2 p = ((ANGLEPosition * 0.5) + 0.5) * viewport.zw + viewport.xy
+    TIntermSwizzle *viewportXY    = CreateSwizzle(viewportRef->deepCopy(), 0, 1);
+    TIntermSwizzle *viewportZW    = CreateSwizzle(viewportRef, 2, 3);
+    TIntermSymbol *position       = new TIntermSymbol(anglePosition);
     TIntermConstantUnion *oneHalf = CreateFloatNode(0.5f);
-    TIntermBinary *halfPosition   = new TIntermBinary(EOpVectorTimesScalar, positionNDC, oneHalf);
-
-    // (ANGLEPosition * 0.5) + 0.5
+    TIntermBinary *halfPosition   = new TIntermBinary(EOpVectorTimesScalar, position, oneHalf);
     TIntermBinary *offsetHalfPosition =
         new TIntermBinary(EOpAdd, halfPosition, oneHalf->deepCopy());
-
-    // ((ANGLEPosition * 0.5) + 0.5) * ANGLEUniforms.viewport.zw
     TIntermBinary *scaledPosition = new TIntermBinary(EOpMul, offsetHalfPosition, viewportZW);
-
-    // ((ANGLEPosition * 0.5) + 0.5) * ANGLEUniforms.viewport + ANGLEUniforms.viewport.xy
     TIntermBinary *windowPosition = new TIntermBinary(EOpAdd, scaledPosition, viewportXY);
+    TVariable *p                  = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *pDecl     = CreateTempInitDeclarationNode(p, windowPosition);
 
-    // Assign to a temporary "b".
-    TVariable *bTemp          = CreateTempVariable(symbolTable, vec2Type);
-    TIntermDeclaration *bDecl = CreateTempInitDeclarationNode(bTemp, windowPosition);
+    // vec2 d = dFdx(p) + dFdy(p)
+    TIntermUnary *dfdx        = new TIntermUnary(EOpDFdx, new TIntermSymbol(p), nullptr);
+    TIntermUnary *dfdy        = new TIntermUnary(EOpDFdy, new TIntermSymbol(p), nullptr);
+    TIntermBinary *dfsum      = new TIntermBinary(EOpAdd, dfdx, dfdy);
+    TVariable *d              = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *dDecl = CreateTempInitDeclarationNode(d, dfsum);
 
-    // gl_FragCoord.xy
+    // vec2 f = gl_FragCoord.xy
     const TVariable *fragCoord  = BuiltInVariable::gl_FragCoord();
-    TIntermSymbol *fragCoordRef = new TIntermSymbol(fragCoord);
-    TIntermSwizzle *fragCoordXY = new TIntermSwizzle(fragCoordRef, swizzleOffsetXY);
+    TIntermSwizzle *fragCoordXY = CreateSwizzle(new TIntermSymbol(fragCoord), 0, 1);
+    TVariable *f                = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *fDecl   = CreateTempInitDeclarationNode(f, fragCoordXY);
 
-    // b - gl_FragCoord.xy
-    TIntermSymbol *bRef           = CreateTempSymbolNode(bTemp);
-    TIntermBinary *differenceExpr = new TIntermBinary(EOpSub, bRef, fragCoordXY);
+    // vec2 p_ = p.yx
+    TIntermSwizzle *pyx        = CreateSwizzle(new TIntermSymbol(p), 1, 0);
+    TVariable *p_              = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *p_decl = CreateTempInitDeclarationNode(p_, pyx);
 
-    // abs(b - gl_FragCoord.xy)
-    TIntermUnary *baAbs = new TIntermUnary(EOpAbs, differenceExpr, nullptr);
+    // vec2 d_ = d.yx
+    TIntermSwizzle *dyx        = CreateSwizzle(new TIntermSymbol(d), 1, 0);
+    TVariable *d_              = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *d_decl = CreateTempInitDeclarationNode(d_, dyx);
 
-    // Assign to a temporary "ba".
-    TVariable *baTemp          = CreateTempVariable(symbolTable, vec2Type);
-    TIntermDeclaration *baDecl = CreateTempInitDeclarationNode(baTemp, baAbs);
-    TIntermSymbol *ba          = CreateTempSymbolNode(baTemp);
+    // vec2 f_ = f.yx
+    TIntermSwizzle *fyx        = CreateSwizzle(new TIntermSymbol(f), 1, 0);
+    TVariable *f_              = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *f_decl = CreateTempInitDeclarationNode(f_, fyx);
 
-    // ba * ba
-    TIntermBinary *baSq = new TIntermBinary(EOpMul, ba, ba->deepCopy());
-
-    // 2.0 * ba * ba
-    TIntermTyped *two      = CreateFloatNode(2.0f);
-    TIntermBinary *twoBaSq = new TIntermBinary(EOpVectorTimesScalar, baSq, two);
-
-    // Assign to a temporary "ba2".
-    TVariable *ba2Temp          = CreateTempVariable(symbolTable, vec2Type);
-    TIntermDeclaration *ba2Decl = CreateTempInitDeclarationNode(ba2Temp, twoBaSq);
-
-    // Create a swizzle to "ba2.yx".
-    TVector<int> swizzleOffsetYX = {1, 0};
-    TIntermSymbol *ba2           = CreateTempSymbolNode(ba2Temp);
-    TIntermSwizzle *ba2YX        = new TIntermSwizzle(ba2, swizzleOffsetYX);
-
-    // ba2 + ba2.yx - ba
-    TIntermBinary *ba2PlusBaYX2 = new TIntermBinary(EOpAdd, ba2->deepCopy(), ba2YX);
-    TIntermBinary *bpInit       = new TIntermBinary(EOpSub, ba2PlusBaYX2, ba->deepCopy());
-
-    // Assign to a temporary "bp".
-    TVariable *bpTemp          = CreateTempVariable(symbolTable, vec2Type);
-    TIntermDeclaration *bpDecl = CreateTempInitDeclarationNode(bpTemp, bpInit);
-    TIntermSymbol *bp          = CreateTempSymbolNode(bpTemp);
-
-    // Create a swizzle to "bp.x".
-    TVector<int> swizzleOffsetX = {0};
-    TIntermSwizzle *bpX         = new TIntermSwizzle(bp, swizzleOffsetX);
+    // vec2 i = abs(p - f + (d/d_) * (f_ - p_))
+    TIntermBinary *dd   = new TIntermBinary(EOpDiv, new TIntermSymbol(d), new TIntermSymbol(d_));
+    TIntermBinary *fp   = new TIntermBinary(EOpSub, new TIntermSymbol(f_), new TIntermSymbol(p_));
+    TIntermBinary *ddfp = new TIntermBinary(EOpMul, dd, fp);
+    TIntermBinary *pf   = new TIntermBinary(EOpSub, new TIntermSymbol(p), new TIntermSymbol(f));
+    TIntermBinary *expr = new TIntermBinary(EOpAdd, pf, ddfp);
+    TIntermUnary *absd  = new TIntermUnary(EOpAbs, expr, nullptr);
+    TVariable *i        = CreateTempVariable(symbolTable, vec2Type);
+    TIntermDeclaration *iDecl = CreateTempInitDeclarationNode(i, absd);
 
     // Using a small epsilon value ensures that we don't suffer from numerical instability when
     // lines are exactly vertical or horizontal.
-    static constexpr float kEpisilon = 0.00001f;
-    TIntermConstantUnion *epsilon    = CreateFloatNode(kEpisilon);
+    static constexpr float kEpsilon   = 0.0001f;
+    static constexpr float kThreshold = 0.5 + kEpsilon;
+    TIntermConstantUnion *threshold   = CreateFloatNode(kThreshold);
 
-    // bp.x > epsilon
-    TIntermBinary *checkX = new TIntermBinary(EOpGreaterThan, bpX, epsilon);
-
-    // Create a swizzle to "bp.y".
-    TVector<int> swizzleOffsetY = {1};
-    TIntermSwizzle *bpY         = new TIntermSwizzle(bp->deepCopy(), swizzleOffsetY);
-
-    // bp.y > epsilon
-    TIntermBinary *checkY = new TIntermBinary(EOpGreaterThan, bpY, epsilon->deepCopy());
-
-    // (bp.x > epsilon) && (bp.y > epsilon)
+    // if (i.x > (0.5 + e) && i.y > (0.5 + e))
+    TIntermSwizzle *ix     = CreateSwizzle(new TIntermSymbol(i), 0);
+    TIntermBinary *checkX  = new TIntermBinary(EOpGreaterThan, ix, threshold);
+    TIntermSwizzle *iy     = CreateSwizzle(new TIntermSymbol(i), 1);
+    TIntermBinary *checkY  = new TIntermBinary(EOpGreaterThan, iy, threshold->deepCopy());
     TIntermBinary *checkXY = new TIntermBinary(EOpLogicalAnd, checkX, checkY);
 
     // discard
     TIntermBranch *discard     = new TIntermBranch(EOpKill, nullptr);
     TIntermBlock *discardBlock = new TIntermBlock;
     discardBlock->appendStatement(discard);
-
-    // if ((bp.x > epsilon) && (bp.y > epsilon)) discard;
     TIntermIfElse *ifStatement = new TIntermIfElse(checkXY, discardBlock, nullptr);
 
     // Ensure the line raster code runs at the beginning of main().
@@ -632,8 +654,8 @@ ANGLE_NO_DISCARD bool AddLineSegmentRasterizationEmulation(TCompiler *compiler,
     TIntermSequence *mainSequence   = main->getBody()->getSequence();
     ASSERT(mainSequence);
 
-    std::array<TIntermNode *, 6> nodes = {
-        {bDecl, baDecl, ba2Decl, bpDecl, ifStatement, GenerateEndIf()}};
+    std::array<TIntermNode *, 9> nodes = {
+        {pDecl, dDecl, fDecl, p_decl, d_decl, f_decl, iDecl, ifStatement, GenerateEndIf()}};
     mainSequence->insert(mainSequence->begin(), nodes.begin(), nodes.end());
 
     // If the shader does not use frag coord, we should insert it inside the ifdef.
@@ -646,7 +668,6 @@ ANGLE_NO_DISCARD bool AddLineSegmentRasterizationEmulation(TCompiler *compiler,
     }
 
     mainSequence->insert(mainSequence->begin(), GenerateLineRasterIfDef());
-
     return compiler->validateAST(root);
 }
 
@@ -656,14 +677,13 @@ TranslatorVulkan::TranslatorVulkan(sh::GLenum type, ShShaderSpec spec)
     : TCompiler(type, spec, SH_GLSL_450_CORE_OUTPUT)
 {}
 
-bool TranslatorVulkan::translate(TIntermBlock *root,
-                                 ShCompileOptions compileOptions,
-                                 PerformanceDiagnostics * /*perfDiagnostics*/)
+bool TranslatorVulkan::translateImpl(TIntermBlock *root,
+                                     ShCompileOptions compileOptions,
+                                     PerformanceDiagnostics * /*perfDiagnostics*/,
+                                     const TVariable **driverUniformsOut,
+                                     TOutputVulkanGLSL *outputGLSL)
 {
     TInfoSinkBase &sink = getInfoSink().obj;
-    TOutputVulkanGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(),
-                                 getNameMap(), &getSymbolTable(), getShaderType(),
-                                 getShaderVersion(), getOutputType(), compileOptions);
 
     if (getShaderType() == GL_VERTEX_SHADER)
     {
@@ -727,7 +747,7 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
         defaultUniformCount -= removedUniformsCount;
 
         // We must declare the struct types before using them.
-        DeclareStructTypesTraverser structTypesTraverser(&outputGLSL);
+        DeclareStructTypesTraverser structTypesTraverser(outputGLSL);
         root->traverse(&structTypesTraverser);
         if (!structTypesTraverser.updateTree(this, root))
         {
@@ -837,8 +857,8 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
             }
         }
 
-        if (!AddLineSegmentRasterizationEmulation(this, sink, root, &getSymbolTable(),
-                                                  driverUniforms, usesFragCoord))
+        if (!AddBresenhamEmulationFS(this, sink, root, &getSymbolTable(), driverUniforms,
+                                     usesFragCoord))
         {
             return false;
         }
@@ -903,7 +923,10 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
     }
     else if (getShaderType() == GL_VERTEX_SHADER)
     {
-        AddANGLEPositionVarying(root, &getSymbolTable());
+        if (!AddBresenhamEmulationVS(this, root, &getSymbolTable(), driverUniforms))
+        {
+            return false;
+        }
 
         // Add a macro to declare transform feedback buffers.
         sink << "@@ XFB-DECL @@\n\n";
@@ -922,8 +945,6 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
     }
     else if (getShaderType() == GL_GEOMETRY_SHADER)
     {
-        AddANGLEPositionVarying(root, &getSymbolTable());
-
         WriteGeometryShaderLayoutQualifiers(
             sink, getGeometryShaderInputPrimitiveType(), getGeometryShaderInvocations(),
             getGeometryShaderOutputPrimitiveType(), getGeometryShaderMaxVertices());
@@ -939,6 +960,29 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
         return false;
     }
 
+    if (driverUniformsOut)
+    {
+        *driverUniformsOut = driverUniforms;
+    }
+
+    return true;
+}
+
+bool TranslatorVulkan::translate(TIntermBlock *root,
+                                 ShCompileOptions compileOptions,
+                                 PerformanceDiagnostics *perfDiagnostics)
+{
+
+    TInfoSinkBase &sink = getInfoSink().obj;
+    TOutputVulkanGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(),
+                                 getNameMap(), &getSymbolTable(), getShaderType(),
+                                 getShaderVersion(), getOutputType(), compileOptions);
+
+    if (!translateImpl(root, compileOptions, perfDiagnostics, nullptr, &outputGLSL))
+    {
+        return false;
+    }
+
     // Write translated shader.
     root->traverse(&outputGLSL);
 
@@ -949,6 +993,12 @@ bool TranslatorVulkan::shouldFlattenPragmaStdglInvariantAll()
 {
     // Not necessary.
     return false;
+}
+
+TIntermBinary *TranslatorVulkan::getDriverUniformNegViewportYScaleRef(
+    const TVariable *driverUniforms) const
+{
+    return CreateDriverUniformRef(driverUniforms, kNegViewportYScale);
 }
 
 }  // namespace sh

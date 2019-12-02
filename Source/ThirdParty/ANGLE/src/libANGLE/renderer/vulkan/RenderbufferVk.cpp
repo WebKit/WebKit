@@ -63,7 +63,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
             mOwnsImage = true;
         }
 
-        const angle::Format &textureFormat = vkFormat.imageFormat();
+        const angle::Format &textureFormat = vkFormat.actualImageFormat();
         bool isDepthOrStencilFormat = textureFormat.depthBits > 0 || textureFormat.stencilBits > 0;
         const VkImageUsageFlags usage =
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
@@ -78,17 +78,10 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
         VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         ANGLE_TRY(mImage->initMemory(contextVk, renderer->getMemoryProperties(), flags));
 
-        VkImageAspectFlags aspect = vk::GetFormatAspectFlags(textureFormat);
-
-        // Note that LUMA textures are not color-renderable, so a read-view with swizzle is not
-        // needed.
-        ANGLE_TRY(mImage->initImageView(contextVk, gl::TextureType::_2D, aspect, gl::SwizzleState(),
-                                        &mImageView, 0, 1));
-
         // Clear the renderbuffer if it has emulated channels.
         mImage->stageClearIfEmulatedFormat(gl::ImageIndex::Make2D(0), vkFormat);
 
-        mRenderTarget.init(mImage, &mImageView, 0, 0);
+        mRenderTarget.init(mImage, &mImageViews, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -111,7 +104,7 @@ angle::Result RenderbufferVk::setStorageMultisample(const gl::Context *context,
     // If the specific number of samples requested is not supported, the smallest number that's at
     // least that many needs to be selected.
     const RendererVk *renderer           = vk::GetImpl(context)->getRenderer();
-    const angle::Format &format          = renderer->getFormat(internalformat).imageFormat();
+    const angle::Format &format          = renderer->getFormat(internalformat).actualImageFormat();
     const VkPhysicalDeviceLimits &limits = renderer->getPhysicalDeviceProperties().limits;
 
     const uint32_t colorSampleCounts        = limits.framebufferColorSampleCounts;
@@ -154,7 +147,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     mOwnsImage       = false;
 
     const vk::Format &vkFormat = renderer->getFormat(image->getFormat().info->sizedInternalFormat);
-    const angle::Format &textureFormat = vkFormat.imageFormat();
+    const angle::Format &textureFormat = vkFormat.actualImageFormat();
 
     VkImageAspectFlags aspect = vk::GetFormatAspectFlags(textureFormat);
 
@@ -176,11 +169,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
                                         imageVk->getImage()->getSamples());
     }
 
-    ANGLE_TRY(mImage->initLayerImageView(contextVk, viewType, aspect, gl::SwizzleState(),
-                                         &mImageView, imageVk->getImageLevel(), 1,
-                                         imageVk->getImageLayer(), 1));
-
-    mRenderTarget.init(mImage, &mImageView, imageVk->getImageLevel(), imageVk->getImageLayer());
+    mRenderTarget.init(mImage, &mImageViews, imageVk->getImageLevel(), imageVk->getImageLayer());
 
     return angle::Result::Continue;
 }
@@ -200,7 +189,8 @@ angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *conte
 angle::Result RenderbufferVk::initializeContents(const gl::Context *context,
                                                  const gl::ImageIndex &imageIndex)
 {
-    mImage->stageSubresourceRobustClear(imageIndex, mImage->getFormat().angleFormat());
+    // Note: stageSubresourceRobustClear only uses the intended format to count channels.
+    mImage->stageSubresourceRobustClear(imageIndex, mImage->getFormat().intendedFormat());
     return mImage->flushAllStagedUpdates(vk::GetImpl(context));
 }
 
@@ -220,10 +210,10 @@ void RenderbufferVk::releaseAndDeleteImage(ContextVk *contextVk)
 
 void RenderbufferVk::releaseImage(ContextVk *contextVk)
 {
+    RendererVk *renderer = contextVk->getRenderer();
+
     if (mImage && mOwnsImage)
     {
-        RendererVk *renderer = contextVk->getRenderer();
-
         mImage->releaseImage(renderer);
         mImage->releaseStagingBuffer(renderer);
     }
@@ -232,7 +222,41 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
         mImage = nullptr;
     }
 
-    contextVk->addGarbage(&mImageView);
+    mImageViews.release(renderer);
 }
 
+const gl::InternalFormat &RenderbufferVk::getImplementationSizedFormat() const
+{
+    GLenum internalFormat = mImage->getFormat().actualImageFormat().glInternalFormat;
+    return gl::GetSizedInternalFormatInfo(internalFormat);
+}
+
+GLenum RenderbufferVk::getColorReadFormat(const gl::Context *context)
+{
+    const gl::InternalFormat &sizedFormat = getImplementationSizedFormat();
+    return sizedFormat.format;
+}
+
+GLenum RenderbufferVk::getColorReadType(const gl::Context *context)
+{
+    const gl::InternalFormat &sizedFormat = getImplementationSizedFormat();
+    return sizedFormat.type;
+}
+
+angle::Result RenderbufferVk::getRenderbufferImage(const gl::Context *context,
+                                                   const gl::PixelPackState &packState,
+                                                   gl::Buffer *packBuffer,
+                                                   GLenum format,
+                                                   GLenum type,
+                                                   void *pixels)
+{
+    // Storage not defined.
+    if (!mImage || !mImage->valid())
+        return angle::Result::Continue;
+
+    ContextVk *contextVk = vk::GetImpl(context);
+    ANGLE_TRY(mImage->flushAllStagedUpdates(contextVk));
+    return mImage->readPixelsForGetImage(contextVk, packState, packBuffer, 0, 0, format, type,
+                                         pixels);
+}
 }  // namespace rx

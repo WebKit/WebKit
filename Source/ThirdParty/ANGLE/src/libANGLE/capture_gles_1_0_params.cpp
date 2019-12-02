@@ -13,7 +13,7 @@ using namespace angle;
 namespace gl
 {
 
-void CaptureClipPlanef_eqn(const Context *context,
+void CaptureClipPlanef_eqn(const State &glState,
                            bool isCallValid,
                            GLenum p,
                            const GLfloat *eqn,
@@ -22,7 +22,7 @@ void CaptureClipPlanef_eqn(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureClipPlanex_equation(const Context *context,
+void CaptureClipPlanex_equation(const State &glState,
                                 bool isCallValid,
                                 GLenum plane,
                                 const GLfixed *equation,
@@ -31,7 +31,7 @@ void CaptureClipPlanex_equation(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureColorPointer_pointer(const Context *context,
+void CaptureColorPointer_pointer(const State &glState,
                                  bool isCallValid,
                                  GLint size,
                                  VertexAttribType typePacked,
@@ -42,7 +42,7 @@ void CaptureColorPointer_pointer(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureFogfv_params(const Context *context,
+void CaptureFogfv_params(const State &glState,
                          bool isCallValid,
                          GLenum pname,
                          const GLfloat *params,
@@ -51,7 +51,7 @@ void CaptureFogfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureFogxv_param(const Context *context,
+void CaptureFogxv_param(const State &glState,
                         bool isCallValid,
                         GLenum pname,
                         const GLfixed *param,
@@ -60,7 +60,7 @@ void CaptureFogxv_param(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetClipPlanef_equation(const Context *context,
+void CaptureGetClipPlanef_equation(const State &glState,
                                    bool isCallValid,
                                    GLenum plane,
                                    GLfloat *equation,
@@ -69,7 +69,7 @@ void CaptureGetClipPlanef_equation(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetClipPlanex_equation(const Context *context,
+void CaptureGetClipPlanex_equation(const State &glState,
                                    bool isCallValid,
                                    GLenum plane,
                                    GLfixed *equation,
@@ -78,7 +78,7 @@ void CaptureGetClipPlanex_equation(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetFixedv_params(const Context *context,
+void CaptureGetFixedv_params(const State &glState,
                              bool isCallValid,
                              GLenum pname,
                              GLfixed *params,
@@ -87,7 +87,7 @@ void CaptureGetFixedv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetLightfv_params(const Context *context,
+void CaptureGetLightfv_params(const State &glState,
                               bool isCallValid,
                               GLenum light,
                               LightParameter pnamePacked,
@@ -97,7 +97,7 @@ void CaptureGetLightfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetLightxv_params(const Context *context,
+void CaptureGetLightxv_params(const State &glState,
                               bool isCallValid,
                               GLenum light,
                               LightParameter pnamePacked,
@@ -107,7 +107,7 @@ void CaptureGetLightxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetMaterialfv_params(const Context *context,
+void CaptureGetMaterialfv_params(const State &glState,
                                  bool isCallValid,
                                  GLenum face,
                                  MaterialParameter pnamePacked,
@@ -117,7 +117,7 @@ void CaptureGetMaterialfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetMaterialxv_params(const Context *context,
+void CaptureGetMaterialxv_params(const State &glState,
                                  bool isCallValid,
                                  GLenum face,
                                  MaterialParameter pnamePacked,
@@ -127,16 +127,7 @@ void CaptureGetMaterialxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetPointerv_params(const Context *context,
-                               bool isCallValid,
-                               GLenum pname,
-                               void **params,
-                               ParamCapture *paramCapture)
-{
-    UNIMPLEMENTED();
-}
-
-void CaptureGetTexEnvfv_params(const Context *context,
+void CaptureGetTexEnvfv_params(const State &glState,
                                bool isCallValid,
                                TextureEnvTarget targetPacked,
                                TextureEnvParameter pnamePacked,
@@ -146,7 +137,7 @@ void CaptureGetTexEnvfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetTexEnviv_params(const Context *context,
+void CaptureGetTexEnviv_params(const State &glState,
                                bool isCallValid,
                                TextureEnvTarget targetPacked,
                                TextureEnvParameter pnamePacked,
@@ -156,7 +147,7 @@ void CaptureGetTexEnviv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetTexEnvxv_params(const Context *context,
+void CaptureGetTexEnvxv_params(const State &glState,
                                bool isCallValid,
                                TextureEnvTarget targetPacked,
                                TextureEnvParameter pnamePacked,
@@ -166,7 +157,7 @@ void CaptureGetTexEnvxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureGetTexParameterxv_params(const Context *context,
+void CaptureGetTexParameterxv_params(const State &glState,
                                      bool isCallValid,
                                      TextureType targetPacked,
                                      GLenum pname,
@@ -176,7 +167,7 @@ void CaptureGetTexParameterxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLightModelfv_params(const Context *context,
+void CaptureLightModelfv_params(const State &glState,
                                 bool isCallValid,
                                 GLenum pname,
                                 const GLfloat *params,
@@ -185,7 +176,7 @@ void CaptureLightModelfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLightModelxv_param(const Context *context,
+void CaptureLightModelxv_param(const State &glState,
                                bool isCallValid,
                                GLenum pname,
                                const GLfixed *param,
@@ -194,7 +185,7 @@ void CaptureLightModelxv_param(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLightfv_params(const Context *context,
+void CaptureLightfv_params(const State &glState,
                            bool isCallValid,
                            GLenum light,
                            LightParameter pnamePacked,
@@ -204,7 +195,7 @@ void CaptureLightfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLightxv_params(const Context *context,
+void CaptureLightxv_params(const State &glState,
                            bool isCallValid,
                            GLenum light,
                            LightParameter pnamePacked,
@@ -214,7 +205,7 @@ void CaptureLightxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLoadMatrixf_m(const Context *context,
+void CaptureLoadMatrixf_m(const State &glState,
                           bool isCallValid,
                           const GLfloat *m,
                           ParamCapture *paramCapture)
@@ -222,7 +213,7 @@ void CaptureLoadMatrixf_m(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureLoadMatrixx_m(const Context *context,
+void CaptureLoadMatrixx_m(const State &glState,
                           bool isCallValid,
                           const GLfixed *m,
                           ParamCapture *paramCapture)
@@ -230,7 +221,7 @@ void CaptureLoadMatrixx_m(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureMaterialfv_params(const Context *context,
+void CaptureMaterialfv_params(const State &glState,
                               bool isCallValid,
                               GLenum face,
                               MaterialParameter pnamePacked,
@@ -240,7 +231,7 @@ void CaptureMaterialfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureMaterialxv_param(const Context *context,
+void CaptureMaterialxv_param(const State &glState,
                              bool isCallValid,
                              GLenum face,
                              MaterialParameter pnamePacked,
@@ -250,7 +241,7 @@ void CaptureMaterialxv_param(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureMultMatrixf_m(const Context *context,
+void CaptureMultMatrixf_m(const State &glState,
                           bool isCallValid,
                           const GLfloat *m,
                           ParamCapture *paramCapture)
@@ -258,7 +249,7 @@ void CaptureMultMatrixf_m(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureMultMatrixx_m(const Context *context,
+void CaptureMultMatrixx_m(const State &glState,
                           bool isCallValid,
                           const GLfixed *m,
                           ParamCapture *paramCapture)
@@ -266,7 +257,7 @@ void CaptureMultMatrixx_m(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureNormalPointer_pointer(const Context *context,
+void CaptureNormalPointer_pointer(const State &glState,
                                   bool isCallValid,
                                   VertexAttribType typePacked,
                                   GLsizei stride,
@@ -276,7 +267,7 @@ void CaptureNormalPointer_pointer(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CapturePointParameterfv_params(const Context *context,
+void CapturePointParameterfv_params(const State &glState,
                                     bool isCallValid,
                                     PointParameter pnamePacked,
                                     const GLfloat *params,
@@ -285,7 +276,7 @@ void CapturePointParameterfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CapturePointParameterxv_params(const Context *context,
+void CapturePointParameterxv_params(const State &glState,
                                     bool isCallValid,
                                     PointParameter pnamePacked,
                                     const GLfixed *params,
@@ -294,7 +285,7 @@ void CapturePointParameterxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureTexCoordPointer_pointer(const Context *context,
+void CaptureTexCoordPointer_pointer(const State &glState,
                                     bool isCallValid,
                                     GLint size,
                                     VertexAttribType typePacked,
@@ -305,7 +296,7 @@ void CaptureTexCoordPointer_pointer(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureTexEnvfv_params(const Context *context,
+void CaptureTexEnvfv_params(const State &glState,
                             bool isCallValid,
                             TextureEnvTarget targetPacked,
                             TextureEnvParameter pnamePacked,
@@ -315,7 +306,7 @@ void CaptureTexEnvfv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureTexEnviv_params(const Context *context,
+void CaptureTexEnviv_params(const State &glState,
                             bool isCallValid,
                             TextureEnvTarget targetPacked,
                             TextureEnvParameter pnamePacked,
@@ -325,7 +316,7 @@ void CaptureTexEnviv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureTexEnvxv_params(const Context *context,
+void CaptureTexEnvxv_params(const State &glState,
                             bool isCallValid,
                             TextureEnvTarget targetPacked,
                             TextureEnvParameter pnamePacked,
@@ -335,7 +326,7 @@ void CaptureTexEnvxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureTexParameterxv_params(const Context *context,
+void CaptureTexParameterxv_params(const State &glState,
                                   bool isCallValid,
                                   TextureType targetPacked,
                                   GLenum pname,
@@ -345,7 +336,7 @@ void CaptureTexParameterxv_params(const Context *context,
     UNIMPLEMENTED();
 }
 
-void CaptureVertexPointer_pointer(const Context *context,
+void CaptureVertexPointer_pointer(const State &glState,
                                   bool isCallValid,
                                   GLint size,
                                   VertexAttribType typePacked,

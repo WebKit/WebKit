@@ -51,28 +51,39 @@ struct BufferFormatInitInfo final
     bool vertexLoadRequiresConversion;
 };
 
+// Describes a Vulkan format. For more information on formats in the Vulkan back-end please see
+// https://chromium.googlesource.com/angle/angle/+/master/src/libANGLE/renderer/vulkan/doc/FormatTablesAndEmulation.md
 struct Format final : private angle::NonCopyable
 {
     Format();
 
     bool valid() const { return internalFormat != 0; }
 
-    // The ANGLE format is the front-end format.
-    const angle::Format &angleFormat() const { return angle::Format::Get(angleFormatID); }
+    // The intended format is the front-end format. For Textures this usually correponds to a
+    // GLenum in the headers. Buffer formats don't always have a corresponding GLenum type.
+    // Some Surface formats and unsized types also don't have a corresponding GLenum.
+    const angle::Format &intendedFormat() const { return angle::Format::Get(intendedFormatID); }
 
-    // The Image format is the VkFormat used to implement the front-end format for VkImages.
-    const angle::Format &imageFormat() const { return angle::Format::Get(imageFormatID); }
+    // The actual Image format is used to implement the front-end format for Texture/Renderbuffers.
+    const angle::Format &actualImageFormat() const
+    {
+        return angle::Format::Get(actualImageFormatID);
+    }
 
-    // The Buffer format is the VkFormat used to implement the front-end format for VkBuffers.
-    const angle::Format &bufferFormat() const { return angle::Format::Get(bufferFormatID); }
+    // The actual Buffer format is used to implement the front-end format for Buffers.
+    const angle::Format &actualBufferFormat() const
+    {
+        return angle::Format::Get(actualBufferFormatID);
+    }
 
-    // Returns OpenGL format information for the front-end format.
+    // The |internalFormat| always correponds to a valid GLenum type. For types that don't have a
+    // corresponding GLenum we do our best to specify a GLenum that is "close".
     const gl::InternalFormat &getInternalFormatInfo(GLenum type) const
     {
         return gl::GetInternalFormatInfo(internalFormat, type);
     }
 
-    // Get buffer alignment for image-copy operations (to or from a buffer).
+    // Returns buffer alignment for image-copy operations (to or from a buffer).
     size_t getImageCopyBufferAlignment() const;
 
     // Returns true if the Image format has more channels than the ANGLE format.
@@ -85,11 +96,11 @@ struct Format final : private angle::NonCopyable
     void initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *info, int numInfo);
     void initBufferFallback(RendererVk *renderer, const BufferFormatInitInfo *info, int numInfo);
 
-    angle::FormatID angleFormatID;
+    angle::FormatID intendedFormatID;
     GLenum internalFormat;
-    angle::FormatID imageFormatID;
+    angle::FormatID actualImageFormatID;
     VkFormat vkImageFormat;
-    angle::FormatID bufferFormatID;
+    angle::FormatID actualBufferFormatID;
     VkFormat vkBufferFormat;
 
     InitializeTextureDataFunction imageInitializerFunction;

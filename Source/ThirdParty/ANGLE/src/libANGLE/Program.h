@@ -244,8 +244,8 @@ struct SamplerBinding
 // elements specified by 'arrayIndex' can set to be enabled.
 struct TransformFeedbackVarying : public sh::ShaderVariable
 {
-    TransformFeedbackVarying(const sh::ShaderVariable &varyingIn, GLuint index)
-        : sh::ShaderVariable(varyingIn), arrayIndex(index)
+    TransformFeedbackVarying(const sh::ShaderVariable &varyingIn, GLuint arrayIndexIn)
+        : sh::ShaderVariable(varyingIn), arrayIndex(arrayIndexIn)
     {
         ASSERT(!isArrayOfArrays());
     }

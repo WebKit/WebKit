@@ -23,14 +23,6 @@ bool ValidateBindFragDataLocation(Context *context,
                                   GLuint color,
                                   const GLchar *name);
 bool ValidateClampColor(Context *context, GLenum target, GLenum clamp);
-bool ValidateColorMaski(Context *context,
-                        GLuint index,
-                        GLboolean r,
-                        GLboolean g,
-                        GLboolean b,
-                        GLboolean a);
-bool ValidateDisablei(Context *context, GLenum target, GLuint index);
-bool ValidateEnablei(Context *context, GLenum target, GLuint index);
 bool ValidateEndConditionalRender(Context *context);
 bool ValidateFramebufferTexture1D(Context *context,
                                   GLenum target,
@@ -45,23 +37,6 @@ bool ValidateFramebufferTexture3D(Context *context,
                                   TextureID texturePacked,
                                   GLint level,
                                   GLint zoffset);
-bool ValidateGetTexParameterIiv(Context *context,
-                                TextureType targetPacked,
-                                GLenum pname,
-                                GLint *params);
-bool ValidateGetTexParameterIuiv(Context *context,
-                                 TextureType targetPacked,
-                                 GLenum pname,
-                                 GLuint *params);
-bool ValidateIsEnabledi(Context *context, GLenum target, GLuint index);
-bool ValidateTexParameterIiv(Context *context,
-                             TextureType targetPacked,
-                             GLenum pname,
-                             const GLint *params);
-bool ValidateTexParameterIuiv(Context *context,
-                              TextureType targetPacked,
-                              GLenum pname,
-                              const GLuint *params);
 bool ValidateVertexAttribI1i(Context *context, GLuint index, GLint x);
 bool ValidateVertexAttribI1iv(Context *context, GLuint index, const GLint *v);
 bool ValidateVertexAttribI1ui(Context *context, GLuint index, GLuint x);

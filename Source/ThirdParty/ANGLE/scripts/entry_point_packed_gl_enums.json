@@ -751,6 +751,9 @@
         "pname": "TextureEnvParameter",
         "target": "TextureEnvTarget"
     },
+    "glGetTexImage": {
+        "target": "TextureTarget"
+    },
     "glGetTexLevelParameterfv": {
         "target": "TextureTarget"
     },

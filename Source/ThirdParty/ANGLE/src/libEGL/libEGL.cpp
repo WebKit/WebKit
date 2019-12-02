@@ -712,4 +712,11 @@ EGLint EGLAPIENTRY eglDupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
     return EGL_DupNativeFenceFDANDROID(dpy, sync);
 }
 
+EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
+                                                         EGLSurface surface,
+                                                         EGLFrameTokenANGLE frametoken)
+{
+    EnsureEGLLoaded();
+    return EGL_SwapBuffersWithFrameTokenANGLE(dpy, surface, frametoken);
+}
 }  // extern "C"

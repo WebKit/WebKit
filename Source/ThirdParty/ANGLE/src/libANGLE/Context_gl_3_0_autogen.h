@@ -13,13 +13,9 @@
 #define ANGLE_GL_3_0_CONTEXT_API                                                               \
     void beginConditionalRender(GLuint id, GLenum mode);                                       \
     void clampColor(GLenum target, GLenum clamp);                                              \
-    void colorMaski(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a);         \
-    void disablei(GLenum target, GLuint index);                                                \
-    void enablei(GLenum target, GLuint index);                                                 \
     void endConditionalRender();                                                               \
     void framebufferTexture1D(GLenum target, GLenum attachment, TextureTarget textargetPacked, \
                               TextureID texturePacked, GLint level);                           \
-    GLboolean isEnabledi(GLenum target, GLuint index);                                         \
     void vertexAttribI1i(GLuint index, GLint x);                                               \
     void vertexAttribI1iv(GLuint index, const GLint *v);                                       \
     void vertexAttribI1ui(GLuint index, GLuint x);                                             \

@@ -14,8 +14,6 @@ set(angle_translator_sources
     include/GLES3/gl3platform.h
     include/GLES3/gl31.h
     include/GLES3/gl32.h
-    include/GLSLANG/ShaderLang.h
-    include/GLSLANG/ShaderVars.h
     include/KHR/khrplatform.h
     include/angle_gl.h
     src/compiler/translator/BaseTypes.h
@@ -103,7 +101,6 @@ set(angle_translator_sources
     src/compiler/translator/VariablePacker.cpp
     src/compiler/translator/VariablePacker.h
     src/compiler/translator/blocklayout.cpp
-    src/compiler/translator/blocklayout.h
     src/compiler/translator/glslang.h
     src/compiler/translator/glslang_lex.cpp
     src/compiler/translator/glslang_tab.cpp
@@ -149,6 +146,8 @@ set(angle_translator_sources
     src/compiler/translator/tree_ops/RegenerateStructNames.h
     src/compiler/translator/tree_ops/RemoveArrayLengthMethod.cpp
     src/compiler/translator/tree_ops/RemoveArrayLengthMethod.h
+    src/compiler/translator/tree_ops/RemoveDynamicIndexing.cpp
+    src/compiler/translator/tree_ops/RemoveDynamicIndexing.h
     src/compiler/translator/tree_ops/RemoveInvariantDeclaration.cpp
     src/compiler/translator/tree_ops/RemoveInvariantDeclaration.h
     src/compiler/translator/tree_ops/RemovePow.cpp
@@ -222,7 +221,6 @@ set(angle_translator_sources
     # Added by conditional statement later in compiler.gni
     src/compiler/translator/ImmutableString_autogen.cpp
     src/compiler/translator/SymbolTable_autogen.cpp
-
 )
 
 set(angle_translator_essl_sources
@@ -235,6 +233,8 @@ set(angle_translator_essl_sources
 set(angle_translator_glsl_sources
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.h
+    src/compiler/translator/BuiltinsWorkaroundGLSL.cpp
+    src/compiler/translator/BuiltinsWorkaroundGLSL.h
     src/compiler/translator/ExtensionGLSL.cpp
     src/compiler/translator/ExtensionGLSL.h
     src/compiler/translator/OutputGLSL.cpp
@@ -253,7 +253,6 @@ set(angle_translator_hlsl_sources
     src/compiler/translator/AtomicCounterFunctionHLSL.cpp
     src/compiler/translator/AtomicCounterFunctionHLSL.h
     src/compiler/translator/blocklayoutHLSL.cpp
-    src/compiler/translator/blocklayoutHLSL.h
     src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
     src/compiler/translator/BuiltInFunctionEmulatorHLSL.h
     src/compiler/translator/OutputHLSL.cpp
@@ -279,8 +278,6 @@ set(angle_translator_hlsl_sources
     src/compiler/translator/tree_ops/AddDefaultReturnStatements.h
     src/compiler/translator/tree_ops/ArrayReturnValueToOutParameter.cpp
     src/compiler/translator/tree_ops/ArrayReturnValueToOutParameter.h
-    src/compiler/translator/tree_ops/RemoveDynamicIndexing.cpp
-    src/compiler/translator/tree_ops/RemoveDynamicIndexing.h
     src/compiler/translator/tree_ops/RemoveSwitchFallThrough.cpp
     src/compiler/translator/tree_ops/RemoveSwitchFallThrough.h
     src/compiler/translator/tree_ops/RewriteElseBlocks.cpp
@@ -330,4 +327,3 @@ set(angle_preprocessor_sources
     src/compiler/preprocessor/Tokenizer.h
     src/compiler/preprocessor/numeric_lex.h
 )
-

@@ -71,7 +71,7 @@ internalFormat = {internal_format};
 break;
 """
 
-image_basic_template = """imageFormatID = {image};
+image_basic_template = """actualImageFormatID = {image};
 vkImageFormat = {vk_image_format};
 imageInitializerFunction = {image_initializer};"""
 
@@ -82,7 +82,7 @@ static constexpr ImageFormatInitInfo kInfo[] = {{{image_list}}};
 initImageFallback(renderer, kInfo, ArraySize(kInfo));
 }}"""
 
-buffer_basic_template = """bufferFormatID = {buffer};
+buffer_basic_template = """actualBufferFormatID = {buffer};
 vkBufferFormat = {vk_buffer_format};
 vkBufferFormatIsPacked = {vk_buffer_format_is_packed};
 vertexLoadFunction = {vertex_load_function};

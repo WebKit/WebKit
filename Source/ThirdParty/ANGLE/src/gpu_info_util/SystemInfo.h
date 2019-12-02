@@ -85,6 +85,7 @@ bool GetSystemInfo(SystemInfo *info);
 // Known PCI vendor IDs
 constexpr VendorID kVendorID_AMD      = 0x1002;
 constexpr VendorID kVendorID_ARM      = 0x13B5;
+constexpr VendorID kVendorID_GOOGLE   = 0x1AE0;
 constexpr VendorID kVendorID_ImgTec   = 0x1010;
 constexpr VendorID kVendorID_Intel    = 0x8086;
 constexpr VendorID kVendorID_NVIDIA   = 0x10DE;
@@ -96,6 +97,9 @@ constexpr VendorID kVendorID_Vivante     = 0x10001;
 constexpr VendorID kVendorID_VeriSilicon = 0x10002;
 constexpr VendorID kVendorID_Kazan       = 0x10003;
 
+// Known device IDs
+constexpr DeviceID kDeviceID_Swiftshader = 0xC0DE;
+
 // Predicates on vendor IDs
 bool IsAMD(VendorID vendorId);
 bool IsARM(VendorID vendorId);
@@ -104,6 +108,7 @@ bool IsIntel(VendorID vendorId);
 bool IsKazan(VendorID vendorId);
 bool IsNVIDIA(VendorID vendorId);
 bool IsQualcomm(VendorID vendorId);
+bool IsSwiftshader(VendorID vendorId);
 bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVivante(VendorID vendorId);

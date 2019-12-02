@@ -27,6 +27,7 @@ class Program;
 class Renderbuffer;
 class Sampler;
 class Shader;
+class State;
 class Texture;
 struct TextureCaps;
 struct UniformBlock;
@@ -58,10 +59,22 @@ void QueryTexLevelParameteriv(const Texture *texture,
                               GLint level,
                               GLenum pname,
                               GLint *params);
-void QueryTexParameterfv(const Texture *texture, GLenum pname, GLfloat *params);
-void QueryTexParameteriv(const Texture *texture, GLenum pname, GLint *params);
-void QueryTexParameterIiv(const Texture *texture, GLenum pname, GLint *params);
-void QueryTexParameterIuiv(const Texture *texture, GLenum pname, GLuint *params);
+void QueryTexParameterfv(const Context *context,
+                         const Texture *texture,
+                         GLenum pname,
+                         GLfloat *params);
+void QueryTexParameteriv(const Context *context,
+                         const Texture *texture,
+                         GLenum pname,
+                         GLint *params);
+void QueryTexParameterIiv(const Context *context,
+                          const Texture *texture,
+                          GLenum pname,
+                          GLint *params);
+void QueryTexParameterIuiv(const Context *context,
+                           const Texture *texture,
+                           GLenum pname,
+                           GLuint *params);
 void QuerySamplerParameterfv(const Sampler *sampler, GLenum pname, GLfloat *params);
 void QuerySamplerParameteriv(const Sampler *sampler, GLenum pname, GLint *params);
 void QuerySamplerParameterIiv(const Sampler *sampler, GLenum pname, GLint *params);
@@ -226,6 +239,10 @@ void GetPointSize(GLES1State *state, GLfloat *sizeOut);
 
 unsigned int GetTexParameterCount(GLenum pname);
 
+bool GetQueryParameterInfo(const State &glState,
+                           GLenum pname,
+                           GLenum *type,
+                           unsigned int *numParams);
 }  // namespace gl
 
 namespace egl

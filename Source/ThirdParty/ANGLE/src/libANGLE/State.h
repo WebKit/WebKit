@@ -47,11 +47,20 @@ class SyncManager;
 class TextureManager;
 class VertexArray;
 
+static constexpr Version ES_1_0 = Version(1, 0);
+static constexpr Version ES_1_1 = Version(1, 1);
 static constexpr Version ES_2_0 = Version(2, 0);
 static constexpr Version ES_3_0 = Version(3, 0);
 static constexpr Version ES_3_1 = Version(3, 1);
+static constexpr Version ES_3_2 = Version(3, 2);
 
 using ContextID = uintptr_t;
+
+template <typename T>
+using BufferBindingMap     = angle::PackedEnumMap<BufferBinding, T>;
+using BoundBufferMap       = BufferBindingMap<BindingPointer<Buffer>>;
+using TextureBindingVector = std::vector<BindingPointer<Texture>>;
+using TextureBindingMap    = angle::PackedEnumMap<TextureType, TextureBindingVector>;
 
 class State : angle::NonCopyable
 {
@@ -346,6 +355,8 @@ class State : angle::NonCopyable
                 return mBoundBuffers[target].get();
         }
     }
+
+    ANGLE_INLINE Buffer *getArrayBuffer() const { return getTargetBuffer(BufferBinding::Array); }
 
     angle::Result setIndexedBufferBinding(const Context *context,
                                           BufferBinding target,
@@ -684,6 +695,24 @@ class State : angle::NonCopyable
 
     const OverlayType *getOverlay() const { return mOverlay; }
 
+    // Not for general use.
+    const BufferManager &getBufferManagerForCapture() const { return *mBufferManager; }
+    const BoundBufferMap &getBoundBuffersForCapture() const { return mBoundBuffers; }
+    const TextureManager &getTextureManagerForCapture() const { return *mTextureManager; }
+    const TextureBindingMap &getBoundTexturesForCapture() const { return mSamplerTextures; }
+    const RenderbufferManager &getRenderbufferManagerForCapture() const
+    {
+        return *mRenderbufferManager;
+    }
+    const FramebufferManager &getFramebufferManagerForCapture() const
+    {
+        return *mFramebufferManager;
+    }
+    const ShaderProgramManager &getShaderProgramManagerForCapture() const
+    {
+        return *mShaderProgramManager;
+    }
+
   private:
     friend class Context;
 
@@ -815,8 +844,6 @@ class State : angle::NonCopyable
     // Texture and sampler bindings
     size_t mActiveSampler;  // Active texture unit selector - GL_TEXTURE0
 
-    using TextureBindingVector = std::vector<BindingPointer<Texture>>;
-    using TextureBindingMap    = angle::PackedEnumMap<TextureType, TextureBindingVector>;
     TextureBindingMap mSamplerTextures;
 
     // Texture Completeness Caching
@@ -849,7 +876,6 @@ class State : angle::NonCopyable
     // Stores the currently bound buffer for each binding point. It has an entry for the element
     // array buffer but it should not be used. Instead this bind point is owned by the current
     // vertex array object.
-    using BoundBufferMap = angle::PackedEnumMap<BufferBinding, BindingPointer<Buffer>>;
     BoundBufferMap mBoundBuffers;
 
     using BufferVector = std::vector<OffsetBindingPointer<Buffer>>;

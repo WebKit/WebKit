@@ -124,8 +124,6 @@
                       void *pixels);                                                               \
     void getnUniformdv(ShaderProgramID programPacked, GLint location, GLsizei bufSize,             \
                        GLdouble *params);                                                          \
-    void getnUniformuiv(ShaderProgramID programPacked, GLint location, GLsizei bufSize,            \
-                        GLuint *params);                                                           \
     void invalidateNamedFramebufferData(FramebufferID framebufferPacked, GLsizei numAttachments,   \
                                         const GLenum *attachments);                                \
     void invalidateNamedFramebufferSubData(FramebufferID framebufferPacked,                        \

@@ -67,7 +67,7 @@ bool DisplayVkXcb::isValidNativeWindow(EGLNativeWindowType window) const
     // window ID, but xcb_query_tree_reply will return nullptr if the window doesn't exist.
     xcb_query_tree_cookie_t cookie =
         xcb_query_tree(mXcbConnection, static_cast<xcb_window_t>(window));
-    xcb_query_tree_reply_t *reply  = xcb_query_tree_reply(mXcbConnection, cookie, nullptr);
+    xcb_query_tree_reply_t *reply = xcb_query_tree_reply(mXcbConnection, cookie, nullptr);
     if (reply)
     {
         free(reply);
@@ -77,11 +77,9 @@ bool DisplayVkXcb::isValidNativeWindow(EGLNativeWindowType window) const
 }
 
 SurfaceImpl *DisplayVkXcb::createWindowSurfaceVk(const egl::SurfaceState &state,
-                                                 EGLNativeWindowType window,
-                                                 EGLint width,
-                                                 EGLint height)
+                                                 EGLNativeWindowType window)
 {
-    return new WindowSurfaceVkXcb(state, window, width, height, mXcbConnection);
+    return new WindowSurfaceVkXcb(state, window, mXcbConnection);
 }
 
 egl::ConfigSet DisplayVkXcb::generateConfigs()

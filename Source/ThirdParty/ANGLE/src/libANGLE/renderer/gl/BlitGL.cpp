@@ -1048,6 +1048,9 @@ angle::Result BlitGL::orphanScratchTextures(const gl::Context *context)
         gl::PixelUnpackState unpack;
         mStateManager->setPixelUnpackState(unpack);
         mStateManager->setPixelUnpackBuffer(nullptr);
+        GLint swizzle[4] = {GL_RED, GL_GREEN, GL_BLUE, GL_ALPHA};
+        ANGLE_GL_TRY(context,
+                     mFunctions->texParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle));
         ANGLE_GL_TRY(context, mFunctions->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 0, GL_RGBA,
                                                      GL_UNSIGNED_BYTE, nullptr));
     }

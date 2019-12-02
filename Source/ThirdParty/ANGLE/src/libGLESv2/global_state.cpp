@@ -10,7 +10,9 @@
 
 #include "common/debug.h"
 #include "common/platform.h"
+#include "common/system_utils.h"
 #include "common/tls.h"
+#include "libGLESv2/resource.h"
 
 namespace gl
 {
@@ -206,11 +208,67 @@ bool TerminateProcess()
 
 }  // namespace egl
 
-extern "C" BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID)
+namespace
+{
+// The following WaitForDebugger code is based on SwiftShader. See:
+// https://cs.chromium.org/chromium/src/third_party/swiftshader/src/Vulkan/main.cpp
+#    if defined(ANGLE_ENABLE_ASSERTS)
+INT_PTR CALLBACK DebuggerWaitDialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    RECT rect;
+
+    switch (uMsg)
+    {
+        case WM_INITDIALOG:
+            ::GetWindowRect(GetDesktopWindow(), &rect);
+            ::SetWindowPos(hwnd, HWND_TOP, rect.right / 2, rect.bottom / 2, 0, 0, SWP_NOSIZE);
+            ::SetTimer(hwnd, 1, 100, NULL);
+            return TRUE;
+        case WM_COMMAND:
+            if (LOWORD(wParam) == IDCANCEL)
+            {
+                ::EndDialog(hwnd, 0);
+            }
+            break;
+        case WM_TIMER:
+            if (angle::IsDebuggerAttached())
+            {
+                ::EndDialog(hwnd, 0);
+            }
+    }
+
+    return FALSE;
+}
+
+void WaitForDebugger(HINSTANCE instance)
+{
+    if (angle::IsDebuggerAttached())
+        return;
+
+    HRSRC dialog = ::FindResourceA(instance, MAKEINTRESOURCEA(IDD_DIALOG1), MAKEINTRESOURCEA(5));
+    if (!dialog)
+    {
+        printf("Error finding wait for debugger dialog. Error %lu.\n", ::GetLastError());
+        return;
+    }
+
+    DLGTEMPLATE *dialogTemplate = reinterpret_cast<DLGTEMPLATE *>(::LoadResource(instance, dialog));
+    ::DialogBoxIndirectA(instance, dialogTemplate, NULL, DebuggerWaitDialogProc);
+}
+#    else
+void WaitForDebugger(HINSTANCE instance) {}
+#    endif  // defined(ANGLE_ENABLE_ASSERTS)
+}  // namespace
+
+extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID)
 {
     switch (reason)
     {
         case DLL_PROCESS_ATTACH:
+            if (angle::GetEnvironmentVar("ANGLE_WAIT_FOR_DEBUGGER") == "1")
+            {
+                WaitForDebugger(instance);
+            }
             return static_cast<BOOL>(egl::InitializeProcess());
 
         case DLL_THREAD_ATTACH:

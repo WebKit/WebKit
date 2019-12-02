@@ -235,6 +235,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetSyncValuesCHROMIUM(EGLDisplay dpy,
 #define EGL_FEATURE_OVERRIDES_ENABLED_ANGLE 0x3466
 #define EGL_FEATURE_OVERRIDES_DISABLED_ANGLE 0x3467
 #define EGL_FEATURE_CONDITION_ANGLE 0x3468
+#define EGL_FEATURE_ALL_DISABLED_ANGLE 0x3469
 typedef const char *(EGLAPIENTRYP PFNEGLQUERYSTRINGIANGLEPROC) (EGLDisplay dpy, EGLint name, EGLint index);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYDISPLAYATTRIBANGLEPROC) (EGLDisplay dpy, EGLint attribute, EGLAttrib *value);
 #ifdef EGL_EGLEXT_PROTOTYPES
@@ -258,6 +259,20 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryDisplayAttribANGLE(EGLDisplay dpy, EGLint 
 #define EGL_CGL_CONTEXT_ANGLE 0x3485
 #define EGL_CGL_PIXEL_FORMAT_ANGLE 0x3486
 #endif
+
+#ifndef EGL_ANGLE_ggp_stream_descriptor
+#define EGL_ANGLE_ggp_stream_descriptor 1
+#define EGL_GGP_STREAM_DESCRIPTOR_ANGLE 0x348B
+#endif /* EGL_ANGLE_ggp_stream_descriptor */
+
+#ifndef EGL_ANGLE_swap_with_frame_token
+#define EGL_ANGLE_swap_with_frame_token 1
+typedef khronos_uint64_t EGLFrameTokenANGLE;
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLSWAPBUFFERSWITHFRAMETOKENANGLEPROC)(EGLDisplay dpy, EGLSurface surface, EGLFrameTokenANGLE frametoken);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, EGLSurface surface, EGLFrameTokenANGLE frametoken);
+#endif
+#endif /* EGL_ANGLE_swap_with_frame_token */
 
 #ifndef EGL_ANGLE_device_eagl
 #define EGL_ANGLE_device_eagl 1

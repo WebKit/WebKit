@@ -389,16 +389,16 @@ bool IsValidCopyTextureDestinationLevel(Context *context,
     switch (type)
     {
         case TextureType::_2D:
-            return static_cast<GLuint>(width) <= (caps.max2DTextureSize >> level) &&
-                   static_cast<GLuint>(height) <= (caps.max2DTextureSize >> level);
+            return width <= (caps.max2DTextureSize >> level) &&
+                   height <= (caps.max2DTextureSize >> level);
         case TextureType::Rectangle:
             ASSERT(level == 0);
-            return static_cast<GLuint>(width) <= (caps.max2DTextureSize >> level) &&
-                   static_cast<GLuint>(height) <= (caps.max2DTextureSize >> level);
+            return width <= (caps.max2DTextureSize >> level) &&
+                   height <= (caps.max2DTextureSize >> level);
 
         case TextureType::CubeMap:
-            return static_cast<GLuint>(width) <= (caps.maxCubeMapTextureSize >> level) &&
-                   static_cast<GLuint>(height) <= (caps.maxCubeMapTextureSize >> level);
+            return width <= (caps.maxCubeMapTextureSize >> level) &&
+                   height <= (caps.maxCubeMapTextureSize >> level);
         default:
             return true;
     }
@@ -717,6 +717,36 @@ bool ValidateES2CopyTexImageParameters(Context *context,
             case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
             case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
                 if (context->getExtensions().lossyETCDecode)
+                {
+                    context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
+                    return false;
+                }
+                else
+                {
+                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                    return false;
+                }
+                break;
+            case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+            case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+            case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+            case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+                if (context->getExtensions().compressedTexturePVRTC)
+                {
+                    context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
+                    return false;
+                }
+                else
+                {
+                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                    return false;
+                }
+                break;
+            case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
+                if (context->getExtensions().compressedTexturePVRTCsRGB)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
@@ -1218,8 +1248,8 @@ bool ValidateES2TexImageParametersBase(Context *context,
     {
         case TextureType::_2D:
         case TextureType::External:
-            if (static_cast<GLuint>(width) > (caps.max2DTextureSize >> level) ||
-                static_cast<GLuint>(height) > (caps.max2DTextureSize >> level))
+            if (width > (caps.max2DTextureSize >> level) ||
+                height > (caps.max2DTextureSize >> level))
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1228,8 +1258,7 @@ bool ValidateES2TexImageParametersBase(Context *context,
 
         case TextureType::Rectangle:
             ASSERT(level == 0);
-            if (static_cast<GLuint>(width) > caps.maxRectangleTextureSize ||
-                static_cast<GLuint>(height) > caps.maxRectangleTextureSize)
+            if (width > caps.maxRectangleTextureSize || height > caps.maxRectangleTextureSize)
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1248,8 +1277,8 @@ bool ValidateES2TexImageParametersBase(Context *context,
                 return false;
             }
 
-            if (static_cast<GLuint>(width) > (caps.maxCubeMapTextureSize >> level) ||
-                static_cast<GLuint>(height) > (caps.maxCubeMapTextureSize >> level))
+            if (width > (caps.maxCubeMapTextureSize >> level) ||
+                height > (caps.maxCubeMapTextureSize >> level))
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1399,6 +1428,14 @@ bool ValidateES2TexImageParametersBase(Context *context,
                             return false;
                         }
                         break;
+                    case GL_SHORT:
+                    case GL_UNSIGNED_SHORT:
+                        if (!context->getExtensions().textureNorm16)
+                        {
+                            context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                            return false;
+                        }
+                        break;
                     default:
                         context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
                         return false;
@@ -1412,6 +1449,15 @@ bool ValidateES2TexImageParametersBase(Context *context,
                     case GL_UNSIGNED_INT_2_10_10_10_REV_EXT:
                     case GL_FLOAT:
                     case GL_HALF_FLOAT_OES:
+                        break;
+                    case GL_SHORT:
+                    case GL_UNSIGNED_SHORT:
+                        if (!context->getExtensions().textureNorm16)
+                        {
+                            context->validationError(GL_INVALID_OPERATION,
+                                                     kMismatchedTypeAndFormat);
+                            return false;
+                        }
                         break;
                     default:
                         context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
@@ -1427,6 +1473,15 @@ bool ValidateES2TexImageParametersBase(Context *context,
                     case GL_FLOAT:
                     case GL_HALF_FLOAT_OES:
                     case GL_UNSIGNED_INT_2_10_10_10_REV_EXT:
+                        break;
+                    case GL_SHORT:
+                    case GL_UNSIGNED_SHORT:
+                        if (!context->getExtensions().textureNorm16)
+                        {
+                            context->validationError(GL_INVALID_OPERATION,
+                                                     kMismatchedTypeAndFormat);
+                            return false;
+                        }
                         break;
                     default:
                         context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
@@ -1553,6 +1608,36 @@ bool ValidateES2TexImageParametersBase(Context *context,
             case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
             case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
                 if (context->getExtensions().lossyETCDecode)
+                {
+                    context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
+                    return false;
+                }
+                else
+                {
+                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                    return false;
+                }
+                break;
+            case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+            case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+            case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+            case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+                if (context->getExtensions().compressedTexturePVRTC)
+                {
+                    context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
+                    return false;
+                }
+                else
+                {
+                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                    return false;
+                }
+                break;
+            case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
+            case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
+                if (context->getExtensions().compressedTexturePVRTCsRGB)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
@@ -1720,6 +1805,20 @@ bool ValidateES2TexImageParametersBase(Context *context,
 
                     break;
 
+                case GL_R16_EXT:
+                case GL_RG16_EXT:
+                case GL_RGB16_EXT:
+                case GL_RGBA16_EXT:
+                case GL_R16_SNORM_EXT:
+                case GL_RG16_SNORM_EXT:
+                case GL_RGB16_SNORM_EXT:
+                case GL_RGBA16_SNORM_EXT:
+                    if (!context->getExtensions().textureNorm16)
+                    {
+                        context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                        return false;
+                    }
+                    break;
                 default:
                     context->validationError(GL_INVALID_VALUE, kInvalidInternalFormat);
                     return false;
@@ -1852,8 +1951,7 @@ bool ValidateES2TexStorageParameters(Context *context,
     switch (target)
     {
         case TextureType::_2D:
-            if (static_cast<GLuint>(width) > caps.max2DTextureSize ||
-                static_cast<GLuint>(height) > caps.max2DTextureSize)
+            if (width > caps.max2DTextureSize || height > caps.max2DTextureSize)
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1866,8 +1964,7 @@ bool ValidateES2TexStorageParameters(Context *context,
                 return false;
             }
 
-            if (static_cast<GLuint>(width) > caps.maxRectangleTextureSize ||
-                static_cast<GLuint>(height) > caps.maxRectangleTextureSize)
+            if (width > caps.maxRectangleTextureSize || height > caps.maxRectangleTextureSize)
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1879,8 +1976,7 @@ bool ValidateES2TexStorageParameters(Context *context,
             }
             break;
         case TextureType::CubeMap:
-            if (static_cast<GLuint>(width) > caps.maxCubeMapTextureSize ||
-                static_cast<GLuint>(height) > caps.maxCubeMapTextureSize)
+            if (width > caps.maxCubeMapTextureSize || height > caps.maxCubeMapTextureSize)
             {
                 context->validationError(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
@@ -1937,6 +2033,26 @@ bool ValidateES2TexStorageParameters(Context *context,
         case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
         case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
             if (!context->getExtensions().lossyETCDecode)
+            {
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
+            }
+            break;
+        case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+        case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+        case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+        case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+            if (!context->getExtensions().compressedTexturePVRTC)
+            {
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
+            }
+            break;
+        case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
+        case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
+            if (!context->getExtensions().compressedTexturePVRTCsRGB)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -3608,7 +3724,7 @@ bool ValidateBindUniformLocationCHROMIUM(Context *context,
     }
 
     const Caps &caps = context->getCaps();
-    if (static_cast<size_t>(location) >=
+    if (static_cast<long>(location) >=
         (caps.maxVertexUniformVectors + caps.maxFragmentUniformVectors) * 4)
     {
         context->validationError(GL_INVALID_VALUE, kInvalidBindUniformLocation);
@@ -4896,6 +5012,23 @@ bool ValidateRequestExtensionANGLE(Context *context, const GLchar *name)
     return true;
 }
 
+bool ValidateDisableExtensionANGLE(Context *context, const GLchar *name)
+{
+    if (!context->getExtensions().requestExtension)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (!context->isExtensionDisablable(name))
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotDisablable);
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateActiveTexture(Context *context, GLenum texture)
 {
     if (context->getClientMajorVersion() < 2)
@@ -4904,7 +5037,8 @@ bool ValidateActiveTexture(Context *context, GLenum texture)
     }
 
     if (texture < GL_TEXTURE0 ||
-        texture > GL_TEXTURE0 + context->getCaps().maxCombinedTextureImageUnits - 1)
+        texture >
+            GL_TEXTURE0 + static_cast<GLuint>(context->getCaps().maxCombinedTextureImageUnits) - 1)
     {
         context->validationError(GL_INVALID_ENUM, kInvalidCombinedImageUnit);
         return false;
@@ -5199,7 +5333,7 @@ bool ValidateRenderbufferStorageMultisampleANGLE(Context *context,
     // ANGLE_framebuffer_multisample states that the value of samples must be less than or equal
     // to MAX_SAMPLES_ANGLE (Context::getCaps().maxSamples) otherwise GL_INVALID_VALUE is
     // generated.
-    if (static_cast<GLuint>(samples) > context->getCaps().maxSamples)
+    if (samples > context->getCaps().maxSamples)
     {
         context->validationError(GL_INVALID_VALUE, kSamplesOutOfRange);
         return false;
@@ -6499,7 +6633,7 @@ bool ValidateFramebufferTexture3DOES(Context *context,
                     context->validationError(GL_INVALID_VALUE, kInvalidMipLevel);
                     return false;
                 }
-                if (static_cast<size_t>(zoffset) >= caps.max3DTextureSize)
+                if (zoffset >= caps.max3DTextureSize)
                 {
                     context->validationError(GL_INVALID_VALUE, kInvalidZOffset);
                     return false;
@@ -7258,6 +7392,78 @@ bool ValidateFramebufferTexture2DMultisampleEXT(Context *context,
                                                 GLint level,
                                                 GLsizei samples)
 {
+    if (!context->getExtensions().multisampledRenderToTexture)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (samples < 0)
+    {
+        return false;
+    }
+
+    // EXT_multisampled_render_to_texture states that the value of samples
+    // must be less than or equal to MAX_SAMPLES_EXT (Context::getCaps().maxSamples)
+    // otherwise GL_INVALID_VALUE is generated.
+    if (samples > context->getCaps().maxSamples)
+    {
+        context->validationError(GL_INVALID_VALUE, kSamplesOutOfRange);
+        return false;
+    }
+
+    if (!ValidFramebufferTarget(context, target))
+    {
+        context->validationError(GL_INVALID_ENUM, kInvalidFramebufferTarget);
+        return false;
+    }
+
+    if (attachment != GL_COLOR_ATTACHMENT0)
+    {
+        context->validationError(GL_INVALID_ENUM, kInvalidAttachment);
+        return false;
+    }
+
+    TextureTarget textargetPacked = FromGLenum<TextureTarget>(textarget);
+    if (!ValidTexture2DDestinationTarget(context, textargetPacked))
+    {
+        context->validationError(GL_INVALID_ENUM, kInvalidTextureTarget);
+        return false;
+    }
+
+    if (texture != 0)
+    {
+        TextureID texturePacked = FromGL<TextureID>(texture);
+        Texture *tex            = context->getTexture(texturePacked);
+
+        if (tex == nullptr)
+        {
+            context->validationError(GL_INVALID_OPERATION, kMissingTexture);
+            return false;
+        }
+
+        if (level < 0)
+        {
+            context->validationError(GL_INVALID_VALUE, kInvalidMipLevel);
+            return false;
+        }
+
+        // EXT_multisampled_render_to_texture returns INVALID_OPERATION when a sample number higher
+        // than the maximum sample number supported by this format is passed.
+        // The TextureCaps::getMaxSamples method is only guarenteed to be valid when the context is
+        // ES3.
+        if (context->getClientMajorVersion() >= 3)
+        {
+            GLenum internalformat = tex->getFormat(textargetPacked, level).info->internalFormat;
+            const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
+            if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
+            {
+                context->validationError(GL_INVALID_OPERATION, kSamplesOutOfRange);
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -7268,6 +7474,40 @@ bool ValidateRenderbufferStorageMultisampleEXT(Context *context,
                                                GLsizei width,
                                                GLsizei height)
 {
+    if (!context->getExtensions().multisampledRenderToTexture)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    if (!ValidateRenderbufferStorageParametersBase(context, target, samples, internalformat, width,
+                                                   height))
+    {
+        return false;
+    }
+
+    // EXT_multisampled_render_to_texture states that the value of samples
+    // must be less than or equal to MAX_SAMPLES_EXT (Context::getCaps().maxSamples)
+    // otherwise GL_INVALID_VALUE is generated.
+    if (samples > context->getCaps().maxSamples)
+    {
+        context->validationError(GL_INVALID_VALUE, kSamplesOutOfRange);
+        return false;
+    }
+
+    // EXT_multisampled_render_to_texture returns GL_OUT_OF_MEMORY on failure to create
+    // the specified storage. This is different than ES 3.0 in which a sample number higher
+    // than the maximum sample number supported by this format generates a GL_INVALID_VALUE.
+    // The TextureCaps::getMaxSamples method is only guarenteed to be valid when the context is ES3.
+    if (context->getClientMajorVersion() >= 3)
+    {
+        const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
+        if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
+        {
+            context->validationError(GL_OUT_OF_MEMORY, kSamplesOutOfRange);
+            return false;
+        }
+    }
+
     return true;
 }
 

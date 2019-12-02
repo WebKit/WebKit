@@ -35,9 +35,9 @@ class TIntermTraverser : angle::NonCopyable
 {
   public:
     POOL_ALLOCATOR_NEW_DELETE
-    TIntermTraverser(bool preVisit,
-                     bool inVisit,
-                     bool postVisit,
+    TIntermTraverser(bool preVisitIn,
+                     bool inVisitIn,
+                     bool postVisitIn,
                      TSymbolTable *symbolTable = nullptr);
     virtual ~TIntermTraverser();
 

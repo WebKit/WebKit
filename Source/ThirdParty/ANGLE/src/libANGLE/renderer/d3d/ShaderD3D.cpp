@@ -154,6 +154,7 @@ void ShaderD3D::uncompile()
     mUsesSecondaryColor          = false;
     mUsesFragCoord               = false;
     mUsesFrontFacing             = false;
+    mUsesHelperInvocation        = false;
     mUsesPointSize               = false;
     mUsesPointCoord              = false;
     mUsesDepthRange              = false;
@@ -277,10 +278,12 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
         mUsesSecondaryColor = translatedSource.find("GL_USES_SECONDARY_COLOR") != std::string::npos;
         mUsesFragCoord      = translatedSource.find("GL_USES_FRAG_COORD") != std::string::npos;
         mUsesFrontFacing    = translatedSource.find("GL_USES_FRONT_FACING") != std::string::npos;
-        mUsesPointSize      = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
-        mUsesPointCoord     = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
-        mUsesDepthRange     = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-        mUsesFragDepth      = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
+        mUsesHelperInvocation =
+            translatedSource.find("GL_USES_HELPER_INVOCATION") != std::string::npos;
+        mUsesPointSize  = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
+        mUsesPointCoord = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
+        mUsesDepthRange = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
+        mUsesFragDepth  = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
         mHasANGLEMultiviewEnabled =
             translatedSource.find("GL_ANGLE_MULTIVIEW_ENABLED") != std::string::npos;
         mUsesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;

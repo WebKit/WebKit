@@ -105,7 +105,7 @@ HRESULT CompositorNativeWindow11::createSwapChain(ID3D11Device *device,
     ComPtr<IDXGIFactory2> factory2;
     factory2.Attach(d3d11::DynamicCastComObject<IDXGIFactory2>(factory));
 
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.Width                 = width;
     swapChainDesc.Height                = height;
     swapChainDesc.Format                = format;

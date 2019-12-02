@@ -18,10 +18,7 @@ namespace rx
 class WindowSurfaceVkFuchsia : public WindowSurfaceVk
 {
   public:
-    WindowSurfaceVkFuchsia(const egl::SurfaceState &surfaceState,
-                           EGLNativeWindowType window,
-                           EGLint width,
-                           EGLint height);
+    WindowSurfaceVkFuchsia(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
     ~WindowSurfaceVkFuchsia() override;
 
     static bool isValidNativeWindow(EGLNativeWindowType window);

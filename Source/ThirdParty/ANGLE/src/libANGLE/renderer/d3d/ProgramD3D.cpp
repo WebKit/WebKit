@@ -740,7 +740,7 @@ GLint ProgramD3D::getSamplerMapping(gl::ShaderType type,
 
     ASSERT(type != gl::ShaderType::InvalidEnum);
 
-    ASSERT(samplerIndex < caps.maxShaderTextureImageUnits[type]);
+    ASSERT(samplerIndex < static_cast<unsigned int>(caps.maxShaderTextureImageUnits[type]));
 
     const auto &samplers = mShaderSamplers[type];
     if (samplerIndex < samplers.size() && samplers[samplerIndex].active)
@@ -748,8 +748,7 @@ GLint ProgramD3D::getSamplerMapping(gl::ShaderType type,
         logicalTextureUnit = samplers[samplerIndex].logicalTextureUnit;
     }
 
-    if (logicalTextureUnit >= 0 &&
-        logicalTextureUnit < static_cast<GLint>(caps.maxCombinedTextureImageUnits))
+    if (logicalTextureUnit >= 0 && logicalTextureUnit < caps.maxCombinedTextureImageUnits)
     {
         return logicalTextureUnit;
     }
@@ -826,7 +825,7 @@ GLint ProgramD3D::getImageMapping(gl::ShaderType type,
                                   const gl::Caps &caps) const
 {
     GLint logicalImageUnit = -1;
-    ASSERT(imageIndex < caps.maxImageUnits);
+    ASSERT(imageIndex < static_cast<unsigned int>(caps.maxImageUnits));
     switch (type)
     {
         case gl::ShaderType::Compute:
@@ -845,7 +844,7 @@ GLint ProgramD3D::getImageMapping(gl::ShaderType type,
             UNREACHABLE();
     }
 
-    if (logicalImageUnit >= 0 && logicalImageUnit < static_cast<GLint>(caps.maxImageUnits))
+    if (logicalImageUnit >= 0 && logicalImageUnit < caps.maxImageUnits)
     {
         return logicalImageUnit;
     }
@@ -873,7 +872,7 @@ class ProgramD3D::LoadBinaryTask : public ProgramD3D::GetExecutableTask
 {
   public:
     LoadBinaryTask(ProgramD3D *program, gl::BinaryInputStream *stream, gl::InfoLog &infoLog)
-        : ProgramD3D::GetExecutableTask(program), mProgram(program), mInfoLog(infoLog)
+        : ProgramD3D::GetExecutableTask(program)
     {
         ASSERT(mProgram);
         ASSERT(stream);
@@ -901,9 +900,6 @@ class ProgramD3D::LoadBinaryTask : public ProgramD3D::GetExecutableTask
     }
 
   private:
-    ProgramD3D *mProgram;
-    gl::InfoLog &mInfoLog;
-
     bool mDataCopySucceeded;
     angle::MemoryBuffer mStreamData;
 };
@@ -950,7 +946,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
 
     reset();
 
-    DeviceIdentifier binaryDeviceIdentifier = {0};
+    DeviceIdentifier binaryDeviceIdentifier = {};
     stream->readBytes(reinterpret_cast<unsigned char *>(&binaryDeviceIdentifier),
                       sizeof(DeviceIdentifier));
 
@@ -1903,7 +1899,7 @@ std::unique_ptr<LinkEvent> ProgramD3D::compileProgramExecutables(const gl::Conte
     auto pixelTask    = std::make_shared<GetPixelExecutableTask>(this);
     auto geometryTask = std::make_shared<GetGeometryExecutableTask>(this, context->getState());
     bool useGS        = usesGeometryShader(context->getState(), gl::PrimitiveMode::Points);
-    gl::Shader *vertexShader = mState.getAttachedShader(gl::ShaderType::Vertex);
+    gl::Shader *vertexShader         = mState.getAttachedShader(gl::ShaderType::Vertex);
     gl::Shader *fragmentShader       = mState.getAttachedShader(gl::ShaderType::Fragment);
     const ShaderD3D *vertexShaderD3D = vertexShader ? GetImplAs<ShaderD3D>(vertexShader) : nullptr;
     const ShaderD3D *fragmentShaderD3D =
@@ -2247,7 +2243,8 @@ void ProgramD3D::updateUniformBufferCache(
 
             unsigned int registerIndex = uniformBlock.mShaderRegisterIndexes[shaderType] -
                                          reservedShaderRegisterIndexes[shaderType];
-            ASSERT(registerIndex < caps.maxShaderUniformBlocks[shaderType]);
+            ASSERT(registerIndex <
+                   static_cast<unsigned int>(caps.maxShaderUniformBlocks[shaderType]));
 
             std::vector<int> &shaderUBOcache = mShaderUBOCaches[shaderType];
             if (shaderUBOcache.size() <= registerIndex)

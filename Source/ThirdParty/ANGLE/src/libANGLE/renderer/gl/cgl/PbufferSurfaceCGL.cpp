@@ -7,17 +7,15 @@
 // PBufferSurfaceCGL.cpp: an implementation of egl::Surface for PBuffers for the CLG backend,
 //                      currently implemented using renderbuffers
 
-#import "common/platform.h"
+#include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
-#include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-
-#include "common/debug.h"
-#include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/FramebufferGL.h"
-#include "libANGLE/renderer/gl/RendererGL.h"
-#include "libANGLE/renderer/gl/StateManagerGL.h"
+#    include "common/debug.h"
+#    include "libANGLE/renderer/gl/FramebufferGL.h"
+#    include "libANGLE/renderer/gl/FunctionsGL.h"
+#    include "libANGLE/renderer/gl/RendererGL.h"
+#    include "libANGLE/renderer/gl/StateManagerGL.h"
 
 namespace rx
 {
@@ -33,8 +31,7 @@ PbufferSurfaceCGL::PbufferSurfaceCGL(const egl::SurfaceState &state,
       mStateManager(renderer->getStateManager()),
       mColorRenderbuffer(0),
       mDSRenderbuffer(0)
-{
-}
+{}
 
 PbufferSurfaceCGL::~PbufferSurfaceCGL()
 {
@@ -102,9 +99,7 @@ egl::Error PbufferSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void PbufferSurfaceCGL::setSwapInterval(EGLint interval)
-{
-}
+void PbufferSurfaceCGL::setSwapInterval(EGLint interval) {}
 
 EGLint PbufferSurfaceCGL::getWidth() const
 {
@@ -146,4 +141,4 @@ FramebufferImpl *PbufferSurfaceCGL::createDefaultFramebuffer(const gl::Context *
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

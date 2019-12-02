@@ -568,7 +568,11 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
     GLsizei readAttachmentSamples = 0;
     if (colorReadAttachment != nullptr)
     {
-        readAttachmentSamples = colorReadAttachment->getSamples();
+        // Blitting requires that the textures be single sampled. getSamples will return
+        // emulated sample number, but the EXT_multisampled_render_to_texture extension will
+        // take care of resolving the texture, so even if emulated samples > 0, we should still
+        // be able to blit as long as the underlying resource samples is single sampled.
+        readAttachmentSamples = colorReadAttachment->getResourceSamples();
     }
 
     bool needManualColorBlit = false;

@@ -1462,6 +1462,9 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                 // This special dirty bit is used to signal the front-end that the implementation
                 // has local dirty bits. The real dirty bits are in mLocalDirty bits.
                 break;
+            case gl::Texture::DIRTY_BIT_BOUND_AS_IMAGE:
+                // Only used for Vulkan.
+                break;
 
             default:
                 UNREACHABLE();

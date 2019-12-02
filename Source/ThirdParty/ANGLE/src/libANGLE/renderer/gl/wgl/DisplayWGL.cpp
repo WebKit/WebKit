@@ -147,7 +147,7 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
     stream << "ANGLE DisplayWGL " << gl::FmtHex(display) << " Intermediate Window Class";
     std::string className = stream.str();
 
-    WNDCLASSA intermediateClassDesc     = {0};
+    WNDCLASSA intermediateClassDesc     = {};
     intermediateClassDesc.style         = CS_OWNDC;
     intermediateClassDesc.lpfnWndProc   = DefWindowProcA;
     intermediateClassDesc.cbClsExtra    = 0;
@@ -706,7 +706,7 @@ egl::Error DisplayWGL::makeCurrent(egl::Surface *drawSurface,
         ContextWGL *contextWGL = GetImplAs<ContextWGL>(context);
         newContext             = contextWGL->getContext();
     }
-    else
+    else if (!mUseDXGISwapChains)
     {
         newContext = 0;
     }

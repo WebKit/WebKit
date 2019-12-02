@@ -115,8 +115,10 @@ const char *Diagnostics::message(ID id)
             return "invalid file number";
         case PP_INVALID_LINE_DIRECTIVE:
             return "invalid line directive";
-        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL:
-            return "extension directive must occur before any non-preprocessor tokens in ESSL";
+        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1:
+            return "extension directive must occur before any non-preprocessor tokens in ESSL1";
+        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3:
+            return "extension directive must occur before any non-preprocessor tokens in ESSL3";
         case PP_UNDEFINED_SHIFT:
             return "shift exponent is negative or undefined";
         case PP_TOKENIZER_ERROR:

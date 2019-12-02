@@ -100,7 +100,7 @@ angle::Result UniformStorage11::getConstantBuffer(const gl::Context *context,
 {
     if (size() > 0 && !mConstantBuffer.valid())
     {
-        D3D11_BUFFER_DESC desc = {0};
+        D3D11_BUFFER_DESC desc = {};
         desc.ByteWidth         = static_cast<unsigned int>(size());
         desc.Usage             = D3D11_USAGE_DEFAULT;
         desc.BindFlags         = D3D11_BIND_CONSTANT_BUFFER;

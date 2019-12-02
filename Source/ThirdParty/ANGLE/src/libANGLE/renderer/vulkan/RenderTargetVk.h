@@ -44,7 +44,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     RenderTargetVk(RenderTargetVk &&other);
 
     void init(vk::ImageHelper *image,
-              const vk::ImageView *imageView,
+              vk::ImageViewHelper *imageViews,
               uint32_t levelIndex,
               uint32_t layerIndex);
     void reset();
@@ -68,8 +68,8 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     vk::ImageHelper *getImageForWrite(ContextVk *contextVk,
                                       vk::CommandGraphResource *writingResource) const;
 
-    const vk::ImageView *getDrawImageView() const;
-    const vk::ImageView *getReadImageView() const;
+    // For cube maps we use single-level single-layer 2D array views.
+    angle::Result getImageView(ContextVk *contextVk, const vk::ImageView **imageViewOut) const;
 
     const vk::Format &getImageFormat() const;
     gl::Extents getExtents() const;
@@ -78,18 +78,21 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     // Special mutator for Surface RenderTargets. Allows the Framebuffer to keep a single
     // RenderTargetVk pointer.
-    void updateSwapchainImage(vk::ImageHelper *image, const vk::ImageView *imageView);
+    void updateSwapchainImage(vk::ImageHelper *image, vk::ImageViewHelper *imageViews);
 
     angle::Result flushStagedUpdates(ContextVk *contextVk);
 
+    void onImageViewGraphAccess(ContextVk *contextVk) const;
+
   private:
     vk::ImageHelper *mImage;
-    // Note that the draw and read image views are the same, given the requirements of a render
-    // target. Note that for cube maps we use 2D array views.
-    const vk::ImageView *mImageView;
+    vk::ImageViewHelper *mImageViews;
     uint32_t mLevelIndex;
     uint32_t mLayerIndex;
 };
+
+// A vector of rendertargets
+using RenderTargetVector = std::vector<RenderTargetVk>;
 
 }  // namespace rx
 

@@ -4,17 +4,16 @@
 // found in the LICENSE file.
 //
 
-// SystemInfo_macos.cpp: implementation of the macOS-specific parts of SystemInfo.h
+// SystemInfo_macos.mm: implementation of the macOS-specific parts of SystemInfo.h
 
 #include "common/platform.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
-#include "gpu_info_util/SystemInfo_internal.h"
+#    include "gpu_info_util/SystemInfo_internal.h"
 
-#include <CoreGraphics/CGDirectDisplay.h>
-#include <IOKit/IOKitLib.h>
-#include <OpenGL/OpenGL.h>
+#    import <Cocoa/Cocoa.h>
+#    import <IOKit/IOKitLib.h>
 
 namespace angle
 {
@@ -159,8 +158,8 @@ bool GetPCIDevices(std::vector<GPUDeviceInfo> *devices)
 
 void SetActiveGPUIndex(SystemInfo *info)
 {
-    VendorID activeVendor;
-    DeviceID activeDevice;
+    VendorID activeVendor = 0;
+    DeviceID activeDevice = 0;
 
     uint64_t gpuID = GetGpuIDFromDisplayID(kCGDirectMainDisplay);
 
@@ -222,9 +221,10 @@ bool GetSystemInfo(SystemInfo *info)
 
     // Then override the activeGPUIndex field of info to reflect the current
     // GPU instead of the non-intel GPU
-    // TODO(dino): Use sysctl to detect OS version.
-    //    if (@available(macOS 10.13, *))
-    SetActiveGPUIndex(info);
+    if (@available(macOS 10.13, *))
+    {
+        SetActiveGPUIndex(info);
+    }
 
     // Figure out whether this is a dual-GPU system.
     //
@@ -244,4 +244,4 @@ bool GetSystemInfo(SystemInfo *info)
 
 }  // namespace angle
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

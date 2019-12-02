@@ -165,6 +165,9 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("offset", ParamType::TGLintptr, 2).value.GLintptrVal,
                 params.getParam("stride", ParamType::TGLsizei, 3).value.GLsizeiVal);
             break;
+        case gl::EntryPoint::BlendBarrier:
+            context->blendBarrier();
+            break;
         case gl::EntryPoint::BlendColor:
             context->blendColor(params.getParam("red", ParamType::TGLfloat, 0).value.GLfloatVal,
                                 params.getParam("green", ParamType::TGLfloat, 1).value.GLfloatVal,
@@ -179,6 +182,16 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("modeRGB", ParamType::TGLenum, 0).value.GLenumVal,
                 params.getParam("modeAlpha", ParamType::TGLenum, 1).value.GLenumVal);
             break;
+        case gl::EntryPoint::BlendEquationSeparatei:
+            context->blendEquationSeparatei(
+                params.getParam("buf", ParamType::TGLuint, 0).value.GLuintVal,
+                params.getParam("modeRGB", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("modeAlpha", ParamType::TGLenum, 2).value.GLenumVal);
+            break;
+        case gl::EntryPoint::BlendEquationi:
+            context->blendEquationi(params.getParam("buf", ParamType::TGLuint, 0).value.GLuintVal,
+                                    params.getParam("mode", ParamType::TGLenum, 1).value.GLenumVal);
+            break;
         case gl::EntryPoint::BlendFunc:
             context->blendFunc(params.getParam("sfactor", ParamType::TGLenum, 0).value.GLenumVal,
                                params.getParam("dfactor", ParamType::TGLenum, 1).value.GLenumVal);
@@ -189,6 +202,19 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("dfactorRGB", ParamType::TGLenum, 1).value.GLenumVal,
                 params.getParam("sfactorAlpha", ParamType::TGLenum, 2).value.GLenumVal,
                 params.getParam("dfactorAlpha", ParamType::TGLenum, 3).value.GLenumVal);
+            break;
+        case gl::EntryPoint::BlendFuncSeparatei:
+            context->blendFuncSeparatei(
+                params.getParam("buf", ParamType::TGLuint, 0).value.GLuintVal,
+                params.getParam("srcRGB", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("dstRGB", ParamType::TGLenum, 2).value.GLenumVal,
+                params.getParam("srcAlpha", ParamType::TGLenum, 3).value.GLenumVal,
+                params.getParam("dstAlpha", ParamType::TGLenum, 4).value.GLenumVal);
+            break;
+        case gl::EntryPoint::BlendFunci:
+            context->blendFunci(params.getParam("buf", ParamType::TGLuint, 0).value.GLuintVal,
+                                params.getParam("src", ParamType::TGLenum, 1).value.GLenumVal,
+                                params.getParam("dst", ParamType::TGLenum, 2).value.GLenumVal);
             break;
         case gl::EntryPoint::BlitFramebuffer:
             context->blitFramebuffer(
@@ -322,6 +348,13 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("blue", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 params.getParam("alpha", ParamType::TGLboolean, 3).value.GLbooleanVal);
             break;
+        case gl::EntryPoint::ColorMaski:
+            context->colorMaski(params.getParam("index", ParamType::TGLuint, 0).value.GLuintVal,
+                                params.getParam("r", ParamType::TGLboolean, 1).value.GLbooleanVal,
+                                params.getParam("g", ParamType::TGLboolean, 2).value.GLbooleanVal,
+                                params.getParam("b", ParamType::TGLboolean, 3).value.GLbooleanVal,
+                                params.getParam("a", ParamType::TGLboolean, 4).value.GLbooleanVal);
+            break;
         case gl::EntryPoint::ColorPointer:
             context->colorPointer(
                 params.getParam("size", ParamType::TGLint, 0).value.GLintVal,
@@ -401,6 +434,24 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("readOffset", ParamType::TGLintptr, 2).value.GLintptrVal,
                 params.getParam("writeOffset", ParamType::TGLintptr, 3).value.GLintptrVal,
                 params.getParam("size", ParamType::TGLsizeiptr, 4).value.GLsizeiptrVal);
+            break;
+        case gl::EntryPoint::CopyImageSubData:
+            context->copyImageSubData(
+                params.getParam("srcName", ParamType::TGLuint, 0).value.GLuintVal,
+                params.getParam("srcTarget", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("srcLevel", ParamType::TGLint, 2).value.GLintVal,
+                params.getParam("srcX", ParamType::TGLint, 3).value.GLintVal,
+                params.getParam("srcY", ParamType::TGLint, 4).value.GLintVal,
+                params.getParam("srcZ", ParamType::TGLint, 5).value.GLintVal,
+                params.getParam("dstName", ParamType::TGLuint, 6).value.GLuintVal,
+                params.getParam("dstTarget", ParamType::TGLenum, 7).value.GLenumVal,
+                params.getParam("dstLevel", ParamType::TGLint, 8).value.GLintVal,
+                params.getParam("dstX", ParamType::TGLint, 9).value.GLintVal,
+                params.getParam("dstY", ParamType::TGLint, 10).value.GLintVal,
+                params.getParam("dstZ", ParamType::TGLint, 11).value.GLintVal,
+                params.getParam("srcWidth", ParamType::TGLsizei, 12).value.GLsizeiVal,
+                params.getParam("srcHeight", ParamType::TGLsizei, 13).value.GLsizeiVal,
+                params.getParam("srcDepth", ParamType::TGLsizei, 14).value.GLsizeiVal);
             break;
         case gl::EntryPoint::CopyTexImage2D:
             context->copyTexImage2D(
@@ -587,6 +638,10 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->disableVertexAttribArray(
                 params.getParam("index", ParamType::TGLuint, 0).value.GLuintVal);
             break;
+        case gl::EntryPoint::Disablei:
+            context->disablei(params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                              params.getParam("index", ParamType::TGLuint, 1).value.GLuintVal);
+            break;
         case gl::EntryPoint::DispatchCompute:
             context->dispatchCompute(
                 params.getParam("num_groups_x", ParamType::TGLuint, 0).value.GLuintVal,
@@ -638,6 +693,15 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 replayContext->getAsConstPointer<const void *>(
                     params.getParam("indices", ParamType::TvoidConstPointer, 3)));
             break;
+        case gl::EntryPoint::DrawElementsBaseVertex:
+            context->drawElementsBaseVertex(
+                params.getParam("mode", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
+                params.getParam("type", ParamType::TGLenum, 2).value.GLenumVal,
+                replayContext->getAsConstPointer<const void *>(
+                    params.getParam("indices", ParamType::TvoidConstPointer, 3)),
+                params.getParam("basevertex", ParamType::TGLint, 4).value.GLintVal);
+            break;
         case gl::EntryPoint::DrawElementsIndirect:
             context->drawElementsIndirect(
                 params.getParam("modePacked", ParamType::TPrimitiveMode, 0).value.PrimitiveModeVal,
@@ -655,6 +719,16 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 replayContext->getAsConstPointer<const void *>(
                     params.getParam("indices", ParamType::TvoidConstPointer, 3)),
                 params.getParam("instancecount", ParamType::TGLsizei, 4).value.GLsizeiVal);
+            break;
+        case gl::EntryPoint::DrawElementsInstancedBaseVertex:
+            context->drawElementsInstancedBaseVertex(
+                params.getParam("mode", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
+                params.getParam("type", ParamType::TGLenum, 2).value.GLenumVal,
+                replayContext->getAsConstPointer<const void *>(
+                    params.getParam("indices", ParamType::TvoidConstPointer, 3)),
+                params.getParam("instancecount", ParamType::TGLsizei, 4).value.GLsizeiVal,
+                params.getParam("basevertex", ParamType::TGLint, 5).value.GLintVal);
             break;
         case gl::EntryPoint::DrawElementsInstancedBaseVertexBaseInstance:
             context->drawElementsInstancedBaseVertexBaseInstance(
@@ -679,6 +753,17 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 replayContext->getAsConstPointer<const void *>(
                     params.getParam("indices", ParamType::TvoidConstPointer, 5)));
             break;
+        case gl::EntryPoint::DrawRangeElementsBaseVertex:
+            context->drawRangeElementsBaseVertex(
+                params.getParam("mode", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("start", ParamType::TGLuint, 1).value.GLuintVal,
+                params.getParam("end", ParamType::TGLuint, 2).value.GLuintVal,
+                params.getParam("count", ParamType::TGLsizei, 3).value.GLsizeiVal,
+                params.getParam("type", ParamType::TGLenum, 4).value.GLenumVal,
+                replayContext->getAsConstPointer<const void *>(
+                    params.getParam("indices", ParamType::TvoidConstPointer, 5)),
+                params.getParam("basevertex", ParamType::TGLint, 6).value.GLintVal);
+            break;
         case gl::EntryPoint::Enable:
             context->enable(params.getParam("cap", ParamType::TGLenum, 0).value.GLenumVal);
             break;
@@ -690,6 +775,10 @@ void FrameCapture::ReplayCall(gl::Context *context,
         case gl::EntryPoint::EnableVertexAttribArray:
             context->enableVertexAttribArray(
                 params.getParam("index", ParamType::TGLuint, 0).value.GLuintVal);
+            break;
+        case gl::EntryPoint::Enablei:
+            context->enablei(params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                             params.getParam("index", ParamType::TGLuint, 1).value.GLuintVal);
             break;
         case gl::EntryPoint::EndQuery:
             context->endQuery(
@@ -1413,6 +1502,15 @@ void FrameCapture::ReplayCall(gl::Context *context,
                                  replayContext->getReadBufferPointer<GLint *>(
                                      params.getParam("params", ParamType::TGLintPointer, 2)));
             break;
+        case gl::EntryPoint::GetTexImage:
+            context->getTexImage(params.getParam("targetPacked", ParamType::TTextureTarget, 0)
+                                     .value.TextureTargetVal,
+                                 params.getParam("level", ParamType::TGLint, 1).value.GLintVal,
+                                 params.getParam("format", ParamType::TGLenum, 2).value.GLenumVal,
+                                 params.getParam("type", ParamType::TGLenum, 3).value.GLenumVal,
+                                 replayContext->getReadBufferPointer<void *>(
+                                     params.getParam("pixels", ParamType::TvoidPointer, 4)));
+            break;
         case gl::EntryPoint::GetTexLevelParameterfv:
             context->getTexLevelParameterfv(
                 params.getParam("targetPacked", ParamType::TTextureTarget, 0)
@@ -1579,6 +1677,15 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 replayContext->getReadBufferPointer<GLint *>(
                     params.getParam("params", ParamType::TGLintPointer, 3)));
             break;
+        case gl::EntryPoint::GetnUniformuiv:
+            context->getnUniformuiv(
+                params.getParam("programPacked", ParamType::TShaderProgramID, 0)
+                    .value.ShaderProgramIDVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
+                params.getParam("bufSize", ParamType::TGLsizei, 2).value.GLsizeiVal,
+                replayContext->getReadBufferPointer<GLuint *>(
+                    params.getParam("params", ParamType::TGLuintPointer, 3)));
+            break;
         case gl::EntryPoint::Hint:
             context->hint(params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
                           params.getParam("mode", ParamType::TGLenum, 1).value.GLenumVal);
@@ -1607,6 +1714,10 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::IsEnabled:
             context->isEnabled(params.getParam("cap", ParamType::TGLenum, 0).value.GLenumVal);
+            break;
+        case gl::EntryPoint::IsEnabledi:
+            context->isEnabledi(params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                                params.getParam("index", ParamType::TGLuint, 1).value.GLuintVal);
             break;
         case gl::EntryPoint::IsFenceNV:
             context->isFenceNV(
@@ -1778,6 +1889,10 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->memoryBarrierByRegion(
                 params.getParam("barriers", ParamType::TGLbitfield, 0).value.GLbitfieldVal);
             break;
+        case gl::EntryPoint::MinSampleShading:
+            context->minSampleShading(
+                params.getParam("value", ParamType::TGLfloat, 0).value.GLfloatVal);
+            break;
         case gl::EntryPoint::MultMatrixf:
             context->multMatrixf(replayContext->getAsConstPointer<const GLfloat *>(
                 params.getParam("m", ParamType::TGLfloatConstPointer, 0)));
@@ -1872,6 +1987,11 @@ void FrameCapture::ReplayCall(gl::Context *context,
                             params.getParam("n", ParamType::TGLfixed, 4).value.GLfixedVal,
                             params.getParam("f", ParamType::TGLfixed, 5).value.GLfixedVal);
             break;
+        case gl::EntryPoint::PatchParameteri:
+            context->patchParameteri(
+                params.getParam("pname", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("value", ParamType::TGLint, 1).value.GLintVal);
+            break;
         case gl::EntryPoint::PauseTransformFeedback:
             context->pauseTransformFeedback();
             break;
@@ -1926,6 +2046,17 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::PopMatrix:
             context->popMatrix();
+            break;
+        case gl::EntryPoint::PrimitiveBoundingBox:
+            context->primitiveBoundingBox(
+                params.getParam("minX", ParamType::TGLfloat, 0).value.GLfloatVal,
+                params.getParam("minY", ParamType::TGLfloat, 1).value.GLfloatVal,
+                params.getParam("minZ", ParamType::TGLfloat, 2).value.GLfloatVal,
+                params.getParam("minW", ParamType::TGLfloat, 3).value.GLfloatVal,
+                params.getParam("maxX", ParamType::TGLfloat, 4).value.GLfloatVal,
+                params.getParam("maxY", ParamType::TGLfloat, 5).value.GLfloatVal,
+                params.getParam("maxZ", ParamType::TGLfloat, 6).value.GLfloatVal,
+                params.getParam("maxW", ParamType::TGLfloat, 7).value.GLfloatVal);
             break;
         case gl::EntryPoint::ProgramBinary:
             context->programBinary(
@@ -2457,6 +2588,20 @@ void FrameCapture::ReplayCall(gl::Context *context,
         case gl::EntryPoint::TestFenceNV:
             context->testFenceNV(
                 params.getParam("fencePacked", ParamType::TFenceNVID, 0).value.FenceNVIDVal);
+            break;
+        case gl::EntryPoint::TexBuffer:
+            context->texBuffer(
+                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("internalformat", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("bufferPacked", ParamType::TBufferID, 2).value.BufferIDVal);
+            break;
+        case gl::EntryPoint::TexBufferRange:
+            context->texBufferRange(
+                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("internalformat", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("bufferPacked", ParamType::TBufferID, 2).value.BufferIDVal,
+                params.getParam("offset", ParamType::TGLintptr, 3).value.GLintptrVal,
+                params.getParam("size", ParamType::TGLsizeiptr, 4).value.GLsizeiptrVal);
             break;
         case gl::EntryPoint::TexCoordPointer:
             context->texCoordPointer(

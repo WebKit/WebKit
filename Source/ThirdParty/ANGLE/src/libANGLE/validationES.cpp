@@ -157,21 +157,25 @@ bool ValidReadPixelsFormatEnum(Context *context, GLenum format)
 }
 
 bool ValidReadPixelsFormatType(Context *context,
-                               GLenum framebufferComponentType,
+                               const gl::InternalFormat *info,
                                GLenum format,
                                GLenum type)
 {
-    switch (framebufferComponentType)
+    switch (info->componentType)
     {
         case GL_UNSIGNED_NORMALIZED:
             // TODO(geofflang): Don't accept BGRA here.  Some chrome internals appear to try to use
             // ReadPixels with BGRA even if the extension is not present
-            return (format == GL_RGBA && type == GL_UNSIGNED_BYTE) ||
+            return (format == GL_RGBA && type == GL_UNSIGNED_BYTE && info->pixelBytes >= 1) ||
+                   (context->getExtensions().textureNorm16 && format == GL_RGBA &&
+                    type == GL_UNSIGNED_SHORT && info->pixelBytes >= 2) ||
                    (context->getExtensions().readFormatBGRA && format == GL_BGRA_EXT &&
                     type == GL_UNSIGNED_BYTE);
 
         case GL_SIGNED_NORMALIZED:
-            return (format == GL_RGBA && type == GL_UNSIGNED_BYTE);
+            return (format == GL_RGBA && type == GL_BYTE && info->pixelBytes >= 1) ||
+                   (context->getExtensions().textureNorm16 && format == GL_RGBA &&
+                    type == GL_UNSIGNED_SHORT && info->pixelBytes >= 2);
 
         case GL_INT:
             return (format == GL_RGBA_INTEGER && type == GL_INT);
@@ -761,8 +765,8 @@ bool ValidFramebufferTarget(const Context *context, GLenum target)
 
 bool ValidMipLevel(const Context *context, TextureType type, GLint level)
 {
-    const auto &caps    = context->getCaps();
-    size_t maxDimension = 0;
+    const auto &caps = context->getCaps();
+    int maxDimension = 0;
     switch (type)
     {
         case TextureType::_2D:
@@ -790,7 +794,7 @@ bool ValidMipLevel(const Context *context, TextureType type, GLint level)
             UNREACHABLE();
     }
 
-    return level <= log2(static_cast<int>(maxDimension)) && level >= 0;
+    return level <= log2(maxDimension) && level >= 0;
 }
 
 bool ValidImageSizeParameters(Context *context,
@@ -894,6 +898,15 @@ bool ValidCompressedSubImageSize(const Context *context,
         return false;
     }
 
+    bool fillsEntireMip =
+        xoffset == 0 && yoffset == 0 && static_cast<size_t>(width) == textureWidth &&
+        static_cast<size_t>(height) == textureHeight && static_cast<size_t>(depth) == textureDepth;
+
+    if (CompressedFormatRequiresWholeImage(internalFormat))
+    {
+        return fillsEntireMip;
+    }
+
     if (CompressedSubTextureFormatRequiresExactSize(internalFormat))
     {
         if (xoffset % formatInfo.compressedBlockWidth != 0 ||
@@ -905,10 +918,6 @@ bool ValidCompressedSubImageSize(const Context *context,
 
         // Allowed to either have data that is a multiple of block size or is smaller than the block
         // size but fills the entire mip
-        bool fillsEntireMip = xoffset == 0 && yoffset == 0 &&
-                              static_cast<size_t>(width) == textureWidth &&
-                              static_cast<size_t>(height) == textureHeight &&
-                              static_cast<size_t>(depth) == textureDepth;
         bool sizeMultipleOfBlockSize = (width % formatInfo.compressedBlockWidth) == 0 &&
                                        (height % formatInfo.compressedBlockHeight) == 0 &&
                                        (depth % formatInfo.compressedBlockDepth) == 0;
@@ -1123,7 +1132,7 @@ bool ValidateAttachmentTarget(Context *context, GLenum attachment)
         }
 
         // Color attachment 0 is validated below because it is always valid
-        const unsigned int colorAttachment = (attachment - GL_COLOR_ATTACHMENT0_EXT);
+        const int colorAttachment = (attachment - GL_COLOR_ATTACHMENT0_EXT);
         if (colorAttachment >= context->getCaps().maxColorAttachments)
         {
             context->validationError(GL_INVALID_OPERATION, kInvalidAttachment);
@@ -1199,7 +1208,7 @@ bool ValidateRenderbufferStorageParametersBase(Context *context,
         return false;
     }
 
-    if (static_cast<GLuint>(std::max(width, height)) > context->getCaps().maxRenderbufferSize)
+    if (std::max(width, height) > context->getCaps().maxRenderbufferSize)
     {
         context->validationError(GL_INVALID_VALUE, kResourceMaxRenderbufferSize);
         return false;
@@ -1325,7 +1334,9 @@ bool ValidateBlitFramebufferParameters(Context *context,
         return false;
     }
 
-    if (!ValidateFramebufferNotMultisampled(context, drawFramebuffer))
+    // Not allow blitting to MS buffers, therefore if renderToTextureSamples exist,
+    // consider it MS. needResourceSamples = false
+    if (!ValidateFramebufferNotMultisampled(context, drawFramebuffer, false))
     {
         return false;
     }
@@ -2237,7 +2248,7 @@ bool ValidateStateQuery(Context *context, GLenum pname, GLenum *nativeType, unsi
 
     if (pname >= GL_DRAW_BUFFER0 && pname <= GL_DRAW_BUFFER15)
     {
-        unsigned int colorAttachment = (pname - GL_DRAW_BUFFER0);
+        int colorAttachment = (pname - GL_DRAW_BUFFER0);
 
         if (colorAttachment >= caps.maxDrawBuffers)
         {
@@ -2476,8 +2487,10 @@ bool ValidateCopyTexImageParametersBase(Context *context,
         return false;
     }
 
+    // needResourceSamples = true. Treat renderToTexture textures as single sample since they will
+    // be resolved before copying
     if (!readFramebuffer->isDefault() &&
-        !ValidateFramebufferNotMultisampled(context, readFramebuffer))
+        !ValidateFramebufferNotMultisampled(context, readFramebuffer, true))
     {
         return false;
     }
@@ -2512,7 +2525,7 @@ bool ValidateCopyTexImageParametersBase(Context *context,
 
     const Caps &caps = context->getCaps();
 
-    GLuint maxDimension = 0;
+    GLint maxDimension = 0;
     switch (texType)
     {
         case TextureType::_2D:
@@ -3299,7 +3312,8 @@ bool ValidateDiscardFramebufferBase(Context *context,
                 return false;
             }
 
-            if (attachments[i] >= GL_COLOR_ATTACHMENT0 + context->getCaps().maxColorAttachments)
+            if (attachments[i] >=
+                GL_COLOR_ATTACHMENT0 + static_cast<GLuint>(context->getCaps().maxColorAttachments))
             {
                 context->validationError(GL_INVALID_OPERATION, kExceedsMaxColorAttachments);
                 return false;
@@ -3557,7 +3571,7 @@ bool ValidateDrawBuffersBase(Context *context, GLsizei n, const GLenum *bufs)
         context->validationError(GL_INVALID_VALUE, kNegativeCount);
         return false;
     }
-    if (static_cast<GLuint>(n) > context->getCaps().maxDrawBuffers)
+    if (n > context->getCaps().maxDrawBuffers)
     {
         context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
         return false;
@@ -3895,6 +3909,14 @@ bool ValidateGetFramebufferAttachmentParameterivBase(Context *context,
             }
             break;
 
+        case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_SAMPLES_EXT:
+            if (!context->getExtensions().multisampledRenderToTexture)
+            {
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
+            }
+            break;
+
         case GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
             if (clientVersion < 3 && !context->getExtensions().sRGB)
             {
@@ -3960,7 +3982,8 @@ bool ValidateGetFramebufferAttachmentParameterivBase(Context *context,
         default:
             if ((clientVersion < 3 && !context->getExtensions().drawBuffers) ||
                 attachment < GL_COLOR_ATTACHMENT0_EXT ||
-                (attachment - GL_COLOR_ATTACHMENT0_EXT) >= context->getCaps().maxColorAttachments)
+                (attachment - GL_COLOR_ATTACHMENT0_EXT) >=
+                    static_cast<GLuint>(context->getCaps().maxColorAttachments))
             {
                 context->validationError(GL_INVALID_ENUM, kInvalidAttachment);
                 return false;
@@ -5084,6 +5107,15 @@ bool ValidateGetRenderbufferParameterivBase(Context *context,
             }
             break;
 
+        case GL_IMPLEMENTATION_COLOR_READ_FORMAT:
+        case GL_IMPLEMENTATION_COLOR_READ_TYPE:
+            if (!context->getExtensions().getImageANGLE)
+            {
+                context->validationError(GL_INVALID_ENUM, kGetImageExtensionNotEnabled);
+                return false;
+            }
+            break;
+
         default:
             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
             return false;
@@ -5294,6 +5326,15 @@ bool ValidateGetTexParameterBase(Context *context,
             }
             break;
 
+        case GL_IMPLEMENTATION_COLOR_READ_FORMAT:
+        case GL_IMPLEMENTATION_COLOR_READ_TYPE:
+            if (!context->getExtensions().getImageANGLE)
+            {
+                context->validationError(GL_INVALID_ENUM, kGetImageExtensionNotEnabled);
+                return false;
+            }
+            break;
+
         default:
             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
             return false;
@@ -5324,7 +5365,7 @@ bool ValidateGetVertexAttribBase(Context *context,
         return false;
     }
 
-    if (index >= context->getCaps().maxVertexAttributes)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;
@@ -5401,118 +5442,17 @@ bool ValidateGetVertexAttribBase(Context *context,
     return true;
 }
 
-bool ValidateReadPixelsBase(Context *context,
-                            GLint x,
-                            GLint y,
-                            GLsizei width,
-                            GLsizei height,
-                            GLenum format,
-                            GLenum type,
-                            GLsizei bufSize,
-                            GLsizei *length,
-                            GLsizei *columns,
-                            GLsizei *rows,
-                            void *pixels)
+bool ValidatePixelPack(Context *context,
+                       GLenum format,
+                       GLenum type,
+                       GLint x,
+                       GLint y,
+                       GLsizei width,
+                       GLsizei height,
+                       GLsizei bufSize,
+                       GLsizei *length,
+                       void *pixels)
 {
-    if (length != nullptr)
-    {
-        *length = 0;
-    }
-    if (rows != nullptr)
-    {
-        *rows = 0;
-    }
-    if (columns != nullptr)
-    {
-        *columns = 0;
-    }
-
-    if (width < 0 || height < 0)
-    {
-        context->validationError(GL_INVALID_VALUE, kNegativeSize);
-        return false;
-    }
-
-    Framebuffer *readFramebuffer = context->getState().getReadFramebuffer();
-    ASSERT(readFramebuffer);
-
-    if (!ValidateFramebufferComplete(context, readFramebuffer))
-    {
-        return false;
-    }
-
-    if (!readFramebuffer->isDefault() &&
-        !ValidateFramebufferNotMultisampled(context, readFramebuffer))
-    {
-        return false;
-    }
-
-    if (readFramebuffer->getReadBufferState() == GL_NONE)
-    {
-        context->validationError(GL_INVALID_OPERATION, kReadBufferNone);
-        return false;
-    }
-
-    const FramebufferAttachment *readBuffer = readFramebuffer->getReadColorAttachment();
-    // WebGL 1.0 [Section 6.26] Reading From a Missing Attachment
-    // In OpenGL ES it is undefined what happens when an operation tries to read from a missing
-    // attachment and WebGL defines it to be an error. We do the check unconditionnaly as the
-    // situation is an application error that would lead to a crash in ANGLE.
-    if (readBuffer == nullptr)
-    {
-        context->validationError(GL_INVALID_OPERATION, kMissingReadAttachment);
-        return false;
-    }
-
-    // OVR_multiview2, Revision 1:
-    // ReadPixels generates an INVALID_FRAMEBUFFER_OPERATION error if
-    // the number of views in the current read framebuffer is more than one.
-    if (readFramebuffer->readDisallowedByMultiview())
-    {
-        context->validationError(GL_INVALID_FRAMEBUFFER_OPERATION, kMultiviewReadFramebuffer);
-        return false;
-    }
-
-    if (context->getExtensions().webglCompatibility)
-    {
-        // The ES 2.0 spec states that the format must be "among those defined in table 3.4,
-        // excluding formats LUMINANCE and LUMINANCE_ALPHA.".  This requires validating the format
-        // and type before validating the combination of format and type.  However, the
-        // dEQP-GLES3.functional.negative_api.buffer.read_pixels passes GL_LUMINANCE as a format and
-        // verifies that GL_INVALID_OPERATION is generated.
-        // TODO(geofflang): Update this check to be done in all/no cases once this is resolved in
-        // dEQP/WebGL.
-        if (!ValidReadPixelsFormatEnum(context, format))
-        {
-            context->validationError(GL_INVALID_ENUM, kInvalidFormat);
-            return false;
-        }
-
-        if (!ValidReadPixelsTypeEnum(context, type))
-        {
-            context->validationError(GL_INVALID_ENUM, kInvalidType);
-            return false;
-        }
-    }
-
-    GLenum currentFormat = GL_NONE;
-    ANGLE_VALIDATION_TRY(
-        readFramebuffer->getImplementationColorReadFormat(context, &currentFormat));
-
-    GLenum currentType = GL_NONE;
-    ANGLE_VALIDATION_TRY(readFramebuffer->getImplementationColorReadType(context, &currentType));
-
-    GLenum currentComponentType = readBuffer->getFormat().info->componentType;
-
-    bool validFormatTypeCombination =
-        ValidReadPixelsFormatType(context, currentComponentType, format, type);
-
-    if (!(currentFormat == format && currentType == type) && !validFormatTypeCombination)
-    {
-        context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
-        return false;
-    }
-
     // Check for pixel pack buffer related API errors
     Buffer *pixelPackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelPack);
     if (pixelPackBuffer != nullptr && pixelPackBuffer->isMapped())
@@ -5573,6 +5513,126 @@ bool ValidateReadPixelsBase(Context *context,
         }
 
         *length = static_cast<GLsizei>(endByte);
+    }
+
+    return true;
+}
+
+bool ValidateReadPixelsBase(Context *context,
+                            GLint x,
+                            GLint y,
+                            GLsizei width,
+                            GLsizei height,
+                            GLenum format,
+                            GLenum type,
+                            GLsizei bufSize,
+                            GLsizei *length,
+                            GLsizei *columns,
+                            GLsizei *rows,
+                            void *pixels)
+{
+    if (length != nullptr)
+    {
+        *length = 0;
+    }
+    if (rows != nullptr)
+    {
+        *rows = 0;
+    }
+    if (columns != nullptr)
+    {
+        *columns = 0;
+    }
+
+    if (width < 0 || height < 0)
+    {
+        context->validationError(GL_INVALID_VALUE, kNegativeSize);
+        return false;
+    }
+
+    Framebuffer *readFramebuffer = context->getState().getReadFramebuffer();
+    ASSERT(readFramebuffer);
+
+    if (!ValidateFramebufferComplete(context, readFramebuffer))
+    {
+        return false;
+    }
+
+    // needIntrinsic = true. Treat renderToTexture textures as single sample since they will be
+    // resolved before reading.
+    if (!readFramebuffer->isDefault() &&
+        !ValidateFramebufferNotMultisampled(context, readFramebuffer, true))
+    {
+        return false;
+    }
+
+    if (readFramebuffer->getReadBufferState() == GL_NONE)
+    {
+        context->validationError(GL_INVALID_OPERATION, kReadBufferNone);
+        return false;
+    }
+
+    const FramebufferAttachment *readBuffer = readFramebuffer->getReadColorAttachment();
+    // WebGL 1.0 [Section 6.26] Reading From a Missing Attachment
+    // In OpenGL ES it is undefined what happens when an operation tries to read from a missing
+    // attachment and WebGL defines it to be an error. We do the check unconditionnaly as the
+    // situation is an application error that would lead to a crash in ANGLE.
+    if (readBuffer == nullptr)
+    {
+        context->validationError(GL_INVALID_OPERATION, kMissingReadAttachment);
+        return false;
+    }
+
+    // OVR_multiview2, Revision 1:
+    // ReadPixels generates an INVALID_FRAMEBUFFER_OPERATION error if
+    // the number of views in the current read framebuffer is more than one.
+    if (readFramebuffer->readDisallowedByMultiview())
+    {
+        context->validationError(GL_INVALID_FRAMEBUFFER_OPERATION, kMultiviewReadFramebuffer);
+        return false;
+    }
+
+    if (context->getExtensions().webglCompatibility)
+    {
+        // The ES 2.0 spec states that the format must be "among those defined in table 3.4,
+        // excluding formats LUMINANCE and LUMINANCE_ALPHA.".  This requires validating the format
+        // and type before validating the combination of format and type.  However, the
+        // dEQP-GLES3.functional.negative_api.buffer.read_pixels passes GL_LUMINANCE as a format and
+        // verifies that GL_INVALID_OPERATION is generated.
+        // TODO(geofflang): Update this check to be done in all/no cases once this is resolved in
+        // dEQP/WebGL.
+        if (!ValidReadPixelsFormatEnum(context, format))
+        {
+            context->validationError(GL_INVALID_ENUM, kInvalidFormat);
+            return false;
+        }
+
+        if (!ValidReadPixelsTypeEnum(context, type))
+        {
+            context->validationError(GL_INVALID_ENUM, kInvalidType);
+            return false;
+        }
+    }
+
+    GLenum currentFormat = GL_NONE;
+    ANGLE_VALIDATION_TRY(
+        readFramebuffer->getImplementationColorReadFormat(context, &currentFormat));
+
+    GLenum currentType = GL_NONE;
+    ANGLE_VALIDATION_TRY(readFramebuffer->getImplementationColorReadType(context, &currentType));
+
+    bool validFormatTypeCombination =
+        ValidReadPixelsFormatType(context, readBuffer->getFormat().info, format, type);
+
+    if (!(currentFormat == format && currentType == type) && !validFormatTypeCombination)
+    {
+        context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
+        return false;
+    }
+
+    if (!ValidatePixelPack(context, format, type, x, y, width, height, bufSize, length, pixels))
+    {
+        return false;
     }
 
     auto getClippedExtent = [](GLint start, GLsizei length, int bufferSize, GLsizei *outExtent) {
@@ -5700,6 +5760,7 @@ bool ValidateTexParameterBase(Context *context,
                 return false;
             }
             break;
+
         default:
             break;
     }
@@ -6297,9 +6358,13 @@ bool ValidateGetInternalFormativBase(Context *context,
     return true;
 }
 
-bool ValidateFramebufferNotMultisampled(Context *context, Framebuffer *framebuffer)
+bool ValidateFramebufferNotMultisampled(Context *context,
+                                        Framebuffer *framebuffer,
+                                        bool needResourceSamples)
 {
-    if (framebuffer->getSamples(context) != 0)
+    int samples = needResourceSamples ? framebuffer->getResourceSamples(context)
+                                      : framebuffer->getSamples(context);
+    if (samples != 0)
     {
         context->validationError(GL_INVALID_OPERATION, kInvalidMultisampledFramebufferOperation);
         return false;
@@ -6325,8 +6390,7 @@ bool ValidateTexStorageMultisample(Context *context,
                                    GLsizei height)
 {
     const Caps &caps = context->getCaps();
-    if (static_cast<GLuint>(width) > caps.max2DTextureSize ||
-        static_cast<GLuint>(height) > caps.max2DTextureSize)
+    if (width > caps.max2DTextureSize || height > caps.max2DTextureSize)
     {
         context->validationError(GL_INVALID_VALUE, kTextureWidthOrHeightOutOfRange);
         return false;
@@ -6489,7 +6553,7 @@ bool ValidateGetMultisamplefvBase(Context *context, GLenum pname, GLuint index, 
 
 bool ValidateSampleMaskiBase(Context *context, GLuint maskNumber, GLbitfield mask)
 {
-    if (maskNumber >= context->getCaps().maxSampleMaskWords)
+    if (maskNumber >= static_cast<GLuint>(context->getCaps().maxSampleMaskWords))
     {
         context->validationError(GL_INVALID_VALUE, kInvalidSampleMaskNumber);
         return false;

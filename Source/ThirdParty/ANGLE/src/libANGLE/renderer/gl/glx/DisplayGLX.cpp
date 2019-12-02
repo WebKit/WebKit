@@ -837,6 +837,8 @@ void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->surfacelessContext = true;
 
+    outExtensions->syncControlCHROMIUM = mGLX.hasExtension("GLX_OML_sync_control");
+
     DisplayGL::generateExtensions(outExtensions);
 }
 

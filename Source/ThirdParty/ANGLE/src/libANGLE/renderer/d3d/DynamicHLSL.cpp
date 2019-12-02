@@ -1209,7 +1209,9 @@ void DynamicHLSL::getPixelShaderOutputKey(const gl::State &data,
     // - with a 2.0 context, the output color is broadcast to all channels
     bool broadcast = metadata.usesBroadcast(data);
     const unsigned int numRenderTargets =
-        (broadcast || metadata.usesMultipleFragmentOuts() ? data.getCaps().maxDrawBuffers : 1);
+        (broadcast || metadata.usesMultipleFragmentOuts()
+             ? static_cast<unsigned int>(data.getCaps().maxDrawBuffers)
+             : 1);
 
     if (!metadata.usesCustomOutVars())
     {

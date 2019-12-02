@@ -21,10 +21,8 @@ namespace rx
 {
 
 WindowSurfaceVkFuchsia::WindowSurfaceVkFuchsia(const egl::SurfaceState &surfaceState,
-                                               EGLNativeWindowType window,
-                                               EGLint width,
-                                               EGLint height)
-    : WindowSurfaceVk(surfaceState, window, width, height)
+                                               EGLNativeWindowType window)
+    : WindowSurfaceVk(surfaceState, window)
 {}
 
 WindowSurfaceVkFuchsia::~WindowSurfaceVkFuchsia() {}

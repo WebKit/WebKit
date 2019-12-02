@@ -152,6 +152,8 @@ angle_translator_sources = [
   "src/compiler/translator/tree_ops/RegenerateStructNames.h",
   "src/compiler/translator/tree_ops/RemoveArrayLengthMethod.cpp",
   "src/compiler/translator/tree_ops/RemoveArrayLengthMethod.h",
+  "src/compiler/translator/tree_ops/RemoveDynamicIndexing.cpp",
+  "src/compiler/translator/tree_ops/RemoveDynamicIndexing.h",
   "src/compiler/translator/tree_ops/RemoveInvariantDeclaration.cpp",
   "src/compiler/translator/tree_ops/RemoveInvariantDeclaration.h",
   "src/compiler/translator/tree_ops/RemovePow.cpp",
@@ -276,8 +278,6 @@ angle_translator_hlsl_sources = [
   "src/compiler/translator/tree_ops/AddDefaultReturnStatements.h",
   "src/compiler/translator/tree_ops/ArrayReturnValueToOutParameter.cpp",
   "src/compiler/translator/tree_ops/ArrayReturnValueToOutParameter.h",
-  "src/compiler/translator/tree_ops/RemoveDynamicIndexing.cpp",
-  "src/compiler/translator/tree_ops/RemoveDynamicIndexing.h",
   "src/compiler/translator/tree_ops/RemoveSwitchFallThrough.cpp",
   "src/compiler/translator/tree_ops/RemoveSwitchFallThrough.h",
   "src/compiler/translator/tree_ops/RewriteElseBlocks.cpp",
@@ -310,6 +310,14 @@ if (is_android) {
     "src/compiler/translator/SymbolTable_autogen.cpp",
   ]
 }
+
+angle_translator_lib_metal_sources = [
+  "src/compiler/translator/OutputVulkanGLSLForMetal.mm",
+  "src/compiler/translator/OutputVulkanGLSLForMetal.h",
+  "src/compiler/translator/TranslatorMetal.cpp",
+  "src/compiler/translator/TranslatorMetal.h",
+]
+
 angle_preprocessor_sources = [
   "src/compiler/preprocessor/DiagnosticsBase.cpp",
   "src/compiler/preprocessor/DiagnosticsBase.h",

@@ -17,32 +17,6 @@ namespace gl
 {
 class Context;
 
-bool ValidateDrawElementsBaseVertex(Context *context,
-                                    GLenum mode,
-                                    GLsizei count,
-                                    GLenum type,
-                                    const void *indices,
-                                    GLint basevertex);
-bool ValidateDrawElementsInstancedBaseVertex(Context *context,
-                                             GLenum mode,
-                                             GLsizei count,
-                                             GLenum type,
-                                             const void *indices,
-                                             GLsizei instancecount,
-                                             GLint basevertex);
-bool ValidateDrawRangeElementsBaseVertex(Context *context,
-                                         GLenum mode,
-                                         GLuint start,
-                                         GLuint end,
-                                         GLsizei count,
-                                         GLenum type,
-                                         const void *indices,
-                                         GLint basevertex);
-bool ValidateFramebufferTexture(Context *context,
-                                GLenum target,
-                                GLenum attachment,
-                                TextureID texturePacked,
-                                GLint level);
 bool ValidateMultiDrawElementsBaseVertex(Context *context,
                                          GLenum mode,
                                          const GLsizei *count,

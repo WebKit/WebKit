@@ -330,6 +330,11 @@ Error ValidateGetNativeClientBufferANDROID(const struct AHardwareBuffer *buffer)
 // EGL_ANDROID_native_fence_sync
 Error ValidateDupNativeFenceFDANDROID(const Display *display, const Sync *sync);
 
+// EGL_ANGLE_swap_with_frame_token
+Error ValidateSwapBuffersWithFrameTokenANGLE(const Display *display,
+                                             const Surface *surface,
+                                             EGLFrameTokenANGLE frametoken);
+
 }  // namespace egl
 
 #define ANGLE_EGL_TRY(THREAD, EXPR, FUNCNAME, LABELOBJECT)                               \

@@ -57,6 +57,7 @@ struct DisplayState final : private angle::NonCopyable
     SurfaceSet surfaceSet;
     std::vector<std::string> featureOverridesEnabled;
     std::vector<std::string> featureOverridesDisabled;
+    bool featuresAllDisabled;
 };
 
 // Constant coded here as a sanity limit.

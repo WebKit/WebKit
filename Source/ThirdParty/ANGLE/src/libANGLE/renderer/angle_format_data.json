@@ -248,5 +248,29 @@
   },
   "ETC2_R8G8B8A8_SRGB_BLOCK": {
     "blockPixelBytes": "16"
+  },
+  "PVRTC1_RGB_4BPP_UNORM_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGB_2BPP_UNORM_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGBA_4BPP_UNORM_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGBA_2BPP_UNORM_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "1"
+  },
+  "PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK": {
+    "blockPixelBytes": "1"
   }
 }

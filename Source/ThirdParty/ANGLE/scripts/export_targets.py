@@ -69,8 +69,10 @@ for directory in os.environ['PATH'].split(os.pathsep):
 if not vs_found:
     GN_ENV['DEPOT_TOOLS_WIN_TOOLCHAIN'] = '0'
 
+if len(sys.argv) < 3:
+    sys.exit('Usage: export_targets.py OUT_DIR ROOTS...')
+
 (OUT_DIR, *ROOTS) = sys.argv[1:]
-assert len(ROOTS), 'Usage: export_targets.py OUT_DIR ROOTS...'
 for x in ROOTS:
     assert x.startswith('//:')
 
@@ -120,7 +122,7 @@ try:
     p = run_checked('gn', 'desc', '--format=json', str(OUT_DIR), '*', stdout=subprocess.PIPE,
                 env=GN_ENV, shell=(True if sys.platform == 'win32' else False))
 except subprocess.CalledProcessError:
-    sys.stderr.buffer.write(b'`gn` failed. Is depot_tools in your PATH?\n')
+    sys.stderr.buffer.write(b'"gn desc" failed. Is depot_tools in your PATH?\n')
     exit(1)
 
 # -
@@ -175,6 +177,7 @@ IGNORED_INCLUDES = {
     b'compiler/translator/TranslatorESSL.h',
     b'compiler/translator/TranslatorGLSL.h',
     b'compiler/translator/TranslatorHLSL.h',
+    b'compiler/translator/TranslatorMetal.h',
     b'compiler/translator/TranslatorVulkan.h',
     b'libANGLE/renderer/d3d/DeviceD3D.h',
     b'libANGLE/renderer/d3d/DisplayD3D.h',
@@ -185,9 +188,11 @@ IGNORED_INCLUDES = {
     b'libANGLE/renderer/gl/egl/ozone/DisplayOzone.h',
     b'libANGLE/renderer/gl/egl/android/DisplayAndroid.h',
     b'libANGLE/renderer/gl/wgl/DisplayWGL.h',
+    b'libANGLE/renderer/metal/DisplayMtl_api.h',
     b'libANGLE/renderer/null/DisplayNULL.h',
     b'libANGLE/renderer/vulkan/android/DisplayVkAndroid.h',
     b'libANGLE/renderer/vulkan/fuchsia/DisplayVkFuchsia.h',
+    b'libANGLE/renderer/vulkan/ggp/DisplayVkGGP.h',
     b'libANGLE/renderer/vulkan/win32/DisplayVkWin32.h',
     b'libANGLE/renderer/vulkan/xcb/DisplayVkXcb.h',
     b'kernel/image.h',
@@ -209,8 +214,6 @@ IGNORED_INCLUDE_PREFIXES = {
 }
 
 IGNORED_DIRECTORIES = {
-    '//third_party/glslang',
-    '//third_party/spirv-tools',
     '//third_party/SwiftShader',
     '//third_party/vulkan-headers',
     '//third_party/vulkan-loader',

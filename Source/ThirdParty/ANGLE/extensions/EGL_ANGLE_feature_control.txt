@@ -85,8 +85,12 @@ New Tokens
 
         EGL_FEATURE_OVERRIDES_ENABLED_ANGLE   0x3466
         EGL_FEATURE_OVERRIDES_DISABLED_ANGLE  0x3467
+        EGL_FEATURE_ALL_DISABLED_ANGLE  0x3469
 
 New Behavior
+
+        EGLDisplay eglGetPlatformDisplay(EGLenum platform, void
+            *native_display, const EGLAttrib *attrib_list);
 
     The attribute following EGL_FEATURE_OVERRIDES_ENABLED_ANGLE or
     EGL_FEATURE_OVERRIDES_DISABLED_ANGLE should be of type char**,
@@ -94,6 +98,9 @@ New Behavior
     the features to be enabled or disabled upon display creation.
     Any features unspecified in one of these arrays will be
     initialized with an internal heuristic.
+    The attribute following EGL_FEATURE_ALL_DISABLED_ANGLE should be
+    either EGL_TRUE to disable all features that are not overridden,
+    or EGL_FALSE to let ANGLE determine which features to enable.
 
 Add the following to the end of section 3.3 "EGL Queries":
 

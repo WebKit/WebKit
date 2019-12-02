@@ -18,15 +18,6 @@ namespace gl
 class Context;
 
 bool ValidateBeginQueryIndexed(Context *context, GLenum target, GLuint index, QueryID idPacked);
-bool ValidateBlendEquationSeparatei(Context *context, GLuint buf, GLenum modeRGB, GLenum modeAlpha);
-bool ValidateBlendEquationi(Context *context, GLuint buf, GLenum mode);
-bool ValidateBlendFuncSeparatei(Context *context,
-                                GLuint buf,
-                                GLenum srcRGB,
-                                GLenum dstRGB,
-                                GLenum srcAlpha,
-                                GLenum dstAlpha);
-bool ValidateBlendFunci(Context *context, GLuint buf, GLenum src, GLenum dst);
 bool ValidateDrawTransformFeedback(Context *context, GLenum mode, TransformFeedbackID idPacked);
 bool ValidateDrawTransformFeedbackStream(Context *context,
                                          GLenum mode,
@@ -79,9 +70,7 @@ bool ValidateGetUniformdv(Context *context,
                           ShaderProgramID programPacked,
                           GLint location,
                           GLdouble *params);
-bool ValidateMinSampleShading(Context *context, GLfloat value);
 bool ValidatePatchParameterfv(Context *context, GLenum pname, const GLfloat *values);
-bool ValidatePatchParameteri(Context *context, GLenum pname, GLint value);
 bool ValidateUniform1d(Context *context, GLint location, GLdouble x);
 bool ValidateUniform1dv(Context *context, GLint location, GLsizei count, const GLdouble *value);
 bool ValidateUniform2d(Context *context, GLint location, GLdouble x, GLdouble y);

@@ -160,6 +160,12 @@ egl::Error SurfaceD3D::releaseTexImage(const gl::Context *, EGLint)
 
 egl::Error SurfaceD3D::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
 {
+    if (!mState.directComposition)
+    {
+        return egl::EglBadSurface()
+               << "getSyncValues: surface requires Direct Composition to be enabled";
+    }
+
     return mSwapChain->getSyncValues(ust, msc, sbc);
 }
 

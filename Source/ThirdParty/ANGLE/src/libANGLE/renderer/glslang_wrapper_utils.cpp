@@ -1,15 +1,16 @@
 //
-// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// GlslangWrapper: Wrapper for Vulkan's glslang compiler.
+// Wrapper for Khronos glslang compiler.
 //
 
-#include "libANGLE/renderer/vulkan/GlslangWrapper.h"
+#include "libANGLE/renderer/glslang_wrapper_utils.h"
 
 // glslang has issues with some specific warnings.
 ANGLE_DISABLE_EXTRA_SEMI_WARNING
+ANGLE_DISABLE_SHADOWING_WARNING
 
 // glslang's version of ShaderLang.h, not to be confused with ANGLE's.
 #include <glslang/Public/ShaderLang.h>
@@ -18,6 +19,7 @@ ANGLE_DISABLE_EXTRA_SEMI_WARNING
 #include <SPIRV/GlslangToSpv.h>
 #include <StandAlone/ResourceLimits.h>
 
+ANGLE_REENABLE_SHADOWING_WARNING
 ANGLE_REENABLE_EXTRA_SEMI_WARNING
 
 #include <array>
@@ -28,8 +30,16 @@ ANGLE_REENABLE_EXTRA_SEMI_WARNING
 #include "common/utilities.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/ProgramLinkedResources.h"
-#include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+
+#define ANGLE_GLSLANG_CHECK(CALLBACK, TEST, ERR) \
+    do                                           \
+    {                                            \
+        if (ANGLE_UNLIKELY(!(TEST)))             \
+        {                                        \
+            return CALLBACK(ERR);                \
+        }                                        \
+                                                 \
+    } while (0)
 
 namespace rx
 {
@@ -454,7 +464,8 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
     return result.str();
 }
 
-void GenerateTransformFeedbackOutputs(const gl::ProgramState &programState,
+void GenerateTransformFeedbackOutputs(const GlslangSourceOptions &options,
+                                      const gl::ProgramState &programState,
                                       IntermediateShaderSource *vertexShader)
 {
     const std::vector<gl::TransformFeedbackVarying> &varyings =
@@ -464,14 +475,14 @@ void GenerateTransformFeedbackOutputs(const gl::ProgramState &programState,
         programState.getTransformFeedbackBufferMode() == GL_INTERLEAVED_ATTRIBS;
     const size_t bufferCount = isInterleaved ? 1 : varyings.size();
 
-    const std::string xfbSet = Str(kUniformsAndXfbDescriptorSetIndex);
+    const std::string xfbSet = Str(options.uniformsAndXfbDescriptorSetIndex);
     std::vector<std::string> xfbIndices(bufferCount);
 
     std::string xfbDecl;
 
     for (uint32_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
-        const std::string xfbBinding = Str(kXfbBindingIndexStart + bufferIndex);
+        const std::string xfbBinding = Str(options.xfbBindingIndexStart + bufferIndex);
         xfbIndices[bufferIndex]      = Str(bufferIndex);
 
         xfbDecl += "layout(set = " + xfbSet + ", binding = " + xfbBinding + ") buffer xfbBuffer" +
@@ -648,11 +659,13 @@ void AssignVaryingLocations(const gl::ProgramState &programState,
     inStageSource->insertQualifierSpecifier(kVaryingName, "in");
 }
 
-void AssignUniformBindings(gl::ShaderMap<IntermediateShaderSource> *shaderSources)
+void AssignUniformBindings(const GlslangSourceOptions &options,
+                           gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
     // Bind the default uniforms for vertex and fragment shaders.
     // See corresponding code in OutputVulkanGLSL.cpp.
-    const std::string uniformsDescriptorSet = "set = " + Str(kUniformsAndXfbDescriptorSetIndex);
+    const std::string uniformsDescriptorSet =
+        "set = " + Str(options.uniformsAndXfbDescriptorSetIndex);
 
     constexpr char kDefaultUniformsBlockName[] = "defaultUniforms";
     uint32_t bindingIndex                      = 0;
@@ -669,7 +682,7 @@ void AssignUniformBindings(gl::ShaderMap<IntermediateShaderSource> *shaderSource
 
     // Substitute layout and qualifier strings for the driver uniforms block.
     const std::string driverBlockLayoutString =
-        "set = " + Str(kDriverUniformsDescriptorSetIndex) + ", binding = 0";
+        "set = " + Str(options.driverUniformsDescriptorSetIndex) + ", binding = 0";
     constexpr char kDriverBlockName[] = "ANGLEUniformBlock";
 
     for (IntermediateShaderSource &shaderSource : *shaderSources)
@@ -705,12 +718,14 @@ void AssignResourceBinding(gl::ShaderBitSet activeShaders,
     }
 }
 
-uint32_t AssignInterfaceBlockBindings(const std::vector<gl::InterfaceBlock> &blocks,
+uint32_t AssignInterfaceBlockBindings(const GlslangSourceOptions &options,
+                                      const std::vector<gl::InterfaceBlock> &blocks,
                                       const char *qualifier,
                                       uint32_t bindingStart,
                                       gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
-    const std::string resourcesDescriptorSet = "set = " + Str(kShaderResourceDescriptorSetIndex);
+    const std::string resourcesDescriptorSet =
+        "set = " + Str(options.shaderResourceDescriptorSetIndex);
 
     uint32_t bindingIndex = bindingStart;
     for (const gl::InterfaceBlock &block : blocks)
@@ -728,7 +743,8 @@ uint32_t AssignInterfaceBlockBindings(const std::vector<gl::InterfaceBlock> &blo
     return bindingIndex;
 }
 
-uint32_t AssignAtomicCounterBufferBindings(const std::vector<gl::AtomicCounterBuffer> &buffers,
+uint32_t AssignAtomicCounterBufferBindings(const GlslangSourceOptions &options,
+                                           const std::vector<gl::AtomicCounterBuffer> &buffers,
                                            const char *qualifier,
                                            uint32_t bindingStart,
                                            gl::ShaderMap<IntermediateShaderSource> *shaderSources)
@@ -739,8 +755,8 @@ uint32_t AssignAtomicCounterBufferBindings(const std::vector<gl::AtomicCounterBu
     }
 
     constexpr char kAtomicCounterBlockName[] = "ANGLEAtomicCounters";
-    const std::string bindingString =
-        "set = " + Str(kShaderResourceDescriptorSetIndex) + ", binding = " + Str(bindingStart);
+    const std::string bindingString = "set = " + Str(options.shaderResourceDescriptorSetIndex) +
+                                      ", binding = " + Str(bindingStart);
 
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
@@ -756,12 +772,14 @@ uint32_t AssignAtomicCounterBufferBindings(const std::vector<gl::AtomicCounterBu
     return bindingStart + 1;
 }
 
-uint32_t AssignImageBindings(const std::vector<gl::LinkedUniform> &uniforms,
+uint32_t AssignImageBindings(const GlslangSourceOptions &options,
+                             const std::vector<gl::LinkedUniform> &uniforms,
                              const gl::RangeUI &imageUniformRange,
                              uint32_t bindingStart,
                              gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
-    const std::string resourcesDescriptorSet = "set = " + Str(kShaderResourceDescriptorSetIndex);
+    const std::string resourcesDescriptorSet =
+        "set = " + Str(options.shaderResourceDescriptorSetIndex);
 
     uint32_t bindingIndex = bindingStart;
     for (unsigned int uniformIndex : imageUniformRange)
@@ -783,34 +801,37 @@ uint32_t AssignImageBindings(const std::vector<gl::LinkedUniform> &uniforms,
     return bindingIndex;
 }
 
-void AssignNonTextureBindings(const gl::ProgramState &programState,
+void AssignNonTextureBindings(const GlslangSourceOptions &options,
+                              const gl::ProgramState &programState,
                               gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
     uint32_t bindingStart = 0;
 
     const std::vector<gl::InterfaceBlock> &uniformBlocks = programState.getUniformBlocks();
-    bindingStart =
-        AssignInterfaceBlockBindings(uniformBlocks, kUniformQualifier, bindingStart, shaderSources);
+    bindingStart = AssignInterfaceBlockBindings(options, uniformBlocks, kUniformQualifier,
+                                                bindingStart, shaderSources);
 
     const std::vector<gl::InterfaceBlock> &storageBlocks = programState.getShaderStorageBlocks();
-    bindingStart =
-        AssignInterfaceBlockBindings(storageBlocks, kSSBOQualifier, bindingStart, shaderSources);
+    bindingStart = AssignInterfaceBlockBindings(options, storageBlocks, kSSBOQualifier,
+                                                bindingStart, shaderSources);
 
     const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers =
         programState.getAtomicCounterBuffers();
-    bindingStart = AssignAtomicCounterBufferBindings(atomicCounterBuffers, kSSBOQualifier,
+    bindingStart = AssignAtomicCounterBufferBindings(options, atomicCounterBuffers, kSSBOQualifier,
                                                      bindingStart, shaderSources);
 
     const std::vector<gl::LinkedUniform> &uniforms = programState.getUniforms();
     const gl::RangeUI &imageUniformRange           = programState.getImageUniformRange();
-    bindingStart = AssignImageBindings(uniforms, imageUniformRange, bindingStart, shaderSources);
+    bindingStart =
+        AssignImageBindings(options, uniforms, imageUniformRange, bindingStart, shaderSources);
 }
 
-void AssignTextureBindings(bool useOldRewriteStructSamplers,
+void AssignTextureBindings(const GlslangSourceOptions &options,
+                           bool useOldRewriteStructSamplers,
                            const gl::ProgramState &programState,
                            gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
-    const std::string texturesDescriptorSet = "set = " + Str(kTextureDescriptorSetIndex);
+    const std::string texturesDescriptorSet = "set = " + Str(options.textureDescriptorSetIndex);
 
     // Assign textures to a descriptor set and binding.
     uint32_t bindingIndex                          = 0;
@@ -821,7 +842,7 @@ void AssignTextureBindings(bool useOldRewriteStructSamplers,
         const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
 
         if (!useOldRewriteStructSamplers &&
-            vk::SamplerNameContainsNonZeroArrayElement(samplerUniform.name))
+            gl::SamplerNameContainsNonZeroArrayElement(samplerUniform.name))
         {
             continue;
         }
@@ -832,7 +853,7 @@ void AssignTextureBindings(bool useOldRewriteStructSamplers,
         // Samplers in structs are extracted and renamed.
         const std::string samplerName = useOldRewriteStructSamplers
                                             ? GetMappedSamplerNameOld(samplerUniform.name)
-                                            : vk::GetMappedSamplerName(samplerUniform.name);
+                                            : GlslangGetMappedSamplerName(samplerUniform.name);
 
         AssignResourceBinding(samplerUniform.activeShaders(), samplerName, bindingString,
                               kUniformQualifier, kUnusedUniformSubstitution, shaderSources);
@@ -891,7 +912,7 @@ void CleanupUnusedEntities(bool useOldRewriteStructSamplers,
         std::string uniformName = unusedUniform.isSampler
                                       ? useOldRewriteStructSamplers
                                             ? GetMappedSamplerNameOld(unusedUniform.name)
-                                            : vk::GetMappedSamplerName(unusedUniform.name)
+                                            : GlslangGetMappedSamplerName(unusedUniform.name)
                                       : unusedUniform.name;
 
         for (IntermediateShaderSource &shaderSource : *shaderSources)
@@ -907,139 +928,11 @@ constexpr gl::ShaderMap<EShLanguage> kShLanguageMap = {
     {gl::ShaderType::Fragment, EShLangFragment},
     {gl::ShaderType::Compute, EShLangCompute},
 };
-}  // anonymous namespace
 
-// static
-void GlslangWrapper::Initialize()
-{
-    int result = ShInitialize();
-    ASSERT(result != 0);
-}
-
-// static
-void GlslangWrapper::Release()
-{
-    int result = ShFinalize();
-    ASSERT(result != 0);
-}
-
-// static
-void GlslangWrapper::GetShaderSource(bool useOldRewriteStructSamplers,
-                                     const gl::ProgramState &programState,
-                                     const gl::ProgramLinkedResources &resources,
-                                     gl::ShaderMap<std::string> *shaderSourcesOut)
-{
-    gl::ShaderMap<IntermediateShaderSource> intermediateSources;
-
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        gl::Shader *glShader = programState.getAttachedShader(shaderType);
-        if (glShader)
-        {
-            intermediateSources[shaderType].init(glShader->getTranslatedSource());
-        }
-    }
-
-    IntermediateShaderSource *vertexSource   = &intermediateSources[gl::ShaderType::Vertex];
-    IntermediateShaderSource *fragmentSource = &intermediateSources[gl::ShaderType::Fragment];
-    IntermediateShaderSource *geometrySource = &intermediateSources[gl::ShaderType::Geometry];
-
-    if (!geometrySource->empty())
-    {
-        AssignOutputLocations(programState, fragmentSource);
-        AssignVaryingLocations(programState, resources, geometrySource, fragmentSource);
-        if (!vertexSource->empty())
-        {
-            AssignAttributeLocations(programState, vertexSource);
-            AssignVaryingLocations(programState, resources, vertexSource, geometrySource);
-        }
-    }
-    else if (!vertexSource->empty())
-    {
-        AssignAttributeLocations(programState, vertexSource);
-        AssignOutputLocations(programState, fragmentSource);
-        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
-    }
-    else if (!fragmentSource->empty())
-    {
-        AssignAttributeLocations(programState, fragmentSource);
-        AssignOutputLocations(programState, fragmentSource);
-        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
-    }
-    AssignUniformBindings(&intermediateSources);
-    AssignTextureBindings(useOldRewriteStructSamplers, programState, &intermediateSources);
-    AssignNonTextureBindings(programState, &intermediateSources);
-
-    for (const auto shaderType : gl::kAllGraphicsShaderTypes)
-    {
-        CleanupUnusedEntities(useOldRewriteStructSamplers, programState, resources, shaderType,
-                              &intermediateSources);
-    }
-
-    // Write transform feedback output code.
-    if (!vertexSource->empty())
-    {
-        if (programState.getLinkedTransformFeedbackVaryings().empty())
-        {
-            vertexSource->insertTransformFeedbackDeclaration("");
-            vertexSource->insertTransformFeedbackOutput("");
-        }
-        else
-        {
-            GenerateTransformFeedbackOutputs(programState, vertexSource);
-        }
-    }
-
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        (*shaderSourcesOut)[shaderType] = intermediateSources[shaderType].getShaderSource();
-    }
-}
-
-// static
-angle::Result GlslangWrapper::GetShaderCode(vk::Context *context,
-                                            const gl::Caps &glCaps,
-                                            bool enableLineRasterEmulation,
-                                            const gl::ShaderMap<std::string> &shaderSources,
-                                            gl::ShaderMap<std::vector<uint32_t>> *shaderCodeOut)
-{
-    if (enableLineRasterEmulation)
-    {
-        ASSERT(shaderSources[gl::ShaderType::Compute].empty());
-
-        gl::ShaderMap<std::string> patchedSources = shaderSources;
-
-        // #defines must come after the #version directive.
-        ANGLE_VK_CHECK(context,
-                       angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Vertex],
-                                               kVersionDefine, kLineRasterDefine),
-                       VK_ERROR_INVALID_SHADER_NV);
-        ANGLE_VK_CHECK(context,
-                       angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Fragment],
-                                               kVersionDefine, kLineRasterDefine),
-                       VK_ERROR_INVALID_SHADER_NV);
-
-        if (!shaderSources[gl::ShaderType::Geometry].empty())
-        {
-            ANGLE_VK_CHECK(context,
-                           angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Geometry],
-                                                   kVersionDefine, kLineRasterDefine),
-                           VK_ERROR_INVALID_SHADER_NV);
-        }
-
-        return GetShaderCodeImpl(context, glCaps, patchedSources, shaderCodeOut);
-    }
-    else
-    {
-        return GetShaderCodeImpl(context, glCaps, shaderSources, shaderCodeOut);
-    }
-}
-
-// static
-angle::Result GlslangWrapper::GetShaderCodeImpl(vk::Context *context,
-                                                const gl::Caps &glCaps,
-                                                const gl::ShaderMap<std::string> &shaderSources,
-                                                gl::ShaderMap<std::vector<uint32_t>> *shaderCodeOut)
+angle::Result GetShaderSpirvCode(GlslangErrorCallback callback,
+                                 const gl::Caps &glCaps,
+                                 const gl::ShaderMap<std::string> &shaderSources,
+                                 gl::ShaderMap<std::vector<uint32_t>> *shaderCodeOut)
 {
     // Enable SPIR-V and Vulkan rules when parsing GLSL
     EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
@@ -1080,7 +973,7 @@ angle::Result GlslangWrapper::GetShaderCodeImpl(vk::Context *context,
             ERR() << "Internal error parsing Vulkan shader corresponding to " << shaderType << ":\n"
                   << shader->getInfoLog() << "\n"
                   << shader->getInfoDebugLog() << "\n";
-            ANGLE_VK_CHECK(context, false, VK_ERROR_INVALID_SHADER_NV);
+            ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
         }
 
         program.addShader(shader);
@@ -1090,7 +983,7 @@ angle::Result GlslangWrapper::GetShaderCodeImpl(vk::Context *context,
     if (!linkResult)
     {
         ERR() << "Internal error linking Vulkan shaders:\n" << program.getInfoLog() << "\n";
-        ANGLE_VK_CHECK(context, false, VK_ERROR_INVALID_SHADER_NV);
+        ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
     }
 
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -1105,5 +998,159 @@ angle::Result GlslangWrapper::GetShaderCodeImpl(vk::Context *context,
     }
 
     return angle::Result::Continue;
+}
+}  // anonymous namespace
+
+void GlslangInitialize()
+{
+    int result = ShInitialize();
+    ASSERT(result != 0);
+}
+
+void GlslangRelease()
+{
+    int result = ShFinalize();
+    ASSERT(result != 0);
+}
+
+std::string GlslangGetMappedSamplerName(const std::string &originalName)
+{
+    std::string samplerName = originalName;
+
+    // Samplers in structs are extracted.
+    std::replace(samplerName.begin(), samplerName.end(), '.', '_');
+
+    // Remove array elements
+    auto out = samplerName.begin();
+    for (auto in = samplerName.begin(); in != samplerName.end(); in++)
+    {
+        if (*in == '[')
+        {
+            while (*in != ']')
+            {
+                in++;
+                ASSERT(in != samplerName.end());
+            }
+        }
+        else
+        {
+            *out++ = *in;
+        }
+    }
+
+    samplerName.erase(out, samplerName.end());
+
+    return samplerName;
+}
+
+void GlslangGetShaderSource(const GlslangSourceOptions &options,
+                            bool useOldRewriteStructSamplers,
+                            const gl::ProgramState &programState,
+                            const gl::ProgramLinkedResources &resources,
+                            gl::ShaderMap<std::string> *shaderSourcesOut)
+{
+    gl::ShaderMap<IntermediateShaderSource> intermediateSources;
+
+    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        gl::Shader *glShader = programState.getAttachedShader(shaderType);
+        if (glShader)
+        {
+            intermediateSources[shaderType].init(glShader->getTranslatedSource());
+        }
+    }
+
+    IntermediateShaderSource *vertexSource   = &intermediateSources[gl::ShaderType::Vertex];
+    IntermediateShaderSource *fragmentSource = &intermediateSources[gl::ShaderType::Fragment];
+    IntermediateShaderSource *geometrySource = &intermediateSources[gl::ShaderType::Geometry];
+
+    if (!geometrySource->empty())
+    {
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, geometrySource, fragmentSource);
+        if (!vertexSource->empty())
+        {
+            AssignAttributeLocations(programState, vertexSource);
+            AssignVaryingLocations(programState, resources, vertexSource, geometrySource);
+        }
+    }
+    else if (!vertexSource->empty())
+    {
+        AssignAttributeLocations(programState, vertexSource);
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
+    }
+    else if (!fragmentSource->empty())
+    {
+        AssignAttributeLocations(programState, fragmentSource);
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
+    }
+    AssignUniformBindings(options, &intermediateSources);
+    AssignTextureBindings(options, useOldRewriteStructSamplers, programState, &intermediateSources);
+    AssignNonTextureBindings(options, programState, &intermediateSources);
+
+    for (const auto shaderType : gl::kAllGraphicsShaderTypes)
+    {
+        CleanupUnusedEntities(useOldRewriteStructSamplers, programState, resources, shaderType,
+                              &intermediateSources);
+    }
+
+    // Write transform feedback output code.
+    if (!vertexSource->empty())
+    {
+        if (programState.getLinkedTransformFeedbackVaryings().empty())
+        {
+            vertexSource->insertTransformFeedbackDeclaration("");
+            vertexSource->insertTransformFeedbackOutput("");
+        }
+        else
+        {
+            GenerateTransformFeedbackOutputs(options, programState, vertexSource);
+        }
+    }
+
+    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        (*shaderSourcesOut)[shaderType] = intermediateSources[shaderType].getShaderSource();
+    }
+}
+
+angle::Result GlslangGetShaderSpirvCode(GlslangErrorCallback callback,
+                                        const gl::Caps &glCaps,
+                                        bool enableLineRasterEmulation,
+                                        const gl::ShaderMap<std::string> &shaderSources,
+                                        gl::ShaderMap<std::vector<uint32_t>> *shaderCodeOut)
+{
+    if (enableLineRasterEmulation)
+    {
+        ASSERT(shaderSources[gl::ShaderType::Compute].empty());
+
+        gl::ShaderMap<std::string> patchedSources = shaderSources;
+
+        // #defines must come after the #version directive.
+        ANGLE_GLSLANG_CHECK(callback,
+                            angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Vertex],
+                                                    kVersionDefine, kLineRasterDefine),
+                            GlslangError::InvalidShader);
+        ANGLE_GLSLANG_CHECK(callback,
+                            angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Fragment],
+                                                    kVersionDefine, kLineRasterDefine),
+                            GlslangError::InvalidShader);
+
+        if (!shaderSources[gl::ShaderType::Geometry].empty())
+        {
+            ANGLE_GLSLANG_CHECK(callback,
+                                angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Geometry],
+                                                        kVersionDefine, kLineRasterDefine),
+                                GlslangError::InvalidShader);
+        }
+
+        return GetShaderSpirvCode(callback, glCaps, patchedSources, shaderCodeOut);
+    }
+    else
+    {
+        return GetShaderSpirvCode(callback, glCaps, shaderSources, shaderCodeOut);
+    }
 }
 }  // namespace rx

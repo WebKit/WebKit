@@ -611,7 +611,7 @@ bool Buffer11::canDeallocateSystemMemory() const
     }
 
     return (!mBufferStorages[BUFFER_USAGE_UNIFORM] ||
-            mSize <= mRenderer->getNativeCaps().maxUniformBlockSize);
+            mSize <= static_cast<size_t>(mRenderer->getNativeCaps().maxUniformBlockSize));
 }
 
 void Buffer11::markBufferUsage(BufferUsage usage)

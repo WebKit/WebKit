@@ -13,13 +13,14 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/entry_points_utils.h"
-#include "libANGLE/gl_enum_utils_autogen.h"
+#include "libANGLE/gl_enum_utils.h"
 #include "libANGLE/validationEGL.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES1.h"
 #include "libANGLE/validationES2.h"
 #include "libANGLE/validationES3.h"
 #include "libANGLE/validationES31.h"
+#include "libANGLE/validationES32.h"
 #include "libANGLE/validationESEXT.h"
 #include "libANGLE/validationGL1_autogen.h"
 #include "libGLESv2/global_state.h"
@@ -2104,14 +2105,16 @@ void GL_APIENTRY GetTexImage(GLenum target, GLint level, GLenum format, GLenum t
 
     if (context)
     {
+        TextureTarget targetPacked                    = FromGL<TextureTarget>(target);
         std::unique_lock<std::mutex> shareContextLock = GetShareGroupLock(context);
-        bool isCallValid                              = (context->skipValidation() ||
-                            ValidateGetTexImage(context, target, level, format, type, pixels));
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetTexImage(context, targetPacked, level, format, type, pixels));
         if (isCallValid)
         {
-            context->getTexImage(target, level, format, type, pixels);
+            context->getTexImage(targetPacked, level, format, type, pixels);
         }
-        ANGLE_CAPTURE(GetTexImage, isCallValid, context, target, level, format, type, pixels);
+        ANGLE_CAPTURE(GetTexImage, isCallValid, context, targetPacked, level, format, type, pixels);
     }
 }
 

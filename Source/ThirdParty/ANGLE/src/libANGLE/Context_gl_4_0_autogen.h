@@ -12,11 +12,6 @@
 
 #define ANGLE_GL_4_0_CONTEXT_API                                                                 \
     void beginQueryIndexed(GLenum target, GLuint index, QueryID idPacked);                       \
-    void blendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum modeAlpha);                   \
-    void blendEquationi(GLuint buf, GLenum mode);                                                \
-    void blendFuncSeparatei(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha,           \
-                            GLenum dstAlpha);                                                    \
-    void blendFunci(GLuint buf, GLenum src, GLenum dst);                                         \
     void drawTransformFeedback(GLenum mode, TransformFeedbackID idPacked);                       \
     void drawTransformFeedbackStream(GLenum mode, TransformFeedbackID idPacked, GLuint stream);  \
     void endQueryIndexed(GLenum target, GLuint index);                                           \
@@ -36,9 +31,7 @@
                                        const GLchar *name);                                      \
     void getUniformSubroutineuiv(GLenum shadertype, GLint location, GLuint *params);             \
     void getUniformdv(ShaderProgramID programPacked, GLint location, GLdouble *params);          \
-    void minSampleShading(GLfloat value);                                                        \
     void patchParameterfv(GLenum pname, const GLfloat *values);                                  \
-    void patchParameteri(GLenum pname, GLint value);                                             \
     void uniform1d(GLint location, GLdouble x);                                                  \
     void uniform1dv(GLint location, GLsizei count, const GLdouble *value);                       \
     void uniform2d(GLint location, GLdouble x, GLdouble y);                                      \

@@ -63,6 +63,8 @@ std::string ParseResourceName(const std::string &name, std::vector<unsigned int>
 // Strips only the last array index from a resource name.
 std::string StripLastArrayIndex(const std::string &name);
 
+bool SamplerNameContainsNonZeroArrayElement(const std::string &name);
+
 // Find the child field which matches 'fullName' == var.name + "." + field.name.
 // Return nullptr if not found.
 const sh::ShaderVariable *FindShaderVarField(const sh::ShaderVariable &var,
@@ -94,6 +96,7 @@ static_assert(GetPrimitiveRestartIndexFromType<uint32_t>() == 0xFFFFFFFF,
               "verify restart index for uint8_t values");
 
 bool IsTriangleMode(PrimitiveMode drawMode);
+bool IsPolygonMode(PrimitiveMode mode);
 
 namespace priv
 {

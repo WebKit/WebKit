@@ -29,7 +29,7 @@ The `gtest` targets support wildcards via the `--gtest_filter` argument,
 but have different test names.
 
 The tests lists are sourced from the Android CTS masters in
-`third_party/deqp/src/android/cts/master`. See `gles2-master.txt`,
+`third_party/VK-GL-CTS/src/android/cts/master`. See `gles2-master.txt`,
 `gles3-master.txt`, `gles31-master.txt` and `egl-master.txt`.
 
 If you're running a full test suite, it might take very long time. Running in
@@ -47,6 +47,7 @@ To specify the exact platform for ANGLE + dEQP, use the arguments:
   * `--deqp-egl-display-type=angle-gl` for OpenGL Desktop (OSX, Linux and Windows)
   * `--deqp-egl-display-type=angle-gles` for OpenGL ES (Android/ChromeOS, some Windows platforms)
   * `--deqp-egl-display-type=angle-vulkan` for Vulkan (Android, Linux, Windows)
+  * `--deqp-egl-display-type=angle-swiftshader` for Vulkan with SwiftShader as driver (Android, Linux, Windows)
 
 The flag `--use-angle=X` has the same effect as `--deqp-egl-display-type=angle-X`.
 

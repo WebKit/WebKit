@@ -20,7 +20,7 @@
 // Check for nullptr so extensions do not overwrite core imports.
 #define ASSIGN(NAME, FP) \
     if (!FP)             \
-    *reinterpret_cast<void **>(&FP) = loadProcAddress(NAME)
+    FP = reinterpret_cast<decltype(FP)>(loadProcAddress(NAME))
 
 namespace rx
 {

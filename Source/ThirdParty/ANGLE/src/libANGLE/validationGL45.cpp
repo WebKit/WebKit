@@ -284,11 +284,6 @@ bool ValidateGetCompressedTextureSubImage(Context *context,
     return true;
 }
 
-bool ValidateGetGraphicsResetStatus(Context *context)
-{
-    return true;
-}
-
 bool ValidateGetNamedBufferParameteri64v(Context *context,
                                          BufferID buffer,
                                          GLenum pname,
@@ -620,33 +615,6 @@ bool ValidateGetnUniformdv(Context *context,
     return true;
 }
 
-bool ValidateGetnUniformfv(Context *context,
-                           ShaderProgramID program,
-                           GLint location,
-                           GLsizei bufSize,
-                           GLfloat *params)
-{
-    return true;
-}
-
-bool ValidateGetnUniformiv(Context *context,
-                           ShaderProgramID program,
-                           GLint location,
-                           GLsizei bufSize,
-                           GLint *params)
-{
-    return true;
-}
-
-bool ValidateGetnUniformuiv(Context *context,
-                            ShaderProgramID program,
-                            GLint location,
-                            GLsizei bufSize,
-                            GLuint *params)
-{
-    return true;
-}
-
 bool ValidateInvalidateNamedFramebufferData(Context *context,
                                             FramebufferID framebuffer,
                                             GLsizei numAttachments,
@@ -777,19 +745,6 @@ bool ValidateNamedRenderbufferStorageMultisample(Context *context,
                                                  GLenum internalformat,
                                                  GLsizei width,
                                                  GLsizei height)
-{
-    return true;
-}
-
-bool ValidateReadnPixels(Context *context,
-                         GLint x,
-                         GLint y,
-                         GLsizei width,
-                         GLsizei height,
-                         GLenum format,
-                         GLenum type,
-                         GLsizei bufSize,
-                         void *data)
 {
     return true;
 }

@@ -13,6 +13,7 @@
 #include <vulkan/vulkan.h>
 #include <memory>
 #include <mutex>
+#include "vk_ext_provoking_vertex.h"
 
 #include "common/PoolAlloc.h"
 #include "common/angleutils.h"
@@ -127,6 +128,7 @@ class RendererVk : angle::NonCopyable
                                     const vk::DescriptorSetLayoutPointerArray &descriptorSetLayouts,
                                     vk::BindingPointer<vk::PipelineLayout> *pipelineLayoutOut);
 
+    angle::Result getPipelineCacheSize(DisplayVk *displayVk, size_t *pipelineCacheSizeOut);
     angle::Result syncPipelineCacheVk(DisplayVk *displayVk);
 
     // Issues a new serial for linked shader modules. Used in the pipeline cache.
@@ -170,7 +172,7 @@ class RendererVk : angle::NonCopyable
         CollectGarbage(&sharedGarbage, garbageIn...);
         if (!sharedGarbage.empty())
         {
-            mSharedGarbage.emplace_back(std::move(*use), std::move(sharedGarbage));
+            collectGarbage(std::move(*use), std::move(sharedGarbage));
         }
         else
         {
@@ -179,6 +181,11 @@ class RendererVk : angle::NonCopyable
         }
         // Keep "use" valid.
         use->init();
+    }
+
+    void collectGarbage(vk::SharedResourceUse &&use, std::vector<vk::GarbageObject> &&sharedGarbage)
+    {
+        mSharedGarbage.emplace_back(std::move(use), std::move(sharedGarbage));
     }
 
     static constexpr size_t kMaxExtensionNames = 200;
@@ -240,6 +247,8 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
     VkPhysicalDeviceSubgroupProperties mPhysicalDeviceSubgroupProperties;
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
+    VkPhysicalDeviceLineRasterizationFeaturesEXT mLineRasterizationFeatures;
+    VkPhysicalDeviceProvokingVertexFeaturesEXT mProvokingVertexFeatures;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     std::mutex mQueueMutex;
     VkQueue mQueue;

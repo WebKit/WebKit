@@ -289,6 +289,7 @@ typedef void (GL_APIENTRYP PFNGLCOPYTEXTURECHROMIUMCONTEXTANGLEPROC)(GLeglContex
 typedef void (GL_APIENTRYP PFNGLCOPYSUBTEXTURECHROMIUMCONTEXTANGLEPROC)(GLeglContext ctx, GLuint sourceId, GLint sourceLevel, GLenum destTarget, GLuint destId, GLint destLevel, GLint xoffset, GLint yoffset, GLint x, GLint y, GLint width, GLint height, GLboolean unpackFlipY, GLboolean unpackPremultiplyAlpha, GLboolean unpackUnmultiplyAlpha);
 typedef void (GL_APIENTRYP PFNGLCOMPRESSEDCOPYTEXTURECHROMIUMCONTEXTANGLEPROC)(GLeglContext ctx, GLuint sourceId, GLuint destId);
 typedef void (GL_APIENTRYP PFNGLREQUESTEXTENSIONANGLECONTEXTANGLEPROC)(GLeglContext ctx, const GLchar * name);
+typedef void (GL_APIENTRYP PFNGLDISABLEEXTENSIONANGLECONTEXTANGLEPROC)(GLeglContext ctx, const GLchar * name);
 typedef void (GL_APIENTRYP PFNGLGETBOOLEANVROBUSTANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum pname, GLsizei bufSize, GLsizei * length, GLboolean * params);
 typedef void (GL_APIENTRYP PFNGLGETBUFFERPARAMETERIVROBUSTANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLenum pname, GLsizei bufSize, GLsizei * length, GLint * params);
 typedef void (GL_APIENTRYP PFNGLGETFLOATVROBUSTANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum pname, GLsizei bufSize, GLsizei * length, GLfloat * params);
@@ -364,14 +365,16 @@ typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSANGLECONTEXTANGLEPROC)(GLeglCon
 typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSINSTANCEDANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, const GLsizei *counts, GLenum type, const GLvoid *const*indices, const GLsizei*instanceCounts, GLsizei drawcount);
 typedef void (GL_APIENTRYP PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, GLint first, GLsizei count, GLsizei instanceCount, GLuint baseInstance);
 typedef void (GL_APIENTRYP PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instanceCounts, GLint baseVertex, GLuint baseInstance);
-typedef void (GL_APIENTRYP PFNGLMULTIDRAWARRAYSINSTANCEDBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, GLsizei drawcount, const GLsizei *counts, const GLsizei *instanceCounts, const GLint *firsts, const GLuint *baseInstances);
-typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, GLenum type, GLsizei drawcount, const GLsizei *counts, const GLsizei *instanceCounts, const GLvoid *const*indices, const GLint *baseVertices, const GLuint *baseInstances);
+typedef void (GL_APIENTRYP PFNGLMULTIDRAWARRAYSINSTANCEDBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, const GLint *firsts, const GLsizei *counts, const GLsizei *instanceCounts, const GLuint *baseInstances, GLsizei drawcount);
+typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode, const GLsizei *counts, GLenum type, const GLvoid *const*indices, const GLsizei *instanceCounts, const GLint *baseVertices, const GLuint *baseInstances, GLsizei drawcount);
 typedef void (GL_APIENTRYP PFNGLGETMULTISAMPLEFVANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum pname, GLuint index, GLfloat * val);
 typedef void (GL_APIENTRYP PFNGLSAMPLEMASKIANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLuint maskNumber, GLbitfield mask);
 typedef void (GL_APIENTRYP PFNGLPROVOKINGVERTEXANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum mode);
 typedef void (GL_APIENTRYP PFNGLLOSECONTEXTCHROMIUMCONTEXTANGLEPROC)(GLeglContext ctx, GLenum current, GLenum other);
 typedef void (GL_APIENTRYP PFNGLTEXIMAGE2DEXTERNALANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
 typedef void (GL_APIENTRYP PFNGLINVALIDATETEXTUREANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum target);
+typedef void (GL_APIENTRYP PFNGLGETTEXIMAGEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLint level, GLenum format, GLenum type, void *pixels);
+typedef void (GL_APIENTRYP PFNGLGETRENDERBUFFERIMAGEANGLECONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLenum format, GLenum type, void *pixels);
 #ifdef GL_GLEXT_PROTOTYPES
 GL_APICALL void GL_APIENTRY glActiveTextureContextANGLE(GLeglContext ctx, GLenum texture);
 GL_APICALL void GL_APIENTRY glAttachShaderContextANGLE(GLeglContext ctx, GLuint program, GLuint shader);
@@ -654,6 +657,7 @@ GL_APICALL void GL_APIENTRY glCopyTextureCHROMIUMContextANGLE(GLeglContext ctx, 
 GL_APICALL void GL_APIENTRY glCopySubTextureCHROMIUMContextANGLE(GLeglContext ctx, GLuint sourceId, GLint sourceLevel, GLenum destTarget, GLuint destId, GLint destLevel, GLint xoffset, GLint yoffset, GLint x, GLint y, GLint width, GLint height, GLboolean unpackFlipY, GLboolean unpackPremultiplyAlpha, GLboolean unpackUnmultiplyAlpha);
 GL_APICALL void GL_APIENTRY glCompressedCopyTextureCHROMIUMContextANGLE(GLeglContext ctx, GLuint sourceId, GLuint destId);
 GL_APICALL void GL_APIENTRY glRequestExtensionANGLEContextANGLE(GLeglContext ctx, const GLchar * name);
+GL_APICALL void GL_APIENTRY glDisableExtensionANGLEContextANGLE(GLeglContext ctx, const GLchar * name);
 GL_APICALL void GL_APIENTRY glGetBooleanvRobustANGLEContextANGLE(GLeglContext ctx, GLenum pname, GLsizei bufSize, GLsizei * length, GLboolean * params);
 GL_APICALL void GL_APIENTRY glGetBufferParameterivRobustANGLEContextANGLE(GLeglContext ctx, GLenum target, GLenum pname, GLsizei bufSize, GLsizei * length, GLint * params);
 GL_APICALL void GL_APIENTRY glGetFloatvRobustANGLEContextANGLE(GLeglContext ctx, GLenum pname, GLsizei bufSize, GLsizei * length, GLfloat * params);
@@ -729,12 +733,14 @@ GL_APICALL void GL_APIENTRY glMultiDrawElementsANGLEContextANGLE(GLeglContext ct
 GL_APICALL void GL_APIENTRY glMultiDrawElementsInstancedANGLEContextANGLE(GLeglContext ctx, GLenum mode, const GLsizei *counts, GLenum type, const GLvoid *const*indices, const GLsizei*instanceCounts, GLsizei drawcount);
 GL_APICALL void GL_APIENTRY glDrawArraysInstancedBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, GLint first, GLsizei count, GLsizei instanceCount, GLuint baseInstance);
 GL_APICALL void GL_APIENTRY glDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instanceCounts, GLint baseVertex, GLuint baseInstance);
-GL_APICALL void GL_APIENTRY glMultiDrawArraysInstancedBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, GLsizei drawcount, const GLsizei *counts, const GLsizei *instanceCounts, const GLint *firsts, const GLuint *baseInstances);
-GL_APICALL void GL_APIENTRY glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, GLenum type, GLsizei drawcount, const GLsizei *counts, const GLsizei *instanceCounts, const GLvoid *const*indices, const GLint *baseVertices, const GLuint *baseInstances);
+GL_APICALL void GL_APIENTRY glMultiDrawArraysInstancedBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, const GLint *firsts, const GLsizei *counts, const GLsizei *instanceCounts, const GLuint *baseInstances, GLsizei drawcount);
+GL_APICALL void GL_APIENTRY glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE(GLeglContext ctx, GLenum mode, const GLsizei *counts, GLenum type, const GLvoid *const*indices, const GLsizei *instanceCounts, const GLint *baseVertices, const GLuint *baseInstances, GLsizei drawcount);
 GL_APICALL void GL_APIENTRY glGetMultisamplefvANGLEContextANGLE(GLeglContext ctx, GLenum pname, GLuint index, GLfloat * val);
 GL_APICALL void GL_APIENTRY glSampleMaskiANGLEContextANGLE(GLeglContext ctx, GLuint maskNumber, GLbitfield mask);
 GL_APICALL void GL_APIENTRY glProvokingVertexANGLEContextANGLE(GLeglContext ctx, GLenum mode);
 GL_APICALL void GL_APIENTRY glLoseContextCHROMIUMContextANGLE(GLeglContext ctx, GLenum current, GLenum other);
 GL_APICALL void GL_APIENTRY glTexImage2DExternalANGLEContextANGLE(GLeglContext ctx, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
 GL_APICALL void GL_APIENTRY glInvalidateTextureANGLEContextANGLE(GLeglContext ctx, GLenum target);
+GL_APICALL void GL_APIENTRY glGetTexImageANGLEContextANGLE(GLeglContext ctx, GLenum target, GLint level, GLenum format, GLenum type, void *pixels);
+GL_APICALL void GL_APIENTRY glGetRenderbufferImageANGLEContextANGLE(GLeglContext ctx, GLenum target, GLenum format, GLenum type, void *pixels);
 #endif

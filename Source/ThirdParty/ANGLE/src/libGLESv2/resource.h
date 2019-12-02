@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by libGLESv2.rc
 
+#define IDD_DIALOG1 101
+#define IDC_STATIC -1
+
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED

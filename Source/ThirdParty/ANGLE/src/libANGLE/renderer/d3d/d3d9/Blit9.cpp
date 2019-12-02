@@ -667,8 +667,8 @@ void Blit9::setCommonBlitState()
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-    RECT scissorRect = {0};  // Scissoring is disabled for flipping, but we need this to capture and
-                             // restore the old rectangle
+    RECT scissorRect = {};  // Scissoring is disabled for flipping, but we need this to capture and
+                            // restore the old rectangle
     device->SetScissorRect(&scissorRect);
 
     for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)

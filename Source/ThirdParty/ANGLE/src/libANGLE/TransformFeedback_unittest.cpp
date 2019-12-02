@@ -116,7 +116,8 @@ TEST_F(TransformFeedbackTest, BufferBinding)
 
     static const size_t bindIndex = 0;
 
-    EXPECT_EQ(mFeedback->getIndexedBufferCount(), mCaps.maxTransformFeedbackSeparateAttributes);
+    EXPECT_EQ(mFeedback->getIndexedBufferCount(),
+              static_cast<GLuint>(mCaps.maxTransformFeedbackSeparateAttributes));
 
     EXPECT_CALL(*mImpl, bindIndexedBuffer(_, _, _));
     EXPECT_EQ(angle::Result::Continue,

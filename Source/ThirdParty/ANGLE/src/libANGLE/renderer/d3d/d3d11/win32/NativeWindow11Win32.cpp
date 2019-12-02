@@ -117,7 +117,7 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
         }
 
         IDXGIFactory2 *factory2             = d3d11::DynamicCastComObject<IDXGIFactory2>(factory);
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width                 = width;
         swapChainDesc.Height                = height;
         swapChainDesc.Format                = format;
@@ -150,7 +150,7 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
     IDXGIFactory2 *factory2 = d3d11::DynamicCastComObject<IDXGIFactory2>(factory);
     if (factory2 != nullptr)
     {
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width                 = width;
         swapChainDesc.Height                = height;
         swapChainDesc.Format                = format;

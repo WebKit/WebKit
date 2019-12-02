@@ -241,6 +241,12 @@ struct Extensions
     // individual formats required to support this extension are available.
     bool compressedTextureETC = false;
 
+    // GL_IMG_texture_compression_pvrtc
+    bool compressedTexturePVRTC = false;
+
+    // GL_EXT_pvrtc_sRGB
+    bool compressedTexturePVRTCsRGB = false;
+
     // GL_EXT_sRGB
     // Implies that TextureCaps for GL_SRGB8_ALPHA8 and GL_SRGB8 exist
     // TODO: Don't advertise this extension in ES3
@@ -535,15 +541,22 @@ struct Extensions
 
     // GL_ANGLE_base_vertex_base_instance
     bool baseVertexBaseInstance = false;
+
+    // GL_ANGLE_get_image
+    bool getImageANGLE = false;
 };
+
+// Pointer to a boolean memeber of the Extensions struct
+using ExtensionBool = bool Extensions::*;
 
 struct ExtensionInfo
 {
-    // If this extension can be enabled with glRequestExtension (GL_ANGLE_request_extension)
+    // If this extension can be enabled or disabled  with glRequestExtension
+    // (GL_ANGLE_request_extension)
     bool Requestable = false;
+    bool Disablable  = false;
 
     // Pointer to a boolean member of the Extensions struct
-    typedef bool(Extensions::*ExtensionBool);
     ExtensionBool ExtensionsMember = nullptr;
 };
 
@@ -605,40 +618,44 @@ struct Caps
     Caps(const Caps &other);
     ~Caps();
 
+    // If the values could be got by using GetIntegeri_v, they should
+    // be GLint instead of GLuint and call LimitToInt() to ensure
+    // they will not overflow.
+
     // ES 3.1 (April 29, 2015) 20.39: implementation dependent values
-    GLuint64 maxElementIndex       = 0;
-    GLuint max3DTextureSize        = 0;
-    GLuint max2DTextureSize        = 0;
-    GLuint maxRectangleTextureSize = 0;
-    GLuint maxArrayTextureLayers   = 0;
-    GLfloat maxLODBias             = 0.0f;
-    GLuint maxCubeMapTextureSize   = 0;
-    GLuint maxRenderbufferSize     = 0;
-    GLfloat minAliasedPointSize    = 1.0f;
-    GLfloat maxAliasedPointSize    = 1.0f;
-    GLfloat minAliasedLineWidth    = 0.0f;
-    GLfloat maxAliasedLineWidth    = 0.0f;
+    GLint64 maxElementIndex       = 0;
+    GLint max3DTextureSize        = 0;
+    GLint max2DTextureSize        = 0;
+    GLint maxRectangleTextureSize = 0;
+    GLint maxArrayTextureLayers   = 0;
+    GLfloat maxLODBias            = 0.0f;
+    GLint maxCubeMapTextureSize   = 0;
+    GLint maxRenderbufferSize     = 0;
+    GLfloat minAliasedPointSize   = 1.0f;
+    GLfloat maxAliasedPointSize   = 1.0f;
+    GLfloat minAliasedLineWidth   = 0.0f;
+    GLfloat maxAliasedLineWidth   = 0.0f;
 
     // ES 3.1 (April 29, 2015) 20.40: implementation dependent values (cont.)
-    GLuint maxDrawBuffers         = 0;
-    GLuint maxFramebufferWidth    = 0;
-    GLuint maxFramebufferHeight   = 0;
-    GLuint maxFramebufferSamples  = 0;
-    GLuint maxColorAttachments    = 0;
-    GLuint maxViewportWidth       = 0;
-    GLuint maxViewportHeight      = 0;
-    GLuint maxSampleMaskWords     = 0;
-    GLuint maxColorTextureSamples = 0;
-    GLuint maxDepthTextureSamples = 0;
-    GLuint maxIntegerSamples      = 0;
-    GLuint64 maxServerWaitTimeout = 0;
+    GLint maxDrawBuffers         = 0;
+    GLint maxFramebufferWidth    = 0;
+    GLint maxFramebufferHeight   = 0;
+    GLint maxFramebufferSamples  = 0;
+    GLint maxColorAttachments    = 0;
+    GLint maxViewportWidth       = 0;
+    GLint maxViewportHeight      = 0;
+    GLint maxSampleMaskWords     = 0;
+    GLint maxColorTextureSamples = 0;
+    GLint maxDepthTextureSamples = 0;
+    GLint maxIntegerSamples      = 0;
+    GLint64 maxServerWaitTimeout = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.41: Implementation dependent values (cont.)
     GLint maxVertexAttribRelativeOffset = 0;
-    GLuint maxVertexAttribBindings      = 0;
+    GLint maxVertexAttribBindings       = 0;
     GLint maxVertexAttribStride         = 0;
-    GLuint maxElementsIndices           = 0;
-    GLuint maxElementsVertices          = 0;
+    GLint maxElementsIndices            = 0;
+    GLint maxElementsVertices           = 0;
     std::vector<GLenum> compressedTextureFormats;
     std::vector<GLenum> programBinaryFormats;
     std::vector<GLenum> shaderBinaryFormats;
@@ -664,80 +681,80 @@ struct Caps
     // limits
     // GL_EXT_geometry_shader (May 31, 2016) Table 20.46: Implementation dependent aggregate shader
     // limits
-    ShaderMap<GLuint> maxShaderUniformBlocks        = {};
-    ShaderMap<GLuint> maxShaderTextureImageUnits    = {};
-    ShaderMap<GLuint> maxShaderStorageBlocks        = {};
-    ShaderMap<GLuint> maxShaderUniformComponents    = {};
-    ShaderMap<GLuint> maxShaderAtomicCounterBuffers = {};
-    ShaderMap<GLuint> maxShaderAtomicCounters       = {};
-    ShaderMap<GLuint> maxShaderImageUniforms        = {};
+    ShaderMap<GLint> maxShaderUniformBlocks        = {};
+    ShaderMap<GLint> maxShaderTextureImageUnits    = {};
+    ShaderMap<GLint> maxShaderStorageBlocks        = {};
+    ShaderMap<GLint> maxShaderUniformComponents    = {};
+    ShaderMap<GLint> maxShaderAtomicCounterBuffers = {};
+    ShaderMap<GLint> maxShaderAtomicCounters       = {};
+    ShaderMap<GLint> maxShaderImageUniforms        = {};
     // Note that we can query MAX_COMPUTE_UNIFORM_COMPONENTS and MAX_GEOMETRY_UNIFORM_COMPONENTS_EXT
     // by GetIntegerv, but we can only use GetInteger64v on MAX_VERTEX_UNIFORM_COMPONENTS and
     // MAX_FRAGMENT_UNIFORM_COMPONENTS. Currently we use GLuint64 to store all these values so that
     // we can put them together into one ShaderMap.
-    ShaderMap<GLuint64> maxCombinedShaderUniformComponents = {};
+    ShaderMap<GLint64> maxCombinedShaderUniformComponents = {};
 
     // ES 3.1 (April 29, 2015) Table 20.43: Implementation dependent Vertex shader limits
-    GLuint maxVertexAttributes       = 0;
-    GLuint maxVertexUniformVectors   = 0;
-    GLuint maxVertexOutputComponents = 0;
+    GLint maxVertexAttributes       = 0;
+    GLint maxVertexUniformVectors   = 0;
+    GLint maxVertexOutputComponents = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.44: Implementation dependent Fragment shader limits
-    GLuint maxFragmentUniformVectors     = 0;
-    GLuint maxFragmentInputComponents    = 0;
-    GLint minProgramTextureGatherOffset  = 0;
-    GLuint maxProgramTextureGatherOffset = 0;
-    GLint minProgramTexelOffset          = 0;
-    GLint maxProgramTexelOffset          = 0;
+    GLint maxFragmentUniformVectors     = 0;
+    GLint maxFragmentInputComponents    = 0;
+    GLint minProgramTextureGatherOffset = 0;
+    GLint maxProgramTextureGatherOffset = 0;
+    GLint minProgramTexelOffset         = 0;
+    GLint maxProgramTexelOffset         = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.45: implementation dependent compute shader limits
-    std::array<GLuint, 3> maxComputeWorkGroupCount = {0, 0, 0};
-    std::array<GLuint, 3> maxComputeWorkGroupSize  = {0, 0, 0};
-    GLuint maxComputeWorkGroupInvocations          = 0;
-    GLuint maxComputeSharedMemorySize              = 0;
+    std::array<GLint, 3> maxComputeWorkGroupCount = {0, 0, 0};
+    std::array<GLint, 3> maxComputeWorkGroupSize  = {0, 0, 0};
+    GLint maxComputeWorkGroupInvocations          = 0;
+    GLint maxComputeSharedMemorySize              = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.46: implementation dependent aggregate shader limits
-    GLuint maxUniformBufferBindings         = 0;
-    GLuint64 maxUniformBlockSize            = 0;
-    GLuint uniformBufferOffsetAlignment     = 0;
-    GLuint maxCombinedUniformBlocks         = 0;
-    GLuint maxVaryingComponents             = 0;
-    GLuint maxVaryingVectors                = 0;
-    GLuint maxCombinedTextureImageUnits     = 0;
-    GLuint maxCombinedShaderOutputResources = 0;
+    GLint maxUniformBufferBindings         = 0;
+    GLint64 maxUniformBlockSize            = 0;
+    GLint uniformBufferOffsetAlignment     = 0;
+    GLint maxCombinedUniformBlocks         = 0;
+    GLint maxVaryingComponents             = 0;
+    GLint maxVaryingVectors                = 0;
+    GLint maxCombinedTextureImageUnits     = 0;
+    GLint maxCombinedShaderOutputResources = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.47: implementation dependent aggregate shader limits (cont.)
-    GLuint maxUniformLocations                = 0;
-    GLuint maxAtomicCounterBufferBindings     = 0;
-    GLuint maxAtomicCounterBufferSize         = 0;
-    GLuint maxCombinedAtomicCounterBuffers    = 0;
-    GLuint maxCombinedAtomicCounters          = 0;
-    GLuint maxImageUnits                      = 0;
-    GLuint maxCombinedImageUniforms           = 0;
-    GLuint maxShaderStorageBufferBindings     = 0;
-    GLuint64 maxShaderStorageBlockSize        = 0;
-    GLuint maxCombinedShaderStorageBlocks     = 0;
-    GLuint shaderStorageBufferOffsetAlignment = 0;
+    GLint maxUniformLocations                = 0;
+    GLint maxAtomicCounterBufferBindings     = 0;
+    GLint maxAtomicCounterBufferSize         = 0;
+    GLint maxCombinedAtomicCounterBuffers    = 0;
+    GLint maxCombinedAtomicCounters          = 0;
+    GLint maxImageUnits                      = 0;
+    GLint maxCombinedImageUniforms           = 0;
+    GLint maxShaderStorageBufferBindings     = 0;
+    GLint64 maxShaderStorageBlockSize        = 0;
+    GLint maxCombinedShaderStorageBlocks     = 0;
+    GLint shaderStorageBufferOffsetAlignment = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.48: implementation dependent transform feedback limits
-    GLuint maxTransformFeedbackInterleavedComponents = 0;
-    GLuint maxTransformFeedbackSeparateAttributes    = 0;
-    GLuint maxTransformFeedbackSeparateComponents    = 0;
+    GLint maxTransformFeedbackInterleavedComponents = 0;
+    GLint maxTransformFeedbackSeparateAttributes    = 0;
+    GLint maxTransformFeedbackSeparateComponents    = 0;
 
     // ES 3.1 (April 29, 2015) Table 20.49: Framebuffer Dependent Values
-    GLuint maxSamples = 0;
+    GLint maxSamples = 0;
 
     // GL_EXT_geometry_shader (May 31, 2016) Table 20.40: Implementation-Dependent Values (cont.)
-    GLuint maxFramebufferLayers = 0;
-    GLuint layerProvokingVertex = 0;
+    GLint maxFramebufferLayers = 0;
+    GLint layerProvokingVertex = 0;
 
     // GL_EXT_geometry_shader (May 31, 2016) Table 20.43gs: Implementation dependent geometry shader
     // limits
-    GLuint maxGeometryInputComponents       = 0;
-    GLuint maxGeometryOutputComponents      = 0;
-    GLuint maxGeometryOutputVertices        = 0;
-    GLuint maxGeometryTotalOutputComponents = 0;
-    GLuint maxGeometryShaderInvocations     = 0;
+    GLint maxGeometryInputComponents       = 0;
+    GLint maxGeometryOutputComponents      = 0;
+    GLint maxGeometryOutputVertices        = 0;
+    GLint maxGeometryTotalOutputComponents = 0;
+    GLint maxGeometryShaderInvocations     = 0;
 
     GLuint subPixelBits = 4;
 
@@ -869,8 +886,8 @@ struct DisplayExtensions
     // EGL_CHROMIUM_create_context_bind_generates_resource
     bool createContextBindGeneratesResource = false;
 
-    // EGL_CHROMIUM_get_sync_values
-    bool getSyncValues = false;
+    // EGL_CHROMIUM_sync_control
+    bool syncControlCHROMIUM = false;
 
     // EGL_KHR_swap_buffers_with_damage
     bool swapBuffersWithDamage = false;
@@ -931,6 +948,12 @@ struct DisplayExtensions
 
     // EGL_KHR_no_config_context
     bool noConfigContext = false;
+
+    // EGL_ANGLE_ggp_stream_descriptor
+    bool ggpStreamDescriptor = false;
+
+    // EGL_ANGLE_swap_with_frame_token
+    bool swapWithFrameToken = false;
 };
 
 struct DeviceExtensions

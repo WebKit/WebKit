@@ -93,4 +93,10 @@ egl::Error SurfaceImpl::getFrameTimestamps(EGLuint64KHR frameId,
     return egl::EglBadDisplay();
 }
 
+egl::Error SurfaceImpl::swapWithFrameToken(const gl::Context *context,
+                                           EGLFrameTokenANGLE frameToken)
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
+}
 }  // namespace rx

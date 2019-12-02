@@ -94,11 +94,11 @@ namespace vk
 
 // Format implementation.
 Format::Format()
-    : angleFormatID(angle::FormatID::NONE),
+    : intendedFormatID(angle::FormatID::NONE),
       internalFormat(GL_NONE),
-      imageFormatID(angle::FormatID::NONE),
+      actualImageFormatID(angle::FormatID::NONE),
       vkImageFormat(VK_FORMAT_UNDEFINED),
-      bufferFormatID(angle::FormatID::NONE),
+      actualBufferFormatID(angle::FormatID::NONE),
       vkBufferFormat(VK_FORMAT_UNDEFINED),
       imageInitializerFunction(nullptr),
       textureLoadFunctions(),
@@ -132,7 +132,7 @@ void Format::initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *
                                 testFunction);
     i += skip;
 
-    imageFormatID            = info[i].format;
+    actualImageFormatID      = info[i].format;
     vkImageFormat            = info[i].vkFormat;
     imageInitializerFunction = info[i].initializer;
 }
@@ -144,7 +144,7 @@ void Format::initBufferFallback(RendererVk *renderer, const BufferFormatInitInfo
                                 HasFullBufferFormatSupport);
     i += skip;
 
-    bufferFormatID               = info[i].format;
+    actualBufferFormatID         = info[i].format;
     vkBufferFormat               = info[i].vkFormat;
     vkBufferFormatIsPacked       = info[i].vkFormatIsPacked;
     vertexLoadFunction           = info[i].vertexLoadFunction;
@@ -172,7 +172,7 @@ size_t Format::getImageCopyBufferAlignment() const
     // - else texelSize % 4 != 0 gives a 2x multiplier
     // - else there's no multiplier.
     //
-    const angle::Format &format = imageFormat();
+    const angle::Format &format = actualImageFormat();
 
     ASSERT(format.pixelBytes != 0);
     const size_t texelSize  = format.pixelBytes;
@@ -184,8 +184,8 @@ size_t Format::getImageCopyBufferAlignment() const
 
 bool Format::hasEmulatedImageChannels() const
 {
-    const angle::Format &angleFmt   = angleFormat();
-    const angle::Format &textureFmt = imageFormat();
+    const angle::Format &angleFmt   = intendedFormat();
+    const angle::Format &textureFmt = actualImageFormat();
 
     return (angleFmt.alphaBits == 0 && textureFmt.alphaBits > 0) ||
            (angleFmt.blueBits == 0 && textureFmt.blueBits > 0) ||
@@ -221,7 +221,7 @@ void FormatTable::initialize(RendererVk *renderer,
 
         format.initialize(renderer, angleFormat);
         const GLenum internalFormat = format.internalFormat;
-        format.angleFormatID        = formatID;
+        format.intendedFormatID     = formatID;
 
         if (!format.valid())
         {
@@ -234,7 +234,8 @@ void FormatTable::initialize(RendererVk *renderer,
 
         if (textureCaps.texturable)
         {
-            format.textureLoadFunctions = GetLoadFunctionsMap(internalFormat, format.imageFormatID);
+            format.textureLoadFunctions =
+                GetLoadFunctionsMap(internalFormat, format.actualImageFormatID);
         }
 
         if (angleFormat.isBlock)
@@ -304,7 +305,7 @@ bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, VkFormat vkForma
 
 size_t GetVertexInputAlignment(const vk::Format &format)
 {
-    const angle::Format &bufferFormat = format.bufferFormat();
+    const angle::Format &bufferFormat = format.actualBufferFormat();
     size_t pixelBytes                 = bufferFormat.pixelBytes;
     return format.vkBufferFormatIsPacked ? pixelBytes : (pixelBytes / bufferFormat.channelCount);
 }
@@ -343,7 +344,7 @@ void MapSwizzleState(const ContextVk *contextVk,
                      const gl::SwizzleState &swizzleState,
                      gl::SwizzleState *swizzleStateOut)
 {
-    const angle::Format &angleFormat = format.angleFormat();
+    const angle::Format &angleFormat = format.intendedFormat();
 
     gl::SwizzleState internalSwizzle;
 

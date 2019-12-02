@@ -17,10 +17,8 @@ namespace rx
 {
 
 WindowSurfaceVkAndroid::WindowSurfaceVkAndroid(const egl::SurfaceState &surfaceState,
-                                               EGLNativeWindowType window,
-                                               EGLint width,
-                                               EGLint height)
-    : WindowSurfaceVk(surfaceState, window, width, height)
+                                               EGLNativeWindowType window)
+    : WindowSurfaceVk(surfaceState, window)
 {}
 
 angle::Result WindowSurfaceVkAndroid::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)

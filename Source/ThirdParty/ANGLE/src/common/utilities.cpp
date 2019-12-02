@@ -632,6 +632,24 @@ bool IsTriangleMode(PrimitiveMode drawMode)
     return false;
 }
 
+bool IsPolygonMode(PrimitiveMode mode)
+{
+    switch (mode)
+    {
+        case PrimitiveMode::Points:
+        case PrimitiveMode::Lines:
+        case PrimitiveMode::LineStrip:
+        case PrimitiveMode::LineLoop:
+        case PrimitiveMode::LinesAdjacency:
+        case PrimitiveMode::LineStripAdjacency:
+            return false;
+        default:
+            break;
+    }
+
+    return true;
+}
+
 namespace priv
 {
 const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes = {
@@ -797,6 +815,27 @@ std::string StripLastArrayIndex(const std::string &name)
     return name;
 }
 
+bool SamplerNameContainsNonZeroArrayElement(const std::string &name)
+{
+    constexpr char kZERO_ELEMENT[] = "[0]";
+
+    size_t start = 0;
+    while (true)
+    {
+        start = name.find(kZERO_ELEMENT[0], start);
+        if (start == std::string::npos)
+        {
+            break;
+        }
+        if (name.compare(start, strlen(kZERO_ELEMENT), kZERO_ELEMENT) != 0)
+        {
+            return true;
+        }
+        start++;
+    }
+    return false;
+}
+
 const sh::ShaderVariable *FindShaderVarField(const sh::ShaderVariable &var,
                                              const std::string &fullName,
                                              GLuint *fieldIndexOut)
@@ -865,7 +904,7 @@ unsigned int ParseArrayIndex(const std::string &name, size_t *nameLengthWithoutA
                 strtoul(name.c_str() + open + 1, /*endptr*/ nullptr, /*radix*/ 10);
 
             // Check if resulting integer is out-of-range or conversion error.
-            if ((subscript <= static_cast<unsigned long>(UINT_MAX)) &&
+            if (angle::base::IsValueInRangeForNumericType<uint32_t>(subscript) &&
                 !(subscript == ULONG_MAX && errno == ERANGE) && !(errno != 0 && subscript == 0))
             {
                 *nameLengthWithoutArrayIndexOut = open;

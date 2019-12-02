@@ -16,10 +16,8 @@ namespace rx
 
 WindowSurfaceVkXcb::WindowSurfaceVkXcb(const egl::SurfaceState &surfaceState,
                                        EGLNativeWindowType window,
-                                       EGLint width,
-                                       EGLint height,
                                        xcb_connection_t *conn)
-    : WindowSurfaceVk(surfaceState, window, width, height), mXcbConnection(conn)
+    : WindowSurfaceVk(surfaceState, window), mXcbConnection(conn)
 {}
 
 angle::Result WindowSurfaceVkXcb::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
@@ -41,7 +39,7 @@ angle::Result WindowSurfaceVkXcb::getCurrentWindowSize(vk::Context *context,
 {
     xcb_get_geometry_cookie_t cookie =
         xcb_get_geometry(mXcbConnection, static_cast<xcb_drawable_t>(mNativeWindowType));
-    xcb_get_geometry_reply_t *reply  = xcb_get_geometry_reply(mXcbConnection, cookie, nullptr);
+    xcb_get_geometry_reply_t *reply = xcb_get_geometry_reply(mXcbConnection, cookie, nullptr);
     ASSERT(reply);
     *extentsOut = gl::Extents(reply->width, reply->height, 1);
     free(reply);

@@ -27,29 +27,13 @@ template_gl_enums_header = """// GENERATED FILE - DO NOT EDIT.
 # ifndef LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
 # define LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
 
-#include <string>
-#include <ostream>
-
-#include "common/PackedGLEnums_autogen.h"
-
 namespace gl
 {{
-
-enum class GLenumGroup {{
+enum class GLenumGroup
+{{
     {gl_enum_groups}
 }};
-
-const char *GLbooleanToString(unsigned int value);
-
-const char *GLenumToString(GLenumGroup enumGroup, unsigned int value);
-
-std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value);
-
-void OutputGLenumString(std::ostream &out, GLenumGroup enumGroup, unsigned int value);
-
-void OutputGLbitfieldString(std::ostream &out, GLenumGroup enumGroup, unsigned int value);
-
-}}
+}}  // namespace gl
 
 # endif  // LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
 """
@@ -66,57 +50,27 @@ template_gl_enums_source = """// GENERATED FILE - DO NOT EDIT.
 
 #include "libANGLE/gl_enum_utils_autogen.h"
 
+#include "libANGLE/gl_enum_utils.h"
+
 #include <sstream>
 
 #include "common/bitset_utils.h"
 
 namespace gl
 {{
-
-namespace
+const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
 {{
-constexpr char kEnumUnknown[] = "EnumUnknown";
-}}  // anonymous namespace
-
-void OutputGLenumString(std::ostream &out, GLenumGroup enumGroup, unsigned int value)
-{{
-    const char *enumStr = GLenumToString(enumGroup, value);
-    if (enumStr != kEnumUnknown)
+    switch (enumGroup)
     {{
-        out << enumStr;
-    }}
-    else
-    {{
-        out << std::hex << value << std::dec;
-    }}
-}}
-
-void OutputGLbitfieldString(std::ostream &out, GLenumGroup enumGroup, unsigned int value)
-{{
-    out << GLbitfieldToString(enumGroup, value);
-}}
-
-const char *GLbooleanToString(unsigned int value) {{
-    switch (value) {{
-        case 0x0:
-            return "GL_FALSE";
-        case 0x1:
-            return "GL_TRUE";
-        default:
-            return kEnumUnknown;
-    }}
-}}
-
-const char *GLenumToString(GLenumGroup enumGroup, unsigned int value) {{
-    switch (enumGroup) {{
         {gl_enums_value_to_string_table}
         default:
-            return kEnumUnknown;
+            return kUnknownGLenumString;
     }}
 }}
 
 
-std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value) {{
+std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value)
+{{
     std::stringstream st;
 
     const angle::BitSet<32> bitSet(value);
@@ -135,8 +89,7 @@ std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value) {{
 
     return st.str();
 }}
-
-}}
+}}  // namespace gl
 
 """
 
@@ -144,7 +97,7 @@ template_enum_group_case = """case GLenumGroup::{group_name}: {{
     switch (value) {{
         {inner_group_cases}
         default:
-            return kEnumUnknown;
+            return kUnknownGLenumString;
     }}
 }}
 """
@@ -182,7 +135,7 @@ def dump_value_to_string_mapping(gl_enum_in_groups, exporting_enums):
 
         inner_code_block = "\n".join([
             template_enum_value_to_string_case.format(
-                value=hex(value),
+                value='0x%X' % value,
                 name='"%s"' % name,
             ) for name, value in exporting_string_value_pairs
         ])
@@ -227,7 +180,7 @@ def main(header_output_path, source_output_path):
     # Find relevant GLenums according to enabled APIs and extensions.
     exporting_enums = set()
     # export all the apis
-    xpath = "./feature/require/enum"
+    xpath = "./feature[@api='gles2']/require/enum"
     for enum_tag in xml.root.findall(xpath):
         enum_name = enum_tag.attrib['name']
         if enum_name not in exclude_gl_enums:
@@ -280,6 +233,7 @@ if __name__ == '__main__':
     inputs = [
         'gl.xml',
         'gl_angle_ext.xml',
+        'registry_xml.py',
     ]
 
     gl_enum_utils_autogen_base_path = '../src/libANGLE/gl_enum_utils_autogen'

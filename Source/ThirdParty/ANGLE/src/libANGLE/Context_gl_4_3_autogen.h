@@ -15,10 +15,6 @@
                          const void *data);                                                        \
     void clearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset,                 \
                             GLsizeiptr size, GLenum format, GLenum type, const void *data);        \
-    void copyImageSubData(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX,            \
-                          GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget,                \
-                          GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth,    \
-                          GLsizei srcHeight, GLsizei srcDepth);                                    \
     void getInternalformati64v(GLenum target, GLenum internalformat, GLenum pname,                 \
                                GLsizei bufSize, GLint64 *params);                                  \
     void invalidateBufferData(BufferID bufferPacked);                                              \
@@ -32,8 +28,6 @@
                                    GLsizei drawcount, GLsizei stride);                             \
     void shaderStorageBlockBinding(ShaderProgramID programPacked, GLuint storageBlockIndex,        \
                                    GLuint storageBlockBinding);                                    \
-    void texBufferRange(GLenum target, GLenum internalformat, BufferID bufferPacked,               \
-                        GLintptr offset, GLsizeiptr size);                                         \
     void textureView(TextureID texturePacked, GLenum target, GLuint origtexture,                   \
                      GLenum internalformat, GLuint minlevel, GLuint numlevels, GLuint minlayer,    \
                      GLuint numlayers);                                                            \

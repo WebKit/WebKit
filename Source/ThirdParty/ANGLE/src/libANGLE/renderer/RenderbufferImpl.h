@@ -16,6 +16,7 @@
 
 namespace gl
 {
+struct PixelPackState;
 class RenderbufferState;
 }  // namespace gl
 
@@ -46,6 +47,16 @@ class RenderbufferImpl : public FramebufferAttachmentObjectImpl
     virtual angle::Result setStorageEGLImageTarget(const gl::Context *context,
                                                    egl::Image *image) = 0;
 
+    virtual GLenum getColorReadFormat(const gl::Context *context);
+    virtual GLenum getColorReadType(const gl::Context *context);
+
+    virtual angle::Result getRenderbufferImage(const gl::Context *context,
+                                               const gl::PixelPackState &packState,
+                                               gl::Buffer *packBuffer,
+                                               GLenum format,
+                                               GLenum type,
+                                               void *pixels);
+
     // Override if accurate native memory size information is available
     virtual GLint getMemorySize() const;
 
@@ -58,6 +69,28 @@ inline GLint RenderbufferImpl::getMemorySize() const
     return 0;
 }
 
+inline GLenum RenderbufferImpl::getColorReadFormat(const gl::Context *context)
+{
+    UNREACHABLE();
+    return GL_NONE;
+}
+
+inline GLenum RenderbufferImpl::getColorReadType(const gl::Context *context)
+{
+    UNREACHABLE();
+    return GL_NONE;
+}
+
+inline angle::Result RenderbufferImpl::getRenderbufferImage(const gl::Context *context,
+                                                            const gl::PixelPackState &packState,
+                                                            gl::Buffer *packBuffer,
+                                                            GLenum format,
+                                                            GLenum type,
+                                                            void *pixels)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_RENDERBUFFERIMPL_H_

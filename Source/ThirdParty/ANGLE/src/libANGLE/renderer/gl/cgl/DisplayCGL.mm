@@ -4,28 +4,27 @@
 // found in the LICENSE file.
 //
 
-// DisplayCGL.cpp: CGL implementation of egl::Display
+// DisplayCGL.mm: CGL implementation of egl::Display
 
-#import "common/platform.h"
+#include "common/platform.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
-#import "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#import "common/debug.h"
-#import "gpu_info_util/SystemInfo.h"
-#import "libANGLE/Display.h"
-#import "libANGLE/renderer/gl/cgl/ContextCGL.h"
-#import "libANGLE/renderer/gl/cgl/DeviceCGL.h"
-#import "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
-#import "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-#import "libANGLE/renderer/gl/cgl/RendererCGL.h"
-#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+#    import <Cocoa/Cocoa.h>
+#    include <EGL/eglext.h>
+#    include <dlfcn.h>
 
-#import <Foundation/Foundation.h>
-#import <OpenGL/OpenGL.h>
-#import <QuartzCore/QuartzCore.h>
-#import <dlfcn.h>
+#    include "common/debug.h"
+#    include "gpu_info_util/SystemInfo.h"
+#    include "libANGLE/Display.h"
+#    include "libANGLE/renderer/gl/cgl/ContextCGL.h"
+#    include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
+#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
+#    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
 namespace
 {
@@ -446,4 +445,4 @@ void DisplayCGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

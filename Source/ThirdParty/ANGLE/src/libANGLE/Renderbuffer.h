@@ -115,6 +115,17 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
     InitState initState(const ImageIndex &imageIndex) const override;
     void setInitState(const ImageIndex &imageIndex, InitState initState) override;
 
+    GLenum getImplementationColorReadFormat(const Context *context) const;
+    GLenum getImplementationColorReadType(const Context *context) const;
+
+    // We pass the pack buffer and state explicitly so they can be overridden during capture.
+    angle::Result getRenderbufferImage(const Context *context,
+                                       const PixelPackState &packState,
+                                       Buffer *packBuffer,
+                                       GLenum format,
+                                       GLenum type,
+                                       void *pixels) const;
+
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
 

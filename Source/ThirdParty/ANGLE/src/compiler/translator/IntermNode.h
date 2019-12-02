@@ -594,7 +594,7 @@ class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
     static TIntermAggregate *CreateBuiltInFunctionCall(const TFunction &func,
                                                        TIntermSequence *arguments);
     static TIntermAggregate *CreateConstructor(const TType &type, TIntermSequence *arguments);
-    ~TIntermAggregate() {}
+    ~TIntermAggregate() override {}
 
     // Note: only supported for nodes that can be a part of an expression.
     TIntermTyped *deepCopy() const override { return new TIntermAggregate(*this); }
@@ -671,7 +671,7 @@ class TIntermBlock : public TIntermNode, public TIntermAggregateBase
 {
   public:
     TIntermBlock() : TIntermNode() {}
-    ~TIntermBlock() {}
+    ~TIntermBlock() override {}
 
     TIntermBlock *getAsBlock() override { return this; }
     void traverse(TIntermTraverser *it) final;
@@ -703,7 +703,7 @@ class TIntermFunctionPrototype : public TIntermTyped
 {
   public:
     TIntermFunctionPrototype(const TFunction *function);
-    ~TIntermFunctionPrototype() {}
+    ~TIntermFunctionPrototype() override {}
 
     TIntermFunctionPrototype *getAsFunctionPrototypeNode() override { return this; }
     void traverse(TIntermTraverser *it) final;
@@ -773,7 +773,7 @@ class TIntermDeclaration : public TIntermNode, public TIntermAggregateBase
 {
   public:
     TIntermDeclaration() : TIntermNode() {}
-    ~TIntermDeclaration() {}
+    ~TIntermDeclaration() override {}
 
     TIntermDeclaration *getAsDeclarationNode() override { return this; }
     bool visit(Visit visit, TIntermTraverser *it) final;

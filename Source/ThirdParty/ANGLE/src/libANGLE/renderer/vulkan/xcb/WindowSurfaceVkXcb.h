@@ -22,8 +22,6 @@ class WindowSurfaceVkXcb : public WindowSurfaceVk
   public:
     WindowSurfaceVkXcb(const egl::SurfaceState &surfaceState,
                        EGLNativeWindowType window,
-                       EGLint width,
-                       EGLint height,
                        xcb_connection_t *conn);
 
   private:

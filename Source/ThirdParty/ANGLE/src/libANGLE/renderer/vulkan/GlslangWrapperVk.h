@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// GlslangWrapper: Wrapper for Vulkan's glslang compiler.
+// GlslangWrapperVk: Wrapper for Vulkan's glslang compiler.
 //
 
 #ifndef LIBANGLE_RENDERER_VULKAN_GLSLANG_WRAPPER_H_
@@ -16,12 +16,9 @@ namespace rx
 {
 // This class currently holds no state. If we want to hold state we would need to solve the
 // potential race conditions with multiple threads.
-class GlslangWrapper
+class GlslangWrapperVk
 {
   public:
-    static void Initialize();
-    static void Release();
-
     static void GetShaderSource(bool useOldRewriteStructSamplers,
                                 const gl::ProgramState &programState,
                                 const gl::ProgramLinkedResources &resources,
@@ -32,12 +29,6 @@ class GlslangWrapper
                                        bool enableLineRasterEmulation,
                                        const gl::ShaderMap<std::string> &shaderSources,
                                        gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
-
-  private:
-    static angle::Result GetShaderCodeImpl(vk::Context *context,
-                                           const gl::Caps &glCaps,
-                                           const gl::ShaderMap<std::string> &shaderSources,
-                                           gl::ShaderMap<std::vector<uint32_t>> *shaderCodesOut);
 };
 }  // namespace rx
 

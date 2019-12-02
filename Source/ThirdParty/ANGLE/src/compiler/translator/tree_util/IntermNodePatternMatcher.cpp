@@ -59,6 +59,12 @@ bool IntermNodePatternMatcher::IsDynamicIndexingOfVectorOrMatrix(TIntermBinary *
            node->getLeft()->getBasicType() != EbtStruct;
 }
 
+// static
+bool IntermNodePatternMatcher::IsDynamicIndexingOfSwizzledVector(TIntermBinary *node)
+{
+    return IsDynamicIndexingOfVectorOrMatrix(node) && node->getLeft()->getAsSwizzleNode();
+}
+
 bool IntermNodePatternMatcher::matchInternal(TIntermBinary *node, TIntermNode *parentNode)
 {
     if ((mMask & kExpressionReturningArray) != 0)

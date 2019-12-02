@@ -112,7 +112,13 @@ generators = {
     'Emulated HLSL functions':
         'src/compiler/translator/gen_emulated_builtin_function_tables.py',
     'Static builtins':
-        'src/compiler/translator/gen_builtin_symbols.py'
+        'src/compiler/translator/gen_builtin_symbols.py',
+    'Metal format table':
+        'src/libANGLE/renderer/metal/gen_mtl_format_table.py',
+    'Metal default shaders':
+        'src/libANGLE/renderer/metal/shaders/gen_mtl_internal_shaders.py',
+    'GL CTS (dEQP) build files':
+        'scripts/gen_vk_gl_cts_build.py',
 }
 
 

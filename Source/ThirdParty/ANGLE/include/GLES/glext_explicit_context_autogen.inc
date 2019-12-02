@@ -35,7 +35,6 @@ typedef void (GL_APIENTRYP PFNGLGETLIGHTFVCONTEXTANGLEPROC)(GLeglContext ctx, GL
 typedef void (GL_APIENTRYP PFNGLGETLIGHTXVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum light, GLenum pname, GLfixed *params);
 typedef void (GL_APIENTRYP PFNGLGETMATERIALFVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum face, GLenum pname, GLfloat *params);
 typedef void (GL_APIENTRYP PFNGLGETMATERIALXVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum face, GLenum pname, GLfixed *params);
-typedef void (GL_APIENTRYP PFNGLGETPOINTERVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum pname, void **params);
 typedef void (GL_APIENTRYP PFNGLGETTEXENVFVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLenum pname, GLfloat *params);
 typedef void (GL_APIENTRYP PFNGLGETTEXENVIVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLenum pname, GLint *params);
 typedef void (GL_APIENTRYP PFNGLGETTEXENVXVCONTEXTANGLEPROC)(GLeglContext ctx, GLenum target, GLenum pname, GLfixed *params);
@@ -160,7 +159,6 @@ GL_API void GL_APIENTRY glGetLightfvContextANGLE(GLeglContext ctx, GLenum light,
 GL_API void GL_APIENTRY glGetLightxvContextANGLE(GLeglContext ctx, GLenum light, GLenum pname, GLfixed *params);
 GL_API void GL_APIENTRY glGetMaterialfvContextANGLE(GLeglContext ctx, GLenum face, GLenum pname, GLfloat *params);
 GL_API void GL_APIENTRY glGetMaterialxvContextANGLE(GLeglContext ctx, GLenum face, GLenum pname, GLfixed *params);
-GL_API void GL_APIENTRY glGetPointervContextANGLE(GLeglContext ctx, GLenum pname, void **params);
 GL_API void GL_APIENTRY glGetTexEnvfvContextANGLE(GLeglContext ctx, GLenum target, GLenum pname, GLfloat *params);
 GL_API void GL_APIENTRY glGetTexEnvivContextANGLE(GLeglContext ctx, GLenum target, GLenum pname, GLint *params);
 GL_API void GL_APIENTRY glGetTexEnvxvContextANGLE(GLeglContext ctx, GLenum target, GLenum pname, GLfixed *params);

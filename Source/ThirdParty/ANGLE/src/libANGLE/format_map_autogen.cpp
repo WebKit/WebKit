@@ -62,6 +62,26 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             }
             break;
 
+        case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                default:
+                    break;
+            }
+            break;
+
         case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
             switch (type)
             {
@@ -112,6 +132,26 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             }
             break;
 
+        case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                default:
+                    break;
+            }
+            break;
+
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
             switch (type)
             {
@@ -127,6 +167,26 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_UNSIGNED_BYTE:
                     return GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT;
                 default:
                     break;
             }
@@ -157,6 +217,26 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_UNSIGNED_BYTE:
                     return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT;
+                default:
+                    break;
+            }
+            break;
+
+        case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    return GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT;
                 default:
                     break;
             }

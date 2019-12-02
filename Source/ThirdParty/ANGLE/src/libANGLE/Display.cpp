@@ -78,10 +78,16 @@
 #        include "libANGLE/renderer/vulkan/android/DisplayVkAndroid.h"
 #    elif defined(ANGLE_PLATFORM_FUCHSIA)
 #        include "libANGLE/renderer/vulkan/fuchsia/DisplayVkFuchsia.h"
+#    elif defined(ANGLE_PLATFORM_GGP)
+#        include "libANGLE/renderer/vulkan/ggp/DisplayVkGGP.h"
 #    else
 #        error Unsupported Vulkan platform.
 #    endif
 #endif  // defined(ANGLE_ENABLE_VULKAN)
+
+#if defined(ANGLE_ENABLE_METAL)
+#    include "libANGLE/renderer/metal/DisplayMtl_api.h"
+#endif  // defined(ANGLE_ENABLE_METAL)
 
 namespace egl
 {
@@ -192,6 +198,8 @@ EGLAttrib GetDisplayTypeFromEnvironment()
 #    else
     return EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE;
 #    endif
+#elif defined(ANGLE_ENABLE_METAL)
+    return EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
 #elif defined(ANGLE_ENABLE_VULKAN)
     return EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
 #elif defined(ANGLE_ENABLE_NULL)
@@ -280,6 +288,8 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const D
             impl = new rx::DisplayVkAndroid(state);
 #    elif defined(ANGLE_PLATFORM_FUCHSIA)
             impl = new rx::DisplayVkFuchsia(state);
+#    elif defined(ANGLE_PLATFORM_GGP)
+            impl = new rx::DisplayVkGGP(state);
 #    else
 #        error Unsupported Vulkan platform.
 #    endif
@@ -288,7 +298,17 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const D
             UNREACHABLE();
 #endif  // defined(ANGLE_ENABLE_VULKAN)
             break;
-
+        case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
+#if defined(ANGLE_ENABLE_METAL)
+            if (rx::IsMetalDisplayAvailable())
+            {
+                impl = rx::CreateMetalDisplay(state);
+                break;
+            }
+#endif
+            // No display available
+            UNREACHABLE();
+            break;
         case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
 #if defined(ANGLE_ENABLE_NULL)
             impl = new rx::DisplayNULL(state);
@@ -349,7 +369,7 @@ void ANGLESetDefaultDisplayPlatform(angle::EGLDisplayType display)
 
 }  // anonymous namespace
 
-DisplayState::DisplayState() : label(nullptr) {}
+DisplayState::DisplayState() : label(nullptr), featuresAllDisabled(false) {}
 
 DisplayState::~DisplayState() {}
 
@@ -549,6 +569,8 @@ void Display::setAttributes(rx::DisplayImpl *impl, const AttributeMap &attribMap
         reinterpret_cast<const char **>(mAttributeMap.get(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE, 0));
     mState.featureOverridesEnabled  = EGLStringArrayToStringVector(featuresForceEnabled);
     mState.featureOverridesDisabled = EGLStringArrayToStringVector(featuresForceDisabled);
+    mState.featuresAllDisabled =
+        static_cast<bool>(mAttributeMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0));
 }
 
 Error Display::initialize()
@@ -594,7 +616,10 @@ Error Display::initialize()
         config.second.renderableType |= EGL_OPENGL_ES_BIT;
     }
 
-    initializeFrontendFeatures();
+    if (!mState.featuresAllDisabled)
+    {
+        initializeFrontendFeatures();
+    }
 
     mFeatures.clear();
     mFrontendFeatures.populateFeatureList(&mFeatures);
@@ -1230,7 +1255,11 @@ static ClientExtensions GenerateClientExtensions()
 #endif
 
 #if defined(ANGLE_ENABLE_D3D11)
+#    if defined(ANGLE_ENABLE_WINDOWS_UWP)
+    extensions.platformANGLED3D11ON12 = true;
+#    else
     extensions.platformANGLED3D11ON12 = IsWindows10OrGreater();
+#    endif
 #endif
 
 #if defined(ANGLE_ENABLE_OPENGL)
@@ -1253,6 +1282,10 @@ static ClientExtensions GenerateClientExtensions()
 #if defined(ANGLE_ENABLE_VULKAN)
     extensions.platformANGLEVulkan                = true;
     extensions.platformANGLEDeviceTypeSwiftShader = true;
+#endif
+
+#if defined(ANGLE_ENABLE_METAL)
+    extensions.platformANGLEMetal = true;
 #endif
 
 #if defined(ANGLE_USE_X11)
@@ -1399,8 +1432,8 @@ void Display::initVendorString()
 void Display::initializeFrontendFeatures()
 {
     // Enable on all Impls
-    ANGLE_FEATURE_CONDITION((&mFrontendFeatures), loseContextOnOutOfMemory, true)
-    ANGLE_FEATURE_CONDITION((&mFrontendFeatures), scalarizeVecAndMatConstructorArgs, true)
+    ANGLE_FEATURE_CONDITION((&mFrontendFeatures), loseContextOnOutOfMemory, true);
+    ANGLE_FEATURE_CONDITION((&mFrontendFeatures), scalarizeVecAndMatConstructorArgs, true);
 
     mImplementation->initializeFrontendFeatures(&mFrontendFeatures);
 

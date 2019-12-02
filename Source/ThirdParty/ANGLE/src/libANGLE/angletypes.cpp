@@ -52,6 +52,10 @@ BlendState::BlendState()
     blendEquationAlpha    = GL_FUNC_ADD;
     sampleAlphaToCoverage = false;
     dither                = true;
+    colorMaskRed          = true;
+    colorMaskGreen        = true;
+    colorMaskBlue         = true;
+    colorMaskAlpha        = true;
 }
 
 BlendState::BlendState(const BlendState &other)

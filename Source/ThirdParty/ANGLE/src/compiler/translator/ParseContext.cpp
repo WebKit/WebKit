@@ -545,6 +545,9 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
         case EvqFrontFacing:
             message = "can't modify gl_FrontFacing";
             break;
+        case EvqHelperInvocation:
+            message = "can't modify gl_HelperInvocation";
+            break;
         case EvqPointCoord:
             message = "can't modify gl_PointCoord";
             break;
@@ -4023,6 +4026,29 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
         else if (mShaderSpec == SH_WEBGL2_SPEC && baseExpression->getQualifier() == EvqFragData)
         {
             error(location, "array index for gl_FragData must be constant zero", "[");
+        }
+        else if (baseExpression->isArray())
+        {
+            TType elementType;
+            switch (mShaderVersion)
+            {
+                case 100:
+                    break;
+                case 300:
+                case 310:
+                    elementType = baseExpression->getType();
+                    elementType.toArrayElementType();
+                    if (elementType.isSampler())
+                    {
+                        error(location,
+                              "array index for samplers must be constant integral expressions",
+                              "[");
+                    }
+                    break;
+                default:
+                    UNREACHABLE();
+                    break;
+            }
         }
     }
 

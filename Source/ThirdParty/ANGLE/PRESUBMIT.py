@@ -32,8 +32,9 @@ def _CheckChangeHasBugField(input_api, output_api):
     bugs = input_api.change.BugsFromDescription()
     if not bugs:
         return [
-            output_api.PresubmitError(
-                'If this change has an associated bug, add Bug: angleproject:[bug number].')
+            output_api.PresubmitError('Please ensure that your description contains:\n'
+                                      '"Bug: angleproject:[bug number]"\n'
+                                      'directly above the Change-Id tag.')
         ]
     elif not all([' ' not in bug for bug in bugs]):
         return [

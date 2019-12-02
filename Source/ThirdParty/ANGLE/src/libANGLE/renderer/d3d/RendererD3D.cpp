@@ -100,7 +100,7 @@ void RendererD3D::notifyDeviceLost()
 
 std::string RendererD3D::getVendorString() const
 {
-    LUID adapterLuid = {0};
+    LUID adapterLuid = {};
 
     if (getLUID(&adapterLuid))
     {

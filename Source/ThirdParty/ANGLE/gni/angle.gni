@@ -4,6 +4,10 @@
 
 import("//build_overrides/angle.gni")
 
+declare_args() {
+  is_ggp = false
+}
+
 if (angle_has_build) {
   import("//build/config/dcheck_always_on.gni")
   import("//build/config/sanitizers/sanitizers.gni")
@@ -17,6 +21,8 @@ if (angle_has_build) {
   if (is_win) {
     import("//build/config/win/visual_studio_version.gni")
   }
+
+  angle_use_x11 = use_x11 && !is_ggp
 } else {
   declare_args() {
     is_ubsan = false
@@ -24,7 +30,7 @@ if (angle_has_build) {
     is_asan = false
     build_with_chromium = false
     dcheck_always_on = false
-    use_x11 = is_linux
+    angle_use_x11 = is_linux && !is_ggp
     use_ozone = false
     use_fuzzing_engine = false
   }
@@ -80,19 +86,23 @@ declare_args() {
   angle_enable_d3d9 = is_win && !angle_is_winuwp
   angle_enable_d3d11 = is_win
   angle_enable_gl =
-      (ozone_platform_gbm || !is_linux || (use_x11 && !is_chromeos)) &&
-      !is_fuchsia && !angle_is_winuwp
+      (ozone_platform_gbm || !is_linux || (angle_use_x11 && !is_chromeos)) &&
+      !is_fuchsia && !angle_is_winuwp && !is_ggp
 
   # ANGLE Vulkan backend on Android requires API level 26, i.e. Oreo, due to
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
   # Otherwise, API level 24 would have been enough.
   angle_enable_vulkan =
       angle_has_build &&
-      ((is_win && !angle_is_winuwp) || (is_linux && use_x11 && !is_chromeos) ||
-       (is_android && ndk_api_level_at_least_26) || is_fuchsia)
+      ((is_win && !angle_is_winuwp) ||
+       (is_linux && angle_use_x11 && !is_chromeos) ||
+       (is_android && ndk_api_level_at_least_26) || is_fuchsia || is_ggp)
   angle_enable_null = true
   angle_enable_essl = true
   angle_enable_glsl = true
+
+  # http://anglebug.com/2634
+  angle_enable_metal = is_mac
 }
 
 declare_args() {
@@ -110,7 +120,9 @@ declare_args() {
 }
 
 angle_common_configs = [
+  angle_root + ":angle_release_asserts_config",
   angle_root + ":better_linux_stack_traces",
+  angle_root + ":constructor_and_destructor_warnings",
   angle_root + ":extra_warnings",
   angle_root + ":internal_config",
 ]
@@ -128,7 +140,13 @@ if (angle_has_build && is_clang) {
 
   # Disabled to enable better stack traces.
   if (angle_better_stack_traces) {
-    angle_remove_configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
+    # This line causes in-class-inline-functions in glslang to be weak symbols.  The KHR dEQP tests
+    # link against glslang as well as libGLESv2.so, resulting in angle_deqp_khr_gles*_tests to link
+    # those weak symbols.  Due to glslang's usage of a global variable in InitializeDll.cpp, a bug
+    # is created where ANGLE sometimes calls into its own copy of glslang and sometimes the KHR
+    # dEQP's version, with the two copies of the global variable being inconsistent.
+    # Commented out until the underlying issue is resolved.  http://anglebug.com/4123
+    # angle_remove_configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
   }
 }
 
@@ -168,6 +186,14 @@ set_defaults("angle_test") {
   # TODO(jmadill): Migrate to standalone harness. http://anglebug.com/3162
   if (build_with_chromium) {
     suppressed_configs -= [ "//build/config/compiler:default_include_dirs" ]
+  }
+
+  if (is_android) {
+    if (build_with_chromium) {
+      use_native_activity = true
+    } else {
+      use_raw_android_executable = true
+    }
   }
 }
 
@@ -277,6 +303,7 @@ template("angle_test") {
 
     configs += invoker.configs
     configs -= invoker.suppressed_configs
+    configs -= [ angle_root + ":constructor_and_destructor_warnings" ]
     configs -= [ angle_root + ":extra_warnings" ]
 
     if (is_linux && !is_component_build) {
@@ -286,7 +313,9 @@ template("angle_test") {
 
     if (is_android) {
       configs += [ angle_root + ":build_id_config" ]
-      configs -= [ "//build/config/android:hide_all_but_jni" ]
+      if (build_with_chromium) {
+        configs -= [ "//build/config/android:hide_all_but_jni" ]
+      }
     }
 
     deps += _googletest_deps + [

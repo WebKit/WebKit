@@ -66,12 +66,12 @@ angle::Result Image9::GenerateMip(Context9 *context9,
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(sourceDesc.Format);
     ASSERT(d3dFormatInfo.info().mipGenerationFunction != nullptr);
 
-    D3DLOCKED_RECT sourceLocked = {0};
+    D3DLOCKED_RECT sourceLocked = {};
     result                      = sourceSurface->LockRect(&sourceLocked, nullptr, D3DLOCK_READONLY);
     ASSERT(SUCCEEDED(result));
     ANGLE_TRY_HR(context9, result, "Failed to lock the source surface for mipmap generation");
 
-    D3DLOCKED_RECT destLocked = {0};
+    D3DLOCKED_RECT destLocked = {};
     result                    = destSurface->LockRect(&destLocked, nullptr, 0);
     ASSERT(SUCCEEDED(result));
     ANGLE_TRY_HR(context9, result, "Failed to lock the destination surface for mipmap generation");
@@ -112,8 +112,8 @@ angle::Result Image9::CopyLockableSurfaces(Context9 *context9,
                                            IDirect3DSurface9 *dest,
                                            IDirect3DSurface9 *source)
 {
-    D3DLOCKED_RECT sourceLock = {0};
-    D3DLOCKED_RECT destLock   = {0};
+    D3DLOCKED_RECT sourceLock = {};
+    D3DLOCKED_RECT destLock   = {};
 
     HRESULT result;
 
@@ -182,12 +182,12 @@ angle::Result Image9::CopyImage(const gl::Context *context,
                  "Failed to query the destination surface description for CopyImage");
     const d3d9::D3DFormat &sourceD3DFormatInfo = d3d9::GetD3DFormatInfo(sourceDesc.Format);
 
-    D3DLOCKED_RECT sourceLocked = {0};
+    D3DLOCKED_RECT sourceLocked = {};
     result                      = sourceSurface->LockRect(&sourceLocked, nullptr, D3DLOCK_READONLY);
     ASSERT(SUCCEEDED(result));
     ANGLE_TRY_HR(context9, result, "Failed to lock the source surface for CopyImage");
 
-    D3DLOCKED_RECT destLocked = {0};
+    D3DLOCKED_RECT destLocked = {};
     result                    = destSurface->LockRect(&destLocked, nullptr, 0);
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
@@ -587,12 +587,12 @@ angle::Result Image9::copyFromRTInternal(Context9 *context9,
     RECT sourceRect = {sourceArea.x, sourceArea.y, sourceArea.x + width, sourceArea.y + height};
     RECT destRect   = {destOffset.x, destOffset.y, destOffset.x + width, destOffset.y + height};
 
-    D3DLOCKED_RECT sourceLock = {0};
+    D3DLOCKED_RECT sourceLock = {};
     hr                        = renderTargetData->LockRect(&sourceLock, &sourceRect, 0);
 
     ANGLE_TRY_HR(context9, hr, "Failed to lock the source surface (rectangle might be invalid)");
 
-    D3DLOCKED_RECT destLock = {0};
+    D3DLOCKED_RECT destLock = {};
     angle::Result result    = lock(context9, &destLock, destRect);
     if (result == angle::Result::Stop)
     {

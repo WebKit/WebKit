@@ -3,3 +3,4 @@ CODE_REVIEW_SERVER: https://chromium-review.googlesource.com
 GERRIT_HOST: True
 TRYSERVER_GERRIT_URL: https://chromium-review.googlesource.com
 GERRIT_SQUASH_UPLOADS: False
+FORMAT_FULL_BY_DEFAULT: True

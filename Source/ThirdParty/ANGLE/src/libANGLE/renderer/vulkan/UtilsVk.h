@@ -56,9 +56,10 @@ class UtilsVk : angle::NonCopyable
 
     struct ConvertIndexIndirectParameters
     {
-        uint32_t indirectBufferOffset = 0;
-        uint32_t dstOffset            = 0;
+        uint32_t srcIndirectBufOffset = 0;
+        uint32_t dstIndexBufOffset    = 0;
         uint32_t maxIndex             = 0;
+        uint32_t dstIndirectBufOffset = 0;
     };
 
     struct ConvertLineLoopIndexIndirectParameters
@@ -67,6 +68,13 @@ class UtilsVk : angle::NonCopyable
         uint32_t dstIndirectBufferOffset = 0;
         uint32_t dstIndexBufferOffset    = 0;
         uint32_t is32Bit                 = 0;
+    };
+
+    struct ConvertLineLoopArrayIndirectParameters
+    {
+        uint32_t indirectBufferOffset    = 0;
+        uint32_t dstIndirectBufferOffset = 0;
+        uint32_t dstIndexBufferOffset    = 0;
     };
 
     struct ConvertVertexParameters
@@ -154,18 +162,26 @@ class UtilsVk : angle::NonCopyable
                                      vk::BufferHelper *src,
                                      const ConvertIndexParameters &params);
     angle::Result convertIndexIndirectBuffer(ContextVk *contextVk,
-                                             vk::BufferHelper *cmdBufferVk,
-                                             vk::BufferHelper *dest,
-                                             vk::BufferHelper *src,
+                                             vk::BufferHelper *srcIndirectBuf,
+                                             vk::BufferHelper *srcIndexBuf,
+                                             vk::BufferHelper *dstIndirectBuf,
+                                             vk::BufferHelper *dstIndexBuf,
                                              const ConvertIndexIndirectParameters &params);
 
     angle::Result convertLineLoopIndexIndirectBuffer(
         ContextVk *contextVk,
-        vk::BufferHelper *cmdBufferVk,
-        vk::BufferHelper *destCmdBufferVk,
-        vk::BufferHelper *dest,
-        vk::BufferHelper *src,
+        vk::BufferHelper *srcIndirectBuffer,
+        vk::BufferHelper *destIndirectBuffer,
+        vk::BufferHelper *destIndexBuffer,
+        vk::BufferHelper *srcIndexBuffer,
         const ConvertLineLoopIndexIndirectParameters &params);
+
+    angle::Result convertLineLoopArrayIndirectBuffer(
+        ContextVk *contextVk,
+        vk::BufferHelper *srcIndirectBuffer,
+        vk::BufferHelper *destIndirectBuffer,
+        vk::BufferHelper *destIndexBuffer,
+        const ConvertLineLoopArrayIndirectParameters &params);
 
     angle::Result convertVertexBuffer(ContextVk *contextVk,
                                       vk::BufferHelper *dest,
@@ -242,10 +258,10 @@ class UtilsVk : angle::NonCopyable
 
     struct ConvertIndexIndirectShaderParams
     {
-        uint32_t cmdOffsetDiv4 = 0;
-        uint32_t dstOffsetDiv4 = 0;
-        uint32_t maxIndex      = 0;
-        uint32_t _padding      = 0;
+        uint32_t srcIndirectOffsetDiv4 = 0;
+        uint32_t dstOffsetDiv4         = 0;
+        uint32_t maxIndex              = 0;
+        uint32_t dstIndirectOffsetDiv4 = 0;
     };
 
     struct ConvertIndexIndirectLineLoopShaderParams
@@ -254,6 +270,13 @@ class UtilsVk : angle::NonCopyable
         uint32_t dstCmdOffsetDiv4 = 0;
         uint32_t dstOffsetDiv4    = 0;
         uint32_t isRestartEnabled = 0;
+    };
+
+    struct ConvertIndirectLineLoopShaderParams
+    {
+        uint32_t cmdOffsetDiv4    = 0;
+        uint32_t dstCmdOffsetDiv4 = 0;
+        uint32_t dstOffsetDiv4    = 0;
     };
 
     struct ConvertVertexShaderParams
@@ -358,9 +381,10 @@ class UtilsVk : angle::NonCopyable
         OverlayDraw                = 8,
         ConvertIndexIndirectBuffer = 9,
         ConvertIndexIndirectLineLoopBuffer = 10,
+        ConvertIndirectLineLoopBuffer      = 11,
 
-        InvalidEnum = 11,
-        EnumCount   = 11,
+        InvalidEnum = 12,
+        EnumCount   = 12,
     };
 
     // Common function that creates the pipeline for the specified function, binds it and prepares
@@ -396,6 +420,7 @@ class UtilsVk : angle::NonCopyable
     angle::Result ensureConvertIndexResourcesInitialized(ContextVk *contextVk);
     angle::Result ensureConvertIndexIndirectResourcesInitialized(ContextVk *contextVk);
     angle::Result ensureConvertIndexIndirectLineLoopResourcesInitialized(ContextVk *contextVk);
+    angle::Result ensureConvertIndirectLineLoopResourcesInitialized(ContextVk *contextVk);
     angle::Result ensureConvertVertexResourcesInitialized(ContextVk *contextVk);
     angle::Result ensureImageClearResourcesInitialized(ContextVk *contextVk);
     angle::Result ensureImageCopyResourcesInitialized(ContextVk *contextVk);
@@ -434,6 +459,10 @@ class UtilsVk : angle::NonCopyable
 
     vk::ShaderProgramHelper mBufferUtilsPrograms[vk::InternalShader::BufferUtils_comp::kArrayLen];
     vk::ShaderProgramHelper mConvertIndexPrograms[vk::InternalShader::ConvertIndex_comp::kArrayLen];
+    vk::ShaderProgramHelper mConvertIndexIndirectLineLoopPrograms
+        [vk::InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen];
+    vk::ShaderProgramHelper mConvertIndirectLineLoopPrograms
+        [vk::InternalShader::ConvertIndirectLineLoop_comp::kArrayLen];
     vk::ShaderProgramHelper
         mConvertVertexPrograms[vk::InternalShader::ConvertVertex_comp::kArrayLen];
     vk::ShaderProgramHelper mImageClearProgramVSOnly;

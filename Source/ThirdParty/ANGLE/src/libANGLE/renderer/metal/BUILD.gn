@@ -1,0 +1,107 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE Metal back-end.
+
+import("../../../../gni/angle.gni")
+
+assert(is_mac)
+assert(angle_enable_metal)
+
+_metal_backend_sources = [
+  "BufferMtl.h",
+  "BufferMtl.mm",
+  "CompilerMtl.h",
+  "CompilerMtl.mm",
+  "ContextMtl.h",
+  "ContextMtl.mm",
+  "DisplayMtl.h",
+  "DisplayMtl_api.h",
+  "DisplayMtl.mm",
+  "FrameBufferMtl.h",
+  "FrameBufferMtl.mm",
+  "ProgramMtl.h",
+  "ProgramMtl.mm",
+  "RenderBufferMtl.h",
+  "RenderBufferMtl.mm",
+  "RenderTargetMtl.h",
+  "RenderTargetMtl.mm",
+  "ShaderMtl.h",
+  "ShaderMtl.mm",
+  "SurfaceMtl.h",
+  "SurfaceMtl.mm",
+  "TextureMtl.h",
+  "TextureMtl.mm",
+  "VertexArrayMtl.h",
+  "VertexArrayMtl.mm",
+  "mtl_buffer_pool.h",
+  "mtl_buffer_pool.mm",
+  "mtl_command_buffer.h",
+  "mtl_command_buffer.mm",
+  "mtl_common.h",
+  "mtl_common.mm",
+  "mtl_format_table_autogen.mm",
+  "mtl_format_utils.h",
+  "mtl_format_utils.mm",
+  "mtl_glslang_utils.h",
+  "mtl_glslang_utils.mm",
+  "mtl_render_utils.h",
+  "mtl_render_utils.mm",
+  "mtl_resources.h",
+  "mtl_resources.mm",
+  "mtl_state_cache.h",
+  "mtl_state_cache.mm",
+  "mtl_utils.h",
+  "mtl_utils.mm",
+  "shaders/mtl_default_shaders_src_autogen.inc",
+  "shaders/compiled/mtl_default_shaders.inc",
+]
+
+config("angle_metal_backend_config") {
+  defines = [ "ANGLE_ENABLE_METAL" ]
+  ldflags = [
+    "-weak_framework",
+    "Metal",
+  ]
+}
+
+angle_source_set("angle_metal_backend") {
+  public_configs = [ ":angle_metal_backend_config" ]
+
+  sources = _metal_backend_sources
+
+  cflags = []
+  cflags_cc = []
+  cflags_objc = []
+  cflags_objcc = []
+  ldflags = []
+  libs = []
+
+  public_deps = [
+    "${angle_root}:angle_glslang_wrapper",
+    "${angle_root}:libANGLE_headers",
+  ]
+
+  deps = [
+    "${angle_spirv_cross_dir}/gn:spirv_cross_sources",
+  ]
+
+  objc_flags = [
+    "-Wno-nullability-completeness",
+    "-Wno-unguarded-availability",
+    "-fno-objc-arc",
+  ]
+  cflags_objc += objc_flags
+  cflags_objcc += objc_flags
+
+  if (is_mac) {
+    libs += [
+      "Cocoa.framework",
+      "IOSurface.framework",
+      "QuartzCore.framework",
+    ]
+  }
+
+  # TODO(hqle): iOS support.
+}

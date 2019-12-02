@@ -888,6 +888,30 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
             accessorIndex == 0 ? symbol : getAncestorNode(accessorIndex - 1);
         TIntermNode *accessor = getAncestorNode(accessorIndex);
 
+        // if accessor is EOpArrayLength, we don't need to perform any transformations either.
+        // Note that this only applies to unsized arrays, as the RemoveArrayLengthMethod()
+        // transformation would have removed this operation otherwise.
+        TIntermUnary *accessorAsUnary = accessor->getAsUnaryNode();
+        if (requiresTransformation && accessorAsUnary && accessorAsUnary->getOp() == EOpArrayLength)
+        {
+            ASSERT(accessorAsUnary->getOperand() == originalExpression);
+            ASSERT(accessorAsUnary->getOperand()->getType().isUnsizedArray());
+
+            requiresTransformation = false;
+
+            // We need to replace the whole expression including the EOpArrayLength, to avoid
+            // confusing the replacement code as the original and new expressions don't have the
+            // same type (one is the transpose of the other).  This doesn't affect the .length()
+            // operation, so this replacement is ok, though it's not worth special-casing this in
+            // the node replacement algorithm.
+            //
+            // Note: the |if (!requiresTransformation)| immediately below will be entered after
+            // this.
+            originalExpression = accessor;
+            accessor           = getAncestorNode(accessorIndex + 1);
+            baseExpression     = new TIntermUnary(EOpArrayLength, baseExpression, nullptr);
+        }
+
         if (!requiresTransformation)
         {
             ASSERT(primaryIndex == nullptr);

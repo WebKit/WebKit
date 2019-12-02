@@ -11,13 +11,13 @@ namespace rx
 ContextEGL::ContextEGL(const gl::State &state,
                        gl::ErrorSet *errorSet,
                        const std::shared_ptr<RendererEGL> &renderer)
-    : ContextGL(state, errorSet, renderer), mRenderer(renderer)
+    : ContextGL(state, errorSet, renderer), mRendererEGL(renderer)
 {}
 
 ContextEGL::~ContextEGL() {}
 
 EGLContext ContextEGL::getContext() const
 {
-    return mRenderer->getContext();
+    return mRendererEGL->getContext();
 }
 }  // namespace rx

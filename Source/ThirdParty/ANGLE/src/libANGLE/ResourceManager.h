@@ -72,6 +72,12 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
         return GetIDValue(handle) == 0 || mObjectMap.contains(handle);
     }
 
+    typename ResourceMap<ResourceType, IDType>::Iterator begin() const
+    {
+        return mObjectMap.begin();
+    }
+    typename ResourceMap<ResourceType, IDType>::Iterator end() const { return mObjectMap.end(); }
+
   protected:
     ~TypedResourceManager() override;
 
@@ -154,6 +160,10 @@ class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
     {
         return mPrograms.query(handle);
     }
+
+    // For capture only.
+    const ResourceMap<Shader, ShaderProgramID> &getShadersForCapture() const { return mShaders; }
+    const ResourceMap<Program, ShaderProgramID> &getProgramsForCapture() const { return mPrograms; }
 
   protected:
     ~ShaderProgramManager() override;

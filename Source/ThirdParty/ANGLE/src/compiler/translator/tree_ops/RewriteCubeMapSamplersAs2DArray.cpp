@@ -537,12 +537,12 @@ class RewriteCubeMapSamplersAs2DArrayTraverser : public TIntermTraverser
                 *mSymbolTable, 300));
         body->appendStatement(recipOuterDecl);
 
-        TIntermSymbol *dPDXdx;
-        TIntermSymbol *dPDYdx;
-        TIntermSymbol *dPDZdx;
-        TIntermSymbol *dPDXdy;
-        TIntermSymbol *dPDYdy;
-        TIntermSymbol *dPDZdy;
+        TIntermSymbol *dPDXdx = nullptr;
+        TIntermSymbol *dPDYdx = nullptr;
+        TIntermSymbol *dPDZdx = nullptr;
+        TIntermSymbol *dPDXdy = nullptr;
+        TIntermSymbol *dPDYdy = nullptr;
+        TIntermSymbol *dPDZdy = nullptr;
         if (implicit)
         {
             dPDXdx = new TIntermSymbol(CreateTempVariable(mSymbolTable, vec3Type));
@@ -869,7 +869,7 @@ class RewriteCubeMapSamplersAs2DArrayTraverser : public TIntermTraverser
         }
         else if (function->name().beginsWith("textureCubeGrad"))
         {
-            isGrad                 = true;
+            isGrad = true;
         }
         else if (!mIsFragmentShader)
         {

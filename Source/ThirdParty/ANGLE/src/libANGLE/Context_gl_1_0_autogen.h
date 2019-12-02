@@ -92,7 +92,6 @@
     void getPixelMapusv(GLenum map, GLushort *values);                                             \
     void getPolygonStipple(GLubyte *mask);                                                         \
     void getTexGendv(GLenum coord, GLenum pname, GLdouble *params);                                \
-    void getTexImage(GLenum target, GLint level, GLenum format, GLenum type, void *pixels);        \
     void indexMask(GLuint mask);                                                                   \
     void indexd(GLdouble c);                                                                       \
     void indexdv(const GLdouble *c);                                                               \

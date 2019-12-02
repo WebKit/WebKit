@@ -53,7 +53,7 @@ egl::Error WindowSurfaceWGL::initialize(const egl::Display *display)
     int windowPixelFormat = GetPixelFormat(mDeviceContext);
     if (windowPixelFormat == 0)
     {
-        PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {0};
+        PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {};
         if (!DescribePixelFormat(mDeviceContext, mPixelFormat, sizeof(pixelFormatDescriptor),
                                  &pixelFormatDescriptor))
         {

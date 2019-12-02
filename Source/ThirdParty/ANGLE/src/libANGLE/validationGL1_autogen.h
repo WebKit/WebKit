@@ -125,7 +125,7 @@ bool ValidateGetTexGendv(Context *context, GLenum coord, GLenum pname, GLdouble 
 bool ValidateGetTexGenfv(Context *context, GLenum coord, GLenum pname, GLfloat *params);
 bool ValidateGetTexGeniv(Context *context, GLenum coord, GLenum pname, GLint *params);
 bool ValidateGetTexImage(Context *context,
-                         GLenum target,
+                         TextureTarget targetPacked,
                          GLint level,
                          GLenum format,
                          GLenum type,

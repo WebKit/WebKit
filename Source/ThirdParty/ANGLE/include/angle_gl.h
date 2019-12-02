@@ -18,4 +18,10 @@
 #include "GLES3/gl31.h"
 #include "GLES3/gl32.h"
 
+// TODO(http://anglebug.com/3730): Autogenerate these enums from gl.xml
+// HACK: Defines for queries that are not in GLES
+#define GL_CONTEXT_PROFILE_MASK 0x9126
+#define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
+#define GL_CONTEXT_CORE_PROFILE_BIT 0x00000001
+
 #endif  // ANGLEGL_H_

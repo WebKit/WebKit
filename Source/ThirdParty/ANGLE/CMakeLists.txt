@@ -88,7 +88,9 @@ if (USE_ANGLE_EGL)
     add_library(ANGLE STATIC
         ${ANGLE_SOURCES}
         ${libangle_sources}
+        ${libangle_headers}
         ${libangle_image_util_sources}
+        ${libangle_image_util_headers}
         ${xxhash_sources}
     )
     target_include_directories(ANGLE PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
