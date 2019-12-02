@@ -754,10 +754,6 @@ public:
     RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function);
     
 private:
-    struct Value {
-        RefPtr<CSSCalcExpressionNode> value;
-    };
-    
     char operatorValue(const CSSParserToken& token)
     {
         if (token.type() == DelimiterToken)
@@ -765,12 +761,12 @@ private:
         return 0;
     }
 
-    bool parseValue(CSSParserTokenRange&, Value* result);
-    bool parseValueTerm(CSSParserTokenRange&, int depth, Value* result);
-    bool parseValueMultiplicativeExpression(CSSParserTokenRange&, int depth, Value* result);
-    bool parseAdditiveValueExpression(CSSParserTokenRange&, int depth, Value* result);
-    bool parseMinMaxExpression(CSSParserTokenRange&, CSSValueID minMaxFunction, int depth, Value* result);
-    bool parseValueExpression(CSSParserTokenRange&, int depth, Value* result);
+    bool parseValue(CSSParserTokenRange&, RefPtr<CSSCalcExpressionNode>&);
+    bool parseValueTerm(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseValueMultiplicativeExpression(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseAdditiveValueExpression(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseMinMaxExpression(CSSParserTokenRange&, CSSValueID minMaxFunction, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseValueExpression(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
 
     CalculationCategory m_destinationCategory;
 };
@@ -778,22 +774,25 @@ private:
 
 RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function)
 {
-    Value result;
+    RefPtr<CSSCalcExpressionNode> result;
     tokens.consumeWhitespace();
     bool ok = false;
     if (function == CSSValueCalc || function == CSSValueWebkitCalc)
-        ok = parseValueExpression(tokens, 0, &result);
+        ok = parseValueExpression(tokens, 0, result);
     else if (function == CSSValueMin || function == CSSValueMax)
-        ok = parseMinMaxExpression(tokens, function, 0, &result);
+        ok = parseMinMaxExpression(tokens, function, 0, result);
     if (!ok || !tokens.atEnd())
         return nullptr;
 
-    LOG_WITH_STREAM(Calc, stream << "CSSCalcExpressionNodeParser::parseCalc " << prettyPrintNode(*result.value));
+    if (!result)
+        return nullptr;
 
-    return result.value;
+    LOG_WITH_STREAM(Calc, stream << "CSSCalcExpressionNodeParser::parseCalc " << prettyPrintNode(*result));
+
+    return result;
 }
 
-bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, Value* result)
+bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr<CSSCalcExpressionNode>& result)
 {
     CSSParserToken token = tokens.consumeIncludingWhitespace();
     if (!(token.type() == NumberToken || token.type() == PercentageToken || token.type() == DimensionToken))
@@ -803,8 +802,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, Value*
     if (calcUnitCategory(type) == CalculationCategory::Other)
         return false;
     
-    result->value = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(token.numericValue(), type));
-    
+    result = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(token.numericValue(), type));
     return true;
 }
 
@@ -824,7 +822,7 @@ static ParseState checkDepthAndIndex(int* depth, CSSParserTokenRange tokens)
     return OK;
 }
 
-bool CSSCalcExpressionNodeParser::parseValueTerm(CSSParserTokenRange& tokens, int depth, Value* result)
+bool CSSCalcExpressionNodeParser::parseValueTerm(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(&depth, tokens) != OK)
         return false;
@@ -848,7 +846,7 @@ bool CSSCalcExpressionNodeParser::parseValueTerm(CSSParserTokenRange& tokens, in
     return parseValue(tokens, result);
 }
 
-bool CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression(CSSParserTokenRange& tokens, int depth, Value* result)
+bool CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(&depth, tokens) != OK)
         return false;
@@ -862,20 +860,20 @@ bool CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression(CSSParserTo
             break;
         tokens.consumeIncludingWhitespace();
         
-        Value rhs;
-        if (!parseValueTerm(tokens, depth, &rhs))
+        RefPtr<CSSCalcExpressionNode> rhs;
+        if (!parseValueTerm(tokens, depth, rhs))
             return false;
         
-        result->value = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
+        result = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result), WTFMove(rhs));
 
-        if (!result->value)
+        if (!result)
             return false;
     }
     
     return true;
 }
 
-bool CSSCalcExpressionNodeParser::parseAdditiveValueExpression(CSSParserTokenRange& tokens, int depth, Value* result)
+bool CSSCalcExpressionNodeParser::parseAdditiveValueExpression(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(&depth, tokens) != OK)
         return false;
@@ -894,31 +892,31 @@ bool CSSCalcExpressionNodeParser::parseAdditiveValueExpression(CSSParserTokenRan
             return false; // calc(1px +2px) is invalid
         tokens.consumeIncludingWhitespace();
         
-        Value rhs;
-        if (!parseValueMultiplicativeExpression(tokens, depth, &rhs))
+        RefPtr<CSSCalcExpressionNode> rhs;
+        if (!parseValueMultiplicativeExpression(tokens, depth, rhs))
             return false;
         
-        result->value = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
-        if (!result->value)
+        result = CSSCalcOperationNode::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result), WTFMove(rhs));
+        if (!result)
             return false;
     }
     
     return true;
 }
 
-bool CSSCalcExpressionNodeParser::parseMinMaxExpression(CSSParserTokenRange& tokens, CSSValueID minMaxFunction, int depth, Value* result)
+bool CSSCalcExpressionNodeParser::parseMinMaxExpression(CSSParserTokenRange& tokens, CSSValueID minMaxFunction, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(&depth, tokens) != OK)
         return false;
 
     CalcOperator op = (minMaxFunction == CSSValueMin) ? CalcOperator::Min : CalcOperator::Max;
 
-    Value value;
-    if (!parseValueExpression(tokens, depth, &value))
+    RefPtr<CSSCalcExpressionNode> value;
+    if (!parseValueExpression(tokens, depth, value))
         return false;
 
     Vector<Ref<CSSCalcExpressionNode>> nodes;
-    nodes.append(value.value.releaseNonNull());
+    nodes.append(value.releaseNonNull());
 
     while (!tokens.atEnd()) {
         tokens.consumeWhitespace();
@@ -926,17 +924,17 @@ bool CSSCalcExpressionNodeParser::parseMinMaxExpression(CSSParserTokenRange& tok
             return false;
         tokens.consumeWhitespace();
 
-        if (!parseValueExpression(tokens, depth, &value))
+        if (!parseValueExpression(tokens, depth, value))
             return false;
 
-        nodes.append(value.value.releaseNonNull());
+        nodes.append(value.releaseNonNull());
     }
 
-    result->value = CSSCalcOperationNode::createMinOrMax(op, WTFMove(nodes), m_destinationCategory);
-    return result->value;
+    result = CSSCalcOperationNode::createMinOrMax(op, WTFMove(nodes), m_destinationCategory);
+    return result;
 }
 
-bool CSSCalcExpressionNodeParser::parseValueExpression(CSSParserTokenRange& tokens, int depth, Value* result)
+bool CSSCalcExpressionNodeParser::parseValueExpression(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     return parseAdditiveValueExpression(tokens, depth, result);
 }

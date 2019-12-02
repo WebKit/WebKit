@@ -1,3 +1,22 @@
+2019-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the confusing Value struct used for calc results
+        https://bugs.webkit.org/show_bug.cgi?id=204751
+
+        Reviewed by Tim Horton.
+
+        Replace the Value* argument with a RefPtr<CSSCalcExpressionNode>&. Value just made things more
+        confusing.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueTerm):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueExpression):
+
 2019-12-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] TrimmableContent only needs to keep track of the first trimmable run index
