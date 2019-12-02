@@ -376,25 +376,33 @@ void LineBuilder::removeTrailingTrimmableContent()
 #ifndef NDEBUG
     auto hasSeenNonWhitespaceTextContent = false;
 #endif
-    // Collapse trimmable trailing content.
+    // Collapse trimmable trailing content and move all the other trailing runs.
+    // <span> </span><span></span> ->
+    // [whitespace][container end][container start][container end]
+    // Trim the whitespace run and move the trailing inline container runs to the left.
+    LayoutUnit accumulatedTrimmedWidth;
     for (auto index = *m_trimmableContent.firstRunIndex(); index < m_inlineItemRuns.size(); ++index) {
         auto& run = m_inlineItemRuns[index];
+        run.moveHorizontally(-accumulatedTrimmedWidth);
         if (!run.isText()) {
             ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isForcedLineBreak());
             continue;
         }
-        if (run.isWhitespace())
+        if (run.isWhitespace()) {
+            accumulatedTrimmedWidth += run.logicalWidth();
             run.setCollapsesToZeroAdvanceWidth();
-        else {
+        } else {
             ASSERT(!hasSeenNonWhitespaceTextContent);
 #ifndef NDEBUG
             hasSeenNonWhitespaceTextContent = true;
 #endif
             // Must be a letter spacing trim.
-            ASSERT(run.layoutBox().style().letterSpacing());
+            ASSERT(run.layoutBox().style().letterSpacing() > 0);
+            accumulatedTrimmedWidth += run.layoutBox().style().letterSpacing();
             run.removeTrailingLetterSpacing();
         }
     }
+    ASSERT(accumulatedTrimmedWidth == m_trimmableContent.width());
     m_lineBox.shrinkHorizontally(m_trimmableContent.width());
     m_trimmableContent.clear();
     // If we trimmed the first visible run on the line, we need to re-check the visibility status.
@@ -517,7 +525,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
     auto lineRunWidth = lineRun.logicalWidth();
     // Trailing whitespace content is fully trimmable so as the trailing letter space.
     auto isFullyTrimmable = !shouldPreserveTrailingContent(inlineItem);
-    auto isPartiallyTrimmable = !inlineItem.isWhitespace() && inlineItem.style().letterSpacing();
+    auto isPartiallyTrimmable = !inlineItem.isWhitespace() && inlineItem.style().letterSpacing() > 0;
     auto isTrimmable = isFullyTrimmable || isPartiallyTrimmable;
     // Reset the trimmable content if needed.
     if (!isTrimmable || isPartiallyTrimmable || (isFullyTrimmable && !m_trimmableContent.isTrailingContentFullyTrimmable()))

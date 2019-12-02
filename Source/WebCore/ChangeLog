@@ -1,5 +1,21 @@
 2019-12-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Adjust trailing runs horizontally while trimming content
+        https://bugs.webkit.org/show_bug.cgi?id=204749
+        <rdar://problem/57559163>
+
+        Reviewed by Antti Koivisto.
+
+        When trailing content is getting trimmed, we also need to adjust subsequent trailing runs e.g. <span>   </span> <- the [container end]'s run should be adjusted. 
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::appendTextContent): there's nothing to trim when the spacing is zero or negative.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::InlineItemRun::moveHorizontally):
+
+2019-12-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] LineBuilder::InlineItemRun objects don't have vertical geometry
         https://bugs.webkit.org/show_bug.cgi?id=204752
         <rdar://problem/57560643>
