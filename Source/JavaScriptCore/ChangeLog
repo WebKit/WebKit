@@ -1,3 +1,22 @@
+2019-12-02  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [JSC] Remove BytecodeCacheVersion.h
+        https://bugs.webkit.org/show_bug.cgi?id=204760
+
+        Reviewed by Mark Lam.
+
+        Having that as a phony make target causes a lot of unnecessary rebuilds. That was a workaround
+        the fact that we only need a new cache version when we rebuild CachedTypes.cpp, but there was
+        no straightforward way to get the current timestamp as an integer at that point. Instead, we now
+        just use a constexpr function that hashes __TIMESTAMP__.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * runtime/CachedTypes.cpp:
+        (JSC::jscBytecodeCacheVersion):
+        (JSC::GenericCacheEntry::isUpToDate const):
+
 2019-12-02  Mark Lam  <mark.lam@apple.com>
 
         mozilla-tests.yaml/js1_5/Array/regress-101964.js is frequently failing on JSC EWS bots.

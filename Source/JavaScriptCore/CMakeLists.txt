@@ -225,10 +225,7 @@ else ()
     string(TIMESTAMP BUILD_TIME "%s")
 endif ()
 
-file(WRITE ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeCacheVersion.h "#define JSC_BYTECODE_CACHE_VERSION ${BUILD_TIME}\n")
-
 list(APPEND JavaScriptCore_HEADERS
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeCacheVersion.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
 )
