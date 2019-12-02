@@ -172,7 +172,7 @@ private:
         void setIsCollapsed() { m_isCollapsed = true; }
         bool isCollapsed() const { return m_isCollapsed; }
 
-        void moveHorizontally(LayoutUnit offset) { m_logicalWidth += offset; }
+        void moveHorizontally(LayoutUnit offset) { m_logicalLeft += offset; }
 
         void removeTrailingLetterSpacing();
         void setCollapsesToZeroAdvanceWidth();
