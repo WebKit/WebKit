@@ -1,3 +1,9 @@
+2019-12-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix following r252989.
+
+        * include/CMakeLists.txt:
+
 2019-12-02  Dean Jackson  <dino@apple.com>
 
         Clean up ANGLE header post-process script

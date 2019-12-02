@@ -28,6 +28,7 @@ set(gles3_headers
     GLES3/gl31.h
     GLES3/gl31ext_explicit_context_autogen.inc
     GLES3/gl32.h
+    GLES3/gl32ext_explicit_context_autogen.inc
     GLES3/gl3platform.h
 )
 
