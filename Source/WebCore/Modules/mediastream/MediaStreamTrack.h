@@ -32,7 +32,6 @@
 #include "ActiveDOMObject.h"
 #include "DoubleRange.h"
 #include "EventTarget.h"
-#include "GenericTaskQueue.h"
 #include "LongRange.h"
 #include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
@@ -216,7 +215,6 @@ private:
 
     MediaTrackConstraints m_constraints;
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
-    GenericTaskQueue<Timer> m_eventTaskQueue;
 
     bool m_ended { false };
     const bool m_isCaptureTrack { false };

@@ -32,6 +32,7 @@
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
 #include <CoreGraphics/CGAffineTransform.h>
+#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>

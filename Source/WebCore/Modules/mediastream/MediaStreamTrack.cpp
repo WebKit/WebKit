@@ -511,13 +511,11 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     
 void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
-    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
+    if (scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
-    m_eventTaskQueue.enqueueTask([this, muted = this->muted()] {
-        AtomString eventType = muted ? eventNames().muteEvent : eventNames().unmuteEvent;
-        dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
-    });
+    AtomString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
 
     configureTrackRendering();
 }
