@@ -239,7 +239,16 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     m_hasFilteredDeviceList = false;
 
     ++m_hasPendingCapture;
-    m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt() }, [this, weakThis = makeWeakPtr(this)] {
+
+    SandboxExtension::Handle handle;
+#if PLATFORM(COCOA)
+    if (!m_hasCreatedSandboxExtensionForTCCD) {
+        SandboxExtension::createHandleForMachLookup("com.apple.tccd", m_page.process().connection()->getAuditToken(), handle);
+        m_hasCreatedSandboxExtensionForTCCD = true;
+    }
+#endif
+
+    m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt(), handle }, [this, weakThis = makeWeakPtr(this)] {
         if (!weakThis)
             return;
         if (!--m_hasPendingCapture)

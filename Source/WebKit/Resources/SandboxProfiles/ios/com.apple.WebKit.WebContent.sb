@@ -628,7 +628,7 @@
     (global-name "com.apple.aggregated")
     (global-name "com.apple.cfprefsd.daemon"))
 
-(allow mach-lookup
+(allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.tccd"))
 
 (allow ipc-posix-shm-read*
@@ -964,7 +964,7 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide")))
+        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd")))
 
 (media-capture-support)
 

@@ -154,6 +154,9 @@ private:
     const void* m_logIdentifier;
 #endif
     bool m_hasFilteredDeviceList { false };
+#if PLATFORM(COCOA)
+    bool m_hasCreatedSandboxExtensionForTCCD { false };
+#endif
     uint64_t m_hasPendingCapture { 0 };
     Optional<bool> m_mockDevicesEnabledOverride;
 };
