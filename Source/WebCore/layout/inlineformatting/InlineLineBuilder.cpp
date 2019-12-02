@@ -263,8 +263,6 @@ void LineBuilder::alignContentVertically(RunList& runList)
                 // Spec makes us generate at least one line -even if it is empty.
                 auto inlineBlockBaselineOffset = formattingState.displayInlineContent()->lineBoxes.last().baselineOffset();
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
-                //   inline-block
-                //              \
                 //           _______________ <- margin box
                 //          |
                 //          |  ____________  <- border box
