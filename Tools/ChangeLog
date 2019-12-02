@@ -1,3 +1,10 @@
+2019-12-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Revert - [EWS] Do not retry layout-tests build if the flaky test failures are also present in clean tree run
+        https://bugs.webkit.org/show_bug.cgi?id=204704
+
+        Reverting this, a more generic fix for handling flakiness would be made in Bug 204769.
+
 2019-12-02  Louie Livon-Bemel  <llivonbemel@apple.com>
 
         Add helper methods for description and equality to text manipulation SPI
