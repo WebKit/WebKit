@@ -288,7 +288,7 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
-    m_server.scriptFetchFinished(*this, result);
+    m_server.scriptFetchFinished(result);
 }
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
@@ -383,7 +383,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOption
         connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
 }
 
-void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
+void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
 {
     LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", result.jobDataIdentifier.loggingString().utf8().data());
 
@@ -393,7 +393,7 @@ void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFe
     if (!jobQueue)
         return;
 
-    jobQueue->scriptFetchFinished(connection, result);
+    jobQueue->scriptFetchFinished(result);
 }
 
 void SWServer::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, const String& message)
@@ -542,7 +542,7 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
+void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
     tryInstallContextData({ jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, contentSecurityPolicy, referrerPolicy, url, type, false, WTFMove(scriptResourceMap) });
 }

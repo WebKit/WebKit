@@ -50,7 +50,7 @@ public:
 
     void runNextJob();
 
-    void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
+    void scriptFetchFinished(const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);

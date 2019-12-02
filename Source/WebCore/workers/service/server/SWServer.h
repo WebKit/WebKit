@@ -146,7 +146,7 @@ public:
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&, FetchOptions::Cache);
 
-    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
+    void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
     void terminateWorker(SWServerWorker&);
     WEBCORE_EXPORT void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
@@ -207,7 +207,7 @@ public:
     WEBCORE_EXPORT void whenImportIsCompleted(CompletionHandler<void()>&&);
 
 private:
-    void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
+    void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
 

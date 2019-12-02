@@ -1,5 +1,23 @@
 2019-12-02  youenn fablet  <youenn@apple.com>
 
+        SWServer::scriptFetchFinished does not need a Connection as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=204641
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior, removing an unused parameter.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::finishFetchingScriptInServer):
+        (WebCore::SWServer::startScriptFetch):
+        (WebCore::SWServer::didResolveRegistrationPromise):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        * workers/service/server/SWServerJobQueue.h:
+
+2019-12-02  youenn fablet  <youenn@apple.com>
+
         Service Worker should correctly set its document first party for cookies URL
         https://bugs.webkit.org/show_bug.cgi?id=204742
 
