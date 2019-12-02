@@ -46,7 +46,7 @@ var expectedvalues = [];
 
 status = inSection(1);
 var arr = Array(BIG);
-var start = new Date();
+var start = $vm.currentCPUTime();
 arr.length = LITTLE;
 actual = elapsedTime(start);
 expect = FAST;
@@ -62,7 +62,7 @@ test();
 
 function elapsedTime(startTime)
 {
-  return new Date() - startTime;
+  return $vm.currentCPUTime() - startTime;
 }
 
 

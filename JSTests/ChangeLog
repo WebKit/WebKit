@@ -1,3 +1,18 @@
+2019-12-02  Mark Lam  <mark.lam@apple.com>
+
+        mozilla-tests.yaml/js1_5/Array/regress-101964.js is frequently failing on JSC EWS bots.
+        https://bugs.webkit.org/show_bug.cgi?id=200789
+        <rdar://problem/54361916>
+
+        Reviewed by Keith Miller.
+
+        The prevailing theory is that this test is being pre-empted and not getting the
+        CPU time it needs to complete.  As a result, the wall clock time period for
+        running the test exceeds the expected time.  This patch tests this theory by
+        changing the time measurement to use CPU time instead.
+
+        * mozilla/js1_5/Array/regress-101964.js:
+
 2019-12-01  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][MIPS] CallFrame is being clobbered on InternalFunction execution

@@ -1,3 +1,15 @@
+2019-12-02  Mark Lam  <mark.lam@apple.com>
+
+        mozilla-tests.yaml/js1_5/Array/regress-101964.js is frequently failing on JSC EWS bots.
+        https://bugs.webkit.org/show_bug.cgi?id=200789
+        <rdar://problem/54361916>
+
+        Reviewed by Keith Miller.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCurrentCPUTime):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put JSGenerator, JSAsyncGenerator, and JSPromise in IsoSubspace
