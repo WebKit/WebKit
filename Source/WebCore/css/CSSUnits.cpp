@@ -49,15 +49,42 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_KHZ:
         return CSSUnitCategory::Frequency;
-#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     case CSSUnitType::CSS_DPPX:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
         return CSSUnitCategory::Resolution;
-#endif
     default:
         return CSSUnitCategory::Other;
     }
+}
+
+CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
+{
+    switch (category) {
+    case CSSUnitCategory::Number:
+        return CSSUnitType::CSS_NUMBER;
+    case CSSUnitCategory::Length:
+        return CSSUnitType::CSS_PX;
+    case CSSUnitCategory::Percent:
+        return CSSUnitType::CSS_UNKNOWN; // Cannot convert between numbers and percent.
+    case CSSUnitCategory::Time:
+        return CSSUnitType::CSS_MS;
+    case CSSUnitCategory::Angle:
+        return CSSUnitType::CSS_DEG;
+    case CSSUnitCategory::Frequency:
+        return CSSUnitType::CSS_HZ;
+#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
+    case CSSUnitCategory::Resolution:
+        return CSSUnitType::CSS_DPPX;
+#endif
+    default:
+        return CSSUnitType::CSS_UNKNOWN;
+    }
+}
+
+CSSUnitType canonicalUnitType(CSSUnitType unitType)
+{
+    return canonicalUnitTypeForCategory(unitCategory(unitType));
 }
 
 } // namespace WebCore

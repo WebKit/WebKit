@@ -14,8 +14,8 @@ shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('column
 
 debug("0px is not a valid value");
 evalAndLog("testDiv.style['column-width'] = 'calc(0px * 2)'");
-shouldBeEqualToString("testDiv.style['column-width']", "calc(200px)");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('column-width')", "200px");
+shouldBeEqualToString("testDiv.style['column-width']", "calc(0px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('column-width')", "0px");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

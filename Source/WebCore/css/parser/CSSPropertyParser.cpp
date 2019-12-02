@@ -1380,8 +1380,9 @@ static RefPtr<CSSValue> consumeColumnWidth(CSSParserTokenRange& range)
     // Always parse lengths in strict mode here, since it would be ambiguous otherwise when used in
     // the 'columns' shorthand property.
     RefPtr<CSSPrimitiveValue> columnWidth = consumeLength(range, HTMLStandardMode, ValueRangeNonNegative);
-    if (!columnWidth || (!columnWidth->isCalculated() && !columnWidth->doubleValue()) || (columnWidth->cssCalcValue() && !columnWidth->cssCalcValue()->doubleValue()))
+    if (!columnWidth || columnWidth->isZero().valueOr(false))
         return nullptr;
+
     return columnWidth;
 }
 
@@ -2280,8 +2281,13 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
             return nullptr;
         parsedValue = CSSPrimitiveValue::create(perspective, CSSUnitType::CSS_PX);
     }
-    if (parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0))
+
+    if (!parsedValue)
+        return nullptr;
+
+    if (parsedValue->isPositive().valueOr(true))
         return parsedValue;
+
     return nullptr;
 }
 
@@ -3687,12 +3693,13 @@ static RefPtr<CSSValue> consumeWebkitAspectRatio(CSSParserTokenRange& range)
         return consumeIdent<CSSValueAuto, CSSValueFromDimensions, CSSValueFromIntrinsic>(range);
     
     RefPtr<CSSPrimitiveValue> leftValue = consumeNumber(range, ValueRangeNonNegative);
-    if (!leftValue || !leftValue->floatValue() || range.atEnd() || !consumeSlashIncludingWhitespace(range))
+    if (!leftValue || leftValue->isZero().valueOr(false) || range.atEnd() || !consumeSlashIncludingWhitespace(range))
         return nullptr;
+
     RefPtr<CSSPrimitiveValue> rightValue = consumeNumber(range, ValueRangeNonNegative);
-    if (!rightValue || !rightValue->floatValue())
+    if (!rightValue || rightValue->isZero().valueOr(false))
         return nullptr;
-    
+
     return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
 }
 

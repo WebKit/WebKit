@@ -86,7 +86,7 @@ public:
     {
         const CSSParserToken& token = range.peek();
         auto functionId = token.functionId();
-        if (functionId == CSSValueCalc || functionId == CSSValueWebkitCalc || functionId == CSSValueMin || functionId == CSSValueMax)
+        if (CSSCalcValue::isCalcFunction(functionId))
             m_calcValue = CSSCalcValue::create(functionId, consumeFunction(m_range), destinationCategory, valueRange);
     }
 
@@ -105,7 +105,6 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-
         double value = std::max(m_calcValue->doubleValue(), minimumValue);
         value = std::round(value);
         return CSSValuePool::singleton().createValue(value, CSSUnitType::CSS_NUMBER);
@@ -128,17 +127,6 @@ public:
         return true;
     }
     
-    bool consumePositiveIntegerRaw(int& result)
-    {
-        if (!m_calcValue || m_calcValue->category() != CalculationCategory::Number || !m_calcValue->isInt())
-            return false;
-        result = static_cast<int>(m_calcValue->doubleValue());
-        if (result < 1)
-            return false;
-        m_sourceRange = m_range;
-        return true;
-    }
-
 private:
     CSSParserTokenRange& m_sourceRange;
     CSSParserTokenRange m_range;
@@ -172,23 +160,6 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
     return consumeInteger(range, 1);
 }
 
-bool consumePositiveIntegerRaw(CSSParserTokenRange& range, int& result)
-{
-    const CSSParserToken& token = range.peek();
-    if (token.type() == NumberToken) {
-        if (token.numericValueType() == NumberValueType || token.numericValue() < 1)
-            return false;
-        result = range.consumeIncludingWhitespace().numericValue();
-        return true;
-    }
-
-    if (token.type() != FunctionToken)
-        return false;
-
-    CalcParser calcParser(range, CalculationCategory::Number);
-    return calcParser.consumePositiveIntegerRaw(result);
-}
-    
 bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
 {
     const CSSParserToken& token = range.peek();
@@ -217,13 +188,11 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
     if (token.type() != FunctionToken)
         return nullptr;
 
-    CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
-    if (const CSSCalcValue* calculation = calcParser.value()) {
-        // FIXME: Calcs should not be subject to parse time range checks.
-        // spec: https://drafts.csswg.org/css-values-3/#calc-range
-        if (calculation->category() != CalculationCategory::Number || (valueRange == ValueRangeNonNegative && calculation->isNegative()))
+    CalcParser calcParser(range, CalculationCategory::Number, valueRange);
+    if (const CSSCalcValue* calcValue = calcParser.value()) {
+        if (calcValue->category() != CalculationCategory::Number)
             return nullptr;
-        return calcParser.consumeNumber();
+        return calcParser.consumeValue();
     }
 
     return nullptr;
@@ -1708,15 +1677,19 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
     if (!verticalOffset)
         return nullptr;
 
-    auto blurRadius = consumeLength(range, cssParserMode, ValueRangeAll);
+    RefPtr<CSSPrimitiveValue> blurRadius;
     RefPtr<CSSPrimitiveValue> spreadDistance;
-    if (blurRadius) {
-        // Blur radius must be non-negative.
-        if (blurRadius->doubleValue() < 0)
+
+    const CSSParserToken& token = range.peek();
+    // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
+    if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
+        blurRadius = consumeLength(range, cssParserMode, ValueRangeNonNegative);
+        if (!blurRadius)
             return nullptr;
-        if (allowSpread)
-            spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
     }
+
+    if (blurRadius && allowSpread)
+        spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
 
     if (!range.atEnd()) {
         if (!color)

@@ -257,7 +257,7 @@ inline static Ref<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const
     return CSSValuePool::singleton().createValue(value / style.effectiveZoom(), CSSUnitType::CSS_NUMBER);
 }
 
-static Ref<CSSValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
+static Ref<CSSPrimitiveValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
 {
     if (length.isFixed())
         return zoomAdjustedPixelValue(length.value(), style);
@@ -454,7 +454,7 @@ static Ref<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const
     if (length.isPercent())
         return CSSValuePool::singleton().createValue(length.percent(), CSSUnitType::CSS_PERCENTAGE);
     
-    return zoomAdjustedPixelValue(valueForLength(length, 0), style);
+    return zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const RenderStyle& style)
@@ -462,7 +462,7 @@ static Ref<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const Rende
     if (length.isAuto())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 
-    return zoomAdjustedPixelValue(valueForLength(length, 0), style);
+    return zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSValueList> borderRadiusCornerValues(const LengthSize& radius, const RenderStyle& style)

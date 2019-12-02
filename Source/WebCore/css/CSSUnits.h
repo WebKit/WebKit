@@ -98,13 +98,13 @@ enum class CSSUnitCategory : uint8_t {
     Angle,
     Time,
     Frequency,
-#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     Resolution,
-#endif
     Other
 };
 
 CSSUnitCategory unitCategory(CSSUnitType);
+CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
+CSSUnitType canonicalUnitType(CSSUnitType);
 
 } // namespace WebCore
 

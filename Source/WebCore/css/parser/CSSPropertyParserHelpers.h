@@ -57,7 +57,6 @@ enum class UnitlessQuirk {
 };
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
-bool consumePositiveIntegerRaw(CSSParserTokenRange&, int& result);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 bool consumeNumberRaw(CSSParserTokenRange&, double& result);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);

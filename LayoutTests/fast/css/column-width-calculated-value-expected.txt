@@ -9,8 +9,8 @@ PASS testDiv.style['column-width'] is "calc(200px)"
 PASS window.getComputedStyle(testDiv).getPropertyValue('column-width') is "200px"
 0px is not a valid value
 testDiv.style['column-width'] = 'calc(0px * 2)'
-PASS testDiv.style['column-width'] is "calc(200px)"
-PASS window.getComputedStyle(testDiv).getPropertyValue('column-width') is "200px"
+PASS testDiv.style['column-width'] is "calc(0px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('column-width') is "0px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

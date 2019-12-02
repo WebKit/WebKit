@@ -70,7 +70,7 @@ public:
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(const CSSToLengthConversionData&) const = 0;
     virtual String customCSSText() const = 0;
-    virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
+    virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category; }
     virtual Type type() const = 0;
     virtual CSSUnitType primitiveType() const = 0;
 
@@ -78,20 +78,17 @@ public:
     virtual void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
 
     CalculationCategory category() const { return m_category; }
-    bool isInteger() const { return m_isInteger; }
 
     virtual void dump(TextStream&) const = 0;
 
 protected:
-    CSSCalcExpressionNode(CalculationCategory category, bool isInteger)
+    CSSCalcExpressionNode(CalculationCategory category)
         : m_category(category)
-        , m_isInteger(isInteger)
     {
     }
 
 private:
     CalculationCategory m_category;
-    bool m_isInteger;
 };
 
 class CSSCalcValue final : public CSSValue {
@@ -101,10 +98,7 @@ public:
     static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
 
     CalculationCategory category() const { return m_expression->category(); }
-    bool isInt() const { return m_expression->isInteger(); }
     double doubleValue() const;
-    bool isPositive() const { return m_expression->doubleValue() > 0; }
-    bool isNegative() const { return m_expression->doubleValue() < 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
     CSSUnitType primitiveType() const { return m_expression->primitiveType(); }
 

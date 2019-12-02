@@ -81,7 +81,8 @@ public:
     static bool isResolution(CSSUnitType);
     static bool isViewportPercentageLength(CSSUnitType type) { return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_VMAX; }
 
-    bool isAngle() const;
+    // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Those that use primitiveUnitType() are broken with calc().
+    bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
     bool isCounter() const { return primitiveUnitType() == CSSUnitType::CSS_COUNTER; }
     bool isFontIndependentLength() const { return primitiveUnitType() >= CSSUnitType::CSS_PX && primitiveUnitType() <= CSSUnitType::CSS_PC; }
@@ -98,7 +99,8 @@ public:
     bool isShape() const { return primitiveUnitType() == CSSUnitType::CSS_SHAPE; }
     bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
     bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
-    bool isTime() const { return primitiveUnitType() == CSSUnitType::CSS_S || primitiveUnitType() == CSSUnitType::CSS_MS; }
+    bool isTime() const { return unitCategory(primitiveUnitType()) == CSSUnitCategory::Time; }
+    bool isFrequency() const { return unitCategory(primitiveType()) == CSSUnitCategory::Frequency; }
     bool isURI() const { return primitiveUnitType() == CSSUnitType::CSS_URI; }
     bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
     bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER; }
@@ -106,7 +108,7 @@ public:
     bool isDotsPerInch() const { return primitiveType() == CSSUnitType::CSS_DPI; }
     bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::CSS_DPPX; }
     bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
-    bool isResolution() const { return isResolution(primitiveType()); }
+    bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isViewportPercentageWidth() const { return primitiveUnitType() == CSSUnitType::CSS_VW; }
     bool isViewportPercentageHeight() const { return primitiveUnitType() == CSSUnitType::CSS_VH; }
@@ -155,7 +157,13 @@ public:
     bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
 
     double doubleValue(CSSUnitType) const;
+    // It's usually wrong to call this; it can trigger type conversion in calc without sufficient context to resolve relative length units.
     double doubleValue() const;
+
+    // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
+    Optional<bool> isZero() const;
+    Optional<bool> isPositive() const;
+    Optional<bool> isNegative() const;
 
     template<typename T> inline T value(CSSUnitType type) const { return clampTo<T>(doubleValue(type)); }
     template<typename T> inline T value() const { return clampTo<T>(doubleValue()); }
@@ -188,7 +196,6 @@ public:
 
     bool equals(const CSSPrimitiveValue&) const;
 
-    static CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
     static double conversionToCanonicalUnitsScaleFactor(CSSUnitType);
 
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, CSSUnitType, double value);
@@ -255,15 +262,6 @@ private:
         const CSSFontFamily* fontFamily;
     } m_value;
 };
-
-inline bool CSSPrimitiveValue::isAngle() const
-{
-    auto primitiveType = this->primitiveType();
-    return primitiveType == CSSUnitType::CSS_DEG
-        || primitiveType == CSSUnitType::CSS_RAD
-        || primitiveType == CSSUnitType::CSS_GRAD
-        || primitiveType == CSSUnitType::CSS_TURN;
-}
 
 inline bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {

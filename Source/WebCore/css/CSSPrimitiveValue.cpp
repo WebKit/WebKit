@@ -714,6 +714,9 @@ double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unit
     case CSSUnitType::CSS_MM:
         factor = cssPixelsPerInch / mmPerInch;
         break;
+    case CSSUnitType::CSS_Q:
+        factor = cssPixelsPerInch / QPerInch;
+        break;
     case CSSUnitType::CSS_IN:
         factor = cssPixelsPerInch;
         break;
@@ -764,31 +767,25 @@ double CSSPrimitiveValue::doubleValue() const
     return primitiveUnitType() != CSSUnitType::CSS_CALC ? m_value.num : m_value.calc->doubleValue();
 }
 
-CSSUnitType CSSPrimitiveValue::canonicalUnitTypeForCategory(CSSUnitCategory category)
+Optional<bool> CSSPrimitiveValue::isZero() const
 {
-    // The canonical unit type is chosen according to the way CSSParser::validUnit() chooses the default unit
-    // in each category (based on unitflags).
-    // Canonical units are specified in <https://drafts.csswg.org/css-values-4>.
-    switch (category) {
-    case CSSUnitCategory::Number:
-        return CSSUnitType::CSS_NUMBER;
-    case CSSUnitCategory::Length:
-        return CSSUnitType::CSS_PX;
-    case CSSUnitCategory::Percent:
-        return CSSUnitType::CSS_UNKNOWN; // Cannot convert between numbers and percent.
-    case CSSUnitCategory::Time:
-        return CSSUnitType::CSS_MS;
-    case CSSUnitCategory::Angle:
-        return CSSUnitType::CSS_DEG;
-    case CSSUnitCategory::Frequency:
-        return CSSUnitType::CSS_HZ;
-#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
-    case CSSUnitCategory::Resolution:
-        return CSSUnitType::CSS_DPPX;
-#endif
-    default:
-        return CSSUnitType::CSS_UNKNOWN;
-    }
+    if (primitiveUnitType() == CSSUnitType::CSS_CALC)
+        return WTF::nullopt;
+    return !m_value.num;
+}
+
+Optional<bool> CSSPrimitiveValue::isPositive() const
+{
+    if (primitiveUnitType() == CSSUnitType::CSS_CALC)
+        return WTF::nullopt;
+    return m_value.num > 0;
+}
+
+Optional<bool> CSSPrimitiveValue::isNegative() const
+{
+    if (primitiveUnitType() == CSSUnitType::CSS_CALC)
+        return WTF::nullopt;
+    return m_value.num < 0;
 }
 
 Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const

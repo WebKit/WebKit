@@ -1,3 +1,67 @@
+2019-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't do range checking for calc() at parse time
+        https://bugs.webkit.org/show_bug.cgi?id=204737
+
+        Reviewed by Antti Koivisto.
+        
+        As specified in https://drafts.csswg.org/css-values-4/#calc-range, we should not do range checking for calc
+        at parse time; the specified value can be a calc which results in a negative values; values are clamped
+        at used value time (i.e. when building RenderStyle).
+        
+        So CSSCalculationValue doesn't need to have isInt(), isPositive(), isNegative(), and CSSCalcExpressionNode
+        doesn't have to keep track of whether its value is an integer.
+        
+        Also do some cleanup of CSSPrimitiveValue, using categories to answer more isFoo type questions, and adding
+        isZero(), isPositive() and isNegative() that return Optional<bool> for cases where parse-time range checking
+        occurs.
+
+        Tested by existing tests.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcOperationNode::createSimplified):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::createBlendHalf):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        (WebCore::isIntegerResult): Deleted.
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcExpressionNode::equals const):
+        (WebCore::CSSCalcExpressionNode::category const):
+        (WebCore::CSSCalcExpressionNode::CSSCalcExpressionNode):
+        (WebCore::CSSCalcExpressionNode::isInteger const): Deleted.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::zoomAdjustedPixelValueForLength):
+        (WebCore::percentageOrZoomAdjustedValue):
+        (WebCore::autoOrZoomAdjustedValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor): I missed the Q unit here when I added it.
+        (WebCore::CSSPrimitiveValue::isZero const):
+        (WebCore::CSSPrimitiveValue::isPositive const):
+        (WebCore::CSSPrimitiveValue::isNegative const):
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory): Deleted.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isAngle const): Deleted.
+        * css/CSSUnits.cpp:
+        (WebCore::unitCategory):
+        (WebCore::canonicalUnitTypeForCategory):
+        (WebCore::canonicalUnitType):
+        * css/CSSUnits.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeColumnWidth):
+        (WebCore::consumePerspective):
+        (WebCore::consumeWebkitAspectRatio):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::CalcParser):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeSingleShadow): This parsing is a little tricky. The blur radius value is optional,
+        but we need to distinguish between failing to parse it, and its value being negative, so an explicit check for calc is the easiest way
+        to handlel that.
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumePositiveIntegerRaw): Deleted. It was unused.
+        (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw): Deleted.
+        * css/parser/CSSPropertyParserHelpers.h:
+
 2019-12-02  Rob Buis  <rbuis@igalia.com>
 
         [GTK] Fix some warnings
