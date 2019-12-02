@@ -32,16 +32,20 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphi
 {
     graphicsContext.save();
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (!graphicsContext.hasPlatformContext()) {
+        WTFLogAlways("LocalCurrentGraphicsContext is not setting the global context because the provided GraphicsContext does not have a platform context (likely display list recording)");
+        m_savedNSGraphicsContext = nil;
+        return;
+    }
+
     CGContextRef cgContext = this->cgContext();
-    if (cgContext == [[NSGraphicsContext currentContext] graphicsPort]) {
-        m_savedNSGraphicsContext = 0;
+    if (cgContext == [[NSGraphicsContext currentContext] CGContext]) {
+        m_savedNSGraphicsContext = nil;
         return;
     }
 
     m_savedNSGraphicsContext = [[NSGraphicsContext currentContext] retain];
-    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:YES];
     [NSGraphicsContext setCurrentContext:newContext];
     m_didSetGraphicsContext = true;
 }
