@@ -871,9 +871,9 @@ void AccessCase::generateWithGuard(
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ScopedArgumentsType)));
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-        allocator.lock(valueRegs.payloadGPR());
-        allocator.lock(propertyGPR);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(stubInfo.propertyRegs());
         allocator.lock(scratchGPR);
         
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
@@ -902,9 +902,16 @@ void AccessCase::generateWithGuard(
         jit.sub32(propertyGPR, scratch2GPR);
         jit.neg32(scratch2GPR);
         jit.loadPtr(CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfStorage()), scratch3GPR);
-        jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs::payloadOnly(scratchGPR));
+#if USE(JSVALUE64)
+        jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratchGPR));
         failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
         jit.move(scratchGPR, valueRegs.payloadGPR());
+#else
+        jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch2GPR, scratchGPR));
+        failAndIgnore.append(jit.branchIfEmpty(scratch2GPR));
+        jit.move(scratchGPR, valueRegs.payloadGPR());
+        jit.move(scratch2GPR, valueRegs.tagGPR());
+#endif
 
         done.link(&jit);
 
@@ -959,9 +966,9 @@ void AccessCase::generateWithGuard(
         state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-        allocator.lock(valueRegs.payloadGPR());
-        allocator.lock(propertyGPR);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(stubInfo.propertyRegs());
         allocator.lock(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
 
@@ -1041,9 +1048,9 @@ void AccessCase::generateWithGuard(
         fallThrough.append(jit.branchIfNotString(baseGPR));
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-        allocator.lock(valueRegs.payloadGPR());
-        allocator.lock(propertyGPR);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(stubInfo.propertyRegs());
         allocator.lock(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
 
@@ -1072,6 +1079,7 @@ void AccessCase::generateWithGuard(
         failAndIgnore.append(jit.branch32(CCallHelpers::Above, scratch2GPR, CCallHelpers::TrustedImm32(maxSingleCharacterString)));
         jit.move(CCallHelpers::TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), scratchGPR);
         jit.loadPtr(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::ScalePtr, 0), valueRegs.payloadGPR());
+        jit.boxCell(valueRegs.payloadGPR(), valueRegs);
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         state.succeed();
 
@@ -1100,11 +1108,14 @@ void AccessCase::generateWithGuard(
         CCallHelpers::Jump isEmpty;
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-        allocator.lock(valueRegs.payloadGPR());
-        allocator.lock(propertyGPR);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(stubInfo.propertyRegs());
         allocator.lock(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
+#if USE(JSVALUE32_64)
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+#endif
         ScratchRegisterAllocator::PreservedState preservedState;
 
         CCallHelpers::JumpList failAndIgnore;
@@ -1122,9 +1133,16 @@ void AccessCase::generateWithGuard(
             isOutOfBounds = jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, CCallHelpers::Address(scratchGPR, ArrayStorage::vectorLengthOffset()));
 
             jit.zeroExtend32ToPtr(propertyGPR, scratch2GPR);
-            jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs::payloadOnly(scratchGPR));
+#if USE(JSVALUE64)
+            jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs(scratchGPR));
             isEmpty = jit.branchIfEmpty(scratchGPR);
             jit.move(scratchGPR, valueRegs.payloadGPR());
+#else
+            jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs(scratch3GPR, scratchGPR));
+            isEmpty = jit.branchIfEmpty(scratch3GPR);
+            jit.move(scratchGPR, valueRegs.payloadGPR());
+            jit.move(scratch3GPR, valueRegs.tagGPR());
+#endif
         } else {
             IndexingType expectedShape;
             switch (m_type) {
@@ -1155,9 +1173,16 @@ void AccessCase::generateWithGuard(
                 isEmpty = jit.branchIfNaN(state.scratchFPR);
                 jit.boxDouble(state.scratchFPR, valueRegs);
             } else {
-                jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs::payloadOnly(scratchGPR));
+#if USE(JSVALUE64)
+                jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratchGPR));
                 isEmpty = jit.branchIfEmpty(scratchGPR);
                 jit.move(scratchGPR, valueRegs.payloadGPR());
+#else
+                jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch3GPR, scratchGPR));
+                isEmpty = jit.branchIfEmpty(scratch3GPR);
+                jit.move(scratchGPR, valueRegs.payloadGPR());
+                jit.move(scratch3GPR, valueRegs.tagGPR());
+#endif
             }
         }
 
@@ -1194,9 +1219,9 @@ void AccessCase::generateWithGuard(
         GPRReg valueGPR = valueRegs.payloadGPR();
         
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-        allocator.lock(valueGPR);
-        allocator.lock(prototypeGPR);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(stubInfo.propertyRegs());
         allocator.lock(scratchGPR);
         
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
@@ -1707,10 +1732,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         bool allocatingInline = allocating && !structure()->couldHaveIndexingHeader();
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-        allocator.lock(baseGPR);
-#if USE(JSVALUE32_64)
-        allocator.lock(stubInfo.patch.baseTagGPR);
-#endif
+        allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(scratchGPR);
 

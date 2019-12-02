@@ -452,6 +452,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     allocator.lock(state.valueRegs);
 #if USE(JSVALUE32_64)
     allocator.lock(stubInfo.patch.baseTagGPR);
+    if (stubInfo.patch.v.thisTagGPR != InvalidGPRReg)
+        allocator.lock(stubInfo.patch.v.thisTagGPR);
 #endif
 
     state.scratchGPR = allocator.allocateScratchGPR();
@@ -521,8 +523,13 @@ AccessGenerationResult PolymorphicAccess::regenerate(
             if (needsInt32PropertyCheck) {
                 CCallHelpers::Jump notInt32;
 
-                if (!stubInfo.propertyIsInt32)
+                if (!stubInfo.propertyIsInt32) {
+#if USE(JSVALUE64) 
                     notInt32 = jit.branchIfNotInt32(state.u.propertyGPR);
+#else
+                    notInt32 = jit.branchIfNotInt32(state.stubInfo->patch.v.propertyTagGPR);
+#endif
+                }
                 for (unsigned i = cases.size(); i--;) {
                     fallThrough.link(&jit);
                     fallThrough.clear();
@@ -542,12 +549,18 @@ AccessGenerationResult PolymorphicAccess::regenerate(
             }
 
             if (needsStringPropertyCheck) {
-                GPRReg propertyGPR = state.u.propertyGPR;
                 CCallHelpers::JumpList notString;
+                GPRReg propertyGPR = state.u.propertyGPR;
                 if (!stubInfo.propertyIsString) {
+#if USE(JSVALUE32_64)
+                    GPRReg propertyTagGPR = state.stubInfo->patch.v.propertyTagGPR;
+                    notString.append(jit.branchIfNotCell(propertyTagGPR));
+#else
                     notString.append(jit.branchIfNotCell(propertyGPR));
+#endif
                     notString.append(jit.branchIfNotString(propertyGPR));
                 }
+
                 jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfValue()), state.scratchGPR);
 
                 state.failAndRepatch.append(jit.branchIfRopeStringImpl(state.scratchGPR));
@@ -571,7 +584,12 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 CCallHelpers::JumpList notSymbol;
                 if (!stubInfo.propertyIsSymbol) {
                     GPRReg propertyGPR = state.u.propertyGPR;
+#if USE(JSVALUE32_64)
+                    GPRReg propertyTagGPR = state.stubInfo->patch.v.propertyTagGPR;
+                    notSymbol.append(jit.branchIfNotCell(propertyTagGPR));
+#else
                     notSymbol.append(jit.branchIfNotCell(propertyGPR));
+#endif
                     notSymbol.append(jit.branchIfNotSymbol(propertyGPR));
                 }
 

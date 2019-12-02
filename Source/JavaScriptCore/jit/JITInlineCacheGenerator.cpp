@@ -78,7 +78,7 @@ JITByIdGenerator::JITByIdGenerator(
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.baseTagGPR = base.tagGPR();
     m_stubInfo->patch.valueTagGPR = value.tagGPR();
-    m_stubInfo->patch.thisTagGPR = InvalidGPRReg;
+    m_stubInfo->patch.v.thisTagGPR = InvalidGPRReg;
 #endif
 }
 
@@ -124,7 +124,7 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 
     m_stubInfo->patch.u.thisGPR = thisRegs.payloadGPR();
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.thisTagGPR = thisRegs.tagGPR();
+    m_stubInfo->patch.v.thisTagGPR = thisRegs.tagGPR();
 #endif
 }
 
@@ -190,7 +190,7 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.baseTagGPR = InvalidGPRReg;
     m_stubInfo->patch.valueTagGPR = InvalidGPRReg;
-    m_stubInfo->patch.thisTagGPR = InvalidGPRReg;
+    m_stubInfo->patch.v.thisTagGPR = InvalidGPRReg;
 #endif
 
     m_stubInfo->patch.usedRegisters.clear(result);
@@ -229,6 +229,11 @@ JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CodeOrigin code
     m_stubInfo->patch.baseGPR = base.payloadGPR();
     m_stubInfo->patch.u.propertyGPR = property.payloadGPR();
     m_stubInfo->patch.valueGPR = result.payloadGPR();
+#if USE(JSVALUE32_64)
+    m_stubInfo->patch.baseTagGPR = base.tagGPR();
+    m_stubInfo->patch.valueTagGPR = result.tagGPR();
+    m_stubInfo->patch.v.propertyTagGPR = property.tagGPR();
+#endif
 }
 
 void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)

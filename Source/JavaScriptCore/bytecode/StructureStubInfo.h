@@ -220,8 +220,13 @@ public:
         } u;
 #if USE(JSVALUE32_64)
         GPRReg valueTagGPR;
+        // FIXME: [32-bits] Check if StructureStubInfo::patch.baseTagGPR is used somewhere.
+        // https://bugs.webkit.org/show_bug.cgi?id=204726
         GPRReg baseTagGPR;
-        GPRReg thisTagGPR;
+        union {
+            GPRReg thisTagGPR;
+            GPRReg propertyTagGPR;
+        } v;
 #endif
     } patch;
 
@@ -247,6 +252,24 @@ public:
             patch.valueTagGPR,
 #endif
             patch.valueGPR);
+    }
+
+    JSValueRegs propertyRegs() const
+    {
+        return JSValueRegs(
+#if USE(JSVALUE32_64)
+            patch.v.propertyTagGPR,
+#endif
+            patch.u.propertyGPR);
+    }
+
+    JSValueRegs baseRegs() const
+    {
+        return JSValueRegs(
+#if USE(JSVALUE32_64)
+            patch.baseTagGPR,
+#endif
+            patch.baseGPR);
     }
 
     bool thisValueIsInThisGPR() const { return accessType == AccessType::GetByIdWithThis; }

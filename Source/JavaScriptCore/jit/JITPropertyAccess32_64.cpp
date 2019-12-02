@@ -138,8 +138,6 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 
 void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 {
-    // FIXME: Implement IC here:
-    // https://bugs.webkit.org/show_bug.cgi?id=204082
     auto bytecode = currentInstruction->as<OpGetByVal>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     int dst = bytecode.m_dst.offset();
@@ -149,35 +147,46 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
 
-    emitJumpSlowCaseIfNotJSCell(base, regT1);
-    emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+    if (metadata.m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
+        auto notCell = branchIfNotCell(regT1);
+        emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+        notCell.link(this);
+        callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByVal, dst, TrustedImmPtr(m_codeBlock->globalObject()), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    } else {
+        emitJumpSlowCaseIfNotJSCell(base, regT1);
+        emitArrayProfilingSiteWithCell(regT0, regT4, profile);
 
-    JITGetByValGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0));
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
-    m_getByVals.append(gen);
+        JITGetByValGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))), RegisterSet::stubUnavailableRegisters(),
+            JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0));
+        if (isOperandConstantInt(property))
+            gen.stubInfo()->propertyIsInt32 = true;
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByVals.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitStore(dst, regT1, regT0);
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitStore(dst, regT1, regT0);
+    }
 }
 
 void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    auto bytecode = currentInstruction->as<OpGetByVal>();
-    int dst = bytecode.m_dst.offset();
-    auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    if (hasAnySlowCases(iter)) {
+        auto bytecode = currentInstruction->as<OpGetByVal>();
+        int dst = bytecode.m_dst.offset();
+        auto& metadata = bytecode.metadata(m_codeBlock);
+        ArrayProfile* profile = &metadata.m_arrayProfile;
 
-    JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
-    ++m_getByValIndex;
+        JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
+        ++m_getByValIndex;
 
-    linkAllSlowCases(iter);
+        linkAllSlowCases(iter);
 
-    Label coldPathBegin = label();
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByValGeneric, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
-    gen.reportSlowPathCall(coldPathBegin, call);
+        Label coldPathBegin = label();
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
 }
 
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)

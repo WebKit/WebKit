@@ -1,3 +1,46 @@
+2019-12-01  Caio Lima  <ticaiolima@gmail.com>
+
+        Implement GetByVal inline caching for 32-bit JITs
+        https://bugs.webkit.org/show_bug.cgi?id=204082
+
+        Reviewed by Saam Barati.
+
+        We are adding 32-bit support for GetByVal cases added on r252684.
+        This requires changes on some of the IC code generated to properly
+        support JSVALUE32_64. The major difference from JSVALUE64 is the
+        usage of tagGPR to inspect value types and store results.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.h:
+
+        Since a generator can't have `thisGPR` and `propertyGPR` at se same time,
+        we created a new `union` to share `thisTagGPR` and `propertyTagGPR`,
+        matching the approach we have for `JITInlineCacheGenerator::patch.u`.
+
+        (JSC::StructureStubInfo::propertyRegs const):
+        (JSC::StructureStubInfo::baseRegs const):
+
+        To simplify scratch register allocation, we added `baseRegs()` and
+        `propertyRegs()` to `StructureStubInfo`, so we can easily retrive
+        payload and tag GPRs for those operands, keeping them locked.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+
 2019-11-29  Eike Rathke  <erack@redhat.com>
 
         Use default implementation for JSVALUE64 with GCC on unknown platform.
