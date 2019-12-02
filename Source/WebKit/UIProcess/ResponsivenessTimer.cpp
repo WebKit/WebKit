@@ -57,7 +57,7 @@ void ResponsivenessTimer::timerFired()
         m_restartFireTime = MonotonicTime();
 
         if (restartFireTime > now) {
-            m_timer.startOneShot(now - restartFireTime);
+            m_timer.startOneShot(restartFireTime - now);
             return;
         }
     }
