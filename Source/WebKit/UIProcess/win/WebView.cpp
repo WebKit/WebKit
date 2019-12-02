@@ -467,7 +467,16 @@ LRESULT WebView::onVerticalScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
 LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam));
+    Vector<MSG> pendingCharEvents;
+    if (message == WM_KEYDOWN) {
+        MSG msg;
+        // WM_SYSCHAR events should not be removed, because WebKit is using WM_SYSCHAR for access keys and they can't be canceled.
+        while (PeekMessage(&msg, hWnd, WM_CHAR, WM_DEADCHAR, PM_REMOVE)) {
+            if (msg.message == WM_CHAR)
+                pendingCharEvents.append(msg);
+        }
+    }
+    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
 
     // We claim here to always have handled the event. If the event is not in fact handled, we will
     // find out later in didNotHandleKeyEvent.

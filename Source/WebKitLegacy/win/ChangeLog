@@ -1,5 +1,17 @@
 2019-12-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Retrieve all following WM_CHAR events at the beginning of processing WM_KEYDOWN event
+        https://bugs.webkit.org/show_bug.cgi?id=204694
+
+        Reviewed by Ross Kirsling.
+
+        * WebView.cpp:
+        (WebView::keyDown): Added a variable pendingCharEvents of
+        Vector<MSG> to preserve following WM_CHAR events. Dispatch them if
+        the WM_KEYDOWN isn't consumed.
+
+2019-12-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [CMake] Ninja can't build WebKitQuartzCoreAdditions of AppleWin port
         https://bugs.webkit.org/show_bug.cgi?id=204696
 

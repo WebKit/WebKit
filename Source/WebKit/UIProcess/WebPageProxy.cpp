@@ -6575,6 +6575,11 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         MESSAGE_CHECK(m_process, type == event.type());
 
+#if PLATFORM(WIN)
+        if (!handled && type == WebEvent::RawKeyDown)
+            dispatchPendingCharEvents(event);
+#endif
+
         bool canProcessMoreKeyEvents = !m_keyEventQueue.isEmpty();
         if (canProcessMoreKeyEvents) {
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");

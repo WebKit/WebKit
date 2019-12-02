@@ -865,6 +865,9 @@ public:
 
     bool isProcessingKeyboardEvents() const;
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
+#if PLATFORM(WIN)
+    void dispatchPendingCharEvents(const NativeWebKeyboardEvent&);
+#endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
     void handleGestureEvent(const NativeWebGestureEvent&);

@@ -1,3 +1,41 @@
+2019-12-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Retrieve all following WM_CHAR events at the beginning of processing WM_KEYDOWN event
+        https://bugs.webkit.org/show_bug.cgi?id=204694
+
+        Reviewed by Ross Kirsling.
+
+        In Windows ports, WM_KEYDOWN dispatches keydown event, and
+        WM_CHAR dispatches keypress event. If a keydown event is canceled
+        by calling preventDefault, the following corresponding keypress
+        events shouldn't be dispatched.
+
+        WebKit1 implemented it by removing WM_CHAR events if the keydown
+        event is consumed. However, WebKit2 can't do so because WebKit2
+        processes key events asynchronously. Thus, retrieve all following
+        WM_CHAR events, and dispatch them after processing the keydown
+        and if it is not consumed.
+
+        In addition to that, retrieving following WM_CHAR events is needed
+        to fix Bug 204672 because the events are needed for 'key' property
+        of keydown KeyboardEvent for dead key combination.
+
+        Gecko and Chromium also implements 'key' property in the same approach.
+
+        Test: Covered by existing fast/events/inputText-never-fired-on-keydown-cancel.html and fast/events/keydown-keypress-preventDefault.html
+
+        * Shared/NativeWebKeyboardEvent.h: Added m_pendingCharEvents as Vector<MSG>.
+        (WebKit::NativeWebKeyboardEvent::pendingCharEvents const):
+        * Shared/win/NativeWebKeyboardEventWin.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::dispatchPendingCharEvents):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onKeyEvent):
+
 2019-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Make CompositeOperator and BlendMode encodable

@@ -2376,6 +2376,15 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 #endif
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
+    Vector<MSG> pendingCharEvents;
+    MSG msg;
+    while (PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_DEADCHAR, PM_REMOVE)) {
+        // FIXME: remove WM_UNICHAR, too
+        // WM_SYSCHAR events should not be removed, because WebKit is using WM_SYSCHAR for access keys and they can't be canceled.
+        if (msg.message == WM_CHAR)
+            pendingCharEvents.append(msg);
+    }
+
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
     bool handled = frame.eventHandler().keyEvent(keyEvent);
 
@@ -2384,14 +2393,8 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     if (systemKeyDown && virtualKeyCode != VK_RETURN)
         return false;
 
-    if (handled) {
-        // FIXME: remove WM_UNICHAR, too
-        MSG msg;
-        // WM_SYSCHAR events should not be removed, because access keys are implemented in WebCore in WM_SYSCHAR handler.
-        if (!systemKeyDown)
-            ::PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_CHAR, PM_REMOVE);
+    if (handled)
         return true;
-    }
 
     // We need to handle back/forward using either Ctrl+Left/Right Arrow keys.
     // FIXME: This logic should probably be in EventHandler::defaultArrowEventHandler().
@@ -2402,8 +2405,9 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
         return m_page->backForward().goBack();
 
     // Need to scroll the page if the arrow keys, pgup/dn, or home/end are hit.
-    ScrollDirection direction;
-    ScrollGranularity granularity;
+    bool willScroll = true;
+    ScrollDirection direction { };
+    ScrollGranularity granularity { };
     switch (virtualKeyCode) {
         case VK_LEFT:
             granularity = ScrollByLine;
@@ -2438,10 +2442,19 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
             direction = ScrollDown;
             break;
         default:
-            return false;
+            willScroll = false;
+            break;
     }
 
-    return frame.eventHandler().scrollRecursively(direction, granularity);
+    if (willScroll) {
+        handled = frame.eventHandler().scrollRecursively(direction, granularity);
+        if (handled)
+            return true;
+    }
+
+    for (auto& msg : pendingCharEvents)
+        DispatchMessage(&msg);
+    return false;
 }
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
