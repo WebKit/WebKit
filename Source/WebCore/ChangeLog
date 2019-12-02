@@ -1,3 +1,32 @@
+2019-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBuilder::InlineItemRun objects don't have vertical geometry
+        https://bugs.webkit.org/show_bug.cgi?id=204752
+        <rdar://problem/57560643>
+
+        Reviewed by Antti Koivisto.
+
+        Height and vertical position are computed when the InlineItemRun objects are merged and transformed into LineBuilder::Run objects.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::ContinousContent::append):
+        (WebCore::Layout::LineBuilder::ContinousContent::close):
+        (WebCore::Layout::LineBuilder::Run::Run):
+        (WebCore::Layout::LineBuilder::appendNonBreakableSpace):
+        (WebCore::Layout::LineBuilder::appendInlineContainerStart):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::appendLineBreak):
+        (WebCore::Layout::LineBuilder::isVisuallyNonEmpty const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::InlineItemRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth):
+        (WebCore::Layout::LineBuilder::InlineItemRun::removeTrailingLetterSpacing):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalLeft const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalWidth const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalRect const): Deleted.
+
 2019-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the confusing Value struct used for calc results

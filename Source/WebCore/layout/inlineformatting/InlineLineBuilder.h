@@ -130,7 +130,7 @@ private:
     LayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
     LayoutUnit baselineOffset() const { return m_lineBox.baselineOffset(); }
 
-    void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
+    void appendNonBreakableSpace(const InlineItem&, LayoutUnit logicalLeft, LayoutUnit logicalWidth);
     void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
     void appendNonReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
     void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
@@ -155,10 +155,11 @@ private:
 
     class InlineItemRun {
     public:
-        InlineItemRun(const InlineItem&, const Display::Rect&, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
+        InlineItemRun(const InlineItem&, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
 
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
-        const Display::Rect& logicalRect() const { return m_logicalRect; }
+        LayoutUnit logicalLeft() const { return m_logicalLeft; }
+        LayoutUnit logicalWidth() const { return m_logicalWidth; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
 
         bool isText() const { return m_inlineItem.isText(); }
@@ -182,7 +183,8 @@ private:
 
     private:
         const InlineItem& m_inlineItem;
-        Display::Rect m_logicalRect;
+        LayoutUnit m_logicalLeft;
+        LayoutUnit m_logicalWidth;
         const Optional<Display::Run::TextContext> m_textContext;
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };

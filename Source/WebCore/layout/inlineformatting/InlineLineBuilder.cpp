@@ -74,7 +74,7 @@ bool LineBuilder::ContinousContent::append(const InlineItemRun& inlineItemRun)
 
     ASSERT(inlineItemRun.isText());
     m_expandedLength += inlineItemRun.textContext()->length();
-    m_expandedWidth += inlineItemRun.logicalRect().width();
+    m_expandedWidth += inlineItemRun.logicalWidth();
 
     if (m_textIsAlignJustify) {
         m_hasTrailingExpansionOpportunity = inlineItemRun.hasExpansionOpportunity();
@@ -90,9 +90,6 @@ LineBuilder::Run LineBuilder::ContinousContent::close()
         return { m_initialInlineRun };
     // Expand the text content and set the expansion opportunities.
     ASSERT(m_initialInlineRun.isText());
-    auto logicalRect = m_initialInlineRun.logicalRect();
-    logicalRect.expandHorizontally(m_expandedWidth);
-
     auto textContext = *m_initialInlineRun.textContext();
     auto length = textContext.length() + m_expandedLength;
     textContext.expand(length);
@@ -104,13 +101,13 @@ LineBuilder::Run LineBuilder::ContinousContent::close()
             ++m_expansionOpportunityCount;
         textContext.setExpansion({ expansionBehavior, { } });
     }
-    return { m_initialInlineRun, logicalRect, textContext, m_expansionOpportunityCount };
+    return { m_initialInlineRun,  Display::Rect { 0, m_initialInlineRun.logicalLeft(), m_initialInlineRun.logicalWidth() + m_expandedWidth, { } }, textContext, m_expansionOpportunityCount };
 }
 
 LineBuilder::Run::Run(const InlineItemRun& inlineItemRun)
     : m_layoutBox(&inlineItemRun.layoutBox())
     , m_type(inlineItemRun.type())
-    , m_logicalRect(inlineItemRun.logicalRect())
+    , m_logicalRect({ { }, inlineItemRun.logicalLeft(), inlineItemRun.logicalWidth(), { } })
     , m_textContext(inlineItemRun.textContext())
     , m_isCollapsedToVisuallyEmpty(inlineItemRun.isCollapsedToZeroAdvanceWidth())
 {
@@ -456,22 +453,22 @@ void LineBuilder::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
         m_lineBox.setIsConsideredNonEmpty();
 }
 
-void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
+void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, LayoutUnit logicalLeft, LayoutUnit logicalWidth)
 {
-    m_inlineItemRuns.append({ inlineItem, logicalRect });
-    m_lineBox.expandHorizontally(logicalRect.width());
+    m_inlineItemRuns.append({ inlineItem, logicalLeft, logicalWidth });
+    m_lineBox.expandHorizontally(logicalWidth);
 }
 
 void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
-    appendNonBreakableSpace(inlineItem, Display::Rect { 0, contentLogicalWidth(), logicalWidth, { } });
+    appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
 }
 
 void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline level container </span>.
-    appendNonBreakableSpace(inlineItem, Display::Rect { 0, contentLogicalRight(), logicalWidth, { } });
+    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
 }
 
 void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logicalWidth)
@@ -508,8 +505,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
     auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
-    auto lineRun = InlineItemRun { inlineItem, Display::Rect { 0, contentLogicalWidth(), logicalWidth, { } },
-        Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content } };
+    auto lineRun = InlineItemRun { inlineItem, contentLogicalWidth(), logicalWidth, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content } };
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
@@ -518,7 +514,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
     if (collapsedRun)
         lineRun.setIsCollapsed();
 
-    auto lineRunWidth = lineRun.logicalRect().width();
+    auto lineRunWidth = lineRun.logicalWidth();
     // Trailing whitespace content is fully trimmable so as the trailing letter space.
     auto isFullyTrimmable = !shouldPreserveTrailingContent(inlineItem);
     auto isPartiallyTrimmable = !inlineItem.isWhitespace() && inlineItem.style().letterSpacing();
@@ -543,7 +539,7 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Layou
     auto& layoutBox = inlineItem.layoutBox();
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto horizontalMargin = boxGeometry.horizontalMargin();
-    m_inlineItemRuns.append({ inlineItem, Display::Rect { 0, contentLogicalWidth() + horizontalMargin.start, logicalWidth, { } } });
+    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth() + horizontalMargin.start, logicalWidth });
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -557,7 +553,7 @@ void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUn
 
 void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
 {
-    m_inlineItemRuns.append({ inlineItem, Display::Rect { 0, contentLogicalWidth(), { }, { } } });
+    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), { } });
 }
 
 void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
@@ -673,7 +669,7 @@ bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
 
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered non-empty.
     if (run.isContainerStart() || run.isContainerEnd()) {
-        if (!run.logicalRect().width())
+        if (!run.logicalWidth())
             return false;
         // Margin does not make the container visually non-empty. Check if it has border or padding.
         auto& boxGeometry = formattingContext().geometryForBox(run.layoutBox());
@@ -689,7 +685,7 @@ bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
         if (!run.layoutBox().establishesFormattingContext())
             return true;
         ASSERT(run.layoutBox().isInlineBlockBox());
-        if (!run.logicalRect().width())
+        if (!run.logicalWidth())
             return false;
         if (m_skipAlignment || formattingContext().geometryForBox(run.layoutBox()).height())
             return true;
@@ -731,9 +727,10 @@ void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIn
     m_lastRunIsFullyTrimmable = isFullyTrimmable == IsFullyTrimmable::Yes;
 }
 
-LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, const Display::Rect& logicalRect, WTF::Optional<Display::Run::TextContext> textContext)
+LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> textContext)
     : m_inlineItem(inlineItem)
-    , m_logicalRect(logicalRect)
+    , m_logicalLeft(logicalLeft)
+    , m_logicalWidth(logicalWidth)
     , m_textContext(textContext)
 {
 }
@@ -741,13 +738,14 @@ LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, const Di
 void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 {
     m_collapsedToZeroAdvanceWidth = true;
-    m_logicalRect.setWidth({ });
+    m_logicalWidth = { };
 }
 
 void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()
 {
     ASSERT(m_inlineItem.style().letterSpacing());
-    m_logicalRect.expandHorizontally(LayoutUnit { -m_inlineItem.style().letterSpacing() });
+    m_logicalWidth -= m_inlineItem.style().letterSpacing();
+    ASSERT(m_logicalWidth > 0);
 }
 
 }
