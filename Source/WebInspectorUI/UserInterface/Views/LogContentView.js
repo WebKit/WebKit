@@ -398,7 +398,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         for (let messageElement of this._allMessageElements()) {
             if (messageElement.__messageView)
-                messageElement.__messageView.removeEventListeners();
+                messageElement.__messageView.clearSavedVariableState();
         }
 
         const isFirstSession = false;
@@ -836,7 +836,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         for (let messageElement of this._allMessageElements()) {
             if (messageElement.__messageView)
-                messageElement.__messageView.removeEventListeners();
+                messageElement.__messageView.clearSavedVariableState();
         }
 
         this._logViewController.clear();

@@ -243,8 +243,14 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         return clipboardString;
     }
 
-    removeEventListeners()
+    clearSavedVariableState()
     {
+        for (let node of this._messageBodyElement.querySelectorAll(".console-saved-variable"))
+            node.remove();
+
+        if (this._objectTree)
+            this._objectTree.resetPropertyPath();
+
         // FIXME: <https://webkit.org/b/196956> Web Inspector: use weak collections for holding event listeners
         WI.settings.consoleSavedResultAlias.removeEventListener(null, null, this);
     }

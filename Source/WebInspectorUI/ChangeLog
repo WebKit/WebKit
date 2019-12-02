@@ -1,3 +1,24 @@
+2019-12-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Console: the saved result value is still shown after page reload
+        https://bugs.webkit.org/show_bug.cgi?id=204532
+
+        Reviewed by Brian Burg.
+
+        Add additional plumbing to remove any `.console-saved-variable` elements whenever a new
+        session is created, as well as reset the base of the property path to `this`.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._sessionStarted):
+        (WI.LogContentView.prototype._logCleared):
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.clearSavedVariableState): Added.
+        (WI.ConsoleMessageView.prototype.removeEventListeners): Deleted.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype.resetPropertyPath): Added.
+
 2019-11-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'target.PageAgent.getCompositingBordersVisible')

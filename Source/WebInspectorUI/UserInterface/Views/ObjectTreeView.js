@@ -321,6 +321,11 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._prototypeNameOverride = override;
     }
 
+    resetPropertyPath()
+    {
+        this._propertyPath.pathComponent = "this";
+    }
+
     // Protected
 
     update()
