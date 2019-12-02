@@ -1,3 +1,74 @@
+2019-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Introduce a gesture recognizer that can be used to defer recognition of other gestures
+        https://bugs.webkit.org/show_bug.cgi?id=204748
+        <rdar://problem/38670692>
+
+        Reviewed by Tim Horton.
+
+        Introduces WKDeferringGestureRecognizer, which is similar to UIKit's _UIRelationshipGestureRecognizer. In a
+        future patch, this will be added to WKContentView to prevent platform gestures (pinching, panning, single/double
+        taps, etc.) from recognizing when dispatching a preventable touch event to the page.
+
+        Additionally renames a member variable on WKContentView, in preparation for making touch gesture recognition
+        asynchronous. No new tests, since there is no change in behavior yet.
+
+        * SourcesCocoa.txt:
+
+        Add the new file.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add a couple of (currently unused) deferring gesture recognizers. These will be added to WKContentView in a
+        future patch. There are two deferring gestures here (one for "immediately resettable" gestures and another for
+        gestures for which the reset is "deferred" -- i.e., multi-tap gestures); this prevents a single deferring
+        gesture from connecting the entire gesture subgraph under WKWebView through failure dependencies. This would
+        result in various usability issues, such as being unable to perform a pan gesture to scroll WKScrollView if a
+        tap was recognized within the last 300 ms, since all gestures would need to wait until every double and triple-
+        tap gesture under WKWebView has failed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Rename _canSendTouchEventsAsynchronously to _touchEventsCanPreventNativeGestures in preparation for adding a
+        codepath for fully asynchronous touch event dispatch; we also flip the conditional in any places where
+        _canSendTouchEventsAsynchronously was previously set or read.
+
+        (-[WKContentView _webTouchEvent:preventsNativeGestures:]):
+        (-[WKContentView scrollViewWillStartPanOrPinchGesture]):
+        (-[WKContentView gestureRecognizer:shouldIgnoreWebTouchWithEvent:]):
+        (-[WKContentView gestureRecognizer:isInterruptingMomentumScrollingWithEvent:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesWithEvent:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
+        Implement WKDeferringGestureRecognizerDelegate.
+
+        (-[WKContentView shouldIgnoreWebTouch]): Deleted.
+
+        Drive-by fix: remove this unnecessary method implementation, and the related FIXME.
+
+        * UIProcess/ios/WKDeferringGestureRecognizer.h: Added.
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm: Added.
+        (-[WKDeferringGestureRecognizer initWithDeferringGestureDelegate:]):
+        (-[WKDeferringGestureRecognizer deferringGestureDelegate]):
+        (-[WKDeferringGestureRecognizer touchesBegan:withEvent:]):
+
+        Unless the touch is interrupts momentum scrolling, WKDeferringGestureRecognizer should transition to Possible
+        state when starting a touch. Later, -setDefaultPrevented: is invoked, which will either transition the deferring
+        gesture recognizer to Failed state (thereby allowing native gestures to begin), or Ended state (preventing other
+        native gestures).
+
+        (-[WKDeferringGestureRecognizer touchesCancelled:withEvent:]):
+        (-[WKDeferringGestureRecognizer setDefaultPrevented:]):
+        (-[WKDeferringGestureRecognizer canBePreventedByGestureRecognizer:]):
+
+        Return NO here to prevent certain platform gestures (e.g. scroll view panning) from causing the deferring
+        gesture to Failed state, when these gestures attempt to transition from Possible to Began state.
+
+        (-[WKDeferringGestureRecognizer shouldDeferGestureRecognizer:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-02  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         ResponsivenessTimer mistakenly restarts immediately

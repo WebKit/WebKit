@@ -844,6 +844,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
     _smartMagnificationController = makeUnique<WebKit::SmartMagnificationController>(self);
+    _touchEventsCanPreventNativeGestures = YES;
     _isExpectingFastSingleTapCommit = NO;
     _potentialTapInProgress = NO;
     _isDoubleTapPending = NO;
@@ -1410,19 +1411,19 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 #if ENABLE(TOUCH_EVENTS)
     WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, gestureRecognizerModifierFlags(gestureRecognizer) };
-    nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [gestureRecognizer isDefaultPrevented]);
+    nativeWebTouchEvent.setCanPreventNativeGestures(_touchEventsCanPreventNativeGestures || [gestureRecognizer isDefaultPrevented]);
 
 #if ENABLE(POINTER_EVENTS)
     [self _handleTouchActionsForTouchEvent:nativeWebTouchEvent];
 #endif
 
-    if (_canSendTouchEventsAsynchronously)
-        _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
-    else
+    if (_touchEventsCanPreventNativeGestures)
         _page->handleTouchEventSynchronously(nativeWebTouchEvent);
+    else
+        _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
 
     if (nativeWebTouchEvent.allTouchPointsAreReleased()) {
-        _canSendTouchEventsAsynchronously = NO;
+        _touchEventsCanPreventNativeGestures = YES;
 
 #if ENABLE(POINTER_EVENTS)
         if (!_page->isScrollingOrZooming())
@@ -1592,7 +1593,7 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     if (preventsNativeGesture) {
         _longPressCanClick = NO;
 
-        _canSendTouchEventsAsynchronously = YES;
+        _touchEventsCanPreventNativeGestures = NO;
         [_touchEventGestureRecognizer setDefaultPrevented:YES];
     }
 }
@@ -2797,7 +2798,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     [_keyboardScrollingAnimator willStartInteractiveScroll];
 
-    _canSendTouchEventsAsynchronously = YES;
+    _touchEventsCanPreventNativeGestures = NO;
 }
 
 - (void)_didEndScrollingOrZooming
@@ -6458,16 +6459,15 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.
 
-// FIXME: Remove once -gestureRecognizer:shouldIgnoreWebTouchWithEvent: is in UIWebTouchEventsGestureRecognizer.h. Refer to <rdar://problem/33217525> for more details.
-- (BOOL)shouldIgnoreWebTouch
-{
-    return NO;
-}
-
 - (BOOL)gestureRecognizer:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer shouldIgnoreWebTouchWithEvent:(UIEvent *)event
 {
-    _canSendTouchEventsAsynchronously = NO;
+    _touchEventsCanPreventNativeGestures = YES;
 
+    return [self gestureRecognizer:gestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer isInterruptingMomentumScrollingWithEvent:(UIEvent *)event
+{
     NSSet<UITouch *> *touches = [event touchesForGestureRecognizer:gestureRecognizer];
     for (UITouch *touch in touches) {
         if ([touch.view isKindOfClass:[UIScrollView class]] && [(UIScrollView *)touch.view _isInterruptingDeceleration])
@@ -6681,6 +6681,29 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (void)_hideContextMenuHintContainer
 {
     [_contextMenuHintContainerView setHidden:YES];
+}
+
+#pragma mark - WKDeferringGestureRecognizerDelegate
+
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesWithEvent:(UIEvent *)event
+{
+    return ![self gestureRecognizer:deferringGestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
+}
+
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+    auto isMultipleTapGesture = [](UIGestureRecognizer *gesture) {
+        return [gesture isKindOfClass:UITapGestureRecognizer.class] && [(UITapGestureRecognizer *)gesture numberOfTapsRequired] > 1;
+    };
+
+    if (deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures)
+        return gestureRecognizer != _touchEventGestureRecognizer && isMultipleTapGesture(gestureRecognizer);
+
+    if (deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures)
+        return gestureRecognizer != _touchEventGestureRecognizer && !isMultipleTapGesture(gestureRecognizer);
+
+    ASSERT_NOT_REACHED();
+    return NO;
 }
 
 #if ENABLE(DRAG_SUPPORT)
