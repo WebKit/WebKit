@@ -4690,6 +4690,8 @@ void Document::setWindowAttributeEventListener(const AtomString& eventType, cons
 {
     if (!m_domWindow)
         return;
+    if (!m_domWindow->frame())
+        return;
     setWindowAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue), isolatedWorld);
 }
 

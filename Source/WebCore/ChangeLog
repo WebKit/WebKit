@@ -1,3 +1,18 @@
+2019-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Document::setWindowAttributeEventListener should check `m_domWindow::frame()`
+        https://bugs.webkit.org/show_bug.cgi?id=204759
+        <rdar://problem/50098787>
+
+        Reviewed by Mark Lam.
+
+        JSLazyEventListener::create assumes that `m_domWindow::frame()` exists.
+        But this check was removed at r196888 accidentally.
+        This patch adds this check back to fix the crash.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setWindowAttributeEventListener):
+
 2019-12-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust trailing runs horizontally while trimming content
