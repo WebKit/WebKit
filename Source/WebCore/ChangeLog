@@ -1,3 +1,10 @@
+2019-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the macCatalyst build.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents):
+
 2019-12-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Fix ASSERT while running fast/block/block-parent-with-zero-width-child.html

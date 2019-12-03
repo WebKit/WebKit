@@ -1166,7 +1166,7 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
 #if PLATFORM(IOS_FAMILY)
         WKSetCurrentGraphicsContext(context);
 
-        fontAntialiasingState = FontAntialiasingStateSaver { context, [platformCALayer->platformLayer() isOpaque] };
+        fontAntialiasingState = FontAntialiasingStateSaver { context, !![platformCALayer->platformLayer() isOpaque] };
         fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #else
         [NSGraphicsContext saveGraphicsState];
