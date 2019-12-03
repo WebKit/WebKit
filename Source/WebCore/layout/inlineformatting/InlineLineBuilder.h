@@ -85,6 +85,7 @@ public:
         bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
 
         const Box& layoutBox() const { return *m_layoutBox; }
+        const RenderStyle& style() const { return m_layoutBox->style(); }
         const Display::Rect& logicalRect() const { return m_logicalRect; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
         bool isCollapsedToVisuallyEmpty() const { return m_isCollapsedToVisuallyEmpty; }
@@ -158,6 +159,7 @@ private:
         InlineItemRun(const InlineItem&, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
 
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
+        const RenderStyle& style() const { return layoutBox().style(); }
         LayoutUnit logicalLeft() const { return m_logicalLeft; }
         LayoutUnit logicalWidth() const { return m_logicalWidth; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
@@ -174,7 +176,12 @@ private:
 
         void moveHorizontally(LayoutUnit offset) { m_logicalLeft += offset; }
 
+        bool isTrimmableWhitespace() const;
+        bool hasTrailingLetterSpacing() const;
+
+        LayoutUnit trailingLetterSpacing() const;
         void removeTrailingLetterSpacing();
+
         void setCollapsesToZeroAdvanceWidth();
         bool isCollapsedToZeroAdvanceWidth() const { return m_collapsedToZeroAdvanceWidth; }
 

@@ -186,13 +186,6 @@ void LineBuilder::initialize(const Constraints& constraints)
     m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
-static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)
-{
-    if (!inlineTextItem.isWhitespace())
-        return true;
-    return TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
-}
-
 static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
 {
     if (!inlineTextItem.isWhitespace())
@@ -397,8 +390,8 @@ void LineBuilder::removeTrailingTrimmableContent()
             hasSeenNonWhitespaceTextContent = true;
 #endif
             // Must be a letter spacing trim.
-            ASSERT(run.layoutBox().style().letterSpacing() > 0);
-            accumulatedTrimmedWidth += run.layoutBox().style().letterSpacing();
+            ASSERT(run.hasTrailingLetterSpacing());
+            accumulatedTrimmedWidth += run.trailingLetterSpacing();
             run.removeTrailingLetterSpacing();
         }
     }
@@ -524,8 +517,8 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
 
     auto lineRunWidth = lineRun.logicalWidth();
     // Trailing whitespace content is fully trimmable so as the trailing letter space.
-    auto isFullyTrimmable = !shouldPreserveTrailingContent(inlineItem);
-    auto isPartiallyTrimmable = !inlineItem.isWhitespace() && inlineItem.style().letterSpacing() > 0;
+    auto isFullyTrimmable = lineRun.isTrimmableWhitespace();
+    auto isPartiallyTrimmable = lineRun.hasTrailingLetterSpacing();
     auto isTrimmable = isFullyTrimmable || isPartiallyTrimmable;
     // Reset the trimmable content if needed.
     if (!isTrimmable || isPartiallyTrimmable || (isFullyTrimmable && !m_trimmableContent.isTrailingContentFullyTrimmable()))
@@ -536,7 +529,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
             m_lineIsVisuallyEmptyBeforeTrimmableContent = isVisuallyEmpty();
         m_trimmableContent.append(lineRunWidth, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::Yes);
     } else if (isPartiallyTrimmable)
-        m_trimmableContent.append(LayoutUnit { inlineItem.style().letterSpacing() }, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::No);
+        m_trimmableContent.append(LayoutUnit { lineRun.trailingLetterSpacing() }, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::No);
 
     m_lineBox.expandHorizontally(lineRunWidth);
     m_inlineItemRuns.append(WTFMove(lineRun));
@@ -654,7 +647,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
 LayoutUnit LineBuilder::runContentHeight(const Run& run) const
 {
     ASSERT(!m_skipAlignment);
-    auto& fontMetrics = run.layoutBox().style().fontMetrics();
+    auto& fontMetrics = run.style().fontMetrics();
     if (run.isText() || run.isForcedLineBreak())
         return fontMetrics.height();
 
@@ -743,6 +736,25 @@ LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, LayoutUn
 {
 }
 
+bool LineBuilder::InlineItemRun::isTrimmableWhitespace() const
+{
+    if (!isWhitespace())
+        return false;
+    return !TextUtil::shouldPreserveTrailingWhitespace(style());
+}
+
+bool LineBuilder::InlineItemRun::hasTrailingLetterSpacing() const
+{
+    return !isWhitespace() && style().letterSpacing() > 0;
+}
+
+LayoutUnit LineBuilder::InlineItemRun::trailingLetterSpacing() const
+{
+    if (!hasTrailingLetterSpacing())
+        return { };
+    return LayoutUnit { style().letterSpacing() };
+}
+
 void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 {
     m_collapsedToZeroAdvanceWidth = true;
@@ -751,9 +763,9 @@ void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 
 void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()
 {
-    ASSERT(m_inlineItem.style().letterSpacing());
-    m_logicalWidth -= LayoutUnit { m_inlineItem.style().letterSpacing() };
-    ASSERT(m_logicalWidth > 0 || (!m_logicalWidth && m_inlineItem.style().letterSpacing() >= intMaxForLayoutUnit));
+    ASSERT(hasTrailingLetterSpacing());
+    m_logicalWidth -= trailingLetterSpacing();
+    ASSERT(m_logicalWidth > 0 || (!m_logicalWidth && style().letterSpacing() >= intMaxForLayoutUnit));
 }
 
 }
