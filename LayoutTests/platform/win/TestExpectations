@@ -4486,3 +4486,5 @@ webkit.org/b/204545 css3/filters/blur-various-radii.html [ Pass ImageOnlyFailure
 webkit.org/b/204545 fast/masking/clip-path-inset-large-radii.html [ ImageOnlyFailure ]
 webkit.org/b/204545 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/204545 svg/as-image/svg-nested.html [ Pass Timeout Crash ]
+
+webkit.org/b/204794 webanimations/accelerated-animation-removal-upon-transition-completion.html [ Timeout ]
