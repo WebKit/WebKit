@@ -241,7 +241,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     ++m_hasPendingCapture;
 
     SandboxExtension::Handle handle;
-#if PLATFORM(COCOA)
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (!m_hasCreatedSandboxExtensionForTCCD) {
         SandboxExtension::createHandleForMachLookup("com.apple.tccd", m_page.process().connection()->getAuditToken(), handle);
         m_hasCreatedSandboxExtensionForTCCD = true;

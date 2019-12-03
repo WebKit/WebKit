@@ -1,3 +1,11 @@
+2019-12-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed assertion fix for older macOS versions after r253011.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2019-12-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a runtime flag for Web Animations composite operations

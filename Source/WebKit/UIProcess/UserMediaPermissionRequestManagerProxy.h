@@ -154,7 +154,7 @@ private:
     const void* m_logIdentifier;
 #endif
     bool m_hasFilteredDeviceList { false };
-#if PLATFORM(COCOA)
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     bool m_hasCreatedSandboxExtensionForTCCD { false };
 #endif
     uint64_t m_hasPendingCapture { 0 };
