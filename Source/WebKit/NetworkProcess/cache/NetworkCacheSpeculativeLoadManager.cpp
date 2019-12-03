@@ -486,6 +486,9 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
     if (pendingLoad && !pendingLoad->didReceiveMainResourceResponse() && subresourceInfo.isFirstParty()) {
         preconnectForSubresource(subresourceInfo, entry.get(), frameID);
         pendingLoad->addPostMainResourceResponseTask([this, subresourceInfo, entry = WTFMove(entry), frameID]() mutable {
+            if (m_pendingPreloads.contains(subresourceInfo.key()))
+                return;
+
             revalidateSubresource(subresourceInfo, WTFMove(entry), frameID);
         });
         return;

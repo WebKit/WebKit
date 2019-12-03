@@ -1,3 +1,29 @@
+2019-12-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r252778): ASSERT(!m_networkLoad); in ~SpeculativeLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=204813
+        <rdar://problem/57581082>
+
+        Reviewed by Antti Koivisto.
+
+        After r252778, SpeculativeLoadManager::revalidateSubresource() may delay the revalidation until we receive
+        the response for the main resource. We can hit the assertion in the SpeculativeLoad destructor if a speculative
+        revalidation for the SAME resource gets scheduled while we're waiting for the main resource response. When we
+        eventually receive the main resource response, we would call revalidateSubresource() again, which would create
+        a SpeculativeLoad and try to add it to m_pendingPreloads. Because m_pendingPreloads would already contain a
+        preload for this same resource, the SpeculativeLoad would not get added to the map and it would get destroyed
+        right away, before completing (thus hitting the assert). This unnecessary creation of the SpeculativeLoad is
+        inefficient and it is thus best to avoid it.
+
+        To address the issue, when we receive the response, we now make sure that m_pendingPreloads does not already
+        contain a preload for this resource before calling revalidateSubresource() again, similarly to what was
+        already done at the beginning of SpeculativeLoadManager::preloadEntry().
+
+        No new tests, unknown how to reproduce.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+
 2019-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         Add a runtime setting for media in the GPU process
