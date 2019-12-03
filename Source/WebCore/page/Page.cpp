@@ -253,7 +253,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
-    , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
+    , m_alternativeTextClient(WTFMove(pageConfiguration.alternativeTextClient))
     , m_consoleClient(makeUnique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(makeUnique<PageDebuggable>(*this))
@@ -355,8 +355,6 @@ Page::~Page()
 
     if (m_plugInClient)
         m_plugInClient->pageDestroyed();
-    if (m_alternativeTextClient)
-        m_alternativeTextClient->pageDestroyed();
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();

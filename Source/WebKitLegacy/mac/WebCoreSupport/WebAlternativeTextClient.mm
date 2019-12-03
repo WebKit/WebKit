@@ -41,11 +41,6 @@ WebAlternativeTextClient::~WebAlternativeTextClient()
 #endif
 }
 
-void WebAlternativeTextClient::pageDestroyed()
-{
-    delete this;
-}
-
 #if USE(AUTOCORRECTION_PANEL)
 void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {

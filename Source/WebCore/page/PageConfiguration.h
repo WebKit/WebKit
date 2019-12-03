@@ -73,7 +73,7 @@ public:
     PageConfiguration(PageConfiguration&&);
 
     PAL::SessionID sessionID;
-    AlternativeTextClient* alternativeTextClient { nullptr };
+    std::unique_ptr<AlternativeTextClient> alternativeTextClient;
     ChromeClient* chromeClient { nullptr };
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuClient* contextMenuClient { nullptr };

@@ -556,7 +556,7 @@ public:
     bool isPainting() const { return m_isPainting; }
 #endif
 
-    AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient; }
+    AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient.get(); }
 
     bool hasSeenPlugin(const String& serviceType) const;
     WEBCORE_EXPORT bool hasSeenAnyPlugin() const;
@@ -900,7 +900,7 @@ private:
 #ifndef NDEBUG
     bool m_isPainting { false };
 #endif
-    AlternativeTextClient* m_alternativeTextClient;
+    std::unique_ptr<AlternativeTextClient> m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended { false };
     const std::unique_ptr<PageConsoleClient> m_consoleClient;

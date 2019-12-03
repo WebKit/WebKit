@@ -1458,7 +1458,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
 #endif
 
-    pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
+    pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
