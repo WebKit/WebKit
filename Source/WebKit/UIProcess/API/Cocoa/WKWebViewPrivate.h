@@ -422,6 +422,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 @property (nonatomic, setter=_setMediaCaptureEnabled:) BOOL _mediaCaptureEnabled WK_API_AVAILABLE(macos(10.13), ios(11.0));
+- (void)_stopMediaCapture WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) BOOL _canTogglePictureInPicture;
 @property (nonatomic, readonly) BOOL _isPictureInPictureActive;

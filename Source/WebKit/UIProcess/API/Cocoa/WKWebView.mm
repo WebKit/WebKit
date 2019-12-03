@@ -4987,6 +4987,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #endif
 }
 
+- (void)_stopMediaCapture
+{
+    _page->stopMediaCapture();
+}
+
 - (void)_stopAllMediaPlayback
 {
     _page->stopAllMediaPlayback();
