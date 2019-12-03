@@ -1,3 +1,20 @@
+2019-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Add a runtime setting for media in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=204801
+        <rdar://problem/57596199>
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences outOfProcessMediaEnabled]):
+        (-[WebPreferences setOutOfProcessMediaEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-12-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a runtime flag for Web Animations composite operations

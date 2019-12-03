@@ -1837,6 +1837,15 @@ RemotePlaybackEnabled:
   humanReadableName: "Remote Playback API"
   humanReadableDescription: "Enable Remote Playback API"
 
+OutOfProcessMediaEnabled:
+    type: bool
+    defaultValue: false
+    condition: ENABLE(VIDEO)
+    humanReadableName: "Media in GPU process"
+    humanReadableDescription: "Do all media loading and playback in the GPU process"
+    category: experimental
+    webcoreName: outOfProcessMediaEnabled
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

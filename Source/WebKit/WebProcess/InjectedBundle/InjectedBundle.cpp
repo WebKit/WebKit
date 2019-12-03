@@ -247,6 +247,15 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     }
 #endif
 
+#if ENABLE(VIDEO)
+    if (preference == "WebKitOutOfProcessMediaEnabled") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+        for (auto* page : pages)
+            page->settings().setOutOfProcessMediaEnabled(enabled);
+        return;
+    }
+#endif
+
     if (preference == "WebKitIsSecureContextAttributeEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::isSecureContextAttributeEnabledKey(), enabled);
         RuntimeEnabledFeatures::sharedFeatures().setIsSecureContextAttributeEnabled(enabled);

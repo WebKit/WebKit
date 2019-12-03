@@ -320,6 +320,9 @@ shouldDisplayTextDescriptions:
 genericCueAPIEnabled:
     initial: false
     conditional: VIDEO_TRACK
+outOfProcessMediaEnabled:
+    initial: false
+    conditional: VIDEO
 scrollingCoordinatorEnabled:
   initial: false
 scrollingTreeIncludesFrames:

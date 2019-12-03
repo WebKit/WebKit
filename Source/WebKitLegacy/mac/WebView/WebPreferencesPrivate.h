@@ -649,6 +649,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL encryptedMediaAPIEnabled;
 @property (nonatomic) BOOL pictureInPictureAPIEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
+@property (nonatomic) BOOL outOfProcessMediaEnabled;
 @property (nonatomic) BOOL viewportFitEnabled;
 @property (nonatomic) BOOL constantPropertiesEnabled;
 @property (nonatomic) BOOL colorFilterEnabled;

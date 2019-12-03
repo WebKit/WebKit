@@ -3209,6 +3209,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setGenericCueAPIEnabled(preferences.genericCueAPIEnabled);
 #endif
 
+#if ENABLE(VIDEO)
+    settings.setOutOfProcessMediaEnabled(preferences.outOfProcessMediaEnabled);
+#endif
+
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);
 
     settings.setAllowMediaContentTypesRequiringHardwareSupportAsFallback(preferences.allowMediaContentTypesRequiringHardwareSupportAsFallback);

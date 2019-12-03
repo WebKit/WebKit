@@ -617,6 +617,10 @@ public:
         @NO, WebKitGenericCueAPIEnabledKey,
 #endif
 
+#if ENABLE(VIDEO)
+        @NO, WebKitOutOfProcessMediaEnabledKey,
+#endif
+
 #if ENABLE(MEDIA_STREAM)
         @NO, WebKitMockCaptureDevicesEnabledPreferenceKey,
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
@@ -3366,6 +3370,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setGenericCueAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
+}
+
+- (BOOL)outOfProcessMediaEnabled
+{
+    return [self _boolValueForKey:WebKitOutOfProcessMediaEnabledKey];
+}
+
+- (void)setOutOfProcessMediaEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitOutOfProcessMediaEnabledKey];
 }
 
 - (BOOL)viewportFitEnabled
