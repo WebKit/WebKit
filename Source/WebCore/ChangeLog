@@ -1,3 +1,20 @@
+2019-12-03  youenn fablet  <youenn@apple.com>
+
+        MediaRecorderPrivateWriter should not be destroyed until finishing its writing task completion handler is called
+        https://bugs.webkit.org/show_bug.cgi?id=204789
+        <rdar://problem/57561143>
+
+        Reviewed by Eric Carlson.
+
+        When stopping the recorder, we might stop recording the private writer without calling fetchData.
+        In that case, we do not wait for the writing completion handler.
+        Fix this by using the semaphore at the end of stopRecording.
+        Covered by existing test.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        (WebCore::MediaRecorderPrivateWriter::fetchData):
+
 2019-12-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] TextUtil::width should not overflow when word/letter-spacing is larger than LayoutUnit::max

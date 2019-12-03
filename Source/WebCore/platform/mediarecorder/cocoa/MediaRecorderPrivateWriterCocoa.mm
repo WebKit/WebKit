@@ -331,6 +331,9 @@ void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData
 
 void MediaRecorderPrivateWriter::stopRecording()
 {
+    if (m_isStopped)
+        return;
+
     m_isStopped = true;
     if (!m_hasStartedWriting)
         return;
@@ -340,10 +343,10 @@ void MediaRecorderPrivateWriter::stopRecording()
 
     if (m_audioInput)
         m_finishWritingAudioSemaphore.wait();
-    auto weakPtr = makeWeakPtr(*this);
-    [m_writer finishWritingWithCompletionHandler:[this, weakPtr] {
+
+    [m_writer finishWritingWithCompletionHandler:[this, weakPtr = makeWeakPtr(*this)]() mutable {
         m_finishWritingSemaphore.signal();
-        callOnMainThread([this, weakPtr] {
+        callOnMainThread([this, weakPtr = WTFMove(weakPtr)] {
             if (!weakPtr)
                 return;
             m_isStopped = false;
@@ -352,6 +355,7 @@ void MediaRecorderPrivateWriter::stopRecording()
             clear();
         });
     }];
+    m_finishWritingSemaphore.wait();
 }
 
 RefPtr<SharedBuffer> MediaRecorderPrivateWriter::fetchData()
@@ -359,7 +363,6 @@ RefPtr<SharedBuffer> MediaRecorderPrivateWriter::fetchData()
     if ((m_path.isEmpty() && !m_isStopped) || !m_hasStartedWriting)
         return nullptr;
     
-    m_finishWritingSemaphore.wait();
     return SharedBuffer::createWithContentsOfFile(m_path);
 }
 
