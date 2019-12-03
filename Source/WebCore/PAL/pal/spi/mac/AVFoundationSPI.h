@@ -28,6 +28,10 @@
 #import <objc/runtime.h>
 #import <wtf/SoftLinking.h>
 
+#if HAVE(AVCONTENTKEYSESSION)
+#import <AVFoundation/AVContentKeySession.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVFoundation/AVAssetCache_Private.h>
@@ -154,7 +158,6 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserStreamDataFlags) {
 NS_ASSUME_NONNULL_END
 
 #if HAVE(AVCONTENTKEYSESSION)
-#import <AVFoundation/AVContentKeySession.h>
 @interface AVStreamDataParser () <AVContentKeyRecipient>
 @end
 #endif
@@ -162,6 +165,18 @@ NS_ASSUME_NONNULL_END
 #endif // !PLATFORM(IOS_FAMILY)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(AVCONTENTKEYSESSION)
+@interface AVContentKeyReportGroup : NSObject
+@property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
+- (void)expire;
+- (void)processContentKeyRequestWithIdentifier:(nullable id)identifier initializationData:(nullable NSData *)initializationData options:(nullable NSDictionary<NSString *, id> *)options;
+@end
+
+@interface AVContentKeySession (AVContentKeyGroup_Support)
+- (nonnull AVContentKeyReportGroup *)makeContentKeyGroup;
+@end
+#endif // HAVE(AVCONTENTKEYSESSION)
 
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 NS_ASSUME_NONNULL_BEGIN

@@ -22948,6 +22948,8 @@
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
 				1A4832B21A953BA6008B4DFE /* LocalizedStringsCocoa.mm */,
+				CD53555723748E5900A613BD /* MediaToolboxSoftLink.cpp */,
+				CD53555623748E5900A613BD /* MediaToolboxSoftLink.h */,
 				C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */,
 				A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */,
 				A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */,

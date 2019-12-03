@@ -34,6 +34,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS AVContentKeyReportGroup;
 OBJC_CLASS AVContentKeyRequest;
 OBJC_CLASS AVContentKeySession;
 OBJC_CLASS NSData;
@@ -46,8 +47,24 @@ namespace WebCore {
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
 struct CDMMediaCapability;
 
-class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
+class AVContentKeySessionDelegateClient {
 public:
+    virtual ~AVContentKeySessionDelegateClient() = default;
+    virtual void didProvideRequest(AVContentKeyRequest*) = 0;
+    virtual void didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&&) = 0;
+    virtual void didProvideRenewingRequest(AVContentKeyRequest*) = 0;
+    virtual void didProvidePersistableRequest(AVContentKeyRequest*) = 0;
+    virtual void didFailToProvideRequest(AVContentKeyRequest*, NSError*) = 0;
+    virtual void requestDidSucceed(AVContentKeyRequest*) = 0;
+    virtual bool shouldRetryRequestForReason(AVContentKeyRequest*, NSString*) = 0;
+    virtual void sessionIdentifierChanged(NSData*) = 0;
+    virtual void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) = 0;
+    virtual void outputObscuredDueToInsufficientExternalProtectionChanged(bool) = 0;
+};
+
+class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
+public:
+    CDMInstanceFairPlayStreamingAVFObjC();
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
 
     static bool supportsPersistableState();
@@ -70,20 +87,36 @@ public:
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
+    AVContentKeySession* contentKeySession() { return m_session.get(); }
 
-    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+    // AVContentKeySessionDelegateClient
+    void didProvideRequest(AVContentKeyRequest*) final;
+    void didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&&) final;
+    void didProvideRenewingRequest(AVContentKeyRequest*) final;
+    void didProvidePersistableRequest(AVContentKeyRequest*) final;
+    void didFailToProvideRequest(AVContentKeyRequest*, NSError*) final;
+    void requestDidSucceed(AVContentKeyRequest*) final;
+    bool shouldRetryRequestForReason(AVContentKeyRequest*, NSString*) final;
+    void sessionIdentifierChanged(NSData*) final;
+    void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) final;
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
 
     using Keys = Vector<Ref<SharedBuffer>>;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
+    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(AVContentKeyReportGroup*) const;
 
 private:
+    void ensureSession();
+
+    RetainPtr<AVContentKeySession> m_session;
+    RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
 };
 
-class CDMInstanceSessionFairPlayStreamingAVFObjC final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC> {
+class CDMInstanceSessionFairPlayStreamingAVFObjC final : public CDMInstanceSession, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC> {
 public:
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
@@ -98,19 +131,22 @@ public:
     void setClient(WeakPtr<CDMInstanceSessionClient>&&) final;
     void clearClient() final;
 
-    void didProvideRequest(AVContentKeyRequest*);
-    void didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
-    void didProvideRenewingRequest(AVContentKeyRequest*);
-    void didProvidePersistableRequest(AVContentKeyRequest*);
-    void didFailToProvideRequest(AVContentKeyRequest*, NSError*);
-    void requestDidSucceed(AVContentKeyRequest*);
-    bool shouldRetryRequestForReason(AVContentKeyRequest*, NSString*);
-    void sessionIdentifierChanged(NSData*);
-    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+    // AVContentKeySessionDelegateClient
+    void didProvideRequest(AVContentKeyRequest*) final;
+    void didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&&) final;
+    void didProvideRenewingRequest(AVContentKeyRequest*) final;
+    void didProvidePersistableRequest(AVContentKeyRequest*) final;
+    void didFailToProvideRequest(AVContentKeyRequest*, NSError*) final;
+    void requestDidSucceed(AVContentKeyRequest*) final;
+    bool shouldRetryRequestForReason(AVContentKeyRequest*, NSString*) final;
+    void sessionIdentifierChanged(NSData*) final;
+    void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) final;
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
 
     using Keys = CDMInstanceFairPlayStreamingAVFObjC::Keys;
     Keys keyIDs();
-    AVContentKeySession* contentKeySession() { return m_session.get(); }
+    AVContentKeySession* contentKeySession() { return m_session ? m_session.get() : m_instance->contentKeySession(); }
+    AVContentKeyReportGroup* contentKeyReportGroup() { return m_group.get(); }
 
     struct Request {
         AtomString initType;
@@ -119,7 +155,7 @@ public:
     };
 
 private:
-    AVContentKeySession* ensureSession();
+    bool ensureSessionOrGroup();
     bool isLicenseTypeSupported(LicenseType) const;
 
     KeyStatusVector keyStatuses() const;
@@ -127,6 +163,7 @@ private:
     AVContentKeyRequest* lastKeyRequest() const;
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
+    RetainPtr<AVContentKeyReportGroup> m_group;
     RetainPtr<AVContentKeySession> m_session;
     Optional<Request> m_currentRequest;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
