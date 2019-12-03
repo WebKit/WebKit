@@ -42,15 +42,17 @@ struct InlineContent;
 }
 
 namespace Layout {
-
 class LayoutTreeContent;
 class LayoutState;
+}
 
-class RenderBlockFlowLineLayout {
+namespace LayoutIntegration {
+
+class LineLayout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderBlockFlowLineLayout(const RenderBlockFlow&);
-    ~RenderBlockFlowLineLayout();
+    LineLayout(const RenderBlockFlow&);
+    ~LineLayout();
 
     static bool canUseFor(const RenderBlockFlow&);
 
@@ -65,12 +67,12 @@ public:
     LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;
 
 private:
-    const Container& rootLayoutBox() const;
+    const Layout::Container& rootLayoutBox() const;
     void prepareRootGeometryForLayout();
 
     const RenderBlockFlow& m_flow;
-    std::unique_ptr<const LayoutTreeContent> m_treeContent;
-    std::unique_ptr<LayoutState> m_layoutState;
+    std::unique_ptr<const Layout::LayoutTreeContent> m_treeContent;
+    std::unique_ptr<Layout::LayoutState> m_layoutState;
     LayoutUnit m_contentLogicalHeight;
 };
 

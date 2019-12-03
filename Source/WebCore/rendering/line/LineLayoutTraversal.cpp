@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LineLayoutTraversal.h"
 
-#include "RenderBlockFlowLineLayout.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "RenderLineBreak.h"
 
 namespace WebCore {
@@ -85,8 +85,8 @@ TextBoxIterator firstTextBoxFor(const RenderText& text)
     }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lfcLineLayout = flow.lfcLineLayout())
-        return lfcLineLayout->textBoxesFor(text);
+    if (auto* layoutFormattingContextLineLayout = flow.layoutFormattingContextLineLayout())
+        return layoutFormattingContextLineLayout->textBoxesFor(text);
 #endif
 
     return { ComplexPath { text.firstTextBox() } };
@@ -139,8 +139,8 @@ ElementBoxIterator elementBoxFor(const RenderLineBreak& renderElement)
     }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lfcLineLayout = flow.lfcLineLayout())
-        return lfcLineLayout->elementBoxFor(renderElement);
+    if (auto* layoutFormattingContextLineLayout = flow.layoutFormattingContextLineLayout())
+        return layoutFormattingContextLineLayout->elementBoxFor(renderElement);
 #endif
 
     return { ComplexPath(renderElement.inlineBoxWrapper()) };

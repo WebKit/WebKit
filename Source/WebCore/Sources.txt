@@ -1444,7 +1444,7 @@ layout/inlineformatting/InlineLineBuilder.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/LineLayoutContext.cpp
 layout/inlineformatting/text/TextUtil.cpp
-layout/integration/RenderBlockFlowLineLayout.cpp
+layout/integration/LayoutIntegrationLineLayout.cpp
 layout/invalidation/InvalidationContext.cpp
 layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp

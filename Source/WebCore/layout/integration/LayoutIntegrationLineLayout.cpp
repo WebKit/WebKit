@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RenderBlockFlowLineLayout.h"
+#include "LayoutIntegrationLineLayout.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -41,17 +41,17 @@
 #include "SimpleLineLayout.h"
 
 namespace WebCore {
-namespace Layout {
+namespace LayoutIntegration {
 
-RenderBlockFlowLineLayout::RenderBlockFlowLineLayout(const RenderBlockFlow& flow)
+LineLayout::LineLayout(const RenderBlockFlow& flow)
     : m_flow(flow)
 {
-    m_treeContent = TreeBuilder::buildLayoutTree(flow);
+    m_treeContent = Layout::TreeBuilder::buildLayoutTree(flow);
 }
 
-RenderBlockFlowLineLayout::~RenderBlockFlowLineLayout() = default;
+LineLayout::~LineLayout() = default;
 
-bool RenderBlockFlowLineLayout::canUseFor(const RenderBlockFlow& flow)
+bool LineLayout::canUseFor(const RenderBlockFlow& flow)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         return false;
@@ -69,23 +69,23 @@ bool RenderBlockFlowLineLayout::canUseFor(const RenderBlockFlow& flow)
     return true;
 }
 
-void RenderBlockFlowLineLayout::layout()
+void LineLayout::layout()
 {
     if (!m_layoutState)
-        m_layoutState = makeUnique<LayoutState>(*m_treeContent);
+        m_layoutState = makeUnique<Layout::LayoutState>(*m_treeContent);
 
     prepareRootGeometryForLayout();
 
-    auto layoutContext = LayoutContext { *m_layoutState };
-    auto invalidationState = InvalidationState { };
+    auto layoutContext = Layout::LayoutContext { *m_layoutState };
+    auto invalidationState = Layout::InvalidationState { };
 
     layoutContext.layoutWithPreparedRootGeometry(invalidationState);
 
-    auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent()->lineBoxes;
+    auto& lineBoxes = downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent()->lineBoxes;
     m_contentLogicalHeight = lineBoxes.last().logicalBottom() - lineBoxes.first().logicalTop();
 }
 
-void RenderBlockFlowLineLayout::prepareRootGeometryForLayout()
+void LineLayout::prepareRootGeometryForLayout()
 {
     auto& displayBox = m_layoutState->displayBoxForRootLayoutBox();
 
@@ -95,12 +95,12 @@ void RenderBlockFlowLineLayout::prepareRootGeometryForLayout()
     displayBox.setContentBoxWidth(m_flow.contentSize().width());
 }
 
-const Display::InlineContent* RenderBlockFlowLineLayout::displayInlineContent() const
+const Display::InlineContent* LineLayout::displayInlineContent() const
 {
-    return downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
+    return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
 }
 
-void RenderBlockFlowLineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     auto& graphicsContext = paintInfo.context();
 
@@ -112,7 +112,7 @@ void RenderBlockFlowLineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& p
     graphicsContext.restore();
 }
 
-LineLayoutTraversal::TextBoxIterator RenderBlockFlowLineLayout::textBoxesFor(const RenderText& renderText) const
+LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
@@ -136,7 +136,7 @@ LineLayoutTraversal::TextBoxIterator RenderBlockFlowLineLayout::textBoxesFor(con
     return { LineLayoutTraversal::DisplayRunPath(*inlineContent, *firstIndex, lastIndex + 1) };
 }
 
-LineLayoutTraversal::ElementBoxIterator RenderBlockFlowLineLayout::elementBoxFor(const RenderLineBreak& renderLineBreak) const
+LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLineBreak& renderLineBreak) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
@@ -153,7 +153,7 @@ LineLayoutTraversal::ElementBoxIterator RenderBlockFlowLineLayout::elementBoxFor
     return { };
 }
 
-const Container& RenderBlockFlowLineLayout::rootLayoutBox() const
+const Layout::Container& LineLayout::rootLayoutBox() const
 {
     return m_treeContent->rootLayoutBox();
 }

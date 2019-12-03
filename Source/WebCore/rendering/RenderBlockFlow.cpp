@@ -35,9 +35,9 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineTextBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "Logging.h"
-#include "RenderBlockFlowLineLayout.h"
 #include "RenderCombineText.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
@@ -670,8 +670,8 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
 {
     auto computeLineLayoutPath = [&] {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (Layout::RenderBlockFlowLineLayout::canUseFor(*this))
-            return LFCPath;
+        if (LayoutIntegration::LineLayout::canUseFor(*this))
+            return LayoutFormattingContextPath;
 #endif
         if (SimpleLineLayout::canUseFor(*this))
             return SimpleLinesPath;
@@ -687,7 +687,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (lineLayoutPath() == LFCPath) {
+    if (lineLayoutPath() == LayoutFormattingContextPath) {
         layoutLFCLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
@@ -3549,8 +3549,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
     ASSERT(childrenInline());
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (lfcLineLayout()) {
-        lfcLineLayout()->paint(paintInfo, paintOffset);
+    if (layoutFormattingContextLineLayout()) {
+        layoutFormattingContextLineLayout()->paint(paintInfo, paintOffset);
         return;
     }
 #endif
@@ -3630,7 +3630,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         ASSERT(!simpleLineLayout());
         setLineLayoutPath(UndeterminedPath);
         return;
-    case LFCPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
+    case LayoutFormattingContextPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
         m_lineLayout = WTF::Monostate();
@@ -3670,17 +3670,17 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    if (!lfcLineLayout())
-        m_lineLayout = makeUnique<Layout::RenderBlockFlowLineLayout>(*this);
+    if (!layoutFormattingContextLineLayout())
+        m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
 
-    auto& lfcLineLayout = *this->lfcLineLayout();
+    auto& layoutFormattingContextLineLayout = *this->layoutFormattingContextLineLayout();
 
     for (auto& renderer : childrenOfType<RenderObject>(*this))
         renderer.clearNeedsLayout();
 
-    lfcLineLayout.layout();
+    layoutFormattingContextLineLayout.layout();
 
-    auto contentHeight = lfcLineLayout.contentLogicalHeight();
+    auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
     auto contentTop = borderAndPaddingBefore();
     auto contentBottom = contentTop + contentHeight;
     auto totalHeight = contentBottom + borderAndPaddingAfter();

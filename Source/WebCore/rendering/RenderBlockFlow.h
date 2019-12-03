@@ -38,8 +38,8 @@ class RenderMultiColumnFlow;
 class RenderRubyRun;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-namespace Layout {
-class RenderBlockFlowLineLayout;
+namespace LayoutIntegration {
+class LineLayout;
 }
 #endif
 
@@ -344,7 +344,7 @@ public:
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
 
-    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, LFCPath, ForceLineBoxesPath };
+    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, LayoutFormattingContextPath, ForceLineBoxesPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
@@ -364,8 +364,8 @@ public:
     const ComplexLineLayout* complexLineLayout() const;
     ComplexLineLayout* complexLineLayout();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const Layout::RenderBlockFlowLineLayout* lfcLineLayout() const;
-    Layout::RenderBlockFlowLineLayout* lfcLineLayout();
+    const LayoutIntegration::LineLayout* layoutFormattingContextLineLayout() const;
+    LayoutIntegration::LineLayout* layoutFormattingContextLineLayout();
 #endif
 
     void ensureLineBoxes();
@@ -547,7 +547,7 @@ private:
     void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    bool hasLFCLineLayout() const;
+    bool hasLayoutFormattingContextLineLayout() const;
     void layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 #endif
 
@@ -592,7 +592,7 @@ private:
         WTF::Monostate,
         Ref<SimpleLineLayout::Layout>,
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        std::unique_ptr<Layout::RenderBlockFlowLineLayout>,
+        std::unique_ptr<LayoutIntegration::LineLayout>,
 #endif
         std::unique_ptr<ComplexLineLayout>
     > m_lineLayout;
@@ -638,19 +638,19 @@ inline SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout()
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-inline bool RenderBlockFlow::hasLFCLineLayout() const
+inline bool RenderBlockFlow::hasLayoutFormattingContextLineLayout() const
 {
-    return WTF::holds_alternative<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout);
+    return WTF::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
 }
 
-inline const Layout::RenderBlockFlowLineLayout* RenderBlockFlow::lfcLineLayout() const
+inline const LayoutIntegration::LineLayout* RenderBlockFlow::layoutFormattingContextLineLayout() const
 {
-    return hasLFCLineLayout() ? WTF::get<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLayoutFormattingContextLineLayout() ? WTF::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 
-inline Layout::RenderBlockFlowLineLayout* RenderBlockFlow::lfcLineLayout()
+inline LayoutIntegration::LineLayout* RenderBlockFlow::layoutFormattingContextLineLayout()
 {
-    return hasLFCLineLayout() ? WTF::get<std::unique_ptr<Layout::RenderBlockFlowLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLayoutFormattingContextLineLayout() ? WTF::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 #endif
 
