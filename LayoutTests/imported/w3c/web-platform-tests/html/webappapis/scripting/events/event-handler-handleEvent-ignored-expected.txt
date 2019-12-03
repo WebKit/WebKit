@@ -1,0 +1,4 @@
+
+FAIL plain object "mouseenter" handler assert_unreached: "handleEvent" property should not be looked up Reached unreachable code
+FAIL non-callable "message" handler that is instance of Function assert_unreached: "handleEvent" property should not be looked up Reached unreachable code
+

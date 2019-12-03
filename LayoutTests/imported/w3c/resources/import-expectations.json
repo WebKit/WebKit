@@ -272,7 +272,6 @@
     "web-platform-tests/html/webappapis/dynamic-markup-insertion": "import", 
     "web-platform-tests/html/webappapis/idle-callbacks": "skip", 
     "web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_raf.html": "skip", 
-    "web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-error": "skip", 
     "web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections": "skip", 
     "web-platform-tests/html/webappapis/the-windoworworkerglobalscope-mixin": "import", 
     "web-platform-tests/http": "skip", 
