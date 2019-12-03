@@ -74,26 +74,30 @@ void RenderBlockFlowLineLayout::layout()
     if (!m_layoutState)
         m_layoutState = makeUnique<LayoutState>(*m_treeContent);
 
-    auto& rootContainer = m_layoutState->root();
+    prepareRootGeometryForLayout();
+
     auto layoutContext = LayoutContext { *m_layoutState };
     auto invalidationState = InvalidationState { };
-    layoutContext.layout(m_flow.contentSize(), invalidationState);
 
-    auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootContainer)).displayInlineContent()->lineBoxes;
-    auto height = lineBoxes.last().logicalBottom();
+    layoutContext.layoutWithPreparedRootGeometry(invalidationState);
 
-    auto& displayBox = m_layoutState->displayBoxForLayoutBox(rootContainer);
-    displayBox.setContentBoxHeight(height);
+    auto& lineBoxes = downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent()->lineBoxes;
+    m_contentLogicalHeight = lineBoxes.last().logicalBottom() - lineBoxes.first().logicalTop();
 }
 
-LayoutUnit RenderBlockFlowLineLayout::contentBoxHeight() const
+void RenderBlockFlowLineLayout::prepareRootGeometryForLayout()
 {
-    return m_layoutState ? m_layoutState->displayBoxForLayoutBox(m_layoutState->root()).contentBoxHeight() : 0_lu;
+    auto& displayBox = m_layoutState->displayBoxForRootLayoutBox();
+
+    // Don't set marging properties or height. These should not be be accessed by inline layout.
+    displayBox.setBorder(Layout::Edges { { m_flow.borderStart(), m_flow.borderEnd() }, { m_flow.borderBefore(), m_flow.borderAfter() } });
+    displayBox.setPadding(Layout::Edges { { m_flow.paddingStart(), m_flow.paddingEnd() }, { m_flow.paddingBefore(), m_flow.paddingAfter() } });
+    displayBox.setContentBoxWidth(m_flow.contentSize().width());
 }
 
 const Display::InlineContent* RenderBlockFlowLineLayout::displayInlineContent() const
 {
-    return downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(m_treeContent->rootLayoutBox())).displayInlineContent();
+    return downcast<InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
 }
 
 void RenderBlockFlowLineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -147,6 +151,11 @@ LineLayoutTraversal::ElementBoxIterator RenderBlockFlowLineLayout::elementBoxFor
     }
 
     return { };
+}
+
+const Container& RenderBlockFlowLineLayout::rootLayoutBox() const
+{
+    return m_treeContent->rootLayoutBox();
 }
 
 }

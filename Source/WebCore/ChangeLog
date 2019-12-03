@@ -1,3 +1,58 @@
+2019-12-03  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Setup root box properties
+        https://bugs.webkit.org/show_bug.cgi?id=204743
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fast/layoutformattingcontext/flow-integration-basic.html
+
+        Line layout needs to know about flow borders and padding so that boxes are offset correctly.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::layoutWithPreparedRootGeometry):
+
+        Split setup and layout into separate functions.
+
+        * layout/LayoutContext.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::displayBoxForLayoutRoot):
+        * layout/LayoutState.h:
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        (WebCore::Display::Painter::paint):
+        (WebCore::Display::Painter::paintInlineFlow):
+
+        Avoid accessing tree root box properties when painting (since margins are not set up).
+
+        * layout/integration/RenderBlockFlowLineLayout.cpp: Renamed from Source/WebCore/layout/RenderBlockFlowLineLayout.cpp.
+
+        Moved to integration subdirectory.
+
+        (WebCore::Layout::RenderBlockFlowLineLayout::layout):
+
+        Drop the content size paramater, the caller is responsible of setting up the root display box.
+
+        (WebCore::Layout::RenderBlockFlowLineLayout::prepareRootDisplayBoxForLayout):
+
+        Setup padding and borders.
+
+        (WebCore::Layout::RenderBlockFlowLineLayout::displayInlineContent const):
+        (WebCore::Layout::RenderBlockFlowLineLayout::rootLayoutBox const):
+        * layout/integration/RenderBlockFlowLineLayout.h: Renamed from Source/WebCore/layout/RenderBlockFlowLineLayout.h.
+        (WebCore::Layout::RenderBlockFlowLineLayout::contentLogicalHeight const):
+
+        Use a member to pass content height.
+
+        * layout/layouttree/LayoutTreeBuilder.h:
+        (WebCore::Layout::LayoutTreeContent::layoutBoxForRenderer const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutLFCLines):
+
 2019-12-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Implement createImageBitmap(OffscreenCanvas)

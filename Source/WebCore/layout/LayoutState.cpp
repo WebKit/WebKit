@@ -57,6 +57,11 @@ LayoutState::LayoutState(const LayoutTreeContent& layoutTreeContent)
 
 LayoutState::~LayoutState() = default;
 
+Display::Box& LayoutState::displayBoxForRootLayoutBox()
+{
+    return displayBoxForLayoutBox(m_layoutTreeContent->rootLayoutBox());
+}
+
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox)
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [] {

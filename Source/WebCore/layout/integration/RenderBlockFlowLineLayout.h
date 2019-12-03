@@ -55,7 +55,8 @@ public:
     static bool canUseFor(const RenderBlockFlow&);
 
     void layout();
-    LayoutUnit contentBoxHeight() const;
+
+    LayoutUnit contentLogicalHeight() const { return m_contentLogicalHeight; }
     const Display::InlineContent* displayInlineContent() const;
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
@@ -64,9 +65,13 @@ public:
     LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;
 
 private:
+    const Container& rootLayoutBox() const;
+    void prepareRootGeometryForLayout();
+
     const RenderBlockFlow& m_flow;
-    std::unique_ptr<LayoutTreeContent> m_treeContent;
+    std::unique_ptr<const LayoutTreeContent> m_treeContent;
     std::unique_ptr<LayoutState> m_layoutState;
+    LayoutUnit m_contentLogicalHeight;
 };
 
 }

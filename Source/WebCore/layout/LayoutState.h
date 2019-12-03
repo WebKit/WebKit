@@ -62,6 +62,7 @@ public:
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
 #endif
 
+    Display::Box& displayBoxForRootLayoutBox();
     Display::Box& displayBoxForLayoutBox(const Box& layoutBox);
     const Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
     bool hasDisplayBox(const Box& layoutBox) const { return m_layoutToDisplayBox.contains(&layoutBox); }

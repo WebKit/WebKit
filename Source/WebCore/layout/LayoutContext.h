@@ -52,7 +52,9 @@ class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
     LayoutContext(LayoutState&);
+
     void layout(const LayoutSize& rootContentBoxSize, InvalidationState&);
+    void layoutWithPreparedRootGeometry(InvalidationState&);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 

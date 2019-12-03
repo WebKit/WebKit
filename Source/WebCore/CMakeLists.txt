@@ -105,6 +105,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/layout/floats"
     "${WEBCORE_DIR}/layout/inlineformatting"
     "${WEBCORE_DIR}/layout/inlineformatting/text"
+    "${WEBCORE_DIR}/layout/integration"
     "${WEBCORE_DIR}/layout/layouttree"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"

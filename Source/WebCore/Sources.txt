@@ -1422,7 +1422,6 @@ layout/LayoutContext.cpp
 layout/LayoutPhase.cpp
 layout/LayoutState.cpp
 layout/LayoutUnits.cpp
-layout/RenderBlockFlowLineLayout.cpp
 layout/Verification.cpp
 layout/blockformatting/BlockFormattingContext.cpp
 layout/blockformatting/BlockFormattingContextGeometry.cpp
@@ -1445,6 +1444,7 @@ layout/inlineformatting/InlineLineBuilder.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/LineLayoutContext.cpp
 layout/inlineformatting/text/TextUtil.cpp
+layout/integration/RenderBlockFlowLineLayout.cpp
 layout/invalidation/InvalidationContext.cpp
 layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp

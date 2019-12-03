@@ -58,12 +58,11 @@ LayoutContext::LayoutContext(LayoutState& layoutState)
 
 void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationState& invalidationState)
 {
-    PhaseScope scope(Phase::Type::Layout);
     // Set the geometry on the root.
     // Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
     // ICB establishes the initial BFC, but it does not live in a formatting context and while a non-ICB root(subtree layout) has to have a formatting context,
     // we could not lay it out even if we wanted to since it's outside of this LayoutContext.
-    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutState().root());
+    auto& displayBox = layoutState().displayBoxForRootLayoutBox();
     displayBox.setHorizontalMargin({ });
     displayBox.setHorizontalComputedMargin({ });
     displayBox.setVerticalMargin({ });
@@ -73,6 +72,13 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationSta
     displayBox.setContentBoxHeight(rootContentBoxSize.height());
     displayBox.setContentBoxWidth(rootContentBoxSize.width());
 
+    layoutWithPreparedRootGeometry(invalidationState);
+}
+
+void LayoutContext::layoutWithPreparedRootGeometry(InvalidationState& invalidationState)
+{
+    PhaseScope scope(Phase::Type::Layout);
+
     auto& formattingContextRootsForLayout = invalidationState.formattingContextRoots();
     // When invalidation is empty, we assume constraint mutation and start running layout on the context root. Layout logic should be able to figure out the damage.
     if (formattingContextRootsForLayout.computesEmpty())
@@ -81,6 +87,7 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationSta
     for (auto& formattingContextRoot : formattingContextRootsForLayout)
         layoutFormattingContextSubtree(formattingContextRoot, invalidationState);
 }
+
 
 void LayoutContext::layoutFormattingContextSubtree(const Container& formattingContextRoot, InvalidationState& invalidationState)
 {

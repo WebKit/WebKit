@@ -454,6 +454,7 @@ void printLayoutTreeForLiveDocuments()
 
         auto& layoutRoot = layoutState.root();
         auto invalidationState = InvalidationState { };
+
         LayoutContext(layoutState).layout(renderView.size(), invalidationState);
         showLayoutTree(layoutRoot, &layoutState);
     }

@@ -3680,11 +3680,15 @@ void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, Layout
 
     lfcLineLayout.layout();
 
-    LayoutUnit lineLayoutHeight = lfcLineLayout.contentBoxHeight();
-    LayoutUnit lineLayoutTop = borderAndPaddingBefore();
-    repaintLogicalTop = lineLayoutTop;
-    repaintLogicalBottom = repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter();
-    setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
+    auto contentHeight = lfcLineLayout.contentLogicalHeight();
+    auto contentTop = borderAndPaddingBefore();
+    auto contentBottom = contentTop + contentHeight;
+    auto totalHeight = contentBottom + borderAndPaddingAfter();
+
+    repaintLogicalTop = contentTop;
+    repaintLogicalBottom = contentBottom;
+
+    setLogicalHeight(totalHeight);
 }
 #endif
 

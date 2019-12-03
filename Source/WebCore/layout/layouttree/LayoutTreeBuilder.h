@@ -57,15 +57,17 @@ public:
 
     void addBox(std::unique_ptr<Box> box) { m_boxes.add(WTFMove(box)); }
 
-    using RenderObjectToLayoutBoxMap = HashMap<const RenderObject*, Box*>;
     Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
+    const Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_renderObjectToLayoutBox.get(&renderer); }
+    
     void addLayoutBoxForRenderer(const RenderObject& renderer, Box& layoutBox) { m_renderObjectToLayoutBox.add(&renderer, &layoutBox); }
 
 private:
     const RenderBox& m_rootRenderer;
     std::unique_ptr<Container> m_rootLayoutBox;
     HashSet<std::unique_ptr<Box>> m_boxes;
-    RenderObjectToLayoutBoxMap m_renderObjectToLayoutBox;
+
+    HashMap<const RenderObject*, Box*> m_renderObjectToLayoutBox;
 };
 
 class TreeBuilder {

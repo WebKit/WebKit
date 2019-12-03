@@ -16629,6 +16629,7 @@
 				1199FA58208E3C4C002358CC /* displaytree */,
 				6FCFC055212DACC2007695D2 /* floats */,
 				115CFA9A208BC140001E6991 /* inlineformatting */,
+				E4FB4B1E2395356F003C336A /* integration */,
 				6F95DE4A237B883000E517E1 /* invalidation */,
 				115CFA90208B9441001E6991 /* layouttree */,
 				6FC5CA9122E3593300B13E11 /* tableformatting */,
@@ -16647,8 +16648,6 @@
 				115CA83023328B1E00FD3B08 /* LayoutUnits.cpp */,
 				6F73918C2106CEDD006AF262 /* LayoutUnits.h */,
 				6FE7AA2621C37B6300296DCD /* MarginTypes.h */,
-				E4ABABDE2360893D00FA4345 /* RenderBlockFlowLineLayout.cpp */,
-				E4ABABDB236088FD00FA4345 /* RenderBlockFlowLineLayout.h */,
 				11FF02D520BA3C810083F25B /* Verification.cpp */,
 			);
 			path = layout;
@@ -16691,6 +16690,7 @@
 		115CFA9A208BC140001E6991 /* inlineformatting */ = {
 			isa = PBXGroup;
 			children = (
+				E435505223953457004829C0 /* integration */,
 				6FE7DDDD20EC6E8B008B5B4E /* text */,
 				6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */,
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
@@ -27021,6 +27021,13 @@
 			path = domjit;
 			sourceTree = "<group>";
 		};
+		E435505223953457004829C0 /* integration */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = integration;
+			sourceTree = "<group>";
+		};
 		E46E97860DAAD61B0071E894 /* animation */ = {
 			isa = PBXGroup;
 			children = (
@@ -27142,6 +27149,15 @@
 				E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */,
 			);
 			path = updating;
+			sourceTree = "<group>";
+		};
+		E4FB4B1E2395356F003C336A /* integration */ = {
+			isa = PBXGroup;
+			children = (
+				E4ABABDE2360893D00FA4345 /* RenderBlockFlowLineLayout.cpp */,
+				E4ABABDB236088FD00FA4345 /* RenderBlockFlowLineLayout.h */,
+			);
+			path = integration;
 			sourceTree = "<group>";
 		};
 		ED501DC90B249F3900AE18D9 /* mac */ = {
