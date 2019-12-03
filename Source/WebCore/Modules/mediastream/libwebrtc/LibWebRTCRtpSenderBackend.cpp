@@ -80,7 +80,7 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
 
     if (!track)
         stopSource();
-    else if (auto* currentTrack = sender.track()) {
+    else if (sender.track()) {
         switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSource>& source) {
             ASSERT(track->source().type() == RealtimeMediaSource::Type::Audio);
             source->stop();
