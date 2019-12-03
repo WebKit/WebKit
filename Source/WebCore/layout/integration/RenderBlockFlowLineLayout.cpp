@@ -53,7 +53,7 @@ RenderBlockFlowLineLayout::~RenderBlockFlowLineLayout() = default;
 
 bool RenderBlockFlowLineLayout::canUseFor(const RenderBlockFlow& flow)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextRenderTreeIntegrationEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         return false;
 
     // Initially only a subset of SLL features is supported.

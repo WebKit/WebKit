@@ -1642,17 +1642,17 @@ DataListElementEnabled:
 LayoutFormattingContextEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Next-generation layout"
-  humanReadableDescription: "Enable next-generation layout"
+  humanReadableName: "Full next-generation layout (LFC)"
+  humanReadableDescription: "Enable full next-generation layout (LFC)"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-LayoutFormattingContextRenderTreeIntegrationEnabled:
+LayoutFormattingContextIntegrationEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Next-generation inline layout in render tree"
-  humanReadableDescription: "Enable next-generation inline layout in render tree"
+  humanReadableName: "Next-generation line layout integration (LFC)"
+  humanReadableDescription: "Enable next-generation line layout integration (LFC)"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)

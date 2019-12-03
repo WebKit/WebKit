@@ -1,3 +1,20 @@
+2019-12-03  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Shorten feature flag name
+        https://bugs.webkit.org/show_bug.cgi?id=204788
+
+        Reviewed by Sam Weinig.
+
+        LayoutFormattingContextRenderTreeIntegrationEnabled -> LayoutFormattingContextIntegrationEnabled
+
+        * layout/integration/RenderBlockFlowLineLayout.cpp:
+        (WebCore::Layout::RenderBlockFlowLineLayout::canUseFor):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLayoutFormattingContextIntegrationEnabled):
+        (WebCore::RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setLayoutFormattingContextRenderTreeIntegrationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::layoutFormattingContextRenderTreeIntegrationEnabled const): Deleted.
+
 2019-12-03  youenn fablet  <youenn@apple.com>
 
         MediaRecorderPrivateWriter should not be destroyed until finishing its writing task completion handler is called

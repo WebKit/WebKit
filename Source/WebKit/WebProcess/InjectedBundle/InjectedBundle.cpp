@@ -261,8 +261,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (preference == "LayoutFormattingContextEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextEnabled(enabled);
-    if (preference == "LayoutFormattingContextRenderTreeIntegrationEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextRenderTreeIntegrationEnabled(enabled);
+    if (preference == "LayoutFormattingContextIntegrationEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextIntegrationEnabled(enabled);
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
