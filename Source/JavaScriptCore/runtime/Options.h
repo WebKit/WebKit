@@ -97,6 +97,8 @@ public:
 
     static bool isAvailable(ID, Availability);
 
+    static bool isUsingFuzzerAgent() { return g_jscConfig.options.isUsingFuzzerAgent; }
+
 private:
     struct ConstMetaData {
         const char* name;

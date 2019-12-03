@@ -536,6 +536,21 @@ inline void* Options::addressOfOptionDefault(Options::ID id)
     return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
 }
 
+static void computeIfUsingFuzzerAgent()
+{
+    g_jscConfig.options.isUsingFuzzerAgent = false;
+#define CHECK_IF_USING_FUZZER_AGENT(type_, name_, defaultValue_, availability_, description_) { \
+        const char name[] = #name_; \
+        unsigned nameLength = strlen(name); \
+        if (nameLength > 14 && !strncmp(name, "use", 3) && !strncmp(&name[nameLength -11], "FuzzerAgent", 11)) { \
+            if (Options::name_()) \
+                g_jscConfig.options.isUsingFuzzerAgent = true; \
+        } \
+    }
+    FOR_EACH_JSC_OPTION(CHECK_IF_USING_FUZZER_AGENT)
+#undef CHECK_IF_USING_FUZZER_AGENT
+}
+
 void Options::initialize()
 {
     static std::once_flag initializeOptionsOnceFlag;
@@ -609,6 +624,7 @@ void Options::initialize()
 
             dumpOptionsIfNeeded();
             ensureOptionsAreCoherent();
+            computeIfUsingFuzzerAgent();
 
 #if HAVE(MACH_EXCEPTIONS)
             if (Options::useMachForExceptions())

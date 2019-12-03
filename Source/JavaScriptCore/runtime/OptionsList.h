@@ -572,6 +572,8 @@ public:
     bool isInRange(unsigned);
     const char* rangeString() const { return (m_state > InitError) ? m_rangeString : s_nullRangeStr; }
     
+    operator bool() const { return m_state != Uninitialized; }
+
     void dump(PrintStream& out) const;
 
 private:
@@ -598,6 +600,8 @@ struct OptionsStorage {
     type_ name_##Default;
 FOR_EACH_JSC_OPTION(DECLARE_OPTION)
 #undef DECLARE_OPTION
+
+    bool isUsingFuzzerAgent; // This value is computed in Options::initialize().
 };
 
 // Options::Metadata's offsetOfOption and offsetOfOptionDefault relies on this.
