@@ -1,3 +1,13 @@
+2019-12-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] Add /experimental:newLambdaProcessor switch for better C++ conformance
+        https://bugs.webkit.org/show_bug.cgi?id=204443
+
+        Reviewed by Alex Christensen.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccess): Reverted MSVC workaround of r252726.
+
 2019-12-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash when animating an enum attribute for multiple instances of an SVG element

@@ -1,3 +1,15 @@
+2019-12-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] Add /experimental:newLambdaProcessor switch for better C++ conformance
+        https://bugs.webkit.org/show_bug.cgi?id=204443
+
+        Reviewed by Alex Christensen.
+
+        MSVC has a bug of lambda capture of 'this'. It has caused
+        compilation errors repeatedly.
+
+        * Source/cmake/OptionsMSVC.cmake: Added /experimental:newLambdaProcessor switch.
+
 2019-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_KEYBOARD_CODE_ATTRIBUTE and ENABLE_KEYBOARD_KEY_ATTRIBUTE macros
