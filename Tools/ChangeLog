@@ -1,3 +1,15 @@
+2019-12-03  Christopher Reid  <chris.reid@sony.com>
+
+        Regular expression hangs in Safari only
+        https://bugs.webkit.org/show_bug.cgi?id=202882
+        <rdar://problem/56236654>
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/BumpPointerAllocator.cpp: Added.
+
 2019-12-03  Jonathan Bedard  <jbedard@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=204804

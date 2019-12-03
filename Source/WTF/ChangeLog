@@ -1,3 +1,19 @@
+2019-12-03  Christopher Reid  <chris.reid@sony.com>
+
+        Regular expression hangs in Safari only
+        https://bugs.webkit.org/show_bug.cgi?id=202882
+        <rdar://problem/56236654>
+
+        Reviewed by Yusuke Suzuki.
+
+        BumpPointerPool::ensureCapacityCrossPool can cause an infinite loop
+        if multiple large pools are deallocated and a new capacity does not
+        fit in the deallocated pools. BumpPointerPool should try using
+        more pools if the next one isn't large enough.
+
+        * wtf/BumpPointerAllocator.h:
+        (WTF::BumpPointerPool::ensureCapacityCrossPool):
+
 2019-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_KEYBOARD_CODE_ATTRIBUTE and ENABLE_KEYBOARD_KEY_ATTRIBUTE macros

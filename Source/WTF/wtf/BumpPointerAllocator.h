@@ -166,6 +166,9 @@ private:
             ASSERT_WITH_SECURITY_IMPLICATION(allocationEnd > current); // check for overflow
             if (allocationEnd <= static_cast<void*>(pool))
                 return pool;
+
+            previousPool = pool;
+            pool = pool->m_next;
         }
     }
 

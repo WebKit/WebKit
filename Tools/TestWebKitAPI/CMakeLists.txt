@@ -27,6 +27,7 @@ set(TestWTF_SOURCES
 
     Tests/WTF/AtomString.cpp
     Tests/WTF/BloomFilter.cpp
+    Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
