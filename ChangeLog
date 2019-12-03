@@ -1,3 +1,16 @@
+2019-12-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, rolling out r253020.
+
+        It breaks WinCairo bots.
+
+        Reverted changeset:
+
+        "[MSVC] Add /experimental:newLambdaProcessor switch for better
+        C++ conformance"
+        https://bugs.webkit.org/show_bug.cgi?id=204443
+        https://trac.webkit.org/changeset/253020
+
 2019-12-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] Add /experimental:newLambdaProcessor switch for better C++ conformance
