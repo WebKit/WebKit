@@ -37,6 +37,8 @@ use Getopt::Long;
 use webkitdirs;
 Getopt::Long::Configure("no_auto_abbrev", "pass_through");
 
+use English;
+
 my $usage = "Usage: run-jsc [--count run_count] [--debugger] shell_file [file2...]";
 
 my $count = 1;
@@ -61,7 +63,13 @@ $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
 print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
 
 while ($count--) {
-    my $status = system("$jsc") >> 8;
+    system("$jsc");
+    my $signal = $? & 0x7f;
+    my $status = ($? >> 8) & 0xff;
+    if ($signal != 0) {
+        system("kill -" . $signal . " " . $PID); # We kill ourselves with the same signal that the `jsc` process was killed with to make it look like `jsc` was directly invoked.
+        print STDERR "\n... I should not be here ...\n";
+    }
     if ($status != 0) {
         print STDERR "\njsc exited with non-zero status: $status\n";
         exit $status;
