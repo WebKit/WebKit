@@ -52,7 +52,7 @@ class ArchiveContext(object):
     MEMORY_LIMIT = 2 * 1024 * 1024 * 1024  # Don't allow more than 2 gigs of archives in memory at one time
 
     class ArchiveMetaDataByCommit(ClusteredByConfiguration):
-        __table_name__ = 'archive_metadata_by_commit'
+        __table_name__ = 'archive_metadata_by_commit_01'
         suite = columns.Text(partition_key=True, required=True)
         branch = columns.Text(partition_key=True, required=True)
         uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
@@ -72,7 +72,7 @@ class ArchiveContext(object):
     # According to https://cwiki.apache.org/confluence/display/CASSANDRA2/CassandraLimitations, we should shard
     # large data blobs.
     class ArchiveChunks(Model):
-        __table_name__ = 'archive_chunks'
+        __table_name__ = 'archive_chunks_01'
         digest = columns.Text(partition_key=True, required=True)
         index = columns.Integer(primary_key=True, required=True)
         chunk = columns.Blob(required=True)
