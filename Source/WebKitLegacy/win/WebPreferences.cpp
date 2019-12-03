@@ -315,6 +315,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanTrue);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
@@ -2328,6 +2330,20 @@ HRESULT WebPreferences::webAnimationsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitWebAnimationsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setWebAnimationsCompositeOperationsEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::webAnimationsCompositeOperationsEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey);
     return S_OK;
 }
 

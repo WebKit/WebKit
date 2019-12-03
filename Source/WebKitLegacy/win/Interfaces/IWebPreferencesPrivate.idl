@@ -248,4 +248,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setRequestIdleCallbackEnabled([in] BOOL enabled);
     HRESULT asyncClipboardAPIEnabled([out, retval] BOOL* enabled);
     HRESULT setAsyncClipboardAPIEnabled([in] BOOL enabled);
+    HRESULT webAnimationsCompositeOperationsEnabled([out, retval] BOOL*);
+    HRESULT setWebAnimationsCompositeOperationsEnabled([in] BOOL enabled);
 }

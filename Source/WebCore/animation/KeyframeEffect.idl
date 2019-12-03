@@ -33,8 +33,8 @@
     Constructor(KeyframeEffect source)
 ] interface KeyframeEffect : AnimationEffect {
     attribute Element? target;
-    attribute IterationCompositeOperation iterationComposite;
-    attribute CompositeOperation composite;
+    [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute IterationCompositeOperation iterationComposite;
+    [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute CompositeOperation composite;
     [CallWith=GlobalObject] sequence<object> getKeyframes();
     [MayThrowException, CallWith=GlobalObject] void setKeyframes(object? keyframes);
 };

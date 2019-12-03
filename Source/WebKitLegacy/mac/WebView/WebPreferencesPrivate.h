@@ -573,6 +573,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebAnimationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsEnabled;
 
+- (void)setWebAnimationsCompositeOperationsEnabled:(BOOL)flag;
+- (BOOL)webAnimationsCompositeOperationsEnabled;
+
 - (void)setPointerEventsEnabled:(BOOL)flag;
 - (BOOL)pointerEventsEnabled;
 

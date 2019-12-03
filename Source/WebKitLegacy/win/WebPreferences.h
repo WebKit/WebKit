@@ -293,6 +293,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setRequestIdleCallbackEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE asyncClipboardAPIEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAsyncClipboardAPIEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE webAnimationsCompositeOperationsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
 
     // WebPreferences
 

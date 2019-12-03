@@ -3176,6 +3176,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitWebAnimationsEnabledPreferenceKey];
 }
 
+- (BOOL)webAnimationsCompositeOperationsEnabled
+{
+    return [self _boolValueForKey:WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey];
+}
+
+- (void)setWebAnimationsCompositeOperationsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey];
+}
+
 - (BOOL)pointerEventsEnabled
 {
     return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];

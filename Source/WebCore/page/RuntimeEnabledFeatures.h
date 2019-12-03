@@ -112,6 +112,9 @@ public:
     void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
     bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
 
+    void setWebAnimationsCompositeOperationsEnabled(bool areEnabled) { m_areWebAnimationsCompositeOperationsEnabled = areEnabled; }
+    bool webAnimationsCompositeOperationsEnabled() const { return m_areWebAnimationsCompositeOperationsEnabled; }
+
     void setImageBitmapEnabled(bool isEnabled) { m_isImageBitmapEnabled = isEnabled; }
     bool imageBitmapEnabled() const { return m_isImageBitmapEnabled; }
 
@@ -415,6 +418,7 @@ private:
     bool m_inputEventsEnabled { true };
     bool m_areWebAnimationsEnabled { true };
     bool m_isWebAnimationsCSSIntegrationEnabled { true };
+    bool m_areWebAnimationsCompositeOperationsEnabled { false };
     bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };

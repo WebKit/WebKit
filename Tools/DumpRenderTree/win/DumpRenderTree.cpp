@@ -797,6 +797,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setCSSOMViewScrollingAPIEnabled(TRUE);
     prefsPrivate->setResizeObserverEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
+    prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC

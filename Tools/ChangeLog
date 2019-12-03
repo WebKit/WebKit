@@ -1,3 +1,15 @@
+2019-12-03  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add a runtime flag for Web Animations composite operations
+        https://bugs.webkit.org/show_bug.cgi?id=204718
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2019-12-03  Aakash Jain  <aakash_jain@apple.com>
 
         Do not retry the EWS build due to flaky failures in layout-test

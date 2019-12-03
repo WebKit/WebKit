@@ -1325,6 +1325,14 @@ WebAnimationsCSSIntegrationEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+WebAnimationsCompositeOperationsEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Web Animations composite operations"
+  humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 WebGL2Enabled:
   type: bool
   defaultValue: false
