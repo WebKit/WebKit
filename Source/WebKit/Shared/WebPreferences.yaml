@@ -1498,7 +1498,7 @@ ItpDebugModeEnabled:
 
 IsITPDatabaseEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "ITP Database Backend"
   humanReadableDescription: "Enable Intelligent Tracking Prevention Database Backend"
   webcoreBinding: RuntimeEnabledFeatures
