@@ -57,7 +57,7 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     auto measureWithEndSpace = hasKerningOrLigatures && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;
-    LayoutUnit width;
+    float width = 0;
     if (textContext.canUseSimplifiedContentMeasuring)
         width = font.widthForSimpleText(text.substring(from, to - from));
     else {
@@ -71,14 +71,14 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return std::max<LayoutUnit>(0, width);
+    return std::max(0_lu, LayoutUnit { width });
 }
 
 LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
 {
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();
-    LayoutUnit width;
+    float width = 0;
     for (auto i = from; i < to; ++i) {
         auto character = text[i];
         if (character >= ' ' || character == '\n')
@@ -90,7 +90,7 @@ LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& 
             width += font.wordSpacing();
     }
 
-    return width;
+    return std::max(0_lu, LayoutUnit { width });
 }
 
 TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)

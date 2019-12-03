@@ -752,8 +752,8 @@ void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()
 {
     ASSERT(m_inlineItem.style().letterSpacing());
-    m_logicalWidth -= m_inlineItem.style().letterSpacing();
-    ASSERT(m_logicalWidth > 0);
+    m_logicalWidth -= LayoutUnit { m_inlineItem.style().letterSpacing() };
+    ASSERT(m_logicalWidth > 0 || (!m_logicalWidth && m_inlineItem.style().letterSpacing() >= intMaxForLayoutUnit));
 }
 
 }

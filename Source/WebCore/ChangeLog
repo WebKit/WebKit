@@ -1,5 +1,21 @@
 2019-12-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] TextUtil::width should not overflow when word/letter-spacing is larger than LayoutUnit::max
+        https://bugs.webkit.org/show_bug.cgi?id=204782
+        <rdar://problem/57580285>
+
+        Reviewed by Antti Koivisto.
+
+        LayoutUnit width = font.width(run) and width -= (font.spaceWidth() + font.wordSpacing()) could produce a negative width value.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::InlineItemRun::removeTrailingLetterSpacing):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::fixedPitchWidth):
+
+2019-12-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Try to fit content on the current line when the line has trimmable trailing content
         https://bugs.webkit.org/show_bug.cgi?id=204781
         <rdar://problem/57580138>
