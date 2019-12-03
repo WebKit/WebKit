@@ -2930,3 +2930,10 @@ void WKPageMarkAdClickAttributionsAsExpiredForTesting(WKPageRef page, WKPageMark
         callback(callbackContext);
     });
 }
+
+void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation)
+{
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    toImpl(page)->setOrientationForMediaCapture(orientation);
+#endif
+}

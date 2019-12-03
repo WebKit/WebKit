@@ -196,6 +196,7 @@
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
+#include "UserMediaCaptureManagerProxy.h"
 #include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
@@ -9533,6 +9534,14 @@ void WebPageProxy::setOverriddenMediaType(const String& mediaType)
 {
     m_overriddenMediaType = mediaType;
     m_process->send(Messages::WebPage::SetOverriddenMediaType(mediaType), m_webPageID);
+}
+
+void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
+{
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (auto* proxy = m_process->userMediaCaptureManagerProxy())
+        proxy->setOrientation(orientation);
+#endif
 }
 
 } // namespace WebKit

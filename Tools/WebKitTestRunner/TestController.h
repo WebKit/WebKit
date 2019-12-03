@@ -293,6 +293,7 @@ public:
     void clearMockMediaDevices();
     void removeMockMediaDevice(WKStringRef persistentID);
     void resetMockMediaDevices();
+    void setMockCameraOrientation(uint64_t);
 
     void injectUserScript(WKStringRef);
     

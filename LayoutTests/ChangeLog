@@ -1,3 +1,13 @@
+2019-12-03  youenn fablet  <youenn@apple.com>
+
+        Add support for camera rotation when capturing in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204750
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-rotation.html:
+        Capture in UIProcess on Cocoa port and make use of test runner API to simulate device rotation.
+
 2019-12-03  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/layoutformattingcontext/flow-integration-basic.html is failing

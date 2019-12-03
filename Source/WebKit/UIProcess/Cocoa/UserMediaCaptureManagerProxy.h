@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "UserMediaCaptureManager.h"
+#include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 
 namespace WebKit {
@@ -45,6 +46,8 @@ public:
 
     WebProcessProxy& process() const { return m_process; }
     void clear();
+
+    void setOrientation(uint64_t);
 
 private:
     // IPC::MessageReceiver
@@ -63,6 +66,7 @@ private:
     friend class SourceProxy;
     HashMap<uint64_t, std::unique_ptr<SourceProxy>> m_proxies;
     WebProcessProxy& m_process;
+    WebCore::OrientationNotifier m_orientationNotifier { 0 };
 };
 
 }

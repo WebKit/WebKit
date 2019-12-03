@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ enableCaptureVideoInUIProcess=false ] -->
 <!doctype html>
 <html>
     <head>
@@ -89,6 +88,8 @@ promise_test(async (test) => {
 
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
+    if (window.testRunner)
+        testRunner.setMockCameraOrientation(90);
 
     await checkVideoBlack(false, localVideo, "canvas1");
     await waitForVideoSize(localVideo, 240, 320);
@@ -97,6 +98,8 @@ promise_test(async (test) => {
 promise_test((test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
+    if (window.testRunner)
+        testRunner.setMockCameraOrientation(90);
 
     return checkVideoBlack(false, remoteVideo, "canvas2").then(() => {
         return waitForVideoSize(remoteVideo, 240, 320);
@@ -106,6 +109,8 @@ promise_test((test) => {
 promise_test((test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 180);
+    if (window.testRunner)
+        testRunner.setMockCameraOrientation(180);
 
     return checkVideoBlack(false, remoteVideo, "canvas3").then(() => {
         return waitForVideoSize(remoteVideo, 320, 240);

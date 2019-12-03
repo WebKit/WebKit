@@ -980,6 +980,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockCameraOrientation")) {
+        TestController::singleton().setMockCameraOrientation(WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody)));
+        return nullptr;
+    }
+
 #if PLATFORM(MAC)
     if (WKStringIsEqualToUTF8CString(messageName, "ConnectMockGamepad")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());

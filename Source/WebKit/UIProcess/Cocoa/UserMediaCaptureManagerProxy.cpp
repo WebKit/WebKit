@@ -152,6 +152,8 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     case WebCore::CaptureDevice::DeviceType::Camera:
         sourceOrError = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().createVideoCaptureSource(device, WTFMove(hashSalt), &constraints);
+        if (sourceOrError)
+            sourceOrError.captureSource->monitorOrientation(m_orientationNotifier);
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:
@@ -230,6 +232,11 @@ void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::
 void UserMediaCaptureManagerProxy::clear()
 {
     m_proxies.clear();
+}
+
+void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
+{
+    m_orientationNotifier.orientationChanged(orientation);
 }
 
 }

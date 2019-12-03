@@ -2398,6 +2398,13 @@ void TestRunner::resetMockMediaDevices()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
 }
 
+void TestRunner::setMockCameraOrientation(unsigned orientation)
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetMockCameraOrientation"));
+    auto messageBody = adoptWK(WKUInt64Create(orientation));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 #if PLATFORM(MAC)
 void TestRunner::connectMockGamepad(unsigned index)
 {

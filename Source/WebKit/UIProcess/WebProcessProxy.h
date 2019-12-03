@@ -347,6 +347,10 @@ public:
 #endif
     void setAssertionStateForTesting(AssertionState state) { didSetAssertionState(state); }
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 

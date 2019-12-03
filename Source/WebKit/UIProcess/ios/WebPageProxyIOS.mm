@@ -357,8 +357,10 @@ void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
 {
     if (deviceOrientation != m_deviceOrientation) {
         m_deviceOrientation = deviceOrientation;
-        if (hasRunningProcess())
+        if (hasRunningProcess()) {
             m_process->send(Messages::WebPage::SetDeviceOrientation(deviceOrientation), m_webPageID);
+            setOrientationForMediaCapture(deviceOrientation);
+        }
     }
 }
 
