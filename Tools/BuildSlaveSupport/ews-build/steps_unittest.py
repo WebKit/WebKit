@@ -1639,7 +1639,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test3'])
-        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
     def test_flaky_and_inconsistent_failures_with_clean_tree_failures(self):
@@ -1647,7 +1647,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test3'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test3'])
-        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
     def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
@@ -1655,7 +1655,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2'])
-        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
     def test_mildly_flaky_patch_with_some_tree_redness_and_flakiness(self):
@@ -1663,7 +1663,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ['PreExistingFail1', 'PreExistingFail2', 'Fail1'])
         self.setProperty('second_run_failures', ['PreExistingFail1', 'PreExistingFail2'])
         self.setProperty('clean_tree_run_failures', ['PreExistingFail1', 'PreExistingFail2', 'Fail2'])
-        self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
 
     def test_first_run_exceed_failure_limit(self):

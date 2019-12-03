@@ -1453,8 +1453,9 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
                     return self.report_failure(failures_introduced_by_patch)
 
             # At this point we know that at least one test flaked, but no consistent failures
-            # were introduced. This is a bit of a grey-zone.
-            return self.retry_build()
+            # were introduced. This is a bit of a grey-zone. It's possible that the patch introduced some flakiness.
+            # We still mark the build as SUCCESS.
+            return self.report_pre_existing_failures(clean_tree_results_failing_tests)
 
         if clean_tree_results_did_exceed_test_failure_limit:
             return self.retry_build()
