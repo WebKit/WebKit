@@ -292,3 +292,6 @@ class MacCatalystPort(MacPort):
     def __init__(self, *args, **kwargs):
         super(MacCatalystPort, self).__init__(*args, **kwargs)
         self._config = Config(self._executive, self._filesystem, MacCatalystPort.port_name)
+
+    def _build_driver_flags(self):
+        return ['SDK_VARIANT=iosmac'] + super(MacCatalystPort, self)._build_driver_flags()
