@@ -146,7 +146,6 @@ struct GraphicsContextState {
     }
 
     enum Change : uint32_t {
-        NoChange                                = 0,
         StrokeGradientChange                    = 1 << 1,
         StrokePatternChange                     = 1 << 2,
         FillGradientChange                      = 1 << 3,
@@ -228,7 +227,7 @@ struct GraphicsContextStateChange {
     void dump(WTF::TextStream&) const;
 
     GraphicsContextState m_state;
-    GraphicsContextState::StateChangeFlags m_changeFlags { GraphicsContextState::NoChange };
+    GraphicsContextState::StateChangeFlags m_changeFlags;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsContextStateChange&);

@@ -77,7 +77,7 @@ private:
 
 GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromState(const GraphicsContextState& state) const
 {
-    GraphicsContextState::StateChangeFlags changeFlags = GraphicsContextState::NoChange;
+    GraphicsContextState::StateChangeFlags changeFlags;
 
     CHECK_FOR_CHANGED_PROPERTY(StrokeGradientChange, strokeGradient);
     CHECK_FOR_CHANGED_PROPERTY(StrokePatternChange, strokePattern);
