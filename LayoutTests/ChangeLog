@@ -1,5 +1,14 @@
 2019-12-03  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test fast/layoutformattingcontext/flow-integration-basic.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=204795
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2019-12-03  Per Arne Vollan  <pvollan@apple.com>
+
         The test webanimations/accelerated-animation-removal-upon-transition-completion.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=204794
 
