@@ -1,3 +1,37 @@
+2019-12-02  Saam Barati  <sbarati@apple.com>
+
+        PropertySlot should not have Customs have a PropertyOffset of zero
+        https://bugs.webkit.org/show_bug.cgi?id=204566
+        <rdar://problem/57466781>
+
+        Reviewed by Keith Miller.
+
+        We used to say that PropertyOffset of a cacheable custom was always zero. We
+        did this because we were using "invalidOffset" to indicate things aren't
+        cacheable. This patch refactors PropertySlot to not look at PropertyOffset
+        for cacheability, but instead just uses the cacheability bit. With that
+        change, we now say that customs always have the invalid PropertyOffset. This
+        fixes a bug where we used to watch for property changes at the offset inside
+        an AccessCase. We were doing this for the zero property offset for all
+        customs. This could trigger a crash inside startWatchingPropertyForReplacements
+        because the prototype Structure was a dictionary. We allow dictionaries to
+        be property holders of customs as long as the property is a custom and has
+        DontDelete property attribute, since DontDelete proves the custom will never
+        change.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::isCacheable const):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setCustomGetterSetter):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        (JSC::PropertySlot::setUndefined):
+
 2019-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put some destructible objects to IsoSubspace

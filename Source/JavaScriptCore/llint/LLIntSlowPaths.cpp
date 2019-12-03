@@ -663,7 +663,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     JSValue result = found ? slot.getValue(globalObject, ident) : jsUndefined();
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable()) {
+    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
         auto& metadata = bytecode.metadata(codeBlock);
         {
             StructureID oldStructureID = metadata.m_structureID;
@@ -773,7 +773,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
-        && slot.isCacheable()) {
+        && slot.isCacheable()
+        && !slot.isUnset()) {
         {
             StructureID oldStructureID;
             switch (metadata.m_modeMetadata.mode) {
@@ -815,7 +816,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
                 vm.heap.writeBarrier(codeBlock);
             }
-        } else if (UNLIKELY(metadata.m_modeMetadata.hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
+        } else if (UNLIKELY(metadata.m_modeMetadata.hitCountForLLIntCaching && slot.isValue())) {
             ASSERT(slot.slotBase() != baseValue);
 
             if (!(--metadata.m_modeMetadata.hitCountForLLIntCaching))

@@ -117,7 +117,7 @@ public:
         , m_thisValue(thisValue)
         , m_slotBase(nullptr)
         , m_watchpointSet(nullptr)
-        , m_cacheability(CachingAllowed)
+        , m_cacheability(CachingDisallowed)
         , m_propertyType(TypeUnset)
         , m_internalMethodType(internalMethodType)
         , m_additionalDataType(AdditionalDataType::None)
@@ -133,7 +133,7 @@ public:
     JSValue getValue(JSGlobalObject*, unsigned propertyName) const;
     JSValue getPureResult() const;
 
-    bool isCacheable() const { return m_cacheability == CachingAllowed && m_offset != invalidOffset; }
+    bool isCacheable() const { return isUnset() || m_cacheability == CachingAllowed; }
     bool isUnset() const { return m_propertyType == TypeUnset; }
     bool isValue() const { return m_propertyType == TypeValue; }
     bool isAccessor() const { return m_propertyType == TypeGetter; }
@@ -217,7 +217,8 @@ public:
         ASSERT(slotBase);
         m_slotBase = slotBase;
         m_propertyType = TypeValue;
-        m_offset = invalidOffset;
+
+        ASSERT(m_cacheability == CachingDisallowed);
     }
     
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value, PropertyOffset offset)
@@ -232,6 +233,8 @@ public:
         m_slotBase = slotBase;
         m_propertyType = TypeValue;
         m_offset = offset;
+
+        m_cacheability = CachingAllowed;
     }
 
     void setValue(JSString*, unsigned attributes, JSValue value)
@@ -244,7 +247,8 @@ public:
 
         m_slotBase = 0;
         m_propertyType = TypeValue;
-        m_offset = invalidOffset;
+
+        ASSERT(m_cacheability == CachingDisallowed);
     }
 
     void setValueModuleNamespace(JSObject* slotBase, unsigned attributes, JSValue value, JSModuleEnvironment* environment, ScopeOffset scopeOffset)
@@ -267,7 +271,7 @@ public:
         ASSERT(slotBase);
         m_slotBase = slotBase;
         m_propertyType = TypeCustom;
-        m_offset = invalidOffset;
+        ASSERT(m_cacheability == CachingDisallowed);
     }
 
     void setCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue, DOMAttributeAnnotation domAttribute)
@@ -289,7 +293,8 @@ public:
         ASSERT(slotBase);
         m_slotBase = slotBase;
         m_propertyType = TypeCustom;
-        m_offset = !invalidOffset;
+
+        m_cacheability = CachingAllowed;
     }
 
     void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue, DOMAttributeAnnotation domAttribute)
@@ -313,7 +318,8 @@ public:
         ASSERT(slotBase);
         m_slotBase = slotBase;
         m_propertyType = TypeCustomAccessor;
-        m_offset = invalidOffset;
+
+        ASSERT(m_cacheability == CachingDisallowed);
     }
 
     void setGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter)
@@ -327,7 +333,8 @@ public:
         ASSERT(slotBase);
         m_slotBase = slotBase;
         m_propertyType = TypeGetter;
-        m_offset = invalidOffset;
+
+        ASSERT(m_cacheability == CachingDisallowed);
     }
 
     void setCacheableGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter, PropertyOffset offset)
@@ -342,6 +349,8 @@ public:
         m_slotBase = slotBase;
         m_propertyType = TypeGetter;
         m_offset = offset;
+
+        m_cacheability = CachingAllowed;
     }
 
     JSValue thisValue() const
@@ -361,7 +370,6 @@ public:
 
         m_slotBase = 0;
         m_propertyType = TypeValue;
-        m_offset = invalidOffset;
     }
 
     void setWatchpointSet(WatchpointSet& set)

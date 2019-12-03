@@ -1,3 +1,13 @@
+2019-12-02  Saam Barati  <sbarati@apple.com>
+
+        PropertySlot should not have Customs have a PropertyOffset of zero
+        https://bugs.webkit.org/show_bug.cgi?id=204566
+        <rdar://problem/57466781>
+
+        Reviewed by Keith Miller.
+
+        * stress/cacheable-custom-accessor-should-not-have-property-offset.js: Added.
+
 2019-12-02  Mark Lam  <mark.lam@apple.com>
 
         mozilla-tests.yaml/js1_5/Array/regress-101964.js is frequently failing on JSC EWS bots.
