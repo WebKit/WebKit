@@ -555,6 +555,11 @@ static void openPrivateWindow(BrowserWindow *window)
     gtk_widget_show(GTK_WIDGET(newWindow));
 }
 
+static void focusLocationBar(BrowserWindow *window)
+{
+    gtk_widget_grab_focus(window->uriEntry);
+}
+
 static void reloadPage(BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
@@ -940,6 +945,10 @@ static void browser_window_init(BrowserWindow *window)
         g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK | GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(openPrivateWindow), window, NULL));
+
+    /* Focus location bar */
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_L, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(focusLocationBar), window, NULL));
 
     /* Reload page */
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE,
