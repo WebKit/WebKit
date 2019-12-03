@@ -169,7 +169,12 @@ private:
     };
     void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (Optional<Rect>&&, Optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
 
+    void elementIsFileUpload(const String& elementID, Function<void (CommandResult&&)>&&);
+    enum class FileUploadType { Single, Multiple };
+    Optional<FileUploadType> parseElementIsFileUploadResult(const RefPtr<JSON::Value>&);
     void selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&&);
+    void setInputFileUploadFiles(const String& elementID, const String& text, bool multiple, Function<void (CommandResult&&)>&&);
+    void didSetInputFileUploadFiles(bool wasCancelled);
 
     enum class MouseInteraction { Move, Down, Up, SingleClick, DoubleClick };
     void performMouseInteraction(int x, int y, MouseButton, MouseInteraction, Function<void (CommandResult&&)>&&);

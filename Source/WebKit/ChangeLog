@@ -1,5 +1,27 @@
 2019-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: handle elements of type file in send keys command
+        https://bugs.webkit.org/show_bug.cgi?id=188514
+
+        Reviewed by Brian Burg.
+
+        Add setFilesForInputFileUpload method to Automation. It's like setFilesToSelectForFileUpload, but it works
+        differently, so I'm keeping both to not break safaridriver. The new one simply sends the file list to the web
+        process to be set on the input element, instead of saving the file list, wait for the driver to trigger the open
+        panel, intercept and complete the open panel request and send a dismiss open panel event to the driver.
+
+        * UIProcess/Automation/Automation.json: Add setFilesForInputFileUpload.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setFilesForInputFileUpload): Send SetFilesForInputFileUpload message to the web process.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::setFilesForInputFileUpload): Create a FileList with the received paths and
+        call HTMLInputElement::setFiles() on the given element.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in: Add SetFilesForInputFileUpload message.
+
+2019-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: most of the clear tests are failing
         https://bugs.webkit.org/show_bug.cgi?id=180404
 

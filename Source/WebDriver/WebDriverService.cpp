@@ -482,6 +482,9 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     RefPtr<JSON::Object> proxy;
     if (matchedCapabilities.getObject("proxy"_s, proxy))
         capabilities.proxy = deserializeProxy(*proxy);
+    bool strictFileInteractability;
+    if (matchedCapabilities.getBoolean("strictFileInteractability"_s, strictFileInteractability))
+        capabilities.strictFileInteractability = strictFileInteractability;
     RefPtr<JSON::Object> timeouts;
     if (matchedCapabilities.getObject("timeouts"_s, timeouts))
         capabilities.timeouts = deserializeTimeouts(*timeouts);
@@ -539,6 +542,11 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             if (!it->value->asObject(proxy) || !deserializeProxy(*proxy))
                 return nullptr;
             result->setValue(it->key, RefPtr<JSON::Value>(it->value));
+        } else if (it->key == "strictFileInteractability") {
+            bool strictFileInteractability;
+            if (!it->value->asBoolean(strictFileInteractability))
+                return nullptr;
+            result->setBoolean(it->key, strictFileInteractability);
         } else if (it->key == "timeouts") {
             RefPtr<JSON::Object> timeouts;
             if (!it->value->asObject(timeouts) || !deserializeTimeouts(*timeouts))
@@ -592,6 +600,8 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
         matchedCapabilities->setString("platformName"_s, platformCapabilities.platformName.value());
     if (platformCapabilities.acceptInsecureCerts)
         matchedCapabilities->setBoolean("acceptInsecureCerts"_s, platformCapabilities.acceptInsecureCerts.value());
+    if (platformCapabilities.strictFileInteractability)
+        matchedCapabilities->setBoolean("strictFileInteractability"_s, platformCapabilities.strictFileInteractability.value());
     if (platformCapabilities.setWindowRect)
         matchedCapabilities->setBoolean("setWindowRect"_s, platformCapabilities.setWindowRect.value());
 
@@ -800,6 +810,7 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.valueOr(emptyString()));
             capabilitiesObject->setString("platformName"_s, capabilities.platformName.valueOr(emptyString()));
             capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.valueOr(false));
+            capabilitiesObject->setBoolean("strictFileInteractability"_s, capabilities.strictFileInteractability.valueOr(false));
             capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.valueOr(true));
             switch (capabilities.unhandledPromptBehavior.valueOr(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:

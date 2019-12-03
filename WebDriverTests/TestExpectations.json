@@ -406,13 +406,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/element_click/file_upload.py": {
-        "subtests": {
-            "test_file_upload_state": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188513"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/element_click/interactability.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}},
         "subtests": {
@@ -500,22 +493,11 @@
     },
     "imported/w3c/webdriver/tests/element_send_keys/events.py": {
         "subtests": {
-            "test_file_upload": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            },
             "test_not_blurred[input]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
             "test_not_blurred[textarea]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/element_send_keys/file_upload.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}},
-        "subtests": {
-            "test_empty_text": {
-                "expected": {"all": {"status": ["PASS"]}}
             }
         }
     },
@@ -608,36 +590,6 @@
             },
             "test_get_current_url_matches_location": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180405"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/new_session/create_alwaysMatch.py": {
-        "subtests": {
-            "test_valid[strictFileInteractability-True]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            },
-            "test_valid[strictFileInteractability-False]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/new_session/create_firstMatch.py": {
-        "subtests": {
-            "test_valid[strictFileInteractability-True]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            },
-            "test_valid[strictFileInteractability-False]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/new_session/response.py": {
-        "subtests": {
-            "test_capability_type[strictFileInteractability-bool]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
-            },
-            "test_capability_default_value[strictFileInteractability-False]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
             }
         }
     },

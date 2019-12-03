@@ -30,6 +30,7 @@
 #include "SessionHost.h"
 #include "WebDriverAtoms.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -1528,6 +1529,60 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
     });
 }
 
+void Session::elementIsFileUpload(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
+{
+    RefPtr<JSON::Array> arguments = JSON::Array::create();
+    arguments->pushString(createElement(elementID)->toJSONString());
+
+    static const char isFileUploadScript[] =
+        "function(element) {"
+        "    if (element.tagName.toLowerCase() === 'input' && element.type === 'file')"
+        "        return { 'fileUpload': true, 'multiple': element.hasAttribute('multiple') };"
+        "    return { 'fileUpload': false };"
+        "}";
+
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+    if (m_currentBrowsingContext)
+        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+    parameters->setString("function"_s, isFileUploadScript);
+    parameters->setArray("arguments"_s, WTFMove(arguments));
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        String valueString;
+        if (!response.responseObject->getString("result"_s, valueString)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        RefPtr<JSON::Value> resultValue;
+        if (!JSON::Value::parseJSON(valueString, resultValue)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        completionHandler(CommandResult::success(WTFMove(resultValue)));
+    });
+}
+
+Optional<Session::FileUploadType> Session::parseElementIsFileUploadResult(const RefPtr<JSON::Value>& resultValue)
+{
+    RefPtr<JSON::Object> result;
+    if (!resultValue->asObject(result))
+        return WTF::nullopt;
+
+    bool isFileUpload;
+    if (!result->getBoolean("fileUpload"_s, isFileUpload) || !isFileUpload)
+        return WTF::nullopt;
+
+    bool multiple;
+    if (!result->getBoolean("multiple"_s, multiple) || !multiple)
+        return FileUploadType::Single;
+
+    return FileUploadType::Multiple;
+}
+
 void Session::selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     RefPtr<JSON::Object> parameters = JSON::Object::create();
@@ -1555,41 +1610,52 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
             completionHandler(WTFMove(result));
             return;
         }
-        OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
-        computeElementLayout(elementID, options, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
-            if (!rect || error) {
-                completionHandler(CommandResult::fail(WTFMove(error)));
-                return;
-            }
-            if (isObscured) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementClickIntercepted));
-                return;
-            }
-            if (!inViewCenter) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
+        elementIsFileUpload(elementID, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                completionHandler(WTFMove(result));
                 return;
             }
 
-            getElementTagName(elementID, [this, elementID, inViewCenter = WTFMove(inViewCenter), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                bool isOptionElement = false;
-                if (!result.isError()) {
-                    String tagName;
-                    if (result.result()->asString(tagName))
-                        isOptionElement = tagName == "option";
+            if (parseElementIsFileUploadResult(result.result())) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+                return;
+            }
+            OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
+            computeElementLayout(elementID, options, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
+                if (!rect || error) {
+                    completionHandler(CommandResult::fail(WTFMove(error)));
+                    return;
+                }
+                if (isObscured) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementClickIntercepted));
+                    return;
+                }
+                if (!inViewCenter) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
+                    return;
                 }
 
-                Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                    if (result.isError()) {
-                        completionHandler(WTFMove(result));
-                        return;
+                getElementTagName(elementID, [this, elementID, inViewCenter = WTFMove(inViewCenter), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                    bool isOptionElement = false;
+                    if (!result.isError()) {
+                        String tagName;
+                        if (result.result()->asString(tagName))
+                            isOptionElement = tagName == "option";
                     }
 
-                    waitForNavigationToComplete(WTFMove(completionHandler));
-                };
-                if (isOptionElement)
-                    selectOptionElement(elementID, WTFMove(continueAfterClickFunction));
-                else
-                    performMouseInteraction(inViewCenter.value().x, inViewCenter.value().y, MouseButton::Left, MouseInteraction::SingleClick, WTFMove(continueAfterClickFunction));
+                    Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                        if (result.isError()) {
+                            completionHandler(WTFMove(result));
+                            return;
+                        }
+
+                        waitForNavigationToComplete(WTFMove(completionHandler));
+                    };
+                    if (isOptionElement)
+                        selectOptionElement(elementID, WTFMove(continueAfterClickFunction));
+                    else
+                        performMouseInteraction(inViewCenter.value().x, inViewCenter.value().y, MouseButton::Left, MouseInteraction::SingleClick, WTFMove(continueAfterClickFunction));
+                });
             });
         });
     });
@@ -1695,6 +1761,43 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
                 });
             });
         });
+    });
+}
+
+void Session::setInputFileUploadFiles(const String& elementID, const String& text, bool multiple, Function<void (CommandResult&&)>&& completionHandler)
+{
+    Vector<String> files = text.split('\n');
+    if (files.isEmpty()) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    if (!multiple && files.size() != 1) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    RefPtr<JSON::Array> filenames = JSON::Array::create();
+    for (const auto& file : files) {
+        if (!FileSystem::fileExists(file)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+            return;
+        }
+        filenames->pushString(file);
+    }
+
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
+    parameters->setString("nodeHandle"_s, elementID);
+    parameters->setArray("filenames"_s, WTFMove(filenames));
+    m_host->sendCommandToBackend("setFilesForInputFileUpload"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+
+        completionHandler(CommandResult::success());
     });
 }
 
@@ -1848,74 +1951,92 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             completionHandler(WTFMove(result));
             return;
         }
-        // FIXME: move this to an atom.
-        static const char focusScript[] =
-            "function focus(element) {"
-            "    let doc = element.ownerDocument || element;"
-            "    let prevActiveElement = doc.activeElement;"
-            "    if (element != prevActiveElement && prevActiveElement)"
-            "        prevActiveElement.blur();"
-            "    element.focus();"
-            "    let tagName = element.tagName.toUpperCase();"
-            "    if (tagName === 'BODY' || element === document.documentElement)"
-            "        return;"
-            "    let isTextElement = tagName === 'TEXTAREA' || (tagName === 'INPUT' && element.type === 'text');"
-            "    if (isTextElement && element.selectionEnd == 0)"
-            "        element.setSelectionRange(element.value.length, element.value.length);"
-            "    if (element != doc.activeElement)"
-            "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
-            "}";
-
-        RefPtr<JSON::Array> arguments = JSON::Array::create();
-        arguments->pushString(createElement(elementID)->toJSONString());
-        RefPtr<JSON::Object> parameters = JSON::Object::create();
-        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        if (m_currentBrowsingContext)
-            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, focusScript);
-        parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), text, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
-            if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+        elementIsFileUpload(elementID, [this, protectedThis = protectedThis.copyRef(), elementID, text, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                completionHandler(WTFMove(result));
                 return;
             }
 
-            unsigned stickyModifiers = 0;
-            auto textLength = text.length();
-            Vector<KeyboardInteraction> interactions;
-            interactions.reserveInitialCapacity(textLength);
-            for (unsigned i = 0; i < textLength; ++i) {
-                auto key = text[i];
-                KeyboardInteraction interaction;
-                KeyModifier modifier;
-                auto virtualKey = virtualKeyForKey(key, modifier);
-                if (!virtualKey.isNull()) {
-                    interaction.key = virtualKey;
-                    if (modifier != KeyModifier::None) {
-                        stickyModifiers ^= modifier;
-                        if (stickyModifiers & modifier)
-                            interaction.type = KeyboardInteractionType::KeyPress;
-                        else
-                            interaction.type = KeyboardInteractionType::KeyRelease;
+            auto fileUploadType = parseElementIsFileUploadResult(result.result());
+            if (!fileUploadType || capabilities().strictFileInteractability.valueOr(false)) {
+                // FIXME: move this to an atom.
+                static const char focusScript[] =
+                    "function focus(element) {"
+                    "    let doc = element.ownerDocument || element;"
+                    "    let prevActiveElement = doc.activeElement;"
+                    "    if (element != prevActiveElement && prevActiveElement)"
+                    "        prevActiveElement.blur();"
+                    "    element.focus();"
+                    "    let tagName = element.tagName.toUpperCase();"
+                    "    if (tagName === 'BODY' || element === document.documentElement)"
+                    "        return;"
+                    "    let isTextElement = tagName === 'TEXTAREA' || (tagName === 'INPUT' && element.type === 'text');"
+                    "    if (isTextElement && element.selectionEnd == 0)"
+                    "        element.setSelectionRange(element.value.length, element.value.length);"
+                    "    if (element != doc.activeElement)"
+                    "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
+                    "}";
+
+                RefPtr<JSON::Array> arguments = JSON::Array::create();
+                arguments->pushString(createElement(elementID)->toJSONString());
+                RefPtr<JSON::Object> parameters = JSON::Object::create();
+                parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+                if (m_currentBrowsingContext)
+                    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+                parameters->setString("function"_s, focusScript);
+                parameters->setArray("arguments"_s, WTFMove(arguments));
+                m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), fileUploadType, elementID, text, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+                    if (response.isError || !response.responseObject) {
+                        completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                        return;
                     }
-                } else
-                    interaction.text = String(&key, 1);
-                interactions.uncheckedAppend(WTFMove(interaction));
-            }
 
-            // Reset sticky modifiers if needed.
-            if (stickyModifiers) {
-                if (stickyModifiers & KeyModifier::Shift)
-                    interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Shift"_s) });
-                if (stickyModifiers & KeyModifier::Control)
-                    interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Control"_s) });
-                if (stickyModifiers & KeyModifier::Alternate)
-                    interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Alternate"_s) });
-                if (stickyModifiers & KeyModifier::Meta)
-                    interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Meta"_s) });
-            }
+                    if (fileUploadType) {
+                        setInputFileUploadFiles(elementID, text, fileUploadType.value() == FileUploadType::Multiple, WTFMove(completionHandler));
+                        return;
+                    }
 
-            performKeyboardInteractions(WTFMove(interactions), WTFMove(completionHandler));
+                    unsigned stickyModifiers = 0;
+                    auto textLength = text.length();
+                    Vector<KeyboardInteraction> interactions;
+                    interactions.reserveInitialCapacity(textLength);
+                    for (unsigned i = 0; i < textLength; ++i) {
+                        auto key = text[i];
+                        KeyboardInteraction interaction;
+                        KeyModifier modifier;
+                        auto virtualKey = virtualKeyForKey(key, modifier);
+                        if (!virtualKey.isNull()) {
+                            interaction.key = virtualKey;
+                            if (modifier != KeyModifier::None) {
+                                stickyModifiers ^= modifier;
+                                if (stickyModifiers & modifier)
+                                    interaction.type = KeyboardInteractionType::KeyPress;
+                                else
+                                    interaction.type = KeyboardInteractionType::KeyRelease;
+                            }
+                        } else
+                            interaction.text = String(&key, 1);
+                        interactions.uncheckedAppend(WTFMove(interaction));
+                    }
+
+                    // Reset sticky modifiers if needed.
+                    if (stickyModifiers) {
+                        if (stickyModifiers & KeyModifier::Shift)
+                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Shift"_s) });
+                        if (stickyModifiers & KeyModifier::Control)
+                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Control"_s) });
+                        if (stickyModifiers & KeyModifier::Alternate)
+                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Alternate"_s) });
+                        if (stickyModifiers & KeyModifier::Meta)
+                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Meta"_s) });
+                    }
+
+                    performKeyboardInteractions(WTFMove(interactions), WTFMove(completionHandler));
+                });
+            } else {
+                setInputFileUploadFiles(elementID, text, fileUploadType.value() == FileUploadType::Multiple, WTFMove(completionHandler));
+                return;
+            }
         });
     });
 }

@@ -70,6 +70,7 @@ struct Capabilities {
     Optional<String> browserVersion;
     Optional<String> platformName;
     Optional<bool> acceptInsecureCerts;
+    Optional<bool> strictFileInteractability;
     Optional<bool> setWindowRect;
     Optional<Timeouts> timeouts;
     Optional<PageLoadStrategy> pageLoadStrategy;

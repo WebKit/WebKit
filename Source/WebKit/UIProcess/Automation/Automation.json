@@ -624,6 +624,17 @@
             ]
         },
         {
+            "name": "setFilesForInputFileUpload",
+            "description": "Sets the choosen files for the given input file upload element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the input element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the input element." },
+                { "name": "filenames", "type": "array", "items": { "type": "string" }, "description": "Absolute paths to the choosen files." }
+            ],
+            "async": true
+        },
+        {
             "name": "getAllCookies",
             "description": "Returns all cookies visible to the specified browsing context.",
             "parameters": [

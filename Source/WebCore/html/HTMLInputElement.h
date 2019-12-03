@@ -118,7 +118,7 @@ public:
     WEBCORE_EXPORT bool isText() const;
 
     WEBCORE_EXPORT bool isEmailField() const;
-    bool isFileUpload() const;
+    WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
     WEBCORE_EXPORT bool isNumberField() const;
     bool isSubmitButton() const;
@@ -235,7 +235,7 @@ public:
 
     unsigned effectiveMaxLength() const;
 
-    bool multiple() const;
+    WEBCORE_EXPORT bool multiple() const;
 
     bool isAutoFilled() const { return m_isAutoFilled; }
     WEBCORE_EXPORT void setAutoFilled(bool = true);

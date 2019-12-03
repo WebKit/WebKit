@@ -71,6 +71,7 @@ private:
     void focusFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>);
     void computeElementLayout(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
     void selectOptionElement(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
+    void setFilesForInputFileUpload(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(Optional<String>)>&&);
     void takeScreenshot(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID);
     void getCookiesForFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&&);
     void deleteCookie(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(Optional<String>)>&&);
