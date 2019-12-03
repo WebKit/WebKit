@@ -82,9 +82,7 @@ private:
     bool m_hasAudioUnit { false };
 
     RunLoop::Timer<MockAudioSharedUnit> m_timer;
-    MonotonicTime m_startTime { MonotonicTime::nan() };
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
-    Seconds m_elapsedTime { 0_s };
     MonotonicTime m_delayUntil;
 
     Ref<WorkQueue> m_workQueue;
