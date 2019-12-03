@@ -896,7 +896,8 @@ void BidiResolverBase<Iterator, Run, DerivedClass>::createBidiRunsForLine(const 
                         m_direction = m_status.lastStrong == U_LEFT_TO_RIGHT ? U_LEFT_TO_RIGHT : U_EUROPEAN_NUMBER;
                         break;
                     default:
-                        ASSERT_NOT_REACHED();
+                        // FIXME: handle neutrals in this case. See https://bugs.webkit.org/show_bug.cgi?id=204817
+                        break;
                 }
                 appendRun();
             }
