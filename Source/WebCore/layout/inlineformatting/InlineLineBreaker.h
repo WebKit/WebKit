@@ -75,6 +75,7 @@ public:
         const RunList& runs() const { return m_continousRuns; }
         bool isEmpty() const { return m_continousRuns.isEmpty(); }
         bool hasTextContentOnly() const;
+        bool hasNonContentRunsOnly() const;
         unsigned size() const { return m_continousRuns.size(); }
         LayoutUnit width() const { return m_width; }
         LayoutUnit nonTrimmableWidth() const { return m_width - m_trailingTrimmableContent.width; }
@@ -94,7 +95,13 @@ public:
         LayoutUnit m_width;
     };
 
-    BreakingContext breakingContextForInlineContent(const Content&, LayoutUnit availableWidth, bool lineHasFullyTrimmableTrailingContent, bool lineIsEmpty);
+    struct LineStatus {
+        LayoutUnit availableWidth;
+        LayoutUnit trimmableWidth;
+        bool lineHasFullyTrimmableTrailingContent;
+        bool lineIsEmpty;
+    };
+    BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);
     bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }

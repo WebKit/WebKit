@@ -1,3 +1,21 @@
+2019-12-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Try to fit content on the current line when the line has trimmable trailing content
+        https://bugs.webkit.org/show_bug.cgi?id=204781
+        <rdar://problem/57580138>
+
+        Reviewed by Antti Koivisto.
+
+        Let's expand the available space when the line has trailing trimmable whitespace and we try to fit some empty inline containers.
+        "text content <span style="padding: 1px"></span>" <- the <span></span> runs should fit after trimming the trailing whitespace.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::Content::hasNonContentRunsOnly const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed, fix build warning.

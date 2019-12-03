@@ -49,31 +49,36 @@ static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInl
     return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& newContent, LayoutUnit availableWidth, bool lineHasFullyTrimmableTrailingContent,  bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& candidateRuns, const LineStatus& lineStatus)
 {
-    ASSERT(!newContent.isEmpty());
-    if (newContent.width() <= availableWidth)
+    ASSERT(!candidateRuns.isEmpty());
+    if (candidateRuns.width() <= lineStatus.availableWidth)
         return { BreakingContext::ContentBreak::Keep, { } };
-    if (newContent.hasTrailingTrimmableContent()) {
+    if (candidateRuns.hasTrailingTrimmableContent()) {
         // First check if the content fits without the trailing trimmable part.
-        if (newContent.nonTrimmableWidth() <= availableWidth)
+        if (candidateRuns.nonTrimmableWidth() <= lineStatus.availableWidth)
             return { BreakingContext::ContentBreak::Keep, { } };
         // Now check if we can trim the line too.
-        if (lineHasFullyTrimmableTrailingContent && newContent.isTrailingContentFullyTrimmable()) {
+        if (lineStatus.lineHasFullyTrimmableTrailingContent && candidateRuns.isTrailingContentFullyTrimmable()) {
             // If this new content is fully trimmable, it shoud surely fit.
             return { BreakingContext::ContentBreak::Keep, { } };
         }
+    } else if (lineStatus.trimmableWidth && candidateRuns.hasNonContentRunsOnly()) {
+        // Let's see if the non-content runs fit when the line has trailing trimmable content
+        // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after trimming the trailing whitespace.
+        if (candidateRuns.width() <= lineStatus.availableWidth + lineStatus.trimmableWidth)
+            return { BreakingContext::ContentBreak::Keep, { } };
     }
 
-    if (newContent.hasTextContentOnly()) {
-        auto& runs = newContent.runs();
-        if (auto trailingPartialContent = wordBreakingBehavior(runs, availableWidth))
+    if (candidateRuns.hasTextContentOnly()) {
+        auto& runs = candidateRuns.runs();
+        if (auto trailingPartialContent = wordBreakingBehavior(runs, lineStatus.availableWidth))
             return { BreakingContext::ContentBreak::Split, trailingPartialContent };
         // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
         // FIXME: Keep tracking the last breaking opportunity where we can wrap the content:
         // <span style="white-space: pre;">this fits</span> <span style="white-space: pre;">this does not fit but does not wrap either</span>
         // ^^ could wrap at the whitespace position between the 2 inline containers.
-        auto contentShouldWrap = !lineIsEmpty && isContentWrappingAllowed(runs[0].inlineItem.style());
+        auto contentShouldWrap = !lineStatus.lineIsEmpty && isContentWrappingAllowed(runs[0].inlineItem.style());
         // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
         // we need to keep the overlapping whitespace on the line (and hang it I'd assume).
         if (isTrailingWhitespaceWithPreWrap(runs.last().inlineItem))
@@ -82,7 +87,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
     }
 
     // First non-text inline content always stays on line.
-    return { lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
+    return { lineStatus.lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
 }
 
 bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
@@ -303,6 +308,18 @@ bool LineBreaker::Content::hasTextContentOnly() const
         return inlineItem.isText();
     }
     return false;
+}
+
+bool LineBreaker::Content::hasNonContentRunsOnly() const
+{
+    // <span></span> <- non content runs.
+    for (auto& run : m_continousRuns) {
+        auto& inlineItem = run.inlineItem;
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+            continue;
+        return false;
+    }
+    return true;
 }
 
 void LineBreaker::Content::TrailingTrimmableContent::reset()
