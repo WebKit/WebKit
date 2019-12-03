@@ -1202,7 +1202,7 @@ public:
 #if USE(OPENGL) || USE(ANGLE)
     void allocateIOSurfaceBackingStore(IntSize);
     void updateFramebufferTextureBackingStoreFromLayer();
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void updateCGLContext();
 #endif
 #endif
