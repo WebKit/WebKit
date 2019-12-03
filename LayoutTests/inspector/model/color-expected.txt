@@ -396,12 +396,12 @@ PASS: '#11223344' should be serializable as a short Hex
 PASS: '#11223345' should not be serializable as a short Hex
 PASS: 'color(display-p3 0 1 0.5)' color should have a default alpha of 1
 PASS: color function is not a keyword
-PASS: 'color(display-p3 0 1 0.5)' has rgb of [0, 1, 0.5]
-PASS: 'color(display-p3 0 1 0.5)' has rgba of [0, 1, 0.5, 1]
+PASS: 'color(display-p3 0 1 0.5)' has normalized RGB of [0, 1, 0.5]
+PASS: 'color(display-p3 0 1 0.5)' has normalized RGBA of [0, 1, 0.5, 1]
 PASS: 'color(display-p3 0 1 0.5 / 0.3)' should have an alpha of 0.3
 PASS: color function is not a keyword
-PASS: 'color(display-p3 0 1 0.5 / 0.3)' has rgb of [0, 1, 0.5]
-PASS: 'color(display-p3 0 1 0.5 / 0.3)' has rgba of [0, 1, 0.5, 0.3]
+PASS: 'color(display-p3 0 1 0.5 / 0.3)' has normalized RGB of [0, 1, 0.5]
+PASS: 'color(display-p3 0 1 0.5 / 0.3)' has normalized RGBA of [0, 1, 0.5, 0.3]
 
 -- Running test case: WI.Color from components
 Check components for color 'rgb(255, 0, 0)'.
@@ -520,10 +520,26 @@ PASS: Should convert [-1,0,0] to [0,0,0].
 
 -- Running test case: WI.Color.displayP3toSRGB
 PASS: Should convert [0,0,0] to [0,0,0].
-PASS: Should convert [1,1,1] to [0.9999300658875597,1.0000101408119602,1.0001054916006267].
-PASS: Should convert [1,0,0] to [1.0929902391315327,-0.5433883521407902,-0.2537782522695441].
-PASS: Should convert [0,1,0] to [-2.9057643199691516,1.0182759798644396,-1.0162215225472337].
-PASS: Should convert [0,0,1] to [2.3902361583783006e-7,-2.0487738563140788e-7,1.0421313171983129].
-PASS: Should convert [2,0,0] to [1.0929902391315327,-0.5433883521407902,-0.2537782522695441].
+PASS: Should convert [1,1,1] to [0.9999,1,1.0001].
+PASS: Should convert [1,0,0] to [1.093,-0.5434,-0.2538].
+PASS: Should convert [0,1,0] to [-2.9058,1.0183,-1.0162].
+PASS: Should convert [0,0,1] to [0,0,1.0421].
+PASS: Should convert [2,0,0] to [1.093,-0.5434,-0.2538].
 PASS: Should convert [-1,0,0] to [0,0,0].
+
+-- Running test case: WI.Color.srgbToDisplayP3
+PASS: Should convert [0,0,0] to [0,0,0].
+PASS: Should convert [1,1,1] to [1.0001,1,0.9999].
+PASS: Should convert [1,0,0] to [0.9176,0.2003,0.1386].
+PASS: Should convert [0,1,0] to [0.4584,0.9853,0.2983].
+PASS: Should convert [0,0,1] to [0,0,0.9595].
+PASS: Should convert [2,0,0] to [0.9176,0.2003,0.1386].
+PASS: Should convert [-1,0,0] to [0,0,0].
+
+-- Running test case: WI.Color.isOutsideSRGB
+"color(display-p3 0 0 0)" is inside sRGB.
+"color(display-p3 1 1 1)" is inside sRGB.
+"color(display-p3 0.04 0.14 0.016)" is inside sRGB.
+"color(display-p3 1 0 0)" is outside sRGB.
+"color(display-p3 0.93 0.353 0.353)" is outside sRGB.
 

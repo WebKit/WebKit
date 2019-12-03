@@ -1,3 +1,80 @@
+2019-12-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Provide UI to convert between sRGB and p3 color spaces
+        https://bugs.webkit.org/show_bug.cgi?id=203534
+        <rdar://problem/56688523>
+
+        Reviewed by Devin Rousso.
+
+        Add context menus:
+        - "Convert to sRGB" and "Clamp to sRGB" for p3 colors, such as `color(display-p3 0 1 0)`.
+        - "Convert to Display-P3" for sRGB colors, such as `rgb(0, 255, 0)`.
+
+        Shift-clicking the color swatch of sRGB colors now goes through the color function syntax as well.
+        Shift-clicking the color swatch of Display-P3 colors converts the color to sRGB when it can be lossless.
+        When the convertion cannot be lossless, Web Inspector beeps.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Models/Color.js:
+        (WI.Color):
+        Introduce `_normalizedRGB` property, which stores rgb values from 0 to 1.
+        Previously, `_rgba` stored values from 0 to 1 for color function format, and from 0 to 255 otherwise.
+        That required format checks before every `rgb` value access and resulted in silent errors when
+        the values were in the wrong format.
+
+        Store alpha as a separate property to simplify format conversion. Previously, alpha was duplicated between `_rgba` and `_hsla`.
+
+        (WI.Color.displayP3toSRGB):
+        (WI.Color.srgbToDisplayP3): Added.
+        (WI.Color.prototype.nextFormat):
+        (WI.Color.prototype.get rgb):
+        (WI.Color.prototype.get hsl):
+        (WI.Color.prototype.get normalizedRGB):
+        (WI.Color.prototype.get rgba):
+        (WI.Color.prototype.get hsla):
+        (WI.Color.prototype.get normalizedRGBA):
+        (WI.Color.prototype.get gamut):
+        (WI.Color.prototype.set gamut):
+        (WI.Color.prototype.copy):
+        (WI.Color.prototype.isKeyword):
+        (WI.Color.prototype.isOutsideSRGB): Added.
+        (WI.Color.prototype.canBeSerializedAsShortHEX):
+        (WI.Color.prototype._toKeywordString):
+        (WI.Color.prototype._toShortHEXString):
+        (WI.Color.prototype._toHEXString):
+        (WI.Color.prototype._toShortHEXAlphaString):
+        (WI.Color.prototype._toHEXAlphaString):
+        (WI.Color.prototype._toRGBString):
+        (WI.Color.prototype._toRGBAString):
+        (WI.Color.prototype._toFunctionString):
+        Limit the values to 4 decimals.
+
+        (WI.Color.prototype._toHSLString):
+        (WI.Color.prototype._toHSLAString):
+        (WI.Color.prototype._hslToRGB):
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker.prototype._updateColor):
+        (WI.ColorPicker.prototype._updateOpacitySlider):
+        * UserInterface/Views/ColorSquare.css:
+        (.color-square > .svg-root):
+        (.color-square > .svg-root > .srgb-edge):
+        (.color-square > .srgb-label):
+        (.color-square > .srgb-label:hover):
+        (.color-square > .srgb-label:hover + .svg-root > .srgb-edge):
+        (@media (-webkit-device-pixel-ratio: 1)):
+        (.color-square > .srgb-edge):
+        * UserInterface/Views/ColorSquare.js:
+        (WI.ColorSquare.prototype.set tintedColor):
+        (WI.ColorSquare.prototype._drawSRGBOutline):
+        (WI.ColorSquare):
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._allowShiftClickColor): Added.
+        (WI.InlineSwatch.prototype._handleContextMenuEvent):
+
 2019-12-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Console: the saved result value is still shown after page reload

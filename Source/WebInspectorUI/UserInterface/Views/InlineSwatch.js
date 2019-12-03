@@ -46,7 +46,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         else {
             switch (this._type) {
             case WI.InlineSwatch.Type.Color:
-                this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
+                // Handled later by _updateSwatch.
                 break;
             case WI.InlineSwatch.Type.Gradient:
                 this._swatchElement.title = WI.UIString("Edit custom gradient");
@@ -77,6 +77,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         this._value = value || this._fallbackValue();
         this._valueEditor = null;
+        this._readOnly = readOnly;
 
         this._updateSwatch();
     }
@@ -146,8 +147,20 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         else if (this._type === WI.InlineSwatch.Type.Image)
             this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
 
+        if (this._type === WI.InlineSwatch.Type.Color) {
+            if (this._allowShiftClickColor())
+                this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
+            else
+                this._swatchElement.title = WI.UIString("Click to select a color");
+        }
+
         if (!dontFireEvents)
             this.dispatchEventToListeners(WI.InlineSwatch.Event.ValueChanged, {value});
+    }
+
+    _allowShiftClickColor()
+    {
+        return !this._readOnly && !this.value.isOutsideSRGB();
     }
 
     _swatchElementClicked(event)
@@ -158,8 +171,12 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         if (event.shiftKey && value) {
             if (this._type === WI.InlineSwatch.Type.Color) {
+                if (!this._allowShiftClickColor()) {
+                    InspectorFrontendHost.beep();
+                    return;
+                }
+
                 let nextFormat = value.nextFormat();
-                // FIXME: <https://webkit.org/b/203534> Provide UI to convert between sRGB and p3 color spaces
                 console.assert(nextFormat);
                 if (nextFormat) {
                     value.format = nextFormat;
@@ -313,42 +330,69 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             return;
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
+        let isColorOutsideSRGB = value.isOutsideSRGB();
 
-        if (value.isKeyword() && value.format !== WI.Color.Format.Keyword) {
-            contextMenu.appendItem(WI.UIString("Format: Keyword"), () => {
-                value.format = WI.Color.Format.Keyword;
+        if (!isColorOutsideSRGB) {
+            if (value.isKeyword() && value.format !== WI.Color.Format.Keyword) {
+                contextMenu.appendItem(WI.UIString("Format: Keyword"), () => {
+                    value.format = WI.Color.Format.Keyword;
+                    this._updateSwatch();
+                });
+            }
+
+            let hexInfo = this._getNextValidHEXFormat();
+            if (hexInfo) {
+                contextMenu.appendItem(hexInfo.title, () => {
+                    value.format = hexInfo.format;
+                    this._updateSwatch();
+                });
+            }
+
+            if (value.simple && value.format !== WI.Color.Format.HSL) {
+                contextMenu.appendItem(WI.UIString("Format: HSL"), () => {
+                    value.format = WI.Color.Format.HSL;
+                    this._updateSwatch();
+                });
+            } else if (value.format !== WI.Color.Format.HSLA) {
+                contextMenu.appendItem(WI.UIString("Format: HSLA"), () => {
+                    value.format = WI.Color.Format.HSLA;
+                    this._updateSwatch();
+                });
+            }
+
+            if (value.simple && value.format !== WI.Color.Format.RGB) {
+                contextMenu.appendItem(WI.UIString("Format: RGB"), () => {
+                    value.format = WI.Color.Format.RGB;
+                    this._updateSwatch();
+                });
+            } else if (value.format !== WI.Color.Format.RGBA) {
+                contextMenu.appendItem(WI.UIString("Format: RGBA"), () => {
+                    value.format = WI.Color.Format.RGBA;
+                    this._updateSwatch();
+                });
+            }
+
+            if (value.format !== WI.Color.Format.ColorFunction) {
+                contextMenu.appendItem(WI.UIString("Format: Color Function"), () => {
+                    value.format = WI.Color.Format.ColorFunction;
+                    this._updateSwatch();
+                });
+            }
+
+            contextMenu.appendSeparator();
+        }
+
+        if (value.gamut !== WI.Color.Gamut.DisplayP3) {
+            contextMenu.appendItem(WI.UIString("Convert to Display-P3"), () => {
+                value.gamut = WI.Color.Gamut.DisplayP3;
                 this._updateSwatch();
             });
         }
 
-        let hexInfo = this._getNextValidHEXFormat();
-        if (hexInfo) {
-            contextMenu.appendItem(hexInfo.title, () => {
-                value.format = hexInfo.format;
-                this._updateSwatch();
-            });
-        }
-
-        if (value.simple && value.format !== WI.Color.Format.HSL) {
-            contextMenu.appendItem(WI.UIString("Format: HSL"), () => {
-                value.format = WI.Color.Format.HSL;
-                this._updateSwatch();
-            });
-        } else if (value.format !== WI.Color.Format.HSLA) {
-            contextMenu.appendItem(WI.UIString("Format: HSLA"), () => {
-                value.format = WI.Color.Format.HSLA;
-                this._updateSwatch();
-            });
-        }
-
-        if (value.simple && value.format !== WI.Color.Format.RGB) {
-            contextMenu.appendItem(WI.UIString("Format: RGB"), () => {
-                value.format = WI.Color.Format.RGB;
-                this._updateSwatch();
-            });
-        } else if (value.format !== WI.Color.Format.RGBA) {
-            contextMenu.appendItem(WI.UIString("Format: RGBA"), () => {
-                value.format = WI.Color.Format.RGBA;
+        if (value.gamut !== WI.Color.Gamut.SRGB) {
+            let label = isColorOutsideSRGB ? WI.UIString("Clamp to sRGB") : WI.UIString("Convert to sRGB");
+            contextMenu.appendItem(label, () => {
+                value.gamut = WI.Color.Gamut.SRGB;
                 this._updateSwatch();
             });
         }

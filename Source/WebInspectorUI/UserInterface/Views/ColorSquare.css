@@ -61,7 +61,7 @@
     --crosshair-size: 7px;
 }
 
-.color-square .svg-root {
+.color-square > .svg-root {
     position: absolute;
     top: 0;
     left: 0;
@@ -70,30 +70,30 @@
     pointer-events: none;
 }
 
-.color-square .srgb-edge {
+.color-square > .svg-root > .srgb-edge {
     fill: none;
     stroke: white;
     stroke-width: 0.5px;
     stroke-opacity: var(--stroke-opacity);
 }
 
-.color-square .srgb-label {
+.color-square > .srgb-label {
     position: absolute;
-    padding-right: 3px;
+    padding-right: 5px;
     color: hsla(0, 0%, 100%, var(--stroke-opacity));
     font-size: 10px;
 }
 
-.color-square .srgb-label:hover {
+.color-square > .srgb-label:hover {
     color: white;
 }
 
-.color-square .srgb-label:hover + .svg-root > .srgb-edge {
+.color-square > .srgb-label:hover + .svg-root > .srgb-edge {
     stroke-width: 1px;
 }
 
 @media (-webkit-device-pixel-ratio: 1) {
-    .color-square .srgb-edge {
+    .color-square > .srgb-edge {
         stroke-width: 1px;
         stroke-opacity: var(--stroke-opacity) / 2;
     }

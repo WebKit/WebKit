@@ -106,7 +106,7 @@ WI.ColorSquare = class ColorSquare
 
         if (tintedColor.format === WI.Color.Format.ColorFunction) {
             // CSS color function only supports RGB. It doesn't support HSL.
-            let hsv = WI.Color.rgb2hsv(...tintedColor.rgb);
+            let hsv = WI.Color.rgb2hsv(...tintedColor.normalizedRGB);
             let x = hsv[1] / 100 * this._dimension;
             let y = (1 - (hsv[2] / 100)) * this._dimension;
             this._setCrosshairPosition(new WI.Point(x, y));
@@ -229,12 +229,11 @@ WI.ColorSquare = class ColorSquare
             this._srgbLabelElement = this._element.appendChild(document.createElement("span"));
             this._srgbLabelElement.className = "srgb-label";
             this._srgbLabelElement.textContent = WI.unlocalizedString("sRGB");
-            this._srgbLabelElement.title = WI.UIString("This line marks the edge of sRGB color space", "Label for a guide within the color picker");
+            this._srgbLabelElement.title = WI.UIString("Edge of sRGB color space", "Label for a guide within the color picker");
 
             const svgNamespace = "http://www.w3.org/2000/svg";
-            this._svgElement = document.createElementNS(svgNamespace, "svg");
+            this._svgElement = this._element.appendChild(document.createElementNS(svgNamespace, "svg"));
             this._svgElement.classList.add("svg-root");
-            this._element.append(this._svgElement);
 
             this._polylineElement = this._svgElement.appendChild(document.createElementNS(svgNamespace, "polyline"));
             this._polylineElement.classList.add("srgb-edge");
@@ -244,7 +243,7 @@ WI.ColorSquare = class ColorSquare
         let step = 1 / window.devicePixelRatio;
         let x = 0;
         for (let y = 0; y < this._dimension; y += step) {
-            let value = 100 - (y / this._dimension) * 100;
+            let value = 100 - ((y / this._dimension) * 100);
 
             // Optimization: instead of starting from x = 0, we can benefit from the fact that the next point
             // always has x >= of the current x. This minimizes processing time over 100 times.
@@ -252,7 +251,7 @@ WI.ColorSquare = class ColorSquare
                 let saturation = x / this._dimension * 100;
                 let rgb = WI.Color.hsv2rgb(this._hue, saturation, value);
                 let srgb = WI.Color.displayP3toSRGB(rgb[0], rgb[1], rgb[2]);
-                if (srgb.some((value) => value > 1 || value < 0)) {
+                if (srgb.some((value) => value < 0 || value > 1)) {
                     // The point is outside of sRGB.
                     points.push({x, y});
                     break;
@@ -274,10 +273,10 @@ WI.ColorSquare = class ColorSquare
         this._srgbLabelElement.style.right = `${this._dimension - points.lastValue.x}px`;
 
         this._polylineElement.points.clear();
-        for (let point of points) {
+        for (let {x, y} of points) {
             let svgPoint = this._svgElement.createSVGPoint();
-            svgPoint.x = point.x;
-            svgPoint.y = point.y;
+            svgPoint.x = x;
+            svgPoint.y = y;
             this._polylineElement.points.appendItem(svgPoint);
         }
     }

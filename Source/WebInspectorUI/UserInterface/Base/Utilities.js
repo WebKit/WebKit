@@ -1211,6 +1211,25 @@ Object.defineProperty(Math, "roundTo",
     }
 });
 
+// https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web#Multiplying_a_matrix_and_a_point
+Object.defineProperty(Math, "multiplyMatrixByVector",
+{
+    value(matrix, vector)
+    {
+        let height = matrix.length;
+        let width = matrix[0].length;
+        console.assert(width === vector.length);
+
+        let result = Array(width).fill(0);
+        for (let i = 0; i < width; ++i) {
+            for (let rowIndex = 0; rowIndex < height; ++rowIndex)
+                result[i] += vector[rowIndex] * matrix[i][rowIndex];
+        }
+
+        return result;
+    }
+});
+
 Object.defineProperty(Number, "constrain",
 {
     value(num, min, max)

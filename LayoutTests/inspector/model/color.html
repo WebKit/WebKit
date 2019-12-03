@@ -323,14 +323,14 @@ function test()
             color = WI.Color.fromString("color(display-p3 0 1 0.5)");
             InspectorTest.expectThat(color.alpha === 1, "'color(display-p3 0 1 0.5)' color should have a default alpha of 1");
             InspectorTest.expectThat(color.isKeyword() === false, "color function is not a keyword");
-            InspectorTest.expectShallowEqual(color.rgb, [0, 1, 0.5], "'color(display-p3 0 1 0.5)' has rgb of [0, 1, 0.5]");
-            InspectorTest.expectShallowEqual(color.rgba, [0, 1, 0.5, 1], "'color(display-p3 0 1 0.5)' has rgba of [0, 1, 0.5, 1]");
+            InspectorTest.expectShallowEqual(color.normalizedRGB, [0, 1, 0.5], "'color(display-p3 0 1 0.5)' has normalized RGB of [0, 1, 0.5]");
+            InspectorTest.expectShallowEqual(color.normalizedRGBA, [0, 1, 0.5, 1], "'color(display-p3 0 1 0.5)' has normalized RGBA of [0, 1, 0.5, 1]");
 
             color = WI.Color.fromString("color(display-p3 0 1 0.5 / 0.3)");
             InspectorTest.expectThat(color.alpha === 0.3, "'color(display-p3 0 1 0.5 / 0.3)' should have an alpha of 0.3");
             InspectorTest.expectThat(color.isKeyword() === false, "color function is not a keyword");
-            InspectorTest.expectShallowEqual(color.rgb, [0, 1, 0.5], "'color(display-p3 0 1 0.5 / 0.3)' has rgb of [0, 1, 0.5]");
-            InspectorTest.expectShallowEqual(color.rgba, [0, 1, 0.5, 0.3], "'color(display-p3 0 1 0.5 / 0.3)' has rgba of [0, 1, 0.5, 0.3]");
+            InspectorTest.expectShallowEqual(color.normalizedRGB, [0, 1, 0.5], "'color(display-p3 0 1 0.5 / 0.3)' has normalized RGB of [0, 1, 0.5]");
+            InspectorTest.expectShallowEqual(color.normalizedRGBA, [0, 1, 0.5, 0.3], "'color(display-p3 0 1 0.5 / 0.3)' has normalized RGBA of [0, 1, 0.5, 0.3]");
 
             return true;
         }
@@ -402,6 +402,7 @@ function test()
             // All with alpha.
             test("transparent", [
                 WI.Color.Format.RGBA,
+                WI.Color.Format.ColorFunction,
                 WI.Color.Format.HSLA,
                 WI.Color.Format.Keyword,
                 WI.Color.Format.ShortHEXAlpha,
@@ -411,6 +412,7 @@ function test()
             // All without alpha.
             test("red", [
                 WI.Color.Format.RGB,
+                WI.Color.Format.ColorFunction,
                 WI.Color.Format.HSL,
                 WI.Color.Format.Keyword,
                 WI.Color.Format.ShortHEX,
@@ -420,6 +422,7 @@ function test()
             // No short hex or keyword.
             test("rgb(100, 150, 200)", [
                 WI.Color.Format.RGB,
+                WI.Color.Format.ColorFunction,
                 WI.Color.Format.HSL,
                 WI.Color.Format.HEX,
             ]);
@@ -427,6 +430,7 @@ function test()
             // No short hex alpha or keyword.
             test("rgba(100, 150, 200, 0.5)", [
                 WI.Color.Format.RGBA,
+                WI.Color.Format.ColorFunction,
                 WI.Color.Format.HSLA,
                 WI.Color.Format.HEXAlpha,
             ]);
@@ -617,14 +621,52 @@ function test()
         description: "Test conversion from display-P3 gamut to sRGB.",
         test() {
             testColorConversion(WI.Color.displayP3toSRGB, [0, 0, 0], [0, 0, 0]);
-            testColorConversion(WI.Color.displayP3toSRGB, [1, 1, 1], [0.9999300658875597, 1.0000101408119602, 1.0001054916006267]);
-            testColorConversion(WI.Color.displayP3toSRGB, [1, 0, 0], [1.0929902391315327, -0.5433883521407902, -0.2537782522695441]);
-            testColorConversion(WI.Color.displayP3toSRGB, [0, 1, 0], [-2.9057643199691516, 1.0182759798644396, -1.0162215225472337]);
-            testColorConversion(WI.Color.displayP3toSRGB, [0, 0, 1], [2.3902361583783006e-7, -2.0487738563140788e-7, 1.0421313171983129]);
+            testColorConversion(WI.Color.displayP3toSRGB, [1, 1, 1], [0.9999, 1, 1.0001]);
+            testColorConversion(WI.Color.displayP3toSRGB, [1, 0, 0], [1.093, -0.5434, -0.2538]);
+            testColorConversion(WI.Color.displayP3toSRGB, [0, 1, 0], [-2.9058, 1.0183, -1.0162]);
+            testColorConversion(WI.Color.displayP3toSRGB, [0, 0, 1], [0, 0, 1.0421]);
 
             // Out-of-bounds inputs.
-            testColorConversion(WI.Color.displayP3toSRGB, [2, 0, 0], [1.0929902391315327, -0.5433883521407902, -0.2537782522695441]);
+            testColorConversion(WI.Color.displayP3toSRGB, [2, 0, 0], [1.093, -0.5434, -0.2538]);
             testColorConversion(WI.Color.displayP3toSRGB, [-1, 0, 0], [0, 0, 0]);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.srgbToDisplayP3",
+        description: "Test conversion from sRGB gamut to display-P3.",
+        test() {
+            testColorConversion(WI.Color.srgbToDisplayP3, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.srgbToDisplayP3, [1, 1, 1], [1.0001, 1, 0.9999]);
+            testColorConversion(WI.Color.srgbToDisplayP3, [1, 0, 0], [0.9176, 0.2003, 0.1386]);
+            testColorConversion(WI.Color.srgbToDisplayP3, [0, 1, 0], [0.4584, 0.9853, 0.2983]);
+            testColorConversion(WI.Color.srgbToDisplayP3, [0, 0, 1], [0, 0, 0.9595]);
+
+            // Out-of-bounds inputs.
+            testColorConversion(WI.Color.srgbToDisplayP3, [2, 0, 0], [0.9176, 0.2003, 0.1386]);
+            testColorConversion(WI.Color.srgbToDisplayP3, [-1, 0, 0], [0, 0, 0]);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.isOutsideSRGB",
+        description: "Test conversion from sRGB gamut to display-P3.",
+        test() {
+            function test(string) {
+                let color = WI.Color.fromString(string);
+                let result = color.isOutsideSRGB();
+                InspectorTest.log(`"${string}" is ${result ? "outside" : "inside"} sRGB.`);
+            }
+
+            test("color(display-p3 0 0 0)");
+            test("color(display-p3 1 1 1)");
+            test("color(display-p3 0.04 0.14 0.016)"); // Barely inside sRGB. Values chosen to test rounding behavior.
+            test("color(display-p3 1 0 0)");
+            test("color(display-p3 0.93 0.353 0.353)"); // Barely outside sRGB.
 
             return true;
         }

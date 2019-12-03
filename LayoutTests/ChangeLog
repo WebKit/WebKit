@@ -1,3 +1,14 @@
+2019-12-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Provide UI to convert between sRGB and p3 color spaces
+        https://bugs.webkit.org/show_bug.cgi?id=203534
+        <rdar://problem/56688523>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2019-12-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash when animating an enum attribute for multiple instances of an SVG element
