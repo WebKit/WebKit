@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 template<typename DecorationType>
-class SVGDecoratedProperty {
+class SVGDecoratedProperty : public RefCounted<SVGDecoratedProperty<DecorationType>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGDecoratedProperty() = default;
@@ -48,7 +50,7 @@ public:
     virtual DecorationType value() const { return valueInternal(); }
 
     virtual String valueAsString() const = 0;
-    virtual std::unique_ptr<SVGDecoratedProperty<DecorationType>> clone() = 0;
+    virtual Ref<SVGDecoratedProperty<DecorationType>> clone() = 0;
 };
 
 }

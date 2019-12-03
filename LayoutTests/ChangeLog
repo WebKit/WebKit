@@ -1,3 +1,13 @@
+2019-12-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when animating an enum attribute for multiple instances of an SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=204766
+
+        Reviewed by Simon Fraser.
+
+        * svg/animations/animated-enum-lengthAdjust-instances-expected.txt: Added.
+        * svg/animations/animated-enum-lengthAdjust-instances.svg: Added.
+
 2019-12-02  Alex Christensen  <achristensen@webkit.org>
 
         Incorrect association of the URL object with the value port

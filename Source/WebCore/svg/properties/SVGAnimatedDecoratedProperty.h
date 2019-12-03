@@ -36,7 +36,7 @@ public:
     template<typename PropertyType, typename AnimatedProperty = SVGAnimatedDecoratedProperty>
     static Ref<AnimatedProperty> create(SVGElement* contextElement)
     {
-        return adoptRef(*new AnimatedProperty(contextElement, makeUnique<DecoratedProperty<DecorationType, PropertyType>>()));
+        return adoptRef(*new AnimatedProperty(contextElement, adoptRef(*new DecoratedProperty<DecorationType, PropertyType>())));
     }
 
     template<typename PropertyType, typename AnimatedProperty = SVGAnimatedDecoratedProperty>
@@ -45,7 +45,7 @@ public:
         return adoptRef(*new AnimatedProperty(contextElement, DecoratedProperty<DecorationType, PropertyType>::create(value)));
     }
 
-    SVGAnimatedDecoratedProperty(SVGElement* contextElement, std::unique_ptr<SVGDecoratedProperty<DecorationType>>&& baseVal)
+    SVGAnimatedDecoratedProperty(SVGElement* contextElement, Ref<SVGDecoratedProperty<DecorationType>>&& baseVal)
         : SVGAnimatedProperty(contextElement)
         , m_baseVal(WTFMove(baseVal))
     {
@@ -83,7 +83,7 @@ public:
     PropertyType animVal() const
     {
         ASSERT_IMPLIES(isAnimating(), m_animVal);
-        return static_cast<PropertyType>((isAnimating() ? m_animVal : m_baseVal)->value());
+        return static_cast<PropertyType>((isAnimating() ? *m_animVal : m_baseVal.get()).value());
     }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
@@ -111,7 +111,8 @@ public:
     template<typename PropertyType>
     PropertyType currentValue() const
     {
-        return static_cast<PropertyType>((isAnimating() ? m_animVal : m_baseVal)->valueInternal());
+        ASSERT_IMPLIES(isAnimating(), m_animVal);
+        return static_cast<PropertyType>((isAnimating() ? *m_animVal : m_baseVal.get()).valueInternal());
     }
 
     // Controlling the animation.
@@ -130,9 +131,22 @@ public:
         SVGAnimatedProperty::stopAnimation();
     }
 
+    // Controlling the instance animation.
+    void instanceStartAnimation(SVGAnimatedProperty& animated) override
+    {
+        m_animVal = static_cast<decltype(*this)>(animated).m_animVal;
+        SVGAnimatedProperty::instanceStartAnimation(animated);
+    }
+
+    void instanceStopAnimation() override
+    {
+        m_animVal = nullptr;
+        SVGAnimatedProperty::instanceStopAnimation();
+    }
+
 protected:
-    std::unique_ptr<SVGDecoratedProperty<DecorationType>> m_baseVal;
-    std::unique_ptr<SVGDecoratedProperty<DecorationType>> m_animVal;
+    Ref<SVGDecoratedProperty<DecorationType>> m_baseVal;
+    RefPtr<SVGDecoratedProperty<DecorationType>> m_animVal;
     SVGPropertyState m_state { SVGPropertyState::Clean };
 };
 

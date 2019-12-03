@@ -39,7 +39,7 @@ public:
     static auto create(const EnumType& value)
     {
         static_assert(std::is_integral<DecorationType>::value, "DecorationType form enum should be integral.");
-        return makeUnique<SVGDecoratedEnumeration>(value);
+        return adoptRef(*new SVGDecoratedEnumeration(value));
     }
 
 private:
@@ -58,7 +58,7 @@ private:
         return Base::value();
     }
 
-    std::unique_ptr<SVGDecoratedProperty<DecorationType>> clone() override
+    Ref<SVGDecoratedProperty<DecorationType>> clone() override
     {
         return create(m_value);
     }
