@@ -328,16 +328,19 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
 {
     if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
         m_page.mainFrame().loader().client().prefetchDNS(result.absoluteLinkURL().host().toString());
-    m_client.mouseDidMoveOverElement(result, modifierFlags);
+
+    String toolTip;
+    TextDirection toolTipDirection;
+    getToolTip(result, toolTip, toolTipDirection);
+    m_client.mouseDidMoveOverElement(result, modifierFlags, toolTip, toolTipDirection);
 
     InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
 }
 
-void Chrome::setToolTip(const HitTestResult& result)
+void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirection& toolTipDirection)
 {
     // First priority is a potential toolTip representing a spelling or grammar error
-    TextDirection toolTipDirection;
-    String toolTip = result.spellingToolTip(toolTipDirection);
+    toolTip = result.spellingToolTip(toolTipDirection);
 
     // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
     if (toolTip.isEmpty() && m_page.settings().showsURLsInToolTips()) {
@@ -382,14 +385,12 @@ void Chrome::setToolTip(const HitTestResult& result)
                 // FIXME: We should obtain text direction of tooltip from
                 // ChromeClient or platform. As of October 2011, all client
                 // implementations don't use text direction information for
-                // ChromeClient::setToolTip. We'll work on tooltip text
+                // ChromeClient::mouseDidMoveOverElement. We'll work on tooltip text
                 // direction during bidi cleanup in form inputs.
                 toolTipDirection = TextDirection::LTR;
             }
         }
     }
-
-    m_client.setToolTip(toolTip, toolTipDirection);
 }
 
 bool Chrome::print(Frame& frame)

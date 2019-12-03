@@ -529,16 +529,16 @@ void WebChromeClient::intrinsicContentsSizeChanged(const IntSize&) const
     notImplemented();
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags, const String& toolTip, TextDirection)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
-    if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<WebElementPropertyBag> element;
+        element.adoptRef(WebElementPropertyBag::createInstance(result));
 
-    COMPtr<WebElementPropertyBag> element;
-    element.adoptRef(WebElementPropertyBag::createInstance(result));
-
-    uiDelegate->mouseDidMoveOverElement(m_webView, element.get(), modifierFlags);
+        uiDelegate->mouseDidMoveOverElement(m_webView, element.get(), modifierFlags);
+    }
+    m_webView->setToolTip(toolTip);
 }
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
@@ -570,11 +570,6 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
 
     COMPtr<IDOMElement> e(AdoptCOM, DOMElement::createInstance(&element));
     uiDelegatePrivate3->didPressMissingPluginButton(e.get());
-}
-
-void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
-{
-    m_webView->setToolTip(toolTip);
 }
 
 void WebChromeClient::print(Frame& frame)

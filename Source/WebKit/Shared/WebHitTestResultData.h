@@ -60,6 +60,7 @@ struct WebHitTestResultData {
     bool isDownloadableMedia;
 
     String lookupText;
+    String toolTipText;
     RefPtr<WebKit::SharedMemory> imageSharedMemory;
     uint64_t imageSize;
 
@@ -75,7 +76,7 @@ struct WebHitTestResultData {
     RefPtr<WebCore::TextIndicator> linkTextIndicator;
 
     WebHitTestResultData();
-    explicit WebHitTestResultData(const WebCore::HitTestResult&);
+    WebHitTestResultData(const WebCore::HitTestResult&, const String& toolTipText);
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
     ~WebHitTestResultData();
 

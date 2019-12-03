@@ -700,7 +700,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, unsigned modifierFlags)
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, unsigned modifierFlags, const String& toolTip, TextDirection)
 {
     RefPtr<API::Object> userData;
 
@@ -708,19 +708,8 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     m_page.injectedBundleUIClient().mouseDidMoveOverElement(&m_page, hitTestResult, OptionSet<WebEvent::Modifier>::fromRaw(modifierFlags), userData);
 
     // Notify the UIProcess.
-    WebHitTestResultData webHitTestResultData(hitTestResult);
+    WebHitTestResultData webHitTestResultData(hitTestResult, toolTip);
     m_page.send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-}
-
-void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
-{
-    // Only send a tool tip to the WebProcess if it has changed since the last time this function was called.
-
-    if (toolTip == m_cachedToolTip)
-        return;
-    m_cachedToolTip = toolTip;
-
-    m_page.send(Messages::WebPageProxy::SetToolTip(m_cachedToolTip));
 }
 
 void WebChromeClient::print(Frame& frame)

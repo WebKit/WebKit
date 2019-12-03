@@ -1911,7 +1911,6 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 
     hoveredNode.setToNonUserAgentShadowAncestor();
     page->chrome().mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
-    page->chrome().setToolTip(hoveredNode);
     return result;
 }
 

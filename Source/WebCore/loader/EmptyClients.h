@@ -118,9 +118,7 @@ class EmptyChromeClient : public ChromeClient {
     void contentsSizeChanged(Frame&, const IntSize&) const final { }
     void intrinsicContentsSizeChanged(const IntSize&) const final { }
 
-    void mouseDidMoveOverElement(const HitTestResult&, unsigned) final { }
-
-    void setToolTip(const String&, TextDirection) final { }
+    void mouseDidMoveOverElement(const HitTestResult&, unsigned, const String&, TextDirection) final { }
 
     void print(Frame&) final { }
 

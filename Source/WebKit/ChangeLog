@@ -1,3 +1,31 @@
+2019-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [PSON] Tooltips from previous page shown on new page
+        https://bugs.webkit.org/show_bug.cgi?id=204735
+
+        Reviewed by Chris Dumez.
+
+        The problem is that WebPage (in the web process) is caching the tooltip text to avoid sending IPC messages when
+        the tooltip didn't change. When a new web process is used for the same web view, the tooltip text doesn't really
+        change (it's always null) until a new one is set. The setToolTip message is always sent right after the
+        MouseDidMoveOverElement, and they both depend on the same hit test result, so we can include the tooltip text as
+        part of the WebHitTestResultData struct passed to MouseDidMoveOverElement and remove the SetToolTip
+        message. Since the UI process is already caching the tooltip, we can simply notify the page client when it changes.
+
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData): Initialize toolTipText.
+        (WebKit::WebHitTestResultData::encode const): Encode toolTipText.
+        (WebKit::WebHitTestResultData::decode): Decode toolTipText.
+        * Shared/WebHitTestResultData.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement): Call setToolTip() after notifying the UI client about the mouse move.
+        (WebKit::WebPageProxy::setToolTip): Return early if tooltip didn't change.
+        (WebKit::WebPageProxy::resetState): Use setToolTip() to ensure the page client is notified about the change.
+        * UIProcess/WebPageProxy.messages.in: Remove SetToolTip message.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement): Pass tooltip text to WebHitTestResultData constructor.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2019-12-02  Sihui Liu  <sihui_liu@apple.com>
 
         Cross-thread version StorageQuotaManager

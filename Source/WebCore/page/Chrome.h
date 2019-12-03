@@ -142,8 +142,6 @@ public:
 
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
-    void setToolTip(const HitTestResult&);
-
     WEBCORE_EXPORT bool print(Frame&);
 
     WEBCORE_EXPORT void enableSuddenTermination();
@@ -187,6 +185,8 @@ public:
 
 private:
     void notifyPopupOpeningObservers() const;
+
+    void getToolTip(const HitTestResult&, String&, TextDirection&);
 
     Page& m_page;
     ChromeClient& m_client;

@@ -5382,6 +5382,7 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData);
     auto modifiers = OptionSet<WebEvent::Modifier>::fromRaw(opaqueModifiers);
     m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
+    setToolTip(hitTestResultData.toolTipText);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -6471,6 +6472,9 @@ void WebPageProxy::takeFocus(uint32_t direction)
 
 void WebPageProxy::setToolTip(const String& toolTip)
 {
+    if (m_toolTip == toolTip)
+        return;
+
     String oldToolTip = m_toolTip;
     m_toolTip = toolTip;
     pageClient().toolTipChanged(oldToolTip, m_toolTip);
@@ -7169,7 +7173,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_notificationPermissionRequestManager.invalidateRequests();
 
-    m_toolTip = String();
+    setToolTip({ });
 
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;

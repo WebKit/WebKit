@@ -38,7 +38,7 @@ WebHitTestResultData::WebHitTestResultData()
 {
 }
 
-WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult)
+WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult, const String& toolTipText)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -53,6 +53,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , toolTipText(toolTipText)
     , imageSize(0)
 {
 }
@@ -108,6 +109,7 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     encoder << isOverTextInsideFormControlElement;
     encoder << isDownloadableMedia;
     encoder << lookupText;
+    encoder << toolTipText;
     encoder << dictionaryPopupInfo;
 
     WebKit::SharedMemory::Handle imageHandle;
@@ -141,6 +143,7 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
         || !decoder.decode(hitTestResultData.isDownloadableMedia)
         || !decoder.decode(hitTestResultData.lookupText)
+        || !decoder.decode(hitTestResultData.toolTipText)
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
 
