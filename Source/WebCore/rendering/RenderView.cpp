@@ -877,6 +877,24 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
+void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
+{
+    if (!m_styleChangeLayerMutationRoot) {
+        m_styleChangeLayerMutationRoot = makeWeakPtr(layer);
+        return;
+    }
+
+    RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
+    m_styleChangeLayerMutationRoot = makeWeakPtr(commonAncestor);
+}
+
+RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
+{
+    auto* result = m_styleChangeLayerMutationRoot.get();
+    m_styleChangeLayerMutationRoot.clear();
+    return result;
+}
+
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {

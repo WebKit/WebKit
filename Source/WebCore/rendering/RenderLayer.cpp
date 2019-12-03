@@ -496,7 +496,7 @@ void RenderLayer::dirtyPaintOrderListsOnChildChange(RenderLayer& child)
     }
 }
 
-void RenderLayer::insertOnlyThisLayer()
+void RenderLayer::insertOnlyThisLayer(LayerChangeTiming timing)
 {
     if (!m_parent && renderer().parent()) {
         // We need to connect ourselves when our renderer() has a parent.
@@ -511,14 +511,22 @@ void RenderLayer::insertOnlyThisLayer()
     for (auto& child : childrenOfType<RenderElement>(renderer()))
         child.moveLayers(m_parent, this);
 
+    if (parent()) {
+        if (timing == LayerChangeTiming::StyleChange)
+            renderer().view().layerChildrenChangedDuringStyleChange(*parent());
+    }
+    
     // Clear out all the clip rects.
     clearClipRectsIncludingDescendants();
 }
 
-void RenderLayer::removeOnlyThisLayer()
+void RenderLayer::removeOnlyThisLayer(LayerChangeTiming timing)
 {
     if (!m_parent)
         return;
+
+    if (timing == LayerChangeTiming::StyleChange)
+        renderer().view().layerChildrenChangedDuringStyleChange(*parent());
 
     // Mark that we are about to lose our layer. This makes render tree
     // walks ignore this layer while we're removing it.
@@ -2248,6 +2256,27 @@ bool RenderLayer::isDescendantOf(const RenderLayer& layer) const
             return true;
     }
     return false;
+}
+
+static RenderLayer* findCommonAncestor(const RenderLayer& firstLayer, const RenderLayer& secondLayer)
+{
+    if (&firstLayer == &secondLayer)
+        return const_cast<RenderLayer*>(&firstLayer);
+
+    HashSet<const RenderLayer*> ancestorChain;
+    for (auto* currLayer = &firstLayer; currLayer; currLayer = currLayer->parent())
+        ancestorChain.add(currLayer);
+
+    for (auto* currLayer = &secondLayer; currLayer; currLayer = currLayer->parent()) {
+        if (ancestorChain.contains(currLayer))
+            return const_cast<RenderLayer*>(currLayer);
+    }
+    return nullptr;
+}
+
+RenderLayer* RenderLayer::commonAncestorWithLayer(const RenderLayer& layer) const
+{
+    return findCommonAncestor(*this, layer);
 }
 
 void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& roundedLocation, ColumnOffsetAdjustment adjustForColumns) const
