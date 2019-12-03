@@ -237,7 +237,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_backForwardController(makeUnique<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_mainFrame(Frame::create(this, nullptr, pageConfiguration.loaderClientForMainFrame))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
-    , m_plugInClient(pageConfiguration.plugInClient)
+    , m_plugInClient(WTFMove(pageConfiguration.plugInClient))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
@@ -352,9 +352,6 @@ Page::~Page()
         frame->willDetachPage();
         frame->detachFromPage();
     }
-
-    if (m_plugInClient)
-        m_plugInClient->pageDestroyed();
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();

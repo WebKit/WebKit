@@ -43,11 +43,6 @@ WebPlugInClient::~WebPlugInClient()
 {
 }
 
-void WebPlugInClient::pageDestroyed()
-{
-    delete this;
-}
-
 bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
     return WebProcess::singleton().shouldPlugInAutoStartFromOrigin(m_webPage, pageOrigin, pluginOrigin, mimeType);

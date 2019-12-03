@@ -31,12 +31,9 @@ namespace WebCore {
 
 class PlugInClient {
 public:
-    virtual void pageDestroyed() = 0;
+    virtual ~PlugInClient() = default;
     virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) = 0;
     virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) = 0;
-
-protected:
-    virtual ~PlugInClient() = default;
 };
 
 } // namespace WebCore

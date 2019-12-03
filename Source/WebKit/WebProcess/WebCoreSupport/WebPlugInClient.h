@@ -39,7 +39,6 @@ public:
     virtual ~WebPlugInClient();
 
 private:
-    void pageDestroyed() override;
     bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) override;
     void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) override;
 

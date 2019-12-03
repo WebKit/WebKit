@@ -96,7 +96,7 @@ public:
 
     UniqueRef<LibWebRTCProvider> libWebRTCProvider;
 
-    PlugInClient* plugInClient { nullptr };
+    std::unique_ptr<PlugInClient> plugInClient;
     ProgressTrackerClient* progressTrackerClient { nullptr };
     Ref<BackForwardClient> backForwardClient;
     Ref<CookieJar> cookieJar;
