@@ -79,7 +79,7 @@ void UniqueIDBDatabaseTransaction::abort()
     auto database = m_databaseConnection->database();
     ASSERT(database);
 
-    database->abortTransaction(*this, UniqueIDBDatabase::WaitForPendingTasks::Yes, [this, weakThis = makeWeakPtr(*this)](auto& error) {
+    database->abortTransaction(*this, [this, weakThis = makeWeakPtr(*this)](auto& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort (callback)");
         if (!weakThis)
             return;
@@ -286,7 +286,7 @@ void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, c
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->putOrAdd(*this, requestData, keyData, value, overwriteMode, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBKeyData& key) {
+    database->putOrAdd(requestData, keyData, value, overwriteMode, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBKeyData& key) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd (callback)");
         if (!weakThis)
             return;
@@ -307,7 +307,7 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->getRecord(*this, requestData, getRecordData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
+    database->getRecord(requestData, getRecordData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord (callback)");
         if (!weakThis)
             return;
@@ -328,7 +328,7 @@ void UniqueIDBDatabaseTransaction::getAllRecords(const IDBRequestData& requestDa
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->getAllRecords(*this, requestData, getAllRecordsData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetAllResult& result) {
+    database->getAllRecords(requestData, getAllRecordsData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetAllResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getAllRecords (callback)");
         if (!weakThis)
             return;
@@ -349,7 +349,7 @@ void UniqueIDBDatabaseTransaction::getCount(const IDBRequestData& requestData, c
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->getCount(*this, requestData, keyRangeData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, uint64_t count) {
+    database->getCount(requestData, keyRangeData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, uint64_t count) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getCount (callback)");
         if (!weakThis)
             return;
@@ -370,7 +370,7 @@ void UniqueIDBDatabaseTransaction::deleteRecord(const IDBRequestData& requestDat
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->deleteRecord(*this, requestData, keyRangeData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error) {
+    database->deleteRecord(requestData, keyRangeData, [this, weakThis = makeWeakPtr(*this), requestData](auto& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteRecord (callback)");
         if (!weakThis)
             return;
@@ -391,7 +391,7 @@ void UniqueIDBDatabaseTransaction::openCursor(const IDBRequestData& requestData,
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->openCursor(*this, requestData, info, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
+    database->openCursor(requestData, info, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor (callback)");
         if (!weakThis)
             return;
@@ -412,7 +412,7 @@ void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestDa
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->iterateCursor(*this, requestData, data, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
+    database->iterateCursor(requestData, data, [this, weakThis = makeWeakPtr(*this), requestData](auto& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor (callback)");
         if (!weakThis)
             return;

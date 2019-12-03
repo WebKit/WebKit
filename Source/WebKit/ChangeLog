@@ -1,3 +1,88 @@
+2019-12-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Cross-thread version StorageQuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=203971
+        <rdar://problem/57290349>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp: Introduce class SessionStorageQuotaManager to manage all 
+        StorageQuotaManagers of the same session. 
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::addSessionStorageQuotaManager):
+        (WebKit::NetworkProcess::removeSessionStorageQuotaManager):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::createIDBServer):
+        (WebKit::NetworkProcess::addIndexedDatabaseSession):
+        (WebKit::NetworkProcess::setSessionStorageQuotaManagerIDBRootPath):
+        (WebKit::NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting):
+        (WebKit::NetworkProcess::resetQuota):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        (WebKit::NetworkProcess::initializeStorageQuota): Deleted.
+        (WebKit::NetworkProcess::clearStorageQuota): Deleted.
+        (): Deleted.
+        (WebKit::NetworkProcess::initializeQuotaUsers): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::SessionStorageQuotaManager):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::defaultQuota const):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::ensureOriginStorageQuotaManager):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::existingStorageQuotaManagers):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::cacheRootPath const):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::setIDBRootPath):
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::idbRootPath const):
+        (WebKit::NetworkProcess::StorageQuotaManagers::defaultQuota const): Deleted.
+        (WebKit::NetworkProcess::StorageQuotaManagers::setDefaultQuotas): Deleted.
+        (WebKit::NetworkProcess::StorageQuotaManagers::managersPerOrigin): Deleted.
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::getDirectorySize):
+        (WebKit::CacheStorage::Engine::diskUsage): static function to get the disk usage of CacheStorage given 
+        CacheStorage root directory.
+        (WebKit::CacheStorage::Engine::requestSpace):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::writeSizeFile):
+        (WebKit::CacheStorage::Engine::readSizeFile):
+        (WebKit::CacheStorage::Engine::initializeQuotaUser): Deleted.
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::remove):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::create):
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::~Caches):
+        (WebKit::CacheStorage::Caches::updateSizeFile):
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::clear):
+        (WebKit::CacheStorage::Caches::requestSpace):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::removeRecord):
+        (WebKit::CacheStorage::Caches::whenInitialized): Deleted.
+        (WebKit::CacheStorage::Caches::resetSpaceUsed): Deleted.
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h: Add a cacheStorageDirectory parameter so we know the direcotry of 
+        CacheStorage when we start using WebsiteDataStore.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreResetQuota):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h: Add a C API for reseting quota in TestRunner.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::resetQuota):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::resetQuota):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-12-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Create sandbox extension for "com.apple.tccd"

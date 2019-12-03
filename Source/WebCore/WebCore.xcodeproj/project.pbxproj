@@ -1129,7 +1129,6 @@
 		41D28D0D2139E05800F4206F /* LibWebRTCStatsCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D28D0B2139E01D00F4206F /* LibWebRTCStatsCollector.cpp */; };
 		41D41C672256874F00697942 /* ServiceWorkerInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41D41C652256859200697942 /* ServiceWorkerInternals.mm */; };
 		41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41DE7C7D222DA14800532B65 /* StorageQuotaUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E9DCE7231974BF00F35949 /* BlobLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9DCE4231973FE00F35949 /* BlobLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7472,7 +7471,6 @@
 		41D28D0C2139E01E00F4206F /* LibWebRTCStatsCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCStatsCollector.h; path = libwebrtc/LibWebRTCStatsCollector.h; sourceTree = "<group>"; };
 		41D41C652256859200697942 /* ServiceWorkerInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerInternals.mm; sourceTree = "<group>"; };
 		41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioFormat.h; path = libwebrtc/LibWebRTCAudioFormat.h; sourceTree = "<group>"; };
-		41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageQuotaUser.h; sourceTree = "<group>"; };
 		41DE7C7A222DA13D00532B65 /* StorageQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageQuotaManager.cpp; sourceTree = "<group>"; };
 		41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageQuotaManager.h; sourceTree = "<group>"; };
 		41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSDOMBindingInternals.js; sourceTree = "<group>"; };
@@ -17118,7 +17116,6 @@
 				1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */,
 				41DE7C7A222DA13D00532B65 /* StorageQuotaManager.cpp */,
 				41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */,
-				41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */,
 				5166D3CC1E8ED41100AD62E3 /* StorageType.h */,
 			);
 			indentWidth = 4;
@@ -29535,6 +29532,7 @@
 				F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */,
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
 				1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */,
+				E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */,
 				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
 				0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */,
 				0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */,
@@ -30048,7 +30046,6 @@
 				A871DB2B0A150BD600B12A68 /* HTMLTableCaptionElement.h in Headers */,
 				A871DB2A0A150BD600B12A68 /* HTMLTableCellElement.h in Headers */,
 				A871DB2F0A150BD600B12A68 /* HTMLTableColElement.h in Headers */,
-				E451C628239293EC00993190 /* LineLayoutTraversalDisplayRunPath.h in Headers */,
 				A871DB270A150BD600B12A68 /* HTMLTableElement.h in Headers */,
 				A871DB2C0A150BD600B12A68 /* HTMLTablePartElement.h in Headers */,
 				A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */,
@@ -30160,7 +30157,6 @@
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
 				72283F0E230B268C00F5D828 /* ImagePaintingOptions.h in Headers */,
-				E451C6322394031A00993190 /* MarginTypes.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
 				CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */,
@@ -30553,7 +30549,6 @@
 				837056901F50915C00D93425 /* JSFileSystemEntryCallback.h in Headers */,
 				833B9E361F508D8500E0E428 /* JSFileSystemFileEntry.h in Headers */,
 				712BE4881FE8686A002031CC /* JSFillMode.h in Headers */,
-				E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */,
 				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
 				C280833F1C6DC26F001451B6 /* JSFontFace.h in Headers */,
 				1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */,
@@ -31177,6 +31172,7 @@
 				6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */,
 				11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */,
 				141DC0481648348F00371E5A /* LayoutUnit.h in Headers */,
+				E451C6312394027900993190 /* LayoutUnits.h in Headers */,
 				CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */,
 				CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */,
 				CDE8B5F11A69778B00B4B66A /* LegacyCDMSessionClearKey.h in Headers */,
@@ -31208,6 +31204,9 @@
 				6F26EB48234004A5006906E2 /* LineLayoutContext.h in Headers */,
 				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				E484A33E23055325009ADE6A /* LineLayoutTraversal.h in Headers */,
+				E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */,
+				E451C628239293EC00993190 /* LineLayoutTraversalDisplayRunPath.h in Headers */,
+				E4343D232392778400EBBB66 /* LineLayoutTraversalSimplePath.h in Headers */,
 				FFDBC047183D27B700407109 /* LineWidth.h in Headers */,
 				CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */,
 				5143B2631DDD15200014FAC6 /* LinkIcon.h in Headers */,
@@ -31241,6 +31240,7 @@
 				46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */,
 				7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
+				E451C6322394031A00993190 /* MarginTypes.h in Headers */,
 				CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
@@ -31701,7 +31701,6 @@
 				57DCED74214305F00016B847 /* PublicKeyCredentialData.h in Headers */,
 				57303BEF200980C600355965 /* PublicKeyCredentialDescriptor.h in Headers */,
 				57303C0A20099BAD00355965 /* PublicKeyCredentialRequestOptions.h in Headers */,
-				E4343D232392778400EBBB66 /* LineLayoutTraversalSimplePath.h in Headers */,
 				57303BEB20097F4000355965 /* PublicKeyCredentialType.h in Headers */,
 				0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,
@@ -32245,7 +32244,6 @@
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				1A37636C1A2E68BB009A7EE2 /* StorageNamespaceProvider.h in Headers */,
 				41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */,
-				41DE7C7D222DA14800532B65 /* StorageQuotaUser.h in Headers */,
 				5C9EF2F321F06190003BDC56 /* StorageSessionProvider.h in Headers */,
 				5166D3CD1E8ED48F00AD62E3 /* StorageType.h in Headers */,
 				4682D2001F79783000C863DB /* StoredCredentialsPolicy.h in Headers */,
@@ -32496,7 +32494,6 @@
 				B2227ADA0D00BF220071B782 /* SVGTransformable.h in Headers */,
 				B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */,
 				B2227ADF0D00BF220071B782 /* SVGTransformList.h in Headers */,
-				E451C6312394027900993190 /* LayoutUnits.h in Headers */,
 				7CE58D581DD7D96D00128552 /* SVGTransformValue.h in Headers */,
 				B2227AE20D00BF220071B782 /* SVGTRefElement.h in Headers */,
 				B2227AE50D00BF220071B782 /* SVGTSpanElement.h in Headers */,
@@ -32826,7 +32823,6 @@
 				49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */,
 				D3F3D36A1A69B7B90059FC2B /* WebGLRenderingContextBase.h in Headers */,
 				6F995A221A7078B100A735F4 /* WebGLSampler.h in Headers */,
-				E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */,
 				49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 				01D3CF8714BD0A3000FE9970 /* WebGLSharedObject.h in Headers */,

@@ -414,8 +414,11 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         auto position = (sameURLRecords && !matchingRecords.isEmpty()) ? sameURLRecords->findMatching([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
 
         spaceRequired += record.responseBodySize;
-        if (position != notFound)
-            spaceRequired -= sameURLRecords->at(position).size;
+        if (position != notFound) {
+            uint64_t spaceDecreased = sameURLRecords->at(position).size;
+            if (spaceRequired >= spaceDecreased)
+                spaceRequired -= spaceDecreased;
+        }
     }
 
     m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](Optional<DOMCacheEngine::Error>&& error) mutable {
@@ -450,7 +453,10 @@ void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOption
         return shouldRemove;
     });
 
-    callback(WTFMove(recordIdentifiers));
+    // This operation would change caches size, so make sure callback finishes after size file is updated.
+    m_caches.updateSizeFile([callback = WTFMove(callback), recordIdentifiers = WTFMove(recordIdentifiers)]() mutable {
+        callback(WTFMove(recordIdentifiers));
+    });
 }
 
 void Cache::removeFromRecordList(const Vector<uint64_t>& recordIdentifiers)
