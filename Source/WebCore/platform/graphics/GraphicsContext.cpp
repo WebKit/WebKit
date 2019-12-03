@@ -72,8 +72,8 @@ private:
 };
 
 #define CHECK_FOR_CHANGED_PROPERTY(flag, property) \
-    if ((m_changeFlags & GraphicsContextState::flag) && (m_state.property != state.property)) \
-        changeFlags |= GraphicsContextState::flag;
+    if (m_changeFlags.contains(GraphicsContextState::flag) && (m_state.property != state.property)) \
+        changeFlags.add(GraphicsContextState::flag);
 
 GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromState(const GraphicsContextState& state) const
 {
@@ -84,11 +84,11 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
     CHECK_FOR_CHANGED_PROPERTY(FillGradientChange, fillGradient);
     CHECK_FOR_CHANGED_PROPERTY(FillPatternChange, fillPattern);
 
-    if ((m_changeFlags & GraphicsContextState::ShadowChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShadowChange)
         && (m_state.shadowOffset != state.shadowOffset
             || m_state.shadowBlur != state.shadowBlur
             || m_state.shadowColor != state.shadowColor))
-        changeFlags |= GraphicsContextState::ShadowChange;
+        changeFlags.add(GraphicsContextState::ShadowChange);
 
     CHECK_FOR_CHANGED_PROPERTY(StrokeThicknessChange, strokeThickness);
     CHECK_FOR_CHANGED_PROPERTY(TextDrawingModeChange, textDrawingMode);
@@ -98,9 +98,11 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
     CHECK_FOR_CHANGED_PROPERTY(FillRuleChange, fillRule);
     CHECK_FOR_CHANGED_PROPERTY(AlphaChange, alpha);
 
-    if ((m_changeFlags & (GraphicsContextState::CompositeOperationChange | GraphicsContextState::BlendModeChange))
-        && (m_state.compositeOperator != state.compositeOperator || m_state.blendMode != state.blendMode))
-        changeFlags |= (GraphicsContextState::CompositeOperationChange | GraphicsContextState::BlendModeChange);
+    if (m_changeFlags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange })
+        && (m_state.compositeOperator != state.compositeOperator || m_state.blendMode != state.blendMode)) {
+        changeFlags.add(GraphicsContextState::CompositeOperationChange);
+        changeFlags.add(GraphicsContextState::BlendModeChange);
+    }
 
     CHECK_FOR_CHANGED_PROPERTY(ShouldAntialiasChange, shouldAntialias);
     CHECK_FOR_CHANGED_PROPERTY(ShouldSmoothFontsChange, shouldSmoothFonts);
@@ -119,92 +121,92 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
 void GraphicsContextStateChange::accumulate(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     // FIXME: This code should move to GraphicsContextState.
-    if (flags & GraphicsContextState::StrokeGradientChange)
+    if (flags.contains(GraphicsContextState::StrokeGradientChange))
         m_state.strokeGradient = state.strokeGradient;
 
-    if (flags & GraphicsContextState::StrokePatternChange)
+    if (flags.contains(GraphicsContextState::StrokePatternChange))
         m_state.strokePattern = state.strokePattern;
 
-    if (flags & GraphicsContextState::FillGradientChange)
+    if (flags.contains(GraphicsContextState::FillGradientChange))
         m_state.fillGradient = state.fillGradient;
 
-    if (flags & GraphicsContextState::FillPatternChange)
+    if (flags.contains(GraphicsContextState::FillPatternChange))
         m_state.fillPattern = state.fillPattern;
 
-    if (flags & GraphicsContextState::ShadowChange) {
+    if (flags.contains(GraphicsContextState::ShadowChange)) {
         // FIXME: Deal with state.shadowsUseLegacyRadius.
         m_state.shadowOffset = state.shadowOffset;
         m_state.shadowBlur = state.shadowBlur;
         m_state.shadowColor = state.shadowColor;
     }
 
-    if (flags & GraphicsContextState::StrokeThicknessChange)
+    if (flags.contains(GraphicsContextState::StrokeThicknessChange))
         m_state.strokeThickness = state.strokeThickness;
 
-    if (flags & GraphicsContextState::TextDrawingModeChange)
+    if (flags.contains(GraphicsContextState::TextDrawingModeChange))
         m_state.textDrawingMode = state.textDrawingMode;
 
-    if (flags & GraphicsContextState::StrokeColorChange)
+    if (flags.contains(GraphicsContextState::StrokeColorChange))
         m_state.strokeColor = state.strokeColor;
 
-    if (flags & GraphicsContextState::FillColorChange)
+    if (flags.contains(GraphicsContextState::FillColorChange))
         m_state.fillColor = state.fillColor;
 
-    if (flags & GraphicsContextState::StrokeStyleChange)
+    if (flags.contains(GraphicsContextState::StrokeStyleChange))
         m_state.strokeStyle = state.strokeStyle;
 
-    if (flags & GraphicsContextState::FillRuleChange)
+    if (flags.contains(GraphicsContextState::FillRuleChange))
         m_state.fillRule = state.fillRule;
 
-    if (flags & GraphicsContextState::AlphaChange)
+    if (flags.contains(GraphicsContextState::AlphaChange))
         m_state.alpha = state.alpha;
 
-    if (flags & (GraphicsContextState::CompositeOperationChange | GraphicsContextState::BlendModeChange)) {
+    if (flags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange })) {
         m_state.compositeOperator = state.compositeOperator;
         m_state.blendMode = state.blendMode;
     }
 
-    if (flags & GraphicsContextState::ShouldAntialiasChange)
+    if (flags.contains(GraphicsContextState::ShouldAntialiasChange))
         m_state.shouldAntialias = state.shouldAntialias;
 
-    if (flags & GraphicsContextState::ShouldSmoothFontsChange)
+    if (flags.contains(GraphicsContextState::ShouldSmoothFontsChange))
         m_state.shouldSmoothFonts = state.shouldSmoothFonts;
 
-    if (flags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+    if (flags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
         m_state.shouldSubpixelQuantizeFonts = state.shouldSubpixelQuantizeFonts;
 
-    if (flags & GraphicsContextState::ShadowsIgnoreTransformsChange)
+    if (flags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
         m_state.shadowsIgnoreTransforms = state.shadowsIgnoreTransforms;
 
-    if (flags & GraphicsContextState::DrawLuminanceMaskChange)
+    if (flags.contains(GraphicsContextState::DrawLuminanceMaskChange))
         m_state.drawLuminanceMask = state.drawLuminanceMask;
 
-    if (flags & GraphicsContextState::ImageInterpolationQualityChange)
+    if (flags.contains(GraphicsContextState::ImageInterpolationQualityChange))
         m_state.imageInterpolationQuality = state.imageInterpolationQuality;
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    if (flags & GraphicsContextState::UseDarkAppearanceChange)
+    if (flags.contains(GraphicsContextState::UseDarkAppearanceChange))
         m_state.useDarkAppearance = state.useDarkAppearance;
 #endif
 
-    m_changeFlags |= flags;
+    m_changeFlags.add(flags);
 }
 
 void GraphicsContextStateChange::apply(GraphicsContext& context) const
 {
-    if (m_changeFlags & GraphicsContextState::StrokeGradientChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeGradientChange))
         context.setStrokeGradient(*m_state.strokeGradient);
 
-    if (m_changeFlags & GraphicsContextState::StrokePatternChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokePatternChange))
         context.setStrokePattern(*m_state.strokePattern);
 
-    if (m_changeFlags & GraphicsContextState::FillGradientChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillGradientChange))
         context.setFillGradient(*m_state.fillGradient);
 
-    if (m_changeFlags & GraphicsContextState::FillPatternChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillPatternChange))
         context.setFillPattern(*m_state.fillPattern);
 
-    if (m_changeFlags & GraphicsContextState::ShadowChange) {
+    if (m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
 #if USE(CG)
         if (m_state.shadowsUseLegacyRadius)
             context.setLegacyShadow(m_state.shadowOffset, m_state.shadowBlur, m_state.shadowColor);
@@ -213,71 +215,71 @@ void GraphicsContextStateChange::apply(GraphicsContext& context) const
             context.setShadow(m_state.shadowOffset, m_state.shadowBlur, m_state.shadowColor);
     }
 
-    if (m_changeFlags & GraphicsContextState::StrokeThicknessChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
         context.setStrokeThickness(m_state.strokeThickness);
 
-    if (m_changeFlags & GraphicsContextState::TextDrawingModeChange)
+    if (m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
         context.setTextDrawingMode(m_state.textDrawingMode);
 
-    if (m_changeFlags & GraphicsContextState::StrokeColorChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeColorChange))
         context.setStrokeColor(m_state.strokeColor);
 
-    if (m_changeFlags & GraphicsContextState::FillColorChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillColorChange))
         context.setFillColor(m_state.fillColor);
 
-    if (m_changeFlags & GraphicsContextState::StrokeStyleChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeStyleChange))
         context.setStrokeStyle(m_state.strokeStyle);
 
-    if (m_changeFlags & GraphicsContextState::FillRuleChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillRuleChange))
         context.setFillRule(m_state.fillRule);
 
-    if (m_changeFlags & GraphicsContextState::AlphaChange)
+    if (m_changeFlags.contains(GraphicsContextState::AlphaChange))
         context.setAlpha(m_state.alpha);
 
-    if (m_changeFlags & (GraphicsContextState::CompositeOperationChange | GraphicsContextState::BlendModeChange))
+    if (m_changeFlags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange }))
         context.setCompositeOperation(m_state.compositeOperator, m_state.blendMode);
 
-    if (m_changeFlags & GraphicsContextState::ShouldAntialiasChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldAntialiasChange))
         context.setShouldAntialias(m_state.shouldAntialias);
 
-    if (m_changeFlags & GraphicsContextState::ShouldSmoothFontsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange))
         context.setShouldSmoothFonts(m_state.shouldSmoothFonts);
 
-    if (m_changeFlags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
         context.setShouldSubpixelQuantizeFonts(m_state.shouldSubpixelQuantizeFonts);
 
-    if (m_changeFlags & GraphicsContextState::ShadowsIgnoreTransformsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
         context.setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
 
-    if (m_changeFlags & GraphicsContextState::DrawLuminanceMaskChange)
+    if (m_changeFlags.contains(GraphicsContextState::DrawLuminanceMaskChange))
         context.setDrawLuminanceMask(m_state.drawLuminanceMask);
 
-    if (m_changeFlags & GraphicsContextState::ImageInterpolationQualityChange)
+    if (m_changeFlags.contains(GraphicsContextState::ImageInterpolationQualityChange))
         context.setImageInterpolationQuality(m_state.imageInterpolationQuality);
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    if (m_changeFlags & GraphicsContextState::UseDarkAppearanceChange)
+    if (m_changeFlags.contains(GraphicsContextState::UseDarkAppearanceChange))
         context.setUseDarkAppearance(m_state.useDarkAppearance);
 #endif
 }
 
 void GraphicsContextStateChange::dump(TextStream& ts) const
 {
-    ts.dumpProperty("change-flags", m_changeFlags);
+    ts.dumpProperty("change-flags", m_changeFlags.toRaw());
 
-    if (m_changeFlags & GraphicsContextState::StrokeGradientChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeGradientChange))
         ts.dumpProperty("stroke-gradient", m_state.strokeGradient.get());
 
-    if (m_changeFlags & GraphicsContextState::StrokePatternChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokePatternChange))
         ts.dumpProperty("stroke-pattern", m_state.strokePattern.get());
 
-    if (m_changeFlags & GraphicsContextState::FillGradientChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillGradientChange))
         ts.dumpProperty("fill-gradient", m_state.fillGradient.get());
 
-    if (m_changeFlags & GraphicsContextState::FillPatternChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillPatternChange))
         ts.dumpProperty("fill-pattern", m_state.fillPattern.get());
 
-    if (m_changeFlags & GraphicsContextState::ShadowChange) {
+    if (m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
         ts.dumpProperty("shadow-blur", m_state.shadowBlur);
         ts.dumpProperty("shadow-offset", m_state.shadowOffset);
 #if USE(CG)
@@ -285,50 +287,50 @@ void GraphicsContextStateChange::dump(TextStream& ts) const
 #endif
     }
 
-    if (m_changeFlags & GraphicsContextState::StrokeThicknessChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
         ts.dumpProperty("stroke-thickness", m_state.strokeThickness);
 
-    if (m_changeFlags & GraphicsContextState::TextDrawingModeChange)
+    if (m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
         ts.dumpProperty("text-drawing-mode", m_state.textDrawingMode);
 
-    if (m_changeFlags & GraphicsContextState::StrokeColorChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeColorChange))
         ts.dumpProperty("stroke-color", m_state.strokeColor);
 
-    if (m_changeFlags & GraphicsContextState::FillColorChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillColorChange))
         ts.dumpProperty("fill-color", m_state.fillColor);
 
-    if (m_changeFlags & GraphicsContextState::StrokeStyleChange)
+    if (m_changeFlags.contains(GraphicsContextState::StrokeStyleChange))
         ts.dumpProperty("stroke-style", m_state.strokeStyle);
 
-    if (m_changeFlags & GraphicsContextState::FillRuleChange)
+    if (m_changeFlags.contains(GraphicsContextState::FillRuleChange))
         ts.dumpProperty("fill-rule", m_state.fillRule);
 
-    if (m_changeFlags & GraphicsContextState::AlphaChange)
+    if (m_changeFlags.contains(GraphicsContextState::AlphaChange))
         ts.dumpProperty("alpha", m_state.alpha);
 
-    if (m_changeFlags & GraphicsContextState::CompositeOperationChange)
+    if (m_changeFlags.contains(GraphicsContextState::CompositeOperationChange))
         ts.dumpProperty("composite-operator", m_state.compositeOperator);
 
-    if (m_changeFlags & GraphicsContextState::BlendModeChange)
+    if (m_changeFlags.contains(GraphicsContextState::BlendModeChange))
         ts.dumpProperty("blend-mode", m_state.blendMode);
 
-    if (m_changeFlags & GraphicsContextState::ShouldAntialiasChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldAntialiasChange))
         ts.dumpProperty("should-antialias", m_state.shouldAntialias);
 
-    if (m_changeFlags & GraphicsContextState::ShouldSmoothFontsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange))
         ts.dumpProperty("should-smooth-fonts", m_state.shouldSmoothFonts);
 
-    if (m_changeFlags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
         ts.dumpProperty("should-subpixel-quantize-fonts", m_state.shouldSubpixelQuantizeFonts);
 
-    if (m_changeFlags & GraphicsContextState::ShadowsIgnoreTransformsChange)
+    if (m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
         ts.dumpProperty("shadows-ignore-transforms", m_state.shadowsIgnoreTransforms);
 
-    if (m_changeFlags & GraphicsContextState::DrawLuminanceMaskChange)
+    if (m_changeFlags.contains(GraphicsContextState::DrawLuminanceMaskChange))
         ts.dumpProperty("draw-luminance-mask", m_state.drawLuminanceMask);
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    if (m_changeFlags & GraphicsContextState::UseDarkAppearanceChange)
+    if (m_changeFlags.contains(GraphicsContextState::UseDarkAppearanceChange))
         ts.dumpProperty("use-dark-appearance", m_state.useDarkAppearance);
 #endif
 }

@@ -29,6 +29,10 @@
 #include "FontCascade.h"
 #include <wtf/text/TextStream.h>
 
+#if USE(CG)
+#include "GraphicsContextPlatformPrivateCG.h"
+#endif
+
 namespace WebCore {
 namespace DisplayList {
 
@@ -43,6 +47,13 @@ WTF::CString Item::description() const
     return ts.release().utf8();
 }
 #endif
+
+Item::Item(ItemType type)
+    : m_type(type)
+{
+}
+
+Item::~Item() = default;
 
 size_t Item::sizeInBytes(const Item& item)
 {
@@ -162,6 +173,20 @@ static TextStream& operator<<(TextStream& ts, const DrawingItem& item)
     return ts;
 }
 
+DrawingItem::DrawingItem(ItemType type)
+    : Item(type)
+{
+}
+
+DrawingItem::~DrawingItem() = default;
+
+Save::Save()
+    : Item(ItemType::Save)
+{
+}
+
+Save::~Save() = default;
+
 void Save::apply(GraphicsContext& context) const
 {
     context.save();
@@ -173,10 +198,26 @@ static TextStream& operator<<(TextStream& ts, const Save& item)
     return ts;
 }
 
+Restore::Restore()
+    : Item(ItemType::Restore)
+{
+}
+
+Restore::~Restore() = default;
+
 void Restore::apply(GraphicsContext& context) const
 {
     context.restore();
 }
+
+Translate::Translate(float x, float y)
+    : Item(ItemType::Translate)
+    , m_x(x)
+    , m_y(y)
+{
+}
+
+Translate::~Translate() = default;
 
 void Translate::apply(GraphicsContext& context) const
 {
@@ -191,6 +232,14 @@ static TextStream& operator<<(TextStream& ts, const Translate& item)
     return ts;
 }
 
+Rotate::Rotate(float angle)
+    : Item(ItemType::Rotate)
+    , m_angle(angle)
+{
+}
+
+Rotate::~Rotate() = default;
+
 void Rotate::apply(GraphicsContext& context) const
 {
     context.rotate(m_angle);
@@ -202,6 +251,14 @@ static TextStream& operator<<(TextStream& ts, const Rotate& item)
 
     return ts;
 }
+
+Scale::Scale(const FloatSize& size)
+    : Item(ItemType::Scale)
+    , m_size(size)
+{
+}
+
+Scale::~Scale() = default;
 
 void Scale::apply(GraphicsContext& context) const
 {
@@ -221,6 +278,8 @@ ConcatenateCTM::ConcatenateCTM(const AffineTransform& transform)
 {
 }
 
+ConcatenateCTM::~ConcatenateCTM() = default;
+
 void ConcatenateCTM::apply(GraphicsContext& context) const
 {
     context.concatCTM(m_transform);
@@ -232,6 +291,20 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
 
     return ts;
 }
+
+SetState::SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+    : Item(ItemType::SetState)
+    , m_state(state, flags)
+{
+}
+
+SetState::SetState(const GraphicsContextStateChange& stateChange)
+    : Item(ItemType::SetState)
+    , m_state(stateChange)
+{
+}
+
+SetState::~SetState() = default;
 
 void SetState::apply(GraphicsContext& context) const
 {
@@ -551,6 +624,15 @@ static TextStream& operator<<(TextStream& ts, const DrawPattern& item)
     return ts;
 }
 
+DrawRect::DrawRect(const FloatRect& rect, float borderThickness)
+    : DrawingItem(ItemType::DrawRect)
+    , m_rect(rect)
+    , m_borderThickness(borderThickness)
+{
+}
+
+DrawRect::~DrawRect() = default;
+
 void DrawRect::apply(GraphicsContext& context) const
 {
     context.drawRect(m_rect, m_borderThickness);
@@ -643,6 +725,14 @@ static TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
     return ts;
 }
 
+DrawPath::DrawPath(const Path& path)
+    : DrawingItem(ItemType::DrawPath)
+    , m_path(path)
+{
+}
+
+DrawPath::~DrawPath() = default;
+
 void DrawPath::apply(GraphicsContext& context) const
 {
 #if USE(CG)
@@ -705,6 +795,14 @@ static TextStream& operator<<(TextStream& ts, const DrawFocusRingRects& item)
     return ts;
 }
 
+FillRect::FillRect(const FloatRect& rect)
+    : DrawingItem(ItemType::FillRect)
+    , m_rect(rect)
+{
+}
+
+FillRect::~FillRect() = default;
+
 void FillRect::apply(GraphicsContext& context) const
 {
     context.fillRect(m_rect);
@@ -716,6 +814,15 @@ static TextStream& operator<<(TextStream& ts, const FillRect& item)
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+FillRectWithColor::FillRectWithColor(const FloatRect& rect, const Color& color)
+    : DrawingItem(ItemType::FillRectWithColor)
+    , m_rect(rect)
+    , m_color(color)
+{
+}
+
+FillRectWithColor::~FillRectWithColor() = default;
 
 void FillRectWithColor::apply(GraphicsContext& context) const
 {
@@ -742,6 +849,17 @@ static TextStream& operator<<(TextStream& ts, const FillRectWithGradient& item)
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+FillCompositedRect::FillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode blendMode)
+    : DrawingItem(ItemType::FillCompositedRect)
+    , m_rect(rect)
+    , m_color(color)
+    , m_op(op)
+    , m_blendMode(blendMode)
+{
+}
+
+FillCompositedRect::~FillCompositedRect() = default;
 
 void FillCompositedRect::apply(GraphicsContext& context) const
 {
@@ -785,6 +903,14 @@ static TextStream& operator<<(TextStream& ts, const FillRectWithRoundedHole& ite
     ts.dumpProperty("color", item.color());
     return ts;
 }
+
+FillPath::FillPath(const Path& path)
+    : DrawingItem(ItemType::FillPath)
+    , m_path(path)
+{
+}
+
+FillPath::~FillPath() = default;
 
 void FillPath::apply(GraphicsContext& context) const
 {
@@ -872,6 +998,14 @@ static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+ClearRect::ClearRect(const FloatRect& rect)
+    : DrawingItem(ItemType::ClearRect)
+    , m_rect(rect)
+{
+}
+
+ClearRect::~ClearRect() = default;
 
 void ClearRect::apply(GraphicsContext& context) const
 {

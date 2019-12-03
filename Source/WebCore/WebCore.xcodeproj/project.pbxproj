@@ -351,10 +351,10 @@
 		0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */; };
 		0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDCD7F21D47E655009F08BC /* LogInitialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */; };
-		0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCB1C3DD51E0007A2CA /* DisplayList.h */; };
-		0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCD1C3DD51E0007A2CA /* DisplayListItems.h */; };
-		0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */; };
-		0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */; };
+		0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCB1C3DD51E0007A2CA /* DisplayList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCD1C3DD51E0007A2CA /* DisplayListItems.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
 		0FEA3E7B191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E79191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E80191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E7E191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -825,6 +825,7 @@
 		2D9BF7461DBFDC47007A7D99 /* MediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */; };
 		2D9BF7471DBFDC49007A7D99 /* MediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
+		2DACB9E923755D0000B4C185 /* GraphicsContextImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F00123F1FAD87D600531D76 /* GraphicsContextImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF343B1EA7E0F100382CD3 /* ConstantPropertyMap.h */; };
 		2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A7261EBEE47D009BA597 /* CompositionUnderline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DDE1CE31F574AE500D1A365 /* JSVRFieldOfView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE1CE01F574AD100D1A365 /* JSVRFieldOfView.h */; };
@@ -29914,6 +29915,7 @@
 				31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */,
 				D0843A4B20FEBE3D00FE860E /* GraphicsContext3DManager.h in Headers */,
 				934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */,
+				2DACB9E923755D0000B4C185 /* GraphicsContextImpl.h in Headers */,
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
@@ -31170,6 +31172,7 @@
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
 				6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
+				E4ABABDD236088FE00FA4345 /* LayoutIntegrationLineLayout.h in Headers */,
 				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestone.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
@@ -31774,7 +31777,6 @@
 				7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */,
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */,
-				E4ABABDD236088FE00FA4345 /* LayoutIntegrationLineLayout.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxFragmentInfo.h in Headers */,
 				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,

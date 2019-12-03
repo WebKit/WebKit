@@ -51,8 +51,8 @@ class Recorder : public GraphicsContextImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
-    Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);
-    virtual ~Recorder();
+    WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);
+    WEBCORE_EXPORT virtual ~Recorder();
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 

@@ -58,7 +58,7 @@ class Image;
 class Pattern final : public RefCounted<Pattern> {
 public:
     static Ref<Pattern> create(Ref<Image>&& tileImage, bool repeatX, bool repeatY);
-    ~Pattern();
+    WEBCORE_EXPORT ~Pattern();
 
     Image& tileImage() const { return m_tileImage.get(); }
 

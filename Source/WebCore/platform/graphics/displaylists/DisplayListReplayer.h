@@ -39,10 +39,10 @@ namespace DisplayList {
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    Replayer(GraphicsContext&, const DisplayList&);
-    ~Replayer();
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&);
+    WEBCORE_EXPORT ~Replayer();
 
-    std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
+    WEBCORE_EXPORT std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
     
 private:
     const DisplayList& m_displayList;

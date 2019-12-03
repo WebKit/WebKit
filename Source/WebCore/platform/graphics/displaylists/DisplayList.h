@@ -79,8 +79,12 @@ public:
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
-    void dump() const;
+    WEBCORE_EXPORT void dump() const;
 #endif
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<DisplayList> decode(Decoder&);
+
 
 private:
     Item& append(Ref<Item>&& item)
@@ -101,6 +105,38 @@ private:
 
     Vector<Ref<Item>> m_list;
 };
+
+
+template<class Encoder>
+void DisplayList::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(m_list.size());
+
+    for (auto& item : m_list)
+        encoder << item.get();
+}
+
+template<class Decoder>
+Optional<DisplayList> DisplayList::decode(Decoder& decoder)
+{
+    Optional<uint64_t> itemCount;
+    decoder >> itemCount;
+    if (!itemCount)
+        return WTF::nullopt;
+
+    DisplayList displayList;
+
+    for (uint64_t i = 0; i < *itemCount; i++) {
+        auto item = Item::decode(decoder);
+        // FIXME: Once we can decode all types, failing to decode an item should turn into a decode failure.
+        // For now, we just have to ignore it.
+        if (!item)
+            continue;
+        displayList.append(WTFMove(*item));
+    }
+
+    return displayList;
+}
 
 } // DisplayList
 

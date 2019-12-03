@@ -62,7 +62,7 @@ void Recorder::willAppendItem(const Item& item)
         if (changesFromLastState) {
             LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << GraphicsContextStateChange(stateChanges.m_state, changesFromLastState));
             m_displayList.append(SetState::create(stateChanges.m_state, changesFromLastState));
-            stateChanges.m_changeFlags = 0;
+            stateChanges.m_changeFlags = { };
             currentState().lastDrawingState = stateChanges.m_state;
         }
         currentState().wasUsedForDrawing = true;

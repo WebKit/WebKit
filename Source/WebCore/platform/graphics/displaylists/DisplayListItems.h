@@ -35,10 +35,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
-#if USE(CG)
-#include "GraphicsContextPlatformPrivateCG.h"
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -49,7 +45,7 @@ struct ImagePaintingOptions;
 
 namespace DisplayList {
 
-enum class ItemType {
+enum class ItemType : uint8_t {
     Save,
     Restore,
     Translate,
@@ -107,12 +103,8 @@ class Item : public RefCounted<Item> {
 public:
     Item() = delete;
 
-    Item(ItemType type)
-        : m_type(type)
-    {
-    }
-
-    virtual ~Item() = default;
+    WEBCORE_EXPORT Item(ItemType);
+    WEBCORE_EXPORT virtual ~Item();
 
     ItemType type() const
     {
@@ -134,16 +126,16 @@ public:
     static bool isStateItemType(ItemType itemType)
     {
         switch (itemType) {
-        case ItemType:: Translate:
-        case ItemType:: Rotate:
-        case ItemType:: Scale:
-        case ItemType:: ConcatenateCTM:
-        case ItemType:: SetState:
-        case ItemType:: SetLineCap:
-        case ItemType:: SetLineDash:
-        case ItemType:: SetLineJoin:
-        case ItemType:: SetMiterLimit:
-        case ItemType:: ClearShadow:
+        case ItemType::Translate:
+        case ItemType::Rotate:
+        case ItemType::Scale:
+        case ItemType::ConcatenateCTM:
+        case ItemType::SetState:
+        case ItemType::SetLineCap:
+        case ItemType::SetLineDash:
+        case ItemType::SetLineJoin:
+        case ItemType::SetMiterLimit:
+        case ItemType::ClearShadow:
             return true;
         default:
             return false;
@@ -156,16 +148,18 @@ public:
 #endif
     static size_t sizeInBytes(const Item&);
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Item>> decode(Decoder&);
+
 private:
     ItemType m_type;
 };
 
 class DrawingItem : public Item {
 public:
-    explicit DrawingItem(ItemType type)
-        : Item(type)
-    {
-    }
+    WEBCORE_EXPORT explicit DrawingItem(ItemType);
+
+    WEBCORE_EXPORT virtual ~DrawingItem();
 
     void setExtent(const FloatRect& r) { m_extent = r; }
     const FloatRect& extent() const { return m_extent.value(); }
@@ -189,20 +183,42 @@ public:
         return adoptRef(*new Save);
     }
 
+    WEBCORE_EXPORT virtual ~Save();
+
     // Index in the display list of the corresponding Restore item. 0 if unmatched.
     size_t restoreIndex() const { return m_restoreIndex; }
     void setRestoreIndex(size_t index) { m_restoreIndex = index; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Save>> decode(Decoder&);
+
 private:
-    Save()
-        : Item(ItemType::Save)
-    {
-    }
+    WEBCORE_EXPORT Save();
 
     void apply(GraphicsContext&) const override;
     
     size_t m_restoreIndex { 0 };
 };
+
+template<class Encoder>
+void Save::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(m_restoreIndex);
+}
+
+template<class Decoder>
+Optional<Ref<Save>> Save::decode(Decoder& decoder)
+{
+    Optional<uint64_t> restoreIndex;
+    decoder >> restoreIndex;
+    if (!restoreIndex)
+        return WTF::nullopt;
+
+    // FIXME: Validate restoreIndex? But we don't have the list context here.
+    auto save = Save::create();
+    save->setRestoreIndex(static_cast<size_t>(*restoreIndex));
+    return save;
+}
 
 class Restore : public Item {
 public:
@@ -211,14 +227,27 @@ public:
         return adoptRef(*new Restore);
     }
 
+    WEBCORE_EXPORT virtual ~Restore();
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Restore>> decode(Decoder&);
+
 private:
-    Restore()
-        : Item(ItemType::Restore)
-    {
-    }
+    WEBCORE_EXPORT Restore();
 
     void apply(GraphicsContext&) const override;
 };
+
+template<class Encoder>
+void Restore::encode(Encoder&) const
+{
+}
+
+template<class Decoder>
+Optional<Ref<Restore>> Restore::decode(Decoder&)
+{
+    return Restore::create();
+}
 
 class Translate : public Item {
 public:
@@ -227,22 +256,45 @@ public:
         return adoptRef(*new Translate(x, y));
     }
 
+    WEBCORE_EXPORT virtual ~Translate();
+
     float x() const { return m_x; }
     float y() const { return m_y; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Translate>> decode(Decoder&);
+
 private:
-    Translate(float x, float y)
-        : Item(ItemType::Translate)
-        , m_x(x)
-        , m_y(y)
-    {
-    }
+    WEBCORE_EXPORT Translate(float x, float y);
 
     void apply(GraphicsContext&) const override;
 
     float m_x;
     float m_y;
 };
+
+template<class Encoder>
+void Translate::encode(Encoder& encoder) const
+{
+    encoder << m_x;
+    encoder << m_y;
+}
+
+template<class Decoder>
+Optional<Ref<Translate>> Translate::decode(Decoder& decoder)
+{
+    Optional<float> x;
+    decoder >> x;
+    if (!x)
+        return WTF::nullopt;
+
+    Optional<float> y;
+    decoder >> y;
+    if (!y)
+        return WTF::nullopt;
+
+    return Translate::create(*x, *y);
+}
 
 class Rotate : public Item {
 public:
@@ -251,19 +303,37 @@ public:
         return adoptRef(*new Rotate(angleInRadians));
     }
 
+    WEBCORE_EXPORT virtual ~Rotate();
+
     float angle() const { return m_angle; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Rotate>> decode(Decoder&);
+
 private:
-    Rotate(float angle)
-        : Item(ItemType::Rotate)
-        , m_angle(angle)
-    {
-    }
+    WEBCORE_EXPORT Rotate(float angle);
 
     void apply(GraphicsContext&) const override;
 
     float m_angle; // In radians.
 };
+
+template<class Encoder>
+void Rotate::encode(Encoder& encoder) const
+{
+    encoder << m_angle;
+}
+
+template<class Decoder>
+Optional<Ref<Rotate>> Rotate::decode(Decoder& decoder)
+{
+    Optional<float> angle;
+    decoder >> angle;
+    if (!angle)
+        return WTF::nullopt;
+
+    return Rotate::create(*angle);
+}
 
 class Scale : public Item {
 public:
@@ -272,19 +342,37 @@ public:
         return adoptRef(*new Scale(size));
     }
 
+    WEBCORE_EXPORT virtual ~Scale();
+
     const FloatSize& amount() const { return m_size; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Scale>> decode(Decoder&);
+
 private:
-    Scale(const FloatSize& size)
-        : Item(ItemType::Scale)
-        , m_size(size)
-    {
-    }
+    WEBCORE_EXPORT Scale(const FloatSize&);
 
     void apply(GraphicsContext&) const override;
 
     FloatSize m_size;
 };
+
+template<class Encoder>
+void Scale::encode(Encoder& encoder) const
+{
+    encoder << m_size;
+}
+
+template<class Decoder>
+Optional<Ref<Scale>> Scale::decode(Decoder& decoder)
+{
+    Optional<FloatSize> scale;
+    decoder >> scale;
+    if (!scale)
+        return WTF::nullopt;
+
+    return Scale::create(*scale);
+}
 
 class ConcatenateCTM : public Item {
 public:
@@ -293,15 +381,37 @@ public:
         return adoptRef(*new ConcatenateCTM(matrix));
     }
 
+    WEBCORE_EXPORT virtual ~ConcatenateCTM();
+
     const AffineTransform& transform() const { return m_transform; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<ConcatenateCTM>> decode(Decoder&);
+
 private:
-    ConcatenateCTM(const AffineTransform&);
+    WEBCORE_EXPORT ConcatenateCTM(const AffineTransform&);
 
     void apply(GraphicsContext&) const override;
 
     AffineTransform m_transform;
 };
+
+template<class Encoder>
+void ConcatenateCTM::encode(Encoder& encoder) const
+{
+    encoder << m_transform;
+}
+
+template<class Decoder>
+Optional<Ref<ConcatenateCTM>> ConcatenateCTM::decode(Decoder& decoder)
+{
+    Optional<AffineTransform> transform;
+    decoder >> transform;
+    if (!transform)
+        return WTF::nullopt;
+
+    return ConcatenateCTM::create(*transform);
+}
 
 class SetState : public Item {
 public:
@@ -309,6 +419,13 @@ public:
     {
         return adoptRef(*new SetState(state, flags));
     }
+
+    static Ref<SetState> create(const GraphicsContextStateChange& stateChange)
+    {
+        return adoptRef(*new SetState(stateChange));
+    }
+
+    WEBCORE_EXPORT virtual ~SetState();
     
     const GraphicsContextStateChange& state() const { return m_state; }
 
@@ -319,17 +436,76 @@ public:
     static void builderState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
     static void dumpStateChanges(WTF::TextStream&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetState>> decode(Decoder&);
+
 private:
-    SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
-        : Item(ItemType::SetState)
-        , m_state(state, flags)
-    {
-    }
+    WEBCORE_EXPORT SetState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    WEBCORE_EXPORT SetState(const GraphicsContextStateChange&);
 
     void apply(GraphicsContext&) const override;
 
     GraphicsContextStateChange m_state;
 };
+
+template<class Encoder>
+void SetState::encode(Encoder& encoder) const
+{
+    encoder << m_state.m_changeFlags;
+
+    // FIXME: Encode the other state changes.
+
+    if (m_state.m_changeFlags.contains(GraphicsContextState::StrokeColorChange))
+        encoder << m_state.m_state.strokeColor;
+
+    if (m_state.m_changeFlags.contains(GraphicsContextState::FillColorChange))
+        encoder << m_state.m_state.fillColor;
+
+    if (m_state.m_changeFlags.contains(GraphicsContextState::AlphaChange))
+        encoder << m_state.m_state.alpha;
+}
+
+template<class Decoder>
+Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
+{
+    Optional<GraphicsContextState::StateChangeFlags> changeFlags;
+    decoder >> changeFlags;
+    if (!changeFlags)
+        return WTF::nullopt;
+
+    GraphicsContextStateChange stateChange;
+    stateChange.m_changeFlags = *changeFlags;
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeColorChange)) {
+        Optional<Color> strokeColor;
+        decoder >> strokeColor;
+        if (!strokeColor)
+            return WTF::nullopt;
+
+        stateChange.m_state.strokeColor = *strokeColor;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillColorChange)) {
+        Optional<Color> fillColor;
+        decoder >> fillColor;
+        if (!fillColor)
+            return WTF::nullopt;
+
+        stateChange.m_state.fillColor = *fillColor;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::AlphaChange)) {
+        Optional<float> alpha;
+        decoder >> alpha;
+        if (!alpha)
+            return WTF::nullopt;
+
+        stateChange.m_state.alpha = *alpha;
+    }
+
+    return SetState::create(stateChange);
+}
 
 class SetLineCap : public Item {
 public:
@@ -741,16 +917,16 @@ public:
         return adoptRef(*new DrawRect(rect, borderThickness));
     }
 
+    WEBCORE_EXPORT virtual ~DrawRect();
+
     FloatRect rect() const { return m_rect; }
     float borderThickness() const { return m_borderThickness; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawRect>> decode(Decoder&);
+
 private:
-    DrawRect(const FloatRect& rect, float borderThickness)
-        : DrawingItem(ItemType::DrawRect)
-        , m_rect(rect)
-        , m_borderThickness(borderThickness)
-    {
-    }
+    WEBCORE_EXPORT DrawRect(const FloatRect&, float borderThickness);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
@@ -758,6 +934,34 @@ private:
     FloatRect m_rect;
     float m_borderThickness;
 };
+
+template<class Encoder>
+void DrawRect::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+    encoder << m_borderThickness;
+}
+
+template<class Decoder>
+Optional<Ref<DrawRect>> DrawRect::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    Optional<float> borderThickness;
+    decoder >> borderThickness;
+    if (!borderThickness)
+        return WTF::nullopt;
+
+    auto item = DrawRect::create(*rect, *borderThickness);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 class DrawLine : public DrawingItem {
 public:
@@ -878,14 +1082,15 @@ public:
         return adoptRef(*new DrawPath(path));
     }
 
+    WEBCORE_EXPORT virtual ~DrawPath();
+
     const Path& path() const { return m_path; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawPath>> decode(Decoder&);
+
 private:
-    DrawPath(const Path& path)
-        : DrawingItem(ItemType::DrawPath)
-        , m_path(path)
-    {
-    }
+    WEBCORE_EXPORT DrawPath(const Path&);
 
     void apply(GraphicsContext&) const override;
 
@@ -893,6 +1098,28 @@ private:
 
     const Path m_path;
 };
+
+template<class Encoder>
+void DrawPath::encode(Encoder& encoder) const
+{
+    encoder << m_path;
+}
+
+template<class Decoder>
+Optional<Ref<DrawPath>> DrawPath::decode(Decoder& decoder)
+{
+    Optional<Path> path;
+    decoder >> path;
+    if (!path)
+        return WTF::nullopt;
+
+    auto item = DrawPath::create(*path);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 class DrawFocusRingPath : public DrawingItem {
 public:
@@ -965,20 +1192,43 @@ public:
         return adoptRef(*new FillRect(rect));
     }
 
+    WEBCORE_EXPORT virtual ~FillRect();
+
     FloatRect rect() const { return m_rect; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillRect>> decode(Decoder&);
+
 private:
-    FillRect(const FloatRect& rect)
-        : DrawingItem(ItemType::FillRect)
-        , m_rect(rect)
-    {
-    }
+    WEBCORE_EXPORT FillRect(const FloatRect&);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
+
+template<class Encoder>
+void FillRect::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+}
+
+template<class Decoder>
+Optional<Ref<FillRect>> FillRect::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    auto item = FillRect::create(*rect);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 // FIXME: Make these inherit from FillRect proper.
 class FillRectWithColor : public DrawingItem {
@@ -988,16 +1238,16 @@ public:
         return adoptRef(*new FillRectWithColor(rect, color));
     }
 
+    WEBCORE_EXPORT virtual ~FillRectWithColor();
+
     FloatRect rect() const { return m_rect; }
     const Color& color() const { return m_color; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillRectWithColor>> decode(Decoder&);
+
 private:
-    FillRectWithColor(const FloatRect& rect, const Color& color)
-        : DrawingItem(ItemType::FillRectWithColor)
-        , m_rect(rect)
-        , m_color(color)
-    {
-    }
+    WEBCORE_EXPORT FillRectWithColor(const FloatRect&, const Color&);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
@@ -1005,6 +1255,34 @@ private:
     FloatRect m_rect;
     Color m_color;
 };
+
+template<class Encoder>
+void FillRectWithColor::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+    encoder << m_color;
+}
+
+template<class Decoder>
+Optional<Ref<FillRectWithColor>> FillRectWithColor::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    Optional<Color> color;
+    decoder >> color;
+    if (!color)
+        return WTF::nullopt;
+
+    auto item = FillRectWithColor::create(*rect, *color);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 class FillRectWithGradient : public DrawingItem {
 public:
@@ -1037,20 +1315,18 @@ public:
         return adoptRef(*new FillCompositedRect(rect, color, op, blendMode));
     }
 
+    WEBCORE_EXPORT virtual ~FillCompositedRect();
+
     FloatRect rect() const { return m_rect; }
     const Color& color() const { return m_color; }
     CompositeOperator compositeOperator() const { return m_op; }
     BlendMode blendMode() const { return m_blendMode; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillCompositedRect>> decode(Decoder&);
+
 private:
-    FillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode blendMode)
-        : DrawingItem(ItemType::FillCompositedRect)
-        , m_rect(rect)
-        , m_color(color)
-        , m_op(op)
-        , m_blendMode(blendMode)
-    {
-    }
+    WEBCORE_EXPORT FillCompositedRect(const FloatRect&, const Color&, CompositeOperator, BlendMode);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
@@ -1060,6 +1336,46 @@ private:
     CompositeOperator m_op;
     BlendMode m_blendMode;
 };
+
+template<class Encoder>
+void FillCompositedRect::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+    encoder << m_color;
+    encoder << m_op;
+    encoder << m_blendMode;
+}
+
+template<class Decoder>
+Optional<Ref<FillCompositedRect>> FillCompositedRect::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    Optional<Color> color;
+    decoder >> color;
+    if (!color)
+        return WTF::nullopt;
+
+    Optional<CompositeOperator> op;
+    decoder >> op;
+    if (!op)
+        return WTF::nullopt;
+
+    Optional<BlendMode> blendMode;
+    decoder >> blendMode;
+    if (!blendMode)
+        return WTF::nullopt;
+
+    auto item = FillCompositedRect::create(*rect, *color, *op, *blendMode);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 class FillRoundedRect : public DrawingItem {
 public:
@@ -1124,20 +1440,43 @@ public:
         return adoptRef(*new FillPath(path));
     }
 
+    WEBCORE_EXPORT virtual ~FillPath();
+
     const Path& path() const { return m_path; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillPath>> decode(Decoder&);
+
 private:
-    FillPath(const Path& path)
-        : DrawingItem(ItemType::FillPath)
-        , m_path(path)
-    {
-    }
+    WEBCORE_EXPORT FillPath(const Path&);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_path.fastBoundingRect(); }
 
     const Path m_path;
 };
+
+template<class Encoder>
+void FillPath::encode(Encoder& encoder) const
+{
+    encoder << m_path;
+}
+
+template<class Decoder>
+Optional<Ref<FillPath>> FillPath::decode(Decoder& decoder)
+{
+    Optional<Path> path;
+    decoder >> path;
+    if (!path)
+        return WTF::nullopt;
+
+    auto item = FillPath::create(*path);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 class FillEllipse : public DrawingItem {
 public:
@@ -1239,20 +1578,43 @@ public:
         return adoptRef(*new ClearRect(rect));
     }
 
+    WEBCORE_EXPORT virtual ~ClearRect();
+
     FloatRect rect() const { return m_rect; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<ClearRect>> decode(Decoder&);
+
 private:
-    ClearRect(const FloatRect& rect)
-        : DrawingItem(ItemType::ClearRect)
-        , m_rect(rect)
-    {
-    }
+    WEBCORE_EXPORT ClearRect(const FloatRect&);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
 };
+
+template<class Encoder>
+void ClearRect::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+}
+
+template<class Decoder>
+Optional<Ref<ClearRect>> ClearRect::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    auto item = ClearRect::create(*rect);
+
+    if (!decodeForDrawingItem(decoder, item.get()))
+        return WTF::nullopt;
+
+    return item;
+}
 
 #if USE(CG)
 class ApplyStrokePattern : public Item {
@@ -1310,6 +1672,333 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Item&);
+
+template<class Encoder>
+void Item::encode(Encoder& encoder) const
+{
+    encoder << m_type;
+
+    switch (m_type) {
+    case ItemType::Save:
+        encoder << downcast<Save>(*this);
+        break;
+    case ItemType::Restore:
+        encoder << downcast<Restore>(*this);
+        break;
+    case ItemType::Translate:
+        encoder << downcast<Translate>(*this);
+        break;
+    case ItemType::Rotate:
+        encoder << downcast<Rotate>(*this);
+        break;
+    case ItemType::Scale:
+        encoder << downcast<Scale>(*this);
+        break;
+    case ItemType::ConcatenateCTM:
+        encoder << downcast<ConcatenateCTM>(*this);
+        break;
+    case ItemType::SetState:
+        encoder << downcast<SetState>(*this);
+        break;
+    case ItemType::SetLineCap:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode SetLineCap");
+        break;
+    case ItemType::SetLineDash:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode SetLineDash");
+        break;
+    case ItemType::SetLineJoin:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode SetLineJoin");
+        break;
+    case ItemType::SetMiterLimit:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode SetMiterLimit");
+        break;
+    case ItemType::ClearShadow:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ClearShadow");
+        break;
+    case ItemType::Clip:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode Clip");
+        break;
+    case ItemType::ClipOut:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ClipOut");
+        break;
+    case ItemType::ClipOutToPath:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ClipOutToPath");
+        break;
+    case ItemType::ClipPath:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ClipPath");
+        break;
+    case ItemType::DrawGlyphs:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawGlyphs");
+        break;
+    case ItemType::DrawImage:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawImage");
+        break;
+    case ItemType::DrawTiledImage:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawTiledImage");
+        break;
+    case ItemType::DrawTiledScaledImage:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawTiledScaledImage");
+        break;
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+    case ItemType::DrawNativeImage:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawNativeImage");
+        break;
+#endif
+    case ItemType::DrawPattern:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawPattern");
+        break;
+    case ItemType::DrawRect:
+        encoder << downcast<DrawRect>(*this);
+        break;
+    case ItemType::DrawLine:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawLine");
+        break;
+    case ItemType::DrawLinesForText:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawLinesForText");
+        break;
+    case ItemType::DrawDotsForDocumentMarker:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawDotsForDocumentMarker");
+        break;
+    case ItemType::DrawEllipse:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawEllipse");
+        break;
+    case ItemType::DrawPath:
+        encoder << downcast<DrawPath>(*this);
+        break;
+    case ItemType::DrawFocusRingPath:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawFocusRingPath");
+        break;
+    case ItemType::DrawFocusRingRects:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawFocusRingRects");
+        break;
+    case ItemType::FillRect:
+        encoder << downcast<FillRect>(*this);
+        break;
+    case ItemType::FillRectWithColor:
+        encoder << downcast<FillRectWithColor>(*this);
+        break;
+    case ItemType::FillRectWithGradient:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRectWithGradient");
+        break;
+    case ItemType::FillCompositedRect:
+        encoder << downcast<FillCompositedRect>(*this);
+        break;
+    case ItemType::FillRoundedRect:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRoundedRect");
+        break;
+    case ItemType::FillRectWithRoundedHole:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRectWithRoundedHole");
+        break;
+    case ItemType::FillPath:
+        encoder << downcast<FillPath>(*this);
+        break;
+    case ItemType::FillEllipse:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillEllipse");
+        break;
+    case ItemType::StrokeRect:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode StrokeRect");
+        break;
+    case ItemType::StrokePath:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode StrokePath");
+        break;
+    case ItemType::StrokeEllipse:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode StrokeEllipse");
+        break;
+    case ItemType::ClearRect:
+        encoder << downcast<ClearRect>(*this);
+        break;
+    case ItemType::BeginTransparencyLayer:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode BeginTransparencyLayer");
+        break;
+    case ItemType::EndTransparencyLayer:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode EndTransparencyLayer");
+        break;
+#if USE(CG)
+    case ItemType::ApplyStrokePattern:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ApplyStrokePattern");
+        break;
+    case ItemType::ApplyFillPattern:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ApplyFillPattern");
+        break;
+#endif
+    case ItemType::ApplyDeviceScaleFactor:
+        WTFLogAlways("DisplayList::Item::encode cannot yet encode ApplyDeviceScaleFactor");
+        break;
+    }
+}
+
+template<class Decoder>
+Optional<Ref<Item>> Item::decode(Decoder& decoder)
+{
+    Optional<ItemType> itemType;
+    decoder >> itemType;
+    if (!itemType)
+        return WTF::nullopt;
+
+    switch (*itemType) {
+    case ItemType::Save:
+        if (auto item = Save::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::Restore:
+        if (auto item = Restore::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::Translate:
+        if (auto item = Translate::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::Rotate:
+        if (auto item = Rotate::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::Scale:
+        if (auto item = Scale::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::ConcatenateCTM:
+        if (auto item = ConcatenateCTM::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetState:
+        if (auto item = SetState::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetLineCap:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode SetLineCap");
+        break;
+    case ItemType::SetLineDash:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode SetLineDash");
+        break;
+    case ItemType::SetLineJoin:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode SetLineJoin");
+        break;
+    case ItemType::SetMiterLimit:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode SetMiterLimit");
+        break;
+    case ItemType::ClearShadow:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ClearShadow");
+        break;
+    case ItemType::Clip:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode Clip");
+        break;
+    case ItemType::ClipOut:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ClipOut");
+        break;
+    case ItemType::ClipOutToPath:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ClipOutToPath");
+        break;
+    case ItemType::ClipPath:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ClipPath");
+        break;
+    case ItemType::DrawGlyphs:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawGlyphs");
+        break;
+    case ItemType::DrawImage:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawImage");
+        break;
+    case ItemType::DrawTiledImage:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawTiledImage");
+        break;
+    case ItemType::DrawTiledScaledImage:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawTiledScaledImage");
+        break;
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+    case ItemType::DrawNativeImage:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawNativeImage");
+        break;
+#endif
+    case ItemType::DrawPattern:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawPattern");
+        break;
+    case ItemType::DrawRect:
+        if (auto item = DrawRect::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::DrawLine:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawLine");
+        break;
+    case ItemType::DrawLinesForText:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawLinesForText");
+        break;
+    case ItemType::DrawDotsForDocumentMarker:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawDotsForDocumentMarker");
+        break;
+    case ItemType::DrawEllipse:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawEllipse");
+        break;
+    case ItemType::DrawPath:
+        if (auto item = DrawPath::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::DrawFocusRingPath:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawFocusRingPath");
+        break;
+    case ItemType::DrawFocusRingRects:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawFocusRingRects");
+        break;
+    case ItemType::FillRect:
+        if (auto item = FillRect::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::FillRectWithColor:
+        if (auto item = FillRectWithColor::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::FillRectWithGradient:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRectWithGradient");
+        break;
+    case ItemType::FillCompositedRect:
+        if (auto item = FillCompositedRect::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::FillRoundedRect:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRoundedRect");
+        break;
+    case ItemType::FillRectWithRoundedHole:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRectWithRoundedHole");
+        break;
+    case ItemType::FillPath:
+        if (auto item = FillPath::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::FillEllipse:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillEllipse");
+        break;
+    case ItemType::StrokeRect:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode StrokeRect");
+        break;
+    case ItemType::StrokePath:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode StrokePath");
+        break;
+    case ItemType::StrokeEllipse:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode StrokeEllipse");
+        break;
+    case ItemType::ClearRect:
+        if (auto item = ClearRect::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::BeginTransparencyLayer:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode BeginTransparencyLayer");
+        break;
+    case ItemType::EndTransparencyLayer:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode EndTransparencyLayer");
+        break;
+#if USE(CG)
+    case ItemType::ApplyStrokePattern:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ApplyStrokePattern");
+        break;
+    case ItemType::ApplyFillPattern:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ApplyFillPattern");
+        break;
+#endif
+    case ItemType::ApplyDeviceScaleFactor:
+        WTFLogAlways("DisplayList::Item::decode cannot yet decode ApplyDeviceScaleFactor");
+        break;
+    }
+
+    return WTF::nullopt;
+}
 
 } // namespace DisplayList
 } // namespace WebCore
@@ -1379,3 +2068,63 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ApplyFillPattern)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ApplyDeviceScaleFactor)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClearShadow)
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
+    using values = EnumValues<
+    WebCore::DisplayList::ItemType,
+    WebCore::DisplayList::ItemType::Save,
+    WebCore::DisplayList::ItemType::Restore,
+    WebCore::DisplayList::ItemType::Translate,
+    WebCore::DisplayList::ItemType::Rotate,
+    WebCore::DisplayList::ItemType::Scale,
+    WebCore::DisplayList::ItemType::ConcatenateCTM,
+    WebCore::DisplayList::ItemType::SetState,
+    WebCore::DisplayList::ItemType::SetLineCap,
+    WebCore::DisplayList::ItemType::SetLineDash,
+    WebCore::DisplayList::ItemType::SetLineJoin,
+    WebCore::DisplayList::ItemType::SetMiterLimit,
+    WebCore::DisplayList::ItemType::ClearShadow,
+    WebCore::DisplayList::ItemType::Clip,
+    WebCore::DisplayList::ItemType::ClipOut,
+    WebCore::DisplayList::ItemType::ClipOutToPath,
+    WebCore::DisplayList::ItemType::ClipPath,
+    WebCore::DisplayList::ItemType::DrawGlyphs,
+    WebCore::DisplayList::ItemType::DrawImage,
+    WebCore::DisplayList::ItemType::DrawTiledImage,
+    WebCore::DisplayList::ItemType::DrawTiledScaledImage,
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+    WebCore::DisplayList::ItemType::DrawNativeImage,
+#endif
+    WebCore::DisplayList::ItemType::DrawPattern,
+    WebCore::DisplayList::ItemType::DrawRect,
+    WebCore::DisplayList::ItemType::DrawLine,
+    WebCore::DisplayList::ItemType::DrawLinesForText,
+    WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker,
+    WebCore::DisplayList::ItemType::DrawEllipse,
+    WebCore::DisplayList::ItemType::DrawPath,
+    WebCore::DisplayList::ItemType::DrawFocusRingPath,
+    WebCore::DisplayList::ItemType::DrawFocusRingRects,
+    WebCore::DisplayList::ItemType::FillRect,
+    WebCore::DisplayList::ItemType::FillRectWithColor,
+    WebCore::DisplayList::ItemType::FillRectWithGradient,
+    WebCore::DisplayList::ItemType::FillCompositedRect,
+    WebCore::DisplayList::ItemType::FillRoundedRect,
+    WebCore::DisplayList::ItemType::FillRectWithRoundedHole,
+    WebCore::DisplayList::ItemType::FillPath,
+    WebCore::DisplayList::ItemType::FillEllipse,
+    WebCore::DisplayList::ItemType::StrokeRect,
+    WebCore::DisplayList::ItemType::StrokePath,
+    WebCore::DisplayList::ItemType::StrokeEllipse,
+    WebCore::DisplayList::ItemType::ClearRect,
+    WebCore::DisplayList::ItemType::BeginTransparencyLayer,
+    WebCore::DisplayList::ItemType::EndTransparencyLayer,
+#if USE(CG)
+    WebCore::DisplayList::ItemType::ApplyStrokePattern,
+    WebCore::DisplayList::ItemType::ApplyFillPattern,
+#endif
+    WebCore::DisplayList::ItemType::ApplyDeviceScaleFactor
+    >;
+};
+
+} // namespace WTF

@@ -1,3 +1,95 @@
+2019-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Start adding encoding support for DisplayList and some DisplayListItems
+        https://bugs.webkit.org/show_bug.cgi?id=204740
+
+        Reviewed by Simon Fraser.
+
+        To be used in a later patch.
+
+        Start encoding and decoding DisplayList, and its child items. We
+        currently support only a subset of the item subclasses.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextStateChange::changesFromState const):
+        (WebCore::GraphicsContextStateChange::accumulate):
+        (WebCore::GraphicsContextStateChange::apply const):
+        * platform/graphics/GraphicsContext.h:
+        Adopt OptionSet for GraphicsContextState::StateChangeFlags.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::encode const):
+        (WebCore::DisplayList::DisplayList::decode):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::Item::Item):
+        (WebCore::DisplayList::DrawingItem::DrawingItem):
+        (WebCore::DisplayList::Save::Save):
+        (WebCore::DisplayList::Restore::Restore):
+        (WebCore::DisplayList::Translate::Translate):
+        (WebCore::DisplayList::Rotate::Rotate):
+        (WebCore::DisplayList::Scale::Scale):
+        (WebCore::DisplayList::SetState::SetState):
+        (WebCore::DisplayList::DrawRect::DrawRect):
+        (WebCore::DisplayList::DrawPath::DrawPath):
+        (WebCore::DisplayList::FillRect::FillRect):
+        (WebCore::DisplayList::FillRectWithColor::FillRectWithColor):
+        (WebCore::DisplayList::FillCompositedRect::FillCompositedRect):
+        (WebCore::DisplayList::FillPath::FillPath):
+        (WebCore::DisplayList::ClearRect::ClearRect):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::Item::isStateItemType):
+        (WebCore::DisplayList::Save::encode const):
+        (WebCore::DisplayList::Save::decode):
+        (WebCore::DisplayList::Restore::encode const):
+        (WebCore::DisplayList::Restore::decode):
+        (WebCore::DisplayList::Translate::encode const):
+        (WebCore::DisplayList::Translate::decode):
+        (WebCore::DisplayList::Rotate::encode const):
+        (WebCore::DisplayList::Rotate::decode):
+        (WebCore::DisplayList::Scale::encode const):
+        (WebCore::DisplayList::Scale::decode):
+        (WebCore::DisplayList::ConcatenateCTM::encode const):
+        (WebCore::DisplayList::ConcatenateCTM::decode):
+        (WebCore::DisplayList::SetState::create):
+        (WebCore::DisplayList::SetState::encode const):
+        (WebCore::DisplayList::SetState::decode):
+        (WebCore::DisplayList::DrawRect::encode const):
+        (WebCore::DisplayList::DrawRect::decode):
+        (WebCore::DisplayList::DrawPath::encode const):
+        (WebCore::DisplayList::DrawPath::decode):
+        (WebCore::DisplayList::FillRect::encode const):
+        (WebCore::DisplayList::FillRect::decode):
+        (WebCore::DisplayList::FillRectWithColor::encode const):
+        (WebCore::DisplayList::FillRectWithColor::decode):
+        (WebCore::DisplayList::FillCompositedRect::encode const):
+        (WebCore::DisplayList::FillCompositedRect::decode):
+        (WebCore::DisplayList::FillPath::encode const):
+        (WebCore::DisplayList::FillPath::decode):
+        (WebCore::DisplayList::ClearRect::encode const):
+        (WebCore::DisplayList::ClearRect::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        (WebCore::DisplayList::Item::Item): Deleted.
+        (WebCore::DisplayList::DrawingItem::DrawingItem): Deleted.
+        (WebCore::DisplayList::Save::Save): Deleted.
+        (WebCore::DisplayList::Restore::Restore): Deleted.
+        (WebCore::DisplayList::Translate::Translate): Deleted.
+        (WebCore::DisplayList::Rotate::Rotate): Deleted.
+        (WebCore::DisplayList::Scale::Scale): Deleted.
+        (WebCore::DisplayList::SetState::SetState): Deleted.
+        (WebCore::DisplayList::DrawRect::DrawRect): Deleted.
+        (WebCore::DisplayList::DrawPath::DrawPath): Deleted.
+        (WebCore::DisplayList::FillRect::FillRect): Deleted.
+        (WebCore::DisplayList::FillRectWithColor::FillRectWithColor): Deleted.
+        (WebCore::DisplayList::FillCompositedRect::FillCompositedRect): Deleted.
+        (WebCore::DisplayList::FillPath::FillPath): Deleted.
+        (WebCore::DisplayList::ClearRect::ClearRect): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        (WebCore::DisplayList::Replayer::replay):
+
 2019-12-03  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Rename RenderBlockFlowLineLayout and move it to LayoutIntegration namespace

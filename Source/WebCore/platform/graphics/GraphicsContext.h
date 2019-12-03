@@ -37,6 +37,7 @@
 #include "Pattern.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OptionSet.h>
 
 #if USE(CG)
 typedef struct CGContext PlatformGraphicsContext;
@@ -171,7 +172,7 @@ struct GraphicsContextState {
         UseDarkAppearanceChange                 = 1 << 22,
 #endif
     };
-    typedef uint32_t StateChangeFlags;
+    typedef OptionSet<Change> StateChangeFlags;
 
     RefPtr<Gradient> strokeGradient;
     RefPtr<Pattern> strokePattern;
