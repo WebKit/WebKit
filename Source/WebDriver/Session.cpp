@@ -1595,6 +1595,53 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
     });
 }
 
+void Session::elementIsEditable(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
+{
+    RefPtr<JSON::Array> arguments = JSON::Array::create();
+    arguments->pushString(createElement(elementID)->toJSONString());
+
+    static const char isEditableScript[] =
+        "function(element) {"
+        "    if (element.disabled || element.readOnly)"
+        "        return false;"
+        "    var tagName = element.tagName.toLowerCase();"
+        "    if (tagName === 'textarea' || element.isContentEditable)"
+        "        return true;"
+        "    if (tagName != 'input')"
+        "        return false;"
+        "    switch (element.type) {"
+        "    case 'color': case 'date': case 'datetime-local': case 'email': case 'file': case 'month': case 'number': "
+        "    case 'password': case 'range': case 'search': case 'tel': case 'text': case 'time': case 'url': case 'week':"
+        "        return true;"
+        "    }"
+        "    return false;"
+        "}";
+
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+    if (m_currentBrowsingContext)
+        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+    parameters->setString("function"_s, isEditableScript);
+    parameters->setArray("arguments"_s, WTFMove(arguments));
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        String valueString;
+        if (!response.responseObject->getString("result"_s, valueString)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        RefPtr<JSON::Value> resultValue;
+        if (!JSON::Value::parseJSON(valueString, resultValue)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        completionHandler(CommandResult::success(WTFMove(resultValue)));
+    });
+}
+
 void Session::elementClear(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
@@ -1608,21 +1655,45 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
             return;
         }
 
-        RefPtr<JSON::Array> arguments = JSON::Array::create();
-        arguments->pushString(createElement(elementID)->toJSONString());
-
-        RefPtr<JSON::Object> parameters = JSON::Object::create();
-        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        if (m_currentBrowsingContext)
-            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, String(FormElementClearJavaScript, sizeof(FormElementClearJavaScript)));
-        parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-            if (response.isError) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+        elementIsEditable(elementID, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                completionHandler(WTFMove(result));
                 return;
             }
-            completionHandler(CommandResult::success());
+
+            bool isEditable;
+            if (!result.result()->asBoolean(isEditable) || !isEditable) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidElementState));
+                return;
+            }
+
+            OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded };
+            computeElementLayout(elementID, options, [this, protectedThis = protectedThis.copyRef(), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool, RefPtr<JSON::Object>&& error) mutable {
+                if (!rect || error) {
+                    completionHandler(CommandResult::fail(WTFMove(error)));
+                    return;
+                }
+                if (!inViewCenter) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
+                    return;
+                }
+                RefPtr<JSON::Array> arguments = JSON::Array::create();
+                arguments->pushString(createElement(elementID)->toJSONString());
+
+                RefPtr<JSON::Object> parameters = JSON::Object::create();
+                parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+                if (m_currentBrowsingContext)
+                    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+                parameters->setString("function"_s, String(FormElementClearJavaScript, sizeof(FormElementClearJavaScript)));
+                parameters->setArray("arguments"_s, WTFMove(arguments));
+                m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+                    if (response.isError) {
+                        completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                        return;
+                    }
+                    completionHandler(CommandResult::success());
+                });
+            });
         });
     });
 }

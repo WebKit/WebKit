@@ -146,6 +146,7 @@ private:
     RefPtr<JSON::Object> extractElement(JSON::Value&);
     String extractElementID(JSON::Value&);
     RefPtr<JSON::Value> handleScriptResult(RefPtr<JSON::Value>&&);
+    void elementIsEditable(const String& elementID, Function<void (CommandResult&&)>&&);
 
     struct Point {
         int x { 0 };
