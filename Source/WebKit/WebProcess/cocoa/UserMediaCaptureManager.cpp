@@ -71,6 +71,11 @@ public:
     {
         if (type() == Type::Audio)
             storage().invalidate();
+        else if (type() == Type::Video) {
+#if PLATFORM(IOS_FAMILY)
+            RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
+#endif
+        }
     }
 
     SharedRingBufferStorage& storage()
@@ -257,6 +262,12 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
     m_sources.add(id, source.copyRef());
+
+#if PLATFORM(IOS_FAMILY)
+    if (type == WebCore::RealtimeMediaSource::Type::Video)
+        RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(source);
+#endif
+
     return WebCore::CaptureSourceOrError(WTFMove(source));
 }
 

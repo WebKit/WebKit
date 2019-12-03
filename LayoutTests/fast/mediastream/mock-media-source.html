@@ -5,27 +5,6 @@
         <script>
             var mediaStream;
 
-            function testWhenDisabled()
-            {
-                debug(`<br>*** Disable mock capture devices`);
-                if (window.internals)
-                    evalAndLog(`internals.setMockMediaCaptureDevicesEnabled(false)`);
-                navigator.mediaDevices
-                    .getUserMedia({audio:{}, video:{}})
-                    .then(function(stream) {
-                        mediaStream = stream;
-                        testFailed(`mediaDevices.getUserMedia() succeeded when no devices should be available`);
-                        finishJSTest();
-                    })
-                    .catch(function(err) {
-                        testPassed(`mediaDevices.getUserMedia() failed with ${err.name}`);
-                        debug(`<br>*** Enable mock capture devices`);
-                        if (window.internals)
-                            evalAndLog(`internals.setMockMediaCaptureDevicesEnabled(true)`);
-                        testWhenEnabled(null);
-                    });
-            }
-
             function testWhenEnabled(nextTest)
             {
                 navigator.mediaDevices
@@ -49,10 +28,7 @@
             function start()
             {
                 debug(`<br>*** Mock capture devices should be enabled by default`);
-                if (window.testRunner)
-                    testRunner.setUserMediaPermission(true);
-
-                testWhenEnabled(testWhenDisabled);
+                testWhenEnabled();
             }
 
         </script>
@@ -62,7 +38,7 @@
         <p id="description"></p>
         <div id="console"></div>
         <script>
-            description("Test enabling/disabling mock media capture devices");
+            description("Test mock media capture devices");
             window.jsTestIsAsync = true;
 
             window.successfullyParsed = true;

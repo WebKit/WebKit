@@ -176,14 +176,10 @@
         }
 
         jsTestIsAsync = true;
-        if (window.testRunner) {
-            testRunner.setUserMediaPermission(true);
+        if (window.testRunner)
             testRunner.waitUntilDone();
-        }
-        if (window.internals) {
-            window.internals.setMockMediaCaptureDevicesEnabled(true);
+        if (window.internals)
             window.internals.settings.setScreenCaptureEnabled(true);
-        }
 
         (async function() {
             try {

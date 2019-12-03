@@ -11,8 +11,6 @@
         <script>
 if (window.testRunner)
     testRunner.setUserMediaPermission(true);
-if (window.internals)
-    window.internals.setMockMediaCaptureDevicesEnabled(true);
 
 promise_test(async () => {
     return navigator.mediaDevices.getUserMedia({audio: {deviceId: {exact:"none"}}}).then(

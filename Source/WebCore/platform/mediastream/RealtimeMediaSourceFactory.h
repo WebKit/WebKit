@@ -40,8 +40,8 @@ struct MediaConstraints;
 
 class SingleSourceFactory {
 public:
-    void setActiveSource(RealtimeMediaSource&);
-    void unsetActiveSource(RealtimeMediaSource&);
+    WEBCORE_EXPORT void setActiveSource(RealtimeMediaSource&);
+    WEBCORE_EXPORT void unsetActiveSource(RealtimeMediaSource&);
     RealtimeMediaSource* activeSource() { return m_activeSource; }
 
 private:

@@ -97,6 +97,7 @@ struct TestOptions {
     bool enableBackForwardCache { false };
     bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
+    bool enableCaptureVideoInUIProcess { true };
 
     double contentInsetTop { 0 };
 
@@ -156,7 +157,8 @@ struct TestOptions {
             || enableAppNap != options.enableAppNap
             || enableBackForwardCache != options.enableBackForwardCache
             || enableLazyImageLoading != options.enableLazyImageLoading
-            || allowsLinkPreview != options.allowsLinkPreview)
+            || allowsLinkPreview != options.allowsLinkPreview
+            || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

@@ -553,7 +553,6 @@ Internals::Internals(Document& document)
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    setMockMediaCaptureDevicesEnabled(true);
     setMediaCaptureRequiresSecureConnection(false);
 #endif
 
@@ -1545,13 +1544,6 @@ void Internals::setUseDTLS10(bool useDTLS10)
 void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterrupt)
 {
     RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(shouldInterrupt);
-}
-
-void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
-{
-    Document* document = contextDocument();
-    if (auto* page = document->page())
-        page->settings().setMockCaptureDevicesEnabled(enabled);
 }
 
 void Internals::setMediaCaptureRequiresSecureConnection(bool enabled)

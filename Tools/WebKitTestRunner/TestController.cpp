@@ -815,6 +815,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     for (const auto& internalDebugFeature : options.internalDebugFeatures)
         WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
 
+#if PLATFORM(COCOA)
+    WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess);
+#endif
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
@@ -1446,6 +1449,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableLazyImageLoading = parseBooleanTestHeaderValue(value);
         else if (key == "allowsLinkPreview")
             testOptions.allowsLinkPreview = parseBooleanTestHeaderValue(value);
+        else if (key == "enableCaptureVideoInUIProcess")
+            testOptions.enableCaptureVideoInUIProcess = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
