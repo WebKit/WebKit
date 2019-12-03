@@ -67,7 +67,7 @@ Structure* IntlNumberFormat::createStructure(VM& vm, JSGlobalObject* globalObjec
 }
 
 IntlNumberFormat::IntlNumberFormat(VM& vm, Structure* structure)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -75,11 +75,6 @@ void IntlNumberFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-}
-
-void IntlNumberFormat::destroy(JSCell* cell)
-{
-    static_cast<IntlNumberFormat*>(cell)->IntlNumberFormat::~IntlNumberFormat();
 }
 
 void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)

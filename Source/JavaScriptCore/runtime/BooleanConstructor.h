@@ -51,6 +51,7 @@ protected:
 private:
     BooleanConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BooleanConstructor, InternalFunction);
 
 JSObject* constructBooleanFromImmediateBoolean(JSGlobalObject*, JSValue);
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(INTL)
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 struct UCollator;
 
@@ -36,9 +36,22 @@ namespace JSC {
 class IntlCollatorConstructor;
 class JSBoundFunction;
 
-class IntlCollator final : public JSDestructibleObject {
+class IntlCollator final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
+
+    static constexpr bool needsDestruction = true;
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<IntlCollator*>(cell)->IntlCollator::~IntlCollator();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.intlCollatorSpace<mode>();
+    }
 
     static IntlCollator* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -55,7 +68,6 @@ public:
 protected:
     IntlCollator(VM&, Structure*);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

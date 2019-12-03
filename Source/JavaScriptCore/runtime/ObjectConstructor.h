@@ -59,6 +59,7 @@ protected:
 private:
     ObjectConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ObjectConstructor, InternalFunction);
 
 inline JSFinalObject* constructEmptyObject(VM& vm, Structure* structure)
 {

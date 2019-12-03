@@ -58,5 +58,6 @@ protected:
 private:
     BigIntConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BigIntConstructor, InternalFunction);
 
 } // namespace JSC

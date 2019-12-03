@@ -70,7 +70,7 @@ Structure* IntlCollator::createStructure(VM& vm, JSGlobalObject* globalObject, J
 }
 
 IntlCollator::IntlCollator(VM& vm, Structure* structure)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -78,11 +78,6 @@ void IntlCollator::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-}
-
-void IntlCollator::destroy(JSCell* cell)
-{
-    static_cast<IntlCollator*>(cell)->IntlCollator::~IntlCollator();
 }
 
 void IntlCollator::visitChildren(JSCell* cell, SlotVisitor& visitor)

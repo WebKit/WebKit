@@ -52,6 +52,7 @@ private:
     FunctionConstructor(VM&, Structure*);
     void finishCreation(VM&, FunctionPrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionConstructor, InternalFunction);
 
 enum class FunctionConstructionMode {
     Function,

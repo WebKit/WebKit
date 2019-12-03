@@ -20,16 +20,28 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include "RuntimeType.h"
 #include "StackFrame.h"
 
 namespace JSC {
 
-class ErrorInstance : public JSDestructibleObject {
+class ErrorInstance : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
+    static constexpr bool needsDestruction = true;
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<ErrorInstance*>(cell)->ErrorInstance::~ErrorInstance();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.errorInstanceSpace<mode>();
+    }
 
     enum SourceTextWhereErrorOccurred { FoundExactSource, FoundApproximateSource };
     typedef String (*SourceAppender) (const String& originalMessage, const String& sourceText, RuntimeType, SourceTextWhereErrorOccurred);
@@ -75,19 +87,12 @@ public:
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);
 
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.errorInstanceSpace<mode>();
-    }
-
     void finalizeUnconditionally(VM&);
 
 protected:
     explicit ErrorInstance(VM&, Structure*);
 
     void finishCreation(JSGlobalObject*, VM&, const String&, bool useCurrentFrame = true);
-    static void destroy(JSCell*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);

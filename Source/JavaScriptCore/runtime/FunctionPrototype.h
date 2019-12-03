@@ -52,5 +52,6 @@ protected:
 private:
     FunctionPrototype(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionPrototype, InternalFunction);
 
 } // namespace JSC

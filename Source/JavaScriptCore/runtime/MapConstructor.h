@@ -55,6 +55,7 @@ private:
 
     void finishCreation(VM&, MapPrototype*, GetterSetter* speciesSymbol);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MapConstructor, InternalFunction);
 
 EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(JSGlobalObject*, CallFrame*);

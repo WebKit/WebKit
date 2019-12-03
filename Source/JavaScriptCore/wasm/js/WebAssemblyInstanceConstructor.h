@@ -54,6 +54,7 @@ protected:
 private:
     WebAssemblyInstanceConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyInstanceConstructor, InternalFunction);
 
 } // namespace JSC
 

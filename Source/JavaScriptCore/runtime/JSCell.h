@@ -98,9 +98,10 @@ public:
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);
     
+    JS_EXPORT_PRIVATE static void destroy(JSCell*);
+
 protected:
     JSCell(VM&, Structure*);
-    JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
 public:
     // Querying the type.

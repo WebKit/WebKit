@@ -50,6 +50,7 @@ protected:
 private:
     WebAssemblyCompileErrorConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyCompileErrorConstructor, InternalFunction);
 
 } // namespace JSC
 

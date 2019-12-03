@@ -1628,4 +1628,9 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, 
 #define JSC_NATIVE_GETTER_WITHOUT_TRANSITION(jsName, cppName, attributes) \
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION((jsName), (cppName), (attributes), NoIntrinsic)
 
+
+#define STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(DerivedClass, BaseClass) \
+    static_assert(sizeof(DerivedClass) == sizeof(BaseClass)); \
+    static_assert(DerivedClass::destroy == BaseClass::destroy);
+
 } // namespace JSC

@@ -53,7 +53,6 @@ private:
     WeakObjectRefConstructor(VM&, Structure*);
     void finishCreation(VM&, WeakObjectRefPrototype*);
 };
-
-static_assert(sizeof(WeakObjectRefConstructor) == sizeof(InternalFunction));
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakObjectRefConstructor, InternalFunction);
 
 }

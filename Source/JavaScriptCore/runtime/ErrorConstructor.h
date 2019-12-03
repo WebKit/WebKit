@@ -55,6 +55,7 @@ private:
     ErrorConstructor(VM&, Structure*);
 
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ErrorConstructor, InternalFunction);
 
 static_assert(sizeof(ErrorConstructor) == sizeof(InternalFunction), "");
 

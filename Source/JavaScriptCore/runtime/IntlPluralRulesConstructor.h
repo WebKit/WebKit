@@ -54,6 +54,7 @@ protected:
 private:
     IntlPluralRulesConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlPluralRulesConstructor, InternalFunction);
 
 } // namespace JSC
 

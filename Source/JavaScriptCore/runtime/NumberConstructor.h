@@ -63,5 +63,6 @@ protected:
 private:
     NumberConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberConstructor, InternalFunction);
 
 } // namespace JSC

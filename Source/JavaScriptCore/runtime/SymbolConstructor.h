@@ -58,5 +58,6 @@ protected:
 private:
     SymbolConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SymbolConstructor, InternalFunction);
 
 } // namespace JSC

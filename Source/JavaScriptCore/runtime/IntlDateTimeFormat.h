@@ -27,7 +27,7 @@
 
 #if ENABLE(INTL)
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include <unicode/udat.h>
 #include <unicode/uvernum.h>
 
@@ -38,9 +38,22 @@ namespace JSC {
 class IntlDateTimeFormatConstructor;
 class JSBoundFunction;
 
-class IntlDateTimeFormat final : public JSDestructibleObject {
+class IntlDateTimeFormat final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
+
+    static constexpr bool needsDestruction = true;
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<IntlDateTimeFormat*>(cell)->IntlDateTimeFormat::~IntlDateTimeFormat();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.intlDateTimeFormatSpace<mode>();
+    }
 
     static IntlDateTimeFormat* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -60,7 +73,6 @@ public:
 protected:
     IntlDateTimeFormat(VM&, Structure*);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

@@ -105,8 +105,8 @@ namespace {
 // globals (since these must have trivial constructors) e.g. DOMJITAttribute.
 // Instead, these constructors should always be ALWAYS_INLINE.
 
-class JSDollarVMCallFrame : public JSDestructibleObject {
-    using Base = JSDestructibleObject;
+class JSDollarVMCallFrame : public JSNonFinalObject {
+    using Base = JSNonFinalObject;
 public:
     JSDollarVMCallFrame(VM& vm, Structure* structure)
         : Base(vm, structure)

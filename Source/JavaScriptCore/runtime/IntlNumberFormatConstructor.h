@@ -54,6 +54,7 @@ protected:
 private:
     IntlNumberFormatConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlNumberFormatConstructor, InternalFunction);
 
 } // namespace JSC
 

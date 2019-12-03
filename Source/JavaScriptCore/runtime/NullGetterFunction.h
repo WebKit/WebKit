@@ -51,5 +51,6 @@ public:
 private:
     NullGetterFunction(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NullGetterFunction, InternalFunction);
 
 } // namespace JSC

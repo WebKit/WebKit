@@ -53,5 +53,6 @@ private:
     AsyncFunctionConstructor(VM&, Structure*);
     void finishCreation(VM&, AsyncFunctionPrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AsyncFunctionConstructor, InternalFunction);
 
 } // namespace JSC

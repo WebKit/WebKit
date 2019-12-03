@@ -86,7 +86,7 @@ Structure* IntlDateTimeFormat::createStructure(VM& vm, JSGlobalObject* globalObj
 }
 
 IntlDateTimeFormat::IntlDateTimeFormat(VM& vm, Structure* structure)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -94,11 +94,6 @@ void IntlDateTimeFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-}
-
-void IntlDateTimeFormat::destroy(JSCell* cell)
-{
-    static_cast<IntlDateTimeFormat*>(cell)->IntlDateTimeFormat::~IntlDateTimeFormat();
 }
 
 void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)

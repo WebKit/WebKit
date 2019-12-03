@@ -52,6 +52,7 @@ protected:
 private:
     DateConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(DateConstructor, InternalFunction);
 
 JSObject* constructDate(JSGlobalObject*, JSValue newTarget, const ArgList&);
 JSValue dateNowImpl();

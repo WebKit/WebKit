@@ -54,6 +54,7 @@ private:
     SetConstructor(VM&, Structure*);
     void finishCreation(VM&, SetPrototype*, GetterSetter* speciesSymbol);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SetConstructor, InternalFunction);
 
 EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(JSGlobalObject*, CallFrame*);

@@ -1,3 +1,87 @@
+2019-12-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put some destructible objects to IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204771
+
+        Reviewed by Mark Lam.
+
+        This patch puts DateInstance, ErrorInstance, and Intl objects in IsoSubspace.
+        By using specific IsoHeapCellType, we can use JSNonFinalObject as base-classes of
+        them instead of using JSDestructibleObject. We also introduce STATIC_ASSERT_ISO_SUBSPACE_SHARABLE
+        to ensure that derived class of some IsoSubspace'ed one is intentional and safe.
+
+        * runtime/ArrayConstructor.h:
+        * runtime/AsyncFunctionConstructor.h:
+        * runtime/AsyncGeneratorFunctionConstructor.h:
+        * runtime/BigIntConstructor.h:
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::destroy): Deleted.
+        * runtime/DateInstance.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::destroy): Deleted.
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::destroy):
+        (JSC::ErrorInstance::subspaceFor):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.h:
+        * runtime/GeneratorFunctionConstructor.h:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::IntlCollator):
+        (JSC::IntlCollator::destroy): Deleted.
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::IntlDateTimeFormat):
+        (JSC::IntlDateTimeFormat::destroy): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::IntlNumberFormat):
+        (JSC::IntlNumberFormat::destroy): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::IntlPluralRules):
+        (JSC::IntlPluralRules::destroy): Deleted.
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSCell.h:
+        * runtime/JSObject.h:
+        * runtime/JSTypedArrayConstructors.h:
+        * runtime/JSTypedArrayViewConstructor.h:
+        * runtime/MapConstructor.h:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NullGetterFunction.h:
+        * runtime/NullSetterFunction.h:
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ProxyConstructor.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/SetConstructor.h:
+        * runtime/StringConstructor.h:
+        * runtime/SymbolConstructor.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapConstructor.h:
+        * runtime/WeakObjectRefConstructor.h:
+        * runtime/WeakSetConstructor.h:
+        * tools/JSDollarVM.cpp:
+        * wasm/js/JSWebAssemblyCompileError.h:
+        * wasm/js/JSWebAssemblyLinkError.h:
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyLinkErrorConstructor.h:
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyTableConstructor.h:
+
 2019-12-02  Mark Lam  <mark.lam@apple.com>
 
         Only check each use...FuzzerAgent() option in VM constructor if any of the options are enabled.

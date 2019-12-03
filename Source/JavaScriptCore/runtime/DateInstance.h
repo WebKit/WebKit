@@ -20,20 +20,25 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-class DateInstance final : public JSDestructibleObject {
-protected:
-    JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
-    void finishCreation(VM&);
-    JS_EXPORT_PRIVATE void finishCreation(VM&, double);
-
-    JS_EXPORT_PRIVATE static void destroy(JSCell*);
-
+class DateInstance final : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
+
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell* cell)
+    {
+        static_cast<DateInstance*>(cell)->DateInstance::~DateInstance();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.dateInstanceSpace;
+    }
 
     static DateInstance* create(VM& vm, Structure* structure, double date)
     {
@@ -77,6 +82,9 @@ public:
     static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
 
 private:
+    JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
+    void finishCreation(VM&);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, double);
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(VM&) const;
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(VM&) const;
 

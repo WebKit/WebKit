@@ -50,5 +50,6 @@ private:
 
     static EncodedJSValue getGetter(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ProxyConstructor, InternalFunction);
 
 } // namespace JSC

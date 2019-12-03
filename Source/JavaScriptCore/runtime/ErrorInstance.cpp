@@ -132,11 +132,6 @@ void ErrorInstance::finishCreation(JSGlobalObject* globalObject, VM& vm, const S
     }
 }
 
-void ErrorInstance::destroy(JSCell* cell)
-{
-    static_cast<ErrorInstance*>(cell)->ErrorInstance::~ErrorInstance();
-}
-
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
 // have no observable side effects to the user (i.e. does not call proxies,
 // and getters).

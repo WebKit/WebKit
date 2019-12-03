@@ -59,5 +59,6 @@ private:
     GeneratorFunctionConstructor(VM&, Structure*);
     void finishCreation(VM&, GeneratorFunctionPrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GeneratorFunctionConstructor, InternalFunction);
 
 } // namespace JSC

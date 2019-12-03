@@ -31,15 +31,25 @@
 
 namespace JSC {
 
-typedef JSGenericTypedArrayViewConstructor<JSInt8Array> JSInt8ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSInt16Array> JSInt16ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSInt32Array> JSInt32ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSUint8Array> JSUint8ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSUint8ClampedArray> JSUint8ClampedArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSUint16Array> JSUint16ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSUint32Array> JSUint32ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSFloat32Array> JSFloat32ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSFloat64Array> JSFloat64ArrayConstructor;
-typedef JSGenericTypedArrayViewConstructor<JSDataView> JSDataViewConstructor;
+using JSInt8ArrayConstructor = JSGenericTypedArrayViewConstructor<JSInt8Array>;
+using JSInt16ArrayConstructor = JSGenericTypedArrayViewConstructor<JSInt16Array>;
+using JSInt32ArrayConstructor = JSGenericTypedArrayViewConstructor<JSInt32Array>;
+using JSUint8ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint8Array>;
+using JSUint8ClampedArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint8ClampedArray>;
+using JSUint16ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint16Array>;
+using JSUint32ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint32Array>;
+using JSFloat32ArrayConstructor = JSGenericTypedArrayViewConstructor<JSFloat32Array>;
+using JSFloat64ArrayConstructor = JSGenericTypedArrayViewConstructor<JSFloat64Array>;
+using JSDataViewConstructor = JSGenericTypedArrayViewConstructor<JSDataView>;
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSInt8ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSInt16ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSInt32ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint8ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint8ClampedArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint16ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint32ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFloat32ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFloat64ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDataViewConstructor, InternalFunction);
 
 } // namespace JSC

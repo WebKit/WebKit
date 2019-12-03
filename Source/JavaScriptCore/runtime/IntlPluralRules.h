@@ -27,7 +27,7 @@
 
 #if ENABLE(INTL)
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include <unicode/unum.h>
 #include <unicode/upluralrules.h>
 #include <unicode/uvernum.h>
@@ -40,9 +40,22 @@ namespace JSC {
 class IntlPluralRulesConstructor;
 class JSBoundFunction;
 
-class IntlPluralRules final : public JSDestructibleObject {
+class IntlPluralRules final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
+
+    static constexpr bool needsDestruction = true;
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<IntlPluralRules*>(cell)->IntlPluralRules::~IntlPluralRules();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.intlPluralRulesSpace<mode>();
+    }
 
     static IntlPluralRules* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -56,7 +69,6 @@ public:
 protected:
     IntlPluralRules(VM&, Structure*);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

@@ -39,6 +39,7 @@
 #include "CommonSlowPaths.h"
 #include "CustomGetterSetter.h"
 #include "DFGWorklist.h"
+#include "DateInstance.h"
 #include "DirectEvalExecutable.h"
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
@@ -178,6 +179,13 @@
 #include "JSCCallbackFunction.h"
 #endif
 
+#if ENABLE(INTL)
+#include "IntlCollator.h"
+#include "IntlDateTimeFormat.h"
+#include "IntlNumberFormat.h"
+#include "IntlPluralRules.h"
+#endif
+
 namespace JSC {
 
 #if ENABLE(JIT)
@@ -267,6 +275,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
     , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
+    , dateInstanceHeapCellType(makeUnique<IsoHeapCellType<DateInstance>>())
+    , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
     , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
     , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
@@ -276,6 +286,12 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
 #ifdef JSC_GLIB_API_ENABLED
     , jscCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<JSCCallbackFunction>>())
+#endif
+#if ENABLE(INTL)
+    , intlCollatorHeapCellType(makeUnique<IsoHeapCellType<IntlCollator>>())
+    , intlDateTimeFormatHeapCellType(makeUnique<IsoHeapCellType<IntlDateTimeFormat>>())
+    , intlNumberFormatHeapCellType(makeUnique<IsoHeapCellType<IntlNumberFormat>>())
+    , intlPluralRulesHeapCellType(makeUnique<IsoHeapCellType<IntlPluralRules>>())
 #endif
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyCodeBlock>>())
@@ -289,6 +305,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbfff3d73
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
+    , dateInstanceSpace ISO_SUBSPACE_INIT(heap, dateInstanceHeapCellType.get(), DateInstance)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
     , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
@@ -1317,7 +1334,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(asyncGeneratorSpace, cellHeapCellType.ge
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, destructibleObjectHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, errorInstanceHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(generatorSpace, cellHeapCellType.get(), JSGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
@@ -1336,6 +1353,12 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, objCCallbackF
 #endif
 #ifdef JSC_GLIB_API_ENABLED
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jscCallbackFunctionSpace, jscCallbackFunctionHeapCellType.get(), JSCCallbackFunction)
+#endif
+#if ENABLE(INTL)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlCollatorSpace, intlCollatorHeapCellType.get(), IntlCollator)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlDateTimeFormatSpace, intlDateTimeFormatHeapCellType.get(), IntlDateTimeFormat)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlNumberFormatSpace, intlNumberFormatHeapCellType.get(), IntlNumberFormat)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlPluralRulesSpace, intlPluralRulesHeapCellType.get(), IntlPluralRules)
 #endif
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd

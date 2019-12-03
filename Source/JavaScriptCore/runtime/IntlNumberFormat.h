@@ -27,7 +27,7 @@
 
 #if ENABLE(INTL)
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include <unicode/unum.h>
 #include <unicode/uvernum.h>
 
@@ -38,9 +38,22 @@ namespace JSC {
 class IntlNumberFormatConstructor;
 class JSBoundFunction;
 
-class IntlNumberFormat final : public JSDestructibleObject {
+class IntlNumberFormat final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
+
+    static constexpr bool needsDestruction = true;
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<IntlNumberFormat*>(cell)->IntlNumberFormat::~IntlNumberFormat();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.intlNumberFormatSpace<mode>();
+    }
 
     static IntlNumberFormat* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -60,7 +73,6 @@ public:
 protected:
     IntlNumberFormat(VM&, Structure*);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

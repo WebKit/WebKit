@@ -72,7 +72,7 @@ Structure* IntlPluralRules::createStructure(VM& vm, JSGlobalObject* globalObject
 }
 
 IntlPluralRules::IntlPluralRules(VM& vm, Structure* structure)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -80,11 +80,6 @@ void IntlPluralRules::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-}
-
-void IntlPluralRules::destroy(JSCell* cell)
-{
-    static_cast<IntlPluralRules*>(cell)->IntlPluralRules::~IntlPluralRules();
 }
 
 void IntlPluralRules::visitChildren(JSCell* cell, SlotVisitor& visitor)

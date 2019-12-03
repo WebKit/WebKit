@@ -54,5 +54,6 @@ private:
     WeakMapConstructor(VM&, Structure*);
     void finishCreation(VM&, WeakMapPrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakMapConstructor, InternalFunction);
 
 } // namespace JSC

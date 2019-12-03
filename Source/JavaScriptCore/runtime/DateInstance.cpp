@@ -50,11 +50,6 @@ void DateInstance::finishCreation(VM& vm, double time)
     m_internalNumber = timeClip(time);
 }
 
-void DateInstance::destroy(JSCell* cell)
-{
-    static_cast<DateInstance*>(cell)->DateInstance::~DateInstance();
-}
-
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM& vm) const
 {
     double milli = internalNumber();

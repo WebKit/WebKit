@@ -55,8 +55,7 @@ protected:
 private:
     RegExpConstructor(VM&, Structure*);
 };
-
-static_assert(sizeof(RegExpConstructor) == sizeof(InternalFunction), "");
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(RegExpConstructor, InternalFunction);
 
 JSObject* constructRegExp(JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = jsUndefined());
 

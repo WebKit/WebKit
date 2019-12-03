@@ -54,6 +54,7 @@ protected:
 private:
     IntlDateTimeFormatConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlDateTimeFormatConstructor, InternalFunction);
 
 } // namespace JSC
 

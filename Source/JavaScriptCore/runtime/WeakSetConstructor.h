@@ -54,5 +54,6 @@ private:
     WeakSetConstructor(VM&, Structure*);
     void finishCreation(VM&, WeakSetPrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakSetConstructor, InternalFunction);
 
 } // namespace JSC

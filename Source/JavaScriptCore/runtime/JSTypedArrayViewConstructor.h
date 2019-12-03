@@ -52,5 +52,6 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTypedArrayViewConstructor, InternalFunction);
     
 } // namespace JSC

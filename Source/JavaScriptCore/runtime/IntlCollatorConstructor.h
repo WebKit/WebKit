@@ -54,6 +54,7 @@ protected:
 private:
     IntlCollatorConstructor(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlCollatorConstructor, InternalFunction);
 
 } // namespace JSC
 

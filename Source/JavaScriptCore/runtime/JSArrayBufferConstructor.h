@@ -61,7 +61,7 @@ public:
 
 using JSArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>;
 using JSSharedArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Shared>;
-static_assert(sizeof(JSArrayBufferConstructor::Base) == sizeof(JSArrayBufferConstructor), "");
-static_assert(sizeof(JSSharedArrayBufferConstructor::Base) == sizeof(JSSharedArrayBufferConstructor), "");
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSArrayBufferConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSSharedArrayBufferConstructor, InternalFunction);
 
 } // namespace JSC

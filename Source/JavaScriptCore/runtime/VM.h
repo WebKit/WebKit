@@ -109,6 +109,8 @@ class CommonIdentifiers;
 class CompactVariableMap;
 class CustomGetterSetter;
 class DOMAttributeGetterSetter;
+class DateInstance;
+class ErrorInstance;
 class Exception;
 class ExceptionScope;
 class FastMallocAlignedMemoryAllocator;
@@ -120,6 +122,10 @@ class HasOwnPropertyCache;
 class HeapProfiler;
 class Identifier;
 class Interpreter;
+class IntlCollator;
+class IntlDateTimeFormat;
+class IntlNumberFormat;
+class IntlPluralRules;
 class JSCCallbackFunction;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
@@ -345,6 +351,8 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
+    std::unique_ptr<IsoHeapCellType<DateInstance>> dateInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
@@ -354,6 +362,12 @@ public:
 #endif
 #ifdef JSC_GLIB_API_ENABLED
     std::unique_ptr<IsoHeapCellType<JSCCallbackFunction>> jscCallbackFunctionHeapCellType;
+#endif
+#if ENABLE(INTL)
+    std::unique_ptr<IsoHeapCellType<IntlCollator>> intlCollatorHeapCellType;
+    std::unique_ptr<IsoHeapCellType<IntlDateTimeFormat>> intlDateTimeFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType<IntlNumberFormat>> intlNumberFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType<IntlPluralRules>> intlPluralRulesHeapCellType;
 #endif
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
@@ -391,6 +405,7 @@ public:
     CompleteSubspace destructibleObjectSpace;
     
     IsoSubspace bigIntSpace;
+    IsoSubspace dateInstanceSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace getterSetterSpace;
@@ -442,6 +457,12 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakObjectRefSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakSetSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakMapSpace)
+#if ENABLE(INTL)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlCollatorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlDateTimeFormatSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlNumberFormatSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
+#endif
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
