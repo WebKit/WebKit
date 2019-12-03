@@ -1,3 +1,10 @@
+2019-12-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, fix build warning.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        durationMediaTime should be marked as override.
+
 2019-12-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r253020.

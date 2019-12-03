@@ -158,7 +158,7 @@ public:
     // Prefer MediaTime based methods over float based.
     float duration() const final { return durationMediaTime().toFloat(); }
     double durationDouble() const final { return durationMediaTime().toDouble(); }
-    MediaTime durationMediaTime() const;
+    MediaTime durationMediaTime() const override;
     float currentTime() const final { return currentMediaTime().toFloat(); }
     double currentTimeDouble() const final { return currentMediaTime().toDouble(); }
     MediaTime currentMediaTime() const override;
