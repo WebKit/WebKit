@@ -38,6 +38,7 @@ using JSC::ArrayBuffer;
 namespace WebCore {
 
 class Blob;
+class CanvasBase;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -46,6 +47,9 @@ class ImageBuffer;
 class ImageData;
 class IntRect;
 class IntSize;
+#if ENABLE(OFFSCREEN_CANVAS)
+class OffscreenCanvas;
+#endif
 class PendingImageBitmap;
 class ScriptExecutionContext;
 class TypedOMCSSImageValue;
@@ -63,6 +67,9 @@ public:
 #endif
         RefPtr<HTMLCanvasElement>,
         RefPtr<ImageBitmap>,
+#if ENABLE(OFFSCREEN_CANVAS)
+        RefPtr<OffscreenCanvas>,
+#endif
 #if ENABLE(CSS_TYPED_OM)
         RefPtr<TypedOMCSSImageValue>,
 #endif
@@ -105,8 +112,12 @@ private:
 #if ENABLE(VIDEO)
     static void createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
 #endif
-    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+#if ENABLE(OFFSCREEN_CANVAS)
+    static void createPromise(ScriptExecutionContext&, RefPtr<OffscreenCanvas>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
+#endif
+    static void createPromise(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);

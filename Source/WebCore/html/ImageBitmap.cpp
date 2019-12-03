@@ -43,6 +43,9 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSImageBitmap.h"
 #include "LayoutSize.h"
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 #include "RenderElement.h"
 #include "SharedBuffer.h"
 #include "SuspendableTimer.h"
@@ -343,12 +346,24 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     promise.resolve(WTFMove(imageBitmap));
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createPromise(ScriptExecutionContext& context, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
+{
+    createPromise(context, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(promise));
+}
+
+#if ENABLE(OFFSCREEN_CANVAS)
+void ImageBitmap::createPromise(ScriptExecutionContext& context, RefPtr<OffscreenCanvas>& canvasElement, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
+{
+    createPromise(context, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(promise));
+}
+#endif
+
+void ImageBitmap::createPromise(ScriptExecutionContext&, CanvasBase& canvas, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
     // 2. If the canvas element's bitmap has either a horizontal dimension or a vertical
     //    dimension equal to zero, then return a promise rejected with an "InvalidStateError"
     //    DOMException and abort these steps.
-    auto size = canvasElement->size();
+    auto size = canvas.size();
     if (!size.width() || !size.height()) {
         promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height");
         return;
@@ -366,7 +381,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
 
-    auto imageForRender = canvasElement->copiedImage();
+    auto imageForRender = canvas.copiedImage();
     if (!imageForRender) {
         promise.reject(InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered");
         return;
@@ -381,7 +396,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same value as
     //    the origin-clean flag of the canvas element's bitmap.
 
-    imageBitmap->m_originClean = canvasElement->originClean();
+    imageBitmap->m_originClean = canvas.originClean();
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
