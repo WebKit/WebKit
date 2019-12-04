@@ -201,14 +201,13 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
     switch (m_value.calc->category()) {
     case CalculationCategory::Number:
         return CSSUnitType::CSS_NUMBER;
-    case CalculationCategory::Length:
-        return CSSUnitType::CSS_PX;
     case CalculationCategory::Percent:
         return CSSUnitType::CSS_PERCENTAGE;
     case CalculationCategory::PercentNumber:
         return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER;
     case CalculationCategory::PercentLength:
         return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+    case CalculationCategory::Length:
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
@@ -905,6 +904,65 @@ ExceptionOr<Ref<RGBColor>> CSSPrimitiveValue::getRGBColorValue() const
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
 {
     return makeString(m_value.num, suffix);
+}
+
+String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
+{
+    switch (unitType) {
+        case CSSUnitType::CSS_PERCENTAGE: return "%";
+        case CSSUnitType::CSS_EMS: return "em";
+        case CSSUnitType::CSS_EXS: return "ex";
+        case CSSUnitType::CSS_PX: return "px";
+        case CSSUnitType::CSS_CM: return "cm";
+        case CSSUnitType::CSS_MM: return "mm";
+        case CSSUnitType::CSS_IN: return "in";
+        case CSSUnitType::CSS_PT: return "pt";
+        case CSSUnitType::CSS_PC: return "pc";
+        case CSSUnitType::CSS_DEG: return "deg";
+        case CSSUnitType::CSS_RAD: return "rad";
+        case CSSUnitType::CSS_GRAD: return "grad";
+        case CSSUnitType::CSS_MS: return "ms";
+        case CSSUnitType::CSS_S: return "s";
+        case CSSUnitType::CSS_HZ: return "hz";
+        case CSSUnitType::CSS_KHZ: return "khz";
+        case CSSUnitType::CSS_VW: return "vw";
+        case CSSUnitType::CSS_VH: return "vh";
+        case CSSUnitType::CSS_VMIN: return "vmin";
+        case CSSUnitType::CSS_VMAX: return "vmax";
+        case CSSUnitType::CSS_DPPX: return "dppx";
+        case CSSUnitType::CSS_DPI: return "dpi";
+        case CSSUnitType::CSS_DPCM: return "dpcm";
+        case CSSUnitType::CSS_FR: return "fr";
+        case CSSUnitType::CSS_Q: return "q";
+        case CSSUnitType::CSS_TURN: return "turn";
+        case CSSUnitType::CSS_REMS: return "rem";
+        case CSSUnitType::CSS_CHS: return "ch";
+
+        case CSSUnitType::CSS_UNKNOWN:
+        case CSSUnitType::CSS_NUMBER:
+        case CSSUnitType::CSS_DIMENSION:
+        case CSSUnitType::CSS_STRING:
+        case CSSUnitType::CSS_URI:
+        case CSSUnitType::CSS_IDENT:
+        case CSSUnitType::CSS_ATTR:
+        case CSSUnitType::CSS_COUNTER:
+        case CSSUnitType::CSS_RECT:
+        case CSSUnitType::CSS_RGBCOLOR:
+        case CSSUnitType::CSS_PAIR:
+        case CSSUnitType::CSS_UNICODE_RANGE:
+        case CSSUnitType::CSS_COUNTER_NAME:
+        case CSSUnitType::CSS_SHAPE:
+        case CSSUnitType::CSS_QUAD:
+        case CSSUnitType::CSS_CALC:
+        case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+        case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
+        case CSSUnitType::CSS_FONT_FAMILY:
+        case CSSUnitType::CSS_PROPERTY_ID:
+        case CSSUnitType::CSS_VALUE_ID:
+        case CSSUnitType::CSS_QUIRKY_EMS:
+            return emptyString();
+    }
+    return emptyString();
 }
 
 ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const

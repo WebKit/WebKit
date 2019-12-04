@@ -9,5 +9,5 @@ PASS e.style['padding-left'] = "40px" should set the property value
 PASS e.style['padding'] = "20%" should set the property value 
 PASS e.style['padding'] = "10px 20% 30% 40px" should set the property value 
 PASS e.style['padding-right'] = "20%" should set the property value 
-PASS e.style['padding-right'] = "calc(2em + 3%)" should set the property value 
+FAIL e.style['padding-right'] = "calc(2em + 3%)" should set the property value assert_equals: serialization should be canonical expected "calc(2em + 3%)" but got "calc(3% + 2em)"
 

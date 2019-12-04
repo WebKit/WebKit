@@ -21,6 +21,10 @@
 
 #pragma once
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum class CSSUnitType : uint8_t {
@@ -105,6 +109,9 @@ enum class CSSUnitCategory : uint8_t {
 CSSUnitCategory unitCategory(CSSUnitType);
 CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
 CSSUnitType canonicalUnitType(CSSUnitType);
+
+WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);
+WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitType);
 
 } // namespace WebCore
 

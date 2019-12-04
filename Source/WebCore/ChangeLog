@@ -79,6 +79,117 @@
         (WebCore::collectScreenProperties):
         (WebCore::screenSupportsHighDynamicRange):
 
+2019-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        calc() serialization doesn't match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203442
+        <rdar://problem/56639402>
+
+        Reviewed by Dean Jackson.
+
+        These changes implement the calc() simplification and serialization rules described in
+        https://drafts.csswg.org/css-values-4/#calc-internal. They also make it easy to add the
+        new math functions in future.
+        
+        The major changes are:
+
+        1. Create Negate and Invert nodes to handle subtraction and division, so that
+           Product and Sum are the only math operators that are tracked, which makes
+           it possible to sort child nodes for simplification.
+
+        2. After parsing, do a bottom-up simplification parse following
+           <https://drafts.csswg.org/css-values-4/#calc-simplification>, which sorts child nodes
+           according to <https://drafts.csswg.org/css-values-4/#sort-a-calculations-children>,
+           combines child nodes where possible, and hoists child nodes up to their parents were
+           possible. Simplification always preserves a calc-like function at the root.
+           
+           This simplification also does unit canonicalization (e.g. all absolute lengths get px units).
+           To make unit conversion more explicit, pass a CSSUnitType into doubleValue() methods so that
+           it's clear what units the resulting value is in.
+           
+        3. Serialize according to <https://drafts.csswg.org/css-values-4/#calc-serialize>
+           which fixes bugs with nested parentheses.
+
+        This patch does not completely implement the type checking and conversion rules described in <https://drafts.csswg.org/css-values-4/#calc-type-checking>
+        and <https://drafts.css-houdini.org/css-typed-om-1/#numeric-typing>.
+
+        Tests: fast/css/calc-parsing-limits.html
+               fast/css/calc-parsing.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::calculationCategoryForCombination):
+        (WebCore::canonicalUnitTypeForCalculationCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcPrimitiveValueNode::isNumericValue const):
+        (WebCore::CSSCalcPrimitiveValueNode::isNegative const):
+        (WebCore::CSSCalcPrimitiveValueNode::negate):
+        (WebCore::CSSCalcPrimitiveValueNode::invert):
+        (WebCore::CSSCalcPrimitiveValueNode::add):
+        (WebCore::CSSCalcPrimitiveValueNode::multiply):
+        (WebCore::CSSCalcPrimitiveValueNode::convertToUnitType):
+        (WebCore::CSSCalcPrimitiveValueNode::canonicalizeUnit):
+        (WebCore::CSSCalcPrimitiveValueNode::doubleValue const):
+        (WebCore::CSSCalcNegateNode::createCalcExpression const):
+        (WebCore::CSSCalcNegateNode::dump const):
+        (WebCore::CSSCalcInvertNode::createCalcExpression const):
+        (WebCore::CSSCalcInvertNode::dump const):
+        (WebCore::categoryForInvert):
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcOperationNode::create):
+        (WebCore::CSSCalcOperationNode::createSum):
+        (WebCore::CSSCalcOperationNode::createProduct):
+        (WebCore::CSSCalcOperationNode::hoistChildrenWithOperator):
+        (WebCore::sortingCategoryForType):
+        (WebCore::sortingCategory):
+        (WebCore::primitiveTypeForCombination):
+        (WebCore::conversionToAddValuesWithTypes):
+        (WebCore::CSSCalcOperationNode::canCombineAllChildren const):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplify):
+        (WebCore::CSSCalcOperationNode::simplifyRecursive):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::CSSCalcOperationNode::primitiveType const):
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        (WebCore::CSSCalcOperationNode::computeLengthPx const):
+        (WebCore::CSSCalcOperationNode::buildCSSText):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::buildCSSTextRecursive):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (WebCore::checkDepthAndIndex):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcProduct):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcSum):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::customCSSText const):
+        (WebCore::CSSCalcValue::doubleValue const):
+        (WebCore::CSSCalcValue::create):
+        (WebCore::CSSCalcOperationNode::createSimplified): Deleted.
+        (WebCore::CSSCalcOperationNode::buildCssText): Deleted.
+        (WebCore::CSSCalcOperationNode::customCSSText const): Deleted.
+        (WebCore::CSSCalcExpressionNodeParser::parseValueTerm): Deleted.
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression): Deleted.
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression): Deleted.
+        (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression): Deleted.
+        (WebCore::CSSCalcExpressionNodeParser::parseValueExpression): Deleted.
+        * css/CSSCalculationValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::unitTypeString):
+        * css/CSSPrimitiveValue.h:
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionNegation::evaluate const):
+        (WebCore::CalcExpressionNegation::operator== const):
+        (WebCore::CalcExpressionNegation::dump const):
+        (WebCore::operator==):
+        (WebCore::CalcExpressionInversion::evaluate const):
+        (WebCore::CalcExpressionInversion::dump const):
+        (WebCore::CalcExpressionInversion::operator== const):
+        (WebCore::CalcExpressionOperation::evaluate const):
+        (WebCore::operator<<):
+        * platform/CalculationValue.h:
+
 2019-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Start adding encoding support for DisplayList and some DisplayListItems

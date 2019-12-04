@@ -197,6 +197,7 @@ public:
     bool equals(const CSSPrimitiveValue&) const;
 
     static double conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+    static String unitTypeString(CSSUnitType);
 
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, CSSUnitType, double value);
     // True if computeNonCalcLengthDouble would produce identical results when resolved against both these styles.

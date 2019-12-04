@@ -831,7 +831,7 @@ var validPolygons = [
 
 // [test value, expected property value, expected computed style]
 var calcTestValues = [
-    ["calc(10in)", "calc(10in)", "960px"],
+    ["calc(10in)", "calc(960px)", "960px"],
     ["calc(10in + 20px)", "calc(980px)", "980px"],
     ["calc(30%)", "calc(30%)", "30%"],
     ["calc(100%/4)", "calc(25%)", "25%"],
@@ -841,8 +841,8 @@ var calcTestValues = [
     // the computed value of a ‘calc()’ expression can be represented as either a number or a tuple
     // of a dimension and a percentage.
     // http://www.w3.org/TR/css3-values/#calc-notation
-    ["calc(25%*3 - 10in)", "calc(75% - 10in)", ["calc(75% - 960px)", "calc(-960px + 75%)"]],
-    ["calc((12.5%*6 + 10in) / 4)", "calc((75% + 10in) / 4)", ["calc((75% + 960px) / 4)", "calc(240px + 18.75%)"]]
+    ["calc(25%*3 - 10in)", "calc(75% - 960px)", ["calc(75% - 960px)", "calc(-960px + 75%)"]],
+    ["calc((12.5%*6 + 10in) / 4)", "calc(0.25 * (75% + 960px))", ["calc(0.25 * (75% + 960px))", "calc(240px + 18.75%)"]]
 ]
 
 return {

@@ -229,6 +229,7 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
 
 SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value)
 {
+    // FIXME: This needs to call value.computeLength() so it can correctly resolve non-absolute units (webkit.org/b/204826).
     SVGLengthType lengthType = primitiveTypeToLengthType(value.primitiveType());
     return lengthType == SVGLengthType::Unknown ? SVGLengthValue() : SVGLengthValue(value.floatValue(), lengthType);
 }

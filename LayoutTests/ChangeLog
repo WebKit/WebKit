@@ -20,6 +20,45 @@
         * fast/text/international/unicode-bidi-other-neutrals-expected.html: Added.
         * fast/text/international/unicode-bidi-other-neutrals.html: Added.
 
+2019-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        calc() serialization doesn't match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203442
+
+        Reviewed by Dean Jackson.
+
+        New results, mainly because of new simplification rules.
+
+        * css3/calc/cssom-expected.txt:
+        * css3/calc/simplification-expected.txt:
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-computed-style.js:
+        * css3/scroll-snap/scroll-snap-property-parsing-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-parsing.js:
+        * css3/shapes/shape-outside/values/support/parsing-utils.js:
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js:
+        * fast/css/calc-parsing-expected.txt: Added.
+        * fast/css/calc-parsing-limits-expected.txt: Added.
+        * fast/css/calc-parsing-limits.html: Added.
+        * fast/css/calc-parsing.html: Added.
+        * fast/css/calc-with-angle-time-frequency-expected.txt:
+        * fast/css/calc-with-angle-time-frequency.html:
+        * fast/css/column-width-calculated-value-expected.txt:
+        * fast/css/column-width-calculated-value.html:
+        * fast/css/turn-angle-double-expected.txt:
+        * fast/css/turn-angle-double.html:
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-test-utils.js:
+
 2019-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/events/touch/ios/passive-by-default-on-document-and-window.html is a flaky failure

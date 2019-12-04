@@ -32,7 +32,7 @@ testScrollSnapRule("single length", "scroll-padding", "10px", "10px", 4);
 testScrollSnapRule("two percentages", "scroll-padding", "10% 20%", "10% 20%", 4);
 testScrollSnapRule("three lengths", "scroll-padding", "1px 2px 3px", "1px 2px 3px", 4);
 testScrollSnapRule("four values", "scroll-padding", "50px 10% 20% 50px", "50px 10% 20% 50px", 4);
-testScrollSnapRule("calc expression", "scroll-padding", "calc(50px + 10%) 20px", "calc(50px + 10%) 20px", 4);
+testScrollSnapRule("calc expression", "scroll-padding", "calc(10% + 50px) 20px", "calc(10% + 50px) 20px", 4);
 testScrollSnapRule("various units", "scroll-padding", "1em 5mm 2in 4cm", "1em 5mm 2in 4cm", 4);
 testScrollSnapRule("subpixel values", "scroll-padding", "10.4375px 6.5px", "10.4375px 6.5px", 4);
 testScrollSnapRule("single length", "scroll-snap-margin", "10px", "10px", 4);

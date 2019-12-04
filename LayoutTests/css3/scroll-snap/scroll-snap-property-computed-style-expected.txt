@@ -127,11 +127,11 @@ PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-rig
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '20%'
 
 calc expression: `calc(50px + 10%) 20px`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'calc(50px + 10%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'calc(10% + 50px) 20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'calc(10% + 50px)'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '20px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '20px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'calc(50px + 10%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'calc(10% + 50px)'
 
 various units: `1em 5mm 2in 4cm`
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '16px 18.89763832092285px 192px 151.1811065673828px'

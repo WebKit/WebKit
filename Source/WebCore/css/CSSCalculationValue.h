@@ -54,6 +54,9 @@ enum class CalculationCategory : uint8_t {
     Angle,
     Time,
     Frequency,
+    // TODO:
+    // Flex,
+    // Resolution
     Other
 };
 
@@ -61,15 +64,16 @@ class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     enum Type {
         CssCalcPrimitiveValue = 1,
-        CssCalcOperation
+        CssCalcOperation,
+        CssCalcNegate,
+        CssCalcInvert,
     };
 
     virtual ~CSSCalcExpressionNode() = default;
     virtual bool isZero() const = 0;
     virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const = 0;
-    virtual double doubleValue() const = 0;
+    virtual double doubleValue(CSSUnitType) const = 0;
     virtual double computeLengthPx(const CSSToLengthConversionData&) const = 0;
-    virtual String customCSSText() const = 0;
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category; }
     virtual Type type() const = 0;
     virtual CSSUnitType primitiveType() const = 0;

@@ -38,6 +38,46 @@
         * resources/import-expectations.json:
         * web-platform-tests/html/webappapis/scripting/events/*: Updated.
 
+2019-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        calc() serialization doesn't match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203442
+        <rdar://problem/56639402>
+
+        Reviewed by Dean Jackson.
+
+        New results. Current WPT don't reflect the new serialization rules yet, so we expect
+        some failing results here.
+
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-box/parsing/padding-valid-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-003-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-008-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-009-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-006-expected.txt:
+        * web-platform-tests/css/css-values/calc-background-position-002-expected.txt:
+        * web-platform-tests/css/css-values/calc-background-position-003-expected.txt:
+        * web-platform-tests/css/css-values/calc-nesting-002-expected.txt:
+        * web-platform-tests/css/css-values/calc-serialization-002-expected.txt:
+        * web-platform-tests/css/css-values/calc-serialization-expected.txt:
+        * web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-angle-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-percentage-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-time-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-time-serialize-expected.txt:
+
 2019-12-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Implement createImageBitmap(OffscreenCanvas)

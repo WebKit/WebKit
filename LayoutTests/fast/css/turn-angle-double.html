@@ -13,7 +13,7 @@ evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(0.5turn)'");
 shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(0.5turn)");
 
 evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(calc(2turn * 1.5))'");
-shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(calc(3turn))");
+shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(calc(1080deg))");
 
 evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(calc(1turn * 2 + 2.5deg))'");
 shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(calc(722.5deg))");

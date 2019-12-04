@@ -15,8 +15,8 @@ testGridTemplatesValues(document.getElementById("gridWithFractionFraction"), "1f
 testGridTemplatesValues(document.getElementById("gridWithFractionMinMax"), "minmax(min-content, 45px) 2fr", "3fr minmax(14px, max-content)");
 testGridTemplatesValues(document.getElementById("gridWithCalcCalc"), "200px 100px", "150px 75px");
 testGridTemplatesValues(document.getElementById("gridWithCalcAndFixed"), "50% 80px", "88px 25%");
-testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "calc(30px + 20%) minmax(min-content, 80px)", "minmax(25%, max-content) calc(10% - 7px)");
-testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(calc(23px + 10%), 400px) 120px", "150px minmax(5%, calc(50% - 125px))");
+testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "calc(20% + 30px) minmax(min-content, 80px)", "minmax(25%, max-content) calc(10% - 7px)");
+testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(calc(10% + 23px), 400px) 120px", "150px minmax(5%, calc(50% - 125px))");
 testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px) 10%", "max-content minmax(min-content, auto)");
 
 debug("");

@@ -57,6 +57,8 @@ enum class CalcExpressionNodeType : uint8_t {
     Number,
     Length,
     Operation,
+    Negation,
+    Inversion,
     BlendLength,
 };
 
@@ -103,6 +105,48 @@ private:
 
     Length m_length;
 };
+
+class CalcExpressionNegation final : public CalcExpressionNode {
+public:
+    CalcExpressionNegation(std::unique_ptr<CalcExpressionNode>&& node)
+        : CalcExpressionNode(CalcExpressionNodeType::Negation)
+        , m_child(WTFMove(node))
+    {
+        ASSERT(m_child);
+    }
+
+    float evaluate(float maxValue) const final;
+    bool operator==(const CalcExpressionNode&) const final;
+    void dump(WTF::TextStream&) const final;
+    
+    const CalcExpressionNode* child() const { return m_child.get(); }
+
+private:
+    std::unique_ptr<CalcExpressionNode> m_child;
+};
+
+bool operator==(const CalcExpressionNegation&, const CalcExpressionNegation&);
+
+class CalcExpressionInversion final : public CalcExpressionNode {
+public:
+    CalcExpressionInversion(std::unique_ptr<CalcExpressionNode>&& node)
+        : CalcExpressionNode(CalcExpressionNodeType::Inversion)
+        , m_child(WTFMove(node))
+    {
+        ASSERT(m_child);
+    }
+
+    float evaluate(float maxValue) const final;
+    bool operator==(const CalcExpressionNode&) const final;
+    void dump(WTF::TextStream&) const final;
+
+    const CalcExpressionNode* child() const { return m_child.get(); }
+
+private:
+    std::unique_ptr<CalcExpressionNode> m_child;
+};
+
+bool operator==(const CalcExpressionInversion&, const CalcExpressionInversion&);
 
 class CalcExpressionOperation final : public CalcExpressionNode {
 public:
@@ -220,4 +264,6 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionNumber, type() == WebCore::CalcExpressionNodeType::Number)
 SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionLength, type() == WebCore::CalcExpressionNodeType::Length)
 SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionOperation, type() == WebCore::CalcExpressionNodeType::Operation)
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionNegation, type() == WebCore::CalcExpressionNodeType::Negation)
+SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionInversion, type() == WebCore::CalcExpressionNodeType::Inversion)
 SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(CalcExpressionBlendLength, type() == WebCore::CalcExpressionNodeType::BlendLength)

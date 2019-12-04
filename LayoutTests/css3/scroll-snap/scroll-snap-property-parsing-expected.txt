@@ -64,10 +64,10 @@ PASS cssRule.type is 1
 PASS declaration.length is 4
 PASS declaration.getPropertyValue('scroll-padding') is '50px 10% 20% 50px'
 
-calc expression : calc(50px + 10%) 20px
+calc expression : calc(10% + 50px) 20px
 PASS cssRule.type is 1
 PASS declaration.length is 4
-PASS declaration.getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
+PASS declaration.getPropertyValue('scroll-padding') is 'calc(10% + 50px) 20px'
 
 various units : 1em 5mm 2in 4cm
 PASS cssRule.type is 1

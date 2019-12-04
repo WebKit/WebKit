@@ -68,28 +68,74 @@ float CalculationValue::evaluate(float maxValue) const
     return m_shouldClampToNonNegative && result < 0 ? 0 : result;
 }
 
+float CalcExpressionNegation::evaluate(float maxValue) const
+{
+    return -m_child->evaluate(maxValue);
+}
+
+bool CalcExpressionNegation::operator==(const CalcExpressionNode& other) const
+{
+    return is<CalcExpressionNegation>(other) && *this == downcast<CalcExpressionNegation>(other);
+}
+
+void CalcExpressionNegation::dump(TextStream& ts) const
+{
+    ts << "-(";
+    ts << *m_child;
+    ts << ")";
+}
+
+bool operator==(const CalcExpressionNegation& a, const CalcExpressionNegation& b)
+{
+    return *a.child() == *b.child();
+}
+
+float CalcExpressionInversion::evaluate(float maxValue) const
+{
+    return 1.0f / m_child->evaluate(maxValue);
+}
+
+void CalcExpressionInversion::dump(TextStream& ts) const
+{
+    ts << "1.0 / " << "(";
+    ts << *m_child;
+    ts << ")";
+}
+
+bool CalcExpressionInversion::operator==(const CalcExpressionNode& other) const
+{
+    return is<CalcExpressionInversion>(other) && *this == downcast<CalcExpressionInversion>(other);
+}
+
+bool operator==(const CalcExpressionInversion& a, const CalcExpressionInversion& b)
+{
+    return *a.child() == *b.child();
+}
+
 float CalcExpressionOperation::evaluate(float maxValue) const
 {
     switch (m_operator) {
     case CalcOperator::Add: {
-        ASSERT(m_children.size() == 2);
-        float left = m_children[0]->evaluate(maxValue);
-        float right = m_children[1]->evaluate(maxValue);
-        return left + right;
+        float sum = 0;
+        for (auto& child : m_children)
+            sum += child->evaluate(maxValue);
+        return sum;
     }
     case CalcOperator::Subtract: {
+        // FIXME
         ASSERT(m_children.size() == 2);
         float left = m_children[0]->evaluate(maxValue);
         float right = m_children[1]->evaluate(maxValue);
         return left - right;
     }
     case CalcOperator::Multiply: {
-        ASSERT(m_children.size() == 2);
-        float left = m_children[0]->evaluate(maxValue);
-        float right = m_children[1]->evaluate(maxValue);
-        return left * right;
+        float product = 1;
+        for (auto& child : m_children)
+            product *= child->evaluate(maxValue);
+        return product;
     }
     case CalcOperator::Divide: {
+        // FIXME
         ASSERT(m_children.size() == 1 || m_children.size() == 2);
         if (m_children.size() == 1)
             return std::numeric_limits<float>::quiet_NaN();
@@ -203,8 +249,8 @@ TextStream& operator<<(TextStream& ts, CalcOperator op)
     case CalcOperator::Subtract: ts << "-"; break;
     case CalcOperator::Multiply: ts << "*"; break;
     case CalcOperator::Divide: ts << "/"; break;
-    case CalcOperator::Min: ts << "max"; break;
-    case CalcOperator::Max: ts << "min"; break;
+    case CalcOperator::Min: ts << "min"; break;
+    case CalcOperator::Max: ts << "max"; break;
     }
     return ts;
 }
