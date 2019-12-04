@@ -392,8 +392,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     state.access = this;
     state.stubInfo = &stubInfo;
     
-    state.baseGPR = stubInfo.baseGPR();
-    state.u.thisGPR = stubInfo.patch.u.thisGPR;
+    state.baseGPR = stubInfo.baseGPR;
+    state.u.thisGPR = stubInfo.regs.thisGPR;
     state.valueRegs = stubInfo.valueRegs();
 
     // Regenerating is our opportunity to figure out what our list of cases should look like. We
@@ -444,16 +444,16 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     }
     m_list.resize(dstIndex);
 
-    ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+    ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
     state.allocator = &allocator;
     allocator.lock(state.baseGPR);
     if (state.u.thisGPR != InvalidGPRReg)
         allocator.lock(state.u.thisGPR);
     allocator.lock(state.valueRegs);
 #if USE(JSVALUE32_64)
-    allocator.lock(stubInfo.patch.baseTagGPR);
-    if (stubInfo.patch.v.thisTagGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.patch.v.thisTagGPR);
+    allocator.lock(stubInfo.baseTagGPR);
+    if (stubInfo.v.thisTagGPR != InvalidGPRReg)
+        allocator.lock(stubInfo.v.thisTagGPR);
 #endif
 
     state.scratchGPR = allocator.allocateScratchGPR();
@@ -527,7 +527,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
 #if USE(JSVALUE64) 
                     notInt32 = jit.branchIfNotInt32(state.u.propertyGPR);
 #else
-                    notInt32 = jit.branchIfNotInt32(state.stubInfo->patch.v.propertyTagGPR);
+                    notInt32 = jit.branchIfNotInt32(state.stubInfo->v.propertyTagGPR);
 #endif
                 }
                 for (unsigned i = cases.size(); i--;) {
@@ -553,7 +553,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 GPRReg propertyGPR = state.u.propertyGPR;
                 if (!stubInfo.propertyIsString) {
 #if USE(JSVALUE32_64)
-                    GPRReg propertyTagGPR = state.stubInfo->patch.v.propertyTagGPR;
+                    GPRReg propertyTagGPR = state.stubInfo->v.propertyTagGPR;
                     notString.append(jit.branchIfNotCell(propertyTagGPR));
 #else
                     notString.append(jit.branchIfNotCell(propertyGPR));
@@ -585,7 +585,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 if (!stubInfo.propertyIsSymbol) {
                     GPRReg propertyGPR = state.u.propertyGPR;
 #if USE(JSVALUE32_64)
-                    GPRReg propertyTagGPR = state.stubInfo->patch.v.propertyTagGPR;
+                    GPRReg propertyTagGPR = state.stubInfo->v.propertyTagGPR;
                     notSymbol.append(jit.branchIfNotCell(propertyTagGPR));
 #else
                     notSymbol.append(jit.branchIfNotCell(propertyGPR));
@@ -702,11 +702,11 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         return AccessGenerationResult::GaveUp;
     }
 
-    CodeLocationLabel<JSInternalPtrTag> successLabel = stubInfo.doneLocation();
+    CodeLocationLabel<JSInternalPtrTag> successLabel = stubInfo.doneLocation;
 
     linkBuffer.link(state.success, successLabel);
 
-    linkBuffer.link(failure, stubInfo.slowPathStartLocation());
+    linkBuffer.link(failure, stubInfo.slowPathStartLocation);
     
     if (PolymorphicAccessInternal::verbose)
         dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");

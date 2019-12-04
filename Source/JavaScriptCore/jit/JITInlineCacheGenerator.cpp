@@ -51,18 +51,18 @@ JITInlineCacheGenerator::JITInlineCacheGenerator(
     m_stubInfo->codeOrigin = codeOrigin;
     m_stubInfo->callSiteIndex = callSite;
 
-    m_stubInfo->patch.usedRegisters = usedRegisters;
+    m_stubInfo->usedRegisters = usedRegisters;
 }
 
 void JITInlineCacheGenerator::finalize(
     LinkBuffer& fastPath, LinkBuffer& slowPath, CodeLocationLabel<JITStubRoutinePtrTag> start)
 {
-    m_stubInfo->patch.start = start;
+    m_stubInfo->start = start;
 
-    m_stubInfo->patch.doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
+    m_stubInfo->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
 
-    m_stubInfo->patch.slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
-    m_stubInfo->patch.slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
+    m_stubInfo->slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
+    m_stubInfo->slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }
 
 JITByIdGenerator::JITByIdGenerator(
@@ -72,13 +72,13 @@ JITByIdGenerator::JITByIdGenerator(
     , m_base(base)
     , m_value(value)
 {
-    m_stubInfo->patch.baseGPR = base.payloadGPR();
-    m_stubInfo->patch.valueGPR = value.payloadGPR();
-    m_stubInfo->patch.u.thisGPR = InvalidGPRReg;
+    m_stubInfo->baseGPR = base.payloadGPR();
+    m_stubInfo->valueGPR = value.payloadGPR();
+    m_stubInfo->regs.thisGPR = InvalidGPRReg;
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.baseTagGPR = base.tagGPR();
-    m_stubInfo->patch.valueTagGPR = value.tagGPR();
-    m_stubInfo->patch.v.thisTagGPR = InvalidGPRReg;
+    m_stubInfo->baseTagGPR = base.tagGPR();
+    m_stubInfo->valueTagGPR = value.tagGPR();
+    m_stubInfo->v.thisTagGPR = InvalidGPRReg;
 #endif
 }
 
@@ -122,9 +122,9 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
 
-    m_stubInfo->patch.u.thisGPR = thisRegs.payloadGPR();
+    m_stubInfo->regs.thisGPR = thisRegs.payloadGPR();
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.v.thisTagGPR = thisRegs.tagGPR();
+    m_stubInfo->v.thisTagGPR = thisRegs.tagGPR();
 #endif
 }
 
@@ -142,7 +142,7 @@ JITPutByIdGenerator::JITPutByIdGenerator(
     , m_ecmaMode(ecmaMode)
     , m_putKind(putKind)
 {
-    m_stubInfo->patch.usedRegisters.clear(scratch);
+    m_stubInfo->usedRegisters.clear(scratch);
 }
 
 void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
@@ -184,20 +184,20 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
     : JITInlineCacheGenerator(
         codeBlock, codeOrigin, callSiteIndex, AccessType::InstanceOf, usedRegisters)
 {
-    m_stubInfo->patch.baseGPR = value;
-    m_stubInfo->patch.valueGPR = result;
-    m_stubInfo->patch.u.prototypeGPR = prototype;
+    m_stubInfo->baseGPR = value;
+    m_stubInfo->valueGPR = result;
+    m_stubInfo->regs.prototypeGPR = prototype;
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.baseTagGPR = InvalidGPRReg;
-    m_stubInfo->patch.valueTagGPR = InvalidGPRReg;
-    m_stubInfo->patch.v.thisTagGPR = InvalidGPRReg;
+    m_stubInfo->baseTagGPR = InvalidGPRReg;
+    m_stubInfo->valueTagGPR = InvalidGPRReg;
+    m_stubInfo->v.thisTagGPR = InvalidGPRReg;
 #endif
 
-    m_stubInfo->patch.usedRegisters.clear(result);
+    m_stubInfo->usedRegisters.clear(result);
     if (scratch1 != InvalidGPRReg)
-        m_stubInfo->patch.usedRegisters.clear(scratch1);
+        m_stubInfo->usedRegisters.clear(scratch1);
     if (scratch2 != InvalidGPRReg)
-        m_stubInfo->patch.usedRegisters.clear(scratch2);
+        m_stubInfo->usedRegisters.clear(scratch2);
 
     m_stubInfo->prototypeIsKnownObject = prototypeIsKnownObject;
 
@@ -226,13 +226,13 @@ JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CodeOrigin code
 {
     m_stubInfo->hasConstantIdentifier = false;
 
-    m_stubInfo->patch.baseGPR = base.payloadGPR();
-    m_stubInfo->patch.u.propertyGPR = property.payloadGPR();
-    m_stubInfo->patch.valueGPR = result.payloadGPR();
+    m_stubInfo->baseGPR = base.payloadGPR();
+    m_stubInfo->regs.propertyGPR = property.payloadGPR();
+    m_stubInfo->valueGPR = result.payloadGPR();
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.baseTagGPR = base.tagGPR();
-    m_stubInfo->patch.valueTagGPR = result.tagGPR();
-    m_stubInfo->patch.v.propertyTagGPR = property.tagGPR();
+    m_stubInfo->baseTagGPR = base.tagGPR();
+    m_stubInfo->valueTagGPR = result.tagGPR();
+    m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
 }
 

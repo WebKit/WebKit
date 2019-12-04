@@ -196,80 +196,69 @@ private:
     HashSet<std::pair<Structure*, RefPtr<UniquedStringImpl>>> bufferedStructures;
 public:
     
-    struct {
-        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
-        CodeLocationLabel<JSInternalPtrTag> doneLocation;
-        CodeLocationCall<JSInternalPtrTag> slowPathCallLocation;
-        CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
+    CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+    CodeLocationLabel<JSInternalPtrTag> doneLocation;
+    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation;
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 
-        RegisterSet usedRegisters;
+    RegisterSet usedRegisters;
 
-        uint32_t inlineSize() const
-        {
-            int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(start, doneLocation);
-            ASSERT(inlineSize >= 0);
-            return inlineSize;
-        }
-
-        GPRReg baseGPR;
-        GPRReg valueGPR;
-        union {
-            GPRReg thisGPR;
-            GPRReg prototypeGPR;
-            GPRReg propertyGPR;
-        } u;
-#if USE(JSVALUE32_64)
-        GPRReg valueTagGPR;
-        // FIXME: [32-bits] Check if StructureStubInfo::patch.baseTagGPR is used somewhere.
-        // https://bugs.webkit.org/show_bug.cgi?id=204726
-        GPRReg baseTagGPR;
-        union {
-            GPRReg thisTagGPR;
-            GPRReg propertyTagGPR;
-        } v;
-#endif
-    } patch;
-
-    GPRReg baseGPR() const
+    uint32_t inlineSize() const
     {
-        return patch.baseGPR;
+        int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(start, doneLocation);
+        ASSERT(inlineSize >= 0);
+        return inlineSize;
     }
 
-    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.slowPathCallLocation; }
-    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.doneLocation; }
-    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.slowPathStartLocation; }
+    GPRReg baseGPR;
+    GPRReg valueGPR;
+    union {
+        GPRReg thisGPR;
+        GPRReg prototypeGPR;
+        GPRReg propertyGPR;
+    } regs;
+#if USE(JSVALUE32_64)
+    GPRReg valueTagGPR;
+    // FIXME: [32-bits] Check if StructureStubInfo::baseTagGPR is used somewhere.
+    // https://bugs.webkit.org/show_bug.cgi?id=204726
+    GPRReg baseTagGPR;
+    union {
+        GPRReg thisTagGPR;
+        GPRReg propertyTagGPR;
+    } v;
+#endif
 
     CodeLocationJump<JSInternalPtrTag> patchableJump()
     { 
         ASSERT(accessType == AccessType::InstanceOf);
-        return patch.start.jumpAtOffset<JSInternalPtrTag>(0);
+        return start.jumpAtOffset<JSInternalPtrTag>(0);
     }
 
     JSValueRegs valueRegs() const
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            patch.valueTagGPR,
+            valueTagGPR,
 #endif
-            patch.valueGPR);
+            valueGPR);
     }
 
     JSValueRegs propertyRegs() const
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            patch.v.propertyTagGPR,
+            v.propertyTagGPR,
 #endif
-            patch.u.propertyGPR);
+            regs.propertyGPR);
     }
 
     JSValueRegs baseRegs() const
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            patch.baseTagGPR,
+            baseTagGPR,
 #endif
-            patch.baseGPR);
+            baseGPR);
     }
 
     bool thisValueIsInThisGPR() const { return accessType == AccessType::GetByIdWithThis; }

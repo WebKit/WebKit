@@ -870,7 +870,7 @@ void AccessCase::generateWithGuard(
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ScopedArgumentsType)));
 
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(stubInfo.propertyRegs());
@@ -965,7 +965,7 @@ void AccessCase::generateWithGuard(
         jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
         state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
 
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(stubInfo.propertyRegs());
@@ -1047,7 +1047,7 @@ void AccessCase::generateWithGuard(
 
         fallThrough.append(jit.branchIfNotString(baseGPR));
 
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(stubInfo.propertyRegs());
@@ -1107,7 +1107,7 @@ void AccessCase::generateWithGuard(
         CCallHelpers::Jump isOutOfBounds;
         CCallHelpers::Jump isEmpty;
 
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(stubInfo.propertyRegs());
@@ -1218,7 +1218,7 @@ void AccessCase::generateWithGuard(
         
         GPRReg valueGPR = valueRegs.payloadGPR();
         
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(stubInfo.propertyRegs());
@@ -1731,7 +1731,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         bool reallocating = allocating && structure()->outOfLineCapacity();
         bool allocatingInline = allocating && !structure()->couldHaveIndexingHeader();
 
-        ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
         allocator.lock(stubInfo.baseRegs());
         allocator.lock(valueRegs);
         allocator.lock(scratchGPR);

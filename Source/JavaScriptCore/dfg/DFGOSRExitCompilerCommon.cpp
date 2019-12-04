@@ -206,7 +206,7 @@ void* callerReturnPC(CodeBlock* baselineCodeBlockForCaller, BytecodeIndex callBy
                 baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
             RELEASE_ASSERT(stubInfo);
 
-            jumpTarget = stubInfo->doneLocation().untaggedExecutableAddress();
+            jumpTarget = stubInfo->doneLocation.untaggedExecutableAddress();
             break;
         }
 
