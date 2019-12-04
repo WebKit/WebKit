@@ -60,7 +60,7 @@ assert_return(() => call($1, "arg", [1]), 12);
 assert_return(() => call($1, "arg", [2]), 4);
 
 // switch.wast:141
-assert_return(() => call($1, "arg", [3]), 1116);
+assert_return(() => call($1, "arg", [3]), 1_116);
 
 // switch.wast:142
 assert_return(() => call($1, "arg", [4]), 118);
@@ -72,7 +72,7 @@ assert_return(() => call($1, "arg", [5]), 20);
 assert_return(() => call($1, "arg", [6]), 12);
 
 // switch.wast:145
-assert_return(() => call($1, "arg", [7]), 1124);
+assert_return(() => call($1, "arg", [7]), 1_124);
 
 // switch.wast:146
 assert_return(() => call($1, "arg", [8]), 126);
