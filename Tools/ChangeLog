@@ -1,3 +1,10 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the TestWebKitAPI 608-branch build
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        We didn't merge this line from trunk, but merged other things that depend on it being there.
+
 2019-11-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r252031. rdar://problem/56889868
