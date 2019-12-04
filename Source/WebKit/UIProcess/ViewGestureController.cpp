@@ -52,12 +52,7 @@ using namespace WebCore;
 
 static const Seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration { 3_s };
 static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval { 250_ms };
-
-#if !PLATFORM(IOS_FAMILY)
-static const Seconds swipeSnapshotRemovalWatchdogDuration = 5_s;
-#else
 static const Seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
-#endif
 
 #if !PLATFORM(IOS_FAMILY)
 static const float minimumHorizontalSwipeDistance = 15;
