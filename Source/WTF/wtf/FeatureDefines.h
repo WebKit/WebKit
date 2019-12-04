@@ -663,6 +663,13 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_RUBBER_BANDING 0
 #endif
 
+#if !defined(ENABLE_SECURITY_ASSERTIONS)
+/* Enable security assertions on all ASAN builds and debug builds. */
+#if ASAN_ENABLED || !defined(NDEBUG)
+#define ENABLE_SECURITY_ASSERTIONS 1
+#endif
+#endif
+
 #if !defined(ENABLE_SMOOTH_SCROLLING)
 #define ENABLE_SMOOTH_SCROLLING 0
 #endif
