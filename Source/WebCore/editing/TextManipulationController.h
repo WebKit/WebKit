@@ -74,8 +74,15 @@ public:
             template<class Decoder> static Optional<AttributeRule> decode(Decoder&);
         };
 
+        struct ClassRule {
+            AtomString className;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<ClassRule> decode(Decoder&);
+        };
+
         Type type;
-        WTF::Variant<ElementRule, AttributeRule> rule;
+        WTF::Variant<ElementRule, AttributeRule, ClassRule> rule;
 
         bool match(const Element&) const;
 
@@ -177,6 +184,21 @@ Optional<TextManipulationController::ExclusionRule::AttributeRule> TextManipulat
     if (!decoder.decode(result.name))
         return WTF::nullopt;
     if (!decoder.decode(result.value))
+        return WTF::nullopt;
+    return result;
+}
+
+template<class Encoder>
+void TextManipulationController::ExclusionRule::ClassRule::encode(Encoder& encoder) const
+{
+    encoder << className;
+}
+
+template<class Decoder>
+Optional<TextManipulationController::ExclusionRule::ClassRule> TextManipulationController::ExclusionRule::ClassRule::decode(Decoder& decoder)
+{
+    ClassRule result;
+    if (!decoder.decode(result.className))
         return WTF::nullopt;
     return result;
 }

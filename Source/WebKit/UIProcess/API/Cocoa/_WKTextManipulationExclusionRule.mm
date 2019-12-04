@@ -33,6 +33,7 @@
     RetainPtr<NSString> _elementName;
     RetainPtr<NSString> _attributeName;
     RetainPtr<NSString> _attributeValue;
+    RetainPtr<NSString> _className;
 }
 
 - (instancetype)initExclusion:(BOOL)exclusion forElement:(NSString *)localName
@@ -58,6 +59,17 @@
     return self;
 }
 
+- (instancetype)initExclusion:(BOOL)exclusion forClass:(NSString *)className
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _isExclusion = exclusion;
+    _className = className;
+
+    return self;
+}
+
 - (NSString *)elementName
 {
     return _elementName.get();
@@ -71,6 +83,11 @@
 - (NSString *)attributeValue
 {
     return _attributeValue.get();
+}
+
+- (NSString *)className
+{
+    return _className.get();
 }
 
 @end

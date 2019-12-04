@@ -1,3 +1,16 @@
+2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
+
+        Add exclusion rule for text manipulation SPI to exclude based on element class
+        https://bugs.webkit.org/show_bug.cgi?id=204754
+        <rdar://problem/57398802>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+            - When matching a class, it should work even with other class names on the element.
+            - All children elements should get the same exclusion rule, unless overridden by another rule.
+
 2019-12-04  youenn fablet  <youenn@apple.com>
 
         WebProcessPool::terminateServiceWorkerProcess should be renamed terminateServiceWorkers

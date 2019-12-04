@@ -33,10 +33,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initExclusion:(BOOL)exclusion forElement:(NSString *)localName;
 - (instancetype)initExclusion:(BOOL)exclusion forAttribute:(NSString *)name value:(NSString *)value;
+- (instancetype)initExclusion:(BOOL)exclusion forClass:(NSString *)className;
 
 @property (nonatomic, readonly) BOOL isExclusion;
 @property (nonatomic, readonly) NSString *elementName;
 @property (nonatomic, readonly) NSString *attributeName;
 @property (nonatomic, readonly) NSString *attributeValue;
+@property (nonatomic, readonly) NSString *className;
 
 @end

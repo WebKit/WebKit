@@ -1,3 +1,23 @@
+2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
+
+        Add exclusion rule for text manipulation SPI to exclude based on element class
+        https://bugs.webkit.org/show_bug.cgi?id=204754
+        <rdar://problem/57398802>
+
+        Reviewed by Ryosuke Niwa.
+
+        Give clients another option for adding an exclusion for text manipulation; allow them to exclude based on an
+        element having a certain class.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]):
+            If the rule doesn't have an attribute but does have a class name, treat it as a ClassRule exclusion.
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.h:
+            Add an initializer for excluding based on a class name. Also add a getter for the className.
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm:
+        (-[_WKTextManipulationExclusionRule initExclusion:forClass:]):
+        (-[_WKTextManipulationExclusionRule className]):
+
 2019-12-04  Kenneth Russell  <kbr@chromium.org>
 
         Enable WebGL's ASTC extension all the time

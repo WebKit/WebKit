@@ -236,6 +236,70 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForAttri
     EXPECT_FALSE(items[0].tokens[1].isExcluded);
 }
 
+TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html><body><span class='someClass exclude'>Message: <b>hello, </b><span>world</span></span></body></html>"];
+
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    [configuration setExclusionRules:@[
+        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"] autorelease],
+    ]];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
+    EXPECT_STREQ("Message: ", items[0].tokens[0].content.UTF8String);
+    EXPECT_TRUE(items[0].tokens[0].isExcluded);
+    EXPECT_STREQ("hello, ", items[0].tokens[1].content.UTF8String);
+    EXPECT_TRUE(items[0].tokens[1].isExcluded);
+    EXPECT_STREQ("world", items[0].tokens[2].content.UTF8String);
+    EXPECT_TRUE(items[0].tokens[2].isExcluded);
+}
+
+TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClassAndAttribute)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html><body><span class='someClass exclude'>Message: <b data-exclude=no>hello, </b><span>world</span></span></body></html>"];
+
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    [configuration setExclusionRules:@[
+        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forAttribute:@"data-exclude" value:@"yes"] autorelease],
+        [[[_WKTextManipulationExclusionRule alloc] initExclusion:NO forAttribute:@"data-exclude" value:@"no"] autorelease],
+        [[[_WKTextManipulationExclusionRule alloc] initExclusion:YES forClass:@"exclude"] autorelease],
+    ]];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
+    EXPECT_STREQ("Message: ", items[0].tokens[0].content.UTF8String);
+    EXPECT_TRUE(items[0].tokens[0].isExcluded);
+    EXPECT_STREQ("hello, ", items[0].tokens[1].content.UTF8String);
+    EXPECT_FALSE(items[0].tokens[1].isExcluded);
+    EXPECT_STREQ("world", items[0].tokens[2].content.UTF8String);
+    EXPECT_TRUE(items[0].tokens[2].isExcluded);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

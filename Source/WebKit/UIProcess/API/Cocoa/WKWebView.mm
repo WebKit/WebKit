@@ -7585,6 +7585,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             auto type = wkRule.isExclusion ? ExclusionRule::Type::Exclude : ExclusionRule::Type::Include;
             if (wkRule.attributeName)
                 exclusionRules.append({type, ExclusionRule::AttributeRule { wkRule.attributeName, wkRule.attributeValue } });
+            else if (wkRule.className)
+                exclusionRules.append({type, ExclusionRule::ClassRule { wkRule.className } });
             else
                 exclusionRules.append({type, ExclusionRule::ElementRule { wkRule.elementName } });
         }

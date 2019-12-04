@@ -1,3 +1,24 @@
+2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
+
+        Add exclusion rule for text manipulation SPI to exclude based on element class
+        https://bugs.webkit.org/show_bug.cgi?id=204754
+        <rdar://problem/57398802>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests:  TextManipulation.StartTextManipulationApplyInclusionExclusionRulesForClass
+                TextManipulation.StartTextManipulationApplyInclusionExclusionRulesForClassAndAttribute
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::ExclusionRule::match const):
+            When matching a ClassRule, check that the element has at least one class, and that the classList contains
+            the rule's class name. Checking it this way rather than checking if the ClassList contains the rule allows
+            us to avoid mutating the element in this function.
+        * editing/TextManipulationController.h:
+            Add a new rule type for a ClassRule.
+        (WebCore::TextManipulationController::ExclusionRule::ClassRule::encode const):
+        (WebCore::TextManipulationController::ExclusionRule::ClassRule::decode):
+
 2019-12-04  Kenneth Russell  <kbr@chromium.org>
 
         Enable WebGL's ASTC extension all the time

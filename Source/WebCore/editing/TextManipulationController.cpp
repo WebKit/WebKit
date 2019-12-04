@@ -41,6 +41,8 @@ inline bool TextManipulationController::ExclusionRule::match(const Element& elem
         return rule.localName == element.localName();
     }, [&element] (AttributeRule rule) {
         return equalIgnoringASCIICase(element.getAttribute(rule.name), rule.value);
+    }, [&element] (ClassRule rule) {
+        return element.hasClass() && element.classNames().contains(rule.className);
     });
 }
 
