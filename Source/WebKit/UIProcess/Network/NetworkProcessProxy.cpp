@@ -1369,7 +1369,7 @@ void NetworkProcessProxy::updateProcessAssertion()
     }
     if (processPool().hasBackgroundWebProcesses()) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
-            m_activityFromWebProcesses = throttler().backgroundActivity("Networking for foreground background view(s)"_s);
+            m_activityFromWebProcesses = throttler().backgroundActivity("Networking for background view(s)"_s);
             send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
         }
         return;

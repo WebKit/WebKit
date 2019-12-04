@@ -1,3 +1,12 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce a GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=204343
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2019-12-03  Megan Gardner  <megan_gardner@apple.com>
 
         Add disabled highlight API skeleton

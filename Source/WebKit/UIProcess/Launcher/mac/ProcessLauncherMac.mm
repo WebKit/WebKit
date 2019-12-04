@@ -56,6 +56,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
+#if ENABLE(GPU_PROCESS)
+    case ProcessLauncher::ProcessType::GPU:
+        return "com.apple.WebKit.GPU";
+#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
         ASSERT_NOT_REACHED();
@@ -73,7 +77,11 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     UNUSED_PARAM(launchOptions);
     return true;
 #else
-    // On Mac, leak a boost onto the NetworkProcess.
+    // On Mac, leak a boost onto the NetworkProcess and GPUProcess.
+#if ENABLE(GPU_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::ProcessType::GPU)
+        return true;
+#endif
     return launchOptions.processType == ProcessLauncher::ProcessType::Network;
 #endif
 }

@@ -22,6 +22,8 @@
 
 VPATH = \
     $(WebKit2) \
+    $(WebKit2)/GPUProcess \
+    $(WebKit2)/GPUProcess/mac \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
@@ -46,6 +48,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Databases/IndexedDB \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
+    $(WebKit2)/WebProcess/GPU \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaStream \
@@ -71,6 +74,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Cocoa \
     $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
+    $(WebKit2)/UIProcess/GPU \
     $(WebKit2)/UIProcess/MediaStream \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
@@ -105,6 +109,10 @@ MESSAGE_RECEIVERS = \
     EventDispatcher \
     LegacyCustomProtocolManager \
     LegacyCustomProtocolManagerProxy \
+    GPUProcess \
+    GPUProcessProxy \
+    GPUProcessConnection \
+    GPUConnectionToWebProcess \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
     NetworkContentRuleListManager \
@@ -226,7 +234,8 @@ endif
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
 	com.apple.WebKit.plugin-common.sb \
-	com.apple.WebKit.NetworkProcess.sb
+	com.apple.WebKit.NetworkProcess.sb \
+	com.apple.WebKit.GPUProcess.sb
 
 all : $(SANDBOX_PROFILES)
 

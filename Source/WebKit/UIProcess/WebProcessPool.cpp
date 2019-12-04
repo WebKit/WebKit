@@ -110,6 +110,12 @@
 #include "ServicesController.h"
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#include "GPUProcessCreationParameters.h"
+#include "GPUProcessMessages.h"
+#include "GPUProcessProxy.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -695,6 +701,13 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 
     m_networkProcess->getNetworkProcessConnection(webProcessProxy, WTFMove(reply));
 }
+
+#if ENABLE(GPU_PROCESS)
+void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
+{
+    GPUProcessProxy::singleton().getGPUProcessConnection(webProcessProxy, WTFMove(reply));
+}
+#endif
 
 #if ENABLE(SERVICE_WORKER)
 void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, PAL::SessionID sessionID)
@@ -1718,6 +1731,13 @@ void WebProcessPool::terminateNetworkProcess()
     
     m_networkProcess->terminate();
     m_networkProcess = nullptr;
+}
+
+void WebProcessPool::terminateAllWebContentProcesses()
+{
+    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
+    for (auto& process : processes)
+        process->terminate();
 }
 
 void WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting()

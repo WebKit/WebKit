@@ -28,6 +28,7 @@
 #include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
+#include "GPUProcessProxy.h"
 #include "GenericCallback.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "MessageReceiver.h"
@@ -105,6 +106,7 @@ class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
 class WebProcessCache;
+struct GPUProcessCreationParameters;
 struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
@@ -320,6 +322,7 @@ public:
 
     void clearCachedCredentials();
     void terminateNetworkProcess();
+    void terminateAllWebContentProcesses();
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
     void terminateServiceWorkerProcesses();
@@ -379,6 +382,11 @@ public:
     void setPlugInAutoStartOriginHashes(API::Dictionary&);
     void setPlugInAutoStartOrigins(API::Array&);
     void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, WallTime);
+
+#if ENABLE(GPU_PROCESS)
+    GPUProcessProxy& ensureGPUProcess();
+    void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+#endif
 
     // Network Process Management
     NetworkProcessProxy& ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore = nullptr);

@@ -107,6 +107,7 @@ namespace WebKit {
 
 class EventDispatcher;
 class GamepadData;
+class GPUProcessConnection;
 class InjectedBundle;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
@@ -212,6 +213,12 @@ public:
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     NetworkProcessConnection* existingNetworkProcessConnection() { return m_networkProcessConnection.get(); }
     WebLoaderStrategy& webLoaderStrategy();
+
+#if ENABLE(GPU_PROCESS)
+    GPUProcessConnection& ensureGPUProcessConnection();
+    void gpuProcessConnectionClosed(GPUProcessConnection*);
+    GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+#endif // ENABLE(GPU_PROCESS)
 
     LibWebRTCNetwork& libWebRTCNetwork();
 
@@ -513,6 +520,10 @@ private:
     String m_uiProcessBundleIdentifier;
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     WebLoaderStrategy& m_webLoaderStrategy;
+
+#if ENABLE(GPU_PROCESS)
+    RefPtr<GPUProcessConnection> m_gpuProcessConnection;
+#endif
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     WebSocketChannelManager m_webSocketChannelManager;

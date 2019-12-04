@@ -162,6 +162,8 @@ void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& pa
 
 void PluginProcess::createWebProcessConnection()
 {
+    // FIXME: Merge this with AuxiliaryProcess::createIPCConnectionPair().
+
     bool didHaveAnyWebProcessConnections = !m_webProcessConnections.isEmpty();
 
 #if USE(UNIX_DOMAIN_SOCKETS)

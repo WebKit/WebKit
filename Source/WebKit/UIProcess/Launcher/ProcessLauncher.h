@@ -65,7 +65,10 @@ public:
         Plugin32,
         Plugin64,
 #endif
-        Network
+        Network,
+#if ENABLE(GPU_PROCESS)
+        GPU
+#endif
     };
 
     struct LaunchOptions {

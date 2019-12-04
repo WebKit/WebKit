@@ -397,6 +397,10 @@ private:
     
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
+#if ENABLE(GPU_PROCESS)
+    void getGPUProcessConnection(Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+#endif
+
     bool platformIsBeingDebugged() const;
     bool shouldAllowNonValidInjectedCode() const;
 

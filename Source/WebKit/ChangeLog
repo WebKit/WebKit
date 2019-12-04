@@ -1,3 +1,135 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce a GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=204343
+
+        Reviewed by Simon Fraser.
+
+        Add a GPU process. This process is destined to be used as a proxy between
+        WebKit and the underlying graphics mechanisms; in the case of the Cocoa
+        ports, it will specifically gate access to IOKit and a few media-related
+        daemons.
+
+        In this patch, the process is a UI-process singleton; the WebKit client
+        application gets a single GPU process for all rendering, regardless of
+        the number of Web Content processes, process pools, or web views.
+
+        For now, it is just a shell of a process; functionality will be added
+        in future patches!
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE(GPU_PROCESS).
+
+        * Configurations/GPUService.xcconfig: Added.
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist: Added.
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist: Added.
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm: Added.
+        * Shared/AuxiliaryProcess.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        * Platform/ExtraPrivateSymbolsForTAPI.h:
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        Add a new target for the XPC service, and do the paperwork to launch it.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp: Added.
+        * GPUProcess/GPUConnectionToWebProcess.h: Added.
+        * GPUProcess/GPUConnectionToWebProcess.messages.in: Added.
+        On the GPU process side, the incoming connection from the Web Content process.
+
+        * GPUProcess/GPUProcess.cpp: Added.
+        * GPUProcess/GPUProcess.h: Added.
+        * GPUProcess/GPUProcess.messages.in: Added.
+        * GPUProcess/GPUProcessCreationParameters.cpp: Added.
+        * GPUProcess/GPUProcessCreationParameters.h: Added.
+        * GPUProcess/cocoa/GPUProcessCocoa.mm: Added.
+        * GPUProcess/ios/GPUProcessIOS.mm: Added.
+        * GPUProcess/mac/GPUProcessMac.mm: Added.
+        Add the shell of the GPU process. Mostly stolen from the Networking process.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp: Added.
+        (WebKit::GPUProcessProxy::singleton):
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::~GPUProcessProxy):
+        (WebKit::GPUProcessProxy::getLaunchOptions):
+        (WebKit::GPUProcessProxy::connectionWillOpen):
+        (WebKit::GPUProcessProxy::processWillShutDown):
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+        (WebKit::GPUProcessProxy::gpuProcessCrashed):
+        (WebKit::GPUProcessProxy::didReceiveMessage):
+        (WebKit::GPUProcessProxy::didReceiveSyncMessage):
+        (WebKit::GPUProcessProxy::didClose):
+        (WebKit::GPUProcessProxy::didReceiveInvalidMessage):
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        (WebKit::GPUProcessProxy::updateProcessAssertion):
+        * UIProcess/GPU/GPUProcessProxy.h: Added.
+        * UIProcess/GPU/GPUProcessProxy.messages.in: Added.
+        On the UI process side, the GPUProcessProxy is the singleton that
+        owns the GPU process for the process.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in: Added.
+        This sandbox profile is copied from the Web Content process.
+        We will cut it down in the future, but this is a sensible starting point,
+        since the code that is moving to the GPU process is code that currently
+        lives in the Web Content process.
+        
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateProcessAssertion):
+        Fix a logging typo I stumbled upon.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getGPUProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        Add a message from Web->UI to retrieve the GPU process connection.
+        In the future, we should send this along with the Web Content process
+        initialization message, but this mechanism doesn't exist yet.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp: Added.
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        (WebKit::GPUProcessConnection::~GPUProcessConnection):
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        (WebKit::GPUProcessConnection::didReceiveSyncMessage):
+        (WebKit::GPUProcessConnection::didClose):
+        (WebKit::GPUProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/GPU/GPUProcessConnection.h: Added.
+        (WebKit::GPUProcessConnection::create):
+        (WebKit::GPUProcessConnection::connection):
+        * WebProcess/GPU/GPUProcessConnection.messages.in: Added.
+        * WebProcess/GPU/GPUProcessConnectionInfo.h: Added.
+        (WebKit::GPUProcessConnectionInfo::identifier):
+        (WebKit::GPUProcessConnectionInfo::releaseIdentifier):
+        (WebKit::GPUProcessConnectionInfo::encode const):
+        (WebKit::GPUProcessConnectionInfo::decode):
+        In the Web Content process, GPUProcessConnection is the process-wide
+        connection to the GPU process. All pages in a given Web Content process
+        use the same connection to talk to the singleton GPU process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getGPUProcessConnection):
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+        (WebKit::WebProcess::gpuProcessConnectionClosed):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::existingGPUProcessConnection):
+        In the Web Content process, make it possible for clients to retrieve
+        the GPU process connection.
+
 2019-12-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow inspector to pause provisional page load and restore its state

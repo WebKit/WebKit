@@ -57,6 +57,10 @@ NetworkProcess/webrtc/NetworkRTCResolver.cpp
 NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
 NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
+GPUProcess/ios/GPUProcessIOS.mm
+GPUProcess/mac/GPUProcessMac.mm
+GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
+
 Platform/cf/ModuleCF.cpp
 
 Platform/cg/CGUtilities.cpp
@@ -617,5 +621,8 @@ WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 
 // Derived Sources
 EditableImageControllerMessageReceiver.cpp
+GPUConnectionToWebProcessMessageReceiver.cpp
+GPUProcessProxyMessageReceiver.cpp
+GPUProcessMessageReceiver.cpp
 ServiceWorkerFetchTaskMessageReceiver.cpp
 TextCheckingControllerProxyMessageReceiver.cpp

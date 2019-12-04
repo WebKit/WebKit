@@ -678,6 +678,13 @@ void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::Get
     m_processPool->getNetworkProcessConnection(*this, WTFMove(reply));
 }
 
+#if ENABLE(GPU_PROCESS)
+void WebProcessProxy::getGPUProcessConnection(Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
+{
+    m_processPool->getGPUProcessConnection(*this, WTFMove(reply));
+}
+#endif
+
 #if !PLATFORM(COCOA)
 bool WebProcessProxy::platformIsBeingDebugged() const
 {

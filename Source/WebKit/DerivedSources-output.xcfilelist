@@ -29,6 +29,18 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/EditableImageControllerMessagesRepl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/EventDispatcherMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/EventDispatcherMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/EventDispatcherMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUConnectionToWebProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUConnectionToWebProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUConnectionToWebProcessMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessConnectionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessConnectionMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/HTTPSUpgradeList.db
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LegacyCustomProtocolManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LegacyCustomProtocolManagerMessages.h
@@ -291,6 +303,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerMessagesRep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.GPUProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.NetworkProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.plugin-common.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebProcess.sb

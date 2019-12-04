@@ -220,6 +220,10 @@ constexpr const char* processStorageClass(AuxiliaryProcess::ProcessType type)
         return "WebKitNetworkingSandbox";
     case AuxiliaryProcess::ProcessType::Plugin:
         return "WebKitPluginSandbox";
+#if ENABLE(GPU_PROCESS)
+    case AuxiliaryProcess::ProcessType::GPU:
+        return "WebKitGPUSandbox";
+#endif
     }
 }
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -277,6 +281,11 @@ static String sandboxDirectory(AuxiliaryProcess::ProcessType processType, const 
     case AuxiliaryProcess::ProcessType::Plugin:
         directory.append("/com.apple.WebKit.Plugin.Sandbox");
         break;
+#if ENABLE(GPU_PROCESS)
+    case AuxiliaryProcess::ProcessType::GPU:
+        directory.append("/com.apple.WebKit.GPU.Sandbox");
+        break;
+#endif
     }
 
 #if !USE(APPLE_INTERNAL_SDK)

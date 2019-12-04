@@ -40,7 +40,11 @@ public:
         ASSERT(!m_messageReceiverMapCount);
     }
 
-    virtual void didReceiveMessage(Connection&, Decoder&) = 0;
+    virtual void didReceiveMessage(Connection&, Decoder&)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
     virtual void didReceiveSyncMessage(Connection&, Decoder&, std::unique_ptr<Encoder>&)
     {
         ASSERT_NOT_REACHED();

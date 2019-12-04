@@ -1,3 +1,13 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce a GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=204343
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE(GPU_PROCESS).
+
 2019-12-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow inspector to pause provisional page load and restore its state

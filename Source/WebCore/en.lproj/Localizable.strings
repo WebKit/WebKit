@@ -37,6 +37,9 @@
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";
 
+/* visible name of the GPU process. The argument is the application name. */
+"%@ Graphics and Media" = "%@ Graphics and Media";
+
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
 
