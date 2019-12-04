@@ -82,7 +82,7 @@ public:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture};
+    enum class VideoPresentationMode { Fullscreen, PictureInPicture, Inline };
     WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
     void webkitSetPresentationMode(VideoPresentationMode);
     VideoPresentationMode webkitPresentationMode() const;

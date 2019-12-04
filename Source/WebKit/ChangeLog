@@ -1,3 +1,7 @@
+2019-12-04  Alan Coon  <alancoon@apple.com>
+
+        Revert r252755. rdar://problem/57607890
+
 2019-11-22  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r252796.
