@@ -1,5 +1,39 @@
 2019-12-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: prefer non-blackboxed scripts when showing a source code location link
+        https://bugs.webkit.org/show_bug.cgi?id=204811
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/StackTrace.js:
+        (WI.StackTrace.prototype.get firstNonNativeNonAnonymousNotBlackboxedCallFrame): Added.
+        (WI.StackTrace.prototype.get firstNonNativeCallFrame): Deleted.
+        (WI.StackTrace.prototype.get firstNonNativeNonAnonymousCallFrame): Deleted.
+        Include logic to skip call frames that are blackboxed, unless there are no non-blackboxed
+        call frames, in which case fall back to the first non-native non-anonymous call frame.
+        Drive-by: remove unused function.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.render):
+        (WI.ConsoleMessageView.prototype.clearSessionState): Added.
+        (WI.ConsoleMessageView.prototype._appendLocationLink):
+        (WI.ConsoleMessageView.prototype._handleDebuggerBlackboxChanged): Added.
+        (WI.ConsoleMessageView.prototype.clearSavedVariableState): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._sessionStarted):
+        (WI.LogContentView.prototype._logCleared):
+        Listen for changes to the debugger blackbox to re-render the location link.
+
+        * UserInterface/Views/StackTraceView.js:
+        (WI.StackTraceView):
+        * UserInterface/Views/CallFrameView.js:
+        (WI.CallFrameView):
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame.blackboxed > .title, .call-frame.blackboxed:not(:hover, :focus) > .subtitle): Added.
+        Add a constructor option to control whether blackboxed frames are indicated visually.
+
+2019-12-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'navigationItem.parentNavigationBar')
         https://bugs.webkit.org/show_bug.cgi?id=204830
 

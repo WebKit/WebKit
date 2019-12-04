@@ -140,38 +140,35 @@ WI.StackTrace = class StackTrace
 
     // Public
 
-    get callFrames()
-    {
-        return this._callFrames;
-    }
+    get callFrames() { return this._callFrames; }
+    get topCallFrameIsBoundary() { return this._topCallFrameIsBoundary; }
+    get truncated() { return this._truncated; }
+    get parentStackTrace() { return this._parentStackTrace; }
 
-    get firstNonNativeCallFrame()
+    get firstNonNativeNonAnonymousNotBlackboxedCallFrame()
     {
-        for (let frame of this._callFrames) {
-            if (!frame.nativeCode)
-                return frame;
-        }
+        let firstNonNativeNonAnonymousCallFrame = null;
 
-        return null;
-    }
-
-    get firstNonNativeNonAnonymousCallFrame()
-    {
         for (let frame of this._callFrames) {
             if (frame.nativeCode)
                 continue;
+
             if (frame.sourceCodeLocation) {
                 let sourceCode = frame.sourceCodeLocation.sourceCode;
                 if (sourceCode instanceof WI.Script && sourceCode.anonymous)
                     continue;
+
+                // Save the first non-native non-anonymous call frame so it can be used as a
+                // fallback if all remaining call frames are blackboxed.
+                firstNonNativeNonAnonymousCallFrame = frame;
+
+                if (WI.debuggerManager.blackboxDataForSourceCode(sourceCode))
+                    continue;
             }
+
             return frame;
         }
 
-        return null;
+        return firstNonNativeNonAnonymousCallFrame;
     }
-
-    get topCallFrameIsBoundary() { return this._topCallFrameIsBoundary; }
-    get truncated() { return this._truncated; }
-    get parentStackTrace() { return this._parentStackTrace; }
 };

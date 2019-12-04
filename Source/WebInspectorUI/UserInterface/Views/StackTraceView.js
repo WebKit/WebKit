@@ -38,7 +38,7 @@ WI.StackTraceView = class StackTraceView extends WI.Object
             if (callFrame.isConsoleEvaluation && (!WI.isDebugUIEnabled() || !WI.settings.debugShowConsoleEvaluations.value))
                 continue;
 
-            var callFrameElement = new WI.CallFrameView(callFrame, true);
+            let callFrameElement = new WI.CallFrameView(callFrame, {showFunctionName: true, indicateIfBlackboxed: true});
             element.appendChild(callFrameElement);
         }
     }

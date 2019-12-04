@@ -30,6 +30,11 @@
     cursor: pointer;
 }
 
+.call-frame.blackboxed > .title,
+.call-frame.blackboxed:not(:hover, :focus) > .subtitle {
+    opacity: 0.5;
+}
+
 .call-frame .icon {
     display: inline-block;
     vertical-align: top;

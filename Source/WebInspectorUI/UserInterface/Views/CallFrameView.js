@@ -25,7 +25,7 @@
 
 WI.CallFrameView = class CallFrameView extends WI.Object
 {
-    constructor(callFrame, showFunctionName)
+    constructor(callFrame, {showFunctionName, indicateIfBlackboxed} = {})
     {
         console.assert(callFrame instanceof WI.CallFrame);
 
@@ -37,6 +37,9 @@ WI.CallFrameView = class CallFrameView extends WI.Object
 
         var sourceCodeLocation = callFrame.sourceCodeLocation;
         if (sourceCodeLocation) {
+            if (indicateIfBlackboxed)
+                callFrameElement.classList.toggle("blackboxed", WI.debuggerManager.blackboxDataForSourceCode(callFrame.sourceCodeLocation.sourceCode));
+
             WI.linkifyElement(callFrameElement, sourceCodeLocation, {
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
