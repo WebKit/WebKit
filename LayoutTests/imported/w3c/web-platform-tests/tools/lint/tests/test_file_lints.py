@@ -54,7 +54,7 @@ def test_indent_tabs():
     for (filename, (errors, kind)) in error_map.items():
         check_errors(errors)
 
-        expected = [("INDENT TABS", "Tabs used for indentation", filename, 2)]
+        expected = [("INDENT TABS", "Test-file line starts with one or more tab characters", filename, 2)]
         if kind == "web-strict":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, None))
         assert errors == expected
@@ -66,7 +66,7 @@ def test_cr_not_at_eol():
     for (filename, (errors, kind)) in error_map.items():
         check_errors(errors)
 
-        expected = [("CR AT EOL", "CR character in line separator", filename, 1)]
+        expected = [("CR AT EOL", "Test-file line ends with CR (U+000D) character", filename, 1)]
         if kind == "web-strict":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, None))
         assert errors == expected
@@ -79,8 +79,8 @@ def test_cr_at_eol():
         check_errors(errors)
 
         expected = [
-            ("CR AT EOL", "CR character in line separator", filename, 1),
-            ("CR AT EOL", "CR character in line separator", filename, 2),
+            ("CR AT EOL", "Test-file line ends with CR (U+000D) character", filename, 1),
+            ("CR AT EOL", "Test-file line ends with CR (U+000D) character", filename, 2),
         ]
         if kind == "web-strict":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, None))
@@ -93,7 +93,7 @@ def test_w3c_test_org():
     for (filename, (errors, kind)) in error_map.items():
         check_errors(errors)
 
-        expected = [("W3C-TEST.ORG", "External w3c-test.org domain used", filename, 1)]
+        expected = [("W3C-TEST.ORG", "Test-file line has the string `w3c-test.org`", filename, 1)]
         if kind == "python":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, 1))
         elif kind == "web-strict":
@@ -136,8 +136,8 @@ def test_console():
 
         if kind in ["web-lax", "web-strict", "js"]:
             assert errors == [
-                ("CONSOLE", "Console logging API used", filename, 2),
-                ("CONSOLE", "Console logging API used", filename, 3),
+                ("CONSOLE", "Test-file line has a `console.*(...)` call", filename, 2),
+                ("CONSOLE", "Test-file line has a `console.*(...)` call", filename, 3),
             ]
         else:
             assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
@@ -153,7 +153,7 @@ def test_setTimeout():
             assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
         else:
             assert errors == [('SET TIMEOUT',
-                               'setTimeout used; step_timeout should typically be used instead',
+                               'setTimeout used',
                                filename,
                                1)]
 
@@ -168,7 +168,7 @@ def test_eventSender():
             assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
         else:
             assert errors == [('LAYOUTTESTS APIS',
-                               'eventSender/testRunner/window.internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
+                               'eventSender/testRunner/internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
                                filename,
                                1)]
 
@@ -183,12 +183,12 @@ def test_testRunner():
             assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
         else:
             assert errors == [('LAYOUTTESTS APIS',
-                               'eventSender/testRunner/window.internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
+                               'eventSender/testRunner/internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
                                filename,
                                1)]
 
 
-def test_windowDotInternals():
+def test_internals():
     error_map = check_with_files(b"<script>if (window.internals) { internals.doAThing(); }</script>")
 
     for (filename, (errors, kind)) in error_map.items():
@@ -198,9 +198,39 @@ def test_windowDotInternals():
             assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
         else:
             assert errors == [('LAYOUTTESTS APIS',
-                               'eventSender/testRunner/window.internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
+                               'eventSender/testRunner/internals used; these are LayoutTests-specific APIs (WebKit/Blink)',
                                filename,
                                1)]
+
+
+def test_missing_deps():
+    error_map = check_with_files(b"<script src='/gen/foo.js'></script>")
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
+        else:
+            assert errors == [('MISSING DEPENDENCY',
+                               'Chromium-specific content referenced',
+                               filename,
+                               1)]
+
+
+def test_no_missing_deps():
+    error_map = check_with_files(b"""<head>
+<script src='/foo/gen/foo.js'></script>
+<script src='/gens/foo.js'></script>
+</head>""")
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            assert errors == [("PARSE-FAILED", "Unable to parse file", filename, 1)]
+        else:
+            assert errors == []
 
 
 def test_meta_timeout():
@@ -219,8 +249,14 @@ def test_meta_timeout():
         if kind in ["web-lax", "web-strict"]:
             assert errors == [
                 ("MULTIPLE-TIMEOUT", "More than one meta name='timeout'", filename, None),
-                ("INVALID-TIMEOUT", "Invalid timeout value ", filename, None),
-                ("INVALID-TIMEOUT", "Invalid timeout value short", filename, None),
+                ("INVALID-TIMEOUT",
+                    "Test file with `<meta name='timeout'...>` element that has a `content` attribute whose value is not `long`: ",
+                    filename,
+                    None),
+                ("INVALID-TIMEOUT",
+                    "Test file with `<meta name='timeout'...>` element that has a `content` attribute whose value is not `long`: short",
+                    filename,
+                    None),
             ]
         elif kind == "python":
             assert errors == [
@@ -242,7 +278,12 @@ def test_early_testharnessreport():
 
         if kind in ["web-lax", "web-strict"]:
             assert errors == [
-                ("EARLY-TESTHARNESSREPORT", "testharnessreport.js script seen before testharness.js script", filename, None),
+                ("EARLY-TESTHARNESSREPORT",
+                    "Test file has an instance of "
+                    "`<script src='/resources/testharnessreport.js'>` "
+                    "prior to `<script src='/resources/testharness.js'>`",
+                    filename,
+                    None),
             ]
         elif kind == "python":
             assert errors == [
@@ -264,8 +305,8 @@ def test_multiple_testharness():
 
         if kind in ["web-lax", "web-strict"]:
             assert errors == [
-                ("MULTIPLE-TESTHARNESS", "More than one <script src='/resources/testharness.js'>", filename, None),
-                ("MISSING-TESTHARNESSREPORT", "Missing <script src='/resources/testharnessreport.js'>", filename, None),
+                ("MULTIPLE-TESTHARNESS", "More than one `<script src='/resources/testharness.js'>`", filename, None),
+                ("MISSING-TESTHARNESSREPORT", "Missing `<script src='/resources/testharnessreport.js'>`", filename, None),
             ]
         elif kind == "python":
             assert errors == [
@@ -288,7 +329,80 @@ def test_multiple_testharnessreport():
 
         if kind in ["web-lax", "web-strict"]:
             assert errors == [
-                ("MULTIPLE-TESTHARNESSREPORT", "More than one <script src='/resources/testharnessreport.js'>", filename, None),
+                ("MULTIPLE-TESTHARNESSREPORT", "More than one `<script src='/resources/testharnessreport.js'>`", filename, None),
+            ]
+        elif kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 2),
+            ]
+
+
+def test_multiple_testdriver():
+    code = b"""
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind in ["web-lax", "web-strict"]:
+            assert errors == [
+                ("MULTIPLE-TESTDRIVER", "More than one `<script src='/resources/testdriver.js'>`", filename, None),
+            ]
+        elif kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 2),
+            ]
+
+
+def test_multiple_testdriver_vendor():
+    code = b"""
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind in ["web-lax", "web-strict"]:
+            assert errors == [
+                ("MULTIPLE-TESTDRIVER-VENDOR", "More than one `<script src='/resources/testdriver-vendor.js'>`", filename, None),
+            ]
+        elif kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 2),
+            ]
+
+
+def test_missing_testdriver_vendor():
+    code = b"""
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind in ["web-lax", "web-strict"]:
+            assert errors == [
+                ("MISSING-TESTDRIVER-VENDOR", "Missing `<script src='/resources/testdriver-vendor.js'>`", filename, None),
             ]
         elif kind == "python":
             assert errors == [
@@ -333,7 +447,7 @@ def test_testharness_path():
     for (filename, (errors, kind)) in error_map.items():
         check_errors(errors)
 
-        expected = [("W3C-TEST.ORG", "External w3c-test.org domain used", filename, 5)]
+        expected = [("W3C-TEST.ORG", "Test-file line has the string `w3c-test.org`", filename, 5)]
         if kind == "python":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, 1))
         elif kind in ["web-lax", "web-strict"]:
@@ -360,7 +474,7 @@ def test_testharnessreport_path():
     for (filename, (errors, kind)) in error_map.items():
         check_errors(errors)
 
-        expected = [("W3C-TEST.ORG", "External w3c-test.org domain used", filename, 5)]
+        expected = [("W3C-TEST.ORG", "Test-file line has the string `w3c-test.org`", filename, 5)]
         if kind == "python":
             expected.append(("PARSE-FAILED", "Unable to parse file", filename, 1))
         elif kind in ["web-lax", "web-strict"]:
@@ -373,12 +487,81 @@ def test_testharnessreport_path():
         assert errors == expected
 
 
+def test_testdriver_path():
+    code = b"""\
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="testdriver.js"></script>
+<script src="/elsewhere/testdriver.js"></script>
+<script src="/elsewhere/resources/testdriver.js"></script>
+<script src="/resources/elsewhere/testdriver.js"></script>
+<script src="../resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        expected = []
+        if kind == "python":
+            expected.append(("PARSE-FAILED", "Unable to parse file", filename, 1))
+        elif kind in ["web-lax", "web-strict"]:
+            expected.extend([
+                ("TESTDRIVER-PATH", "testdriver.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-PATH", "testdriver.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-PATH", "testdriver.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-PATH", "testdriver.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-PATH", "testdriver.js script seen with incorrect path", filename, None)
+            ])
+        assert errors == expected
+
+
+def test_testdriver_vendor_path():
+    code = b"""\
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="testdriver-vendor.js"></script>
+<script src="/elsewhere/testdriver-vendor.js"></script>
+<script src="/elsewhere/resources/testdriver-vendor.js"></script>
+<script src="/resources/elsewhere/testdriver-vendor.js"></script>
+<script src="../resources/testdriver-vendor.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            expected = set([("PARSE-FAILED", "Unable to parse file", filename, 1)])
+        elif kind in ["web-lax", "web-strict"]:
+            expected = set([
+                ("MISSING-TESTDRIVER-VENDOR", "Missing `<script src='/resources/testdriver-vendor.js'>`", filename, None),
+                ("TESTDRIVER-VENDOR-PATH", "testdriver-vendor.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-VENDOR-PATH", "testdriver-vendor.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-VENDOR-PATH", "testdriver-vendor.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-VENDOR-PATH", "testdriver-vendor.js script seen with incorrect path", filename, None),
+                ("TESTDRIVER-VENDOR-PATH", "testdriver-vendor.js script seen with incorrect path", filename, None)
+            ])
+        else:
+            expected = set()
+
+        assert set(errors) == expected
+
+
 def test_not_testharness_path():
     code = b"""\
 <html xmlns="http://www.w3.org/1999/xhtml">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="resources/webperftestharness.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
 </html>
 """
     error_map = check_with_files(code)
@@ -394,6 +577,85 @@ def test_not_testharness_path():
             assert errors == []
 
 
+def test_variant_missing():
+    code = b"""\
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="variant">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 1),
+            ]
+        elif kind == "web-lax":
+            assert errors == [
+                ("VARIANT-MISSING",
+                    "Test file with a `<meta name='variant'...>` element that's missing a `content` attribute",
+                    filename,
+                    None)
+            ]
+
+
+# A corresponding "positive" test cannot be written because the manifest
+# SourceFile implementation raises a runtime exception for the condition this
+# linting rule describes
+@pytest.mark.parametrize("content", ["",
+                                     "?"
+                                     "#"])
+def test_variant_malformed_negative(content):
+    code = """\
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="variant" content="{}">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</html>
+""".format(content).encode("utf-8")
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 1),
+            ]
+        elif kind == "web-lax":
+            assert errors == []
+
+
+def test_late_timeout():
+    code = b"""\
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/resources/testharness.js"></script>
+<meta name="timeout" content="long">
+<script src="/resources/testharnessreport.js"></script>
+</html>
+"""
+    error_map = check_with_files(code)
+
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if kind == "python":
+            assert errors == [
+                ("PARSE-FAILED", "Unable to parse file", filename, 1),
+            ]
+        elif kind == "web-lax":
+            assert errors == [
+                ("LATE-TIMEOUT",
+                    "Test file with `<meta name='timeout'...>` element after `<script src='/resources/testharnessreport.js'>` element",
+                    filename,
+                    None)
+            ]
+
+
 @pytest.mark.skipif(six.PY3, reason="Cannot parse print statements from python 3")
 def test_print_statement():
     error_map = check_with_files(b"def foo():\n  print 'statement'\n  print\n")
@@ -403,8 +665,8 @@ def test_print_statement():
 
         if kind == "python":
             assert errors == [
-                ("PRINT STATEMENT", "Print function used", filename, 2),
-                ("PRINT STATEMENT", "Print function used", filename, 3),
+                ("PRINT STATEMENT", "A server-side python support file contains a `print` statement", filename, 2),
+                ("PRINT STATEMENT", "A server-side python support file contains a `print` statement", filename, 3),
             ]
         elif kind == "web-strict":
             assert errors == [
@@ -422,13 +684,52 @@ def test_print_function():
 
         if kind == "python":
             assert errors == [
-                ("PRINT STATEMENT", "Print function used", filename, 2),
+                ("PRINT STATEMENT", "A server-side python support file contains a `print` statement", filename, 2),
             ]
         elif kind == "web-strict":
             assert errors == [
                 ("PARSE-FAILED", "Unable to parse file", filename, None),
             ]
         else:
+            assert errors == []
+
+
+def test_ahem_system_font():
+    code = b"""\
+<html>
+<style>
+body {
+  font-family: aHEm, sans-serif;
+}
+</style>
+</html>
+"""
+    error_map = check_with_files(code)
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if filename.endswith((".htm", ".html", ".xht", ".xhtml")):
+            assert errors == [
+                ("AHEM SYSTEM FONT", "Don't use Ahem as a system font, use /fonts/ahem.css", filename, None)
+            ]
+
+
+def test_ahem_web_font():
+    code = b"""\
+<html>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+body {
+  font-family: aHEm, sans-serif;
+}
+</style>
+</html>
+"""
+    error_map = check_with_files(code)
+    for (filename, (errors, kind)) in error_map.items():
+        check_errors(errors)
+
+        if filename.endswith((".htm", ".html", ".xht", ".xhtml")):
             assert errors == []
 
 

@@ -29,7 +29,8 @@ from .router import Router
 from .utils import HTTPException
 from .constants import h2_headers
 
-"""HTTP server designed for testing purposes.
+"""
+HTTP server designed for testing purposes.
 
 The server is designed to provide flexibility in the way that
 requests are handled, and to provide control both of exactly
@@ -44,7 +45,7 @@ for parsing the incoming request. A RequestRewriter is then
 applied and may change the request data if it matches a
 supplied rule.
 
-Once the request data had been finalised, Request and Reponse
+Once the request data had been finalised, Request and Response
 objects are constructed. These are used by the other parts of the
 system to read information about the request and manipulate the
 response.
@@ -61,6 +62,12 @@ The handler functions are responsible for either populating the
 fields of the response object, which will then be written when the
 handler returns, or for directly writing to the output stream.
 """
+
+
+EDIT_HOSTS_HELP = ("Please ensure all the necessary WPT subdomains "
+                  "are mapped to a loopback device in /etc/hosts. "
+                  "See https://github.com/web-platform-tests/wpt#running-the-tests "
+                  "for instructions.")
 
 
 class RequestRewriter(object):
@@ -154,7 +161,7 @@ class WebTestServer(ThreadingMixIn, BaseHTTPServer.HTTPServer):
                             port specified in the server_address parameter.
                             False to bind the server only to the port in the
                             server_address parameter, but not to the address.
-        :param latency: Delay in ms to wait before seving each response, or
+        :param latency: Delay in ms to wait before serving each response, or
                         callable that returns a delay in ms
         """
         self.router = router
@@ -321,8 +328,14 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
 
     def handle_one_request(self):
         """
-        This is the main HTTP/2.0 Handler. When a browser opens a connection to the server
-        on the HTTP/2.0 port, Because there can be multiple H2 connections active at the same
+        This is the main HTTP/2.0 Handler.
+
+        When a browser opens a connection to the server
+        on the HTTP/2.0 port, the server enters this which will initiate the h2 connection
+        and keep running throughout the duration of the interaction, and will read/write directly
+        from the socket.
+
+        Because there can be multiple H2 connections active at the same
         time, a UUID is created for each so that it is easier to tell them apart in the logs.
         """
 
@@ -338,6 +351,7 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
         with self.conn as connection:
             connection.initiate_connection()
             data = connection.data_to_send()
+            window_size = connection.remote_settings.initial_window_size
 
         self.request.sendall(data)
 
@@ -346,11 +360,15 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
 
         try:
             while not self.close_connection:
-                # This size may need to be made variable based on remote settings?
-                data = self.request.recv(65535)
+                data = self.request.recv(window_size)
+                if data == '':
+                    self.logger.debug('(%s) Socket Closed' % self.uid)
+                    self.close_connection = True
+                    continue
 
                 with self.conn as connection:
                     frames = connection.receive_data(data)
+                    window_size = connection.remote_settings.initial_window_size
 
                 self.logger.debug('(%s) Frames Received: ' % self.uid + str(frames))
 
@@ -385,6 +403,12 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
                 thread.join()
 
     def start_stream_thread(self, frame, queue):
+        """
+        This starts a new thread to handle frames for a specific stream.
+        :param frame: The first frame on the stream
+        :param queue: A queue object that the thread will use to check for new frames
+        :return: The thread object that has already been started
+        """
         t = threading.Thread(
             target=Http2WebTestRequestHandler._stream_thread,
             args=(self, frame.stream_id, queue)
@@ -493,7 +517,6 @@ class H2Headers(dict):
 
 
 class H2HandlerCopy(object):
-
     def __init__(self, handler, req_frame, rfile):
         self.headers = H2Headers(req_frame.headers)
         self.command = self.headers['method']
@@ -532,7 +555,7 @@ class Http1WebTestRequestHandler(BaseWebTestRequestHandler):
             self.close_connection = True
             return
 
-        except Exception as e:
+        except Exception:
             err = traceback.format_exc()
             if response:
                 response.set_error(500, err)
@@ -575,7 +598,7 @@ class WebTestHttpd(object):
     :param config: Dictionary holding environment configuration settings for
                    handlers to read, or None to use the default values.
     :param bind_address: Boolean indicating whether to bind server to IP address.
-    :param latency: Delay in ms to wait before seving each response, or
+    :param latency: Delay in ms to wait before serving each response, or
                     callable that returns a delay in ms
 
     HTTP server designed for testing scenarios.
@@ -605,7 +628,7 @@ class WebTestHttpd(object):
 
     .. attribute:: started
 
-      Boolean indictaing whether the server is running
+      Boolean indicating whether the server is running
 
     """
     def __init__(self, host="127.0.0.1", port=8000,
@@ -653,8 +676,7 @@ class WebTestHttpd(object):
 
             _host, self.port = self.httpd.socket.getsockname()
         except Exception:
-            self.logger.error("Failed to start HTTP server. "
-                              "You may need to edit /etc/hosts or similar, see README.md.")
+            self.logger.critical("Failed to start HTTP server. {}".format(EDIT_HOSTS_HELP))
             raise
 
     def start(self, block=False):

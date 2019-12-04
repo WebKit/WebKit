@@ -14,11 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/Makefile
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/architecture.svg
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/conf.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/design.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/expectation.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/index.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/make.bat
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/internals.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/usage.rst

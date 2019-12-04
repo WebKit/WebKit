@@ -14,6 +14,7 @@ from cStringIO import StringIO as CStringIO
 import requests
 
 from .base import Browser, ExecutorBrowser, require_arg
+from .base import get_timeout_multiplier   # noqa: F401
 from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorselenium import (SeleniumTestharnessExecutor,  # noqa: F401
                                           SeleniumRefTestExecutor)  # noqa: F401
@@ -32,7 +33,8 @@ __wptrunner__ = {"product": "sauce",
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
-                 "env_options": "env_options"}
+                 "env_options": "env_options",
+                 "timeout_multiplier": "get_timeout_multiplier"}
 
 
 def get_capabilities(**kwargs):
@@ -133,6 +135,8 @@ class SauceConnect():
         self.sauce_key = kwargs["sauce_key"]
         self.sauce_tunnel_id = kwargs["sauce_tunnel_id"]
         self.sauce_connect_binary = kwargs.get("sauce_connect_binary")
+        self.sauce_connect_args = kwargs.get("sauce_connect_args")
+        self.sauce_init_timeout = kwargs.get("sauce_init_timeout")
         self.sc_process = None
         self.temp_dir = None
         self.env_config = None
@@ -170,14 +174,11 @@ class SauceConnect():
             "--readyfile=./sauce_is_ready",
             "--tunnel-domains",
             ",".join(self.env_config.domains_set)
-        ])
-
-        # Timeout config vars
-        max_wait = 30
+        ] + self.sauce_connect_args)
 
         tot_wait = 0
         while not os.path.exists('./sauce_is_ready') and self.sc_process.poll() is None:
-            if tot_wait >= max_wait:
+            if tot_wait >= self.sauce_init_timeout:
                 self.quit()
 
                 raise SauceException("Sauce Connect Proxy was not ready after %d seconds" % tot_wait)

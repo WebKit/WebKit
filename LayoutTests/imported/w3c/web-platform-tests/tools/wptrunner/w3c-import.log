@@ -18,9 +18,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/MANIFEST.in
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/README.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_android_webview.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome_android.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome_ios.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_edge.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_edge_chromium.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_epiphany.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_firefox.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_ie.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_opera.txt

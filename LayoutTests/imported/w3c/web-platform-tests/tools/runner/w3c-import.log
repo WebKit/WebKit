@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/runner/index.html
-/LayoutTests/imported/w3c/web-platform-tests/tools/runner/logo.svg
 /LayoutTests/imported/w3c/web-platform-tests/tools/runner/report.css
 /LayoutTests/imported/w3c/web-platform-tests/tools/runner/report.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/runner/runner.css

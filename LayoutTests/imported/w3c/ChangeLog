@@ -1,3 +1,15 @@
+2019-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT tools directory
+        https://bugs.webkit.org/show_bug.cgi?id=204728
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/window/cache-add.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-add.https-expected.txt:
+        * web-platform-tests/tools: Refreshed
+
 2019-12-04  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
 
         Implement OffscreenCanvas.transferToImageBitmap

@@ -21,3 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/fnmatch.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/lint.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/lint.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/lint/rules.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/lint/rules.pyc

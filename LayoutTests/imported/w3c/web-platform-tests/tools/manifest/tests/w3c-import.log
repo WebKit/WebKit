@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/tests/test_item.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/tests/test_manifest.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/tests/test_sourcefile.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/manifest/tests/test_utils.py

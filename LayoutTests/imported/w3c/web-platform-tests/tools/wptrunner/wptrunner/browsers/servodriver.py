@@ -4,9 +4,10 @@ import tempfile
 
 from mozprocess import ProcessHandler
 
-from serve.serve import make_hosts_file
+from tools.serve.serve import make_hosts_file
 
 from .base import Browser, require_arg, get_free_port, browser_command, ExecutorBrowser
+from .base import get_timeout_multiplier   # noqa: F401
 from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorservodriver import (ServoWebDriverTestharnessExecutor,  # noqa: F401
                                              ServoWebDriverRefTestExecutor)  # noqa: F401
@@ -25,6 +26,7 @@ __wptrunner__ = {
     "executor_kwargs": "executor_kwargs",
     "env_extras": "env_extras",
     "env_options": "env_options",
+    "timeout_multiplier": "get_timeout_multiplier",
     "update_properties": "update_properties",
 }
 
@@ -40,6 +42,7 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
         "debug_info": kwargs["debug_info"],
         "server_config": config,
         "user_stylesheets": kwargs.get("user_stylesheets"),
+        "headless": kwargs.get("headless"),
     }
 
 
@@ -60,7 +63,7 @@ def env_options():
 
 
 def update_properties():
-    return ["debug", "os", "version", "processor", "bits"], None
+    return (["debug", "os", "processor"], {"os": ["version"], "processor": ["bits"]})
 
 
 def write_hosts_file(config):
@@ -69,13 +72,11 @@ def write_hosts_file(config):
         f.write(make_hosts_file(config, "127.0.0.1"))
     return hosts_path
 
-
 class ServoWebDriverBrowser(Browser):
-    used_ports = set()
     init_timeout = 300  # Large timeout for cases where we're booting an Android emulator
 
     def __init__(self, logger, binary, debug_info=None, webdriver_host="127.0.0.1",
-                 server_config=None, binary_args=None, user_stylesheets=None):
+                 server_config=None, binary_args=None, user_stylesheets=None, headless=None):
         Browser.__init__(self, logger)
         self.binary = binary
         self.binary_args = binary_args or []
@@ -87,10 +88,11 @@ class ServoWebDriverBrowser(Browser):
         self.server_ports = server_config.ports if server_config else {}
         self.command = None
         self.user_stylesheets = user_stylesheets if user_stylesheets else []
+        self.headless = headless if headless else False
+        self.ca_certificate_path = server_config.ssl_config["ca_cert_path"]
 
     def start(self, **kwargs):
-        self.webdriver_port = get_free_port(4444, exclude=self.used_ports)
-        self.used_ports.add(self.webdriver_port)
+        self.webdriver_port = get_free_port()
 
         env = os.environ.copy()
         env["HOST_FILE"] = self.hosts_path
@@ -106,11 +108,17 @@ class ServoWebDriverBrowser(Browser):
             self.binary,
             self.binary_args + [
                 "--hard-fail",
-                "--webdriver", str(self.webdriver_port),
+                "--webdriver=%s" % self.webdriver_port,
                 "about:blank",
             ],
             self.debug_info
         )
+
+        if self.headless:
+            command += ["--headless"]
+
+        if self.ca_certificate_path:
+            command += ["--certificate-path", self.ca_certificate_path]
 
         for stylesheet in self.user_stylesheets:
             command += ["--user-stylesheet", stylesheet]
@@ -155,9 +163,7 @@ class ServoWebDriverBrowser(Browser):
                                    command=" ".join(self.command))
 
     def is_alive(self):
-        if self.runner:
-            return self.runner.is_running()
-        return False
+        return self.proc.poll() is None
 
     def cleanup(self):
         self.stop()

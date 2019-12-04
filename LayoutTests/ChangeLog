@@ -1,5 +1,14 @@
 2019-12-04  youenn fablet  <youenn@apple.com>
 
+        Update WPT tools directory
+        https://bugs.webkit.org/show_bug.cgi?id=204728
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
+2019-12-04  youenn fablet  <youenn@apple.com>
+
         WebProcessPool::terminateServiceWorkerProcess should be renamed terminateServiceWorkers
         https://bugs.webkit.org/show_bug.cgi?id=204792
 

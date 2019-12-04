@@ -8,11 +8,15 @@ import time
 
 from mozlog import get_default_logger, handlers, proxy
 
-from wptlogging import LogLevelRewriter
-from wptserve.handlers import StringHandler
+from .wptlogging import LogLevelRewriter
 
 here = os.path.split(__file__)[0]
 repo_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir, os.pardir))
+
+sys.path.insert(0, repo_root)
+from tools import localpaths  # noqa: F401
+
+from wptserve.handlers import StringHandler
 
 serve = None
 
@@ -46,13 +50,14 @@ class TestEnvironmentError(Exception):
 
 
 class TestEnvironment(object):
-    def __init__(self, test_paths, pause_after_test, debug_info, options, ssl_config, env_extras):
-        """Context manager that owns the test environment i.e. the http and
-        websockets servers"""
+    """Context manager that owns the test environment i.e. the http and
+    websockets servers"""
+    def __init__(self, test_paths, testharness_timeout_multipler, pause_after_test, debug_info, options, ssl_config, env_extras):
         self.test_paths = test_paths
         self.server = None
         self.config_ctx = None
         self.config = None
+        self.testharness_timeout_multipler = testharness_timeout_multipler
         self.pause_after_test = pause_after_test
         self.test_server_port = options.pop("test_server_port", True)
         self.debug_info = debug_info
@@ -169,7 +174,10 @@ class TestEnvironment(object):
         for path, format_args, content_type, route in [
                 ("testharness_runner.html", {}, "text/html", "/testharness_runner.html"),
                 (self.options.get("testharnessreport", "testharnessreport.js"),
-                 {"output": self.pause_after_test}, "text/javascript;charset=utf8",
+                 {"output": self.pause_after_test,
+                  "timeout_multiplier": self.testharness_timeout_multipler,
+                  "explicit_timeout": "true" if self.debug_info is not None else "false"},
+                 "text/javascript;charset=utf8",
                  "/resources/testharnessreport.js")]:
             path = os.path.normpath(os.path.join(here, path))
             # Note that .headers. files don't apply to static routes, so we need to
@@ -198,11 +206,14 @@ class TestEnvironment(object):
 
     def ensure_started(self):
         # Pause for a while to ensure that the server has a chance to start
-        for _ in xrange(60):
+        total_sleep_secs = 30
+        each_sleep_secs = 0.5
+        end_time = time.time() + total_sleep_secs
+        while time.time() < end_time:
             failed = self.test_servers()
             if not failed:
                 return
-            time.sleep(0.5)
+            time.sleep(each_sleep_secs)
         raise EnvironmentError("Servers failed to start: %s" %
                                ", ".join("%s:%s" % item for item in failed))
 
@@ -213,6 +224,7 @@ class TestEnvironment(object):
             for port, server in servers:
                 if self.test_server_port:
                     s = socket.socket()
+                    s.settimeout(0.1)
                     try:
                         s.connect((host, port))
                     except socket.error:

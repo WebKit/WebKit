@@ -9,7 +9,7 @@ import unittest
 from six.moves.urllib.parse import urlencode, urlunsplit
 from six.moves.urllib.request import Request as BaseRequest
 from six.moves.urllib.request import urlopen
-from six import binary_type, iteritems
+from six import binary_type, iteritems, PY3
 
 from hyper import HTTP20Connection, tls
 import ssl
@@ -75,10 +75,15 @@ class TestUsingServer(unittest.TestCase):
             req.add_data(body)
 
         if auth is not None:
-            req.add_header("Authorization", "Basic %s" % base64.b64encode('%s:%s' % auth))
+            req.add_header("Authorization", b"Basic %s" % base64.b64encode(b"%s:%s" % auth))
 
         return urlopen(req)
 
+    def assert_multiple_headers(self, resp, name, values):
+        if PY3:
+            assert resp.info().get_all(name) == values
+        else:
+            assert resp.info()[name] == ", ".join(values)
 
 @pytest.mark.skipif(not wptserve.utils.http2_compatible(), reason="h2 server only works in python 2.7.15")
 class TestUsingH2Server:
@@ -101,5 +106,51 @@ class TestUsingH2Server:
         self.conn.connect()
 
     def teardown_method(self, test_method):
-        self.conn.close()
         self.server.stop()
+
+
+class TestWrapperHandlerUsingServer(TestUsingServer):
+    '''For a wrapper handler, a .js dummy testing file is requried to render
+    the html file. This class extends the TestUsingServer and do some some
+    extra work: it tries to generate the dummy .js file in setUp and
+    remove it in tearDown.'''
+    dummy_js_files = {}
+
+    def gen_js_file(self, filename, empty=True, content=b''):
+        self.remove_js_file(filename)
+
+        with open(filename, 'wb') as fp:
+            if not empty:
+                fp.write(content)
+
+    def remove_js_file(self, filename):
+        if os.path.exists(filename):
+            os.remove(filename)
+
+    def setUp(self):
+        super(TestWrapperHandlerUsingServer, self).setUp()
+
+        for filename, content in self.dummy_js_files.items():
+            filepath = os.path.join(doc_root, filename)
+            if content == '':
+                self.gen_js_file(filepath)
+            else:
+                self.gen_js_file(filepath, False, content)
+
+    def run_wrapper_test(self, req_file, header_data, wrapper_handler):
+        route = ('GET', req_file, wrapper_handler())
+        self.server.router.register(*route)
+
+        resp = self.request(route[1])
+        self.assertEqual(200, resp.getcode())
+        self.assertEqual(header_data, resp.info()['Content-Type'])
+
+        with open(os.path.join(doc_root, req_file), 'rb') as fp:
+            self.assertEqual(fp.read(), resp.read())
+
+    def tearDown(self):
+        super(TestWrapperHandlerUsingServer, self).tearDown()
+
+        for filename, _ in self.dummy_js_files.items():
+            filepath = os.path.join(doc_root, filename)
+            self.remove_js_file(filepath)

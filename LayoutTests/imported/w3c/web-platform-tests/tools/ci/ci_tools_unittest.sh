@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ex
 
-SCRIPT_DIR=$(dirname $(readlink -f "$0"))
-WPT_ROOT=$(readlink -f $SCRIPT_DIR/../..)
+SCRIPT_DIR=$(cd $(dirname "$0") && pwd -P)
+WPT_ROOT=$SCRIPT_DIR/../..
 cd $WPT_ROOT
 
 run_applicable_tox () {
@@ -18,11 +18,8 @@ run_applicable_tox () {
     export TOXENV="$OLD_TOXENV"
 }
 
-RELEVANT_JOBS=$(./wpt test-jobs)
-
-RELEVANT_CHANGES_TOOLS=$(echo "$RELEVANT_JOBS" | grep "tools_unittest" || true)
-if [[ ! -z $RELEVANT_CHANGES_TOOLS ]]; then
-    pip install -U tox codecov
+if ./wpt test-jobs --includes tools_unittest; then
+    pip install --user -U tox codecov
     cd tools
     run_applicable_tox
     cd $WPT_ROOT
@@ -30,12 +27,10 @@ else
     echo "Skipping tools unittest"
 fi
 
-RELEVANT_CHANGES_WPTRUNNER=$(echo "$RELEVANT_JOBS" | grep "wptrunner_unittest" || true)
-if [[ ! -z $RELEVANT_CHANGES_WPTRUNNER ]]; then
+if ./wpt test-jobs --includes wptrunner_unittest; then
     cd tools/wptrunner
     run_applicable_tox
     cd $WPT_ROOT
 else
     echo "Skipping wptrunner unittest"
 fi
-

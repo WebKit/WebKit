@@ -228,6 +228,10 @@ imported/w3c/web-platform-tests/xhr/event-timeout-order.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 
+# Failures due to bumping WPT tools repository.
+imported/w3c/web-platform-tests/xhr/send-authentication-basic-repeat-no-args.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/send-authentication-basic.htm [ Pass Failure ]
+
 # The tests prints out a UUID that is different every time.
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
 

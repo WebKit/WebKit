@@ -14,7 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/bar.any.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/document.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.any.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.any.serviceworker.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.any.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.any.worker.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.window.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/foo.worker.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/invalid.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/no_main.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub.sub.txt
@@ -22,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash_subject.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash_unrecognized.sub.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_header_or_default.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_headers.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_headers.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_location.sub.txt

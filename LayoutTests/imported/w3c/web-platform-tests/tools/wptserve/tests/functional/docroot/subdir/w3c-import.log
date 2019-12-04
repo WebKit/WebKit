@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/subdir/example_module.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/subdir/file.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/subdir/import_handler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/subdir/sub_path.sub.txt

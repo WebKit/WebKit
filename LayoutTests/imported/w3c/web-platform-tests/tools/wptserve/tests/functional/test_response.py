@@ -2,14 +2,14 @@ import sys
 import os
 import unittest
 import json
-from types import MethodType
 from io import BytesIO
 
 import pytest
+from six import create_bound_method
 
 wptserve = pytest.importorskip("wptserve")
 from .base import TestUsingServer, TestUsingH2Server, doc_root
-from hyper.h2.exceptions import ProtocolError
+from h2.exceptions import ProtocolError
 
 def send_body_as_header(self):
     if self._response.add_required_headers:
@@ -19,13 +19,11 @@ def send_body_as_header(self):
     self._headers_complete = True
 
 class TestResponse(TestUsingServer):
-    @pytest.mark.xfail(sys.version_info >= (3,), reason="wptserve only works on Py2")
     def test_head_without_body(self):
         @wptserve.handlers.handler
         def handler(request, response):
-            response.writer.end_headers = MethodType(send_body_as_header,
-                                                     response.writer,
-                                                     wptserve.response.ResponseWriter)
+            response.writer.end_headers = create_bound_method(send_body_as_header,
+                                                              response.writer)
             return [("X-Test", "TEST")], "body\r\n"
 
         route = ("GET", "/test/test_head_without_body", handler)
@@ -35,14 +33,12 @@ class TestResponse(TestUsingServer):
         self.assertEqual("TEST", resp.info()['x-Test'])
         self.assertEqual("", resp.info()['x-body'])
 
-    @pytest.mark.xfail(sys.version_info >= (3,), reason="wptserve only works on Py2")
     def test_head_with_body(self):
         @wptserve.handlers.handler
         def handler(request, response):
             response.send_body_for_head_request = True
-            response.writer.end_headers = MethodType(send_body_as_header,
-                                                     response.writer,
-                                                     wptserve.response.ResponseWriter)
+            response.writer.end_headers = create_bound_method(send_body_as_header,
+                                                              response.writer)
             return [("X-Test", "TEST")], "body\r\n"
 
         route = ("GET", "/test/test_head_with_body", handler)
@@ -164,7 +160,7 @@ class TestResponse(TestUsingServer):
     def test_write_raw_none(self):
         @wptserve.handlers.handler
         def handler(request, response):
-            with pytest.raises(ValueError, message="data cannot be None"):
+            with pytest.raises(ValueError):
                 response.writer.write_raw_content(None)
 
         route = ("GET", "/test/test_write_raw_content", handler)
