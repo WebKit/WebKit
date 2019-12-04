@@ -41,9 +41,25 @@ WI.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WI.
         return this._defaultToolTip;
     }
 
+    set defaultToolTip(defaultToolTip)
+    {
+        this._defaultToolTip = defaultToolTip;
+
+        if (!this.activated)
+            this.tooltip = this._defaultToolTip;
+    }
+
     get activatedToolTip()
     {
         return this._activatedToolTip;
+    }
+
+    set activatedToolTip(activatedToolTip)
+    {
+        this._activatedToolTip = activatedToolTip;
+
+        if (this.activated)
+            this.tooltip = this._activatedToolTip;
     }
 
     get activated()

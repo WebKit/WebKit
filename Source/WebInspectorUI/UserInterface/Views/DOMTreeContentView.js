@@ -31,6 +31,25 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         super(representedObject);
 
+        // COMPATIBILITY (iOS 12)
+        WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
+        this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show rulers"), WI.UIString("Hide rulers"), "Images/Rulers.svg", 16, 16);
+        this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
+        this._showRulersButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setShowRulers");
+        this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._showRulersChanged();
+
+        this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force print media styles"), WI.UIString("Use default media styles"), "Images/Printer.svg", 16, 16);
+        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
+        this._showPrintStylesButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
+        this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._showPrintStylesChanged();
+
+        this._forceAppearanceButtonNavigationItem = new WI.ActivateButtonNavigationItem("appearance", WI.UIString("Force Dark Appearance"), WI.UIString("Use Default Appearance"), "Images/Appearance.svg", 16, 16);
+        this._forceAppearanceButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleAppearance, this);
+        this._forceAppearanceButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._forceAppearanceButtonNavigationItem.enabled = WI.cssManager.canForceAppearance();
+
         this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
         this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
         this._compositingBordersButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
@@ -49,20 +68,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showsShadowDOMButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
         this._showsShadowDOMButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showShadowDOMSettingChanged();
-
-        this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force print media styles"), WI.UIString("Use default media styles"), "Images/Printer.svg", 16, 16);
-        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
-        this._showPrintStylesButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
-        this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showPrintStylesChanged();
-
-        // COMPATIBILITY (iOS 12)
-        WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
-        this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show rulers"), WI.UIString("Hide rulers"), "Images/Rulers.svg", 16, 16);
-        this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
-        this._showRulersButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setShowRulers");
-        this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showRulersChanged();
 
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
@@ -84,6 +89,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultAppearanceDidChange, this._defaultAppearanceDidChange, this);
 
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
+        this._lastKnownDefaultAppearance = null;
 
         this._numberOfSearchResults = null;
 
@@ -664,27 +670,20 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (WI.cssManager.forcedAppearance)
             return;
 
-        this._forceAppearanceButtonNavigationItem = null;
-
         let defaultAppearance = WI.cssManager.defaultAppearance;
         switch (defaultAppearance) {
         case WI.CSSManager.Appearance.Light:
         case null: // if there is no default appearance, the navigation item will be disabled
-            this._forceAppearanceButtonNavigationItem = new WI.ActivateButtonNavigationItem("appearance", WI.UIString("Force Dark Appearance"), WI.UIString("Use Default Appearance"), "Images/Appearance.svg", 16, 16);
+            this._forceAppearanceButtonNavigationItem.defaultToolTip = WI.UIString("Force Dark Appearance");
             break;
         case WI.CSSManager.Appearance.Dark:
-            this._forceAppearanceButtonNavigationItem = new WI.ActivateButtonNavigationItem("appearance", WI.UIString("Force Light Appearance"), WI.UIString("Use Default Appearance"), "Images/Appearance.svg", 16, 16);
+            this._forceAppearanceButtonNavigationItem.defaultToolTip = WI.UIString("Force Light Appearance");
             break;
         }
 
         this._lastKnownDefaultAppearance = defaultAppearance;
 
-        this._forceAppearanceButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleAppearance, this);
-        this._forceAppearanceButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._forceAppearanceButtonNavigationItem.enabled = WI.cssManager.canForceAppearance();
         this._forceAppearanceButtonNavigationItem.activated = !!WI.cssManager.forcedAppearance;
-
-        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
     }
 
     _toggleAppearance(event)
@@ -695,6 +694,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         let appearanceToForce = null;
         switch (this._lastKnownDefaultAppearance) {
         case WI.CSSManager.Appearance.Light:
+        case null:
             appearanceToForce = WI.CSSManager.Appearance.Dark;
             break;
         case WI.CSSManager.Appearance.Dark:

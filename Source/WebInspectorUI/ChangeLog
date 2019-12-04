@@ -1,5 +1,31 @@
 2019-12-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'navigationItem.parentNavigationBar')
+        https://bugs.webkit.org/show_bug.cgi?id=204830
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype._mainResourceDidChange):
+        When the main resource changes, make sure to clear the `_forcedAppearance` member variable.
+        This way, when the main `WI.DOMTreeContentView` reloads, it isn't left in an unknown state.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype._defaultAppearanceDidChange):
+        (WI.DOMTreeContentView.prototype._toggleAppearance):
+        Always create the Force Appearance navigation item, rather than destroying and recreating it
+        each time the page navigates. Instead, just update the tooltip (which was all that really
+        changed) whenever the default appearance changes. Depending on the timing of events during a
+        page navigation, `_forceAppearanceButtonNavigationItem` could be `null`.
+
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WI.ActivateButtonNavigationItem.prototype.set defaultToolTip): Added.
+        (WI.ActivateButtonNavigationItem.prototype.set activatedToolTip): Added.
+        Allow the various tooltips to be updated after creation.
+
+2019-12-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: stopping time marker is permanently removed when the current recording is cleared
         https://bugs.webkit.org/show_bug.cgi?id=204827
 

@@ -533,6 +533,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
         this._modifiedStyles.clear();
+        this._forcedAppearance = null;
 
         this._nodeStylesMap = {};
     }
