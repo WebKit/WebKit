@@ -1,3 +1,59 @@
+2019-12-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r252674. rdar://problem/57609333
+
+    [JSC] MetadataTable::sizeInBytes should not touch m_rawBuffer in UnlinkedMetadataTable unless MetadataTable is linked to that UnlinkedMetadataTable
+    https://bugs.webkit.org/show_bug.cgi?id=204390
+    
+    Reviewed by Mark Lam.
+    
+    We have a race issue here. When calling MetadataTable::sizeInBytes, we call UnlinkedMetadataTable::sizeInBytes since we change the result based on
+    whether this MetadataTable is linked to this UnlinkedMetadataTable or not. The problem is that we are calling `UnlinkedMetadataTable::totalSize`
+    unconditionally in UnlinkedMetadataTable::sizeInBytes, and this is touching m_rawBuffer unconditionally. This is not correct since it is possible
+    that this m_rawBuffer is realloced while we are calling MetadataTable::sizeInBytes in GC thread.
+    
+        1. The GC thread is calling MetadataTable::sizeInBytes for MetadataTable "A".
+        2. The main thread is destroying MetadataTable "B".
+        3. MetadataTable "B" is linked to UnlinkedMetadataTable "C".
+        4. MetadataTable "A" is pointing to UnlinkedMetadataTable "C".
+        5. "A" is touching UnlinkedMetadataTable::m_rawBuffer in "C", called from MetadataTable::sizeInBytes.
+        6. (2) destroys MetadataTable "B", and realloc UnlinkedMetadataTable::m_rawBuffer in "C".
+        7. (5) can touch already freed buffer.
+    
+    This patch fixes UnlinkedMetadataTable::sizeInBytes: not touching m_rawBuffer unless it is owned by the caller's MetadataTable. We need to call
+    UnlinkedMetadataTable::sizeInBytes anyway since we need to adjust the result based on whether the caller MetadataTable is linked to this UnlinkedMetadataTable.
+    
+    * bytecode/UnlinkedMetadataTableInlines.h:
+    (JSC::UnlinkedMetadataTable::sizeInBytes):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@252674 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] MetadataTable::sizeInBytes should not touch m_rawBuffer in UnlinkedMetadataTable unless MetadataTable is linked to that UnlinkedMetadataTable
+            https://bugs.webkit.org/show_bug.cgi?id=204390
+
+            Reviewed by Mark Lam.
+
+            We have a race issue here. When calling MetadataTable::sizeInBytes, we call UnlinkedMetadataTable::sizeInBytes since we change the result based on
+            whether this MetadataTable is linked to this UnlinkedMetadataTable or not. The problem is that we are calling `UnlinkedMetadataTable::totalSize`
+            unconditionally in UnlinkedMetadataTable::sizeInBytes, and this is touching m_rawBuffer unconditionally. This is not correct since it is possible
+            that this m_rawBuffer is realloced while we are calling MetadataTable::sizeInBytes in GC thread.
+
+                1. The GC thread is calling MetadataTable::sizeInBytes for MetadataTable "A".
+                2. The main thread is destroying MetadataTable "B".
+                3. MetadataTable "B" is linked to UnlinkedMetadataTable "C".
+                4. MetadataTable "A" is pointing to UnlinkedMetadataTable "C".
+                5. "A" is touching UnlinkedMetadataTable::m_rawBuffer in "C", called from MetadataTable::sizeInBytes.
+                6. (2) destroys MetadataTable "B", and realloc UnlinkedMetadataTable::m_rawBuffer in "C".
+                7. (5) can touch already freed buffer.
+
+            This patch fixes UnlinkedMetadataTable::sizeInBytes: not touching m_rawBuffer unless it is owned by the caller's MetadataTable. We need to call
+            UnlinkedMetadataTable::sizeInBytes anyway since we need to adjust the result based on whether the caller MetadataTable is linked to this UnlinkedMetadataTable.
+
+            * bytecode/UnlinkedMetadataTableInlines.h:
+            (JSC::UnlinkedMetadataTable::sizeInBytes):
+
 2019-11-04  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r248552. rdar://problem/56868427
