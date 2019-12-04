@@ -1,3 +1,64 @@
+2019-12-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Delete non-cookie website data after 7 days of no user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=204779
+        <rdar://problem/57578989>
+
+        Reviewed by Alex Christensen.
+
+        Trackers are continuing to move cross-site tracking IDs into first-party storage.
+        This change ages out script-writable non-cookie website data in alignment with the
+        7-day cap on client-side cookies.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor const):
+            Now makes use of the set WebCore::FirstPartyWebsiteDataRemovalMode.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor const):
+            Now makes use of the set WebCore::FirstPartyWebsiteDataRemovalMode.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode):
+        (WebKit::ResourceLoadStatisticsStore::firstPartyWebsiteDataRemovalMode const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setFirstPartyWebsiteDataRemovalModeForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        (WebKit::NetworkSession::forwardResourceLoadStatisticsSettings):
+            New convenience function to avoid code duplication in
+            NetworkSession::setResourceLoadStatisticsEnabled() and 
+            NetworkSession::forwardResourceLoadStatisticsSettings().
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Scripts/webkit/messages.py:
+            Makes sure the WebCore::FirstPartyWebsiteDataRemovalMode is found in WebCore/NetworkStorageSession.h.
+        * Shared/WebPreferences.yaml:
+            New experimental feature, off by default.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-12-03  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Unable to interact with the view after a back swipe until lifting the finger off the screen

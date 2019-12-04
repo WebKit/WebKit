@@ -159,6 +159,7 @@ public:
     void hasIsolatedSession(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void setShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID, WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
+    void setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID, WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
 #endif
     
     void synthesizeAppIsBackground(bool background);

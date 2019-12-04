@@ -132,6 +132,7 @@ protected:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void destroyResourceLoadStatistics();
+    void forwardResourceLoadStatisticsSettings();
 #endif
 
     PAL::SessionID m_sessionID;
@@ -146,6 +147,7 @@ protected:
     bool m_enableResourceLoadStatisticsLogTestingEvent;
     bool m_downgradeReferrer { true };
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction };
+    WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::None };
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;

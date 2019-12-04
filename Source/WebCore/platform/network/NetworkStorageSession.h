@@ -75,6 +75,7 @@ struct SameSiteInfo;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
+enum class FirstPartyWebsiteDataRemovalMode : bool { AllButCookies, None };
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;

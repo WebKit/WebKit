@@ -261,6 +261,7 @@ public:
     bool isITPDatabaseEnabled() const { return m_isITPDatabaseEnabled; }
     void setShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID, WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
+    void setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID, WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
 #endif
 
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;

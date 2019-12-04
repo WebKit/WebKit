@@ -337,6 +337,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetFirstPartyWebsiteDataRemovalMode")) {
+        m_testRunner->statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidResetStatisticsToConsistentState")) {
         m_testRunner->statisticsCallDidResetToConsistentStateCallback();
         return;

@@ -886,6 +886,9 @@ webRTCEncryptionEnabled:
 isThirdPartyCookieBlockingEnabled:
   initial: true
 
+isFirstPartyWebsiteDataRemovalEnabled:
+  initial: false
+
 isLoggedInAPIEnabled:
   initial: false
 

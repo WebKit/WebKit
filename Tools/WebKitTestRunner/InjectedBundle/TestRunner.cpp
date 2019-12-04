@@ -752,6 +752,7 @@ enum {
     StatisticsDidSetBlockCookiesForHostCallbackID,
     StatisticsDidSetShouldDowngradeReferrerCallbackID,
     StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
+    StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -2242,6 +2243,24 @@ void TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback()
 {
     callTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID);
     m_hasSetBlockThirdPartyCookiesCallback = false;
+}
+
+void TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, JSValueRef completionHandler)
+{
+    if (m_hasSetFirstPartyWebsiteDataRemovalModeCallback)
+        return;
+
+    cacheTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID, completionHandler);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsFirstPartyWebsiteDataRemovalMode"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    m_hasSetFirstPartyWebsiteDataRemovalModeCallback = true;
+}
+
+void TestRunner::statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID);
+    m_hasSetFirstPartyWebsiteDataRemovalModeCallback = false;
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

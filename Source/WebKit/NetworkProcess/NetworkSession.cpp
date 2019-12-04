@@ -175,7 +175,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     // This should always be forwarded since debug mode may be enabled at runtime.
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
-    m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
+    forwardResourceLoadStatisticsSettings();
 }
 
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
@@ -183,7 +183,13 @@ void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()
     destroyResourceLoadStatistics();
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
     m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
+    forwardResourceLoadStatisticsSettings();
+}
+
+void NetworkSession::forwardResourceLoadStatisticsSettings()
+{
     m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
+    m_resourceLoadStatistics->setFirstPartyWebsiteDataRemovalMode(m_firstPartyWebsiteDataRemovalMode, [] { });
 }
 
 bool NetworkSession::isResourceLoadStatisticsEnabled() const

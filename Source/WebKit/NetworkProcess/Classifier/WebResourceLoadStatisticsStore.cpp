@@ -481,6 +481,19 @@ void WebResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode(ThirdPartyC
     });
 }
 
+void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPartyWebsiteDataRemovalMode mode, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, mode, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->setFirstPartyWebsiteDataRemovalMode(mode);
+        postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
     ASSERT(RunLoop::isMain());

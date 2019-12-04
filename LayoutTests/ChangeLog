@@ -1,3 +1,23 @@
+2019-12-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Delete non-cookie website data after 7 days of no user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=204779
+        <rdar://problem/57578989>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+            Fixed some minor stuff in these two test cases to make any failures more clear.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-database.html: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html: Added.
+
 2019-12-03  Truitt Savell  <tsavell@apple.com>
 
         6 fast/text/emoji-gender are expected to fail on Catalina 10.15.1 and newer

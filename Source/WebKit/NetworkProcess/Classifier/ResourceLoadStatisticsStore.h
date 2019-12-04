@@ -30,7 +30,6 @@
 #include "ResourceLoadStatisticsClassifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -164,6 +163,7 @@ public:
     void setPrevalentResourceForDebugMode(const RegistrableDomain&);
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode mode) { m_thirdPartyCookieBlockingMode = mode; };
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; };
+    void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode mode) { m_firstPartyWebsiteDataRemovalMode = mode; }
 
     virtual bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) = 0;
     virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
@@ -237,6 +237,7 @@ protected:
     const RegistrableDomain& debugStaticPrevalentResource() const { return m_debugStaticPrevalentResource; }
     bool debugLoggingEnabled() const { return m_debugLoggingEnabled; };
     bool debugModeEnabled() const { return m_debugModeEnabled; }
+    WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode() const { return m_firstPartyWebsiteDataRemovalMode; }
 
     static constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
     
@@ -275,6 +276,7 @@ private:
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction };
     bool m_dataRecordsBeingRemoved { false };
     ShouldIncludeLocalhost m_shouldIncludeLocalhost { ShouldIncludeLocalhost::Yes };
+    WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::None };
 };
 
 } // namespace WebKit

@@ -3598,6 +3598,14 @@ void TestController::setStatisticsShouldBlockThirdPartyCookies(bool value, bool 
     m_currentInvocation->didSetShouldBlockThirdPartyCookies();
 }
 
+void TestController::setStatisticsFirstPartyWebsiteDataRemovalMode(bool value)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(TestController::websiteDataStore(), value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetFirstPartyWebsiteDataRemovalMode();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

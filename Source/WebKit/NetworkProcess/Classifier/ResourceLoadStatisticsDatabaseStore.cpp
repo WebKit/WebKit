@@ -2087,7 +2087,10 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor(const Do
 
 bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    return resourceStatistic.isScheduledForAllButCookieDataRemoval && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+    bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.isScheduledForAllButCookieDataRemoval;
+    bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
+
+    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short);
 }
 
 Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()

@@ -75,6 +75,7 @@ public:
     void didClearStatisticsThroughWebsiteDataRemoval();
     void didSetShouldDowngradeReferrer();
     void didSetShouldBlockThirdPartyCookies();
+    void didSetFirstPartyWebsiteDataRemovalMode();
     void didResetStatisticsToConsistentState();
     void didSetBlockCookiesForHost();
     void didSetStatisticsDebugMode();

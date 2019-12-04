@@ -5,7 +5,7 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout('runTest()', 0)">
-<div id="description">Check that non-cookie website data gets removed after a navigation with link decoration from a prevalent resource.</div>
+<div id="description">Check that non-cookie website data gets removed after a period of no user interaction.</div>
 <br>
 <div id="output"></div>
 <br>
@@ -168,7 +168,7 @@
                     let value = localStorage.getItem(localStorageName);
                     addOutput("Before deletion: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
                     checkLocalStorageCallback();
-                } else if (testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {
+                } else if (testRunner.isStatisticsHasLocalStorage(originUnderTest)) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
                     addOutput("Before deletion: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
@@ -183,7 +183,7 @@
                     let value = localStorage.getItem(localStorageName);
                     addOutput("After deletion: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
                     checkLocalStorageCallback();
-                } else if (!testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {
+                } else if (!testRunner.isStatisticsHasLocalStorage(originUnderTest)) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
                     addOutput("After deletion: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
@@ -229,19 +229,22 @@
 
     function finishTest() {
         resetCookies();
-        testRunner.dumpResourceLoadStatistics();
-        setEnableFeature(false, function() {
-            testRunner.notifyDone();
+        testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(false, function() {
+            setEnableFeature(false, function() {
+                testRunner.notifyDone();
+            });
         });
     }
 
-    const prevalentResourceOrigin = "http://localhost:8000";
-    const destinationOrigin  = "http://127.0.0.1:8000";
+    const originUnderTest  = "http://127.0.0.1:8000";
     function runTest() {
         setEnableFeature(true, function () {
-            testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
-                testRunner.setStatisticsCrossSiteLoadWithLinkDecoration(prevalentResourceOrigin, destinationOrigin);
-                writeWebsiteDataAndContinue();
+            testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function() {
+                testRunner.setStatisticsHasHadUserInteraction(originUnderTest, false, function() {
+                    if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
+                        addOutput("FAIL: " + originUnderTest + " got logged for user interaction.");
+                    writeWebsiteDataAndContinue();
+                });
             });
         });
     }

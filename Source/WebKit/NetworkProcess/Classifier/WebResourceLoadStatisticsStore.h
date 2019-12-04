@@ -31,6 +31,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataType.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
@@ -181,6 +182,7 @@ public:
 
     void hasCookies(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
+    void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
     void didCreateNetworkProcess();
 
     void notifyResourceLoadStatisticsProcessed();

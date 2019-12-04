@@ -343,6 +343,7 @@ interface TestRunner {
     boolean hasStatisticsIsolatedSession(DOMString hostName);
     void setStatisticsShouldDowngradeReferrer(boolean value, object callback);
     void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
+    void setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

@@ -1817,6 +1817,13 @@ IsThirdPartyCookieBlockingEnabled:
   humanReadableDescription: "Block all third-party cookies when Intelligent Tracking Prevention is enabled"
   category: experimental
 
+IsFirstPartyWebsiteDataRemovalEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Remove Non-Cookie Data After 7 Days of No User Interaction (ITP)"
+  humanReadableDescription: "Remove all non-cookie website data after seven days of no user interaction when Intelligent Tracking Prevention is enabled"
+  category: experimental
+
 IsLoggedInAPIEnabled:
     type: bool
     defaultValue: false

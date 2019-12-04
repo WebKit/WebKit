@@ -1568,6 +1568,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsFirstPartyWebsiteDataRemovalMode")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(WKBooleanGetValue(value));
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
         TestController::singleton().removeAllSessionCredentials();
         return nullptr;
@@ -1854,6 +1861,12 @@ void TestInvocation::didSetShouldDowngradeReferrer()
 void TestInvocation::didSetShouldBlockThirdPartyCookies()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetShouldBlockThirdPartyCookies"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+}
+
+void TestInvocation::didSetFirstPartyWebsiteDataRemovalMode()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetFirstPartyWebsiteDataRemovalMode"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
 }
 

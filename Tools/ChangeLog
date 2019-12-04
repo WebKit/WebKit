@@ -1,3 +1,29 @@
+2019-12-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Delete non-cookie website data after 7 days of no user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=204779
+        <rdar://problem/57578989>
+
+        Reviewed by Alex Christensen.
+
+        These changes are test infrastructure so that TestRunner can
+        control the new setting.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode):
+        (WTR::TestRunner::statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsFirstPartyWebsiteDataRemovalMode):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didSetFirstPartyWebsiteDataRemovalMode):
+        * WebKitTestRunner/TestInvocation.h:
+
 2019-12-03  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.bindings

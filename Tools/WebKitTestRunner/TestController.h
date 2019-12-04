@@ -254,6 +254,7 @@ public:
     bool hasStatisticsIsolatedSession(WKStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool value);
     void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
+    void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
