@@ -958,6 +958,8 @@ void VideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, const
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::preparedToReturnToInline(%p) - visible(%s)", this, boolString(visible));
     setInlineRect(inlineRect, visible);
+    [[m_playerViewController view] setNeedsLayout];
+    [[m_playerViewController view] layoutIfNeeded];
     if (m_prepareToInlineCallback) {
         WTF::Function<void(bool)> callback = WTFMove(m_prepareToInlineCallback);
         callback(visible);
