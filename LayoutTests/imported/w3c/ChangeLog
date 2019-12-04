@@ -1,3 +1,18 @@
+2019-12-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-callable "handleEvent" property is silently ignored
+        https://bugs.webkit.org/show_bug.cgi?id=200066
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/IndexedDB/fire-error-event-exception-expected.txt:
+        * web-platform-tests/IndexedDB/fire-success-event-exception-expected.txt:
+        * web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception-expected.txt:
+        * web-platform-tests/dom/events/EventListener-handleEvent-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-handleEvent-ignored-expected.txt:
+        * web-platform-tests/websockets/interfaces/WebSocket/events/013-expected.txt:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/onmessage.worker-expected.txt:
+
 2019-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Implement the CSS clamp() function

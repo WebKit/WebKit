@@ -1,3 +1,26 @@
+2019-12-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-callable "handleEvent" property is silently ignored
+        https://bugs.webkit.org/show_bug.cgi?id=200066
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch prevents "handleEvent" property from being looked up on event handlers
+        and also reports TypeError exception if "handleEvent" value is not callable.
+        Web IDL spec: https://heycam.github.io/webidl/#call-a-user-objects-operation (step 10.4)
+
+        Tests: fast/dom/exception-getting-event-handler.html
+               imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
+               imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
+               imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html
+               imported/w3c/web-platform-tests/dom/events/EventListener-handleEvent.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-handleEvent-ignored.html
+               imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/013.html
+               imported/w3c/web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/onmessage.worker.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+
 2019-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Expose basic ITP data from the database for future API/SPI use

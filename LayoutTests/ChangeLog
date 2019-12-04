@@ -1,3 +1,12 @@
+2019-12-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-callable "handleEvent" property is silently ignored
+        https://bugs.webkit.org/show_bug.cgi?id=200066
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/exception-getting-event-handler-expected.txt:
+
 2019-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adopt UIHelper in a few more layout tests in fast/events

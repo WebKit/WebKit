@@ -137,8 +137,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     CallData callData;
     CallType callType = getCallData(vm, handleEventFunction, callData);
 
-    // If jsFunction is not actually a function, see if it implements the EventListener interface and use that
+    // If jsFunction is not actually a function and this is an EventListener, see if it implements callback interface.
     if (callType == CallType::None) {
+        if (m_isAttribute)
+            return;
+
         handleEventFunction = jsFunction->get(lexicalGlobalObject, Identifier::fromString(vm, "handleEvent"));
         if (UNLIKELY(scope.exception())) {
             auto* exception = scope.exception();
@@ -148,10 +151,12 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
         }
         callType = getCallData(vm, handleEventFunction, callData);
+        if (callType == CallType::None) {
+            event.target()->uncaughtExceptionInEventHandler();
+            reportException(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
+            return;
+        }
     }
-
-    if (callType == CallType::None)
-        return;
 
     Ref<JSEventListener> protectedThis(*this);
 
