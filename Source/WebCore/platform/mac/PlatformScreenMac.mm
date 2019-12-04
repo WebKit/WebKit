@@ -135,7 +135,7 @@ ScreenProperties collectScreenProperties()
         bool screenSupportsHighDynamicRange = false;
 
 #if USE(MEDIATOOLBOX)
-        if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+        if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
             screenSupportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
 #endif
 
@@ -365,7 +365,7 @@ bool screenSupportsHighDynamicRange(Widget* widget)
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 #if USE(MEDIATOOLBOX)
-    if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo()) {
+    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo()) {
         auto displayID = WebCore::displayID(screen(widget));
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
     }

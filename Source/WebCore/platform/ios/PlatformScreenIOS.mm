@@ -75,7 +75,7 @@ bool screenSupportsExtendedColor(Widget*)
 bool screenSupportsHighDynamicRange(Widget*)
 {
 #if USE(MEDIATOOLBOX)
-    if (PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo(nullptr);
 #endif
     return false;
