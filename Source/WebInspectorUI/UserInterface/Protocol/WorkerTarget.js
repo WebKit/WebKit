@@ -25,9 +25,9 @@
 
 WI.WorkerTarget = class WorkerTarget extends WI.Target
 {
-    constructor(parentTarget, workerId, name, connection)
+    constructor(parentTarget, workerId, name, connection, options = {})
     {
-        super(parentTarget, workerId, name, WI.TargetType.Worker, connection);
+        super(parentTarget, workerId, name, WI.TargetType.Worker, connection, options);
 
         const isPageContext = false;
         this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, isPageContext, null);

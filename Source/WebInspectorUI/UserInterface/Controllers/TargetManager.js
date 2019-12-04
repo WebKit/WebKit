@@ -33,9 +33,6 @@ WI.TargetManager = class TargetManager extends WI.Object
         this._cachedTargetsList = null;
         this._seenPageTarget = false;
         this._transitionTimeoutIdentifier = undefined;
-
-        this._provisionalTargetInfos = new Map;
-        this._swappedTargetIds = new Set;
     }
 
     // Public
@@ -120,91 +117,66 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     targetCreated(parentTarget, targetInfo)
     {
-        this._connectToTarget(parentTarget, targetInfo);
-
-        this.dispatchEventToListeners(WI.TargetManager.Event.TargetCreated, {targetInfo});
+        let connection = new InspectorBackend.TargetConnection(parentTarget, targetInfo.targetId);
+        let subTarget = this._createTarget(parentTarget, targetInfo, connection);
+        this._checkAndHandlePageTargetTransition(subTarget);
+        subTarget.initialize();
+        this.addTarget(subTarget);
     }
 
     didCommitProvisionalTarget(parentTarget, previousTargetId, newTargetId)
     {
-        this._destroyTarget(previousTargetId);
-        let targetInfo = this._provisionalTargetInfos.get(newTargetId);
-        console.assert(targetInfo);
-        targetInfo.isProvisional = false;
-        this._provisionalTargetInfos.delete(newTargetId);
-        this._connectToTarget(parentTarget, targetInfo);
-        console.assert(!this._swappedTargetIds.has(previousTargetId));
-        this._swappedTargetIds.add(previousTargetId);
+        this.targetDestroyed(previousTargetId);
+        let target = this._targets.get(newTargetId);
+        console.assert(target);
+        if (!target)
+            return;
 
-        this.dispatchEventToListeners(WI.TargetManager.Event.DidCommitProvisionalTarget, {previousTargetId, targetInfo});
+        target.didCommitProvisionalTarget();
+        this._checkAndHandlePageTargetTransition(target);
+        target.connection.dispatchProvisionalMessages();
+
+        this.dispatchEventToListeners(WI.TargetManager.Event.DidCommitProvisionalTarget, {previousTargetId, target});
     }
 
     targetDestroyed(targetId)
     {
-        this._destroyTarget(targetId);
+        let target = this._targets.get(targetId);
+        if (!target)
+            return;
 
-        this.dispatchEventToListeners(WI.TargetManager.Event.TargetDestroyed, {targetId});
+        this._checkAndHandlePageTargetTermination(target);
+        this.removeTarget(target);
     }
 
     dispatchMessageFromTarget(targetId, message)
     {
-        if (this._provisionalTargetInfos.has(targetId))
-            return;
-
         let target = this._targets.get(targetId);
         console.assert(target);
         if (!target)
             return;
 
-        target.connection.dispatch(message);
+        if (target.isProvisional)
+            target.connection.addProvisionalMessage(message);
+        else
+            target.connection.dispatch(message);
     }
 
     // Private
 
-    _connectToTarget(parentTarget, targetInfo)
-    {
-        console.assert(!this._provisionalTargetInfos.has(targetInfo.targetId));
-
-        // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` did not exist yet.
-        if (targetInfo.isProvisional) {
-            this._provisionalTargetInfos.set(targetInfo.targetId, targetInfo);
-            return;
-        }
-
-        console.assert(parentTarget.hasCommand("Target.sendMessageToTarget"));
-        let connection = new InspectorBackend.TargetConnection;
-        let subTarget = this._createTarget(parentTarget, targetInfo, connection);
-        this._checkAndHandlePageTargetTransition(subTarget);
-        subTarget.initialize();
-
-        this.addTarget(subTarget);
-    }
-
-    _destroyTarget(targetId)
-    {
-        if (this._provisionalTargetInfos.delete(targetId))
-            return;
-
-        if (this._swappedTargetIds.delete(targetId))
-            return;
-
-        let target = this._targets.get(targetId);
-        this._checkAndHandlePageTargetTermination(target);
-        this.removeTarget(target);
-    }
-
     _createTarget(parentTarget, targetInfo, connection)
     {
-        let {targetId, type} = targetInfo;
+        // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` and `Target.TargetInfo.isPaused` did not exist yet.
+        let {targetId, type, isProvisional, isPaused} = targetInfo;
 
         switch (type) {
         case InspectorBackend.Enum.Target.TargetInfoType.Page:
-            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection);
+            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection, {isProvisional, isPaused});
         case InspectorBackend.Enum.Target.TargetInfoType.Worker:
-            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("Worker"), connection);
+            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("Worker"), connection, {isPaused});
         case "serviceworker": // COMPATIBILITY (iOS 13): "serviceworker" was renamed to "service-worker".
         case InspectorBackend.Enum.Target.TargetInfoType.ServiceWorker:
-            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("ServiceWorker"), connection);
+            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("ServiceWorker"), connection, {isPaused});
         }
 
         throw "Unknown Target type: " + type;
@@ -213,6 +185,9 @@ WI.TargetManager = class TargetManager extends WI.Object
     _checkAndHandlePageTargetTransition(target)
     {
         if (target.type !== WI.TargetType.Page)
+            return;
+
+        if (target.isProvisional)
             return;
 
         // First page target.
@@ -229,6 +204,9 @@ WI.TargetManager = class TargetManager extends WI.Object
     _checkAndHandlePageTargetTermination(target)
     {
         if (target.type !== WI.TargetType.Page)
+            return;
+
+        if (target.isProvisional)
             return;
 
         console.assert(target === WI.pageTarget);
@@ -317,8 +295,5 @@ WI.TargetManager = class TargetManager extends WI.Object
 WI.TargetManager.Event = {
     TargetAdded: Symbol("target-manager-target-added"),
     TargetRemoved: Symbol("target-manager-target-removed"),
-
-    TargetCreated: "target-manager-target-created",
     DidCommitProvisionalTarget: "target-manager-provisional-target-committed",
-    TargetDestroyed: "target-manager-target-detroyed",
 };

@@ -39,6 +39,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         this._pendingResponses = new Map;
         this._deferredCallbacks = [];
         this._target = null;
+        this._provisionalMessages = [];
     }
 
     // Public
@@ -52,6 +53,20 @@ InspectorBackend.Connection = class InspectorBackendConnection
     {
         console.assert(!this._target);
         this._target = target;
+    }
+
+    addProvisionalMessage(message)
+    {
+        console.assert(this.target && this.target.isProvisional);
+        this._provisionalMessages.push(message);
+    }
+
+    dispatchProvisionalMessages()
+    {
+        console.assert(this.target && !this.target.isProvisional);
+        for (let message of this._provisionalMessages)
+            this.dispatch(message);
+        this._provisionalMessages = [];
     }
 
     dispatch(message)

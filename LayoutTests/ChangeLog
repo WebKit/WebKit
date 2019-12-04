@@ -1,3 +1,24 @@
+2019-12-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow inspector to pause provisional page load and restore its state
+        https://bugs.webkit.org/show_bug.cgi?id=204170
+
+        Reviewed by Devin Rousso.
+
+        Test that provisional loading which starts before previos provisional loading
+        commits will be correctly handled by the insepctor.
+
+        Test that script execution will break on debugger statement in inline scripts in
+        case of cross origin navigation and PSON.
+
+        * http/tests/inspector/target/pause-on-inline-debugger-statement-expected.txt: Added.
+        * http/tests/inspector/target/pause-on-inline-debugger-statement.html: Added.
+        * http/tests/inspector/target/provisional-load-cancels-previous-load-expected.txt: Added.
+        * http/tests/inspector/target/provisional-load-cancels-previous-load.html: Added.
+        * http/tests/inspector/target/resources/inline-debugger-statement.html: Added.
+        * http/tests/inspector/target/target-events-for-provisional-page-expected.txt:
+        * http/tests/inspector/target/target-events-for-provisional-page.html:
+
 2019-12-03  Megan Gardner  <megan_gardner@apple.com>
 
         Add disabled highlight API skeleton

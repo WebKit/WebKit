@@ -49,6 +49,8 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // TargetBackendDispatcherHandler
+    void setPauseOnStart(ErrorString&, bool pauseOnStart) override;
+    void resume(ErrorString&, const String& targetId) override;
     void sendMessageToTarget(ErrorString&, const String& targetId, const String& message) final;
 
     // Target lifecycle.
@@ -70,6 +72,7 @@ private:
     Ref<TargetBackendDispatcher> m_backendDispatcher;
     HashMap<String, InspectorTarget*> m_targets;
     bool m_isConnected { false };
+    bool m_shouldPauseOnStart { false };
 };
 
 } // namespace Inspector

@@ -1,3 +1,32 @@
+2019-12-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow inspector to pause provisional page load and restore its state
+        https://bugs.webkit.org/show_bug.cgi?id=204170
+
+        Reviewed by Devin Rousso.
+
+        Added an option to Target domain to pause all new targets on start waiting for
+        explicit 'resume' command from the inspector front-end. This allows to configure
+        inspector backend (including user agent overrides, breakpoints and instrumentation)
+        before navigation starts.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * inspector/InspectorTarget.cpp: Added.
+        (Inspector::InspectorTarget::pause):
+        (Inspector::InspectorTarget::resume):
+        (Inspector::InspectorTarget::setResumeCallback):
+        * inspector/InspectorTarget.h:
+        * inspector/agents/InspectorTargetAgent.cpp:
+        (Inspector::InspectorTargetAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorTargetAgent::setPauseOnStart):
+        (Inspector::InspectorTargetAgent::resume):
+        (Inspector::buildTargetInfoObject):
+        (Inspector::InspectorTargetAgent::targetCreated):
+        (Inspector::InspectorTargetAgent::targetDestroyed):
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/protocol/Target.json:
+
 2019-12-03  Saam Barati  <sbarati@apple.com>
 
         Remove "patch" struct from StructureStubInfo because it adds unnecessary padding

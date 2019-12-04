@@ -25,9 +25,10 @@
 
 WI.Target = class Target extends WI.Object
 {
-    constructor(parentTarget, identifier, name, type, connection)
+    constructor(parentTarget, identifier, name, type, connection, {isPaused, isProvisional} = {})
     {
         console.assert(parentTarget === null || parentTarget instanceof WI.Target);
+        console.assert(!isPaused || parentTarget.hasCommand("Target.setPauseOnStart"));
         super();
 
         this._parentTarget = parentTarget;
@@ -35,6 +36,8 @@ WI.Target = class Target extends WI.Object
         this._name = name;
         this._type = type;
         this._connection = connection;
+        this._isPaused = !!isPaused;
+        this._isProvisional = !!isProvisional;
         this._executionContext = null;
         this._mainResource = null;
         this._resourceCollection = new WI.ResourceCollection;
@@ -96,6 +99,20 @@ WI.Target = class Target extends WI.Object
             if (this.hasCommand("Inspector.initialized"))
                 this.InspectorAgent.initialized();
         });
+
+        if (this._isPaused) {
+            console.assert(this._parentTarget.hasCommand("Target.resume"));
+            this._parentTarget.TargetAgent.resume(this._identifier, (error) => {
+                if (error) {
+                    // Ignore errors if the target was destroyed after the command was sent.
+                    if (!this.isDestroyed)
+                        WI.reportInternalError(error);
+                    return;
+                }
+
+                this._isPaused = false;
+            });
+        }
     }
 
     activateExtraDomain(domainName)
@@ -176,6 +193,8 @@ WI.Target = class Target extends WI.Object
     get resourceCollection() { return this._resourceCollection; }
     get extraScriptCollection() { return this._extraScriptCollection; }
 
+    get isProvisional() { return this._isProvisional; }
+    get isPaused() { return this._isPaused; }
     get isDestroyed() { return this._isDestroyed; }
 
     get displayName() { return this._name; }
@@ -213,6 +232,12 @@ WI.Target = class Target extends WI.Object
         this._extraScriptCollection.add(script);
 
         this.dispatchEventToListeners(WI.Target.Event.ScriptAdded, {script});
+    }
+
+    didCommitProvisionalTarget()
+    {
+        console.assert(this._isProvisional);
+        this._isProvisional = false;
     }
 
     destroy()

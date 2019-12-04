@@ -6,11 +6,11 @@ Test that cross domain navigation results in the following sequence of events in
 
 == Running test suite: Target.PSON
 -- Running test case: ProvisionalPageTarget
-PASS: Should receive targetCreated event.
+PASS: Should receive TargetAdded event.
 PASS: Target should be provisional.
-PASS: Should receive didCommitProvisionalTarget event.
+PASS: Should receive TargetRemoved event.
+PASS: Destroyed target should be previous target.
+PASS: Should receive DidCommitProvisionalTarget event.
 PASS: Previous target should be the current one.
 PASS: Committed target should match provisional target.
-PASS: Should receive targetDestroyed event.
-PASS: Destroyed target should be previous target.
 

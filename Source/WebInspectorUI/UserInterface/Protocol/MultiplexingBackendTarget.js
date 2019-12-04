@@ -43,8 +43,11 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
 
     initialize()
     {
-        // Intentionally do nothing, including not calling super.
-        // No agents other than the TargetAgent, nothing to initialize.
+        // Intentionally not calling super. No agents other than the TargetAgent.
+
+        // COMPATIBILITY (iOS 13): Target.setPauseOnStart did not exist yet.
+        if (this.hasCommand("Target.setPauseOnStart"))
+            this.TargetAgent.setPauseOnStart(true);
     }
 
     // Protected (Target)

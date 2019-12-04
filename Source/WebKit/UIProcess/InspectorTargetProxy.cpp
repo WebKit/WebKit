@@ -69,6 +69,9 @@ void InspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType co
 
 void InspectorTargetProxy::disconnect()
 {
+    if (isPaused())
+        resume();
+
     if (m_provisionalPage) {
         m_provisionalPage->process().send(Messages::WebPage::DisconnectInspector(identifier()), m_provisionalPage->webPageID());
         return;

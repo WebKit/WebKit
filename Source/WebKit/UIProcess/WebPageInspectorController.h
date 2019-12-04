@@ -66,6 +66,9 @@ public:
     void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
+    bool shouldPauseLoading(const ProvisionalPageProxy&) const;
+    void setContinueLoadingCallback(const ProvisionalPageProxy&, WTF::Function<void()>&&);
+
     void didCreateProvisionalPage(ProvisionalPageProxy&);
     void willDestroyProvisionalPage(const ProvisionalPageProxy&);
     void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);

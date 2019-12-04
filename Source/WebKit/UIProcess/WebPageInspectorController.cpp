@@ -167,6 +167,23 @@ void WebPageInspectorController::sendMessageToInspectorFrontend(const String& ta
     m_targetAgent->sendMessageFromTargetToFrontend(targetId, message);
 }
 
+bool WebPageInspectorController::shouldPauseLoading(const ProvisionalPageProxy& provisionalPage) const
+{
+    if (!m_frontendRouter->hasFrontends())
+        return false;
+
+    auto* target = m_targets.get(getTargetID(provisionalPage));
+    ASSERT(target);
+    return target->isPaused();
+}
+
+void WebPageInspectorController::setContinueLoadingCallback(const ProvisionalPageProxy& provisionalPage, WTF::Function<void()>&& callback)
+{
+    auto* target = m_targets.get(getTargetID(provisionalPage));
+    ASSERT(target);
+    target->setResumeCallback(WTFMove(callback));
+}
+
 void WebPageInspectorController::didCreateProvisionalPage(ProvisionalPageProxy& provisionalPage)
 {
     addTarget(InspectorTargetProxy::create(provisionalPage, getTargetID(provisionalPage), Inspector::InspectorTargetType::Page));

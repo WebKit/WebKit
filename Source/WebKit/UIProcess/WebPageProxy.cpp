@@ -3097,28 +3097,34 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
 
     m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPage), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
 
-    if (auto* item = navigation.targetItem()) {
-        LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
+    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), newProcess = WTFMove(newProcess), websitePolicies = WTFMove(websitePolicies)]() mutable {
+        if (auto* item = navigation->targetItem()) {
+            LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
 
-        auto transaction = m_pageLoadState.transaction();
-        m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), item->url() });
+            auto transaction = m_pageLoadState.transaction();
+            m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), item->url() });
 
-        m_provisionalPage->goToBackForwardItem(navigation, *item, WTFMove(websitePolicies));
-        return;
-    }
+            m_provisionalPage->goToBackForwardItem(navigation, *item, WTFMove(websitePolicies));
+            return;
+        }
 
-    if (m_backForwardList->currentItem() && (navigation.lockBackForwardList() == LockBackForwardList::Yes || navigation.lockHistory() == LockHistory::Yes)) {
-        // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
-        // it instead of creating a new one.
-        newProcess->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_provisionalPage->webPageID());
-    }
+        if (m_backForwardList->currentItem() && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
+            // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
+            // it instead of creating a new one.
+            newProcess->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_provisionalPage->webPageID());
+        }
 
-    // FIXME: Work out timing of responding with the last policy delegate, etc
-    ASSERT(!navigation.currentRequest().isEmpty());
-    if (auto& substituteData = navigation.substituteData())
-        m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), WTFMove(websitePolicies));
+        // FIXME: Work out timing of responding with the last policy delegate, etc
+        ASSERT(!navigation->currentRequest().isEmpty());
+        if (auto& substituteData = navigation->substituteData())
+            m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), WTFMove(websitePolicies));
+        else
+            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, WTFMove(websitePolicies));
+    };
+    if (m_inspectorController->shouldPauseLoading(*m_provisionalPage))
+        m_inspectorController->setContinueLoadingCallback(*m_provisionalPage, WTFMove(continuation));
     else
-        m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, WTFMove(websitePolicies));
+        continuation();
 }
 
 bool WebPageProxy::isPageOpenedByDOMShowingInitialEmptyDocument() const

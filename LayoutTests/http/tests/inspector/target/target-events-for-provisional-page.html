@@ -13,28 +13,27 @@ function test()
         description: "Check that a new target will be created for provisional page.",
         test(resolve, reject) {
             const mainTargetId = WI.mainTarget.identifier;
-            let newTargetId;
+            let newTarget;
             InspectorTest.assert(mainTargetId);
             let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
 
-            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetCreated, (event) => {
-                let {targetInfo} = event.data;
-                newTargetId = targetInfo.targetId;
-                InspectorTest.pass(`Should receive targetCreated event.`);
-                InspectorTest.expectTrue(targetInfo.isProvisional, "Target should be provisional.");
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                newTarget = event.data.target;
+                InspectorTest.pass(`Should receive TargetAdded event.`);
+                InspectorTest.expectTrue(newTarget.isProvisional, "Target should be provisional.");
             });
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
-                let {previousTargetId, targetInfo} = event.data;
-                InspectorTest.pass(`Should receive didCommitProvisionalTarget event.`);
+                let {previousTargetId, target} = event.data;
+                InspectorTest.pass(`Should receive DidCommitProvisionalTarget event.`);
                 InspectorTest.expectEqual(previousTargetId, mainTargetId, "Previous target should be the current one.");
-                InspectorTest.expectEqual(targetInfo.targetId, newTargetId, "Committed target should match provisional target.");
+                InspectorTest.expectEqual(target, newTarget, "Committed target should match provisional target.");
             });
 
-            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetDestroyed, (event) =>{
-                let {targetId} = event.data;
-                InspectorTest.pass(`Should receive targetDestroyed event.`);
-                InspectorTest.expectEqual(targetId, mainTargetId, "Destroyed target should be previous target.");
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) =>{
+                let target = event.data.target;
+                InspectorTest.pass(`Should receive TargetRemoved event.`);
+                InspectorTest.expectEqual(target.identifier, mainTargetId, "Destroyed target should be previous target.");
 
                 // Wait for page reload event to avoid race between test results flushing and the test completion.
                 reloadPromise.then(resolve);
