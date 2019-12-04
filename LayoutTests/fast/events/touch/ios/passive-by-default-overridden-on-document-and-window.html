@@ -1,90 +1,83 @@
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
+touchEndEventCount = 0;
 
-function getUIScript()
-{
-    return `
-    (function() {
-        uiController.dragFromPointToPoint(50, 250, 50, 30, 0.1, function() {
-            uiController.uiScriptComplete("Done");
-        });
-    })();`
-}
-
-function runTest()
+async function runTest()
 {
     let output = "";
     window.addEventListener("touchstart", function(event) {
         event.preventDefault();
-        output += `touchstart on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchstart on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false });
 
     window.addEventListener("touchmove", function(event) {
         event.preventDefault();
-        output += `touchmove on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchmove on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false, "once": true });
 
     window.addEventListener("touchend", function(event) {
         event.preventDefault();
-        output += `touchend on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchend on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
+        touchEndEventCount++;
     }, { "passive": false });
 
     document.addEventListener("touchstart", function(event) {
         event.preventDefault();
-        output += `touchstart on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchstart on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false });
 
     document.addEventListener("touchmove", function(event) {
         event.preventDefault();
-        output += `touchmove on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchmove on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false, "once": true });
 
     document.addEventListener("touchend", function(event) {
         event.preventDefault();
-        output += `touchend on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchend on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
+        touchEndEventCount++;
     }, { "passive": false });
 
     document.documentElement.addEventListener("touchstart", function(event) {
         event.preventDefault();
-        output += `touchstart on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchstart on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false });
 
     document.documentElement.addEventListener("touchmove", function(event) {
         event.preventDefault();
-        output += `touchmove on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchmove on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false, "once": true });
 
     document.documentElement.addEventListener("touchend", function(event) {
         event.preventDefault();
-        output += `touchend on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchend on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
+        touchEndEventCount++;
     }, { "passive": false });
 
     let body = document.querySelector("body");
 
     body.addEventListener("touchstart", function(event) {
         event.preventDefault();
-        output += `touchstart on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchstart on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false });
 
     body.addEventListener("touchmove", function(event) {
         event.preventDefault();
-        output += `touchmove on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchmove on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
     }, { "passive": false, "once": true });
 
     body.addEventListener("touchend", function(event) {
         event.preventDefault();
-        output += `touchend on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+        testPassed(`touchend on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented}`);
+        touchEndEventCount++;
     }, { "passive": false });
 
-    if (testRunner.runUIScript) {
-        testRunner.runUIScript(getUIScript(), function(result) {
-            output += result;
-            document.getElementById("output").innerHTML = output;
-            testRunner.notifyDone();
-        });
+    if (window.testRunner && testRunner.runUIScript) {
+        description("This test verifies that active touchstart and touchend event listeners can be added to document, window, documentElement, and body. This test requires WebKitTestRunner.");
+        await UIHelper.dragFromPointToPoint(50, 250, 50, 30, 0.1);
+        await new Promise(resolve => shouldBecomeEqual("touchEndEventCount", "4", resolve));
+        finishJSTest();
     }
 }
 

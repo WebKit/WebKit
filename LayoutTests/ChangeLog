@@ -1,3 +1,29 @@
+2019-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adopt UIHelper in a few more layout tests in fast/events
+        https://bugs.webkit.org/show_bug.cgi?id=204855
+
+        Reviewed by Darin Adler.
+
+        Fixes and cleans up some more layout tests; see below for details.
+
+        * fast/events/ios/touch-events-during-scroll-deceleration-in-overflow.html:
+
+        Use async-await here, as well as UIHelper.dragFromPointToPoint.
+
+        * fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks-expected.txt:
+        * fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks.html:
+
+        This test sometimes times out when run in rapid succession, due to touches being dispatched while the test is
+        finishing. Fix this (and also simplify the test) by using UIHelper instead to synthesize taps, and only finish
+        the layout test after the expected number of clicks have been observed and all tap gestures have been sent.
+
+        * fast/events/touch/ios/passive-by-default-overridden-on-document-and-window-expected.txt:
+        * fast/events/touch/ios/passive-by-default-overridden-on-document-and-window.html:
+
+        This test currently fails due to finishing too early, before the touchend event is observed; fix this by waiting
+        for touchend events before finishing the test.
+
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html is a flakey failure, WebAssembly.Global is not implemented

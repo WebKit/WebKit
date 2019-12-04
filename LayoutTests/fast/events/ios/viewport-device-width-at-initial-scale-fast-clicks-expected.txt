@@ -1,12 +1,8 @@
+PASS Dispatched three clicks.
 PASS successfullyParsed is true
 
 TEST COMPLETE
 
-Repeatedly tapping on the button should fire click events.
+This test verifies that repeatedly tapping a button when the viewport is at initial scale dispatches click events instead of only causing the user to zoom. To manually run the test, tap the button several quickly; the button should be clicked multiple times, without waiting for a ~300 ms delay between each tap.
 
-This test is best run in WebKitTestRunner. If you are running this test manually, verify that tapping the button causes a "Click!" message to appear below, and that click occurred without the regular 350ms delay for double tapping.
-
-Click!
-Click!
-Click!
-
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
