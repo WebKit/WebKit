@@ -1,3 +1,17 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawRect::decode):
+        (WebCore::DisplayList::DrawPath::decode):
+        (WebCore::DisplayList::FillRect::decode):
+        (WebCore::DisplayList::FillRectWithColor::decode):
+        (WebCore::DisplayList::FillCompositedRect::decode):
+        (WebCore::DisplayList::FillPath::decode):
+        (WebCore::DisplayList::ClearRect::decode):
+        Some deleted stuff leaked into the patch.
+
 2019-12-03  Daniel Bates  <dabates@apple.com>
 
         Remove unused DragController::client()

@@ -955,12 +955,7 @@ Optional<Ref<DrawRect>> DrawRect::decode(Decoder& decoder)
     if (!borderThickness)
         return WTF::nullopt;
 
-    auto item = DrawRect::create(*rect, *borderThickness);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return DrawRect::create(*rect, *borderThickness);
 }
 
 class DrawLine : public DrawingItem {
@@ -1113,12 +1108,7 @@ Optional<Ref<DrawPath>> DrawPath::decode(Decoder& decoder)
     if (!path)
         return WTF::nullopt;
 
-    auto item = DrawPath::create(*path);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return DrawPath::create(*path);
 }
 
 class DrawFocusRingPath : public DrawingItem {
@@ -1222,12 +1212,7 @@ Optional<Ref<FillRect>> FillRect::decode(Decoder& decoder)
     if (!rect)
         return WTF::nullopt;
 
-    auto item = FillRect::create(*rect);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return FillRect::create(*rect);
 }
 
 // FIXME: Make these inherit from FillRect proper.
@@ -1276,12 +1261,7 @@ Optional<Ref<FillRectWithColor>> FillRectWithColor::decode(Decoder& decoder)
     if (!color)
         return WTF::nullopt;
 
-    auto item = FillRectWithColor::create(*rect, *color);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return FillRectWithColor::create(*rect, *color);
 }
 
 class FillRectWithGradient : public DrawingItem {
@@ -1369,12 +1349,7 @@ Optional<Ref<FillCompositedRect>> FillCompositedRect::decode(Decoder& decoder)
     if (!blendMode)
         return WTF::nullopt;
 
-    auto item = FillCompositedRect::create(*rect, *color, *op, *blendMode);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return FillCompositedRect::create(*rect, *color, *op, *blendMode);
 }
 
 class FillRoundedRect : public DrawingItem {
@@ -1470,12 +1445,7 @@ Optional<Ref<FillPath>> FillPath::decode(Decoder& decoder)
     if (!path)
         return WTF::nullopt;
 
-    auto item = FillPath::create(*path);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return FillPath::create(*path);
 }
 
 class FillEllipse : public DrawingItem {
@@ -1608,12 +1578,7 @@ Optional<Ref<ClearRect>> ClearRect::decode(Decoder& decoder)
     if (!rect)
         return WTF::nullopt;
 
-    auto item = ClearRect::create(*rect);
-
-    if (!decodeForDrawingItem(decoder, item.get()))
-        return WTF::nullopt;
-
-    return item;
+    return ClearRect::create(*rect);
 }
 
 #if USE(CG)
