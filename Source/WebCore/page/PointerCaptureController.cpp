@@ -150,7 +150,7 @@ void PointerCaptureController::elementWasRemoved(Element& element)
             auto pointerId = static_cast<PointerID>(keyAndValue.key);
             auto pointerType = capturingData.pointerType;
             releasePointerCapture(&element, pointerId);
-            // FIXME: Spec doesn't specify which task soruce to use.
+            // FIXME: Spec doesn't specify which task source to use.
             element.document().queueTaskToDispatchEvent(TaskSource::UserInteraction, PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
             return;
         }
