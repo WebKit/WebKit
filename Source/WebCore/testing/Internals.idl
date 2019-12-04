@@ -815,4 +815,6 @@ enum CompositingPolicy {
     [Conditional=WEB_AUTHN] void setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration configuration);
 
     [Conditional=PICTURE_IN_PICTURE_API] void setPictureInPictureAPITestEnabled(HTMLVideoElement videoElement, boolean enabled);
+
+    InternalsSetLike createInternalsSetLike();
 };

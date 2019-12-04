@@ -1618,6 +1618,10 @@ sub GetFullyQualifiedImplementationCallName
         return "forward" . $codeGenerator->WK_ucfirst($property->name) . "ToMapLike";
     }
     
+    if ($property->isSetLike) {
+        return "forward" . $codeGenerator->WK_ucfirst($property->name) . "ToSetLike";
+    }
+
     return "${implExpression}.${implementationName}";
 }
 
@@ -1629,7 +1633,7 @@ sub AddAdditionalArgumentsForImplementationCall
         unshift(@$arguments, $implExpression);
     }
     
-    if ($property->isMapLike) {
+    if ($property->isMapLike or $property->isSetLike) {
         push(@$arguments, $globalObject);
         if (ref($property) eq "IDLOperation") {
             push(@$arguments, $callFrame);
@@ -1766,6 +1770,7 @@ sub IsAcceleratedDOMAttribute
 
     return 0 if $attribute->isStatic;
     return 0 if $attribute->isMapLike;
+    return 0 if $attribute->isSetLike;
     return 0 if $codeGenerator->IsConstructorType($attribute->type);
     return 0 if IsJSBuiltin($interface, $attribute);
     return 0 if $attribute->extendedAttributes->{LenientThis};
@@ -1846,6 +1851,7 @@ sub PrototypeOperationCount
 
     $count += scalar @{$interface->iterable->operations} if $interface->iterable;
     $count += scalar @{$interface->mapLike->operations} if $interface->mapLike;
+    $count += scalar @{$interface->setLike->operations} if $interface->setLike;
     $count += scalar @{$interface->serializable->operations} if $interface->serializable;
 
     return $count;
@@ -3103,6 +3109,7 @@ sub GeneratePropertiesHashTable
 
     my @attributes = @{$interface->attributes};
     push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
+    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
 
     foreach my $attribute (@attributes) {
         next if ($attribute->isStatic);
@@ -3148,6 +3155,7 @@ sub GeneratePropertiesHashTable
     my @operations = @{$interface->operations};
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
+    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
     push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
     foreach my $operation (@operations) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
@@ -3900,7 +3908,7 @@ sub InterfaceNeedsIterator
 {
     my ($interface) = @_;
 
-    # FIXME: This should return 1 for setlike once we support it.
+    return 1 if $interface->setLike;
     return 1 if $interface->mapLike;
     return 1 if $interface->iterable;
 
@@ -3937,6 +3945,7 @@ sub GenerateImplementation
     AddToImplIncludes("<wtf/PointerPreparations.h>");
     AddToImplIncludes("<JavaScriptCore/PropertyNameArray.h>") if $indexedGetterOperation;
     AddToImplIncludes("JSDOMMapLike.h") if $interface->mapLike;
+    AddToImplIncludes("JSDOMSetLike.h") if $interface->setLike;
     AddJSBuiltinIncludesIfNeeded($interface);
 
     my $implType = GetImplClassName($interface);
@@ -3952,10 +3961,12 @@ sub GenerateImplementation
     my @operations = @{$interface->operations};
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
+    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
     push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
 
     my @attributes = @{$interface->attributes};
     push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
+    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
 
     my $numConstants = @{$interface->constants};
     my $numOperations = @operations;
@@ -4306,7 +4317,7 @@ sub GenerateImplementation
 
         if (InterfaceNeedsIterator($interface)) {
             AddToImplIncludes("<JavaScriptCore/BuiltinNames.h>");
-            if (IsKeyValueIterableInterface($interface) or $interface->mapLike) {
+            if (IsKeyValueIterableInterface($interface) or $interface->mapLike or $interface->setLike) {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
                 AddToImplIncludes("<JavaScriptCore/ArrayPrototype.h>");
@@ -4937,7 +4948,7 @@ sub GenerateAttributeGetterBodyDefinition
 
         my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)" : "*thisObject.globalObject()";
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", $globalObjectReference);
-        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike or $attribute->isSetLike;
 
         if (!IsReadonly($attribute)) {
             my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
@@ -5268,7 +5279,7 @@ sub GenerateOperationBodyDefinition
     } elsif (HasCustomMethod($operation)) {
         GenerateImplementationCustomFunctionCall($outputArray, $operation, $interface, $className, $functionImplementationName, $indent);
     } else {
-        if (!$operation->isMapLike && !$operation->isStatic) {
+        if (!$operation->isMapLike && !$operation->isSetLike && !$operation->isStatic) {
             push(@$outputArray, "    auto& impl = castedThis->wrapped();\n");
         }
 
@@ -7333,6 +7344,7 @@ sub GetRuntimeEnabledStaticProperties
 
     my @attributes = @{$interface->attributes};
     push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
+    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
 
     foreach my $attribute (@attributes) {
         next if AttributeShouldBeOnInstance($interface, $attribute) != 0;
@@ -7346,6 +7358,7 @@ sub GetRuntimeEnabledStaticProperties
     my @operations = @{$interface->operations};
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
+    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
     push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
     foreach my $operation (@operations) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});

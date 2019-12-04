@@ -108,6 +108,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "InternalSettings.h"
+#include "InternalsSetLike.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSImageData.h"
 #include "LegacySchemeRegistry.h"
@@ -5290,6 +5291,11 @@ void Internals::setMaxCanvasPixelMemory(unsigned size)
 int Internals::processIdentifier() const
 {
     return getCurrentProcessID();
+}
+
+Ref<InternalsSetLike> Internals::createInternalsSetLike()
+{
+    return InternalsSetLike::create();
 }
 
 } // namespace WebCore

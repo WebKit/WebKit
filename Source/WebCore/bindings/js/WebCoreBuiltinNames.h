@@ -247,6 +247,7 @@ namespace WebCore {
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
     macro(backingMap) \
+    macro(backingSet) \
     macro(blur) \
     macro(body) \
     macro(byobRequest) \

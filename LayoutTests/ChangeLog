@@ -1,3 +1,13 @@
+2019-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Add support for WebIDL setlike
+        https://bugs.webkit.org/show_bug.cgi?id=159140
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/setlike-expected.txt: Added.
+        * js/dom/setlike.html: Added.
+
 2019-12-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow inspector to pause provisional page load and restore its state

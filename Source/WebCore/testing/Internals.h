@@ -76,6 +76,7 @@ class HTMLVideoElement;
 class ImageData;
 class InspectorStubFrontend;
 class InternalSettings;
+class InternalsSetLike;
 class MallocStatistics;
 class MediaSession;
 class MediaStream;
@@ -904,6 +905,8 @@ public:
 #endif
 
     int processIdentifier() const;
+
+    Ref<InternalsSetLike> createInternalsSetLike();
 
 private:
     explicit Internals(Document&);

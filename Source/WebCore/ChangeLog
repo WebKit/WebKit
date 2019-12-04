@@ -1,3 +1,183 @@
+2019-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Add support for WebIDL setlike
+        https://bugs.webkit.org/show_bug.cgi?id=159140
+
+        Reviewed by Chris Dumez.
+
+        Add preliminary support for https://heycam.github.io/webidl/#idl-setlike in the binding generator and IDL parser.
+        A setlike JS wrapper owns a JSSet as a private slot that mirrors values owned by the wrapped object.
+        forEach support is still missing.
+
+        A DOM class implementing setlike must currently implement the following methods:
+        - initializeSetLike
+        - addFromSetLike
+        - removeFromSetLike
+
+        Added an internals class implementing setlike to test it.
+        Also covered by binding tests.
+
+        Test: js/dom/setlike.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMSetLike.cpp: Added.
+        (WebCore::getBackingSet):
+        (WebCore::clearBackingSet):
+        (WebCore::addToBackingSet):
+        (WebCore::forwardAttributeGetterToBackingSet):
+        (WebCore::forwardFunctionCallToBackingSet):
+        * bindings/js/JSDOMSetLike.h: Added.
+        (WebCore::DOMSetAdapter::DOMSetAdapter):
+        (WebCore::DOMSetAdapter::add):
+        (WebCore::DOMSetAdapter::clear):
+        (WebCore::DOMSetAdapter::globalObject const):
+        (WebCore::getAndInitializeBackingSet):
+        (WebCore::forwardSizeToSetLike):
+        (WebCore::forwardEntriesToSetLike):
+        (WebCore::forwardKeysToSetLike):
+        (WebCore::forwardValuesToSetLike):
+        (WebCore::forwardHasToSetLike):
+        (WebCore::forwardClearToSetLike):
+        (WebCore::forwardAddToSetLike):
+        (WebCore::forwardDeleteToSetLike):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFullyQualifiedImplementationCallName):
+        (AddAdditionalArgumentsForImplementationCall):
+        (IsAcceleratedDOMAttribute):
+        (PrototypeOperationCount):
+        (GeneratePropertiesHashTable):
+        (InterfaceNeedsIterator):
+        (GenerateImplementation):
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+        (GetRuntimeEnabledStaticProperties):
+        * bindings/scripts/IDLParser.pm:
+        (cloneOperation):
+        (applyTypedefs):
+        (parseOperationOrReadWriteAttributeOrMaplike):
+        (parseReadOnlyMember):
+        (parseOperation):
+        (parseSetLikeRest):
+        (parseSetLikeProperties):
+        (applyMemberList):
+        * bindings/scripts/test/JS/JSReadOnlySetLike.cpp: Added.
+        (WebCore::JSReadOnlySetLikePrototype::create):
+        (WebCore::JSReadOnlySetLikePrototype::createStructure):
+        (WebCore::JSReadOnlySetLikePrototype::JSReadOnlySetLikePrototype):
+        (WebCore::JSReadOnlySetLikeConstructor::prototypeForStructure):
+        (WebCore::JSReadOnlySetLikeConstructor::initializeProperties):
+        (WebCore::JSReadOnlySetLikePrototype::finishCreation):
+        (WebCore::JSReadOnlySetLike::JSReadOnlySetLike):
+        (WebCore::JSReadOnlySetLike::finishCreation):
+        (WebCore::JSReadOnlySetLike::createPrototype):
+        (WebCore::JSReadOnlySetLike::prototype):
+        (WebCore::JSReadOnlySetLike::getConstructor):
+        (WebCore::JSReadOnlySetLike::destroy):
+        (WebCore::IDLAttribute<JSReadOnlySetLike>::cast):
+        (WebCore::IDLOperation<JSReadOnlySetLike>::cast):
+        (WebCore::jsReadOnlySetLikeConstructor):
+        (WebCore::setJSReadOnlySetLikeConstructor):
+        (WebCore::jsReadOnlySetLikeSizeGetter):
+        (WebCore::jsReadOnlySetLikeSize):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionHasBody):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionHas):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionEntriesBody):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionEntries):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionKeysBody):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionKeys):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionValuesBody):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionValues):
+        (WebCore::JSReadOnlySetLike::analyzeHeap):
+        (WebCore::JSReadOnlySetLikeOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSReadOnlySetLikeOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSReadOnlySetLike::toWrapped):
+        * bindings/scripts/test/JS/JSReadOnlySetLike.h: Added.
+        (WebCore::JSReadOnlySetLike::create):
+        (WebCore::JSReadOnlySetLike::createStructure):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSSetLike.cpp: Added.
+        (WebCore::JSSetLikePrototype::create):
+        (WebCore::JSSetLikePrototype::createStructure):
+        (WebCore::JSSetLikePrototype::JSSetLikePrototype):
+        (WebCore::JSSetLikeConstructor::prototypeForStructure):
+        (WebCore::JSSetLikeConstructor::initializeProperties):
+        (WebCore::JSSetLikePrototype::finishCreation):
+        (WebCore::JSSetLike::JSSetLike):
+        (WebCore::JSSetLike::finishCreation):
+        (WebCore::JSSetLike::createPrototype):
+        (WebCore::JSSetLike::prototype):
+        (WebCore::JSSetLike::getConstructor):
+        (WebCore::JSSetLike::destroy):
+        (WebCore::IDLAttribute<JSSetLike>::cast):
+        (WebCore::IDLOperation<JSSetLike>::cast):
+        (WebCore::jsSetLikeConstructor):
+        (WebCore::setJSSetLikeConstructor):
+        (WebCore::jsSetLikeSizeGetter):
+        (WebCore::jsSetLikeSize):
+        (WebCore::jsSetLikePrototypeFunctionHasBody):
+        (WebCore::jsSetLikePrototypeFunctionHas):
+        (WebCore::jsSetLikePrototypeFunctionEntriesBody):
+        (WebCore::jsSetLikePrototypeFunctionEntries):
+        (WebCore::jsSetLikePrototypeFunctionKeysBody):
+        (WebCore::jsSetLikePrototypeFunctionKeys):
+        (WebCore::jsSetLikePrototypeFunctionValuesBody):
+        (WebCore::jsSetLikePrototypeFunctionValues):
+        (WebCore::jsSetLikePrototypeFunctionAddBody):
+        (WebCore::jsSetLikePrototypeFunctionAdd):
+        (WebCore::jsSetLikePrototypeFunctionClearBody):
+        (WebCore::jsSetLikePrototypeFunctionClear):
+        (WebCore::jsSetLikePrototypeFunctionDeleteBody):
+        (WebCore::jsSetLikePrototypeFunctionDelete):
+        (WebCore::JSSetLike::analyzeHeap):
+        (WebCore::JSSetLikeOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSSetLikeOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSSetLike::toWrapped):
+        * bindings/scripts/test/JS/JSSetLike.h: Added.
+        (WebCore::JSSetLike::create):
+        (WebCore::JSSetLike::createStructure):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectTestReadOnlySetLikeConstructorGetter):
+        (WebCore::jsTestGlobalObjectTestReadOnlySetLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestReadOnlySetLikeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectTestReadOnlySetLikeConstructor):
+        (WebCore::jsTestGlobalObjectTestSetLikeConstructorGetter):
+        (WebCore::jsTestGlobalObjectTestSetLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestSetLikeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectTestSetLikeConstructor):
+        * bindings/scripts/test/TestReadOnlySetLike.idl: Added.
+        * bindings/scripts/test/TestSetLike.idl: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::createInternalsSetLike):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/InternalsSetLike.cpp: Added.
+        (WebCore::InternalsSetLike::InternalsSetLike):
+        (WebCore::InternalsSetLike::initializeSetLike):
+        * testing/InternalsSetLike.h: Added.
+        (WebCore::InternalsSetLike::create):
+        (WebCore::InternalsSetLike::clearFromSetLike):
+        (WebCore::InternalsSetLike::removeFromSetLike):
+        (WebCore::InternalsSetLike::items const):
+        (WebCore::InternalsSetLike::addToSetLike):
+        * testing/InternalsSetLike.idl: Added.
+
 2019-12-04  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
 
         Implement OffscreenCanvas.transferToImageBitmap

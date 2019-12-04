@@ -79,11 +79,13 @@
 #include "JSTestOverrideBuiltins.h"
 #include "JSTestPluginInterface.h"
 #include "JSTestReadOnlyMapLike.h"
+#include "JSTestReadOnlySetLike.h"
 #include "JSTestReportExtraMemoryCost.h"
 #include "JSTestSerialization.h"
 #include "JSTestSerializationIndirectInheritance.h"
 #include "JSTestSerializationInherit.h"
 #include "JSTestSerializationInheritFinal.h"
+#include "JSTestSetLike.h"
 #include "JSTestStringifier.h"
 #include "JSTestStringifierAnonymousOperation.h"
 #include "JSTestStringifierNamedOperation.h"
@@ -256,6 +258,8 @@ JSC::EncodedJSValue jsTestGlobalObjectTestPluginInterfaceConstructor(JSC::JSGlob
 bool setJSTestGlobalObjectTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestGlobalObjectTestReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectTestReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestSerializationConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -270,6 +274,8 @@ bool setJSTestGlobalObjectTestSerializationInheritFinalConstructor(JSC::JSGlobal
 JSC::EncodedJSValue jsTestGlobalObjectTestSerializedScriptValueInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestSerializedScriptValueInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
+JSC::EncodedJSValue jsTestGlobalObjectTestSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectTestSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestStringifierAnonymousOperationConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -305,7 +311,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 50, -1 },
+    { 51, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -313,7 +319,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 61, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -333,7 +339,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 64, -1 },
+    { 66, -1 },
     { 9, 258 },
     { -1, -1 },
     { -1, -1 },
@@ -377,7 +383,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 57, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -386,7 +392,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { 20, 256 },
     { -1, -1 },
-    { 56, -1 },
+    { 58, -1 },
     { 15, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -417,7 +423,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 54, -1 },
+    { 55, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -432,7 +438,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 50, -1 },
     { -1, -1 },
     { 10, -1 },
     { -1, -1 },
@@ -450,7 +456,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 62, -1 },
+    { 64, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -467,7 +473,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { 12, 257 },
     { -1, -1 },
-    { 57, -1 },
+    { 59, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -480,7 +486,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { 13, -1 },
     { -1, -1 },
-    { 60, -1 },
+    { 62, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -499,7 +505,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 52, -1 },
+    { 53, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -524,7 +530,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { 46, -1 },
     { 7, 260 },
     { -1, -1 },
-    { 58, -1 },
+    { 60, -1 },
     { -1, -1 },
     { 44, -1 },
     { -1, -1 },
@@ -553,11 +559,11 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { 36, -1 },
     { 38, -1 },
     { 40, -1 },
-    { 51, -1 },
-    { 53, -1 },
-    { 55, -1 },
-    { 59, -1 },
-    { 63, -1 },
+    { 52, -1 },
+    { 54, -1 },
+    { 56, -1 },
+    { 61, -1 },
+    { 65, -1 },
 };
 
 
@@ -625,6 +631,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestOverrideBuiltins", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestOverrideBuiltinsConstructor) } },
     { "TestPluginInterface", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestPluginInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestPluginInterfaceConstructor) } },
     { "TestReadOnlyMapLike", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestReadOnlyMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestReadOnlyMapLikeConstructor) } },
+    { "TestReadOnlySetLike", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestReadOnlySetLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestReadOnlySetLikeConstructor) } },
     { "TestReportExtraMemoryCost", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestReportExtraMemoryCostConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestReportExtraMemoryCostConstructor) } },
     { "TestSerialization", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestSerializationConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestSerializationConstructor) } },
     { "TestSerializationIndirectInheritance", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestSerializationIndirectInheritanceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestSerializationIndirectInheritanceConstructor) } },
@@ -635,6 +642,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+    { "TestSetLike", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestSetLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestSetLikeConstructor) } },
     { "TestStringifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestStringifierConstructor) } },
     { "TestStringifierAnonymousOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestStringifierAnonymousOperationConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestStringifierAnonymousOperationConstructor) } },
     { "TestStringifierNamedOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestStringifierNamedOperationConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestStringifierNamedOperationConstructor) } },
@@ -646,7 +654,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestGlobalObjectInstanceFunctionRegularOperation), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 65, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 67, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
@@ -2142,6 +2150,31 @@ bool setJSTestGlobalObjectTestReadOnlyMapLikeConstructor(JSGlobalObject* lexical
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestReadOnlyMapLikeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestReadOnlyMapLike");
 }
 
+static inline JSValue jsTestGlobalObjectTestReadOnlySetLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestReadOnlySetLike::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+EncodedJSValue jsTestGlobalObjectTestReadOnlySetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestReadOnlySetLikeConstructorGetter>(*lexicalGlobalObject, thisValue, "TestReadOnlySetLike");
+}
+
+static inline bool setJSTestGlobalObjectTestReadOnlySetLikeConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    VM& vm = throwScope.vm();
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestReadOnlySetLike"), strlen("TestReadOnlySetLike")), value);
+}
+
+bool setJSTestGlobalObjectTestReadOnlySetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestReadOnlySetLikeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestReadOnlySetLike");
+}
+
 static inline JSValue jsTestGlobalObjectTestReportExtraMemoryCostConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -2297,6 +2330,31 @@ bool setJSTestGlobalObjectTestSerializedScriptValueInterfaceConstructor(JSGlobal
 }
 
 #endif
+
+static inline JSValue jsTestGlobalObjectTestSetLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestSetLike::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+EncodedJSValue jsTestGlobalObjectTestSetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestSetLikeConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSetLike");
+}
+
+static inline bool setJSTestGlobalObjectTestSetLikeConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    VM& vm = throwScope.vm();
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSetLike"), strlen("TestSetLike")), value);
+}
+
+bool setJSTestGlobalObjectTestSetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestSetLikeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSetLike");
+}
 
 static inline JSValue jsTestGlobalObjectTestStringifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
 {
