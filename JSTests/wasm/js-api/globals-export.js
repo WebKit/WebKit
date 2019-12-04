@@ -25,4 +25,4 @@ bin.trim();
 
 const module = new WebAssembly.Module(bin.get());
 const instance = new WebAssembly.Instance(module, { imp: { global: 5 } });
-assert.eq(instance.exports.global, 5);
+assert.eq(instance.exports.global.value, 5);

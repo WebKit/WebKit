@@ -215,12 +215,12 @@ function makeFuncrefIdent() {
     fullGC();
 
     assert.eq($1.exports.get_import()(), 1337)
-    assert.eq($1.exports.expglob, null)
-    assert.eq($1.exports.expglob2(), 1337)
-    assert.eq($1.exports.exp_glob_is_null, $1.exports.glob_is_null);
+    assert.eq($1.exports.expglob.value, null)
+    assert.eq($1.exports.expglob2.value(), 1337)
+    assert.eq($1.exports.exp_glob_is_null.value, $1.exports.glob_is_null);
     assert.eq($1.exports.get_glob(), null)
 
-    $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob(), myfun); assert.eq($1.exports.get_glob()(), 42); assert.eq($1.exports.expglob2(), 1337)
+    $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob(), myfun); assert.eq($1.exports.get_glob()(), 42); assert.eq($1.exports.expglob2.value(), 1337)
     $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null)
     $1.exports.set_glob(myfun); assert.eq($1.exports.get_glob()(), 42);
 

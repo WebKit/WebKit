@@ -8,5 +8,5 @@ PASS Calling
 PASS Empty module 
 PASS getter order for imports object 
 PASS imports 
-FAIL exports WebAssembly.Module doesn't parse at byte 87: 3th Export isn't immutable, named 'global' (evaluating 'new WebAssembly.Module(buffer)')
+FAIL exports assert_false: fn: writable expected false got true
 

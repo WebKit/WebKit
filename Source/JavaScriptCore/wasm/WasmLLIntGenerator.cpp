@@ -31,6 +31,7 @@
 #include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeStructs.h"
 #include "InstructionStream.h"
+#include "JSCJSValueInlines.h"
 #include "Label.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
@@ -763,18 +764,37 @@ auto LLIntGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRe
 
 auto LLIntGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
+    const Wasm::GlobalInformation& global = m_info.globals[index];
     result = push();
-    WasmGetGlobal::emit(this, result, index);
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        WasmGetGlobal::emit(this, result, index);
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable:
+        WasmGetGlobalPortableBinding::emit(this, result, index);
+        break;
+    }
     return { };
 }
 
 auto LLIntGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
-    Type type = m_info.globals[index].type;
-    if (isSubtype(type, Anyref))
-        WasmSetGlobalRef::emit(this, index, value);
-    else
-        WasmSetGlobal::emit(this, index, value);
+    const Wasm::GlobalInformation& global = m_info.globals[index];
+    Type type = global.type;
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        if (isSubtype(type, Anyref))
+            WasmSetGlobalRef::emit(this, index, value);
+        else
+            WasmSetGlobal::emit(this, index, value);
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable:
+        if (isSubtype(type, Anyref))
+            WasmSetGlobalRefPortableBinding::emit(this, index, value);
+        else
+            WasmSetGlobalPortableBinding::emit(this, index, value);
+        break;
+    }
     return { };
 }
 

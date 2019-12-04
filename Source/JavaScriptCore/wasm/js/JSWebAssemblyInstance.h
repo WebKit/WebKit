@@ -28,8 +28,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "JSObject.h"
 #include "JSWebAssemblyCodeBlock.h"
+#include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
 #include "WasmCreationMode.h"
@@ -48,7 +48,7 @@ class CodeBlock;
 
 class JSWebAssemblyInstance final : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
 
     static Identifier createPrivateModuleKey();
 
@@ -78,6 +78,13 @@ public:
         ASSERT(!table(index));
         m_tables[index].set(vm, this, value);
         instance().setTable(index, makeRef(*table(index)->table()));
+    }
+
+    void linkGlobal(VM& vm, uint32_t index, JSWebAssemblyGlobal* value)
+    {
+        ASSERT(value == value->global()->owner<JSWebAssemblyGlobal>());
+        instance().linkGlobal(index, makeRef(*value->global()));
+        vm.heap.writeBarrier(this, value);
     }
 
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }

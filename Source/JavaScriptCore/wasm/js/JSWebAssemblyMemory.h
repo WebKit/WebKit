@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "JSObject.h"
 #include "WasmMemory.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -40,7 +39,7 @@ class JSArrayBuffer;
 
 class JSWebAssemblyMemory final : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

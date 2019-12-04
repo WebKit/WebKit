@@ -1819,6 +1819,7 @@
 		E36B767022F8D61900D09818 /* WasmOMGForOSREntryPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = E36B766F22F8D61100D09818 /* WasmOMGForOSREntryPlan.h */; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
 		E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */ = {isa = PBXBuildFile; fileRef = E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
@@ -1838,6 +1839,9 @@
 		E3AC277721FDB4940024452C /* RegExpCachedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BD2B7522F275020011765C /* WasmCompilationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF1BAD238AAED1003A1C2B /* IsoHeapCellType.h */; };
+		E3BF3C4D2390D1E8008BC752 /* JSWebAssemblyGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF3C4B2390D1E2008BC752 /* JSWebAssemblyGlobal.h */; };
+		E3BF3C522390D202008BC752 /* WebAssemblyGlobalPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF3C502390D1FC008BC752 /* WebAssemblyGlobalPrototype.h */; };
+		E3BF3C532390D205008BC752 /* WebAssemblyGlobalConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF3C512390D1FC008BC752 /* WebAssemblyGlobalConstructor.h */; };
 		E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
@@ -4953,6 +4957,8 @@
 		E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationMode.cpp; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
+		E38350082390D9370036316D /* WasmGlobal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmGlobal.cpp; sourceTree = "<group>"; };
+		E38350092390D9370036316D /* WasmGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmGlobal.h; sourceTree = "<group>"; };
 		E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedIDInlines.h; path = dfg/DFGMinifiedIDInlines.h; sourceTree = "<group>"; };
 		E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockDirectoryBits.h; sourceTree = "<group>"; };
 		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
@@ -4985,6 +4991,12 @@
 		E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargetsInlines.h; sourceTree = "<group>"; };
 		E3BD2B7522F275020011765C /* WasmCompilationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCompilationMode.h; sourceTree = "<group>"; };
 		E3BF1BAD238AAED1003A1C2B /* IsoHeapCellType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsoHeapCellType.h; sourceTree = "<group>"; };
+		E3BF3C4B2390D1E2008BC752 /* JSWebAssemblyGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyGlobal.h; path = js/JSWebAssemblyGlobal.h; sourceTree = "<group>"; };
+		E3BF3C4C2390D1E3008BC752 /* JSWebAssemblyGlobal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyGlobal.cpp; path = js/JSWebAssemblyGlobal.cpp; sourceTree = "<group>"; };
+		E3BF3C4E2390D1FC008BC752 /* WebAssemblyGlobalConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyGlobalConstructor.cpp; path = js/WebAssemblyGlobalConstructor.cpp; sourceTree = "<group>"; };
+		E3BF3C4F2390D1FC008BC752 /* WebAssemblyGlobalPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyGlobalPrototype.cpp; path = js/WebAssemblyGlobalPrototype.cpp; sourceTree = "<group>"; };
+		E3BF3C502390D1FC008BC752 /* WebAssemblyGlobalPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyGlobalPrototype.h; path = js/WebAssemblyGlobalPrototype.h; sourceTree = "<group>"; };
+		E3BF3C512390D1FC008BC752 /* WebAssemblyGlobalConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyGlobalConstructor.h; path = js/WebAssemblyGlobalConstructor.h; sourceTree = "<group>"; };
 		E3BFA5CB21E853A0009C0EBA /* DFGDesiredGlobalProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredGlobalProperties.cpp; path = dfg/DFGDesiredGlobalProperties.cpp; sourceTree = "<group>"; };
 		E3BFA5CC21E853A0009C0EBA /* DFGDesiredGlobalProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredGlobalProperties.h; path = dfg/DFGDesiredGlobalProperties.h; sourceTree = "<group>"; };
 		E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredGlobalProperty.h; path = dfg/DFGDesiredGlobalProperty.h; sourceTree = "<group>"; };
@@ -6799,6 +6811,8 @@
 				14C5AD6B22F33FC000F1FB83 /* WasmFunctionCodeBlock.h */,
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
 				1487CE16237741000044429C /* WasmGeneratorTraits.h */,
+				E38350082390D9370036316D /* WasmGlobal.cpp */,
+				E38350092390D9370036316D /* WasmGlobal.h */,
 				AD8FF3961EB5BD850087FF82 /* WasmIndexOrName.cpp */,
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
 				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
@@ -8613,6 +8627,8 @@
 				AD9E852E1E8A0C6E008DE39E /* JSWebAssemblyCodeBlock.h */,
 				AD2FCBA61DB58DA400B3E736 /* JSWebAssemblyCompileError.cpp */,
 				AD2FCBA71DB58DA400B3E736 /* JSWebAssemblyCompileError.h */,
+				E3BF3C4C2390D1E3008BC752 /* JSWebAssemblyGlobal.cpp */,
+				E3BF3C4B2390D1E2008BC752 /* JSWebAssemblyGlobal.h */,
 				796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */,
 				AD2FCBA81DB58DA400B3E736 /* JSWebAssemblyInstance.cpp */,
 				AD2FCBA91DB58DA400B3E736 /* JSWebAssemblyInstance.h */,
@@ -8636,6 +8652,10 @@
 				AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */,
 				521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */,
 				521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */,
+				E3BF3C4E2390D1FC008BC752 /* WebAssemblyGlobalConstructor.cpp */,
+				E3BF3C512390D1FC008BC752 /* WebAssemblyGlobalConstructor.h */,
+				E3BF3C4F2390D1FC008BC752 /* WebAssemblyGlobalPrototype.cpp */,
+				E3BF3C502390D1FC008BC752 /* WebAssemblyGlobalPrototype.h */,
 				AD2FCBB41DB58DA400B3E736 /* WebAssemblyInstanceConstructor.cpp */,
 				AD2FCBB51DB58DA400B3E736 /* WebAssemblyInstanceConstructor.h */,
 				AD2FCBB61DB58DA400B3E736 /* WebAssemblyInstancePrototype.cpp */,
@@ -9389,6 +9409,8 @@
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
 				0FEC3C571F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.h in Headers */,
+				CECFAD372372DAD400291599 /* FileBasedFuzzerAgent.h in Headers */,
+				CE20BD05237D3E230046E520 /* FileBasedFuzzerAgentBase.h in Headers */,
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
@@ -9455,6 +9477,7 @@
 				62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */,
 				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
 				E33A94972255323300D42B06 /* FuzzerAgent.h in Headers */,
+				CECFAD362372DAD000291599 /* FuzzerPredictions.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
 				0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */,
@@ -9606,7 +9629,6 @@
 				A18193E41B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h in Headers */,
 				A1587D6E1B4DC14100D69849 /* IntlDateTimeFormat.h in Headers */,
 				A1587D701B4DC14100D69849 /* IntlDateTimeFormatConstructor.h in Headers */,
-				CE20BD05237D3E230046E520 /* FileBasedFuzzerAgentBase.h in Headers */,
 				A1587D751B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h in Headers */,
 				A1587D721B4DC14100D69849 /* IntlDateTimeFormatPrototype.h in Headers */,
 				A1587D761B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h in Headers */,
@@ -9838,6 +9860,7 @@
 				AD5C36EB1F75AD73000BCAAF /* JSWebAssembly.h in Headers */,
 				AD9E852F1E8A0C7C008DE39E /* JSWebAssemblyCodeBlock.h in Headers */,
 				AD2FCBE31DB58DAD00B3E736 /* JSWebAssemblyCompileError.h in Headers */,
+				E3BF3C4D2390D1E8008BC752 /* JSWebAssemblyGlobal.h in Headers */,
 				796FB43A1DFF8C3F0039C95D /* JSWebAssemblyHelpers.h in Headers */,
 				AD2FCBE51DB58DAD00B3E736 /* JSWebAssemblyInstance.h in Headers */,
 				ADE802991E08F1DE0058DE78 /* JSWebAssemblyLinkError.h in Headers */,
@@ -9903,7 +9926,6 @@
 				0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
-				CE20BD07237D3E480046E520 /* PredictionFileCreatingFuzzerAgent.h in Headers */,
 				0F7DF1351E2970DC0095951B /* MarkedSpaceInlines.h in Headers */,
 				0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */,
 				0F660E3A1E0517C10031462C /* MarkingConstraintSet.h in Headers */,
@@ -9982,6 +10004,7 @@
 				0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */,
 				0F98206116BFE38300240D02 /* PreciseJumpTargets.h in Headers */,
 				E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */,
+				CE20BD07237D3E480046E520 /* PredictionFileCreatingFuzzerAgent.h in Headers */,
 				0FBB73B81DEF3AAE002C009E /* PreventCollectionScope.h in Headers */,
 				FE63DD541EA9B61E00103A69 /* Printer.h in Headers */,
 				868916B0155F286300CB2B9A /* PrivateName.h in Headers */,
@@ -10020,7 +10043,6 @@
 				534E03561E53BEDE00213F64 /* ProxyableAccessCase.h in Headers */,
 				79B00CBD1C6AB07E0088C65D /* ProxyConstructor.h in Headers */,
 				79B00CBF1C6AB07E0088C65D /* ProxyObject.h in Headers */,
-				CECFAD372372DAD400291599 /* FileBasedFuzzerAgent.h in Headers */,
 				79160DBE1C8E3EC8008C085A /* ProxyRevoke.h in Headers */,
 				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
 				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
@@ -10099,7 +10121,6 @@
 				FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */,
 				0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
-				CECFAD362372DAD000291599 /* FuzzerPredictions.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */,
 				A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */,
@@ -10248,6 +10269,7 @@
 				7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */,
 				1450FA1C2357BDBE0093CD4D /* WasmFunctionCodeBlock.h in Headers */,
 				53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */,
+				E383500A2390D93B0036316D /* WasmGlobal.h in Headers */,
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
 				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
@@ -10306,6 +10328,8 @@
 				AD2FCC171DB59CB200B3E736 /* WebAssemblyCompileErrorPrototype.lut.h in Headers */,
 				AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */,
 				521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */,
+				E3BF3C532390D205008BC752 /* WebAssemblyGlobalConstructor.h in Headers */,
+				E3BF3C522390D202008BC752 /* WebAssemblyGlobalPrototype.h in Headers */,
 				AD2FCBF11DB58DAD00B3E736 /* WebAssemblyInstanceConstructor.h in Headers */,
 				AD2FCC181DB59CB200B3E736 /* WebAssemblyInstanceConstructor.lut.h in Headers */,
 				AD2FCBF31DB58DAD00B3E736 /* WebAssemblyInstancePrototype.h in Headers */,

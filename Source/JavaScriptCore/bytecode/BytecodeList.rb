@@ -1345,6 +1345,24 @@ op :set_global_ref,
         value: VirtualRegister,
     }
 
+op :get_global_portable_binding,
+    args: {
+        dst: VirtualRegister,
+        globalIndex: unsigned,
+    }
+
+op :set_global_portable_binding,
+    args: {
+        globalIndex: unsigned,
+        value: VirtualRegister,
+    }
+
+op :set_global_ref_portable_binding,
+    args: {
+        globalIndex: unsigned,
+        value: VirtualRegister,
+    }
+
 op :table_get,
     args: {
         dst: VirtualRegister,

@@ -137,7 +137,11 @@ class JSRunLoopTimer;
 class JSWeakMap;
 class JSWeakSet;
 class JSWebAssemblyCodeBlock;
+class JSWebAssemblyGlobal;
 class JSWebAssemblyInstance;
+class JSWebAssemblyMemory;
+class JSWebAssemblyModule;
+class JSWebAssemblyTable;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class ObjCCallbackFunction;
@@ -372,6 +376,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
     std::unique_ptr<IsoHeapCellType<WebAssemblyFunction>> webAssemblyFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyGlobal>> webAssemblyGlobalHeapCellType;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
@@ -466,6 +471,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyMemorySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyWrapperFunctionSpace)
 #endif

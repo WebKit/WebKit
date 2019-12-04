@@ -94,6 +94,11 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
         visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 
+    for (size_t i : thisObject->instance().globalsToBinding()) {
+        Wasm::Global* binding = thisObject->instance().getGlobalBinding(i);
+        if (binding)
+            visitor.appendUnbarriered(binding->owner<JSWebAssemblyGlobal>());
+    }
     for (size_t i : thisObject->instance().globalsToMark())
         visitor.appendUnbarriered(JSValue::decode(thisObject->instance().loadI64Global(i)));
 

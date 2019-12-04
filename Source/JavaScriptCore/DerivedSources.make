@@ -175,6 +175,8 @@ OBJECT_LUT_HEADERS = \
     SymbolPrototype.lut.h \
     WebAssemblyCompileErrorConstructor.lut.h \
     WebAssemblyCompileErrorPrototype.lut.h \
+    WebAssemblyGlobalConstructor.lut.h \
+    WebAssemblyGlobalPrototype.lut.h \
     WebAssemblyInstanceConstructor.lut.h \
     WebAssemblyInstancePrototype.lut.h \
     WebAssemblyLinkErrorConstructor.lut.h \

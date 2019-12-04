@@ -136,10 +136,11 @@ auto SectionParser::parseImport() -> PartialResult
             break;
         }
         case ExternalKind::Global: {
-            Global global;
+            GlobalInformation global;
             WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
-            WASM_PARSER_FAIL_IF(global.mutability == Global::Mutable, "Mutable Globals aren't supported");
-
+            // Only mutable globals need floating bindings.
+            if (global.mutability == GlobalInformation::Mutability::Mutable)
+                global.bindingMode = GlobalInformation::BindingMode::Portable;
             kindIndex = m_info->globals.size();
             m_info->globals.uncheckedAppend(WTFMove(global));
             break;
@@ -285,18 +286,18 @@ auto SectionParser::parseGlobal() -> PartialResult
     WASM_PARSER_FAIL_IF((static_cast<uint32_t>(totalBytes) < globalCount) || !m_info->globals.tryReserveCapacity(totalBytes), "can't allocate memory for ", totalBytes, " globals");
 
     for (uint32_t globalIndex = 0; globalIndex < globalCount; ++globalIndex) {
-        Global global;
+        GlobalInformation global;
         uint8_t initOpcode;
 
         WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
         Type typeForInitOpcode;
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, global.initialBitsOrImportNumber, typeForInitOpcode));
         if (initOpcode == GetGlobal)
-            global.initializationType = Global::FromGlobalImport;
+            global.initializationType = GlobalInformation::FromGlobalImport;
         else if (initOpcode == RefFunc)
-            global.initializationType = Global::FromRefFunc;
+            global.initializationType = GlobalInformation::FromRefFunc;
         else
-            global.initializationType = Global::FromExpression;
+            global.initializationType = GlobalInformation::FromExpression;
         WASM_PARSER_FAIL_IF(!isSubtype(typeForInitOpcode, global.type), "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
 
         m_info->globals.uncheckedAppend(WTFMove(global));
@@ -343,7 +344,10 @@ auto SectionParser::parseExport() -> PartialResult
         }
         case ExternalKind::Global: {
             WASM_PARSER_FAIL_IF(kindIndex >= m_info->globals.size(), exportNumber, "th Export has invalid global number ", kindIndex, " it exceeds the globals count ", m_info->globals.size(), ", named '", fieldString, "'");
-            WASM_PARSER_FAIL_IF(m_info->globals[kindIndex].mutability != Global::Immutable, exportNumber, "th Export isn't immutable, named '", fieldString, "'");
+            // Only mutable globals need floating bindings.
+            GlobalInformation& global = m_info->globals[kindIndex];
+            if (global.mutability == GlobalInformation::Mutability::Mutable)
+                global.bindingMode = GlobalInformation::BindingMode::Portable;
             break;
         }
         }
@@ -465,7 +469,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         WASM_PARSER_FAIL_IF(index >= m_info->globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info->globals.size());
         WASM_PARSER_FAIL_IF(index >= m_info->firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info->firstInternalGlobal);
 
-        ASSERT(m_info->globals[index].mutability == Global::Immutable);
+        ASSERT(m_info->globals[index].mutability == GlobalInformation::Immutable);
         resultType = m_info->globals[index].type;
         bitsOrImportNumber = index;
         break;
@@ -498,12 +502,12 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     return { };
 }
 
-auto SectionParser::parseGlobalType(Global& global) -> PartialResult
+auto SectionParser::parseGlobalType(GlobalInformation& global) -> PartialResult
 {
     uint8_t mutability;
     WASM_PARSER_FAIL_IF(!parseValueType(global.type), "can't get Global's value type");
     WASM_PARSER_FAIL_IF(!parseVarUInt1(mutability), "can't get Global type's mutability");
-    global.mutability = static_cast<Global::Mutability>(mutability);
+    global.mutability = static_cast<GlobalInformation::Mutability>(mutability);
     return { };
 }
 

@@ -47,8 +47,9 @@ size_t globalMemoryByteSize(Module& module)
 Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
     : m_context(context)
     , m_module(WTFMove(module))
-    , m_globals(MallocPtr<GlobalValue>::malloc(globalMemoryByteSize(m_module.get())))
+    , m_globals(MallocPtr<Global::Value>::malloc(globalMemoryByteSize(m_module.get())))
     , m_globalsToMark(m_module.get().moduleInformation().globals.size())
+    , m_globalsToBinding(m_module.get().moduleInformation().globals.size())
     , m_pointerToTopEntryFrame(pointerToTopEntryFrame)
     , m_pointerToActualStackLimit(pointerToActualStackLimit)
     , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
@@ -58,8 +59,14 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         new (importFunctionInfo(i)) ImportFunctionInfo();
     memset(static_cast<void*>(m_globals.get()), 0, globalMemoryByteSize(m_module.get()));
     for (unsigned i = 0; i < m_module->moduleInformation().globals.size(); ++i) {
-        if (isSubtype(m_module.get().moduleInformation().globals[i].type, Anyref))
+        const Wasm::GlobalInformation& global = m_module.get().moduleInformation().globals[i];
+        if (global.bindingMode == Wasm::GlobalInformation::BindingMode::Portable) {
+            // This is kept alive by JSWebAssemblyInstance -> JSWebAssemblyGlobal -> binding.
+            m_globalsToBinding.set(i);
+        } else if (isSubtype(global.type, Anyref)) {
+            // This is kept alive by JSWebAssemblyInstance -> binding.
             m_globalsToMark.set(i);
+        }
     }
     memset(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, 0), 0, m_module->moduleInformation().tableCount() * sizeof(Table*));
 }
@@ -78,8 +85,16 @@ size_t Instance::extraMemoryAllocated() const
 
 void Instance::setGlobal(unsigned i, JSValue value)
 {
+    Global::Value* slot = m_globals.get() + i;
+    if (m_globalsToBinding.get(i)) {
+        Wasm::Global* global = getGlobalBinding(i);
+        if (!global)
+            return;
+        global->valuePointer()->m_anyref.set(owner<JSWebAssemblyInstance>()->vm(), global->owner<JSWebAssemblyGlobal>(), value);
+        return;
+    }
     ASSERT(m_owner);
-    m_globals.get()[i].anyref.set(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
+    slot->m_anyref.set(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value);
 }
 
 JSValue Instance::getFunctionWrapper(unsigned i) const
@@ -111,6 +126,12 @@ void Instance::setTable(unsigned i, Ref<Table>&& table)
     RELEASE_ASSERT(i < m_module->moduleInformation().tableCount());
     ASSERT(!this->table(i));
     *bitwise_cast<Table**>(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, i)) = &table.leakRef();
+}
+
+void Instance::linkGlobal(unsigned i, Ref<Global>&& global)
+{
+    m_globals.get()[i].m_pointer = global->valuePointer();
+    m_linkedGlobals.set(i, WTFMove(global));
 }
 
 } } // namespace JSC::Wasm

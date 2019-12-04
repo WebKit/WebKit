@@ -66,8 +66,6 @@ const EXPECT_INVALID = false;
 
 /* DATA **********************************************************************/
 
-let soft_validate = true;
-
 let $$;
 
 // Default imports.
@@ -78,14 +76,25 @@ function reinitializeRegistry() {
     if (typeof WebAssembly === 'undefined')
         return;
 
-    registry = {
-        spectest: {
-            print: print,
-            global: 666,
-            table: new WebAssembly.Table({initial: 10, maximum: 20, element: 'funcref'}),
-            memory: new WebAssembly.Memory({initial: 1, maximum: 2})
-        }
+    let spectest = {
+        print: console.log.bind(console),
+        print_i32: console.log.bind(console),
+        print_i32_f32: console.log.bind(console),
+        print_f64_f64: console.log.bind(console),
+        print_f32: console.log.bind(console),
+        print_f64: console.log.bind(console),
+        global_i32: 666,
+        global_f32: 666,
+        global_f64: 666,
+        table: new WebAssembly.Table({initial: 10, maximum: 20, element: 'anyfunc'}),
+        memory: new WebAssembly.Memory({initial: 1, maximum: 2})
     };
+    let handler = {
+        get(target, prop) {
+        return (prop in target) ?  target[prop] : {};
+      }
+    };
+    registry = new Proxy({spectest}, handler);
 }
 
 reinitializeRegistry();
@@ -116,7 +125,6 @@ function module(bytes, valid = true) {
 
     if (validated !== valid) {
         // Try to get a more precise error message from the WebAssembly.CompileError.
-        let err = '';
         try {
             new WebAssembly.Module(buffer);
         } catch (e) {
@@ -157,19 +165,6 @@ function assert_invalid(bytes) {
 
 const assert_malformed = assert_invalid;
 
-function assert_soft_invalid(bytes) {
-    uniqueTest(() => {
-        try {
-            module(bytes, /* valid */ soft_validate);
-            if (soft_validate)
-                throw new Error('did not fail');
-        } catch(e) {
-            if (soft_validate)
-                assert_true(e instanceof WebAssembly.CompileError, "expected soft invalid failure:");
-        }
-    }, "A wast module that *could* be invalid under certain engines.");
-}
-
 function instance(bytes, imports = registry, valid = true) {
     if (imports instanceof Result) {
         if (imports.isError())
@@ -190,7 +185,6 @@ function instance(bytes, imports = registry, valid = true) {
     if (valid) {
         uniqueTest(() => {
             let instantiated = err === null;
-            if (!instantiated) print(err);
             assert_true(instantiated, err);
         }, "module successfully instantiated");
     }
@@ -230,7 +224,10 @@ function get(instance, name) {
     if (instance.isError())
         return instance;
 
-    return ValueResult(instance.value.exports[name]);
+    let value = instance.value.exports[name];
+    if (value instanceof WebAssembly.Global)
+        value = value.value;
+    return ValueResult(value);
 }
 
 function exports(name, instance) {
@@ -243,7 +240,6 @@ function exports(name, instance) {
 }
 
 function run(action) {
-    print("running new test: " + (new Error()).stack);
     let result = action();
 
     _assert(result instanceof Result);
@@ -312,6 +308,7 @@ function assert_exhaustion(action) {
         }
     }, "A wast module that must exhaust the stack space.");
 }
+
 
 function assert_return(action, ...expectedValues) {
     if (expectedValues[0] instanceof Result) {

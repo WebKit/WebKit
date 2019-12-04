@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyLinkError.h"
@@ -228,34 +229,73 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
 
         case Wasm::ExternalKind::Global: {
             // 5. If i is a global import:
-            // i. If i is not an immutable global, throw a TypeError.
-            ASSERT(moduleInformation.globals[import.kindIndex].mutability == Wasm::Global::Immutable);
-            // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
-            if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-            if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Anyref) && !value.isNumber())
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
-            // iii. Append ToWebAssemblyValue(v) to imports.
-            switch (moduleInformation.globals[import.kindIndex].type) {
-            case Wasm::Funcref:
-                if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
-                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
-                m_instance->instance().setGlobal(import.kindIndex, value);
-                break;
-            case Wasm::Anyref:
-                m_instance->instance().setGlobal(import.kindIndex, value);
-                break;
-            case Wasm::I32:
-                m_instance->instance().setGlobal(import.kindIndex, value.toInt32(globalObject));
-                break;
-            case Wasm::F32:
-                m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
-                break;
-            case Wasm::F64:
-                m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
+            const Wasm::GlobalInformation& global = moduleInformation.globals[import.kindIndex];
+            if (global.mutability == Wasm::GlobalInformation::Immutable) {
+                if (value.inherits<JSWebAssemblyGlobal>(vm)) {
+                    JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
+                    if (globalValue->global()->type() != global.type)
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
+                    if (globalValue->global()->mutability() != Wasm::GlobalInformation::Immutable)
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
+                    switch (moduleInformation.globals[import.kindIndex].type) {
+                    case Wasm::Funcref:
+                        value = globalValue->global()->get();
+                        if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
+                        m_instance->instance().setGlobal(import.kindIndex, value);
+                        break;
+                    case Wasm::Anyref:
+                        value = globalValue->global()->get();
+                        m_instance->instance().setGlobal(import.kindIndex, value);
+                        break;
+                    case Wasm::I32:
+                    case Wasm::I64:
+                    case Wasm::F32:
+                    case Wasm::F64:
+                        m_instance->instance().setGlobal(import.kindIndex, globalValue->global()->getPrimitive());
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                } else {
+                    // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
+                    if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be an i64")));
+                    if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Anyref) && !value.isNumber())
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
+
+                    // iii. Append ToWebAssemblyValue(v) to imports.
+                    switch (moduleInformation.globals[import.kindIndex].type) {
+                    case Wasm::Funcref:
+                        if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
+                            return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
+                        m_instance->instance().setGlobal(import.kindIndex, value);
+                        break;
+                    case Wasm::Anyref:
+                        m_instance->instance().setGlobal(import.kindIndex, value);
+                        break;
+                    case Wasm::I32:
+                        m_instance->instance().setGlobal(import.kindIndex, value.toInt32(globalObject));
+                        break;
+                    case Wasm::F32:
+                        m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
+                        break;
+                    case Wasm::F64:
+                        m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                }
+            } else {
+                if (!value.inherits<JSWebAssemblyGlobal>(vm))
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a WebAssembly.Global object since it is mutable")));
+                JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
+                if (globalValue->global()->type() != global.type)
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
+                if (globalValue->global()->mutability() != global.mutability)
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
+                m_instance->linkGlobal(vm, import.kindIndex, globalValue);
             }
             scope.assertNoException();
             break;
@@ -365,16 +405,32 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
     {
         for (size_t globalIndex = moduleInformation.firstInternalGlobal; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
             const auto& global = moduleInformation.globals[globalIndex];
-            ASSERT(global.initializationType != Wasm::Global::IsImport);
-            if (global.initializationType == Wasm::Global::FromGlobalImport) {
+            ASSERT(global.initializationType != Wasm::GlobalInformation::IsImport);
+            uint64_t initialBits = 0;
+            if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
                 ASSERT(global.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
-                m_instance->instance().setGlobal(globalIndex, m_instance->instance().loadI64Global(global.initialBitsOrImportNumber));
-            } else if (global.initializationType == Wasm::Global::FromRefFunc) {
+                initialBits = m_instance->instance().loadI64Global(global.initialBitsOrImportNumber);
+            } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
                 ASSERT(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber).isFunction(vm));
-                m_instance->instance().setGlobal(globalIndex, JSValue::encode(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber)));
+                initialBits = JSValue::encode(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber));
             } else
-                m_instance->instance().setGlobal(globalIndex, global.initialBitsOrImportNumber);
+                initialBits = global.initialBitsOrImportNumber;
+
+            switch (global.bindingMode) {
+            case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
+                m_instance->instance().setGlobal(globalIndex, initialBits);
+                break;
+            }
+            case Wasm::GlobalInformation::BindingMode::Portable: {
+                ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+                Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::GlobalInformation::Mutability::Mutable, initialBits);
+                JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                m_instance->linkGlobal(vm, globalIndex, globalValue);
+                keepAlive(bitwise_cast<void*>(initialBits)); // Ensure this is kept alive while creating JSWebAssemblyGlobal.
+                break;
+            }
+            }
         }
     }
 
@@ -404,32 +460,32 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             break;
         }
         case Wasm::ExternalKind::Global: {
-            // Assert: the global is immutable by MVP validation constraint.
-            const Wasm::Global& global = moduleInformation.globals[exp.kindIndex];
-            ASSERT(global.mutability == Wasm::Global::Immutable);
-            // Return ToJSValue(v).
+            const Wasm::GlobalInformation& global = moduleInformation.globals[exp.kindIndex];
             switch (global.type) {
             case Wasm::Anyref:
             case Wasm::Funcref:
-                exportedValue = JSValue::decode(m_instance->instance().loadI64Global(exp.kindIndex));
-                break;
-
             case Wasm::I32:
-                exportedValue = JSValue(m_instance->instance().loadI32Global(exp.kindIndex));
-                break;
-
             case Wasm::I64:
-                throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, "exported global cannot be an i64"_s));
-                return;
-
             case Wasm::F32:
-                exportedValue = jsNumber(purifyNaN(m_instance->instance().loadF32Global(exp.kindIndex)));
+            case Wasm::F64: {
+                // If global is immutable, we are not creating a binding internally.
+                // But we need to create a binding just to export it. This binding is not actually connected. But this is OK since it is immutable.
+                if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {
+                    uint64_t initialValue = m_instance->instance().loadI64Global(exp.kindIndex);
+                    Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
+                    exportedValue = JSWebAssemblyGlobal::create(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                } else {
+                    ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+                    RefPtr<Wasm::Global> globalRef = m_instance->instance().getGlobalBinding(exp.kindIndex);
+                    ASSERT(globalRef);
+                    ASSERT(globalRef->type() == global.type);
+                    ASSERT(globalRef->mutability() == global.mutability);
+                    ASSERT(globalRef->mutability() == Wasm::GlobalInformation::Mutability::Mutable);
+                    ASSERT(globalRef->owner<JSWebAssemblyGlobal>());
+                    exportedValue = globalRef->owner<JSWebAssemblyGlobal>();
+                }
                 break;
-
-            case Wasm::F64:
-                exportedValue = jsNumber(purifyNaN(m_instance->instance().loadF64Global(exp.kindIndex)));
-                break;
-
+            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }

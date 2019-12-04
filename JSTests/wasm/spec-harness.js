@@ -27,7 +27,13 @@ let assert_unreached = () => {
     throw new Error("Should have been unreachable");
 };
 
+let console = {
+    log(...args) {
+        print(...args);
+    }
+};
+
 // This is run from the spec-tests directory
-load("../spec-harness/index.js");
+load("../spec-harness/sync_index.js");
 load("../spec-harness/wasm-constants.js");
 load("../spec-harness/wasm-module-builder.js");

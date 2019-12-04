@@ -177,6 +177,8 @@ $(PROJECT_DIR)/wasm/generateWasmValidateInlinesHeader.py
 $(PROJECT_DIR)/wasm/js/JSWebAssembly.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorPrototype.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyGlobalConstructor.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyGlobalPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyInstanceConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyInstancePrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyLinkErrorConstructor.cpp

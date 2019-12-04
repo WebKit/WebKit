@@ -1201,7 +1201,8 @@ auto AirIRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRe
 
 auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
-    Type type = m_info.globals[index].type;
+    const Wasm::GlobalInformation& global = m_info.globals[index];
+    Type type = global.type;
 
     result = tmpForType(type);
 
@@ -1211,13 +1212,29 @@ auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
 
     int32_t offset = safeCast<int32_t>(index * sizeof(Register));
-    if (Arg::isValidAddrForm(offset, B3::widthForType(toB3Type(type))))
-        append(moveOpForValueType(type), Arg::addr(temp, offset), result);
-    else {
-        auto temp2 = g64();
-        append(Move, Arg::bigImm(offset), temp2);
-        append(Add64, temp2, temp, temp);
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        if (Arg::isValidAddrForm(offset, B3::widthForType(toB3Type(type))))
+            append(moveOpForValueType(type), Arg::addr(temp, offset), result);
+        else {
+            auto temp2 = g64();
+            append(Move, Arg::bigImm(offset), temp2);
+            append(Add64, temp2, temp, temp);
+            append(moveOpForValueType(type), Arg::addr(temp), result);
+        }
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable:
+        ASSERT(global.mutability == Mutable);
+        if (Arg::isValidAddrForm(offset, B3::Width64))
+            append(Move, Arg::addr(temp, offset), temp);
+        else {
+            auto temp2 = g64();
+            append(Move, Arg::bigImm(offset), temp2);
+            append(Add64, temp2, temp, temp);
+            append(Move, Arg::addr(temp), temp);
+        }
         append(moveOpForValueType(type), Arg::addr(temp), result);
+        break;
     }
     return { };
 }
@@ -1229,20 +1246,80 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
     RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfGlobals(), B3::Width64));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
 
-    Type type = m_info.globals[index].type;
+    const Wasm::GlobalInformation& global = m_info.globals[index];
+    Type type = global.type;
 
     int32_t offset = safeCast<int32_t>(index * sizeof(Register));
-    if (Arg::isValidAddrForm(offset, B3::widthForType(toB3Type(type))))
-        append(moveOpForValueType(type), value, Arg::addr(temp, offset));
-    else {
-        auto temp2 = g64();
-        append(Move, Arg::bigImm(offset), temp2);
-        append(Add64, temp2, temp, temp);
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        if (Arg::isValidAddrForm(offset, B3::widthForType(toB3Type(type))))
+            append(moveOpForValueType(type), value, Arg::addr(temp, offset));
+        else {
+            auto temp2 = g64();
+            append(Move, Arg::bigImm(offset), temp2);
+            append(Add64, temp2, temp, temp);
+            append(moveOpForValueType(type), value, Arg::addr(temp));
+        }
+        if (isSubtype(type, Anyref))
+            emitWriteBarrierForJSWrapper();
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable:
+        ASSERT(global.mutability == Mutable);
+        if (Arg::isValidAddrForm(offset, B3::Width64))
+            append(Move, Arg::addr(temp, offset), temp);
+        else {
+            auto temp2 = g64();
+            append(Move, Arg::bigImm(offset), temp2);
+            append(Add64, temp2, temp, temp);
+            append(Move, Arg::addr(temp), temp);
+        }
         append(moveOpForValueType(type), value, Arg::addr(temp));
-    }
+        // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
+        if (isSubtype(type, Anyref)) {
+            auto cell = g64();
+            auto vm = g64();
+            auto cellState = g32();
+            auto threshold = g32();
 
-    if (isSubtype(type, Anyref))
-        emitWriteBarrierForJSWrapper();
+            BasicBlock* fenceCheckPath = m_code.addBlock();
+            BasicBlock* fencePath = m_code.addBlock();
+            BasicBlock* doSlowPath = m_code.addBlock();
+            BasicBlock* continuation = m_code.addBlock();
+
+            append(Move, Arg::addr(instanceValue(), Instance::offsetOfOwner()), cell);
+            append(Move, Arg::addr(cell, JSWebAssemblyInstance::offsetOfVM()), vm);
+
+            append(Move, Arg::addr(temp, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue()), cell);
+            append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+            append(Move32, Arg::addr(vm, VM::offsetOfHeapBarrierThreshold()), threshold);
+
+            append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, threshold);
+            m_currentBlock->setSuccessors(continuation, fenceCheckPath);
+            m_currentBlock = fenceCheckPath;
+
+            append(Load8, Arg::addr(vm, VM::offsetOfHeapMutatorShouldBeFenced()), threshold);
+            append(BranchTest32, Arg::resCond(MacroAssembler::Zero), threshold, threshold);
+            m_currentBlock->setSuccessors(doSlowPath, fencePath);
+            m_currentBlock = fencePath;
+
+            auto* doFence = addPatchpoint(B3::Void);
+            doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                jit.memoryFence();
+            });
+            emitPatchpoint(doFence, Tmp());
+
+            append(Load8, Arg::addr(cell, JSCell::cellStateOffset()), cellState);
+            append(Branch32, Arg::relCond(MacroAssembler::Above), cellState, Arg::imm(blackThreshold));
+            m_currentBlock->setSuccessors(continuation, doSlowPath);
+            m_currentBlock = doSlowPath;
+
+            emitCCall(&operationWasmWriteBarrierSlowPath, TypedTmp(), cell, vm);
+            append(Jump);
+            m_currentBlock->setSuccessors(continuation);
+            m_currentBlock = continuation;
+        }
+        break;
+    }
 
     return { };
 }

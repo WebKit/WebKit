@@ -60,7 +60,7 @@ private:
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
     }
 
-    PartialResult WARN_UNUSED_RETURN parseGlobalType(Global&);
+    PartialResult WARN_UNUSED_RETURN parseGlobalType(GlobalInformation&);
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum);

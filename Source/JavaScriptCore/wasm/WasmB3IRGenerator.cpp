@@ -811,20 +811,88 @@ auto B3IRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRes
 
 auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
+    const Wasm::GlobalInformation& global = m_info.globals[index];
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
-    result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(m_info.globals[index].type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable: {
+        ASSERT(global.mutability == Mutable);
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), pointer);
+        break;
+    }
+    }
     return { };
 }
 
 auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
-    ASSERT(toB3Type(m_info.globals[index].type) == value->type());
+    const Wasm::GlobalInformation& global = m_info.globals[index];
+    ASSERT(toB3Type(global.type) == value->type());
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
-    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+    switch (global.bindingMode) {
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        if (isSubtype(global.type, Anyref))
+            emitWriteBarrierForJSWrapper();
+        break;
+    case Wasm::GlobalInformation::BindingMode::Portable: {
+        ASSERT(global.mutability == Mutable);
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, pointer);
+        // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
+        if (isSubtype(global.type, Anyref)) {
+            Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+            Value* cell = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointer, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue());
+            Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
+            Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instance, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
+            Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
 
-    if (isSubtype(m_info.globals[index].type, Anyref))
-        emitWriteBarrierForJSWrapper();
+            BasicBlock* fenceCheckPath = m_proc.addBlock();
+            BasicBlock* fencePath = m_proc.addBlock();
+            BasicBlock* doSlowPath = m_proc.addBlock();
+            BasicBlock* continuation = m_proc.addBlock();
 
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+                m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellState, threshold),
+                FrequentedBlock(continuation), FrequentedBlock(fenceCheckPath, FrequencyClass::Rare));
+            fenceCheckPath->addPredecessor(m_currentBlock);
+            continuation->addPredecessor(m_currentBlock);
+            m_currentBlock = fenceCheckPath;
+
+            Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+                shouldFence,
+                FrequentedBlock(fencePath), FrequentedBlock(doSlowPath));
+            fencePath->addPredecessor(m_currentBlock);
+            doSlowPath->addPredecessor(m_currentBlock);
+            m_currentBlock = fencePath;
+
+            B3::PatchpointValue* doFence = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+            doFence->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                jit.memoryFence();
+            });
+
+            Value* cellStateLoadAfterFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+                m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellStateLoadAfterFence, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), blackThreshold)),
+                FrequentedBlock(continuation), FrequentedBlock(doSlowPath, FrequencyClass::Rare));
+            doSlowPath->addPredecessor(m_currentBlock);
+            continuation->addPredecessor(m_currentBlock);
+            m_currentBlock = doSlowPath;
+
+            Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(&operationWasmWriteBarrierSlowPath, B3CCallPtrTag));
+            m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(), writeBarrierAddress, cell, vm);
+            m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+
+            continuation->addPredecessor(m_currentBlock);
+            m_currentBlock = continuation;
+        }
+        break;
+    }
+    }
     return { };
 }
 

@@ -51,8 +51,7 @@ import Builder from '../Builder.js';
 
     const bin = builder.WebAssembly();
     bin.trim();
-
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 32: Mutable Globals aren't supported (evaluating 'new WebAssembly.Module(bin.get())')");
+    new WebAssembly.Module(bin.get());
 }
 
 {
@@ -69,15 +68,14 @@ import Builder from '../Builder.js';
         .Code()
 
         .Function("setGlobal", { params: [], ret: "i32" })
-        .GetGlobal(1)
+        .GetGlobal(0)
         .End()
 
         .End()
 
     const bin = builder.WebAssembly();
     bin.trim();
-
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 51: 1th Export isn't immutable, named 'global' (evaluating 'new WebAssembly.Module(bin.get())')");
+    new WebAssembly.Module(bin.get());
 }
 
 {
@@ -196,7 +194,8 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
             .Global("bigInt", 0)
         .End();
     const module = new WebAssembly.Module(builder.WebAssembly().get());
-    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "exported global cannot be an i64 (evaluating 'new WebAssembly.Instance(module)')");
+    let instance = new WebAssembly.Instance(module);
+    assert.throws(() => instance.exports.bigInt.value, TypeError, "WebAssembly.Global.prototype.value does not work with i64 type");
 }
 
 {

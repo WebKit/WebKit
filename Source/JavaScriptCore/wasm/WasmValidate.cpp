@@ -298,7 +298,7 @@ auto Validate::getGlobal(uint32_t index, ExpressionType& result) -> Result
 auto Validate::setGlobal(uint32_t index, ExpressionType value) -> Result
 {
     WASM_VALIDATOR_FAIL_IF(index >= m_module.globals.size(), "set_global ", index, " of unknown global, limit is ", m_module.globals.size());
-    WASM_VALIDATOR_FAIL_IF(m_module.globals[index].mutability == Global::Immutable, "set_global ", index, " is immutable");
+    WASM_VALIDATOR_FAIL_IF(m_module.globals[index].mutability == GlobalInformation::Immutable, "set_global ", index, " is immutable");
 
     ExpressionType globalType = m_module.globals[index].type;
     ASSERT(isValueType(globalType));

@@ -1,3 +1,127 @@
+2019-12-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Adopt the new WebAssembly.Global system
+        https://bugs.webkit.org/show_bug.cgi?id=186552
+
+        Reviewed by Keith Miller.
+
+        This patch adds WebAssembly.Global implementation. It is already included in the Wasm spec (this means, it is not in
+        staging right now: it was stage-4, and included in the spec). WebAssembly.Global is a wrapper object around
+        "global" binding. This object can hold "immutable" and "mutable" global binding, and we can access Wasm globals through
+        this object. Furthermore, we can share mutable global binding through this object across WebAssembly modules.
+
+        To implement it efficiently, this patch introduces BindingMode to Wasm globals. If the mode is EmbeddedInInstance,
+        we continue using the current existing mechanism. If the mode is Portable, we store a pointer to actual value in
+        Wasm globals array in Wasm::Instance, so that we can access it through one additional dereference.
+        And we mark all immutable globals as EmbeddedInInstance. If the binding is immutable, internally we do not need to
+        have one binding. We can just continue using the current mechanism since users cannot observe whether immutable bindings'
+        storage is shared or not. If the global is mutable, and it is exported outside of the module, we use Portable mode.
+        So, all the previously used wasm global bindings are EmbeddedInInstance. Only newly added "mutable" "exported" bindings
+        are Portable and requires one additional dereference.
+
+        To access portable bindings efficiently, we add new Wasm bytecodes, `get_global_portable_binding`, `set_global_portable_binding`,
+        and `set_global_ref_portable_binding`.
+
+        This patch improves WPT wasm coverage significantly.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeList.rb:
+        * heap/HeapCell.cpp:
+        (JSC::keepAlive):
+        (JSC::HeapCell::use const): Deleted.
+        * heap/HeapCell.h:
+        (JSC::keepAlive):
+        (JSC::HeapCell::use const):
+        * llint/WebAssembly.asm:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::getGlobal):
+        (JSC::Wasm::AirIRGenerator::setGlobal):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::getGlobal):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        * wasm/WasmFormat.h:
+        * wasm/WasmGlobal.cpp: Added.
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        (JSC::Wasm::Global::visitAggregate):
+        * wasm/WasmGlobal.h: Added.
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::setGlobal):
+        (JSC::Wasm::Instance::linkGlobal):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::loadI32Global const):
+        (JSC::Wasm::Instance::loadI64Global const):
+        (JSC::Wasm::Instance::setGlobal):
+        (JSC::Wasm::Instance::globalsToBinding):
+        (JSC::Wasm::Instance::getGlobalBinding):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::getGlobal):
+        (JSC::Wasm::LLIntGenerator::setGlobal):
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationWasmWriteBarrierSlowPath):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseImport):
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseExport):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::setGlobal):
+        * wasm/js/JSWebAssembly.cpp:
+        * wasm/js/JSWebAssemblyGlobal.cpp: Added.
+        (JSC::JSWebAssemblyGlobal::create):
+        (JSC::JSWebAssemblyGlobal::createStructure):
+        (JSC::JSWebAssemblyGlobal::JSWebAssemblyGlobal):
+        (JSC::JSWebAssemblyGlobal::finishCreation):
+        (JSC::JSWebAssemblyGlobal::destroy):
+        (JSC::JSWebAssemblyGlobal::visitChildren):
+        * wasm/js/JSWebAssemblyGlobal.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyMemory.h.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::destroy):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyGlobalConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyGlobal):
+        (JSC::callJSWebAssemblyGlobal):
+        (JSC::WebAssemblyGlobalConstructor::create):
+        (JSC::WebAssemblyGlobalConstructor::createStructure):
+        (JSC::WebAssemblyGlobalConstructor::finishCreation):
+        (JSC::WebAssemblyGlobalConstructor::WebAssemblyGlobalConstructor):
+        * wasm/js/WebAssemblyGlobalConstructor.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyMemory.h.
+        * wasm/js/WebAssemblyGlobalPrototype.cpp: Added.
+        (JSC::getGlobal):
+        (JSC::webAssemblyGlobalProtoFuncValueOf):
+        (JSC::webAssemblyGlobalProtoGetterFuncValue):
+        (JSC::webAssemblyGlobalProtoSetterFuncValue):
+        (JSC::WebAssemblyGlobalPrototype::create):
+        (JSC::WebAssemblyGlobalPrototype::createStructure):
+        (JSC::WebAssemblyGlobalPrototype::finishCreation):
+        (JSC::WebAssemblyGlobalPrototype::WebAssemblyGlobalPrototype):
+        * wasm/js/WebAssemblyGlobalPrototype.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyMemory.h.
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2019-12-02  Saam Barati  <sbarati@apple.com>
 
         PropertySlot should not have Customs have a PropertyOffset of zero

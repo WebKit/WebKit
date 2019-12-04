@@ -515,6 +515,7 @@ slowWasmOp(table_size)
 slowWasmOp(table_fill)
 slowWasmOp(table_grow)
 slowWasmOp(set_global_ref)
+slowWasmOp(set_global_ref_portable_binding)
 
 wasmOp(grow_memory, WasmGrowMemory, macro(ctx)
     callWasmSlowPath(_slow_path_wasm_grow_memory)
@@ -651,6 +652,23 @@ wasmOp(set_global, WasmSetGlobal, macro(ctx)
     wgetu(ctx, m_globalIndex, t1)
     mloadq(ctx, m_value, t2)
     storeq t2, [t0, t1, 8]
+    dispatch(ctx)
+end)
+
+wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
+    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    wgetu(ctx, m_globalIndex, t1)
+    loadq [t0, t1, 8], t0
+    loadq [t0], t0
+    returnq(ctx, t0)
+end)
+
+wasmOp(set_global_portable_binding, WasmSetGlobalPortableBinding, macro(ctx)
+    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    wgetu(ctx, m_globalIndex, t1)
+    mloadq(ctx, m_value, t2)
+    loadq [t0, t1, 8], t0
+    storeq t2, [t0]
     dispatch(ctx)
 end)
 

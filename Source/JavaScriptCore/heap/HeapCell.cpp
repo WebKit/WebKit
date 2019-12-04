@@ -43,7 +43,7 @@ bool HeapCell::isLive()
 }
 
 #if !COMPILER(GCC_COMPATIBLE)
-void HeapCell::use() const
+NEVER_INLINE void keepAlive(const void*)
 {
 }
 #endif

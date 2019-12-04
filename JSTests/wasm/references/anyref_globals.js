@@ -51,15 +51,15 @@ const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
       .End().WebAssembly().get()), { imp: { ref: "hi" } });
 
 assert.eq($1.exports.get_import(), "hi")
-assert.eq($1.exports.expglob, null)
-assert.eq($1.exports.expglob2, "hi")
+assert.eq($1.exports.expglob.value, null)
+assert.eq($1.exports.expglob2.value, "hi")
 assert.eq($1.exports.get_glob(), null)
 
 const obj = { test: "hi" }
 
 assert.throws(() => $1.exports.expglob2 = null, TypeError, "Attempted to assign to readonly property.")
 
-$1.exports.set_glob(obj); assert.eq($1.exports.get_glob(), obj); assert.eq($1.exports.expglob2, "hi")
+$1.exports.set_glob(obj); assert.eq($1.exports.get_glob(), obj); assert.eq($1.exports.expglob2.value, "hi")
 $1.exports.set_glob(5); assert.eq($1.exports.get_glob(), 5)
 $1.exports.set_glob(null); assert.eq($1.exports.get_glob(), null)
 $1.exports.set_glob("hi"); assert.eq($1.exports.get_glob(), "hi")

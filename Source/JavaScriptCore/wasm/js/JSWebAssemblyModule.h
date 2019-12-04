@@ -52,7 +52,7 @@ class WebAssemblyToJSCallee;
 
 class JSWebAssemblyModule final : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
 
     DECLARE_EXPORT_INFO;
 

@@ -57,7 +57,7 @@ float JIT_OPERATION operationConvertToF32(CallFrame*, JSValue) WTF_INTERNAL;
 void JIT_OPERATION operationIterateResults(CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*) WTF_INTERNAL;
 JSArray* JIT_OPERATION operationAllocateResultsArray(CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*) WTF_INTERNAL;
 
-void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSWebAssemblyInstance*, VM*) WTF_INTERNAL;
+void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSCell*, VM*) WTF_INTERNAL;
 uint32_t JIT_OPERATION operationPopcount32(int32_t) WTF_INTERNAL;
 uint64_t JIT_OPERATION operationPopcount64(int64_t) WTF_INTERNAL;
 int32_t JIT_OPERATION operationGrowMemory(void*, Instance*, int32_t) WTF_INTERNAL;

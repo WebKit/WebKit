@@ -139,7 +139,6 @@ void JSWebAssemblyMemory::destroy(JSCell* cell)
 {
     auto memory = static_cast<JSWebAssemblyMemory*>(cell);
     ASSERT(memory->classInfo() == info());
-
     memory->JSWebAssemblyMemory::~JSWebAssemblyMemory();
 }
 

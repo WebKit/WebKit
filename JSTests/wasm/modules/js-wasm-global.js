@@ -1,8 +1,8 @@
 import { constant } from "./constant.wasm"
 import * as assert from '../assert.js';
 
-assert.isNumber(constant);
-assert.eq(constant, 42);
+assert.isNumber(constant.value);
+assert.eq(constant.value, 42);
 assert.throws(() => {
-    constant = 200;
-}, TypeError, `Attempted to assign to readonly property.`);
+    constant.value = 200;
+}, TypeError, `WebAssembly.Global.prototype.value attempts to modify immutable global value`);

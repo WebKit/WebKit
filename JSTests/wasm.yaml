@@ -46,6 +46,25 @@
 - path: wasm/self-test/
   cmd: runWebAssemblySuite unless parseRunCommands
 
+- path: wasm/multi-value-spec-tests/block.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/br.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/br_if.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/call.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/call_indirect.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/func.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/if.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/loop.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/multi-value-spec-tests/type.wast.js
+  cmd: runWebAssemblySpecTest :normal
+
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/align.wast.js

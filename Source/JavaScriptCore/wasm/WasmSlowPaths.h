@@ -68,6 +68,7 @@ WASM_SLOW_PATH_HIDDEN_DECL(call_no_tls);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect_no_tls);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref);
+WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref_portable_binding);
 
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const Instruction*, Wasm::Instance* instance, Wasm::ExceptionType) WTF_INTERNAL;
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t) WTF_INTERNAL;

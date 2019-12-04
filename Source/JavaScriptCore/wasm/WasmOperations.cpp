@@ -576,7 +576,7 @@ JSArray* JIT_OPERATION operationAllocateResultsArray(CallFrame* callFrame, Wasm:
     return result;
 }
 
-void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSWebAssemblyInstance* cell, VM* vmPointer)
+void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSCell* cell, VM* vmPointer)
 {
     ASSERT(cell);
     ASSERT(vmPointer);

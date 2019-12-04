@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "WasmLimits.h"
 #include "WasmTable.h"
@@ -40,7 +39,7 @@ namespace JSC {
 
 class JSWebAssemblyTable final : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
 
     static JSWebAssemblyTable* create(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Table>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: line 154: TypeError: undefined is not an object (evaluating 'WebAssembly.Global.prototype')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'WebAssembly.Global.prototype')
 
 PASS WebAssembly: property descriptor 
 PASS WebAssembly: calling 
@@ -17,9 +14,9 @@ PASS WebAssembly.Memory: prototype.constructor
 PASS WebAssembly.Table: property descriptor 
 PASS WebAssembly.Table: prototype 
 PASS WebAssembly.Table: prototype.constructor 
-FAIL WebAssembly.Global: property descriptor assert_equals: expected "object" but got "undefined"
-FAIL WebAssembly.Global: prototype undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(interface_object, "prototype")')
-FAIL WebAssembly.Global: prototype.constructor undefined is not an object (evaluating 'interface_object.prototype')
+PASS WebAssembly.Global: property descriptor 
+PASS WebAssembly.Global: prototype 
+PASS WebAssembly.Global: prototype.constructor 
 PASS WebAssembly.CompileError: property descriptor 
 PASS WebAssembly.CompileError: prototype 
 PASS WebAssembly.CompileError: prototype.constructor 
@@ -82,4 +79,14 @@ PASS WebAssembly.Table.set: length
 PASS WebAssembly.Table.length 
 PASS WebAssembly.Table.length: getter 
 PASS WebAssembly.Table.length: setter 
+FAIL WebAssembly.Global.valueOf assert_equals: expected function "function valueOf() {
+    [native code]
+}" but got function "function valueOf() {
+    [native code]
+}"
+PASS WebAssembly.Global.valueOf: name 
+PASS WebAssembly.Global.valueOf: length 
+PASS WebAssembly.Global.value 
+PASS WebAssembly.Global.value: getter 
+PASS WebAssembly.Global.value: setter 
 

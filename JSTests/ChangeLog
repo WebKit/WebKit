@@ -1,3 +1,49 @@
+2019-12-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Adopt the new WebAssembly.Global system
+        https://bugs.webkit.org/show_bug.cgi?id=186552
+
+        Reviewed by Keith Miller.
+
+        1. Update spec-harness to accept newer tests. And we update several tests that does not work with the old harness.
+        2. Add WebAssembly.Global tests.
+
+        * wasm/js-api/global-error.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (new.WebAssembly.Module):
+        (assert.throws):
+        * wasm/js-api/global-external-init-from-import.js:
+        * wasm/js-api/globals-export.js:
+        * wasm/modules/js-wasm-global-namespace.js:
+        (assert.throws):
+        * wasm/modules/js-wasm-global.js:
+        (assert.throws):
+        * wasm/modules/wasm-import-wasm-export-i64-error.js:
+        * wasm/references/anyref_globals.js:
+        * wasm/references/func_ref.js:
+        (assert.eq.instance.exports.fix):
+        * wasm/spec-harness.js:
+        (getGlobal):
+        (let.console.log):
+        * wasm/spec-harness/sync_index.js: Renamed from JSTests/wasm/spec-harness/index.js.
+        (reinitializeRegistry.let.handler.get return):
+        (module):
+        * wasm/spec-tests/call.wast.js:
+        * wasm/spec-tests/exports.wast.js:
+        * wasm/spec-tests/globals.wast.js:
+        * wasm/spec-tests/if.wast.js:
+        * wasm/spec-tests/imports.wast.js:
+        * wasm/spec-tests/linking.wast.js:
+        * wasm/spec-tests/memory.wast.js:
+        * wasm/stress/immutable-globals.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.assert.eq.instance.exports.getI32):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.assert.eq):
+        * wasm/stress/mutable-globals-cross.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.const.instance1):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.const.instance2):
+        * wasm/stress/mutable-globals.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.instance.exports.setI32AsI64):
+
 2019-12-03  Christopher Reid  <chris.reid@sony.com>
 
         Regular expression hangs in Safari only
