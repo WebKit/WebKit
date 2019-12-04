@@ -471,7 +471,7 @@ public:
     void abortModal();
 
     void terminateNetworkProcess();
-    void terminateServiceWorkerProcess();
+    void terminateServiceWorkers();
     void setUseSeparateServiceWorkerProcess(bool);
 
     void removeAllSessionCredentials(JSValueRef);

@@ -268,7 +268,7 @@ public:
 #endif
 
     void terminateNetworkProcess();
-    void terminateServiceWorkerProcess();
+    void terminateServiceWorkers();
 
     void resetQuota();
 

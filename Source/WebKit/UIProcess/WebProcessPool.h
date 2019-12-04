@@ -325,7 +325,7 @@ public:
     void terminateAllWebContentProcesses();
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
-    void terminateServiceWorkerProcesses();
+    void terminateServiceWorkers();
 
     void syncNetworkProcessCookies();
     void syncLocalStorage(CompletionHandler<void()>&& callback);
@@ -619,7 +619,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     using RegistrableDomainWithSessionID = std::pair<WebCore::RegistrableDomain, PAL::SessionID>;
-    HashMap<RegistrableDomainWithSessionID, WebProcessProxy*> m_serviceWorkerProcesses;
+    HashMap<RegistrableDomainWithSessionID, WeakPtr<WebProcessProxy>> m_serviceWorkerProcesses;
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
     String m_serviceWorkerUserAgent;

@@ -1664,9 +1664,9 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "TerminateServiceWorkerProcess")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateServiceWorkers")) {
         ASSERT(!messageBody);
-        TestController::singleton().terminateServiceWorkerProcess();
+        TestController::singleton().terminateServiceWorkers();
         return nullptr;
     }
 

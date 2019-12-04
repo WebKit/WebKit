@@ -3005,9 +3005,9 @@ void TestController::terminateNetworkProcess()
     WKContextTerminateNetworkProcess(platformContext());
 }
 
-void TestController::terminateServiceWorkerProcess()
+void TestController::terminateServiceWorkers()
 {
-    WKContextTerminateServiceWorkerProcess(platformContext());
+    WKContextTerminateServiceWorkers(platformContext());
 }
 
 #if !PLATFORM(COCOA)

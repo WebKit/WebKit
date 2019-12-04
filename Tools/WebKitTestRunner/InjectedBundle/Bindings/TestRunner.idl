@@ -368,7 +368,7 @@ interface TestRunner {
     void setWebAPIStatisticsEnabled(boolean value);
 
     void terminateNetworkProcess();
-    void terminateServiceWorkerProcess();
+    void terminateServiceWorkers();
     void setUseSeparateServiceWorkerProcess(boolean value);
 
     readonly attribute unsigned long serverTrustEvaluationCallbackCallsCount;

@@ -613,9 +613,9 @@ void WKContextTerminateNetworkProcess(WKContextRef context)
     WebKit::toImpl(context)->terminateNetworkProcess();
 }
 
-void WKContextTerminateServiceWorkerProcess(WKContextRef context)
+void WKContextTerminateServiceWorkers(WKContextRef context)
 {
-    WebKit::toImpl(context)->terminateServiceWorkerProcesses();
+    WebKit::toImpl(context)->terminateServiceWorkers();
 }
 
 ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)

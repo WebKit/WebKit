@@ -1840,7 +1840,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         TestWebKitAPI::Util::run(&done);
         done = false;
 
-        [webView.get().configuration.processPool _terminateServiceWorkerProcesses];
+        [webView.get().configuration.processPool _terminateServiceWorkers];
     }
 
     @autoreleasepool {

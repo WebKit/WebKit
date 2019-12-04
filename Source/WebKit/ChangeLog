@@ -1,5 +1,32 @@
 2019-12-04  youenn fablet  <youenn@apple.com>
 
+        WebProcessPool::terminateServiceWorkerProcess should be renamed terminateServiceWorkers
+        https://bugs.webkit.org/show_bug.cgi?id=204792
+
+        Reviewed by Chris Dumez.
+
+        Make use of disableServiceWorkers in terminateServiceWorkers as we might need to handle the case of a service worker in a process containing a page.
+        Renaming API accordingly.
+        Covered by existing tests.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateServiceWorkers):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateServiceWorkers]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent):
+        (WebKit::WebProcessPool::terminateNetworkProcess):
+        (WebKit::WebProcessPool::terminateServiceWorkers):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        * UIProcess/WebProcessPool.h:
+
+2019-12-04  youenn fablet  <youenn@apple.com>
+
         Move soft update handling to network process
         https://bugs.webkit.org/show_bug.cgi?id=204678
 

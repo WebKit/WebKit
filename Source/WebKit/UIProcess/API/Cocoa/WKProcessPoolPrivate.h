@@ -92,7 +92,7 @@
 - (void)_terminateNetworkProcess WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_sendNetworkProcessWillSuspendImminently WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_sendNetworkProcessDidResume WK_API_AVAILABLE(macos(10.15), ios(13.0));
-- (void)_terminateServiceWorkerProcesses WK_API_AVAILABLE(macos(10.14), ios(12.0));
+- (void)_terminateServiceWorkers WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 // Test only.
 - (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macos(10.13), ios(11.0));

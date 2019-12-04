@@ -12,7 +12,7 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         serviceWorkerHasReceivedState = true;
 
         log("* Simulating Service Worker process crash");
-        testRunner.terminateServiceWorkerProcess();
+        testRunner.terminateServiceWorkers();
 
         handle = setInterval(function() {
             remainingAttempts--;

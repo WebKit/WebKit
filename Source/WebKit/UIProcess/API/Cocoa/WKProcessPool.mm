@@ -444,9 +444,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->sendNetworkProcessDidResume();
 }
 
-- (void)_terminateServiceWorkerProcesses
+- (void)_terminateServiceWorkers
 {
-    _processPool->terminateServiceWorkerProcesses();
+    _processPool->terminateServiceWorkers();
 }
 
 - (void)_setUseSeparateServiceWorkerProcess:(BOOL)useSeparateServiceWorkerProcess

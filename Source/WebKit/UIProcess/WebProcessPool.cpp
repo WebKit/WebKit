@@ -760,7 +760,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     }
 
     ASSERT(!m_serviceWorkerProcesses.contains(registrableDomainWithSessionID));
-    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), serviceWorkerProcessProxy);
+    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), makeWeakPtr(serviceWorkerProcessProxy));
 
     serviceWorkerProcessProxy->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store());
     if (!m_serviceWorkerUserAgent.isNull())
@@ -1251,7 +1251,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 #if ENABLE(SERVICE_WORKER)
     if (!m_serviceWorkerPreferences) {
         m_serviceWorkerPreferences = page->preferencesStore();
-        for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
             serviceWorkerProcess->updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
     }
     if (userContentController)
@@ -1281,7 +1281,7 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
     if (m_serviceWorkerUserAgent == userAgent)
         return;
     m_serviceWorkerUserAgent = userAgent;
-    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+    for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
         serviceWorkerProcess->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }
 #endif
@@ -1721,10 +1721,7 @@ void WebProcessPool::clearCachedCredentials()
 
 void WebProcessPool::terminateNetworkProcess()
 {
-#if ENABLE(SERVICE_WORKER)
-    while (!m_serviceWorkerProcesses.isEmpty())
-        m_serviceWorkerProcesses.begin()->value->disableServiceWorkers();
-#endif
+    terminateServiceWorkers();
 
     if (!m_networkProcess)
         return;
@@ -1752,12 +1749,12 @@ void WebProcessPool::sendNetworkProcessDidResume()
         m_networkProcess->sendProcessDidResume();
 }
 
-void WebProcessPool::terminateServiceWorkerProcesses()
+void WebProcessPool::terminateServiceWorkers()
 {
 #if ENABLE(SERVICE_WORKER)
     auto protectedThis = makeRef(*this);
     while (!m_serviceWorkerProcesses.isEmpty())
-        m_serviceWorkerProcesses.begin()->value->requestTermination(ProcessTerminationReason::RequestedByClient);
+        m_serviceWorkerProcesses.begin()->value->disableServiceWorkers();
 #endif
 }
 
@@ -2079,7 +2076,7 @@ void WebProcessPool::updateProcessAssertions()
         if (!weakThis)
             return;
 #if ENABLE(SERVICE_WORKER)
-        for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
             serviceWorkerProcess->updateServiceWorkerProcessAssertion();
 #endif
     });
@@ -2089,7 +2086,7 @@ bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
 {
 #if ENABLE(SERVICE_WORKER)
     // FIXME: This is inefficient.
-    return WTF::anyOf(m_serviceWorkerProcesses.values(), [pageID](auto* process) {
+    return WTF::anyOf(m_serviceWorkerProcesses.values(), [pageID](auto& process) {
         return process->hasServiceWorkerPageProxy(pageID);
     });
 #endif
