@@ -70,6 +70,8 @@ public:
 
     bool cancelPendingLoad();
 
+    WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
+
 private:
     // WorkerScriptLoaderClient
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;

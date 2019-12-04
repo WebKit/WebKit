@@ -153,23 +153,28 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const
     return request;
 }
 
-void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, FetchOptions::Destination destination)
 {
-    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode()) {
-        m_failed = true;
-        return;
-    }
+    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
 
     if (!isScriptAllowedByNosniff(response)) {
         String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type: nosniff\" was given and its Content-Type is not a script MIME type.");
-        m_error = ResourceError { errorDomainWebKitInternal, 0, url(), message, ResourceError::Type::General };
-        m_failed = true;
-        return;
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
     }
 
-    if (shouldBlockResponseDueToMIMEType(response, m_destination)) {
+    if (shouldBlockResponseDueToMIMEType(response, destination)) {
         String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
-        m_error = ResourceError { errorDomainWebKitInternal, 0, response.url(), message, ResourceError::Type::General };
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
+    }
+
+    return { };
+}
+
+void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+{
+    m_error = validateWorkerResponse(response, m_destination);
+    if (!m_error.isNull()) {
         m_failed = true;
         return;
     }

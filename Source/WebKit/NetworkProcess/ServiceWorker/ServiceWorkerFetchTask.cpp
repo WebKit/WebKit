@@ -41,6 +41,7 @@
 #include "WebSWServerConnection.h"
 #include "WebSWServerToContextConnection.h"
 #include <WebCore/CrossOriginAccessControl.h>
+#include <WebCore/SWServerRegistration.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_loader.sessionID().isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerFetchTask::" fmt, this, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_loader.sessionID().isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerFetchTask::" fmt, this, ##__VA_ARGS__)
@@ -49,13 +50,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ServiceWorkerFetchTask::ServiceWorkerFetchTask(NetworkResourceLoader& loader, ResourceRequest&& request, SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier)
+ServiceWorkerFetchTask::ServiceWorkerFetchTask(NetworkResourceLoader& loader, ResourceRequest&& request, SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, bool shouldSoftUpdate)
     : m_loader(loader)
     , m_fetchIdentifier(WebCore::FetchIdentifier::generate())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_serviceWorkerIdentifier(serviceWorkerIdentifier)
     , m_currentRequest(WTFMove(request))
     , m_timeoutTimer(*this, &ServiceWorkerFetchTask::timeoutTimerFired)
+    , m_serviceWorkerRegistrationIdentifier(serviceWorkerRegistrationIdentifier)
+    , m_shouldSoftUpdate(shouldSoftUpdate)
 {
     m_timeoutTimer.startOneShot(loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
 }
@@ -106,7 +109,8 @@ void ServiceWorkerFetchTask::startFetch()
 void ServiceWorkerFetchTask::didReceiveRedirectResponse(ResourceResponse&& response)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveRedirectResponse: %s", m_fetchIdentifier.loggingString().utf8().data());
-    m_wasHandled = true;
+    m_timeoutTimer.stop();
+    softUpdateIfNeeded();
 
     response.setSource(ResourceResponse::Source::ServiceWorker);
     auto newRequest = m_currentRequest.redirectedRequest(response, m_loader.parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
@@ -118,7 +122,7 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: %s", m_fetchIdentifier.loggingString().utf8().data());
     m_timeoutTimer.stop();
-    m_wasHandled = true;
+    softUpdateIfNeeded();
 
     response.setSource(ResourceResponse::Source::ServiceWorker);
     sendToClient(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
@@ -146,7 +150,10 @@ void ServiceWorkerFetchTask::didFinish()
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 {
-    m_timeoutTimer.stop();
+    if (m_timeoutTimer.isActive()) {
+        m_timeoutTimer.stop();
+        softUpdateIfNeeded();
+    }
     RELEASE_LOG_ERROR_IF_ALLOWED("didFailFetch: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
     m_loader.didFailLoading(error);
 }
@@ -155,6 +162,8 @@ void ServiceWorkerFetchTask::didNotHandle()
 {
     RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
     m_timeoutTimer.stop();
+    softUpdateIfNeeded();
+
     m_loader.serviceWorkerDidNotHandle();
 }
 
@@ -171,6 +180,7 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
 
 void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 {
+    m_timeoutTimer.startOneShot(m_loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
     if (!m_serviceWorkerConnection) {
         m_loader.serviceWorkerDidNotHandle();
         return;
@@ -181,9 +191,19 @@ void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 
 void ServiceWorkerFetchTask::timeoutTimerFired()
 {
+    softUpdateIfNeeded();
+
     RELEASE_LOG_IF_ALLOWED("timeoutTimerFired: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
     if (m_serviceWorkerConnection)
         m_serviceWorkerConnection->fetchTaskTimedOut(serviceWorkerIdentifier());
+}
+
+void ServiceWorkerFetchTask::softUpdateIfNeeded()
+{
+    if (!m_shouldSoftUpdate)
+        return;
+    if (auto* registration = m_loader.connectionToWebProcess().swConnection().server().getRegistration(m_serviceWorkerRegistrationIdentifier))
+        registration->scheduleSoftUpdate();
 }
 
 } // namespace WebKit

@@ -46,6 +46,8 @@ struct ServiceWorkerJobData {
 
     SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 
+    bool isEquivalent(const ServiceWorkerJobData&) const;
+
     URL scriptURL;
     URL clientCreationURL;
     SecurityOriginData topOrigin;
@@ -56,7 +58,7 @@ struct ServiceWorkerJobData {
     ServiceWorkerRegistrationOptions registrationOptions;
 
     Identifier identifier() const { return m_identifier; }
-    ServiceWorkerRegistrationKey registrationKey() const;
+    WEBCORE_EXPORT ServiceWorkerRegistrationKey registrationKey() const;
     ServiceWorkerJobData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;

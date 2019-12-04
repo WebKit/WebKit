@@ -293,7 +293,7 @@ void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetch
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
-    m_server.didResolveRegistrationPromise(*this, key);
+    m_server.didResolveRegistrationPromise(this, key);
 }
 
 void SWServer::Connection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
@@ -312,11 +312,12 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
     , m_createContextConnectionCallback(WTFMove(callback))
+    , m_softUpdateCallback(WTFMove(softUpdateCallback))
 {
     ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());
     if (!m_sessionID.isEphemeral())
@@ -331,16 +332,26 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminati
 // https://w3c.github.io/ServiceWorker/#schedule-job-algorithm
 void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
-    ASSERT(m_connections.contains(jobData.connectionIdentifier()));
-
-    // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
-    // If it is, stack it along with that job.
+    ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
     auto& jobQueue = *m_jobQueues.ensure(jobData.registrationKey(), [this, &jobData] {
         return makeUnique<SWServerJobQueue>(*this, jobData.registrationKey());
     }).iterator->value;
 
-    jobQueue.enqueueJob(jobData);
+    if (!jobQueue.size()) {
+        jobQueue.enqueueJob(WTFMove(jobData));
+        jobQueue.runNextJob();
+        return;
+    }
+    auto& lastJob = jobQueue.lastJob();
+    if (jobData.isEquivalent(lastJob)) {
+        // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
+        // If it is, stack it along with that job. For now, we just make sure to not call soft-update too often.
+        if (jobData.type == ServiceWorkerJobType::Update && jobData.connectionIdentifier() == Process::identifier())
+            return;
+    }
+
+    jobQueue.enqueueJob(WTFMove(jobData));
     if (jobQueue.size() == 1)
         jobQueue.runNextJob();
 }
@@ -359,8 +370,11 @@ void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const
 {
     LOG(ServiceWorker, "Resolved ServiceWorker job %s in server with registration %s", jobData.identifier().loggingString().utf8().data(), registrationData.identifier.loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
-    if (!connection)
+    if (!connection) {
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes && jobData.connectionIdentifier() == Process::identifier())
+            didResolveRegistrationPromise(nullptr, registrationData.key);
         return;
+    }
 
     connection->resolveRegistrationJobInClient(jobData.identifier().jobIdentifier, registrationData, shouldNotifyWhenResolved);
 }
@@ -374,20 +388,57 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
     connection->resolveUnregistrationJobInClient(jobData.identifier().jobIdentifier, registrationKey, unregistrationResult);
 }
 
-void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOptions::Cache cachePolicy)
+URL static inline originURL(const SecurityOrigin& origin)
+{
+    URL url;
+    url.setProtocol(origin.protocol());
+    url.setHost(origin.host());
+    if (origin.port())
+        url.setPort(*origin.port());
+    return url;
+}
+
+void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, bool shouldRefreshCache)
 {
     LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s in client", jobData.identifier().loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (connection) {
+        connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), shouldRefreshCache ? FetchOptions::Cache::NoCache : FetchOptions::Cache::Default);
+        return;
+    }
+    if (jobData.connectionIdentifier() == Process::identifier()) {
+        ASSERT(jobData.type == ServiceWorkerJobType::Update);
+        // This is a soft-update job, create directly a network load to fetch the script.
+        ResourceRequest request { jobData.scriptURL };
+
+        auto topOrigin = jobData.topOrigin.securityOrigin();
+        auto origin = SecurityOrigin::create(jobData.scriptURL);
+
+        request.setDomainForCachePartition(topOrigin->domainForCachePartition());
+        request.setAllowCookies(true);
+        request.setFirstPartyForCookies(originURL(topOrigin));
+
+        request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
+        request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+        request.setHTTPReferrer(originURL(origin));
+        request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
+        request.setPriority(ResourceLoadPriority::Low);
+
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [this, weakThis = makeWeakPtr(this)](auto& result) {
+            if (!weakThis)
+                return;
+            scriptFetchFinished(result);
+        });
+        return;
+    }
     ASSERT_WITH_MESSAGE(connection, "If the connection was lost, this job should have been cancelled");
-    if (connection)
-        connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
 }
 
 void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
 {
     LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", result.jobDataIdentifier.loggingString().utf8().data());
 
-    ASSERT(m_connections.contains(result.jobDataIdentifier.connectionIdentifier));
+    ASSERT(m_connections.contains(result.jobDataIdentifier.connectionIdentifier) || result.jobDataIdentifier.connectionIdentifier == Process::identifier());
 
     auto jobQueue = m_jobQueues.get(result.registrationKey);
     if (!jobQueue)
@@ -517,9 +568,9 @@ void SWServer::claim(SWServerWorker& worker)
     });
 }
 
-void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
+void SWServer::didResolveRegistrationPromise(Connection* connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
-    ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
+    ASSERT_UNUSED(connection, !connection || m_connections.contains(connection->identifier()));
 
     if (auto* jobQueue = m_jobQueues.get(registrationKey))
         jobQueue->didResolveRegistrationPromise();
@@ -996,6 +1047,17 @@ bool SWServer::canHandleScheme(StringView scheme) const
     if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
         return true;
     return scheme.length() == 4;
+}
+
+// https://w3c.github.io/ServiceWorker/#soft-update
+void SWServer::softUpdate(SWServerRegistration& registration)
+{
+    ServiceWorkerJobData jobData(Process::identifier(), ServiceWorkerIdentifier::generate());
+    jobData.scriptURL = registration.scriptURL();
+    jobData.topOrigin = registration.key().topOrigin();
+    jobData.scopeURL = registration.scopeURLWithoutFragment();
+    jobData.type = ServiceWorkerJobType::Update;
+    scheduleJob(WTFMove(jobData));
 }
 
 } // namespace WebCore

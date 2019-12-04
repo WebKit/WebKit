@@ -49,6 +49,7 @@ SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorker
     , m_scriptURL(scriptURL)
     , m_server(server)
     , m_creationTime(MonotonicTime::now())
+    , m_softUpdateTimer { *this, &SWServerRegistration::softUpdate }
 {
     m_scopeURL.removeFragmentIdentifier();
 }
@@ -363,18 +364,16 @@ bool SWServerRegistration::shouldSoftUpdate(const FetchOptions& options) const
     return WebCore::isNonSubresourceRequest(options.destination) && isStale();
 }
 
-// https://w3c.github.io/ServiceWorker/#soft-update
 void SWServerRegistration::softUpdate()
 {
-    auto* worker = getNewestWorker();
-    if (!worker)
-        return;
+    m_server.softUpdate(*this);
+}
 
-    // FIXME: We should schedule an update job.
-    m_server.runServiceWorkerIfNecessary(worker->identifier(), [serviceWorkerIdentifier = worker->identifier()](auto* contextConnection) {
-        if (contextConnection)
-            contextConnection->softUpdate(serviceWorkerIdentifier);
-    });
+void SWServerRegistration::scheduleSoftUpdate()
+{
+    // To avoid scheduling many updates during a single page load, we do soft updates on a 1 second delay and keep delaying
+    // as long as soft update requests keep coming. This seems to match Chrome's behavior.
+    m_softUpdateTimer.startOneShot(softUpdateDelay);
 }
 
 } // namespace WebCore

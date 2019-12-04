@@ -1,3 +1,52 @@
+2019-12-04  youenn fablet  <youenn@apple.com>
+
+        Move soft update handling to network process
+        https://bugs.webkit.org/show_bug.cgi?id=204678
+
+        Reviewed by Chris Dumez.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::validateResponse):
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoader.h:
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::isEquivalent const):
+        * workers/service/ServiceWorkerJobData.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::ServiceWorkerRegistration):
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/context/SWContextManager.cpp:
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        * workers/service/context/ServiceWorkerThread.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::didResolveRegistrationPromise):
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::resolveRegistrationJob):
+        (WebCore::originURL):
+        (WebCore::SWServer::startScriptFetch):
+        (WebCore::SWServer::scriptFetchFinished):
+        (WebCore::SWServer::didResolveRegistrationPromise):
+        (WebCore::SWServer::softUpdate):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::getRegistration):
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::runUpdateJob):
+        * workers/service/server/SWServerJobQueue.h:
+        (WebCore::SWServerJobQueue::enqueueJob):
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::SWServerRegistration):
+        (WebCore::SWServerRegistration::setUpdateViaCache):
+        (WebCore::SWServerRegistration::softUpdate):
+        (WebCore::SWServerRegistration::scheduleSoftUpdate):
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::scopeURLWithoutFragment const):
+        (WebCore::SWServerRegistration::scriptURL const):
+        * workers/service/server/SWServerToContextConnection.h:
+
 2019-12-04  Youenn Fablet  <youenn@apple.com>
 
         Add support for WebIDL setlike

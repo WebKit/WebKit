@@ -177,14 +177,15 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         return nullptr;
     }
 
+    auto* registration = server().getRegistration(*serviceWorkerRegistrationIdentifier);
+    bool shouldSoftUpdate = registration && registration->shouldSoftUpdate(loader.parameters().options);
     if (worker->shouldSkipFetchEvent()) {
-        auto* registration = server().getRegistration(worker->registrationKey());
-        if (registration && registration->shouldSoftUpdate(loader.parameters().options))
-            registration->softUpdate();
+        if (shouldSoftUpdate)
+            registration->scheduleSoftUpdate();
         return nullptr;
     }
 
-    auto task = makeUnique<ServiceWorkerFetchTask>(loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier);
+    auto task = makeUnique<ServiceWorkerFetchTask>(loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier, shouldSoftUpdate);
     startFetch(*task, *worker);
     return task;
 }

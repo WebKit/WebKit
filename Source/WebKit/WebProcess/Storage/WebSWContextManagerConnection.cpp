@@ -256,11 +256,6 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
     SWContextManager::singleton().fireActivateEvent(identifier);
 }
 
-void WebSWContextManagerConnection::softUpdate(WebCore::ServiceWorkerIdentifier identifier)
-{
-    SWContextManager::singleton().softUpdate(identifier);
-}
-
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
     SWContextManager::singleton().terminateWorker(identifier, SWContextManager::workerTerminationTimeout, nullptr);

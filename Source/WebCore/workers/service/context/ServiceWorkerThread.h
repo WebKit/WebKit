@@ -61,7 +61,6 @@ public:
 
     void fireInstallEvent();
     void fireActivateEvent();
-    void softUpdate();
 
     const ServiceWorkerContextData& contextData() const { return m_data; }
 

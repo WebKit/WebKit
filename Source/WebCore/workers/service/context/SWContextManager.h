@@ -83,7 +83,6 @@ public:
     WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
-    WEBCORE_EXPORT void softUpdate(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 
     void forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>&);

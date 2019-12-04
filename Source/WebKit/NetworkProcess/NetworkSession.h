@@ -27,6 +27,7 @@
 
 #include "PrefetchCache.h"
 #include "SandboxExtension.h"
+#include "ServiceWorkerSoftUpdateLoader.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BlobRegistryImpl.h>
@@ -127,6 +128,11 @@ public:
 
     bool isStaleWhileRevalidateEnabled() const { return m_isStaleWhileRevalidateEnabled; }
 
+#if ENABLE(SERVICE_WORKER)
+    void addSoftUpdateLoader(std::unique_ptr<ServiceWorkerSoftUpdateLoader>&& loader) { m_softUpdateLoaders.add(WTFMove(loader)); }
+    void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
+#endif
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -162,6 +168,10 @@ protected:
     RefPtr<NetworkCache::Cache> m_cache;
     WebCore::BlobRegistryImpl m_blobRegistry;
     unsigned m_testSpeedMultiplier { 1 };
+
+#if ENABLE(SERVICE_WORKER)
+    HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
+#endif
 };
 
 } // namespace WebKit

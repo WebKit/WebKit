@@ -52,7 +52,6 @@ public:
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const String& userAgent) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
-    virtual void softUpdate(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;

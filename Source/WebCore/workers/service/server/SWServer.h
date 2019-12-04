@@ -124,8 +124,9 @@ public:
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
+    using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(const ServiceWorkerFetchResult&)>&&)>;
     using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&)>;
-    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, CreateContextConnectionCallback&&);
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, SoftUpdateCallback&&, CreateContextConnectionCallback&&);
 
     WEBCORE_EXPORT ~SWServer();
 
@@ -135,6 +136,7 @@ public:
     WEBCORE_EXPORT void startSuspension(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void endSuspension();
 
+    SWServerRegistration* getRegistration(ServiceWorkerRegistrationIdentifier identifier) { return m_registrations.get(identifier); }
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
     void removeRegistration(ServiceWorkerRegistrationIdentifier);
@@ -144,7 +146,7 @@ public:
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
     void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved);
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
-    void startScriptFetch(const ServiceWorkerJobData&, FetchOptions::Cache);
+    void startScriptFetch(const ServiceWorkerJobData&, bool shouldRefreshCache);
 
     void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
     void terminateWorker(SWServerWorker&);
@@ -206,10 +208,12 @@ public:
     bool isImportCompleted() const { return m_importCompleted; }
     WEBCORE_EXPORT void whenImportIsCompleted(CompletionHandler<void()>&&);
 
+    void softUpdate(SWServerRegistration&);
+
 private:
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
-    void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
+    void didResolveRegistrationPromise(Connection*, const ServiceWorkerRegistrationKey&);
 
     void addClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
@@ -266,6 +270,7 @@ private:
     CreateContextConnectionCallback m_createContextConnectionCallback;
     HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
     Vector<CompletionHandler<void()>> m_importCompletedCallbacks;
+    SoftUpdateCallback m_softUpdateCallback;
 };
 
 } // namespace WebCore

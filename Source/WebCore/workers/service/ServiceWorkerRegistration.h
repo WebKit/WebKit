@@ -68,8 +68,6 @@ public:
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
 
-    void scheduleSoftUpdate();
-
     using RefCounted::ref;
     using RefCounted::deref;
     
@@ -86,8 +84,6 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-
-    void softUpdate();
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
@@ -106,7 +102,6 @@ private:
     bool m_isSuspended { false };
     bool m_shouldFireUpdateFoundEventUponResuming { false };
     RefPtr<PendingActivity<ServiceWorkerRegistration>> m_pendingActivityForEventDispatch;
-    Timer m_softUpdateTimer;
 };
 
 } // namespace WebCore

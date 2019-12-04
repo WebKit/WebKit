@@ -140,7 +140,6 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     FetchOptions::Redirect redirect = options.redirect;
 
     bool isNavigation = options.mode == FetchOptions::Mode::Navigate;
-    bool isNonSubresourceRequest = WebCore::isNonSubresourceRequest(options.destination);
 
     ASSERT(globalScope.registration().active());
     ASSERT(globalScope.registration().active()->identifier() == globalScope.thread().identifier());
@@ -188,10 +187,6 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     }
 
     globalScope.updateExtendedEventsSet(event.ptr());
-
-    auto& registration = globalScope.registration();
-    if (isNonSubresourceRequest || registration.needsUpdate())
-        registration.scheduleSoftUpdate();
 }
 
 } // namespace ServiceWorkerFetch

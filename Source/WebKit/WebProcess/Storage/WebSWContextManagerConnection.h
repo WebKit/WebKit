@@ -90,7 +90,6 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerOrClientData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
-    void softUpdate(WebCore::ServiceWorkerIdentifier);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier, Messages::WebSWContextManagerConnection::SyncTerminateWorkerDelayedReply&&);
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, Optional<WebCore::ServiceWorkerClientData>&&, bool hasSecurityError);

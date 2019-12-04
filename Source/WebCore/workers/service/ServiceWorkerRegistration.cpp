@@ -46,8 +46,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerRegistration);
 
-const Seconds softUpdateDelay { 1_s };
-
 Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& data)
 {
     if (auto* registration = container->registration(data.identifier)) {
@@ -62,7 +60,6 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     : ActiveDOMObject(&context)
     , m_registrationData(WTFMove(registrationData))
     , m_container(WTFMove(container))
-    , m_softUpdateTimer([this] { softUpdate(); })
 {
     LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
     suspendIfNeeded();
@@ -154,28 +151,6 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 
     // FIXME: Support worker types.
     m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, WTFMove(promise));
-}
-
-// To avoid scheduling many updates during a single page load, we do soft updates on a 1 second delay and keep delaying
-// as long as soft update requests keep coming. This seems to match Chrome's behavior.
-void ServiceWorkerRegistration::scheduleSoftUpdate()
-{
-    if (m_softUpdateTimer.isActive())
-        m_softUpdateTimer.stop();
-    m_softUpdateTimer.startOneShot(softUpdateDelay);
-}
-
-void ServiceWorkerRegistration::softUpdate()
-{
-    if (m_isStopped)
-        return;
-
-    auto* newestWorker = getNewestWorker();
-    if (!newestWorker)
-        return;
-
-    // FIXME: Support worker types.
-    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, nullptr);
 }
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)

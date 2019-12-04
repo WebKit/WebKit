@@ -31,6 +31,7 @@
 #include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
+#include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
@@ -98,13 +99,16 @@ public:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
     WEBCORE_EXPORT bool shouldSoftUpdate(const FetchOptions&) const;
-    WEBCORE_EXPORT void softUpdate();
-    
-    String scopeURLWithoutFragment() const { return m_scopeURL; }
+    WEBCORE_EXPORT void scheduleSoftUpdate();
+    static constexpr Seconds softUpdateDelay { 1_s };
+
+    URL scopeURLWithoutFragment() const { return m_scopeURL; }
+    URL scriptURL() const { return m_scriptURL; }
 
 private:
     void activate();
     void handleClientUnload();
+    void softUpdate();
 
     ServiceWorkerRegistrationIdentifier m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;
@@ -124,6 +128,8 @@ private:
 
     MonotonicTime m_creationTime;
     HashMap<SWServerConnectionIdentifier, HashSet<DocumentIdentifier>> m_clientsUsingRegistration;
+
+    WebCore::Timer m_softUpdateTimer;
 };
 
 } // namespace WebCore

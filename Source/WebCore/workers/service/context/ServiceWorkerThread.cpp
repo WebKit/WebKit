@@ -175,14 +175,6 @@ void ServiceWorkerThread::fireActivateEvent()
     });
 }
 
-void ServiceWorkerThread::softUpdate()
-{
-    runLoop().postTask([](auto& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        serviceWorkerGlobalScope.registration().scheduleSoftUpdate();
-    });
-}
-
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
     m_doesHandleFetch = workerGlobalScope()->hasEventListeners(eventNames().fetchEvent);

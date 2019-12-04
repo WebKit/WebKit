@@ -100,11 +100,6 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
     send(Messages::WebSWContextManagerConnection::FireActivateEvent(serviceWorkerIdentifier));
 }
 
-void WebSWServerToContextConnection::softUpdate(ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    send(Messages::WebSWContextManagerConnection::SoftUpdate(serviceWorkerIdentifier));
-}
-
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));

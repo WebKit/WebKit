@@ -67,6 +67,25 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     return result;
 }
 
+// https://w3c.github.io/ServiceWorker/#dfn-job-equivalent
+bool ServiceWorkerJobData::isEquivalent(const ServiceWorkerJobData& job) const
+{
+    if (type != job.type)
+        return false;
+
+    switch (type) {
+    case ServiceWorkerJobType::Register:
+    case ServiceWorkerJobType::Update:
+        return scopeURL == job.scopeURL
+            && scriptURL == job.scriptURL
+            && registrationOptions.type == job.registrationOptions.type
+            && registrationOptions.updateViaCache == job.registrationOptions.updateViaCache;
+    case ServiceWorkerJobType::Unregister:
+        return scopeURL == job.scopeURL;
+    }
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

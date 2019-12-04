@@ -2349,7 +2349,9 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
 
-        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, [this, sessionID](auto& registrableDomain) {
+        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
+            ServiceWorkerSoftUpdateLoader::start(networkSession(sessionID), WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
+        }, [this, sessionID](auto& registrableDomain) {
             ASSERT(!registrableDomain.isEmpty());
             parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
         });

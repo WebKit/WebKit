@@ -56,7 +56,7 @@ class WebSWServerToContextConnection;
 class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerFetchTask(NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier);
+    ServiceWorkerFetchTask(NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, bool shouldSoftUpdate);
     ~ServiceWorkerFetchTask();
 
     void start(WebSWServerToContextConnection&);
@@ -88,6 +88,7 @@ private:
     void startFetch();
 
     void timeoutTimerFired();
+    void softUpdateIfNeeded();
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
@@ -100,6 +101,8 @@ private:
     WebCore::ResourceRequest m_currentRequest;
     WebCore::Timer m_timeoutTimer;
     bool m_wasHandled { false };
+    WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
+    bool m_shouldSoftUpdate { false };
 };
 
 }

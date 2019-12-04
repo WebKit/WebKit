@@ -1,3 +1,51 @@
+2019-12-04  youenn fablet  <youenn@apple.com>
+
+        Move soft update handling to network process
+        https://bugs.webkit.org/show_bug.cgi?id=204678
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::addSoftUpdateLoader):
+        (WebKit::NetworkSession::removeSoftUpdateLoader):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        (WebKit::ServiceWorkerFetchTask::continueFetchTaskWith):
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        (WebKit::ServiceWorkerFetchTask::softUpdateIfNeeded):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp: Added.
+        (WebKit::ServiceWorkerSoftUpdateLoader::start):
+        (WebKit::ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader):
+        (WebKit::ServiceWorkerSoftUpdateLoader::~ServiceWorkerSoftUpdateLoader):
+        (WebKit::ServiceWorkerSoftUpdateLoader::fail):
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadWithCacheEntry):
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadFromNetwork):
+        (WebKit::ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveResponse):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveBuffer):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didFinishLoading):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didFailLoading):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didComplete):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h: Added.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2019-12-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce a GPU process

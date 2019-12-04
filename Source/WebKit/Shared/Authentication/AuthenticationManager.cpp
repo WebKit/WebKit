@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
+#include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManagerMessages.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
@@ -110,7 +111,8 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, const SecurityOriginData* topOrigin, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
-    ASSERT(pageID);
+    if (!pageID)
+        return completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
 
     uint64_t challengeID = addChallengeToChallengeMap({ pageID, authenticationChallenge, WTFMove(completionHandler) });
 
