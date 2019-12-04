@@ -94,9 +94,8 @@ Vector<String> WebGLCompressedTextureASTC::getSupportedProfiles()
 
 bool WebGLCompressedTextureASTC::supported(const WebGLRenderingContextBase& context)
 {
-    return RuntimeEnabledFeatures::sharedFeatures().webGLCompressedTextureASTCSupportEnabled()
-        && (context.graphicsContext3D()->getExtensions().supports("GL_KHR_texture_compression_astc_hdr"_s)
-        || context.graphicsContext3D()->getExtensions().supports("GL_KHR_texture_compression_astc_ldr"_s));
+    return context.graphicsContext3D()->getExtensions().supports("GL_KHR_texture_compression_astc_hdr"_s)
+        || context.graphicsContext3D()->getExtensions().supports("GL_KHR_texture_compression_astc_ldr"_s);
 }
 
 } // namespace WebCore

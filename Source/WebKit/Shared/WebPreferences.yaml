@@ -1552,14 +1552,6 @@ LegacyOverflowScrollingTouchEnabled:
   condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)
   category: internal
 
-WebGLCompressedTextureASTCSupportEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "ASTC Texture Support"
-  humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
-  category: internal
-  webcoreBinding: RuntimeEnabledFeatures
-
 FullScreenEnabled:
   type: bool
   defaultValue: false

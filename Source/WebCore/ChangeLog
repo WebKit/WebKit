@@ -1,3 +1,21 @@
+2019-12-04  Kenneth Russell  <kbr@chromium.org>
+
+        Enable WebGL's ASTC extension all the time
+        https://bugs.webkit.org/show_bug.cgi?id=202836
+        <rdar://problem/57627592>
+
+        Reviewed by Dean Jackson.
+
+        Remove the run-time flag - no longer necessary.
+
+        * html/canvas/WebGLCompressedTextureASTC.cpp:
+        (WebCore::WebGLCompressedTextureASTC::supported):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebGLCompressedTextureASTCSupportEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webGLCompressedTextureASTCSupportEnabled const): Deleted.
+
 2019-12-04  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Paint with TextPainter
