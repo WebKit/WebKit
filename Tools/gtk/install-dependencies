@@ -219,6 +219,7 @@ function installDependenciesWithApt {
         python-dev \
         python3-setuptools \
         ragel \
+        uuid-dev \
         x11proto-bigreqs-dev \
         x11proto-composite-dev \
         x11proto-gl-dev \
@@ -539,6 +540,7 @@ function installDependenciesWithDnf {
         libpsl-devel \
         libtiff-devel \
         libunistring-devel \
+        libuuid-devel \
         libxcb-devel \
         libxkbfile-devel \
         libxkbcommon-x11-devel \

@@ -136,6 +136,7 @@ function installDependenciesWithApt {
         libwayland-dev \
         luajit \
         python3-setuptools \
+        uuid-dev \
         yasm"
 
     # These are dependencies necessary for using webkit-patch
@@ -330,6 +331,7 @@ function installDependenciesWithDnf {
         libpsl-devel \
         libsrtp-devel \
         libtheora-devel \
+        libuuid-devel \
         libv4l-devel \
         libvorbis-devel \
         libvpx-devel \
