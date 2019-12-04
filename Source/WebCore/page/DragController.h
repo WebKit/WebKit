@@ -59,8 +59,6 @@ struct PromisedAttachmentInfo;
         static std::unique_ptr<DragController> create(Page&, DragClient&);
         static DragOperation platformGenericDragOperation();
 
-        DragClient& client() const { return m_client; }
-
         WEBCORE_EXPORT DragOperation dragEntered(const DragData&);
         WEBCORE_EXPORT void dragExited(const DragData&);
         WEBCORE_EXPORT DragOperation dragUpdated(const DragData&);
