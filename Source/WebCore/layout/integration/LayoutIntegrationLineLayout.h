@@ -69,6 +69,7 @@ public:
 private:
     const Layout::Container& rootLayoutBox() const;
     void prepareRootGeometryForLayout();
+    ShadowData* debugTextShadow();
 
     const RenderBlockFlow& m_flow;
     std::unique_ptr<const Layout::LayoutTreeContent> m_treeContent;

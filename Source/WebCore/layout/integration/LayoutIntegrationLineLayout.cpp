@@ -29,16 +29,20 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "DisplayPainter.h"
+#include "EventRegion.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutContext.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
 #include "RenderLineBreak.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include "SimpleLineLayout.h"
+#include "TextDecorationPainter.h"
+#include "TextPainter.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -100,18 +104,6 @@ const Display::InlineContent* LineLayout::displayInlineContent() const
     return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
 }
 
-void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    auto& graphicsContext = paintInfo.context();
-
-    graphicsContext.save();
-    graphicsContext.translate(paintOffset);
-
-    Display::Painter::paintInlineFlow(*m_layoutState, paintInfo.context());
-
-    graphicsContext.restore();
-}
-
 LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
 {
     auto* inlineContent = displayInlineContent();
@@ -156,6 +148,100 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
 const Layout::Container& LineLayout::rootLayoutBox() const
 {
     return m_treeContent->rootLayoutBox();
+}
+
+static LayoutRect computeOverflow(const RenderStyle& style, const LayoutRect& boxRect, IntSize& viewportSize)
+{
+    auto overflowRect = boxRect;
+    auto strokeOverflow = std::ceil(style.computedStrokeWidth(viewportSize));
+    overflowRect.inflate(strokeOverflow);
+
+    auto letterSpacing = style.fontCascade().letterSpacing();
+    if (letterSpacing >= 0)
+        return overflowRect;
+    // Last letter's negative spacing shrinks layout rect. Push it to visual overflow.
+    overflowRect.expand(-letterSpacing, 0);
+    return overflowRect;
+}
+
+void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    if (!displayInlineContent())
+        return;
+
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion)
+        return;
+
+    auto& inlineContent = *displayInlineContent();
+
+    auto viewportSize = m_flow.frame().view()->size();
+    float deviceScaleFactor = m_flow.document().deviceScaleFactor();
+
+    auto paintRect = paintInfo.rect;
+    paintRect.moveBy(-paintOffset);
+
+    for (auto& run : inlineContent.runsForRect(paintRect)) {
+        if (!run.textContext())
+            continue;
+
+        auto& textContext = *run.textContext();
+        if (!textContext.length())
+            continue;
+
+        auto& style = run.style();
+        if (style.visibility() != Visibility::Visible)
+            return;
+
+        LayoutRect rect = run.logicalRect();
+        auto visualOverflowRect = computeOverflow(style, rect, viewportSize);
+        if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
+            continue;
+
+        if (paintInfo.eventRegionContext) {
+            if (style.pointerEvents() != PointerEvents::None)
+                paintInfo.eventRegionContext->unite(enclosingIntRect(visualOverflowRect), style);
+            continue;
+        }
+
+        // FIXME: Hyphens.
+
+        auto& lineBox = inlineContent.lineBoxForRun(run);
+        auto baselineOffset = paintOffset.y() + lineBox.logicalTop() + lineBox.baselineOffset();
+
+        auto behavior = textContext.expansion() ? textContext.expansion()->behavior : DefaultExpansion;
+        auto horizontalExpansion = textContext.expansion() ? textContext.expansion()->horizontalExpansion : 0_lu;
+        auto logicalLeft = paintOffset.x() + run.logicalLeft();
+
+        TextRun textRun { textContext.content(), logicalLeft, horizontalExpansion, behavior };
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
+
+        TextPainter textPainter(paintInfo.context());
+        textPainter.setFont(style.fontCascade());
+        textPainter.setStyle(computeTextPaintStyle(m_flow.frame(), style, paintInfo));
+        if (auto* debugShadow = debugTextShadow())
+            textPainter.setShadow(debugShadow);
+
+        textPainter.paint(textRun, rect, textOrigin);
+
+        if (!style.textDecorationsInEffect().isEmpty()) {
+            // FIXME: Use correct RenderText.
+            if (auto* textRenderer = childrenOfType<RenderText>(m_flow).first()) {
+                auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false, style.fontCascade() };
+                painter.setWidth(rect.width());
+                painter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
+            }
+        }
+    }
+}
+
+ShadowData* LineLayout::debugTextShadow()
+{
+    if (!m_flow.settings().simpleLineLayoutDebugBordersEnabled())
+        return nullptr;
+
+    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 0, 150, 150));
+    return &debugTextShadow.get();
 }
 
 }

@@ -29,6 +29,7 @@
 
 #include "DisplayRun.h"
 #include "InlineLineBox.h"
+#include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -42,7 +43,34 @@ struct InlineContent : public RefCounted<InlineContent> {
     LineBoxes lineBoxes;
 
     const Layout::LineBox& lineBoxForRun(const Run& run) const { return lineBoxes[run.lineIndex()]; }
+    WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
 };
+
+inline WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect& rect) const
+{
+    // FIXME: Do something efficient.
+    const Run* first = nullptr;
+    for (auto& run : runs) {
+        LayoutRect runRect = run.logicalRect();
+        if (runRect.intersects(rect)) {
+            first = &run;
+            break;
+        }
+    }
+    if (!first)
+        return { nullptr, nullptr };
+
+    const Run* last = nullptr;
+    for (auto& run : WTF::makeReversedRange(runs)) {
+        LayoutRect runRect = run.logicalRect();
+        if (runRect.intersects(rect)) {
+            last = &run;
+            break;
+        }
+    }
+
+    return { first, last + 1 };
+}
 
 }
 }

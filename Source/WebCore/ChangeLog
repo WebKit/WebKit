@@ -1,3 +1,29 @@
+2019-12-04  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Paint with TextPainter
+        https://bugs.webkit.org/show_bug.cgi?id=204852
+
+        Reviewed by Zalan Bujtas.
+
+        Display::Painter is very rudimentary and turning it into a full painting implementation
+        requires lot of refactoring. Instead, for now use separate painting code in the integration
+        layer that invokes the existing render tree based painting helpers.
+
+        This also enables writing reftests for intergrated LFC layout.
+
+        Test: fast/layoutformattingcontext/flow-integration-basic-paint.html
+
+        * layout/displaytree/DisplayInlineContent.h:
+        (WebCore::Display:: const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::computeOverflow):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
+        Adopted from SimpleLineLayout::paintFlow with support for per-run style added.
+
+        (WebCore::LayoutIntegration::LineLayout::debugTextShadow):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+
 2019-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Implement the CSS clamp() function

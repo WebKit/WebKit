@@ -1,3 +1,13 @@
+2019-12-04  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Paint with TextPainter
+        https://bugs.webkit.org/show_bug.cgi?id=204852
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/layoutformattingcontext/flow-integration-basic-paint-expected.html: Added.
+        * fast/layoutformattingcontext/flow-integration-basic-paint.html: Added.
+
 2019-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Implement the CSS clamp() function
