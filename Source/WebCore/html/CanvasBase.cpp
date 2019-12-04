@@ -182,12 +182,13 @@ bool CanvasBase::callTracingActive() const
     return context && context->callTracingActive();
 }
 
-void CanvasBase::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
+std::unique_ptr<ImageBuffer> CanvasBase::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
 {
+    std::unique_ptr<ImageBuffer> returnBuffer;
     {
         auto locker = holdLock(m_imageBufferAssignmentLock);
         m_contextStateSaver = nullptr;
-        m_imageBuffer = WTFMove(buffer);
+        returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
     }
 
     if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
@@ -201,16 +202,17 @@ void CanvasBase::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
     if (context && m_imageBuffer && previousMemoryCost != m_imageBufferCost)
         InspectorInstrumentation::didChangeCanvasMemory(*context);
 
-    if (!m_imageBuffer)
-        return;
+    if (m_imageBuffer) {
+        m_imageBuffer->context().setShadowsIgnoreTransforms(true);
+        m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
+        m_imageBuffer->context().setStrokeThickness(1);
+        m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
 
-    m_imageBuffer->context().setShadowsIgnoreTransforms(true);
-    m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
-    m_imageBuffer->context().setStrokeThickness(1);
-    m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
+        JSC::JSLockHolder lock(scriptExecutionContext()->vm());
+        scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());
+    }
 
-    JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-    scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(m_imageBufferCost);
+    return returnBuffer;
 }
 
 size_t CanvasBase::activePixelMemory()

@@ -78,7 +78,7 @@ public:
 #if ENABLE(WEBGL)
     ExceptionOr<OffscreenRenderingContext> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 #endif
-    RefPtr<ImageBitmap> transferToImageBitmap();
+    ExceptionOr<RefPtr<ImageBitmap>> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);
 
     void didDraw(const FloatRect&) final;
@@ -109,6 +109,8 @@ private:
 
     void setSize(const IntSize&) final;
     void createImageBuffer() const final;
+    std::unique_ptr<ImageBuffer> takeImageBuffer() const;
+
     void reset();
 
     std::unique_ptr<CanvasRenderingContext> m_context;

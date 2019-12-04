@@ -53,7 +53,7 @@ enum OffscreenRenderingContextType
     attribute [EnforceRange] unsigned long height;
 
     [CallWith=GlobalObject, MayThrowException] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
-    ImageBitmap transferToImageBitmap();
+    [MayThrowException] ImageBitmap transferToImageBitmap();
     // Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
 
 };

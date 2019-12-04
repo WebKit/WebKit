@@ -1,3 +1,26 @@
+2019-12-04  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
+
+        Implement OffscreenCanvas.transferToImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=202572
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. Covered by existing tests.
+
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::setImageBuffer const):
+        * html/CanvasBase.h:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::size const):
+        (WebCore::OffscreenCanvas::setSize):
+        (WebCore::requiresAcceleratedCompositingForWebGL):
+        (WebCore::shouldEnableWebGL):
+        (WebCore::OffscreenCanvas::isWebGLType):
+        (WebCore::OffscreenCanvas::createContextWebGL):
+        (WebCore::OffscreenCanvas::getContext):
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+
 2019-12-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce a GPU process

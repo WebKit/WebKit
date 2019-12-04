@@ -110,7 +110,7 @@ protected:
 
     virtual void setSize(const IntSize& size) { m_size = size; }
 
-    void setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
+    std::unique_ptr<ImageBuffer> setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
     virtual bool hasCreatedImageBuffer() const { return false; }
     static size_t activePixelMemory();
 

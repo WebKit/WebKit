@@ -1,12 +1,12 @@
 
 Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
 
-FAIL Test that transferToImageBitmap returns an ImageBitmap with correct width and height in a worker assert_unreached: error Reached unreachable code
-FAIL Test that transferToImageBitmap returns an ImageBitmap with correct color in a worker Type error
-FAIL Test that call transferToImageBitmap twice returns an ImageBitmap with correct color in a worker Type error
-FAIL Test that call transferToImageBitmap twice on a alpha-disabled context returns an ImageBitmap with correct color in a worker Type error
+PASS Test that transferToImageBitmap returns an ImageBitmap with correct width and height in a worker 
+PASS Test that transferToImageBitmap returns an ImageBitmap with correct color in a worker 
+PASS Test that call transferToImageBitmap twice returns an ImageBitmap with correct color in a worker 
+FAIL Test that call transferToImageBitmap twice on a alpha-disabled context returns an ImageBitmap with correct color in a worker assert_array_equals: property 3, expected 255 but got 0
 PASS Test that transferToImageBitmap won't change context's property in a worker 
-FAIL Test that call transferToImageBitmap preserves transform in a worker Type error
+FAIL Test that call transferToImageBitmap preserves transform in a worker assert_array_equals: property 1, expected 255 but got 0
 FAIL Test that call transferToImageBitmap on a detached OffscreenCanvas throws an exception in a worker assert_unreached: error Reached unreachable code
-FAIL Test that call transferToImageBitmap without a context throws an exception in a worker assert_true: expected true got undefined
+PASS Test that call transferToImageBitmap without a context throws an exception in a worker 
 
