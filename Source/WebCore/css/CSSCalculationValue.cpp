@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -234,6 +234,8 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueMin;
     case CalcOperator::Max:
         return CSSValueMax;
+    case CalcOperator::Clamp:
+        return CSSValueClamp;
     }
     return CSSValueCalc;
 }
@@ -633,6 +635,7 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
         return leftCategory;
     case CalcOperator::Min:
     case CalcOperator::Max:
+    case CalcOperator::Clamp:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -701,6 +704,7 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
 
         case CalcOperator::Min:
         case CalcOperator::Max:
+        case CalcOperator::Clamp:
             // The type of a min(), max(), or clamp() expression is the result of adding the types of its comma-separated calculations
             return CalculationCategory::Other;
         }
@@ -709,7 +713,7 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
     return currentCategory;
 }
 
-static CalculationCategory resolvedTypeForMinOrMax(CalculationCategory category, CalculationCategory destinationCategory)
+static CalculationCategory resolvedTypeForMinOrMaxOrClamp(CalculationCategory category, CalculationCategory destinationCategory)
 {
     switch (category) {
     case CalculationCategory::Number:
@@ -744,7 +748,7 @@ public:
     static RefPtr<CSSCalcOperationNode> create(CalcOperator, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide);
     static RefPtr<CSSCalcOperationNode> createSum(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createProduct(Vector<Ref<CSSCalcExpressionNode>>&& values);
-    static RefPtr<CSSCalcOperationNode> createMinOrMax(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
+    static RefPtr<CSSCalcOperationNode> createMinOrMaxOrClamp(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
 
     static Ref<CSSCalcExpressionNode> simplify(Ref<CSSCalcExpressionNode>&&);
 
@@ -877,13 +881,14 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createProduct(Vector<Ref<CSSC
     return adoptRef(new CSSCalcOperationNode(newCategory, CalcOperator::Multiply, WTFMove(values)));
 }
 
-RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMax(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
 {
-    ASSERT(op == CalcOperator::Min || op == CalcOperator::Max);
+    ASSERT(op == CalcOperator::Min || op == CalcOperator::Max || op == CalcOperator::Clamp);
+    ASSERT_IMPLIES(op == CalcOperator::Clamp, values.size() == 3);
 
     Optional<CalculationCategory> category = WTF::nullopt;
     for (auto& value : values) {
-        auto valueCategory = resolvedTypeForMinOrMax(value->category(), destinationCategory);
+        auto valueCategory = resolvedTypeForMinOrMaxOrClamp(value->category(), destinationCategory);
 
         ASSERT(valueCategory < CalculationCategory::Other);
         if (!category) {
@@ -1399,6 +1404,7 @@ static const char* functionPrefixForOperator(CalcOperator op)
         return "";
     case CalcOperator::Min: return "min(";
     case CalcOperator::Max: return "max(";
+    case CalcOperator::Clamp: return "clamp(";
     }
     
     return "";
@@ -1592,6 +1598,14 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
             maximum = std::max(maximum, child);
         return maximum;
     }
+    case CalcOperator::Clamp: {
+        if (children.size() != 3)
+            return std::numeric_limits<double>::quiet_NaN();
+        double min = children[0];
+        double value = children[1];
+        double max = children[2];
+        return std::max(min, std::min(value, max));
+    }
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -1686,12 +1700,17 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         return false;
 
     // "arguments" refers to things between commas.
+    unsigned minArgumentCount = 1;
     Optional<unsigned> maxArgumentCount;
 
     switch (functionID) {
     case CSSValueMin:
     case CSSValueMax:
         maxArgumentCount = WTF::nullopt;
+        break;
+    case CSSValueClamp:
+        minArgumentCount = 3;
+        maxArgumentCount = 3;
         break;
     case CSSValueCalc:
         maxArgumentCount = 1;
@@ -1724,13 +1743,19 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         nodes.append(node.releaseNonNull());
         requireComma = true;
     }
+    
+    if (argumentCount < minArgumentCount)
+        return false;
 
     switch (functionID) {
     case CSSValueMin:
-        result = CSSCalcOperationNode::createMinOrMax(CalcOperator::Min, WTFMove(nodes), m_destinationCategory);
+        result = CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Min, WTFMove(nodes), m_destinationCategory);
         break;
     case CSSValueMax:
-        result = CSSCalcOperationNode::createMinOrMax(CalcOperator::Max, WTFMove(nodes), m_destinationCategory);
+        result = CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Max, WTFMove(nodes), m_destinationCategory);
+        break;
+    case CSSValueClamp:
+        result = CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Clamp, WTFMove(nodes), m_destinationCategory);
         break;
     case CSSValueWebkitCalc:
     case CSSValueCalc:
@@ -1970,11 +1995,12 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             return CSSCalcOperationNode::createProduct(createCSS(operationChildren, style));
         }
         case CalcOperator::Min:
-        case CalcOperator::Max: {
+        case CalcOperator::Max:
+        case CalcOperator::Clamp: {
             auto children = createCSS(operationChildren, style);
             if (children.isEmpty())
                 return nullptr;
-            return CSSCalcOperationNode::createMinOrMax(op, WTFMove(children), CalculationCategory::Other);
+            return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), CalculationCategory::Other);
         }
         }
         return nullptr;
@@ -2047,6 +2073,7 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueWebkitCalc:
     case CSSValueMin:
     case CSSValueMax:
+    case CSSValueClamp:
         return true;
     default:
         return false;

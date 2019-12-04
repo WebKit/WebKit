@@ -23,6 +23,11 @@
             testExpression('max(100px + 200px)', 'max(300px)', '300px');
             testExpression('max(100px , 200px)', 'max(200px)', '200px');
             testExpression('max(100px,200px)', 'max(200px)', '200px');
+            testExpression('clamp(100px,123px,200px)', 'clamp(100px, 123px, 200px)', '123px');
+            testExpression('clamp(100px,300px,200px)', 'clamp(100px, 300px, 200px)', '200px');
+            testExpression('clamp(200px,300px,100px)', 'clamp(200px, 300px, 100px)', '200px');
+            testExpression('clamp((50px + 50px),40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
+            testExpression('clamp(50px + 50px,40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
 
             // Non-parsing expression.
             testExpression('calc(100px, 200px)', '999px', '999px');
@@ -35,6 +40,12 @@
             testExpression('max(100px,, 200px)', '999px', '999px');
             testExpression('max(100px, , 200px)', '999px', '999px');
             testExpression('max(100px, 200px,)', '999px', '999px');
+
+            testExpression('clamp(200px,300px)', '999px', '999px');
+            testExpression('clamp(200px,300px,)', '999px', '999px');
+            testExpression('clamp(200px,,300px)', '999px', '999px');
+            testExpression('clamp((),,300px)', '999px', '999px');
+            testExpression('clamp(1px,2px,2px,4px)', '999px', '999px');
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

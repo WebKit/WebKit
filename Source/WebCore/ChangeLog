@@ -1,3 +1,39 @@
+2019-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement the CSS clamp() function
+        https://bugs.webkit.org/show_bug.cgi?id=203310
+        <rdar://problem/56551088>
+
+        Reviewed by Antti Koivisto.
+        
+        Implement the CSS clamp() function, of the form clamp(min, value, max):
+        https://drafts.csswg.org/css-values-4/#funcdef-clamp
+
+        This is a natural extension of min() and max(), the main difference being
+        that it takes exactly three arguments.
+
+        Tests: fast/css/calc-parsing.html
+               web-platform-tests/css/css-values/clamp-length-computed-expected.txt:
+               web-platform-tests/css/css-values/clamp-length-serialize-expected.txt:
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::functionFromOperator):
+        (WebCore::determineCategory):
+        (WebCore::resolvedTypeForMinOrMaxOrClamp):
+        (WebCore::CSSCalcOperationNode::createMinOrMaxOrClamp):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        (WebCore::resolvedTypeForMinOrMax): Deleted.
+        (WebCore::CSSCalcOperationNode::createMinOrMax): Deleted.
+        * css/CSSValueKeywords.in:
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        (WebCore::operator<<):
+        * platform/CalculationValue.h:
+
 2019-12-04  youenn fablet  <youenn@apple.com>
 
         Move soft update handling to network process

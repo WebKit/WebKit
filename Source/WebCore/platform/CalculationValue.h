@@ -49,7 +49,8 @@ enum class CalcOperator : uint8_t {
     Multiply = '*',
     Divide = '/',
     Min = 0,
-    Max = 1,
+    Max,
+    Clamp,
 };
 
 enum class CalcExpressionNodeType : uint8_t {

@@ -1,3 +1,16 @@
+2019-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement the CSS clamp() function
+        https://bugs.webkit.org/show_bug.cgi?id=203310
+        <rdar://problem/56551088>
+
+        Reviewed by Antti Koivisto.
+
+        Some basic clamp() parsing tests (valid and invalid inputs).
+
+        * fast/css/calc-parsing-expected.txt:
+        * fast/css/calc-parsing.html:
+
 2019-12-04  youenn fablet  <youenn@apple.com>
 
         Update WPT tools directory

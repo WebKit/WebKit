@@ -159,6 +159,15 @@ float CalcExpressionOperation::evaluate(float maxValue) const
             maximum = std::max(maximum, child->evaluate(maxValue));
         return maximum;
     }
+    case CalcOperator::Clamp: {
+        if (m_children.size() != 3)
+            return std::numeric_limits<float>::quiet_NaN();
+
+        float min = m_children[0]->evaluate(maxValue);
+        float value = m_children[1]->evaluate(maxValue);
+        float max = m_children[2]->evaluate(maxValue);
+        return std::max(min, std::min(value, max));
+    }
     }
     ASSERT_NOT_REACHED();
     return std::numeric_limits<float>::quiet_NaN();
@@ -251,6 +260,7 @@ TextStream& operator<<(TextStream& ts, CalcOperator op)
     case CalcOperator::Divide: ts << "/"; break;
     case CalcOperator::Min: ts << "min"; break;
     case CalcOperator::Max: ts << "max"; break;
+    case CalcOperator::Clamp: ts << "clamp"; break;
     }
     return ts;
 }
