@@ -1,3 +1,14 @@
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html is a flakey failure, WebAssembly.Global is not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=200258
+
+        Reviewed by Saam Barati.
+
+        We implemented WebAssembly.Global now. So let's unmark it.
+
+        * platform/mac/TestExpectations:
+
 2019-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Expose basic ITP data from the database for future API/SPI use
