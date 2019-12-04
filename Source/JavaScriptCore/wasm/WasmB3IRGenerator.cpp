@@ -818,7 +818,7 @@ auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partial
         result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
-        ASSERT(global.mutability == Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
         result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), pointer);
         break;
@@ -839,7 +839,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
-        ASSERT(global.mutability == Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
         m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, pointer);
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.

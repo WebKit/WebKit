@@ -1224,7 +1224,7 @@ auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
         }
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
@@ -1264,7 +1264,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
