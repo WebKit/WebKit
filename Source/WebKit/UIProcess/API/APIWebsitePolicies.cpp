@@ -55,7 +55,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setPopUpPolicy(m_popUpPolicy);
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setCustomUserAgent(m_customUserAgent);
-    policies->setCustomJavaScriptUserAgentAsSiteSpecificQuirks(m_customJavaScriptUserAgentAsSiteSpecificQuirks);
+    policies->setCustomUserAgentAsSiteSpecificQuirks(m_customUserAgentAsSiteSpecificQuirks);
     policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
     policies->setPreferredContentMode(m_preferredContentMode);
     policies->setMetaViewportPolicy(m_metaViewportPolicy);
@@ -110,7 +110,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         popUpPolicy(),
         m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->parameters() } : WTF::nullopt,
         m_customUserAgent,
-        m_customJavaScriptUserAgentAsSiteSpecificQuirks,
+        m_customUserAgentAsSiteSpecificQuirks,
         m_customNavigatorPlatform,
         m_metaViewportPolicy,
         m_mediaSourcePolicy,

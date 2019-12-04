@@ -137,14 +137,14 @@
     return [_webpagePreferences _customUserAgent];
 }
 
-- (void)setCustomJavaScriptUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
+- (void)setCustomUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
 {
-    [_webpagePreferences _setCustomJavaScriptUserAgentAsSiteSpecificQuirks:customUserAgent];
+    [_webpagePreferences _setCustomUserAgentAsSiteSpecificQuirks:customUserAgent];
 }
 
-- (NSString *)customJavaScriptUserAgentAsSiteSpecificQuirks
+- (NSString *)customUserAgentAsSiteSpecificQuirks
 {
-    return [_webpagePreferences _customJavaScriptUserAgentAsSiteSpecificQuirks];
+    return [_webpagePreferences _customUserAgentAsSiteSpecificQuirks];
 }
 
 - (void)setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform

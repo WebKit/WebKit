@@ -1265,7 +1265,7 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     if (navigationAction.targetFrame.mainFrame) {
-        [websitePolicies setCustomJavaScriptUserAgentAsSiteSpecificQuirks:@"Foo Custom JavaScript UserAgent"];
+        [websitePolicies setCustomUserAgentAsSiteSpecificQuirks:@"Foo Site Specific Quriks UserAgent"];
         if (_setCustomUserAgent)
             [websitePolicies setCustomUserAgent:@"Foo Custom Request UserAgent"];
     }
@@ -1280,7 +1280,7 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
 
 @end
 
-TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
+TEST(WebKit, WebsitePoliciesCustomUserAgentAsSiteSpecificQuirksDisabled)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -1293,7 +1293,7 @@ TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
         EXPECT_TRUE([userAgentString containsString:@"(KHTML, like Gecko)"]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
-    [configuration preferences]._needsSiteSpecificQuirks = YES;
+    [configuration preferences]._needsSiteSpecificQuirks = NO;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1310,11 +1310,16 @@ TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
     while (loadCount != 9U)
         TestWebKitAPI::Util::spinRunLoop();
 
-    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] UTF8String]);
-    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"subframeUserAgent"] UTF8String]);
+    auto* userAgentString = [webView stringByEvaluatingJavaScript:@"navigator.userAgent"];
+    EXPECT_TRUE([userAgentString hasPrefix:@"Mozilla/5.0 "]);
+    EXPECT_TRUE([userAgentString containsString:@"(KHTML, like Gecko)"]);
+
+    userAgentString = [webView stringByEvaluatingJavaScript:@"navigator.userAgent"];
+    EXPECT_TRUE([userAgentString hasPrefix:@"Mozilla/5.0 "]);
+    EXPECT_TRUE([userAgentString containsString:@"(KHTML, like Gecko)"]);
 }
 
-TEST(WebKit, WebsitePoliciesCustomUserAgents)
+TEST(WebKit, WebsitePoliciesCustomUserAgentAsSiteSpecificQuirks)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -1322,7 +1327,7 @@ TEST(WebKit, WebsitePoliciesCustomUserAgents)
     [schemeHandler addMappingFromURLString:@"test://www.webkit.org/main.html" toData:customUserAgentMainFrameTestBytes];
     [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
     [schemeHandler setTaskHandler:[](id <WKURLSchemeTask> task) {
-        EXPECT_STREQ("Foo Custom Request UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+        EXPECT_STREQ("Foo Site Specific Quriks UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
     [configuration preferences]._needsSiteSpecificQuirks = YES;
@@ -1343,8 +1348,8 @@ TEST(WebKit, WebsitePoliciesCustomUserAgents)
     while (loadCount != 9U)
         TestWebKitAPI::Util::spinRunLoop();
 
-    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] UTF8String]);
-    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"subframeUserAgent"] UTF8String]);
+    EXPECT_STREQ("Foo Site Specific Quriks UserAgent", [[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] UTF8String]);
+    EXPECT_STREQ("Foo Site Specific Quriks UserAgent", [[webView stringByEvaluatingJavaScript:@"subframeUserAgent"] UTF8String]);
 }
 
 @interface CustomNavigatorPlatformDelegate : NSObject <WKNavigationDelegate> {

@@ -2768,24 +2768,9 @@ String FrameLoader::userAgent(const URL& url) const
 {
     String userAgent;
 
-    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader())
-        userAgent = documentLoader->customUserAgent();
-
-    InspectorInstrumentation::applyUserAgentOverride(m_frame, userAgent);
-
-    if (!userAgent.isEmpty())
-        return userAgent;
-
-    return m_client.userAgent(url);
-}
-
-String FrameLoader::userAgentForJavaScript(const URL& url) const
-{
-    String userAgent;
-
     if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
         if (m_frame.settings().needsSiteSpecificQuirks())
-            userAgent = documentLoader->customJavaScriptUserAgentAsSiteSpecificQuirks();
+            userAgent = documentLoader->customUserAgentAsSiteSpecificQuirks();
         if (userAgent.isEmpty())
             userAgent = documentLoader->customUserAgent();
     }
@@ -2797,7 +2782,7 @@ String FrameLoader::userAgentForJavaScript(const URL& url) const
 
     return m_client.userAgent(url);
 }
-    
+
 String FrameLoader::navigatorPlatform() const
 {
     if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {

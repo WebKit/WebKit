@@ -47,7 +47,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << popUpPolicy;
     encoder << websiteDataStoreParameters;
     encoder << customUserAgent;
-    encoder << customJavaScriptUserAgentAsSiteSpecificQuirks;
+    encoder << customUserAgentAsSiteSpecificQuirks;
     encoder << customNavigatorPlatform;
     encoder << metaViewportPolicy;
     encoder << mediaSourcePolicy;
@@ -100,9 +100,9 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!customUserAgent)
         return WTF::nullopt;
 
-    Optional<String> customJavaScriptUserAgentAsSiteSpecificQuirks;
-    decoder >> customJavaScriptUserAgentAsSiteSpecificQuirks;
-    if (!customJavaScriptUserAgentAsSiteSpecificQuirks)
+    Optional<String> customUserAgentAsSiteSpecificQuirks;
+    decoder >> customUserAgentAsSiteSpecificQuirks;
+    if (!customUserAgentAsSiteSpecificQuirks)
         return WTF::nullopt;
 
     Optional<String> customNavigatorPlatform;
@@ -146,7 +146,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*popUpPolicy),
         WTFMove(*websiteDataStoreParameters),
         WTFMove(*customUserAgent),
-        WTFMove(*customJavaScriptUserAgentAsSiteSpecificQuirks),
+        WTFMove(*customUserAgentAsSiteSpecificQuirks),
         WTFMove(*customNavigatorPlatform),
         WTFMove(*metaViewportPolicy),
         WTFMove(*mediaSourcePolicy),
@@ -160,7 +160,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 {
     documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
     documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
-    documentLoader.setCustomJavaScriptUserAgentAsSiteSpecificQuirks(websitePolicies.customJavaScriptUserAgentAsSiteSpecificQuirks);
+    documentLoader.setCustomUserAgentAsSiteSpecificQuirks(websitePolicies.customUserAgentAsSiteSpecificQuirks);
     documentLoader.setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
 
 #if ENABLE(DEVICE_ORIENTATION)

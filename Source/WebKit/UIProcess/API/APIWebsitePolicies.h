@@ -86,8 +86,8 @@ public:
     void setCustomUserAgent(const WTF::String& customUserAgent) { m_customUserAgent = customUserAgent; }
     const WTF::String& customUserAgent() const { return m_customUserAgent; }
 
-    void setCustomJavaScriptUserAgentAsSiteSpecificQuirks(const WTF::String& customUserAgent) { m_customJavaScriptUserAgentAsSiteSpecificQuirks = customUserAgent; }
-    const WTF::String& customJavaScriptUserAgentAsSiteSpecificQuirks() const { return m_customJavaScriptUserAgentAsSiteSpecificQuirks; }
+    void setCustomUserAgentAsSiteSpecificQuirks(const WTF::String& customUserAgent) { m_customUserAgentAsSiteSpecificQuirks = customUserAgent; }
+    const WTF::String& customUserAgentAsSiteSpecificQuirks() const { return m_customUserAgentAsSiteSpecificQuirks; }
 
     void setCustomNavigatorPlatform(const WTF::String& customNavigatorPlatform) { m_customNavigatorPlatform = customNavigatorPlatform; }
     const WTF::String& customNavigatorPlatform() const { return m_customNavigatorPlatform; }
@@ -130,7 +130,7 @@ private:
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     WTF::String m_customUserAgent;
-    WTF::String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
+    WTF::String m_customUserAgentAsSiteSpecificQuirks;
     WTF::String m_customNavigatorPlatform;
     WebKit::WebContentMode m_preferredContentMode { WebKit::WebContentMode::Recommended };
     WebKit::WebsiteMetaViewportPolicy m_metaViewportPolicy { WebKit::WebsiteMetaViewportPolicy::Default };

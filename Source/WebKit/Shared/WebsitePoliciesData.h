@@ -61,7 +61,7 @@ struct WebsitePoliciesData {
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;
-    String customJavaScriptUserAgentAsSiteSpecificQuirks;
+    String customUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;
     WebsiteMetaViewportPolicy metaViewportPolicy { WebsiteMetaViewportPolicy::Default };
     WebsiteMediaSourcePolicy mediaSourcePolicy { WebsiteMediaSourcePolicy::Default };

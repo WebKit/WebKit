@@ -1,3 +1,28 @@
+2019-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace customJavaScriptUserAgentAsSiteSpecificQuirks with customUserAgentAsSiteSpecificQuirks
+        https://bugs.webkit.org/show_bug.cgi?id=204824
+
+        Reviewed by Brent Fulgham.
+
+        This patch renames customJavaScriptUserAgentAsSiteSpecificQuirks to customUserAgentAsSiteSpecificQuirks,
+        and make it apply to network requests as well as JavaScript API.
+
+        Tests: WebKit.WebsitePoliciesCustomUserAgentAsSiteSpecificQuirksDisabled
+               WebKit.WebsitePoliciesCustomUserAgentAsSiteSpecificQuirks
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomUserAgentAsSiteSpecificQuirks): Renamed from setCustomJavaScriptUserAgentAsSiteSpecificQuirks.
+        (WebCore::DocumentLoader::customUserAgentAsSiteSpecificQuirks const): Renamed from customJavaScriptUserAgentAsSiteSpecificQuirks.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgent const):
+        (WebCore::FrameLoader::userAgentForJavaScript const): Deleted.
+        * loader/FrameLoader.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::userAgent const):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldOpenAsAboutBlank const):
+
 2019-12-03  Andres Gonzalez  <andresg_22@apple.com>
 
         Focus tracking support in the accessibility isolatedtree.

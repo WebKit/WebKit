@@ -286,14 +286,14 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return _websitePolicies->customUserAgent();
 }
 
-- (void)_setCustomJavaScriptUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
+- (void)_setCustomUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
 {
-    _websitePolicies->setCustomJavaScriptUserAgentAsSiteSpecificQuirks(customUserAgent);
+    _websitePolicies->setCustomUserAgentAsSiteSpecificQuirks(customUserAgent);
 }
 
-- (NSString *)_customJavaScriptUserAgentAsSiteSpecificQuirks
+- (NSString *)_customUserAgentAsSiteSpecificQuirks
 {
-    return _websitePolicies->customJavaScriptUserAgentAsSiteSpecificQuirks();
+    return _websitePolicies->customUserAgentAsSiteSpecificQuirks();
 }
 
 - (void)_setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform
