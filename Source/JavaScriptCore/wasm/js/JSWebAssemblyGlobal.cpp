@@ -36,7 +36,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyGlobal::s_info = { "WebAssembly.Global", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyGlobal) };
 
-JSWebAssemblyGlobal* JSWebAssemblyGlobal::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Global>&& global)
+JSWebAssemblyGlobal* JSWebAssemblyGlobal::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Global>&& global)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 

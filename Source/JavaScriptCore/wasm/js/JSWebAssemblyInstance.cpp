@@ -157,7 +157,7 @@ Identifier JSWebAssemblyInstance::createPrivateModuleKey()
     return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
 }
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module, Wasm::CreationMode creationMode)
+JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module, Wasm::CreationMode creationMode)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -290,7 +290,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, JSGlobalObject* glo
             // We create a memory when it's a memory definition.
             RELEASE_ASSERT(!moduleInformation.memory.isImport());
 
-            auto* jsMemory = JSWebAssemblyMemory::create(globalObject, vm, globalObject->webAssemblyMemoryStructure());
+            auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
             RETURN_IF_EXCEPTION(throwScope, nullptr);
 
             RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(moduleInformation.memory.initial(), moduleInformation.memory.maximum(),
@@ -308,7 +308,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, JSGlobalObject* glo
     
     if (!jsInstance->memory()) {
         // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
-        auto* jsMemory = JSWebAssemblyMemory::create(globalObject, vm, globalObject->webAssemblyMemoryStructure());
+        auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
         jsMemory->adopt(Wasm::Memory::create());
         jsInstance->setMemory(vm, jsMemory);
         RETURN_IF_EXCEPTION(throwScope, nullptr);

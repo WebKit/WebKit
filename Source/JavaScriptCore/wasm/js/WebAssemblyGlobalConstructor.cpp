@@ -121,7 +121,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyGlobal(JSGlobalObject*
     }
 
     Ref<Wasm::Global> wasmGlobal = Wasm::Global::create(type, mutability, initialValue);
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyGlobal::create(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(wasmGlobal))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(wasmGlobal))));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyGlobal(JSGlobalObject* globalObject, CallFrame*)

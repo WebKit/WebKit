@@ -59,7 +59,7 @@ public:
 
     static Identifier createPrivateModuleKey();
 
-    static JSWebAssemblyInstance* create(VM&, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&, Wasm::CreationMode);
+    static JSWebAssemblyInstance* tryCreate(VM&, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&, Wasm::CreationMode);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;

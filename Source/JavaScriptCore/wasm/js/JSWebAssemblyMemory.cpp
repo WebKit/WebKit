@@ -37,7 +37,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
-JSWebAssemblyMemory* JSWebAssemblyMemory::create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
+JSWebAssemblyMemory* JSWebAssemblyMemory::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 

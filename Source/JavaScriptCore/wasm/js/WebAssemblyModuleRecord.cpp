@@ -350,7 +350,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type());
             if (!wasmTable)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"));
-            JSWebAssemblyTable* table = JSWebAssemblyTable::create(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
+            JSWebAssemblyTable* table = JSWebAssemblyTable::tryCreate(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
             // We should always be able to allocate a JSWebAssemblyTable we've defined.
             // If it's defined to be too large, we should have thrown a validation error.
             scope.assertNoException();
@@ -425,7 +425,8 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             case Wasm::GlobalInformation::BindingMode::Portable: {
                 ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
                 Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::GlobalInformation::Mutability::Mutable, initialBits);
-                JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::create(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                scope.assertNoException();
                 m_instance->linkGlobal(vm, globalIndex, globalValue);
                 keepAlive(bitwise_cast<void*>(initialBits)); // Ensure this is kept alive while creating JSWebAssemblyGlobal.
                 break;
@@ -473,7 +474,8 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                 if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {
                     uint64_t initialValue = m_instance->instance().loadI64Global(exp.kindIndex);
                     Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
-                    exportedValue = JSWebAssemblyGlobal::create(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    exportedValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    scope.assertNoException();
                 } else {
                     ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
                     RefPtr<Wasm::Global> globalRef = m_instance->instance().getGlobalBinding(exp.kindIndex);

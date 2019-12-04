@@ -49,7 +49,7 @@ public:
         return vm.webAssemblyTableSpace<mode>();
     }
 
-    static JSWebAssemblyTable* create(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Table>&&);
+    static JSWebAssemblyTable* tryCreate(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Table>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

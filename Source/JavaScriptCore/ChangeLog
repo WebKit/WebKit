@@ -1,5 +1,47 @@
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSWebAssemblyGlobal creation should have exception check
+        https://bugs.webkit.org/show_bug.cgi?id=204857
+        <rdar://problem/57618579>
+
+        Reviewed by Mark Lam.
+
+        Each WebAssembly cells have a path throwing an exception if WebAssembly is disabled. We lack exception checking after calling JSWebAssemblyGlobal::create
+        in WebAssemblyModuleRecord linking phase. While exception is never thrown in this place since this happens only when WebAssembly is enabled, we should put
+        `scope.assertNoException()` to satisfy exception verifier requirement. We also rename factory function of Wasm cells from "create" to "tryCreate" since it
+        can fail potentially.
+
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::instantiate):
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::tryCreate):
+        (JSC::JSWebAssemblyGlobal::create): Deleted.
+        * wasm/js/JSWebAssemblyGlobal.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        (JSC::JSWebAssemblyInstance::create): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::tryCreate):
+        (JSC::JSWebAssemblyMemory::create): Deleted.
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::tryCreate):
+        (JSC::JSWebAssemblyTable::create): Deleted.
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::constructJSWebAssemblyGlobal):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Put more cells into IsoSubspace
         https://bugs.webkit.org/show_bug.cgi?id=204845
 
