@@ -1,3 +1,13 @@
+2019-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening.
+
+        Update legacy-animation-engine/fast/css/calc-with-angle-time-frequency.html to match fast/css/calc-with-angle-time-frequency.html
+        for new calc() behavior.
+
+        * legacy-animation-engine/fast/css/calc-with-angle-time-frequency-expected.txt:
+        * legacy-animation-engine/fast/css/calc-with-angle-time-frequency.html:
+
 2019-12-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Delete non-cookie website data after 7 days of no user interaction
