@@ -816,7 +816,13 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     _recordingReset(event)
     {
         this._timelineRuler.clearMarkers();
+
         this._timelineRuler.addMarker(this._currentTimeMarker);
+
+        if (this._stoppingTimeMarker) {
+            this._stoppingTimeMarker.time = -1; // Hide the marker.
+            this._timelineRuler.addMarker(this._stoppingTimeMarker);
+        }
     }
 
     _canShowTimelineType(type)
