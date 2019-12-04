@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "ExceptionData.h"
 #include "MessageEvent.h"
-#include "Microtasks.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerFetchResult.h"

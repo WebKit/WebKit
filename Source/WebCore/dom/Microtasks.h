@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -32,7 +31,6 @@ class VM;
 namespace WebCore {
 
 class EventLoopTask;
-class ScriptExecutionContext;
 
 class MicrotaskQueue final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -43,19 +41,13 @@ public:
     WEBCORE_EXPORT void append(std::unique_ptr<EventLoopTask>&&);
     WEBCORE_EXPORT void performMicrotaskCheckpoint();
 
-    JSC::VM& vm() const { return m_vm.get(); }
-
 private:
-    void timerFired();
+    JSC::VM& vm() const { return m_vm.get(); }
 
     bool m_performingMicrotaskCheckpoint { false };
     Vector<std::unique_ptr<EventLoopTask>> m_microtaskQueue;
     // For the main thread the VM lives forever. For workers it's lifetime is tied to our owning WorkerGlobalScope. Regardless, we retain the VM here to be safe.
     Ref<JSC::VM> m_vm;
-
-    // FIXME: Instead of a Timer, we should have a centralized Event Loop that calls performMicrotaskCheckpoint()
-    // on every iteration, implementing https://html.spec.whatwg.org/multipage/webappapis.html#processing-model-9
-    Timer m_timer;
 };
 
 } // namespace WebCore

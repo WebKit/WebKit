@@ -1,3 +1,16 @@
+2019-11-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perform microtask checkpoint after each task as spec'ed
+        https://bugs.webkit.org/show_bug.cgi?id=204546
+        <rdar://problem/57449333>
+
+        Reviewed by Chris Dumez.
+
+        Added a regresion test using newly added internals methods.
+
+        * http/tests/eventloop/perform-microtask-checkpoint-at-end-of-task-expected.txt: Added.
+        * http/tests/eventloop/perform-microtask-checkpoint-at-end-of-task.html: Added.
+
 2019-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test gardening.

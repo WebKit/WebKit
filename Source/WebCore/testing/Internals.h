@@ -776,6 +776,7 @@ public:
 
     void postTask(RefPtr<VoidCallback>&&);
     ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, RefPtr<VoidCallback>&&);
+    ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, RefPtr<VoidCallback>&&);
     void markContextAsInsecure();
 
     bool usingAppleInternalSDK() const;

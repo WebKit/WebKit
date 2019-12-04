@@ -43,6 +43,7 @@ void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
 {
     ASSERT(microtask->taskSource() == TaskSource::Microtask);
     microtaskQueue().append(WTFMove(microtask));
+    scheduleToRunIfNeeded(); // FIXME: Remove this once everything is integrated with the event loop.
 }
 
 void EventLoop::performMicrotaskCheckpoint()
@@ -77,28 +78,35 @@ void EventLoop::scheduleToRunIfNeeded()
 void EventLoop::run()
 {
     m_isScheduledToRun = false;
-    if (m_tasks.isEmpty())
-        return;
+    bool didPerformMicrotaskCheckpoint = false;
 
-    auto tasks = std::exchange(m_tasks, { });
-    m_groupsWithSuspenedTasks.clear();
-    Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
-    for (auto& task : tasks) {
-        auto* group = task->group();
-        if (!group || group->isStoppedPermanently())
-            continue;
+    if (!m_tasks.isEmpty()) {
+        auto tasks = std::exchange(m_tasks, { });
+        m_groupsWithSuspenedTasks.clear();
+        Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
+        for (auto& task : tasks) {
+            auto* group = task->group();
+            if (!group || group->isStoppedPermanently())
+                continue;
 
-        if (group->isSuspended()) {
-            m_groupsWithSuspenedTasks.add(group);
-            remainingTasks.append(WTFMove(task));
-            continue;
+            if (group->isSuspended()) {
+                m_groupsWithSuspenedTasks.add(group);
+                remainingTasks.append(WTFMove(task));
+                continue;
+            }
+
+            task->execute();
+            didPerformMicrotaskCheckpoint = true;
+            microtaskQueue().performMicrotaskCheckpoint();
         }
-
-        task->execute();
+        for (auto& task : m_tasks)
+            remainingTasks.append(WTFMove(task));
+        m_tasks = WTFMove(remainingTasks);
     }
-    for (auto& task : m_tasks)
-        remainingTasks.append(WTFMove(task));
-    m_tasks = WTFMove(remainingTasks);
+
+    // FIXME: Remove this once everything is integrated with the event loop.
+    if (!didPerformMicrotaskCheckpoint)
+        microtaskQueue().performMicrotaskCheckpoint();
 }
 
 void EventLoop::clearAllTasks()

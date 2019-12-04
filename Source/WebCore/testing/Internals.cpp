@@ -4650,16 +4650,38 @@ void Internals::postTask(RefPtr<VoidCallback>&& callback)
     });
 }
 
+static Optional<TaskSource> taskSourceFromString(const String& taskSourceName)
+{
+    if (taskSourceName == "DOMManipulation")
+        return TaskSource::DOMManipulation;
+    return WTF::nullopt;
+}
+
 ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
 {
-    TaskSource source;
-    if (taskSourceName == "DOMManipulation")
-        source = TaskSource::DOMManipulation;
-    else
+    auto source = taskSourceFromString(taskSourceName);
+    if (!source)
         return Exception { NotSupportedError };
 
-    context.eventLoop().queueTask(source, [callback = WTFMove(callback)]() {
+    context.eventLoop().queueTask(*source, [callback = WTFMove(callback)] {
         callback->handleEvent();
+    });
+
+    return { };
+}
+
+ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
+{
+    auto source = taskSourceFromString(taskSourceName);
+    if (!source)
+        return Exception { NotSupportedError };
+
+    ScriptExecutionContext& context = document; // This avoids unnecessarily exporting Document::eventLoop.
+    context.eventLoop().queueTask(*source, [movedCallback = WTFMove(callback), protectedDocument = makeRef(document)]() mutable {
+        ScriptExecutionContext& context = protectedDocument.get();
+        context.eventLoop().queueMicrotask([callback = WTFMove(movedCallback)] {
+            callback->handleEvent();
+        });
     });
 
     return { };

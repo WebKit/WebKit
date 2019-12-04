@@ -33,7 +33,6 @@ namespace WebCore {
 
 MicrotaskQueue::MicrotaskQueue(JSC::VM& vm)
     : m_vm(makeRef(vm))
-    , m_timer(*this, &MicrotaskQueue::timerFired)
 {
 }
 
@@ -42,13 +41,6 @@ MicrotaskQueue::~MicrotaskQueue() = default;
 void MicrotaskQueue::append(std::unique_ptr<EventLoopTask>&& task)
 {
     m_microtaskQueue.append(WTFMove(task));
-
-    m_timer.startOneShot(0_s);
-}
-
-void MicrotaskQueue::timerFired()
-{
-    performMicrotaskCheckpoint();
 }
 
 void MicrotaskQueue::performMicrotaskCheckpoint()

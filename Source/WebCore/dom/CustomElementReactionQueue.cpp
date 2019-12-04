@@ -34,7 +34,6 @@
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
-#include "Microtasks.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
 #include <wtf/NeverDestroyed.h>

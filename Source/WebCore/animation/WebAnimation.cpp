@@ -40,7 +40,6 @@
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
-#include "Microtasks.h"
 #include "RenderElement.h"
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
