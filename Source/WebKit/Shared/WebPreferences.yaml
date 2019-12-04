@@ -750,6 +750,14 @@ GamepadsEnabled:
   humanReadableDescription: "Web Gamepad API support"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(GAMEPAD)
+  
+HighlightAPIEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Highlight API"
+    humanReadableDescription: "Highlight API support"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: experimental
 
 InputEventsEnabled:
   type: bool

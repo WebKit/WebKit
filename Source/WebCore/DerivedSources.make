@@ -41,6 +41,7 @@ VPATH = \
     $(WebCore)/Modules/fetch \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
+    $(WebCore)/Modules/highlight \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/indieui \
     $(WebCore)/Modules/mediacapabilities \
@@ -188,6 +189,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/geolocation/PositionCallback.idl \
     $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
+    $(WebCore)/Modules/highlight/HighlightMap.idl \
+    $(WebCore)/Modules/highlight/HighlightRangeGroup.idl \
     $(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \

@@ -403,6 +403,9 @@ fullscreen/ [ Skip ]
 # viewport meta tag support
 fast/viewport/ [ Skip ]
 
+# highlight API
+highlight/ [ Skip ]
+
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 

@@ -1539,6 +1539,16 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
 
+void WKPreferencesSetHighlightAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setHighlightAPIEnabled(enabled);
+}
+
+bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->highlightAPIEnabled();
+}
+
 // FIXME: Remove these when possible.
 void WKPreferencesSetLongMousePressEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {

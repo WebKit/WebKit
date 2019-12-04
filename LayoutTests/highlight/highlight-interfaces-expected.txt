@@ -1,0 +1,19 @@
+Tests the interfaces of the highlight API, which include HighlightRangeGroup, HighlightMap, and extensions to the CSS namespace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing Highlight:
+PASS HighlightRangeGroup instanceof Function is true
+PASS typeof HighlightRangeGroup is "function"
+PASS new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof HighlightRangeGroup is true
+PASS HighlightMap instanceof Function is true
+PASS typeof HighlightMap is "function"
+PASS new HighlightMap() instanceof HighlightMap is true
+PASS new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is undefined.
+PASS CSS.highlights is defined.
+PASS CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

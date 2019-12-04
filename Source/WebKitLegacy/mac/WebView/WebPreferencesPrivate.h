@@ -510,6 +510,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setGamepadsEnabled:(BOOL)flag;
 - (BOOL)gamepadsEnabled;
 
+- (void)setHighlightAPIEnabled:(BOOL)flag;
+- (BOOL)highlightAPIEnabled;
+
 - (void)setMediaPreloadingEnabled:(BOOL)flag;
 - (BOOL)mediaPreloadingEnabled;
 

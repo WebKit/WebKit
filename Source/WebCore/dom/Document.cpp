@@ -108,6 +108,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "HashChangeEvent.h"
+#include "HighlightMap.h"
 #include "History.h"
 #include "HitTestResult.h"
 #include "IdleCallbackController.h"
@@ -2716,6 +2717,13 @@ Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
     return XMLDocumentParser::create(*this, view());
+}
+
+HighlightMap& Document::highlightMap()
+{
+    if (!m_highlightMap)
+        m_highlightMap = HighlightMap::create();
+    return *m_highlightMap;
 }
 
 ScriptableDocumentParser* Document::scriptableDocumentParser() const

@@ -1,3 +1,13 @@
+2019-12-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Add disabled highlight API skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=204809
+
+        Reviewed by Ryosuke Niwa.
+
+        * highlight/highlight-interfaces-expected.txt: Added.
+        * highlight/highlight-interfaces.html: Added.
+
 2019-11-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perform microtask checkpoint after each task as spec'ed

@@ -214,6 +214,9 @@ public:
 
     void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
     bool keygenElementEnabled() const { return m_keygenElementEnabled; }
+    
+    void setHighlightAPIEnabled(bool isEnabled) { m_highlightAPIEnabled = isEnabled; }
+    bool highlightAPIEnabled() const { return m_highlightAPIEnabled; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
@@ -447,6 +450,7 @@ private:
     bool m_webSQLEnabled { true };
     bool m_keygenElementEnabled { false };
     bool m_pageAtRuleSupportEnabled { false };
+    bool m_highlightAPIEnabled { false };
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };

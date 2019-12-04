@@ -631,6 +631,7 @@ public:
         @YES, WebKitDataTransferItemsEnabledPreferenceKey,
         @NO, WebKitCustomPasteboardDataEnabledPreferenceKey,
         @NO, WebKitDialogElementEnabledPreferenceKey,
+        @NO, WebKitHighlightAPIEnabledPreferenceKey,
         @YES, WebKitModernMediaControlsEnabledPreferenceKey,
         @NO, WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
 
@@ -2848,6 +2849,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setGamepadsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitGamepadsEnabledPreferenceKey];
+}
+
+- (BOOL)highlightAPIEnabled
+{
+    return [self _boolValueForKey:WebKitHighlightAPIEnabledPreferenceKey];
+}
+
+- (void)setHighlightAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHighlightAPIEnabledPreferenceKey];
 }
 
 - (BOOL)shouldConvertPositionStyleOnCopy

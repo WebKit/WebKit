@@ -145,6 +145,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLVideoElement;
 class HTMLScriptElement;
+class HighlightMap;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -1565,6 +1566,8 @@ public:
 
     WEBCORE_EXPORT TextManipulationController& textManipulationController();
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
+        
+    HighlightMap& highlightMap();
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
@@ -1887,6 +1890,8 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
     std::unique_ptr<TextAutoSizing> m_textAutoSizing;
 #endif
+        
+    RefPtr<HighlightMap> m_highlightMap;
 
     Timer m_visualUpdatesSuppressionTimer;
 

@@ -34,4 +34,5 @@
     [CallWith=Document] static boolean supports(DOMString property, DOMString value);
     [CallWith=Document] static boolean supports(DOMString conditionText);
     static DOMString escape(DOMString ident);
+    [EnabledAtRuntime=HighlightAPI, CallWith=Document] static readonly attribute HighlightMap highlights;
 };

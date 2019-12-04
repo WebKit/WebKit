@@ -884,6 +884,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMediaSourceEnabled(preferences, true);
     WKPreferencesSetSourceBufferChangeTypeEnabled(preferences, true);
 #endif
+    WKPreferencesSetHighlightAPIEnabled(preferences, true);
 
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);

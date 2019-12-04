@@ -857,6 +857,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
 {
     // FIXME: SpringTimingFunction
     [preferences setGamepadsEnabled:YES];
+    [preferences setHighlightAPIEnabled:YES];
     [preferences setLinkPreloadEnabled:YES];
     [preferences setMediaPreloadingEnabled:YES];
     // FIXME: InputEvents

@@ -37,6 +37,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/entriesapi"
     "${WEBCORE_DIR}/Modules/fetch"
     "${WEBCORE_DIR}/Modules/geolocation"
+    "${WEBCORE_DIR}/Modules/highlight"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
@@ -195,6 +196,7 @@ set(WebCore_IDL_INCLUDES
     Modules/entriesapi
     Modules/fetch
     Modules/geolocation
+    Modules/highlight
     Modules/indexeddb
     Modules/mediacapabilities
     Modules/mediarecorder
@@ -275,6 +277,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionCallback.idl
     Modules/geolocation/PositionErrorCallback.idl
     Modules/geolocation/PositionOptions.idl
+
+    Modules/highlight/HighlightMap.idl
+    Modules/highlight/HighlightRangeGroup.idl
 
     Modules/indexeddb/DOMWindowIndexedDatabase.idl
     Modules/indexeddb/IDBCursor.idl

@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:HighlightAPIEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description("Tests the interfaces of the highlight API, which include HighlightRangeGroup, HighlightMap, and extensions to the CSS namespace.");
+
+debug("Testing Highlight:");
+shouldBeTrue("HighlightRangeGroup instanceof Function");
+shouldBeEqualToString("typeof HighlightRangeGroup", "function");
+shouldBeTrue("new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof HighlightRangeGroup");
+shouldBeTrue("HighlightMap instanceof Function");
+shouldBeEqualToString("typeof HighlightMap", "function");
+shouldBeTrue("new HighlightMap() instanceof HighlightMap");
+shouldBeUndefined('new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
+shouldBeDefined('CSS.highlights');
+shouldBeUndefined('CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
+
+</script>
+</body>
+</html>

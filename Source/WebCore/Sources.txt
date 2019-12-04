@@ -79,6 +79,9 @@ Modules/geolocation/GeolocationController.cpp
 Modules/geolocation/GeolocationCoordinates.cpp
 Modules/geolocation/NavigatorGeolocation.cpp
 
+Modules/highlight/HighlightMap.cpp
+Modules/highlight/HighlightRangeGroup.cpp
+
 Modules/indexeddb/DOMWindowIndexedDatabase.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
@@ -2900,6 +2903,8 @@ JSGeolocationPositionError.cpp
 JSGlobalCrypto.cpp
 JSGlobalEventHandlers.cpp
 JSGlobalPerformance.cpp
+JSHighlightMap.cpp
+JSHighlightRangeGroup.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp
 JSHTMLAppletElement.cpp

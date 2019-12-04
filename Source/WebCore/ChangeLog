@@ -1,3 +1,58 @@
+2019-12-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Add disabled highlight API skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=204809
+
+        Reviewed by Ryosuke Niwa.
+
+        Beginning implementation of https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/master/highlight/explainer.md
+        Spec not written yet, starting from the explainer for now.
+
+        Test: highlight/highlight-interfaces.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/highlight/HighlightMap.cpp: Added.
+        (WebCore::HighlightMap::addHighlightGroup):
+        (WebCore::HighlightMap::addFromMapLike):
+        (WebCore::HighlightMap::remove):
+        (WebCore::HighlightMap::namedItem const):
+        (WebCore::HighlightMap::setNamedItem):
+        (WebCore::HighlightMap::deleteNamedProperty):
+        (WebCore::HighlightMap::set):
+        * Modules/highlight/HighlightMap.h: Added.
+        (WebCore::HighlightMap::create):
+        (WebCore::HighlightMap::synchronizeBackingMap):
+        (WebCore::HighlightMap::backingMap):
+        (WebCore::HighlightMap::clear):
+        * Modules/highlight/HighlightMap.idl: Added.
+        * Modules/highlight/HighlightRangeGroup.cpp: Added.
+        (WebCore::HighlightRangeGroup::HighlightRangeGroup):
+        (WebCore::HighlightRangeGroup::create):
+        (WebCore::HighlightRangeGroup::addRange):
+        (WebCore::HighlightRangeGroup::removeRange):
+        (WebCore::HighlightRangeGroup::Iterator::Iterator):
+        (WebCore::HighlightRangeGroup::Iterator::next):
+        * Modules/highlight/HighlightRangeGroup.h: Added.
+        (WebCore::HighlightRangeGroup::createIterator):
+        * Modules/highlight/HighlightRangeGroup.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/DOMCSSNamespace.cpp:
+        (WebCore::DOMCSSNamespace::highlights):
+        * css/DOMCSSNamespace.h:
+        * css/DOMCSSNamespace.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::highlightMap):
+        * dom/Document.h:
+        * dom/Range.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setHighlightAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::highlightAPIEnabled const):
+
 2019-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perform microtask checkpoint after each task as spec'ed

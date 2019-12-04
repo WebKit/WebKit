@@ -33,6 +33,7 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyParser.h"
+#include "HighlightMap.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -85,6 +86,11 @@ String DOMCSSNamespace::escape(const String& ident)
     StringBuilder builder;
     serializeIdentifier(ident, builder);
     return builder.toString();
+}
+
+HighlightMap& DOMCSSNamespace::highlights(Document& document)
+{
+    return document.highlightMap();
 }
 
 }

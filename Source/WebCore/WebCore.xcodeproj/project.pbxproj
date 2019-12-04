@@ -7654,6 +7654,12 @@
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Extensions3DOpenGLCommon.cpp; sourceTree = "<group>"; };
 		44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3DOpenGLCommon.h; sourceTree = "<group>"; };
+		44E88E4C2369128A009B4847 /* HighlightMap.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightMap.idl; sourceTree = "<group>"; };
+		44E88E4D2369128B009B4847 /* HighlightRangeGroup.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightRangeGroup.idl; sourceTree = "<group>"; };
+		44E88E50236A56AC009B4847 /* HighlightMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightMap.h; sourceTree = "<group>"; };
+		44E88E51236A5C8D009B4847 /* HighlightRangeGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightRangeGroup.h; sourceTree = "<group>"; };
+		44E88E52236A667F009B4847 /* HighlightMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HighlightMap.cpp; sourceTree = "<group>"; };
+		44E88E54236A66A1009B4847 /* HighlightRangeGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HighlightRangeGroup.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
 		4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinButtonElement.cpp; sourceTree = "<group>"; };
@@ -18381,6 +18387,19 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		44E88E472368DF0F009B4847 /* highlight */ = {
+			isa = PBXGroup;
+			children = (
+				44E88E52236A667F009B4847 /* HighlightMap.cpp */,
+				44E88E50236A56AC009B4847 /* HighlightMap.h */,
+				44E88E4C2369128A009B4847 /* HighlightMap.idl */,
+				44E88E54236A66A1009B4847 /* HighlightRangeGroup.cpp */,
+				44E88E51236A5C8D009B4847 /* HighlightRangeGroup.h */,
+				44E88E4D2369128B009B4847 /* HighlightRangeGroup.idl */,
+			);
+			path = highlight;
+			sourceTree = "<group>";
+		};
 		4642404420EAF0BD00B29FD2 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -22199,6 +22218,7 @@
 				41F54F7C1C50C4F600338488 /* fetch */,
 				518F4FE9194CA4B60081BAAE /* gamepad */,
 				971145FF14EF007900674FD9 /* geolocation */,
+				44E88E472368DF0F009B4847 /* highlight */,
 				9712A55315004E3C0048AF10 /* indexeddb */,
 				CDBD3D271FE85C920012C545 /* mediacapabilities */,
 				CD9A37F517C7D93600C5FA7A /* mediacontrols */,
