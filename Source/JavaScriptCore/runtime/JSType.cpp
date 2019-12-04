@@ -105,7 +105,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSSetType)
     CASE(JSWeakMapType)
     CASE(JSWeakSetType)
-    CASE(WebAssemblyToJSCalleeType)
+    CASE(WebAssemblyModuleType)
     CASE(StringObjectType)
     CASE(MaxJSType)
     }

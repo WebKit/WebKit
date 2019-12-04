@@ -197,7 +197,7 @@ bool CallFrame::isAnyWasmCallee()
         return true;
 
     ASSERT(callee.isCell());
-    if (!!callee.rawPtr() && isWebAssemblyToJSCallee(callee.asCell()))
+    if (!!callee.rawPtr() && isWebAssemblyModule(callee.asCell()))
         return true;
 
     return false;

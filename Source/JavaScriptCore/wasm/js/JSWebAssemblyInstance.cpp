@@ -37,7 +37,6 @@
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include "WebAssemblyModuleRecord.h"
-#include "WebAssemblyToJSCallee.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -67,7 +66,6 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
 
     m_module.set(vm, this, module);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
-    m_callee.set(vm, this, module->callee());
 
     vm.heap.reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
 }
@@ -89,7 +87,6 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_memory);
     for (unsigned i = 0; i < thisObject->instance().module().moduleInformation().tableCount(); ++i)
         visitor.append(thisObject->m_tables[i]);
-    visitor.append(thisObject->m_callee);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
         visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.

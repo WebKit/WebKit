@@ -1074,7 +1074,6 @@ wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
 wasm/js/WebAssemblyTableConstructor.cpp
 wasm/js/WebAssemblyTablePrototype.cpp
-wasm/js/WebAssemblyToJSCallee.cpp
 wasm/js/WebAssemblyWrapperFunction.cpp
 
 yarr/RegularExpression.cpp

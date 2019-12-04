@@ -1,5 +1,57 @@
 2019-12-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove WebAssemblyToJSCallee
+        https://bugs.webkit.org/show_bug.cgi?id=204808
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch drops WebAssemblyToJSCallee. It was originally required to put small cell to retrieve VM from callee.
+        But now this limitation is removed. We can just put JSWebAssemblyModule in callee place instead.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::isAnyWasmCallee):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegistersForUnwinding):
+        * jit/Repatch.cpp:
+        (JSC::webAssemblyOwner):
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * runtime/JSCast.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCellInlines.h:
+        (JSC::isWebAssemblyModule):
+        (JSC::isWebAssemblyToJSCallee): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::webAssemblyWrapperFunctionStructure const):
+        (JSC::JSGlobalObject::webAssemblyToJSCalleeStructure const): Deleted.
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationWasmToJSException):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStructure):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        (JSC::JSWebAssemblyModule::callee const): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyToJSCallee.cpp: Removed.
+        * wasm/js/WebAssemblyToJSCallee.h: Removed.
+
+2019-12-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Adopt the new WebAssembly.Global system
         https://bugs.webkit.org/show_bug.cgi?id=186552
 

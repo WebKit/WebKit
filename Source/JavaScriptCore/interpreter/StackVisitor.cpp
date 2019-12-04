@@ -264,7 +264,7 @@ Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwind
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
         if (callee().isCell()) {
-            RELEASE_ASSERT(isWebAssemblyToJSCallee(callee().asCell()));
+            RELEASE_ASSERT(isWebAssemblyModule(callee().asCell()));
             return WTF::nullopt;
         }
         Wasm::Callee* wasmCallee = callee().asWasmCallee();

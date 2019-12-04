@@ -205,7 +205,6 @@
 #include "WebAssemblyRuntimeErrorPrototype.h"
 #include "WebAssemblyTableConstructor.h"
 #include "WebAssemblyTablePrototype.h"
-#include "WebAssemblyToJSCallee.h"
 #include <wtf/RandomNumber.h>
 
 #if ENABLE(INTL)
@@ -1195,10 +1194,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
             });
-        m_webAssemblyToJSCalleeStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                init.set(WebAssemblyToJSCallee::createStructure(init.vm, init.owner, jsNull()));
-            });
         auto* webAssembly = JSWebAssembly::create(vm, this, JSWebAssembly::createStructure(vm, this, m_objectPrototype.get()));
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "WebAssembly"), webAssembly, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -1850,7 +1845,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_webAssemblyFunctionStructure.visit(visitor);
     thisObject->m_jsToWasmICCalleeStructure.visit(visitor);
     thisObject->m_webAssemblyWrapperFunctionStructure.visit(visitor);
-    thisObject->m_webAssemblyToJSCalleeStructure.visit(visitor);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 

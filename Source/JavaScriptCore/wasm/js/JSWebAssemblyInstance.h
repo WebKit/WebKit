@@ -40,7 +40,6 @@ namespace JSC {
 
 class JSModuleNamespaceObject;
 class JSWebAssemblyModule;
-class WebAssemblyToJSCallee;
 
 namespace Wasm {
 class CodeBlock;
@@ -61,7 +60,6 @@ public:
     
     Wasm::Instance& instance() { return m_instance.get(); }
     JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }
-    WebAssemblyToJSCallee* webAssemblyToJSCallee() { return m_callee.get(); }
 
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* value) {
@@ -91,8 +89,8 @@ public:
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
     static size_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
+    static size_t offsetOfModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_module); }
     static size_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globalObject); }
-    static size_t offsetOfCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
     static size_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
 
 protected:
@@ -111,7 +109,6 @@ private:
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     Vector<WriteBarrier<JSWebAssemblyTable>> m_tables;
-    WriteBarrier<WebAssemblyToJSCallee> m_callee;
 };
 
 } // namespace JSC

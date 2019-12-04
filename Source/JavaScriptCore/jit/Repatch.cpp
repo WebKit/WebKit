@@ -64,7 +64,6 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "WebAssemblyFunction.h"
-#include "WebAssemblyToJSCallee.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
@@ -921,7 +920,7 @@ static JSCell* webAssemblyOwner(JSCell* callee)
 {
 #if ENABLE(WEBASSEMBLY)
     // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return jsCast<WebAssemblyToJSCallee*>(callee)->module();
+    return jsCast<JSWebAssemblyModule*>(callee);
 #else
     UNUSED_PARAM(callee);
     RELEASE_ASSERT_NOT_REACHED();
@@ -943,7 +942,7 @@ void linkFor(
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssemblyToJSCallee(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
+    JSCell* owner = isWebAssemblyModule(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
@@ -1074,7 +1073,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     ASSERT(callerFrame->callee().isCell());
 
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-    bool isWebAssembly = isWebAssemblyToJSCallee(callerFrame->callee().asCell());
+    bool isWebAssembly = isWebAssemblyModule(callerFrame->callee().asCell());
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
     JSCell* owner = isWebAssembly ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;

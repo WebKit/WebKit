@@ -30,7 +30,6 @@
 #include "JSString.h"
 #include "JSObject.h"
 #include "NumberObject.h"
-#include "WebAssemblyToJSCallee.h"
 #include <wtf/LockAlgorithmInlines.h>
 #include <wtf/MathExtras.h>
 

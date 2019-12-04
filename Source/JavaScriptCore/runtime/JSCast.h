@@ -63,7 +63,7 @@ inline To jsCast(JSValue from)
     macro(NumberObject, JSType::NumberObjectType, JSType::NumberObjectType) \
     macro(ProxyObject, JSType::ProxyObjectType, JSType::ProxyObjectType) \
     macro(RegExpObject, JSType::RegExpObjectType, JSType::RegExpObjectType) \
-    macro(WebAssemblyToJSCallee, JSType::WebAssemblyToJSCalleeType, JSType::WebAssemblyToJSCalleeType) \
+    macro(JSWebAssemblyModule, JSType::WebAssemblyModuleType, JSType::WebAssemblyModuleType) \
     macro(DirectArguments, JSType::DirectArgumentsType, JSType::DirectArgumentsType) \
     macro(ScopedArguments, JSType::ScopedArgumentsType, JSType::ScopedArgumentsType) \
     macro(ClonedArguments, JSType::ClonedArgumentsType, JSType::ClonedArgumentsType) \
