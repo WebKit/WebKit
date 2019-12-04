@@ -103,6 +103,9 @@ class WPEPort(Port):
     def _path_to_image_diff(self):
         return self._built_executables_path('ImageDiff')
 
+    def _path_to_default_image_diff(self):
+        return self._path_to_image_diff()
+
     def _search_paths(self):
         return [self.port_name, 'wk2'] + self.get_option("additional_platform_directory", [])
 

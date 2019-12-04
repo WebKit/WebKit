@@ -292,7 +292,7 @@ class Port(object):
 
     def check_image_diff(self, override_step=None, logging=True):
         """This routine is used to check whether image_diff binary exists."""
-        image_diff_path = self._build_path('ImageDiff')
+        image_diff_path = self._path_to_default_image_diff()
         if not self._filesystem.exists(image_diff_path):
             if logging:
                 _log.error("ImageDiff was not found at %s" % image_diff_path)
@@ -1377,6 +1377,10 @@ class Port(object):
 
         This is likely only used by start/stop_helper()."""
         return None
+
+    def _path_to_default_image_diff(self):
+        """Returns the full path to the default ImageDiff binary, or None if it is not available."""
+        return self._build_path('ImageDiff')
 
     @memoized
     def _path_to_image_diff(self):

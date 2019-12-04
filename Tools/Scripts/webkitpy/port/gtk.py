@@ -188,6 +188,9 @@ class GtkPort(Port):
     def _path_to_image_diff(self):
         return self._built_executables_path('ImageDiff')
 
+    def _path_to_default_image_diff(self):
+        return self._path_to_image_diff()
+
     def _path_to_webcore_library(self):
         gtk_library_names = [
             "libwebkitgtk-1.0.so",
