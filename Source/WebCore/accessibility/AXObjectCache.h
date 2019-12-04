@@ -195,8 +195,10 @@ public:
     WEBCORE_EXPORT static bool clientSupportsIsolatedTree();
 private:
     AXCoreObject* isolatedTreeRootObject();
-    Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier);
-    Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
+    static AXCoreObject* isolatedTreeFocusedObject(Document&);
+    void setIsolatedTreeFocusedObject(Node*);
+    static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
+    static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXObjectCache*, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
 #endif
 
 public:
@@ -413,6 +415,7 @@ private:
     AccessibilityObject* rootWebArea();
 
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
+    static AXCoreObject* focusedObject(Document&);
 
     AXID getAXID(AccessibilityObject*);
 

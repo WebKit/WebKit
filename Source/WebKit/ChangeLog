@@ -1,3 +1,13 @@
+2019-12-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        Focus tracking support in the accessibility isolatedtree.
+        https://bugs.webkit.org/show_bug.cgi?id=204535
+
+        Reviewed by Chris Fleizach.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityFocusedObject):
+
 2019-12-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Delete non-cookie website data after 7 days of no user interaction

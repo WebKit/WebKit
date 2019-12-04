@@ -106,6 +106,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedUIElement()
 {
+    m_focusedNodeID = m_pendingFocusedNodeID;
     return nodeForID(m_focusedNodeID);
 }
     

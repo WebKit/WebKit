@@ -58,6 +58,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
@@ -269,9 +270,17 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
     if (!page)
         return 0;
 
+    auto* focusedDocument = page->focusController().focusedOrMainFrame().document();
+    if (!focusedDocument)
+        return 0;
+
     WebCore::AXObjectCache::enableAccessibility();
 
-    WebCore::AXCoreObject* focusedObject = WebCore::AXObjectCache::focusedUIElementForPage(page);
+    auto* axObjectCache = focusedDocument->axObjectCache();
+    if (!axObjectCache)
+        return 0;
+
+    auto* focusedObject = axObjectCache->focusedUIElementForPage(page);
     if (!focusedObject)
         return 0;
     

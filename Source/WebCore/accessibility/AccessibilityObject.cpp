@@ -2867,7 +2867,8 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
 AXCoreObject* AccessibilityObject::focusedUIElement() const
 {
     auto* page = this->page();
-    return page ? AXObjectCache::focusedUIElementForPage(page) : nullptr;
+    auto* axObjectCache = this->axObjectCache();
+    return page && axObjectCache ? axObjectCache->focusedUIElementForPage(page) : nullptr;
 }
     
 AccessibilitySortDirection AccessibilityObject::sortDirection() const

@@ -348,32 +348,86 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     
     return nullptr;
 }
-    
+
+AXCoreObject* AXObjectCache::focusedObject(Document& document)
+{
+    Element* focusedElement = document.focusedElement();
+    if (is<HTMLAreaElement>(focusedElement))
+        return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
+
+    auto* axObjectCache = document.axObjectCache();
+    if (!axObjectCache)
+        return nullptr;
+
+    AXCoreObject* focus = axObjectCache->getOrCreate(focusedElement ? focusedElement : static_cast<Node*>(&document));
+    if (!focus)
+        return nullptr;
+
+    if (focus->shouldFocusActiveDescendant()) {
+        if (auto* descendant = focus->activeDescendant())
+            focus = descendant;
+    }
+
+    // the HTML element, for example, is focusable but has an AX object that is ignored
+    if (focus->accessibilityIsIgnored())
+        focus = focus->parentObjectUnignored();
+
+    return focus;
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+AXCoreObject* AXObjectCache::isolatedTreeFocusedObject(Document& document)
+{
+    auto pageID = document.pageID();
+    if (!pageID)
+        return nullptr;
+
+    auto tree = AXIsolatedTree::treeForPageID(*pageID);
+    if (!tree) {
+        tree = generateIsolatedTree(*pageID, document);
+        // Now that we have created our tree, initialize the secondary thread,
+        // so future requests come in on the other thread.
+        _AXUIElementUseSecondaryAXThread(true);
+    }
+
+    if (tree)
+        return tree->focusedUIElement().get();
+
+    // Should not get here, couldn't create the IsolatedTree.
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
+{
+    ASSERT(isMainThread());
+    auto* focus = getOrCreate(focusedNode);
+    auto pageID = m_document.pageID();
+    if (!pageID)
+        return;
+
+    if (auto tree = AXIsolatedTree::treeForPageID(*pageID))
+        tree->setFocusedNodeID(focus ? focus->objectID() : InvalidAXID);
+}
+#endif
+
 AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 {
+    ASSERT(isMainThread());
     if (!gAccessibilityEnabled)
         return nullptr;
 
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
-    Element* focusedElement = focusedDocument->focusedElement();
-    if (is<HTMLAreaElement>(focusedElement))
-        return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
-
-    AXCoreObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
-    if (!obj)
+    if (!focusedDocument)
         return nullptr;
 
-    if (obj->shouldFocusActiveDescendant()) {
-        if (AXCoreObject* descendant = obj->activeDescendant())
-            obj = descendant;
-    }
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (clientSupportsIsolatedTree())
+        return isolatedTreeFocusedObject(*focusedDocument);
+#endif
 
-    // the HTML element, for example, is focusable but has an AX object that is ignored
-    if (obj->accessibilityIsIgnored())
-        obj = obj->parentObjectUnignored();
-
-    return obj;
+    return focusedObject(*focusedDocument);
 }
 
 AccessibilityObject* AXObjectCache::get(Widget* widget)
@@ -687,7 +741,7 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 
     auto tree = AXIsolatedTree::treeForPageID(*pageID);
     if (!tree && isMainThread()) {
-        tree = generateIsolatedTree(*pageID);
+        tree = generateIsolatedTree(*pageID, m_document);
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
         _AXUIElementUseSecondaryAXThread(true);
@@ -700,7 +754,7 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
     }
 
     // Should not get here, couldn't create or update the IsolatedTree.
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 #endif
@@ -1103,6 +1157,10 @@ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* new
     
 void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
 {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    setIsolatedTreeFocusedObject(newNode);
+#endif
+
     handleMenuItemSelected(newNode);
     platformHandleFocusedUIElementChanged(oldNode, newNode);
 }
@@ -3006,36 +3064,48 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
+Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXObjectCache* axObjectCache, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
 {
     auto isolatedTreeNode = AXIsolatedObject::create(object);
     nodeChanges.append(isolatedTreeNode.copyRef());
 
     isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
     isolatedTreeNode->setParent(parentID);
-    attachWrapper(&isolatedTreeNode.get());
+    axObjectCache->attachWrapper(&isolatedTreeNode.get());
 
     for (const auto& child : object.children()) {
-        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), tree, nodeChanges);
+        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), axObjectCache, tree, nodeChanges);
         isolatedTreeNode->appendChild(staticChild->objectID());
     }
 
     return isolatedTreeNode;
 }
-    
-Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID)
+
+Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, Document& document)
 {
     RELEASE_ASSERT(isMainThread());
 
     auto tree = AXIsolatedTree::treeForPageID(pageID);
     if (!tree)
         tree = AXIsolatedTree::createTreeForPageID(pageID);
-    
-    Vector<Ref<AXIsolatedObject>> nodeChanges;
-    AccessibilityObject* axRoot = getOrCreate(m_document.view());
-    auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, *tree, nodeChanges);
-    tree->setRoot(isolatedRoot);
-    tree->appendNodeChanges(nodeChanges);
+
+    // Set the root and focused objects in the isolated tree. For that, we need
+    // the root and the focused object in the AXObject tree.
+    auto* axObjectCache = document.axObjectCache();
+    if (!axObjectCache)
+        return makeRef(*tree);
+
+    auto* axRoot = axObjectCache->getOrCreate(document.view());
+    if (axRoot) {
+        Vector<Ref<AXIsolatedObject>> nodeChanges;
+        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, axObjectCache, *tree, nodeChanges);
+        tree->setRoot(isolatedRoot);
+        tree->appendNodeChanges(nodeChanges);
+    }
+
+    auto* axFocus = axObjectCache->focusedObject(document);
+    if (axFocus)
+        tree->setFocusedNodeID(axFocus->objectID());
 
     return makeRef(*tree);
 }

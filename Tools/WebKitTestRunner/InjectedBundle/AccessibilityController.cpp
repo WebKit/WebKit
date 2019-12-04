@@ -99,9 +99,8 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    void* root = WKAccessibilityFocusedObject(page);
-    
-    return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
+    PlatformUIElement focusedElement = static_cast<PlatformUIElement>(WKAccessibilityFocusedObject(page));
+    return AccessibilityUIElement::create(focusedElement);
 }
 
 void AccessibilityController::execute(Function<void()>&& function)
