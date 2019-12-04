@@ -201,6 +201,11 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
+
+    // Disabling user interaction on the snapshot view lets the gestures go through the snapshot view, to the
+    // actual underlying view.
+    [m_snapshotView setUserInteractionEnabled:NO];
+
     [m_snapshotView layer].name = @"SwipeSnapshot";
 
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
