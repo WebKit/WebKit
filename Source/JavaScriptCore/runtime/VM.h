@@ -377,6 +377,10 @@ public:
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
     std::unique_ptr<IsoHeapCellType<WebAssemblyFunction>> webAssemblyFunctionHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyGlobal>> webAssemblyGlobalHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyInstance>> webAssemblyInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyMemory>> webAssemblyMemoryHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyModule>> webAssemblyModuleHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSWebAssemblyTable>> webAssemblyTableHeapCellType;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
@@ -472,7 +476,10 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyInstanceSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyMemorySpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTableSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyWrapperFunctionSpace)
 #endif
 

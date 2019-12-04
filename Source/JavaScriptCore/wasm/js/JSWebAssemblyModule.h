@@ -49,9 +49,17 @@ class SymbolTable;
 class JSWebAssemblyCodeBlock;
 class JSWebAssemblyMemory;
 
-class JSWebAssemblyModule final : public JSDestructibleObject {
+class JSWebAssemblyModule final : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.webAssemblyModuleSpace<mode>();
+    }
 
     DECLARE_EXPORT_INFO;
 
@@ -72,7 +80,6 @@ private:
 
     JSWebAssemblyModule(VM&, Structure*, Ref<Wasm::Module>&&);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     Ref<Wasm::Module> m_module;

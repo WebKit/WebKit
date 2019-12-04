@@ -37,9 +37,11 @@ namespace JSC {
 class ArrayBuffer;
 class JSArrayBuffer;
 
-class JSWebAssemblyMemory final : public JSDestructibleObject {
+class JSWebAssemblyMemory final : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -61,7 +63,6 @@ public:
 private:
     JSWebAssemblyMemory(VM&, Structure*);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     Ref<Wasm::Memory> m_memory;

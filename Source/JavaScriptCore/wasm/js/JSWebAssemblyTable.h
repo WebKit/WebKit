@@ -37,9 +37,17 @@
 
 namespace JSC {
 
-class JSWebAssemblyTable final : public JSDestructibleObject {
+class JSWebAssemblyTable final : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.webAssemblyTableSpace<mode>();
+    }
 
     static JSWebAssemblyTable* create(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Table>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
@@ -62,7 +70,6 @@ public:
 private:
     JSWebAssemblyTable(VM&, Structure*, Ref<Wasm::Table>&&);
     void finishCreation(VM&);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     Ref<Wasm::Table> m_table;

@@ -45,9 +45,17 @@ namespace Wasm {
 class CodeBlock;
 }
 
-class JSWebAssemblyInstance final : public JSDestructibleObject {
+class JSWebAssemblyInstance final : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.webAssemblyInstanceSpace<mode>();
+    }
 
     static Identifier createPrivateModuleKey();
 
@@ -96,7 +104,6 @@ public:
 protected:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
     void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
