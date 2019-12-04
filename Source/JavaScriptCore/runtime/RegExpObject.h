@@ -32,6 +32,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        static_assert(!CellType::needsDestruction, "");
+        return &vm.regExpObjectSpace;
+    }
+
     static constexpr uintptr_t lastIndexIsNotWritableFlag = 1;
 
     static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp)

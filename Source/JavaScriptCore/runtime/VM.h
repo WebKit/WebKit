@@ -414,6 +414,7 @@ public:
     CompleteSubspace destructibleObjectSpace;
     
     IsoSubspace bigIntSpace;
+    IsoSubspace clonedArgumentsSpace;
     IsoSubspace dateInstanceSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
@@ -422,6 +423,7 @@ public:
     IsoSubspace nativeExecutableSpace;
     IsoSubspace promiseSpace;
     IsoSubspace propertyTableSpace;
+    IsoSubspace regExpObjectSpace;
     IsoSubspace ropeStringSpace;
     IsoSubspace scopedArgumentsSpace;
     IsoSubspace sparseArrayValueMapSpace;
@@ -455,9 +457,11 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(errorInstanceSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(functionRareDataSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(generatorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedEvalCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedFunctionCodeBlockSpace)

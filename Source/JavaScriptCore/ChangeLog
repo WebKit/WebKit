@@ -1,5 +1,29 @@
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Put more cells into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204845
+
+        Reviewed by Saam Barati.
+
+        This patch puts following cells in IsoSubspace.
+
+            - ClonedArguments
+            - JSMap
+            - JSSet
+            - RegExpObject
+
+        * runtime/ClonedArguments.h:
+        * runtime/JSMap.h:
+        * runtime/JSSet.h:
+        * runtime/RegExpObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::subspaceFor):
+
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove m_sharingMode field from JSArrayBufferPrototype and make it plain object
         https://bugs.webkit.org/show_bug.cgi?id=204832
 

@@ -306,7 +306,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        if (isWeakMap())
+        if constexpr (isWeakMap())
             return vm.weakMapSpace<mode>();
         return vm.weakSetSpace<mode>();
     }

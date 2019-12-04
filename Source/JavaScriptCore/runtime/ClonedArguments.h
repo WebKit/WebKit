@@ -39,8 +39,15 @@ namespace JSC {
 // caller/callee/@@iterator properties unless someone asks for them.
 class ClonedArguments final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        static_assert(!CellType::needsDestruction, "");
+        return &vm.clonedArgumentsSpace;
+    }
     
 private:
     ClonedArguments(VM&, Structure*, Butterfly*);
