@@ -413,6 +413,11 @@ static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<Res
 }
 #endif
 
+static bool hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds)
+{
+    return interactionTimeSeconds > Seconds(0) && WallTime::now().secondsSinceEpoch() - interactionTimeSeconds < 24_h;
+}
+
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
@@ -424,7 +429,10 @@ String ResourceLoadStatistics::toString() const
     appendBoolean(builder, "hadUserInteraction", hadUserInteraction);
     builder.append('\n');
     builder.appendLiteral("    mostRecentUserInteraction: ");
-    builder.appendFixedPrecisionNumber(mostRecentUserInteractionTime.secondsSinceEpoch().value());
+    if (hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()))
+        builder.appendLiteral("within 24 hours");
+    else
+        builder.appendLiteral("-1");
     builder.append('\n');
     appendBoolean(builder, "grandfathered", grandfathered);
     builder.append('\n');

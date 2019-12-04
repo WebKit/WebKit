@@ -78,6 +78,46 @@ struct RegistrableDomainsToBlockCookiesFor {
     RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockAndDeleteCookiesFor.isolatedCopy(), domainsToBlockButKeepCookiesFor.isolatedCopy(), domainsWithUserInteractionAsFirstParty.isolatedCopy() }; }
 };
 
+struct ThirdPartyDataForSpecificFirstParty {
+    WebCore::RegistrableDomain firstPartyDomain;
+    bool storageAccessGranted;
+
+    String toString() const
+    {
+        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted);
+    }
+
+    bool operator==(ThirdPartyDataForSpecificFirstParty const other) const
+    {
+        return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
+    }
+};
+
+struct ThirdPartyData {
+    WebCore::RegistrableDomain thirdPartyDomain;
+    Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
+
+    String toString() const
+    {
+        StringBuilder stringBuilder;
+        stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n");
+        stringBuilder.appendLiteral("    {");
+
+        for (auto firstParty : underFirstParties) {
+            stringBuilder.appendLiteral("{ ");
+            stringBuilder.append(firstParty.toString());
+            stringBuilder.appendLiteral(" },");
+        }
+        stringBuilder.appendLiteral("}");
+        return stringBuilder.toString();
+    }
+
+    bool operator<(const ThirdPartyData &other) const
+    {
+        return underFirstParties.size() < other.underFirstParties.size();
+    }
+};
+
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
@@ -195,6 +235,7 @@ public:
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
+    Vector<ThirdPartyData> aggregatedThirdPartyData();
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);

@@ -24,3 +24,7 @@ Registrable domain: localhost
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
+
+ITP Data:
+Third Party Registrable Domain: localhost
+    {{ Has been granted storage access under 127.0.0.1: 0 },}

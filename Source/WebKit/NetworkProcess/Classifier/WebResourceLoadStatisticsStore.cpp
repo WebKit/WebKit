@@ -1149,6 +1149,11 @@ void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsig
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(numberOfPrevalentResources, numberOfPrevalentResourcesWithUserInteraction, numberOfPrevalentResourcesWithoutUserInteraction, topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, top3NumberOfPrevalentResourcesWithUI, top3MedianSubFrameWithoutUI, top3MedianSubResourceWithoutUI, top3MedianUniqueRedirectsWithoutUI, top3MedianDataRecordsRemovedWithoutUI);
 }
 
+Vector<ThirdPartyData> WebResourceLoadStatisticsStore::aggregatedThirdPartyData()
+{
+    return m_statisticsStore->aggregatedThirdPartyData();
+}
+
 } // namespace WebKit
 
 #endif

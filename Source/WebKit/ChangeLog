@@ -1,3 +1,78 @@
+2019-12-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expose basic ITP data from the database for future API/SPI use
+        https://bugs.webkit.org/show_bug.cgi?id=203432
+        <rdar://problem/56085040>
+
+        Reviewed John Wilander.
+
+        Tests: http/tests/resourceLoadStatistics/user-interface-data-no-storage-access-database.html
+               http/tests/resourceLoadStatistics/user-interface-data-no-storage-access.html
+               http/tests/storageAccess/user-interface-data-with-storage-access-database.html
+               http/tests/storageAccess/user-interface-data-with-storage-access.html
+
+        Adds the ability to collect sorted ITP data for displaying in a
+        user interface. 
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        Added new queries to the database store to check for storage access in
+        the database and aggregate topFrames with the same
+        subframe/subresource so easily create the struct for collecting data
+        for the UI.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::relationshipExists const):
+        Fixed an incorrect function name in the error message.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::joinSubStatisticsForSorting):
+        Renamed unclear SQL variable names and added a bind parameter to
+        specify whether resource is prevalent or not, which allows
+        this function to be used to collect sorted ITP data
+        for the UI.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getFirstPartyDataForDomain const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::gatherDataForUserInterface const):
+
+        (WebKit::buildQueryStartAndEnd):
+        (WebKit::getMedianOfPrevalentResourcesWithUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI const):
+        (WebKit::getMedianOfPrevalentResourceWithoutUserInteraction):
+        (WebKit::getNumberOfPrevalentResourcesInTopResources):
+        Changed sql query variable names to make them more clear and added a
+        new bind parameter to allow for more general use of substatistic
+        sorting query.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics const):
+        Combined UI data with dumpResourceLoadStatistics() data to keep the testing aspect
+        of this patch simpler.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString const):
+        Since mostRecentUserInteractionTime changes with each test run, I
+        updated the dumping to report only if it was in the last 24 hours as
+        opposed to reporting an actual time.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ensureFirstPartyStatistic):
+        (WebKit::getFirstPartyDataForDomain):
+        (WebKit::hasBeenThirdParty):
+        (WebKit::ResourceLoadStatisticsMemoryStore::gatherDataForUserInterface const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::gatherDataForUserInterface):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::FirstPartyData::toString const):
+        (WebKit::FirstPartyData::operator== const):
+        (WebKit::ThirdPartyData::toString const):
+        (WebKit::ThirdPartyData::operator< const):
+        The toString methods allow the structs to be printed for testing
+        purposes. The equals methods allow the return vectors to use
+        appendIfNotContains.
+
 2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
 
         Add exclusion rule for text manipulation SPI to exclude based on element class

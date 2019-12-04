@@ -98,6 +98,7 @@ public:
 
     virtual void clear(CompletionHandler<void()>&&) = 0;
     virtual bool isEmpty() const = 0;
+    virtual Vector<ThirdPartyData> aggregatedThirdPartyData() const = 0;
 
     virtual void updateCookieBlocking(CompletionHandler<void()>&&) = 0;
     void updateCookieBlockingForDomains(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);

@@ -85,6 +85,7 @@ public:
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
 
+    Vector<ThirdPartyData> aggregatedThirdPartyData() const override;
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 
     void classifyPrevalentResources() override;
@@ -137,6 +138,8 @@ public:
 private:
     void openITPDatabase();
     bool isCorrectTableSchema();
+    bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
+    Vector<ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndDropOldDatabaseIfNecessary();
     String getDomainStringFromDomainID(unsigned) const;
     String getSubStatisticStatement(const String&) const;
@@ -248,6 +251,8 @@ private:
     mutable WebCore::SQLiteStatement m_getResourceDataByDomainNameStatement;
     mutable WebCore::SQLiteStatement m_getAllDomainsStatement;
     mutable WebCore::SQLiteStatement m_domainStringFromDomainIDStatement;
+    mutable WebCore::SQLiteStatement m_getAllSubStatisticsStatement;
+    mutable WebCore::SQLiteStatement m_storageAccessExistsStatement;
     PAL::SessionID m_sessionID;
 };
 

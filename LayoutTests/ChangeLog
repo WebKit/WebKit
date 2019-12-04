@@ -1,3 +1,31 @@
+2019-12-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expose basic ITP data from the database for future API/SPI use
+        https://bugs.webkit.org/show_bug.cgi?id=203432
+        <rdar://problem/56085040>
+
+        Reviewed John Wilander.
+
+        Added new tests to check if basic ITP data is properly
+        collected and sorted for both the database store and the memory store.
+        Also edited any tests which use dumpResourceLoadStatistics() to also
+        expect the new aggregated data to be displayed.
+
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database-expected.txt:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-expected.txt:
+        * http/tests/resourceLoadStatistics/user-interface-data-no-storage-access-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/user-interface-data-no-storage-access-database.html: Added.
+        * http/tests/resourceLoadStatistics/user-interface-data-no-storage-access-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/user-interface-data-no-storage-access.html: Added.
+        * http/tests/storageAccess/user-interface-data-with-storage-access-database-expected.txt: Added.
+        * http/tests/storageAccess/user-interface-data-with-storage-access-database.html: Added.
+        * http/tests/storageAccess/user-interface-data-with-storage-access-expected.txt: Added.
+        * http/tests/storageAccess/user-interface-data-with-storage-access.html: Added.
+
 2019-12-04  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Paint with TextPainter

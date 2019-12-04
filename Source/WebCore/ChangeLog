@@ -1,3 +1,24 @@
+2019-12-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expose basic ITP data from the database for future API/SPI use
+        https://bugs.webkit.org/show_bug.cgi?id=203432
+        <rdar://problem/56085040>
+
+        Reviewed John Wilander.
+
+        Tests: http/tests/resourceLoadStatistics/user-interface-data-no-storage-access-database.html
+               http/tests/resourceLoadStatistics/user-interface-data-no-storage-access.html
+               http/tests/storageAccess/user-interface-data-with-storage-access-database.html
+               http/tests/storageAccess/user-interface-data-with-storage-access.html
+
+        Updated the toString() to report only if mostRecentUserInteractionTime
+        was in the last 24 hours as opposed to reporting an actual time since 
+        mostRecentUserInteractionTime changes with each test run.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::hasHadRecentUserInteraction):
+        (WebCore::ResourceLoadStatistics::toString const):
+
 2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
 
         Add exclusion rule for text manipulation SPI to exclude based on element class
