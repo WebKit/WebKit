@@ -1611,7 +1611,7 @@ void Document::setTitle(const String& title)
             m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
             element->insertBefore(*m_titleElement, element->firstChild());
         }
-        // insertBefore above may have ran scripts which removed m_titleElement
+        // insertBefore above may have ran scripts which removed m_titleElement.
         if (m_titleElement)
             m_titleElement->setTextContent(title);
     } else if (is<HTMLElement>(element)) {
@@ -1622,7 +1622,7 @@ void Document::setTitle(const String& title)
             m_titleElement = HTMLTitleElement::create(HTMLNames::titleTag, *this);
             headElement->appendChild(*m_titleElement);
         }
-        // appendChild above may have ran scripts which removed m_titleElement
+        // appendChild above may have ran scripts which removed m_titleElement.
         if (m_titleElement)
             m_titleElement->setTextContent(title);
     }
