@@ -1,3 +1,29 @@
+2019-12-05  Sihui Liu  <sihui_liu@apple.com>
+
+        Rename IDBDatabaseIdentifier::debugString to IDBDatabaseIdentifier::loggingString
+        https://bugs.webkit.org/show_bug.cgi?id=204898
+
+        Reviewed by Brady Eidson.
+
+        We use loggingString everywhere in IDB code but IDBDatabaseIdentifier, so rename it for consistency.
+
+        No behavior change.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::loggingString const):
+        (WebCore::IDBDatabaseIdentifier::debugString const): Deleted.
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionToServer::openDatabase):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::deleteDatabase):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+
 2019-12-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce InlineSoftLineBreakItem

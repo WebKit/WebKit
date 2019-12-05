@@ -155,7 +155,7 @@ void IDBServer::openDatabase(const IDBRequestData& requestData)
 
 void IDBServer::deleteDatabase(const IDBRequestData& requestData)
 {
-    LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().debugString().utf8().data());
+    LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().loggingString().utf8().data());
     ASSERT(isMainThread());
 
     auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());

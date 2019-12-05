@@ -71,7 +71,7 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOrig
 }
 
 #if !LOG_DISABLED
-String IDBDatabaseIdentifier::debugString() const
+String IDBDatabaseIdentifier::loggingString() const
 {
     return makeString(m_databaseName, "@", m_origin.topOrigin.debugString(), ":", m_origin.clientOrigin.debugString());
 }

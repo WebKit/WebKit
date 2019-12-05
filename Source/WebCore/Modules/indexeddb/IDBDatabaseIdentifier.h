@@ -88,7 +88,7 @@ public:
     template<class Decoder> static Optional<IDBDatabaseIdentifier> decode(Decoder&);
 
 #if !LOG_DISABLED
-    String debugString() const;
+    String loggingString() const;
 #endif
 
     bool isRelatedToOrigin(const SecurityOriginData& other) const { return m_origin.isRelated(other); }

@@ -123,12 +123,12 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
     , m_operationAndTransactionTimer(*this, &UniqueIDBDatabase::operationAndTransactionTimerFired)
 {
     m_server->addDatabase(*this);
-    LOG(IndexedDB, "UniqueIDBDatabase::UniqueIDBDatabase() (%p) %s", this, m_identifier.debugString().utf8().data());
+    LOG(IndexedDB, "UniqueIDBDatabase::UniqueIDBDatabase() (%p) %s", this, m_identifier.loggingString().utf8().data());
 }
 
 UniqueIDBDatabase::~UniqueIDBDatabase()
 {
-    LOG(IndexedDB, "UniqueIDBDatabase::~UniqueIDBDatabase() (%p) %s", this, m_identifier.debugString().utf8().data());
+    LOG(IndexedDB, "UniqueIDBDatabase::~UniqueIDBDatabase() (%p) %s", this, m_identifier.loggingString().utf8().data());
     ASSERT(isMainThread());
     ASSERT(!hasAnyPendingCallbacks());
     ASSERT(!hasUnfinishedTransactions());
@@ -267,7 +267,7 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
 void UniqueIDBDatabase::performCurrentDeleteOperation()
 {
     ASSERT(isMainThread());
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentDeleteOperation - %s", m_identifier.debugString().utf8().data());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentDeleteOperation - %s", m_identifier.loggingString().utf8().data());
 
     ASSERT(m_currentOpenDBRequest);
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
@@ -321,7 +321,7 @@ void UniqueIDBDatabase::deleteBackingStore(const IDBDatabaseIdentifier& identifi
             IDBDatabaseInfo databaseInfo;
             auto error = backingStore->getOrEstablishDatabaseInfo(databaseInfo, locker);
             if (!error.isNull())
-                LOG_ERROR("Error getting database info from database %s that we are trying to delete", identifier.debugString().utf8().data());
+                LOG_ERROR("Error getting database info from database %s that we are trying to delete", identifier.loggingString().utf8().data());
 
             deletedVersion = databaseInfo.version();
             backingStore->deleteBackingStore(locker);
