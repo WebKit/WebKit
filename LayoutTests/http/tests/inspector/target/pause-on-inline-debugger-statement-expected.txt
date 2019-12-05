@@ -1,2 +1,7 @@
-ALERT: PASS: Should pause on debugger statement.
 Test page used to check that execution will break on inline 'debugger' statement after cross-origin navigation.
+
+
+== Running test suite: Target.PSON
+-- Running test case: InlineDebuggerStatement
+PASS: Should pause on debugger statement.
+

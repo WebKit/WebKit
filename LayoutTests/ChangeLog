@@ -1,5 +1,18 @@
 2019-12-05  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: http/tests/inspector/target/pause-on-inline-debugger-statement.html is crashing in debug
+        https://bugs.webkit.org/show_bug.cgi?id=204901
+
+        Reviewed by Devin Rousso.
+
+        Restructured the test to avoid inadvertent alert() when navigating to a new
+        process. New logs are printed after inspected page has navigated.
+
+        * http/tests/inspector/target/pause-on-inline-debugger-statement-expected.txt:
+        * http/tests/inspector/target/pause-on-inline-debugger-statement.html:
+
+2019-12-05  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: Avoid using Runtime.executionContextCreated to figure out the iframe's contentDocument node.
         https://bugs.webkit.org/show_bug.cgi?id=122764
         <rdar://problem/15222136>
