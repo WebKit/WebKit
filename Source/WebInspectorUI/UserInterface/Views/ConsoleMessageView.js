@@ -208,8 +208,10 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
     toClipboardString(isPrefixOptional)
     {
         let clipboardString = this._messageBodyElement.innerText.removeWordBreakCharacters();
-        if (this._message.savedResultIndex)
-            clipboardString = clipboardString.replace(new RegExp(`\\s*=\\s*(${WI.RuntimeManager.preferredSavedResultPrefix()}\\d+)$`), "");
+        if (this._message.savedResultIndex) {
+            let escapedSavedResultPrefix = WI.RuntimeManager.preferredSavedResultPrefix().escapeForRegExp();
+            clipboardString = clipboardString.replace(new RegExp(`\\s*=\\s*${escapedSavedResultPrefix}\\d+\\s*$`), "");
+        }
 
         let hasStackTrace = this._shouldShowStackTrace();
         if (!hasStackTrace) {
