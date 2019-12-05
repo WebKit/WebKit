@@ -4,8 +4,8 @@ import json
 import logging
 import urlparse
 
-from benchmark_runner import BenchmarkRunner
-from http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
+from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
+from webkitpy.benchmark_runner.http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
 from webkitpy.common.timeout_context import Timeout
 
 

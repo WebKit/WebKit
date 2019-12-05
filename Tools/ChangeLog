@@ -1,5 +1,40 @@
 2019-12-04  Jonathan Bedard  <jbedard@apple.com>
 
+        Python 3: Add support in webkitpy.benchmark_runner
+        https://bugs.webkit.org/show_bug.cgi?id=204784
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.benchmark_runner.
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults): Arithmetic aggregator should use integer division.
+        (BenchmarkResults._format_values): Convert map to list.
+        (BenchmarkResults._aggregate_results): Ditto.
+        (BenchmarkResults._aggregate_results_for_test): Use Python 2/3 compatible iteritems.
+        (BenchmarkResults._subtest_values_by_config_iteration): Ditto.
+        (BenchmarkResults._lint_subtest_results): Ditto.
+        (BenchmarkResults._lint_configuration): Ditto.
+        * Scripts/webkitpy/benchmark_runner/benchmark_results_unittest.py: Use explicit imports.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/__init__.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_chrome_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_cog_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_epiphany_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_firefox_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowsergtk_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowserwpe_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Ditto.
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py: Ditto.
+
+2019-12-04  Jonathan Bedard  <jbedard@apple.com>
+
         Python 3: Add support in webkitpy.tool
         https://bugs.webkit.org/show_bug.cgi?id=204838
 

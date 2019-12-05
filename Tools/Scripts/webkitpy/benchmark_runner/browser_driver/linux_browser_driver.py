@@ -34,7 +34,7 @@ try:
 except ImportError:
     pass
 from webkitpy.benchmark_runner.utils import force_remove
-from browser_driver import BrowserDriver
+from webkitpy.benchmark_runner.browser_driver.browser_driver import BrowserDriver
 
 
 _log = logging.getLogger(__name__)

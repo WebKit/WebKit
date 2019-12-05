@@ -4,7 +4,7 @@ import os
 import subprocess
 import time
 
-from browser_driver import BrowserDriver
+from webkitpy.benchmark_runner.browser_driver.browser_driver import BrowserDriver
 from webkitpy.benchmark_runner.utils import write_defaults
 
 

@@ -14,7 +14,7 @@
 import os
 
 from webkitpy.benchmark_runner.utils import load_subclasses
-from browser_driver_factory import BrowserDriverFactory
+from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 
 
 def browser_driver_loader(browser_driver_class):

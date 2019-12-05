@@ -25,12 +25,14 @@ import math
 import re
 import sys
 
+from webkitpy.common.iteration_compatibility import iteritems
+
 
 class BenchmarkResults(object):
 
     aggregators = {
         'Total': (lambda values: sum(values)),
-        'Arithmetic': (lambda values: sum(values) / len(values)),
+        'Arithmetic': (lambda values: sum(values) // len(values)),
         'Geometric': (lambda values: math.exp(sum(map(math.log, values)) / len(values))),
     }
     metric_to_unit = {
@@ -79,7 +81,7 @@ class BenchmarkResults(object):
 
     @classmethod
     def _format_values(cls, metric_name, values, scale_unit=True, show_iteration_values=False):
-        values = map(float, values)
+        values = list(map(float, values))
         total = sum(values)
         mean = total / len(values)
         square_sum = sum(map(lambda x: x * x, values))
@@ -104,7 +106,7 @@ class BenchmarkResults(object):
         if unit == 'ms':
             unit = 's'
             mean = float(mean) / 1000
-            values = map(lambda value: float(value) / 1000, values)
+            values = list(map(lambda value: float(value) / 1000, values))
             sample_stdev /= 1000
 
         base = 1024 if unit == 'B' else 1000
@@ -135,7 +137,7 @@ class BenchmarkResults(object):
     @classmethod
     def _aggregate_results(cls, tests):
         results = {}
-        for test_name, test in tests.iteritems():
+        for test_name, test in iteritems(tests):
             results[test_name] = cls._aggregate_results_for_test(test)
         return results
 
@@ -143,10 +145,10 @@ class BenchmarkResults(object):
     def _aggregate_results_for_test(cls, test):
         subtest_results = cls._aggregate_results(test['tests']) if 'tests' in test else {}
         results = {}
-        for metric_name, metric in test.get('metrics', {}).iteritems():
+        for metric_name, metric in iteritems(test.get('metrics', {})):
             if not isinstance(metric, list):
                 results[metric_name] = {None: {}}
-                for config_name, values in metric.iteritems():
+                for config_name, values in iteritems(metric):
                     results[metric_name][None][config_name] = cls._flatten_list(values)
                 continue
 
@@ -154,7 +156,7 @@ class BenchmarkResults(object):
             results[metric_name] = {}
             for aggregator in aggregator_list:
                 values_by_config_iteration = cls._subtest_values_by_config_iteration(subtest_results, metric_name, aggregator)
-                for config_name, values_by_iteration in values_by_config_iteration.iteritems():
+                for config_name, values_by_iteration in iteritems(values_by_config_iteration):
                     results[metric_name].setdefault(aggregator, {})
                     results[metric_name][aggregator][config_name] = [cls._aggregate_values(aggregator, values) for values in values_by_iteration]
 
@@ -173,17 +175,17 @@ class BenchmarkResults(object):
     @classmethod
     def _subtest_values_by_config_iteration(cls, subtest_results, metric_name, aggregator):
         values_by_config_iteration = {}
-        for subtest_name, subtest in subtest_results.iteritems():
+        for subtest_name, subtest in iteritems(subtest_results):
             results_for_metric = subtest['metrics'].get(metric_name, {})
             if aggregator in results_for_metric:
                 results_for_aggregator = results_for_metric.get(aggregator)
             elif None in results_for_metric:
                 results_for_aggregator = results_for_metric.get(None)
             elif len(results_for_metric.keys()) == 1:
-                results_for_aggregator = results_for_metric.get(results_for_metric.keys()[0])
+                results_for_aggregator = results_for_metric.get(list(results_for_metric.keys())[0])
             else:
                 results_for_aggregator = {}
-            for config_name, values in results_for_aggregator.iteritems():
+            for config_name, values in iteritems(results_for_aggregator):
                 values_by_config_iteration.setdefault(config_name, [[] for _ in values])
                 for iteration, value in enumerate(values):
                     values_by_config_iteration[config_name][iteration].append(value)
@@ -201,7 +203,7 @@ class BenchmarkResults(object):
     @classmethod
     def _lint_subtest_results(cls, subtests, parent_test, parent_aggregator_list):
         iteration_groups_by_config = {}
-        for test_name, test in subtests.iteritems():
+        for test_name, test in iteritems(subtests):
             aggregator_list = None
 
             if 'metrics' not in test and 'tests' not in test:
@@ -211,7 +213,7 @@ class BenchmarkResults(object):
                 metrics = test['metrics']
                 if not isinstance(metrics, dict):
                     raise TypeError('The metrics in "%s" is not a dictionary' % test_name)
-                for metric_name, metric in metrics.iteritems():
+                for metric_name, metric in iteritems(metrics):
                     if isinstance(metric, list):
                         cls._lint_aggregator_list(test_name, metric_name, metric, parent_test, parent_aggregator_list)
                         aggregator_list = metric
@@ -247,7 +249,7 @@ class BenchmarkResults(object):
     @classmethod
     def _lint_configuration(cls, test_name, metric_name, configurations, parent_test, parent_aggregator_list, iteration_groups_by_config):
         # FIXME: Check that config_name is always "current".
-        for config_name, values in configurations.iteritems():
+        for config_name, values in iteritems(configurations):
             nested_list_count = [isinstance(value, list) for value in values].count(True)
             if nested_list_count not in [0, len(values)]:
                 raise TypeError('"%s" metric of "%s" had malformed values: %s' % (metric_name, test_name, json.dumps(values)))

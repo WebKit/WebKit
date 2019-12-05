@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 
-from osx_browser_driver import OSXBrowserDriver
+from webkitpy.benchmark_runner.browser_driver.osx_browser_driver import OSXBrowserDriver
 from webkitpy.benchmark_runner.utils import force_remove
 
 

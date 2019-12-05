@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from linux_browser_driver import LinuxBrowserDriver
+from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxBrowserDriver
 
 
 class WPEMiniBrowserDriver(LinuxBrowserDriver):

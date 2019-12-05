@@ -22,7 +22,7 @@
 
 import unittest
 
-from benchmark_results import BenchmarkResults
+from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 
 
 class BenchmarkResultsTest(unittest.TestCase):

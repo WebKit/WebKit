@@ -26,7 +26,7 @@
 
 import os
 
-from linux_browser_driver import LinuxBrowserDriver
+from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxBrowserDriver
 
 
 class LinuxChromeDriver(LinuxBrowserDriver):

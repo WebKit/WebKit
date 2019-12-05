@@ -3,7 +3,7 @@
 import logging
 import os
 
-from osx_browser_driver import OSXBrowserDriver
+from webkitpy.benchmark_runner.browser_driver.osx_browser_driver import OSXBrowserDriver
 
 
 _log = logging.getLogger(__name__)

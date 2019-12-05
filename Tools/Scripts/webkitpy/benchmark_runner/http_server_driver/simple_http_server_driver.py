@@ -8,7 +8,7 @@ import subprocess
 import sys
 import time
 
-from http_server_driver import HTTPServerDriver
+from webkitpy.benchmark_runner.http_server_driver.http_server_driver import HTTPServerDriver
 
 
 _log = logging.getLogger(__name__)
