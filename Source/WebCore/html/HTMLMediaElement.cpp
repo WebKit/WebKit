@@ -1003,7 +1003,7 @@ void HTMLMediaElement::scheduleNextSourceChild()
     });
 }
 
-void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*)
+void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged()
 {
     m_hasEverHadAudio |= hasAudio();
     m_hasEverHadVideo |= hasVideo();
@@ -2230,7 +2230,7 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(AbortError));
 }
 
-void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerNetworkStateChanged()
 {
     beginProcessingMediaPlayerCallback();
     setNetworkState(m_player->networkState());
@@ -2376,7 +2376,7 @@ void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
     m_networkState = NETWORK_IDLE;
 }
 
-void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerReadyStateChanged()
 {
     beginProcessingMediaPlayerCallback();
 
@@ -2594,7 +2594,7 @@ RefPtr<ArrayBuffer> HTMLMediaElement::mediaPlayerCachedKeyForKeyId(const String&
     return m_webKitMediaKeys ? m_webKitMediaKeys->cachedKeyForKeyId(keyId) : nullptr;
 }
 
-bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
+bool HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().legacyEncryptedMediaAPIEnabled())
         return false;
@@ -4821,7 +4821,7 @@ void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement& source)
     }
 }
 
-void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerTimeChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -4949,7 +4949,7 @@ void HTMLMediaElement::seekToPlaybackPositionEndedTimerFired()
 #endif
 }
 
-void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerVolumeChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -4965,7 +4965,7 @@ void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerMuteChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerMuteChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -4975,14 +4975,14 @@ void HTMLMediaElement::mediaPlayerMuteChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
+void HTMLMediaElement::mediaPlayerDurationChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
     beginProcessingMediaPlayerCallback();
 
     scheduleEvent(eventNames().durationchangeEvent);
-    mediaPlayerCharacteristicChanged(player);
+    mediaPlayerCharacteristicChanged();
 
     MediaTime now = currentMediaTime();
     MediaTime dur = durationMediaTime();
@@ -4992,7 +4992,7 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerRateChanged()
 {
     beginProcessingMediaPlayerCallback();
 
@@ -5010,7 +5010,7 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerPlaybackStateChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerPlaybackStateChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5028,7 +5028,7 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerSawUnsupportedTracks()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5039,7 +5039,7 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
         downcast<MediaDocument>(document()).mediaElementSawUnsupportedTracks();
 }
 
-void HTMLMediaElement::mediaPlayerResourceNotSupported(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerResourceNotSupported()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5048,7 +5048,7 @@ void HTMLMediaElement::mediaPlayerResourceNotSupported(MediaPlayer*)
 }
 
 // MediaPlayerPresentation methods
-void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerRepaint()
 {
     beginProcessingMediaPlayerCallback();
     updateDisplayState();
@@ -5057,7 +5057,7 @@ void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerSizeChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5071,14 +5071,14 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
+bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
 {
     auto* renderer = this->renderer();
     return is<RenderVideo>(renderer)
         && downcast<RenderVideo>(*renderer).view().compositor().canAccelerateVideoRendering(downcast<RenderVideo>(*renderer));
 }
 
-void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerRenderingModeChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5093,7 +5093,7 @@ bool HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled()
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 
-GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const
+GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter() const
 {
     auto* page = document().page();
     if (!page)
@@ -5153,7 +5153,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #endif
 }
 
-void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerEngineUpdated()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5166,19 +5166,19 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     scheduleMediaEngineWasUpdated();
 }
 
-void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable()
 {
     INFO_LOG(LOGIDENTIFIER, "current display mode = ", (int)displayMode());
 
     beginProcessingMediaPlayerCallback();
     if (displayMode() == PosterWaitingForVideo) {
         setDisplayMode(Video);
-        mediaPlayerRenderingModeChanged(m_player.get());
+        mediaPlayerRenderingModeChanged();
     }
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -5191,7 +5191,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
 
     if (potentiallyPlaying() && displayMode() == PosterWaitingForVideo) {
         setDisplayMode(Video);
-        mediaPlayerRenderingModeChanged(m_player.get());
+        mediaPlayerRenderingModeChanged();
     }
 
     if (hasMediaControls())
@@ -5866,7 +5866,7 @@ void HTMLMediaElement::wirelessRoutesAvailableDidChange()
     enqueuePlaybackTargetAvailabilityChangedEvent();
 }
 
-void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged()
 {
     setIsPlayingToWirelessTarget(m_player && m_player->isCurrentPlaybackTargetWireless());
 }

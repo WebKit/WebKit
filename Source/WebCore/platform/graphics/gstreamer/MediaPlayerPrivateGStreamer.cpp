@@ -1063,7 +1063,7 @@ void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
     if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
         return;
 
-    const char* role = m_player->client().mediaPlayerIsVideo() ? "video" : "music";
+    const char* role = m_player->isVideoPlayer() ? "video" : "music";
     GstStructure* structure = gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, nullptr);
     g_object_set(object, "stream-properties", structure, nullptr);
     gst_structure_free(structure);
@@ -1168,7 +1168,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
     if (useMediaSource) {
         GST_DEBUG_OBJECT(pipeline(), "Tracks managed by source element. Bailing out now.");
-        m_player->client().mediaPlayerEngineUpdated(m_player);
+        m_player->mediaEngineUpdated();
         return;
     }
 
@@ -1199,7 +1199,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     purgeInvalidVideoTracks(validVideoStreams);
 #endif
 
-    m_player->client().mediaPlayerEngineUpdated(m_player);
+    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1212,7 +1212,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivat
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 {
     m_videoSize = IntSize();
-    m_player->client().mediaPlayerEngineUpdated(m_player);
+    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1242,7 +1242,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 
     if (useMediaSource) {
         GST_DEBUG_OBJECT(pipeline(), "Tracks managed by source element. Bailing out now.");
-        m_player->client().mediaPlayerEngineUpdated(m_player);
+        m_player->mediaEngineUpdated();
         return;
     }
 
@@ -1273,7 +1273,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
     purgeInvalidAudioTracks(validAudioStreams);
 #endif
 
-    m_player->client().mediaPlayerEngineUpdated(m_player);
+    m_player->mediaEngineUpdated();
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -1662,7 +1662,7 @@ void MediaPlayerPrivateGStreamer::updateTracks()
     if (m_hasVideo)
         m_player->sizeChanged();
 
-    m_player->client().mediaPlayerEngineUpdated(m_player);
+    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateGStreamer::clearTracks()
@@ -2093,7 +2093,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 m_missingPluginCallbacks.append(missingPluginCallback.copyRef());
                 GUniquePtr<char> detail(gst_missing_plugin_message_get_installer_detail(message));
                 GUniquePtr<char> description(gst_missing_plugin_message_get_description(message));
-                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
+                m_player->requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
             }
         }
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -2780,7 +2780,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
 
     m_isEndReached = true;
 
-    if (!m_player->client().mediaPlayerIsLooping()) {
+    if (!m_player->isLooping()) {
         m_isPaused = true;
         changePipelineState(GST_STATE_READY);
         m_didDownloadFinish = false;
@@ -2997,7 +2997,7 @@ void MediaPlayerPrivateGStreamer::readyTimerFired()
 
 void MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged()
 {
-    m_canRenderingBeAccelerated = m_player && m_player->client().mediaPlayerAcceleratedCompositingEnabled();
+    m_canRenderingBeAccelerated = m_player && m_player->acceleratedCompositingEnabled();
 }
 
 #if USE(TEXTURE_MAPPER_GL)

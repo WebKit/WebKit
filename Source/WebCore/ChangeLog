@@ -1,3 +1,119 @@
+2019-12-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Make MediaPlayer::client() private
+        https://bugs.webkit.org/show_bug.cgi?id=204856
+        <rdar://problem/57633186>
+
+        Reviewed by Jer Noble.
+        
+        Make MediaPlayer::client private and create accessors for all of the client methods
+        that were being accessed directly. Also remove the MediaPlayer* parameters from
+        the client methods since none of them were used.
+
+        No new tests, no behavioral change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerReadyStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerMuteChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerSawUnsupportedTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerResourceNotSupported):
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint):
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingModeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated):
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::currentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::MediaPlayer::readyStateChanged):
+        (WebCore::MediaPlayer::volumeChanged):
+        (WebCore::MediaPlayer::muteChanged):
+        (WebCore::MediaPlayer::timeChanged):
+        (WebCore::MediaPlayer::sizeChanged):
+        (WebCore::MediaPlayer::repaint):
+        (WebCore::MediaPlayer::durationChanged):
+        (WebCore::MediaPlayer::rateChanged):
+        (WebCore::MediaPlayer::playbackStateChanged):
+        (WebCore::MediaPlayer::firstVideoFrameAvailable):
+        (WebCore::MediaPlayer::characteristicChanged):
+        (WebCore::MediaPlayer::keyNeeded):
+        (WebCore::MediaPlayer::graphicsDeviceAdapter const):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerNetworkStateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerReadyStateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerVolumeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerMuteChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerTimeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerDurationChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerRateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerPlaybackStateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerSawUnsupportedTracks):
+        (WebCore::MediaPlayerClient::mediaPlayerResourceNotSupported):
+        (WebCore::MediaPlayerClient::mediaPlayerRepaint):
+        (WebCore::MediaPlayerClient::mediaPlayerSizeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerEngineUpdated):
+        (WebCore::MediaPlayerClient::mediaPlayerFirstVideoFrameAvailable):
+        (WebCore::MediaPlayerClient::mediaPlayerCharacteristicChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerRenderingCanBeAccelerated):
+        (WebCore::MediaPlayerClient::mediaPlayerRenderingModeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerActiveSourceBuffersChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerGraphicsDeviceAdapter const):
+        (WebCore::MediaPlayerClient::mediaPlayerKeyNeeded):
+        (WebCore::MediaPlayerClient::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayer::renderingCanBeAccelerated const):
+        (WebCore::MediaPlayer::renderingModeChanged const):
+        (WebCore::MediaPlayer::acceleratedCompositingEnabled):
+        (WebCore::MediaPlayer::activeSourceBuffersChanged):
+        (WebCore::MediaPlayer::playerContentBoxRect const):
+        (WebCore::MediaPlayer::playerContentsScale const):
+        (WebCore::MediaPlayer::shouldUsePersistentCache const):
+        (WebCore::MediaPlayer::mediaCacheDirectory const):
+        (WebCore::MediaPlayer::isVideoPlayer const):
+        (WebCore::MediaPlayer::mediaEngineUpdated):
+        (WebCore::MediaPlayer::isLooping const):
+        (WebCore::MediaPlayer::requestInstallMissingPlugins):
+        (WebCore::MediaPlayer::client const):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode const):
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareForRendering):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::acceleratedRenderingStateChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged):
+
 2019-12-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-callable "handleEvent" property is silently ignored

@@ -99,72 +99,72 @@ public:
     virtual ~MediaPlayerClient() = default;
 
     // the network state has changed
-    virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) { }
+    virtual void mediaPlayerNetworkStateChanged() { }
 
     // the ready state has changed
-    virtual void mediaPlayerReadyStateChanged(MediaPlayer*) { }
+    virtual void mediaPlayerReadyStateChanged() { }
 
     // the volume state has changed
-    virtual void mediaPlayerVolumeChanged(MediaPlayer*) { }
+    virtual void mediaPlayerVolumeChanged() { }
 
     // the mute state has changed
-    virtual void mediaPlayerMuteChanged(MediaPlayer*) { }
+    virtual void mediaPlayerMuteChanged() { }
 
     // time has jumped, eg. not as a result of normal playback
-    virtual void mediaPlayerTimeChanged(MediaPlayer*) { }
+    virtual void mediaPlayerTimeChanged() { }
 
     // the media file duration has changed, or is now known
-    virtual void mediaPlayerDurationChanged(MediaPlayer*) { }
+    virtual void mediaPlayerDurationChanged() { }
 
     // the playback rate has changed
-    virtual void mediaPlayerRateChanged(MediaPlayer*) { }
+    virtual void mediaPlayerRateChanged() { }
 
     // the play/pause status changed
-    virtual void mediaPlayerPlaybackStateChanged(MediaPlayer*) { }
+    virtual void mediaPlayerPlaybackStateChanged() { }
 
     // The MediaPlayer has found potentially problematic media content.
     // This is used internally to trigger swapping from a <video>
     // element to an <embed> in standalone documents
-    virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*) { }
+    virtual void mediaPlayerSawUnsupportedTracks() { }
 
     // The MediaPlayer could not discover an engine which supports the requested resource.
-    virtual void mediaPlayerResourceNotSupported(MediaPlayer*) { }
+    virtual void mediaPlayerResourceNotSupported() { }
 
 // Presentation-related methods
     // a new frame of video is available
-    virtual void mediaPlayerRepaint(MediaPlayer*) { }
+    virtual void mediaPlayerRepaint() { }
 
     // the movie size has changed
-    virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
+    virtual void mediaPlayerSizeChanged() { }
 
-    virtual void mediaPlayerEngineUpdated(MediaPlayer*) { }
+    virtual void mediaPlayerEngineUpdated() { }
 
     // The first frame of video is available to render. A media engine need only make this callback if the
     // first frame is not available immediately when prepareForRendering is called.
-    virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) { }
+    virtual void mediaPlayerFirstVideoFrameAvailable() { }
 
     // A characteristic of the media file, eg. video, audio, closed captions, etc, has changed.
-    virtual void mediaPlayerCharacteristicChanged(MediaPlayer*) { }
+    virtual void mediaPlayerCharacteristicChanged() { }
     
     // whether the rendering system can accelerate the display of this MediaPlayer.
-    virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) { return false; }
+    virtual bool mediaPlayerRenderingCanBeAccelerated() { return false; }
 
     // called when the media player's rendering mode changed, which indicates a change in the
     // availability of the platformLayer().
-    virtual void mediaPlayerRenderingModeChanged(MediaPlayer*) { }
+    virtual void mediaPlayerRenderingModeChanged() { }
 
     // whether accelerated compositing is enabled for video rendering
     virtual bool mediaPlayerAcceleratedCompositingEnabled() { return false; }
 
-    virtual void mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*) { }
+    virtual void mediaPlayerActiveSourceBuffersChanged() { }
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const { return nullptr; }
+    virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter() const { return nullptr; }
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const { return nullptr; }
-    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
+    virtual bool mediaPlayerKeyNeeded(Uint8Array*) { return false; }
     virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
 
@@ -174,7 +174,7 @@ public:
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) { };
+    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged() { };
 #endif
 
     virtual String mediaPlayerReferrer() const { return String(); }
@@ -416,8 +416,6 @@ public:
 
     void repaint();
 
-    MediaPlayerClient& client() const { return *m_client; }
-
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
 
@@ -580,8 +578,26 @@ public:
 
     bool shouldIgnoreIntrinsicSize();
 
+    bool renderingCanBeAccelerated() const { return client().mediaPlayerRenderingCanBeAccelerated(); }
+    void renderingModeChanged() const  { client().mediaPlayerRenderingModeChanged(); }
+    bool acceleratedCompositingEnabled() { return client().mediaPlayerAcceleratedCompositingEnabled(); }
+    void activeSourceBuffersChanged() { client().mediaPlayerActiveSourceBuffersChanged(); }
+    LayoutRect playerContentBoxRect() const { return client().mediaPlayerContentBoxRect(); }
+    float playerContentsScale() const { return client().mediaPlayerContentsScale(); }
+    bool shouldUsePersistentCache() const { return client().mediaPlayerShouldUsePersistentCache(); }
+    const String& mediaCacheDirectory() const { return client().mediaPlayerMediaCacheDirectory(); }
+    bool isVideoPlayer() const { return client().mediaPlayerIsVideo(); }
+    void mediaEngineUpdated() { client().mediaPlayerEngineUpdated(); }
+    bool isLooping() const { return client().mediaPlayerIsLooping(); }
+
+#if USE(GSTREAMER)
+    void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
+#endif
+
 private:
     MediaPlayer(MediaPlayerClient&);
+
+    MediaPlayerClient& client() const { return *m_client; }
 
     const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(const MediaPlayerFactory*);

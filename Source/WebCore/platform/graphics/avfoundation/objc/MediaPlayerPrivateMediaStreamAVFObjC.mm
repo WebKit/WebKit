@@ -485,7 +485,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     m_backgroundLayer.get().backgroundColor = cachedCGColor(Color::black);
     m_backgroundLayer.get().needsDisplayOnBoundsChange = YES;
 
-    auto size = snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size();
+    auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
     m_backgroundLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
 
     [m_statusChangeListener beginObservingLayers];
@@ -828,7 +828,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode()
     scheduleDeferredTask([this] {
         m_transformIsValid = false;
         if (m_player)
-            m_player->client().mediaPlayerRenderingModeChanged(m_player);
+            m_player->renderingModeChanged();
     });
 
 }
@@ -1114,7 +1114,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
 
 void MediaPlayerPrivateMediaStreamAVFObjC::acceleratedRenderingStateChanged()
 {
-    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+    if (m_player->renderingCanBeAccelerated())
         ensureLayers();
     else
         destroyLayers();

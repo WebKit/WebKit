@@ -663,33 +663,33 @@ private:
     double effectivePlaybackRate() const;
     double requestedPlaybackRate() const;
 
-    void mediaPlayerNetworkStateChanged(MediaPlayer*) override;
-    void mediaPlayerReadyStateChanged(MediaPlayer*) override;
-    void mediaPlayerTimeChanged(MediaPlayer*) override;
-    void mediaPlayerVolumeChanged(MediaPlayer*) override;
-    void mediaPlayerMuteChanged(MediaPlayer*) override;
-    void mediaPlayerDurationChanged(MediaPlayer*) override;
-    void mediaPlayerRateChanged(MediaPlayer*) override;
-    void mediaPlayerPlaybackStateChanged(MediaPlayer*) override;
-    void mediaPlayerSawUnsupportedTracks(MediaPlayer*) override;
-    void mediaPlayerResourceNotSupported(MediaPlayer*) override;
-    void mediaPlayerRepaint(MediaPlayer*) override;
-    void mediaPlayerSizeChanged(MediaPlayer*) override;
-    bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) override;
-    void mediaPlayerRenderingModeChanged(MediaPlayer*) override;
-    bool mediaPlayerAcceleratedCompositingEnabled() override;
-    void mediaPlayerEngineUpdated(MediaPlayer*) override;
+    void mediaPlayerNetworkStateChanged() final;
+    void mediaPlayerReadyStateChanged() final;
+    void mediaPlayerTimeChanged() final;
+    void mediaPlayerVolumeChanged() final;
+    void mediaPlayerMuteChanged() final;
+    void mediaPlayerDurationChanged() final;
+    void mediaPlayerRateChanged() final;
+    void mediaPlayerPlaybackStateChanged() final;
+    void mediaPlayerSawUnsupportedTracks() final;
+    void mediaPlayerResourceNotSupported() final;
+    void mediaPlayerRepaint() final;
+    void mediaPlayerSizeChanged() final;
+    bool mediaPlayerRenderingCanBeAccelerated() final;
+    void mediaPlayerRenderingModeChanged() final;
+    bool mediaPlayerAcceleratedCompositingEnabled() final;
+    void mediaPlayerEngineUpdated() final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();
 
-    void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) override;
-    void mediaPlayerCharacteristicChanged(MediaPlayer*) override;
+    void mediaPlayerFirstVideoFrameAvailable() final;
+    void mediaPlayerCharacteristicChanged() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const override;
-    bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) override;
-    String mediaPlayerMediaKeysStorageDirectory() const override;
+    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const final;
+    bool mediaPlayerKeyNeeded(Uint8Array*) final;
+    String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -704,7 +704,7 @@ private:
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) override;
+    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged() final;
     void enqueuePlaybackTargetAvailabilityChangedEvent();
 
     using EventTarget::dispatchEvent;
@@ -737,10 +737,10 @@ private:
     const String& mediaPlayerMediaCacheDirectory() const override;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
-    GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const override;
+    GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter() const override;
 #endif
 
-    void mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*) override;
+    void mediaPlayerActiveSourceBuffersChanged() override;
 
     void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command) override { didReceiveRemoteControlCommand(command, nullptr); }
     String sourceApplicationIdentifier() const override;
