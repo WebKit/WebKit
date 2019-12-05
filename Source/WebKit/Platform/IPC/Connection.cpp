@@ -176,9 +176,7 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
 
     Vector<ConnectionAndIncomingMessage> messagesToPutBack;
 
-    for (size_t i = 0; i < messagesToDispatchWhileWaitingForSyncReply.size(); ++i) {
-        ConnectionAndIncomingMessage& connectionAndIncomingMessage = messagesToDispatchWhileWaitingForSyncReply[i];
-
+    for (auto& connectionAndIncomingMessage : messagesToDispatchWhileWaitingForSyncReply) {
         if (allowedConnection && allowedConnection != connectionAndIncomingMessage.connection.ptr()) {
             // This incoming message belongs to another connection and we don't want to dispatch it now
             // so mark it to be put back in the message queue.
@@ -191,9 +189,8 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
 
     if (!messagesToPutBack.isEmpty()) {
         std::lock_guard<Lock> lock(m_mutex);
-
-        for (auto& message : messagesToPutBack)
-            m_messagesToDispatchWhileWaitingForSyncReply.append(WTFMove(message));
+        messagesToPutBack.appendVector(WTFMove(m_messagesToDispatchWhileWaitingForSyncReply));
+        m_messagesToDispatchWhileWaitingForSyncReply = WTFMove(messagesToPutBack);
     }
 }
 

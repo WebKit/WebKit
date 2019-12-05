@@ -1,5 +1,20 @@
 2019-12-04  Chris Dumez  <cdumez@apple.com>
 
+        IPC messages may get processed out of order in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=204864
+
+        Reviewed by Ryosuke Niwa.
+
+        IPC messages may get processed out of order in some cases. Connection::SyncMessageState::dispatchMessages()
+        puts messages it did not process back at the end of the queue, instead of the beginning. This means that
+        messages added to the queue while Connection::SyncMessageState::dispatchMessages() was running will
+        incorrectly run *before* the ones dispatchMessages() did not process.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+
+2019-12-04  Chris Dumez  <cdumez@apple.com>
+
         PageConfiguration::progressTrackerClient should use a smart pointer
         https://bugs.webkit.org/show_bug.cgi?id=204854
 
