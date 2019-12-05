@@ -1,3 +1,25 @@
+2019-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove DocumentEventQueue and WorkerEventQueue
+        https://bugs.webkit.org/show_bug.cgi?id=204841
+
+        Reviewed by Sam Weinig.
+
+        Delete DocumentEventQueue and WorkerEventQueue since we don't use them after r252824.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+        * dom/DocumentEventQueue.cpp: Removed.
+        * dom/DocumentEventQueue.h: Removed.
+        * page/VisualViewport.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderListBox.cpp:
+        * workers/WorkerEventQueue.cpp: Removed.
+        * workers/WorkerEventQueue.h: Removed.
+        * worklets/WorkletGlobalScope.h:
+
 2019-12-04  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in RenderLayoutState::pageLogicalHeight const via RenderGrid::computeIntrinsicLogicalWidths inside RenderMarquee::updateMarqueePosition

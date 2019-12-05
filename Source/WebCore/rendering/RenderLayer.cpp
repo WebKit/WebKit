@@ -53,7 +53,6 @@
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
-#include "DocumentEventQueue.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
 #include "Editor.h"

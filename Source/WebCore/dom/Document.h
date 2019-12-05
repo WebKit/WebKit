@@ -31,7 +31,6 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
-#include "DocumentEventQueue.h"
 #include "DocumentIdentifier.h"
 #include "DocumentTiming.h"
 #include "ElementIdentifier.h"

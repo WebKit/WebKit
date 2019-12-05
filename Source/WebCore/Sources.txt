@@ -868,7 +868,6 @@ dom/DeviceOrientationData.cpp
 dom/DeviceOrientationEvent.cpp
 dom/DeviceOrientationOrMotionEvent.cpp
 dom/Document.cpp
-dom/DocumentEventQueue.cpp
 dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp
 dom/DocumentParser.cpp
@@ -2514,7 +2513,6 @@ workers/DedicatedWorkerThread.cpp
 workers/Worker.cpp
 workers/WorkerConsoleClient.cpp
 workers/WorkerEventLoop.cpp
-workers/WorkerEventQueue.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp
 workers/WorkerLocation.cpp

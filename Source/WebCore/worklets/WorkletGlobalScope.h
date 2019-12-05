@@ -34,7 +34,6 @@
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 #include "WorkerEventLoop.h"
-#include "WorkerEventQueue.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/URL.h>

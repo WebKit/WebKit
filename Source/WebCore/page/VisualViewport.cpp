@@ -29,7 +29,6 @@
 #include "ContextDestructionObserver.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "DocumentEventQueue.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
