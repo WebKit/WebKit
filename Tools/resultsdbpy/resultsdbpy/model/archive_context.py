@@ -177,35 +177,40 @@ class ArchiveContext(object):
                     if memory_used > self.MEMORY_LIMIT:
                         raise RuntimeError('Hit soft-memory cap when fetching archives, aborting')
 
+            archive_by_digest = {}
             result = {}
             for config, values in metadata_by_config.items():
                 for value in values:
                     if not value.get('digest'):
                         continue
 
-                    rows = self.cassandra.select_from_table(
-                        self.ArchiveChunks.__table_name__,
-                        digest=value.get('digest'),
-                        limit=1 + int(value.get('size', 0) / self.CHUNK_SIZE),
-                    )
-                    if len(rows) == 0:
-                        continue
+                    if not archive_by_digest.get(value.get('digest')):
+                        rows = self.cassandra.select_from_table(
+                            self.ArchiveChunks.__table_name__,
+                            digest=value.get('digest'),
+                            limit=1 + int(value.get('size', 0) / self.CHUNK_SIZE),
+                        )
+                        if len(rows) == 0:
+                            continue
 
-                    digest = hashlib.md5()
-                    archive = io.BytesIO()
-                    archive_size = 0
-                    for row in rows:
-                        archive_size += len(row.chunk)
-                        digest.update(row.chunk)
-                        archive.write(row.chunk)
+                        digest = hashlib.md5()
+                        archive = io.BytesIO()
+                        archive_size = 0
+                        for row in rows:
+                            archive_size += len(row.chunk)
+                            digest.update(row.chunk)
+                            archive.write(row.chunk)
 
-                    if archive_size != value.get('size', 0) or value.get('digest', '') != digest.hexdigest():
-                        raise RuntimeError('Failed to reconstruct archive from chunks')
+                        if archive_size != value.get('size', 0) or value.get('digest', '') != digest.hexdigest():
+                            raise RuntimeError('Failed to reconstruct archive from chunks')
 
-                    archive.seek(0)
+                        archive_by_digest[value.get('digest')] = archive
+
+                    archive_by_digest.get(value.get('digest')).seek(0)
                     result.setdefault(config, [])
                     result[config].append(dict(
-                        archive=archive,
+                        archive=archive_by_digest.get(value.get('digest')),
+                        digest=digest.hexdigest(),
                         uuid=value['uuid'],
                         start_time=value['start_time'],
                     ))

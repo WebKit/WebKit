@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import hashlib
 import io
 import json
 import time
@@ -66,19 +67,22 @@ class ArchiveController(HasCommitContext):
             suites = set(suite)
 
         result = None
-        filename = 'archive.zip'
+        filename = None
+        digest = None
         with self.archive_context, self.upload_context:
             for suite in suites:
                 for configuration, archives in self.archive_context.find_archive(
                     configurations=configurations, suite=suite, branch=branch[0],
                     begin=begin, end=end, recent=recent, limit=2,
+                    begin_query_time=begin_query_time, end_query_time=end_query_time,
                 ).items():
                     for archive in archives:
-                        if archive.get('archive'):
-                            if result:
+                        if archive.get('archive') and archive.get('digest'):
+                            if digest and digest != archive.get('digest'):
                                 abort(400, description='Multiple archives matching the specified criteria')
                             result = archive.get('archive')
                             filename = f'{configuration}@{archive["uuid"]}'.replace(' ', '_').replace('.', '-')
+                            digest = archive.get('digest')
 
         if not result:
             abort(404, description='No archives matching the specified criteria')

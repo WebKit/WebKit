@@ -1,5 +1,18 @@
 2019-12-04  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Handle duplicate archives
+        https://bugs.webkit.org/show_bug.cgi?id=204860
+
+        Reviewed by Stephanie Lewis.
+
+        * resultsdbpy/resultsdbpy/controller/archive_controller.py:
+        (ArchiveController): Pass test time to ArchiveContext, de-duplicate any
+        identical archives.
+        * resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext): Only upack identical archives once, pass digest to caller.
+
+2019-12-04  Jonathan Bedard  <jbedard@apple.com>
+
         Python 3: Add support in webkitpy.benchmark_runner
         https://bugs.webkit.org/show_bug.cgi?id=204784
 
