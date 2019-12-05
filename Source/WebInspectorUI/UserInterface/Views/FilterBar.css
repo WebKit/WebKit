@@ -25,13 +25,9 @@
 
 .filter-bar {
     display: flex;
-
     height: var(--navigation-bar-height);
-
     white-space: nowrap;
     overflow: hidden;
-
-    background-color: var(--panel-background-color);
 }
 
 .filter-bar > .navigation-bar {

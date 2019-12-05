@@ -69,6 +69,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
         this._dataGrid = new WI.DataGrid(columnInfo);
         this._dataGrid.variableHeightRows = true;
+        this._dataGrid.filterDelegate = this;
         this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
         this.addSubview(this._dataGrid);
 
@@ -76,6 +77,9 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
         this._fetchingMoreData = false;
         this._fetchMoreData();
+
+        this._filterBarNavigationItem = new WI.FilterBarNavigationItem;
+        this._filterBarNavigationItem.filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._handleFilterBarFilterDidChange, this);
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("indexed-database-object-store-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
@@ -89,7 +93,12 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
     get navigationItems()
     {
-        return [this._refreshButtonNavigationItem, this._clearButtonNavigationItem];
+        return [
+            this._filterBarNavigationItem,
+            new WI.DividerNavigationItem,
+            this._refreshButtonNavigationItem,
+            this._clearButtonNavigationItem,
+        ];
     }
 
     closed()
@@ -111,6 +120,35 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
     get scrollableElements()
     {
         return [this._dataGrid.scrollContainer];
+    }
+
+    get canFocusFilterBar()
+    {
+        return true;
+    }
+
+    focusFilterBar()
+    {
+        this._filterBarNavigationItem.filterBar.focus();
+    }
+
+    // Protected
+
+    dataGridMatchNodeAgainstCustomFilters(node)
+    {
+        let filterText = this._filterBarNavigationItem.filterBar.filters.text;
+        if (!filterText)
+            return true;
+
+        let regex = WI.SearchUtilities.regExpForString(filterText, WI.SearchUtilities.defaultSettings);
+
+        // Iterate over each cell.
+        for (let child of node.element.children) {
+            if (regex.test(child.textContent))
+                return true;
+        }
+
+        return false;
     }
 
     // Private
@@ -159,6 +197,11 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
         this._fetchingMoreData = true;
 
         WI.indexedDBManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
+    }
+
+    _handleFilterBarFilterDidChange(event)
+    {
+        this._dataGrid.filterDidChange();
     }
 
     _refreshButtonClicked()

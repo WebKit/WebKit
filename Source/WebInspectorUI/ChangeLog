@@ -1,5 +1,42 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Support search on IndexedDB stores and indexes
+        https://bugs.webkit.org/show_bug.cgi?id=129208
+        <rdar://problem/16142046>
+
+        Reviewed by Timothy Hatcher.
+
+        Add filter bars to the navigation bars for `IndexedDB`, `LocalStorage`, and `SessionStorage`.
+
+        * UserInterface/Views/StorageTabContentView.js:
+        (WI.StorageTabContentView.prototype.get canHandleFindEvent): Added.
+        (WI.StorageTabContentView.prototype.handleFindEvent): Added.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView):
+        (WI.DOMStorageContentView.prototype.get navigationItems): Added.
+        (WI.DOMStorageContentView.prototype.get canFocusFilterBar): Added.
+        (WI.DOMStorageContentView.prototype.focusFilterBar): Added.
+        (WI.DOMStorageContentView.prototype._handleFilterBarFilterDidChange): Added.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WI.IndexedDatabaseObjectStoreContentView):
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.get navigationItems):
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.get canFocusFilterBar): Added.
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.focusFilterBar): Added.
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.dataGridMatchNodeAgainstCustomFilters): Added.
+        (WI.IndexedDatabaseObjectStoreContentView.prototype._handleFilterBarFilterDidChange): Added.
+        Check against the `textContent` of each cell for a given `WI.DataGridNode` to see if it
+        matches the filter text as all of the pieces of data are `WI.RemoteObject`s.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .navigation-bar .filter-bar): Deleted.
+        Remove the `background-color` to let it match the background content.
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: pressing ⌘F when no network item is selected should focus the filter bar
         https://bugs.webkit.org/show_bug.cgi?id=204862
 

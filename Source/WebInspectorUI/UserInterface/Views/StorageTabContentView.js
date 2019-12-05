@@ -78,6 +78,16 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
             || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex;
     }
 
+    get canHandleFindEvent()
+    {
+        return this.contentBrowser.currentContentView.canFocusFilterBar;
+    }
+
+    handleFindEvent(event)
+    {
+        this.contentBrowser.currentContentView.focusFilterBar();
+    }
+
     closed()
     {
         WI.applicationCacheManager.disable();
