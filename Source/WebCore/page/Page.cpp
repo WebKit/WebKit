@@ -217,7 +217,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     : m_chrome(makeUnique<Chrome>(*this, *pageConfiguration.chromeClient))
     , m_dragCaretController(makeUnique<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(makeUnique<DragController>(*this, *pageConfiguration.dragClient))
+    , m_dragController(makeUnique<DragController>(*this, WTFMove(pageConfiguration.dragClient)))
 #endif
     , m_focusController(makeUnique<FocusController>(*this, pageInitialActivityState()))
 #if ENABLE(CONTEXT_MENUS)

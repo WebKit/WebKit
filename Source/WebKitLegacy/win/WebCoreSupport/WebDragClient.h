@@ -34,7 +34,6 @@ class WebDragClient : public WebCore::DragClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebDragClient(WebView*);
-    virtual void dragControllerDestroyed();
 
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&);
     virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&);

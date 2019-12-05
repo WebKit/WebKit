@@ -182,7 +182,6 @@ class EmptyDragClient final : public DragClient {
     void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
     DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) final { return DragSourceActionNone; }
     void startDrag(DragItem, DataTransfer&, Frame&) final { }
-    void dragControllerDestroyed() final { }
 };
 
 #endif // ENABLE(DRAG_SUPPORT)
@@ -607,8 +606,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    static NeverDestroyed<EmptyDragClient> dummyDragClient;
-    pageConfiguration.dragClient = &dummyDragClient.get();
+    pageConfiguration.dragClient = makeUnique<EmptyDragClient>();
 #endif
 
     static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;

@@ -60,11 +60,6 @@ void WebDragClient::didConcludeEditDrag()
 }
 #endif
 
-void WebDragClient::dragControllerDestroyed()
-{
-    delete this;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(DRAG_SUPPORT)

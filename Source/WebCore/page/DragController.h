@@ -53,10 +53,9 @@ struct PromisedAttachmentInfo;
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
     public:
-        DragController(Page&, DragClient&);
+        DragController(Page&, std::unique_ptr<DragClient>&&);
         ~DragController();
 
-        static std::unique_ptr<DragController> create(Page&, DragClient&);
         static DragOperation platformGenericDragOperation();
 
         WEBCORE_EXPORT DragOperation dragEntered(const DragData&);
@@ -133,6 +132,8 @@ struct PromisedAttachmentInfo;
 #endif
         }
 
+        DragClient& client() const { return *m_client; }
+
         bool tryToUpdateDroppedImagePlaceholders(const DragData&);
         void removeAllDroppedImagePlaceholders();
 
@@ -145,7 +146,7 @@ struct PromisedAttachmentInfo;
         PromisedAttachmentInfo promisedAttachmentInfo(Frame&, Element&);
 #endif
         Page& m_page;
-        DragClient& m_client;
+        std::unique_ptr<DragClient> m_client;
 
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.

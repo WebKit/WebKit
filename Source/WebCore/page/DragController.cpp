@@ -133,16 +133,13 @@ static PlatformMouseEvent createMouseEvent(const DragData& dragData)
                               metaKey, WallTime::now(), ForceAtClick, NoTap);
 }
 
-DragController::DragController(Page& page, DragClient& client)
+DragController::DragController(Page& page, std::unique_ptr<DragClient>&& client)
     : m_page(page)
-    , m_client(client)
+    , m_client(WTFMove(client))
 {
 }
 
-DragController::~DragController()
-{
-    m_client.dragControllerDestroyed();
-}
+DragController::~DragController() = default;
 
 static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
@@ -209,7 +206,7 @@ void DragController::dragEnded()
     clearDragCaret();
     removeAllDroppedImagePlaceholders();
     
-    m_client.dragEnded();
+    client().dragEnded();
 }
 
 DragOperation DragController::dragEntered(const DragData& dragData)
@@ -260,7 +257,7 @@ bool DragController::performDragOperation(const DragData& dragData)
         shouldOpenExternalURLsPolicy = m_documentUnderMouse->shouldOpenExternalURLsPolicyToPropagate();
 
     if ((m_dragDestinationAction & DragDestinationActionDHTML) && dragIsHandledByDocument(m_dragHandlingMethod)) {
-        m_client.willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
+        client().willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
         Ref<Frame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
         if (mainFrame->view())
@@ -273,7 +270,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     }
 
     if ((m_dragDestinationAction & DragDestinationActionEdit) && concludeEditDrag(dragData)) {
-        m_client.didConcludeEditDrag();
+        client().didConcludeEditDrag();
         m_documentUnderMouse = nullptr;
         clearDragCaret();
         return true;
@@ -289,7 +286,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     if (urlString.isEmpty())
         return false;
 
-    m_client.willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
+    client().willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
     FrameLoadRequest frameLoadRequest { m_page.mainFrame(), ResourceRequest { urlString }, shouldOpenExternalURLsPolicy };
     frameLoadRequest.setIsRequestFromClientOrUserInput();
     m_page.mainFrame().loader().load(WTFMove(frameLoadRequest));
@@ -488,7 +485,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Dra
 
 DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootViewPoint)
 {
-    m_dragSourceAction = m_client.dragSourceActionMaskForPoint(rootViewPoint);
+    m_dragSourceAction = client().dragSourceActionMaskForPoint(rootViewPoint);
     return m_dragSourceAction;
 }
 
@@ -573,7 +570,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         style->setProperty(CSSPropertyColor, color.serialized(), false);
         if (!innerFrame->editor().shouldApplyStyle(style.ptr(), innerRange.get()))
             return false;
-        m_client.willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
+        client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         innerFrame->editor().applyStyle(style.ptr(), EditAction::SetColor);
         return true;
     }
@@ -609,7 +606,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         if (!fragment || !editor.shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Dropped))
             return false;
 
-        m_client.willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
+        client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
 
         if (editor.client() && editor.client()->performTwoStepDrop(*fragment, *range, isMove))
             return true;
@@ -635,7 +632,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         if (text.isEmpty() || !editor.shouldInsertText(text, range.get(), EditorInsertAction::Dropped))
             return false;
 
-        m_client.willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
+        client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         RefPtr<DocumentFragment> fragment = createFragmentFromText(*range, text);
         if (!fragment)
             return false;
@@ -956,7 +953,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     ASSERT(state.source);
     Element& element = *state.source;
 
-    bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || m_client.useLegacyDragClient();
+    bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || client().useLegacyDragClient();
 
     IntRect dragImageBounds;
     Image* image = getImage(element);
@@ -1002,7 +999,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
             src.editor().didWriteSelectionToPasteboard();
         }
-        m_client.willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, dataTransfer);
         if (!dragImage) {
             TextIndicatorData textIndicator;
             dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };
@@ -1054,7 +1051,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
                 declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult.altDisplayString());
         }
 
-        m_client.willPerformDragSourceAction(DragSourceActionImage, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionImage, dragOrigin, dataTransfer);
 
         if (!dragImage)
             doImageDrag(element, dragOrigin, hitTestResult.imageRect(), src, m_dragOffset, state, WTFMove(attachmentInfo));
@@ -1098,7 +1095,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
                 src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node));
         }
 
-        m_client.willPerformDragSourceAction(DragSourceActionLink, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionLink, dragOrigin, dataTransfer);
         if (!dragImage) {
             TextIndicatorData textIndicator;
             dragImage = DragImage { createDragImageForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, textIndicator, src.settings().fontRenderingMode(), m_page.deviceScaleFactor()) };
@@ -1149,7 +1146,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             }
         }
         
-        m_client.willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);
         
         if (!dragImage) {
             TextIndicatorData textIndicator;
@@ -1184,7 +1181,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         dragImageOffset = IntPoint { dragImageSize(dragImage.get()) };
         dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, false);
 
-        m_client.willPerformDragSourceAction(DragSourceActionColor, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionColor, dragOrigin, dataTransfer);
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }
@@ -1192,7 +1189,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
     if (state.type == DragSourceActionDHTML && dragImage) {
         ASSERT(m_dragSourceAction & DragSourceActionDHTML);
-        m_client.willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
+        client().willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }
@@ -1248,7 +1245,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 
 void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer& dataTransfer, DragSourceAction dragSourceAction)
 {
-    ASSERT(!m_client.useLegacyDragClient());
+    ASSERT(!client().useLegacyDragClient());
 
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
@@ -1260,7 +1257,7 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     auto mouseDownPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDownPoint));
     auto mouseDraggedPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDraggedPoint));
 
-    m_client.beginDrag(WTFMove(dragItem), frame, mouseDownPointInRootViewCoordinates, mouseDraggedPointInRootViewCoordinates, dataTransfer, dragSourceAction);
+    client().beginDrag(WTFMove(dragItem), frame, mouseDownPointInRootViewCoordinates, mouseDraggedPointInRootViewCoordinates, dataTransfer, dragSourceAction);
 }
 
 void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedAttachmentInfo&& promisedAttachmentInfo)
@@ -1316,7 +1313,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
             item.url = frame.document()->completeURL(stripLeadingAndTrailingHTMLSpaces(link->getAttribute(HTMLNames::hrefAttr)));
         }
     }
-    m_client.startDrag(WTFMove(item), *state.dataTransfer, frameProtector.get());
+    client().startDrag(WTFMove(item), *state.dataTransfer, frameProtector.get());
     // DragClient::startDrag can cause our Page to dispear, deallocating |this|.
     if (!frameProtector->page())
         return;

@@ -54,8 +54,6 @@ private:
     void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const URL&, const String&, WebCore::Frame*) override;
 #endif
 
-    void dragControllerDestroyed() override;
-
     WebPage* m_page;
 };
 

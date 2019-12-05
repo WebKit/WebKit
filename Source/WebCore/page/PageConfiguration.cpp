@@ -32,6 +32,7 @@
 #include "CookieJar.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "DragClient.h"
 #include "EditorClient.h"
 #include "LibWebRTCProvider.h"
 #include "PerformanceLoggingClient.h"

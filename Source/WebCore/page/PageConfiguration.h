@@ -80,7 +80,7 @@ public:
 #endif
     UniqueRef<EditorClient> editorClient;
     Ref<SocketProvider> socketProvider;
-    DragClient* dragClient { nullptr };
+    std::unique_ptr<DragClient> dragClient;
     InspectorClient* inspectorClient { nullptr };
 #if ENABLE(APPLE_PAY)
     PaymentCoordinatorClient* paymentCoordinatorClient { nullptr };

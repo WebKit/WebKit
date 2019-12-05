@@ -3125,7 +3125,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     );
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
-    configuration.dragClient = new WebDragClient(this);
+    configuration.dragClient = makeUnique<WebDragClient>(this);
     configuration.inspectorClient = m_inspectorClient;
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
     configuration.applicationCacheStorage = &WebApplicationCache::storage();

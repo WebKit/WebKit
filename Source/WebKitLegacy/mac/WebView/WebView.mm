@@ -1452,7 +1452,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    pageConfiguration.dragClient = new WebDragClient(self);
+    pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -1711,7 +1711,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
-    pageConfiguration.dragClient = new WebDragClient(self);
+    pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
 #endif
 
 #if ENABLE(APPLE_PAY)

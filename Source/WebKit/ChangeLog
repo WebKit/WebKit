@@ -1,5 +1,15 @@
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
+        PageConfiguration::dragClient should use a smart pointer
+        https://bugs.webkit.org/show_bug.cgi?id=204816
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
         [IPC] Fail BackForwardItemIdentifier decoding if the decoded integer is not a valid ID
         https://bugs.webkit.org/show_bug.cgi?id=204920
         <rdar://problem/57677453>

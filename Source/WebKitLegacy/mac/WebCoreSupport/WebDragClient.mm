@@ -249,9 +249,4 @@ void WebDragClient::didConcludeEditDrag()
 
 #endif // PLATFORM(IOS_FAMILY)
 
-void WebDragClient::dragControllerDestroyed() 
-{
-    delete this;
-}
-
 #endif // ENABLE(DRAG_SUPPORT)

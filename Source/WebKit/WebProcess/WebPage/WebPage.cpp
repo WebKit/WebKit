@@ -457,7 +457,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.contextMenuClient = new WebContextMenuClient(this);
 #endif
 #if ENABLE(DRAG_SUPPORT)
-    pageConfiguration.dragClient = new WebDragClient(this);
+    pageConfiguration.dragClient = makeUnique<WebDragClient>(this);
 #endif
     pageConfiguration.inspectorClient = new WebInspectorClient(this);
 #if USE(AUTOCORRECTION_PANEL)

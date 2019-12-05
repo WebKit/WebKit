@@ -40,9 +40,8 @@ class Image;
 struct PromisedAttachmentInfo;
 
 class DragClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual void dragControllerDestroyed() = 0;
-
     virtual bool useLegacyDragClient() { return true; }
 
     virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&) = 0;

@@ -162,8 +162,3 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame& 
         frame.eventHandler().dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
     }
 }
-
-void WebDragClient::dragControllerDestroyed()
-{
-    delete this;
-}

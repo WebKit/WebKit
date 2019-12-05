@@ -1,3 +1,13 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        PageConfiguration::dragClient should use a smart pointer
+        https://bugs.webkit.org/show_bug.cgi?id=204816
+
+        Reviewed by Alex Christensen.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2019-12-04  Chris Dumez  <cdumez@apple.com>
 
         PageConfiguration::progressTrackerClient should use a smart pointer

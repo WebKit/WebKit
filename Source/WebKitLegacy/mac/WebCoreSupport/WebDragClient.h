@@ -38,7 +38,6 @@ public:
 
     void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&) override;
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
-    void dragControllerDestroyed() override;
     WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
     void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&) override;
 
