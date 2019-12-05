@@ -150,7 +150,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBConnectionToServer.h"
-#include "InProcessIDBServer.h"
 #endif
 
 #if ENABLE(DATA_INTERACTION)

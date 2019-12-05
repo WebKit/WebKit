@@ -50,7 +50,7 @@
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
 #include "HistoryItem.h"
-#include "InProcessIDBServer.h"
+#include "IDBConnectionToServer.h"
 #include "InspectorClient.h"
 #include "LibWebRTCProvider.h"
 #include "NetworkStorageSession.h"
@@ -123,10 +123,46 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
-    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID& sessionID) final
+    struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
+        IDBConnectionIdentifier identifier() const final { return { }; }
+        void deleteDatabase(const IDBRequestData&) final { }
+        void openDatabase(const IDBRequestData&) final { }
+        void abortTransaction(const IDBResourceIdentifier&) final { }
+        void commitTransaction(const IDBResourceIdentifier&) final { }
+        void didFinishHandlingVersionChangeTransaction(uint64_t, const IDBResourceIdentifier&) final { }
+        void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final { }
+        void deleteObjectStore(const IDBRequestData&, const String&) final { }
+        void renameObjectStore(const IDBRequestData&, uint64_t, const String&) final { }
+        void clearObjectStore(const IDBRequestData&, uint64_t) final { }
+        void createIndex(const IDBRequestData&, const IDBIndexInfo&) final { }
+        void deleteIndex(const IDBRequestData&, uint64_t, const String&) final { }
+        void renameIndex(const IDBRequestData&, uint64_t, uint64_t, const String&) final { }
+        void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) final { }
+        void getRecord(const IDBRequestData&, const IDBGetRecordData&) final { }
+        void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) final { }
+        void getCount(const IDBRequestData&, const IDBKeyRangeData&) final { }
+        void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final { }
+        void openCursor(const IDBRequestData&, const IDBCursorInfo&) final { }
+        void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&) final { }
+        void establishTransaction(uint64_t, const IDBTransactionInfo&) final { }
+        void databaseConnectionPendingClose(uint64_t) final { }
+        void databaseConnectionClosed(uint64_t) final { }
+        void abortOpenAndUpgradeNeeded(uint64_t, const IDBResourceIdentifier&) final { }
+        void didFireVersionChangeEvent(uint64_t, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
+        void openDBRequestCancelled(const IDBRequestData&) final { }
+        void getAllDatabaseNames(const SecurityOriginData&, const SecurityOriginData&, uint64_t) final { }
+        ~EmptyIDBConnectionToServerDeletegate() { }
+        
+        void confirmDidCloseFromServer(uint64_t) final { }
+        void ref() { }
+        void deref() { }
+    };
+
+    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final
     {
-        static auto& sharedConnection = InProcessIDBServer::create(sessionID).leakRef();
-        return sharedConnection.connectionToServer();
+        static NeverDestroyed<EmptyIDBConnectionToServerDeletegate> emptyDelegate;
+        static auto& emptyConnection = IDBClient::IDBConnectionToServer::create(emptyDelegate.get()).leakRef();
+        return emptyConnection;
     }
 #endif
 };

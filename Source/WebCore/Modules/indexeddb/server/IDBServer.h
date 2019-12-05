@@ -58,7 +58,7 @@ enum class ShouldForceStop : bool { No, Yes };
 class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
 public:
     using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
-    static Ref<IDBServer> create(PAL::SessionID, StorageQuotaManagerSpaceRequester&&);
+    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, StorageQuotaManagerSpaceRequester&&);
     WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);

@@ -31,7 +31,7 @@
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
-#include <WebCore/InProcessIDBServer.h>
+#include "InProcessIDBServer.h"
 #endif
 
 class WebDatabaseProvider final : public WebCore::DatabaseProvider {
@@ -52,6 +52,6 @@ private:
     static String indexedDatabaseDirectoryPath();
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<PAL::SessionID, RefPtr<WebCore::InProcessIDBServer>> m_idbServerMap;
+    HashMap<PAL::SessionID, RefPtr<InProcessIDBServer>> m_idbServerMap;
 #endif
 };

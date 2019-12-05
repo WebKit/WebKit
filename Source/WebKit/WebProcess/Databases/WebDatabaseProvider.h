@@ -27,7 +27,6 @@
 #define WebDatabaseProvider_h
 
 #include <WebCore/DatabaseProvider.h>
-#include <WebCore/InProcessIDBServer.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {

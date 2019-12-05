@@ -1,5 +1,28 @@
 2019-12-05  Sihui Liu  <sihui_liu@apple.com>
 
+        Move InProcessIDBServer to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=204896
+
+        Reviewed by Brady Eidson.
+
+        We only use InProcessIDBServer in WebKitLegacy now.
+
+        No behavior change.
+
+        * Headers.cmake:
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        * Modules/indexeddb/shared/InProcessIDBServer.h: Removed.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        * page/Page.cpp:
+
+2019-12-05  Sihui Liu  <sihui_liu@apple.com>
+
         Rename IDBDatabaseIdentifier::debugString to IDBDatabaseIdentifier::loggingString
         https://bugs.webkit.org/show_bug.cgi?id=204898
 

@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "InProcessIDBServer.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBConnectionToClient.h"
-#include "IDBConnectionToServer.h"
-#include "IDBCursorInfo.h"
-#include "IDBGetRecordData.h"
-#include "IDBIterateCursorData.h"
-#include "IDBKeyRangeData.h"
-#include "IDBOpenDBRequest.h"
-#include "IDBRequestData.h"
-#include "IDBResultData.h"
-#include "IDBValue.h"
-#include "Logging.h"
-#include "ProcessIdentifier.h"
-#include <wtf/FileSystem.h>
+#include <WebCore/IDBCursorInfo.h>
+#include <WebCore/IDBGetRecordData.h>
+#include <WebCore/IDBIterateCursorData.h>
+#include <WebCore/IDBKeyRangeData.h>
+#include <WebCore/IDBOpenDBRequest.h>
+#include <WebCore/IDBRequestData.h>
+#include <WebCore/IDBResultData.h>
+#include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/IDBValue.h>
 #include <wtf/RunLoop.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
 {
@@ -464,7 +459,5 @@ void InProcessIDBServer::didGetAllDatabaseNames(uint64_t callbackID, const Vecto
         m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
     });
 }
-
-} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
