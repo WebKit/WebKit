@@ -60,6 +60,7 @@ public:
     void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown) override;
 
     // InspectorInstrumentation
+    void frameNavigated(Frame&);
     void didClearWindowObjectInWorld(Frame&);
 
 private:

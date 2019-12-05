@@ -717,6 +717,9 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
             pageHeapAgent->mainFrameNavigated();
     }
 
+    if (auto* pageRuntimeAgent = instrumentingAgents.pageRuntimeAgent())
+        pageRuntimeAgent->frameNavigated(frame);
+
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->frameNavigated(frame);
 

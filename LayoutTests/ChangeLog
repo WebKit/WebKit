@@ -1,3 +1,16 @@
+2019-12-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Avoid using Runtime.executionContextCreated to figure out the iframe's contentDocument node.
+        https://bugs.webkit.org/show_bug.cgi?id=122764
+        <rdar://problem/15222136>
+
+        Reviewed by Devin Rousso.
+
+        Test that execution context is created and reported for pages without JavaScript.
+
+        * inspector/runtime/execution-context-in-scriptless-page-expected.txt: Added.
+        * inspector/runtime/execution-context-in-scriptless-page.html: Added.
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         maplike should define a set method

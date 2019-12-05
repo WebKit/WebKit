@@ -1,0 +1,8 @@
+Test that Runtime.executionContextCreated event is fired even for pages without JavaScript.
+
+
+== Running test suite: Runtime.executionContextCreated.ContextWithoutScript
+-- Running test case: Runtime.executionContextCreated.ContextWithoutScript.SubFrame
+PASS: Should receive Runtime.executionContextCreated notification.
+PASS: Should be able to evaluate in subframe.
+

@@ -87,6 +87,12 @@ void PageRuntimeAgent::disable(ErrorString& errorString)
     InspectorRuntimeAgent::disable(errorString);
 }
 
+void PageRuntimeAgent::frameNavigated(Frame& frame)
+{
+    // Ensure execution context is created for the frame even if it doesn't have scripts.
+    mainWorldExecState(&frame);
+}
+
 void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame)
 {
     auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
