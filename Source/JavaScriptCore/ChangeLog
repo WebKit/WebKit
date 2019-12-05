@@ -45,6 +45,17 @@
         * runtime/VM.cpp:
         (JSC::VM::VM):
 
+2019-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix inspector/css test assertions after r253158 
+        https://bugs.webkit.org/show_bug.cgi?id=204924
+
+        Reviewed by Devin Rousso.
+        
+        Teach the inspector protocol about the ::highlight pseudoelement.
+
+        * inspector/protocol/CSS.json:
+
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI should convert IsCellWithType to constant when Structure set is finite

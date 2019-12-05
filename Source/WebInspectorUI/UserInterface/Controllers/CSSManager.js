@@ -142,6 +142,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::first-line");
         case CSSManager.PseudoSelectorNames.FirstLetter:
             return WI.unlocalizedString("::first-letter");
+        case CSSManager.PseudoSelectorNames.Highlight:
+            return WI.unlocalizedString("::highlight");
         case CSSManager.PseudoSelectorNames.Marker:
             return WI.unlocalizedString("::marker");
         case CSSManager.PseudoSelectorNames.Before:
@@ -751,6 +753,7 @@ WI.CSSManager.PseudoSelectorNames = {
     Before: "before",
     FirstLetter: "first-letter",
     FirstLine: "first-line",
+    Highlight: "highlight",
     Marker: "marker",
     Resizer: "resizer",
     Scrollbar: "scrollbar",

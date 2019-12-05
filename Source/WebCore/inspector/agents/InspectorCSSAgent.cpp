@@ -442,6 +442,8 @@ static Optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(Pse
         return Inspector::Protocol::CSS::PseudoId::After;
     case PseudoId::Selection:
         return Inspector::Protocol::CSS::PseudoId::Selection;
+    case PseudoId::Highlight:
+        return Inspector::Protocol::CSS::PseudoId::Highlight;
     case PseudoId::Scrollbar:
         return Inspector::Protocol::CSS::PseudoId::Scrollbar;
     case PseudoId::ScrollbarThumb:

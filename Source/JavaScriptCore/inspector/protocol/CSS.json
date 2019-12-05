@@ -38,6 +38,7 @@
             "enum": [
                 "first-line",
                 "first-letter",
+                "highlight",
                 "marker",
                 "before",
                 "after",

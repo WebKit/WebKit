@@ -117,6 +117,16 @@
         * history/BackForwardItemIdentifier.h:
         (WebCore::operator!=):
 
+2019-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix inspector/css test assertions after r253158 
+        https://bugs.webkit.org/show_bug.cgi?id=204924
+
+        Reviewed by Devin Rousso.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::protocolValueForPseudoId):
+
 2019-12-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Trim trailing letter-spacing at inline container boundary
