@@ -1,3 +1,10 @@
+2019-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-04  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed fix for failure to create sandbox extension on macOS after r253011. This should be iOS only.
