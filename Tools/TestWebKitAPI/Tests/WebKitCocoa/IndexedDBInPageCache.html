@@ -12,7 +12,7 @@ request.onsuccess = (event) => {
             thirdOpenRequest.onsuccess = (event) => {
                 window.webkit.messageHandlers.testHandler.postMessage("First Database Connection Closed, Second Database Connection Not Failed, Third Database Connection Opened");
             }
-            thirdOpenRequest.onblock = (event) => {
+            thirdOpenRequest.onblocked = (event) => {
                 window.webkit.messageHandlers.testHandler.postMessage("Third Database Connection Blocked");
             }
             thirdOpenRequest.onerror = (event) => {
