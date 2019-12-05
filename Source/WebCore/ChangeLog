@@ -1,3 +1,16 @@
+2019-12-04  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in RenderLayoutState::pageLogicalHeight const via RenderGrid::computeIntrinsicLogicalWidths inside RenderMarquee::updateMarqueePosition
+        https://bugs.webkit.org/show_bug.cgi?id=204527
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/table/crash-empty-layoutStateStack.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::markForPaginationRelayoutIfNeeded):
+
 2019-12-04  Chris Dumez  <cdumez@apple.com>
 
         PageConfiguration::progressTrackerClient should use a smart pointer

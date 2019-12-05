@@ -1,3 +1,13 @@
+2019-12-04  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in RenderLayoutState::pageLogicalHeight const via RenderGrid::computeIntrinsicLogicalWidths inside RenderMarquee::updateMarqueePosition
+        https://bugs.webkit.org/show_bug.cgi?id=204527
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/table/crash-empty-layoutStateStack-expected.txt: Added.
+        * fast/table/crash-empty-layoutStateStack.html: Added.
+
 2019-12-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-callable "handleEvent" property is silently ignored

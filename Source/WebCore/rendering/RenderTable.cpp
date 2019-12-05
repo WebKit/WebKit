@@ -559,7 +559,7 @@ void RenderTable::layout()
     }
 
     auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (layoutState->pageLogicalHeight())
+    if (layoutState && layoutState->pageLogicalHeight())
         setPageLogicalOffset(layoutState->pageLogicalOffset(this, logicalTop()));
 
     bool didFullRepaint = repainter.repaintAfterLayout();
@@ -1584,7 +1584,7 @@ const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCel
 void RenderTable::markForPaginationRelayoutIfNeeded()
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (!layoutState->isPaginated() || (!layoutState->pageLogicalHeightChanged() && (!layoutState->pageLogicalHeight() || layoutState->pageLogicalOffset(this, logicalTop()) == pageLogicalOffset())))
+    if (!layoutState || !layoutState->isPaginated() || (!layoutState->pageLogicalHeightChanged() && (!layoutState->pageLogicalHeight() || layoutState->pageLogicalOffset(this, logicalTop()) == pageLogicalOffset())))
         return;
     
     // When a table moves, we have to dirty all of the sections too.
