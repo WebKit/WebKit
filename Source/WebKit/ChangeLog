@@ -1,5 +1,37 @@
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
+        Optimize IPC::Connection::SyncMessageState methods
+        https://bugs.webkit.org/show_bug.cgi?id=204890
+
+        Reviewed by Alex Christensen.
+
+        Optimize IPC::Connection::SyncMessageState methods. We are seeing lock contention on some (app launch)
+        benchmarks, resulting in the main thread yielding for 10ms.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState): Make constructor private since this is a singleton class.
+        (IPC::Connection::ConnectionAndIncomingMessage): Add convenience dispatch() method.
+
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        Drop the lock as early as possible, *before* calling RunLoop::main().dispatch().
+
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        Drop allowedConnection parameter and simplify the code a lot as a result. Only dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection()
+        needed the pass an allowedConnection but having dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection() call dispatchMessages() was
+        inefficient since it would cause us to grab the lock in dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection() to update
+        m_didScheduleDispatchMessagesWorkSet, then release it, then grab the lock again in dispatchMessages() for m_messagesToDispatchWhileWaitingForSyncReply.
+
+        (IPC::Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection):
+        Grab the lock only once to update m_didScheduleDispatchMessagesWorkSet and m_messagesToDispatchWhileWaitingForSyncReply, instead of doing it in 2
+        separate steps, each one taking the lock.
+
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::waitForSyncReply):
+        (IPC::Connection::dispatchSyncMessage):
+        stop passing a null allowedConnection when calling dispatchMessages().
+
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
         PageConfiguration::dragClient should use a smart pointer
         https://bugs.webkit.org/show_bug.cgi?id=204816
 
