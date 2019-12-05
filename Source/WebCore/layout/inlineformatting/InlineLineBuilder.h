@@ -80,7 +80,7 @@ public:
 
         bool isText() const { return m_type == InlineItem::Type::Text; }
         bool isBox() const { return m_type == InlineItem::Type::Box; }
-        bool isForcedLineBreak() const { return m_type == InlineItem::Type::ForcedLineBreak; }
+        bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak || m_type == InlineItem::Type::SoftLineBreak; }
         bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
         bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
 
@@ -168,7 +168,7 @@ private:
         bool isBox() const { return m_inlineItem.isBox(); }
         bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
         bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
-        bool isForcedLineBreak() const { return m_inlineItem.isForcedLineBreak(); }
+        bool isLineBreak() const { return m_inlineItem.isLineBreak(); }
         InlineItem::Type type() const { return m_inlineItem.type(); }
 
         void setIsCollapsed() { m_isCollapsed = true; }

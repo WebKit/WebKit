@@ -23,22 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InlineItem.h"
-
-#include "InlineTextItem.h"
+#pragma once
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "InlineItem.h"
 
 namespace WebCore {
 namespace Layout {
 
-InlineItem::InlineItem(const Box& layoutBox, Type type)
-    : m_layoutBox(layoutBox)
-    , m_type(type)
+class InlineSoftLineBreakItem : public InlineItem {
+public:
+    static std::unique_ptr<InlineSoftLineBreakItem> createSoftLineBreakItem(const Box&, unsigned position);
+
+    unsigned position() const { return m_position; }
+
+    InlineSoftLineBreakItem(const Box&, unsigned position);
+private:
+    unsigned m_position { 0 };
+};
+
+std::unique_ptr<InlineSoftLineBreakItem> InlineSoftLineBreakItem::createSoftLineBreakItem(const Box& inlineBox, unsigned position)
+{
+    return makeUnique<InlineSoftLineBreakItem>(inlineBox, position);
+}
+
+InlineSoftLineBreakItem::InlineSoftLineBreakItem(const Box& inlineBox, unsigned position)
+    : InlineItem(inlineBox, Type::SoftLineBreak)
+    , m_position(position)
 {
 }
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(InlineSoftLineBreakItem, isSoftLineBreak())
+
 #endif

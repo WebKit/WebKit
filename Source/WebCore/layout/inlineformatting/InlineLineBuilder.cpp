@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineFormattingContext.h"
+#include "InlineSoftLineBreakItem.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -244,7 +245,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
 
         switch (verticalAlign) {
         case VerticalAlign::Baseline:
-            if (run.isForcedLineBreak() || run.isText())
+            if (run.isLineBreak() || run.isText())
                 logicalTop = baselineOffset() - ascent;
             else if (run.isContainerStart()) {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -405,7 +406,7 @@ void LineBuilder::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
         appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
-    else if (inlineItem.isForcedLineBreak())
+    else if (inlineItem.isLineBreak())
         appendLineBreak(inlineItem);
     else if (inlineItem.isContainerStart())
         appendInlineContainerStart(inlineItem, logicalWidth);
@@ -528,13 +529,18 @@ void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUn
 
 void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
 {
-    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), { } });
+    if (inlineItem.isHardLineBreak())
+        return m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), { } });
+    // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
+    ASSERT(inlineItem.isSoftLineBreak());
+    auto& softLineBreakItem = downcast<InlineSoftLineBreakItem>(inlineItem);
+    m_inlineItemRuns.append({ softLineBreakItem, contentLogicalWidth(), { }, Display::Run::TextContext { softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content } });
 }
 
 void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
 {
     auto& baseline = m_lineBox.baseline();
-    if (run.isText() || run.isForcedLineBreak()) {
+    if (run.isText() || run.isLineBreak()) {
         // For text content we set the baseline either through the initial strut (set by the formatting context root) or
         // through the inline container (start) -see above. Normally the text content itself does not stretch the line.
         if (!m_initialStrut)
@@ -622,7 +628,7 @@ LayoutUnit LineBuilder::runContentHeight(const Run& run) const
 {
     ASSERT(!m_skipAlignment);
     auto& fontMetrics = run.style().fontMetrics();
-    if (run.isText() || run.isForcedLineBreak())
+    if (run.isText() || run.isLineBreak())
         return fontMetrics.height();
 
     if (run.isContainerStart() || run.isContainerEnd())
@@ -653,7 +659,7 @@ bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
         return boxGeometry.borderRight() || (boxGeometry.paddingRight() && boxGeometry.paddingRight().value());
     }
 
-    if (run.isForcedLineBreak())
+    if (run.isLineBreak())
         return true;
 
     if (run.isBox()) {
@@ -733,7 +739,7 @@ LayoutUnit LineBuilder::TrimmableContent::trim()
         auto& run = m_inlineitemRunList[index];
         run.moveHorizontally(-accumulatedTrimmedWidth);
         if (!run.isText()) {
-            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isForcedLineBreak());
+            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isLineBreak());
             continue;
         }
         if (run.isWhitespace()) {

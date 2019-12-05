@@ -37,7 +37,7 @@ namespace Layout {
 
 static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
 {
-    if (inlineItem.isForcedLineBreak())
+    if (inlineItem.isLineBreak())
         return { };
 
     if (is<InlineTextItem>(inlineItem)) {
@@ -175,8 +175,8 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
         line.setHasIntrusiveFloat();
         return IsEndOfLine::No;
     }
-    // Forced line breaks are also special.
-    if (inlineItem.isForcedLineBreak()) {
+    // Line breaks are also special.
+    if (inlineItem.isLineBreak()) {
         auto isEndOfLine = !m_uncommittedContent.isEmpty() ? processUncommittedContent(line) : IsEndOfLine::No;
         // When the uncommitted content fits(or the line is empty), add the line break to this line as well.
         if (isEndOfLine == IsEndOfLine::No) {

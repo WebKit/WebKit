@@ -2030,6 +2030,7 @@
 		6F1CC1DE225F8B4900720AD2 /* InlineTextItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26BB6B23343E5B002F2BEA /* LayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F26EB48234004A5006906E2 /* LineLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26EB46234004A5006906E2 /* LineLayoutContext.h */; };
+		6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F3E1F622136142000A65A08 /* FloatBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F3E1F612136141700A65A08 /* FloatBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F77868823491AD8004D9636 /* DisplayPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F77868723491AD7004D9636 /* DisplayPainter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9283,6 +9284,7 @@
 		6F26BB6B23343E5B002F2BEA /* LayoutContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutContext.h; sourceTree = "<group>"; };
 		6F26EB46234004A5006906E2 /* LineLayoutContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutContext.h; sourceTree = "<group>"; };
 		6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextGeometry.cpp; sourceTree = "<group>"; };
+		6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineSoftLineBreakItem.h; sourceTree = "<group>"; };
 		6F3E1F5F2136141700A65A08 /* FloatBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatBox.cpp; sourceTree = "<group>"; };
 		6F3E1F612136141700A65A08 /* FloatBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
 		6F4A5BD522F9F16B00A80F25 /* LayoutPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPhase.cpp; sourceTree = "<group>"; };
@@ -16721,6 +16723,7 @@
 				6FE198152178397C00446F08 /* InlineLineBreaker.h */,
 				6F0CD692229ED31900C5994E /* InlineLineBuilder.cpp */,
 				6F0CD694229ED32700C5994E /* InlineLineBuilder.h */,
+				6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */,
 				6F1CC1DC225F8B4100720AD2 /* InlineTextItem.cpp */,
 				6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */,
 				6F25B200220A85AB0000011B /* LineLayoutContext.cpp */,
@@ -30241,6 +30244,7 @@
 				6FB47E632277425A00C7BCB0 /* InlineLineBox.h in Headers */,
 				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
 				6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */,
+				6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
 				1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */,
@@ -33119,7 +33123,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
@@ -33401,7 +33404,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D4150DE1C1F868C000A3BA4 /* (null) in Sources */,
 				51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */,
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,

@@ -30,6 +30,7 @@
 
 #include "BreakLines.h"
 #include "FontCascade.h"
+#include "InlineSoftLineBreakItem.h"
 
 namespace WebCore {
 namespace Layout {
@@ -106,7 +107,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 
         // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
         if (isSegmentBreakCandidate(text[currentPosition]) && style.preserveNewline()) {
-            inlineContent.append(makeUnique<InlineItem>(inlineBox, Type::ForcedLineBreak));
+            inlineContent.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineBox, currentPosition));
             ++currentPosition;
             continue;
         }
@@ -134,11 +135,6 @@ std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& 
 std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width)
 {
     return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::NonWhitespace);
-}
-
-std::unique_ptr<InlineTextItem> InlineTextItem::createSegmentBreakItem(const Box& inlineBox, unsigned position)
-{
-    return makeUnique<InlineTextItem>(inlineBox, position, 1, WTF::nullopt, TextItemType::SegmentBreak);
 }
 
 std::unique_ptr<InlineTextItem> InlineTextItem::createEmptyItem(const Box& inlineBox)

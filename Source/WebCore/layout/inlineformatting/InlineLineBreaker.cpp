@@ -185,7 +185,7 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
     // [inline container start][text content][inline container end]
     // An incoming <img> box would enable us to commit the "<span>continuous</span>" content
     // while additional text content would not.
-    ASSERT(!inlineItem.isFloat() && !inlineItem.isForcedLineBreak());
+    ASSERT(!inlineItem.isFloat() && !inlineItem.isLineBreak());
     if (content.isEmpty()) {
         // Can't decide it yet.
         return false;
@@ -261,11 +261,11 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
 void LineBreaker::Content::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     ASSERT(!inlineItem.isFloat());
-    ASSERT(inlineItem.isForcedLineBreak() || !isAtContentBoundary(inlineItem, *this));
+    ASSERT(inlineItem.isLineBreak() || !isAtContentBoundary(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
     // Figure out the trailing trimmable state.
-    if (inlineItem.isBox() || inlineItem.isForcedLineBreak())
+    if (inlineItem.isBox() || inlineItem.isLineBreak())
         m_trailingTrimmableContent.reset();
     else if (inlineItem.isText()) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
