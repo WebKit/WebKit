@@ -893,10 +893,10 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
 void RemoteLayerTreeTransaction::dump() const
 {
-    fprintf(stderr, "%s", description().data());
+    fprintf(stderr, "%s", description().utf8().data());
 }
 
-CString RemoteLayerTreeTransaction::description() const
+String RemoteLayerTreeTransaction::description() const
 {
     TextStream ts;
 
@@ -964,7 +964,7 @@ CString RemoteLayerTreeTransaction::description() const
 
     ts.endGroup();
 
-    return ts.release().utf8();
+    return ts.release();
 }
 
 #endif // !defined(NDEBUG) || !LOG_DISABLED

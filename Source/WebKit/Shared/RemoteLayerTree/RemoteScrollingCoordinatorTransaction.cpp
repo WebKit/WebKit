@@ -768,7 +768,7 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
         recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
 }
 
-WTF::CString RemoteScrollingCoordinatorTransaction::description() const
+String RemoteScrollingCoordinatorTransaction::description() const
 {
     TextStream ts;
 
@@ -785,12 +785,12 @@ WTF::CString RemoteScrollingCoordinatorTransaction::description() const
 
     ts.endGroup();
 
-    return ts.release().utf8();
+    return ts.release();
 }
 
 void RemoteScrollingCoordinatorTransaction::dump() const
 {
-    fprintf(stderr, "%s", description().data());
+    fprintf(stderr, "%s", description().utf8().data());
 }
 #endif
 

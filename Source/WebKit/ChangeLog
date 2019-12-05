@@ -191,6 +191,27 @@
         purposes. The equals methods allow the return vectors to use
         appendIfNotContains.
 
+2019-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor RemoteLayerTree logging cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=204865
+
+        Reviewed by Tim Horton.
+
+        Have the ::description() methods return Strings like everything else does.
+        Use LOG_WITH_STREAM() so we don't call description() unless the log channel is on.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::dump const):
+        (WebKit::RemoteLayerTreeTransaction::description const):
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::description const):
+        (WebKit::RemoteScrollingCoordinatorTransaction::dump const):
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
 2019-12-04  Louie Livon-Bemel  <llivonbemel@apple.com>
 
         Add exclusion rule for text manipulation SPI to exclude based on element class

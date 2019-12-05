@@ -192,8 +192,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 {
     TraceScope tracingScope(CommitLayerTreeStart, CommitLayerTreeEnd);
 
-    LOG(RemoteLayerTree, "%s", layerTreeTransaction.description().data());
-    LOG(RemoteLayerTree, "%s", scrollingTreeTransaction.description().data());
+    LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
+    LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
 
     ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID.next());
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();

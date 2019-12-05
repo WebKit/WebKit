@@ -45,7 +45,7 @@ public:
     static bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    WTF::CString description() const;
+    String description() const;
     void dump() const;
 #endif
 
