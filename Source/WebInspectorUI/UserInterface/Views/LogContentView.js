@@ -251,7 +251,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     get supportsCustomFindBanner()
     {
-        return WI.isShowingConsoleTab();
+        return true;
     }
 
     showCustomFindBanner()
