@@ -33,6 +33,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         this._nestingLevel = 0;
         this._selectedMessages = [];
+        this._immediatelyHiddenMessages = new Set;
 
         // FIXME: Try to use a marker, instead of a list of messages that get re-added.
         this._provisionalMessages = [];
@@ -96,12 +97,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), {className: "infos", hidden: true}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs", hidden: true}),
         ];
-
-        for (let scopeBarItem of scopeBarItems) {
-            let indicatorElement = scopeBarItem.element.insertBefore(document.createElement("div"), scopeBarItem.element.firstChild);
-            indicatorElement.className = "indicator";
-        }
-
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
         this._scopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
@@ -237,12 +232,17 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (!this._scopeBar.item(WI.LogContentView.Scopes.All).selected) {
             if (messageView instanceof WI.ConsoleCommandView || messageView.message instanceof WI.ConsoleCommandResultMessage)
                 this._scopeBar.item(WI.LogContentView.Scopes.Evaluations).toggle(true, {extendSelection: true});
-            else
-                this._markScopeBarItemForMessageLevelUnread(messageView.message.level);
         }
 
         console.assert(messageView.element instanceof Element);
         this._filterMessageElements([messageView.element]);
+
+        if (!this._isMessageVisible(messageView.element)) {
+            this._immediatelyHiddenMessages.add(messageView);
+            this._showHiddenMessagesBannerIfNeeded();
+        }
+
+        this._lastMessageView = messageView;
     }
 
     get supportsSearch() { return true; }
@@ -441,22 +441,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         return undefined;
     }
 
-    _markScopeBarItemUnread(scope)
-    {
-        let item = this._scopeBar.item(scope);
-        if (item && !item.selected && !this._scopeBar.item(WI.LogContentView.Scopes.All).selected)
-            item.element.classList.add("unread");
-    }
-
-    _markScopeBarItemForMessageLevelUnread(level)
-    {
-        let scope = this._scopeFromMessageLevel(level);
-        if (!scope)
-            return;
-
-        this._markScopeBarItemUnread(scope);
-    }
-
     _messageAdded(event)
     {
         let message = event.data.message;
@@ -475,8 +459,17 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _previousMessageRepeatCountUpdated(event)
     {
-        if (this._logViewController.updatePreviousMessageRepeatCount(event.data.count) && this._lastMessageView)
-            this._markScopeBarItemForMessageLevelUnread(this._lastMessageView.message.level);
+        if (!this._logViewController.updatePreviousMessageRepeatCount(event.data.count))
+            return;
+
+        if (this._lastMessageView) {
+            if (this._isMessageVisible(this._lastMessageView.element))
+                return;
+
+            this._immediatelyHiddenMessages.add(this._lastMessageView);
+        }
+
+        this._showHiddenMessagesBannerIfNeeded();
     }
 
     _handleContextMenuEvent(event)
@@ -831,19 +824,21 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _logCleared(event)
     {
-        for (let item of this._scopeBar.items)
-            item.element.classList.remove("unread");
-
         for (let messageElement of this._allMessageElements()) {
             if (messageElement.__messageView)
                 messageElement.__messageView.clearSessionState();
         }
 
         this._logViewController.clear();
+
         this._nestingLevel = 0;
+        this._selectedMessages = [];
+        this._immediatelyHiddenMessages.clear();
 
         if (this._currentSearchQuery)
             this.performSearch(this._currentSearchQuery);
+
+        this._showHiddenMessagesBannerIfNeeded();
     }
 
     _showConsoleTab()
@@ -884,10 +879,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (items.some((item) => item.id === WI.LogContentView.Scopes.AllChannels))
             items = this._messageSourceBar.items;
 
-        for (let item of items)
-            item.element.classList.remove("unread");
-
         this._filterMessageElements(this._allMessageElements());
+
+        this._showHiddenMessagesBannerIfNeeded();
     }
 
     _scopeBarSelectionDidChange(event)
@@ -896,10 +890,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (items.some((item) => item.id === WI.LogContentView.Scopes.All))
             items = this._scopeBar.items;
 
-        for (let item of items)
-            item.element.classList.remove("unread");
-
         this._filterMessageElements(this._allMessageElements());
+
+        this._showHiddenMessagesBannerIfNeeded();
     }
 
     _filterMessageElements(messageElements)
@@ -912,9 +905,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 visible = this._messageShouldBeVisible(messageElement.__message);
 
             let classList = messageElement.classList;
-            if (visible)
+            if (visible) {
                 classList.remove(WI.LogContentView.FilteredOutStyleClassName);
-            else {
+                this._immediatelyHiddenMessages.delete(messageElement.__messageView);
+            } else {
                 this._selectedMessages.remove(messageElement);
                 classList.remove(WI.LogContentView.SelectedStyleClassName);
                 classList.add(WI.LogContentView.FilteredOutStyleClassName);
@@ -1235,6 +1229,41 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     {
         this._startedProvisionalLoad = false;
         this._provisionalMessages = [];
+    }
+
+    _showHiddenMessagesBannerIfNeeded()
+    {
+        if (!this._immediatelyHiddenMessages.size) {
+            if (this._hiddenMessagesBannerElement)
+                this._hiddenMessagesBannerElement.remove();
+            return;
+        }
+
+        if (!this._hiddenMessagesBannerElement) {
+            this._hiddenMessagesBannerElement = document.createElement("div");
+            this._hiddenMessagesBannerElement.className = "hidden-messages-banner";
+
+            this._hiddenMessagesBannerElement.appendChild(document.createTextNode(WI.UIString("There are unread messages that have been filtered")));
+
+            let clearFiltersButtonElement = this._hiddenMessagesBannerElement.appendChild(document.createElement("button"));
+            clearFiltersButtonElement.textContent = WI.UIString("Clear Filters");
+            clearFiltersButtonElement.addEventListener("click", (event) => {
+                this._findBanner.clearAndBlur();
+                this._scopeBar.resetToDefault();
+                console.assert(!this._immediatelyHiddenMessages.size);
+
+                this._hiddenMessagesBannerElement.remove();
+            });
+
+            let dismissBannerIconElement = this._hiddenMessagesBannerElement.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Close.svg", "dismiss", WI.UIString("Dismiss")));
+            dismissBannerIconElement.addEventListener("click", (event) => {
+                this._immediatelyHiddenMessages.clear();
+                this._hiddenMessagesBannerElement.remove();
+            });
+        }
+
+        if (this.element.firstChild !== this._hiddenMessagesBannerElement)
+            this.element.insertAdjacentElement("afterbegin", this._hiddenMessagesBannerElement);
     }
 };
 

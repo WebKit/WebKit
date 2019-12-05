@@ -74,7 +74,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._nextResultButton.appendChild(nextResultButtonGlyphElement);
 
         if (fixed)
-            this._clearAndBlurKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this._clearAndBlur.bind(this), this.element);
+            this._clearAndBlurKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this.clearAndBlur.bind(this), this.element);
         else {
             let doneButtonElement = document.createElement("button");
             doneButtonElement.textContent = WI.UIString("Done");
@@ -164,7 +164,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
             this._inputField.select();
     }
 
-    _clearAndBlur()
+    clearAndBlur()
     {
         this.numberOfResults = null;
 

@@ -1,5 +1,54 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r242604): Console: unread indicator overlaps selection background of previous scope bar item
+        https://bugs.webkit.org/show_bug.cgi?id=204630
+
+        Reviewed by Timothy Hatcher.
+
+        When a new message is added that is immediately filtered, such as from an existing filter or
+        previously selected scope bar items, rather than show a blinking circle next to the level of
+        the new message in the scope bar (which doesn't cover the case where there's a filter and
+        was often hard to notice), add a dismissable warning banner explaning that the message had
+        been filtered with a button to clear all filters.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        (WI.LogContentView.prototype.didAppendConsoleMessageView):
+        (WI.LogContentView.prototype._previousMessageRepeatCountUpdated):
+        (WI.LogContentView.prototype._logCleared):
+        (WI.LogContentView.prototype._messageSourceBarSelectionDidChange):
+        (WI.LogContentView.prototype._scopeBarSelectionDidChange):
+        (WI.LogContentView.prototype._filterMessageElements):
+        (WI.LogContentView.prototype._showHiddenMessagesBannerIfNeeded): Added.
+        (WI.LogContentView.prototype._markScopeBarItemUnread): Deleted.
+        (WI.LogContentView.prototype._markScopeBarItemForMessageLevelUnread): Deleted.
+        * UserInterface/Views/LogContentView.css:
+        (.content-view.log):
+        (.content-view.log > .hidden-messages-banner): Added.
+        (.content-view.log > .hidden-messages-banner > button): Added.
+        (.content-view.log > .hidden-messages-banner > .dismiss): Added.
+        (body[dir=ltr] .content-view.log > .hidden-messages-banner > .dismiss): Added.
+        (body[dir=rtl] .content-view.log > .hidden-messages-banner > .dismiss): Added.
+        (.console-messages):
+        (.log-scope-bar > li:not(.unread) > .indicator): Deleted.
+        (.log-scope-bar > li.unread > .indicator): Deleted.
+        (.log-scope-bar > li.unread:hover > .indicator): Deleted.
+        (.log-scope-bar > li.unread.evaluations > .indicator): Deleted.
+        (.log-scope-bar > li.unread.errors > .indicator): Deleted.
+        (.log-scope-bar > li.unread.warnings > .indicator): Deleted.
+        (.log-scope-bar > li.unread.logs > .indicator): Deleted.
+        (@keyframes unread-background-pulse): Deleted.
+
+        * UserInterface/Views/FindBanner.js:
+        (WI.FindBanner):
+        (WI.FindBanner.prototype.clearAndBlur): Added.
+        (WI.FindBanner.prototype._clearAndBlur): Deleted.
+        Expose a public way to clear the find banner.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: add WI.EngineeringSetting and WI.DebugSetting to avoid callsite checking
         https://bugs.webkit.org/show_bug.cgi?id=204785
 
