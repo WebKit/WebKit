@@ -1,3 +1,38 @@
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put TypedArrays in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204867
+
+        Reviewed by Mark Lam.
+
+        This patch puts TypedArrays in IsoSubspace.
+
+            - JSArrayBuffer
+            - JSDataView
+            - JSInt8Array
+            - JSInt16Array
+            - JSInt32Array
+            - JSUint8Array
+            - JSUint8ClampedArray
+            - JSUint16Array
+            - JSUint32Array
+            - JSFloat32Array
+            - JSFloat64Array
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::subspaceFor):
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSTypedArrays.h:
+        * runtime/TypedArrayAdaptors.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2019-12-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Validate and generate bytecode in one pass

@@ -9911,9 +9911,20 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 #endif
 
     auto butterfly = TrustedImmPtr(nullptr);
-    emitAllocateJSObject<JSArrayBufferView>(
-        resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR, scratchGPR2,
-        slowCases);
+    switch (typedArrayType) {
+#define TYPED_ARRAY_TYPE_CASE(name) \
+    case Type ## name: \
+        emitAllocateJSObject<JS##name##Array>(resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR, scratchGPR2, slowCases); \
+        break;
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+    case TypeDataView:
+        emitAllocateJSObject<JSDataView>(resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR, scratchGPR2, slowCases);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 
     m_jit.storePtr(
         storageGPR,

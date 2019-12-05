@@ -32,8 +32,14 @@ namespace JSC {
 
 class JSDataView final : public JSArrayBufferView {
 public:
-    typedef JSArrayBufferView Base;
+    using Base = JSArrayBufferView;
     static constexpr unsigned elementSize = 1;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.dataViewSpace<mode>();
+    }
     
 protected:
     JSDataView(VM&, ConstructionContext&, ArrayBuffer*);

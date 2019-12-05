@@ -6912,8 +6912,21 @@ private:
 
             ValueFromBlock haveStorage = m_out.anchor(storage);
 
-            LValue fastResultValue =
-                allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, slowCase);
+            LValue fastResultValue = nullptr;
+            switch (typedArrayType) {
+#define TYPED_ARRAY_TYPE_CASE(name) \
+            case Type ## name: \
+                fastResultValue = allocateObject<JS##name##Array>(structure, m_out.intPtrZero, slowCase); \
+                break;
+            FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+            case TypeDataView:
+                fastResultValue = allocateObject<JSDataView>(structure, m_out.intPtrZero, slowCase);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
 
             m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);

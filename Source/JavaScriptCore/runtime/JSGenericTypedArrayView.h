@@ -93,7 +93,7 @@ static const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underly
 template<typename Adaptor>
 class JSGenericTypedArrayView final : public JSArrayBufferView {
 public:
-    typedef JSArrayBufferView Base;
+    using Base = JSArrayBufferView;
     typedef typename Adaptor::Type ElementType;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
@@ -258,7 +258,35 @@ public:
             return getFloat64ArrayClassInfo();
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return 0;
+            return nullptr;
+        }
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        switch (Adaptor::typeValue) {
+        case TypeInt8:
+            return vm.int8ArraySpace<mode>();
+        case TypeInt16:
+            return vm.int16ArraySpace<mode>();
+        case TypeInt32:
+            return vm.int32ArraySpace<mode>();
+        case TypeUint8:
+            return vm.uint8ArraySpace<mode>();
+        case TypeUint8Clamped:
+            return vm.uint8ClampedArraySpace<mode>();
+        case TypeUint16:
+            return vm.uint16ArraySpace<mode>();
+        case TypeUint32:
+            return vm.uint32ArraySpace<mode>();
+        case TypeFloat32:
+            return vm.float32ArraySpace<mode>();
+        case TypeFloat64:
+            return vm.float64ArraySpace<mode>();
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         }
     }
     

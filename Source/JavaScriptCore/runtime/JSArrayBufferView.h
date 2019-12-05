@@ -95,7 +95,15 @@ inline bool hasArrayBuffer(TypedArrayMode mode)
 
 class JSArrayBufferView : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
+
+    template<typename, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM&)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     static constexpr unsigned fastSizeLimit = 1000;
     using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void, tagCagedPtr>;
     
