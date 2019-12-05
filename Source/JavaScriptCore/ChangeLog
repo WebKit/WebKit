@@ -1,5 +1,20 @@
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] AI should convert IsCellWithType to constant when Structure set is finite
+        https://bugs.webkit.org/show_bug.cgi?id=204141
+
+        Reviewed by Mark Lam.
+
+        We should fold IsCellWithType if Structure set is finite since we have a chance to know what JSType is.
+        The difference from the last patch is that we have `if (!(child.m_type & ~SpecCell))` check. Even if
+        structures meet the requirement, this structures do not guarantee that non cell types never come. We
+        should ensure it by using proven type.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Put TypedArrays in IsoSubspace
         https://bugs.webkit.org/show_bug.cgi?id=204867
 

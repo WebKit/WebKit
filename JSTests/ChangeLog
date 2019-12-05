@@ -1,3 +1,19 @@
+2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI should convert IsCellWithType to constant when Structure set is finite
+        https://bugs.webkit.org/show_bug.cgi?id=204141
+
+        Reviewed by Mark Lam.
+
+        * stress/generator-cell-with-type.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (test):
+        (i.shouldThrow):
+        * stress/is-cell-with-type-should-check-non-cell-cases.js: Added.
+        (getter):
+        (foo):
+
 2019-12-04  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in ArrayPrototype's fastJoin().

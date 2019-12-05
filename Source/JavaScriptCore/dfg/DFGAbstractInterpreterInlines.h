@@ -1444,6 +1444,37 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (constantWasSet)
                 break;
         }
+
+        if (!(child.m_type & ~SpecCell)) {
+            if (child.m_structure.isFinite()) {
+                bool constantWasSet = false;
+                switch (node->op()) {
+                case IsCellWithType: {
+                    bool ok = true;
+                    Optional<bool> result;
+                    child.m_structure.forEach(
+                        [&](RegisteredStructure structure) {
+                            bool matched = structure->typeInfo().type() == node->queriedType();
+                            if (!result)
+                                result = matched;
+                            else {
+                                if (result.value() != matched)
+                                    ok = false;
+                            }
+                        });
+                    if (ok && result) {
+                        setConstant(node, jsBoolean(result.value()));
+                        constantWasSet = true;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+                if (constantWasSet)
+                    break;
+            }
+        }
         
         // FIXME: This code should really use AbstractValue::isType() and
         // AbstractValue::couldBeType().
