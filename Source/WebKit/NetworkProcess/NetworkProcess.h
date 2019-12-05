@@ -477,9 +477,9 @@ private:
 
         Ref<WebCore::StorageQuotaManager> ensureOriginStorageQuotaManager(WebCore::ClientOrigin origin, uint64_t quota, WebCore::StorageQuotaManager::UsageGetter&& usageGetter, WebCore::StorageQuotaManager::QuotaIncreaseRequester&& quotaIncreaseRequester)
         {
-            auto [iter, isNewEntry] = m_storageQuotaManagers.ensure(origin, [quota, usageGetter = WTFMove(usageGetter), quotaIncreaseRequester = WTFMove(quotaIncreaseRequester)]() mutable {
+            auto iter = m_storageQuotaManagers.ensure(origin, [quota, usageGetter = WTFMove(usageGetter), quotaIncreaseRequester = WTFMove(quotaIncreaseRequester)]() mutable {
                 return WebCore::StorageQuotaManager::create(quota, WTFMove(usageGetter), WTFMove(quotaIncreaseRequester));
-            });
+            }).iterator;
             return makeRef(*iter->value);
         }
 

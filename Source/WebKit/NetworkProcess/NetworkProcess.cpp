@@ -427,9 +427,9 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle& cacheRootPathHandle)
 {
     LockHolder locker(m_sessionStorageQuotaManagersLock);
-    auto [iter, isNewEntry] = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
+    auto isNewEntry = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
         return makeUnique<SessionStorageQuotaManager>(cacheRootPath, defaultQuota, defaultThirdPartyQuota);
-    });
+    }).isNewEntry;
     if (isNewEntry)
         SandboxExtension::consumePermanently(cacheRootPathHandle);
 }

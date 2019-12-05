@@ -1,3 +1,16 @@
+2019-12-04  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove build warnings below since r253025.
+        warning: unused variable ‘iter’ [-Wunused-variable]
+        warning: unused variable ‘isNewEntry’ [-Wunused-variable]
+
+        No new tests, no new behavioral changes.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addSessionStorageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::ensureOriginStorageQuotaManager):
+
 2019-12-04  Chris Dumez  <cdumez@apple.com>
 
         IPC messages may get processed out of order in some cases
