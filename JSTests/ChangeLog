@@ -1,3 +1,13 @@
+2019-12-04  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception check in ArrayPrototype's fastJoin().
+        https://bugs.webkit.org/show_bug.cgi?id=204868
+        <rdar://problem/57516684>
+
+        Reviewed by Saam Barati.
+
+        * stress/missing-exception-check-in-array-prototype-fastJoin.js: Added.
+
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling out r252416, vimeo does not work

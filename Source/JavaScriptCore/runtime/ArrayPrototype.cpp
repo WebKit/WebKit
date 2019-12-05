@@ -490,6 +490,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
             if (JSValue value = data[i].get()) {
                 if (!joiner.appendWithoutSideEffects(globalObject, value))
                     goto generalCase;
+                RETURN_IF_EXCEPTION(scope, { });
             } else {
                 if (sawHoles)
                     *sawHoles = true;

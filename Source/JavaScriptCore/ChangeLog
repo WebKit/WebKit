@@ -1,5 +1,16 @@
 2019-12-04  Mark Lam  <mark.lam@apple.com>
 
+        Fix missing exception check in ArrayPrototype's fastJoin().
+        https://bugs.webkit.org/show_bug.cgi?id=204868
+        <rdar://problem/57516684>
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::fastJoin):
+
+2019-12-04  Mark Lam  <mark.lam@apple.com>
+
         Fix a broken assertion in GetByStatus::computeForStubInfoWithoutExitSiteFeedback().
         https://bugs.webkit.org/show_bug.cgi?id=204866
 
