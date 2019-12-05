@@ -367,9 +367,7 @@ void LineBuilder::removeTrailingTrimmableContent()
     if (m_trimmableContent.isEmpty() || m_inlineItemRuns.isEmpty())
         return;
 
-    m_lineBox.shrinkHorizontally(m_trimmableContent.width());
-
-    m_trimmableContent.trim();
+    m_lineBox.shrinkHorizontally(m_trimmableContent.trim());
     // If we trimmed the first visible run on the line, we need to re-check the visibility status.
     if (!m_lineIsVisuallyEmptyBeforeTrimmableContent)
         return;
@@ -441,6 +439,14 @@ void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, Layou
 void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline level container </span>.
+    auto trimTrailingLetterSpacing = [&] {
+        if (!m_trimmableContent.isTrailingRunPartiallyTrimmable())
+            return;
+        m_lineBox.shrinkHorizontally(m_trimmableContent.trimTrailingRun());
+    };
+    // Prevent trailing letter-spacing from spilling out of the inline container.
+    // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
+    trimTrailingLetterSpacing();
     appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
 }
 
@@ -712,10 +718,9 @@ void LineBuilder::TrimmableContent::append(size_t runIndex)
     m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
 }
 
-void LineBuilder::TrimmableContent::trim()
+LayoutUnit LineBuilder::TrimmableContent::trim()
 {
-    if (!m_firstRunIndex)
-        return;
+    ASSERT(!isEmpty());
 #ifndef NDEBUG
     auto hasSeenNonWhitespaceTextContent = false;
 #endif
@@ -747,6 +752,38 @@ void LineBuilder::TrimmableContent::trim()
     }
     ASSERT(accumulatedTrimmedWidth == width());
     reset();
+    return accumulatedTrimmedWidth;
+}
+
+LayoutUnit LineBuilder::TrimmableContent::trimTrailingRun()
+{
+    ASSERT(!isEmpty());
+    // Find the last trimmable run (it is not necessarily the last run e.g [container start][whitespace][container end])
+    for (auto index = m_inlineitemRunList.size(); index-- && *m_firstRunIndex >= index;) {
+        auto& run = m_inlineitemRunList[index];
+        if (!run.isText()) {
+            ASSERT(run.isContainerStart() || run.isContainerEnd());
+            continue;
+        }
+        LayoutUnit trimmedWidth;
+        if (run.isWhitespace()) {
+            trimmedWidth = run.logicalWidth();
+            run.setCollapsesToZeroAdvanceWidth();
+        } else {
+            ASSERT(run.hasTrailingLetterSpacing());
+            trimmedWidth = run.trailingLetterSpacing();
+            run.removeTrailingLetterSpacing();
+        }
+        m_width -= trimmedWidth;
+        // We managed to trim the last trimmable run.
+        if (index == *m_firstRunIndex) {
+            ASSERT(!m_width);
+            m_firstRunIndex = { };
+        }
+        return trimmedWidth;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> textContext)

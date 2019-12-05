@@ -1,3 +1,28 @@
+2019-12-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Trim trailing letter-spacing at inline container boundary
+        https://bugs.webkit.org/show_bug.cgi?id=204895
+        <rdar://problem/57666898>
+
+        Reviewed by Antti Koivisto.
+
+        According to https://www.w3.org/TR/css-text-3/#letter-spacing-property, "An inline box only
+        includes letter spacing between characters completely contained within that element".
+        This patch enables this behavior by trimming the trailing letter spacing at [container end].
+
+        <div>1<span style="letter-spacing: 100px;">2</span>3</div> ->
+        [1][container start][2][container end][3]
+        vs.
+        [1][container start][2<-----100px----->][container end][3]
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trim):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trimTrailingRun):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingRunPartiallyTrimmable const):
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         maplike should define a set method

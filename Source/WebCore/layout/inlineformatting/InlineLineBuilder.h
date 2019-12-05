@@ -205,13 +205,15 @@ private:
         TrimmableContent(InlineItemRunList&);
 
         void append(size_t runIndex);
-        void trim();
+        LayoutUnit trim();
+        LayoutUnit trimTrailingRun();
         void reset();
 
         LayoutUnit width() const { return m_width; }
         Optional<size_t> firstRunIndex() { return m_firstRunIndex; }
         bool isEmpty() const { return !m_firstRunIndex.hasValue(); }
         bool isTrailingRunFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
+        bool isTrailingRunPartiallyTrimmable() const { return !isEmpty() && !isTrailingRunFullyTrimmable(); }
 
     private:
         InlineItemRunList& m_inlineitemRunList;
