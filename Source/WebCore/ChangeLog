@@ -1,5 +1,17 @@
 2019-12-05  Antti Koivisto  <antti@apple.com>
 
+        [LFC][Integration] Disable LFC when floats are present for now
+        https://bugs.webkit.org/show_bug.cgi?id=204892
+
+        Reviewed by Zalan Bujtas.
+
+        Diasable until we start synthesizing the required structures.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::canUseFor):
+
+2019-12-05  Antti Koivisto  <antti@apple.com>
+
         [LFC][IFC] Many render tree dump tests show 1px too narrow runs
         https://bugs.webkit.org/show_bug.cgi?id=204885
 

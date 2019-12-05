@@ -64,6 +64,9 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow)
     if (!SimpleLineLayout::canUseFor(flow))
         return false;
 
+    if (flow.containsFloats())
+        return false;
+
     if (flow.style().textTransform() == TextTransform::Capitalize)
         return false;
 
