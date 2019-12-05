@@ -47,33 +47,17 @@ namespace WasmEntryPlanInternal {
 static const bool verbose = false;
 }
 
-EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
-    : Base(context, WTFMove(info), WTFMove(task), WTFMove(createEmbedderWrapper), throwWasmException)
+EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
+    : Base(context, WTFMove(info), WTFMove(task))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Validated)
     , m_asyncWork(work)
 {
 }
 
-EntryPlan::EntryPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
-    : Base(context, ModuleInformation::create(), WTFMove(task), WTFMove(createEmbedderWrapper), throwWasmException)
-    , m_source(WTFMove(source))
-    , m_streamingParser(m_moduleInformation.get(), *this)
-    , m_state(State::Initial)
-    , m_asyncWork(work)
-{
-}
-
-EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> moduleInformation, CompletionTask&& task)
-    : Base(context, WTFMove(moduleInformation), WTFMove(task))
-    , m_streamingParser(m_moduleInformation.get(), *this)
-    , m_state(State::Initial)
-    , m_asyncWork(AsyncWork::FullCompile)
-{
-}
-
-EntryPlan::EntryPlan(Context* context, AsyncWork work, CompletionTask&& task)
+EntryPlan::EntryPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
     : Base(context, WTFMove(task))
+    , m_source(WTFMove(source))
     , m_streamingParser(m_moduleInformation.get(), *this)
     , m_state(State::Initial)
     , m_asyncWork(work)
@@ -97,26 +81,6 @@ void EntryPlan::moveToState(State state)
     ASSERT(state >= m_state);
     dataLogLnIf(WasmEntryPlanInternal::verbose && state != m_state, "moving to state: ", stateString(state), " from state: ", stateString(m_state));
     m_state = state;
-}
-
-bool EntryPlan::didReceiveFunctionData(unsigned functionIndex, const FunctionData& function)
-{
-    dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
-    size_t functionLength = function.end - function.start;
-    ASSERT(functionLength == function.data.size());
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
-
-    auto validationResult = validateFunction(function, signature, m_moduleInformation.get());
-    if (!validationResult) {
-        if (WasmEntryPlanInternal::verbose) {
-            for (unsigned i = 0; i < functionLength; ++i)
-                dataLog(RawPointer(reinterpret_cast<void*>(function.data[i])), ", ");
-            dataLogLn();
-        }
-        fail(holdLock(m_lock), makeString(validationResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
-    }
-    return !!validationResult;
 }
 
 bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLength)
@@ -145,8 +109,6 @@ bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLengt
         dataLogLn("Took ", (MonotonicTime::now() - startTime).microseconds(), " us to validate module");
 
     moveToState(State::Validated);
-    if (m_asyncWork == Validation)
-        complete(holdLock(m_lock));
     return true;
 }
 
@@ -156,6 +118,7 @@ void EntryPlan::prepare()
     dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting preparation");
 
     const auto& functions = m_moduleInformation->functions;
+    m_numberOfFunctions = functions.size();
     if (!tryReserveCapacity(m_wasmToWasmExitStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
         || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, functions.size(), " unlinked WebAssembly to WebAssembly calls"))
         return;
@@ -223,20 +186,6 @@ public:
     EntryPlan& m_plan;
 };
 
-void EntryPlan::complete(const AbstractLocker& locker)
-{
-    ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functions.size());
-    dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting Completion");
-
-    if (!failed() && m_state == State::Compiled)
-        didCompleteCompilation(locker);
-
-    if (!isComplete()) {
-        moveToState(State::Completed);
-        runCompletionTasks(locker);
-    }
-}
-
 
 void EntryPlan::compileFunctions(CompilationEffort effort)
 {
@@ -252,7 +201,6 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
     ThreadCountHolder holder(*this);
 
     size_t bytesCompiled = 0;
-    const auto& functions = m_moduleInformation->functions;
     while (true) {
         if (effort == Partial && bytesCompiled >= Options::webAssemblyPartialCompileLimit())
             return;
@@ -260,7 +208,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
         uint32_t functionIndex;
         {
             auto locker = holdLock(m_lock);
-            if (m_currentIndex >= functions.size()) {
+            if (m_currentIndex >= m_numberOfFunctions) {
                 if (hasWork())
                     moveToState(State::Compiled);
                 return;
@@ -270,30 +218,24 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
         }
 
         compileFunction(functionIndex);
-        bytesCompiled += functions[functionIndex].data.size();
+        bytesCompiled += m_moduleInformation->functions[functionIndex].data.size();
     }
 }
 
-void EntryPlan::work(CompilationEffort effort)
+void EntryPlan::complete(const AbstractLocker& locker)
 {
-    switch (m_state) {
-    case State::Initial:
-        parseAndValidateModule(m_source.data(), m_source.size());
-        if (!hasWork()) {
-            ASSERT(isComplete());
-            break;
-        }
-        FALLTHROUGH;
-    case State::Validated:
-        prepare();
-        break;
-    case State::Prepared:
-        compileFunctions(effort);
-        break;
-    default:
-        break;
+    ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functions.size());
+    dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting Completion");
+
+    if (!failed() && m_state == State::Compiled)
+        didCompleteCompilation(locker);
+
+    if (!isComplete()) {
+        moveToState(State::Completed);
+        runCompletionTasks(locker);
     }
 }
+
 
 } } // namespace JSC::Wasm
 

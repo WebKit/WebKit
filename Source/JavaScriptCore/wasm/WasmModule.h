@@ -37,9 +37,10 @@
 
 namespace JSC { namespace Wasm {
 
+class BBQPlan;
+class LLIntPlan;
 struct Context;
 struct ModuleInformation;
-class Plan;
 
 using SignatureIndex = uint64_t;
 
@@ -52,26 +53,34 @@ public:
     static ValidationResult validateSync(Context*, Vector<uint8_t>&& source);
     static void validateAsync(Context*, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
 
-    static Ref<Module> create(Ref<ModuleInformation>&& moduleInformation)
+    static Ref<Module> create(BBQPlan& plan)
     {
-        return adoptRef(*new Module(WTFMove(moduleInformation)));
+        return adoptRef(*new Module(plan));
+    }
+
+    static Ref<Module> create(LLIntPlan& plan)
+    {
+        return adoptRef(*new Module(plan));
     }
 
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
-    Ref<CodeBlock> compileSync(Context*, MemoryMode, CreateEmbedderWrapper&&, ThrowWasmException);
-    void compileAsync(Context*, MemoryMode, CodeBlock::AsyncCompilationCallback&&, CreateEmbedderWrapper&&, ThrowWasmException);
+    Ref<CodeBlock> compileSync(Context*, MemoryMode);
+    void compileAsync(Context*, MemoryMode, CodeBlock::AsyncCompilationCallback&&);
 
     JS_EXPORT_PRIVATE ~Module();
 
     CodeBlock* codeBlockFor(MemoryMode mode) { return m_codeBlocks[static_cast<uint8_t>(mode)].get(); }
 private:
-    Ref<CodeBlock> getOrCreateCodeBlock(Context*, MemoryMode, CreateEmbedderWrapper&&, ThrowWasmException);
+    Ref<CodeBlock> getOrCreateCodeBlock(Context*, MemoryMode);
 
-    Module(Ref<ModuleInformation>&&);
+    Module(BBQPlan&);
+    Module(LLIntPlan&);
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
+    Vector<Ref<LLIntCallee>> m_llintCallees;
+    MacroAssemblerCodeRef<B3CompilationPtrTag> m_llintEntryThunks;
     Lock m_lock;
 };
 

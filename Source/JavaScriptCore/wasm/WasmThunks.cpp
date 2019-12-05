@@ -56,10 +56,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.breakpoint(); // We should not reach this.
 
-    ThrowWasmException throwWasmException = Thunks::singleton().throwWasmException();
-    RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(throwWasmException));
+    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmToJSException));
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw exception from Wasm");
 }
 
@@ -111,19 +109,6 @@ Thunks& Thunks::singleton()
 {
     ASSERT(thunks);
     return *thunks;
-}
-
-void Thunks::setThrowWasmException(ThrowWasmException throwWasmException)
-{
-    auto locker = holdLock(m_lock);
-    // The thunks are unique for the entire process, therefore changing the throwing function changes it for all uses of WebAssembly.
-    RELEASE_ASSERT(!m_throwWasmException || m_throwWasmException == throwWasmException);
-    m_throwWasmException = throwWasmException;
-}
-
-ThrowWasmException Thunks::throwWasmException()
-{
-    return m_throwWasmException;
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(ThunkGenerator generator)

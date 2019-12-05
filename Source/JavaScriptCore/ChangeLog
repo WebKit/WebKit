@@ -1,3 +1,235 @@
+2019-12-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Validate and generate bytecode in one pass
+        https://bugs.webkit.org/show_bug.cgi?id=204474
+
+        Reviewed by Saam Barati.
+
+        Currently, we traverse the WebAssembly code twice:
+        - a first serial pass that validates all functions
+        - a second concurrent pass that compiles all functions.
+        In this patch, we move the validation into the parser and update the LLIntPlan so that we no longer have
+        the first pass. Instead, we now validate concurrently at the same time we generate bytecode.
+
+        As a result, when we call WebAssembly.validate, we'll still generate bytecode for the module, but it will
+        be thrown away. If the module is constructed with new WebAssembly.Module, we'll also eagerly generate
+        bytecode, but in this case the bytecode is kept and shared across all instantiations of this module.
+
+        This is a 1.5x speedup when compiling the ZenGarden demo.
+
+        * DerivedSources.make:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::ControlData::ControlData):
+        (JSC::Wasm::AirIRGenerator::ControlData::isIf):
+        (JSC::Wasm::AirIRGenerator::ControlData::isTopLevel):
+        (JSC::Wasm::AirIRGenerator::ControlData::branchTargetArity const):
+        (JSC::Wasm::AirIRGenerator::ControlData::branchTargetType const):
+        (JSC::Wasm::AirIRGenerator::emptyExpression):
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
+        (JSC::Wasm::AirIRGenerator::tmpsForSignature):
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addRefIsNull):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        (JSC::Wasm::AirIRGenerator::addBlock):
+        (JSC::Wasm::AirIRGenerator::addIf):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::unify):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::AirIRGenerator::dump):
+        (JSC::Wasm::parseAndCompileAir):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        * wasm/WasmAirIRGenerator.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+        (JSC::Wasm::B3IRGenerator::ControlData::isIf):
+        (JSC::Wasm::B3IRGenerator::ControlData::isTopLevel):
+        (JSC::Wasm::B3IRGenerator::ControlData::signature const):
+        (JSC::Wasm::B3IRGenerator::ControlData::hasNonVoidresult const):
+        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetArity const):
+        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetType const):
+        (JSC::Wasm::B3IRGenerator::emptyExpression):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addRefIsNull):
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addBlock):
+        (JSC::Wasm::B3IRGenerator::addIf):
+        (JSC::Wasm::B3IRGenerator::addReturn):
+        (JSC::Wasm::B3IRGenerator::endBlock):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::B3IRGenerator::dump):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        (JSC::Wasm::BBQPlan::didReceiveFunctionData):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::create):
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::EntryPlan):
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::prepare):
+        (JSC::Wasm::EntryPlan::compileFunctions):
+        (JSC::Wasm::EntryPlan::complete):
+        * wasm/WasmEntryPlan.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::splitStack):
+        (JSC::Wasm::FunctionParser::TypedExpression::TypedExpression):
+        (JSC::Wasm::FunctionParser::TypedExpression::type const):
+        (JSC::Wasm::FunctionParser::TypedExpression::value const):
+        (JSC::Wasm::FunctionParser::TypedExpression::operator ExpressionType const):
+        (JSC::Wasm::FunctionParser::TypedExpression::operator-> const):
+        (JSC::Wasm::FunctionParser::controlStack):
+        (JSC::Wasm::FunctionParser::validationFail const):
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::binaryCase):
+        (JSC::Wasm::FunctionParser<Context>::unaryCase):
+        (JSC::Wasm::FunctionParser<Context>::load):
+        (JSC::Wasm::FunctionParser<Context>::store):
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::topLevel):
+        (JSC::Wasm::LLIntGenerator::ControlType::loop):
+        (JSC::Wasm::LLIntGenerator::ControlType::isIf):
+        (JSC::Wasm::LLIntGenerator::ControlType::isTopLevel):
+        (JSC::Wasm::LLIntGenerator::ControlType::stackSize const):
+        (JSC::Wasm::LLIntGenerator::ControlType::signature const):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetArity const):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetType const):
+        (JSC::Wasm::LLIntGenerator::emptyExpression):
+        (JSC::Wasm::LLIntGenerator::dump):
+        (JSC::Wasm::LLIntGenerator::getDropKeepCount):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::LLIntGenerator::splitStack):
+        (JSC::Wasm::parseAndCompileBytecode):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        (JSC::Wasm::LLIntGenerator::setLocal):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCall):
+        (JSC::Wasm::LLIntGenerator::addCallIndirect):
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::LLIntPlan):
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        (JSC::Wasm::LLIntPlan::work):
+        (JSC::Wasm::LLIntPlan::didReceiveFunctionData):
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::Module):
+        (JSC::Wasm::makeValidationResult):
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        (JSC::Wasm::Module::compileSync):
+        (JSC::Wasm::Module::compileAsync):
+        * wasm/WasmModule.h:
+        (JSC::Wasm::Module::create):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::dontFinalize):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::slow_path_wasm_throw_exception):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        * wasm/WasmThunks.h:
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::ControlData::isIf):
+        (JSC::Wasm::Validate::ControlData::isTopLevel):
+        (JSC::Wasm::Validate::ControlData::blockType const):
+        (JSC::Wasm::Validate::ControlData::signature const):
+        (JSC::Wasm::Validate::ControlData::branchTargetArity const):
+        (JSC::Wasm::Validate::ControlData::branchTargetType const):
+        (JSC::Wasm::Validate::emptyExpression):
+        (JSC::Wasm::Validate::addConstant):
+        (JSC::Wasm::Validate::Validate):
+        (JSC::Wasm::Validate::addArguments):
+        (JSC::Wasm::Validate::addTableGet):
+        (JSC::Wasm::Validate::addTableSet):
+        (JSC::Wasm::Validate::addTableSize):
+        (JSC::Wasm::Validate::addTableGrow):
+        (JSC::Wasm::Validate::addTableFill):
+        (JSC::Wasm::Validate::addRefIsNull):
+        (JSC::Wasm::Validate::addRefFunc):
+        (JSC::Wasm::Validate::addLocal):
+        (JSC::Wasm::Validate::getLocal):
+        (JSC::Wasm::Validate::setLocal):
+        (JSC::Wasm::Validate::getGlobal):
+        (JSC::Wasm::Validate::setGlobal):
+        (JSC::Wasm::Validate::addBlock):
+        (JSC::Wasm::Validate::addLoop):
+        (JSC::Wasm::Validate::addSelect):
+        (JSC::Wasm::Validate::addIf):
+        (JSC::Wasm::Validate::addElse):
+        (JSC::Wasm::Validate::addElseToUnreachable):
+        (JSC::Wasm::Validate::addReturn):
+        (JSC::Wasm::Validate::addBranch):
+        (JSC::Wasm::Validate::addSwitch):
+        (JSC::Wasm::Validate::addGrowMemory):
+        (JSC::Wasm::Validate::addCurrentMemory):
+        (JSC::Wasm::Validate::endBlock):
+        (JSC::Wasm::Validate::addEndToUnreachable):
+        (JSC::Wasm::Validate::addCall):
+        (JSC::Wasm::Validate::addCallIndirect):
+        (JSC::Wasm::Validate::load):
+        (JSC::Wasm::Validate::store):
+        (JSC::Wasm::Validate::addOp):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::Validate::dump):
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+        * wasm/generateWasmOpsHeader.py:
+        (cppType):
+        (cppMacro):
+        (opcodeMacroizer):
+        (opcodeWithTypesMacroizer):
+        (opcodeWithTypesMacroizer.modifier):
+        (memoryLoadMacroizer):
+        (memoryLoadMacroizer.modifier):
+        (memoryStoreMacroizer):
+        (memoryStoreMacroizer.modifier):
+        * wasm/generateWasmValidateInlinesHeader.py: Removed.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::instantiate):
+        (JSC::webAssemblyValidateFunc):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+
 2019-12-04  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in ArrayPrototype's fastJoin().

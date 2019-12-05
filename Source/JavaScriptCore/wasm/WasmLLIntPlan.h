@@ -37,14 +37,16 @@ class CallLinkInfo;
 namespace Wasm {
 
 class LLIntCallee;
+class EmbedderEntrypointCallee;
+
+using EmbedderEntrypointCalleeMap = HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
 class LLIntPlan final : public EntryPlan {
-public:
     using Base = EntryPlan;
 
-    using Base::Base;
-
-    void initializeCallees(const CalleeInitializer&) override;
+public:
+    JS_EXPORT_PRIVATE LLIntPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    LLIntPlan(Context*, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
 
     MacroAssemblerCodeRef<B3CompilationPtrTag>&& takeEntryThunks()
     {
@@ -52,20 +54,37 @@ public:
         return WTFMove(m_entryThunks);
     }
 
+    Vector<Ref<LLIntCallee>>&& takeCallees()
+    {
+        RELEASE_ASSERT(!failed() && !hasWork());
+        return WTFMove(m_calleesVector);
+    }
+
+    EmbedderEntrypointCalleeMap&& takeEmbedderCallees()
+    {
+        RELEASE_ASSERT(!failed() && !hasWork());
+        return WTFMove(m_embedderCallees);
+    }
+
+    bool hasWork() const override
+    {
+        return m_state < State::Compiled;
+    }
+
+    void work(CompilationEffort) override;
+
+    bool didReceiveFunctionData(unsigned, const FunctionData&) override;
+
 protected:
     bool prepareImpl() override;
     void compileFunction(uint32_t functionIndex) override;
     void didCompleteCompilation(const AbstractLocker&) override;
 
 private:
-    struct EmbederToWasmFunction {
-        std::unique_ptr<CCallHelpers> jit;
-        std::unique_ptr<InternalFunction> function;
-    };
-
     Vector<std::unique_ptr<FunctionCodeBlock>> m_wasmInternalFunctions;
-    Vector<Ref<LLIntCallee>> m_callees;
-    HashMap<uint32_t, EmbederToWasmFunction, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
+    const Ref<LLIntCallee>* m_callees { nullptr };
+    Vector<Ref<LLIntCallee>> m_calleesVector;
+    EmbedderEntrypointCalleeMap m_embedderCallees;
     MacroAssemblerCodeRef<B3CompilationPtrTag> m_entryThunks;
 };
 

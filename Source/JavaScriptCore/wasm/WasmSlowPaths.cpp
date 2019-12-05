@@ -411,7 +411,7 @@ WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
-    WASM_RETURN_TWO(Wasm::Thunks::singleton().throwWasmException()(callFrame, exceptionType, instance), 0);
+    WASM_RETURN_TWO(operationWasmToJSException(callFrame, exceptionType, instance), 0);
 }
 
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t x)

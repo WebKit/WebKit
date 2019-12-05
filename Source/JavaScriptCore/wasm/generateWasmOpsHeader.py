@@ -40,9 +40,15 @@ opcodes = wasm.opcodes
 wasmOpsHFile = open(args[2], "w")
 
 
-def cppMacro(wasmOpcode, value, b3, inc):
-    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + str(inc) + ")"
+def cppType(type):
+    if type == "bool":
+        return "I32"
+    return type.capitalize()
 
+
+def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
+    extraArgsStr = ", " + ", ".join(extraArgs) if len(extraArgs) else ""
+    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + str(inc) + extraArgsStr + ")"
 
 def typeMacroizer():
     inc = 0
@@ -55,33 +61,55 @@ type_definitions.extend([t for t in typeMacroizer()])
 type_definitions = "".join(type_definitions)
 
 
-def opcodeMacroizer(filter, opcodeField="value"):
+def opcodeMacroizer(filter, opcodeField="value", modifier=None):
     inc = 0
     for op in wasm.opcodeIterator(filter):
         b3op = "Oops"
         if isSimple(op["opcode"]):
             b3op = op["opcode"]["b3op"]
-        yield cppMacro(op["name"], op["opcode"][opcodeField], b3op, inc)
+        extraArgs = []
+        if modifier:
+            extraArgs = modifier(op["opcode"])
+        yield cppMacro(op["name"], op["opcode"][opcodeField], b3op, inc, *extraArgs)
         inc += 1
+
+
+def opcodeWithTypesMacroizer(filter):
+    def modifier(op):
+        return [cppType(type) for type in op["parameter"] + op["return"]]
+    return opcodeMacroizer(filter, modifier=modifier)
+
+
+def memoryLoadMacroizer():
+    def modifier(op):
+        return [cppType(op["return"][0])]
+    return opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 1), modifier=modifier)
+
+
+def memoryStoreMacroizer():
+    def modifier(op):
+        return [cppType(op["parameter"][1])]
+    return opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 0), modifier=modifier)
+
 
 defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
 defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["category"] == "exttable"))])
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and isSimple(op))])
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and isSimple(op))])
 defines.append("\n\n#define FOR_EACH_WASM_UNARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isUnary(op) and not (isSimple(op)))])
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and not (isSimple(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and isSimple(op))])
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and isSimple(op))])
 defines.append("\n\n#define FOR_EACH_WASM_BINARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: isBinary(op) and not (isSimple(op)))])
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and not (isSimple(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 1))])
+defines.extend([op for op in memoryLoadMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 0))])
+defines.extend([op for op in memoryStoreMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_TABLE_OP(macro)")
-defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "exttable"), "extendedOp")])
+defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "exttable"), opcodeField="extendedOp")])
 defines.append("\n\n")
 
 defines = "".join(defines)
@@ -133,13 +161,13 @@ static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumb
 static constexpr unsigned numTypes = """ + str(len(types)) + """;
 
 """ + type_definitions + """
-#define CREATE_ENUM_VALUE(name, id, b3type, inc) name = id,
+#define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum Type : int8_t {
     FOR_EACH_WASM_TYPE(CREATE_ENUM_VALUE)
 };
 #undef CREATE_ENUM_VALUE
 
-#define CREATE_CASE(name, id, b3type, inc) case id: return true;
+#define CREATE_CASE(name, id, ...) case id: return true;
 template <typename Int>
 inline bool isValidType(Int i)
 {
@@ -152,7 +180,7 @@ inline bool isValidType(Int i)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc) case name: return b3type;
+#define CREATE_CASE(name, id, b3type, ...) case name: return b3type;
 inline B3::Type toB3Type(Type type)
 {
     switch (type) {
@@ -163,7 +191,7 @@ inline B3::Type toB3Type(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc) case name: return #name;
+#define CREATE_CASE(name, ...) case name: return #name;
 inline const char* makeString(Type type)
 {
     switch (type) {
@@ -174,7 +202,7 @@ inline const char* makeString(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc) case id: return inc;
+#define CREATE_CASE(name, id, b3type, inc, ...) case id: return inc;
 inline int linearizeType(Type type)
 {
     switch (type) {
@@ -185,7 +213,7 @@ inline int linearizeType(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc) case inc: return name;
+#define CREATE_CASE(name, id, b3type, inc, ...) case inc: return name;
 inline Type linearizedToType(int i)
 {
     switch (i) {
@@ -207,7 +235,7 @@ inline Type linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(ExtTable, 0xFC, Oops, 0)
 
-#define CREATE_ENUM_VALUE(name, id, b3op, inc) name = id,
+#define CREATE_ENUM_VALUE(name, id, ...) name = id,
 
 enum OpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
@@ -246,7 +274,7 @@ enum class ExtTableOpType : uint8_t {
 inline bool isControlOp(OpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case OpType::name:
+#define CREATE_CASE(name, ...) case OpType::name:
     FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
@@ -259,7 +287,7 @@ inline bool isControlOp(OpType op)
 inline bool isSimple(UnaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case UnaryOpType::name:
+#define CREATE_CASE(name, ...) case UnaryOpType::name:
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
@@ -272,7 +300,7 @@ inline bool isSimple(UnaryOpType op)
 inline bool isSimple(BinaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case BinaryOpType::name:
+#define CREATE_CASE(name, ...) case BinaryOpType::name:
     FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
@@ -294,7 +322,7 @@ inline uint32_t memoryLog2Alignment(OpType op)
     return 0;
 }
 
-#define CREATE_CASE(name, id, b3type, inc) case name: return #name;
+#define CREATE_CASE(name, ...) case name: return #name;
 inline const char* makeString(OpType op)
 {
     switch (op) {

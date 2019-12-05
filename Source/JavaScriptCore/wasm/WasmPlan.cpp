@@ -48,19 +48,11 @@ namespace WasmPlanInternal {
 static constexpr bool verbose = false;
 }
 
-Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
-    , m_createEmbedderWrapper(WTFMove(createEmbedderWrapper))
-    , m_throwWasmException(throwWasmException)
 {
     m_completionTasks.append(std::make_pair(context, WTFMove(task)));
 }
-
-Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task)
-    : Plan(context, WTFMove(info), WTFMove(task), nullptr, nullptr)
-{
-}
-
 Plan::Plan(Context* context, CompletionTask&& task)
     : m_moduleInformation(ModuleInformation::create())
 {

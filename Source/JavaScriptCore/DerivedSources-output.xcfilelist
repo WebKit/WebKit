@@ -60,7 +60,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmB3IRGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmLLIntGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOps.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmValidateInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyCompileErrorConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyCompileErrorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyGlobalConstructor.lut.h

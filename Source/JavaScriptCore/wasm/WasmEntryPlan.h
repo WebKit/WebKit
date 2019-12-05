@@ -47,35 +47,14 @@ public:
     enum AsyncWork : uint8_t { FullCompile, Validation };
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    EntryPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
-    JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
-    EntryPlan(Context*, Ref<ModuleInformation>, CompletionTask&&);
-    EntryPlan(Context*, AsyncWork, CompletionTask&&);
+    EntryPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
 
     virtual ~EntryPlan() = default;
 
-    using CalleeInitializer = Function<void(uint32_t, RefPtr<Callee>&&, Ref<Callee>&&)>;
-    virtual void initializeCallees(const CalleeInitializer&) = 0;
-
-    bool parseAndValidateModule()
-    {
-        return parseAndValidateModule(m_source.data(), m_source.size());
-    }
-    bool parseAndValidateModule(const uint8_t*, size_t);
+    void prepare();
 
     void compileFunctions(CompilationEffort);
-
-    Vector<Export>& exports() const
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return m_moduleInformation->exports;
-    }
-
-    size_t internalFunctionCount() const
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return m_moduleInformation->internalFunctionCount();
-    }
 
     Ref<ModuleInformation>&& takeModuleInformation()
     {
@@ -103,38 +82,26 @@ public:
         Completed // We should only move to Completed if we are holding the lock.
     };
 
-    bool hasWork() const override
-    {
-        if (m_asyncWork == AsyncWork::Validation)
-            return m_state < State::Validated;
-        return m_state < State::Compiled;
-    }
-
-    void work(CompilationEffort) override;
-    bool hasBeenPrepared() const { return m_state >= State::Prepared; }
-    bool multiThreaded() const override { return hasBeenPrepared(); }
-
-    bool didReceiveFunctionData(unsigned, const FunctionData&) override;
+    bool multiThreaded() const override { return m_state >= State::Prepared; }
 
 private:
     class ThreadCountHolder;
     friend class ThreadCountHolder;
 
-    void prepare();
-    bool isComplete() const override { return m_state == State::Completed; }
-    void complete(const AbstractLocker&) override;
-
-    const char* stateString(State);
-
 protected:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
 
+    bool parseAndValidateModule(const uint8_t*, size_t);
+
+    const char* stateString(State);
+    void moveToState(State);
+    bool isComplete() const override { return m_state == State::Completed; }
+    void complete(const AbstractLocker&) override;
+
     virtual bool prepareImpl() = 0;
     virtual void compileFunction(uint32_t functionIndex) = 0;
     virtual void didCompleteCompilation(const AbstractLocker&) = 0;
-
-    void moveToState(State);
 
     template<typename T>
     bool tryReserveCapacity(Vector<T>& vector, size_t size, const char* what)
@@ -157,6 +124,7 @@ protected:
     const AsyncWork m_asyncWork;
     uint8_t m_numberOfActiveThreads { 0 };
     uint32_t m_currentIndex { 0 };
+    uint32_t m_numberOfFunctions { 0 };
 };
 
 

@@ -60,7 +60,6 @@ all : \
     UnicodePatternTables.h \
     yarr/YarrCanonicalizeUnicode.cpp \
     WasmOps.h \
-    WasmValidateInlines.h \
     WasmB3IRGeneratorInlines.h \
 #
 
@@ -353,9 +352,6 @@ IntlCanonicalizeLanguage.h: $(JavaScriptCore)/Scripts/generateIntlCanonicalizeLa
 
 WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmOps.h
-
-WasmValidateInlines.h: $(JavaScriptCore)/wasm/generateWasmValidateInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
-	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmValidateInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmValidateInlines.h
 
 WasmB3IRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmB3IRGeneratorInlines.h

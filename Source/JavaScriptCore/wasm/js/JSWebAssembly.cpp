@@ -229,7 +229,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
             JSGlobalObject* globalObject = instance->globalObject();
             resolve(vm, globalObject, promise, instance, module, importObject, codeBlock.releaseNonNull(), resolveKind, creationMode);
         });
-    }), &Wasm::createJSToWasmWrapper, &Wasm::operationWasmToJSException);
+    }));
 }
 
 static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, const Identifier& moduleKey, JSValue buffer, JSObject* importObject, Resolve resolveKind, Wasm::CreationMode creationMode)
@@ -329,12 +329,12 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto [base, byteSize] = getWasmBufferFromValue(globalObject, callFrame->argument(0));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    BBQPlan plan(&vm.wasmContext, BBQPlan::Validation, Plan::dontFinalize());
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
-    return JSValue::encode(jsBoolean(plan.parseAndValidateModule(base, byteSize)));
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto validationResult = Wasm::Module::validateSync(&vm.wasmContext, WTFMove(source));
+    return JSValue::encode(jsBoolean(validationResult.has_value()));
 }
 
 EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject* globalObject, CallFrame* callFrame)

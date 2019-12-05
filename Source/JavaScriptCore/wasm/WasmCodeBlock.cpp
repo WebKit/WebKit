@@ -36,58 +36,72 @@
 
 namespace JSC { namespace Wasm {
 
-Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, const Ref<LLIntCallee>* llintCallees)
 {
-    auto* result = new (NotNull, fastMalloc(sizeof(CodeBlock))) CodeBlock(context, mode, moduleInformation, WTFMove(createEmbedderWrapper), throwWasmException);
+    auto* result = new (NotNull, fastMalloc(sizeof(CodeBlock))) CodeBlock(context, mode, moduleInformation, llintCallees);
     return adoptRef(*result);
 }
 
-CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, const Ref<LLIntCallee>* llintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
+    , m_llintCallees(llintCallees)
 {
     RefPtr<CodeBlock> protectedThis = this;
 
-    auto task = createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
-        auto locker = holdLock(m_lock);
-        if (m_plan->failed()) {
-            m_errorMessage = m_plan->errorMessage();
-            setCompilationFinished();
-            return;
-        }
-
-        // FIXME: we should eventually collect the BBQ code.
-        m_llintCallees.resize(m_calleeCount);
-        m_bbqCallees.resize(m_calleeCount);
-        m_omgCallees.resize(m_calleeCount);
-        m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
-
-        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<Callee>&& embedderEntrypointCallee, RefPtr<Callee>&& wasmEntrypoint) {
-            if (embedderEntrypointCallee) {
-                auto result = m_embedderCallees.set(calleeIndex, WTFMove(embedderEntrypointCallee));
-                ASSERT_UNUSED(result, result.isNewEntry);
+    if (Options::useWasmLLInt()) {
+        m_plan = adoptRef(*new LLIntPlan(context, makeRef(moduleInformation), m_llintCallees, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+            auto locker = holdLock(m_lock);
+            if (m_plan->failed()) {
+                m_errorMessage = m_plan->errorMessage();
+                setCompilationFinished();
+                return;
             }
-            m_wasmIndirectCallEntryPoints[calleeIndex] = wasmEntrypoint->entrypoint();
 
-            if (Options::useWasmLLInt())
-                m_llintCallees[calleeIndex] = adoptRef(static_cast<LLIntCallee*>(wasmEntrypoint.leakRef()));
-            else
+            // FIXME: we should eventually collect the BBQ code.
+            m_bbqCallees.resize(m_calleeCount);
+            m_omgCallees.resize(m_calleeCount);
+            m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
+
+            for (unsigned i = 0; i < m_calleeCount; ++i)
+                m_wasmIndirectCallEntryPoints[i] = m_llintCallees[i]->entrypoint();
+
+            m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+            m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
+            m_embedderCallees = static_cast<LLIntPlan*>(m_plan.get())->takeEmbedderCallees();
+
+            setCompilationFinished();
+        })));
+    } else {
+        m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), EntryPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+            auto locker = holdLock(m_lock);
+            if (m_plan->failed()) {
+                m_errorMessage = m_plan->errorMessage();
+                setCompilationFinished();
+                return;
+            }
+
+            // FIXME: we should eventually collect the BBQ code.
+            m_bbqCallees.resize(m_calleeCount);
+            m_omgCallees.resize(m_calleeCount);
+            m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
+
+            BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
+            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<EmbedderEntrypointCallee>&& embedderEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
+                if (embedderEntrypointCallee) {
+                    auto result = m_embedderCallees.set(calleeIndex, WTFMove(embedderEntrypointCallee));
+                    ASSERT_UNUSED(result, result.isNewEntry);
+                }
+                m_wasmIndirectCallEntryPoints[calleeIndex] = wasmEntrypoint->entrypoint();
                 m_bbqCallees[calleeIndex] = adoptRef(static_cast<BBQCallee*>(wasmEntrypoint.leakRef()));
-        });
+            });
 
-        m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
-        m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
+            m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+            m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
 
-        if (Options::useWasmLLInt())
-            m_llintEntryThunks = bitwise_cast<LLIntPlan*>(m_plan.get())->takeEntryThunks();
-
-        setCompilationFinished();
-    });
-
-    if (Options::useWasmLLInt())
-        m_plan = adoptRef(*new LLIntPlan(context, makeRef(moduleInformation), EntryPlan::FullCompile, WTFMove(task), WTFMove(createEmbedderWrapper), throwWasmException));
-    else
-        m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), EntryPlan::FullCompile, WTFMove(task), WTFMove(createEmbedderWrapper), throwWasmException));
+            setCompilationFinished();
+        })));
+    }
     m_plan->setMode(mode);
 
     auto& worklist = Wasm::ensureWorklist();

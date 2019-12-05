@@ -44,7 +44,9 @@ class CallLinkInfo;
 
 namespace Wasm {
 
+class BBQCallee;
 class CodeBlock;
+class EmbedderEntrypointCallee;
 
 class BBQPlan final : public EntryPlan {
 public:
@@ -54,8 +56,24 @@ public:
 
     BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CodeBlock*, CompletionTask&&);
 
+    bool hasWork() const override
+    {
+        if (m_asyncWork == AsyncWork::Validation)
+            return m_state < State::Validated;
+        return m_state < State::Compiled;
+    }
+
     void work(CompilationEffort) override;
-    void initializeCallees(const CalleeInitializer&) override;
+
+    using CalleeInitializer = Function<void(uint32_t, RefPtr<EmbedderEntrypointCallee>&&, Ref<BBQCallee>&&)>;
+    void initializeCallees(const CalleeInitializer&);
+
+    bool didReceiveFunctionData(unsigned, const FunctionData&) override;
+
+    bool parseAndValidateModule()
+    {
+        return Base::parseAndValidateModule(m_source.data(), m_source.size());
+    }
 
 protected:
     bool prepareImpl() override;

@@ -51,7 +51,6 @@ public:
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;
 
     static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](Plan&) { }); }
-    Plan(Context*, Ref<ModuleInformation>, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
     Plan(Context*, Ref<ModuleInformation>, CompletionTask&&);
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
@@ -87,9 +86,6 @@ protected:
     Ref<ModuleInformation> m_moduleInformation;
 
     Vector<std::pair<Context*, CompletionTask>, 1> m_completionTasks;
-
-    CreateEmbedderWrapper m_createEmbedderWrapper;
-    ThrowWasmException m_throwWasmException { nullptr };
 
     String m_errorMessage;
     MemoryMode m_mode { MemoryMode::BoundsChecking };
