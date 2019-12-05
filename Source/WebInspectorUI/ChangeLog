@@ -1,5 +1,29 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: the Classes toggle is drawn on top of other content with no other way of scrolling to it
+        https://bugs.webkit.org/show_bug.cgi?id=204690
+
+        Reviewed by Timothy Hatcher.
+
+        Use a vertical flexbox for the contents of sidebar panels instead of absolute positioning so
+        that the variable height Classes "drawer" can have it's own scroll area and doesn't take up
+        any space from the rest of the panel's contents.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content):
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container):
+        (.sidebar > .panel.details.css-style > .content.has-filter-bar): Deleted.
+
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar > .panel):
+        (.sidebar > .panel.selected): Deleted.
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Search: there should be some default content when there is no search string
         https://bugs.webkit.org/show_bug.cgi?id=204631
 

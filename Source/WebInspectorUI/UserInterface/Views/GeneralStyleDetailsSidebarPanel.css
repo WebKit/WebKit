@@ -24,17 +24,7 @@
  */
 
 .sidebar > .panel.details.css-style > .content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.sidebar > .panel.details.css-style > .content.has-filter-bar {
-    bottom: calc(var(--navigation-bar-height) - 1px);
+    position: relative;
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
@@ -65,8 +55,8 @@
 
 .sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container) {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
-    position: absolute;
     /* Make sure options and class containers are above details section headers, but below popovers. */
     z-index: calc(var(--z-index-header) + 1);
     width: 100%;
@@ -74,7 +64,6 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container {
-    bottom: 0;
     height: calc(var(--console-prompt-min-height) - 1px);
     padding-top: 1px;
 }
@@ -146,7 +135,6 @@
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container {
     flex-wrap: wrap;
-    bottom: calc(var(--console-prompt-min-height) - 1px);
     max-height: 75px;
     padding: 3px 2px;
     background-color: var(--panel-background-color);
