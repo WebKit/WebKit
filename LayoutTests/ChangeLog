@@ -1,3 +1,15 @@
+2019-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        WPT test MediaStream-MediaElement-srcObject.https.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=204762
+        <rdar://problem/57567671>
+
+        Reviewed by youenn fablet.
+
+        * TestExpectations: Mark imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html
+        as expected to fail because the failure message logs media times as floats, so the values
+        logged are always different.
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         getStats() promise never rejects nor resolves when peer connection state is closed.

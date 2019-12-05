@@ -1,3 +1,42 @@
+2019-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        WPT test MediaStream-MediaElement-srcObject.https.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=204762
+        <rdar://problem/57567671>
+
+        Reviewed by youenn fablet.
+
+        No new tests, these changes fix existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad): Check hasMediaStreamSrcObject() instead of
+        m_mediaStreamSrcObject so we behave correctly when a MediaStream is cleared by setting srcObject to null.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        (WebCore::HTMLMediaElement::seekWithTolerance): Return early if seeking isn't allowed.
+        (WebCore::HTMLMediaElement::defaultPlaybackRate const): Check hasMediaStreamSrcObject() instead 
+        of m_mediaStreamSrcObject.
+        (WebCore::HTMLMediaElement::setDefaultPlaybackRate): Ditto.
+        (WebCore::HTMLMediaElement::playbackRate const): Ditto.
+        (WebCore::HTMLMediaElement::setPlaybackRate): Ditto.
+        (WebCore::HTMLMediaElement::ended const): Ditto.
+        (WebCore::HTMLMediaElement::preload const): Ditto.
+        (WebCore::HTMLMediaElement::setPreload): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Don't send an 'ended' event for a MediaStream.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Don't check m_settingMediaStreamSrcObject, it 
+        is never set.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h: Add m_lastReportedTime.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime const): Return last reported
+        time after the stream ends.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime const): Ditto. Set m_lastReportedTime.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState): Don't return HaveNothing
+        for an inactive stream. Return HaveMetadata for an stream that has either ended or is waiting
+        for the first video frame.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged): Send duration changed when
+        a stream ends.
+
 2019-12-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move trailing trimming logic to LineBuilder::TrimmableContent

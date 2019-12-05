@@ -24,7 +24,7 @@ const vid = document.getElementById("vid");
 
 function queueTask(f) {
   window.onmessage = f;
-  window.postMessage("hi");
+  window.postMessage("hi", "*");
 }
 
 promise_test(async t => {

@@ -958,6 +958,8 @@ private:
 
     void setInActiveDocument(bool);
 
+    bool canLoop() const;
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
@@ -1210,7 +1212,6 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream> m_mediaStreamSrcObject;
-    bool m_settingMediaStreamSrcObject { false };
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

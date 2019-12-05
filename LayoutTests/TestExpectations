@@ -3878,3 +3878,7 @@ webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Skip ]
 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
+
+# Parts of this test are expected to fail, but the failure message logs media times as floats so it is not
+# possible to land "good" results.
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]

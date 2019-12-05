@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 3082: Error: assert_unreached: Got unexpected event resize Reached unreachable code
 When prompted, accept to share your video stream.
 
 Description
