@@ -1,3 +1,12 @@
+2019-12-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Display GStreamer version in about:gpu page
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API

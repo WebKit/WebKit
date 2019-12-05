@@ -67,6 +67,10 @@
 #include <WebCore/OpenGLShims.h>
 #endif
 
+#if USE(GSTREAMER)
+#include <gst/gst.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -222,6 +226,16 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "  <td>%s (build) %s (runtime)</td>"
         " </tbody></tr>",
         CAIRO_VERSION_STRING, cairo_version_string());
+
+#if USE(GSTREAMER)
+    GUniquePtr<char> gstVersion(gst_version_string());
+    g_string_append_printf(html,
+        " <tbody><tr>"
+        "  <td><div class=\"titlename\">GStreamer version</div></td>"
+        "  <td>%d.%d.%d (build) %s (runtime)</td>"
+        " </tbody></tr>",
+        GST_VERSION_MAJOR, GST_VERSION_MINOR, GST_VERSION_MICRO, gstVersion.get());
+#endif
 
 #if PLATFORM(GTK)
     g_string_append_printf(html,
