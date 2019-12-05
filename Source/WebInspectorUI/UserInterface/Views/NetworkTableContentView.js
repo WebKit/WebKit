@@ -342,6 +342,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._showingRepresentedObjectCookie = null;
     }
 
+    get canFocusFilterBar()
+    {
+        return !this._detailView;
+    }
+
+    focusFilterBar()
+    {
+        this._urlFilterNavigationItem.filterBar.focus();
+    }
+
     // NetworkDetailView delegate
 
     networkDetailViewClose(networkDetailView)

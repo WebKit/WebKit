@@ -83,6 +83,16 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         super.closed();
     }
 
+    get canHandleFindEvent()
+    {
+        return this._networkTableContentView.canFocusFilterBar;
+    }
+
+    handleFindEvent()
+    {
+        this._networkTableContentView.focusFilterBar();
+    }
+
     async handleFileDrop(files)
     {
         await WI.FileUtilities.readJSON(files, (result) => this._networkTableContentView.processHAR(result));
