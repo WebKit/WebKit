@@ -1,5 +1,18 @@
 2019-12-04  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Decrease ttl for archives
+        https://bugs.webkit.org/show_bug.cgi?id=204806
+        <rdar://problem/57527644>
+
+        Unreviewed infrastructure fix.
+
+        * resultsdbpy/resultsdbpy/controller/archive_controller_unittest.py:
+        (ArchiveControllerUnittest.setup_webserver): Disable time-to-live.
+        * resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory.create): Ensure time-to-live is longer than the oldest commit.
+
+2019-12-04  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Handle duplicate archives
         https://bugs.webkit.org/show_bug.cgi?id=204860
 

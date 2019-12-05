@@ -75,6 +75,7 @@ class MockModelFactory(object):
                 MockSVNRepository.webkit(redis=redis),
             ],
             default_ttl_seconds=time.time() - oldest_commit + Model.TTL_WEEK,
+            archive_ttl_seconds=time.time() - oldest_commit + Model.TTL_WEEK,
             async_processing=async_processing,
         )
         with model.commit_context, model.commit_context.cassandra.batch_query_context():

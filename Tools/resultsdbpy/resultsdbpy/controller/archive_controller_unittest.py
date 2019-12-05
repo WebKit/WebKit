@@ -53,7 +53,13 @@ class ArchiveControllerUnittest(FlaskTestCase, WaitForDockerTestCase):
         cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
         cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
-        app.register_blueprint(APIRoutes(Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])))
+        app.register_blueprint(APIRoutes(Model(
+            redis=redis_instance,
+            cassandra=cassandra_instance,
+            repositories=[safari, webkit],
+            default_ttl_seconds=None,
+            archive_ttl_seconds=None,
+        )))
 
     @classmethod
     def upload_file(cls, client, url, meta_data, content):
