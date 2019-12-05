@@ -158,6 +158,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << websiteDataStoreParameters;
+    
+#if PLATFORM(IOS)
+    encoder << compilerServiceExtensionHandle;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -387,6 +391,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!websiteDataStoreParameters)
         return false;
     parameters.websiteDataStoreParameters = WTFMove(*websiteDataStoreParameters);
+
+#if PLATFORM(IOS)
+    Optional<Optional<SandboxExtension::Handle>> compilerServiceExtensionHandle;
+    decoder >> compilerServiceExtensionHandle;
+    if (!compilerServiceExtensionHandle)
+        return false;
+    parameters.compilerServiceExtensionHandle = WTFMove(*compilerServiceExtensionHandle);
+#endif
 
     return true;
 }

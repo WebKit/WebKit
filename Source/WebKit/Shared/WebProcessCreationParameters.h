@@ -196,6 +196,10 @@ struct WebProcessCreationParameters {
 #endif
 
     Optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
+    
+#if PLATFORM(IOS)
+    Optional<SandboxExtension::Handle> compilerServiceExtensionHandle;
+#endif
 };
 
 } // namespace WebKit

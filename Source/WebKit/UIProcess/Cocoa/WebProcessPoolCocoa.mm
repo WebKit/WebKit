@@ -68,6 +68,10 @@
 #import "UIKitSPI.h"
 #endif
 
+#if PLATFORM(IOS)
+#import <sys/utsname.h>
+#endif
+
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
@@ -167,6 +171,25 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
+#if PLATFORM(IOS)
+static bool deviceHasAGXCompilerService()
+{
+    static bool deviceHasAGXCompilerService = false;
+    static std::once_flag flag;
+    std::call_once(
+        flag,
+        [] () {
+            struct utsname systemInfo;
+            if (uname(&systemInfo))
+                return;
+            const char* machine = systemInfo.machine;
+            if (!strcmp(machine, "iPad5,1") || !strcmp(machine, "iPad5,2") || !strcmp(machine, "iPad5,3") || !strcmp(machine, "iPad5,4"))
+                deviceHasAGXCompilerService = true;
+        });
+    return deviceHasAGXCompilerService;
+}
+#endif
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -263,6 +286,14 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     auto screenProperties = WebCore::collectScreenProperties();
     parameters.screenProperties = WTFMove(screenProperties);
     parameters.useOverlayScrollbars = ([NSScroller preferredScrollerStyle] == NSScrollerStyleOverlay);
+#endif
+    
+#if PLATFORM(IOS)
+    if (deviceHasAGXCompilerService()) {
+        SandboxExtension::Handle compilerServiceExtensionHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService", WTF::nullopt, compilerServiceExtensionHandle);
+        parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
+    }
 #endif
 }
 

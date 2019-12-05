@@ -285,8 +285,10 @@
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
 
+    (allow mach-lookup (with report) (with telemetry)
+        (xpc-service-name-prefix "com.apple.AGXCompilerService"))
+
     (allow mach-lookup
-       (xpc-service-name-prefix "com.apple.AGXCompilerService")
        ;; <rdar://problem/47268166>
        (xpc-service-name "com.apple.MTLCompilerService"))
     
@@ -964,7 +966,7 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd")))
+        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.AGXCompilerService")))
 
 (media-capture-support)
 

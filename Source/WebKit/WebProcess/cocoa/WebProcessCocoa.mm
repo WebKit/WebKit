@@ -221,6 +221,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
 #endif
+    
+#if PLATFORM(IOS)
+    if (parameters.compilerServiceExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
