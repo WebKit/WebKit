@@ -1,3 +1,17 @@
+2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Fix bad assertion in LLIntPlan
+        https://bugs.webkit.org/show_bug.cgi?id=204893
+
+        Reviewed by Mark Lam.
+
+        Before landing r253140 I introduced an assertion in Wasm::LLIntPlan that the pointer to previously
+        compiled callees must be non-null. However, it's perfectly valid for the pointer to be null when the
+        module has no functions.
+
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::LLIntPlan):
+
 2019-12-05  Mark Lam  <mark.lam@apple.com>
 
         computeIfUsingFuzzerAgent() is called before parsing command line arguments.

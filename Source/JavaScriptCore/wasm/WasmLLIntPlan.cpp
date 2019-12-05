@@ -56,7 +56,7 @@ LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, const Ref<LL
     : Base(context, WTFMove(info), AsyncWork::FullCompile, WTFMove(task))
     , m_callees(callees)
 {
-    ASSERT(m_callees);
+    ASSERT(m_callees || !m_moduleInformation->functions.size());
     prepare();
     m_currentIndex = m_moduleInformation->functions.size();
 }
