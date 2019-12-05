@@ -65,7 +65,7 @@ public:
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
     LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
-    bool isTrailingContentFullyTrimmable() const { return m_trimmableContent.isTrailingContentFullyTrimmable(); }
+    bool isTrailingRunFullyTrimmable() const { return m_trimmableContent.isTrailingRunFullyTrimmable(); }
 
     const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
@@ -199,24 +199,29 @@ private:
         bool m_collapsedToZeroAdvanceWidth { false };
     };
 
+    using InlineItemRunList = Vector<InlineItemRun, 50>;
+
     struct TrimmableContent {
-        enum class IsFullyTrimmable { No, Yes };
-        void append(LayoutUnit itemRunWidth, size_t runIndex, IsFullyTrimmable);
-        void clear();
+        TrimmableContent(InlineItemRunList&);
+
+        void append(size_t runIndex);
+        void trim();
+        void reset();
 
         LayoutUnit width() const { return m_width; }
         Optional<size_t> firstRunIndex() { return m_firstRunIndex; }
         bool isEmpty() const { return !m_firstRunIndex.hasValue(); }
-        bool isTrailingContentFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
+        bool isTrailingRunFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
 
     private:
+        InlineItemRunList& m_inlineitemRunList;
         Optional<size_t> m_firstRunIndex;
         LayoutUnit m_width;
         bool m_lastRunIsFullyTrimmable { false };
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    Vector<InlineItemRun, 50> m_inlineItemRuns;
+    InlineItemRunList m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
@@ -227,7 +232,7 @@ private:
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableContent;
 };
 
-inline void LineBuilder::TrimmableContent::clear()
+inline void LineBuilder::TrimmableContent::reset()
 {
     m_firstRunIndex = { };
     m_width = { };

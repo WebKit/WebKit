@@ -1,3 +1,13 @@
+2019-12-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move trailing trimming logic to LineBuilder::TrimmableContent
+        https://bugs.webkit.org/show_bug.cgi?id=204872
+        <rdar://problem/57652365>
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-12-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-javascriptcore-tests is failing to run testmasm of 64bit AppleWin on Buildbot

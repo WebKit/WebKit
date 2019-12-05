@@ -59,7 +59,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         if (candidateRuns.nonTrimmableWidth() <= lineStatus.availableWidth)
             return { BreakingContext::ContentBreak::Keep, { } };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyTrimmableTrailingContent && candidateRuns.isTrailingContentFullyTrimmable()) {
+        if (lineStatus.lineHasFullyTrimmableTrailingRun && candidateRuns.isTrailingContentFullyTrimmable()) {
             // If this new content is fully trimmable, it shoud surely fit.
             return { BreakingContext::ContentBreak::Keep, { } };
         }

@@ -209,7 +209,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     auto lineBreaker = LineBreaker { };
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
-    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingTrimmableWidth(), line.isTrailingContentFullyTrimmable(), lineIsConsideredEmpty };
+    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingTrimmableWidth(), line.isTrailingRunFullyTrimmable(), lineIsConsideredEmpty };
     auto breakingContext = lineBreaker.breakingContextForInlineContent(m_uncommittedContent, lineStatus);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)

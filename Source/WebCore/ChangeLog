@@ -1,3 +1,36 @@
+2019-12-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move trailing trimming logic to LineBuilder::TrimmableContent
+        https://bugs.webkit.org/show_bug.cgi?id=204872
+        <rdar://problem/57652365>
+
+        Reviewed by Antti Koivisto.
+
+        Move trimming logic from LineBuilder::removeTrailingTrimmableContent to inside TrimmableContent.
+        This is also in preparation for adding partial trimming at inline container boundary. 
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::TrimmableContent::TrimmableContent):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trim):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::isTrailingRunFullyTrimmable const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingRunFullyTrimmable const):
+        (WebCore::Layout::LineBuilder::TrimmableContent::reset):
+        (WebCore::Layout::LineBuilder::isTrailingContentFullyTrimmable const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingContentFullyTrimmable const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::clear): Deleted.
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         getStats() promise never rejects nor resolves when peer connection state is closed.

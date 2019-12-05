@@ -153,6 +153,7 @@ void LineBuilder::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansio
 
 LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_trimmableContent(m_inlineItemRuns)
     , m_horizontalAlignment(horizontalAlignment)
     , m_skipAlignment(skipAlignment == SkipAlignment::Yes)
 {
@@ -182,7 +183,7 @@ void LineBuilder::initialize(const Constraints& constraints)
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
 
     m_inlineItemRuns.clear();
-    m_trimmableContent.clear();
+    m_trimmableContent.reset();
     m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
@@ -366,53 +367,24 @@ void LineBuilder::removeTrailingTrimmableContent()
     if (m_trimmableContent.isEmpty() || m_inlineItemRuns.isEmpty())
         return;
 
-#ifndef NDEBUG
-    auto hasSeenNonWhitespaceTextContent = false;
-#endif
-    // Collapse trimmable trailing content and move all the other trailing runs.
-    // <span> </span><span></span> ->
-    // [whitespace][container end][container start][container end]
-    // Trim the whitespace run and move the trailing inline container runs to the left.
-    LayoutUnit accumulatedTrimmedWidth;
-    for (auto index = *m_trimmableContent.firstRunIndex(); index < m_inlineItemRuns.size(); ++index) {
-        auto& run = m_inlineItemRuns[index];
-        run.moveHorizontally(-accumulatedTrimmedWidth);
-        if (!run.isText()) {
-            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isForcedLineBreak());
-            continue;
-        }
-        if (run.isWhitespace()) {
-            accumulatedTrimmedWidth += run.logicalWidth();
-            run.setCollapsesToZeroAdvanceWidth();
-        } else {
-            ASSERT(!hasSeenNonWhitespaceTextContent);
-#ifndef NDEBUG
-            hasSeenNonWhitespaceTextContent = true;
-#endif
-            // Must be a letter spacing trim.
-            ASSERT(run.hasTrailingLetterSpacing());
-            accumulatedTrimmedWidth += run.trailingLetterSpacing();
-            run.removeTrailingLetterSpacing();
-        }
-    }
-    ASSERT(accumulatedTrimmedWidth == m_trimmableContent.width());
     m_lineBox.shrinkHorizontally(m_trimmableContent.width());
-    m_trimmableContent.clear();
+
+    m_trimmableContent.trim();
     // If we trimmed the first visible run on the line, we need to re-check the visibility status.
-    if (m_lineIsVisuallyEmptyBeforeTrimmableContent) {
-        // Just because the line was visually empty before the trimmed content, it does not necessarily mean it is still visually empty.
-        // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
-        auto lineIsVisuallyEmpty = [&] {
-            for (auto& run : m_inlineItemRuns) {
-                if (isVisuallyNonEmpty(run))
-                    return false;
-            }
-            return true;
-        };
-        // We could only go from visually non empty -> to visually empty. Trimming runs should never make the line visible.
-        if (lineIsVisuallyEmpty())
-            m_lineBox.setIsConsideredEmpty();
-    }
+    if (!m_lineIsVisuallyEmptyBeforeTrimmableContent)
+        return;
+    // Just because the line was visually empty before the trimmed content, it does not necessarily mean it is still visually empty.
+    // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
+    auto lineIsVisuallyEmpty = [&] {
+        for (auto& run : m_inlineItemRuns) {
+            if (isVisuallyNonEmpty(run))
+                return false;
+        }
+        return true;
+    };
+    // We could only go from visually non empty -> to visually empty. Trimming runs should never make the line visible.
+    if (lineIsVisuallyEmpty())
+        m_lineBox.setIsConsideredEmpty();
     m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
@@ -503,36 +475,32 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit
         return true;
     };
 
+    auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
     auto contentStart = inlineItem.start();
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
-    auto lineRun = InlineItemRun { inlineItem, contentLogicalWidth(), logicalWidth, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content } };
+    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), logicalWidth, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content } });
+    auto& lineRun = m_inlineItemRuns.last();
 
-    auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
         lineRun.setCollapsesToZeroAdvanceWidth();
 
     if (collapsedRun)
         lineRun.setIsCollapsed();
 
-    auto lineRunWidth = lineRun.logicalWidth();
-    // Trailing whitespace content is fully trimmable so as the trailing letter space.
-    auto isFullyTrimmable = lineRun.isTrimmableWhitespace();
-    auto isPartiallyTrimmable = lineRun.hasTrailingLetterSpacing();
-    auto isTrimmable = isFullyTrimmable || isPartiallyTrimmable;
-    // Reset the trimmable content if needed.
-    if (!isTrimmable || isPartiallyTrimmable || (isFullyTrimmable && !m_trimmableContent.isTrailingContentFullyTrimmable()))
-        m_trimmableContent.clear();
-    if (isFullyTrimmable) {
+    m_lineBox.expandHorizontally(lineRun.logicalWidth());
+
+    // Existing trailing trimmable content can only be expanded if the current rus is fully trimmable.
+    auto trimmableListNeedsReset = !m_trimmableContent.isEmpty() && !lineRun.isTrimmableWhitespace();
+    if (trimmableListNeedsReset)
+        m_trimmableContent.reset();
+    auto isTrimmable = lineRun.isTrimmableWhitespace() || lineRun.hasTrailingLetterSpacing();
+    if (isTrimmable) {
         // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
         if (m_trimmableContent.isEmpty())
             m_lineIsVisuallyEmptyBeforeTrimmableContent = isVisuallyEmpty();
-        m_trimmableContent.append(lineRunWidth, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::Yes);
-    } else if (isPartiallyTrimmable)
-        m_trimmableContent.append(LayoutUnit { lineRun.trailingLetterSpacing() }, m_inlineItemRuns.size(), TrimmableContent::IsFullyTrimmable::No);
-
-    m_lineBox.expandHorizontally(lineRunWidth);
-    m_inlineItemRuns.append(WTFMove(lineRun));
+        m_trimmableContent.append(m_inlineItemRuns.size() - 1);
+    }
 }
 
 void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -542,7 +510,7 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Layou
     auto horizontalMargin = boxGeometry.horizontalMargin();
     m_inlineItemRuns.append({ inlineItem, contentLogicalWidth() + horizontalMargin.start, logicalWidth });
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
-    m_trimmableContent.clear();
+    m_trimmableContent.reset();
 }
 
 void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -719,13 +687,66 @@ const InlineFormattingContext& LineBuilder::formattingContext() const
     return m_inlineFormattingContext;
 }
 
-void LineBuilder::TrimmableContent::append(LayoutUnit itemRunWidth, size_t runIndex, IsFullyTrimmable isFullyTrimmable)
+LineBuilder::TrimmableContent::TrimmableContent(InlineItemRunList& inlineItemRunList)
+    : m_inlineitemRunList(inlineItemRunList)
 {
+}
+
+void LineBuilder::TrimmableContent::append(size_t runIndex)
+{
+    auto& trimmableRun = m_inlineitemRunList[runIndex];
+    LayoutUnit trimmableWidth;
+    auto isFullyTrimmable = trimmableRun.isTrimmableWhitespace();
+    if (isFullyTrimmable)
+        trimmableWidth = trimmableRun.logicalWidth();
+    else {
+        ASSERT(trimmableRun.hasTrailingLetterSpacing());
+        trimmableWidth = trimmableRun.trailingLetterSpacing();
+    }
     // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
-    itemRunWidth = std::max(0_lu, itemRunWidth);
-    m_width += itemRunWidth;
+    trimmableWidth = std::max(0_lu, trimmableWidth);
+
+    ASSERT(trimmableWidth >= 0);
+    m_width += trimmableWidth;
+    m_lastRunIsFullyTrimmable = isFullyTrimmable;
     m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
-    m_lastRunIsFullyTrimmable = isFullyTrimmable == IsFullyTrimmable::Yes;
+}
+
+void LineBuilder::TrimmableContent::trim()
+{
+    if (!m_firstRunIndex)
+        return;
+#ifndef NDEBUG
+    auto hasSeenNonWhitespaceTextContent = false;
+#endif
+    // Collapse trimmable trailing content and move all the other trailing runs.
+    // <span> </span><span></span> ->
+    // [whitespace][container end][container start][container end]
+    // Trim the whitespace run and move the trailing inline container runs to the left.
+    LayoutUnit accumulatedTrimmedWidth;
+    for (auto index = *m_firstRunIndex; index < m_inlineitemRunList.size(); ++index) {
+        auto& run = m_inlineitemRunList[index];
+        run.moveHorizontally(-accumulatedTrimmedWidth);
+        if (!run.isText()) {
+            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isForcedLineBreak());
+            continue;
+        }
+        if (run.isWhitespace()) {
+            accumulatedTrimmedWidth += run.logicalWidth();
+            run.setCollapsesToZeroAdvanceWidth();
+        } else {
+            ASSERT(!hasSeenNonWhitespaceTextContent);
+#ifndef NDEBUG
+            hasSeenNonWhitespaceTextContent = true;
+#endif
+            // Must be a letter spacing trim.
+            ASSERT(run.hasTrailingLetterSpacing());
+            accumulatedTrimmedWidth += run.trailingLetterSpacing();
+            run.removeTrailingLetterSpacing();
+        }
+    }
+    ASSERT(accumulatedTrimmedWidth == width());
+    reset();
 }
 
 LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> textContext)

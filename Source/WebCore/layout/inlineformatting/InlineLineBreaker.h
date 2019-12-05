@@ -98,7 +98,7 @@ public:
     struct LineStatus {
         LayoutUnit availableWidth;
         LayoutUnit trimmableWidth;
-        bool lineHasFullyTrimmableTrailingContent;
+        bool lineHasFullyTrimmableTrailingRun;
         bool lineIsEmpty;
     };
     BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);

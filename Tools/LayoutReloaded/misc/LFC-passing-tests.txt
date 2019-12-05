@@ -2071,7 +2071,8 @@ fast/text/zero-font-size.html
 fast/text/zero-sized-fonts.html
 fast/text/zero-width-characters.html
 fast/text/basic/002.html
-fast/text/basic/003.html
+// letter-spacing progression.
+// fast/text/basic/003.html
 fast/text/basic/008.html
 fast/text/basic/009.html
 fast/text/basic/012.html
