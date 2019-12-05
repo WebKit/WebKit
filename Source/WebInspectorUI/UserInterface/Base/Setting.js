@@ -82,10 +82,8 @@ WI.Setting = class Setting extends WI.Object
 
     // Public
 
-    get name()
-    {
-        return this._name;
-    }
+    get name() { return this._name; }
+    get defaultValue() { return this._defaultValue; }
 
     get value()
     {
@@ -116,14 +114,6 @@ WI.Setting = class Setting extends WI.Object
         this.save();
     }
 
-    get valueRespectingDebugUIAvailability()
-    {
-        if (this._name.startsWith("debug-") || this._name.startsWith("engineering-"))
-            return WI.isDebugUIEnabled() ? this.value : this._defaultValue;
-
-        return this.value;
-    }
-
     save()
     {
         if (!window.InspectorTest && window.localStorage) {
@@ -149,6 +139,40 @@ WI.Setting = class Setting extends WI.Object
 
 WI.Setting.Event = {
     Changed: "setting-changed"
+};
+
+WI.EngineeringSetting = class EngineeringSetting extends WI.Setting
+{
+    get value()
+    {
+        if (WI.isEngineeringBuild)
+            return super.value;
+        return this.defaultValue;
+    }
+
+    set value(value)
+    {
+        console.assert(WI.isEngineeringBuild);
+        if (WI.isEngineeringBuild)
+            super.value = value;
+    }
+};
+
+WI.DebugSetting = class DebugSetting extends WI.Setting
+{
+    get value()
+    {
+        if (WI.isDebugUIEnabled())
+            return super.value;
+        return this.defaultValue;
+    }
+
+    set value(value)
+    {
+        console.assert(WI.isDebugUIEnabled());
+        if (WI.isDebugUIEnabled())
+            super.value = value;
+    }
 };
 
 WI.settings = {
@@ -205,20 +229,20 @@ WI.settings = {
     protocolFilterMultiplexingBackendMessages: new WI.Setting("protocol-filter-multiplexing-backend-messages", true),
 
     // Engineering
-    engineeringShowInternalScripts: new WI.Setting("engineering-show-internal-scripts", false),
-    engineeringPauseForInternalScripts: new WI.Setting("engineering-pause-for-internal-scripts", false),
-    engineeringShowInternalObjectsInHeapSnapshot: new WI.Setting("engineering-show-internal-objects-in-heap-snapshot", false),
-    engineeringShowPrivateSymbolsInHeapSnapshot: new WI.Setting("engineering-show-private-symbols-in-heap-snapshot", false),
-    engineeringAllowEditingUserAgentShadowTrees: new WI.Setting("engineering-allow-editing-user-agent-shadow-trees", false),
+    engineeringShowInternalScripts: new WI.EngineeringSetting("engineering-show-internal-scripts", false),
+    engineeringPauseForInternalScripts: new WI.EngineeringSetting("engineering-pause-for-internal-scripts", false),
+    engineeringShowInternalObjectsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-internal-objects-in-heap-snapshot", false),
+    engineeringShowPrivateSymbolsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-private-symbols-in-heap-snapshot", false),
+    engineeringAllowEditingUserAgentShadowTrees: new WI.EngineeringSetting("engineering-allow-editing-user-agent-shadow-trees", false),
 
     // Debug
-    debugShowConsoleEvaluations: new WI.Setting("debug-show-console-evaluations", false),
-    debugEnableLayoutFlashing: new WI.Setting("debug-enable-layout-flashing", false),
-    debugEnableStyleEditingDebugMode: new WI.Setting("debug-enable-style-editing-debug-mode", false),
-    debugEnableUncaughtExceptionReporter: new WI.Setting("debug-enable-uncaught-exception-reporter", true),
-    debugEnableDiagnosticLogging: new WI.Setting("debug-enable-diagnostic-logging", true),
-    debugAutoLogDiagnosticEvents: new WI.Setting("debug-auto-log-diagnostic-events", false),
-    debugLayoutDirection: new WI.Setting("debug-layout-direction-override", "system"),
+    debugShowConsoleEvaluations: new WI.DebugSetting("debug-show-console-evaluations", false),
+    debugEnableLayoutFlashing: new WI.DebugSetting("debug-enable-layout-flashing", false),
+    debugEnableStyleEditingDebugMode: new WI.DebugSetting("debug-enable-style-editing-debug-mode", false),
+    debugEnableUncaughtExceptionReporter: new WI.DebugSetting("debug-enable-uncaught-exception-reporter", true),
+    debugEnableDiagnosticLogging: new WI.DebugSetting("debug-enable-diagnostic-logging", true),
+    debugAutoLogDiagnosticEvents: new WI.DebugSetting("debug-auto-log-diagnostic-events", false),
+    debugLayoutDirection: new WI.DebugSetting("debug-layout-direction-override", "system"),
 };
 
 WI.previewFeatures = [

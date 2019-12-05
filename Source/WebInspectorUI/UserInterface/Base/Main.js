@@ -2641,7 +2641,7 @@ WI.setZoomFactor = function(factor)
 WI.resolvedLayoutDirection = function()
 {
     let layoutDirection = WI.settings.debugLayoutDirection.value;
-    if (!WI.isDebugUIEnabled() || layoutDirection === WI.LayoutDirection.System)
+    if (layoutDirection === WI.LayoutDirection.System)
         layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
     return layoutDirection;
 };

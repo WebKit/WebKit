@@ -440,7 +440,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             });
         }
 
-        if (callFrame && (!callFrame.isConsoleEvaluation || (WI.isDebugUIEnabled() && WI.settings.debugShowConsoleEvaluations.value))) {
+        if (callFrame && (!callFrame.isConsoleEvaluation || WI.settings.debugShowConsoleEvaluations.value)) {
             let existingCallFrameView = this._callFrameView;
 
             this._callFrameView = new WI.CallFrameView(callFrame, {showFunctionName: !!callFrame.functionName});

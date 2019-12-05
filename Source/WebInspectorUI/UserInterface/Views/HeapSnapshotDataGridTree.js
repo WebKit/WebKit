@@ -216,7 +216,7 @@ WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree e
     populateTopLevel()
     {
         // Populate the first level with the different classes.
-        let skipInternalOnlyObjects = !WI.isEngineeringBuild || !WI.settings.engineeringShowInternalObjectsInHeapSnapshot.value;
+        let skipInternalOnlyObjects = !WI.settings.engineeringShowInternalObjectsInHeapSnapshot.value;
 
         for (let [className, {size, retainedSize, count, internalCount, deadCount, objectCount}] of this.heapSnapshot.categories) {
             console.assert(count > 0);

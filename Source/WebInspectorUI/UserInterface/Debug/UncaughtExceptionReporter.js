@@ -94,7 +94,7 @@ function handleUnhandledPromiseRejection(event) {
 
 function handleUncaughtExceptionRecord(exceptionRecord) {
     try {
-        if (WI.isDebugUIEnabled() && !WI.settings.debugEnableUncaughtExceptionReporter.value)
+        if (!WI.settings.debugEnableUncaughtExceptionReporter.value)
             return;
     } catch { }
 

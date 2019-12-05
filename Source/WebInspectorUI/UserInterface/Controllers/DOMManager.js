@@ -96,8 +96,7 @@ WI.DOMManager = class DOMManager extends WI.Object
     static supportsEditingUserAgentShadowTrees({frontendOnly, target} = {})
     {
         target = target || InspectorBackend;
-        return WI.isEngineeringBuild
-            && WI.settings.engineeringAllowEditingUserAgentShadowTrees.value
+        return WI.settings.engineeringAllowEditingUserAgentShadowTrees.value
             && (frontendOnly || target.hasCommand("DOM.setAllowEditingUserAgentShadowTrees"));
 
     }

@@ -410,9 +410,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             for (let script of targetData.scripts) {
                 if (script.resource)
                     continue;
-                if ((!WI.isDebugUIEnabled() || !WI.settings.debugShowConsoleEvaluations.value) && isWebInspectorConsoleEvaluationScript(script.sourceURL))
+                if (!WI.settings.debugShowConsoleEvaluations.value && isWebInspectorConsoleEvaluationScript(script.sourceURL))
                     continue;
-                if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(script.sourceURL))
+                if (!WI.settings.engineeringShowInternalScripts.value && isWebKitInternalScript(script.sourceURL))
                     continue;
                 knownScripts.push(script);
             }
@@ -772,7 +772,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 continue;
 
             // Exclude the case where the call frame is in the inspector code.
-            if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(sourceCodeLocation.sourceCode.sourceURL))
+            if (!WI.settings.engineeringShowInternalScripts.value && isWebKitInternalScript(sourceCodeLocation.sourceCode.sourceURL))
                 continue;
 
             let scopeChain = this._scopeChainFromPayload(target, callFramePayload.scopeChain);
@@ -855,7 +855,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
         }
 
-        if ((!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value) && isWebKitInternalScript(sourceURL))
+        if (!WI.settings.engineeringShowInternalScripts.value && isWebKitInternalScript(sourceURL))
             return;
 
         let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
@@ -885,11 +885,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (isWebKitInternalScript(script.sourceURL)) {
             this._internalWebKitScripts.push(script);
-            if (!WI.isEngineeringBuild || !WI.settings.engineeringShowInternalScripts.value)
+            if (!WI.settings.engineeringShowInternalScripts.value)
                 return;
         }
 
-        if ((!WI.isDebugUIEnabled() || !WI.settings.debugShowConsoleEvaluations.value) && isWebInspectorConsoleEvaluationScript(script.sourceURL))
+        if (!WI.settings.debugShowConsoleEvaluations.value && isWebInspectorConsoleEvaluationScript(script.sourceURL))
             return;
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});

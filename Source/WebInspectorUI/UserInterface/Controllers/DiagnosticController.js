@@ -30,7 +30,7 @@ WI.DiagnosticController = class DiagnosticController
         this._diagnosticLoggingAvailable = false;
         this._recorders = new Set;
 
-        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.valueRespectingDebugUIAvailability;
+        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.value;
         this._logToConsoleMethod = window.InspectorTest ? InspectorTest.log.bind(InspectorTest) : console.log;
 
         WI.settings.debugEnableDiagnosticLogging.addEventListener(WI.Setting.Event.Changed, this._debugEnableDiagnosticLoggingSettingDidChange, this);
@@ -83,12 +83,12 @@ WI.DiagnosticController = class DiagnosticController
 
     _debugAutoLogDiagnosticEventsSettingDidChange()
     {
-        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.valueRespectingDebugUIAvailability;
+        this._autoLogDiagnosticEventsToConsole = WI.settings.debugAutoLogDiagnosticEvents.value;
     }
 
     _updateRecorderStates()
     {
-        let isActive = this._diagnosticLoggingAvailable && WI.settings.debugEnableDiagnosticLogging.valueRespectingDebugUIAvailability;
+        let isActive = this._diagnosticLoggingAvailable && WI.settings.debugEnableDiagnosticLogging.value;
         for (let recorder of this._recorders)
             recorder.active = isActive;
     }

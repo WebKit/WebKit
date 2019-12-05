@@ -1,5 +1,56 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add WI.EngineeringSetting and WI.DebugSetting to avoid callsite checking
+        https://bugs.webkit.org/show_bug.cgi?id=204785
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Setting.js:
+        (WI.Setting.prototype.get defaultValue): Added.
+        (WI.EngineeringSetting.prototype.get value): Added.
+        (WI.EngineeringSetting.prototype.set value): Added.
+        (WI.DebugSetting.prototype.get value): Added.
+        (WI.DebugSetting.prototype.set value): Added.
+        (WI.Setting.prototype.get valueRespectingDebugUIAvailability): Deleted.
+        Only get/set the `_value` if the `WI.isEngineeringBuild`/`WI.isDebugUIEnabled()`.
+
+        * UserInterface/Base/Main.js:
+        (WI.resolvedLayoutDirection):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.update):
+        * UserInterface/Proxies/HeapSnapshotEdgeProxy.js:
+        (WI.HeapSnapshotEdgeProxy.prototype.isPrivateSymbol):
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.supportsEditingUserAgentShadowTrees):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WI.DebuggerManager.prototype.debuggerDidPause):
+        (WI.DebuggerManager.prototype.scriptDidParse):
+        * UserInterface/Controllers/DiagnosticController.js:
+        (WI.DiagnosticController):
+        (WI.DiagnosticController.prototype._debugAutoLogDiagnosticEventsSettingDidChange):
+        (WI.DiagnosticController.prototype._updateRecorderStates):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendLocationLink):
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WI.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addScriptsForTarget):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        * UserInterface/Views/StackTraceView.js:
+        (WI.StackTraceView):
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleUncaughtExceptionRecord):
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Console: copying an evaluation result shouldn't include the saved variable index
         https://bugs.webkit.org/show_bug.cgi?id=204906
 
