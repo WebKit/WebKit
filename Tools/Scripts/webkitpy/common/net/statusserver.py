@@ -70,7 +70,7 @@ class StatusServer:
 
     def set_api_key(self, api_key):
         self._api_key = str(api_key)
-        new_headers = filter(lambda header: header[0] != self._AUTHORIZATION_HEADER_NAME, self._browser.addheaders)
+        new_headers = list(filter(lambda header: header[0] != self._AUTHORIZATION_HEADER_NAME, self._browser.addheaders))
         if api_key:
             new_headers.append(self._authorization_header_name_and_value_pair())
         self._browser.addheaders = new_headers

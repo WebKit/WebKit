@@ -323,7 +323,7 @@ class MockBugzillaQueries(object):
         bugs_with_commit_queued_patches = filter(
                 lambda bug: bug.commit_queued_patches(),
                 self._all_bugs())
-        return map(lambda bug: bug.id(), bugs_with_commit_queued_patches)
+        return list(map(lambda bug: bug.id(), bugs_with_commit_queued_patches))
 
     def fetch_attachment_ids_from_review_queue(self, since=None, only_security_bugs=False):
         unreviewed_patches = sum([bug.unreviewed_patches()
@@ -333,7 +333,7 @@ class MockBugzillaQueries(object):
                                         if patch.attach_date() >= since]
         if only_security_bugs:
             unreviewed_patches = filter(lambda patch: patch.bug().is_security_sensitive(), unreviewed_patches)
-        return map(lambda patch: patch.id(), unreviewed_patches)
+        return list(map(lambda patch: patch.id(), unreviewed_patches))
 
     def fetch_patches_from_commit_queue(self):
         return sum([bug.commit_queued_patches()
@@ -342,7 +342,7 @@ class MockBugzillaQueries(object):
     def fetch_bug_ids_from_pending_commit_list(self):
         bugs_with_reviewed_patches = filter(lambda bug: bug.reviewed_patches(),
                                             self._all_bugs())
-        bug_ids = map(lambda bug: bug.id(), bugs_with_reviewed_patches)
+        bug_ids = list(map(lambda bug: bug.id(), bugs_with_reviewed_patches))
         # NOTE: This manual hack here is to allow testing logging in
         # test_assign_to_committer the real pending-commit query on bugzilla
         # will return bugs with patches which have r+, but are also obsolete.
@@ -470,7 +470,7 @@ class MockBugzilla(object):
 
     def post_comment_to_bug(self, bug_id, comment_text, cc=None, see_also=None):
         _log.info("MOCK bug comment: bug_id=%s, cc=%s, see_also=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
-                  bug_id, cc, see_also, comment_text))
+                  bug_id, sorted(cc or []) or None, see_also, comment_text))
 
     def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
         _log.info("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %

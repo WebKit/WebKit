@@ -85,7 +85,7 @@ class JSCEarlyWarningSystemTest(unittest.TestCase):
         queue = MockJSCEarlyWarningSystem(first_test_results, second_test_results, clean_test_results)
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(10000)
-        patches_passed_all_tests = map(self._results_indicate_all_passed, [second_test_results, first_test_results])
+        patches_passed_all_tests = list(map(self._results_indicate_all_passed, [second_test_results, first_test_results]))
         return MockPatchAnalysisTask(queue, patch, patches_passed_all_tests)
 
     def test_success_case(self):

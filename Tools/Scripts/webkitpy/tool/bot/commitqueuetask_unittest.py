@@ -112,7 +112,7 @@ class FailingTestCommitQueue(MockCommitQueue):
         assert(self._test_run_counter >= 0)
         failures_for_run = self._test_failure_plan[self._test_run_counter]
         assert(isinstance(failures_for_run, list))
-        results = LayoutTestResults(test_results=map(self._mock_test_result, failures_for_run), did_exceed_test_failure_limit=(len(failures_for_run) >= 10))
+        results = LayoutTestResults(test_results=list(map(self._mock_test_result, failures_for_run)), did_exceed_test_failure_limit=(len(failures_for_run) >= 10))
         return results
 
 
@@ -147,7 +147,7 @@ class MockSimpleTestPlanCommitQueue(MockCommitQueue):
 
     def test_results(self):
         assert(isinstance(self._current_test_results, list))
-        return LayoutTestResults(test_results=map(self._mock_test_result, self._current_test_results), did_exceed_test_failure_limit=(len(self._current_test_results) >= 10))
+        return LayoutTestResults(test_results=list(map(self._mock_test_result, self._current_test_results)), did_exceed_test_failure_limit=(len(self._current_test_results) >= 10))
 
     def did_run_clean_tests(self):
         return self._did_run_clean_tests
@@ -159,7 +159,7 @@ class GoldenScriptError(ScriptError):
     pass
 
 
-_lots_of_failing_tests = map(lambda num: "test-%s.html" % num, range(0, 100))
+_lots_of_failing_tests = list(map(lambda num: "test-%s.html" % num, range(0, 100)))
 
 
 class CommitQueueTaskTest(unittest.TestCase):

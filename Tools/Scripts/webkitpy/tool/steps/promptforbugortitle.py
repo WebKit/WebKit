@@ -26,10 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+import sys
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from urlparse import urlparse
-import re
+
+if sys.version_info > (3, 0):
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
+
 
 class PromptForBugOrTitle(AbstractStep):
     @classmethod

@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import BaseHTTPServer
-
 import cgi
 import codecs
 import datetime
@@ -36,14 +34,19 @@ import json
 import mimetypes
 import os.path
 import shutil
+import sys
 import threading
 import time
-import urlparse
 import wsgiref.handlers
-import BaseHTTPServer
+
+if sys.version_info > (3, 0):
+    from http.server import BaseHTTPRequestHandler
+
+else:
+    from BaseHTTPServer import BaseHTTPRequestHandler
 
 
-class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class ReflectionHandler(BaseHTTPRequestHandler):
     STATIC_FILE_EXTENSIONS = ['.js', '.css', '.html']
     # Subclasses should override.
     STATIC_FILE_DIRECTORY = None

@@ -31,11 +31,13 @@ import json
 import logging
 import os
 from optparse import make_option
+import sys
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import encode_for
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.bindingstestresultsreader import BindingsTestResultsReader
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
@@ -174,8 +176,13 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             return None
 
         classes = []
-        for name, config in ewses.iteritems():
-            classes.append(type(name.encode('utf-8').translate(None, ' -'), (cls,), {
+        for name, config in ewses.items():
+            if sys.version_info > (3, 0):
+                translated = encode_for(name, str).translate(' -')
+            else:
+                translated = encode_for(name, str).translate(None, ' -')
+
+            classes.append(type(translated, (cls,), {
                 'name': config.get('name', config['port'] + '-ews'),
                 'port_name': config['port'],
                 'architecture': config.get('architecture', None),

@@ -26,18 +26,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import urllib2
+import sys
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
+
+if sys.version_info > (3, 0):
+    from urllib.request import build_opener, Request, urlopen, HTTPHandler
+else:
+    from urllib2 import urlopen, build_opener, Request, HTTPHandler
 
 
 class Web(object):
     def get_binary(self, url, convert_404_to_None=False):
-        return NetworkTransaction(convert_404_to_None=convert_404_to_None).run(lambda: urllib2.urlopen(url).read())
+        return NetworkTransaction(convert_404_to_None=convert_404_to_None).run(lambda: urlopen(url).read())
 
     def request(self, method, url, data, headers=None):
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
-        request = urllib2.Request(url=url, data=data)
+        opener = build_opener(HTTPHandler)
+        request = Request(url=url, data=data)
         request.get_method = lambda: method
 
         if headers:

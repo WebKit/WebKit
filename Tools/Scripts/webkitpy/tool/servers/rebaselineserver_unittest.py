@@ -234,7 +234,7 @@ class GetActualResultFilesTest(unittest.TestCase):
             'fast/text2-actual.txt',
             'fast/text-notactual.txt',
         ))
-        self.assertItemsEqual(
+        self.assertEqual(
             ('text-actual.txt',),
             rebaselineserver._get_actual_result_files(
                 'fast/text.html', test_config))

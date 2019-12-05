@@ -73,7 +73,7 @@ class FlakyTestReporter(object):
             return None
         # Match any bugs which are from known bots or the email this bot is using.
         allowed_emails = self._bot_emails | set([self._bugzilla_email])
-        bugs = filter(lambda bug: bug.reporter_email() in allowed_emails, bugs)
+        bugs = list(filter(lambda bug: bug.reporter_email() in allowed_emails, bugs))
         if not bugs:
             return None
         if len(bugs) > 1:

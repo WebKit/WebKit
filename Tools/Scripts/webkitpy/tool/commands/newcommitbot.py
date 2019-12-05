@@ -158,7 +158,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
                     linkified_revision, requested_by.group('reason'))
             lines[0] = '%s rolled out %s in %s' % (author, rollout.group('revisions'), linkified_revision)
 
-        return ' '.join(filter(lambda line: len(line), lines)[0:4])
+        return ' '.join(list(filter(lambda line: len(line), lines))[0:4])
 
     def handle_unexpected_error(self, failure_map, message):
         _log.error(message)

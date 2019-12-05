@@ -30,6 +30,8 @@ from webkitpy.common.config import urls
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.grammar import join_with_separators
 
+from functools import reduce
+
 
 class Sheriff(object):
     def __init__(self, tool, sheriffbot):

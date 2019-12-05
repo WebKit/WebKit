@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import urllib
+import sys
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
@@ -34,6 +34,10 @@ from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import ScriptError
 
+if sys.version_info > (3, 0):
+    from urllib.request import pathname2url
+else:
+    from urllib import pathname2url
 
 _log = logutils.get_logger(__file__)
 
@@ -53,7 +57,7 @@ class ConfirmDiff(AbstractStep):
             pretty_patch = PrettyPatch(self._tool.executive,
                                        self._tool.scm().checkout_root)
             pretty_diff_file = pretty_patch.pretty_diff_file(diff)
-            url = "file://%s" % urllib.pathname2url(pretty_diff_file.name)
+            url = "file://%s" % pathname2url(pretty_diff_file.name)
             self._tool.user.open_url(url)
             # We return the pretty_diff_file here because we need to keep the
             # file alive until the user has had a chance to confirm the diff.

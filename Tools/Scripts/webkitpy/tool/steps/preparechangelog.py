@@ -65,7 +65,7 @@ class PrepareChangeLog(AbstractStep):
         # by prepare-ChangeLog, as an clean updated version of the one below it.
         with self._tool.filesystem.open_text_file_for_reading(changelog_path) as changelog_file:
             entries_gen = ChangeLog.parse_entries_from_file(changelog_file)
-            entries = zip(entries_gen, range(2))
+            entries = list(zip(entries_gen, range(2)))
 
         if not len(entries):
             raise Exception("Expected to find at least two ChangeLog entries in %s but found none." % changelog_path)

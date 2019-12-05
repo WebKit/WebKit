@@ -179,9 +179,9 @@ class HelpCommand(Command):
             relevant_commands = self._tool.commands[:]
         else:
             epilog = "Common %prog commands:\n"
-            relevant_commands = filter(self._tool.should_show_in_main_help, self._tool.commands)
+            relevant_commands = list(filter(self._tool.should_show_in_main_help, self._tool.commands))
         longest_name_length = max(map(lambda command: len(command.name), relevant_commands))
-        relevant_commands.sort(lambda a, b: cmp(a.name, b.name))
+        relevant_commands = sorted(relevant_commands, key=lambda command: command.name)
         command_help_texts = map(lambda command: "   %s   %s\n" % (command.name.ljust(longest_name_length), command.help_text), relevant_commands)
         epilog += "%s\n" % "".join(command_help_texts)
         epilog += "See '%prog help --all-commands' to list all commands.\n"
@@ -232,7 +232,7 @@ class MultiCommandTool(object):
     def _find_all_commands(cls):
         commands = set()
         cls._add_all_subclasses(Command, commands)
-        return sorted(commands)
+        return sorted(commands, key=lambda typ: typ.__name__)
 
     def name(self):
         return self._name

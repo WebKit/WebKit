@@ -35,6 +35,7 @@ from webkitpy.common.config import urls
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.web import Web
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import unicode
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.grammar import join_with_separators
 from webkitpy.tool.grammar import pluralize
@@ -282,7 +283,7 @@ class Whois(IRCCommand):
             if not contributor.irc_nicknames:
                 return unicode("%s: %s hasn't told me their nick. Boo hoo :-(") % (nick, contributor)
             return unicode("%s: %s is %s. Why do you ask?") % (nick, search_string, self._full_record_and_nick(contributor))
-        contributor_nicks = map(self._full_record_and_nick, contributors)
+        contributor_nicks = list(map(self._full_record_and_nick, contributors))
         contributors_string = join_with_separators(contributor_nicks, only_two_separator=" or ", last_separator=', or ')
         return unicode("%s: I'm not sure who you mean?  %s could be '%s'.") % (nick, contributors_string, search_string)
 

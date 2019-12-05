@@ -59,7 +59,7 @@ class StepSequence(object):
         for step in self._steps:
             collected_options = collected_options + step.options()
         # Remove duplicates.
-        collected_options = sorted(set(collected_options))
+        collected_options = sorted(set(collected_options), key=lambda option: option.dest)
         return collected_options
 
     def _run(self, tool, options, state):

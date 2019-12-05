@@ -28,13 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock

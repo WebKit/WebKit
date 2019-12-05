@@ -195,7 +195,7 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
         options = []
         self._prepare_sequence = StepSequence(self.prepare_steps)
         self._main_sequence = StepSequence(self.main_steps)
-        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()))
+        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()), key=lambda option: option.dest)
         AbstractPatchProcessingCommand.__init__(self, options)
 
     def _prepare_to_process(self, options, args, tool):

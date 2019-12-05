@@ -54,7 +54,7 @@ class CommitQueueFeeder(AbstractFeeder):
     def feed(self):
         patches = self._validate_patches()
         patches = self._patches_with_acceptable_review_flag(patches)
-        patches = sorted(patches, self._patch_cmp)
+        patches = sorted(patches, key=lambda patch: patch.attach_date() or 0)
 
         high_priority_item_ids = [patch.id() for patch in patches if patch.is_rollout()]
         item_ids = [patch.id() for patch in patches if not patch.is_rollout()]
@@ -74,9 +74,6 @@ class CommitQueueFeeder(AbstractFeeder):
         bug_ids = self._tool.bugs.queries.fetch_bug_ids_from_commit_queue()
         all_patches = sum([self._patches_for_bug(bug_id) for bug_id in bug_ids], [])
         return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
-
-    def _patch_cmp(self, a, b):
-        return cmp(a.attach_date(), b.attach_date())
 
 
 class EWSFeeder(AbstractFeeder):

@@ -108,10 +108,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = "png,wav,txt"
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertItemsEqual(self.tool.web.urls_fetched,
-            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertEquals(
+            sorted(self.tool.web.urls_fetched), [
+                self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.txt',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+            ])
         new_expectations = self._read(self.lion_expectations_path)
         self.assertMultiLineEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
 Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
@@ -124,10 +126,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = 'png,wav,txt'
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertItemsEqual(self.tool.web.urls_fetched,
-            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertEquals(
+            sorted(self.tool.web.urls_fetched), [
+                self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.txt',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+            ])
         new_expectations = self._read(self.lion_expectations_path)
         self.assertMultiLineEqual(new_expectations, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
@@ -138,23 +142,25 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = 'png,wav,txt'
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertItemsEqual(self.tool.web.urls_fetched,
-            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
-             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertEquals(
+            sorted(self.tool.web.urls_fetched), [
+                self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.txt',
+                self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+            ])
 
         new_expectations = self._read(self.lion_expectations_path)
         self.assertMultiLineEqual(new_expectations, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", None, "txt", self.WEB_PREFIX)
-        self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertEquals(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_with_results_directory(self):
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         self.options.results_directory = '/tmp'
         self.command._rebaseline_test_and_update_expectations(self.options)
-        self.assertItemsEqual(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
+        self.assertEquals(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
         self.command._print_scm_changes = True
@@ -184,7 +190,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", self.WEB_PREFIX)
 
-        self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertEquals(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         self.assertMultiLineEqual(self._read("platform/mac-lion-wk2/userscripts/another-test-expected.txt"), "original lion result")
         self.assertMultiLineEqual(self._read("platform/mac-lion-wk1/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
@@ -295,7 +301,7 @@ class TestRebaseline(_BaseTestCase):
             oc.restore_output()
             builders._exact_matches = old_exact_matches
 
-        calls = filter(lambda x: x[0] not in ['perl', '/usr/bin/xcrun', '/usr/bin/ulimit'], self.tool.executive.calls)
+        calls = list(filter(lambda x: x[0] not in ['perl', '/usr/bin/xcrun', '/usr/bin/ulimit'], self.tool.executive.calls))
         self.assertEqual(calls,
             [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
 
@@ -317,7 +323,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         self.command.execute(self.options, [], self.tool)
 
         # FIXME: change this to use the test- ports.
-        calls = filter(lambda x: x[0] not in ['perl', '/usr/bin/xcrun', '/usr/bin/ulimit'], self.tool.executive.calls)
+        calls = list(filter(lambda x: x[0] not in ['perl', '/usr/bin/xcrun', '/usr/bin/ulimit'], self.tool.executive.calls))
         self.assertEqual(len(calls), 1)
         self.assertEqual(len(calls[0]), 22)
 

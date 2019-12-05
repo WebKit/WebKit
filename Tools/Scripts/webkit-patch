@@ -38,8 +38,6 @@ import signal
 import sys
 import codecs
 
-import webkitpy.common.version_check
-
 from webkitpy.common.system.logutils import configure_logging
 from webkitpy.tool.main import WebKitPatch
 

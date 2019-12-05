@@ -29,11 +29,16 @@
 import fnmatch
 import os
 import os.path
-import BaseHTTPServer
+import sys
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
+
+if sys.version_info > (3, 0):
+    from http.server import HTTPServer
+else:
+    from BaseHTTPServer import HTTPServer
 
 
 STATE_NEEDS_REBASELINE = 'needs_rebaseline'
@@ -169,7 +174,7 @@ def get_test_baselines(test_file, test_config):
             self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self, **kwargs):
-            return self._platforms_by_directory.keys()
+            return list(self._platforms_by_directory.keys())
 
         def platform_from_directory(self, directory):
             return self._platforms_by_directory[directory]
@@ -198,10 +203,10 @@ def get_test_baselines(test_file, test_config):
     return all_test_baselines
 
 
-class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
+class RebaselineHTTPServer(HTTPServer):
     def __init__(self, httpd_port, config):
         server_name = ""
-        BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), RebaselineHTTPRequestHandler)
+        HTTPServer.__init__(self, (server_name, httpd_port), RebaselineHTTPRequestHandler)
         self.test_config = config['test_config']
         self.results_json = config['results_json']
         self.platforms_json = config['platforms_json']

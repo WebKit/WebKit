@@ -1,5 +1,102 @@
 2019-12-04  Jonathan Bedard  <jbedard@apple.com>
 
+        Python 3: Add support in webkitpy.tool
+        https://bugs.webkit.org/show_bug.cgi?id=204838
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.tool.
+        * Scripts/webkit-patch: Remove version check.
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        (Bug.reviewed_patches): Convert filter to list.
+        (Bug.commit_queued_patches): Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzillaQueries.fetch_bug_ids_from_commit_queue): Convert map to list.
+        (MockBugzillaQueries.fetch_attachment_ids_from_review_queue): Ditto.
+        (MockBugzillaQueries.fetch_bug_ids_from_pending_commit_list): Ditto.
+        (MockBugzilla.post_comment_to_bug): Sort cc list before printing.
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer.set_api_key): Convert filter to list.
+        * Scripts/webkitpy/common/net/web.py:
+        (Web.get_binary): Use Python 2/3 compatible urlopen.
+        (Web.request): Use Python 2/3 compatible Request.
+        * Scripts/webkitpy/common/prettypatch.py:
+        (PrettyPatch.pretty_diff_file): Encode diff before printing.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_and_throw_if_fail): Sort environment before printing.
+        (MockExecutive.run_command): Convert input to string before printing.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (FailingTestCommitQueue.test_results): Convert map to list.
+        (MockSimpleTestPlanCommitQueue.test_results): Ditto.
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        (CommitQueueFeeder.feed): Use Python 2/3 compatible sort.
+        (CommitQueueFeeder._patch_cmp): Deleted.
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter._lookup_bug_for_flaky_test): Convert filter to list.
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Whois.execute): Convert map to list.
+        * Scripts/webkitpy/tool/bot/retrylogic_unittest.py:
+        (JSCEarlyWarningSystemTest._create_task): Convert map to list.
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py: Use sorted lists
+        Instead of sets.
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchSequencingCommand.__init__): Use Python 2/3 compatible sort.
+        * Scripts/webkitpy/tool/commands/download_unittest.py: Sort environment.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.load_ews_classes): str.translate differs between Python 2
+        and Python 3.
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot._summarize_commit_log): Convert filter to list.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.should_continue_work_queue): Handle case where iterations is a MagicMock.
+        (AbstractQueue._log_from_script_error_for_upload): Explicitly use BytesIO
+        * Scripts/webkitpy/tool/commands/queues_unittest.py: Use explicit import paths.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py: Sort lists before comparing them.
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        (StepSequence.options): Use Python 2/3 compatible sort.
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (AbstractCommitLogCommand.__init__): Use Python 2/3 compatible sort.
+        (SuggestNominations._print_nominations): Ditto.
+        (SuggestNominations._print_counts): Ditto.
+        (SuggestNominations._print_nominations.nomination_cmp): Deleted.
+        (SuggestNominations._print_counts.counter_cmp): Deleted.
+        * Scripts/webkitpy/tool/mocktool_unittest.py: Use explicit import paths.
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (HelpCommand._help_epilog): Convert filter to list, use Python 2/3 compatible sort.
+        (MultiCommandTool._find_all_commands): Use Python 2/3 compatible sort.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPServer): Use Python 2/3 compatible HTTPServers.
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (get_test_baselines.AllPlatformsPort.baseline_search_path): Use list instead of utterable keys.
+        (RebaselineHTTPServer): Use Python 2/3 compatible HTTPServers.
+        (RebaselineHTTPServer.__init__): Ditto.
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (GetActualResultFilesTest.test): Use assertEqual instead of assertItemsEqual.
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        (ReflectionHandler): Use Python 2/3 compatible HTTPServers.
+        * Scripts/webkitpy/tool/steps/applywatchlist.py:
+        (ApplyWatchList.run): Sort cc_emails before printing.
+        * Scripts/webkitpy/tool/steps/applywatchlist_unittest.py: Print sorted list instead
+        of set.
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        (ConfirmDiff._show_pretty_diff): Use Python 2/3 compatible pathname2url.
+        * Scripts/webkitpy/tool/steps/haslanded.py:
+        (HasLanded.convert_to_svn): Use Python 2/3 compatible StringIO.
+        (HasLanded.strip_change_log): Ditto.
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._resolve_existing_entry): Convert zip object to list.
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py: Use Python 2/3 compatible urlparse.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py: Sort environment.
+        * Scripts/webkitpy/w3c/test_exporter.py: Use Python 2/3 compatible HTTPError.
+        * Scripts/webkitpy/w3c/wpt_github.py:
+        (WPTGitHub.remove_label): Use Python 2/3 compatible urllib.quote.
+        (WPTGitHub.is_pr_merged): Use Python 2/3 compatible HTTPError.
+        (WPTGitHub.merge_pr): Ditto.
+        (JSONResponse.__init__):
+
+2019-12-04  Jonathan Bedard  <jbedard@apple.com>
+
         Unreviewed, rolling out r253069.
 
         requests not handling certificate chain correctly in Catalina

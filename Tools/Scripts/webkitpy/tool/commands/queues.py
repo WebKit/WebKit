@@ -36,12 +36,12 @@ import time
 import traceback
 
 from optparse import make_option
-from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.net.bugzilla import Bugzilla, Attachment
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import BytesIO
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
@@ -135,6 +135,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     def should_continue_work_queue(self):
         self._iteration_count += 1
+        if not isinstance(self._options.iterations, int):
+            return True
         return not self._options.iterations or self._iteration_count <= self._options.iterations
 
     def next_work_item(self):
@@ -163,7 +165,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         # We pre-encode the string to a byte array before passing it
         # to status_server, because ClientForm (part of mechanize)
         # wants a file-like object with pre-encoded data.
-        return StringIO(output.encode("utf-8"))
+        return BytesIO(output.encode("utf-8"))
 
     @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
