@@ -1,3 +1,22 @@
+2019-12-05  Mark Lam  <mark.lam@apple.com>
+
+        computeIfUsingFuzzerAgent() is called before parsing command line arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=204886
+
+        Reviewed by Saam Barati.
+
+        Rolling out r253015 which introduced computeIfUsingFuzzerAgent().
+
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        (JSC::computeIfUsingFuzzerAgent): Deleted.
+        * runtime/Options.h:
+        (JSC::Options::isUsingFuzzerAgent): Deleted.
+        * runtime/OptionsList.h:
+        (JSC::OptionRange::operator bool const): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI should convert IsCellWithType to constant when Structure set is finite

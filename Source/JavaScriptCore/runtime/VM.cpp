@@ -493,16 +493,14 @@ VM::VM(VMType vmType, HeapType heapType)
     }
 #endif // ENABLE(SAMPLING_PROFILER)
 
-    if (UNLIKELY(Options::isUsingFuzzerAgent())) {
-        if (Options::useRandomizingFuzzerAgent())
-            setFuzzerAgent(makeUnique<RandomizingFuzzerAgent>(*this));
-        if (Options::useDoublePredictionFuzzerAgent())
-            setFuzzerAgent(makeUnique<DoublePredictionFuzzerAgent>(*this));
-        if (Options::useFileBasedFuzzerAgent())
-            setFuzzerAgent(makeUnique<FileBasedFuzzerAgent>(*this));
-        if (Options::usePredictionFileCreatingFuzzerAgent())
-            setFuzzerAgent(makeUnique<PredictionFileCreatingFuzzerAgent>(*this));
-    }
+    if (Options::useRandomizingFuzzerAgent())
+        setFuzzerAgent(makeUnique<RandomizingFuzzerAgent>(*this));
+    if (Options::useDoublePredictionFuzzerAgent())
+        setFuzzerAgent(makeUnique<DoublePredictionFuzzerAgent>(*this));
+    if (Options::useFileBasedFuzzerAgent())
+        setFuzzerAgent(makeUnique<FileBasedFuzzerAgent>(*this));
+    if (Options::usePredictionFileCreatingFuzzerAgent())
+        setFuzzerAgent(makeUnique<PredictionFileCreatingFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();
