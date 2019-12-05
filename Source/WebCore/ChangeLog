@@ -1,3 +1,19 @@
+2019-12-05  Antti Koivisto  <antti@apple.com>
+
+        [LFC][IFC] Many render tree dump tests show 1px too narrow runs
+        https://bugs.webkit.org/show_bug.cgi?id=204885
+
+        Reviewed by Zalan Bujtas.
+
+        Width measurement is currently clamping the measured (float) text widths to layout units. Use rounding instead.
+
+        This doesn't solve the fundamental problem of loss of precision but it allows many more render tree dump
+        based layout tests to pass.
+
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::fixedPitchWidth):
+
 2019-12-05  youenn fablet  <youenn@apple.com>
 
         inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API

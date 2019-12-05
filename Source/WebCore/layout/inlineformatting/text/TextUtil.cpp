@@ -71,7 +71,7 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return std::max(0_lu, LayoutUnit { width });
+    return std::max(0_lu, LayoutUnit::fromFloatRound(width));
 }
 
 LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
@@ -90,7 +90,7 @@ LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& 
             width += font.wordSpacing();
     }
 
-    return std::max(0_lu, LayoutUnit { width });
+    return std::max(0_lu, LayoutUnit::fromFloatRound(width));
 }
 
 TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
