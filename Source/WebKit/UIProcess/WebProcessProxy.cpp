@@ -627,8 +627,6 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
 
 void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
 {
-    MESSAGE_CHECK(itemState.identifier.isValid());
-
     auto* item = WebBackForwardListItem::itemForID(itemState.identifier);
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;

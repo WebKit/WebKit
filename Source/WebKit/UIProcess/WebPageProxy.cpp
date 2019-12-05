@@ -1573,8 +1573,6 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
 
 void WebPageProxy::willGoToBackForwardListItem(const BackForwardItemIdentifier& itemID, bool inBackForwardCache)
 {
-    MESSAGE_CHECK(m_process, itemID.isValid());
-
     PageClientProtector protector(pageClient());
 
     if (auto* item = m_backForwardList->itemForID(itemID))
@@ -5927,8 +5925,6 @@ void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, 
 
 void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
 {
-    MESSAGE_CHECK(process, itemID.isValid());
-
     auto* item = m_backForwardList->itemForID(itemID);
     if (!item)
         return completionHandler({ });

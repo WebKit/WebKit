@@ -90,7 +90,10 @@ Optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& d
     if (!itemIdentifier)
         return WTF::nullopt;
 
-    return { { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) } };
+    BackForwardItemIdentifier result = { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) };
+    if (!result.isValid())
+        return WTF::nullopt;
+    return result;
 }
 
 inline unsigned BackForwardItemIdentifier::hash() const

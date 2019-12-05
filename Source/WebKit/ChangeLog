@@ -1,3 +1,17 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        [IPC] Fail BackForwardItemIdentifier decoding if the decoded integer is not a valid ID
+        https://bugs.webkit.org/show_bug.cgi?id=204920
+        <rdar://problem/57677453>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::backForwardGoToItemShared):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+
 2019-12-05  Sihui Liu  <sihui_liu@apple.com>
 
         Move InProcessIDBServer to WebKitLegacy
