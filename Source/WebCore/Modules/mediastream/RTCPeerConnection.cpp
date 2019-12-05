@@ -455,7 +455,7 @@ void RTCPeerConnection::close()
 
     updateConnectionState();
     ASSERT(isClosed());
-    doStop();
+    m_backend->close();
 }
 
 void RTCPeerConnection::emulatePlatformEvent(const String& action)
@@ -465,9 +465,7 @@ void RTCPeerConnection::emulatePlatformEvent(const String& action)
 
 void RTCPeerConnection::stop()
 {
-    if (!doClose())
-        return;
-
+    doClose();
     doStop();
 }
 
@@ -477,8 +475,8 @@ void RTCPeerConnection::doStop()
         return;
 
     m_isStopped = true;
-
-    m_backend->stop();
+    if (m_backend)
+        m_backend->stop();
 }
 
 void RTCPeerConnection::registerToController(RTCController& controller)

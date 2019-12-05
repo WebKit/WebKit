@@ -58,6 +58,7 @@ public:
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
 private:
+    void close() final;
     void doCreateOffer(RTCOfferOptions&&) final;
     void doCreateAnswer(RTCAnswerOptions&&) final;
     void doSetLocalDescription(RTCSessionDescription&) final;

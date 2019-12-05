@@ -88,6 +88,7 @@ public:
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
     bool addIceCandidate(webrtc::IceCandidateInterface& candidate) { return m_backend->AddIceCandidate(&candidate); }
 
+    void close();
     void stop();
     bool isStopped() const { return !m_backend; }
 

@@ -251,6 +251,11 @@ void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
     m_endpoint->doCreateAnswer();
 }
 
+void LibWebRTCPeerConnectionBackend::close()
+{
+    m_endpoint->close();
+}
+
 void LibWebRTCPeerConnectionBackend::doStop()
 {
     m_endpoint->stop();

@@ -1,3 +1,14 @@
+2019-12-05  youenn fablet  <youenn@apple.com>
+
+        getStats() promise never rejects nor resolves when peer connection state is closed.
+        https://bugs.webkit.org/show_bug.cgi?id=204842
+        <rdar://problem/57617107>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-stats-expected.txt:
+        * webrtc/video-stats.html:
+
 2019-12-04  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in RenderLayoutState::pageLogicalHeight const via RenderGrid::computeIntrinsicLogicalWidths inside RenderMarquee::updateMarqueePosition

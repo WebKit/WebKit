@@ -642,6 +642,12 @@ void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChanne
     });
 }
 
+void LibWebRTCMediaEndpoint::close()
+{
+    m_backend->Close();
+    stopLoggingStats();
+}
+
 void LibWebRTCMediaEndpoint::stop()
 {
     if (!m_backend)

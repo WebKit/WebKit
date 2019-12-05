@@ -99,6 +99,8 @@ public:
 
     void stop();
 
+    virtual void close() = 0;
+
     virtual RefPtr<RTCSessionDescription> localDescription() const = 0;
     virtual RefPtr<RTCSessionDescription> currentLocalDescription() const = 0;
     virtual RefPtr<RTCSessionDescription> pendingLocalDescription() const = 0;

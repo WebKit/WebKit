@@ -187,6 +187,12 @@ promise_test(async (test) => {
     });
     assert_equals(instats1.ssrc, instats2.ssrc);
 }, "Check ssrc is not changing in inbound rtp stats");
+
+promise_test(async (test) => {
+    const pc = new RTCPeerConnection();
+    pc.close();
+    return pc.getStats();
+}, "Stats after pc close");
         </script>
     </body>
 </html>
