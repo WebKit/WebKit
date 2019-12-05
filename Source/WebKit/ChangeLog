@@ -1,3 +1,16 @@
+2019-12-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        [MSVC] WebResourceLoadStatisticsStore.h is reporting warning C4804: '/': unsafe use of type 'bool' in operation
+        https://bugs.webkit.org/show_bug.cgi?id=204870
+
+        Reviewed by Darin Adler.
+
+        This patch converts storageAccessGranted to a char since makeString()
+        does not explicitly accept bool types.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::ThirdPartyDataForSpecificFirstParty::toString const):
+
 2019-12-05  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Display GStreamer version in about:gpu page

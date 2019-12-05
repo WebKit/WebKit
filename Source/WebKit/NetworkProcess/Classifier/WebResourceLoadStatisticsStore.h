@@ -84,7 +84,7 @@ struct ThirdPartyDataForSpecificFirstParty {
 
     String toString() const
     {
-        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted);
+        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0');
     }
 
     bool operator==(ThirdPartyDataForSpecificFirstParty const other) const
