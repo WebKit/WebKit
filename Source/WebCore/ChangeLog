@@ -1,3 +1,16 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        MESSAGE_CHECK BackForwardItemIdentifier on incoming IPC from the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204899
+
+        Reviewed by Ryosuke Niwa.
+
+        * Sources.txt:
+        * history/BackForwardItemIdentifier.cpp: Added.
+        (WebCore::BackForwardItemIdentifier::isValid const):
+        * history/BackForwardItemIdentifier.h:
+        (WebCore::operator!=):
+
 2019-12-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Trim trailing letter-spacing at inline container boundary

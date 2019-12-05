@@ -45,6 +45,8 @@ struct BackForwardItemIdentifier {
 
     String string() const { return makeString(processIdentifier.toUInt64(), '-', itemIdentifier.toUInt64()); }
 
+    WEBCORE_EXPORT bool isValid() const;
+
 #if !LOG_DISABLED
     const char* logString() const;
 #endif
@@ -62,6 +64,11 @@ inline const char* BackForwardItemIdentifier::logString() const
 inline bool operator==(const BackForwardItemIdentifier& a, const BackForwardItemIdentifier& b)
 {
     return a.processIdentifier == b.processIdentifier &&  a.itemIdentifier == b.itemIdentifier;
+}
+
+inline bool operator!=(const BackForwardItemIdentifier& a, const BackForwardItemIdentifier& b)
+{
+    return !(a == b);
 }
 
 template<class Encoder>

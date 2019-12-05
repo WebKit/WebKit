@@ -1,3 +1,23 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        MESSAGE_CHECK BackForwardItemIdentifier on incoming IPC from the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204899
+
+        Reviewed by Ryosuke Niwa.
+
+        MESSAGE_CHECK BackForwardItemIdentifier on incoming IPC from the WebProcess. This is important since we use this identifier
+        to look up the WebBackForwardListItem in a HashMap, and looking up a bad ID could corrupt said HashMap.
+
+        * Shared/WebBackForwardListItem.cpp:
+        Make sure the WebBackForwardListItem is always constructed and destroyed on the main thread, to avoid corrupting
+        the allItems() HashMap.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::backForwardGoToItemShared):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+
 2019-12-05  Kate Cheney  <katherine_cheney@apple.com>
 
         [MSVC] WebResourceLoadStatisticsStore.h is reporting warning C4804: '/': unsafe use of type 'bool' in operation

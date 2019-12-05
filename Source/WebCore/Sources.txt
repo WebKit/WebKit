@@ -1086,6 +1086,7 @@ fileapi/ThreadableBlobRegistry.cpp
 
 history/BackForwardCache.cpp
 history/BackForwardController.cpp
+history/BackForwardItemIdentifier.cpp
 history/CachedFrame.cpp
 history/CachedPage.cpp
 history/HistoryItem.cpp

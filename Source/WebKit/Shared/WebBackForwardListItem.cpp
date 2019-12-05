@@ -60,6 +60,7 @@ WebBackForwardListItem::~WebBackForwardListItem()
 
 HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>> items;
     return items;
 }
