@@ -1,3 +1,17 @@
+2019-12-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-javascriptcore-tests is failing to run testmasm of 64bit AppleWin on Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=204869
+
+        Reviewed by Per Arne Vollan.
+
+        testmasm is compiled only when DEVELOPER_MODE.
+        Enable DEVELOPER_MODE for all 64bit Windows builds.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject): Replaced "isFTW() || isWinCairo()" with isWin64()
+        in the condition of enabling DEVELOPER_MODE.
+
 2019-12-04  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Decrease ttl for archives
