@@ -1,5 +1,19 @@
 2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
 
+        REGRESSION(r253140): Wasm::FunctionParser needs to bounds check in SetLocal/TeeLocal
+        https://bugs.webkit.org/show_bug.cgi?id=204909
+
+        Reviewed by Keith Miller.
+
+        When moving the code from WasmValidate.cpp to WasmFunctionParser.h, I missed that SetLocal and
+        TeeLocal used to call Wasm::Validate::getLocal, which would perform the bounds check. I just
+        added back the checks to the parser before accessing the local's type from m_locals.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+
+2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
+
         [WebAssembly] Fix bad assertion in LLIntPlan
         https://bugs.webkit.org/show_bug.cgi?id=204893
 
