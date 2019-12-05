@@ -231,6 +231,8 @@ list(APPEND WebKitLegacy_SOURCES_WebCoreSupport
     win/WebCoreSupport/WebPlatformStrategies.h
     win/WebCoreSupport/WebPluginInfoProvider.cpp
     win/WebCoreSupport/WebPluginInfoProvider.h
+    win/WebCoreSupport/WebProgressTrackerClient.cpp
+    win/WebCoreSupport/WebProgressTrackerClient.h
     win/WebCoreSupport/WebVisitedLinkStore.cpp
     win/WebCoreSupport/WebVisitedLinkStore.h
 )

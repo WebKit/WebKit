@@ -39,12 +39,7 @@ WebProgressTrackerClient::WebProgressTrackerClient(WebPage& webPage)
     : m_webPage(webPage)
 {
 }
-    
-void WebProgressTrackerClient::progressTrackerDestroyed()
-{
-    delete this;
-}
-    
+
 void WebProgressTrackerClient::progressStarted(Frame& originatingProgressFrame)
 {
     if (!originatingProgressFrame.isMainFrame())

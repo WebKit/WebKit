@@ -553,7 +553,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         LibWebRTCProvider::create(),
         CacheStorageProvider::create(),
         adoptRef(*new EmptyBackForwardClient),
-        CookieJar::create(adoptRef(*new EmptyStorageSessionProvider))
+        CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
+        makeUniqueRef<EmptyProgressTrackerClient>()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
@@ -579,9 +580,6 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 
     static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
     pageConfiguration.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
-
-    static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
-    pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
 
     pageConfiguration.diagnosticLoggingClient = makeUnique<EmptyDiagnosticLoggingClient>();
 

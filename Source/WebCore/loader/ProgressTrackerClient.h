@@ -30,11 +30,9 @@ namespace WebCore {
 class Frame;
 
 class ProgressTrackerClient {
-protected:
-    virtual ~ProgressTrackerClient() = default;
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual void progressTrackerDestroyed() { }
+    virtual ~ProgressTrackerClient() = default;
 
     virtual void willChangeEstimatedProgress() { }
     virtual void didChangeEstimatedProgress() { }

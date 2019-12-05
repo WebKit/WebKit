@@ -35,8 +35,6 @@ public:
     explicit WebProgressTrackerClient(WebView*);
 
 private:
-    void progressTrackerDestroyed() override;
-    
 #if !PLATFORM(IOS_FAMILY)
     void willChangeEstimatedProgress() override;
     void didChangeEstimatedProgress() override;

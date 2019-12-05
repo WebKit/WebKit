@@ -1437,7 +1437,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
-        WebCore::CookieJar::create(storageProvider.copyRef())
+        WebCore::CookieJar::create(storageProvider.copyRef()),
+        makeUniqueRef<WebProgressTrackerClient>(self)
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1460,7 +1461,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
@@ -1706,7 +1706,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
-        WebCore::CookieJar::create(storageProvider.copyRef())
+        WebCore::CookieJar::create(storageProvider.copyRef()),
+        makeUniqueRef<WebProgressTrackerClient>(self)
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
@@ -1719,7 +1720,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();

@@ -64,6 +64,7 @@
 #include "WebPlatformStrategies.h"
 #include "WebPluginInfoProvider.h"
 #include "WebPreferences.h"
+#include "WebProgressTrackerClient.h"
 #include "WebResourceLoadScheduler.h"
 #include "WebScriptWorld.h"
 #include "WebStorageNamespaceProvider.h"
@@ -3119,7 +3120,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<LibWebRTCProvider>(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(),
-        CookieJar::create(storageProvider.copyRef())
+        CookieJar::create(storageProvider.copyRef()),
+        makeUniqueRef<WebProgressTrackerClient>()
     );
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
@@ -3129,7 +3131,6 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     configuration.applicationCacheStorage = &WebApplicationCache::storage();
     configuration.databaseProvider = &WebDatabaseProvider::singleton();
     configuration.storageNamespaceProvider = &m_webViewGroup->storageNamespaceProvider();
-    configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
     configuration.userContentProvider = &m_webViewGroup->userContentController();
     configuration.visitedLinkStore = &m_webViewGroup->visitedLinkStore();
     configuration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
@@ -3149,6 +3150,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     WebFrame* webFrame = WebFrame::createInstance();
     webFrame->initWithWebView(this, m_page);
     static_cast<WebFrameLoaderClient&>(m_page->mainFrame().loader().client()).setWebFrame(webFrame);
+    static_cast<WebProgressTrackerClient&>(m_page->progress().client()).setWebFrame(webFrame);
     m_mainFrame = webFrame;
     webFrame->Release(); // The WebFrame is owned by the Frame, so release our reference to it.
 

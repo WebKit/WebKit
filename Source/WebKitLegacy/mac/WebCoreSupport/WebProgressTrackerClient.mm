@@ -39,11 +39,6 @@ WebProgressTrackerClient::WebProgressTrackerClient(WebView *webView)
 {
 }
 
-void WebProgressTrackerClient::progressTrackerDestroyed()
-{
-    delete this;
-}
-
 #if !PLATFORM(IOS_FAMILY)
 void WebProgressTrackerClient::willChangeEstimatedProgress()
 {

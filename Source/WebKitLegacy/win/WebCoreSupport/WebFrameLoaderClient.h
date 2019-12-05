@@ -41,9 +41,9 @@ class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    WebFrameLoaderClient(WebFrame* = 0);
+    WebFrameLoaderClient(WebFrame* = nullptr);
     ~WebFrameLoaderClient();
 
     void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
@@ -119,10 +119,6 @@ public:
     void setMainFrameDocumentReady(bool) override;
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) override;
-
-    void progressStarted(WebCore::Frame&) override;
-    void progressEstimateChanged(WebCore::Frame&) override;
-    void progressFinished(WebCore::Frame&) override;
 
     void committedLoad(WebCore::DocumentLoader*, const char*, int) override;
     void finishedLoading(WebCore::DocumentLoader*) override;
