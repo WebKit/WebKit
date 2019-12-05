@@ -181,6 +181,7 @@ namespace WebCore {
 #endif
             PseudoElementFirstLetter,
             PseudoElementFirstLine,
+            PseudoElementHighlight,
             PseudoElementMarker,
             PseudoElementPart,
             PseudoElementResizer,

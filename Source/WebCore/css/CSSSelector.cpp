@@ -275,6 +275,8 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return PseudoId::FirstLetter;
     case PseudoElementSelection:
         return PseudoId::Selection;
+    case PseudoElementHighlight:
+        return PseudoId::Highlight;
     case PseudoElementMarker:
         return PseudoId::Marker;
     case PseudoElementBefore:
@@ -314,11 +316,16 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
 {
     if (name.isNull())
         return PseudoElementUnknown;
+
     auto type = parsePseudoElementString(name);
     if (type == PseudoElementUnknown) {
         if (name.startsWith("-webkit-"))
             type = PseudoElementWebKitCustom;
     }
+
+    if (type == PseudoElementHighlight && !RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled())
+        return PseudoElementUnknown;
+
     if (type == PseudoElementPart && !RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
         return PseudoElementUnknown;
 

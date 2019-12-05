@@ -5,6 +5,7 @@ cue
 #endif
 first-letter
 first-line
+highlight
 marker
 part
 placeholder, PseudoElementWebKitCustom
