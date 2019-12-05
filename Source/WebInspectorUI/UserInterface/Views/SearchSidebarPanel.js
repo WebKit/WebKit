@@ -61,6 +61,22 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
     // Public
 
+    showDefaultContentView()
+    {
+        let contentView = new WI.ContentView;
+
+        let contentPlaceholder = WI.createMessageTextView(this._searchQuerySetting.value ? WI.UIString("No search results") : WI.UIString("No search string"));
+        contentView.element.appendChild(contentPlaceholder);
+
+        let searchNavigationItem = new WI.ButtonNavigationItem("search", WI.UIString("Search Resource Content"), "Images/Search.svg", 15, 15);
+        searchNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleDefaultContentViewSearchNavigationItemClicked, this);
+
+        let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to see recent searches"), searchNavigationItem);
+        contentPlaceholder.appendChild(importHelpElement);
+
+        this.contentBrowser.showContentView(contentView);
+    }
+
     closed()
     {
         super.closed();
@@ -97,8 +113,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         if (this._changedBanner)
             this._changedBanner.remove();
 
-        if (!searchQuery.length)
+        if (!searchQuery.length) {
+            this.showDefaultContentView();
             return;
+        }
 
         let createSearchingPlaceholder = () => {
             let searchingPlaceholder = WI.createMessageTextView("");
@@ -133,8 +151,12 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
             --promiseCount;
             console.assert(promiseCount >= 0);
-            if (promiseCount === 0)
+            if (promiseCount === 0) {
                 this.updateEmptyContentPlaceholder(WI.UIString("No Search Results"));
+
+                if (!this.contentTreeOutline.children.length)
+                    this.showDefaultContentView();
+            }
         };
 
         let isCaseSensitive = !!this._searchInputSettings.caseSensitive.value;
@@ -444,5 +466,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         }
 
         this.element.appendChild(this._changedBanner);
+    }
+
+    _handleDefaultContentViewSearchNavigationItemClicked(event)
+    {
+        this.focusSearchField();
     }
 };

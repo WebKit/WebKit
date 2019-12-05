@@ -784,6 +784,8 @@ localizedStrings["No request, served from the disk cache."] = "No request, serve
 localizedStrings["No request, served from the memory cache."] = "No request, served from the memory cache.";
 localizedStrings["No response cookies."] = "No response cookies.";
 localizedStrings["No response headers"] = "No response headers";
+localizedStrings["No search results"] = "No search results";
+localizedStrings["No search string"] = "No search string";
 localizedStrings["Node"] = "Node";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM node is removed */
 localizedStrings["Node Removed"] = "Node Removed";
@@ -857,6 +859,7 @@ localizedStrings["Prefer indent using:"] = "Prefer indent using:";
 localizedStrings["Preserve Log"] = "Preserve Log";
 localizedStrings["Press %s to import a test or result file"] = "Press %s to import a test or result file";
 localizedStrings["Press %s to load a recording from file."] = "Press %s to load a recording from file.";
+localizedStrings["Press %s to see recent searches"] = "Press %s to see recent searches";
 localizedStrings["Press %s to start running the audit"] = "Press %s to start running the audit";
 localizedStrings["Press %s to stop editing"] = "Press %s to stop editing";
 localizedStrings["Pressed"] = "Pressed";

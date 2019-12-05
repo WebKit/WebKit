@@ -1,5 +1,25 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Search: there should be some default content when there is no search string
+        https://bugs.webkit.org/show_bug.cgi?id=204631
+
+        Reviewed by Timothy Hatcher.
+
+        It's very odd to switch to the Search Tab and find it completely empty, especially if you've
+        never used it before.
+
+        Add basic "No Search String" and "No Search Results" text with a clickable help navigation
+        item that reveals and focuses the sidebar search input.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.showDefaultContentView): Added.
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        (WI.SearchSidebarPanel.prototype._handleDefaultContentViewSearchNavigationItemClicked): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: move the "Add Breakpoint" context menu to be next to the blackboxing context menu item
         https://bugs.webkit.org/show_bug.cgi?id=204833
 
