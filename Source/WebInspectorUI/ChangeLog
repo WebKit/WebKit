@@ -1,5 +1,17 @@
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: move the "Add Breakpoint" context menu to be next to the blackboxing context menu item
+        https://bugs.webkit.org/show_bug.cgi?id=204833
+
+        Reviewed by Timothy Hatcher.
+
+        Both items are related to JavaScript debugging, so they should be closer together.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+
+2019-12-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Support search on IndexedDB stores and indexes
         https://bugs.webkit.org/show_bug.cgi?id=129208
         <rdar://problem/16142046>

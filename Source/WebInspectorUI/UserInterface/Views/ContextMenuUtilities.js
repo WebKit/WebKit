@@ -92,6 +92,19 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
+    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.isLocalResourceOverride))) {
+        let existingBreakpoint = WI.debuggerManager.breakpointForSourceCodeLocation(location);
+        if (existingBreakpoint) {
+            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
+                WI.debuggerManager.removeBreakpoint(existingBreakpoint);
+            });
+        } else {
+            contextMenu.appendItem(WI.UIString("Add Breakpoint"), () => {
+                WI.debuggerManager.addBreakpoint(new WI.Breakpoint(location));
+            });
+        }
+    }
+
     if (sourceCode.supportsScriptBlackboxing) {
         let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(sourceCode);
         if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
@@ -144,21 +157,6 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     });
 
     contextMenu.appendSeparator();
-
-    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.isLocalResourceOverride))) {
-        let existingBreakpoint = WI.debuggerManager.breakpointForSourceCodeLocation(location);
-        if (existingBreakpoint) {
-            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
-                WI.debuggerManager.removeBreakpoint(existingBreakpoint);
-            });
-        } else {
-            contextMenu.appendItem(WI.UIString("Add Breakpoint"), () => {
-                WI.debuggerManager.addBreakpoint(new WI.Breakpoint(location));
-            });
-        }
-
-        contextMenu.appendSeparator();
-    }
 };
 
 WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
