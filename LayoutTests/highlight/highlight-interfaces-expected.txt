@@ -10,9 +10,9 @@ PASS new HighlightRangeGroup(new StaticRange({startContainer: document.body, sta
 PASS HighlightMap instanceof Function is true
 PASS typeof HighlightMap is "function"
 PASS new HighlightMap() instanceof HighlightMap is true
-PASS new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is undefined.
+PASS new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is defined.
 PASS CSS.highlights is defined.
-PASS CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is undefined.
+PASS CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is CSS.highlights
 PASS successfullyParsed is true
 
 TEST COMPLETE

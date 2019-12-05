@@ -49,9 +49,7 @@ public:
     ExceptionOr<void> setNamedItem(const String& name, const HighlightRangeGroup& value);
     bool deleteNamedProperty(const String& name);
     
-    ExceptionOr<void> set(const String& name, const HighlightRangeGroup& value);
-    
-    bool addFromMapLike(const String& value);
+    void setFromMapLike(String&&, Ref<HighlightRangeGroup>&&);
     void clear() { };
     bool remove(const String& value);
     

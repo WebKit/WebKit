@@ -1092,6 +1092,7 @@ $(PROJECT_DIR)/svg/xlinkattrs.in
 $(PROJECT_DIR)/testing/GCObservation.idl
 $(PROJECT_DIR)/testing/InternalSettings.idl
 $(PROJECT_DIR)/testing/Internals.idl
+$(PROJECT_DIR)/testing/InternalsMapLike.idl
 $(PROJECT_DIR)/testing/InternalsSetLike.idl
 $(PROJECT_DIR)/testing/MallocStatistics.idl
 $(PROJECT_DIR)/testing/MemoryInfo.idl

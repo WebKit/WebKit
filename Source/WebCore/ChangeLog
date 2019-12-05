@@ -1,3 +1,43 @@
+2019-12-05  youenn fablet  <youenn@apple.com>
+
+        maplike should define a set method
+        https://bugs.webkit.org/show_bug.cgi?id=204877
+
+        Reviewed by Chris Dumez.
+
+        maplike implementation was defining an add method instead of a set method.
+        Update implementation to define and use a set method.
+        Add an InternalsMapLike to allow testing.
+
+        Test: js/dom/maplike.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/highlight/HighlightMap.cpp:
+        (WebCore::HighlightMap::addFromMapLike):
+        * Modules/highlight/HighlightMap.h:
+        * Modules/highlight/HighlightMap.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMMapLike.h:
+        (WebCore::DOMMapLike::set):
+        (WebCore::forwardSetToMapLike):
+        * bindings/scripts/IDLParser.pm:
+        (parseMapLikeProperties):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::jsMapLikePrototypeFunctionSetBody):
+        (WebCore::jsMapLikePrototypeFunctionSet):
+        (WebCore::jsMapLikePrototypeFunctionAddBody): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionAdd): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::createInternalsMapLike):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/InternalsMapLike.cpp: Added.
+        * testing/InternalsMapLike.h: Added.
+        * testing/InternalsMapLike.idl: Added.
+
 2019-12-05  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Disable LFC when floats are present for now

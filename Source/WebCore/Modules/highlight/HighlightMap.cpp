@@ -34,10 +34,8 @@ void HighlightMap::addHighlightGroup(String& cssStyle, HighlightRangeGroup &grou
     UNUSED_PARAM(group);
 }
 
-bool HighlightMap::addFromMapLike(const String& value)
+void HighlightMap::setFromMapLike(String&&, Ref<HighlightRangeGroup>&&)
 {
-    UNUSED_PARAM(value);
-    return false;
 }
 
 bool HighlightMap::remove(const String& value)
@@ -65,14 +63,6 @@ bool HighlightMap::deleteNamedProperty(const String& name)
 {
     UNUSED_PARAM(name);
     return false;
-}
-
-ExceptionOr<void> HighlightMap::set(const String& name, const HighlightRangeGroup& value)
-{
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(value);
-    
-    return { };
 }
 
 }

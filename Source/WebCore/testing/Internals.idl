@@ -817,5 +817,6 @@ enum CompositingPolicy {
 
     [Conditional=PICTURE_IN_PICTURE_API] void setPictureInPictureAPITestEnabled(HTMLVideoElement videoElement, boolean enabled);
 
+    InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();
 };

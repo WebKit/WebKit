@@ -108,6 +108,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "InternalSettings.h"
+#include "InternalsMapLike.h"
 #include "InternalsSetLike.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSImageData.h"
@@ -5296,6 +5297,11 @@ void Internals::setMaxCanvasPixelMemory(unsigned size)
 int Internals::processIdentifier() const
 {
     return getCurrentProcessID();
+}
+
+Ref<InternalsMapLike> Internals::createInternalsMapLike()
+{
+    return InternalsMapLike::create();
 }
 
 Ref<InternalsSetLike> Internals::createInternalsSetLike()

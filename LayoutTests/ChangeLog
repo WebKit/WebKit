@@ -1,5 +1,17 @@
 2019-12-05  youenn fablet  <youenn@apple.com>
 
+        maplike should define a set method
+        https://bugs.webkit.org/show_bug.cgi?id=204877
+
+        Reviewed by Chris Dumez.
+
+        * highlight/highlight-interfaces-expected.txt:
+        * highlight/highlight-interfaces.html:
+        * js/dom/maplike-expected.txt: Added.
+        * js/dom/maplike.html: Added.
+
+2019-12-05  youenn fablet  <youenn@apple.com>
+
         inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API
         https://bugs.webkit.org/show_bug.cgi?id=204849
 

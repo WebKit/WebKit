@@ -75,6 +75,7 @@ class HTMLSelectElement;
 class HTMLVideoElement;
 class ImageData;
 class InspectorStubFrontend;
+class InternalsMapLike;
 class InternalSettings;
 class InternalsSetLike;
 class MallocStatistics;
@@ -908,6 +909,7 @@ public:
     int processIdentifier() const;
 
     Ref<InternalsSetLike> createInternalsSetLike();
+    Ref<InternalsMapLike> createInternalsMapLike();
 
 private:
     explicit Internals(Document&);

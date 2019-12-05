@@ -13,9 +13,9 @@ shouldBeTrue("new HighlightRangeGroup(new StaticRange({startContainer: document.
 shouldBeTrue("HighlightMap instanceof Function");
 shouldBeEqualToString("typeof HighlightMap", "function");
 shouldBeTrue("new HighlightMap() instanceof HighlightMap");
-shouldBeUndefined('new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
+shouldBeDefined('new HighlightMap().set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
 shouldBeDefined('CSS.highlights');
-shouldBeUndefined('CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
+shouldBe('CSS.highlights.set("foo-styling",new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))', 'CSS.highlights');
 
 </script>
 </body>

@@ -1082,6 +1082,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/GCObservation.idl \
     $(WebCore)/testing/InternalSettings.idl \
     $(WebCore)/testing/Internals.idl \
+    $(WebCore)/testing/InternalsMapLike.idl \
     $(WebCore)/testing/InternalsSetLike.idl \
     $(WebCore)/testing/MallocStatistics.idl \
     $(WebCore)/testing/MemoryInfo.idl \

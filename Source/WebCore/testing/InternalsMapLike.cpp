@@ -23,11 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Constructor(),
-    EnabledAtRuntime=HighlightAPI,
-    ImplementationLacksVTable
-] interface HighlightMap {
-    maplike<DOMString, HighlightRangeGroup>;
-    [CEReactions, MayThrowException] setter void (DOMString style, HighlightRangeGroup group);
-};
+#include "config.h"
+#include "InternalsMapLike.h"
+
+#include "IDLTypes.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+InternalsMapLike::InternalsMapLike()
+{
+    m_values.add("init", 0);
+}
+
+void InternalsMapLike::synchronizeBackingMap(Ref<DOMMapLike>&& mapLike)
+{
+    m_mapLike = WTFMove(mapLike);
+    for (auto& keyValue : m_values)
+        m_mapLike->set<IDLDOMString, IDLUnsignedLong>(keyValue.key, keyValue.value);
+}
+
+void InternalsMapLike::setFromMapLike(String&& key, unsigned value)
+{
+    m_values.set(WTFMove(key), value);
+}
+
+void InternalsMapLike::clear()
+{
+    m_values.clear();
+}
+
+bool InternalsMapLike::remove(const String& key)
+{
+    return m_values.remove(key);
+}
+
+Vector<String> InternalsMapLike::inspectKeys() const
+{
+    auto result = copyToVector(m_values.keys());
+    std::sort(result.begin(), result.end(), WTF::codePointCompareLessThan);
+    return result;
+}
+
+Vector<unsigned> InternalsMapLike::inspectValues() const
+{
+    auto result = copyToVector(m_values.values());
+    std::sort(result.begin(), result.end(), std::less<unsigned>());
+    return result;
+}
+
+} // namespace WebCore

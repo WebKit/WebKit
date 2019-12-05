@@ -1997,16 +1997,21 @@ sub parseMapLikeProperties
 
     return $maplike if $isReadOnly;
 
-    my $addOperation = IDLOperation->new();
-    $addOperation->name("add");
-    $addOperation->isMapLike(1);
-    my $addArgument = IDLArgument->new();
-    $addArgument->name("key");
-    $addArgument->type($maplike->keyType);
-    $addArgument->extendedAttributes($extendedAttributeList);
-    push(@{$addOperation->arguments}, ($addArgument));
-    $addOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $addOperation->type(makeSimpleType("any"));
+    my $setOperation = IDLOperation->new();
+    $setOperation->name("set");
+    $setOperation->isMapLike(1);
+    my $setKeyArgument = IDLArgument->new();
+    $setKeyArgument->name("key");
+    $setKeyArgument->type($maplike->keyType);
+    $setKeyArgument->extendedAttributes($extendedAttributeList);
+    my $setValueArgument = IDLArgument->new();
+    $setValueArgument->name("value");
+    $setValueArgument->type($maplike->valueType);
+    $setValueArgument->extendedAttributes($extendedAttributeList);
+    push(@{$setOperation->arguments}, ($setKeyArgument));
+    push(@{$setOperation->arguments}, ($setValueArgument));
+    $setOperation->extendedAttributes($notEnumerableExtendedAttributeList);
+    $setOperation->type(makeSimpleType("any"));
 
     my $clearOperation = IDLOperation->new();
     $clearOperation->name("clear");
@@ -2025,7 +2030,7 @@ sub parseMapLikeProperties
     $deleteOperation->extendedAttributes($notEnumerableExtendedAttributeList);
     $deleteOperation->type(makeSimpleType("any"));
 
-    push(@{$maplike->operations}, $addOperation);
+    push(@{$maplike->operations}, $setOperation);
     push(@{$maplike->operations}, $clearOperation);
     push(@{$maplike->operations}, $deleteOperation);
 

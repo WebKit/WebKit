@@ -691,10 +691,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalPerformance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalPerformance.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightMap.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightMap.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRangeGroup.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRangeGroup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLAllCollection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLAllCollection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLAnchorElement.cpp
@@ -873,6 +869,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightMap.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightMap.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRangeGroup.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRangeGroup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHkdfParams.cpp
@@ -939,6 +939,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettingsGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettingsGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternals.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternals.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalsMapLike.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalsMapLike.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalsSetLike.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalsSetLike.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserver.cpp
