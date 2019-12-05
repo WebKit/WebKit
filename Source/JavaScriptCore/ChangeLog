@@ -1,3 +1,19 @@
+2019-12-04  Mark Lam  <mark.lam@apple.com>
+
+        Fix a broken assertion in GetByStatus::computeForStubInfoWithoutExitSiteFeedback().
+        https://bugs.webkit.org/show_bug.cgi?id=204866
+
+        Reviewed by Saam Barati.
+
+        The assertion wrong assumes that access.offset() cannot be invalid unless the
+        access.type() is a Miss.  However, if the AccessCase is a Custom value or accessor,
+        the offset is always invalid.  This patch fixes this assertion.
+
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::isCustom const):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+
 2019-12-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling out r252416, vimeo does not work

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,6 +178,19 @@ public:
     // If you supply the optional vector, this will append the set of cells that this will need to keep alive
     // past the call.
     bool doesCalls(Vector<JSCell*>* cellsToMark = nullptr) const;
+
+    bool isCustom() const
+    {
+        switch (type()) {
+        case CustomValueGetter:
+        case CustomAccessorGetter:
+        case CustomValueSetter:
+        case CustomAccessorSetter:
+            return true;
+        default:
+            return false;
+        }
+    }
 
     bool isGetter() const
     {

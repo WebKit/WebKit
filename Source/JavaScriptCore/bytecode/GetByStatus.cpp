@@ -292,7 +292,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                     return GetByStatus(JSC::slowVersion(summary), *stubInfo);
                 } }
 
-                ASSERT((AccessCase::Miss == access.type()) == (access.offset() == invalidOffset));
+                ASSERT((AccessCase::Miss == access.type() || access.isCustom()) == (access.offset() == invalidOffset));
                 GetByIdVariant variant(
                     trackIdentifiers == TrackIdentifiers::Yes ? access.identifier() : Box<Identifier>(nullptr), StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
