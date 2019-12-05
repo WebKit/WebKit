@@ -105,6 +105,11 @@ public:
     class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
     };
 
+    class ThreadMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<ThreadMessageReceiver> {
+    public:
+        virtual void dispatchToThread(WTF::Function<void()>&&) { };
+    };
+
 #if USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsValid(Identifier identifier) { return identifier != -1; }
@@ -175,6 +180,9 @@ public:
 
     void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue&, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiver(StringReference messageReceiverName);
+
+    void addThreadMessageReceiver(StringReference messageReceiverName, ThreadMessageReceiver*);
+    void removeThreadMessageReceiver(StringReference messageReceiverName);
 
     bool open();
     void invalidate();
@@ -260,12 +268,14 @@ private:
     std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption>);
 
     bool dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>&);
+    bool dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>&);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
     void processIncomingSyncReply(std::unique_ptr<Decoder>);
 
     void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver&, Decoder&);
+    void dispatchThreadMessageReceiverMessage(ThreadMessageReceiver&, Decoder&);
 
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
@@ -327,6 +337,10 @@ private:
     Lock m_workQueueMessageReceiversMutex;
     using WorkQueueMessageReceiverMap = HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>>;
     WorkQueueMessageReceiverMap m_workQueueMessageReceivers;
+
+    Lock m_threadMessageReceiversLock;
+    using ThreadMessageReceiverMap = HashMap<StringReference, RefPtr<ThreadMessageReceiver>>;
+    ThreadMessageReceiverMap m_threadMessageReceivers;
 
     unsigned m_inSendSyncCount;
     unsigned m_inDispatchMessageCount;

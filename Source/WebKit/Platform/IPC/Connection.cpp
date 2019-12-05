@@ -360,6 +360,50 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         sendSyncReply(WTFMove(replyEncoder));
 }
 
+void Connection::addThreadMessageReceiver(StringReference messageReceiverName, ThreadMessageReceiver* threadMessageReceiver)
+{
+    ASSERT(RunLoop::isMain());
+
+    std::lock_guard<Lock> lock(m_threadMessageReceiversLock);
+    ASSERT(!m_threadMessageReceivers.contains(messageReceiverName));
+
+    m_threadMessageReceivers.add(messageReceiverName, threadMessageReceiver);
+}
+
+void Connection::removeThreadMessageReceiver(StringReference messageReceiverName)
+{
+    ASSERT(RunLoop::isMain());
+
+    std::lock_guard<Lock> lock(m_threadMessageReceiversLock);
+    ASSERT(m_threadMessageReceivers.contains(messageReceiverName));
+
+    m_threadMessageReceivers.remove(messageReceiverName);
+}
+
+void Connection::dispatchThreadMessageReceiverMessage(ThreadMessageReceiver& threadMessageReceiver, Decoder& decoder)
+{
+    if (!decoder.isSyncMessage()) {
+        threadMessageReceiver.didReceiveMessage(*this, decoder);
+        return;
+    }
+
+    uint64_t syncRequestID = 0;
+    if (!decoder.decode(syncRequestID) || !syncRequestID) {
+        // FIXME: Handle invalid sync message.
+        decoder.markInvalid();
+        return;
+    }
+
+    auto replyEncoder = makeUnique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
+    threadMessageReceiver.didReceiveSyncMessage(*this, decoder, replyEncoder);
+
+    // FIXME: If the message was invalid, we should send back a SyncMessageError.
+    ASSERT(!decoder.isInvalid());
+
+    if (replyEncoder)
+        sendSyncReply(WTFMove(replyEncoder));
+}
+
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
 {
     ASSERT(!m_isConnected);
@@ -667,7 +711,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         return;
     }
 
-    if (!WorkQueueMessageReceiverMap::isValidKey(message->messageReceiverName())) {
+    if (!WorkQueueMessageReceiverMap::isValidKey(message->messageReceiverName()) || !ThreadMessageReceiverMap::isValidKey(message->messageReceiverName())) {
         RefPtr<Connection> protectedThis(this);
         StringReference messageReceiverNameReference = message->messageReceiverName();
         String messageReceiverName(messageReceiverNameReference.isEmpty() ? "<unknown message receiver>" : String(messageReceiverNameReference.data(), messageReceiverNameReference.size()));
@@ -681,6 +725,9 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
     }
 
     if (dispatchMessageToWorkQueueReceiver(message))
+        return;
+
+    if (dispatchMessageToThreadReceiver(message))
         return;
 
 #if HAVE(QOS_CLASSES)
@@ -960,6 +1007,23 @@ bool Connection::dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>& me
     if (it != m_workQueueMessageReceivers.end()) {
         it->value.first->dispatch([protectedThis = makeRef(*this), workQueueMessageReceiver = it->value.second, decoder = WTFMove(message)]() mutable {
             protectedThis->dispatchWorkQueueMessageReceiverMessage(*workQueueMessageReceiver, *decoder);
+        });
+        return true;
+    }
+    return false;
+}
+
+bool Connection::dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>& message)
+{
+    RefPtr<ThreadMessageReceiver> protectedThreadMessageReceiver;
+    {
+        std::lock_guard<Lock> lock(m_threadMessageReceiversLock);
+        protectedThreadMessageReceiver = m_threadMessageReceivers.get(message->messageReceiverName());
+    }
+
+    if (protectedThreadMessageReceiver) {
+        protectedThreadMessageReceiver->dispatchToThread([protectedThis = makeRef(*this), threadMessageReceiver = WTFMove(protectedThreadMessageReceiver), decoder = WTFMove(message)]() mutable {
+            protectedThis->dispatchThreadMessageReceiverMessage(*threadMessageReceiver, *decoder);
         });
         return true;
     }
