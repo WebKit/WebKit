@@ -76,6 +76,7 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/ContentRuleListResults.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/Page.h>
 #include <WebCore/SSLKeyGenerator.h>
 #include <WebCore/SecurityOriginData.h>
@@ -2935,5 +2936,14 @@ void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation)
 {
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     toImpl(page)->setOrientationForMediaCapture(orientation);
+#endif
+}
+
+WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
+{
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
+#else
+    return false;
 #endif
 }

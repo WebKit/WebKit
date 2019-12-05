@@ -79,6 +79,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 #if ENABLE(MEDIA_STREAM)
     proxies().add(this);
 #endif
+    syncWithWebCorePrefs();
 }
 
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
@@ -681,6 +682,12 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
     UNUSED_PARAM(topLevelDocumentOrigin);
     completionHandler({ }, { });
 #endif
+}
+
+void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+{
+    m_mockDevicesEnabledOverride = enabled;
+    syncWithWebCorePrefs();
 }
 
 void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const

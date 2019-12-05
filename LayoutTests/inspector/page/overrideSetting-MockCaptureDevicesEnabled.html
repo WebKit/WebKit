@@ -4,13 +4,18 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 
-if (window.internals)
-    window.internals.setMockMediaCaptureDevicesEnabled(false);
+function checkMockUsage(expectToUseMock)
+{
+    if (window.testRunner && testRunner.isMockRealtimeMediaSourceCenterEnabled && testRunner.isMockRealtimeMediaSourceCenterEnabled() !== expectToUseMock)
+        return "FAIL: testRunner mismatch";
+    if (window.internals && internals.isMockRealtimeMediaSourceCenterEnabled && internals.isMockRealtimeMediaSourceCenterEnabled() !== expectToUseMock)
+        return "FAIL: internals mismatch";
+    return "PASS";
+}
 
-function requestGetUserMedia() {
-    navigator.mediaDevices.getUserMedia({audio: {}, video: {}})
-        .then(() => TestPage.dispatchEventToFrontend("GetUserMedia", {success: true}))
-        .catch((error) => TestPage.dispatchEventToFrontend("GetUserMedia", {error: error.message}));
+function validateMockUsage(expectToUseMock)
+{
+    TestPage.dispatchEventToFrontend("ValidateMock", checkMockUsage(expectToUseMock));
 }
 
 function test()
@@ -21,29 +26,28 @@ function test()
         name: "Page.overrideSetting.MockCaptureDevicesEnabled",
         description: "Test that changing whether mock capture devices are enabled has an effect.",
         async test() {
-            let [defaultResult] = await Promise.all([
-                InspectorTest.awaitEvent("GetUserMedia"),
-                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
-            ]);
-            InspectorTest.log("Expected Error: " + defaultResult.data.error);
+            InspectorTest.log("Overriding MockCaptureDevicesEnabled to false...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, false);
+
+            InspectorTest.evaluateInPage(`validateMockUsage(false)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
+
 
             InspectorTest.log("Overriding MockCaptureDevicesEnabled to true...");
             await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, true);
 
-            let [overriddenResult] = await Promise.all([
-                InspectorTest.awaitEvent("GetUserMedia"),
-                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
-            ])
-            InspectorTest.expectTrue(overriddenResult.data.success, "getUserMedia should not fail when no devices are available");
+            InspectorTest.evaluateInPage(`validateMockUsage(true)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
+
 
             InspectorTest.log("Removing MockCaptureDevicesEnabled override...");
             await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled);
 
-            let [originalResult] = await Promise.all([
-                InspectorTest.awaitEvent("GetUserMedia"),
-                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
-            ])
-            InspectorTest.log("Expected Error: " + originalResult.data.error);
+            InspectorTest.evaluateInPage(`validateMockUsage(true)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
         },
     });
 

@@ -2424,6 +2424,15 @@ void TestRunner::setMockCameraOrientation(unsigned orientation)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+bool TestRunner::isMockRealtimeMediaSourceCenterEnabled()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("IsMockRealtimeMediaSourceCenterEnabled"));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
 #if PLATFORM(MAC)
 void TestRunner::connectMockGamepad(unsigned index)
 {

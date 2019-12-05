@@ -985,6 +985,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "IsMockRealtimeMediaSourceCenterEnabled")) {
+        bool isMockRealtimeMediaSourceCenterEnabled = TestController::singleton().isMockRealtimeMediaSourceCenterEnabled();
+        return adoptWK(WKBooleanCreate(isMockRealtimeMediaSourceCenterEnabled));
+    }
+
 #if PLATFORM(MAC)
     if (WKStringIsEqualToUTF8CString(messageName, "ConnectMockGamepad")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());

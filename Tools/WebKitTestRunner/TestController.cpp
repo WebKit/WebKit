@@ -3640,6 +3640,11 @@ void TestController::setMockCameraOrientation(uint64_t orientation)
     WKPageSetMockCameraOrientation(m_mainWebView->page(), orientation);
 }
 
+bool TestController::isMockRealtimeMediaSourceCenterEnabled() const
+{
+    return WKPageIsMockRealtimeMediaSourceCenterEnabled(m_mainWebView->page());
+}
+
 #if !PLATFORM(COCOA)
 void TestController::platformAddTestOptions(TestOptions&) const
 {

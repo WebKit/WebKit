@@ -1,3 +1,22 @@
+2019-12-05  youenn fablet  <youenn@apple.com>
+
+        inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API
+        https://bugs.webkit.org/show_bug.cgi?id=204849
+
+        Reviewed by Eric Carlson.
+
+        Synchronize the center with the preferences when the value might be updated.
+        Add API to check which center is used in UIProcess.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsMockRealtimeMediaSourceCenterEnabled):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride): Deleted.
+
 2019-12-04  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove build warnings below since r253025.

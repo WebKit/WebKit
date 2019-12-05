@@ -388,6 +388,7 @@ interface TestRunner {
     void removeMockMediaDevice(DOMString persistentId);
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned long orientation);
+    boolean isMockRealtimeMediaSourceCenterEnabled();
 
     void injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;

@@ -1,3 +1,22 @@
+2019-12-05  youenn fablet  <youenn@apple.com>
+
+        inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API
+        https://bugs.webkit.org/show_bug.cgi?id=204849
+
+        Reviewed by Eric Carlson.
+
+        Add test runner API to check which center (mock or not) is used in UIProcess side.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::isMockRealtimeMediaSourceCenterEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::isMockRealtimeMediaSourceCenterEnabled const):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-12-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move trailing trimming logic to LineBuilder::TrimmableContent

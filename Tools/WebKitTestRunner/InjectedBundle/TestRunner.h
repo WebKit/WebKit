@@ -492,6 +492,7 @@ public:
     void removeMockMediaDevice(JSStringRef persistentId);
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned);
+    bool isMockRealtimeMediaSourceCenterEnabled();
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);

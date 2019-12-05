@@ -1,3 +1,22 @@
+2019-12-05  youenn fablet  <youenn@apple.com>
+
+        inspector/page/overrideSetting-MockCaptureDevicesEnabled.html is failing after removal of internals.setMockMediaCaptureDevicesEnabled API
+        https://bugs.webkit.org/show_bug.cgi?id=204849
+
+        Reviewed by Eric Carlson.
+
+        Add API and internals to check which center is used in WebProcess.
+        Covered by updated test.
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMockRealtimeMediaSourceCenterEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         WPT test MediaStream-MediaElement-srcObject.https.html times out

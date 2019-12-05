@@ -86,7 +86,7 @@ public:
         Prompt
     };
 
-    void setMockCaptureDevicesEnabledOverride(Optional<bool> enabled) { m_mockDevicesEnabledOverride = enabled; }
+    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
     bool hasPendingCapture() const { return m_hasPendingCapture; }
 
 private:

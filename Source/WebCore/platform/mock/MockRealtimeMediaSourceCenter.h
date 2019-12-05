@@ -94,6 +94,7 @@ private:
     bool m_isMockAudioCaptureEnabled { true };
     bool m_isMockVideoCaptureEnabled { true };
     bool m_isMockDisplayCaptureEnabled { true };
+    bool m_isEnabled { false };
 };
 
 }

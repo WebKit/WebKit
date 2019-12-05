@@ -295,6 +295,7 @@ public:
     void removeMockMediaDevice(WKStringRef persistentID);
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
+    bool isMockRealtimeMediaSourceCenterEnabled() const;
 
     void injectUserScript(WKStringRef);
     

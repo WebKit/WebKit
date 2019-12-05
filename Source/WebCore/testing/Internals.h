@@ -744,6 +744,7 @@ public:
     void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack&);
     void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
+    bool isMockRealtimeMediaSourceCenterEnabled();
 #endif
 
     bool supportsAudioSession() const;
