@@ -1,3 +1,21 @@
+2019-12-06  Don Olmstead  <don.olmstead@sony.com>
+
+        [MathML] Should support conditional compilation
+        https://bugs.webkit.org/show_bug.cgi?id=204958
+
+        Reviewed by Ross Kirsling.
+
+        No new tests. No change in behavior.
+
+        Add missing checks for ENABLE_MATHML in the idl and cpp files.
+
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::createNewElementWrapper):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * mathml/MathMLElement.idl:
+        * mathml/MathMLMathElement.idl:
+
 2019-12-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add compiler UNLIKELY hints when checking if developer extras are enabled

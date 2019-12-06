@@ -55,8 +55,10 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
         return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
     if (is<SVGElement>(element))
         return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
+#if ENABLE(MATHML)
     if (is<MathMLElement>(element))
         return createJSMathMLWrapper(globalObject, static_reference_cast<MathMLElement>(WTFMove(element)));
+#endif
     return createWrapper<Element>(globalObject, WTFMove(element));
 }
 

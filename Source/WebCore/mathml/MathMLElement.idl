@@ -24,6 +24,7 @@
  */
 
 [
+    Conditional=MATHML,
     JSGenerateToNativeObject,
 ] interface MathMLElement : Element { };
 
