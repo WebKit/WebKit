@@ -77,27 +77,27 @@ LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormat
 {
 }
 
-LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent)
+LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength)
 {
     auto initialize = [&] {
         m_committedInlineItemCount = 0;
         m_uncommittedContent.reset();
-        m_leadingPartialTextItem = { };
-        m_trailingPartialTextItem = { };
-        m_overflowPartialContent = { };
+        m_partialLeadingTextItem = { };
+        m_partialTrailingTextItem = { };
+        m_partialContent = { };
     };
     initialize();
     // Iterate through the inline content and place the inline boxes on the current line.
     // Start with the partial leading text from the previous line.
     auto firstNonPartialInlineItemIndex = leadingInlineItemIndex;
-    if (leadingPartialContent) {
+    if (partialLeadingContentLength) {
         // Handle partial inline item (split text from the previous line).
         auto& leadingTextItem = m_inlineItems[leadingInlineItemIndex];
         RELEASE_ASSERT(leadingTextItem->isText());
         // Construct a partial leading inline item.
-        ASSERT(!m_leadingPartialTextItem);
-        m_leadingPartialTextItem = downcast<InlineTextItem>(*leadingTextItem).right(leadingPartialContent->length);
-        if (placeInlineItem(line, *m_leadingPartialTextItem) == IsEndOfLine::Yes)
+        ASSERT(!m_partialLeadingTextItem);
+        m_partialLeadingTextItem = downcast<InlineTextItem>(*leadingTextItem).right(*partialLeadingContentLength);
+        if (placeInlineItem(line, *m_partialLeadingTextItem) == IsEndOfLine::Yes)
             return close(line, leadingInlineItemIndex);
         ++firstNonPartialInlineItemIndex;
     }
@@ -132,7 +132,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
 
     auto trailingInlineItemIndex = leadingInlineItemIndex + m_committedInlineItemCount - 1;
     auto isLastLineWithInlineContent = [&] {
-        if (m_overflowPartialContent)
+        if (m_partialContent)
             return LineBuilder::IsLastLineWithInlineContent::No;
         // Skip floats backwards to see if this is going to be the last line with inline content.
         for (auto i = m_inlineItems.size(); i--;) {
@@ -144,7 +144,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
         return LineBuilder::IsLastLineWithInlineContent::No;
     };
 
-    return LineContent { trailingInlineItemIndex, m_overflowPartialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
+    return LineContent { trailingInlineItemIndex, m_partialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent()), line.lineBox() };
 }
 
 LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& line, const InlineItem& inlineItem)
@@ -215,27 +215,27 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
         commitPendingContent(line);
     else if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Split) {
-        ASSERT(breakingContext.trailingPartialContent);
-        ASSERT(m_uncommittedContent.runs()[breakingContext.trailingPartialContent->runIndex].inlineItem.isText());
+        ASSERT(breakingContext.partialTrailingContent);
+        ASSERT(m_uncommittedContent.runs()[breakingContext.partialTrailingContent->runIndex].inlineItem.isText());
         // Turn the uncommitted trailing run into a partial trailing run.
-        auto overflowInlineTextItemIndex = breakingContext.trailingPartialContent->runIndex;
+        auto overflowInlineTextItemIndex = breakingContext.partialTrailingContent->runIndex;
         auto& overflowInlineTextItem = downcast<InlineTextItem>(m_uncommittedContent.runs()[overflowInlineTextItemIndex].inlineItem);
 
         // Construct a partial trailing inline run.
-        ASSERT(!m_trailingPartialTextItem);
-        auto trailingContentLength = breakingContext.trailingPartialContent->length;
-        m_trailingPartialTextItem = overflowInlineTextItem.left(trailingContentLength);
-        m_overflowPartialContent = PartialContent { overflowInlineTextItem.length() - trailingContentLength };
+        ASSERT(!m_partialTrailingTextItem);
+        auto trailingContentLength = breakingContext.partialTrailingContent->length;
+        m_partialTrailingTextItem = overflowInlineTextItem.left(trailingContentLength);
+        m_partialContent = LineContent::PartialContent { breakingContext.partialTrailingContent->needsHyphen, overflowInlineTextItem.length() - trailingContentLength };
         // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
         m_uncommittedContent.trim(overflowInlineTextItemIndex);
-        m_uncommittedContent.append(*m_trailingPartialTextItem, breakingContext.trailingPartialContent->logicalWidth);
+        m_uncommittedContent.append(*m_partialTrailingTextItem, breakingContext.partialTrailingContent->logicalWidth);
         commitPendingContent(line);
     } else if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Wrap)
         m_uncommittedContent.reset();
     else
         ASSERT_NOT_REACHED();
     // Adjust hyphenated line count
-    m_successiveHyphenatedLineCount = breakingContext.trailingPartialContent && breakingContext.trailingPartialContent->hasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
+    m_successiveHyphenatedLineCount = breakingContext.partialTrailingContent && breakingContext.partialTrailingContent->needsHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     return breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
 }
 

@@ -45,7 +45,7 @@ struct Run {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
         struct ExpansionContext;
-        TextContext(unsigned position, unsigned length, const String&, Optional<ExpansionContext> = { });
+        TextContext(unsigned position, unsigned length, const String&);
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
@@ -59,11 +59,15 @@ struct Run {
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
+        bool needsHyphen() const { return m_needsHyphen; }
+
         void expand(unsigned expandedLength);
+        void setNeedsHyphen() { m_needsHyphen = true; }
 
     private:
         unsigned m_start { 0 };
         unsigned m_length { 0 };
+        bool m_needsHyphen { false };
         String m_contentString;
         Optional<ExpansionContext> m_expansionContext;
     };
@@ -94,6 +98,7 @@ struct Run {
 
     void setTextContext(const TextContext&& textContext) { m_textContext.emplace(textContext); }
     const Optional<TextContext>& textContext() const { return m_textContext; }
+    Optional<TextContext>& textContext() { return m_textContext; }
 
     void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
@@ -120,11 +125,10 @@ inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const Rect& logi
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length, const String& contentString, Optional<ExpansionContext> expansionContext)
+inline Run::TextContext::TextContext(unsigned start, unsigned length, const String& contentString)
     : m_start(start)
     , m_length(length)
     , m_contentString(contentString)
-    , m_expansionContext(expansionContext)
 {
 }
 

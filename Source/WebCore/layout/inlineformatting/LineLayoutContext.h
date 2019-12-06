@@ -37,18 +37,18 @@ class LineLayoutContext {
 public:
     LineLayoutContext(const InlineFormattingContext&, const Container& formattingContextRoot, const InlineItems&);
 
-    struct PartialContent {
-        // This will potentially gain some more members. 
-        unsigned length { 0 };
-    };
     struct LineContent {
+        struct PartialContent {
+            bool trailingContentNeedsHyphen { false };
+            unsigned overlfowContentLength { 0 };
+        };
         Optional<unsigned> trailingInlineItemIndex;
-        Optional<PartialContent> overflowPartialContent;
+        Optional<PartialContent> partialContent;
         Vector<WeakPtr<InlineItem>> floats;
         const LineBuilder::RunList runList;
         const LineBox lineBox;
     };
-    LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
+    LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength);
 
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
@@ -65,9 +65,9 @@ private:
     LineBreaker::Content m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
-    std::unique_ptr<InlineTextItem> m_leadingPartialTextItem;
-    std::unique_ptr<InlineTextItem> m_trailingPartialTextItem;
-    Optional<PartialContent> m_overflowPartialContent;
+    std::unique_ptr<InlineTextItem> m_partialLeadingTextItem;
+    std::unique_ptr<InlineTextItem> m_partialTrailingTextItem;
+    Optional<LineContent::PartialContent> m_partialContent;
     unsigned m_successiveHyphenatedLineCount { 0 };
 };
 

@@ -72,8 +72,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
-        if (auto trailingPartialContent = wordBreakingBehavior(runs, lineStatus.availableWidth))
-            return { BreakingContext::ContentBreak::Split, trailingPartialContent };
+        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth))
+            return { BreakingContext::ContentBreak::Split, partialTrailingContent };
         // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
         // FIXME: Keep tracking the last breaking opportunity where we can wrap the content:
         // <span style="white-space: pre;">this fits</span> <span style="white-space: pre;">this does not fit but does not wrap either</span>
@@ -95,7 +95,7 @@ bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit av
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, LayoutUnit availableWidth) const
+Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, LayoutUnit availableWidth) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -122,7 +122,7 @@ Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::word
         // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
         auto adjustedAvailableWidth = std::max(LayoutUnit { }, availableWidth - runsWidth + run.logicalWidth);
         if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
-            return BreakingContext::TrailingPartialContent { i, leftSide->length, leftSide->logicalWidth, leftSide->hasHyphen };
+            return BreakingContext::PartialTrailingContent { i, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
         return { };
     }
     // We did not manage to break in this sequence of runs.

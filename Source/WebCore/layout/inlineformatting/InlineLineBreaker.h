@@ -40,13 +40,13 @@ public:
     struct BreakingContext {
         enum class ContentBreak { Keep, Split, Wrap };
         ContentBreak contentBreak;
-        struct TrailingPartialContent {
+        struct PartialTrailingContent {
             unsigned runIndex { 0 };
             unsigned length { 0 };
             LayoutUnit logicalWidth;
-            bool hasHyphen { false };
+            bool needsHyphen { false };
         };
-        Optional<TrailingPartialContent> trailingPartialContent;
+        Optional<PartialTrailingContent> partialTrailingContent;
     };
 
     // This struct represents the amount of content committed to line breaking at a time e.g.
@@ -107,11 +107,11 @@ public:
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const Content::RunList&, LayoutUnit availableWidth) const;
+    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, LayoutUnit availableWidth) const;
     struct LeftSide {
         unsigned length { 0 };
         LayoutUnit logicalWidth;
-        bool hasHyphen { false };
+        bool needsHyphen { false };
     };
     Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const;
 

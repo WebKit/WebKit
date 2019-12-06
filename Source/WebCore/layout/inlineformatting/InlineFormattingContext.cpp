@@ -94,24 +94,24 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
     auto& inlineItems = formattingState().inlineItems();
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
     unsigned leadingInlineItemIndex = 0;
-    Optional<LineLayoutContext::PartialContent> leadingPartialContent;
+    Optional<unsigned> partialLeadingContentLength;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::No };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
     while (leadingInlineItemIndex < inlineItems.size()) {
         lineBuilder.initialize(constraintsForLine(usedHorizontalValues, lineLogicalTop));
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, leadingPartialContent);
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, partialLeadingContentLength);
         setDisplayBoxesForLine(lineContent, usedHorizontalValues);
 
-        leadingPartialContent = { };
+        partialLeadingContentLength = { };
         if (lineContent.trailingInlineItemIndex) {
             lineLogicalTop = lineContent.lineBox.logicalBottom();
             // When the trailing content is partial, we need to reuse the last InlinItem.
-            if (lineContent.overflowPartialContent) {
+            if (lineContent.partialContent) {
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
                 // Turn previous line's overflow content length into the next line's leading content partial length.
                 // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
-                leadingPartialContent = LineLayoutContext::PartialContent { lineContent.overflowPartialContent->length };
+                partialLeadingContentLength = lineContent.partialContent->overlfowContentLength;
             } else
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
@@ -427,10 +427,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     }
 
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
-
     auto lineIndex = inlineContent.lineBoxes.size();
     inlineContent.lineBoxes.append(LineBox { lineContent.lineBox });
-
+    Optional<unsigned> lastTextItemIndex;
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -483,6 +482,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
 
         if (lineRun.isText()) {
+            lastTextItemIndex = inlineContent.runs.size() - 1;
             auto firstRunForLayoutBox = !index || &lineRuns[index - 1].layoutBox() != &layoutBox; 
             if (firstRunForLayoutBox) {
                 // Setup display box for the associated layout box.
@@ -497,6 +497,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
         ASSERT_NOT_REACHED();
     }
+    // Make sure the trailing text run gets a hyphen when it needs one.
+    if (lineContent.partialContent && lineContent.partialContent->trailingContentNeedsHyphen)
+        inlineContent.runs[*lastTextItemIndex].textContext()->setNeedsHyphen();
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

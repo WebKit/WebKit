@@ -1,3 +1,36 @@
+2019-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Paint partial trailing run with hyphen when needed
+        https://bugs.webkit.org/show_bug.cgi?id=204953
+        <rdar://problem/57705169>
+
+        Reviewed by Antti Koivisto.
+
+        When LineBreaker comes back with a partial content that needs hyphen, we need to make sure this information
+        ends up in the final Display::Run so that the rendered content includes the hyphen string. Note that this only needs to
+        be done when the content does _not_ have the hyphen already (opportunity vs. oppor-tunity).
+        (This patch also renames trailingPartial to partialTrailing because the fact that it is partial run is more important than that it is trailing run.)
+
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::TextContext):
+        (WebCore::Display::Run::TextContext::needsHyphen const):
+        (WebCore::Display::Run::TextContext::setNeedsHyphen):
+        (WebCore::Display::Run::textContext):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        * layout/inlineformatting/LineLayoutContext.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
 2019-12-06  Chris Dumez  <cdumez@apple.com>
 
         Prevent synchronous XHR in beforeunload / unload event handlers
