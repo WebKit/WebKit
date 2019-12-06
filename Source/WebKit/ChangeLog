@@ -1,3 +1,16 @@
+2019-12-06  Benjamin Nham  <nham@apple.com>
+
+        Drop support for NSURLCache callbacks in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=203344
+
+        Reviewed by Alex Christensen.
+
+        Remove the NSURLSession caching policy callback in NetworkProcess. It's no longer necessary since
+        we don't use NSURLCache in NetworkProcess (https://bugs.webkit.org/show_bug.cgi?id=185990).
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:willCacheResponse:completionHandler:]): Deleted.
+
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         Stop using reserveCapacity() / reserveInitialCapacity() in IPC decoders
