@@ -224,8 +224,11 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             for (const test of triggerable.acceptedTests())
                 acceptedTests.add(test);
         }
-
-        let tests = Test.all().filter((test) => acceptedTests.has(test) && (!test.parentTest() || !acceptedTests.has(test.parentTest())));
+        const tests = [...acceptedTests].sort((testA, testB) => {
+            if (testA.fullName() == testB.fullName())
+                return 0;
+            return testA.fullName() < testB.fullName() ? -1 : 1;
+        });
         return this._renderRadioButtonList(this.content('test-list'), 'test', tests, this.selectTests.bind(this), (test) => test.fullName());
     }
 
