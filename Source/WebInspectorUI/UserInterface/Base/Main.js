@@ -545,6 +545,8 @@ WI.contentLoaded = function()
     // Store WI on the window in case the WebInspector global gets corrupted.
     window.__frontendCompletedLoad = true;
 
+    WI.frontendCompletedLoadTimestamp = performance.now();
+
     if (WI.runBootstrapOperations)
         WI.runBootstrapOperations();
 

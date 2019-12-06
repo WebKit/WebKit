@@ -1,3 +1,47 @@
+2019-11-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: TabActivity diagnostic event should sample the active tab uniformly
+        https://bugs.webkit.org/show_bug.cgi?id=204531
+
+        Reviewed by Devin Rousso.
+
+        Rewrite this class to use a uniform sampling approach. Every n seconds, a timer fires and
+        samples what the current tab is. If the last user interaction happened up to n seconds ago,
+        report a TabActivity diagnostic event. Keeping with the previous implementation, samples
+        are taken every n=60 seconds.
+
+        To account for bias in the initial sample when Web Inspector is open, wait m seconds for
+        the first sample. This accounts for the time between opening Web Inspector and choosing the
+        desired tab. In my testing, m=10 is enough time to load Web Inspector and switch
+        immediately to a different tab. In that case, the initial tab would not be sampled as the
+        active tab even if the last user interaction (clicking tab bar) happened while the initial
+        tab was displayed. If the recorder's setup() method is called some time after Web Inspector is
+        opened, then the initial delay will shrink to ensure at least 10s has elapsed since the frontend
+        finished loading.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded): Keep a timestamp of when the frontend finished loading.
+
+        * UserInterface/Controllers/TabActivityDiagnosticEventRecorder.js:
+        (WI.TabActivityDiagnosticEventRecorder):
+        (WI.TabActivityDiagnosticEventRecorder.prototype.setup):
+        (WI.TabActivityDiagnosticEventRecorder.prototype.teardown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._startInitialDelayBeforeSamplingTimer):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._stopInitialDelayBeforeSamplingTimer):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._startEventSamplingTimer):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._stopEventSamplingTimer):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._sampleCurrentTabActivity):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._didObserveUserInteraction):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowFocus):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowBlur):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowKeyDown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleWindowMouseDown):
+        (WI.TabActivityDiagnosticEventRecorder.prototype._didInteractWithTabContent): Deleted.
+        (WI.TabActivityDiagnosticEventRecorder.prototype._clearTabActivityTimeout): Deleted.
+        (WI.TabActivityDiagnosticEventRecorder.prototype._beginTabActivityTimeout): Deleted.
+        (WI.TabActivityDiagnosticEventRecorder.prototype._stopTrackingTabActivity): Deleted.
+        (WI.TabActivityDiagnosticEventRecorder.prototype._handleTabBrowserSelectedTabContentViewDidChange): Deleted.
+
 2019-12-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r242604): Console: unread indicator overlaps selection background of previous scope bar item

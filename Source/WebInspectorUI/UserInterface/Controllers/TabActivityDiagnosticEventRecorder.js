@@ -29,16 +29,23 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
     {
         super("TabActivity", controller);
 
-        this._shouldLogTabContentActivity = false;
-        this._tabActivityTimeoutIdentifier = 0;
+        this._inspectorHasFocus = true;
+        this._lastUserInteractionTimestamp = undefined;
+
+        this._eventSamplingTimerIdentifier = undefined;
+        this._initialDelayBeforeSamplingTimerIdentifier = undefined;
     }
+
+    // Static
+
+    // In milliseconds.
+    static get eventSamplingInterval() { return 60 * 1000; }
+    static get initialDelayBeforeSamplingInterval() { return 10 * 1000; }
 
     // Protected
 
     setup()
     {
-        WI.TabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._handleTabBrowserSelectedTabContentViewDidChange, this);
-
         const options = {
             capture: true,
         };
@@ -47,13 +54,16 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         window.addEventListener("keydown", this, options);
         window.addEventListener("mousedown", this, options);
 
-        this._shouldLogTabContentActivity = true;
+        // If it's been less than 10 seconds since the frontend loaded, wait a bit.
+        if (performance.now() - WI.frontendCompletedLoadTimestamp < TabActivityDiagnosticEventRecorder.initialDelayBeforeSamplingInterval)
+            this._startInitialDelayBeforeSamplingTimer();
+        else
+            this._startEventSamplingTimer();
+
     }
 
     teardown()
     {
-        WI.TabBrowser.removeEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._handleTabBrowserSelectedTabContentViewDidChange, this);
-
         const options = {
             capture: true,
         };
@@ -62,7 +72,9 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         window.removeEventListener("keydown", this, options);
         window.removeEventListener("mousedown", this, options);
 
-        this._stopTrackingTabActivity();
+        this._stopInitialDelayBeforeSamplingTimer();
+        this._stopEventSamplingTimer();
+
     }
 
     // Public
@@ -87,10 +99,60 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
 
     // Private
 
-    _didInteractWithTabContent()
+    _startInitialDelayBeforeSamplingTimer()
     {
-        if (!this._shouldLogTabContentActivity)
+        if (this._initialDelayBeforeSamplingTimerIdentifier) {
+            clearTimeout(this._initialDelayBeforeSamplingTimerIdentifier);
+            this._initialDelayBeforeSamplingTimerIdentifier = undefined;
+        }
+
+        // All intervals are in milliseconds.
+        let maximumInitialDelay = TabActivityDiagnosticEventRecorder.initialDelayBeforeSamplingInterval;
+        let elapsedTime = performance.now() - WI.frontendCompletedLoadTimestamp;
+        let remainingTime = maximumInitialDelay - elapsedTime;
+        let initialDelay = Number.constrain(remainingTime, 0, maximumInitialDelay);
+        this._initialDelayBeforeSamplingTimerIdentifier = setTimeout(this._sampleCurrentTabActivity.bind(this), initialDelay);
+    }
+
+    _stopInitialDelayBeforeSamplingTimer()
+    {
+        if (this._initialDelayBeforeSamplingTimerIdentifier) {
+            clearTimeout(this._initialDelayBeforeSamplingTimerIdentifier);
+            this._initialDelayBeforeSamplingTimerIdentifier = undefined;
+        }
+    }
+
+    _startEventSamplingTimer()
+    {
+        if (this._eventSamplingTimerIdentifier) {
+            clearTimeout(this._eventSamplingTimerIdentifier);
+            this._eventSamplingTimerIdentifier = undefined;
+        }
+
+        this._eventSamplingTimerIdentifier = setTimeout(this._sampleCurrentTabActivity.bind(this), TabActivityDiagnosticEventRecorder.eventSamplingInterval);
+    }
+
+    _stopEventSamplingTimer()
+    {
+        if (this._eventSamplingTimerIdentifier) {
+            clearTimeout(this._eventSamplingTimerIdentifier);
+            this._eventSamplingTimerIdentifier = undefined;
+        }
+    }
+
+    _sampleCurrentTabActivity()
+    {
+        // Set up the next timer first so later code can bail out if there's nothing to do.
+        this._stopEventSamplingTimer();
+        this._stopInitialDelayBeforeSamplingTimer();
+        this._startEventSamplingTimer();
+
+        let intervalSinceLastUserInteraction = performance.now() - this._lastUserInteractionTimestamp;
+        if (intervalSinceLastUserInteraction > TabActivityDiagnosticEventRecorder.eventSamplingInterval) {
+            if (WI.settings.debugAutoLogDiagnosticEvents.valueRespectingDebugUIAvailability)
+                console.log("TabActivity: sample not reported, last user interaction was %.1f seconds ago.".format(intervalSinceLastUserInteraction / 1000));
             return;
+        }
 
         let selectedTabContentView = WI.tabBrowser.selectedTabContentView;
         console.assert(selectedTabContentView);
@@ -98,34 +160,16 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
             return;
 
         let tabType = selectedTabContentView.type;
-        let interval = TabActivityDiagnosticEventRecorder.ActivityTimingResolution;
+        let interval = TabActivityDiagnosticEventRecorder.eventSamplingInterval / 1000;
         this.logDiagnosticEvent(this.name, {tabType, interval});
-
-        this._beginTabActivityTimeout();
     }
 
-    _clearTabActivityTimeout()
+    _didObserveUserInteraction()
     {
-        if (this._tabActivityTimeoutIdentifier) {
-            clearTimeout(this._tabActivityTimeoutIdentifier);
-            this._tabActivityTimeoutIdentifier = 0;
-        }
-    }
+        if (!this._inspectorHasFocus)
+            return;
 
-    _beginTabActivityTimeout()
-    {
-        this._stopTrackingTabActivity();
-
-        this._tabActivityTimeoutIdentifier = setTimeout(() => {
-            this._shouldLogTabContentActivity = true;
-            this._tabActivityTimeoutIdentifier = 0;
-        }, TabActivityDiagnosticEventRecorder.ActivityTimingResolution);
-    }
-
-    _stopTrackingTabActivity()
-    {
-        this._clearTabActivityTimeout();
-        this._shouldLogTabContentActivity = false;
+        this._lastUserInteractionTimestamp = performance.now();
     }
 
     _handleWindowFocus(event)
@@ -133,7 +177,7 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         if (event.target !== window)
             return;
 
-        this._shouldLogTabContentActivity = true;
+        this._inspectorHasFocus = true;
     }
 
     _handleWindowBlur(event)
@@ -141,24 +185,17 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         if (event.target !== window)
             return;
 
-        this._stopTrackingTabActivity();
+        this._inspectorHasFocus = false;
     }
 
     _handleWindowKeyDown(event)
     {
-        this._didInteractWithTabContent();
+        this._didObserveUserInteraction();
     }
 
     _handleWindowMouseDown(event)
     {
-        this._didInteractWithTabContent();
-    }
-
-    _handleTabBrowserSelectedTabContentViewDidChange(event)
-    {
-        this._clearTabActivityTimeout();
-        this._shouldLogTabContentActivity = true;
+        this._didObserveUserInteraction();
     }
 };
 
-WI.TabActivityDiagnosticEventRecorder.ActivityTimingResolution = 60 * 1000;
