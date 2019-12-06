@@ -1,3 +1,17 @@
+2019-12-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix css1/basic/containment.html
+        https://bugs.webkit.org/show_bug.cgi?id=204931
+        <rdar://problem/57682871>
+
+        Reviewed by Simon Fraser.
+
+        moveToNextBreakablePosition jumped over all the positions that came back as the current position.
+        e.g --- <- first 2 breakable positions are at: 1 2 but we skipped over the first one.
+
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::moveToNextBreakablePosition):
+
 2019-12-05  Megan Gardner  <megan_gardner@apple.com>
 
         Move member variable that should be private

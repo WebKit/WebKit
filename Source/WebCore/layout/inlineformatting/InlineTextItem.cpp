@@ -72,12 +72,13 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
     };
 
     auto textLength = lineBreakIterator.stringView().length();
-    auto currentPosition = startPosition;
-    while (currentPosition < textLength - 1) {
-        auto nextBreakablePosition = findNextBreakablePosition(currentPosition);
-        if (nextBreakablePosition != currentPosition)
-            return nextBreakablePosition - currentPosition;
-        ++currentPosition;
+    auto startPositionForNextBreakablePosition = startPosition;
+    while (startPositionForNextBreakablePosition < textLength) {
+        auto nextBreakablePosition = findNextBreakablePosition(startPositionForNextBreakablePosition);
+        // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
+        if (nextBreakablePosition != startPosition)
+            return nextBreakablePosition - startPosition;
+        ++startPositionForNextBreakablePosition;
     }
     return textLength - startPosition;
 }
