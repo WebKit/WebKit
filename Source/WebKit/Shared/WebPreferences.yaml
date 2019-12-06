@@ -1819,10 +1819,24 @@ IsThirdPartyCookieBlockingEnabled:
 
 IsFirstPartyWebsiteDataRemovalEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Remove Non-Cookie Data After 7 Days of No User Interaction (ITP)"
   humanReadableDescription: "Remove all non-cookie website data after seven days of no user interaction when Intelligent Tracking Prevention is enabled"
   category: experimental
+
+IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "[ITP Live-On] 1 Hour Timeout For Non-Cookie Data Removal"
+  humanReadableDescription: "Remove all non-cookie website data after just one hour of no user interaction when Intelligent Tracking Prevention is enabled"
+  category: internal
+
+IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "[ITP Repro] 30 Second Timeout For Non-Cookie Data Removal"
+  humanReadableDescription: "Remove all non-cookie website data after just 30 seconds of no user interaction when Intelligent Tracking Prevention is enabled"
+  category: internal
 
 IsLoggedInAPIEnabled:
     type: bool

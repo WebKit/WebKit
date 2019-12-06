@@ -863,12 +863,16 @@ bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(Res
     ASSERT(!RunLoop::isMain());
 
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic, operatingDatesWindow)) {
-        // Drop privacy sensitive data because we no longer need it.
-        // Set timestamp to 0 so that statistics merge will know
-        // it has been reset as opposed to its default -1.
-        resourceStatistic.mostRecentUserInteractionTime = { };
-        resourceStatistic.storageAccessUnderTopFrameDomains.clear();
-        resourceStatistic.hadUserInteraction = false;
+        if (operatingDatesWindow == OperatingDatesWindow::Long) {
+            // Drop privacy sensitive data because we no longer need it.
+            // Set timestamp to 0 so that statistics merge will know
+            // it has been reset as opposed to its default -1.
+            resourceStatistic.mostRecentUserInteractionTime = { };
+            resourceStatistic.storageAccessUnderTopFrameDomains.clear();
+            resourceStatistic.hadUserInteraction = false;
+        }
+        
+        return false;
     }
 
     return resourceStatistic.hadUserInteraction;
@@ -883,8 +887,22 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoa
 {
     bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.gotLinkDecorationFromPrevalentResource;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
+    
+    OperatingDatesWindow window;
+    switch (firstPartyWebsiteDataRemovalMode()) {
+    case FirstPartyWebsiteDataRemovalMode::AllButCookies:
+        FALLTHROUGH;
+    case FirstPartyWebsiteDataRemovalMode::None:
+        window = OperatingDatesWindow::Short;
+        break;
+    case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
+        window = OperatingDatesWindow::ForLiveOnTesting;
+        break;
+    case FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout:
+        window = OperatingDatesWindow::ForReproTesting;
+    }
 
-    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short);
+    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
 Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()

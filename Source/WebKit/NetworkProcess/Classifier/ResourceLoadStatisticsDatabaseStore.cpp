@@ -2143,7 +2143,11 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
 bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(const DomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
 {
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow)) {
-        clearUserInteraction(resourceStatistic.registrableDomain, [] { });
+
+        // Drop privacy sensitive data if we no longer need it.
+        if (operatingDatesWindow == OperatingDatesWindow::Long)
+            clearUserInteraction(resourceStatistic.registrableDomain, [] { });
+
         return false;
     }
 
@@ -2160,7 +2164,21 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
     bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.isScheduledForAllButCookieDataRemoval;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
 
-    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short);
+    OperatingDatesWindow window;
+    switch (firstPartyWebsiteDataRemovalMode()) {
+    case FirstPartyWebsiteDataRemovalMode::AllButCookies:
+        FALLTHROUGH;
+    case FirstPartyWebsiteDataRemovalMode::None:
+        window = OperatingDatesWindow::Short;
+        break;
+    case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
+        window = OperatingDatesWindow::ForLiveOnTesting;
+        break;
+    case FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout:
+        window = OperatingDatesWindow::ForReproTesting;
+    }
+
+    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
 Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()

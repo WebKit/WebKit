@@ -53,6 +53,7 @@ using namespace WebCore;
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
 constexpr unsigned operatingDatesWindowLong { 30 };
 constexpr unsigned operatingDatesWindowShort { 7 };
+constexpr Seconds operatingTimeWindowForLiveOnTesting { 1_h };
 
 #if !RELEASE_LOG_DISABLED
 static String domainsToString(const Vector<RegistrableDomain>& domains)
@@ -503,7 +504,20 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserIn
 {
     ASSERT(!RunLoop::isMain());
 
-    unsigned operatingDatesWindowInDays = (operatingDatesWindow == OperatingDatesWindow::Long ? operatingDatesWindowLong : operatingDatesWindowShort);
+    unsigned operatingDatesWindowInDays;
+    switch (operatingDatesWindow) {
+    case OperatingDatesWindow::Long:
+        operatingDatesWindowInDays = operatingDatesWindowLong;
+        break;
+    case OperatingDatesWindow::Short:
+        operatingDatesWindowInDays = operatingDatesWindowShort;
+        break;
+    case OperatingDatesWindow::ForLiveOnTesting:
+        return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
+    case OperatingDatesWindow::ForReproTesting:
+        return true;
+    }
+
     if (m_operatingDates.size() >= operatingDatesWindowInDays) {
         if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_operatingDates.first())
             return true;

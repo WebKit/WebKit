@@ -75,7 +75,7 @@ struct SameSiteInfo;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
-enum class FirstPartyWebsiteDataRemovalMode : bool { AllButCookies, None };
+enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -230,6 +230,16 @@ template<> struct EnumTraits<WebCore::ThirdPartyCookieBlockingMode> {
         WebCore::ThirdPartyCookieBlockingMode::All,
         WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction,
         WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy
+    >;
+};
+
+template<> struct EnumTraits<WebCore::FirstPartyWebsiteDataRemovalMode> {
+    using values = EnumValues<
+        WebCore::FirstPartyWebsiteDataRemovalMode,
+        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies,
+        WebCore::FirstPartyWebsiteDataRemovalMode::None,
+        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout,
+        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout
     >;
 };
 

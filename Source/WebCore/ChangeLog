@@ -1,3 +1,25 @@
+2019-12-05  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Add fast mode for non-cookie website data deletion
+        https://bugs.webkit.org/show_bug.cgi?id=204858
+        <rdar://problem/57639851>
+
+        Reviewed by Alex Christensen.
+
+        This change adds two internal flags:
+        - "Live-On Testing" with a one hour timeout instead of seven days.
+        - "Repro Testing" with an instant timeout (bar ITP's regular delays) instead of seven days.
+
+        These internal flags should be removed once testing is complete: <rdar://problem/57673418>
+
+        No new tests. This change just adds new opt-in settings for manual testing.
+
+        * page/Settings.yaml:
+        * platform/network/NetworkStorageSession.h:
+            The FirstPartyWebsiteDataRemovalMode enum now has two new values:
+            - AllButCookiesLiveOnTestingTimeout
+            - AllButCookiesReproTestingTimeout
+
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         PageConfiguration::dragClient should use a smart pointer

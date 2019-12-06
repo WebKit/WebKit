@@ -1,3 +1,42 @@
+2019-12-05  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Add fast mode for non-cookie website data deletion
+        https://bugs.webkit.org/show_bug.cgi?id=204858
+        <rdar://problem/57639851>
+
+        Reviewed by Alex Christensen.
+
+        The purpose of this change is to allow for dedicated testing of the change in
+        https://trac.webkit.org/changeset/253082/webkit. Waiting seven days just isn't a good
+        starting point.
+
+        This change adds two internal flags:
+        - "Live-On Testing" with a one hour timeout instead of seven days.
+        - "Repro Testing" with an instant timeout (bar ITP's regular delays) instead of seven days.
+
+        The change also makes sure that hasHadUnexpiredRecentUserInteraction() in
+        ResourceLoadStatisticsDatabaseStore and ResourceLoadStatisticsMemoryStore only
+        age out the user interaction timestamp if the OperatingDatesWindow is Long so
+        that we don't age out timestamps early with the shorter OperatingDatesWindows.
+
+        This change changes the default value of IsFirstPartyWebsiteDataRemovalEnabled to true.
+
+        These internal flags should be removed once testing is complete: <rdar://problem/57673418>
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode):
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         Optimize IPC::Connection::SyncMessageState methods

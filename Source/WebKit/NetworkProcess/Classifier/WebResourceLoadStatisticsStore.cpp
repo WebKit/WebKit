@@ -486,8 +486,11 @@ void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPa
     ASSERT(RunLoop::isMain());
 
     postTask([this, mode, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_statisticsStore)
+        if (m_statisticsStore) {
             m_statisticsStore->setFirstPartyWebsiteDataRemovalMode(mode);
+            if (mode == FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout)
+                m_statisticsStore->setIsRunningTest(true);
+        }
         postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });

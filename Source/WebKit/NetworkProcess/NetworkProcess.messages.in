@@ -138,7 +138,7 @@ messages -> NetworkProcess LegacyReceiver {
     HasIsolatedSession(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> (bool hasIsolatedSession) Async
     SetShouldDowngradeReferrerForTesting(bool enabled) -> () Async
     SetShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> () Async
-    SetFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, enum:bool WebCore::FirstPartyWebsiteDataRemovalMode mode) -> () Async
+    SetFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, enum:uint8_t WebCore::FirstPartyWebsiteDataRemovalMode mode) -> () Async
 #endif
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);

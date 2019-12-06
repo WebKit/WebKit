@@ -74,7 +74,7 @@ private:
     int m_monthDay { 0 }; // [1, 31].
 };
 
-enum class OperatingDatesWindow : bool { Long, Short };
+enum class OperatingDatesWindow : uint8_t { Long, Short, ForLiveOnTesting, ForReproTesting };
 enum class CookieAccess : uint8_t { CannotRequest, BasedOnCookiePolicy, OnlyIfGranted };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
