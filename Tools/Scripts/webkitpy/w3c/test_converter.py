@@ -30,10 +30,15 @@
 import json
 import logging
 import re
+import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
-from HTMLParser import HTMLParser
+
+if sys.version_info > (3, 0):
+    from html.parser import HTMLParser
+else:
+    from HTMLParser import HTMLParser
 
 _log = logging.getLogger(__name__)
 

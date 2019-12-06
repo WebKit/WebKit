@@ -24,7 +24,6 @@
 
 """unit testing code for webkitpy."""
 
-import StringIO
 import itertools
 import json
 import logging
@@ -41,6 +40,7 @@ from webkitpy.common.system.logutils import configure_logging
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.host import Host
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.port.config import Config
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
@@ -353,9 +353,9 @@ class Tester(object):
         return names
 
     def _log_exception(self):
-        s = StringIO.StringIO()
+        s = StringIO()
         traceback.print_exc(file=s)
-        for l in s.buflist:
+        for l in s.getvalue().splitlines():
             _log.error('  ' + l.rstrip())
 
 
@@ -373,9 +373,8 @@ class _Loader(unittest.TestLoader):
             if not hasattr(getattr(testCaseClass, attrname), '__call__'):
                 return False
             return (any(attrname.startswith(prefix) for prefix in self.test_method_prefixes))
-        testFnNames = filter(isTestMethod, dir(testCaseClass))
-        testFnNames.sort()
-        return testFnNames
+
+        return sorted(filter(isTestMethod, dir(testCaseClass)))
 
 
 if __name__ == '__main__':

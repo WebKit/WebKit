@@ -1,3 +1,36 @@
+2019-12-06  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.test
+        https://bugs.webkit.org/show_bug.cgi?id=204952
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.tool.
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py: Use Python 2/3
+        compatible StringIO objects.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Ditto.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py: Ditto.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py: Ditto.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py: Ditto.
+        * Scripts/webkitpy/test/finder.py:
+        (Finder._exclude): Convert filter to list.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._log_exception): Use Python 2/3 compatible StringIO object.
+        (_Loader.getTestCaseNames): Convert filter to list.
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found): Use Python 2/3 compatible StringIO.
+        (TesterTest.test_integration_tests_are_found): Sort serial tests before comparing.
+        * Scripts/webkitpy/test/printer.py: Use Python 2/3 compatible StringIO.
+        * Scripts/webkitpy/test/runner_unittest.py: Ditto.
+        * Scripts/webkitpy/test/skip.py:
+        (_skipped_method._skip): Fix class inspection on instance method.
+        * Scripts/webkitpy/test/skip_unittest.py: Use Python 2/3 compatible StringIO.
+        * Scripts/webkitpy/w3c/test_converter.py: Use Python 2/3 compatible HTMLParser.
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (main): Fix Python 3 syntax errors.
+        * lldb/dump_class_layout_unittest.py:
+        (TestDumpClassLayout.setUpClass): Fix Python 3 syntax errors.
+
 2019-12-05  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support to webkitpy.browserperfdash

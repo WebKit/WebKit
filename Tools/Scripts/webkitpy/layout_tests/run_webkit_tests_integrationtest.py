@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import StringIO
 import unittest
 
 from webkitpy.common.system import outputcapture, path
@@ -37,6 +36,7 @@ from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_dar
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.unicode_compatibility import StringIO
 
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
@@ -77,7 +77,7 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
     if shared_port:
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
 
-    logging_stream = StringIO.StringIO()
+    logging_stream = StringIO()
     run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     return run_details.exit_code == 0
 
@@ -100,7 +100,7 @@ def run_and_capture(port_obj, options, parsed_args, shared_port=True):
     oc = outputcapture.OutputCapture()
     try:
         oc.capture_output()
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
         run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     finally:
         oc.restore_output()
@@ -135,7 +135,7 @@ def get_test_results(args, host=None):
 
     oc = outputcapture.OutputCapture()
     oc.capture_output()
-    logging_stream = StringIO.StringIO()
+    logging_stream = StringIO()
     try:
         run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     finally:
@@ -180,7 +180,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def test_basic(self):
         options, args = parse_args(tests_included=True)
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options)
         details = run_webkit_tests.run(port_obj, options, args, logging_stream)
@@ -798,8 +798,8 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(full_results['has_pretty_patch'], False)
 
     def test_unsupported_platform(self):
-        stdout = StringIO.StringIO()
-        stderr = StringIO.StringIO()
+        stdout = StringIO()
+        stderr = StringIO()
         res = run_webkit_tests.main(['--platform', 'foo'], stdout, stderr)
 
         self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
@@ -819,7 +819,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
         host = MockHost()
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
         run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
         self.assertTrue('text.html passed' in logging_stream.getvalue())
         self.assertTrue('image.html passed' in logging_stream.getvalue())
@@ -836,7 +836,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         oc = outputcapture.OutputCapture()
         try:
             oc.capture_output()
-            logging = StringIO.StringIO()
+            logging = StringIO()
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
         finally:
             output, err, _ = oc.restore_output()
@@ -860,7 +860,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         oc = outputcapture.OutputCapture()
         try:
             oc.capture_output()
-            logging = StringIO.StringIO()
+            logging = StringIO()
             run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
         finally:
             output, _, _ = oc.restore_output()
@@ -894,7 +894,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         oc = outputcapture.OutputCapture()
         try:
             oc.capture_output()
-            logging = StringIO.StringIO()
+            logging = StringIO()
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
         finally:
             output, err, _ = oc.restore_output()
@@ -915,7 +915,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         oc = outputcapture.OutputCapture()
         try:
             oc.capture_output()
-            logging = StringIO.StringIO()
+            logging = StringIO()
             run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
         finally:
             output, _, _ = oc.restore_output()
@@ -1040,8 +1040,8 @@ class MainTest(unittest.TestCase):
         def exception_raising_run(port, options, args, stderr):
             assert False
 
-        stdout = StringIO.StringIO()
-        stderr = StringIO.StringIO()
+        stdout = StringIO()
+        stderr = StringIO()
         try:
             run_webkit_tests.run = interrupting_run
             res = run_webkit_tests.main([], stdout, stderr)

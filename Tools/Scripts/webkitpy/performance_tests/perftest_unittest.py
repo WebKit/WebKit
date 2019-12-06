@@ -26,13 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import json
 import math
 import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestDriver
 from webkitpy.port.test import TestPort

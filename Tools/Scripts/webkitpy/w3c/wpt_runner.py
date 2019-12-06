@@ -46,7 +46,7 @@ def main(script_name, argv):
     host = Host()
     try:
         port = host.port_factory.get(options.platform, options)
-    except NotImplementedError, e:
+    except NotImplementedError as e:
         _log.error(str(e))
         sys.exit(-1)
 

@@ -20,10 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import logging
 import unittest
 
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.test.skip import skip_if
 
 
@@ -37,7 +37,7 @@ class SkipTest(unittest.TestCase):
         self.old_propagate = self.logger.propagate
         self.logger.propagate = False
 
-        self.log_stream = StringIO.StringIO()
+        self.log_stream = StringIO()
         self.handler = logging.StreamHandler(self.log_stream)
         self.logger.addHandler(self.handler)
 

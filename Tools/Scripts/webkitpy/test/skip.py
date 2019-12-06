@@ -44,9 +44,9 @@ def skip_if(klass, condition, message=None, logger=None):
 
 
 def _skipped_method(method, message, logger):
-    def _skip(*args):
-        if method.im_class._printed_skipped_message:
+    def _skip(self, *args):
+        if self._printed_skipped_message:
             return
-        method.im_class._printed_skipped_message = True
-        logger.info('Skipping %s.%s: %s' % (method.__module__, method.im_class.__name__, message))
+        self._printed_skipped_message = True
+        logger.info('Skipping %s.%s: %s' % (method.__module__, type(self).__name__, message))
     return _skip

@@ -164,7 +164,7 @@ class Finder(object):
         _log.info('Skipping tests in the following modules or packages because they %s:' % reason)
         for prefix in module_prefixes:
             _log.info('    %s' % prefix)
-            modules_to_exclude = filter(lambda m: m.startswith(prefix), modules)
+            modules_to_exclude = list(filter(lambda m: m.startswith(prefix), modules))
             for m in modules_to_exclude:
                 if len(modules_to_exclude) > 1:
                     _log.debug('        %s' % m)

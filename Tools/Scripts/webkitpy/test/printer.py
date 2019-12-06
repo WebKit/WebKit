@@ -21,11 +21,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import logging
 
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.tool.grammar import pluralize
 
@@ -187,7 +187,7 @@ class Printer(object):
 
 class _CaptureAndPassThroughStream(object):
     def __init__(self, stream):
-        self._buffer = StringIO.StringIO()
+        self._buffer = StringIO()
         self._stream = stream
 
     def write(self, msg):

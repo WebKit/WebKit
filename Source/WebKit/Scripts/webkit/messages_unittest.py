@@ -24,7 +24,11 @@ import os
 import re
 import sys
 import unittest
-from StringIO import StringIO
+
+if sys.version_info > (3, 0):
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from webkit import messages

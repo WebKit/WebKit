@@ -20,11 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import logging
 import re
 import unittest
 
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner
@@ -86,7 +86,7 @@ class RunnerTest(unittest.TestCase):
 
     def test_run(self, verbose=0, timing=False, child_processes=1, quiet=False):
         options = MockOptions(verbose=verbose, timing=timing, child_processes=child_processes, quiet=quiet, pass_through=False)
-        stream = StringIO.StringIO()
+        stream = StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))

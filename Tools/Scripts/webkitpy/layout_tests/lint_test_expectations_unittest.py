@@ -26,11 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import optparse
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.layout_tests import lint_test_expectations
 
 
@@ -85,14 +85,14 @@ class LintTest(unittest.TestCase):
                                                FakePort(host, 'b', 'path-to-b'),
                                                FakePort(host, 'b-win', 'path-to-b')))
 
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
         options = optparse.Values({'platform': None})
         res = lint_test_expectations.lint(host, options, logging_stream)
         self.assertEqual(res, 0)
         self.assertEqual(host.ports_parsed, ['a', 'b', 'b-win'])
 
     def test_lint_test_files(self):
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
         options = optparse.Values({'platform': 'test-mac-leopard'})
         host = MockHost()
 
@@ -116,7 +116,7 @@ class LintTest(unittest.TestCase):
         host.port_factory.get = lambda platform, options=None: port
         host.port_factory.all_port_names = lambda platform=None: [port.name()]
 
-        logging_stream = StringIO.StringIO()
+        logging_stream = StringIO()
 
         res = lint_test_expectations.lint(host, options, logging_stream)
 
@@ -140,8 +140,8 @@ class MainTest(unittest.TestCase):
         def exception_raising_lint(host, options, logging_stream):
             assert False
 
-        stdout = StringIO.StringIO()
-        stderr = StringIO.StringIO()
+        stdout = StringIO()
+        stderr = StringIO()
         try:
             lint_test_expectations.lint = interrupting_lint
             res = lint_test_expectations.main([], stdout, stderr)

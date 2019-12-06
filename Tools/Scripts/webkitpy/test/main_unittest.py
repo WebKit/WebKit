@@ -20,11 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import logging
 import sys
 import unittest
 
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -52,7 +52,7 @@ class TesterTest(unittest.TestCase):
 
     def test_no_tests_found(self):
         tester = Tester()
-        errors = StringIO.StringIO()
+        errors = StringIO()
 
         # Here we need to remove any existing log handlers so that they
         # don't log the messages webkitpy.test while we're testing it.
@@ -99,7 +99,7 @@ class TesterTest(unittest.TestCase):
             STUBS_CLASS + '.integration_test_empty',
             STUBS_CLASS + '.test_empty',
             ])
-        self.assertEqual(serial_tests, [
+        self.assertEqual(sorted(serial_tests), [
             STUBS_CLASS + '.serial_integration_test_empty',
             STUBS_CLASS + '.serial_test_empty',
             ])
