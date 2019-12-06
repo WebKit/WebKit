@@ -98,6 +98,8 @@ struct Run {
     void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
 
+    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContext() && textContext()->content() == "\n" && style().preserveNewline()); }
+
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox->style(); }
 

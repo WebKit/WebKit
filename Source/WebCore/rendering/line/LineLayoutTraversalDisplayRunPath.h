@@ -61,7 +61,7 @@ public:
 
     bool isLeftToRightDirection() const { return true; }
     bool dirOverride() const { return false; }
-    bool isLineBreak() const { return false; } // FIXME: Implement.
+    bool isLineBreak() const { return run().isLineBreak(); }
 
     bool hasHyphen() const { return false; } // FIXME: Implement.
     StringView text() const { return run().textContext()->content(); }
@@ -85,8 +85,6 @@ public:
     {
         ASSERT(!atEnd());
         ++m_runIndex;
-        while (!atEnd() && !run().textContext())
-            ++m_runIndex;
     }
     void traverseNextTextBoxInTextOrder() {  traverseNextTextBoxInVisualOrder(); }
 
