@@ -40,8 +40,11 @@ NetworkRTCMonitor::~NetworkRTCMonitor()
     ASSERT(!m_manager);
 }
 
-void NetworkRTCMonitor::startUpdating()
+void NetworkRTCMonitor::startUpdatingIfNeeded()
 {
+    if (m_isStarted)
+        return;
+
     m_isStarted = true;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
         m_manager = makeUniqueWithoutFastMallocCheck<rtc::BasicNetworkManager>();

@@ -44,6 +44,7 @@ class WebRTCMonitor final : public rtc::NetworkManagerBase {
 public:
     WebRTCMonitor() = default;
 
+    void networkProcessCrashed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:

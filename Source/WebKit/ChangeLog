@@ -1,5 +1,36 @@
 2019-12-06  youenn fablet  <youenn@apple.com>
 
+        Protect WebRTC network monitoring to wait forever in edge cases
+        https://bugs.webkit.org/show_bug.cgi?id=204846
+
+        Reviewed by Eric Carlson.
+
+        We were limiting the number of IPC message sent to network process by only sending the start monitoring event for the first client.
+        The issue is that, if network process crashes for instance while having not yet given the list of networks, all clients will be hanging
+        waiting for the completion of network list.
+        We are now sending an IPC message for every client and the network process will ignore the ones that are not useful.
+        In addition, in case of network process crash, we send a signal that network list has changed to make sure clients will never hang.
+        They might still fail connecting, which is ok since network process crashed.
+
+        Test: webrtc/datachannel/gather-candidates-networkprocess-crash.html
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkRTCMonitor::startUpdatingIfNeeded):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+        * NetworkProcess/webrtc/NetworkRTCMonitor.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::networkProcessCrashed):
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::WebRTCMonitor::StartUpdating):
+        (WebKit::WebRTCMonitor::StopUpdating):
+        (WebKit::WebRTCMonitor::networksChanged):
+        (WebKit::WebRTCMonitor::networkProcessCrashed):
+        * WebProcess/Network/webrtc/WebRTCMonitor.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+
+2019-12-06  youenn fablet  <youenn@apple.com>
+
         Output libwebrtc logging from Network Process as release logging
         https://bugs.webkit.org/show_bug.cgi?id=204853
 

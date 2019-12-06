@@ -1244,6 +1244,9 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     WebSocketStream::networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
 
+    if (m_libWebRTCNetwork)
+        m_libWebRTCNetwork->networkProcessCrashed();
+
     for (auto& page : m_pageMap.values()) {
         page->stopAllURLSchemeTasks();
 #if ENABLE(APPLE_PAY)

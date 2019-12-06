@@ -23,7 +23,7 @@
 #if USE(LIBWEBRTC)
 
 messages -> NetworkRTCMonitor NotRefCounted {
-    void StartUpdating()
+    void StartUpdatingIfNeeded()
     void StopUpdating()
 }
 

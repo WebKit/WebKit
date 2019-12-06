@@ -51,7 +51,7 @@ public:
     bool isStarted() const { return m_isStarted; }
 
 private:
-    void startUpdating();
+    void startUpdatingIfNeeded();
 
     void onNetworksChanged();
 

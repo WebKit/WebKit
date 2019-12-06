@@ -42,6 +42,8 @@ class LibWebRTCNetwork {
 public:
     LibWebRTCNetwork() = default;
 
+    void networkProcessCrashed();
+
 #if USE(LIBWEBRTC)
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
@@ -65,5 +67,12 @@ private:
     WebMDNSRegister m_mdnsRegister;
 #endif
 };
+
+inline void LibWebRTCNetwork::networkProcessCrashed()
+{
+#if USE(LIBWEBRTC)
+    m_webNetworkMonitor.networkProcessCrashed();
+#endif
+}
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkRTCMonitorMessages.h"
@@ -47,35 +48,36 @@ void WebRTCMonitor::sendOnMainThread(Function<void(IPC::Connection&)>&& callback
 
 void WebRTCMonitor::StartUpdating()
 {
-    if (m_clientCount) {
-        // Need to signal new client that we already have the network list, let's do it asynchronously
-        if (m_receivedNetworkList) {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this] {
-                SignalNetworksChanged();
-            });
-        }
-    } else {
-        m_receivedNetworkList = false;
-        sendOnMainThread([](IPC::Connection& connection) {
-            connection.send(Messages::NetworkRTCMonitor::StartUpdating(), 0);
+    RELEASE_LOG(WebRTC, "WebRTCMonitor::StartUpdating");
+    if (m_receivedNetworkList) {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this] {
+            SignalNetworksChanged();
         });
     }
+
+    sendOnMainThread([](IPC::Connection& connection) {
+        RELEASE_LOG(WebRTC, "WebRTCMonitor asks network process to start updating");
+        connection.send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(), 0);
+    });
     ++m_clientCount;
 }
 
 void WebRTCMonitor::StopUpdating()
 {
+    RELEASE_LOG(WebRTC, "WebRTCMonitor::StopUpdating");
     ASSERT(m_clientCount);
     if (--m_clientCount)
         return;
 
     sendOnMainThread([](IPC::Connection& connection) {
+        RELEASE_LOG(WebRTC, "WebRTCMonitor asks network process to stop updating");
         connection.send(Messages::NetworkRTCMonitor::StopUpdating(), 0);
     });
 }
 
 void WebRTCMonitor::networksChanged(const Vector<RTCNetwork>& networks, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
 {
+    RELEASE_LOG(WebRTC, "WebRTCMonitor::networksChanged");
     // No need to protect 'this' as it has the lifetime of LibWebRTC which has the lifetime of the web process.
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, networks, ipv4, ipv6] {
         std::vector<rtc::Network*> networkList(networks.size());
@@ -91,6 +93,18 @@ void WebRTCMonitor::networksChanged(const Vector<RTCNetwork>& networks, const RT
         if (hasChanged || forceSignaling)
             SignalNetworksChanged();
 
+    });
+}
+
+void WebRTCMonitor::networkProcessCrashed()
+{
+    m_receivedNetworkList = false;
+    if (!WebCore::LibWebRTCProvider::hasWebRTCThreads())
+        return;
+
+    // In case we have clients waiting for networksChanged, we call SignalNetworksChanged to make sure they do not wait for nothing.    
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this] {
+        SignalNetworksChanged();
     });
 }
 

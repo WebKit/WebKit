@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing ICE candidate filtering when using data channel</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(async (test) => {
+    var counter = 0;
+    var pc = new RTCPeerConnection();
+    pc.createDataChannel('sendDataChannel');
+
+    const iceCandidatePromise = new Promise(r => pc.onicecandidate = r);
+
+    const offer = await pc.createOffer();
+    pc.setLocalDescription(offer);
+    // This test is a bit racy, we are trying to have network process crash between the time it receives a monitor start request and the time it answers that request.
+    if (window.testRunner && testRunner.terminateNetworkProcess)
+       setTimeout(() => testRunner.terminateNetworkProcess(), 0);
+
+    await iceCandidatePromise;
+}, "Gathering ICE candidates from a data channel while network process is crashing");
+    </script>
+  </body>
+</html>

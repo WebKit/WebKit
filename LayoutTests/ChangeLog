@@ -1,3 +1,14 @@
+2019-12-06  youenn fablet  <youenn@apple.com>
+
+        Protect WebRTC network monitoring to wait forever in edge cases
+        https://bugs.webkit.org/show_bug.cgi?id=204846
+        <rdar://problem/57618773>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/gather-candidates-networkprocess-crash-expected.txt: Added.
+        * webrtc/datachannel/gather-candidates-networkprocess-crash.html: Added.
+
 2019-12-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: http/tests/inspector/target/pause-on-inline-debugger-statement.html is crashing in debug

@@ -217,6 +217,11 @@ void PeerConnectionFactoryAndThreads::OnMessage(rtc::Message* message)
     delete data;
 }
 
+bool LibWebRTCProvider::hasWebRTCThreads()
+{
+    return !!staticFactoryAndThreads().networkThread;
+}
+
 void LibWebRTCProvider::callOnWebRTCNetworkThread(Function<void()>&& callback)
 {
     PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
