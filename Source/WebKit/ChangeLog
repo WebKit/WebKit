@@ -1,3 +1,15 @@
+2019-12-06  Keith Miller  <keith_miller@apple.com>
+
+        Remove various .order files.
+        https://bugs.webkit.org/show_bug.cgi?id=204959
+
+        Reviewed by Yusuke Suzuki.
+
+        These files are all super out of date and likely don't do anything anymore.
+        The signatures of the functions have changed thus the mangled name has changed.
+
+        * mac/WebKit2.order: Removed.
+
 2019-12-06  Dan Bernstein  <mitz@apple.com>
 
         Address <https://bugs.webkit.org/show_bug.cgi?id=189222#c3>
