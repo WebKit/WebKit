@@ -5,7 +5,7 @@ PRODUCT_NAME = ANGLE;
 
 EXECUTABLE_PREFIX = lib;
 
-ANGLE_OTHER_LDFLAGS = $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME));
+ANGLE_OTHER_LDFLAGS = -allowable_client WebCore -allowable_client WebCoreTestSupport $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME));
 ANGLE_OTHER_LDFLAGS_iphoneos = -framework IOSurface -framework OpenGLES;
 ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
