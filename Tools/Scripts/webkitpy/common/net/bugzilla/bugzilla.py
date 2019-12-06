@@ -585,10 +585,10 @@ class Bugzilla(object):
             self.browser.find_control("Bugzilla_restrictlogin").items[0].selected = False
             response = self.browser.submit()
 
-            match = re.search("<title>(.+?)</title>", response.read())
+            match = re.search(b'<title>(.+?)</title>', response.read())
             # If the resulting page has a title, and it contains the word
             # "invalid" assume it's the login failure page.
-            if match and re.search("Invalid", match.group(1), re.IGNORECASE):
+            if match and re.search(b'Invalid', match.group(1), re.IGNORECASE):
                 errorMessage = "Bugzilla login failed: %s" % match.group(1)
                 # raise an exception only if this was the last attempt
                 if attempts < 5:
@@ -665,7 +665,7 @@ class Bugzilla(object):
 
     @staticmethod
     def _parse_attachment_id_from_add_patch_to_bug_response(response_html):
-        match = re.search('<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
+        match = re.search(b'<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
         if match:
             return match.group('attachment_id')
         _log.warning('Unable to parse attachment id')
