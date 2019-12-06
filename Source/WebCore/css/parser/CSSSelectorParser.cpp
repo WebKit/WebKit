@@ -630,11 +630,13 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             DisallowPseudoElementsScope scope(this);
 
             auto& ident = block.consumeIncludingWhitespace();
-            if (ident.type() != IdentToken)
+            if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
 
             auto argumentList = makeUnique<Vector<AtomString>>();
             argumentList->append(ident.value().toAtomString());
+            selector->setArgumentList(WTFMove(argumentList));
+
             return selector;
         }
         case CSSSelector::PseudoElementPart: {

@@ -134,7 +134,7 @@ private:
 public:
     RenderStyle(RenderStyle&&);
     RenderStyle& operator=(RenderStyle&&);
-    ~RenderStyle();
+    WEBCORE_EXPORT ~RenderStyle();
 
     RenderStyle replace(RenderStyle&&) WARN_UNUSED_RETURN;
 
@@ -1747,7 +1747,7 @@ public:
     const Color& borderTopColor() const { return m_surroundData->border.top().color(); }
     const Color& borderBottomColor() const { return m_surroundData->border.bottom().color(); }
     const Color& backgroundColor() const { return m_backgroundData->color; }
-    const Color& color() const;
+    WEBCORE_EXPORT const Color& color() const;
     const Color& columnRuleColor() const { return m_rareNonInheritedData->multiCol->rule.color(); }
     const Color& outlineColor() const { return m_backgroundData->outline.color(); }
     const Color& textEmphasisColor() const { return m_rareInheritedData->textEmphasisColor; }

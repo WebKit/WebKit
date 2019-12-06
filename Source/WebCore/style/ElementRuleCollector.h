@@ -46,8 +46,16 @@ public:
     {
     }
 
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& highlightName)
+        : pseudoId(pseudoId)
+        , highlightName(highlightName)
+    {
+        ASSERT(pseudoId == PseudoId::Highlight);
+    }
+
     PseudoId pseudoId;
     Optional<StyleScrollbarState> scrollbarState;
+    AtomString highlightName;
 };
 
 struct MatchedRule {

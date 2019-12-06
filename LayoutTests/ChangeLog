@@ -1,3 +1,13 @@
+2019-12-06  Antti Koivisto  <antti@apple.com>
+
+        Support for resolving highlight pseudo element style
+        https://bugs.webkit.org/show_bug.cgi?id=204937
+
+        Reviewed by Simon Fraser.
+
+        * highlight/highlight-pseudo-element-style-expected.txt: Added.
+        * highlight/highlight-pseudo-element-style.html: Added.
+
 2019-12-06  youenn fablet  <youenn@apple.com>
 
         Protect WebRTC network monitoring to wait forever in edge cases

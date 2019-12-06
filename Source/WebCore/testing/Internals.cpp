@@ -170,6 +170,7 @@
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
 #include "StringCallback.h"
+#include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
@@ -5241,6 +5242,22 @@ void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(isPlaying);
 #endif
+}
+
+String Internals::highlightPseudoElementColor(const String& highlightName, Element& element)
+{
+    element.document().updateStyleIfNeeded();
+
+    auto& styleResolver = element.document().styleScope().resolver();
+    auto* parentStyle = element.computedStyle();
+    if (!parentStyle)
+        return { };
+
+    auto style = styleResolver.pseudoStyleForElement(element, { PseudoId::Highlight, highlightName }, *parentStyle);
+    if (!style)
+        return { };
+
+    return style->color().cssText();
 }
     
 Internals::TextIndicatorInfo::TextIndicatorInfo()

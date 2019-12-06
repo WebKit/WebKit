@@ -115,7 +115,7 @@ public:
     Vector<Ref<ProcessingInstruction>> collectXSLTransforms();
 #endif
 
-    Resolver& resolver();
+    WEBCORE_EXPORT Resolver& resolver();
     Resolver* resolverIfExists();
     void clearResolver();
     void releaseMemory();

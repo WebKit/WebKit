@@ -911,6 +911,8 @@ public:
     Ref<InternalsSetLike> createInternalsSetLike();
     Ref<InternalsMapLike> createInternalsMapLike();
 
+    String highlightPseudoElementColor(const String& highlightName, Element&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

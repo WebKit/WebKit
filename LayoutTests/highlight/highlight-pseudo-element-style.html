@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:HighlightAPIEnabled=true ] -->
+<html>
+<script src="../resources/js-test.js"></script>
+<style>
+#testDiv { color: red }
+::highlight(green-yellow-range) { color: green }
+#testspan1::highlight(green-yellow-range) { background-color: yellow; }
+#testspan2::highlight(green-yellow-range) { color: yellow; }
+#testspan3::highlight(blue-range) { color: blue }
+</style>
+<body>
+<div id=testdiv>
+    <span id=testspan1></span>
+    <span id=testspan2></span>
+    <span id=testspan3></span>
+</div>
+<script>
+
+description("Tests computing the highlight pseudo element style.");
+
+shouldBeEqualToString("internals.highlightPseudoElementColor('green-yellow-range', testdiv)", "rgb(0, 128, 0)");
+shouldBeEqualToString("internals.highlightPseudoElementColor('green-yellow-range', testspan1)", "rgb(0, 128, 0)");
+shouldBeEqualToString("internals.highlightPseudoElementColor('green-yellow-range', testspan2)", "rgb(255, 255, 0)");
+shouldBeEqualToString("internals.highlightPseudoElementColor('green-yellow-range', testspan3)", "rgb(0, 128, 0)");
+shouldBeEqualToString("internals.highlightPseudoElementColor('blue-range', testdiv)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('blue-range', testspan1)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('blue-range', testspan2)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('blue-range', testspan3)", "rgb(0, 0, 255)");
+shouldBeEqualToString("internals.highlightPseudoElementColor('non-existent-range', testdiv)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('non-existent-range', testspan1)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('non-existent-range', testspan2)", "");
+shouldBeEqualToString("internals.highlightPseudoElementColor('non-existent-range', testspan3)", "");
+
+</script>
+</body>
+</html>

@@ -819,4 +819,6 @@ enum CompositingPolicy {
 
     InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();
+
+    DOMString highlightPseudoElementColor(DOMString highlightName, Element element);
 };

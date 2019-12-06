@@ -91,6 +91,7 @@ public:
         const SelectorChecker::Mode resolvingMode;
         PseudoId pseudoId { PseudoId::None };
         Optional<StyleScrollbarState> scrollbarState;
+        AtomString nameForHightlightPseudoElement;
         const ContainerNode* scope { nullptr };
         bool isMatchingHostPseudoClass { false };
         const Element* shadowHostInPartRuleScope { nullptr };

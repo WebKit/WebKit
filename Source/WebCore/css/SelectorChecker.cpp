@@ -1191,6 +1191,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             return true;
         }
+
+        case CSSSelector::PseudoElementHighlight:
+            // Always matches when not specifically requested so it gets added to the pseudoIdSet.
+            if (checkingContext.pseudoId == PseudoId::None)
+                return true;
+            if (checkingContext.pseudoId != PseudoId::Highlight)
+                return false;
+            return selector.argumentList()->first() == checkingContext.nameForHightlightPseudoElement;
+
         default:
             return true;
         }
