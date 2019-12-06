@@ -282,6 +282,8 @@ static StringView makeDescription(PrevalentResourceDatabaseTelemetry::Statistic 
     case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
         return "NumberOfTimesAccessedAsFirstPartyDueToStorageAccessAPI";
     }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static void databaseSubmitTopLists(const PrevalentResourceDatabaseTelemetry& telemetry, const WebResourceLoadStatisticsStore& store)

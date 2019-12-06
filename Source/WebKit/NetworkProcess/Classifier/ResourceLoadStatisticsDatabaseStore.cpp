@@ -850,6 +850,7 @@ static std::pair<StringView, StringView> buildQueryStartAndEnd(PrevalentResource
         LOG_ERROR("ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery was called for an incorrect statistic, undetermined query behavior will result.");
         RELEASE_ASSERT_NOT_REACHED();
     }
+    return { };
 }
 
 static SQLiteStatement makeMedianWithoutUIQuery(SQLiteDatabase& database, PrevalentResourceDatabaseTelemetry::Statistic statistic)
@@ -977,7 +978,7 @@ static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabas
     if (numberOfPrevalentResourcesWithoutUI < bucketSize)
         return 0;
 
-    unsigned median;
+    unsigned median = 0;
     SQLiteStatement getMedianStatistic = makeMedianWithoutUIQuery(database, statistic);
 
     if (getMedianStatistic.prepare() == SQLITE_OK) {
@@ -1045,6 +1046,8 @@ static unsigned makeStatisticQuery(SQLiteDatabase& database, PrevalentResourceDa
     case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
         return getMedianOfPrevalentResourceWithoutUserInteraction(database, bucketSize, statistic, totalWithoutUI);
     }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithoutUI() const

@@ -7236,7 +7236,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_editableImageController = nullptr;
 #endif
 
-    CallbackBase::Error error;
+    CallbackBase::Error error { };
     switch (resetStateReason) {
     case ResetStateReason::NavigationSwap:
         FALLTHROUGH;

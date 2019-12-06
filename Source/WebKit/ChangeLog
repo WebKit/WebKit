@@ -1,3 +1,29 @@
+2019-12-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebKit] Fix compilation warnings for MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=204661
+
+        Reviewed by Don Olmstead.
+
+        No behavior changes.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::makeDescription):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toDiagnosticLoggingResultType):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachmentIdentifier):
+
 2019-12-05  Brian Burg  <bburg@apple.com>
 
         [Cocoa] _WKInspector uses wrong WKWebView in -setDiagnosticLoggingDelegate:

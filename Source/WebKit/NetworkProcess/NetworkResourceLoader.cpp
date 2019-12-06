@@ -327,7 +327,7 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 {
     ASSERT(RunLoop::isMain());
 
-    NetworkActivityTracker::CompletionCode code;
+    NetworkActivityTracker::CompletionCode code { };
     switch (result) {
     case LoadResult::Unknown:
         code = NetworkActivityTracker::CompletionCode::Undefined;

@@ -846,7 +846,7 @@ inline SameDocumentNavigationType toSameDocumentNavigationType(WKSameDocumentNav
 
 inline WKDiagnosticLoggingResultType toAPI(WebCore::DiagnosticLoggingResultType type)
 {
-    WKDiagnosticLoggingResultType wkType;
+    WKDiagnosticLoggingResultType wkType { };
 
     switch (type) {
     case WebCore::DiagnosticLoggingResultPass:
@@ -865,7 +865,7 @@ inline WKDiagnosticLoggingResultType toAPI(WebCore::DiagnosticLoggingResultType 
 
 inline WebCore::DiagnosticLoggingResultType toDiagnosticLoggingResultType(WKDiagnosticLoggingResultType wkType)
 {
-    WebCore::DiagnosticLoggingResultType type;
+    WebCore::DiagnosticLoggingResultType type { };
 
     switch (wkType) {
     case kWKDiagnosticLoggingResultPass:

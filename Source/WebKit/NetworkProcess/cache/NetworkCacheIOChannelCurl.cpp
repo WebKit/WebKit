@@ -35,7 +35,7 @@ IOChannel::IOChannel(const String& filePath, Type type)
     : m_path(filePath)
     , m_type(type)
 {
-    FileSystem::FileOpenMode mode;
+    FileSystem::FileOpenMode mode { };
     switch (type) {
     case Type::Read:
         mode = FileSystem::FileOpenMode::Read;
