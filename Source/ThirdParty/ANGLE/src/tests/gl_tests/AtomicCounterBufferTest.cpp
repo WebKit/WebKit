@@ -437,7 +437,10 @@ void main()
 // is with WGL where if a Vulkan test is run first in the shard, it causes crashes when an OpenGL
 // test is run afterwards.  AtomicCounter* tests are alphabetically first, and having them not run
 // on Vulkan makes every shard our bots currently make do have at least some OpenGL test run before
-// any Vulkan test.
+// any Vulkan test. When these tests can be enabled on Vulkan, can replace the current macros with
+// the updated macros below that include Vulkan:
+// ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(AtomicCounterBufferTest);
+// ANGLE_INSTANTIATE_TEST_ES31(AtomicCounterBufferTest31);
 ANGLE_INSTANTIATE_TEST(AtomicCounterBufferTest,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),

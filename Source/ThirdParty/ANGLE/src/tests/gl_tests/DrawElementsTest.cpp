@@ -111,6 +111,8 @@ TEST_P(DrawElementsTest, ClientSideNullptrArrayZeroCount)
 // deleting the applied index buffer.
 TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
     // Init program
     constexpr char kVS[] =
         "attribute vec2 position;\n"
@@ -311,6 +313,6 @@ TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-ANGLE_INSTANTIATE_TEST(DrawElementsTest, ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(WebGLDrawElementsTest, ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
+ANGLE_INSTANTIATE_TEST_ES2(WebGLDrawElementsTest);
 }  // namespace

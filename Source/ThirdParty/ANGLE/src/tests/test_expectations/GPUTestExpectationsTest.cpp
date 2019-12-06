@@ -27,7 +27,8 @@ class GPUTestConfigTest : public ANGLETest
         EXPECT_EQ(IsLinux(), config.getConditions()[GPUTestConfig::kConditionLinux]);
         EXPECT_EQ(IsAndroid(), config.getConditions()[GPUTestConfig::kConditionAndroid]);
         EXPECT_EQ(IsNexus5X(), config.getConditions()[GPUTestConfig::kConditionNexus5X]);
-        EXPECT_EQ(IsPixel2(), config.getConditions()[GPUTestConfig::kConditionPixel2]);
+        EXPECT_EQ((IsPixel2() || IsPixel2XL()),
+                  config.getConditions()[GPUTestConfig::kConditionPixel2OrXL]);
         EXPECT_EQ(IsIntel(), config.getConditions()[GPUTestConfig::kConditionIntel]);
         EXPECT_EQ(IsAMD(), config.getConditions()[GPUTestConfig::kConditionAMD]);
         EXPECT_EQ(IsNVIDIA(), config.getConditions()[GPUTestConfig::kConditionNVIDIA]);
@@ -42,6 +43,7 @@ class GPUTestConfigTest : public ANGLETest
         bool GLDesktop = false;
         bool GLES      = false;
         bool Vulkan    = false;
+        bool Metal     = false;
         switch (api)
         {
             case GPUTestConfig::kAPID3D9:
@@ -59,6 +61,9 @@ class GPUTestConfigTest : public ANGLETest
             case GPUTestConfig::kAPIVulkan:
                 Vulkan = true;
                 break;
+            case GPUTestConfig::kAPIMetal:
+                Metal = true;
+                break;
             case GPUTestConfig::kAPIUnknown:
             default:
                 break;
@@ -68,6 +73,7 @@ class GPUTestConfigTest : public ANGLETest
         EXPECT_EQ(GLDesktop, config.getConditions()[GPUTestConfig::kConditionGLDesktop]);
         EXPECT_EQ(GLES, config.getConditions()[GPUTestConfig::kConditionGLES]);
         EXPECT_EQ(Vulkan, config.getConditions()[GPUTestConfig::kConditionVulkan]);
+        EXPECT_EQ(Metal, config.getConditions()[GPUTestConfig::kConditionMetal]);
     }
 };
 
@@ -93,6 +99,12 @@ TEST_P(GPUTestConfigTest, GPUTestConfigConditions_D3D11)
     validateConfigAPI(config, GPUTestConfig::kAPID3D11);
 }
 
+TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Metal)
+{
+    GPUTestConfig config(GPUTestConfig::kAPIMetal);
+    validateConfigAPI(config, GPUTestConfig::kAPIMetal);
+}
+
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_GLDesktop)
 {
     GPUTestConfig config(GPUTestConfig::kAPIGLDesktop);
@@ -113,14 +125,6 @@ TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Vulkan)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(GPUTestConfigTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GPUTestConfigTest);
 
 }  // namespace angle

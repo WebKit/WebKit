@@ -159,10 +159,6 @@ TEST_P(D3DImageFormatConversionTest, WriteColorFunctionR8G8B8)
 // imageformats.h from the D3D renderer), we can still run the test against OpenGL. This is
 // valuable, since it provides extra validation using a renderer that doesn't use imageformats.h
 // itself.
-ANGLE_INSTANTIATE_TEST(D3DImageFormatConversionTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(D3DImageFormatConversionTest);
 
 }  // namespace

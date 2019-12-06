@@ -86,6 +86,8 @@ class GPUTestExpectationsParser
     std::vector<std::string> mErrorMessages;
 };
 
+const char *GetConditionName(uint32_t condition);
+
 }  // namespace angle
 
 #endif  // TEST_EXPECTATIONS_GPU_TEST_EXPECTATIONS_PARSER_H_

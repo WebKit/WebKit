@@ -535,13 +535,8 @@ TEST_P(BindUniformLocationES31Test, ArrayOfArrays)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(BindUniformLocationTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(BindUniformLocationTest);
 
-ANGLE_INSTANTIATE_TEST(BindUniformLocationES31Test, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES31(BindUniformLocationES31Test);
 
 }  // namespace

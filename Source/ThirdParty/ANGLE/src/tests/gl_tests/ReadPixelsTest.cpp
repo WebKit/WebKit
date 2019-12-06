@@ -695,17 +695,9 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ReadPixelsTest, ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(ReadPixelsPBOTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(ReadPixelsPBODrawTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(ReadPixelsMultisampleTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(ReadPixelsTextureTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(ReadPixelsErrorTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(ReadPixelsTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBOTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBODrawTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsMultisampleTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsTextureTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsErrorTest);

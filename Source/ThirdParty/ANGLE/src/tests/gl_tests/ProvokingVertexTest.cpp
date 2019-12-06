@@ -135,6 +135,9 @@ TEST_P(ProvokingVertexTest, FlatTriangle)
 // Ensure that any provoking vertex shenanigans still gives correct vertex streams.
 TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     // TODO(cwallez) figure out why it is broken on AMD on Mac
     ANGLE_SKIP_TEST_IF(IsOSX() && IsAMD());
 
@@ -176,6 +179,8 @@ TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
 // Test drawing a simple line with flat shading, and different valued vertices.
 TEST_P(ProvokingVertexTest, FlatLine)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsWindows() || IsLinux()) && IsVulkan());
     GLfloat halfPixel = 1.0f / static_cast<GLfloat>(getWindowWidth());
 
     GLint vertexData[]     = {1, 2};

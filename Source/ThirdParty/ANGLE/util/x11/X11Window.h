@@ -22,7 +22,7 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
   public:
     X11Window();
     X11Window(int visualId);
-    ~X11Window();
+    ~X11Window() override;
 
     bool initialize(const std::string &name, int width, int height) override;
     void destroy() override;

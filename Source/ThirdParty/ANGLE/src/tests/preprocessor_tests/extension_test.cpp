@@ -74,8 +74,12 @@ TEST_F(ExtensionTest, ExtensionAfterNonPreProcessorTokenESSL1)
     const char *expected = "int baz = 1;\n\n";
 
     using testing::_;
-    // Expect an error about extension pragmas after non-preprocessor tokens.
-    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL, _, _));
+#if defined(ANGLE_PLATFORM_CHROMEOS)
+    // Directive successfully parsed.
+    EXPECT_CALL(mDirectiveHandler, handleExtension(pp::SourceLocation(0, 2), "foo", "bar"));
+#endif
+    // Expect an error (chromeos warning) about extension pragmas after non-preprocessor tokens.
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1, _, _));
 
     preprocess(str, expected);
 }
@@ -92,7 +96,7 @@ TEST_F(ExtensionTest, ExtensionAfterNonPreProcessorTokenESSL3)
     // Directive successfully parsed.
     EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 300, SH_GLES2_SPEC));
     // Expect an error about extension pragmas after non-preprocessor tokens.
-    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL, _, _));
+    EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3, _, _));
 
     preprocess(str, expected);
 }

@@ -25,8 +25,8 @@ class ANGLE_UTIL_EXPORT OSWindow
     static OSWindow *New();
     static void Delete(OSWindow **osWindow);
 
-    virtual bool initialize(const std::string &name, int width, int height)       = 0;
-    virtual void destroy()                                                        = 0;
+    virtual bool initialize(const std::string &name, int width, int height) = 0;
+    virtual void destroy()                                                  = 0;
 
     int getX() const;
     int getY() const;
@@ -66,7 +66,6 @@ class ANGLE_UTIL_EXPORT OSWindow
   protected:
     OSWindow();
     virtual ~OSWindow();
-    friend ANGLE_UTIL_EXPORT void FreeOSWindow(OSWindow *window);
 
     int mX;
     int mY;

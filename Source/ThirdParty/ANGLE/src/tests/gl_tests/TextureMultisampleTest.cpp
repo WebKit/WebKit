@@ -298,6 +298,8 @@ TEST_P(TextureMultisampleTest, MultisampleTargetGetInternalFormativBase)
 TEST_P(TextureMultisampleTest, MultisampleTargetFramebufferTexture2D)
 {
     ANGLE_SKIP_TEST_IF(lessThanES31MultisampleExtNotSupported());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
     GLint samples = 1;
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture);
     texStorageMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA8, 64, 64, GL_FALSE);
@@ -312,6 +314,8 @@ TEST_P(TextureMultisampleTest, MultisampleTargetFramebufferTexture2D)
 // Tests basic functionality of glTexStorage2DMultisample.
 TEST_P(TextureMultisampleTest, ValidateTextureStorageMultisampleParameters)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
     ANGLE_SKIP_TEST_IF(lessThanES31MultisampleExtNotSupported());
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture);
@@ -386,6 +390,8 @@ TEST_P(TextureMultisampleTest, MaxDepthTextureSamples)
 TEST_P(TextureMultisampleTest, GetTexLevelParameter)
 {
     ANGLE_SKIP_TEST_IF(lessThanES31MultisampleExtNotSupported());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexture);
     texStorageMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, 1, 1, GL_TRUE);
@@ -1026,16 +1032,7 @@ TEST_P(TextureMultisampleArrayWebGLTest, IntegerTexelFetch)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(TextureMultisampleTest,
-                       ES3_D3D11(),
-                       ES31_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES());
-ANGLE_INSTANTIATE_TEST(NegativeTextureMultisampleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(TextureMultisampleArrayWebGLTest,
-                       ES31_D3D11(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(TextureMultisampleTest);
+ANGLE_INSTANTIATE_TEST_ES3(NegativeTextureMultisampleTest);
+ANGLE_INSTANTIATE_TEST_ES31(TextureMultisampleArrayWebGLTest);
 }  // anonymous namespace

@@ -513,7 +513,7 @@ bool Win32Window::initialize(const std::string &name, int width, int height)
     // Work around compile error from not defining "UNICODE" while Chromium does
     const LPSTR idcArrow = MAKEINTRESOURCEA(32512);
 
-    WNDCLASSEXA parentWindowClass   = {0};
+    WNDCLASSEXA parentWindowClass   = {};
     parentWindowClass.cbSize        = sizeof(WNDCLASSEXA);
     parentWindowClass.style         = 0;
     parentWindowClass.lpfnWndProc   = WndProc;
@@ -530,7 +530,7 @@ bool Win32Window::initialize(const std::string &name, int width, int height)
         return false;
     }
 
-    WNDCLASSEXA childWindowClass   = {0};
+    WNDCLASSEXA childWindowClass   = {};
     childWindowClass.cbSize        = sizeof(WNDCLASSEXA);
     childWindowClass.style         = CS_OWNDC;
     childWindowClass.lpfnWndProc   = WndProc;

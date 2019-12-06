@@ -17,7 +17,7 @@ class OzoneWindow : public OSWindow
 {
   public:
     OzoneWindow();
-    ~OzoneWindow();
+    ~OzoneWindow() override;
 
     bool initialize(const std::string &name, int width, int height) override;
     void destroy() override;

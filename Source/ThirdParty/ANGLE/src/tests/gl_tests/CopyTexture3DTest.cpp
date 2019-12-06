@@ -1726,7 +1726,7 @@ TEST_P(Texture2DArrayCopy, UintFormats)
              GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(255, 214, 81, 3));
 }
 
-ANGLE_INSTANTIATE_TEST(Texture3DCopy, ES3_D3D11());
-ANGLE_INSTANTIATE_TEST(Texture2DArrayCopy, ES3_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3(Texture3DCopy);
+ANGLE_INSTANTIATE_TEST_ES3(Texture2DArrayCopy);
 
 }  // namespace angle

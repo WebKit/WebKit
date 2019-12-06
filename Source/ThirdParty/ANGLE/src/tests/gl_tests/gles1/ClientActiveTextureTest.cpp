@@ -77,8 +77,4 @@ TEST_P(ClientActiveTextureTest, Set)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(ClientActiveTextureTest,
-                       ES1_D3D11(),
-                       ES1_OPENGL(),
-                       ES1_OPENGLES(),
-                       ES1_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES1(ClientActiveTextureTest);

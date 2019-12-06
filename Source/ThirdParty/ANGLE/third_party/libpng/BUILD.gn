@@ -24,6 +24,13 @@ static_library("libpng") {
     "src/pngwtran.c",
     "src/pngwutil.c",
   ]
+  if (target_cpu == "arm") {
+    sources += [
+      "src/arm/arm_init.c",
+      "src/arm/filter_neon.S",
+      "src/arm/filter_neon_intrinsics.c",
+    ]
+  }
   if (is_win) {
     cflags = [ "/wd4028" ]
   }

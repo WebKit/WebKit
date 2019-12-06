@@ -96,8 +96,4 @@ TEST_P(CurrentTextureCoordsTest, Set)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(CurrentTextureCoordsTest,
-                       ES1_D3D11(),
-                       ES1_OPENGL(),
-                       ES1_OPENGLES(),
-                       ES1_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES1(CurrentTextureCoordsTest);

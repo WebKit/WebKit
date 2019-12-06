@@ -71,6 +71,7 @@ enum Token
     kConfigGLES,
     kConfigVulkan,
     kConfigSwiftShader,
+    kConfigMetal,
     // Android devices
     kConfigNexus5X,
     kConfigPixel2,
@@ -108,12 +109,28 @@ enum ErrorType
 
 struct TokenInfo
 {
+    constexpr TokenInfo()
+        : name(nullptr),
+          condition(GPUTestConfig::kConditionNone),
+          expectation(GPUTestExpectationsParser::kGpuTestPass)
+    {}
+
+    constexpr TokenInfo(const char *nameIn,
+                        GPUTestConfig::Condition conditionIn,
+                        GPUTestExpectationsParser::GPUTestExpectation expectationIn)
+        : name(nameIn), condition(conditionIn), expectation(expectationIn)
+    {}
+
+    constexpr TokenInfo(const char *nameIn, GPUTestConfig::Condition conditionIn)
+        : TokenInfo(nameIn, conditionIn, GPUTestExpectationsParser::kGpuTestPass)
+    {}
+
     const char *name;
     GPUTestConfig::Condition condition;
     GPUTestExpectationsParser::GPUTestExpectation expectation;
 };
 
-const TokenInfo kTokenData[kNumberOfTokens] = {
+constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"xp", GPUTestConfig::kConditionWinXP},
     {"vista", GPUTestConfig::kConditionWinVista},
     {"win7", GPUTestConfig::kConditionWin7},
@@ -132,7 +149,7 @@ const TokenInfo kTokenData[kNumberOfTokens] = {
     {"mojave", GPUTestConfig::kConditionMacMojave},
     {"mac", GPUTestConfig::kConditionMac},
     {"linux", GPUTestConfig::kConditionLinux},
-    {"chromeos"},  // (https://anglebug.com/3363) ChromeOS not supported yet
+    {"chromeos", GPUTestConfig::kConditionNone},  // https://anglebug.com/3363 CrOS not supported
     {"android", GPUTestConfig::kConditionAndroid},
     {"nvidia", GPUTestConfig::kConditionNVIDIA},
     {"amd", GPUTestConfig::kConditionAMD},
@@ -146,19 +163,20 @@ const TokenInfo kTokenData[kNumberOfTokens] = {
     {"gles", GPUTestConfig::kConditionGLES},
     {"vulkan", GPUTestConfig::kConditionVulkan},
     {"swiftshader", GPUTestConfig::kConditionSwiftShader},
+    {"metal", GPUTestConfig::kConditionMetal},
     {"nexus5x", GPUTestConfig::kConditionNexus5X},
-    {"pixel2", GPUTestConfig::kConditionPixel2},
+    {"pixel2orxl", GPUTestConfig::kConditionPixel2OrXL},
     {"quadrop400", GPUTestConfig::kConditionNVIDIAQuadroP400},
     {"pass", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestPass},
     {"fail", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFail},
     {"flaky", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFlaky},
     {"timeout", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestTimeout},
     {"skip", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestSkip},
-    {":"},  // kSeparatorColon
-    {"="},  // kSeparatorEqual
-    {},     // kNumberOfExactMatchTokens
-    {},     // kTokenComment
-    {},     // kTokenWord
+    {":", GPUTestConfig::kConditionNone},  // kSeparatorColon
+    {"=", GPUTestConfig::kConditionNone},  // kSeparatorEqual
+    {},                                    // kNumberOfExactMatchTokens
+    {},                                    // kTokenComment
+    {},                                    // kTokenWord
 };
 
 const char *kErrorMessage[kNumberOfErrors] = {
@@ -251,6 +269,27 @@ inline bool NamesMatching(const char *ref, const char *testName)
 }
 
 }  // anonymous namespace
+
+const char *GetConditionName(uint32_t condition)
+{
+    if (condition == GPUTestConfig::kConditionNone)
+    {
+        return nullptr;
+    }
+
+    for (const TokenInfo &info : kTokenData)
+    {
+        if (info.condition == condition)
+        {
+            // kConditionNone is used to tag tokens that aren't conditions, but this case has been
+            // handled above.
+            ASSERT(info.condition != GPUTestConfig::kConditionNone);
+            return info.name;
+        }
+    }
+
+    return nullptr;
+}
 
 GPUTestExpectationsParser::GPUTestExpectationsParser()
 {
@@ -395,6 +434,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig &config,
             case kConfigGLES:
             case kConfigVulkan:
             case kConfigSwiftShader:
+            case kConfigMetal:
             case kConfigNexus5X:
             case kConfigPixel2:
             case kConfigNVIDIAQuadroP400:

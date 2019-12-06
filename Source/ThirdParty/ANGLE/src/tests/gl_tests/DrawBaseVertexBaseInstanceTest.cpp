@@ -318,9 +318,9 @@ void main()
         {
             baseInstances[i] = i * 2;
         }
-        glMultiDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLES, drawCount, counts.data(),
-                                                    instanceCounts.data(), firsts.data(),
-                                                    baseInstances.data());
+        glMultiDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLES, firsts.data(), counts.data(),
+                                                    instanceCounts.data(), baseInstances.data(),
+                                                    drawCount);
     }
 
     void doDrawElementsInstancedBaseVertexBaseInstance()
@@ -378,8 +378,8 @@ void main()
         }
 
         glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(
-            GL_TRIANGLES, GL_UNSIGNED_SHORT, drawCount, counts.data(), instanceCounts.data(),
-            indices.data(), baseVertices.data(), baseInstances.data());
+            GL_TRIANGLES, counts.data(), GL_UNSIGNED_SHORT, indices.data(), instanceCounts.data(),
+            baseVertices.data(), baseInstances.data(), drawCount);
     }
 
     void checkDrawResult(bool hasBaseVertex, bool oneColumn = false)

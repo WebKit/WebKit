@@ -15,7 +15,6 @@ angle_unittests_sources = [
   "../common/matrix_utils_unittest.cpp",
   "../common/string_utils_unittest.cpp",
   "../common/system_utils_unittest.cpp",
-  "../common/system_utils_unittest_helper.h",
   "../common/utilities_unittest.cpp",
   "../common/vector_utils_unittest.cpp",
   "../feature_support_util/feature_support_util_unittest.cpp",
@@ -130,6 +129,8 @@ angle_unittests_sources = [
   "../tests/test_utils/ShaderCompileTreeTest.h",
   "../tests/test_utils/ShaderCompileTreeTest.cpp",
   "../tests/test_utils/ShaderExtensionTest.h",
+  "../../util/test_utils_unittest.cpp",
+  "../../util/test_utils_unittest_helper.h",
 ]
 
 # TODO(jmadill): should probably call this windows sources
@@ -138,9 +139,9 @@ angle_unittests_hlsl_sources = [
   "../tests/compiler_tests/UnrollFlatten_test.cpp",
 ]
 
-angle_unittests_helper_sources = [
-  "../common/system_utils_unittest_helper.cpp",
-  "../common/system_utils_unittest_helper.h",
+test_utils_unittest_helper_sources = [
+  "../../util/test_utils_unittest_helper.cpp",
+  "../../util/test_utils_unittest_helper.h",
 ]
 
 if (is_android) {

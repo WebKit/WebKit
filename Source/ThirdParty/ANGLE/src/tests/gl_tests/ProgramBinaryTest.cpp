@@ -274,14 +274,7 @@ TEST_P(ProgramBinaryTest, ZeroSizedUnlinkedBinary)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ProgramBinaryTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ProgramBinaryTest);
 
 class ProgramBinaryES3Test : public ANGLETest
 {
@@ -620,11 +613,7 @@ TEST_P(ProgramBinaryES3Test, BinaryWithLargeUniformCount)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
 }
 
-ANGLE_INSTANTIATE_TEST(ProgramBinaryES3Test,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryES3Test);
 
 class ProgramBinaryES31Test : public ANGLETest
 {
@@ -650,6 +639,8 @@ TEST_P(ProgramBinaryES31Test, ProgramBinaryWithComputeShader)
     GLint binaryFormatCount = 0;
     glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
     ANGLE_SKIP_TEST_IF(!binaryFormatCount);
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kCS[] =
         "#version 310 es\n"
@@ -691,6 +682,8 @@ TEST_P(ProgramBinaryES31Test, ProgramBinaryWithComputeShader)
 // Tests that saving and loading a program attached with computer shader.
 TEST_P(ProgramBinaryES31Test, ProgramBinaryWithAtomicCounterComputeShader)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
     // We can't run the test if no program binary formats are supported.
     GLint binaryFormatCount = 0;
     glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
@@ -811,7 +804,7 @@ TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
     ASSERT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(ProgramBinaryES31Test, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES31(ProgramBinaryES31Test);
 
 class ProgramBinaryTransformFeedbackTest : public ANGLETest
 {
@@ -878,7 +871,9 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
     ANGLE_SKIP_TEST_IF(!getAvailableProgramBinaryFormatCount());
 
     // http://anglebug.com/3690
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsPixel2() && IsVulkan());
+    ANGLE_SKIP_TEST_IF(IsAndroid() && (IsPixel2() || IsPixel2XL()) && IsVulkan());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     std::vector<uint8_t> binary(0);
     GLint programLength = 0;
@@ -922,7 +917,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ProgramBinaryTransformFeedbackTest, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryTransformFeedbackTest);
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
 // - a set to save the program binary

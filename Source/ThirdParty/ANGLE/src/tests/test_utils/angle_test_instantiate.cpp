@@ -26,6 +26,10 @@
 #    include "util/windows/WGLWindow.h"
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
 
+#if defined(ANGLE_PLATFORM_APPLE)
+#    include "test_utils/angle_test_instantiate_apple.h"
+#endif
+
 namespace angle
 {
 namespace
@@ -222,6 +226,11 @@ bool IsPixel2()
     return IsAndroidDevice("Pixel 2");
 }
 
+bool IsPixel2XL()
+{
+    return IsAndroidDevice("Pixel 2 XL");
+}
+
 bool IsNVIDIAShield()
 {
     return IsAndroidDevice("SHIELD Android TV");
@@ -295,6 +304,7 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
         }
     }
 
+#if defined(ANGLE_PLATFORM_APPLE)
     if (IsOSX())
     {
         // We do not support non-ANGLE bindings on OSX.
@@ -309,9 +319,19 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
             return false;
         }
 
-        // Currently we only support the OpenGL back-end on OSX.
-        return (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE);
+        if (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE &&
+            (!IsMetalRendererAvailable() || IsIntel(vendorID)))
+        {
+            // TODO(hqle): Intel metal tests seem to have problems. Disable for now.
+            // http://anglebug.com/4133
+            return false;
+        }
+
+        // Currently we only support the OpenGL & Metal back-end on OSX.
+        return (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE ||
+                param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
+#endif  // #if defined(ANGLE_PLATFORM_APPLE)
 
     if (IsFuchsia())
     {
@@ -448,6 +468,22 @@ bool IsPlatformAvailable(const PlatformParameters &param)
 
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
 #if !defined(ANGLE_ENABLE_VULKAN)
+            return false;
+#elif defined(ANGLE_IS_32_BIT_CPU)
+            // http://anglebug.com/4092
+            //  Currently hitting crashes in SwS w/ 32-bit Windows so skipping for now
+            if (IsWindows() && (param.eglParameters.deviceType ==
+                                EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE))
+            {
+                return false;
+            }
+            break;
+#else
+            break;
+#endif
+
+        case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
+#if !defined(ANGLE_ENABLE_METAL)
             return false;
 #else
             break;

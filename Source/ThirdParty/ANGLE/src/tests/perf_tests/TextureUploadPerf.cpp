@@ -109,6 +109,69 @@ class TextureUploadFullMipBenchmark : public TextureUploadBenchmarkBase
     void drawBenchmark() override;
 };
 
+class PBOSubImageBenchmark : public TextureUploadBenchmarkBase
+{
+  public:
+    PBOSubImageBenchmark() : TextureUploadBenchmarkBase("PBO") {}
+
+    void initializeBenchmark() override
+    {
+        TextureUploadBenchmarkBase::initializeBenchmark();
+
+        const auto &params = GetParam();
+
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, params.baseSize, params.baseSize);
+
+        glGenBuffers(1, &mPBO);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mPBO);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, params.baseSize * params.baseSize * 4,
+                     mTextureData.data(), GL_STREAM_DRAW);
+    }
+
+    void destroyBenchmark()
+    {
+        TextureUploadBenchmarkBase::destroyBenchmark();
+        glDeleteBuffers(1, &mPBO);
+    }
+
+    void drawBenchmark() override;
+
+  private:
+    GLuint mPBO;
+};
+
+class PBOCompressedSubImageBenchmark : public TextureUploadBenchmarkBase
+{
+  public:
+    PBOCompressedSubImageBenchmark() : TextureUploadBenchmarkBase("PBOCompressed") {}
+
+    void initializeBenchmark() override
+    {
+        TextureUploadBenchmarkBase::initializeBenchmark();
+
+        const auto &params = GetParam();
+
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGB8_ETC2, params.baseSize,
+                          params.baseSize);
+
+        glGenBuffers(1, &mPBO);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mPBO);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, params.subImageSize * params.subImageSize / 2,
+                     mTextureData.data(), GL_STREAM_DRAW);
+    }
+
+    void destroyBenchmark()
+    {
+        TextureUploadBenchmarkBase::destroyBenchmark();
+        glDeleteBuffers(1, &mPBO);
+    }
+
+    void drawBenchmark() override;
+
+  private:
+    GLuint mPBO;
+};
+
 TextureUploadBenchmarkBase::TextureUploadBenchmarkBase(const char *benchmarkName)
     : ANGLERenderTest(benchmarkName, GetParam())
 {
@@ -228,6 +291,46 @@ void TextureUploadFullMipBenchmark::drawBenchmark()
     ASSERT_GL_NO_ERROR();
 }
 
+void PBOSubImageBenchmark::drawBenchmark()
+{
+    const auto &params = GetParam();
+
+    startGpuTimer();
+    for (unsigned int iteration = 0; iteration < params.iterationsPerStep; ++iteration)
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, rand() % (params.baseSize - params.subImageSize),
+                        rand() % (params.baseSize - params.subImageSize), params.subImageSize,
+                        params.subImageSize, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        // Perform a draw just so the texture data is flushed.  With the position attributes not
+        // set, a constant default value is used, resulting in a very cheap draw.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+    stopGpuTimer();
+
+    ASSERT_GL_NO_ERROR();
+}
+
+void PBOCompressedSubImageBenchmark::drawBenchmark()
+{
+    const auto &params = GetParam();
+
+    startGpuTimer();
+    for (unsigned int iteration = 0; iteration < params.iterationsPerStep; ++iteration)
+    {
+        glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, params.subImageSize, params.subImageSize,
+                                  GL_COMPRESSED_RGB8_ETC2,
+                                  params.subImageSize * params.subImageSize / 2, 0);
+
+        // Perform a draw just so the texture data is flushed.  With the position attributes not
+        // set, a constant default value is used, resulting in a very cheap draw.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+    stopGpuTimer();
+
+    ASSERT_GL_NO_ERROR();
+}
+
 TextureUploadParams D3D11Params(bool webglCompat)
 {
     TextureUploadParams params;
@@ -252,6 +355,30 @@ TextureUploadParams VulkanParams(bool webglCompat)
     return params;
 }
 
+TextureUploadParams VulkanPBOParams(GLsizei baseSize, GLsizei subImageSize)
+{
+    TextureUploadParams params;
+    params.eglParameters = egl_platform::VULKAN();
+    params.webgl         = false;
+    params.trackGpuTime  = false;
+    params.baseSize      = baseSize;
+    params.subImageSize  = subImageSize;
+    return params;
+}
+
+TextureUploadParams ES3OpenGLPBOParams(GLsizei baseSize, GLsizei subImageSize)
+{
+    TextureUploadParams params;
+    params.eglParameters = egl_platform::OPENGL();
+    params.majorVersion  = 3;
+    params.minorVersion  = 0;
+    params.webgl         = false;
+    params.trackGpuTime  = false;
+    params.baseSize      = baseSize;
+    params.subImageSize  = subImageSize;
+    return params;
+}
+
 }  // anonymous namespace
 
 TEST_P(TextureUploadSubImageBenchmark, Run)
@@ -260,6 +387,16 @@ TEST_P(TextureUploadSubImageBenchmark, Run)
 }
 
 TEST_P(TextureUploadFullMipBenchmark, Run)
+{
+    run();
+}
+
+TEST_P(PBOSubImageBenchmark, Run)
+{
+    run();
+}
+
+TEST_P(PBOCompressedSubImageBenchmark, Run)
 {
     run();
 }
@@ -283,3 +420,11 @@ ANGLE_INSTANTIATE_TEST(TextureUploadFullMipBenchmark,
                        VulkanParams(false),
                        NullDevice(VulkanParams(false)),
                        VulkanParams(true));
+
+ANGLE_INSTANTIATE_TEST(PBOSubImageBenchmark,
+                       ES3OpenGLPBOParams(1024, 128),
+                       VulkanPBOParams(1024, 128));
+
+ANGLE_INSTANTIATE_TEST(PBOCompressedSubImageBenchmark,
+                       ES3OpenGLPBOParams(128, 128),
+                       VulkanPBOParams(128, 128));

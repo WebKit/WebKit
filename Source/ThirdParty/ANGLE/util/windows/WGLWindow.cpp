@@ -19,7 +19,7 @@ namespace
 {
 PIXELFORMATDESCRIPTOR GetDefaultPixelFormatDescriptor()
 {
-    PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {0};
+    PIXELFORMATDESCRIPTOR pixelFormatDescriptor = {};
     pixelFormatDescriptor.nSize                 = sizeof(pixelFormatDescriptor);
     pixelFormatDescriptor.nVersion              = 1;
     pixelFormatDescriptor.dwFlags =

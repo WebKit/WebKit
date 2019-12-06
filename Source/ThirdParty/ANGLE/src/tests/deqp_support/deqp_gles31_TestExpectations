@@ -1,0 +1,694 @@
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file contains a list of defective dEQP conformance tests. The expected
+// format is:
+//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
+//
+// MODIFIERS can be a combination of the below list, combined with a logical AND:
+//  WIN XP VISTA WIN7 WIN8 WIN10
+//  MAC LEOPARD SNOWLEOPARD LION MOUNTAINLION MAVERICKS YOSEMITE ELCAPITAN SIERRA HIGHSIERRA MOJAVE
+//  LINUX CHROMEOS ANDROID
+//  NVIDIA AMD INTEL
+//  DEBUG RELEASE
+//  D3D9 D3D11 OPENGL GLES VULKAN
+//  NEXUS5X PIXEL2ORXL
+//  QUADROP400
+//  SWIFTSHADER
+//
+//
+// TEST_NAME can be a specific test name, or have a '*' in the end, which
+// indicates a prefix matching.
+//
+// Examples:
+// fails on both windows and mac (crash)
+//  91530 WIN : context_lost_restored = SKIP
+//  91530 MAC : context_lost_restored = SKIP
+// fails on windows using NVIDIA GPUs
+//  91533 WIN NVIDIA : gl_min_uniforms = FAIL
+// fails on Nexus5X with GLES backend (hangs)
+//  91531 NEXUS5X GLES : conformance_more_* = SKIP
+
+// Crashing Tests
+1920 NVIDIA D3D11 : dEQP-GLES31.functional.layout_binding.ubo.vertex_binding_max = SKIP
+1442 D3D11 : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
+
+// Crashing Tests on Linux on Intel HD 630.
+2349 LINUX INTEL : dEQP-GLES31.functional.synchronization.in_invocation.image_* = SKIP
+2349 LINUX INTEL : dEQP-GLES31.functional.synchronization.inter_invocation.image_* = SKIP
+2349 LINUX INTEL : dEQP-GLES31.functional.compute.basic.copy_image_to_ssbo_small = SKIP
+2349 LINUX INTEL : dEQP-GLES31.functional.compute.basic.copy_ssbo_to_image_small = SKIP
+2349 LINUX INTEL : dEQP-GLES31.functional.compute.basic.image_barrier_multiple = SKIP
+
+// Failing Tests on Linux on Intel HD 630.
+2349 LINUX INTEL : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader.program_binary = FAIL
+
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.* = SKIP
+
+// Times out shader compilation because it uses so many resources.
+3445 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.48 = SKIP
+
+// D3D11 Failing Tests
+// Below cases are failed due to binding multi-UAVs to a single buffer is not supported in D3D backend.
+// http://anglebug.com/3032
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.single_struct.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.single_struct_array.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.single_nested_struct.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.single_nested_struct_array.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.unsized_struct_array.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.2_level_unsized_struct_array.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.unsized_nested_struct_array.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.multi_basic_types.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.multi_nested_struct.single_buffer* = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.nested_structs_arrays_instance_arrays.13 = FAIL
+3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer* = FAIL
+
+1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_compute_atomic_counters_* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_atomic_counter_buffer_size_* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_combined_atomic_counters* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_uniform_buffer_bindings_* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_combined_texture_image_units_* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.state_query.program.compute_work_group_size_get_programiv = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.async.case_4_log = SKIP
+1442 D3D11 : dEQP-GLES31.functional.debug.async.case_5_callback = SKIP
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_2 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_3 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_9 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_10 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_27 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_28 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_2 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_3 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_9 = FAIL
+1442 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_10 = FAIL
+
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.sign.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floor.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.trunc.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.round.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.roundeven.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ceil.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fract.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.modf.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isnan.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.isinf.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstoint.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.floatbitstouint.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.frexp.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.ldexp.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.float_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.float_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.float_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.fma.vec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.intbitstofloat.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.intbitstofloat.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.intbitstofloat.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.uintbitstofloat.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.uintbitstofloat.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.uintbitstofloat.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm4x8_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm4x8_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm4x8_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.unpacksnorm4x8_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm4x8_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm4x8_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm4x8_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.unpackunorm4x8_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm2x16_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm2x16_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packsnorm2x16_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm2x16_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm2x16_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packunorm2x16_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.packhalf2x16_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.unpackhalf2x16_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.uaddcarry.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.usubborrow.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.umulextended.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.umulextended.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.umulextended.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.umulextended.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.imulextended.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.imulextended.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.imulextended.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.imulextended.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldextract.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldreverse.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitcount.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findlsb.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.int_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.int_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.int_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.ivec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uint_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uint_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uint_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec2_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec2_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec2_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec3_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec3_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec3_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec4_lowp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec4_mediump_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.findmsb.uvec4_highp_geometry = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.builtin_constants.geometry_shader.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.state_query.program.geometry_shader_state_get_programiv = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.query.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.basic.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.conversion.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.emit.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.varying.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.layered.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.instanced.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.input.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.negative.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.geometry_shading.vertex_transform_feedback.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.shaders.linkage.es31.geometry.* = FAIL
+1941 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.shader_directive.geometry_shader = FAIL
+1941 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.shader_directive.geometry_shader = FAIL
+1941 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader_directive.geometry_shader = FAIL
+2826 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8.texture_swizzle.* = FAIL
+2826 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8i.* = FAIL
+2826 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8ui.* = FAIL
+3865 D3D11 : dEQP-GLES31.functional.compute.basic.copy_image_to_ssbo_large = FAIL
+3865 D3D11 : dEQP-GLES31.functional.compute.basic.copy_ssbo_to_image_large = FAIL
+
+// Failing with dEQP roll
+3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.22 = FAIL
+3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.41 = FAIL
+
+// OPENGL Failing Tests
+1665 WIN NVIDIA OPENGL : dEQP-GLES31.functional.draw_indirect.negative.command_offset_not_in_buffer_unsigned32_wrap = FAIL
+1442 NVIDIA OPENGL : dEQP-GLES31.functional.fbo.no_attachments.maximums.all = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.atomic_counter_buffer.referenced_by* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.buffer_limited_query.resource_query = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.buffer_variable.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.program_input.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.program_output.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.shader_storage_block.referenced_by.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.uniform.referenced_by_shader.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.uniform.random.* = FAIL
+1442 OPENGL : dEQP-GLES31.functional.program_interface_query.uniform_block.referenced_by.* = FAIL
+
+// An NVIDIA bug seems to occur when sending GL commands in a certain order to the driver
+2432 NVIDIA OPENGL : dEQP-GLES31.functional.vertex_attribute_binding.usage.mixed_usage.mixed_api_change_binding_point = SKIP
+
+// OpenGL/D3D11 Failing Tests
+1442 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
+1442 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
+
+// OpenGL/D3D11/Vulkan Failing Tests
+1442 : dEQP-GLES31.functional.synchronization.inter_call.without_memory_barrier.atomic_counter_dispatch_100_calls_1k_invocations = FAIL
+
+// Waiting for Program pipeline functionality
+3570 : dEQP-GLES31.functional.state_query.integer.program_pipeline_binding_* = FAIL
+3570 : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
+3570 : dEQP-GLES31.functional.state_query.program_pipeline.* = FAIL
+3570 : dEQP-GLES31.functional.debug.object_labels.program_pipeline = FAIL
+3570 : dEQP-GLES31.functional.separate_shader.* = FAIL
+
+// The following passes with Vulkan (with warning), but fails otherwise.  We'll keep the file simple by expecting it to fail.
+2324 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.vertex_array.draw_range_elements = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.vertex_array.draw_range_elements_incomplete_primitive = FAIL
+
+// These tests are failing because of compile errors with SSBOs in compute shaders.
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.exceed_shared_memory_size_limit = FAIL
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.exceed_shared_memory_size_limit = FAIL
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.exceed_shared_memory_size_limit = FAIL
+
+1442 D3D11 : dEQP-GLES31.functional.stencil_texturing.* = SKIP
+// TODO(xinghua.cao@intel.com): FAIL expectation instead of SKIP should be sufficient for OpenGL, but the
+// test expectations parser doesn't support having FAIL for GL and SKIP for D3D with the same test filter.
+
+1729 D3D11 : dEQP-GLES31.functional.atomic_counter.* = SKIP
+1951 D3D11 : dEQP-GLES31.functional.layout_binding.ssbo.* = SKIP
+1951 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.ssbo.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.program_interface_query.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.synchronization.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.layout_binding.image.* = SKIP
+// This case is skipped since it uses atomic counter builtin functions which haven't been implemented.
+1729 D3D11 : dEQP-GLES31.functional.state_query.program.active_atomic_counter_buffers_get_programiv = SKIP
+
+// Vulkan Android failures
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = FAIL
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdy = FAIL
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = FAIL
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_max_samples_dfdy = FAIL
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = FAIL
+4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_dfdy = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_dfdx = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_8_samples_dfdy = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdx = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_fwidth = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_points_8_samples_dfdy = FAIL
+4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = FAIL
+
+// Debug failures that occur on Android:
+3590 VULKAN ANDROID : dEQP-GLES31.functional.debug.negative_coverage.get_error.texture.texparameterf = FAIL
+3590 VULKAN ANDROID : dEQP-GLES31.functional.debug.negative_coverage.get_error.texture.texparameterfv = FAIL
+
+// Passing on recent drivers:
+3726 VULKAN ANDROID : dEQP-GLES31.functional.ssbo.layout.* = FAIL
+3726 VULKAN ANDROID : dEQP-GLES31.functional.atomic_counter.* = FAIL
+3726 VULKAN ANDROID : dEQP-GLES31.functional.synchronization.inter_call.without_memory_barrier.*atomic_counter* = FAIL
+3726 VULKAN ANDROID : dEQP-GLES31.functional.compute.basic.atomic_counter* = FAIL
+
+// Validation error on SPIR-V (but only on Android, possibly related to issue 2703)
+3882 VULKAN ANDROID : dEQP-GLES31.functional.uniform_location.nested_array.*sampler* = FAIL
+
+// Arrays of opaque types as function parameters (possibly related to issue 3882)
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_literal_vertex = FAIL
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_literal_fragment = FAIL
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_literal_compute = FAIL
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_vertex = FAIL
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_fragment = FAIL
+2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_compute = FAIL
+
+// General Vulkan failures
+
+// Front-end query bugs:
+3596 VULKAN : dEQP-GLES31.functional.program_interface_query.shader_storage_block.buffer_data_size.* = FAIL
+
+// Shader support:
+3565 VULKAN : dEQP-GLES31.functional.shaders.builtin_functions.texture_size.samples_* = SKIP
+
+// SSBO synchronization:
+4097 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_alias_overwrite = FAIL
+
+// Block name matching failure:
+3459 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.shader_storage_block.mismatch_with_and_without_instance_name = FAIL
+
+// Tessellation geometry interaction:
+3572 VULKAN : dEQP-GLES31.functional.tessellation_geometry_interaction.* = FAIL
+
+// Framebuffer without attachments:
+3579 ANDROID VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
+
+// Debug:
+3590 VULKAN : dEQP-GLES31.functional.debug.negative_coverage.*exceed_shared_memory_size_limit = FAIL
+
+// Stencil textures (some missing support for base level):
+3683 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.stencil_texturing.format.* = FAIL
+3683 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.stencil_texturing.misc.compare_mode_effect = FAIL
+
+// Need to support non-color when staging image updates
+4080 ANDROID VULKAN : dEQP-GLES31.functional.stencil_texturing.misc.base_level = SKIP
+
+// Multisampled textures:
+3565 VULKAN : dEQP-GLES31.functional.texture.multisample.* = SKIP
+3565 VULKAN : dEQP-GLES31.functional.state_query.texture*multisample.* = SKIP
+
+// Vulkan creates the image view with the same format as the texture.
+3885 VULKAN : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.* = FAIL
+
+// Cannot create 2D (array) view of 3D texture.
+3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*layer = FAIL
+
+// Inactive SSBOs with flexible array member (about 20% of these tests are affected):
+3714 VULKAN : dEQP-GLES31.functional.ssbo.layout.random.* = FAIL
+
+// OpenGL ES 3.1 conformance failures
+4098 SWIFTSHADER : dEQP-GLES31.functional.compute.basic.write_multiple_unsized_arr_multiple_groups = FAIL
+4098 SWIFTSHADER : dEQP-GLES31.functional.compute.basic.write_multiple_unsized_arr_single_invocation = FAIL
+
+4099 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.draw_elements_indirect.base_vertex.index_neg_* = FAIL
+
+4100 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.random.30 = FAIL
+4100 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.random.39 = FAIL
+
+4101 SWIFTSHADER : dEQP-GLES31.functional.multisample.default_framebuffer.sample_position = FAIL
+
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getfloat = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getinteger = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getinteger64 = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getfloat = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getinteger = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getinteger64 = FAIL
+
+4103 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture_level.texture_2d_multisample.* = FAIL
+
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_format_float = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_format_integer = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_levels_float = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_levels_integer = FAIL
+
+4105 SWIFTSHADER : dEQP-GLES31.functional.stencil_texturing.format.depth24_stencil8_cube = FAIL
+4105 SWIFTSHADER : dEQP-GLES31.functional.stencil_texturing.format.depth32f_stencil8_cube = FAIL

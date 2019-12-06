@@ -452,7 +452,7 @@ TEST_P(TextureRectangleTestES3, CopyTexSubImage)
     ASSERT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(TextureRectangleTest, ES2_OPENGL(), ES3_OPENGL(), ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(TextureRectangleTestES3, ES3_OPENGL());
-ANGLE_INSTANTIATE_TEST(TextureRectangleTestES31, ES31_OPENGL());
+ANGLE_INSTANTIATE_TEST_ES2(TextureRectangleTest);
+ANGLE_INSTANTIATE_TEST_ES3(TextureRectangleTestES3);
+ANGLE_INSTANTIATE_TEST_ES31(TextureRectangleTestES31);
 }  // anonymous namespace

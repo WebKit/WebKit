@@ -38,10 +38,10 @@ tcu::RandomOrderExecutor *g_executor = nullptr;
 const char *kDataPaths[] = {
     ".",
     "../../sdcard/chromium_tests_root",
-    "../../sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src",
-    "../../third_party/angle/third_party/deqp/src",
-    "../../third_party/deqp/src",
-    "third_party/deqp/src",
+    "../../sdcard/chromium_tests_root/third_party/angle/third_party/VK-GL-CTS/src",
+    "../../third_party/angle/third_party/VK-GL-CTS/src",
+    "../../third_party/VK-GL-CTS/src",
+    "third_party/VK-GL-CTS/src",
 };
 
 bool FindDataDir(std::string *dataDirOut)

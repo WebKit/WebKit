@@ -737,13 +737,8 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(DepthStencilFormatsTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(DepthStencilFormatsTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES2(DepthStencilFormatsTest);
+ANGLE_INSTANTIATE_TEST_ES3(DepthStencilFormatsTestES3);
 
 class TinyDepthStencilWorkaroundTest : public ANGLETest
 {
@@ -769,6 +764,9 @@ class TinyDepthStencilWorkaroundTest : public ANGLETest
 // http://anglebug.com/1664
 TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsOpenGLES()) || (IsLinux() && IsVulkan()));
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kDrawVS[] =
         "#version 100\n"
         "attribute vec3 vertex;\n"
@@ -873,4 +871,4 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(TinyDepthStencilWorkaroundTest, ES3_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3(TinyDepthStencilWorkaroundTest);

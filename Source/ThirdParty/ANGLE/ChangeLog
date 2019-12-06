@@ -1,3 +1,76 @@
+2019-12-05  James Darpinian  <jdarpinian@chromium.org>
+
+        Finish ANGLE update
+        https://bugs.webkit.org/show_bug.cgi?id=204911
+
+        The last ANGLE update patch didn't include all the changed files.
+        This patch updates the rest of the files.
+
+        Reviewed by Alex Christensen.
+
+        * src/tests: Lots of changed files from upstream ANGLE.
+        * src/third_party/compiler/README.chromium:
+        * third_party/VK-GL-CTS/README.angle: Added.
+        * third_party/deqp/README.angle: Removed.
+        * third_party/googletest/README.angle: Removed.
+        * third_party/libpng/BUILD.gn:
+        * third_party/spirv-cross/README.angle: Added.
+        * util/OSWindow.h:
+        * util/egl_loader_autogen.cpp:
+        (angle::LoadEGL):
+        * util/egl_loader_autogen.h:
+        * util/fuchsia/ScenicWindow.cpp:
+        (ScenicWindow::resetNativeWindow):
+        * util/fuchsia/ScenicWindow.h:
+        * util/gles_loader_autogen.cpp:
+        (angle::LoadGLES):
+        * util/gles_loader_autogen.h:
+        * util/osx/OSXWindow.h:
+        * util/osx/OSXWindow.mm:
+        (OSXWindow::initialize):
+        * util/ozone/OzoneWindow.h:
+        * util/posix/crash_handler_posix.cpp:
+        (angle::InitCrashHandler):
+        * util/posix/test_utils_posix.cpp:
+        (angle::GetTempDir):
+        (angle::CreateTemporaryFileInDir):
+        (angle::DeleteFile):
+        (angle::LaunchProcess):
+        (angle::NumberOfProcessors):
+        * util/shader_utils.cpp:
+        (CompileShaderFromFile):
+        (CompileProgramFromFiles):
+        * util/test_utils.cpp: Added.
+        (angle::CreateTemporaryFile):
+        (angle::GetFileSize):
+        (angle::ReadEntireFileToString):
+        (angle::ProcessHandle::ProcessHandle):
+        (angle::ProcessHandle::~ProcessHandle):
+        (angle::ProcessHandle::operator=):
+        (angle::ProcessHandle::reset):
+        * util/test_utils.h:
+        * util/test_utils_unittest.cpp: Added.
+        (angle::NormalizeNewLines):
+        (angle::TEST):
+        * util/test_utils_unittest_helper.cpp: Added.
+        (main):
+        * util/test_utils_unittest_helper.h: Added.
+        * util/util.gni:
+        * util/windows/WGLWindow.cpp:
+        * util/windows/test_utils_win.cpp:
+        (angle::InitCrashHandler):
+        (angle::TerminateCrashHandler):
+        (angle::LaunchProcess):
+        (angle::GetTempDir):
+        (angle::CreateTemporaryFileInDir):
+        (angle::DeleteFile):
+        (angle::NumberOfProcessors):
+        * util/windows/win32/Win32Window.cpp:
+        (Win32Window::initialize):
+        * util/windows/win32/test_utils_win32.cpp:
+        (angle::StabilizeCPUForBenchmarking):
+        * util/x11/X11Window.h:
+
 2019-12-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed WinCairo build fix following r252989.

@@ -63,4 +63,4 @@ TEST_P(EGLRecordableTest, CheckAllContexts)
 
 }  // namespace angle
 
-ANGLE_INSTANTIATE_TEST(EGLRecordableTest, ES2_D3D11(), ES2_OPENGL(), ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(EGLRecordableTest);

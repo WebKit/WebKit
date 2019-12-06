@@ -707,29 +707,8 @@ void main() {
     glDeleteProgram(program);
 }
 
-ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedTest,
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedTestES3,
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES(),
-                       ES3_VULKAN(),
-                       ES31_VULKAN());
-ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedDrawTest,
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedDrawTestES3,
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES(),
-                       ES3_VULKAN(),
-                       ES31_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(EXTBlendFuncExtendedTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(EXTBlendFuncExtendedTestES3);
+
+ANGLE_INSTANTIATE_TEST_ES2(EXTBlendFuncExtendedDrawTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(EXTBlendFuncExtendedDrawTestES3);

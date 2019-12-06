@@ -819,6 +819,6 @@ TEST_P(GeometryShaderTest, NegativeLayeredFramebufferCompletenessWithCubeMapText
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT, status);
 }
 
-ANGLE_INSTANTIATE_TEST(GeometryShaderTestES3, ES3_OPENGL(), ES3_OPENGLES(), ES3_D3D11());
-ANGLE_INSTANTIATE_TEST(GeometryShaderTest, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3(GeometryShaderTestES3);
+ANGLE_INSTANTIATE_TEST_ES31(GeometryShaderTest);
 }  // namespace

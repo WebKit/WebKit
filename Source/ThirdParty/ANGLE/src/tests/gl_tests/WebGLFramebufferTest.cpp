@@ -901,14 +901,6 @@ TEST_P(WebGLFramebufferTest, DepthStencilAttachmentOrdering)
 }
 
 // Only run against WebGL 1 validation, since much was changed in 2.
-ANGLE_INSTANTIATE_TEST(WebGLFramebufferTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLFramebufferTest);
 
 }  // namespace angle

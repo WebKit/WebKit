@@ -2,7 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-deqp_path = "../../third_party/deqp/src"
+import("../../../gni/angle.gni")
+deqp_path = "../../third_party/VK-GL-CTS/src"
 
 deqp_include_dirs = [
   "$deqp_path/executor",
@@ -24,6 +25,8 @@ deqp_include_dirs = [
   "$deqp_path/modules/gles31/functional",
   "$deqp_path/modules/gles31/stress",
   "$deqp_path/modules/glusecases",
+  "${angle_glslang_dir}",
+  "${angle_spirv_tools_dir}",
 ]
 
 deqp_gles2_sources = [
@@ -49,6 +52,8 @@ deqp_gles2_sources = [
   "$deqp_path/modules/gles2/functional/es2fBufferTestUtil.hpp",
   "$deqp_path/modules/gles2/functional/es2fBufferWriteTests.cpp",
   "$deqp_path/modules/gles2/functional/es2fBufferWriteTests.hpp",
+  "$deqp_path/modules/gles2/functional/es2fClipControlTests.cpp",
+  "$deqp_path/modules/gles2/functional/es2fClipControlTests.hpp",
   "$deqp_path/modules/gles2/functional/es2fClippingTests.cpp",
   "$deqp_path/modules/gles2/functional/es2fClippingTests.hpp",
   "$deqp_path/modules/gles2/functional/es2fColorClearTest.cpp",
@@ -905,7 +910,11 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcSampleVariablesTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcSeparableProgramsTransformFeedbackTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcSeparableProgramsTransformFeedbackTests.hpp",
-  "$deqp_path/external/openglcts/modules/common/glcShaderConstExprTests.cpp",
+
+  # Override to work around a dEQP bug: https://gitlab.khronos.org/Tracker/vk-gl-cts/issues/1859
+  # "$deqp_path/external/openglcts/modules/common/glcShaderConstExprTests.cpp",
+  "deqp_support/glcShaderConstExprTests_override.cpp",
+
   "$deqp_path/external/openglcts/modules/common/glcShaderConstExprTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderGroupVoteTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderGroupVoteTests.hpp",
@@ -919,7 +928,11 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcShaderLibraryCase.hpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderLoopTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderLoopTests.hpp",
-  "$deqp_path/external/openglcts/modules/common/glcShaderMacroTests.cpp",
+
+  # Override to work around a dEQP bug: https://gitlab.khronos.org/Tracker/vk-gl-cts/issues/1859
+  # "$deqp_path/external/openglcts/modules/common/glcShaderMacroTests.cpp",
+  "deqp_support/glcShaderMacroTests_override.cpp",
+
   "$deqp_path/external/openglcts/modules/common/glcShaderMacroTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderMultisampleInterpolationTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcShaderMultisampleInterpolationTests.hpp",
@@ -976,6 +989,7 @@ deqp_khr_test_module_headers = [
   "$deqp_path/external/openglcts/modules/glesext/texture_border_clamp/esextcTextureBorderClampTests.hpp",
   "$deqp_path/external/openglcts/modules/glesext/texture_buffer/esextcTextureBufferTests.hpp",
   "$deqp_path/external/openglcts/modules/glesext/texture_cube_map_array/esextcTextureCubeMapArrayTests.hpp",
+  "$deqp_path/external/openglcts/modules/glesext/texture_shadow_lod/esextcTextureShadowLodFunctionsTest.hpp",
   "$deqp_path/external/openglcts/modules/glesext/draw_buffers_indexed/esextcDrawBuffersIndexedTests.hpp",
   "$deqp_path/modules/gles2/tes2Context.hpp",
   "$deqp_path/modules/gles2/tes2TestPackage.hpp",
@@ -1365,6 +1379,7 @@ deqp_khr_glesext_sources = [
   "$deqp_path/external/openglcts/modules/glesext/texture_cube_map_array/esextcTextureCubeMapArrayTests.cpp",
   "$deqp_path/external/openglcts/modules/glesext/texture_cube_map_array/esextcTextureCubeMapArrayTex3DValidation.cpp",
   "$deqp_path/external/openglcts/modules/glesext/texture_cube_map_array/esextcTextureCubeMapArrayTex3DValidation.hpp",
+  "$deqp_path/external/openglcts/modules/glesext/texture_shadow_lod/esextcTextureShadowLodFunctionsTest.cpp",
 ]
 
 deqp_framework_debase_sources = [

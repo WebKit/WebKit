@@ -1305,6 +1305,26 @@ TEST_F(FragmentShaderValidationTest, DynamicallyIndexedInterfaceBlock)
     }
 }
 
+// Test that indexing a sampler array with a non-constant expression is forbidden, even if ANGLE is
+// able to constant fold the index expression. ESSL 3.00 section 4.1.7.1.
+TEST_F(FragmentShaderValidationTest, DynamicallyIndexedSampler)
+{
+    const std::string &shaderString =
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "uniform int a;\n"
+        "uniform sampler2D s[2];\n"
+        "out vec4 my_FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "    my_FragColor = texture(s[true ? 0 : a], vec2(0));\n"
+        "}\n";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Test that a shader that uses a struct definition in place of a struct constructor does not
 // compile. See GLSL ES 1.00 section 5.4.3.
 TEST_F(FragmentShaderValidationTest, StructConstructorWithStructDefinition)

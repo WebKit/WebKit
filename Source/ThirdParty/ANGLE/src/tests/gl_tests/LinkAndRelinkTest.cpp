@@ -444,15 +444,7 @@ void main()
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-ANGLE_INSTANTIATE_TEST(LinkAndRelinkTest,
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_D3D11(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(LinkAndRelinkTestES31, ES31_OPENGL(), ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(LinkAndRelinkTest);
+ANGLE_INSTANTIATE_TEST_ES31(LinkAndRelinkTestES31);
 
 }  // namespace

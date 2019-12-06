@@ -274,11 +274,7 @@ TEST_P(EXTMultisampleCompatibilityTest, DrawAlphaOneAndResolve)
     EXPECT_EQ(0, memcmp(results[0].get(), results[2].get(), kResultSize));
 }
 
-ANGLE_INSTANTIATE_TEST(EXTMultisampleCompatibilityTest,
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EXTMultisampleCompatibilityTest);
 
 class MultisampleCompatibilityTest : public ANGLETest
 {
@@ -401,12 +397,4 @@ TEST_P(MultisampleCompatibilityTest, DrawCoverageAndResolve)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(MultisampleCompatibilityTest,
-                       ES2_D3D9(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MultisampleCompatibilityTest);

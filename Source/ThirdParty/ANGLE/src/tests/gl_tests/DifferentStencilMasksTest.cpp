@@ -67,6 +67,9 @@ TEST_P(DifferentStencilMasksTest, DrawWithSameEffectiveMask)
 // Tests that effectively different front and back masks are illegal.
 TEST_P(DifferentStencilMasksTest, DrawWithDifferentMask)
 {
+    // TODO(hqle): Make this test work for Metal. http://anglebug.com/4134
+    ANGLE_SKIP_TEST_IF(IsMetal());
+
     glStencilMaskSeparate(GL_FRONT, 0x0001);
     glStencilMaskSeparate(GL_BACK, 0x0002);
 
@@ -100,11 +103,5 @@ TEST_P(DifferentStencilMasksTest, DrawWithDifferentMask_NoStencilBuffer)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(DifferentStencilMasksTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DifferentStencilMasksTest);
 }  // anonymous namespace

@@ -480,6 +480,10 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     // rendered at all on AMD. http://anglebug.com/2113
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
 
+    // TODO(hqle): Metal on macbook also has problem with drawing point outside framebuffer.
+    // http://anglebug.com/4135
+    ANGLE_SKIP_TEST_IF(IsMetal());
+
     GLfloat pointSizeRange[2] = {};
     glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
     GLfloat maxPointSize = pointSizeRange[1];
@@ -541,9 +545,4 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 // We test on D3D11 9_3 because the existing D3D11 PointSprite implementation
 // uses Geometry Shaders which are not supported for 9_3.
 // D3D9 and D3D11 are also tested to ensure no regressions.
-ANGLE_INSTANTIATE_TEST(PointSpritesTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(PointSpritesTest);

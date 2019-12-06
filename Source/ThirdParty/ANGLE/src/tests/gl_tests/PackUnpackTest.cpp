@@ -141,6 +141,8 @@ void main()
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackSnormNormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mSNormProgram, 0.5f, -0.2f);
     compareBeforeAfter(mSNormProgram, -0.35f, 0.75f);
@@ -152,6 +154,8 @@ TEST_P(PackUnpackTest, PackUnpackSnormNormal)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackUnormNormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mUNormProgram, 0.5f, 0.2f, 0.5f, 0.2f);
     compareBeforeAfter(mUNormProgram, 0.35f, 0.75f, 0.35f, 0.75f);
@@ -163,6 +167,8 @@ TEST_P(PackUnpackTest, PackUnpackUnormNormal)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackHalfNormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mHalfProgram, 0.5f, -0.2f);
     compareBeforeAfter(mHalfProgram, -0.35f, 0.75f);
@@ -174,6 +180,8 @@ TEST_P(PackUnpackTest, PackUnpackHalfNormal)
 // floating numbers.
 TEST_P(PackUnpackTest, PackUnpackSnormSubnormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mSNormProgram, 0.00001f, -0.00001f);
 }
@@ -182,6 +190,8 @@ TEST_P(PackUnpackTest, PackUnpackSnormSubnormal)
 // floating numbers.
 TEST_P(PackUnpackTest, PackUnpackUnormSubnormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input for positive numbers and clamp
     // to [0, 1]
     compareBeforeAfter(mUNormProgram, 0.00001f, -0.00001f, 0.00001f, 0.0f);
@@ -191,6 +201,8 @@ TEST_P(PackUnpackTest, PackUnpackUnormSubnormal)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackHalfSubnormal)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mHalfProgram, 0.00001f, -0.00001f);
 }
@@ -199,6 +211,8 @@ TEST_P(PackUnpackTest, PackUnpackHalfSubnormal)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackSnormZero)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mSNormProgram, 0.00000f, -0.00000f);
 }
@@ -207,6 +221,8 @@ TEST_P(PackUnpackTest, PackUnpackSnormZero)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackUnormZero)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     compareBeforeAfter(mUNormProgram, 0.00000f, -0.00000f, 0.00000f, 0.00000f);
 }
 
@@ -214,6 +230,8 @@ TEST_P(PackUnpackTest, PackUnpackUnormZero)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackHalfZero)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to output the same value as the input
     compareBeforeAfter(mHalfProgram, 0.00000f, -0.00000f);
 }
@@ -222,6 +240,8 @@ TEST_P(PackUnpackTest, PackUnpackHalfZero)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackUnormOverflow)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to clamp the input to [0, 1]
     compareBeforeAfter(mUNormProgram, 67000.0f, -67000.0f, 1.0f, 0.0f);
 }
@@ -230,9 +250,11 @@ TEST_P(PackUnpackTest, PackUnpackUnormOverflow)
 // numbers.
 TEST_P(PackUnpackTest, PackUnpackSnormOverflow)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
     // Expect the shader to clamp the input to [-1, 1]
     compareBeforeAfter(mSNormProgram, 67000.0f, -67000.0f, 1.0f, -1.0f);
 }
 
-ANGLE_INSTANTIATE_TEST(PackUnpackTest, ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES3(PackUnpackTest);
 }  // namespace

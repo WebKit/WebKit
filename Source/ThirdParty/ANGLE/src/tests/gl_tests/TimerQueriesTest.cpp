@@ -478,6 +478,8 @@ class TimerQueriesTestES3 : public TimerQueriesTest
 TEST_P(TimerQueriesTestES3, TimestampGetInteger64)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsAndroid());
 
     GLint queryTimestampBits = 0;
     glGetQueryivEXT(GL_TIMESTAMP_EXT, GL_QUERY_COUNTER_BITS_EXT, &queryTimestampBits);
@@ -502,12 +504,6 @@ TEST_P(TimerQueriesTestES3, TimestampGetInteger64)
     EXPECT_LT(result1, result2);
 }
 
-ANGLE_INSTANTIATE_TEST(TimerQueriesTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(TimerQueriesTest);
 
-ANGLE_INSTANTIATE_TEST(TimerQueriesTestES3, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST_ES3(TimerQueriesTestES3);

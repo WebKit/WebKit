@@ -19,6 +19,13 @@ _angle_perf_test_common_sources = [
   "test_utils/gl_raii.h",
 ]
 
+if (is_mac) {
+  _angle_perf_test_common_sources += [
+    "test_utils/angle_test_instantiate_apple.mm",
+    "test_utils/angle_test_instantiate_apple.h",
+  ]
+}
+
 angle_perf_tests_sources = _angle_perf_test_common_sources + [
                              "perf_tests/BlitFramebufferPerf.cpp",
                              "perf_tests/BindingPerf.cpp",

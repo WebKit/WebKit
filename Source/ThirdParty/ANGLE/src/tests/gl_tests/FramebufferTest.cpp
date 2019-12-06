@@ -364,16 +364,7 @@ TEST_P(FramebufferFormatsTest, ReadDrawCompleteness)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(FramebufferFormatsTest,
-                       ES2_VULKAN(),
-                       ES3_VULKAN(),
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(FramebufferFormatsTest);
 
 class FramebufferTest_ES3 : public ANGLETest
 {};
@@ -827,11 +818,7 @@ TEST_P(FramebufferTest_ES3, ResizeTextureSmallToLarge)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
 }
 
-ANGLE_INSTANTIATE_TEST(FramebufferTest_ES3,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(FramebufferTest_ES3);
 
 class FramebufferTest_ES31 : public ANGLETest
 {
@@ -1003,6 +990,8 @@ TEST_P(FramebufferTest_ES31, RenderingLimitToDefaultFBOSizeWithNoAttachments)
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
     // Occlusion query reports fragments outside the render area are still rendered
     ANGLE_SKIP_TEST_IF(IsAndroid() || (IsWindows() && (IsIntel() || IsAMD())));
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
 
     constexpr char kVS1[] = R"(#version 310 es
 in layout(location = 0) highp vec2 a_position;
@@ -1112,11 +1101,7 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(FramebufferTest_ES31,
-                       ES31_D3D11(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES(),
-                       ES31_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES31(FramebufferTest_ES31);
 
 class AddDummyTextureNoRenderTargetTest : public ANGLETest
 {
@@ -1152,4 +1137,4 @@ TEST_P(AddDummyTextureNoRenderTargetTest, NoProgramOutputWorkaround)
     ASSERT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(AddDummyTextureNoRenderTargetTest, ES2_D3D11());
+ANGLE_INSTANTIATE_TEST_ES2(AddDummyTextureNoRenderTargetTest);

@@ -133,4 +133,4 @@ TEST_P(DrawTextureTest, ColorArrayNotUsed)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-ANGLE_INSTANTIATE_TEST(DrawTextureTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES1(DrawTextureTest);

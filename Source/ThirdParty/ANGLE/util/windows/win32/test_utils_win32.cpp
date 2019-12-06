@@ -11,9 +11,10 @@
 #include <windows.h>
 #include <array>
 
+#include "util/random_utils.h"
+
 namespace angle
 {
-
 void SetLowPriorityProcess()
 {
     SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
@@ -21,15 +22,15 @@ void SetLowPriorityProcess()
 
 bool StabilizeCPUForBenchmarking()
 {
-    if (SetThreadAffinityMask(GetCurrentThread(), 1) == 0)
+    if (::SetThreadAffinityMask(::GetCurrentThread(), 1) == 0)
     {
         return false;
     }
-    if (SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS) == FALSE)
+    if (::SetPriorityClass(::GetCurrentProcess(), REALTIME_PRIORITY_CLASS) == FALSE)
     {
         return false;
     }
-    if (SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) == FALSE)
+    if (::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) == FALSE)
     {
         return false;
     }

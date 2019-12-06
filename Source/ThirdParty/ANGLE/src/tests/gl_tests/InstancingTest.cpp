@@ -480,6 +480,8 @@ TEST_P(InstancingTestES31, UpdateAttribBindingByVertexAttribDivisor)
 // Verify that a large divisor that also changes doesn't cause issues and renders correctly.
 TEST_P(InstancingTestES3, LargeDivisor)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kVS[] = R"(#version 300 es
 layout(location = 0) in vec4 a_position;
 layout(location = 1) in vec4 a_color;
@@ -579,6 +581,8 @@ void main()
 // incorrectly clamped down to the maximum signed integer.
 TEST_P(InstancingTestES3, LargestDivisor)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr GLuint kLargeDivisor = std::numeric_limits<GLuint>::max();
     glVertexAttribDivisor(0, kLargeDivisor);
 
@@ -588,13 +592,8 @@ TEST_P(InstancingTestES3, LargestDivisor)
         << "Vertex attrib divisor read was not the same that was passed in.";
 }
 
-ANGLE_INSTANTIATE_TEST(InstancingTestES3, ES3_OPENGL(), ES3_OPENGLES(), ES3_D3D11(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(InstancingTestES3);
 
-ANGLE_INSTANTIATE_TEST(InstancingTestES31, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
+ANGLE_INSTANTIATE_TEST_ES31(InstancingTestES31);
 
-ANGLE_INSTANTIATE_TEST(InstancingTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(InstancingTest);

@@ -187,6 +187,6 @@ TEST_P(D3D11EmulatedIndexedBufferTest, TestSourceBufferRemainsUntouchedAfterExpa
     SafeDelete(cleanSourceBuffer);
 }
 
-ANGLE_INSTANTIATE_TEST(D3D11EmulatedIndexedBufferTest, ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(D3D11EmulatedIndexedBufferTest, ES2_D3D11(), ES3_D3D11(), ES31_D3D11());
 
 }  // anonymous namespace

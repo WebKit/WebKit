@@ -51,4 +51,4 @@ TEST_P(ObjectAllocationTest, BindFramebufferAfterGen)
 
 }  // anonymous namespace
 
-ANGLE_INSTANTIATE_TEST(ObjectAllocationTest, ES3_OPENGL(), ES3_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3(ObjectAllocationTest);

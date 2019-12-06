@@ -58,9 +58,9 @@ std::string DrawElementsToGoogleTestName(const std::string &dEQPName)
 }
 
 const char *gCaseListSearchPaths[] = {
-    "/../../sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src",
-    "/../../third_party/deqp/src",
-    "/../../third_party/angle/third_party/deqp/src",
+    "/../../sdcard/chromium_tests_root/third_party/angle/third_party/VK-GL-CTS/src",
+    "/../../third_party/VK-GL-CTS/src",
+    "/../../third_party/angle/third_party/VK-GL-CTS/src",
 };
 
 const char *gTestExpectationsSearchPaths[] = {
@@ -267,6 +267,19 @@ void dEQPCaseList::initialize()
     }
 
     GPUTestConfig testConfig = GPUTestConfig(api);
+
+#if !defined(ANGLE_PLATFORM_ANDROID)
+    // Note: These prints mess up parsing of test list when running on Android.
+    std::cout << "Using test config with:" << std::endl;
+    for (uint32_t condition : testConfig.getConditions())
+    {
+        const char *name = GetConditionName(condition);
+        if (name != nullptr)
+        {
+            std::cout << "  " << name << std::endl;
+        }
+    }
+#endif
 
     if (!mTestExpectationsParser.loadTestExpectationsFromFile(testConfig,
                                                               testExpectationsPath.value()))

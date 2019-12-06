@@ -421,7 +421,7 @@ void MultiviewGPUBoundBenchmark::initializeBenchmark()
                             "   frag_Col3 = vert_Col3;\n"
                             "   frag_Col4 = vert_Col4;\n"
                             "   frag_Col5 = vert_Col5;\n"
-                            "    gl_Position = vPosition;\n"
+                            "   gl_Position = vPosition;\n"
                             "}\n";
 
     const std::string &fs =

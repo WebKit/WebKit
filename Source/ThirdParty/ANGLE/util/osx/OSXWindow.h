@@ -33,7 +33,7 @@ class OSXWindow : public OSWindow
 {
   public:
     OSXWindow();
-    ~OSXWindow();
+    ~OSXWindow() override;
 
     bool initialize(const std::string &name, int width, int height) override;
     void destroy() override;

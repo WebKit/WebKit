@@ -320,15 +320,15 @@ bool RunSeparateProcessesForEachConfig(int *argc, char *argv[])
         std::vector<const char *> childArgs = commonArgs;
         childArgs.push_back(configStr.c_str());
 
-        int exitCode = 0;
-        if (!RunApp(childArgs, nullptr, nullptr, &exitCode))
+        ProcessHandle process(childArgs, false, false);
+        if (!process->started() || !process->finish())
         {
             std::cerr << "Launching child config " << config << " failed.\n";
         }
-        else if (exitCode != 0)
+        else if (process->getExitCode() != 0)
         {
-            std::cerr << "Child config " << config << " failed with exit code " << exitCode
-                      << ".\n";
+            std::cerr << "Child config " << config << " failed with exit code "
+                      << process->getExitCode() << ".\n";
             success = false;
         }
     }
@@ -481,7 +481,7 @@ void ANGLETestBase::ANGLETestSetUp()
 {
     mSetUpCalled = true;
 
-    InitCrashHandler();
+    InitCrashHandler(nullptr);
 
     gDefaultPlatformMethods.overrideWorkaroundsD3D = TestPlatform_overrideWorkaroundsD3D;
     gDefaultPlatformMethods.overrideFeaturesVk     = TestPlatform_overrideFeaturesVk;
@@ -1278,6 +1278,13 @@ bool IsVulkan()
     const char *renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
     std::string rendererString(renderer);
     return (rendererString.find("Vulkan") != std::string::npos);
+}
+
+bool IsMetal()
+{
+    const char *renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+    std::string rendererString(renderer);
+    return (rendererString.find("Metal") != std::string::npos);
 }
 
 bool IsDebug()

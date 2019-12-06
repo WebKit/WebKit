@@ -1438,8 +1438,8 @@ TEST_P(D3DTextureTest, RGBEmulationTextureImage)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(D3DTextureTest, ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(D3DTextureTestES3, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST_ES2(D3DTextureTest);
+ANGLE_INSTANTIATE_TEST_ES3(D3DTextureTestES3);
 // D3D Debug device reports an error. http://anglebug.com/3513
 // ANGLE_INSTANTIATE_TEST(D3DTextureTestMS, ES2_D3D11());
 }  // namespace angle

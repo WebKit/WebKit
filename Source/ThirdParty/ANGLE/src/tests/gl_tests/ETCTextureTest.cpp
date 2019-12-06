@@ -253,11 +253,5 @@ TEST_P(ETCTextureTest, ETC2SRGB8A1Validation)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(ETCTextureTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ETCTextureTest);
 }  // anonymous namespace

@@ -842,6 +842,8 @@ TEST_P(RobustResourceInitTest, ReadingOutOfBoundsCopiedTexture)
 
     // Flaky failure on Linux / NV / Vulkan when run in a sequence. http://anglebug.com/3416
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsLinux());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan());
 
     GLTexture tex;
     setupTexture(&tex);
@@ -1634,6 +1636,8 @@ TEST_P(RobustResourceInitTestES3, CompressedSubImage)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr int width     = 8;
     constexpr int height    = 8;
@@ -1785,6 +1789,8 @@ TEST_P(RobustResourceInitTest, SurfaceInitializedAfterSwap)
 TEST_P(RobustResourceInitTestES31, Multisample2DTexture)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
@@ -1947,18 +1953,10 @@ TEST_P(RobustResourceInitTestES3, InitializeMultisampledDepthRenderbufferAfterCo
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-ANGLE_INSTANTIATE_TEST(RobustResourceInitTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(RobustResourceInitTest);
 
-ANGLE_INSTANTIATE_TEST(RobustResourceInitTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES3(RobustResourceInitTestES3);
 
-ANGLE_INSTANTIATE_TEST(RobustResourceInitTestES31, ES31_OPENGL(), ES31_D3D11());
+ANGLE_INSTANTIATE_TEST_ES31(RobustResourceInitTestES31);
 
 }  // namespace angle

@@ -70,12 +70,6 @@ TEST_P(ProgramParameterTestES31, ValidateParameters)
     glDeleteProgram(program);
 }
 
-ANGLE_INSTANTIATE_TEST(ProgramParameterTest,
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_D3D11(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES(),
-                       ES31_D3D11());
-ANGLE_INSTANTIATE_TEST(ProgramParameterTestES31, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(ProgramParameterTest);
+ANGLE_INSTANTIATE_TEST_ES31(ProgramParameterTestES31);
 }  // namespace

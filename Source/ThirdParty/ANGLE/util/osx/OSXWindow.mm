@@ -655,6 +655,11 @@ bool OSXWindow::initialize(const std::string &name, int width, int height)
     }
     [mView setWantsLayer:YES];
 
+    // Disable scaling for this view. If scaling is enabled, the metal backend's
+    // frame buffer's size will be this window's size multiplied by contentScale.
+    // It will cause inconsistent testing & example apps' results.
+    mView.layer.contentsScale = 1;
+
     [mWindow setContentView:mView];
     [mWindow setTitle:[NSString stringWithUTF8String:name.c_str()]];
     [mWindow setAcceptsMouseMovedEvents:YES];

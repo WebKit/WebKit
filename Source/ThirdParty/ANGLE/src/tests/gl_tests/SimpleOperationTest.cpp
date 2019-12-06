@@ -31,11 +31,6 @@ constexpr char kGreenFragmentShader[] =
     gl_FragColor = vec4(0, 1, 0, 1);
 })";
 
-constexpr std::array<GLenum, 6> kCubeFaces = {
-    {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-     GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z}};
-
 class SimpleOperationTest : public ANGLETest
 {
   protected:
@@ -1085,16 +1080,6 @@ TEST_P(SimpleOperationTest, PrimitiveModeNegativeTest)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(SimpleOperationTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_D3D11_PRESENT_PATH_FAST(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES2_VULKAN_SWIFTSHADER());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleOperationTest);
 
 }  // namespace

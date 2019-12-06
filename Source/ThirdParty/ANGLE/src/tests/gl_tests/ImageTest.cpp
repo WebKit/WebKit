@@ -510,8 +510,14 @@ TEST_P(ImageTest, ANGLEExtensionAvailability)
         EXPECT_TRUE(has2DTextureExt());
         EXPECT_TRUE(hasCubemapExt());
         EXPECT_TRUE(hasRenderbufferExt());
-        // TODO(geofflang): Support GL_OES_EGL_image_external_essl3. http://anglebug.com/2668
-        EXPECT_FALSE(hasExternalESSL3Ext());
+        if (getClientMajorVersion() >= 3)
+        {
+            EXPECT_TRUE(hasExternalESSL3Ext());
+        }
+        else
+        {
+            EXPECT_FALSE(hasExternalESSL3Ext());
+        }
     }
     else
     {
@@ -1960,15 +1966,6 @@ TEST_P(ImageTest, UpdatedData)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(ImageTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(ImageTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ImageTest);
+ANGLE_INSTANTIATE_TEST_ES3(ImageTestES3);
 }  // namespace angle

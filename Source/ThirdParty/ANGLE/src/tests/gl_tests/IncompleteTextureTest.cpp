@@ -171,6 +171,8 @@ TEST_P(IncompleteTextureTest, UpdateTexture)
 // Tests that incomplete textures don't get initialized with the unpack buffer contents.
 TEST_P(IncompleteTextureTestES3, UnpackBufferBound)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
     std::vector<GLColor> red(16, GLColor::red);
 
     GLBuffer unpackBuffer;
@@ -186,6 +188,8 @@ TEST_P(IncompleteTextureTestES3, UnpackBufferBound)
 // Tests that the incomplete multisample texture has the correct alpha value.
 TEST_P(IncompleteTextureTestES31, MultisampleTexture)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsVulkan());
     constexpr char kVS[] = R"(#version 310 es
 in vec2 position;
 out vec2 texCoord;
@@ -221,11 +225,6 @@ void main()
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(IncompleteTextureTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(IncompleteTextureTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(IncompleteTextureTestES31, ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES2(IncompleteTextureTest);
+ANGLE_INSTANTIATE_TEST_ES3(IncompleteTextureTestES3);
+ANGLE_INSTANTIATE_TEST_ES31(IncompleteTextureTestES31);

@@ -10,6 +10,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include "common/apple_platform_utils.h"
+
 // OSX 10.8 deprecates Gestalt but doesn't make the operatingSystemVersion property part of the
 // public interface of NSProcessInfo until 10.10. Add a forward declaration.
 #if !defined(MAC_OS_X_VERSION_10_10) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
@@ -27,7 +29,7 @@ void GetOperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorVersi
     Gestalt(gestaltSystemVersionMajor, reinterpret_cast<SInt32 *>(majorVersion));
     Gestalt(gestaltSystemVersionMinor, reinterpret_cast<SInt32 *>(minorVersion));
 #else
-    if (@available(macOS 10.10, *))
+    if (ANGLE_APPLE_AVAILABLE_XC(10.10, 13.0))
     {
         NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
         *majorVersion                    = static_cast<int32_t>(version.majorVersion);

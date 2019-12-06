@@ -24,17 +24,17 @@ namespace gles31
 {
 
 Context::Context (tcu::TestContext& testCtx)
-    : m_testCtx        (testCtx)
-    , m_renderCtx    (DE_NULL)
-    , m_contextInfo    (DE_NULL)
+    : m_testCtx     (testCtx)
+    , m_renderCtx   (DE_NULL)
+    , m_contextInfo (DE_NULL)
 {
     if (m_testCtx.getCommandLine().getRunMode() == tcu::RUNMODE_EXECUTE)
         createRenderContext();
     else
     {
         // \todo [2016-11-15 pyry] Many tests (erroneously) inspect context type
-        //                           during test hierarchy construction. We should fix that
-        //                           and revert dummy context to advertise unknown context type.
+        //                         during test hierarchy construction. We should fix that
+        //                         and revert dummy context to advertise unknown context type.
         m_renderCtx = new glu::DummyRenderContext(glu::ContextType(glu::ApiType::es(3,1)));
     }
 }
@@ -57,17 +57,17 @@ void Context::createRenderContext (void)
 #if 0
         try
         {
-            m_renderCtx        = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 2));
+            m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 2));
         }
         catch (...)
         {
-            m_renderCtx        = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
+            m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
         }
 #else
         // Override the original behavior (above) to only create a 3.1 context
-        m_renderCtx        = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
+        m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
 #endif
-        m_contextInfo    = glu::ContextInfo::create(*m_renderCtx);
+        m_contextInfo   = glu::ContextInfo::create(*m_renderCtx);
     }
     catch (...)
     {
@@ -81,8 +81,8 @@ void Context::destroyRenderContext (void)
     delete m_contextInfo;
     delete m_renderCtx;
 
-    m_contextInfo    = DE_NULL;
-    m_renderCtx        = DE_NULL;
+    m_contextInfo   = DE_NULL;
+    m_renderCtx     = DE_NULL;
 }
 
 const tcu::RenderTarget& Context::getRenderTarget (void) const

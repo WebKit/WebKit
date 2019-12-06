@@ -12,6 +12,7 @@ util_sources = [
   "util/random_utils.h",
   "util/shader_utils.cpp",
   "util/shader_utils.h",
+  "util/test_utils.cpp",
   "util/test_utils.h",
   "util/util_export.h",
   "util/util_gl.h",

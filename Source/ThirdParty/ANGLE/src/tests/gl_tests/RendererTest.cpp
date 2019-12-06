@@ -172,28 +172,5 @@ TEST_P(RendererTest, SimpleOperation)
 // Select configurations (e.g. which renderer, which GLES major version) these tests should be run
 // against.
 
-ANGLE_INSTANTIATE_TEST(RendererTest,
-                       // ES2 on top of D3D9
-                       ES2_D3D9(),
-
-                       // ES on top of D3D11.
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-
-                       // ES on top of desktop OpenGL.
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-
-                       // ES on top of OpenGL ES.
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-
-                       // All ES version on top of the NULL backend.
-                       ES2_NULL(),
-                       ES3_NULL(),
-                       ES31_NULL(),
-
-                       // ES on top of Vulkan.
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL(RendererTest);
 }  // anonymous namespace

@@ -292,6 +292,8 @@ void main()
 // https://code.google.com/p/angleproject/issues/detail?id=709
 TEST_P(IndexedBufferCopyTest, IndexRangeBug)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     // TODO(geofflang): Figure out why this fails on AMD OpenGL (http://anglebug.com/1291)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
@@ -538,18 +540,9 @@ TEST_P(BufferDataTestES3, NoBufferInitDataCopyBug)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(BufferDataTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(BufferDataTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(IndexedBufferCopyTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2(BufferDataTest);
+ANGLE_INSTANTIATE_TEST_ES3(BufferDataTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(IndexedBufferCopyTest);
 
 #ifdef _WIN64
 
@@ -568,6 +561,8 @@ TEST_P(BufferDataOverflowTest, VertexBufferIntegerOverflow)
 {
     // http://anglebug.com/3786: flaky timeout on Win10 FYI x64 Release (NVIDIA GeForce GTX 1660)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsWindows() && (IsVulkan() || IsOpenGL()));
 
     // These values are special, to trigger the rounding bug.
     unsigned int numItems       = 0x7FFFFFE;
@@ -666,6 +661,6 @@ TEST_P(BufferDataOverflowTest, CopySubDataValidation)
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
-ANGLE_INSTANTIATE_TEST(BufferDataOverflowTest, ES3_D3D11());
+ANGLE_INSTANTIATE_TEST_ES3(BufferDataOverflowTest);
 
 #endif  // _WIN64

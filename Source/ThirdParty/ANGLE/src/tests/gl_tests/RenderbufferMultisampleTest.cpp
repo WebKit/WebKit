@@ -74,11 +74,5 @@ TEST_P(RenderbufferMultisampleTest, IntegerInternalformat)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(RenderbufferMultisampleTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES31_D3D11(),
-                       ES31_OPENGL(),
-                       ES31_OPENGLES());
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(RenderbufferMultisampleTest);
 }  // namespace

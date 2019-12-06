@@ -25,3 +25,7 @@ angle_white_box_tests_vulkan_sources = [
   "gl_tests/VulkanFormatTablesTest.cpp",
   "gl_tests/VulkanUniformUpdatesTest.cpp",
 ]
+angle_white_box_tests_mac_sources = [
+  "test_utils/angle_test_instantiate_apple.mm",
+  "test_utils/angle_test_instantiate_apple.h",
+]

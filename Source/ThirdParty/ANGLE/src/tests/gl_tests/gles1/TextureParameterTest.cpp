@@ -111,8 +111,4 @@ TEST_P(TextureParameterTest, Set)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(TextureParameterTest,
-                       ES1_D3D11(),
-                       ES1_OPENGL(),
-                       ES1_OPENGLES(),
-                       ES1_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES1(TextureParameterTest);

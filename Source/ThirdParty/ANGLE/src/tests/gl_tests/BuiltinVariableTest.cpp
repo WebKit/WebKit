@@ -195,11 +195,7 @@ TEST_P(BuiltinVariableVertexIdTest, Triangles)
     runTest(GL_TRIANGLES, indices, 6);
 }
 
-ANGLE_INSTANTIATE_TEST(BuiltinVariableVertexIdTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES3(BuiltinVariableVertexIdTest);
 
 class BuiltinVariableFragDepthClampingFloatRBOTest : public ANGLETest
 {

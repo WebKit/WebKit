@@ -244,19 +244,13 @@ TEST_P(DepthStencilTest, DepthOnlyEmulatedWithPacked)
 // Tests that clearing or rendering into a stencil-only format doesn't affect depth.
 TEST_P(DepthStencilTest, StencilOnlyEmulatedWithPacked)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D9());
     bindColorStencilFBO();
     prepareSingleEmulatedWithPacked();
     ensureDepthUnaffected();
 }
 
-ANGLE_INSTANTIATE_TEST(DepthStencilTest,
-                       ES2_D3D11(),
-                       ES3_D3D11(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthStencilTest);
 
 }  // anonymous namespace

@@ -20,10 +20,7 @@ class GPUTestConfigTester : public GPUTestConfig
   public:
     GPUTestConfigTester()
     {
-        for (bool &condition : mConditions)
-        {
-            condition = false;
-        }
+        mConditions.reset();
         mConditions[GPUTestConfig::kConditionWin]    = true;
         mConditions[GPUTestConfig::kConditionNVIDIA] = true;
         mConditions[GPUTestConfig::kConditionD3D11]  = true;

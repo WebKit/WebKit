@@ -32,6 +32,7 @@ bool IsNexus6P();
 bool IsNexus9();
 bool IsPixelXL();
 bool IsPixel2();
+bool IsPixel2XL();
 bool IsNVIDIAShield();
 
 // Desktop devices.
@@ -88,13 +89,79 @@ struct CombinedPrintToStringParamName
     }
 };
 
-#define ANGLE_INSTANTIATE_TEST_PLATFORMS(testName) \
-    testing::ValuesIn(::angle::FilterTestParams(testName##params, ArraySize(testName##params)))
+#define ANGLE_INSTANTIATE_TEST_PLATFORMS(testName, ...)                        \
+    testing::ValuesIn(::angle::FilterTestParams(testName##__VA_ARGS__##params, \
+                                                ArraySize(testName##__VA_ARGS__##params)))
 
 // Instantiate the test once for each extra argument. The types of all the
 // arguments must match, and getRenderer must be implemented for that type.
 #define ANGLE_INSTANTIATE_TEST(testName, first, ...)                                 \
     const decltype(first) testName##params[] = {first, ##__VA_ARGS__};               \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_ALL_TEST_PLATFORMS_ES1 \
+    ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER()
+
+#define ANGLE_ALL_TEST_PLATFORMS_ES2 \
+    ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER()
+
+#define ANGLE_ALL_TEST_PLATFORMS_ES3 \
+    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER()
+
+#define ANGLE_ALL_TEST_PLATFORMS_ES31 \
+    ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES(), ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER()
+
+#define ANGLE_ALL_TEST_PLATFORMS_NULL ES2_NULL(), ES3_NULL(), ES31_NULL()
+
+// Instantiate the test once for each GLES1 platform
+#define ANGLE_INSTANTIATE_TEST_ES1(testName)                                         \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES1};    \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+// Instantiate the test once for each GLES2 platform
+#define ANGLE_INSTANTIATE_TEST_ES2(testName)                                         \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2};    \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+// Instantiate the test once for each GLES3 platform
+#define ANGLE_INSTANTIATE_TEST_ES3(testName)                                         \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3};    \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+// Instantiate the test once for each GLES31 platform
+#define ANGLE_INSTANTIATE_TEST_ES31(testName)                                        \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES31};   \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+// Multiple ES Version macros
+#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(testName)                                 \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,     \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES3};    \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(testName)                        \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,     \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES3,     \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES31};   \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL(testName)                             \
+    const PlatformParameters testName##params[] = {                                                \
+        ANGLE_ALL_TEST_PLATFORMS_ES2, ANGLE_ALL_TEST_PLATFORMS_ES3, ANGLE_ALL_TEST_PLATFORMS_ES31, \
+        ANGLE_ALL_TEST_PLATFORMS_NULL};                                                            \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),               \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(testName)                                \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3,     \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES31};   \
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
                              testing::PrintToStringParamName())
 

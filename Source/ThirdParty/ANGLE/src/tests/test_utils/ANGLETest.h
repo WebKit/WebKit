@@ -123,6 +123,15 @@ struct GLColor
     static const GLColor magenta;
 };
 
+struct GLColor16UI
+{
+    constexpr GLColor16UI() : GLColor16UI(0, 0, 0, 0) {}
+    constexpr GLColor16UI(GLushort r, GLushort g, GLushort b, GLushort a) : R(r), G(g), B(b), A(a)
+    {}
+
+    GLushort R, G, B, A;
+};
+
 struct GLColor32F
 {
     constexpr GLColor32F() : GLColor32F(0.0f, 0.0f, 0.0f, 0.0f) {}
@@ -167,6 +176,11 @@ GLColor32F MakeGLColor32F(TR r, TG g, TB b, TA a)
 bool operator==(const GLColor32F &a, const GLColor32F &b);
 std::ostream &operator<<(std::ostream &ostream, const GLColor32F &color);
 GLColor32F ReadColor32F(GLint x, GLint y);
+
+constexpr std::array<GLenum, 6> kCubeFaces = {
+    {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+     GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z}};
 
 }  // namespace angle
 
@@ -246,6 +260,12 @@ GLColor32F ReadColor32F(GLint x, GLint y);
 #define EXPECT_PIXEL_8UI(x, y, r, g, b, a) \
     EXPECT_PIXEL_EQ_HELPER(x, y, r, g, b, a, GLubyte, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE)
 
+#define EXPECT_PIXEL_16UI(x, y, r, g, b, a) \
+    EXPECT_PIXEL_EQ_HELPER(x, y, r, g, b, a, GLushort, GL_RGBA, GL_UNSIGNED_SHORT)
+
+#define EXPECT_PIXEL_16UI_COLOR(x, y, color) \
+    EXPECT_PIXEL_16UI(x, y, color.R, color.G, color.B, color.A)
+
 #define EXPECT_PIXEL_RGB_EQUAL(x, y, r, g, b) \
     EXPECT_PIXEL_RGB_EQ_HELPER(x, y, r, g, b, GLubyte, GL_RGBA, GL_UNSIGNED_BYTE)
 
@@ -305,6 +325,12 @@ class ANGLETestBase
     virtual void overrideFeaturesVk(angle::FeaturesVk *featuresVulkan) {}
 
     static void ReleaseFixtures();
+
+    bool isSwiftshader() const
+    {
+        return mCurrentParams->eglParameters.deviceType ==
+               EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+    }
 
   protected:
     void ANGLETestSetUp();
@@ -576,6 +602,7 @@ bool IsOpenGLES();
 bool IsOpenGL();
 bool IsNULL();
 bool IsVulkan();
+bool IsMetal();
 
 // Debug/Release
 bool IsDebug();

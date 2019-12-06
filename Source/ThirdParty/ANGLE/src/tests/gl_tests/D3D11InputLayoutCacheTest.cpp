@@ -121,6 +121,6 @@ TEST_P(D3D11InputLayoutCacheTest, StressTest)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(D3D11InputLayoutCacheTest, ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(D3D11InputLayoutCacheTest, ES2_D3D11(), ES3_D3D11(), ES31_D3D11());
 
 }  // anonymous namespace
