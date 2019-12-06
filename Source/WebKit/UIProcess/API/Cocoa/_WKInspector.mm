@@ -44,6 +44,13 @@
     return nil;
 }
 
+- (WKWebView *)inspectorWebView
+{
+    if (auto* page = _inspector->inspectorPage())
+        return fromWebPageProxy(*page);
+    return nil;
+}
+
 - (BOOL)isConnected
 {
     return _inspector->isConnected();
@@ -135,7 +142,11 @@
 
 - (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)delegate
 {
-    self.webView._diagnosticLoggingDelegate = delegate;
+    auto inspectorWebView = self.inspectorWebView;
+    if (!inspectorWebView)
+        return;
+
+    inspectorWebView._diagnosticLoggingDelegate = delegate;
     _inspector->setDiagnosticLoggingAvailable(!!delegate);
 }
 

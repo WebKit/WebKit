@@ -89,6 +89,7 @@ public:
 
     // Public APIs
     WebPageProxy* inspectedPage() const { return m_inspectedPage; }
+    WebPageProxy* inspectorPage() const { return m_inspectorPage; }
 
     bool isConnected() const { return !!m_inspectorPage; }
     bool isVisible() const { return m_isVisible; }

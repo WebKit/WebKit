@@ -1,3 +1,19 @@
+2019-12-05  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] _WKInspector uses wrong WKWebView in -setDiagnosticLoggingDelegate:
+        https://bugs.webkit.org/show_bug.cgi?id=204928
+
+        Reviewed by Timothy Hatcher.
+
+        I feel like I've made this mistake before. To make the right thing more obvious,
+        add a property named inspectorWebView that returns the Inspector WKWebView.
+
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector inspectorWebView]):
+        (-[_WKInspector _setDiagnosticLoggingDelegate:]):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::inspectorPage const):
+
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         Use sendWithAsyncReply() for WebPage::TryClose IPC
