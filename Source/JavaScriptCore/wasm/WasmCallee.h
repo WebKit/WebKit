@@ -215,12 +215,39 @@ private:
         : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
         , m_codeBlock(WTFMove(codeBlock))
     {
+        RELEASE_ASSERT(m_codeBlock);
     }
 
     RefPtr<JITCallee> m_replacement;
     RefPtr<OMGForOSREntryCallee> m_osrEntryCallee;
     std::unique_ptr<FunctionCodeBlock> m_codeBlock;
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
+};
+
+class LLIntCallees : public ThreadSafeRefCounted<LLIntCallees> {
+public:
+    static Ref<LLIntCallees> create(Vector<Ref<LLIntCallee>>&& llintCallees)
+    {
+        return adoptRef(*new LLIntCallees(WTFMove(llintCallees)));
+    }
+
+    const Ref<LLIntCallee>& at(unsigned i) const
+    {
+        return m_llintCallees.at(i);
+    }
+
+    const Ref<LLIntCallee>* data() const
+    {
+        return m_llintCallees.data();
+    }
+
+private:
+    LLIntCallees(Vector<Ref<LLIntCallee>>&& llintCallees)
+        : m_llintCallees(WTFMove(llintCallees))
+    {
+    }
+
+    Vector<Ref<LLIntCallee>> m_llintCallees;
 };
 
 } } // namespace JSC::Wasm

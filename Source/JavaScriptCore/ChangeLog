@@ -1,5 +1,38 @@
 2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
 
+        [WebAssembly] Fix LLIntCallee's ownership
+        https://bugs.webkit.org/show_bug.cgi?id=204929
+
+        Reviewed by Saam Barati.
+
+        Currently, after the LLIntPlan finished generating bytecode, the Module takes ownership of the Vector
+        of LLIntCallee's and passes a pointer to the Vector's storage to the CodeBlock. However, while we're
+        tiering up, the module might be destroyed and we'll try to access the LLIntCallee after we finish
+        compiling through the pointer held by the CodeBlock, which is now stale, since the Vector was owned
+        by the Module. In order to fix this, we move the Vector into a reference counted wrapper class, LLIntCallees,
+        and both the Module and the CodeBlock hold references to the wrapper.
+
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::LLIntCallees::create):
+        (JSC::Wasm::LLIntCallees::at const):
+        (JSC::Wasm::LLIntCallees::data const):
+        (JSC::Wasm::LLIntCallees::LLIntCallees):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::create):
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::Module):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        * wasm/WasmModule.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
+2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
+
         REGRESSION(r253140): Wasm::FunctionParser needs to bounds check in SetLocal/TeeLocal
         https://bugs.webkit.org/show_bug.cgi?id=204909
 

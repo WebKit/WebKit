@@ -79,7 +79,7 @@ private:
     Module(LLIntPlan&);
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
-    Vector<Ref<LLIntCallee>> m_llintCallees;
+    RefPtr<LLIntCallees> m_llintCallees;
     MacroAssemblerCodeRef<B3CompilationPtrTag> m_llintEntryThunks;
     Lock m_lock;
 };

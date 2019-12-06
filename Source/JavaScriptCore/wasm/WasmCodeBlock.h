@@ -53,7 +53,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
 public:
     typedef void CallbackType(Ref<CodeBlock>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
-    static Ref<CodeBlock> create(Context*, MemoryMode, ModuleInformation&, const Ref<LLIntCallee>*);
+    static Ref<CodeBlock> create(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
 
     void waitUntilFinished();
     void compileAsync(Context*, AsyncCompilationCallback&&);
@@ -95,7 +95,7 @@ public:
             return *m_omgCallees[calleeIndex].get();
         if (m_bbqCallees[calleeIndex])
             return *m_bbqCallees[calleeIndex].get();
-        return m_llintCallees[calleeIndex].get();
+        return m_llintCallees->at(calleeIndex).get();
     }
 
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
@@ -128,13 +128,13 @@ private:
     friend class OMGPlan;
     friend class OMGForOSREntryPlan;
 
-    CodeBlock(Context*, MemoryMode, ModuleInformation&, const Ref<LLIntCallee>*);
+    CodeBlock(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;
     Vector<RefPtr<OMGCallee>> m_omgCallees;
     Vector<RefPtr<BBQCallee>> m_bbqCallees;
-    const Ref<LLIntCallee>* m_llintCallees;
+    RefPtr<LLIntCallees> m_llintCallees;
     HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;

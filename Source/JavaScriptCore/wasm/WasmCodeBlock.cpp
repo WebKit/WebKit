@@ -36,13 +36,13 @@
 
 namespace JSC { namespace Wasm {
 
-Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, const Ref<LLIntCallee>* llintCallees)
+Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
 {
     auto* result = new (NotNull, fastMalloc(sizeof(CodeBlock))) CodeBlock(context, mode, moduleInformation, llintCallees);
     return adoptRef(*result);
 }
 
-CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, const Ref<LLIntCallee>* llintCallees)
+CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_llintCallees(llintCallees)
@@ -50,7 +50,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
     RefPtr<CodeBlock> protectedThis = this;
 
     if (Options::useWasmLLInt()) {
-        m_plan = adoptRef(*new LLIntPlan(context, makeRef(moduleInformation), m_llintCallees, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+        m_plan = adoptRef(*new LLIntPlan(context, makeRef(moduleInformation), m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             auto locker = holdLock(m_lock);
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();
@@ -64,7 +64,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
             m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
 
             for (unsigned i = 0; i < m_calleeCount; ++i)
-                m_wasmIndirectCallEntryPoints[i] = m_llintCallees[i]->entrypoint();
+                m_wasmIndirectCallEntryPoints[i] = m_llintCallees->at(i)->entrypoint();
 
             m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
             m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();

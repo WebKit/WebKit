@@ -123,7 +123,7 @@ void OMGPlan::work(CompilationEffort)
                 bbqCallee->tierUpCount()->m_compilationStatusForOMG = TierUpCount::CompilationStatus::Compiled;
             }
             if (m_codeBlock->m_llintCallees) {
-                LLIntCallee& llintCallee = m_codeBlock->m_llintCallees[m_functionIndex].get();
+                LLIntCallee& llintCallee = m_codeBlock->m_llintCallees->at(m_functionIndex).get();
                 auto locker = holdLock(llintCallee.tierUpCounter().m_lock);
                 llintCallee.setReplacement(callee.copyRef());
                 llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
@@ -163,7 +163,7 @@ void OMGPlan::work(CompilationEffort)
         for (unsigned i = 0; i < m_codeBlock->m_wasmToWasmCallsites.size(); ++i) {
             repatchCalls(m_codeBlock->m_wasmToWasmCallsites[i]);
             if (m_codeBlock->m_llintCallees) {
-                LLIntCallee& llintCallee = m_codeBlock->m_llintCallees[i].get();
+                LLIntCallee& llintCallee = m_codeBlock->m_llintCallees->at(i).get();
                 if (JITCallee* replacementCallee = llintCallee.replacement())
                     repatchCalls(replacementCallee->wasmToWasmCallsites());
                 if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee())

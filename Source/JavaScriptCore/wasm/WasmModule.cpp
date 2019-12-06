@@ -37,7 +37,7 @@ namespace JSC { namespace Wasm {
 
 Module::Module(LLIntPlan& plan)
     : m_moduleInformation(plan.takeModuleInformation())
-    , m_llintCallees(plan.takeCallees())
+    , m_llintCallees(LLIntCallees::create(plan.takeCallees()))
     , m_llintEntryThunks(plan.takeEntryThunks())
 {
 }
@@ -108,9 +108,9 @@ Ref<CodeBlock> Module::getOrCreateCodeBlock(Context* context, MemoryMode mode)
     // FIXME: We might want to back off retrying at some point:
     // https://bugs.webkit.org/show_bug.cgi?id=170607
     if (!codeBlock || (codeBlock->compilationFinished() && !codeBlock->runnable())) {
-        const Ref<LLIntCallee>* llintCallees = nullptr;
+        RefPtr<LLIntCallees> llintCallees = nullptr;
         if (Options::useWasmLLInt())
-            llintCallees = m_llintCallees.data();
+            llintCallees = m_llintCallees;
         codeBlock = CodeBlock::create(context, mode, const_cast<ModuleInformation&>(moduleInformation()), llintCallees);
         m_codeBlocks[static_cast<uint8_t>(mode)] = codeBlock;
     }
