@@ -210,22 +210,46 @@ static bool isDocumentSandboxed(Frame& frame, SandboxFlags mask)
     return frame.document() && frame.document()->isSandboxed(mask);
 }
 
-struct ForbidPromptsScope {
-    ForbidPromptsScope(Page* page) : m_page(page)
+class PageLevelForbidScope {
+protected:
+    explicit PageLevelForbidScope(Page* page)
+        : m_page(makeWeakPtr(page))
     {
-        if (!m_page)
-            return;
-        m_page->forbidPrompts();
+    }
+
+    ~PageLevelForbidScope() = default;
+
+    WeakPtr<Page> m_page;
+};
+
+struct ForbidPromptsScope : public PageLevelForbidScope {
+    explicit ForbidPromptsScope(Page* page)
+        : PageLevelForbidScope(page)
+    {
+        if (m_page)
+            m_page->forbidPrompts();
     }
 
     ~ForbidPromptsScope()
     {
-        if (!m_page)
-            return;
-        m_page->allowPrompts();
+        if (m_page)
+            m_page->allowPrompts();
+    }
+};
+
+struct ForbidSynchronousLoadsScope : public PageLevelForbidScope {
+    explicit ForbidSynchronousLoadsScope(Page* page)
+        : PageLevelForbidScope(page)
+    {
+        if (m_page)
+            m_page->forbidSynchronousLoads();
     }
 
-    Page* m_page;
+    ~ForbidSynchronousLoadsScope()
+    {
+        if (m_page)
+            m_page->allowSynchronousLoads();
+    }
 };
 
 class FrameLoader::FrameProgressTracker {
@@ -3298,6 +3322,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 
     // We store the frame's page in a local variable because the frame might get detached inside dispatchEvent.
     ForbidPromptsScope forbidPrompts(m_frame.page());
+    ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame.page());
     IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
 
     if (m_didCallImplicitClose && !m_wasUnloadEventEmitted) {
@@ -3378,6 +3403,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     {
         SetForScope<PageDismissalType> change(m_pageDismissalEventBeingDispatched, PageDismissalType::BeforeUnload);
         ForbidPromptsScope forbidPrompts(m_frame.page());
+        ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame.page());
         domWindow->dispatchEvent(beforeUnloadEvent, domWindow->document());
     }
 

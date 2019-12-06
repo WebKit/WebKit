@@ -2418,6 +2418,22 @@ bool Page::arePromptsAllowed()
     return !m_forbidPromptsDepth;
 }
 
+void Page::forbidSynchronousLoads()
+{
+    ++m_forbidSynchronousLoadsDepth;
+}
+
+void Page::allowSynchronousLoads()
+{
+    ASSERT(m_forbidSynchronousLoadsDepth);
+    --m_forbidSynchronousLoadsDepth;
+}
+
+bool Page::areSynchronousLoadsAllowed()
+{
+    return !m_forbidSynchronousLoadsDepth;
+}
+
 void Page::logNavigation(const Navigation& navigation)
 {
     String navigationDescription;

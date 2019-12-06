@@ -55,6 +55,7 @@
 #include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 #include "SubresourceIntegrity.h"
 #include "SubresourceLoader.h"
@@ -130,6 +131,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
+
+    if (document.settings().disallowSyncXHRDuringPageDismissalEnabled() && !m_async && (!document.page() || !document.page()->areSynchronousLoadsAllowed())) {
+        logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Synchronous loads are not allowed at this time"));
+        return;
+    }
 
     // Referrer and Origin headers should be set after the preflight if any.
     ASSERT(!request.hasHTTPReferrer() && !request.hasHTTPOrigin());

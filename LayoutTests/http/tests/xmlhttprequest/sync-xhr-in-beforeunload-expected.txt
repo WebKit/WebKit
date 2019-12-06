@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/dummy.xml.
+Checks that trying to do a synchronous XHR in a beforeunload event handler is not allowed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Doing a synchronous XHR in the beforeunload event handler threw an exception
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

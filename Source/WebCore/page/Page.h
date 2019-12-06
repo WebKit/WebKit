@@ -584,6 +584,10 @@ public:
     void allowPrompts();
     bool arePromptsAllowed();
 
+    void forbidSynchronousLoads();
+    void allowSynchronousLoads();
+    bool areSynchronousLoadsAllowed();
+
     void mainFrameLoadStarted(const URL&, FrameLoadType);
 
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
@@ -918,6 +922,7 @@ private:
 
     unsigned m_lastSpatialNavigationCandidatesCount { 0 };
     unsigned m_forbidPromptsDepth { 0 };
+    unsigned m_forbidSynchronousLoadsDepth { 0 };
 
     Ref<SocketProvider> m_socketProvider;
     Ref<CookieJar> m_cookieJar;

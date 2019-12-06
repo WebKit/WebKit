@@ -54,6 +54,10 @@ deviceHeight:
   type: int
   initial: 0
 
+disallowSyncXHRDuringPageDismissalEnabled:
+  type: bool
+  initial: true
+
 # Allow clients concerned with memory consumption to set a quota on session storage
 # since the memory used won't be released until the Page is destroyed.
 sessionStorageQuota:

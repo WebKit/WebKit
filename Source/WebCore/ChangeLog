@@ -1,3 +1,42 @@
+2019-12-06  Chris Dumez  <cdumez@apple.com>
+
+        Prevent synchronous XHR in beforeunload / unload event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=204912
+        <rdar://problem/57676394>
+
+        Reviewed by Darin Adler.
+
+        Prevent synchronous XHR in beforeunload / unload event handlers. They are terrible for performance
+        and the Beacon API (or Fetch keepalive) are more efficient & supported alternatives.
+
+        In particular, this would cause hangs when trying to navigate away from a site or when closing
+        attempt, which would result in terrible user experience.
+
+        Chrome and Edge have expressed public support for this. Chrome has actually been testing this behavior
+        for a while now:
+        https://www.chromestatus.com/feature/4664843055398912
+
+        I added this new behavior behind an experimental feature flag, enabled by default.
+
+        Tests: http/tests/xmlhttprequest/sync-xhr-in-beforeunload.html
+               http/tests/xmlhttprequest/sync-xhr-in-unload.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        * loader/FrameLoader.cpp:
+        (WebCore::PageLevelForbidScope::PageLevelForbidScope):
+        (WebCore::ForbidPromptsScope::ForbidPromptsScope):
+        (WebCore::ForbidPromptsScope::~ForbidPromptsScope):
+        (WebCore::ForbidSynchronousLoadsScope::ForbidSynchronousLoadsScope):
+        (WebCore::ForbidSynchronousLoadsScope::~ForbidSynchronousLoadsScope):
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+        * page/Page.cpp:
+        (WebCore::Page::forbidSynchronousLoads):
+        (WebCore::Page::allowSynchronousLoads):
+        (WebCore::Page::areSynchronousLoadsAllowed):
+        * page/Page.h:
+
 2019-12-06  Antti Koivisto  <antti@apple.com>
 
         Support for resolving highlight pseudo element style

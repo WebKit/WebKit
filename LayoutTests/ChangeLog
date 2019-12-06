@@ -1,3 +1,20 @@
+2019-12-06  Chris Dumez  <cdumez@apple.com>
+
+        Prevent synchronous XHR in beforeunload / unload event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=204912
+        <rdar://problem/57676394>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * http/tests/xmlhttprequest/resources/sync-xhr-in-beforeunload-window.html: Added.
+        * http/tests/xmlhttprequest/resources/sync-xhr-in-unload-window.html: Added.
+        * http/tests/xmlhttprequest/sync-xhr-in-beforeunload-expected.txt: Added.
+        * http/tests/xmlhttprequest/sync-xhr-in-beforeunload.html: Added.
+        * http/tests/xmlhttprequest/sync-xhr-in-unload-expected.txt: Added.
+        * http/tests/xmlhttprequest/sync-xhr-in-unload.html: Added.
+
 2019-12-06  Antti Koivisto  <antti@apple.com>
 
         Support for resolving highlight pseudo element style
