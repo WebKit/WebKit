@@ -1,3 +1,23 @@
+2019-12-06  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Fix DisplayRunPath offsets
+        https://bugs.webkit.org/show_bug.cgi?id=204949
+
+        Reviewed by Zalan Bujtas.
+
+        Fixes output of tests like fast/text/system-font-zero-size.html with LFC integration enabled.
+
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
+        (WebCore::LineLayoutTraversal::DisplayRunPath::DisplayRunPath):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::localStartOffset const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::localEndOffset const):
+
+        Display::Run offsets are already local.
+
+        (WebCore::LineLayoutTraversal::DisplayRunPath::length const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::runs const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::firstRun const): Deleted.
+
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         Stop using reserveCapacity() / reserveInitialCapacity() in IPC decoders

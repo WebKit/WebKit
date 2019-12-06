@@ -42,7 +42,6 @@ class DisplayRunPath {
 public:
     DisplayRunPath(const Display::InlineContent& inlineContent, size_t startIndex, size_t endIndex)
         : m_inlineContent(&inlineContent)
-        , m_startIndex(startIndex)
         , m_endIndex(endIndex)
         , m_runIndex(startIndex)
     { }
@@ -65,9 +64,9 @@ public:
 
     bool hasHyphen() const { return false; } // FIXME: Implement.
     StringView text() const { return run().textContext()->content(); }
-    unsigned localStartOffset() const { return run().textContext()->start() - firstRun().textContext()->start(); }
-    unsigned localEndOffset() const { return run().textContext()->end() - firstRun().textContext()->start(); }
-    unsigned length() const { return run().textContext()->end() - run().textContext()->start(); }
+    unsigned localStartOffset() const { return run().textContext()->start(); }
+    unsigned localEndOffset() const { return run().textContext()->end(); }
+    unsigned length() const { return run().textContext()->length(); }
 
     bool isLastOnLine() const
     {
@@ -93,11 +92,9 @@ public:
 
 private:
     const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
-    const Display::Run& firstRun() const { return runs()[m_startIndex]; }
     const Display::Run& run() const { return runs()[m_runIndex]; }
 
     RefPtr<const Display::InlineContent> m_inlineContent;
-    size_t m_startIndex { 0 };
     size_t m_endIndex { 0 };
     size_t m_runIndex { 0 };
 };
