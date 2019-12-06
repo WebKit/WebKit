@@ -88,7 +88,10 @@ ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes(MetadataTable& metadataT
 
     // In this case, we return the size of the table minus the offset table,
     // which was already accounted for in the UnlinkedCodeBlock.
-    size_t result = totalSize();
+
+    // Be careful not to touch m_rawBuffer if this metadataTable is not owning it.
+    // It is possible that, m_rawBuffer is realloced in the other thread while we are accessing here.
+    size_t result = metadataTable.totalSize();
     if (metadataTable.buffer() == buffer()) {
         ASSERT(m_isLinked);
         if (m_is32Bit)
