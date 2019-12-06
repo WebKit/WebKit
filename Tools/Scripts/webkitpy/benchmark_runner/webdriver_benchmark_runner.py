@@ -3,7 +3,7 @@
 import json
 import logging
 
-from benchmark_runner import BenchmarkRunner
+from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 
 
 _log = logging.getLogger(__name__)

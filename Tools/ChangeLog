@@ -1,3 +1,16 @@
+2019-12-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support to webkitpy.browserperfdash
+        https://bugs.webkit.org/show_bug.cgi?id=204887
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.browserperfdash.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Remove urlparse dependency.
+        * Scripts/webkitpy/benchmark_runner/webdriver_benchmark_runner.py: Use explicit import.
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner._run_one_test): Use Python 2/3 compatible urljoin.
+
 2019-12-05  Sihui Liu  <sihui_liu@apple.com>
 
         Fix a Typo in IndexedDBInPageCache.html

@@ -10,12 +10,10 @@ import tempfile
 import time
 import types
 import os
-import urlparse
 
 from webkitpy.benchmark_runner.benchmark_builder import BenchmarkBuilder
 from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
-
 
 _log = logging.getLogger(__name__)
 
