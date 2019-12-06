@@ -1,5 +1,12 @@
 2019-12-06  Joonghun Park  <jh718.park@samsung.com>
 
+        Unreviewed. Revert r253207 because it causes compile error in Mac and ios build.
+
+        * runtime/PredictionFileCreatingFuzzerAgent.cpp:
+        (JSC::PredictionFileCreatingFuzzerAgent::getPredictionInternal):
+
+2019-12-06  Joonghun Park  <jh718.park@samsung.com>
+
         Unreviewed. Remove build warning below since r252978.
 
         warning: format ‘%llx’ expects argument of type ‘long long unsigned int’,
