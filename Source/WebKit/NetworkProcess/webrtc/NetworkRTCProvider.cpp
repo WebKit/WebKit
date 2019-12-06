@@ -58,17 +58,24 @@ static inline std::unique_ptr<rtc::Thread> createThread()
     return thread;
 }
 
+#if !RELEASE_LOG_DISABLED
+static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
+{
+    if (severity == rtc::LS_ERROR)
+        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC error: %{public}s", message);
+    else
+        RELEASE_LOG(WebRTC, "LibWebRTC message: %{public}s", message);
+}
+#endif
+
 NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection)
     : m_connection(&connection)
     , m_rtcMonitor(*this)
     , m_rtcNetworkThread(createThread())
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(m_rtcNetworkThread.get()))
 {
-#if defined(NDEBUG)
-    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
-#else
-    if (WebKit2LogWebRTC.state != WTFLogChannelState::On)
-        rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
+#if !RELEASE_LOG_DISABLED
+    rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
 #endif
 }
 
