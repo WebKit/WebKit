@@ -2177,6 +2177,7 @@ private:
     void clearAudibleActivity();
 #endif
 
+    void tryCloseTimedOut();
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
 
     const Identifier m_identifier;
@@ -2593,6 +2594,8 @@ private:
 
     bool m_needsFontAttributes { false };
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
+
+    RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;
 
     std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;

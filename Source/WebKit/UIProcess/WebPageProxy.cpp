@@ -271,6 +271,7 @@ static const unsigned wheelEventQueueSizeThreshold = 10;
 static const Seconds resetRecentCrashCountDelay = 30_s;
 static unsigned maximumWebProcessRelaunchAttempts = 1;
 static const Seconds audibleActivityClearDelay = 10_s;
+static const Seconds tryCloseTimeoutDelay = 500_ms;
 
 namespace WebKit {
 using namespace WebCore;
@@ -449,6 +450,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
+    , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
 
@@ -1074,23 +1076,29 @@ bool WebPageProxy::tryClose()
     if (!hasRunningProcess())
         return true;
 
-    RELEASE_LOG_IF_ALLOWED(Loading, "tryClose:");
+    RELEASE_LOG_IF_ALLOWED(Process, "tryClose:");
 
     // Close without delay if the process allows it. Our goal is to terminate
     // the process, so we check a per-process status bit.
     if (m_process->isSuddenTerminationEnabled())
         return true;
 
-    m_process->responsivenessTimer().start();
+    m_tryCloseTimeoutTimer.startOneShot(tryCloseTimeoutDelay);
     sendWithAsyncReply(Messages::WebPage::TryClose(), [this, weakThis = makeWeakPtr(*this)](bool shouldClose) {
         if (!weakThis)
             return;
 
-        m_process->responsivenessTimer().stop();
+        m_tryCloseTimeoutTimer.stop();
         if (shouldClose)
             closePage();
     });
     return false;
+}
+
+void WebPageProxy::tryCloseTimedOut()
+{
+    RELEASE_LOG_ERROR_IF_ALLOWED(Process, "tryCloseTimedOut: Timed out waiting for the process to respond to the WebPage::TryClose IPC, closing the page now");
+    closePage();
 }
 
 void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle& sandboxExtensionHandle, bool checkAssumedReadAccessToResourceURL)
@@ -5321,6 +5329,10 @@ void WebPageProxy::didExitFullscreen()
 
 void WebPageProxy::closePage()
 {
+    if (isClosed())
+        return;
+
+    RELEASE_LOG_IF_ALLOWED(Process, "closePage:");
     pageClient().clearAllEditCommands();
     m_uiClient->close(this);
 }
