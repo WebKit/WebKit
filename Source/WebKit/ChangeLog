@@ -1,3 +1,17 @@
+2019-12-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Improve Inspectable Target Page to adapt a long title and URL
+        https://bugs.webkit.org/show_bug.cgi?id=204874
+
+        Reviewed by Fujii Hironori.
+
+        Add some CSS atributes to make such long titles and URLs fit the width
+        of a window size. Then "Inspector" button is shown at the visible area.
+        No new tests, since there is no change in behavior.
+
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::platformStartTask):
+
 2019-12-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WebKit] Fix compilation warnings for MSVC
