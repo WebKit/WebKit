@@ -3546,6 +3546,16 @@ private:
     {
         ASSERT(type == AccessType::GetById || type == AccessType::TryGetById || type == AccessType::GetByIdDirect);
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+
+        if (m_graph.m_shouldSkipIC.contains(m_node)) {
+            speculate(m_node->child1());
+            LValue base = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+
+            setJSValue(vmCall(Int64, appropriateGenericGetByIdFunction(type),
+                weakPointer(globalObject), base, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+            return;
+        }
+
         switch (m_node->child1().useKind()) {
         case CellUse: {
             setJSValue(getById(lowCell(m_node->child1()), type));
@@ -4453,7 +4463,7 @@ private:
         }
             
         case Array::Generic: {
-            if (m_graph.m_slowGetByVal.contains(m_node)) {
+            if (m_graph.m_shouldSkipIC.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
                     if (m_graph.varArgChild(m_node, 1).useKind() == StringUse) {
                         setJSValue(vmCall(

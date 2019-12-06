@@ -30,7 +30,7 @@ types [
     :ErrorType,
     :GetByIdMode,
     :GetByIdModeMetadata,
-    :GetByValHistory,
+    :PointerHistory,
     :GetPutInfo,
     :IndexingType,
     :JSCell,
@@ -451,6 +451,7 @@ op :get_by_id,
     metadata: {
         modeMetadata: GetByIdModeMetadata,
         profile: ValueProfile,
+        seenStructures: PointerHistory,
     }
 
 op :get_by_id_with_this,
@@ -462,6 +463,7 @@ op :get_by_id_with_this,
     },
     metadata: {
         profile: ValueProfile,
+        seenStructures: PointerHistory,
     }
 
 op :get_by_val_with_this,
@@ -485,6 +487,7 @@ op :get_by_id_direct,
         profile: ValueProfile, # not used in llint
         structureID: StructureID,
         offset: unsigned,
+        seenStructures: PointerHistory,
     }
 
 op :try_get_by_id,
@@ -495,6 +498,7 @@ op :try_get_by_id,
     },
     metadata: {
         profile: ValueProfile,
+        seenStructures: PointerHistory,
     }
 
 op :put_by_id,
@@ -535,7 +539,7 @@ op :get_by_val,
     metadata: {
         profile: ValueProfile,
         arrayProfile: ArrayProfile,
-        seenIdentifiers: GetByValHistory,
+        seenIdentifiers: PointerHistory,
     }
 
 op :put_by_val,

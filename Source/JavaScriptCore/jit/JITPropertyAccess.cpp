@@ -409,37 +409,44 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
     int resultVReg = bytecode.m_dst.offset();
     int baseVReg = bytecode.m_base.offset();
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+    auto& metadata = bytecode.metadata(m_codeBlock);
 
     emitGetVirtualRegister(baseVReg, regT0);
 
-    emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
+    if (metadata.m_seenStructures.count() > Options::getByIdICMaxNumberOfStructures())
+        callOperationWithProfile(bytecode.metadata(m_codeBlock), operationTryGetByIdGeneric, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), regT0, TrustedImmPtr(ident->impl()));
+    else {
+        emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
-    JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::TryGetById);
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
-    m_getByIds.append(gen);
-    
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(resultVReg);
+        JITGetByIdGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+            ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::TryGetById);
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByIds.append(gen);
+        
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitPutVirtualRegister(resultVReg);
+    }
 }
 
 void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCases(iter);
+    if (hasAnySlowCases(iter)) {
+        linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpTryGetById>();
-    int resultVReg = bytecode.m_dst.offset();
-    const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+        auto bytecode = currentInstruction->as<OpTryGetById>();
+        int resultVReg = bytecode.m_dst.offset();
+        const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
-    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
 
-    Label coldPathBegin = label();
+        Label coldPathBegin = label();
 
-    Call call = callOperation(operationTryGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
-    
-    gen.reportSlowPathCall(coldPathBegin, call);
+        Call call = callOperation(operationTryGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
+        
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
 }
 
 void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
@@ -448,37 +455,44 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
     int resultVReg = bytecode.m_dst.offset();
     int baseVReg = bytecode.m_base.offset();
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+    auto& metadata = bytecode.metadata(m_codeBlock);
 
     emitGetVirtualRegister(baseVReg, regT0);
 
-    emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
+    if (metadata.m_seenStructures.count() > Options::getByIdICMaxNumberOfStructures())
+        callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdDirectGeneric, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), regT0, TrustedImmPtr(ident->impl()));
+    else {
+        emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
-    JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetByIdDirect);
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
-    m_getByIds.append(gen);
+        JITGetByIdGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+            ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetByIdDirect);
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(resultVReg);
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitPutVirtualRegister(resultVReg);
+    }
 }
 
 void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCases(iter);
+    if (hasAnySlowCases(iter)) {
+        linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpGetByIdDirect>();
-    int resultVReg = bytecode.m_dst.offset();
-    const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+        auto bytecode = currentInstruction->as<OpGetByIdDirect>();
+        int resultVReg = bytecode.m_dst.offset();
+        const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
-    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
 
-    Label coldPathBegin = label();
+        Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdDirectOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdDirectOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
 
-    gen.reportSlowPathCall(coldPathBegin, call);
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
 }
 
 void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
@@ -490,24 +504,54 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     emitGetVirtualRegister(baseVReg, regT0);
-    
-    emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
-    
-    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
-        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-        emitArrayProfilingSiteWithCell(regT0, regT1, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
-        notArrayLengthMode.link(this);
+
+    if (metadata.m_seenStructures.count() > Options::getByIdICMaxNumberOfStructures()) {
+        if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
+            auto notCell = branchIfNotCell(regT0);
+            Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+            emitArrayProfilingSiteWithCell(regT0, regT1, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
+            notArrayLengthMode.link(this);
+            notCell.link(this);
+        }
+        callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdGeneric, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), regT0, TrustedImmPtr(ident->impl()));
+    } else {
+        emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
+        
+        if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
+            Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+            emitArrayProfilingSiteWithCell(regT0, regT1, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
+            notArrayLengthMode.link(this);
+        }
+
+        JITGetByIdGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+            ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetById);
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByIds.append(gen);
+
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitPutVirtualRegister(resultVReg);
     }
+}
 
-    JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetById);
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
-    m_getByIds.append(gen);
+void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    if (hasAnySlowCases(iter)) {
+        linkAllSlowCases(iter);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(resultVReg);
+        auto bytecode = currentInstruction->as<OpGetById>();
+        int resultVReg = bytecode.m_dst.offset();
+        const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        
+        Label coldPathBegin = label();
+
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
+
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
 }
 
 void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
@@ -532,23 +576,6 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
 
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
     emitPutVirtualRegister(resultVReg);
-}
-
-void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    auto bytecode = currentInstruction->as<OpGetById>();
-    int resultVReg = bytecode.m_dst.offset();
-    const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
-
-    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-    
-    Label coldPathBegin = label();
-
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
-
-    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

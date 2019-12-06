@@ -1153,7 +1153,7 @@ public:
     RegisteredStructure stringStructure;
     RegisteredStructure symbolStructure;
 
-    HashSet<Node*> m_slowGetByVal;
+    HashSet<Node*> m_shouldSkipIC;
 
 private:
     bool isStringPrototypeMethodSane(JSGlobalObject*, UniquedStringImpl*);

@@ -986,6 +986,20 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
 {
     ASSERT(accessType == AccessType::GetById || accessType == AccessType::GetByIdDirect || accessType == AccessType::TryGetById);
 
+    if (m_graph.m_shouldSkipIC.contains(node)) {
+        JSValueOperand base(this, node->child1(), ManualOperandSpeculation);
+        speculate(node, node->child1());
+        JSValueRegs baseRegs = base.jsValueRegs();
+
+        flushRegisters();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(appropriateGenericGetByIdFunction(accessType), resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, TrustedImmPtr(identifierUID(node->identifierNumber())));
+        m_jit.exceptionCheck();
+        jsValueResult(resultRegs, node, DataFormatJS);
+        return;
+    }
+
     switch (node->child1().useKind()) {
     case CellUse: {
         SpeculateCellOperand base(this, node->child1());

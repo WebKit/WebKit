@@ -2408,7 +2408,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         case Array::Generic: {
-            if (m_graph.m_slowGetByVal.contains(node)) {
+            if (m_graph.m_shouldSkipIC.contains(node)) {
                 if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
                     if (m_graph.varArgChild(node, 1).useKind() == StringUse) {
                         compileGetByValForObjectWithString(node);

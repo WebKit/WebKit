@@ -1,3 +1,64 @@
+2019-12-05  Saam Barati  <sbarati@apple.com>
+
+        get_by_id ICs should have a structure history used to indicate when we should skip generating an IC
+        https://bugs.webkit.org/show_bug.cgi?id=204904
+        <rdar://problem/57631437>
+
+        Reviewed by Yusuke Suzuki and Tadeu Zagallo.
+
+        I implemented a similar policy for get_by_val for the number of unique seen
+        identifiers. This allows us to create a heuristic to directly call the slow
+        path when profiling information tells us if inline caching might not be
+        profitable. This patch implements a similar policy for get_by_id where we
+        profile the seen base value structures. If the LLInt observes enough
+        unique structures, we omit emitting the inline cache in the upper
+        tiers.
+        
+        The goal here was to try to speed up Speedometer2. Local testing showed
+        this patch to repeatedly be 0.5% faster, but all the P values I got were
+        insignificant. So it appears it's either neutral or slightly faster.
+        
+        This patch also adjusts the policy of seeing a non-identifier inside
+        the PointerHistory data structure. Instead of increasing it to reach the
+        limit when we see a non-identifier, we just treat each execution with
+        a non-identifier to increment the count by 1.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.rb:
+        * bytecode/GetByValHistory.h: Removed.
+        * bytecode/PointerHistory.h: Copied from Source/JavaScriptCore/bytecode/GetByValHistory.h.
+        (JSC::PointerHistory::observe):
+        (JSC::PointerHistory::observeNull):
+        (JSC::GetByValHistory::observeNonUID): Deleted.
+        (JSC::GetByValHistory::observe): Deleted.
+        (JSC::GetByValHistory::count const): Deleted.
+        (JSC::GetByValHistory::filter const): Deleted.
+        (JSC::GetByValHistory::update): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * generator/DSL.rb:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/OptionsList.h:
+
 2019-12-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Fix LLIntCallee's ownership

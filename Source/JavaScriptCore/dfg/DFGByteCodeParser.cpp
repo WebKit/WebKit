@@ -4712,11 +4712,6 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     
     Node* base = get(bytecode.m_base);
     unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
-    
-    GetByStatus getByStatus = GetByStatus::computeFor(
-        m_inlineStackTop->m_profiledBlock,
-        m_inlineStackTop->m_baselineMap, m_icContextStack,
-        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No);
 
     AccessType type = AccessType::GetById;
     unsigned opcodeLength = currentInstruction->size();
@@ -4724,10 +4719,29 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
         type = AccessType::TryGetById;
     else if (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
+    
+    if (bytecode.metadata(m_inlineStackTop->m_codeBlock).m_seenStructures.count() > Options::getByIdICMaxNumberOfStructures()) {
+        NodeType getById;
+        if (type == AccessType::GetById)
+            getById = GetById;
+        else if (type == AccessType::TryGetById)
+            getById = TryGetById;
+        else
+            getById = GetByIdDirect;
+
+        Node* node = addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base);
+        set(bytecode.m_dst, node);
+        m_graph.m_shouldSkipIC.add(node);
+        return;
+    }
+    
+    GetByStatus getByStatus = GetByStatus::computeFor(
+        m_inlineStackTop->m_profiledBlock,
+        m_inlineStackTop->m_baselineMap, m_icContextStack,
+        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No);
 
     handleGetById(
         bytecode.m_dst, prediction, base, identifierNumber, getByStatus, type, opcodeLength);
-
 }
 
 static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutInfo)
@@ -5656,7 +5670,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
                 if (getByStatus.observedStructureStubInfoSlowPath() || bytecode.metadata(codeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers())
-                    m_graph.m_slowGetByVal.add(getByVal);
+                    m_graph.m_shouldSkipIC.add(getByVal);
             }
 
             NEXT_OPCODE(op_get_by_val);
