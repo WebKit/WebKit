@@ -341,8 +341,6 @@ public:
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
-    IntPoint m_targetAutoscrollPositionInWindow;
-    bool m_isAutoscrolling { false };
 #endif
 
 private:
@@ -630,6 +628,8 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_shouldAllowMouseDownToStartDrag { false };
+    IntPoint m_targetAutoscrollPositionInWindow;
+    bool m_isAutoscrolling { false };
 #endif
 
 #if ENABLE(CURSOR_VISIBILITY)
