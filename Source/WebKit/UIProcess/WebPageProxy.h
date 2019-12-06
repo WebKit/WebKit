@@ -557,7 +557,7 @@ public:
     void didExceedInactiveMemoryLimitWhileActive();
     void didExceedBackgroundCPULimitWhileInForeground();
 
-    void closePage(bool stopResponsivenessTimer);
+    void closePage();
 
     void addPlatformLoadParameters(LoadParameters&);
     RefPtr<API::Navigation> loadRequest(WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, API::Object* userData = nullptr);

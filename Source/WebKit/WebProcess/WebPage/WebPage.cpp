@@ -1457,19 +1457,15 @@ void WebPage::close()
         RunLoop::main().stop();
 }
 
-void WebPage::tryClose()
+void WebPage::tryClose(CompletionHandler<void(bool)>&& completionHandler)
 {
-    SendStopResponsivenessTimer stopper;
-
-    if (!corePage()->userInputBridge().tryClosePage())
-        return;
-
-    send(Messages::WebPageProxy::ClosePage(true));
+    bool shouldClose = corePage()->userInputBridge().tryClosePage();
+    completionHandler(shouldClose);
 }
 
 void WebPage::sendClose()
 {
-    send(Messages::WebPageProxy::ClosePage(false));
+    send(Messages::WebPageProxy::ClosePage());
 }
 
 void WebPage::suspendForProcessSwap()

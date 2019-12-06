@@ -234,7 +234,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ResumeActiveDOMObjectsAndAnimations()
 
     Close()
-    TryClose()
+    TryClose() -> (bool shouldClose) Async
 
     SetEditable(bool editable)
     ValidateCommand(String name, WebKit::CallbackID callbackID)

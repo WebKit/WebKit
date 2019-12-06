@@ -1081,8 +1081,15 @@ bool WebPageProxy::tryClose()
     if (m_process->isSuddenTerminationEnabled())
         return true;
 
-    m_process->send(Messages::WebPage::TryClose(), m_webPageID);
     m_process->responsivenessTimer().start();
+    sendWithAsyncReply(Messages::WebPage::TryClose(), [this, weakThis = makeWeakPtr(*this)](bool shouldClose) {
+        if (!weakThis)
+            return;
+
+        m_process->responsivenessTimer().stop();
+        if (shouldClose)
+            closePage();
+    });
     return false;
 }
 
@@ -5312,11 +5319,8 @@ void WebPageProxy::didExitFullscreen()
     m_uiClient->didExitFullscreen(this);
 }
 
-void WebPageProxy::closePage(bool stopResponsivenessTimer)
+void WebPageProxy::closePage()
 {
-    if (stopResponsivenessTimer)
-        m_process->responsivenessTimer().stop();
-
     pageClient().clearAllEditCommands();
     m_uiClient->close(this);
 }

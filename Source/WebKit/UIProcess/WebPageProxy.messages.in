@@ -24,7 +24,7 @@ messages -> WebPageProxy {
     # UI messages
     CreateNewPage(struct WebKit::FrameInfoData originatingFrameInfoData, Optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (Optional<WebCore::PageIdentifier> newPageID, Optional<WebKit::WebPageCreationParameters> newPageParameters) Synchronous
     ShowPage()
-    ClosePage(bool stopResponsivenessTimer)
+    ClosePage()
     RunJavaScriptAlert(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> () Synchronous
     RunJavaScriptConfirm(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> (bool result) Synchronous
     RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message, String defaultValue) -> (String result) Synchronous

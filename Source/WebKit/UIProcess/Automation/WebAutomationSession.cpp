@@ -355,7 +355,7 @@ void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorStr
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    page->closePage(false);
+    page->closePage();
 }
 
 void WebAutomationSession::switchToBrowsingContext(const String& browsingContextHandle, const String* optionalFrameHandle, Ref<SwitchToBrowsingContextCallback>&& callback)

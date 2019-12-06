@@ -1,3 +1,25 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Use sendWithAsyncReply() for WebPage::TryClose IPC
+        https://bugs.webkit.org/show_bug.cgi?id=204926
+
+        Reviewed by Alex Christensen.
+
+        Use sendWithAsyncReply() for WebPage::TryClose IPC, instead of 2 separate IPCs.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::closePage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryClose):
+        (WebKit::WebPage::sendClose):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-12-05  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Add fast mode for non-cookie website data deletion
