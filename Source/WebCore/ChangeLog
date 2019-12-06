@@ -1,3 +1,17 @@
+2019-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Stop using reserveCapacity() / reserveInitialCapacity() in IPC decoders
+        https://bugs.webkit.org/show_bug.cgi?id=204930
+        <rdar://problem/57682737>
+
+        Reviewed by Ryosuke Niwa.
+
+        This is IPC hardening since the size we use to reserve the capacity is encoded over IPC
+        and cannot be trusted in some cases.
+
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        (WebCore::ContentSecurityPolicyResponseHeaders::decode):
+
 2019-12-06  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Wire line counting functions in RenderBlockFlow

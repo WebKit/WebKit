@@ -3034,13 +3034,14 @@ bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vec
     if (!decoder.decode(dataSize))
         return false;
 
-    origins.reserveInitialCapacity(dataSize);
     for (uint64_t i = 0; i < dataSize; ++i) {
         auto decodedOriginRefPtr = SecurityOrigin::decode(decoder);
         if (!decodedOriginRefPtr)
             return false;
-        origins.uncheckedAppend(decodedOriginRefPtr.releaseNonNull());
+        origins.append(decodedOriginRefPtr.releaseNonNull());
     }
+    origins.shrinkToFit();
+
     return true;
 }
 

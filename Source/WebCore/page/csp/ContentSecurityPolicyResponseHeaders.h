@@ -74,7 +74,6 @@ bool ContentSecurityPolicyResponseHeaders::decode(Decoder& decoder, ContentSecur
     uint64_t headersSize;
     if (!decoder.decode(headersSize))
         return false;
-    headers.m_headers.reserveCapacity(static_cast<size_t>(headersSize));
     for (size_t i = 0; i < headersSize; ++i) {
         String header;
         if (!decoder.decode(header))
@@ -84,6 +83,7 @@ bool ContentSecurityPolicyResponseHeaders::decode(Decoder& decoder, ContentSecur
             return false;
         headers.m_headers.append(std::make_pair(header, headerType));
     }
+    headers.m_headers.shrinkToFit();
 
     if (!decoder.decode(headers.m_httpStatusCode))
         return false;
