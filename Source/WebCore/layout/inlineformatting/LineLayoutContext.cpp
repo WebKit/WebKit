@@ -38,7 +38,7 @@ namespace Layout {
 static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
 {
     if (inlineItem.isLineBreak())
-        return { };
+        return 0_lu;
 
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);

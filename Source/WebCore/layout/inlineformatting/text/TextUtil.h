@@ -37,7 +37,7 @@ namespace Layout {
 
 class TextUtil {
 public:
-    static LayoutUnit width(const Box&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft = { });
+    static LayoutUnit width(const Box&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft = 0_lu);
     static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
     struct SplitData {
         unsigned start { 0 };

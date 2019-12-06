@@ -102,13 +102,13 @@ LineBuilder::Run LineBuilder::ContinousContent::close()
             ++m_expansionOpportunityCount;
         textContext.setExpansion({ expansionBehavior, { } });
     }
-    return { m_initialInlineRun,  Display::Rect { 0, m_initialInlineRun.logicalLeft(), m_initialInlineRun.logicalWidth() + m_expandedWidth, { } }, textContext, m_expansionOpportunityCount };
+    return { m_initialInlineRun,  Display::Rect { 0_lu, m_initialInlineRun.logicalLeft(), m_initialInlineRun.logicalWidth() + m_expandedWidth, 0_lu }, textContext, m_expansionOpportunityCount };
 }
 
 LineBuilder::Run::Run(const InlineItemRun& inlineItemRun)
     : m_layoutBox(&inlineItemRun.layoutBox())
     , m_type(inlineItemRun.type())
-    , m_logicalRect({ { }, inlineItemRun.logicalLeft(), inlineItemRun.logicalWidth(), { } })
+    , m_logicalRect({ 0_lu, inlineItemRun.logicalLeft(), inlineItemRun.logicalWidth(), 0_lu })
     , m_textContext(inlineItemRun.textContext())
     , m_isCollapsedToVisuallyEmpty(inlineItemRun.isCollapsedToZeroAdvanceWidth())
 {
@@ -177,7 +177,7 @@ void LineBuilder::initialize(const Constraints& constraints)
     } else
         m_initialStrut = { };
 
-    auto lineRect = Display::Rect { constraints.logicalTopLeft, { }, initialLineHeight };
+    auto lineRect = Display::Rect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
     auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
     m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
@@ -221,7 +221,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
         }
         if (isVisuallyEmpty()) {
             m_lineBox.resetBaseline();
-            m_lineBox.setLogicalHeight({ });
+            m_lineBox.setLogicalHeight(0_lu);
         }
         // Remove descent when all content is baseline aligned but none of them have descent.
         if (formattingContext().quirks().lineDescentNeedsCollapsing(runList)) {
@@ -273,7 +273,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
                 logicalTop = baselineOffset() - run.logicalRect().height();
             break;
         case VerticalAlign::Top:
-            logicalTop = { };
+            logicalTop = 0_lu;
             break;
         case VerticalAlign::Bottom:
             logicalTop = logicalBottom() - run.logicalRect().height();
@@ -530,11 +530,11 @@ void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUn
 void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
 {
     if (inlineItem.isHardLineBreak())
-        return m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), { } });
+        return m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), 0_lu });
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
     auto& softLineBreakItem = downcast<InlineSoftLineBreakItem>(inlineItem);
-    m_inlineItemRuns.append({ softLineBreakItem, contentLogicalWidth(), { }, Display::Run::TextContext { softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content } });
+    m_inlineItemRuns.append({ softLineBreakItem, contentLogicalWidth(), 0_lu, Display::Run::TextContext { softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content } });
 }
 
 void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
@@ -598,7 +598,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
                 // Non inline-block boxes sit on the baseline (including their bottom margin).
                 m_lineBox.setAscentIfGreater(marginBoxHeight);
                 // Ignore negative descent (yes, negative descent is a thing).
-                m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max(LayoutUnit(), baseline.descent()));
+                m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max(0_lu, baseline.descent()));
             }
             break;
         }
@@ -789,7 +789,7 @@ LayoutUnit LineBuilder::TrimmableContent::trimTrailingRun()
         return trimmedWidth;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return 0_lu;
 }
 
 LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> textContext)
@@ -815,14 +815,14 @@ bool LineBuilder::InlineItemRun::hasTrailingLetterSpacing() const
 LayoutUnit LineBuilder::InlineItemRun::trailingLetterSpacing() const
 {
     if (!hasTrailingLetterSpacing())
-        return { };
+        return 0_lu;
     return LayoutUnit { style().letterSpacing() };
 }
 
 void LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth()
 {
     m_collapsedToZeroAdvanceWidth = true;
-    m_logicalWidth = { };
+    m_logicalWidth = 0_lu;
 }
 
 void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()

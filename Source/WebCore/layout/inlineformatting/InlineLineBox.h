@@ -92,7 +92,7 @@ public:
     void setDescentIfGreater(LayoutUnit);
 
     void resetBaseline();
-    void resetDescent() { m_baseline.setDescent({ }); }
+    void resetDescent() { m_baseline.setDescent(0_lu); }
 
     void setLogicalTopLeft(LayoutPoint logicalTopLeft) { m_rect.setTopLeft(logicalTopLeft); }
     void setLogicalHeight(LayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
@@ -187,7 +187,7 @@ inline void LineBox::resetBaseline()
 #if !ASSERT_DISABLED
     m_hasValidBaselineOffset = true;
 #endif
-    m_baselineOffset = { };
+    m_baselineOffset = 0_lu;
     m_baseline.reset();
 }
 
@@ -223,8 +223,8 @@ inline void LineBox::Baseline::reset()
     m_hasValidAscent = true;
     m_hasValidDescent = true;
 #endif
-    m_ascent = { };
-    m_descent = { };
+    m_ascent = 0_lu;
+    m_descent = 0_lu;
 }
 
 inline LayoutUnit LineBox::Baseline::ascent() const

@@ -120,7 +120,7 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
         // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
         // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
         // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
-        auto adjustedAvailableWidth = std::max(LayoutUnit { }, availableWidth - runsWidth + run.logicalWidth);
+        auto adjustedAvailableWidth = std::max(0_lu, availableWidth - runsWidth + run.logicalWidth);
         if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
             return BreakingContext::PartialTrailingContent { i, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
         return { };
@@ -287,7 +287,7 @@ void LineBreaker::Content::reset()
 {
     m_continousRuns.clear();
     m_trailingTrimmableContent.reset();
-    m_width = 0;
+    m_width = 0_lu;
 }
 
 void LineBreaker::Content::trim(unsigned newSize)
@@ -325,7 +325,7 @@ bool LineBreaker::Content::hasNonContentRunsOnly() const
 void LineBreaker::Content::TrailingTrimmableContent::reset()
 {
     isFullyTrimmable = false;
-    width = { };
+    width = 0_lu;
 }
 
 

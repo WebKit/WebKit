@@ -237,7 +237,7 @@ private:
 inline void LineBuilder::TrimmableContent::reset()
 {
     m_firstRunIndex = { };
-    m_width = { };
+    m_width = 0_lu;
     m_lastRunIsFullyTrimmable = false;
 }
 

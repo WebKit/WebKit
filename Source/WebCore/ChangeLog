@@ -1,3 +1,43 @@
+2019-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use explicit 0_lu value instead of LayoutUnit { }
+        https://bugs.webkit.org/show_bug.cgi?id=204964
+        <rdar://problem/57714095>
+
+        Reviewed by Antti Koivisto.
+
+        From geometry computation point of view, it is really the 0 value and not an empty value. 
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::resetDescent):
+        (WebCore::Layout::LineBox::resetBaseline):
+        (WebCore::Layout::LineBox::Baseline::reset):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::Content::reset):
+        (WebCore::Layout::LineBreaker::Content::TrailingTrimmableContent::reset):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::ContinousContent::close):
+        (WebCore::Layout::LineBuilder::Run::Run):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        (WebCore::Layout::LineBuilder::appendLineBreak):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trimTrailingRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::trailingLetterSpacing const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::setCollapsesToZeroAdvanceWidth):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::TrimmableContent::reset):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        * layout/inlineformatting/text/TextUtil.h:
+        (WebCore::Layout::TextUtil::width): Deleted.
+
 2019-12-06  Keith Miller  <keith_miller@apple.com>
 
         Remove various .order files.
