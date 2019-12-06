@@ -1212,9 +1212,6 @@ void HTMLMediaElement::prepareForLoad()
     m_havePreparedToPlay = false;
     m_displayMode = Unknown;
     m_currentSrc = URL();
-#if ENABLE(MEDIA_STREAM)
-    m_mediaStreamSrcObject = nullptr;
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_failedToPlayToWirelessTarget = false;
@@ -1603,7 +1600,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    if (!loadAttempted && hasMediaStreamSrcObject()) {
+    if (!loadAttempted && m_mediaStreamSrcObject) {
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
         if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
@@ -3002,9 +2999,6 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     if (m_readyState == HAVE_NOTHING || !m_player)
         return;
 
-    if (!supportsSeeking())
-        return;
-
     // If the media engine has been told to postpone loading data, let it go ahead now.
     if (m_preload < MediaPlayer::Auto && m_readyState < HAVE_FUTURE_DATA)
         prepareToPlay();
@@ -3345,7 +3339,7 @@ double HTMLMediaElement::defaultPlaybackRate() const
     // A MediaStream is not seekable. Therefore, this attribute must always have the
     // value 1.0 and any attempt to alter it must be ignored. Note that this also means
     // that the ratechange event will not fire.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return 1;
 #endif
 
@@ -3360,7 +3354,7 @@ void HTMLMediaElement::setDefaultPlaybackRate(double rate)
     // A MediaStream is not seekable. Therefore, this attribute must always have the
     // value 1.0 and any attempt to alter it must be ignored. Note that this also means
     // that the ratechange event will not fire.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return;
 #endif
 
@@ -3389,7 +3383,7 @@ double HTMLMediaElement::playbackRate() const
     // "playbackRate" - A MediaStream is not seekable. Therefore, this attribute must always
     // have the value 1.0 and any attempt to alter it must be ignored. Note that this also
     // means that the ratechange event will not fire.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return 1;
 #endif
 
@@ -3405,7 +3399,7 @@ void HTMLMediaElement::setPlaybackRate(double rate)
     // "playbackRate" - A MediaStream is not seekable. Therefore, this attribute must always
     // have the value 1.0 and any attempt to alter it must be ignored. Note that this also
     // means that the ratechange event will not fire.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return;
 #endif
 
@@ -3449,7 +3443,7 @@ bool HTMLMediaElement::ended() const
     // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
     // When the MediaStream state moves from the active to the inactive state, the User Agent
     // must raise an ended event on the HTMLMediaElement and set its ended attribute to true.
-    if (hasMediaStreamSrcObject() && m_player && m_player->ended())
+    if (m_mediaStreamSrcObject && m_player && m_player->ended())
         return true;
 #endif
 
@@ -3469,7 +3463,7 @@ String HTMLMediaElement::preload() const
 #if ENABLE(MEDIA_STREAM)
     // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
     // "preload" - On getting: none. On setting: ignored.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return "none"_s;
 #endif
 
@@ -3492,7 +3486,7 @@ void HTMLMediaElement::setPreload(const String& preload)
 #if ENABLE(MEDIA_STREAM)
     // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
     // "preload" - On getting: none. On setting: ignored.
-    if (hasMediaStreamSrcObject())
+    if (m_mediaStreamSrcObject)
         return;
 #endif
 
@@ -3700,16 +3694,6 @@ void HTMLMediaElement::detachMediaSource()
 }
 
 #endif
-
-bool HTMLMediaElement::canLoop() const
-{
-#if ENABLE(MEDIA_STREAM)
-    if (hasMediaStreamSrcObject())
-        return false;
-#endif
-
-    return !m_mediaController && supportsSeeking();
-}
 
 bool HTMLMediaElement::loop() const
 {
@@ -4867,7 +4851,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
     if (dur && dur.isValid() && !dur.isPositiveInfinite() && !dur.isNegativeInfinite()) {
         // If the media element has a loop attribute specified and does not have a current media controller,
-        if (loop() && playbackRate > 0 && canLoop()) {
+        if (loop() && !m_mediaController && playbackRate > 0) {
             m_sentEndEvent = false;
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
@@ -4898,7 +4882,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
             m_sentEndEvent = false;
     } else {
 #if ENABLE(MEDIA_STREAM)
-        if (hasMediaStreamSrcObject()) {
+        if (m_mediaStreamSrcObject) {
             // http://w3c.github.io/mediacapture-main/#event-mediastream-inactive
             // 6. MediaStreams in Media Elements
             // When the MediaStream state moves from the active to the inactive state, the User Agent
@@ -5622,7 +5606,8 @@ void HTMLMediaElement::userCancelledLoad()
 void HTMLMediaElement::clearMediaPlayer()
 {
 #if ENABLE(MEDIA_STREAM)
-    m_mediaStreamSrcObject = nullptr;
+    if (!m_settingMediaStreamSrcObject)
+        m_mediaStreamSrcObject = nullptr;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

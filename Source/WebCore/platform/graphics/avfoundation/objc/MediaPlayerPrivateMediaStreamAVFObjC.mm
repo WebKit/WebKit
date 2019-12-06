@@ -741,23 +741,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool visible)
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
 {
-    if (m_ended)
-        return m_lastReportedTime;
-
     return MediaTime::positiveInfiniteTime();
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
 {
-    if (m_ended)
-        return m_lastReportedTime;
-
     if (paused())
-        m_lastReportedTime = m_pausedTime;
-    else
-        m_lastReportedTime = streamTime();
+        return m_pausedTime;
 
-    return m_lastReportedTime;
+    return streamTime();
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::streamTime() const
@@ -777,11 +769,8 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::readyState() const
 
 MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState()
 {
-    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->tracks().size())
+    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->active() || !m_mediaStreamPrivate->tracks().size())
         return MediaPlayer::ReadyState::HaveNothing;
-
-    if (m_ended || m_waitingForFirstImage)
-        return MediaPlayer::ReadyState::HaveMetadata;
 
     bool allTracksAreLive = true;
     for (auto& track : m_mediaStreamPrivate->tracks()) {
@@ -795,7 +784,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState(
         }
     }
 
-    if (!allTracksAreLive && !m_haveSeenMetadata)
+    if (m_waitingForFirstImage || (!allTracksAreLive && !m_haveSeenMetadata))
         return MediaPlayer::ReadyState::HaveMetadata;
 
     return MediaPlayer::ReadyState::HaveEnoughData;
@@ -826,8 +815,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
             if (m_player) {
                 m_player->timeChanged();
                 m_player->characteristicChanged();
-                if (m_ended)
-                    m_player->durationChanged();
             }
         }
     });

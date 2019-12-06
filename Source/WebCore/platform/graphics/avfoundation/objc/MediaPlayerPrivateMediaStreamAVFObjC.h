@@ -240,7 +240,6 @@ private:
     std::unique_ptr<PAL::Clock> m_clock;
 
     MediaTime m_pausedTime;
-    mutable MediaTime m_lastReportedTime;
 
     struct CurrentFramePainter {
         CurrentFramePainter() = default;
