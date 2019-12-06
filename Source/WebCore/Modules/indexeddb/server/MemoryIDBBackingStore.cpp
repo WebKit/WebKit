@@ -232,6 +232,11 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::createIndex");
 
+    ASSERT(m_databaseInfo);
+    auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
+    if (!objectStoreInfo)
+        return IDBError { ConstraintError };
+
     auto rawTransaction = m_transactions.get(transactionIdentifier);
     ASSERT(rawTransaction);
     ASSERT(rawTransaction->isVersionChange());
@@ -240,12 +245,25 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     if (!objectStore)
         return IDBError { ConstraintError };
 
-    return objectStore->createIndex(*rawTransaction, info);
+    auto error = objectStore->createIndex(*rawTransaction, info);
+    if (error.isNull())
+        objectStoreInfo->addExistingIndex(info);
+
+    return error;
 }
 
 IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const LockHolder&)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::deleteIndex");
+
+    ASSERT(m_databaseInfo);
+    auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    if (!objectStoreInfo)
+        return IDBError { ConstraintError };
+
+    auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
+    if (!indexInfo)
+        return IDBError { ConstraintError };
 
     auto rawTransaction = m_transactions.get(transactionIdentifier);
     ASSERT(rawTransaction);
@@ -255,7 +273,11 @@ IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     if (!objectStore)
         return IDBError { ConstraintError };
 
-    return objectStore->deleteIndex(*rawTransaction, indexIdentifier);
+    auto error = objectStore->deleteIndex(*rawTransaction, indexIdentifier);
+    if (!error.isNull())
+        objectStoreInfo->deleteIndex(indexIdentifier);
+
+    return error;
 }
 
 IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, const LockHolder&)

@@ -1,3 +1,27 @@
+2019-12-06  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: pass along error of IDBBackingStore::renameIndex
+        https://bugs.webkit.org/show_bug.cgi?id=204900
+
+        Reviewed by Brady Eidson.
+
+        We ignored error of IDBBackingStore::renameIndex, so the operation may fail silently. This covered up two bugs 
+        in our code as we were unaware of the failure.
+        One was in MemoryIDBBackingStore that we did not update objectStoreInfo properly when createIndex/deleteIndex; 
+        another was in IDBObjectStoreInfo that we did not copy its members correctly.
+
+        Covered by existing test: storage/indexeddb//modern/index-rename-1-private.html
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::createIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameIndex):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp: If some index is deleted from IDBObjectStoreInfo, then
+        m_maxIndexID could be bigger than maximum index ID in m_indexMap, because we don't decrease m_maxIndexID for
+        deletion. Therefore, the assertion here is incorrect.
+        (WebCore::IDBObjectStoreInfo::isolatedCopy const):
+
 2019-12-06  Don Olmstead  <don.olmstead@sony.com>
 
         [MathML] Should support conditional compilation

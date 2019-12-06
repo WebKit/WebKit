@@ -1112,6 +1112,11 @@ void UniqueIDBDatabase::performRenameIndex(uint64_t callbackIdentifier, const ID
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performRenameIndex");
 
+    if (!error.isNull()) {
+        postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformRenameIndex, callbackIdentifier, error, objectStoreIdentifier, indexIdentifier, newName));
+        return;
+    }
+
     // Quota check.
     auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
     if (m_server->requestSpace(m_origin, taskSize) == StorageQuotaManager::Decision::Deny) {
@@ -1120,12 +1125,13 @@ void UniqueIDBDatabase::performRenameIndex(uint64_t callbackIdentifier, const ID
     }
 
     ASSERT(m_backingStore);
+    IDBError backingStoreError;
     {
         LockHolder locker(m_backingStoreLock);
-        m_backingStore->renameIndex(transactionIdentifier, objectStoreIdentifier, indexIdentifier, newName, locker);
+        backingStoreError = m_backingStore->renameIndex(transactionIdentifier, objectStoreIdentifier, indexIdentifier, newName, locker);
     }
 
-    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformRenameIndex, callbackIdentifier, error, objectStoreIdentifier, indexIdentifier, newName));
+    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformRenameIndex, callbackIdentifier, backingStoreError, objectStoreIdentifier, indexIdentifier, newName));
 }
 
 void UniqueIDBDatabase::didPerformRenameIndex(uint64_t callbackIdentifier, const IDBError& error, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
