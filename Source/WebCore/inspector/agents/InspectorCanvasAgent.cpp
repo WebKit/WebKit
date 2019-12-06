@@ -568,6 +568,11 @@ void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& c
     startRecording(*inspectorCanvas, Inspector::Protocol::Recording::Initiator::Console, WTFMove(recordingOptions));
 }
 
+void InspectorCanvasAgent::consoleStopRecordingCanvas(CanvasRenderingContext& context)
+{
+    didFinishRecordingCanvasFrame(context, true);
+}
+
 #if ENABLE(WEBGL)
 void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
 {

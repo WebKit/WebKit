@@ -272,6 +272,9 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue 
 
 void PageConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
+    if (LIKELY(!InspectorInstrumentation::hasFrontends()))
+        return;
+
     if (auto* target = objectArgumentAt(arguments, 0)) {
         if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
             InspectorInstrumentation::consoleStartRecordingCanvas(*context, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
@@ -280,9 +283,12 @@ void PageConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<Scr
 
 void PageConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
+    if (LIKELY(!InspectorInstrumentation::hasFrontends()))
+        return;
+
     if (auto* target = objectArgumentAt(arguments, 0)) {
         if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
-            InspectorInstrumentation::didFinishRecordingCanvasFrame(*context, true);
+            InspectorInstrumentation::consoleStopRecordingCanvas(*context);
     }
 }
 

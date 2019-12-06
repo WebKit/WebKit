@@ -106,6 +106,11 @@ void InspectorConsoleAgent::clearMessages(ErrorString&)
         m_frontendDispatcher->messagesCleared();
 }
 
+bool InspectorConsoleAgent::developerExtrasEnabled() const
+{
+    return m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled();
+}
+
 void InspectorConsoleAgent::reset()
 {
     ErrorString ignored;
@@ -117,9 +122,6 @@ void InspectorConsoleAgent::reset()
 
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     if (message->type() == MessageType::Clear) {
         ErrorString ignored;
         clearMessages(ignored);
@@ -130,9 +132,6 @@ void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> 
 
 void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const String& label)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     ASSERT(!label.isNull());
     if (label.isNull())
         return;
@@ -148,9 +147,6 @@ void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const
 
 void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     ASSERT(!label.isNull());
     if (label.isNull())
         return;
@@ -173,9 +169,6 @@ void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const S
 
 void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const String& label)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     ASSERT(!label.isNull());
     if (label.isNull())
         return;
@@ -200,9 +193,6 @@ void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const 
 
 void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     if (!m_heapAgent)
         return;
 
@@ -216,9 +206,6 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
 
 void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const String& label)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     auto result = m_counts.add(label, 1);
     if (!result.isNewEntry)
         result.iterator->value += 1;
@@ -231,9 +218,6 @@ void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const Strin
 
 void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const String& label)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     auto it = m_counts.find(label);
     if (it == m_counts.end()) {
         // FIXME: Send an enum to the frontend for localization?
@@ -256,9 +240,6 @@ static bool isGroupMessage(MessageType type)
 
 void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> consoleMessage)
 {
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
     ASSERT_ARG(consoleMessage, consoleMessage);
 
     ConsoleMessage* previousMessage = m_consoleMessages.isEmpty() ? nullptr : m_consoleMessages.last().get();

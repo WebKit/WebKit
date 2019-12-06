@@ -254,6 +254,7 @@ public:
     static void startProfiling(Page&, JSC::JSGlobalObject*, const String& title);
     static void stopProfiling(Page&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
+    static void consoleStopRecordingCanvas(CanvasRenderingContext&);
 
     static void didRequestAnimationFrame(Document&, int callbackId);
     static void didCancelAnimationFrame(Document&, int callbackId);
@@ -449,6 +450,7 @@ private:
     static void startProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void stopProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
+    static void consoleStopRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
@@ -1582,9 +1584,14 @@ inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::JSGlobalObj
 
 inline void InspectorInstrumentation::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::JSGlobalObject& exec, JSC::JSObject* options)
 {
-    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
         consoleStartRecordingCanvasImpl(*instrumentingAgents, context, exec, options);
+}
+
+inline void InspectorInstrumentation::consoleStopRecordingCanvas(CanvasRenderingContext& context)
+{
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
+        consoleStopRecordingCanvasImpl(*instrumentingAgents, context);
 }
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)

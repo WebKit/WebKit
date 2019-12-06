@@ -97,6 +97,7 @@ public:
     void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
+    void consoleStopRecordingCanvas(CanvasRenderingContext&);
 #if ENABLE(WEBGL)
     void didEnableExtension(WebGLRenderingContextBase&, const String&);
     void didCreateWebGLProgram(WebGLRenderingContextBase&, WebGLProgram&);

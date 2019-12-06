@@ -70,6 +70,7 @@ public:
     void setInspectorHeapAgent(InspectorHeapAgent* agent) { m_heapAgent = agent; }
 
     bool enabled() const { return m_enabled; }
+    bool developerExtrasEnabled() const;
     void reset();
 
     void addMessageToConsole(std::unique_ptr<ConsoleMessage>);

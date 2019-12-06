@@ -222,7 +222,7 @@ void InspectorInstrumentation::documentDetachedImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& instrumentingAgents, DOMWindow* window)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -586,7 +586,7 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
@@ -615,7 +615,7 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
@@ -680,7 +680,7 @@ void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DocumentLoader* loader)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (!frame.page())
@@ -831,7 +831,7 @@ static bool isConsoleAssertMessage(MessageSource source, MessageType type)
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, std::unique_ptr<ConsoleMessage> message)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     MessageSource source = message->source();
@@ -849,12 +849,18 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents& instrumentingAgents, JSC::JSGlobalObject* state, const String& label)
 {
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
+        return;
+
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->count(state, label);
 }
 
 void InspectorInstrumentation::consoleCountResetImpl(InstrumentingAgents& instrumentingAgents, JSC::JSGlobalObject* state, const String& label)
 {
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
+        return;
+
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->countReset(state, label);
 }
@@ -867,7 +873,7 @@ void InspectorInstrumentation::takeHeapSnapshotImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (auto* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
@@ -878,7 +884,7 @@ void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instr
 
 void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, JSC::JSGlobalObject* exec, const String& label)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -887,7 +893,7 @@ void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instr
 
 void InspectorInstrumentation::logConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, JSC::JSGlobalObject* exec, const String& label, Ref<Inspector::ScriptArguments>&& arguments)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -896,7 +902,7 @@ void InspectorInstrumentation::logConsoleTimingImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -907,7 +913,7 @@ void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instru
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, JSC::JSGlobalObject* exec, const String& label)
 {
-    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+    if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -939,6 +945,12 @@ void InspectorInstrumentation::consoleStartRecordingCanvasImpl(InstrumentingAgen
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->consoleStartRecordingCanvas(context, exec, options);
+}
+
+void InspectorInstrumentation::consoleStopRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
+{
+    if (auto* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->consoleStopRecordingCanvas(context);
 }
 
 void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrumentingAgents, Database& database)
