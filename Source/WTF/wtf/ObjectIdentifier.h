@@ -66,9 +66,8 @@ public:
     {
         Optional<uint64_t> identifier;
         decoder >> identifier;
-        if (!identifier)
+        if (!identifier || !isValidIdentifier(*identifier))
             return WTF::nullopt;
-        ASSERT(isValidIdentifier(*identifier));
         return ObjectIdentifier { *identifier };
     }
 
