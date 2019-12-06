@@ -59,6 +59,8 @@ public:
     void layout();
 
     LayoutUnit contentLogicalHeight() const { return m_contentLogicalHeight; }
+    size_t lineCount() const;
+
     const Display::InlineContent* displayInlineContent() const;
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);

@@ -70,6 +70,9 @@ public:
     bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
     void addOverflowFromInlineChildren();
 
+    size_t lineCount() const;
+    size_t lineCountUntil(const RootInlineBox*) const;
+
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
     static void updateLogicalWidthForAlignment(RenderBlockFlow&, const TextAlignMode&, const RootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
 

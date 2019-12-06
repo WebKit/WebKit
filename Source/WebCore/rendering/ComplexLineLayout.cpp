@@ -1556,7 +1556,7 @@ void ComplexLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState,
                 lineBox = lineBox->prevRootBox();
 
             // We now want to break at this line. Remember for next layout and trigger relayout.
-            m_flow.setBreakAtLineToAvoidWidow(m_flow.lineCount(lineBox));
+            m_flow.setBreakAtLineToAvoidWidow(lineCountUntil(lineBox));
             m_flow.markLinesDirtyInBlockRange(lastRootBox()->lineBottomWithLeading(), lineBox->lineBottomWithLeading(), lineBox);
         }
     }
@@ -2106,6 +2106,27 @@ void ComplexLineLayout::addOverflowFromInlineChildren()
                 fragment->addVisualOverflowForBox(&m_flow, childVisualOverflowRect);
         }
     }
+}
+
+size_t ComplexLineLayout::lineCount() const
+{
+    size_t count = 0;
+    for (auto* box = firstRootBox(); box; box = box->nextRootBox())
+        ++count;
+
+    return count;
+}
+
+size_t ComplexLineLayout::lineCountUntil(const RootInlineBox* stopRootInlineBox) const
+{
+    size_t count = 0;
+    for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
+        ++count;
+        if (box == stopRootInlineBox)
+            break;
+    }
+
+    return count;
 }
 
 void ComplexLineLayout::deleteEllipsisLineBoxes()

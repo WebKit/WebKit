@@ -102,6 +102,12 @@ void LineLayout::prepareRootGeometryForLayout()
     displayBox.setContentBoxWidth(m_flow.contentSize().width());
 }
 
+size_t LineLayout::lineCount() const
+{
+    auto* inlineContent = displayInlineContent();
+    return inlineContent ? inlineContent->lineBoxes.size() : 0;
+}
+
 const Display::InlineContent* LineLayout::displayInlineContent() const
 {
     return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();

@@ -1790,7 +1790,7 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
     overflowsFragment = (lineHeight > remainingLogicalHeight);
 
-    int lineIndex = lineCount(lineBox);
+    int lineIndex = complexLineLayout()->lineCountUntil(lineBox);
     if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
         if (lineBreakToAvoidWidow() == lineIndex)
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
@@ -3244,39 +3244,31 @@ RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
     return nullptr;
 }
 
-int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* found) const
+int RenderBlockFlow::lineCount() const
 {
+    // FIXME: This should be tested by clients.
     if (style().visibility() != Visibility::Visible)
         return 0;
 
-    int count = 0;
-
     if (childrenInline()) {
-        if (auto simpleLineLayout = this->simpleLineLayout()) {
-            ASSERT(!stopRootInlineBox);
-            return simpleLineLayout->lineCount();
-        }
-        for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
-            ++count;
-            if (box == stopRootInlineBox) {
-                if (found)
-                    *found = true;
-                break;
-            }
-        }
-        return count;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (layoutFormattingContextLineLayout())
+            return layoutFormattingContextLineLayout()->lineCount();
+#endif
+        if (simpleLineLayout())
+            return simpleLineLayout()->lineCount();
+
+        if (complexLineLayout())
+            return complexLineLayout()->lineCount();
+
+        return 0;
     }
 
+    int count = 0;
     for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
         if (!shouldCheckLines(blockFlow))
             continue;
-        bool recursiveFound = false;
-        count += blockFlow.lineCount(stopRootInlineBox, &recursiveFound);
-        if (recursiveFound) {
-            if (found)
-                *found = true;
-            break;
-        }
+        count += blockFlow.lineCount();
     }
 
     return count;
@@ -3613,8 +3605,12 @@ bool RenderBlockFlow::hasLines() const
     if (!childrenInline())
         return false;
 
-    if (auto simpleLineLayout = this->simpleLineLayout())
-        return simpleLineLayout->lineCount();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout())
+        return layoutFormattingContextLineLayout()->lineCount();
+#endif
+    if (simpleLineLayout())
+        return simpleLineLayout()->lineCount();
 
     return complexLineLayout() && complexLineLayout()->lineBoxes().firstLineBox();
 }
