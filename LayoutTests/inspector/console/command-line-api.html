@@ -97,7 +97,7 @@ function test()
             }
 
             // Select div#foo for $0.
-            WI.domManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
+            documentNode.querySelector("#foo", (contentNodeId) => {
                 if (!contentNodeId) {
                     InspectorTest.log("FAIL: DOM node not found.");
                     return reject();

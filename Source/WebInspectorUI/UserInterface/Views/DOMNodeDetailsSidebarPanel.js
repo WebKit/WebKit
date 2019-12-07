@@ -157,7 +157,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
     {
         super.layout();
 
-        if (!this.domNode)
+        if (!this.domNode || this.domNode.destroyed)
             return;
 
         this._refreshIdentity();

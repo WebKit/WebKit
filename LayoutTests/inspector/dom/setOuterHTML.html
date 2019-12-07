@@ -72,7 +72,7 @@ function test()
     });
 
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+        documentNode.querySelector("#x", function(nodeId) {
             domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.assert(domNode, "DOMNode exists.");
             suite.runTestCasesAndFinish();

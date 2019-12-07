@@ -145,9 +145,9 @@ function test() {
 
     WI.domManager.requestDocument(async (documentNode) => {
         let [parentNodeId, childNodeId, siblingNodeId] = await Promise.all([
-            WI.domManager.querySelector(documentNode, "#parent"),
-            WI.domManager.querySelector(documentNode, "#child"),
-            WI.domManager.querySelector(documentNode, "#sibling"),
+            documentNode.querySelector("#parent"),
+            documentNode.querySelector("#child"),
+            documentNode.querySelector("#sibling"),
         ]);
 
         parentNode = WI.domManager.nodeForId(parentNodeId);

@@ -143,6 +143,11 @@ WI.RemoteObject = class RemoteObject
 
     static resolveNode(node, objectGroup)
     {
+        console.assert(node instanceof WI.DOMNode, node);
+
+        if (node.destroyed)
+            return Promise.reject("ERROR: node is destroyed");
+
         let target = WI.assumingMainTarget();
         return target.DOMAgent.resolveNode(node.id, objectGroup)
             .then(({object}) => WI.RemoteObject.fromPayload(object, WI.mainTarget));

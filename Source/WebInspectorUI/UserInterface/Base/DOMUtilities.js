@@ -90,7 +90,7 @@ WI.bindInteractionsForNodeToElement = function(node, element, options = {}) {
     }
 
     element.addEventListener("mouseover", (event) => {
-        WI.domManager.highlightDOMNode(node.id, "all");
+        node.highlight();
     });
 
     element.addEventListener("mouseout", (event) => {

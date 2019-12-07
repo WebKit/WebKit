@@ -14,7 +14,7 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Builtin",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "#builtin", (nodeId) => {
+            documentNode.querySelector("#builtin", (nodeId) => {
                 const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "builtin", "#builtin should be CustomElementState.Builtin.");
                 resolve();
@@ -25,7 +25,7 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Custom.Constructed",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "constructed-element", (nodeId) => {
+            documentNode.querySelector("constructed-element", (nodeId) => {
                 const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "custom", "constructed-element should be CustomElementState.Custom.");
                 resolve();
@@ -36,7 +36,7 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Custom.Upgraded",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "upgraded-element", (nodeId) => {
+            documentNode.querySelector("upgraded-element", (nodeId) => {
                 const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "custom", "upgraded-element should be CustomElementState.Custom.");
                 resolve();
@@ -47,7 +47,7 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Waiting",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "undefined-element", (nodeId) => {
+            documentNode.querySelector("undefined-element", (nodeId) => {
                 const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "waiting", "undefined-element should be CustomElementState.Waiting.");
                 resolve();
@@ -58,7 +58,7 @@ function test()
     suite.addTestCase({
         name: "CustomElementState.Failed",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "failed-element", (nodeId) => {
+            documentNode.querySelector("failed-element", (nodeId) => {
                 const node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectEqual(node.customElementState(), "failed", "failed-element should be CustomElementState.Failed.");
                 resolve();

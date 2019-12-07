@@ -4,7 +4,7 @@
 <script>
 function test() {
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#none", function(nodeId) {
+        documentNode.querySelector("#none", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #none");
@@ -15,7 +15,7 @@ function test() {
             InspectorTest.assert(!domNode.afterPseudoElement());
         });
 
-        WI.domManager.querySelector(documentNode.id, "#b", function(nodeId) {
+        documentNode.querySelector("#b", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #b");
@@ -27,7 +27,7 @@ function test() {
             InspectorTest.expectThat(domNode.beforePseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.Before, "DOMNode for before pseudo element has the right type");
         });
 
-        WI.domManager.querySelector(documentNode.id, "#a", function(nodeId) {
+        documentNode.querySelector("#a", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #a");
@@ -39,7 +39,7 @@ function test() {
             InspectorTest.expectThat(domNode.afterPseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.After, "DOMNode for after pseudo element has the right type");
         });
 
-        WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+        documentNode.querySelector("#x", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for #x");

@@ -64,7 +64,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
         let domNode = null;
         if (documentNode && domNodeCSSPath) {
             try {
-                let nodeId = await WI.domManager.querySelector(documentNode, domNodeCSSPath);
+                let nodeId = await documentNode.querySelector(domNodeCSSPath);
                 if (nodeId)
                     domNode = WI.domManager.nodeForId(nodeId);
             } catch { }
@@ -84,7 +84,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
                 if (item.type === MediaTimelineRecord.TimestampType.MediaElementDOMEvent) {
                     if (documentNode && item.originatorCSSPath) {
                         try {
-                            let nodeId = await WI.domManager.querySelector(documentNode, item.originatorCSSPath);
+                            let nodeId = await documentNode.querySelector(item.originatorCSSPath);
                             if (nodeId)
                                 item.originator = WI.domManager.nodeForId(nodeId);
                         } catch { }

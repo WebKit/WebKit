@@ -8,7 +8,7 @@ function test()
     let documentNode;
 
     function nodeForSelector(selector, callback) {
-        WI.domManager.querySelector(documentNode.id, selector, (nodeId) => {
+        documentNode.querySelector(selector, (nodeId) => {
             callback(WI.domManager.nodeForId(nodeId));
         });
     }

@@ -117,14 +117,14 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
     {
         if (this.representedObject.cssCanvasName || this.representedObject.contextType === WI.Canvas.ContextType.WebGPU) {
             this.representedObject.requestClientNodes((clientNodes) => {
-                WI.domManager.highlightDOMNodeList(clientNodes.map((node) => node.id));
+                WI.domManager.highlightDOMNodeList(clientNodes);
             });
         } else {
             this.representedObject.requestNode((node) => {
                 if (!node || !node.ownerDocument)
                     return;
 
-                WI.domManager.highlightDOMNode(node.id);
+                node.highlight();
             });
         }
     }

@@ -636,7 +636,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let node = this._style.node;
 
         if (!this._style.ownerRule) {
-            WI.domManager.highlightDOMNode(node.id);
+            node.highlight();
             return;
         }
 

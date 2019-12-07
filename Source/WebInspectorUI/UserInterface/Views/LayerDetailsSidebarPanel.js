@@ -149,22 +149,29 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
     _dataGridMouseMove(event)
     {
-        let node = this._dataGrid.dataGridNodeFromNode(event.target);
-        if (node === this._hoveredDataGridNode)
+        let dataGridNode = this._dataGrid.dataGridNodeFromNode(event.target);
+        if (dataGridNode === this._hoveredDataGridNode)
             return;
 
-        if (!node) {
+        if (!dataGridNode) {
             this._hideDOMNodeHighlight();
             return;
         }
 
-        this._hoveredDataGridNode = node;
+        this._hoveredDataGridNode = dataGridNode;
 
-        if (node.layer.isGeneratedContent || node.layer.isReflection || node.layer.isAnonymous) {
+        let layer = dataGridNode.layer;
+
+        if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous) {
             const usePageCoordinates = true;
-            WI.domManager.highlightRect(node.layer.bounds, usePageCoordinates);
-        } else
-            WI.domManager.highlightDOMNode(node.layer.nodeId);
+            WI.domManager.highlightRect(layer.bounds, usePageCoordinates);
+        } else {
+            let domNode = WI.domManager.nodeForId(layer.nodeId);
+            if (domNode)
+                domNode.highlight();
+            else
+                WI.domManager.hideDOMNodeHighlight();
+        }
     }
 
     _dataGridMouseLeave(event)

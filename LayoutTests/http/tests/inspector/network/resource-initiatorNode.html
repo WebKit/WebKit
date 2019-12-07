@@ -117,7 +117,7 @@ function test()
     });
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "video#video", (videoNodeId) => {
+        documentNode.querySelector("video#video", (videoNodeId) => {
             videoNode = WI.domManager.nodeForId(videoNodeId);
             if (videoNode)
                 suite.runTestCasesAndFinish();

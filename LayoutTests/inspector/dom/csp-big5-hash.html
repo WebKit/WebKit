@@ -11,7 +11,7 @@ function test() {
     ];
     WI.domManager.requestDocument(function(documentNode) {
         for (let {selector, hash} of testCases) {
-            WI.domManager.querySelector(documentNode.id, selector, function(nodeId) {
+            documentNode.querySelector(selector, function(nodeId) {
                 let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.log("");
                 InspectorTest.expectThat(domNode, `Got DOMNode for ${selector}`);

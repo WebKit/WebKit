@@ -76,7 +76,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
     {
         super.layout();
 
-        if (!this.domNode)
+        if (!this.domNode || this.domNode.destroyed)
             return;
 
         WI.layerTreeManager.layersForNode(this.domNode, (layers) => {
@@ -232,8 +232,13 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         var layer = dataGridNode.layer;
         if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous)
             WI.domManager.highlightRect(layer.bounds, true);
-        else
-            WI.domManager.highlightDOMNode(layer.nodeId);
+        else {
+            let domNode = WI.domManager.nodeForId(layer.nodeId);
+            if (domNode)
+                domNode.highlight();
+            else
+                WI.domManager.hideDOMNodeHighlight();
+        }
     }
 
     _updateDisplayWithLayers(layerForNode, childLayers)

@@ -297,7 +297,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         contextMenu.appendSeparator();
 
         let canLogShadowTree = !domNode.isInUserAgentShadowTree() || WI.DOMManager.supportsEditingUserAgentShadowTrees({frontendOnly: true});
-        if (!options.excludeLogElement && canLogShadowTree && !domNode.isPseudoElement()) {
+        if (!options.excludeLogElement && canLogShadowTree && !domNode.destroyed && !domNode.isPseudoElement()) {
             let label = isElement ? WI.UIString("Log Element", "Log (print) DOM element to Console") : WI.UIString("Log Node", "Log (print) DOM node to Console");
             contextMenu.appendItem(label, () => {
                 WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {

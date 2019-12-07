@@ -114,12 +114,12 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
     {
         event.stopPropagation();
 
-        var nodeId = showHighlight ? this.nodeStyles.node.id : 0;
-        if (nodeId) {
+        let node = showHighlight ? this.nodeStyles.node : null;
+        if (node) {
             if (this._highlightMode === mode)
                 return;
             this._highlightMode = mode;
-            WI.domManager.highlightDOMNode(nodeId, mode);
+            node.highlight(this._highlightMode);
         } else {
             this._highlightMode = null;
             WI.domManager.hideDOMNodeHighlight();
@@ -127,7 +127,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         for (var i = 0; this._boxElements && i < this._boxElements.length; ++i) {
             var element = this._boxElements[i];
-            if (nodeId && (mode === "all" || element._name === mode))
+            if (node && (mode === "all" || element._name === mode))
                 element.classList.add("active");
             else
                 element.classList.remove("active");

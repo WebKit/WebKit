@@ -112,7 +112,7 @@ function test() {
     }
 
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+        documentNode.querySelector("#x", function(nodeId) {
             testDOMNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(testDOMNode, "Got DOMNode for #x");

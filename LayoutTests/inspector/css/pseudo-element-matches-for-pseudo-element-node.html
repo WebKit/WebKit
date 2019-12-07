@@ -38,7 +38,7 @@ function test() {
     }
 
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#x", function(contentNodeId) {
+        documentNode.querySelector("#x", function(contentNodeId) {
             var domNode = WI.domManager.nodeForId(contentNodeId);
             InspectorTest.assert(domNode);
             var beforePseudoElementDOMNode = domNode.beforePseudoElement();

@@ -75,11 +75,11 @@ function test()
     // FIXME: What should $0 be after reloading / navigating the page. Should it be cleared?
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "#a", (contentNodeId) => {
+        documentNode.querySelector("#a", (contentNodeId) => {
             InspectorTest.assert(contentNodeId, "#a node should exist.");
             nodeA = WI.domManager.nodeForId(contentNodeId);
         });
-        WI.domManager.querySelector(documentNode.id, "#b", (contentNodeId) => {
+        documentNode.querySelector("#b", (contentNodeId) => {
             InspectorTest.assert(contentNodeId, "#b node should exist.");
             nodeB = WI.domManager.nodeForId(contentNodeId);
             suite.runTestCasesAndFinish();

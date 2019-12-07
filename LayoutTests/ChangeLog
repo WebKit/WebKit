@@ -1,3 +1,56 @@
+2019-12-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: Missing node for given nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=204519
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector/dom/cross-domain-inspected-node-access.html:
+        * http/tests/inspector/dom/didFireEvent.html:
+        * http/tests/inspector/network/resource-initiatorNode.html:
+        * inspector/console/command-line-api.html:
+        * inspector/css/add-css-property.html:
+        * inspector/css/css-property.html:
+        * inspector/css/force-page-appearance.html:
+        * inspector/css/generateCSSRuleString.html:
+        * inspector/css/matched-style-properties.html:
+        * inspector/css/modify-css-property-race.html:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/modify-inline-style.html:
+        * inspector/css/modify-rule-selector.html:
+        * inspector/css/overridden-property.html:
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+        * inspector/css/pseudo-element-matches.html:
+        * inspector/css/resolve-variable-value.html:
+        * inspector/css/selector-dynamic-specificity.html:
+        * inspector/css/selector-specificity.html:
+        * inspector/css/shadow-scoped-style.html:
+        * inspector/css/stylesheet-with-mutations.html:
+        * inspector/dom-debugger/attribute-modified-style.html:
+        * inspector/dom-debugger/dom-breakpoints.html:
+        * inspector/dom/attributeModified.html:
+        * inspector/dom/breakpoint-for-event-listener.html:
+        * inspector/dom/csp-big5-hash.html:
+        * inspector/dom/csp-hash.html:
+        * inspector/dom/customElementState.html:
+        * inspector/dom/domutilities-csspath.html:
+        * inspector/dom/domutilities-path-dump.html:
+        * inspector/dom/domutilities-xpath.html:
+        * inspector/dom/event-listener-inspected-node.html:
+        * inspector/dom/getEventListenersForNode.html:
+        * inspector/dom/getOuterHTML.html:
+        * inspector/dom/insertAdjacentHTML.html:
+        * inspector/dom/pseudo-element-dynamic.html:
+        * inspector/dom/pseudo-element-static.html:
+        * inspector/dom/setAllowEditingUserAgentShadowTrees.html:
+        * inspector/dom/setInspectedNode.html:
+        * inspector/dom/setOuterHTML.html:
+        * inspector/dom/shadow-and-non-shadow-children.html:
+        * inspector/dom/shadowRootType.html:
+        * inspector/dom/template-content.html:
+        * inspector/model/dom-node.html:
+        * inspector/page/hidpi-snapshot-size.html:
+
 2019-12-06  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test http/tests/xmlhttprequest/sync-xhr-in-unload.html is failing

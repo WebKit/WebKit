@@ -182,8 +182,8 @@ function test() {
 
     WI.domManager.requestDocument((documentNode) => {
         Promise.all([
-            WI.domManager.querySelector(documentNode.id, "#button1"),
-            WI.domManager.querySelector(documentNode.id, "#button2"),
+            documentNode.querySelector("#button1"),
+            documentNode.querySelector("#button2"),
         ])
         .then(([button1Id, button2Id]) => {
             button1Node = WI.domManager.nodeForId(button1Id);

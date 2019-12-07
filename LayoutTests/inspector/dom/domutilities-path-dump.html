@@ -41,7 +41,7 @@ function test()
 
     WI.domManager.requestDocument((documentNode) => {
         // Push all the nodes to the frontend.
-        WI.domManager.querySelector(documentNode.id, "html", (nodeId) => {
+        documentNode.querySelector("html", (nodeId) => {
             let htmlNode = WI.domManager.nodeForId(nodeId);
             htmlNode.getSubtree(10, () => {
                 buildNodeList(htmlNode, 0);

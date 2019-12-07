@@ -82,7 +82,7 @@ function test()
                     return;
                 }
 
-                WI.domManager.querySelector(documentNode.id, selector, (nodeId) => {
+                documentNode.querySelector(selector, (nodeId) => {
                     if (!nodeId) {
                         InspectorTest.fail("Selector returned no nodes.", selector);
                         reject();

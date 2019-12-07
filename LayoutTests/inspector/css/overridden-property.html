@@ -15,7 +15,7 @@ function test() {
 
     function getNodeStyles(selector, callback) {
         WI.domManager.requestDocument((documentNode) => {
-            WI.domManager.querySelector(documentNode.id, selector, (contentNodeId) => {
+            documentNode.querySelector(selector, (contentNodeId) => {
                 if (!contentNodeId) {
                     InspectorTest.fail("DOM node not found.");
                     InspectorTest.completeTest();

@@ -8,7 +8,7 @@ function test()
     let documentNode;
 
     async function nodeForSelector(selector) {
-        let nodeId = await WI.domManager.querySelector(documentNode.id, selector);
+        let nodeId = await documentNode.querySelector(selector);
         return WI.domManager.nodeForId(nodeId);
     }
 

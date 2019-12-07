@@ -59,7 +59,7 @@ function test() {
             return;
         }
 
-        WI.domManager.querySelector(documentNode.id, ".foo", function(contentNodeId) {
+        documentNode.querySelector(".foo", function(contentNodeId) {
             if (!contentNodeId) {
                 InspectorTest.log("ERROR: DOM node not found.");
                 InspectorTest.completeTest();

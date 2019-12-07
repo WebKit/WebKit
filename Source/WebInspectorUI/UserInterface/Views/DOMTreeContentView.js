@@ -504,7 +504,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._domTreeOutline.selectDOMNode(domNode, selectedByUser);
 
         if (domNode && selectedByUser)
-            WI.domManager.highlightDOMNode(domNode.id);
+            domNode.highlight();
 
         this._domTreeOutline.updateSelectionArea();
         this._domTreeOutline.suppressRevealAndSelect = false;

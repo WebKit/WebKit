@@ -42,7 +42,7 @@ function test() {
     }
 
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
+        documentNode.querySelector("#node1", function(contentNodeId) {
             if (contentNodeId) {
                 var domNode = WI.domManager.nodeForId(contentNodeId);
                 nodeStyles = WI.cssManager.stylesForNode(domNode);

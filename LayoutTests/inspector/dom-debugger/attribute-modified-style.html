@@ -115,7 +115,7 @@ function test()
             return;
         }
 
-        WI.domManager.querySelector(documentNode.id, "#test", async (nodeId) => {
+        documentNode.querySelector("#test", async (nodeId) => {
             let testNode = WI.domManager.nodeForId(nodeId);
             if (!testNode) {
                 InspectorTest.fail("Missing #test node");

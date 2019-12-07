@@ -69,7 +69,7 @@ function test() {
         }
 
         currentSelector = steps[currentStepIndex++];
-        WI.domManager.querySelector(documentNode.id, currentSelector, function(contentNodeId) {
+        documentNode.querySelector(currentSelector, function(contentNodeId) {
             if (contentNodeId) {
                 var domNode = WI.domManager.nodeForId(contentNodeId);
                 nodeStyles = WI.cssManager.stylesForNode(domNode);

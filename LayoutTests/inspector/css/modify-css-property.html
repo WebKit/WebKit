@@ -309,7 +309,7 @@ function test() {
     });
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+        documentNode.querySelector("#x", (contentNodeId) => {
             if (contentNodeId) {
                 let domNode = WI.domManager.nodeForId(contentNodeId);
                 nodeStyles = WI.cssManager.stylesForNode(domNode);

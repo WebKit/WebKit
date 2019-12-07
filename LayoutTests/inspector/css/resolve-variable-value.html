@@ -90,7 +90,7 @@ function test() {
     
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
+        documentNode.querySelector("#foo", (contentNodeId) => {
             if (!contentNodeId) {
                 InspectorTest.fail("DOM node not found.");
                 InspectorTest.completeTest();

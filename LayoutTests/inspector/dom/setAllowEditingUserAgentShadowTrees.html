@@ -38,7 +38,7 @@ function test()
     });
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+        documentNode.querySelector("#x", (contentNodeId) => {
             let inputNode = WI.domManager.nodeForId(contentNodeId);
 
             let fragment = inputNode.shadowRoots()[0];

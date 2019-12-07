@@ -43,7 +43,7 @@ function test()
         name: "CSS.ShadowScopedStyle.HostStyles",
         description: "Ensure shadow root host element gets :host styles.",
         test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "#shadow-host", (nodeId) => {
+            documentNode.querySelector("#shadow-host", (nodeId) => {
                 if (!nodeId) {
                     InspectorTest.fail("DOM node #shadow-host not found in document.");
                     reject();
@@ -68,7 +68,7 @@ function test()
         name: "CSS.ShadowScopedStyle.ElementInShadowTree",
         description: "Ensure element in shadow tree gets shadow dom scoped styles.",
         test(resolve, reject) {
-            WI.domManager.querySelector(hostNode.shadowRoots()[0].id, "#shadow-node", (nodeId) => {
+            hostNode.shadowRoots()[0].querySelector("#shadow-node", (nodeId) => {
                 if (!nodeId) {
                     InspectorTest.fail("DOM node #shadow-node not found in #shadow-host's shadowRoot.");
                     reject();

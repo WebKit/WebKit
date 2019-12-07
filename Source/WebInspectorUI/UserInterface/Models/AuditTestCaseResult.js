@@ -144,7 +144,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
                         options.resolvedDOMNodes = await Promise.all(payload.data.domNodes.map(async (domNodeString) => {
                             let nodeId = 0;
                             try {
-                                nodeId = await WI.domManager.querySelector(documentNode, domNodeString);
+                                nodeId = await documentNode.querySelector(domNodeString);
                             } catch { }
                             return WI.domManager.nodeForId(nodeId) || null;
                         }));

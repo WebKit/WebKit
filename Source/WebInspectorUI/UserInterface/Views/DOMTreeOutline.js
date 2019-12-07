@@ -151,7 +151,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     get editable()
     {
-        return this._editable;
+        return this._editable && this.rootDOMNode && !this.rootDOMNode.destroyed;
     }
 
     set editable(x)
@@ -287,14 +287,17 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             delete: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Delete")),
         };
 
-        if (treeElement.selected && this.selectedTreeElements.length > 1)
-            subMenus.delete.appendItem(WI.UIString("Nodes"), () => { this.ondelete(); }, !this._editable);
+        if (this.editable && treeElement.selected && this.selectedTreeElements.length > 1) {
+            subMenus.delete.appendItem(WI.UIString("Nodes"), () => {
+                this.ondelete();
+            });
+        }
 
         if (treeElement.populateDOMNodeContextMenu)
             treeElement.populateDOMNodeContextMenu(contextMenu, subMenus, event, subMenus);
 
         let options = {
-            disallowEditing: !this._editable,
+            disallowEditing: !this.editable,
             usingLocalDOMNode: this._usingLocalDOMNode,
             excludeRevealElement: this._excludeRevealElementContextMenu,
             copySubMenu: subMenus.copy,
@@ -314,7 +317,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     ondelete()
     {
-        if (!this._editable)
+        if (!this.editable)
             return false;
 
         this._treeElementsToRemove = this.selectedTreeElements;
@@ -465,12 +468,16 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             element.hovered = true;
             this._previousHoveredElement = element;
 
-            // Lazily compute tag-specific tooltips.
-            if (element.representedObject && !element.tooltip && element._createTooltipForNode)
-                element._createTooltipForNode();
-        }
+            if (element.representedObject) {
+                // Lazily compute tag-specific tooltips.
+                if (!element.tooltip && element._createTooltipForNode)
+                    element._createTooltipForNode();
 
-        WI.domManager.highlightDOMNode(element ? element.representedObject.id : 0);
+                element.representedObject.highlight();
+            } else
+                WI.domManager.hideDOMNodeHighlight();
+        } else
+            WI.domManager.hideDOMNodeHighlight();
     }
 
     _onmouseout(event)
@@ -492,7 +499,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondragstart(event)
     {
-        if (!this._editable)
+        if (!this.editable)
             return false;
 
         let treeElement = this.treeElementFromEvent(event);
@@ -518,7 +525,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondragover(event)
     {
-        if (!this._editable)
+        if (!this.editable)
             return false;
 
         if (event.dataTransfer.types.includes(WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType)) {
@@ -552,7 +559,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondragleave(event)
     {
-        if (!this._editable)
+        if (!this.editable)
             return false;
 
         this._clearDragOverTreeElementMarker();
@@ -577,7 +584,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondrop(event)
     {
-        if (!this._editable)
+        if (!this.editable)
             return;
 
         event.preventDefault();
@@ -619,7 +626,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondragend(event)
     {
-        if (!this._editable)
+        if (!this.editable)
             return;
 
         event.preventDefault();
@@ -678,7 +685,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _hideElements(event, keyboardShortcut)
     {
-        if (!this._editable)
+        if (!this.editable)
             return;
 
         if (!this.selectedTreeElement || WI.isEditingAnyField())

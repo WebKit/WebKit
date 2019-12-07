@@ -32,7 +32,7 @@ function test()
         name: "SnapshotPreservesPageResolution",
         description: "Verify that a node snapshot is not scaled down to CSS pixels.",
         async test() {
-            let targetNodeId = await WI.domManager.querySelector(documentNode.id, "#element-to-snapshot");
+            let targetNodeId = await documentNode.querySelector("#element-to-snapshot");
             let {dataURL} = await PageAgent.snapshotNode(targetNodeId);
             let devicePixelRatio = await InspectorTest.evaluateInPage(`window.devicePixelRatio`);
             let elementBounds = await InspectorTest.evaluateInPage(`window.snapshotElement.getBoundingClientRect()`)

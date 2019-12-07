@@ -244,6 +244,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     {
         let node = this.representedObject;
 
+        if (node.destroyed)
+            return false;
+
         if (node.isShadowRoot())
             return false;
 
@@ -830,7 +833,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             }, WI.isBeingEdited(textNode));
         }
 
-        if (!this.representedObject.isPseudoElement()) {
+        if (!this.representedObject.destroyed && !this.representedObject.isPseudoElement()) {
             subMenus.copy.appendItem(WI.UIString("HTML"), () => {
                 this.representedObject.getOuterHTML()
                 .then((outerHTML) => {

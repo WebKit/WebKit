@@ -23,7 +23,7 @@ function test() {
 
             InspectorTest.log("Creating test node...");
             await InspectorTest.evaluateInPage(`createTestNode("${id}")`);
-            let testNodeId = await WI.domManager.querySelector(documentNode.id, "#" + id);
+            let testNodeId = await documentNode.querySelector("#" + id);
             let testNode = WI.domManager.nodeForId(testNodeId);
             InspectorTest.assert(testNode, "Missing test node for id " + testNodeId);
 

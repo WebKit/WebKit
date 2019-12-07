@@ -79,10 +79,9 @@ function test()
     });
 
     WI.domManager.requestDocument((documentNode) => {
-        WI.domManager.querySelector(documentNode.id, "iframe#myframe", (nodeId) => {
+        documentNode.querySelector("iframe#myframe", (nodeId) => {
             let iframeNode = WI.domManager.nodeForId(nodeId);
-            let iframeDocumentNodeId = iframeNode.children[0].id;
-            WI.domManager.querySelector(iframeDocumentNodeId, "div#rootDiv", (nodeId) => {
+            iframeNode.children[0].querySelector("div#rootDiv", (nodeId) => {
                 nodeInMainFrameId = iframeNode.id;
                 nodeInSubFrameId = nodeId;
                 suite.runTestCasesAndFinish();

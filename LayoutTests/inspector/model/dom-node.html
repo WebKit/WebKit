@@ -12,7 +12,7 @@ function test()
         description: "Test getting the attributes of a node.",
         test(resolve, reject) {
             WI.domManager.requestDocument((documentNode) => {
-                WI.domManager.querySelector(documentNode.id, "#test-id", (nodeId) => {
+                documentNode.querySelector("#test-id", (nodeId) => {
                     let domNode = WI.domManager.nodeForId(nodeId);
                     InspectorTest.assert(domNode, "DOMNode exists");
 

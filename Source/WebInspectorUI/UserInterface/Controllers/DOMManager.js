@@ -82,6 +82,39 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     // Static
 
+    static buildHighlightConfig(mode)
+    {
+        mode = mode || "all";
+
+        let highlightConfig = {showInfo: mode === "all"};
+
+        if (mode === "all" || mode === "content")
+            highlightConfig.contentColor = {r: 111, g: 168, b: 220, a: 0.66};
+
+        if (mode === "all" || mode === "padding")
+            highlightConfig.paddingColor = {r: 147, g: 196, b: 125, a: 0.66};
+
+        if (mode === "all" || mode === "border")
+            highlightConfig.borderColor = {r: 255, g: 229, b: 153, a: 0.66};
+
+        if (mode === "all" || mode === "margin")
+            highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
+
+        return highlightConfig;
+    }
+
+    static wrapClientCallback(callback)
+    {
+        if (!callback)
+            return null;
+
+        return function(error, result) {
+            if (error)
+                console.error("Error during DOMAgent operation: " + error);
+            callback(error ? null : result);
+        };
+    }
+
     static supportsDisablingEventListeners()
     {
         return InspectorBackend.hasCommand("DOM.setEventListenerDisabled");
@@ -205,21 +238,9 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     // Private
 
-    _wrapClientCallback(callback)
-    {
-        if (!callback)
-            return null;
-
-        return function(error, result) {
-            if (error)
-                console.error("Error during DOMAgent operation: " + error);
-            callback(error ? null : result);
-        };
-    }
-
     _dispatchWhenDocumentAvailable(func, callback)
     {
-        var callbackWrapper = this._wrapClientCallback(callback);
+        var callbackWrapper = DOMManager.wrapClientCallback(callback);
 
         function onDocumentAvailable()
         {
@@ -285,6 +306,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         let target = WI.assumingMainTarget();
 
         for (var nodeId in this._attributeLoadNodeIds) {
+            if (!(nodeId in this._idToDOMNode))
+                continue;
             var nodeIdAsNumber = parseInt(nodeId);
             target.DOMAgent.getAttributes(nodeIdAsNumber, callback.bind(this, nodeIdAsNumber));
         }
@@ -310,6 +333,9 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _setDocument(payload)
     {
+        for (let node of Object.values(this._idToDOMNode))
+            node.markDestroyed();
+
         this._idToDOMNode = {};
 
         for (let breakpoint of this._breakpointsForEventListeners.values())
@@ -412,6 +438,8 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _unbind(node)
     {
+        node.markDestroyed();
+
         delete this._idToDOMNode[node.id];
 
         for (let i = 0; node.children && i < node.children.length; ++i)
@@ -470,45 +498,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         remoteObject.pushNodeToFrontend(nodeAvailable.bind(this));
     }
 
-    querySelector(nodeOrNodeId, selector, callback)
-    {
-        let nodeId = nodeOrNodeId instanceof WI.DOMNode ? nodeOrNodeId.id : nodeOrNodeId;
-        console.assert(typeof nodeId === "number");
-
-        let target = WI.assumingMainTarget();
-        if (typeof callback === "function")
-            target.DOMAgent.querySelector(nodeId, selector, this._wrapClientCallback(callback));
-        else
-            return target.DOMAgent.querySelector(nodeId, selector).then(({nodeId}) => nodeId);
-    }
-
-    querySelectorAll(nodeOrNodeId, selector, callback)
-    {
-        let nodeId = nodeOrNodeId instanceof WI.DOMNode ? nodeOrNodeId.id : nodeOrNodeId;
-        console.assert(typeof nodeId === "number");
-
-        let target = WI.assumingMainTarget();
-        if (typeof callback === "function")
-            target.DOMAgent.querySelectorAll(nodeId, selector, this._wrapClientCallback(callback));
-        else
-            return target.DOMAgent.querySelectorAll(nodeId, selector).then(({nodeIds}) => nodeIds);
-    }
-
-    highlightDOMNode(nodeId, mode)
-    {
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
-
-        let target = WI.assumingMainTarget();
-        if (nodeId)
-            target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: this._buildHighlightConfig(mode)});
-        else
-            target.DOMAgent.hideHighlight();
-    }
-
-    highlightDOMNodeList(nodeIds, mode)
+    highlightDOMNodeList(nodes, mode)
     {
         let target = WI.assumingMainTarget();
 
@@ -521,7 +511,16 @@ WI.DOMManager = class DOMManager extends WI.Object
             this._hideDOMNodeHighlightTimeout = undefined;
         }
 
-        target.DOMAgent.highlightNodeList(nodeIds, this._buildHighlightConfig(mode));
+        let nodeIds = [];
+        for (let node of nodes) {
+            console.assert(node instanceof WI.DOMNode, node);
+            console.assert(!node.destroyed, node);
+            if (node.destroyed)
+                continue;
+            nodeIds.push(node.id);
+        }
+
+        target.DOMAgent.highlightNodeList(nodeIds, DOMManager.buildHighlightConfig(mode));
     }
 
     highlightSelector(selectorText, frameId, mode)
@@ -537,7 +536,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             this._hideDOMNodeHighlightTimeout = undefined;
         }
 
-        target.DOMAgent.highlightSelector(this._buildHighlightConfig(mode), selectorText, frameId);
+        target.DOMAgent.highlightSelector(DOMManager.buildHighlightConfig(mode), selectorText, frameId);
     }
 
     highlightRect(rect, usePageCoordinates)
@@ -556,12 +555,18 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     hideDOMNodeHighlight()
     {
-        this.highlightDOMNode(0);
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.hideHighlight();
     }
 
     highlightDOMNodeForTwoSeconds(nodeId)
     {
-        this.highlightDOMNode(nodeId);
+        let node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+
+        node.highlight();
+
         this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this), 2000);
     }
 
@@ -578,7 +583,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         let target = WI.assumingMainTarget();
         let commandArguments = {
             enabled,
-            highlightConfig: this._buildHighlightConfig(),
+            highlightConfig: DOMManager.buildHighlightConfig(),
             showRulers: WI.settings.showRulersDuringElementSelection.value,
         };
         target.DOMAgent.setInspectModeEnabled.invoke(commandArguments, (error) => {
@@ -591,6 +596,10 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         console.assert(node instanceof WI.DOMNode);
         if (node === this._inspectedNode)
+            return;
+
+        console.assert(!node.destroyed, node);
+        if (node.destroyed)
             return;
 
         let callback = (error) => {
@@ -632,10 +641,7 @@ WI.DOMManager = class DOMManager extends WI.Object
     setEventListenerDisabled(eventListener, disabled)
     {
         let target = WI.assumingMainTarget();
-        target.DOMAgent.setEventListenerDisabled(eventListener.eventListenerId, disabled, (error) => {
-            if (error)
-                console.error(error);
-        });
+        target.DOMAgent.setEventListenerDisabled(eventListener.eventListenerId, disabled);
     }
 
     setBreakpointForEventListener(eventListener)
@@ -688,25 +694,6 @@ WI.DOMManager = class DOMManager extends WI.Object
     }
 
     // Private
-
-    _buildHighlightConfig(mode = "all")
-    {
-        let highlightConfig = {showInfo: mode === "all"};
-
-        if (mode === "all" || mode === "content")
-            highlightConfig.contentColor = {r: 111, g: 168, b: 220, a: 0.66};
-
-        if (mode === "all" || mode === "padding")
-            highlightConfig.paddingColor = {r: 147, g: 196, b: 125, a: 0.66};
-
-        if (mode === "all" || mode === "border")
-            highlightConfig.borderColor = {r: 255, g: 229, b: 153, a: 0.66};
-
-        if (mode === "all" || mode === "margin")
-            highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
-
-        return highlightConfig;
-    }
 
     _updateEventBreakpoint(breakpoint, target)
     {

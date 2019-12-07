@@ -1,5 +1,105 @@
 2019-12-06  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: Missing node for given nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=204519
+
+        Reviewed by Timothy Hatcher.
+
+        When a DOM node is removed from the main DOM tree, the `InspectorDOMAgent` invalidates the
+        `DOM.NodeId` that was previously assigned to that DOM node, meaning that any future commands
+        sent by the frontend with that `DOM.NodeId` will fail.
+
+        Add logic to mark `WI.DOMNode` as being `destroyed` when this happens so the frontend can
+        decide to not invoke any commands with that `DOM.NodeId`.
+
+        Many functions have also switched to expecting a `WI.DOMNode` instead of a `DOM.NodeId` or
+        have been moved to `WI.DOMNode.prototype` in order to also be able to use `destroyed`.
+
+        This issue will eventually be mitigated by <https://webkit.org/b/189687>.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.get destroyed): Added.
+        (WI.DOMNode.prototype.get attached):
+        (WI.DOMNode.prototype.markDestroyed): Added.
+        (WI.DOMNode.prototype.setNodeName):
+        (WI.DOMNode.prototype.setNodeValue):
+        (WI.DOMNode.prototype.setAttribute):
+        (WI.DOMNode.prototype.setAttributeValue):
+        (WI.DOMNode.prototype.querySelector): Added.
+        (WI.DOMNode.prototype.querySelectorAll): Added.
+        (WI.DOMNode.prototype.highlight): Added.
+        (WI.DOMNode.prototype.getOuterHTML):
+        (WI.DOMNode.prototype.setOuterHTML):
+        (WI.DOMNode.prototype.removeNode):
+        (WI.DOMNode.prototype.getEventListeners):
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WI.bindInteractionsForNodeToElement):
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.buildHighlightConfig):
+        (WI.DOMManager.wrapClientCallback):
+        (WI.DOMManager.prototype._loadNodeAttributes):
+        (WI.DOMManager.prototype._setDocument):
+        (WI.DOMManager.prototype._unbind):
+        (WI.DOMManager.prototype.highlightDOMNodeList):
+        (WI.DOMManager.prototype.highlightSelector):
+        (WI.DOMManager.prototype.hideDOMNodeHighlight):
+        (WI.DOMManager.prototype.highlightDOMNodeForTwoSeconds):
+        (WI.DOMManager.prototype.set inspectModeEnabled):
+        (WI.DOMManager.prototype.setInspectedNode):
+        (WI.DOMManager.prototype.setEventListenerDisabled):
+        (WI.DOMManager.prototype._wrapClientCallback): Deleted.
+        (WI.DOMManager.prototype.querySelector): Deleted.
+        (WI.DOMManager.prototype.querySelectorAll): Deleted.
+        (WI.DOMManager.prototype.highlightDOMNode): Deleted.
+        (WI.DOMManager.prototype._buildHighlightConfig): Deleted.
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult.async fromPayload):
+        * UserInterface/Models/MediaTimelineRecord.js:
+        (WI.MediaTimelineRecord.async fromJSON):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.resolveNode):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype._highlightDOMNode):
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._contentViewMouseEnter):
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement.prototype._handleMouseOver):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype._domTreeSelectionDidChange):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.get editable):
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        (WI.DOMTreeElementPathComponent.prototype.mouseOver):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.get editable):
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        (WI.DOMTreeOutline.prototype._onmousemove):
+        (WI.DOMTreeOutline.prototype._ondragstart):
+        (WI.DOMTreeOutline.prototype._ondragover):
+        (WI.DOMTreeOutline.prototype._ondragleave):
+        (WI.DOMTreeOutline.prototype._ondragend):
+        (WI.DOMTreeOutline.prototype._hideElements):
+        * UserInterface/Views/FormattedValue.js:
+        (WI.FormattedValue.createElementForNodePreview):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridMouseMove):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype.layout):
+        (WI.LayerTreeDetailsSidebarPanel.prototype._highlightSelectedNode):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._highlightNodesWithSelector):
+
+2019-12-06  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: saving a file with the url "/" suggest the name "Untitled"
         https://bugs.webkit.org/show_bug.cgi?id=204910
 

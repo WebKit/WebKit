@@ -12,7 +12,7 @@ function test()
         description: "Get the OuterHTML of the target element.",
         test(resolve, reject) {
             WI.domManager.requestDocument(function(documentNode) {
-                WI.domManager.querySelector(documentNode.id, "#x", function(nodeId) {
+                documentNode.querySelector("#x", function(nodeId) {
                     let domNode = WI.domManager.nodeForId(nodeId);
                     InspectorTest.assert(domNode, "DOMNode exists");
                     domNode.getOuterHTML(function(error, outerHTML) {

@@ -87,7 +87,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
     layout()
     {
         let domNode = this.domNode;
-        if (!domNode)
+        if (!domNode || domNode.destroyed)
             return;
 
         this.contentView.element.scrollTop = this._initialScrollOffset;

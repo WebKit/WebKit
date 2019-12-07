@@ -4,13 +4,13 @@
 <script>
 function test() {
     WI.domManager.requestDocument(function(documentNode) {
-        WI.domManager.querySelector(documentNode.id, "#div", function(nodeId) {
+        documentNode.querySelector("#div", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.expectThat(domNode, "Got DOMNode for div element");
             InspectorTest.expectThat(!domNode.templateContent(), "DOMNode does not have template content");
         });
 
-        WI.domManager.querySelector(documentNode.id, "#template", function(nodeId) {
+        documentNode.querySelector("#template", function(nodeId) {
             var domNode = WI.domManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(domNode, "Got DOMNode for template element");
