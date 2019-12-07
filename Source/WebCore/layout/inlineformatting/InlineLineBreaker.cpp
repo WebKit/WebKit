@@ -102,7 +102,7 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    InlineLayoutUnit accumulatedRunWidth;
+    InlineLayoutUnit accumulatedRunWidth = 0;
     unsigned index = 0;
     while (index < runs.size()) {
         auto& run = runs[index];

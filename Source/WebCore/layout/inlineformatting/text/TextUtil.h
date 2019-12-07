@@ -37,12 +37,12 @@ namespace Layout {
 
 class TextUtil {
 public:
-    static InlineLayoutUnit width(const Box&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft = 0_lu);
+    static InlineLayoutUnit width(const Box&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft = 0);
     static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
     struct SplitData {
         unsigned start { 0 };
         unsigned length { 0 };
-        InlineLayoutUnit logicalWidth;
+        InlineLayoutUnit logicalWidth { 0 };
     };
     static SplitData split(const Box&, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
     static bool shouldPreserveTrailingWhitespace(const RenderStyle&);

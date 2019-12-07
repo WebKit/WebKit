@@ -231,7 +231,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const UsedHorizontalValues& usedHorizontalValues) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    InlineLayoutUnit maximumLineWidth;
+    InlineLayoutUnit maximumLineWidth = 0;
     unsigned leadingInlineItemIndex = 0;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
@@ -241,7 +241,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
         auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, { });
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
-        InlineLayoutUnit floatsWidth;
+        InlineLayoutUnit floatsWidth = 0;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += geometryForBox(floatItem->layoutBox()).marginBoxWidth();
         maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.lineBox.logicalWidth());

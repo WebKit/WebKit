@@ -43,12 +43,12 @@ class LineBuilder {
 
 public:
     struct Constraints {
-        LayoutPoint logicalTopLeft;
-        InlineLayoutUnit availableLogicalWidth;
+        InlineLayoutPoint logicalTopLeft;
+        InlineLayoutUnit availableLogicalWidth { 0 };
         bool lineIsConstrainedByFloat { false };
         struct HeightAndBaseline {
-            InlineLayoutUnit height;
-            InlineLayoutUnit baselineOffset;
+            InlineLayoutUnit height { 0 };
+            InlineLayoutUnit baselineOffset { 0 };
             Optional<Display::LineBox::Baseline> strut;
         };
         Optional<HeightAndBaseline> heightAndBaseline;
@@ -192,8 +192,8 @@ private:
 
     private:
         const InlineItem& m_inlineItem;
-        InlineLayoutUnit m_logicalLeft;
-        InlineLayoutUnit m_logicalWidth;
+        InlineLayoutUnit m_logicalLeft { 0 };
+        InlineLayoutUnit m_logicalWidth { 0 };
         const Optional<Display::Run::TextContext> m_textContext;
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };
@@ -218,7 +218,7 @@ private:
     private:
         InlineItemRunList& m_inlineitemRunList;
         Optional<size_t> m_firstRunIndex;
-        InlineLayoutUnit m_width;
+        InlineLayoutUnit m_width { 0 };
         bool m_lastRunIsFullyTrimmable { false };
     };
 
@@ -226,7 +226,7 @@ private:
     InlineItemRunList m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
     Optional<Display::LineBox::Baseline> m_initialStrut;
-    InlineLayoutUnit m_lineLogicalWidth;
+    InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_skipAlignment { false };
     bool m_hasIntrusiveFloat { false };

@@ -47,7 +47,7 @@ public:
         struct PartialTrailingContent {
             unsigned runIndex { 0 };
             unsigned length { 0 };
-            InlineLayoutUnit logicalWidth;
+            InlineLayoutUnit logicalWidth { 0 };
             bool needsHyphen { false };
         };
         Optional<PartialTrailingContent> partialTrailingContent;
@@ -71,7 +71,7 @@ public:
 
         struct Run {
             const InlineItem& inlineItem;
-            InlineLayoutUnit logicalWidth;
+            InlineLayoutUnit logicalWidth { 0 };
         };
         using RunList = Vector<Run, 30>;
 
@@ -93,17 +93,17 @@ public:
             void reset();
 
             bool isFullyTrimmable { false };
-            InlineLayoutUnit width;
+            InlineLayoutUnit width { 0 };
         };
         TrailingTrimmableContent m_trailingTrimmableContent;
-        InlineLayoutUnit m_width;
+        InlineLayoutUnit m_width { 0 };
     };
 
     struct LineStatus {
-        InlineLayoutUnit availableWidth;
-        InlineLayoutUnit trimmableWidth;
-        bool lineHasFullyTrimmableTrailingRun;
-        bool lineIsEmpty;
+        InlineLayoutUnit availableWidth { 0 };
+        InlineLayoutUnit trimmableWidth { 0 };
+        bool lineHasFullyTrimmableTrailingRun { false };
+        bool lineIsEmpty { true };
     };
     BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);
     bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
@@ -114,7 +114,7 @@ private:
     Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, InlineLayoutUnit availableWidth) const;
     struct LeftSide {
         unsigned length { 0 };
-        InlineLayoutUnit logicalWidth;
+        InlineLayoutUnit logicalWidth { 0 };
         bool needsHyphen { false };
     };
     Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth) const;

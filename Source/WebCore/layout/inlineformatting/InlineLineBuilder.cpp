@@ -50,7 +50,7 @@ private:
     const InlineItemRun& m_initialInlineRun;
     const bool m_textIsAlignJustify { false };
     unsigned m_expandedLength { 0 };
-    InlineLayoutUnit m_expandedWidth;
+    InlineLayoutUnit m_expandedWidth { 0 };
     bool m_trailingRunCanBeExpanded { false };
     bool m_hasTrailingExpansionOpportunity { false };
     unsigned m_expansionOpportunityCount { 0 };
@@ -168,8 +168,8 @@ void LineBuilder::initialize(const Constraints& constraints)
 {
     ASSERT(m_skipAlignment || constraints.heightAndBaseline);
 
-    InlineLayoutUnit initialLineHeight;
-    InlineLayoutUnit initialBaselineOffset;
+    InlineLayoutUnit initialLineHeight = 0;
+    InlineLayoutUnit initialBaselineOffset = 0;
     if (constraints.heightAndBaseline) {
         m_initialStrut = constraints.heightAndBaseline->strut;
         initialLineHeight = constraints.heightAndBaseline->height;
@@ -238,7 +238,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
 {
     ASSERT(!m_skipAlignment);
     for (auto& run : runList) {
-        InlineLayoutUnit logicalTop;
+        InlineLayoutUnit logicalTop = 0;
         auto& layoutBox = run.layoutBox();
         auto verticalAlign = layoutBox.style().verticalAlign();
         auto ascent = layoutBox.style().fontMetrics().ascent();
@@ -306,7 +306,7 @@ void LineBuilder::justifyRuns(RunList& runList) const
         return;
     // Distribute the extra space.
     auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
-    InlineLayoutUnit accumulatedExpansion;
+    InlineLayoutUnit accumulatedExpansion = 0;
     for (auto& run : runList) {
         // Expand and moves runs by the accumulated expansion.
         if (!run.hasExpansionOpportunity()) {
@@ -707,7 +707,7 @@ LineBuilder::TrimmableContent::TrimmableContent(InlineItemRunList& inlineItemRun
 void LineBuilder::TrimmableContent::append(size_t runIndex)
 {
     auto& trimmableRun = m_inlineitemRunList[runIndex];
-    InlineLayoutUnit trimmableWidth;
+    InlineLayoutUnit trimmableWidth = 0;
     auto isFullyTrimmable = trimmableRun.isTrimmableWhitespace();
     if (isFullyTrimmable)
         trimmableWidth = trimmableRun.logicalWidth();
@@ -734,7 +734,7 @@ InlineLayoutUnit LineBuilder::TrimmableContent::trim()
     // <span> </span><span></span> ->
     // [whitespace][container end][container start][container end]
     // Trim the whitespace run and move the trailing inline container runs to the left.
-    InlineLayoutUnit accumulatedTrimmedWidth;
+    InlineLayoutUnit accumulatedTrimmedWidth = 0;
     for (auto index = *m_firstRunIndex; index < m_inlineitemRunList.size(); ++index) {
         auto& run = m_inlineitemRunList[index];
         run.moveHorizontally(-accumulatedTrimmedWidth);
@@ -771,7 +771,7 @@ InlineLayoutUnit LineBuilder::TrimmableContent::trimTrailingRun()
             ASSERT(run.isContainerStart() || run.isContainerEnd());
             continue;
         }
-        InlineLayoutUnit trimmedWidth;
+        InlineLayoutUnit trimmedWidth = 0;
         if (run.isWhitespace()) {
             trimmedWidth = run.logicalWidth();
             run.setCollapsesToZeroAdvanceWidth();
