@@ -4493,3 +4493,5 @@ webkit.org/b/204545 svg/as-image/svg-nested.html [ Pass Timeout Crash ]
 webkit.org/b/204794 webanimations/accelerated-animation-removal-upon-transition-completion.html [ Timeout ]
 
 webkit.org/b/204795 fast/layoutformattingcontext/flow-integration-basic.html [ Failure ]
+
+webkit.org/b/204974 http/tests/xmlhttprequest/sync-xhr-in-unload.html [ Failure ]
