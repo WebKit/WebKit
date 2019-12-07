@@ -740,9 +740,9 @@ private:
     CurrentThreadState* m_currentThreadState { nullptr };
     Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
 
-#if PLATFORM(IOS_FAMILY)
-    unsigned m_precentAvailableMemoryCachedCallCount;
-    bool m_overCriticalMemoryThreshold;
+#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+    unsigned m_percentAvailableMemoryCachedCallCount { 0 };
+    bool m_overCriticalMemoryThreshold { false };
 #endif
 
     bool m_parallelMarkersShouldExit { false };

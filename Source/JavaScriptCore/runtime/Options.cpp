@@ -346,14 +346,14 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
-#if PLATFORM(IOS_FAMILY)
-    // On iOS, we control heap growth using process memory footprint. Therefore these values can be agressive.
+#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+    // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
-
-#if !PLATFORM(WATCHOS) && defined(__LP64__)
-    Options::useSigillCrashAnalyzer() = true;
 #endif
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && defined(__LP64__)
+    Options::useSigillCrashAnalyzer() = true;
 #endif
 
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)
