@@ -50,12 +50,6 @@ AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const I
 {
 }
 
-void AbstractModuleRecord::destroy(JSCell* cell)
-{
-    AbstractModuleRecord* thisObject = static_cast<AbstractModuleRecord*>(cell);
-    thisObject->AbstractModuleRecord::~AbstractModuleRecord();
-}
-
 void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     Base::finishCreation(vm);

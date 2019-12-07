@@ -42,7 +42,16 @@ class WebAssemblyFunction;
 class WebAssemblyModuleRecord final : public AbstractModuleRecord {
     friend class LLIntOffsetsExtractor;
 public:
-    typedef AbstractModuleRecord Base;
+    using Base = AbstractModuleRecord;
+
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.webAssemblyModuleRecordSpace<mode>();
+    }
 
     DECLARE_EXPORT_INFO;
 
@@ -57,7 +66,6 @@ private:
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
     void finishCreation(JSGlobalObject*, VM&, const Wasm::ModuleInformation&);
-    static void destroy(JSCell*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

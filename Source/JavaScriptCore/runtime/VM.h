@@ -130,6 +130,7 @@ class JSCCallbackFunction;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
+class JSModuleRecord;
 class JSObject;
 class JSPromise;
 class JSPropertyNameEnumerator;
@@ -176,6 +177,7 @@ class Watchdog;
 class Watchpoint;
 class WatchpointSet;
 class WebAssemblyFunction;
+class WebAssemblyModuleRecord;
 
 template<typename CellType> class IsoHeapCellType;
 
@@ -357,6 +359,7 @@ public:
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
     std::unique_ptr<IsoHeapCellType<DateInstance>> dateInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSModuleRecord>> jsModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
@@ -380,6 +383,7 @@ public:
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyInstance>> webAssemblyInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyMemory>> webAssemblyMemoryHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyModule>> webAssemblyModuleHeapCellType;
+    std::unique_ptr<IsoHeapCellType<WebAssemblyModuleRecord>> webAssemblyModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWebAssemblyTable>> webAssemblyTableHeapCellType;
 #endif
     
@@ -465,6 +469,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int16ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsModuleRecordSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
@@ -496,6 +501,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyInstanceSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyMemorySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleRecordSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTableSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyWrapperFunctionSpace)
 #endif

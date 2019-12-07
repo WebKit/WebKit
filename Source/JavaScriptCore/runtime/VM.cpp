@@ -95,6 +95,7 @@
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
+#include "JSModuleRecord.h"
 #include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScriptFetchParameters.h"
@@ -162,6 +163,7 @@
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WebAssemblyFunction.h"
+#include "WebAssemblyModuleRecord.h"
 #include "WebAssemblyWrapperFunction.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
@@ -286,6 +288,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
     , dateInstanceHeapCellType(makeUnique<IsoHeapCellType<DateInstance>>())
     , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
+    , jsModuleRecordHeapCellType(makeUnique<IsoHeapCellType<JSModuleRecord>>())
     , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
     , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
@@ -309,6 +312,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , webAssemblyInstanceHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyInstance>>())
     , webAssemblyMemoryHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyMemory>>())
     , webAssemblyModuleHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyModule>>())
+    , webAssemblyModuleRecordHeapCellType(makeUnique<IsoHeapCellType<WebAssemblyModuleRecord>>())
     , webAssemblyTableHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyTable>>())
 #endif
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
@@ -1356,6 +1360,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float32ArraySpace, cellHeapCellType.get(
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float64ArraySpace, cellHeapCellType.get(), JSFloat64Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(generatorSpace, cellHeapCellType.get(), JSGenerator)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsModuleRecordSpace, jsModuleRecordHeapCellType.get(), JSModuleRecord)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int8ArraySpace, cellHeapCellType.get(), JSInt8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int16ArraySpace, cellHeapCellType.get(), JSInt16Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int32ArraySpace, cellHeapCellType.get(), JSInt32Array)
@@ -1396,6 +1401,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyGlobalSpace, webAssemblyGloba
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyInstanceSpace, webAssemblyInstanceHeapCellType.get(), JSWebAssemblyInstance)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyMemorySpace, webAssemblyMemoryHeapCellType.get(), JSWebAssemblyMemory)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyModuleSpace, webAssemblyModuleHeapCellType.get(), JSWebAssemblyModule)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyModuleRecordSpace, webAssemblyModuleRecordHeapCellType.get(), WebAssemblyModuleRecord)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyTableSpace, webAssemblyTableHeapCellType.get(), JSWebAssemblyTable)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHeapCellType.get(), WebAssemblyWrapperFunction) // Hash:0xd4a5ff01
 #endif
