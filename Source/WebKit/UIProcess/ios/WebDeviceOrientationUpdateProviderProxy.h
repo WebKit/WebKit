@@ -35,6 +35,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebDeviceOrientationUpdateProviderProxy : public WebCore::MotionManagerClient, private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebDeviceOrientationUpdateProviderProxy(WebPageProxy&);
     ~WebDeviceOrientationUpdateProviderProxy();
@@ -46,7 +47,7 @@ private:
     // WebCore::WebCoreMotionManagerClient
     void orientationChanged(double, double, double, double, double) final;
     
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebPageProxy& m_page;

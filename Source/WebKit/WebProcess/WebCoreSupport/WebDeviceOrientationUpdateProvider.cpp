@@ -39,13 +39,14 @@ namespace WebKit {
 
 WebDeviceOrientationUpdateProvider::WebDeviceOrientationUpdateProvider(WebPage& page)
     : m_page(makeWeakPtr(page))
+    , m_pageIdentifier(page.identifier())
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebDeviceOrientationUpdateProvider::messageReceiverName(), page.identifier(), *this);
 }
 
 WebDeviceOrientationUpdateProvider::~WebDeviceOrientationUpdateProvider()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProvider::messageReceiverName());
+    WebProcess::singleton().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProvider::messageReceiverName(), m_pageIdentifier);
 }
 
 void WebDeviceOrientationUpdateProvider::startUpdating(WebCore::MotionManagerClient& client)

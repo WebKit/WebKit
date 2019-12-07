@@ -256,6 +256,10 @@
 #include <d3d11_1.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+#include "WebDeviceOrientationUpdateProviderProxy.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -451,9 +455,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
     , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
-#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-    , m_webDeviceOrientationUpdateProviderProxy(*this)
-#endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
 
@@ -908,6 +909,11 @@ void WebPageProxy::didAttachToRunningProcess()
 #if HAVE(PENCILKIT)
     ASSERT(!m_editableImageController);
     m_editableImageController = makeUnique<EditableImageController>(*this);
+#endif
+    
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+    ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
+    m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
 }
 
@@ -7249,6 +7255,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if HAVE(PENCILKIT)
     m_editableImageController = nullptr;
+#endif
+    
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+    m_webDeviceOrientationUpdateProviderProxy = nullptr;
 #endif
 
     CallbackBase::Error error { };

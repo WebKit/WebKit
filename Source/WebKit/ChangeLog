@@ -1,3 +1,35 @@
+2019-12-07  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION(r253231): Debug assertion failures under ~WebDeviceOrientationUpdateProvider(Proxy)
+        https://bugs.webkit.org/show_bug.cgi?id=204977
+        rdar://problem/57724251
+
+        Reviewed by Per Arne Vollan.
+
+        In the UI process, have the WebPageProxy swap out its WebDeviceOrientationUpdateProviderProxy whenever
+        it connects to a new process, instead of creating one on construction and holding onto it for the rest
+        of the WebPageProxy lifetime. The …UpdateProviderProxy assumes that its page will have the same ID
+        at the time of registering as a message receiver and later unregistering, but the page ID could change
+        if the WebPageProxy swaps web processes. Using a new instance per web page ID ensures that the
+        updater is always able to successfully remove itself as a message receiver when deallocating.
+
+        In the Web process, ~WebDeviceOrientationUpdateProvider() should remove itself as a message receiver
+        specifically for its page ID, rather than as a global message receiver.
+
+        No new tests -- existing tests (at least the ProcessSwap API tests) revealed the regression.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_tryCloseTimeoutTimer):
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::m_webDeviceOrientationUpdateProviderProxy): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.h:
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+        (WebKit::WebDeviceOrientationUpdateProvider::WebDeviceOrientationUpdateProvider):
+        (WebKit::WebDeviceOrientationUpdateProvider::~WebDeviceOrientationUpdateProvider):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.h:
+
 2019-12-07  Tim Horton  <timothy_horton@apple.com>
 
         Implement encoding for DrawImage and DrawRoundedRect display list items

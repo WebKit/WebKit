@@ -54,6 +54,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WeakPtr<WebPage> m_page;
+    WebCore::PageIdentifier m_pageIdentifier;
     HashSet<WebCore::MotionManagerClient*> m_clients;
 };
 

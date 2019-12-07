@@ -149,10 +149,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include "SOAuthorizationLoadPolicy.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-#include "WebDeviceOrientationUpdateProviderProxy.h"
-#endif
-
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -301,6 +297,7 @@ class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebWheelEvent;
 class WebsiteDataStore;
+class WebDeviceOrientationUpdateProviderProxy;
 class WebViewDidMoveToWindowObserver;
 
 struct AttributedString;
@@ -2638,7 +2635,7 @@ private:
     String m_overriddenMediaType;
         
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-    WebDeviceOrientationUpdateProviderProxy m_webDeviceOrientationUpdateProviderProxy;
+    std::unique_ptr<WebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProviderProxy;
 #endif
 };
 
