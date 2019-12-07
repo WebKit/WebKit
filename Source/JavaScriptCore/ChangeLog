@@ -1,3 +1,35 @@
+2019-12-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put JSWrapperObject derived classes in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204976
+
+        Reviewed by Mark Lam.
+
+        Put JSWrapperObject derived classes in IsoSubspace.
+
+            1. StringObject
+            2. NumberObject
+            3. SymbolObject
+            4. BigIntObject
+            5. BooleanObject
+
+        * runtime/BigIntObject.h:
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::subspaceFor):
+        * runtime/BooleanPrototype.h:
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::subspaceFor):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::subspaceFor):
+        * runtime/NumberPrototype.h:
+        * runtime/StringObject.h:
+        (JSC::StringObject::subspaceFor):
+        * runtime/StringPrototype.h:
+        * runtime/SymbolObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-12-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: non-regex Local Overrides and Script Blackboxing shouldn't apply to scripts that just contain the URL

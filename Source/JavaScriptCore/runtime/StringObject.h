@@ -30,6 +30,12 @@ public:
     using Base = JSWrapperObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
+    template<typename, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.stringObjectSpace;
+    }
+
     static StringObject* create(VM& vm, Structure* structure)
     {
         JSString* string = jsEmptyString(vm);

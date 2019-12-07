@@ -428,6 +428,7 @@ public:
     IsoSubspace getterSetterSpace;
     IsoSubspace internalFunctionSpace;
     IsoSubspace nativeExecutableSpace;
+    IsoSubspace numberObjectSpace;
     IsoSubspace promiseSpace;
     IsoSubspace propertyTableSpace;
     IsoSubspace regExpObjectSpace;
@@ -435,6 +436,7 @@ public:
     IsoSubspace scopedArgumentsSpace;
     IsoSubspace sparseArrayValueMapSpace;
     IsoSubspace stringSpace;
+    IsoSubspace stringObjectSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
     IsoSubspace symbolTableSpace;
@@ -459,6 +461,8 @@ public:
 #endif
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(arrayBufferSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(asyncGeneratorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(bigIntObjectSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(booleanObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(boundFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterSetterFunctionSpace)
@@ -479,6 +483,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint16ArraySpace)

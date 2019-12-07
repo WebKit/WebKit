@@ -31,6 +31,8 @@
 
 #include "ArgList.h"
 #include "ArrayBufferNeuteringWatchpointSet.h"
+#include "BigIntObject.h"
+#include "BooleanObject.h"
 #include "BuiltinExecutables.h"
 #include "BytecodeIntrinsicRegistry.h"
 #include "ClonedArguments.h"
@@ -128,6 +130,7 @@
 #include "NativeExecutable.h"
 #include "NativeStdFunctionCell.h"
 #include "Nodes.h"
+#include "NumberObject.h"
 #include "ObjCCallbackFunction.h"
 #include "Parser.h"
 #include "PredictionFileCreatingFuzzerAgent.h"
@@ -149,8 +152,10 @@
 #include "SourceProviderCache.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
+#include "StringObject.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
+#include "SymbolObject.h"
 #include "TestRunnerUtils.h"
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
@@ -333,6 +338,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
     , internalFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), InternalFunction) // Hash:0xf845c464
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
+    , numberObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), NumberObject)
     , promiseSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPromise)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
     , regExpObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), RegExpObject)
@@ -340,6 +346,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , scopedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ScopedArguments)
     , sparseArrayValueMapSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SparseArrayValueMap)
     , stringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSString) // Hash:0x90cf758f
+    , stringObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), StringObject)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData) // Hash:0xaca4e62d
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure) // Hash:0x1f1bcdca
     , symbolTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SymbolTable) // Hash:0xc5215afd
@@ -1353,6 +1360,8 @@ void VM::ensureShadowChicken()
 
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayBufferSpace, cellHeapCellType.get(), JSArrayBuffer)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(asyncGeneratorSpace, cellHeapCellType.get(), JSAsyncGenerator)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(bigIntObjectSpace, cellHeapCellType.get(), BigIntObject)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(booleanObjectSpace, cellHeapCellType.get(), BooleanObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
@@ -1373,6 +1382,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get()
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(), SymbolObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ArraySpace, cellHeapCellType.get(), JSUint8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ClampedArraySpace, cellHeapCellType.get(), JSUint8ClampedArray)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint16ArraySpace, cellHeapCellType.get(), JSUint16Array)

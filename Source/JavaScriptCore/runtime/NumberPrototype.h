@@ -26,7 +26,7 @@ namespace JSC {
 
 class NumberPrototype final : public NumberObject {
 public:
-    typedef NumberObject Base;
+    using Base = NumberObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static NumberPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
@@ -49,6 +49,7 @@ protected:
 private:
     NumberPrototype(VM&, Structure*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberPrototype, NumberObject);
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject*, CallFrame*);

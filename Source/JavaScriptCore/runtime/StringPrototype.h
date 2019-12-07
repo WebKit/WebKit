@@ -34,7 +34,7 @@ private:
     StringPrototype(VM&, Structure*);
 
 public:
-    typedef StringObject Base;
+    using Base = StringObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
@@ -49,6 +49,7 @@ public:
 protected:
     void finishCreation(VM&, JSGlobalObject*, JSString*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringPrototype, StringObject);
 
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceGeneric(JSGlobalObject*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue);
 JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(JSGlobalObject*, JSString* thisValue, RegExpObject* searchValue);

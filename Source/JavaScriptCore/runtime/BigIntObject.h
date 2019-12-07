@@ -35,6 +35,12 @@ class BigIntObject final : public JSWrapperObject {
 public:
     using Base = JSWrapperObject;
 
+    template<typename, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.bigIntObjectSpace<mode>();
+    }
+
     static BigIntObject* create(VM&, JSGlobalObject*, JSBigInt*);
 
     DECLARE_EXPORT_INFO;

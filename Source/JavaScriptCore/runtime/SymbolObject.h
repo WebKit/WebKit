@@ -30,6 +30,12 @@ class SymbolObject final : public JSWrapperObject {
 public:
     using Base = JSWrapperObject;
 
+    template<typename, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.symbolObjectSpace<mode>();
+    }
+
     static SymbolObject* create(VM& vm, Structure* structure)
     {
         Symbol* symbol = Symbol::create(vm);

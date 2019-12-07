@@ -31,6 +31,13 @@ class JSWrapperObject : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 
+    template<typename, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM&)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);

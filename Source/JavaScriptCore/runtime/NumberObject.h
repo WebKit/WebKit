@@ -32,6 +32,12 @@ protected:
 public:
     using Base = JSWrapperObject;
 
+    template<typename, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.numberObjectSpace;
+    }
+
     static NumberObject* create(VM& vm, Structure* structure)
     {
         NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm.heap)) NumberObject(vm, structure);
