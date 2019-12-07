@@ -494,7 +494,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, useUnlinkedCodeBlockJettisoning, false, Normal, "If true, UnlinkedCodeBlock can be jettisoned.") \
     v(Bool, forceOSRExitToLLInt, false, Normal, "If true, we always exit to the LLInt. If false, we exit to whatever is most convenient.") \
     v(Unsigned, getByValICMaxNumberOfIdentifiers, 4, Normal, "Number of identifiers we see in the LLInt that could cause us to bail on generating an IC for get_by_val.") \
-    v(Unsigned, getByIdICMaxNumberOfStructures, 5, Normal, "Number of structures we see in the LLInt that could cause us to bail on generating an IC for various get_by_id ICs.") \
 
 enum OptionEquivalence {
     SameOption,

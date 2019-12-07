@@ -640,12 +640,8 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpTryGetById>();
-    auto& metadata = bytecode.metadata(codeBlock);
-
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-    if (metadata.m_seenStructures.count() <= Options::getByIdICMaxNumberOfStructures())
-        metadata.m_seenStructures.observe(baseValue.structureOrNull());
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry);
 
     baseValue.getPropertySlot(globalObject, ident, slot);
@@ -658,11 +654,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGetByIdDirect>();
-    auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-    if (metadata.m_seenStructures.count() <= Options::getByIdICMaxNumberOfStructures())
-        metadata.m_seenStructures.observe(baseValue.structureOrNull());
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::GetOwnProperty);
 
     bool found = baseValue.getOwnPropertySlot(globalObject, ident, slot);
@@ -671,6 +664,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     LLINT_CHECK_EXCEPTION();
 
     if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
+        auto& metadata = bytecode.metadata(codeBlock);
         {
             StructureID oldStructureID = metadata.m_structureID;
             if (oldStructureID) {
@@ -771,10 +765,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-
-    if (metadata.m_seenStructures.count() <= Options::getByIdICMaxNumberOfStructures())
-        metadata.m_seenStructures.observe(baseValue.structureOrNull());
-
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::Get);
 
     JSValue result = baseValue.get(globalObject, ident, slot);

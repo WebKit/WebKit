@@ -1,3 +1,41 @@
+2019-12-07  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Roll out r253201. It was not a progression on any benchmarks, and was 8% slower on JetStream 2 ML.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.rb:
+        * bytecode/GetByValHistory.h: Added.
+        (JSC::GetByValHistory::observeNonUID):
+        (JSC::GetByValHistory::observe):
+        (JSC::GetByValHistory::count const):
+        (JSC::GetByValHistory::filter const):
+        (JSC::GetByValHistory::update):
+        * bytecode/PointerHistory.h: Removed.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * generator/DSL.rb:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/OptionsList.h:
+
 2019-12-07  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid assertion in FTL's allocateJSArray().

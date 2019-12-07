@@ -30,11 +30,17 @@
 
 namespace JSC {
 
-struct PointerHistory {
-    void observe(const void* pointer)
+struct GetByValHistory {
+    void observeNonUID()
     {
-        if (!pointer) {
-            observeNull();
+        uintptr_t count = Options::getByValICMaxNumberOfIdentifiers() + 1;
+        update(count, filter());
+    }
+
+    void observe(const UniquedStringImpl* impl)
+    {
+        if (!impl) {
+            observeNonUID();
             return;
         }
 
@@ -42,10 +48,10 @@ struct PointerHistory {
         uintptr_t filter = this->filter();
 
         TinyBloomFilter bloomFilter(filter);
-        uintptr_t pointerBits = bitwise_cast<uintptr_t>(pointer);
-        ASSERT(((static_cast<uint64_t>(pointerBits) << 8) >> 8) == static_cast<uint64_t>(pointerBits));
-        if (bloomFilter.ruleOut(pointerBits)) {
-            bloomFilter.add(pointerBits);
+        uintptr_t implBits = bitwise_cast<uintptr_t>(impl);
+        ASSERT(((static_cast<uint64_t>(implBits) << 8) >> 8) == static_cast<uint64_t>(implBits));
+        if (bloomFilter.ruleOut(implBits)) {
+            bloomFilter.add(implBits);
             ++count;
             update(count, bloomFilter.bits());
         }
@@ -54,11 +60,6 @@ struct PointerHistory {
     uintptr_t count() const { return static_cast<uintptr_t>(m_payload >> 56); }
 
 private:
-    void observeNull()
-    {
-        update(count() + 1, filter());
-    }
-
     uintptr_t filter() const { return static_cast<uintptr_t>((m_payload << 8) >> 8); }
 
     void update(uint64_t count, uint64_t filter)

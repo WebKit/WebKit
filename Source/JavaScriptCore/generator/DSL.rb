@@ -136,7 +136,7 @@ module DSL
 #include "BytecodeDumper.h"
 #include "Fits.h"
 #include "GetByIdMetadata.h"
-#include "PointerHistory.h"
+#include "GetByValHistory.h"
 #include "Instruction.h"
 #include "Opcode.h"
 #include "PutByIdStatus.h"

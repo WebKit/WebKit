@@ -4712,7 +4712,7 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     
     Node* base = get(bytecode.m_base);
     unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
-
+    
     AccessType type = AccessType::GetById;
     unsigned opcodeLength = currentInstruction->size();
     if (Op::opcodeID == op_try_get_by_id)
@@ -4720,21 +4720,6 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     else if (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
     
-    if (bytecode.metadata(m_inlineStackTop->m_codeBlock).m_seenStructures.count() > Options::getByIdICMaxNumberOfStructures()) {
-        NodeType getById;
-        if (type == AccessType::GetById)
-            getById = GetById;
-        else if (type == AccessType::TryGetById)
-            getById = TryGetById;
-        else
-            getById = GetByIdDirect;
-
-        Node* node = addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base);
-        set(bytecode.m_dst, node);
-        m_graph.m_shouldSkipIC.add(node);
-        return;
-    }
-
     GetByStatus::IdentifierKeepAlive keepAlive = [&] (Box<Identifier> identifier) {
         m_graph.m_plan.keepAliveIdentifier(WTFMove(identifier));
     };
@@ -5677,7 +5662,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
                 if (getByStatus.observedStructureStubInfoSlowPath() || bytecode.metadata(codeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers())
-                    m_graph.m_shouldSkipIC.add(getByVal);
+                    m_graph.m_slowGetByVal.add(getByVal);
             }
 
             NEXT_OPCODE(op_get_by_val);
