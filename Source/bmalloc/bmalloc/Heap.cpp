@@ -287,9 +287,12 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass, F
 
         m_freeableMemory += accountedInFreeable;
 
-        auto decommitSize = chunkSize - Chunk::metadataSize(pageSize) - accountedInFreeable;
+        auto metadataSize = Chunk::metadataSize(pageSize);
+        vmDeallocatePhysicalPagesSloppy(chunk->address(sizeof(Chunk)), metadataSize - sizeof(Chunk));
+
+        auto decommitSize = chunkSize - metadataSize - accountedInFreeable;
         if (decommitSize > 0)
-            vmDeallocatePhysicalPagesSloppy(Chunk::get(chunk)->address(chunkSize - decommitSize), decommitSize);
+            vmDeallocatePhysicalPagesSloppy(chunk->address(chunkSize - decommitSize), decommitSize);
 
         m_scavenger->schedule(0);
 
