@@ -471,15 +471,15 @@ static void _WAKCopyWrapper(const void *value, void *context)
 static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQuality quality)
 {
     switch (quality) {
-    case WebCore::InterpolationDefault:
+    case WebCore::InterpolationQuality::Default:
         return kCGInterpolationDefault;
-    case WebCore::InterpolationNone:
+    case WebCore::InterpolationQuality::DoNotInterpolate:
         return kCGInterpolationNone;
-    case WebCore::InterpolationLow:
+    case WebCore::InterpolationQuality::Low:
         return kCGInterpolationLow;
-    case WebCore::InterpolationMedium:
+    case WebCore::InterpolationQuality::Medium:
         return kCGInterpolationMedium;
-    case WebCore::InterpolationHigh:
+    case WebCore::InterpolationQuality::High:
         return kCGInterpolationHigh;
     default:
         ASSERT_NOT_REACHED();

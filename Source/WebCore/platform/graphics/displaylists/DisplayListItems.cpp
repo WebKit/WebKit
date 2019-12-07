@@ -492,6 +492,8 @@ DrawImage::DrawImage(Image& image, const FloatRect& destination, const FloatRect
 {
 }
 
+DrawImage::~DrawImage() = default;
+
 void DrawImage::apply(GraphicsContext& context) const
 {
     context.drawImage(m_image.get(), m_destination, m_source, m_imagePaintingOptions);
@@ -875,6 +877,16 @@ static TextStream& operator<<(TextStream& ts, const FillCompositedRect& item)
     ts.dumpProperty("blend-mode", item.blendMode());
     return ts;
 }
+
+FillRoundedRect::FillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
+    : DrawingItem(ItemType::FillRoundedRect)
+    , m_rect(rect)
+    , m_color(color)
+    , m_blendMode(blendMode)
+{
+}
+
+FillRoundedRect::~FillRoundedRect() = default;
 
 void FillRoundedRect::apply(GraphicsContext& context) const
 {

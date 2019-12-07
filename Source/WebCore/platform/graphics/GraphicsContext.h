@@ -196,7 +196,7 @@ struct GraphicsContextState {
     float alpha { 1 };
     CompositeOperator compositeOperator { CompositeOperator::SourceOver };
     BlendMode blendMode { BlendMode::Normal };
-    InterpolationQuality imageInterpolationQuality { InterpolationDefault };
+    InterpolationQuality imageInterpolationQuality { InterpolationQuality::Default };
 
     bool shouldAntialias : 1;
     bool shouldSmoothFonts : 1;
@@ -699,7 +699,7 @@ public:
     explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, InterpolationQuality interpolationQualityToUse)
         : m_graphicsContext(graphicsContext)
         , m_currentInterpolationQuality(graphicsContext.imageInterpolationQuality())
-        , m_interpolationQualityChanged(interpolationQualityToUse != InterpolationDefault && m_currentInterpolationQuality != interpolationQualityToUse)
+        , m_interpolationQualityChanged(interpolationQualityToUse != InterpolationQuality::Default && m_currentInterpolationQuality != interpolationQualityToUse)
     {
         if (m_interpolationQualityChanged)
             m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);

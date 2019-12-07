@@ -26,12 +26,13 @@
 #pragma once
 
 #include "IntSize.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
 
-enum class DecodingMode {
+enum class DecodingMode : uint8_t {
     Auto,
     Synchronous,
     Asynchronous
@@ -144,4 +145,17 @@ private:
     DecodingModeOrSize m_decodingModeOrSize;
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DecodingMode> {
+    using values = EnumValues<
+    WebCore::DecodingMode,
+    WebCore::DecodingMode::Auto,
+    WebCore::DecodingMode::Synchronous,
+    WebCore::DecodingMode::Asynchronous
+    >;
+};
+
+} // namespace WTF

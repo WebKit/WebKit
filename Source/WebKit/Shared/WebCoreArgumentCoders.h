@@ -189,7 +189,12 @@ namespace DOMCacheEngine {
 struct CacheInfo;
 struct Record;
 }
+
+namespace DisplayList {
+class ImageHandle;
 }
+
+} // namespace WebCore
 
 namespace IPC {
 
@@ -381,6 +386,11 @@ template<> struct ArgumentCoder<WebCore::Credential> {
 template<> struct ArgumentCoder<WebCore::Cursor> {
     static void encode(Encoder&, const WebCore::Cursor&);
     static bool decode(Decoder&, WebCore::Cursor&);
+};
+
+template<> struct ArgumentCoder<WebCore::DisplayList::ImageHandle> {
+    static void encode(Encoder&, const WebCore::DisplayList::ImageHandle&);
+    static bool decode(Decoder&, WebCore::DisplayList::ImageHandle&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

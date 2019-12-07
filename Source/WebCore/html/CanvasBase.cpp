@@ -43,9 +43,9 @@ namespace WebCore {
 #if USE(CG)
 // FIXME: It seems strange that the default quality is not the one that is literally named "default".
 // Should fix names to make this easier to understand, or write an excellent comment here explaining why not.
-const InterpolationQuality defaultInterpolationQuality = InterpolationLow;
+const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 #else
-const InterpolationQuality defaultInterpolationQuality = InterpolationDefault;
+const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Default;
 #endif
 
 CanvasBase::CanvasBase(IntSize size)

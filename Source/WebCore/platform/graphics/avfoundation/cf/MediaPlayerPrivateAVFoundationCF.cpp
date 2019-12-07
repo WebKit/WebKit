@@ -859,7 +859,7 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext& context, const Flo
         context.save();
         context.translate(rect.x(), rect.y() + rect.height());
         context.scale(FloatSize(1.0f, -1.0f));
-        context.setImageInterpolationQuality(InterpolationLow);
+        context.setImageInterpolationQuality(InterpolationQuality::Low);
         FloatRect paintRect(FloatPoint(), rect.size());
 #if USE(DIRECT2D)
         notImplemented();

@@ -41,6 +41,7 @@
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
+#include <WebCore/DisplayListItems.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FetchOptions.h>
@@ -1141,6 +1142,18 @@ static bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
         return true;
 
     return decodeImage(decoder, image);
+}
+
+void ArgumentCoder<DisplayList::ImageHandle>::encode(Encoder& encoder, const DisplayList::ImageHandle& imageHandle)
+{
+    encodeOptionalImage(encoder, imageHandle.image.get());
+}
+
+bool ArgumentCoder<DisplayList::ImageHandle>::decode(Decoder& decoder, DisplayList::ImageHandle& imageHandle)
+{
+    if (!decodeOptionalImage(decoder, imageHandle.image))
+        return false;
+    return true;
 }
 
 #if !PLATFORM(IOS_FAMILY)

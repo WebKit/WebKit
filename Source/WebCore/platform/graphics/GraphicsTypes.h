@@ -79,12 +79,12 @@ enum GradientSpreadMethod {
     SpreadMethodRepeat
 };
 
-enum InterpolationQuality {
-    InterpolationDefault,
-    InterpolationNone,
-    InterpolationLow,
-    InterpolationMedium,
-    InterpolationHigh
+enum class InterpolationQuality : uint8_t {
+    Default,
+    DoNotInterpolate,
+    Low,
+    Medium,
+    High
 };
 
 enum LineCap {
@@ -133,13 +133,13 @@ enum class AlphaPremultiplication {
     Unpremultiplied
 };
 
-String compositeOperatorName(CompositeOperator, BlendMode);
-String blendModeName(BlendMode);
-bool parseBlendMode(const String&, BlendMode&);
-bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
+String compositeOperatorName(WebCore::CompositeOperator, WebCore::BlendMode);
+String blendModeName(WebCore::BlendMode);
+bool parseBlendMode(const String&, WebCore::BlendMode&);
+bool parseCompositeAndBlendOperator(const String&, WebCore::CompositeOperator&, WebCore::BlendMode&);
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, BlendMode);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeOperator);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::BlendMode);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeOperator);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WindRule);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);
@@ -190,6 +190,17 @@ template<> struct EnumTraits<WebCore::BlendMode> {
     WebCore::BlendMode::Luminosity,
     WebCore::BlendMode::PlusDarker,
     WebCore::BlendMode::PlusLighter
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InterpolationQuality> {
+    using values = EnumValues<
+    WebCore::InterpolationQuality,
+    WebCore::InterpolationQuality::Default,
+    WebCore::InterpolationQuality::DoNotInterpolate,
+    WebCore::InterpolationQuality::Low,
+    WebCore::InterpolationQuality::Medium,
+    WebCore::InterpolationQuality::High
     >;
 };
 

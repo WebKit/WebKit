@@ -28,6 +28,7 @@
 
 #include "AffineTransform.h"
 #include "FloatSize.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -121,3 +122,22 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ImageOrientation::Orientation> {
+    using values = EnumValues<
+    WebCore::ImageOrientation::Orientation,
+    WebCore::ImageOrientation::Orientation::FromImage,
+    WebCore::ImageOrientation::Orientation::OriginTopLeft,
+    WebCore::ImageOrientation::Orientation::OriginTopRight,
+    WebCore::ImageOrientation::Orientation::OriginBottomRight,
+    WebCore::ImageOrientation::Orientation::OriginBottomLeft,
+    WebCore::ImageOrientation::Orientation::OriginLeftTop,
+    WebCore::ImageOrientation::Orientation::OriginRightTop,
+    WebCore::ImageOrientation::Orientation::OriginRightBottom,
+    WebCore::ImageOrientation::Orientation::OriginLeftBottom
+    >;
+};
+
+} // namespace WTF

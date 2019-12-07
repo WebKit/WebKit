@@ -206,16 +206,16 @@ static InterpolationQuality interpolationQualityForResizeQuality(ImageBitmapOpti
 {
     switch (resizeQuality) {
     case ImageBitmapOptions::ResizeQuality::Pixelated:
-        return InterpolationNone;
+        return InterpolationQuality::DoNotInterpolate;
     case ImageBitmapOptions::ResizeQuality::Low:
-        return InterpolationDefault; // Low is the default.
+        return InterpolationQuality::Default; // Low is the default.
     case ImageBitmapOptions::ResizeQuality::Medium:
-        return InterpolationMedium;
+        return InterpolationQuality::Medium;
     case ImageBitmapOptions::ResizeQuality::High:
-        return InterpolationHigh;
+        return InterpolationQuality::High;
     }
     ASSERT_NOT_REACHED();
-    return InterpolationDefault;
+    return InterpolationQuality::Default;
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting

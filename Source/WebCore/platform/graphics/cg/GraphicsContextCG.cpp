@@ -143,17 +143,17 @@ static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality q
 {
     switch (quality) {
     case kCGInterpolationDefault:
-        return InterpolationDefault;
+        return InterpolationQuality::Default;
     case kCGInterpolationNone:
-        return InterpolationNone;
+        return InterpolationQuality::DoNotInterpolate;
     case kCGInterpolationLow:
-        return InterpolationLow;
+        return InterpolationQuality::Low;
     case kCGInterpolationMedium:
-        return InterpolationMedium;
+        return InterpolationQuality::Medium;
     case kCGInterpolationHigh:
-        return InterpolationHigh;
+        return InterpolationQuality::High;
     }
-    return InterpolationDefault;
+    return InterpolationQuality::Default;
 }
 
 static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendMode blendMode)
@@ -1667,19 +1667,19 @@ void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality 
 
     CGInterpolationQuality quality = kCGInterpolationDefault;
     switch (mode) {
-    case InterpolationDefault:
+    case InterpolationQuality::Default:
         quality = kCGInterpolationDefault;
         break;
-    case InterpolationNone:
+    case InterpolationQuality::DoNotInterpolate:
         quality = kCGInterpolationNone;
         break;
-    case InterpolationLow:
+    case InterpolationQuality::Low:
         quality = kCGInterpolationLow;
         break;
-    case InterpolationMedium:
+    case InterpolationQuality::Medium:
         quality = kCGInterpolationMedium;
         break;
-    case InterpolationHigh:
+    case InterpolationQuality::High:
         quality = kCGInterpolationHigh;
         break;
     }

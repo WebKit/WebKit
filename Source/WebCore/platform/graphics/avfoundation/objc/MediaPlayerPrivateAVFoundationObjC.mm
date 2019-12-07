@@ -1547,7 +1547,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext
         GraphicsContextStateSaver stateSaver(context);
         context.translate(rect.x(), rect.y() + rect.height());
         context.scale(FloatSize(1.0f, -1.0f));
-        context.setImageInterpolationQuality(InterpolationLow);
+        context.setImageInterpolationQuality(InterpolationQuality::Low);
         IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
         CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
     }

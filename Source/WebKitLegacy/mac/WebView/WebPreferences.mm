@@ -579,7 +579,7 @@ public:
         [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
         @NO, WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey,
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
-        [NSNumber numberWithInt:InterpolationLow], WebKitInterpolationQualityPreferenceKey,
+        [NSNumber numberWithInt:static_cast<int>(InterpolationQuality::Low)], WebKitInterpolationQualityPreferenceKey,
         @YES, WebKitPasswordEchoEnabledPreferenceKey,
         [NSNumber numberWithFloat:2.0f], WebKitPasswordEchoDurationPreferenceKey,
         @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,

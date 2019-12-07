@@ -1062,19 +1062,19 @@ void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality 
     D2D1_INTERPOLATION_MODE quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 
     switch (mode) {
-    case InterpolationDefault:
+    case InterpolationQuality::Default:
         quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
         break;
-    case InterpolationNone:
+    case InterpolationQuality::DoNotInterpolate:
         quality = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
         break;
-    case InterpolationLow:
+    case InterpolationQuality::Low:
         quality = D2D1_INTERPOLATION_MODE_LINEAR;
         break;
-    case InterpolationMedium:
+    case InterpolationQuality::Medium:
         quality = D2D1_INTERPOLATION_MODE_CUBIC;
         break;
-    case InterpolationHigh:
+    case InterpolationQuality::High:
         quality = D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC;
         break;
     }

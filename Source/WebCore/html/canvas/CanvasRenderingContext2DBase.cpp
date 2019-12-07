@@ -2288,15 +2288,15 @@ static inline InterpolationQuality smoothingToInterpolationQuality(ImageSmoothin
 {
     switch (quality) {
     case ImageSmoothingQuality::Low:
-        return InterpolationLow;
+        return InterpolationQuality::Low;
     case ImageSmoothingQuality::Medium:
-        return InterpolationMedium;
+        return InterpolationQuality::Medium;
     case ImageSmoothingQuality::High:
-        return InterpolationHigh;
+        return InterpolationQuality::High;
     }
 
     ASSERT_NOT_REACHED();
-    return InterpolationLow;
+    return InterpolationQuality::Low;
 };
 
 auto CanvasRenderingContext2DBase::imageSmoothingQuality() const -> ImageSmoothingQuality
@@ -2333,7 +2333,7 @@ void CanvasRenderingContext2DBase::setImageSmoothingEnabled(bool enabled)
     modifiableState().imageSmoothingEnabled = enabled;
     auto* c = drawingContext();
     if (c)
-        c->setImageInterpolationQuality(enabled ? smoothingToInterpolationQuality(state().imageSmoothingQuality) : InterpolationNone);
+        c->setImageInterpolationQuality(enabled ? smoothingToInterpolationQuality(state().imageSmoothingQuality) : InterpolationQuality::DoNotInterpolate);
 }
 
 void CanvasRenderingContext2DBase::setPath(Path2D& path)

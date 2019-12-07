@@ -1,5 +1,74 @@
 2019-12-07  Tim Horton  <timothy_horton@apple.com>
 
+        Implement encoding for DrawImage and DrawRoundedRect display list items
+        https://bugs.webkit.org/show_bug.cgi?id=204881
+
+        Reviewed by Simon Fraser.
+
+        Make InterpolationQuality an enum class.
+        Make ImagePaintingOptions and all of its children encodable.
+        Make DrawImage and DrawRoundedRect encodable.
+        Add ImageHandle, which right now just wraps WebCore::Image, but
+        later could carry identifiers. This allows us to implement image encoding
+        in WebKit code, which can then use ShareableBitmap to A) decode the image
+        in the Web Content process and B) use shared memory to transmit the
+        decoded image data to the GPU process.
+
+        * html/CanvasBase.cpp:
+        * html/ImageBitmap.cpp:
+        (WebCore::interpolationQualityForResizeQuality):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::smoothingToInterpolationQuality):
+        (WebCore::CanvasRenderingContext2DBase::setImageSmoothingEnabled):
+        * platform/graphics/DecodingOptions.h:
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::InterpolationQualityMaintainer::InterpolationQualityMaintainer):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/ImageOrientation.h:
+        * platform/graphics/ImagePaintingOptions.h:
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions):
+        (WebCore::ImagePaintingOptions::encode const):
+        (WebCore::ImagePaintingOptions::decode):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::paint):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator):
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawSurface):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::convertInterpolationQuality):
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::FillRoundedRect::FillRoundedRect):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawImage::encode const):
+        (WebCore::DisplayList::DrawImage::decode):
+        (WebCore::DisplayList::FillRoundedRect::create):
+        (WebCore::DisplayList::FillRoundedRect::encode const):
+        (WebCore::DisplayList::FillRoundedRect::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        (WebCore::DisplayList::FillRoundedRect::FillRoundedRect): Deleted.
+        * platform/graphics/ios/IconIOS.mm:
+        (WebCore::Icon::paint):
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality):
+        * platform/ios/wak/WAKView.mm:
+        (toCGInterpolationQuality):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::imageBuffer const):
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::interpolationQualityFromStyle):
+        (WebCore::ImageQualityController::chooseInterpolationQuality):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+
+2019-12-07  Tim Horton  <timothy_horton@apple.com>
+
         macCatalyst: REGRESSION (r251320): WebKit-native media controls do not respond to hover or click
         https://bugs.webkit.org/show_bug.cgi?id=204543
         <rdar://problem/57208621>

@@ -741,12 +741,17 @@ public:
         return adoptRef(*new DrawImage(image, destination, source, imagePaintingOptions));
     }
 
+    WEBCORE_EXPORT virtual ~DrawImage();
+
     const Image& image() const { return m_image.get(); }
     FloatRect source() const { return m_source; }
     FloatRect destination() const { return m_destination; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawImage>> decode(Decoder&);
+
 private:
-    DrawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
+    WEBCORE_EXPORT DrawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
 
     void apply(GraphicsContext&) const override;
 
@@ -757,6 +762,49 @@ private:
     FloatRect m_source;
     ImagePaintingOptions m_imagePaintingOptions;
 };
+
+class ImageHandle {
+public:
+    RefPtr<Image> image;
+};
+
+template<class Encoder>
+void DrawImage::encode(Encoder& encoder) const
+{
+    ImageHandle imageHandle;
+    imageHandle.image = m_image.ptr();
+
+    encoder << imageHandle;
+    encoder << m_destination;
+    encoder << m_source;
+    encoder << m_imagePaintingOptions;
+}
+
+template<class Decoder>
+Optional<Ref<DrawImage>> DrawImage::decode(Decoder& decoder)
+{
+    Optional<ImageHandle> imageHandle;
+    decoder >> imageHandle;
+    if (!imageHandle)
+        return WTF::nullopt;
+
+    Optional<FloatRect> destination;
+    decoder >> destination;
+    if (!destination)
+        return WTF::nullopt;
+
+    Optional<FloatRect> source;
+    decoder >> source;
+    if (!source)
+        return WTF::nullopt;
+
+    Optional<ImagePaintingOptions> imagePaintingOptions;
+    decoder >> imagePaintingOptions;
+    if (!imagePaintingOptions)
+        return WTF::nullopt;
+
+    return DrawImage::create(*imageHandle->image, *destination, *source, *imagePaintingOptions);
+}
 
 class DrawTiledImage : public DrawingItem {
 public:
@@ -1359,18 +1407,17 @@ public:
         return adoptRef(*new FillRoundedRect(rect, color, blendMode));
     }
 
+    WEBCORE_EXPORT virtual ~FillRoundedRect();
+
     const FloatRoundedRect& roundedRect() const { return m_rect; }
     const Color& color() const { return m_color; }
     BlendMode blendMode() const { return m_blendMode; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillRoundedRect>> decode(Decoder&);
+
 private:
-    FillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
-        : DrawingItem(ItemType::FillRoundedRect)
-        , m_rect(rect)
-        , m_color(color)
-        , m_blendMode(blendMode)
-    {
-    }
+    WEBCORE_EXPORT FillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect.rect(); }
@@ -1379,6 +1426,35 @@ private:
     Color m_color;
     BlendMode m_blendMode;
 };
+
+template<class Encoder>
+void FillRoundedRect::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+    encoder << m_color;
+    encoder << m_blendMode;
+}
+
+template<class Decoder>
+Optional<Ref<FillRoundedRect>> FillRoundedRect::decode(Decoder& decoder)
+{
+    Optional<FloatRoundedRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    Optional<Color> color;
+    decoder >> color;
+    if (!color)
+        return WTF::nullopt;
+
+    Optional<BlendMode> blendMode;
+    decoder >> blendMode;
+    if (!blendMode)
+        return WTF::nullopt;
+
+    return FillRoundedRect::create(*rect, *color, *blendMode);
+}
 
 class FillRectWithRoundedHole : public DrawingItem {
 public:
@@ -1696,7 +1772,7 @@ void Item::encode(Encoder& encoder) const
         WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawGlyphs");
         break;
     case ItemType::DrawImage:
-        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawImage");
+        encoder << downcast<DrawImage>(*this);
         break;
     case ItemType::DrawTiledImage:
         WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawTiledImage");
@@ -1749,7 +1825,7 @@ void Item::encode(Encoder& encoder) const
         encoder << downcast<FillCompositedRect>(*this);
         break;
     case ItemType::FillRoundedRect:
-        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRoundedRect");
+        encoder << downcast<FillRoundedRect>(*this);
         break;
     case ItemType::FillRectWithRoundedHole:
         WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRectWithRoundedHole");
@@ -1860,7 +1936,8 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawGlyphs");
         break;
     case ItemType::DrawImage:
-        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawImage");
+        if (auto item = DrawImage::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::DrawTiledImage:
         WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawTiledImage");
@@ -1918,7 +1995,8 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::FillRoundedRect:
-        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRoundedRect");
+        if (auto item = FillRoundedRect::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::FillRectWithRoundedHole:
         WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRectWithRoundedHole");
