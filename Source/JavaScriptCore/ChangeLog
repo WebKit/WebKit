@@ -1,3 +1,10 @@
+2019-12-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix. Initialize local variable.
+
+        * API/tests/testapi.cpp:
+        (TestAPI::promiseUnhandledRejection):
+
 2019-12-06  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Change the format string portable by using "%" PRIx64

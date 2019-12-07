@@ -524,7 +524,7 @@ void TestAPI::promiseRejectTrue()
 
 void TestAPI::promiseUnhandledRejection()
 {
-    JSObjectRef reject;
+    JSObjectRef reject = nullptr;
     JSValueRef exception = nullptr;
     static auto promise = JSObjectMakeDeferredPromise(context, nullptr, &reject, &exception);
     check(!exception, "creating a (reject-only) deferred promise should not throw");
