@@ -130,6 +130,7 @@ class JSCCallbackFunction;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
+class JSModuleNamespaceObject;
 class JSModuleRecord;
 class JSObject;
 class JSPromise;
@@ -360,6 +361,7 @@ public:
     std::unique_ptr<IsoHeapCellType<DateInstance>> dateInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSModuleRecord>> jsModuleRecordHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSModuleNamespaceObject>> moduleNamespaceObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
@@ -471,6 +473,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsModuleRecordSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(moduleNamespaceObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)

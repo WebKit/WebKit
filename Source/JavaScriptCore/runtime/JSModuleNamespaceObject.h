@@ -30,19 +30,24 @@
 
 namespace JSC {
 
-class JSModuleNamespaceObject final : public JSDestructibleObject {
+class JSModuleNamespaceObject final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | GetOwnPropertySlotIsImpureForPropertyAbsence | IsImmutablePrototypeExoticObject;
+
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.moduleNamespaceObjectSpace<mode>();
+    }
 
     static JSModuleNamespaceObject* create(JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
     {
         VM& vm = getVM(globalObject);
-        JSModuleNamespaceObject* object =
-            new (
-                NotNull,
-                allocateCell<JSModuleNamespaceObject>(vm.heap, JSModuleNamespaceObject::allocationSize(resolutions.size())))
-            JSModuleNamespaceObject(vm, structure);
+        JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(vm.heap)) JSModuleNamespaceObject(vm, structure);
         object->finishCreation(globalObject, moduleRecord, WTFMove(resolutions));
         return object;
     }
@@ -69,33 +74,12 @@ protected:
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
 
 private:
-    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
 
-    WriteBarrierBase<AbstractModuleRecord>& moduleRecordAt(unsigned offset)
-    {
-        return moduleRecords()[offset];
-    }
-
-    WriteBarrierBase<AbstractModuleRecord>* moduleRecords()
-    {
-        return bitwise_cast<WriteBarrierBase<AbstractModuleRecord>*>(bitwise_cast<char*>(this) + offsetOfModuleRecords());
-    }
-
-    static size_t offsetOfModuleRecords()
-    {
-        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<AbstractModuleRecord>)>(sizeof(JSModuleNamespaceObject));
-    }
-
-    static size_t allocationSize(Checked<size_t> moduleRecords)
-    {
-        return (offsetOfModuleRecords() + moduleRecords * sizeof(WriteBarrier<AbstractModuleRecord>)).unsafeGet();
-    }
-
     struct ExportEntry {
         Identifier localName;
-        unsigned moduleRecordOffset;
+        WriteBarrier<AbstractModuleRecord> moduleRecord;
     };
 
     typedef HashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportMap;

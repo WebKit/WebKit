@@ -95,6 +95,7 @@
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
+#include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
@@ -289,6 +290,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , dateInstanceHeapCellType(makeUnique<IsoHeapCellType<DateInstance>>())
     , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
     , jsModuleRecordHeapCellType(makeUnique<IsoHeapCellType<JSModuleRecord>>())
+    , moduleNamespaceObjectHeapCellType(makeUnique<IsoHeapCellType<JSModuleNamespaceObject>>())
     , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
     , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
@@ -1365,6 +1367,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int8ArraySpace, cellHeapCellType.get(), 
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int16ArraySpace, cellHeapCellType.get(), JSInt16Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int32ArraySpace, cellHeapCellType.get(), JSInt32Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapSpace, cellHeapCellType.get(), JSMap)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType.get(), JSModuleNamespaceObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get(), ProxyObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939

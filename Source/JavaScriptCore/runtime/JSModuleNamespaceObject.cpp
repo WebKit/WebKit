@@ -59,17 +59,14 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     });
 
     m_moduleRecord.set(vm, this, moduleRecord);
+    m_names.reserveCapacity(resolutions.size());
     {
-        unsigned moduleRecordOffset = 0;
-        m_names.reserveCapacity(resolutions.size());
+        auto locker = holdLock(cellLock());
         for (const auto& pair : resolutions) {
-            moduleRecordAt(moduleRecordOffset).set(vm, this, pair.second.moduleRecord);
             m_names.append(pair.first);
-            m_exports.add(pair.first.impl(), ExportEntry {
-                pair.second.localName,
-                moduleRecordOffset
-            });
-            ++moduleRecordOffset;
+            auto addResult = m_exports.add(pair.first.impl(), ExportEntry());
+            addResult.iterator->value.localName = pair.second.localName;
+            addResult.iterator->value.moduleRecord.set(vm, this, pair.second.moduleRecord);
         }
     }
 
@@ -95,8 +92,11 @@ void JSModuleNamespaceObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleRecord);
-    for (unsigned i = 0; i < thisObject->m_names.size(); ++i)
-        visitor.appendHidden(thisObject->moduleRecordAt(i));
+    {
+        auto locker = holdLock(thisObject->cellLock());
+        for (auto& pair : thisObject->m_exports)
+            visitor.appendHidden(pair.value.moduleRecord);
+    }
 }
 
 static JSValue getValue(JSModuleEnvironment* environment, PropertyName localName, ScopeOffset& scopeOffset)
@@ -136,7 +136,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::GetOwnProperty:
     case PropertySlot::InternalMethodType::Get: {
-        JSModuleEnvironment* environment = moduleRecordAt(exportEntry.moduleRecordOffset)->moduleEnvironment();
+        JSModuleEnvironment* environment = exportEntry.moduleRecord->moduleEnvironment();
         ScopeOffset scopeOffset;
         JSValue value = getValue(environment, exportEntry.localName, scopeOffset);
         // If the value is filled with TDZ value, throw a reference error.

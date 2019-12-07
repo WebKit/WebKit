@@ -29,7 +29,6 @@
 #include "JSBigInt.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
-#include "JSModuleNamespaceObject.h"
 
 namespace JSC {
 
@@ -38,8 +37,7 @@ inline constexpr bool isDynamicallySizedType(JSType type)
     if (type == DirectArgumentsType
         || type == FinalObjectType
         || type == LexicalEnvironmentType
-        || type == ModuleEnvironmentType
-        || type == ModuleNamespaceObjectType)
+        || type == ModuleEnvironmentType)
         return true;
     return false;
 }
@@ -65,10 +63,6 @@ inline size_t cellSize(VM& vm, JSCell* cell)
         case ModuleEnvironmentType: {
             auto* env = jsCast<JSModuleEnvironment*>(cell);
             return JSModuleEnvironment::allocationSize(env->symbolTable());
-        }
-        case ModuleNamespaceObjectType: {
-            auto* obj = jsCast<JSModuleNamespaceObject*>(cell);
-            return JSModuleNamespaceObject::allocationSize(obj->m_names.capacity());
         }
         default:
             RELEASE_ASSERT_NOT_REACHED();
