@@ -1,3 +1,14 @@
+2019-12-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r250009.
+        warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+
+        This patch typecasts the "maybe signed" one as unsigned, which is the
+        same what the compilers would do, but making the typecast explicit
+        so that the warning go away.
+
+        * b3/air/testair.cpp:
+
 2019-12-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put JSWrapperObject derived classes in IsoSubspace

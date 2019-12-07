@@ -2218,7 +2218,7 @@ void testElideMoveThenRealloc()
 
         code.resetReachability();
         auto runResult = compileAndRun<uint32_t>(proc);
-        CHECK(runResult == 42 + (42 * (reg == GPRInfo::returnValueGPR)));
+        CHECK(runResult == static_cast<unsigned>(42 + (42 * (reg == GPRInfo::returnValueGPR))));
     }
 }
 
