@@ -38,6 +38,8 @@ namespace Display {
 class Box;
 }
 
+using InlineLayoutUnit = LayoutUnit;
+
 namespace Layout {
 
 struct Position {

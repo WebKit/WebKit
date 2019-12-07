@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
+static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft)
 {
     if (inlineItem.isLineBreak())
         return 0_lu;
@@ -47,7 +47,7 @@ static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, co
             auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
             contentWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
         }
-        auto wordSpacing = inlineTextItem.isWhitespace() ? LayoutUnit(inlineTextItem.style().fontCascade().wordSpacing()) : 0_lu;
+        auto wordSpacing = inlineTextItem.isWhitespace() ? InlineLayoutUnit(inlineTextItem.style().fontCascade().wordSpacing()) : 0_lu;
         return *contentWidth + wordSpacing;
     }
 

@@ -1,3 +1,119 @@
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce InlineLayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=204986
+        <rdar://problem/57728333>
+
+        Reviewed by Antti Koivisto.
+
+        While IFC uses LayoutUnit type solely to compute inline geometry, complex line layout (CLL) has
+        adopted several different types over time (int, float and LayoutUnit). These types all have different precisions.
+        In order to match CLL's output (inline tree geometry) IFC needs to use a type that has
+        roughly the same precision as what CLL uses.
+        LayoutUnit currently does not have high enough precision (1/64) to produce matching results.
+        This patch introduces InlineLayoutUnit. It is going to be mapped to 'float' for now (in a subsequent patch).
+        It helps to keep one uniform type across the IFC codebase and we could also just re-map it to something
+        more appropriate in the future. 
+
+        * layout/LayoutUnits.h:
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::Baseline::height const):
+        (WebCore::Display::LineBox::logicalLeft const):
+        (WebCore::Display::LineBox::logicalRight const):
+        (WebCore::Display::LineBox::logicalTop const):
+        (WebCore::Display::LineBox::logicalBottom const):
+        (WebCore::Display::LineBox::logicalWidth const):
+        (WebCore::Display::LineBox::logicalHeight const):
+        (WebCore::Display::LineBox::setLogicalHeight):
+        (WebCore::Display::LineBox::setLogicalWidth):
+        (WebCore::Display::LineBox::moveHorizontally):
+        (WebCore::Display::LineBox::expandHorizontally):
+        (WebCore::Display::LineBox::shrinkHorizontally):
+        (WebCore::Display::LineBox::expandVertically):
+        (WebCore::Display::LineBox::shrinkVertically):
+        (WebCore::Display::LineBox::LineBox):
+        (WebCore::Display::LineBox::setLogicalHeightIfGreater):
+        (WebCore::Display::LineBox::setBaselineOffsetIfGreater):
+        (WebCore::Display::LineBox::setAscentIfGreater):
+        (WebCore::Display::LineBox::setDescentIfGreater):
+        (WebCore::Display::LineBox::baselineOffset const):
+        (WebCore::Display::LineBox::Baseline::Baseline):
+        (WebCore::Display::LineBox::Baseline::setAscent):
+        (WebCore::Display::LineBox::Baseline::setDescent):
+        (WebCore::Display::LineBox::Baseline::ascent const):
+        (WebCore::Display::LineBox::Baseline::descent const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::shouldWrapFloatBox):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::Content::append):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::Content::width const):
+        (WebCore::Layout::LineBreaker::Content::nonTrimmableWidth const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::Run::setComputedHorizontalExpansion):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        (WebCore::Layout::LineBuilder::justifyRuns const):
+        (WebCore::Layout::LineBuilder::alignContentHorizontally const):
+        (WebCore::Layout::LineBuilder::moveLogicalLeft):
+        (WebCore::Layout::LineBuilder::moveLogicalRight):
+        (WebCore::Layout::LineBuilder::append):
+        (WebCore::Layout::LineBuilder::appendNonBreakableSpace):
+        (WebCore::Layout::LineBuilder::appendInlineContainerStart):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::appendReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::runContentHeight const):
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics):
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trim):
+        (WebCore::Layout::LineBuilder::TrimmableContent::trimTrailingRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::InlineItemRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::trailingLetterSpacing const):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::availableWidth const):
+        (WebCore::Layout::LineBuilder::trailingTrimmableWidth const):
+        (WebCore::Layout::LineBuilder::Run::adjustLogicalTop):
+        (WebCore::Layout::LineBuilder::Run::moveHorizontally):
+        (WebCore::Layout::LineBuilder::Run::moveVertically):
+        (WebCore::Layout::LineBuilder::Run::setLogicalHeight):
+        (WebCore::Layout::LineBuilder::logicalTop const):
+        (WebCore::Layout::LineBuilder::logicalBottom const):
+        (WebCore::Layout::LineBuilder::logicalLeft const):
+        (WebCore::Layout::LineBuilder::logicalRight const):
+        (WebCore::Layout::LineBuilder::logicalWidth const):
+        (WebCore::Layout::LineBuilder::logicalHeight const):
+        (WebCore::Layout::LineBuilder::contentLogicalWidth const):
+        (WebCore::Layout::LineBuilder::contentLogicalRight const):
+        (WebCore::Layout::LineBuilder::baselineOffset const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalLeft const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::logicalWidth const):
+        (WebCore::Layout::LineBuilder::InlineItemRun::moveHorizontally):
+        (WebCore::Layout::LineBuilder::TrimmableContent::width const):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::createWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createNonWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::width const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::fixedPitchWidth):
+        (WebCore::Layout::TextUtil::split):
+        * layout/inlineformatting/text/TextUtil.h:
+
 2019-12-07  Antti Koivisto  <antti@apple.com>
 
         [LFC][IFC] Move LineBox to Display namespace

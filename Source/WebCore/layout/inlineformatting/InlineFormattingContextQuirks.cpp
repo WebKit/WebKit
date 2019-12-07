@@ -89,7 +89,7 @@ LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lin
         return { initialBaselineOffset, initialBaselineOffset, Display::LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
     }
     // FIXME: The only reason why we use intValue() here is to match current inline tree (integral)behavior.
-    auto initialLineHeight = LayoutUnit { lineHeight.intValue() };
+    auto initialLineHeight = InlineLayoutUnit { lineHeight.intValue() };
     auto initialBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent();
     return { initialLineHeight, initialBaselineOffset, Display::LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
 }

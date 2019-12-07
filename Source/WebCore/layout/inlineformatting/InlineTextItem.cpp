@@ -95,7 +95,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     LazyLineBreakIterator lineBreakIterator(text);
     unsigned currentPosition = 0;
 
-    auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<LayoutUnit> {
+    auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<InlineLayoutUnit> {
         if (!textContext.canUseSimplifiedContentMeasuring)
             return { };
         return TextUtil::width(inlineBox, startPosition, startPosition + length);
@@ -116,7 +116,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         if (isWhitespaceCharacter(text[currentPosition], style.preserveNewline())) {
             auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline());
             auto simpleSingleWhitespaceContent = textContext.canUseSimplifiedContentMeasuring && (length == 1 || style.collapseWhiteSpace());
-            auto width = simpleSingleWhitespaceContent ? makeOptional(LayoutUnit { font.spaceWidth() }) : inlineItemWidth(currentPosition, length);
+            auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(currentPosition, length);
             inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, currentPosition, length, width));
             currentPosition += length;
             continue;
@@ -128,12 +128,12 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     }
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width)
+std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
 {
     return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::Whitespace);
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width)
+std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
 {
     return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::NonWhitespace);
 }
@@ -143,7 +143,7 @@ std::unique_ptr<InlineTextItem> InlineTextItem::createEmptyItem(const Box& inlin
     return makeUnique<InlineTextItem>(inlineBox);
 }
 
-InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, Optional<LayoutUnit> width, TextItemType textItemType)
+InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType textItemType)
     : InlineItem(inlineBox, Type::Text)
     , m_start(start)
     , m_length(length)

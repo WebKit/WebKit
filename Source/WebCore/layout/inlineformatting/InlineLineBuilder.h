@@ -44,11 +44,11 @@ class LineBuilder {
 public:
     struct Constraints {
         LayoutPoint logicalTopLeft;
-        LayoutUnit availableLogicalWidth;
+        InlineLayoutUnit availableLogicalWidth;
         bool lineIsConstrainedByFloat { false };
         struct HeightAndBaseline {
-            LayoutUnit height;
-            LayoutUnit baselineOffset;
+            InlineLayoutUnit height;
+            InlineLayoutUnit baselineOffset;
             Optional<Display::LineBox::Baseline> strut;
         };
         Optional<HeightAndBaseline> heightAndBaseline;
@@ -59,17 +59,17 @@ public:
     ~LineBuilder();
 
     void initialize(const Constraints&);
-    void append(const InlineItem&, LayoutUnit logicalWidth);
+    void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
     bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
-    LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
+    InlineLayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
-    LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
+    InlineLayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableContent.isTrailingRunFullyTrimmable(); }
 
     const Display::LineBox& lineBox() const { return m_lineBox; }
-    void moveLogicalLeft(LayoutUnit);
-    void moveLogicalRight(LayoutUnit);
+    void moveLogicalLeft(InlineLayoutUnit);
+    void moveLogicalRight(InlineLayoutUnit);
     void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
 
     struct Run {
@@ -93,15 +93,15 @@ public:
     private:
         friend class LineBuilder;
 
-        void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-        void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
-        void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-        void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
+        void adjustLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
+        void moveHorizontally(InlineLayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
+        void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+        void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
 
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
         Optional<ExpansionBehavior> expansionBehavior() const;
         unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
-        void setComputedHorizontalExpansion(LayoutUnit logicalExpansion);
+        void setComputedHorizontalExpansion(InlineLayoutUnit logicalExpansion);
         void adjustExpansionBehavior(ExpansionBehavior);
 
         const Box* m_layoutBox { nullptr };
@@ -115,28 +115,28 @@ public:
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
-    static Display::LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
+    static Display::LineBox::Baseline halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
 private:
-    LayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
-    LayoutUnit logicalBottom() const { return m_lineBox.logicalBottom(); }
+    InlineLayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
+    InlineLayoutUnit logicalBottom() const { return m_lineBox.logicalBottom(); }
 
-    LayoutUnit logicalLeft() const { return m_lineBox.logicalLeft(); }
-    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+    InlineLayoutUnit logicalLeft() const { return m_lineBox.logicalLeft(); }
+    InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
-    LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_lineBox.logicalHeight(); }
+    InlineLayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
+    InlineLayoutUnit logicalHeight() const { return m_lineBox.logicalHeight(); }
 
-    LayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
-    LayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
-    LayoutUnit baselineOffset() const { return m_lineBox.baselineOffset(); }
+    InlineLayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
+    InlineLayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
+    InlineLayoutUnit baselineOffset() const { return m_lineBox.baselineOffset(); }
 
-    void appendNonBreakableSpace(const InlineItem&, LayoutUnit logicalLeft, LayoutUnit logicalWidth);
-    void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
-    void appendNonReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
-    void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
-    void appendInlineContainerStart(const InlineItem&, LayoutUnit logicalWidth);
-    void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
+    void appendNonBreakableSpace(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+    void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
+    void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendInlineContainerStart(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendInlineContainerEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);
 
     void removeTrailingTrimmableContent();
@@ -144,7 +144,7 @@ private:
     void alignContentVertically(RunList&);
 
     void adjustBaselineAndLineHeight(const Run&);
-    LayoutUnit runContentHeight(const Run&) const;
+    InlineLayoutUnit runContentHeight(const Run&) const;
 
     bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
     void justifyRuns(RunList&) const;
@@ -156,12 +156,12 @@ private:
 
     class InlineItemRun {
     public:
-        InlineItemRun(const InlineItem&, LayoutUnit logicalLeft, LayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
+        InlineItemRun(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
 
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
         const RenderStyle& style() const { return layoutBox().style(); }
-        LayoutUnit logicalLeft() const { return m_logicalLeft; }
-        LayoutUnit logicalWidth() const { return m_logicalWidth; }
+        InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
+        InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
 
         bool isText() const { return m_inlineItem.isText(); }
@@ -174,12 +174,12 @@ private:
         void setIsCollapsed() { m_isCollapsed = true; }
         bool isCollapsed() const { return m_isCollapsed; }
 
-        void moveHorizontally(LayoutUnit offset) { m_logicalLeft += offset; }
+        void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
 
         bool isTrimmableWhitespace() const;
         bool hasTrailingLetterSpacing() const;
 
-        LayoutUnit trailingLetterSpacing() const;
+        InlineLayoutUnit trailingLetterSpacing() const;
         void removeTrailingLetterSpacing();
 
         void setCollapsesToZeroAdvanceWidth();
@@ -192,8 +192,8 @@ private:
 
     private:
         const InlineItem& m_inlineItem;
-        LayoutUnit m_logicalLeft;
-        LayoutUnit m_logicalWidth;
+        InlineLayoutUnit m_logicalLeft;
+        InlineLayoutUnit m_logicalWidth;
         const Optional<Display::Run::TextContext> m_textContext;
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };
@@ -205,11 +205,11 @@ private:
         TrimmableContent(InlineItemRunList&);
 
         void append(size_t runIndex);
-        LayoutUnit trim();
-        LayoutUnit trimTrailingRun();
+        InlineLayoutUnit trim();
+        InlineLayoutUnit trimTrailingRun();
         void reset();
 
-        LayoutUnit width() const { return m_width; }
+        InlineLayoutUnit width() const { return m_width; }
         Optional<size_t> firstRunIndex() { return m_firstRunIndex; }
         bool isEmpty() const { return !m_firstRunIndex.hasValue(); }
         bool isTrailingRunFullyTrimmable() const { return m_lastRunIsFullyTrimmable; }
@@ -218,7 +218,7 @@ private:
     private:
         InlineItemRunList& m_inlineitemRunList;
         Optional<size_t> m_firstRunIndex;
-        LayoutUnit m_width;
+        InlineLayoutUnit m_width;
         bool m_lastRunIsFullyTrimmable { false };
     };
 
@@ -226,7 +226,7 @@ private:
     InlineItemRunList m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
     Optional<Display::LineBox::Baseline> m_initialStrut;
-    LayoutUnit m_lineLogicalWidth;
+    InlineLayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_skipAlignment { false };
     bool m_hasIntrusiveFloat { false };

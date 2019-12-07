@@ -93,16 +93,16 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
     return { lineStatus.lineIsEmpty ? BreakingContext::ContentWrappingRule::Keep : BreakingContext::ContentWrappingRule::Push, { } };
 }
 
-bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
+bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty)
 {
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, LayoutUnit availableWidth) const
+Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, InlineLayoutUnit availableWidth) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    LayoutUnit accumulatedRunWidth;
+    InlineLayoutUnit accumulatedRunWidth;
     unsigned index = 0;
     while (index < runs.size()) {
         auto& run = runs[index];
@@ -133,7 +133,7 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
     return { };
 }
 
-Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const
+Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& style = overflowRun.inlineItem.style();
@@ -161,7 +161,7 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
 
     auto& fontCascade = style.fontCascade();
     // FIXME: We might want to cache the hyphen width.
-    auto hyphenWidth = LayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
     auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
 
     // For spaceWidth() see webkit.org/b/169613
@@ -272,7 +272,7 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
     return true;
 }
 
-void LineBreaker::Content::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
+void LineBreaker::Content::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     ASSERT(!inlineItem.isFloat());
     ASSERT(inlineItem.isLineBreak() || !isAtContentBoundary(inlineItem, *this));

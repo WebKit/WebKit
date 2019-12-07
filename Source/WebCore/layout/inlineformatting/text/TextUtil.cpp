@@ -39,7 +39,7 @@ Optional<unsigned> TextUtil::hyphenPositionBefore(const InlineItem&, unsigned, u
     return WTF::nullopt;
 }
 
-LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
     auto& style = inlineBox.style();
     auto& font = style.fontCascade();
@@ -71,10 +71,10 @@ LayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, Lay
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return std::max(0_lu, LayoutUnit::fromFloatRound(width));
+    return std::max(0_lu, InlineLayoutUnit::fromFloatRound(width));
 }
 
-LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, LayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();
@@ -90,19 +90,19 @@ LayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& 
             width += font.wordSpacing();
     }
 
-    return std::max(0_lu, LayoutUnit::fromFloatRound(width));
+    return std::max(0_lu, InlineLayoutUnit::fromFloatRound(width));
 }
 
-TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
+TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     ASSERT(availableWidth >= 0);
     auto left = startPosition;
     // Pathological case of (extremely)long string and narrow lines.
     // Adjust the range so that we can pick a reasonable midpoint.
-    LayoutUnit averageCharacterWidth = textWidth / length;
+    InlineLayoutUnit averageCharacterWidth = textWidth / length;
     auto right = std::min<unsigned>(left + (2 * availableWidth / averageCharacterWidth).toUnsigned(), (startPosition + length - 1));
     // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
-    LayoutUnit leftSideWidth = 0;
+    InlineLayoutUnit leftSideWidth = 0;
     while (left < right) {
         auto middle = (left + right) / 2;
         auto width = TextUtil::width(inlineBox, startPosition, middle + 1, contentLogicalLeft);

@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutUnit.h"
+#include "LayoutUnits.h"
 
 namespace WebCore {
 namespace Layout {
@@ -47,7 +47,7 @@ public:
         struct PartialTrailingContent {
             unsigned runIndex { 0 };
             unsigned length { 0 };
-            LayoutUnit logicalWidth;
+            InlineLayoutUnit logicalWidth;
             bool needsHyphen { false };
         };
         Optional<PartialTrailingContent> partialTrailingContent;
@@ -63,7 +63,7 @@ public:
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct Content {
-        void append(const InlineItem&, LayoutUnit logicalWidth);
+        void append(const InlineItem&, InlineLayoutUnit logicalWidth);
         void reset();
         void trim(unsigned newSize);
 
@@ -71,7 +71,7 @@ public:
 
         struct Run {
             const InlineItem& inlineItem;
-            LayoutUnit logicalWidth;
+            InlineLayoutUnit logicalWidth;
         };
         using RunList = Vector<Run, 30>;
 
@@ -81,8 +81,8 @@ public:
         bool hasTextContentOnly() const;
         bool hasNonContentRunsOnly() const;
         unsigned size() const { return m_continousRuns.size(); }
-        LayoutUnit width() const { return m_width; }
-        LayoutUnit nonTrimmableWidth() const { return m_width - m_trailingTrimmableContent.width; }
+        InlineLayoutUnit width() const { return m_width; }
+        InlineLayoutUnit nonTrimmableWidth() const { return m_width - m_trailingTrimmableContent.width; }
 
         bool hasTrailingTrimmableContent() const { return !!m_trailingTrimmableContent.width; }
         bool isTrailingContentFullyTrimmable() const { return m_trailingTrimmableContent.isFullyTrimmable; }
@@ -93,31 +93,31 @@ public:
             void reset();
 
             bool isFullyTrimmable { false };
-            LayoutUnit width;
+            InlineLayoutUnit width;
         };
         TrailingTrimmableContent m_trailingTrimmableContent;
-        LayoutUnit m_width;
+        InlineLayoutUnit m_width;
     };
 
     struct LineStatus {
-        LayoutUnit availableWidth;
-        LayoutUnit trimmableWidth;
+        InlineLayoutUnit availableWidth;
+        InlineLayoutUnit trimmableWidth;
         bool lineHasFullyTrimmableTrailingRun;
         bool lineIsEmpty;
     };
     BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);
-    bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, LayoutUnit availableWidth) const;
+    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, InlineLayoutUnit availableWidth) const;
     struct LeftSide {
         unsigned length { 0 };
-        LayoutUnit logicalWidth;
+        InlineLayoutUnit logicalWidth;
         bool needsHyphen { false };
     };
-    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, LayoutUnit availableWidth) const;
+    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth) const;
 
     bool n_hyphenationIsDisabled { false };
 };

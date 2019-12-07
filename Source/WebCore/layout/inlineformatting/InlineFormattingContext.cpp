@@ -223,15 +223,15 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
         return computedIntrinsicWidthForConstraint(usedHorizontalValues);
     };
 
-    auto constraints = geometry().constrainByMinMaxWidth(root(), { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) });
+    auto constraints = geometry().constrainByMinMaxWidth(root(), { maximumLineWidth(0), maximumLineWidth(InlineLayoutUnit::max()) });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
 
-LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const UsedHorizontalValues& usedHorizontalValues) const
+InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const UsedHorizontalValues& usedHorizontalValues) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    LayoutUnit maximumLineWidth;
+    InlineLayoutUnit maximumLineWidth;
     unsigned leadingInlineItemIndex = 0;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
@@ -241,7 +241,7 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const Us
         auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, { });
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
-        LayoutUnit floatsWidth;
+        InlineLayoutUnit floatsWidth;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += geometryForBox(floatItem->layoutBox()).marginBoxWidth();
         maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.lineBox.logicalWidth());
@@ -371,7 +371,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const LayoutUnit lineLogicalTop)
+LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const InlineLayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
     auto availableWidth = usedHorizontalValues.constraints.width;

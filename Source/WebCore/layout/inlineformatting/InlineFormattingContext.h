@@ -82,14 +82,14 @@ private:
 
     void computeIntrinsicWidthForFormattingRoot(const Box&, const UsedHorizontalValues&);
     void computeWidthAndHeightForReplacedInlineBox(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
-    LayoutUnit computedIntrinsicWidthForConstraint(const UsedHorizontalValues&) const;
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(const UsedHorizontalValues&) const;
 
     void computeHorizontalMargin(const Box&, const UsedHorizontalValues&);
     void computeHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
     void computeWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
     void collectInlineContentIfNeeded();
-    LineBuilder::Constraints constraintsForLine(const UsedHorizontalValues&, const LayoutUnit lineLogicalTop);
+    LineBuilder::Constraints constraintsForLine(const UsedHorizontalValues&, const InlineLayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const UsedHorizontalValues&);
     void invalidateFormattingState(const InvalidationState&);
 
