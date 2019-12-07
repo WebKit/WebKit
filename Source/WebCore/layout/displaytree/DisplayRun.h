@@ -27,9 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayRect.h"
+#include "DisplayInlineRect.h"
 #include "LayoutBox.h"
-#include "LayoutUnit.h"
 #include "RenderStyle.h"
 #include "TextFlags.h"
 
@@ -72,11 +71,11 @@ struct Run {
         Optional<ExpansionContext> m_expansionContext;
     };
 
-    Run(size_t lineIndex, const Layout::Box&, const Rect& logicalRect, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const InlineRect& logicalRect, Optional<TextContext> = WTF::nullopt);
 
     size_t lineIndex() const { return m_lineIndex; }
 
-    const Rect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& logicalRect() const { return m_logicalRect; }
 
     LayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
     LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
@@ -90,7 +89,6 @@ struct Run {
     void setLogicalWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
     void setLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
-    void setLogicalRight(LayoutUnit logicalRight) { m_logicalRect.shiftRightTo(logicalRight); }
     void moveVertically(LayoutUnit delta) { m_logicalRect.moveVertically(delta); }
     void moveHorizontally(LayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
     void expandVertically(LayoutUnit delta) { m_logicalRect.expandVertically(delta); }
@@ -113,11 +111,11 @@ private:
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
     CachedImage* m_cachedImage { nullptr };
-    Rect m_logicalRect;
+    InlineRect m_logicalRect;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const Rect& logicalRect, Optional<TextContext> textContext)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Optional<TextContext> textContext)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)

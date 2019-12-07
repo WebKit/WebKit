@@ -102,7 +102,7 @@ LineBuilder::Run LineBuilder::ContinousContent::close()
             ++m_expansionOpportunityCount;
         textContext.setExpansion({ expansionBehavior, { } });
     }
-    return { m_initialInlineRun,  Display::Rect { 0_lu, m_initialInlineRun.logicalLeft(), m_initialInlineRun.logicalWidth() + m_expandedWidth, 0_lu }, textContext, m_expansionOpportunityCount };
+    return { m_initialInlineRun,  Display::InlineRect { 0_lu, m_initialInlineRun.logicalLeft(), m_initialInlineRun.logicalWidth() + m_expandedWidth, 0_lu }, textContext, m_expansionOpportunityCount };
 }
 
 LineBuilder::Run::Run(const InlineItemRun& inlineItemRun)
@@ -119,7 +119,7 @@ LineBuilder::Run::Run(const InlineItemRun& inlineItemRun)
     }
 }
 
-LineBuilder::Run::Run(const InlineItemRun& inlineItemRun, const Display::Rect& logicalRect, const Display::Run::TextContext& textContext, unsigned expansionOpportunityCount)
+LineBuilder::Run::Run(const InlineItemRun& inlineItemRun, const Display::InlineRect& logicalRect, const Display::Run::TextContext& textContext, unsigned expansionOpportunityCount)
     : m_layoutBox(&inlineItemRun.layoutBox())
     , m_type(inlineItemRun.type())
     , m_logicalRect(logicalRect)
@@ -177,7 +177,7 @@ void LineBuilder::initialize(const Constraints& constraints)
     } else
         m_initialStrut = { };
 
-    auto lineRect = Display::Rect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
+    auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
     auto baseline = Display::LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
     m_lineBox = Display::LineBox { lineRect, baseline, initialBaselineOffset };
     m_lineLogicalWidth = constraints.availableLogicalWidth;

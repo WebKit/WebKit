@@ -370,6 +370,7 @@
 		0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
 		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
+		112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 112FB350239C23C40087054A /* DisplayInlineRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF320BA4A370065A8D0 /* LayoutReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = 111C615620AD1AE1005B82FA /* LayoutReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC72092764C0081AA6C /* LayoutIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5876,6 +5877,7 @@
 		111C615720AD1AE1005B82FA /* LayoutReplaced.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutReplaced.cpp; sourceTree = "<group>"; };
 		112B34D01E60B8A700BB310A /* SimpleLineLayoutPagination.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutPagination.cpp; sourceTree = "<group>"; };
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
+		112FB350239C23C40087054A /* DisplayInlineRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayInlineRect.h; sourceTree = "<group>"; };
 		113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderContinuation.cpp; sourceTree = "<group>"; };
 		113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderContinuation.h; sourceTree = "<group>"; };
 		113A3CB22385860000AE3ECE /* TextContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextContext.h; sourceTree = "<group>"; };
@@ -16749,6 +16751,7 @@
 				6F77868523491AC6004D9636 /* DisplayPainter.cpp */,
 				6F77868723491AD7004D9636 /* DisplayPainter.h */,
 				6FD9CD52227E21C800E53957 /* DisplayRect.h */,
+				112FB350239C23C40087054A /* DisplayInlineRect.h */,
 				6FCE1A1822618AB3004F0343 /* DisplayRun.h */,
 			);
 			path = displaytree;
@@ -31924,6 +31927,7 @@
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
 				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
+				112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */,
 				2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */,
 				43C092BC12D9E4EE00A989C3 /* RenderSVGForeignObject.h in Headers */,
 				436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */,

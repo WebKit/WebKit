@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "DisplayInlineRect.h"
 
 namespace WebCore {
 namespace Display {
@@ -57,7 +58,7 @@ public:
         InlineLayoutUnit m_descent;
     };
 
-    LineBox(Rect, const Baseline&, InlineLayoutUnit baselineOffset);
+    LineBox(const InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
     LineBox() = default;
     
     LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
@@ -123,13 +124,13 @@ private:
     bool m_hasValidBaseline { false };
     bool m_hasValidBaselineOffset { false };
 #endif
-    Rect m_rect;
+    InlineRect m_rect;
     Baseline m_baseline;
     InlineLayoutUnit m_baselineOffset;
     bool m_isConsideredEmpty { true };
 };
 
-inline LineBox::LineBox(Rect rect, const Baseline& baseline, InlineLayoutUnit baselineOffset)
+inline LineBox::LineBox(const InlineRect& rect, const Baseline& baseline, InlineLayoutUnit baselineOffset)
     : m_rect(rect)
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)

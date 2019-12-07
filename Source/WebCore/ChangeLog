@@ -1,5 +1,62 @@
 2019-12-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Introduce InlineRect
+        https://bugs.webkit.org/show_bug.cgi?id=204988
+        <rdar://problem/57729049>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using float based types in IFC. See webkit.org/b/204986 for more info.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutUnits.h:
+        * layout/displaytree/DisplayInlineRect.h: Added.
+        (WebCore::Display::InlineRect::expandHorizontally):
+        (WebCore::Display::InlineRect::expandVertically):
+        (WebCore::Display::InlineRect::invalidateTop):
+        (WebCore::Display::InlineRect::invalidateLeft):
+        (WebCore::Display::InlineRect::invalidateWidth):
+        (WebCore::Display::InlineRect::invalidateHeight):
+        (WebCore::Display::InlineRect::hasValidPosition const):
+        (WebCore::Display::InlineRect::hasValidSize const):
+        (WebCore::Display::InlineRect::hasValidGeometry const):
+        (WebCore::Display::InlineRect::InlineRect):
+        (WebCore::Display::InlineRect::invalidatePosition):
+        (WebCore::Display::InlineRect::setHasValidPosition):
+        (WebCore::Display::InlineRect::setHasValidSize):
+        (WebCore::Display::InlineRect::top const):
+        (WebCore::Display::InlineRect::left const):
+        (WebCore::Display::InlineRect::bottom const):
+        (WebCore::Display::InlineRect::right const):
+        (WebCore::Display::InlineRect::topLeft const):
+        (WebCore::Display::InlineRect::size const):
+        (WebCore::Display::InlineRect::width const):
+        (WebCore::Display::InlineRect::height const):
+        (WebCore::Display::InlineRect::setTopLeft):
+        (WebCore::Display::InlineRect::setTop):
+        (WebCore::Display::InlineRect::setLeft):
+        (WebCore::Display::InlineRect::setWidth):
+        (WebCore::Display::InlineRect::setHeight):
+        (WebCore::Display::InlineRect::moveHorizontally):
+        (WebCore::Display::InlineRect::moveVertically):
+        (WebCore::Display::InlineRect::expand):
+        (WebCore::Display::InlineRect::operator InlineLayoutRect const):
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::LineBox):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::logicalRect const):
+        (WebCore::Display::Run::setLogicalLeft):
+        (WebCore::Display::Run::Run):
+        (WebCore::Display::Run::setLogicalRight): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::ContinousContent::close):
+        (WebCore::Layout::LineBuilder::Run::Run):
+        (WebCore::Layout::LineBuilder::initialize):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::Run::logicalRect const):
+
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Introduce InlineLayoutUnit
         https://bugs.webkit.org/show_bug.cgi?id=204986
         <rdar://problem/57728333>

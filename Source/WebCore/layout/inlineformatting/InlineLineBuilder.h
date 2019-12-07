@@ -74,7 +74,7 @@ public:
 
     struct Run {
         Run(const InlineItemRun&);
-        Run(const InlineItemRun&, const Display::Rect&, const Display::Run::TextContext&, unsigned expansionOpportunityCount);
+        Run(const InlineItemRun&, const Display::InlineRect&, const Display::Run::TextContext&, unsigned expansionOpportunityCount);
         Run(Run&&) = default;
         Run& operator=(Run&& other) = default;
 
@@ -86,7 +86,7 @@ public:
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
-        const Display::Rect& logicalRect() const { return m_logicalRect; }
+        const Display::InlineRect& logicalRect() const { return m_logicalRect; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
         bool isCollapsedToVisuallyEmpty() const { return m_isCollapsedToVisuallyEmpty; }
 
@@ -106,7 +106,7 @@ public:
 
         const Box* m_layoutBox { nullptr };
         InlineItem::Type m_type;
-        Display::Rect m_logicalRect;
+        Display::InlineRect m_logicalRect;
         Optional<Display::Run::TextContext> m_textContext;
         unsigned m_expansionOpportunityCount { 0 };
         bool m_isCollapsedToVisuallyEmpty { false };

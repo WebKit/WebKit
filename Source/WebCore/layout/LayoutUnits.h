@@ -39,6 +39,9 @@ class Box;
 }
 
 using InlineLayoutUnit = LayoutUnit;
+using InlineLayoutPoint = LayoutPoint;
+using InlineLayoutSize = LayoutSize;
+using InlineLayoutRect = LayoutRect;
 
 namespace Layout {
 
