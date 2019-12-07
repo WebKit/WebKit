@@ -41,7 +41,7 @@ static const Seconds plugInAutoStartExpirationTimeThreshold { 30 * 24 * 60 * 60 
 PlugInAutoStartProvider::PlugInAutoStartProvider(WebProcessPool* processPool)
     : m_processPool(processPool)
 {
-    m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, String>());
+    m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashToOriginMap());
     m_autoStartTable.add(PAL::SessionID::defaultSessionID(), AutoStartTable());
 }
 
@@ -56,7 +56,7 @@ void PlugInAutoStartProvider::addAutoStartOriginHash(const String& pageOrigin, u
     if (sessionIterator == m_hashToOriginMap.end()) {
         if (m_hashToOriginMap.get(PAL::SessionID::defaultSessionID()).contains(plugInOriginHash))
             return;
-        sessionIterator = m_hashToOriginMap.set(sessionID, HashMap<unsigned, String>()).iterator;
+        sessionIterator = m_hashToOriginMap.set(sessionID, HashToOriginMap()).iterator;
     } else if (sessionIterator->value.contains(plugInOriginHash) || m_hashToOriginMap.get(PAL::SessionID::defaultSessionID()).contains(plugInOriginHash))
         return;
 
@@ -126,7 +126,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(API::
     m_hashToOriginMap.clear();
     m_autoStartTable.clear();
     HashMap<unsigned, WallTime> hashMap;
-    HashMap<unsigned, String>& hashToOriginMap = m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, String>()).iterator->value;
+    auto& hashToOriginMap = m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashToOriginMap()).iterator->value;
     AutoStartTable& ast = m_autoStartTable.add(PAL::SessionID::defaultSessionID(), AutoStartTable()).iterator->value;
 
     for (auto& strDict : table.map()) {
@@ -165,8 +165,8 @@ void PlugInAutoStartProvider::setAutoStartOriginsArray(API::Array& originList)
 
 void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
-    HashMap<PAL::SessionID, HashMap<unsigned, String>>::const_iterator sessionIterator = m_hashToOriginMap.find(sessionID);
-    HashMap<unsigned, String>::const_iterator it;
+    auto sessionIterator = m_hashToOriginMap.find(sessionID);
+    HashToOriginMap::const_iterator it;
     bool contains = false;
     if (sessionIterator != m_hashToOriginMap.end()) {
         it = sessionIterator->value.find(plugInOriginHash);

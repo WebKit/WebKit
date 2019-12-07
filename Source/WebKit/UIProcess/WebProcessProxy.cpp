@@ -1511,11 +1511,14 @@ PAL::SessionID WebProcessProxy::sessionID() const
 
 void WebProcessProxy::addPlugInAutoStartOriginHash(String&& pageOrigin, uint32_t hash)
 {
+    MESSAGE_CHECK(PlugInAutoStartProvider::AutoStartTable::isValidKey(pageOrigin));
+    MESSAGE_CHECK(PlugInAutoStartProvider::HashToOriginMap::isValidKey(hash));
     processPool().plugInAutoStartProvider().addAutoStartOriginHash(WTFMove(pageOrigin), hash, sessionID());
 }
 
 void WebProcessProxy::plugInDidReceiveUserInteraction(uint32_t hash)
 {
+    MESSAGE_CHECK(PlugInAutoStartProvider::HashToOriginMap::isValidKey(hash));
     processPool().plugInAutoStartProvider().didReceiveUserInteraction(hash, sessionID());
 }
 

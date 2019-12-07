@@ -64,16 +64,19 @@ public:
     PlugInAutoStartOriginMap autoStartOriginHashesCopy(PAL::SessionID) const;
     const PlugInAutoStartOrigins& autoStartOrigins() const { return m_autoStartOrigins; }
 
+    using HashToOriginMap = HashMap<unsigned, String>;
+    using PerSessionHashToOriginMap = HashMap<PAL::SessionID, HashToOriginMap>;
+    using AutoStartTable = HashMap<String, PlugInAutoStartOriginMap, ASCIICaseInsensitiveHash>;
+
 private:
     WebProcessPool* m_processPool;
 
     void setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary&, WTF::Function<bool(WallTime expirationTimestamp)>&&);
 
-    typedef HashMap<String, PlugInAutoStartOriginMap, ASCIICaseInsensitiveHash> AutoStartTable;
     typedef HashMap<PAL::SessionID, AutoStartTable> SessionAutoStartTable;
     SessionAutoStartTable m_autoStartTable;
 
-    HashMap<PAL::SessionID, HashMap<unsigned, String>> m_hashToOriginMap;
+    PerSessionHashToOriginMap m_hashToOriginMap;
 
     PlugInAutoStartOrigins m_autoStartOrigins;
 };
