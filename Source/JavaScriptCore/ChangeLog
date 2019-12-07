@@ -1,3 +1,16 @@
+2019-12-06  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Change the format string portable by using "%" PRIx64
+        instead of "%llx" for uint64_t argument.
+
+        This patch removes the build warning below since r252978.
+
+        warning: format ‘%llx’ expects argument of type ‘long long unsigned int’,
+        but argument 3 has type ‘JSC::SpeculatedType {aka long unsigned int}’ [-Wformat=]
+
+        * runtime/PredictionFileCreatingFuzzerAgent.cpp:
+        (JSC::PredictionFileCreatingFuzzerAgent::getPredictionInternal):
+
 2019-12-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r253218.
