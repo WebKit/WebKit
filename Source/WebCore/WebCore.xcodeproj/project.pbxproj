@@ -909,7 +909,7 @@
 		3135910A1E7DDC7300F30630 /* RTCSdpType.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591041E7DDC6000F30630 /* RTCSdpType.h */; };
 		3135910B1E7DDC7300F30630 /* RTCSignalingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591051E7DDC6000F30630 /* RTCSignalingState.h */; };
 		313BCE1C235E3BE500FC39E5 /* ElementContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE1B235E3BDB00FC39E5 /* ElementContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */; };
+		3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */; };
 		3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */; };
 		3140C5241FDF318700D2A873 /* CanvasRenderingContext2DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */; };
@@ -4780,6 +4780,8 @@
 		E35802B61DC8435D00A9773C /* DOMJITIDLTypeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D049931DADC04500718F3C /* NodeConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E39628BF2395728F00658ECD /* DeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628BD2395728E00658ECD /* DeviceOrientationUpdateProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E39628C12395743100658ECD /* MotionManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628C02395743000658ECD /* MotionManagerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A776671DC85D2800B690D8 /* DOMJITIDLConvert.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A776651DC85D2200B690D8 /* DOMJITIDLConvert.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A776681DC85D2800B690D8 /* DOMJITIDLType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A776661DC85D2200B690D8 /* DOMJITIDLType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B2F0ED1D7F4CA300B0C9D1 /* LoadableScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E71D7F35EC00B0C9D1 /* LoadableScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15084,6 +15086,8 @@
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
 		E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchParameters.h; sourceTree = "<group>"; };
+		E39628BD2395728E00658ECD /* DeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
+		E39628C02395743000658ECD /* MotionManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionManagerClient.h; sourceTree = "<group>"; };
 		E3975B761EC9AF3900847717 /* JSDocumentFragmentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentDOMJIT.cpp; sourceTree = "<group>"; };
 		E3975B771EC9AF3900847717 /* JSElementDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSElementDOMJIT.cpp; sourceTree = "<group>"; };
 		E3975B781EC9AF3900847717 /* JSEventDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventDOMJIT.cpp; sourceTree = "<group>"; };
@@ -22814,6 +22818,7 @@
 				31EAF97D121435A400E7C1BF /* DeviceMotionClientIOS.mm */,
 				31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */,
 				3140379A124BEA7F00AF40E4 /* DeviceOrientationClientIOS.mm */,
+				E39628BD2395728E00658ECD /* DeviceOrientationUpdateProvider.h */,
 				0FDA7C22188330A900C954B5 /* DragImageIOS.mm */,
 				265541371489811C000DFC5D /* KeyEventCodesIOS.h */,
 				265541381489811C000DFC5D /* KeyEventIOS.mm */,
@@ -22830,6 +22835,7 @@
 				1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */,
 				1C43DE6A22AB4B8A001527D9 /* LocalCurrentTraitCollection.mm */,
 				46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */,
+				E39628C02395743000658ECD /* MotionManagerClient.h */,
 				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
 				26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */,
 				26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */,
@@ -29555,6 +29561,7 @@
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
 				460E3075222F4EFD009A0606 /* DeviceOrientationOrMotionEvent.h in Headers */,
 				460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */,
+				E39628BF2395728F00658ECD /* DeviceOrientationUpdateProvider.h in Headers */,
 				572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */,
 				572B403A21772581000AD43E /* DeviceResponseConverter.h in Headers */,
 				267725FD1A5B3AD9003C24DD /* DFA.h in Headers */,
@@ -31442,6 +31449,7 @@
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
 				E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */,
 				F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */,
+				E39628C12395743100658ECD /* MotionManagerClient.h in Headers */,
 				85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */,
 				83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */,
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,

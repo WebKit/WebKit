@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
+#import "DeviceMotionClientIOS.h"
+#import "MotionManagerClient.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreThreadRun.h"
 #import <CoreLocation/CoreLocation.h>
@@ -112,16 +114,16 @@ static const double kGravity = 9.80665;
         [self checkClientStatus];
 }
 
-- (void)addOrientationClient:(WebCore::DeviceOrientationClientIOS *)client
+- (void)addOrientationClient:(WebCore::MotionManagerClient *)client
 {
-    m_deviceOrientationClients.add(client);
+    m_deviceOrientationClients.add(*client);
     if (m_initialized)
         [self checkClientStatus];
 }
 
-- (void)removeOrientationClient:(WebCore::DeviceOrientationClientIOS *)client
+- (void)removeOrientationClient:(WebCore::MotionManagerClient *)client
 {
-    m_deviceOrientationClients.remove(client);
+    m_deviceOrientationClients.remove(*client);
     if (m_initialized)
         [self checkClientStatus];
 }
@@ -169,7 +171,7 @@ static const double kGravity = 9.80665;
     // be no chance that m_motionManager has not been created.
     ASSERT(m_motionManager);
 
-    if (m_deviceMotionClients.size() || m_deviceOrientationClients.size()) {
+    if (m_deviceMotionClients.size() || m_deviceOrientationClients.computeSize()) {
         if (m_gyroAvailable)
             [m_motionManager startDeviceMotionUpdates];
         else
@@ -246,8 +248,11 @@ static const double kGravity = 9.80665;
 
         CMAttitude* attitude = newMotion.attitude;
 
-        auto orientationClients = copyToVector(m_deviceOrientationClients);
-
+        Vector<WeakPtr<MotionManagerClient>> orientationClients;
+        orientationClients.reserveInitialCapacity(m_deviceOrientationClients.computeSize());
+        for (auto& client : m_deviceOrientationClients)
+            orientationClients.uncheckedAppend(makeWeakPtr(&client));
+        
         // Compose the raw motion data to an intermediate ZXY-based 3x3 rotation
         // matrix (R) where [z=attitude.yaw, x=attitude.pitch, y=attitude.roll]
         // in the form:
@@ -319,8 +324,10 @@ static const double kGravity = 9.80665;
         double heading = (m_headingAvailable && newHeading) ? newHeading.magneticHeading : 0;
         double headingAccuracy = (m_headingAvailable && newHeading) ? newHeading.headingAccuracy : -1;
 
-        for (size_t i = 0; i < orientationClients.size(); ++i)
-            orientationClients[i]->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
+        for (size_t i = 0; i < orientationClients.size(); ++i) {
+            if (orientationClients[i])
+                orientationClients[i]->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
+        }
     });
 }
 

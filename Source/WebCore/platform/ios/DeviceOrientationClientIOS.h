@@ -30,15 +30,17 @@
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationController.h"
 #include "DeviceOrientationData.h"
+#include "DeviceOrientationUpdateProvider.h"
+#include "MotionManagerClient.h"
 #include <wtf/RefPtr.h>
 
 OBJC_CLASS WebCoreMotionManager;
 
 namespace WebCore {
 
-class DeviceOrientationClientIOS : public DeviceOrientationClient {
+class DeviceOrientationClientIOS : public DeviceOrientationClient, public MotionManagerClient {
 public:
-    DeviceOrientationClientIOS();
+    DeviceOrientationClientIOS(RefPtr<DeviceOrientationUpdateProvider>&&);
     ~DeviceOrientationClientIOS() override;
     void setController(DeviceOrientationController*) override;
     void startUpdating() override;
@@ -46,13 +48,14 @@ public:
     DeviceOrientationData* lastOrientation() const override;
     void deviceOrientationControllerDestroyed() override;
 
-    void orientationChanged(double, double, double, double, double);
+    void orientationChanged(double, double, double, double, double) override;
 
 private:
-    WebCoreMotionManager* m_motionManager;
-    DeviceOrientationController* m_controller;
+    WebCoreMotionManager* m_motionManager  { nullptr };
+    DeviceOrientationController* m_controller  { nullptr };
     RefPtr<DeviceOrientationData> m_currentDeviceOrientation;
-    bool m_updating;
+    RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+    bool m_updating { false };
 };
 
 } // namespace WebCore

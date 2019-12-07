@@ -307,6 +307,10 @@
 #include <WebCore/AuthenticatorCoordinator.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+#include "WebDeviceOrientationUpdateProvider.h"
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -500,6 +504,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(APPLICATION_MANIFEST)
     pageConfiguration.applicationManifest = parameters.applicationManifest;
+#endif
+    
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+    pageConfiguration.deviceOrientationUpdateProvider = WebDeviceOrientationUpdateProvider::create(*this);
 #endif
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));

@@ -1696,6 +1696,14 @@
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
+		E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */; };
+		E3866AE72397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */; };
+		E3866B082399A2D100F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */; };
+		E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */; };
+		E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */; };
+		E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */; };
+		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
+		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
 		E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E06111AA75ABD00B11699 /* NetworkCacheData.h */; };
@@ -1975,9 +1983,9 @@
 			dstPath = "$(INSTALL_PATH)";
 			dstSubfolderSpec = 0;
 			files = (
+				2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
 				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
-				2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4806,6 +4814,16 @@
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
+		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
+		E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderProxy.h; path = ios/WebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
+		E3866AED2398471A00F88FE9 /* WebDeviceOrientationUpdateProviderProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebDeviceOrientationUpdateProviderProxy.messages.in; path = ios/WebDeviceOrientationUpdateProviderProxy.messages.in; sourceTree = "<group>"; };
+		E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderProxyMessages.h; path = DerivedSources/WebKit2/WebDeviceOrientationUpdateProviderProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDeviceOrientationUpdateProviderMessageReceiver.cpp; path = DerivedSources/WebKit2/WebDeviceOrientationUpdateProviderMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderMessages.h; path = DerivedSources/WebKit2/WebDeviceOrientationUpdateProviderMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
+		E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProvider.cpp; sourceTree = "<group>"; };
+		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
 		E404907021DE65F70037F0DB /* ScrollerPairMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerPairMac.h; sourceTree = "<group>"; };
 		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
 		E404907221DE65F70037F0DB /* ScrollerPairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerPairMac.mm; sourceTree = "<group>"; };
@@ -5923,6 +5941,9 @@
 			isa = PBXGroup;
 			children = (
 				2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */,
+				E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */,
+				E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */,
+				E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */,
 				2D28F3E21885CCC1004B9EAE /* WebEditorClientIOS.mm */,
 				2D28F3E31885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm */,
 				A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */,
@@ -6310,6 +6331,9 @@
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
 				E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */,
 				E5BEF6812130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.mm */,
+				E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */,
+				E3866AED2398471A00F88FE9 /* WebDeviceOrientationUpdateProviderProxy.messages.in */,
+				E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
 				2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */,
 				0FCB4E3818BBE044000FCFC9 /* WKActionSheet.h */,
@@ -9148,6 +9172,10 @@
 				330934441315B9220097A7BC /* WebCookieManagerMessages.h */,
 				330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */,
 				330934461315B9220097A7BC /* WebCookieManagerProxyMessages.h */,
+				E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */,
+				E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */,
+				E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */,
+				E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */,
 				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
 				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
 				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
@@ -10135,6 +10163,10 @@
 				E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */,
 				E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */,
 				46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */,
+				E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */,
+				E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */,
+				E3866AE72397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h in Headers */,
+				E3866B082399A2D100F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
 				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
@@ -11828,6 +11860,10 @@
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
 				330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */,
 				2D92A788212B6AB100F493FD /* WebCoreArgumentCoders.cpp in Sources */,
+				E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */,
+				E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */,
+				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
+				E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */,
 				2D92A789212B6AB100F493FD /* WebEvent.cpp in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,

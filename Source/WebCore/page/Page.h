@@ -69,6 +69,10 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+#include "DeviceOrientationUpdateProvider.h"
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -723,6 +727,10 @@ public:
 
     WEBCORE_EXPORT Vector<Ref<Element>> editableElementsInRect(const FloatRect&) const;
 
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
+#endif
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -994,6 +1002,10 @@ private:
 #endif
 
     Optional<ViewportArguments> m_overrideViewportArguments;
+
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+#endif
 
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };

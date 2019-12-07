@@ -88,6 +88,7 @@ $(PROJECT_DIR)/UIProcess/WebProcessPool.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/ios/EditableImageController.messages.in
 $(PROJECT_DIR)/UIProcess/ios/SmartMagnificationController.messages.in
+$(PROJECT_DIR)/UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.messages.in
 $(PROJECT_DIR)/UIProcess/mac/SecItemShimProxy.messages.in
 $(PROJECT_DIR)/WebProcess/ApplePay/WebPaymentCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.js
@@ -113,6 +114,7 @@ $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in

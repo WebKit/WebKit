@@ -1,3 +1,25 @@
+2019-12-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Calls to device orientation API should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204720
+
+        Reviewed by Alex Christensen.
+
+        Add a new class, WebDeviceOrientationUpdateProviderProxy, to handle messages to start and stop updating device orientation
+        in the UI process. Also, add a message to update the device orientation in the WebContent process. In the UI process, the
+        device orientation API is called through the already existing WebCoreMotionManager class.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_webDeviceOrientationUpdateProviderProxy):
+        (WebKit::m_resetRecentCrashCountTimer): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+
 2019-12-06  Chris Dumez  <cdumez@apple.com>
 
         Reduce timeout for page to handle beforeunload events when trying to close a page

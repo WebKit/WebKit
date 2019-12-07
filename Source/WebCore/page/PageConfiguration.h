@@ -118,6 +118,10 @@ public:
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentProvider> userContentProvider;
     RefPtr<VisitedLinkStore> visitedLinkStore;
+    
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;
+#endif
 };
 
 }

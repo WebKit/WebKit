@@ -189,6 +189,8 @@ MESSAGE_RECEIVERS = \
     WebSWContextManagerConnection \
     WebSWServerConnection \
     WebSWServerToContextConnection \
+    WebDeviceOrientationUpdateProvider \
+    WebDeviceOrientationUpdateProviderProxy \
     WebSocketChannel \
     WebSocketStream \
     WebUserContentController \
