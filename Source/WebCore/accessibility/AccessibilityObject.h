@@ -66,41 +66,30 @@ class IntPoint;
 class IntSize;
 class ScrollableArea;
 
-enum class AccessibilityTextSource {
-    Alternative,
-    Children,
-    Summary,
-    Help,
-    Visible,
-    TitleTag,
-    Placeholder,
-    LabelByElement,
-    Title,
-    Subtitle,
-    Action,
-};
-    
 struct AccessibilityText {
     String text;
     AccessibilityTextSource textSource;
-    Vector<RefPtr<AccessibilityObject>> textElements;
+    Vector<RefPtr<AXCoreObject>> textElements;
     
     AccessibilityText(const String& t, const AccessibilityTextSource& s)
         : text(t)
         , textSource(s)
     { }
 
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<RefPtr<AccessibilityObject>> elements)
-        : text(t)
-        , textSource(s)
-        , textElements(WTFMove(elements))
-    { }
-
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, RefPtr<AccessibilityObject>&& element)
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<AXCoreObject*> elements)
         : text(t)
         , textSource(s)
     {
-        textElements.append(WTFMove(element));
+        textElements.reserveCapacity(elements.size());
+        for (auto element : elements)
+            textElements.uncheckedAppend(element);
+    }
+
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, AXCoreObject* element)
+        : text(t)
+        , textSource(s)
+    {
+        textElements.append(element);
     }
 };
 
@@ -137,7 +126,6 @@ public:
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
     bool isImage() const override { return false; }
-    bool isImageMap() const override { return roleValue() == AccessibilityRole::ImageMap; }
     bool isNativeImage() const override { return false; }
     bool isImageButton() const override { return false; }
     bool isPasswordField() const override { return false; }
@@ -145,11 +133,7 @@ public:
     AccessibilityObject* passwordFieldOrContainingPasswordField() override { return nullptr; }
     bool isNativeTextControl() const override { return false; }
     bool isSearchField() const override { return false; }
-    bool isWebArea() const override { return roleValue() == AccessibilityRole::WebArea; }
-    bool isCheckbox() const override { return roleValue() == AccessibilityRole::CheckBox; }
-    bool isRadioButton() const override { return roleValue() == AccessibilityRole::RadioButton; }
     bool isNativeListBox() const override { return false; }
-    bool isListBox() const override { return roleValue() == AccessibilityRole::ListBox; }
     bool isListBoxOption() const override { return false; }
     bool isAttachment() const override { return false; }
     bool isMediaTimeline() const override { return false; }
@@ -179,42 +163,22 @@ public:
     bool isMenuList() const override { return false; }
     bool isMenuListPopup() const override { return false; }
     bool isMenuListOption() const override { return false; }
-    bool isSpinButton() const override { return roleValue() == AccessibilityRole::SpinButton; }
     bool isNativeSpinButton() const override { return false; }
     bool isSpinButtonPart() const override { return false; }
     bool isMockObject() const override { return false; }
-    bool isMediaControlLabel() const override { return false; }
+    virtual bool isMediaControlLabel() const { return false; }
     bool isMediaObject() const override { return false; }
-    bool isSwitch() const override { return roleValue() == AccessibilityRole::Switch; }
-    bool isToggleButton() const override { return roleValue() == AccessibilityRole::ToggleButton; }
     bool isTextControl() const override;
     bool isARIATextControl() const override;
     bool isNonNativeTextControl() const override;
-    bool isTabList() const override { return roleValue() == AccessibilityRole::TabList; }
-    bool isTabItem() const override { return roleValue() == AccessibilityRole::Tab; }
-    bool isRadioGroup() const override { return roleValue() == AccessibilityRole::RadioGroup; }
-    bool isComboBox() const override { return roleValue() == AccessibilityRole::ComboBox; }
-    bool isTree() const override { return roleValue() == AccessibilityRole::Tree; }
-    bool isTreeGrid() const override { return roleValue() == AccessibilityRole::TreeGrid; }
-    bool isTreeItem() const override { return roleValue() == AccessibilityRole::TreeItem; }
-    bool isScrollbar() const override { return roleValue() == AccessibilityRole::ScrollBar; }
     bool isButton() const override;
-    bool isListItem() const override { return roleValue() == AccessibilityRole::ListItem; }
-    bool isCheckboxOrRadio() const override { return isCheckbox() || isRadioButton(); }
-    bool isScrollView() const override { return roleValue() == AccessibilityRole::ScrollArea; }
-    bool isCanvas() const override { return roleValue() == AccessibilityRole::Canvas; }
-    bool isPopUpButton() const override { return roleValue() == AccessibilityRole::PopUpButton; }
     bool isBlockquote() const override;
     bool isLandmark() const override;
-    bool isColorWell() const override { return roleValue() == AccessibilityRole::ColorWell; }
     bool isRangeControl() const override;
     bool isMeter() const override;
-    bool isSplitter() const override { return roleValue() == AccessibilityRole::Splitter; }
-    bool isToolbar() const override { return roleValue() == AccessibilityRole::Toolbar; }
     bool isStyleFormatGroup() const override;
     bool isFigureElement() const override;
     bool isKeyboardFocusable() const override;
-    bool isSummary() const override { return roleValue() == AccessibilityRole::Summary; }
     bool isOutput() const override;
 
     bool isChecked() const override { return false; }
@@ -255,7 +219,7 @@ public:
     bool hasHighlighting() const override;
 
     bool supportsDatetimeAttribute() const override;
-    const AtomString& datetimeAttributeValue() const override;
+    String datetimeAttributeValue() const override;
 
     bool canSetFocusAttribute() const override { return false; }
     bool canSetTextRangeAttributes() const override { return false; }
@@ -323,8 +287,8 @@ public:
     AccessibilitySortDirection sortDirection() const override;
     bool canvasHasFallbackContent() const override { return false; }
     bool supportsRangeValue() const override;
-    const AtomString& identifierAttribute() const override;
-    const AtomString& linkRelValue() const override;
+    String identifierAttribute() const override;
+    String linkRelValue() const override;
     void classList(Vector<String>&) const override;
     AccessibilityCurrentState currentState() const override;
     String currentValue() const override;
@@ -454,8 +418,8 @@ public:
     URL url() const override { return URL(); }
     VisibleSelection selection() const override { return VisibleSelection(); }
     String selectedText() const override { return String(); }
-    const AtomString& accessKey() const override { return nullAtom(); }
-    const String& actionVerb() const override;
+    String accessKey() const override { return nullAtom(); }
+    String actionVerb() const override;
     Widget* widget() const override { return nullptr; }
     Widget* widgetForAttachmentView() const override { return nullptr; }
     Page* page() const override;
@@ -468,6 +432,7 @@ public:
     String language() const override;
     // 1-based, to match the aria-level spec.
     unsigned hierarchicalLevel() const override { return 0; }
+    bool isInlineText() const override;
 
     void setFocused(bool) override { }
     void setSelectedText(const String&) override { }
@@ -528,6 +493,7 @@ public:
     bool hasAttribute(const QualifiedName&) const override;
     const AtomString& getAttribute(const QualifiedName&) const override;
     bool hasTagName(const QualifiedName&) const override;
+    String tagName() const override;
 
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
@@ -629,6 +595,7 @@ public:
     bool supportsAutoComplete() const override;
     String autoCompleteValue() const override;
 
+    bool hasARIAValueNow() const override { return hasAttribute(HTMLNames::aria_valuenowAttr); }
     bool supportsARIAAttributes() const override;
 
     // CSS3 Speech properties.
@@ -750,6 +717,7 @@ public:
     String descriptionAttributeValue() const override;
     String helpTextAttributeValue() const override;
     String titleAttributeValue() const override;
+    bool hasApplePDFAnnotationAttribute() const override { return hasAttribute(HTMLNames::x_apple_pdf_annotationAttr); }
 #endif
 
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
@@ -765,6 +733,10 @@ public:
 
     void clearIsIgnoredFromParentData() override { m_isIgnoredFromParentData = AccessibilityIsIgnoredFromParentData(); }
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;
+
+    uint64_t sessionID() const override;
+    String documentURI() const override;
+    String documentEncoding() const override;
 
 protected:
     AXID m_id { 0 };
@@ -823,7 +795,7 @@ protected:
 
 #if !ENABLE(ACCESSIBILITY)
 inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
-inline const String& AccessibilityObject::actionVerb() const { return emptyString(); }
+inline String AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
 inline void AccessibilityObject::updateBackingStore() { }
 #endif

@@ -1513,11 +1513,11 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
         Vector<Element*> elements;
         ariaLabeledByElements(elements);
 
-        Vector<RefPtr<AccessibilityObject>> axElements;
+        Vector<AXCoreObject*> axElements;
         for (const auto& element : elements)
             axElements.append(objectCache->getOrCreate(element));
         
-        textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative, WTFMove(axElements)));
+        textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative, axElements));
     }
 }
     

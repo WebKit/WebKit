@@ -115,7 +115,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
     return nodeForID(m_rootNodeID);
 }
 
-void AXIsolatedTree::setRoot(Ref<AXIsolatedObject>& root)
+void AXIsolatedTree::setRootNode(Ref<AXIsolatedObject>& root)
 {
     LockHolder locker { m_changeLogLock };
     m_rootNodeID = root->objectID();

@@ -1,3 +1,303 @@
+2019-12-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of additional attribute caching in the IsolatedTree.
+        https://bugs.webkit.org/show_bug.cgi?id=204918
+
+        Reviewed by Chris Fleizach.
+
+        No new tests, no new functionality. Updated several tests to fixed
+        expected output.
+
+        - Implementation of around 200 methods in the AXIsolatedObject class.
+        - The pending method implementations have an ASSERT_NOT_REACHED.
+        - Support for dispatching to the main thread some
+        WebAccessibilityObjectWrapper methods that cannot be run in the
+        secondary thread.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::createIsolatedTreeHierarchy):
+        (WebCore::AXObjectCache::generateIsolatedTree):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::actionVerb const):
+        (WebCore::AccessibilityObject::datetimeAttributeValue const):
+        (WebCore::AccessibilityObject::linkRelValue const):
+        (WebCore::AccessibilityObject::isInlineText const):
+        (WebCore::AccessibilityObject::identifierAttribute const):
+        (WebCore::AccessibilityObject::documentURI const):
+        (WebCore::AccessibilityObject::documentEncoding const):
+        (WebCore::AccessibilityObject::sessionID const):
+        (WebCore::AccessibilityObject::tagName const):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityText::AccessibilityText):
+        (WebCore::AccessibilityObject::actionVerb const):
+        * accessibility/AccessibilityObjectInterface.h: Base implementation for
+        several isXXX methods that rely on the object roleValue.
+        (WebCore::AXCoreObject::isImageMap const):
+        (WebCore::AXCoreObject::isWebArea const):
+        (WebCore::AXCoreObject::isCheckbox const):
+        (WebCore::AXCoreObject::isRadioButton const):
+        (WebCore::AXCoreObject::isListBox const):
+        (WebCore::AXCoreObject::isSpinButton const):
+        (WebCore::AXCoreObject::isSwitch const):
+        (WebCore::AXCoreObject::isToggleButton const):
+        (WebCore::AXCoreObject::isTabList const):
+        (WebCore::AXCoreObject::isTabItem const):
+        (WebCore::AXCoreObject::isRadioGroup const):
+        (WebCore::AXCoreObject::isComboBox const):
+        (WebCore::AXCoreObject::isTree const):
+        (WebCore::AXCoreObject::isTreeGrid const):
+        (WebCore::AXCoreObject::isTreeItem const):
+        (WebCore::AXCoreObject::isScrollbar const):
+        (WebCore::AXCoreObject::isListItem const):
+        (WebCore::AXCoreObject::isCheckboxOrRadio const):
+        (WebCore::AXCoreObject::isScrollView const):
+        (WebCore::AXCoreObject::isCanvas const):
+        (WebCore::AXCoreObject::isPopUpButton const):
+        (WebCore::AXCoreObject::isColorWell const):
+        (WebCore::AXCoreObject::isSplitter const):
+        (WebCore::AXCoreObject::isToolbar const):
+        (WebCore::AXCoreObject::isSummary const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessKey const):
+        (WebCore::AccessibilityRenderObject::actionVerb const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::setRootNode):
+        (WebCore::AXIsolatedTree::setRoot): Renamed setRootNode.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp: Implementation of
+        around 200 methods in the AXIsolatedObject class. The methods that are
+        pending, have a stub implemetation with an ASSERT_NOT_REACHED.
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::create):
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::setMathscripts):
+        (WebCore::AXIsolatedObject::setObjectVectorProperty):
+        (WebCore::AXIsolatedObject::isDetached const):
+        (WebCore::AXIsolatedObject::isDetachedFromParent):
+        (WebCore::AXIsolatedObject::accessibilityText const):
+        (WebCore::AXIsolatedObject::classList const):
+        (WebCore::AXIsolatedObject::sessionID const):
+        (WebCore::AXIsolatedObject::documentURI const):
+        (WebCore::AXIsolatedObject::preventKeyboardDOMEventDispatch const):
+        (WebCore::AXIsolatedObject::documentEncoding const):
+        (WebCore::AXIsolatedObject::insertMathPairs):
+        (WebCore::AXIsolatedObject::mathPrescripts):
+        (WebCore::AXIsolatedObject::mathPostscripts):
+        (WebCore::AXIsolatedObject::scrollBar):
+        (WebCore::AXIsolatedObject::colorValue const):
+        (WebCore::AXIsolatedObject::intPointAttributeValue const):
+        (WebCore::AXIsolatedObject::vectorAttributeValue const):
+        (WebCore::AXIsolatedObject::optionSetAttributeValue const):
+        (WebCore::AXIsolatedObject::uint64AttributeValue const):
+        (WebCore::AXIsolatedObject::urlAttributeValue const):
+        (WebCore::AXIsolatedObject::colorAttributeValue const):
+        (WebCore::AXIsolatedObject::floatAttributeValue const):
+        (WebCore::AXIsolatedObject::fillChildrenVectorForProperty const):
+        (WebCore::AXIsolatedObject::replaceTextInRange):
+        (WebCore::AXIsolatedObject::insertText):
+        (WebCore::AXIsolatedObject::press):
+        (WebCore::AXIsolatedObject::performDefaultAction):
+        (WebCore::AXIsolatedObject::isAccessibilityObject const):
+        (WebCore::AXIsolatedObject::isAccessibilityNodeObject const):
+        (WebCore::AXIsolatedObject::isAccessibilityRenderObject const):
+        (WebCore::AXIsolatedObject::isAccessibilityScrollbar const):
+        (WebCore::AXIsolatedObject::isAccessibilityScrollView const):
+        (WebCore::AXIsolatedObject::isAccessibilitySVGRoot const):
+        (WebCore::AXIsolatedObject::isAccessibilitySVGElement const):
+        (WebCore::AXIsolatedObject::containsText const):
+        (WebCore::AXIsolatedObject::isAttachmentElement const):
+        (WebCore::AXIsolatedObject::isNativeImage const):
+        (WebCore::AXIsolatedObject::isImageButton const):
+        (WebCore::AXIsolatedObject::isContainedByPasswordField const):
+        (WebCore::AXIsolatedObject::passwordFieldOrContainingPasswordField):
+        (WebCore::AXIsolatedObject::isNativeTextControl const):
+        (WebCore::AXIsolatedObject::isNativeListBox const):
+        (WebCore::AXIsolatedObject::isListBoxOption const):
+        (WebCore::AXIsolatedObject::isSliderThumb const):
+        (WebCore::AXIsolatedObject::isInputSlider const):
+        (WebCore::AXIsolatedObject::isLabel const):
+        (WebCore::AXIsolatedObject::isDataTable const):
+        (WebCore::AXIsolatedObject::isImageMapLink const):
+        (WebCore::AXIsolatedObject::isNativeSpinButton const):
+        (WebCore::AXIsolatedObject::isSpinButtonPart const):
+        (WebCore::AXIsolatedObject::isMockObject const):
+        (WebCore::AXIsolatedObject::isMediaObject const):
+        (WebCore::AXIsolatedObject::isARIATextControl const):
+        (WebCore::AXIsolatedObject::isNonNativeTextControl const):
+        (WebCore::AXIsolatedObject::isBlockquote const):
+        (WebCore::AXIsolatedObject::isLandmark const):
+        (WebCore::AXIsolatedObject::isFigureElement const):
+        (WebCore::AXIsolatedObject::isKeyboardFocusable const):
+        (WebCore::AXIsolatedObject::isHovered const):
+        (WebCore::AXIsolatedObject::isIndeterminate const):
+        (WebCore::AXIsolatedObject::isLoaded const):
+        (WebCore::AXIsolatedObject::isOnScreen const):
+        (WebCore::AXIsolatedObject::isOffScreen const):
+        (WebCore::AXIsolatedObject::isPressed const):
+        (WebCore::AXIsolatedObject::isUnvisited const):
+        (WebCore::AXIsolatedObject::isLinked const):
+        (WebCore::AXIsolatedObject::isVisible const):
+        (WebCore::AXIsolatedObject::isCollapsed const):
+        (WebCore::AXIsolatedObject::isSelectedOptionActive const):
+        (WebCore::AXIsolatedObject::hasBoldFont const):
+        (WebCore::AXIsolatedObject::hasItalicFont const):
+        (WebCore::AXIsolatedObject::hasMisspelling const):
+        (WebCore::AXIsolatedObject::hasPlainText const):
+        (WebCore::AXIsolatedObject::hasSameFont const):
+        (WebCore::AXIsolatedObject::hasSameFontColor const):
+        (WebCore::AXIsolatedObject::hasSameStyle const):
+        (WebCore::AXIsolatedObject::isStaticText const):
+        (WebCore::AXIsolatedObject::hasUnderline const):
+        (WebCore::AXIsolatedObject::hasHighlighting const):
+        (WebCore::AXIsolatedObject::element const):
+        (WebCore::AXIsolatedObject::node const):
+        (WebCore::AXIsolatedObject::renderer const):
+        (WebCore::AXIsolatedObject::defaultObjectInclusion const):
+        (WebCore::AXIsolatedObject::accessibilityIsIgnoredByDefault const):
+        (WebCore::AXIsolatedObject::stepValueForRange const):
+        (WebCore::AXIsolatedObject::selectedListItem):
+        (WebCore::AXIsolatedObject::ariaActiveDescendantReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaControlsReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaDescribedByElements const):
+        (WebCore::AXIsolatedObject::ariaDescribedByReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaDetailsReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaErrorMessageReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaFlowToReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaLabelledByElements const):
+        (WebCore::AXIsolatedObject::ariaLabelledByReferencingElements const):
+        (WebCore::AXIsolatedObject::ariaOwnsReferencingElements const):
+        (WebCore::AXIsolatedObject::hasDatalist const):
+        (WebCore::AXIsolatedObject::supportsHasPopup const):
+        (WebCore::AXIsolatedObject::supportsPressed const):
+        (WebCore::AXIsolatedObject::supportsChecked const):
+        (WebCore::AXIsolatedObject::ignoredFromModalPresence const):
+        (WebCore::AXIsolatedObject::isModalDescendant const):
+        (WebCore::AXIsolatedObject::isModalNode const):
+        (WebCore::AXIsolatedObject::elementAccessibilityHitTest const):
+        (WebCore::AXIsolatedObject::firstChild const):
+        (WebCore::AXIsolatedObject::lastChild const):
+        (WebCore::AXIsolatedObject::previousSibling const):
+        (WebCore::AXIsolatedObject::nextSibling const):
+        (WebCore::AXIsolatedObject::nextSiblingUnignored const):
+        (WebCore::AXIsolatedObject::previousSiblingUnignored const):
+        (WebCore::AXIsolatedObject::parentObjectIfExists const):
+        (WebCore::AXIsolatedObject::isDescendantOfBarrenParent const):
+        (WebCore::AXIsolatedObject::isDescendantOfRole const):
+        (WebCore::AXIsolatedObject::observableObject const):
+        (WebCore::AXIsolatedObject::correspondingLabelForControlElement const):
+        (WebCore::AXIsolatedObject::correspondingControlForLabelElement const):
+        (WebCore::AXIsolatedObject::isPresentationalChildOfAriaRole const):
+        (WebCore::AXIsolatedObject::ariaRoleHasPresentationalChildren const):
+        (WebCore::AXIsolatedObject::inheritsPresentationalRole const):
+        (WebCore::AXIsolatedObject::setAccessibleName):
+        (WebCore::AXIsolatedObject::hasAttributesRequiredForInclusion const):
+        (WebCore::AXIsolatedObject::accessibilityDescription const):
+        (WebCore::AXIsolatedObject::title const):
+        (WebCore::AXIsolatedObject::helpText const):
+        (WebCore::AXIsolatedObject::isARIAStaticText const):
+        (WebCore::AXIsolatedObject::stringValue const):
+        (WebCore::AXIsolatedObject::text const):
+        (WebCore::AXIsolatedObject::ariaLabeledByAttribute const):
+        (WebCore::AXIsolatedObject::ariaDescribedByAttribute const):
+        (WebCore::AXIsolatedObject::accessibleNameDerivesFromContent const):
+        (WebCore::AXIsolatedObject::elementsFromAttribute const):
+        (WebCore::AXIsolatedObject::axObjectCache const):
+        (WebCore::AXIsolatedObject::anchorElement const):
+        (WebCore::AXIsolatedObject::actionElement const):
+        (WebCore::AXIsolatedObject::elementPath const):
+        (WebCore::AXIsolatedObject::supportsPath const):
+        (WebCore::AXIsolatedObject::textIteratorBehaviorForTextRange const):
+        (WebCore::AXIsolatedObject::widget const):
+        (WebCore::AXIsolatedObject::widgetForAttachmentView const):
+        (WebCore::AXIsolatedObject::page const):
+        (WebCore::AXIsolatedObject::document const):
+        (WebCore::AXIsolatedObject::documentFrameView const):
+        (WebCore::AXIsolatedObject::frame const):
+        (WebCore::AXIsolatedObject::mainFrame const):
+        (WebCore::AXIsolatedObject::topDocument const):
+        (WebCore::AXIsolatedObject::scrollViewAncestor const):
+        (WebCore::AXIsolatedObject::childrenChanged):
+        (WebCore::AXIsolatedObject::textChanged):
+        (WebCore::AXIsolatedObject::updateAccessibilityRole):
+        (WebCore::AXIsolatedObject::addChildren):
+        (WebCore::AXIsolatedObject::addChild):
+        (WebCore::AXIsolatedObject::insertChild):
+        (WebCore::AXIsolatedObject::shouldIgnoreAttributeRole const):
+        (WebCore::AXIsolatedObject::canHaveChildren const):
+        (WebCore::AXIsolatedObject::hasChildren const):
+        (WebCore::AXIsolatedObject::setNeedsToUpdateChildren):
+        (WebCore::AXIsolatedObject::setNeedsToUpdateSubtree):
+        (WebCore::AXIsolatedObject::clearChildren):
+        (WebCore::AXIsolatedObject::needsToUpdateChildren const):
+        (WebCore::AXIsolatedObject::detachFromParent):
+        (WebCore::AXIsolatedObject::shouldFocusActiveDescendant const):
+        (WebCore::AXIsolatedObject::activeDescendant const):
+        (WebCore::AXIsolatedObject::handleActiveDescendantChanged):
+        (WebCore::AXIsolatedObject::handleAriaExpandedChanged):
+        (WebCore::AXIsolatedObject::isDescendantOfObject const):
+        (WebCore::AXIsolatedObject::isAncestorOfObject const):
+        (WebCore::AXIsolatedObject::firstAnonymousBlockChild const):
+        (WebCore::AXIsolatedObject::hasAttribute const):
+        (WebCore::AXIsolatedObject::getAttribute const):
+        (WebCore::AXIsolatedObject::hasTagName const):
+        (WebCore::AXIsolatedObject::stringValueForMSAA const):
+        (WebCore::AXIsolatedObject::stringRoleForMSAA const):
+        (WebCore::AXIsolatedObject::nameForMSAA const):
+        (WebCore::AXIsolatedObject::descriptionForMSAA const):
+        (WebCore::AXIsolatedObject::roleValueForMSAA const):
+        (WebCore::AXIsolatedObject::passwordFieldValue const):
+        (WebCore::AXIsolatedObject::liveRegionAncestor const):
+        (WebCore::AXIsolatedObject::hasContentEditableAttributeSet const):
+        (WebCore::AXIsolatedObject::supportsReadOnly const):
+        (WebCore::AXIsolatedObject::supportsAutoComplete const):
+        (WebCore::AXIsolatedObject::supportsARIAAttributes const):
+        (WebCore::AXIsolatedObject::scrollByPage const):
+        (WebCore::AXIsolatedObject::scrollPosition const):
+        (WebCore::AXIsolatedObject::scrollContentsSize const):
+        (WebCore::AXIsolatedObject::scrollVisibleContentRect const):
+        (WebCore::AXIsolatedObject::scrollToMakeVisible const):
+        (WebCore::AXIsolatedObject::lastKnownIsIgnoredValue):
+        (WebCore::AXIsolatedObject::setLastKnownIsIgnoredValue):
+        (WebCore::AXIsolatedObject::notifyIfIgnoredValueChanged):
+        (WebCore::AXIsolatedObject::isMathScriptObject const):
+        (WebCore::AXIsolatedObject::isMathMultiscriptObject const):
+        (WebCore::AXIsolatedObject::isAXHidden const):
+        (WebCore::AXIsolatedObject::isDOMHidden const):
+        (WebCore::AXIsolatedObject::isHidden const):
+        (WebCore::AXIsolatedObject::overrideAttachmentParent):
+        (WebCore::AXIsolatedObject::accessibilityIgnoreAttachment const):
+        (WebCore::AXIsolatedObject::accessibilityPlatformIncludesObject const):
+        (WebCore::AXIsolatedObject::hasApplePDFAnnotationAttribute const):
+        (WebCore::AXIsolatedObject::ancestorAccessibilityScrollView const):
+        (WebCore::AXIsolatedObject::setIsIgnoredFromParentData):
+        (WebCore::AXIsolatedObject::clearIsIgnoredFromParentData):
+        (WebCore::AXIsolatedObject::setIsIgnoredFromParentDataForChild):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: Added
+        dispatching to the main thread some of the methods that cannot be run
+        in the secondary thread.
+        (performAccessibilityFunctionOnMainThread):
+        (retrieveAccessibilityValueFromMainThread):
+        (-[WebAccessibilityObjectWrapper attachmentView]):
+        (-[WebAccessibilityObjectWrapper screenToContents:]):
+        (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+        (-[WebAccessibilityObjectWrapper remoteAccessibilityParentObject]):
+        (-[WebAccessibilityObjectWrapper associatedPluginParent]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper scrollViewParent]):
+        (-[WebAccessibilityObjectWrapper windowElement:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        (-[WebAccessibilityObjectWrapper _accessibilityShowContextMenu]):
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]):
+        (-[WebAccessibilityObjectWrapper _textMarkerForIndex:]):
+
 2019-12-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Initialize InlineLayoutUnit variables to 0

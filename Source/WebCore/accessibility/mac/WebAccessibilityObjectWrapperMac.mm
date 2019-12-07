@@ -555,13 +555,38 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
     [super detach];
 }
 
+template<typename U> inline void performAccessibilityFunctionOnMainThread(U&& lambda)
+{
+    if (isMainThread())
+        return lambda();
+
+    callOnMainThread([&lambda] {
+        lambda();
+    });
+}
+
+template<typename T, typename U> inline T retrieveAccessibilityValueFromMainThread(U&& lambda)
+{
+    if (isMainThread())
+        return lambda();
+    
+    T value;
+    callOnMainThreadAndWait([&value, &lambda] {
+        value = lambda();
+    });
+    return value;
+}
+
 - (id)attachmentView
 {
     ASSERT(m_object->isAttachment());
-    Widget* widget = m_object->widgetForAttachmentView();
-    if (!widget)
-        return nil;
-    return NSAccessibilityUnignoredDescendant(widget->platformWidget());
+
+    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+        auto* widget = protectedSelf->m_object->widgetForAttachmentView();
+        if (!widget)
+            return nil;
+        return NSAccessibilityUnignoredDescendant(widget->platformWidget());
+    });
 }
 
 #pragma mark SystemInterface wrappers
@@ -603,7 +628,9 @@ static id AXTextMarkerRangeEnd(id range)
 
 - (IntRect)screenToContents:(const IntRect&)rect
 {
-    Document* document = m_object->document();
+    ASSERT(isMainThread());
+
+    Document* document = _axBackingObject->document();
     if (!document)
         return IntRect();
     
@@ -1893,28 +1920,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray*)renderWidgetChildren
 {
-    Widget* widget = m_object->widget();
-    if (!widget)
-        return nil;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [(widget->platformWidget()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return retrieveAccessibilityValueFromMainThread<NSArray *>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSArray * {
+        Widget* widget = protectedSelf->m_object->widget();
+        if (!widget)
+            return nil;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        return [(widget->platformWidget()) accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    });
 }
 
 - (id)remoteAccessibilityParentObject
 {
+    ASSERT(isMainThread());
     if (!m_object)
         return nil;
-    
-    Document* document = m_object->document();
-    if (!document)
-        return nil;
-    
-    Frame* frame = document->frame();
-    if (!frame)
-        return nil;
-    
-    return frame->loader().client().accessibilityRemoteObject();
+
+    if (auto* document = _axBackingObject->document()) {
+        if (auto* frame = document->frame())
+            return frame->loader().client().accessibilityRemoteObject();
+    }
+
+    return nil;
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
@@ -1946,17 +1973,19 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
 
 - (id)associatedPluginParent
 {
-    if (!m_object || !m_object->hasAttribute(x_apple_pdf_annotationAttr))
-        return nil;
+    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+        if (!protectedSelf->m_object || !protectedSelf->m_object->hasApplePDFAnnotationAttribute())
+            return nil;
     
-    if (!m_object->document()->isPluginDocument())
-        return nil;
+        if (!protectedSelf->m_object->document()->isPluginDocument())
+            return nil;
         
-    Widget* pluginWidget = static_cast<PluginDocument*>(m_object->document())->pluginWidget();
-    if (!pluginWidget || !pluginWidget->isPluginViewBase())
-        return nil;
-
-    return static_cast<PluginViewBase*>(pluginWidget)->accessibilityAssociatedPluginParentForElement(m_object->element());
+        Widget* pluginWidget = static_cast<PluginDocument*>(protectedSelf->m_object->document())->pluginWidget();
+        if (!pluginWidget || !pluginWidget->isPluginViewBase())
+            return nil;
+        
+        return static_cast<PluginViewBase*>(pluginWidget)->accessibilityAssociatedPluginParentForElement(protectedSelf->m_object->element());
+    });
 }
 
 static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *element)
@@ -2220,20 +2249,20 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return @"AXSubscriptStyleGroup";
 
     if (m_object->isStyleFormatGroup()) {
-        if (Node* node = m_object->node()) {
-            if (node->hasTagName(kbdTag))
-                return @"AXKeyboardInputStyleGroup";
-            if (node->hasTagName(codeTag))
-                return @"AXCodeStyleGroup";
-            if (node->hasTagName(preTag))
-                return @"AXPreformattedStyleGroup";
-            if (node->hasTagName(sampTag))
-                return @"AXSampleStyleGroup";
-            if (node->hasTagName(varTag))
-                return @"AXVariableStyleGroup";
-            if (node->hasTagName(citeTag))
-                return @"AXCiteStyleGroup";
-        }
+        auto tagName = m_object->tagName();
+        if (tagName == kbdTag)
+            return @"AXKeyboardInputStyleGroup";
+        if (tagName == codeTag)
+            return @"AXCodeStyleGroup";
+        if (tagName == preTag)
+            return @"AXPreformattedStyleGroup";
+        if (tagName == sampTag)
+            return @"AXSampleStyleGroup";
+        if (tagName == varTag)
+            return @"AXVariableStyleGroup";
+        if (tagName == citeTag)
+            return @"AXCiteStyleGroup";
+        ASSERT_NOT_REACHED();
     }
     
     // Ruby subroles
@@ -2297,22 +2326,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)scrollViewParent
 {
-    if (!is<AccessibilityScrollView>(m_object))
-        return nil;
-    
-    // If this scroll view provides it's parent object (because it's a sub-frame), then
-    // we should not find the remoteAccessibilityParent.
-    if (m_object->parentObject())
-        return nil;
-    
-    ScrollView* scroll = downcast<AccessibilityScrollView>(*m_object).scrollView();
-    if (!scroll)
-        return nil;
-    
-    if (scroll->platformWidget())
-        return NSAccessibilityUnignoredAncestor(scroll->platformWidget());
-    
-    return [self remoteAccessibilityParentObject];
+    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+        if (!is<AccessibilityScrollView>(protectedSelf->m_object))
+            return nil;
+
+        // If this scroll view provides it's parent object (because it's a sub-frame), then
+        // we should not find the remoteAccessibilityParent.
+        if (protectedSelf->m_object->parentObject())
+            return nil;
+
+        ScrollView* scroll = downcast<AccessibilityScrollView>(*protectedSelf->m_object).scrollView();
+        if (!scroll)
+            return nil;
+
+        if (scroll->platformWidget())
+            return NSAccessibilityUnignoredAncestor(scroll->platformWidget());
+
+        return [protectedSelf remoteAccessibilityParentObject];
+    });
 }
 
 - (NSString *)valueDescriptionForMeter
@@ -2336,6 +2367,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #endif
     return valueDescription;
+}
+
+- (id)windowElement:(NSString*)attributeName
+{
+    return retrieveAccessibilityValueFromMainThread<id>([attributeName, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+        id remoteParent = [protectedSelf remoteAccessibilityParentObject];
+        if (remoteParent) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            return [remoteParent accessibilityAttributeValue:attributeName];
+            ALLOW_DEPRECATED_DECLARATIONS_END
+        }
+
+        if (auto* fv = protectedSelf->m_object->documentFrameView())
+            return [fv->platformWidget() window];
+
+        return nil;
+    });
 }
 
 // FIXME: split up this function in a better way.
@@ -2453,12 +2501,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSNumber numberWithBool:m_object->preventKeyboardDOMEventDispatch()];
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
             return [NSNumber numberWithBool:m_object->caretBrowsingEnabled()];
-        if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute]) {
-            if (auto* document = m_object->topDocument()) {
-                if (auto* page = document->page())
-                    return [NSNumber numberWithUnsignedLongLong:page->sessionID().toUInt64()];
-            }
-        }
+        if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute])
+            return @(m_object->sessionID());
     }
     
     if (m_object->isTextControl()) {
@@ -2599,14 +2643,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     
     if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute]) {
         // Indeterminate progress indicator should return 0.
-        if (m_object->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !m_object->hasAttribute(aria_valuenowAttr))
+        if (m_object->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !m_object->hasARIAValueNow())
             return @0;
         return [NSNumber numberWithFloat:m_object->minValueForRange()];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityMaxValueAttribute]) {
         // Indeterminate progress indicator should return 0.
-        if (m_object->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !m_object->hasAttribute(aria_valuenowAttr))
+        if (m_object->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !m_object->hasARIAValueNow())
             return @0;
         return [NSNumber numberWithFloat:m_object->maxValueForRange()];
     }
@@ -2631,20 +2675,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self position];
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
-    
-    if ([attributeName isEqualToString: NSAccessibilityWindowAttribute] ||
-        [attributeName isEqualToString: NSAccessibilityTopLevelUIElementAttribute]) {
-        
-        id remoteParent = [self remoteAccessibilityParentObject];
-        if (remoteParent)
-            return [remoteParent accessibilityAttributeValue:attributeName];
-        
-        FrameView* fv = m_object->documentFrameView();
-        if (fv)
-            return [fv->platformWidget() window];
-        return nil;
-    }
-    
+
+    if ([attributeName isEqualToString:NSAccessibilityWindowAttribute]
+        || [attributeName isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+        return [self windowElement:attributeName];
+
     if ([attributeName isEqualToString:NSAccessibilityAccessKeyAttribute]) {
         AtomString accessKey = m_object->accessKey();
         if (accessKey.isNull())
@@ -2897,12 +2932,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return [self textMarkerRangeForSelection];
     
-    if (m_object->renderer()) {
-        if ([attributeName isEqualToString: @"AXStartTextMarker"])
-            return [self textMarkerForVisiblePosition:startOfDocument(&m_object->renderer()->document())];
-        if ([attributeName isEqualToString: @"AXEndTextMarker"])
-            return [self textMarkerForVisiblePosition:endOfDocument(&m_object->renderer()->document())];
-    }
+    if ([attributeName isEqualToString: @"AXStartTextMarker"])
+        return [self textMarkerForVisiblePosition:startOfDocument(_axBackingObject->document())];
+    if ([attributeName isEqualToString: @"AXEndTextMarker"])
+        return [self textMarkerForVisiblePosition:endOfDocument(_axBackingObject->document())];
     
     if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
         return [NSNumber numberWithUnsignedInt:m_object->blockquoteLevel()];
@@ -3040,7 +3073,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return m_object->datetimeAttributeValue();
     
     if ([attributeName isEqualToString:NSAccessibilityInlineTextAttribute])
-        return @(m_object->renderer() && is<RenderInline>(m_object->renderer()));
+        return @(_axBackingObject->isInlineText());
     
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
@@ -3109,7 +3142,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     
     // Used by DRT to find an accessible node by its element id.
     if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
-        return m_object->getAttribute(idAttr);
+        return m_object->identifierAttribute();
     
     if ([attributeName isEqualToString:@"AXAutocompleteValue"])
         return m_object->autoCompleteValue();
@@ -3152,17 +3185,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [NSNumber numberWithBool:m_object->isMultiSelectable()];
     
     // Document attributes
-    if ([attributeName isEqualToString:NSAccessibilityDocumentURIAttribute]) {
-        if (Document* document = m_object->document())
-            return document->documentURI();
-        return nil;
-    }
+    if ([attributeName isEqualToString:NSAccessibilityDocumentURIAttribute])
+        return m_object->documentURI();
     
-    if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute]) {
-        if (Document* document = m_object->document())
-            return document->encoding();
-        return nil;
-    }
+    if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute])
+        return m_object->documentEncoding();
     
     // Aria controls element
     if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute]) {
@@ -3382,9 +3409,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (m_object->isPasswordField())
         return @[ NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute ];
     
-    if (!m_object->isAccessibilityRenderObject())
-        return paramAttrs;
-    
     if (m_object->isTextControl())
         return textParamAttrs;
     
@@ -3473,21 +3497,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)accessibilityShowContextMenu
 {
-    if (!m_object)
+    performAccessibilityFunctionOnMainThread([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] {
+        [protectedSelf _accessibilityShowContextMenu];
+    });
+}
+
+- (void)_accessibilityShowContextMenu
+{
+    ASSERT(isMainThread());
+    
+    if (!_axBackingObject)
         return;
     
-    Page* page = m_object->page();
+    Page* page = _axBackingObject->page();
     if (!page)
         return;
     
-    IntRect rect = snappedIntRect(m_object->elementRect());
-    FrameView* frameView = m_object->documentFrameView();
+    IntRect rect = snappedIntRect(_axBackingObject->elementRect());
+    FrameView* frameView = _axBackingObject->documentFrameView();
     
     // On WK2, we need to account for the scroll position with regards to root view.
     // On WK1, we need to convert rect to window space to match mouse clicking.
     if (frameView) {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        for (auto* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+        for (auto* parent = _axBackingObject->parentObject(); parent; parent = parent->parentObject()) {
             if (is<AccessibilityScrollView>(*parent)) {
                 if (auto scrollView = downcast<AccessibilityScrollView>(*parent).scrollView()) {
                     if (!frameView->platformWidget())
@@ -3711,11 +3744,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSRange)_convertToNSRange:(Range*)range
 {
+    ASSERT(isMainThread());
+    
     NSRange result = NSMakeRange(NSNotFound, 0);
     if (!range)
         return result;
     
-    Document* document = m_object->document();
+    Document* document = _axBackingObject->document();
     if (!document)
         return result;
     
@@ -3744,7 +3779,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)_textMarkerForIndex:(NSInteger)textIndex
 {
-    Document* document = m_object->document();
+    ASSERT(isMainThread());
+
+    Document* document = _axBackingObject->document();
     if (!document)
         return nil;
     

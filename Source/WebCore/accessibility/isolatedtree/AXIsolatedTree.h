@@ -57,7 +57,7 @@ public:
     void appendNodeChanges(Vector<Ref<AXIsolatedObject>>&);
     void removeNode(AXID);
 
-    void setRoot(Ref<AXIsolatedObject>&);
+    void setRootNode(Ref<AXIsolatedObject>&);
     void setFocusedNodeID(AXID);
     
     // Call on AX thread

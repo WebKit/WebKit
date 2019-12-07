@@ -3064,9 +3064,9 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXObjectCache* axObjectCache, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
+Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXObjectCache* axObjectCache, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges, bool isRoot)
 {
-    auto isolatedTreeNode = AXIsolatedObject::create(object);
+    auto isolatedTreeNode = AXIsolatedObject::create(object, isRoot);
     nodeChanges.append(isolatedTreeNode.copyRef());
 
     isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
@@ -3074,7 +3074,7 @@ Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& o
     axObjectCache->attachWrapper(&isolatedTreeNode.get());
 
     for (const auto& child : object.children()) {
-        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), axObjectCache, tree, nodeChanges);
+        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), axObjectCache, tree, nodeChanges, false);
         isolatedTreeNode->appendChild(staticChild->objectID());
     }
 
@@ -3098,8 +3098,8 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     auto* axRoot = axObjectCache->getOrCreate(document.view());
     if (axRoot) {
         Vector<Ref<AXIsolatedObject>> nodeChanges;
-        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, axObjectCache, *tree, nodeChanges);
-        tree->setRoot(isolatedRoot);
+        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, axObjectCache, *tree, nodeChanges, true);
+        tree->setRootNode(isolatedRoot);
         tree->appendNodeChanges(nodeChanges);
     }
 

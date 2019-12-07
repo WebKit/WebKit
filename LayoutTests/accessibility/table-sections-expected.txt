@@ -261,8 +261,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -295,8 +295,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -329,8 +329,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -943,8 +943,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -1211,8 +1211,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -1245,8 +1245,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -1279,8 +1279,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXColumn>
+AXEndTextMarker: <AXColumn>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -1893,8 +1893,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0

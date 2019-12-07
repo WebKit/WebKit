@@ -46,7 +46,6 @@ private:
     AccessibilitySpinButton();
 
     AccessibilityRole roleValue() const override { return AccessibilityRole::SpinButton; }
-    bool isSpinButton() const override { return true; }
     bool isNativeSpinButton() const override { return true; }
     void addChildren() override;
     LayoutRect elementRect() const override;

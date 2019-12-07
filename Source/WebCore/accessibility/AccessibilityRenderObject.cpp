@@ -1570,7 +1570,7 @@ String AccessibilityRenderObject::selectedText() const
     return doAXStringForRange(documentBasedSelectedTextRange());
 }
 
-const AtomString& AccessibilityRenderObject::accessKey() const
+String AccessibilityRenderObject::accessKey() const
 {
     Node* node = m_renderer->node();
     if (!is<Element>(node))
@@ -3582,7 +3582,7 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
     }
 }
     
-const String& AccessibilityRenderObject::actionVerb() const
+String AccessibilityRenderObject::actionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.

@@ -44,8 +44,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXLink>
+AXEndTextMarker: <AXLink>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0
@@ -78,8 +78,8 @@ AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
+AXStartTextMarker: <AXLink>
+AXEndTextMarker: <AXLink>
 AXVisited: 0
 AXLinkedUIElements: <array of size 0>
 AXSelected: 0

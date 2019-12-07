@@ -198,7 +198,7 @@ private:
     static AXCoreObject* isolatedTreeFocusedObject(Document&);
     void setIsolatedTreeFocusedObject(Node*);
     static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
-    static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXObjectCache*, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
+    static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXObjectCache*, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&, bool isRoot);
 #endif
 
 public:

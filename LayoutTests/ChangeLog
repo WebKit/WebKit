@@ -1,3 +1,21 @@
+2019-12-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of additional attribute caching in the IsolatedTree.
+        https://bugs.webkit.org/show_bug.cgi?id=204918
+
+        Reviewed by Chris Fleizach.
+
+        The AXStart/EndTextMarker attributes were being computed for
+        AccessibilityObjects that had a renderer object. With this change,
+        AXStart/EndTextMarker are computed for all AccessibilityObjects. Thus
+        the expected output for the following tests changed from null value for
+        these attributes to valid object values.
+
+        * accessibility/image-map2-expected.txt:
+        * accessibility/mac/document-links-expected.txt:
+        * accessibility/table-attributes-expected.txt:
+        * accessibility/table-sections-expected.txt:
+
 2019-12-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: Missing node for given nodeId

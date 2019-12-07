@@ -134,8 +134,8 @@ public:
     String text() const override;
     int textLength() const override;
     String selectedText() const override;
-    const AtomString& accessKey() const override;
-    const String& actionVerb() const override;
+    String accessKey() const override;
+    String actionVerb() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     virtual void getDocumentLinks(AccessibilityChildrenVector&);

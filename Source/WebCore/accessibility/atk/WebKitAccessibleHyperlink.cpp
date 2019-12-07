@@ -98,7 +98,7 @@ static const gchar* webkitAccessibleHyperlinkActionGetKeybinding(AtkAction* acti
         return nullptr;
 
     auto& coreObject = webkitAccessibleGetAccessibilityObject(accessibleHyperlink->priv->hyperlinkImpl);
-    accessibleHyperlink->priv->actionKeyBinding = coreObject.accessKey().string().utf8();
+    accessibleHyperlink->priv->actionKeyBinding = coreObject.accessKey().utf8();
     return accessibleHyperlink->priv->actionKeyBinding.data();
 }
 

@@ -83,7 +83,7 @@ static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint)
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     // FIXME: Construct a proper keybinding string.
-    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionKeyBinding, core(action)->accessKey().string().utf8());
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionKeyBinding, core(action)->accessKey().utf8());
 }
 
 static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint)
