@@ -1,3 +1,16 @@
+2019-12-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r252652): Local Overrides: creating a local override for a resource loaded before Web Inspector was opened shows NaN for the Status Code
+        https://bugs.webkit.org/show_bug.cgi?id=204965
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.show):
+        Make sure to update the object that holds the resource's original data in addition to the
+        object that holds the current edited values.
+        Drive-by: update the popover once all of the `CodeMirror`s have updated to hide scrollbars.
+
 2019-11-25  Brian Burg  <bburg@apple.com>
 
         Web Inspector: TabActivity diagnostic event should sample the active tab uniformly

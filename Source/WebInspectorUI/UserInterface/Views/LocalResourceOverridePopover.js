@@ -131,12 +131,19 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         if (!data.url)
             data.url = this._defaultURL();
+
         if (!data.mimeType)
             data.mimeType = "text/javascript";
-        if (!data.statusCode || data.statusCode === "NaN")
+
+        if (!data.statusCode || data.statusCode === "NaN") {
             data.statusCode = "200";
-        if (!data.statusText)
+            resourceData.statusCode = undefined;
+        }
+
+        if (!data.statusText) {
             data.statusText = WI.HTTPUtilities.statusTextForStatusCode(parseInt(data.statusCode));
+            resourceData.statusText = undefined;
+        }
 
         let responseHeaders = localResource ? localResource.responseHeaders : {};
 
@@ -382,6 +389,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             this._urlCodeMirror.focus();
             this._urlCodeMirror.setCursor(this._urlCodeMirror.lineCount(), 0);
+
+            this.update();
         });
     }
 
