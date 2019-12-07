@@ -414,6 +414,7 @@ public:
     CompleteSubspace destructibleObjectSpace;
     
     IsoSubspace bigIntSpace;
+    IsoSubspace calleeSpace;
     IsoSubspace clonedArgumentsSpace;
     IsoSubspace dateInstanceSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
@@ -488,6 +489,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
 #endif
 #if ENABLE(WEBASSEMBLY)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)

@@ -84,6 +84,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSCallbackFunction.h"
+#include "JSCallee.h"
 #include "JSCustomGetterSetterFunction.h"
 #include "JSDestructibleObjectHeapCellType.h"
 #include "JSFixedArray.h"
@@ -102,6 +103,7 @@
 #include "JSSetIterator.h"
 #include "JSSourceCode.h"
 #include "JSTemplateObjectDescriptor.h"
+#include "JSToWasmICCallee.h"
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
@@ -317,6 +319,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbfff3d73
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
+    , calleeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCallee)
     , clonedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ClonedArguments)
     , dateInstanceSpace ISO_SUBSPACE_INIT(heap, dateInstanceHeapCellType.get(), DateInstance)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
@@ -1386,6 +1389,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlNumberFormatSpace, intlNumberFormatH
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlPluralRulesSpace, intlPluralRulesHeapCellType.get(), IntlPluralRules)
 #endif
 #if ENABLE(WEBASSEMBLY)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsToWasmICCalleeSpace, cellHeapCellType.get(), JSToWasmICCallee)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType.get(), WebAssemblyFunction) // Hash:0x8b7c32db
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType.get(), JSWebAssemblyGlobal)

@@ -581,6 +581,8 @@ public:
     void setGlobalScopeExtension(JSScope*);
     void clearGlobalScopeExtension();
 
+    JSCallee* globalCallee() { return m_globalCallee.get(); }
+
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
 

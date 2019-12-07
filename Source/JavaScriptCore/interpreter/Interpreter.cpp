@@ -666,6 +666,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = scope->globalObject(vm);
+    JSCallee* globalCallee = globalObject->globalCallee();
 
     ProgramExecutable* program = ProgramExecutable::create(globalObject, source);
     EXCEPTION_ASSERT(throwScope.exception() || program);
@@ -839,7 +840,7 @@ failedJSONP:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), thisObj, 1);
+    protoCallFrame.init(codeBlock, globalObject, globalCallee, thisObj, 1);
 
     // Execute the code:
     throwScope.release();
@@ -1151,8 +1152,13 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
+    JSCallee* callee = nullptr;
+    if (scope == globalObject->globalScope())
+        callee = globalObject->globalCallee();
+    else
+        callee = JSCallee::create(vm, globalObject, scope);
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), thisValue, 1);
+    protoCallFrame.init(codeBlock, globalObject, callee, thisValue, 1);
 
     // Execute the code:
     throwScope.release();

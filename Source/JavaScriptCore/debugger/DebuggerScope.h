@@ -54,8 +54,7 @@ public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) 
     {
         return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info()); 
-    }
-
+    } 
     class iterator {
     public:
         iterator(DebuggerScope* node)

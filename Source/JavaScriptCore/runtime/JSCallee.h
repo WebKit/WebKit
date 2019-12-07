@@ -44,8 +44,14 @@ class JSCallee : public JSNonFinalObject {
     friend class VM;
 
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.calleeSpace;
+    }
 
     static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
     {

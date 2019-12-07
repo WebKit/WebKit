@@ -1,3 +1,31 @@
+2019-12-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSCallee should be in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=204961
+
+        Reviewed by Mark Lam.
+
+        We should put JSCallee in IsoSubspace. Currently, we are also putting JSToWasmICCallee in IsoSusbapce
+        since it is a derived class of JSCallee, but I think we can remove this class completely. We are tracking
+        it in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=204960
+
+        * debugger/DebuggerScope.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::execute):
+        * runtime/JSCallee.h:
+        (JSC::JSCallee::subspaceFor):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::globalCallee):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSToWasmICCallee.h:
+        (JSC::JSToWasmICCallee::function): Deleted.
+        (JSC::JSToWasmICCallee::JSToWasmICCallee): Deleted.
+
 2019-12-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add compiler UNLIKELY hints when checking if developer extras are enabled

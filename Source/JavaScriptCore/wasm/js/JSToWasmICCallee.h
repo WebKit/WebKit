@@ -33,9 +33,18 @@ namespace JSC {
 
 class WebAssemblyFunction;
 
-class JSToWasmICCallee : public JSCallee {
-    using Base = JSCallee;
+// FIXME: Remove this type. Unwinding should just work by using WebAssemblyFunction instead of JSToWasmICCallee.
+// https://bugs.webkit.org/show_bug.cgi?id=204960
+class JSToWasmICCallee final : public JSCallee {
 public:
+    using Base = JSCallee;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.jsToWasmICCalleeSpace<mode>();
+    }
+
     DECLARE_INFO;
 
     static JSToWasmICCallee* create(VM&, JSGlobalObject*, WebAssemblyFunction*);
