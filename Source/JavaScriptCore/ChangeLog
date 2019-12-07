@@ -1,5 +1,21 @@
 2019-12-07  Mark Lam  <mark.lam@apple.com>
 
+        Remove invalid assertion in FTL's allocateJSArray().
+        https://bugs.webkit.org/show_bug.cgi?id=204987
+        <rdar://problem/57280725>
+
+        Reviewed by Saam Barati.
+
+        The assertion (in the compiler thread) does not take into account that the mutator
+        may be in the process of transiting to HavingABadTime.  As a result, the assertion
+        may fail intermittently.  This patch fixes this issue by removing this bad
+        assertion.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+
+2019-12-07  Mark Lam  <mark.lam@apple.com>
+
         Build fix for: The compiler thread should not adjust Identifier refCounts.
         https://bugs.webkit.org/show_bug.cgi?id=204919
         <rdar://problem/57426861>

@@ -14349,15 +14349,6 @@ private:
     ArrayValues allocateJSArray(LValue publicLength, LValue vectorLength, LValue structure, LValue indexingType, bool shouldInitializeElements = true, bool shouldLargeArraySizeCreateArrayStorage = true)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        if (indexingType->hasInt32()) {
-            IndexingType type = static_cast<IndexingType>(indexingType->asInt32());
-            ASSERT_UNUSED(type,
-                hasUndecided(type)
-                || hasInt32(type)
-                || hasDouble(type)
-                || hasContiguous(type));
-        }
-
         LBasicBlock fastCase = m_out.newBlock();
         LBasicBlock largeCase = m_out.newBlock();
         LBasicBlock failCase = m_out.newBlock();
