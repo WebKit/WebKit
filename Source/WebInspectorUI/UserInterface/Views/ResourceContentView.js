@@ -114,7 +114,18 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     get saveData()
     {
-        return {url: this._resource.url, content: this._resource.content};
+        let saveData = {
+            url: this._resource.url,
+            content: this._resource.content,
+        };
+
+        if (this._resource.urlComponents.path === "/") {
+            let extension = WI.fileExtensionForMIMEType(this._resource.mimeType);
+            if (extension)
+                saveData.suggestedName = `index.${extension}`;
+        }
+
+        return saveData;
     }
 
     contentAvailable(content, base64Encoded)

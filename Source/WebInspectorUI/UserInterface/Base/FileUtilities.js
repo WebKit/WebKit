@@ -63,17 +63,22 @@ WI.FileUtilities = class FileUtilities {
         if (!saveData.content)
             return;
 
-        let url = saveData.url || "";
-        let suggestedName = parseURL(url).lastPathComponent;
+        let suggestedName = saveData.suggestedName;
         if (!suggestedName) {
-            suggestedName = WI.UIString("Untitled");
-            let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
-            if (dataURLTypeMatch) {
-                let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
-                if (fileExtension)
-                    suggestedName += "." + fileExtension;
+            let url = saveData.url || "";
+            suggestedName = parseURL(url).lastPathComponent;
+            if (!suggestedName) {
+                suggestedName = WI.UIString("Untitled");
+                let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
+                if (dataURLTypeMatch) {
+                    let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
+                    if (fileExtension)
+                        suggestedName += "." + fileExtension;
+                }
             }
         }
+
+        suggestedName = FileUtilities.inspectorURLForFilename(suggestedName);
 
         if (typeof saveData.content === "string") {
             const base64Encoded = saveData.base64Encoded || false;

@@ -192,8 +192,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let filename = this.representedObject.displayName;
 
         WI.FileUtilities.save({
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: JSON.stringify(this.representedObject.toJSON()),
+            suggestedName: filename + ".json",
             forceSaveAs: true,
         });
     }
@@ -208,8 +208,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let filename = this.representedObject.displayName;
 
         WI.FileUtilities.save({
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".html"),
             content: this.representedObject.toHTML(),
+            suggestedName: filename + ".html",
             forceSaveAs: true,
         });
     }

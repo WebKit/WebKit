@@ -235,8 +235,8 @@ WI.AuditManager = class AuditManager extends WI.Object
             filename = WI.UIString("%s Result").format(filename);
 
         WI.FileUtilities.save({
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: JSON.stringify(object),
+            suggestedName: filename + ".json",
             forceSaveAs: true,
         });
     }

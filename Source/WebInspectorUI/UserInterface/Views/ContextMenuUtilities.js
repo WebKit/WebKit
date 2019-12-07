@@ -148,11 +148,19 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendItem(WI.UIString("Save File"), () => {
         sourceCode.requestContent().then(() => {
+            let saveData = {
+                url: sourceCode.url,
+                content: sourceCode.content,
+            };
+
+            if (sourceCode.urlComponents.path === "/") {
+                let extension = WI.fileExtensionForMIMEType(sourceCode.mimeType);
+                if (extension)
+                    saveData.suggestedName = `index.${extension}`;
+            }
+
             const forceSaveAs = true;
-            WI.FileUtilities.save({
-                url: sourceCode.url || "",
-                content: sourceCode.content
-            }, forceSaveAs);
+            WI.FileUtilities.save(saveData, forceSaveAs);
         });
     });
 
@@ -328,9 +336,9 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                     }
 
                     WI.FileUtilities.save({
-                        url: WI.FileUtilities.inspectorURLForFilename(WI.FileUtilities.screenshotString() + ".png"),
                         content: parseDataURL(dataURL).data,
                         base64Encoded: true,
+                        suggestedName: WI.FileUtilities.screenshotString() + ".png",
                     });
                 });
             });

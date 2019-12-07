@@ -125,10 +125,9 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
             Number.zeroPad(date.getMinutes(), 2),
             Number.zeroPad(date.getSeconds(), 2),
         ];
-        let filename = WI.UIString("Heap Snapshot %s-%s-%s at %s.%s.%s").format(...values);
         WI.FileUtilities.save({
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: this.representedObject.snapshotStringData,
+            suggestedName: WI.UIString("Heap Snapshot %s-%s-%s at %s.%s.%s").format(...values) + ".json",
             forceSaveAs: true,
         });
     }

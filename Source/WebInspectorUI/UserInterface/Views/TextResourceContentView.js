@@ -161,11 +161,24 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
     get saveData()
     {
+        let saveData = {
+            content: this._textEditor.string,
+        };
+
         if (this.resource instanceof WI.CSSStyleSheet) {
-            let url = WI.FileUtilities.inspectorURLForFilename("InspectorStyleSheet.css");
-            return {url, content: this._textEditor.string, forceSaveAs: true};
+            saveData.suggestedName = "InspectorStyleSheet.css";
+            saveData.forceSaveAs = true;
+        } else {
+            saveData.url = this.resource.url;
+
+            if (this.resource.urlComponents.path === "/") {
+                let extension = WI.fileExtensionForMIMEType(this.resource.mimeType);
+                if (extension)
+                    saveData.suggestedName = `index.${extension}`;
+            }
         }
-        return {url: this.resource.url, content: this._textEditor.string};
+
+        return saveData;
     }
 
     get supportsSearch()

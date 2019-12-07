@@ -276,8 +276,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     get saveData()
     {
         return {
-            url: WI.FileUtilities.inspectorURLForFilename("Console.txt"),
             content: this._formatMessagesAsData(false),
+            suggestedName: WI.UIString("Console") + ".txt",
             forceSaveAs: true,
         };
     }
@@ -509,8 +509,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             contextMenu.appendItem(WI.UIString("Save Selected"), () => {
                 const forceSaveAs = true;
                 WI.FileUtilities.save({
-                    url: WI.FileUtilities.inspectorURLForFilename("Console.txt"),
                     content: this._formatMessagesAsData(true),
+                    suggestedName: WI.UIString("Console") + ".txt",
                 }, forceSaveAs);
             });
 

@@ -99,8 +99,11 @@ WI.TextContentView = class TextContentView extends WI.ContentView
 
     get saveData()
     {
-        let url = WI.FileUtilities.inspectorURLForFilename(WI.UIString("Untitled") + ".txt");
-        return {url, content: this._textEditor.string, forceSaveAs: true};
+        return {
+            content: this._textEditor.string,
+            suggestedName: WI.UIString("Untitled") + ".txt",
+            forceSaveAs: true,
+        };
     }
 
     get supportsSearch()

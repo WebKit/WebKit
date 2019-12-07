@@ -608,8 +608,8 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         let filename = frameName ? `${frameName}-recording` : this._recording.displayName;
 
         WI.FileUtilities.save({
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: JSON.stringify(json),
+            suggestedName: filename + ".json",
             forceSaveAs: true,
         });
     }

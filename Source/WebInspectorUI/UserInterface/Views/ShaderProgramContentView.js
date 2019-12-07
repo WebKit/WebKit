@@ -194,8 +194,8 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
         console.assert(extension);
 
         return {
-            url: WI.FileUtilities.inspectorURLForFilename(filename + extension),
             content: this._lastActiveEditor.string,
+            suggestedName: filename + extension,
             forceSaveAs: true,
         };
     }

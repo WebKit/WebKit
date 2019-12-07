@@ -50,10 +50,9 @@ WI.ProtocolTrace = class ProtocolTrace
         // This follows the file name of screen shots on OS X (en-US):
         // "Protocol Trace 2015-12-31 at 12.43.04.json".
         // When the Intl API is implemented, we can do a better job.
-        let filename = WI.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`);
         return {
-            url: WI.FileUtilities.inspectorURLForFilename(filename),
             content: JSON.stringify(this._entries),
+            suggestedName: WI.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`),
         };
     }
 };
