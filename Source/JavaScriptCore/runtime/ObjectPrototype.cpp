@@ -121,14 +121,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (!callFrame->argument(0).isObject())
+        return JSValue::encode(jsBoolean(false));
+
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
     JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-
-    if (!callFrame->argument(0).isObject())
-        return JSValue::encode(jsBoolean(false));
 
     JSValue v = asObject(callFrame->argument(0))->getPrototype(vm, globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

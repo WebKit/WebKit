@@ -1,3 +1,23 @@
+2019-12-07  Mark Lam  <mark.lam@apple.com>
+
+        Object.prototype.isPrototypeOf() should check if the passed in value is a non-object first.
+        https://bugs.webkit.org/show_bug.cgi?id=204971
+        <rdar://problem/57730080>
+
+        Reviewed by Saam Barati.
+
+        The spec says Object.prototype.isPrototypeOf() should do checks in the following
+        order:
+        1. If Type(V) is not Object, return false.
+        2. Let O be ? ToObject(this value).
+        ...
+        We were previously checking (2) before (1).  This patch fixes this order.
+
+        Ref: http://www.ecma-international.org/ecma-262/10.0/index.html#sec-object.prototype.isprototypeof
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncIsPrototypeOf):
+
 2019-12-07  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Roll out r253201. It was not a progression on any benchmarks, and was 8% slower on JetStream 2 ML.
