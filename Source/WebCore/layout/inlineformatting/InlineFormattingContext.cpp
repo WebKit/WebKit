@@ -371,7 +371,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, const InlineLayoutUnit lineLogicalTop)
+LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, InlineLayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
     auto availableWidth = usedHorizontalValues.constraints.width;

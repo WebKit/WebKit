@@ -61,7 +61,7 @@ public:
     LineBox(const InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
     LineBox() = default;
     
-    LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
+    InlineLayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
 
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
     InlineLayoutUnit logicalRight() const { return m_rect.right(); }
@@ -95,7 +95,7 @@ public:
     void resetBaseline();
     void resetDescent() { m_baseline.setDescent(0_lu); }
 
-    void setLogicalTopLeft(LayoutPoint logicalTopLeft) { m_rect.setTopLeft(logicalTopLeft); }
+    void setLogicalTopLeft(const InlineLayoutPoint& logicalTopLeft) { m_rect.setTopLeft(logicalTopLeft); }
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
 
     void setLogicalHeightIfGreater(InlineLayoutUnit);

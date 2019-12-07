@@ -89,7 +89,7 @@ private:
     void computeWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
     void collectInlineContentIfNeeded();
-    LineBuilder::Constraints constraintsForLine(const UsedHorizontalValues&, const InlineLayoutUnit lineLogicalTop);
+    LineBuilder::Constraints constraintsForLine(const UsedHorizontalValues&, InlineLayoutUnit lineLogicalTop);
     void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const UsedHorizontalValues&);
     void invalidateFormattingState(const InvalidationState&);
 

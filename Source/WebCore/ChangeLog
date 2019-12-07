@@ -1,3 +1,35 @@
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Display::LineBox should adopt to InlineLayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=204990
+        <rdar://problem/57730105>
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation for using float based types in IFC. See webkit.org/b/204986 for more info.
+
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::logicalTopLeft const):
+        (WebCore::Display::LineBox::setLogicalTopLeft):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::logicalTopLeft const):
+        (WebCore::Display::Run::logicalLeft const):
+        (WebCore::Display::Run::logicalRight const):
+        (WebCore::Display::Run::logicalTop const):
+        (WebCore::Display::Run::logicalBottom const):
+        (WebCore::Display::Run::logicalWidth const):
+        (WebCore::Display::Run::logicalHeight const):
+        (WebCore::Display::Run::setLogicalWidth):
+        (WebCore::Display::Run::setLogicalTop):
+        (WebCore::Display::Run::setLogicalLeft):
+        (WebCore::Display::Run::moveVertically):
+        (WebCore::Display::Run::moveHorizontally):
+        (WebCore::Display::Run::expandVertically):
+        (WebCore::Display::Run::expandHorizontally):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2019-12-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Implementation of additional attribute caching in the IsolatedTree.

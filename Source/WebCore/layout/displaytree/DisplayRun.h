@@ -53,7 +53,7 @@ struct Run {
 
         struct ExpansionContext {
             ExpansionBehavior behavior;
-            LayoutUnit horizontalExpansion;
+            InlineLayoutUnit horizontalExpansion { 0 };
         };
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
@@ -77,22 +77,22 @@ struct Run {
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 
-    LayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
-    LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
-    LayoutUnit logicalRight() const { return m_logicalRect.right(); }
-    LayoutUnit logicalTop() const { return m_logicalRect.top(); }
-    LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
+    InlineLayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
+    InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
+    InlineLayoutUnit logicalRight() const { return m_logicalRect.right(); }
+    InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
+    InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
 
-    LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
-    LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
+    InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
+    InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
 
-    void setLogicalWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
-    void setLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-    void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
-    void moveVertically(LayoutUnit delta) { m_logicalRect.moveVertically(delta); }
-    void moveHorizontally(LayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
-    void expandVertically(LayoutUnit delta) { m_logicalRect.expandVertically(delta); }
-    void expandHorizontally(LayoutUnit delta) { m_logicalRect.expandHorizontally(delta); }
+    void setLogicalWidth(InlineLayoutUnit width) { m_logicalRect.setWidth(width); }
+    void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
+    void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
+    void moveVertically(InlineLayoutUnit delta) { m_logicalRect.moveVertically(delta); }
+    void moveHorizontally(InlineLayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
+    void expandVertically(InlineLayoutUnit delta) { m_logicalRect.expandVertically(delta); }
+    void expandHorizontally(InlineLayoutUnit delta) { m_logicalRect.expandHorizontally(delta); }
 
     void setTextContext(const TextContext&& textContext) { m_textContext.emplace(textContext); }
     const Optional<TextContext>& textContext() const { return m_textContext; }
