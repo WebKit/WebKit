@@ -216,9 +216,19 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
                 return false;
         }
         // texttext -> continuous content.
+        // text-text -> commit boundary.
         // ' 'text -> commit boundary.
-        if (lastUncomittedContent->isText())
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
+        if (lastUncomittedContent->isText()) {
+            auto& previousInlineTextItem = downcast<InlineTextItem>(*lastUncomittedContent);
+            if (previousInlineTextItem.isWhitespace())
+                return true;
+            // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
+            // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
+            if (&inlineItem.layoutBox() == &lastUncomittedContent->layoutBox())
+                return true;
+            // FIXME: check if <span>text-</span><span>text</span> should be handled here as well.
+            return false;
+        }
         // <img>text -> the inline box is on a commit boundary.
         if (lastUncomittedContent->isBox())
             return true;

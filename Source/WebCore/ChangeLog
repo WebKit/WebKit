@@ -1,3 +1,17 @@
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix css1/formatting_model/floating_elements.html
+        https://bugs.webkit.org/show_bug.cgi?id=204983
+        <rdar://problem/57727197>
+
+        Reviewed by Antti Koivisto.
+
+        Adjacent non-whitespace inline items are guaranteed to be on commit boundary when they both belong
+        to the same layout box (<div>text-content</div> [text-][content] vs <div>textcontent</div> [textcontent]).
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::Content::isAtContentBoundary):
+
 2019-12-07  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Layout test assert and crash fixes
