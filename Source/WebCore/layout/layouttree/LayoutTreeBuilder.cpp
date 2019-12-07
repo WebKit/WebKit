@@ -194,9 +194,8 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
         if (is<RenderLineBreak>(renderer))
-            return makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-
-        if (is<RenderTable>(renderer)) {
+            childLayoutBox = makeUnique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
             childLayoutBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, RenderStyle::clone(renderer.style()));
             childLayoutBox->setIsAnonymous();

@@ -1,3 +1,33 @@
+2019-12-07  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Layout test assert and crash fixes
+        https://bugs.webkit.org/show_bug.cgi?id=204982
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::firstLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::textBoxesFor const):
+
+        Don't 0-initialize Optional.
+
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
+        Remember to add line break renderer to the renderer->layout box map.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::markLinesDirtyInBlockRange):
+
+        Invalidate layout path with LFC.
+
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+
+        Call LFC baseline functions.
+
 2019-12-07  Tim Horton  <timothy_horton@apple.com>
 
         Implement encoding for DrawImage and DrawRoundedRect display list items

@@ -3050,11 +3050,18 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
     if (logicalTop >= logicalBottom)
         return;
 
-    // Floats currently affect the choice whether to use simple line layout path.
+    // Floats currently affect the choice of layout path.
     if (simpleLineLayout()) {
         invalidateLineLayoutPath();
         return;
     }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout()) {
+        invalidateLineLayoutPath();
+        return;
+    }
+#endif
 
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
@@ -3080,8 +3087,13 @@ Optional<int> RenderBlockFlow::firstLineBaseline() const
     if (!hasLines())
         return WTF::nullopt;
 
-    if (auto simpleLineLayout = this->simpleLineLayout())
-        return Optional<int>(SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout));
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout())
+        return floorToInt(layoutFormattingContextLineLayout()->firstLineBaseline());
+#endif
+
+    if (simpleLineLayout())
+        return { SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout()) };
 
     ASSERT(firstRootBox());
     if (style().isFlippedLinesWritingMode())
@@ -3112,8 +3124,12 @@ Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirecti
                 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight()));
         }
 
-        if (auto simpleLineLayout = this->simpleLineLayout())
-            lastBaseline = SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout);
+        if (simpleLineLayout())
+            lastBaseline = SimpleLineLayout::computeFlowLastLineBaseline(*this, *simpleLineLayout());
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        else if (layoutFormattingContextLineLayout())
+            lastBaseline = floorToInt(layoutFormattingContextLineLayout()->lastLineBaseline());
+#endif
         else {
             bool isFirstLine = lastRootBox() == firstRootBox();
             const auto& style = isFirstLine ? firstLineStyle() : this->style();

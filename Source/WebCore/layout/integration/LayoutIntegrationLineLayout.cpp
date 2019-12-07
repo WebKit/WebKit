@@ -108,6 +108,30 @@ size_t LineLayout::lineCount() const
     return inlineContent ? inlineContent->lineBoxes.size() : 0;
 }
 
+LayoutUnit LineLayout::firstLineBaseline() const
+{
+    auto* inlineContent = displayInlineContent();
+    if (!inlineContent) {
+        ASSERT_NOT_REACHED();
+        return 0_lu;
+    }
+
+    auto& firstLineBox = inlineContent->lineBoxes.first();
+    return firstLineBox.logicalTop() + firstLineBox.baselineOffset();
+}
+
+LayoutUnit LineLayout::lastLineBaseline() const
+{
+    auto* inlineContent = displayInlineContent();
+    if (!inlineContent) {
+        ASSERT_NOT_REACHED();
+        return 0_lu;
+    }
+
+    auto& lastLineBox = inlineContent->lineBoxes.last();
+    return lastLineBox.logicalTop() + lastLineBox.baselineOffset();
+}
+
 const Display::InlineContent* LineLayout::displayInlineContent() const
 {
     return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
@@ -121,15 +145,16 @@ LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& 
     auto* layoutBox = m_treeContent->layoutBoxForRenderer(renderText);
     ASSERT(layoutBox);
 
-    Optional<size_t> firstIndex = 0;
+    Optional<size_t> firstIndex;
     size_t lastIndex = 0;
     for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
-        auto& run =  inlineContent->runs[i];
+        auto& run = inlineContent->runs[i];
         if (&run.layoutBox() == layoutBox) {
             if (!firstIndex)
                 firstIndex = i;
             lastIndex = i;
-        }
+        } else if (firstIndex)
+            break;
     }
     if (!firstIndex)
         return { };
