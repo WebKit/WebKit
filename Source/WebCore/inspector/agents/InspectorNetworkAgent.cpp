@@ -852,7 +852,8 @@ bool InspectorNetworkAgent::shouldIntercept(URL url)
         return false;
 
     for (auto& intercept : m_intercepts) {
-        auto regex = ContentSearchUtilities::createSearchRegex(intercept.url, intercept.caseSensitive, intercept.isRegex);
+        auto searchStringType = intercept.isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
+        auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(intercept.url, intercept.caseSensitive, searchStringType);
         if (regex.match(urlString) != -1)
             return true;
     }

@@ -45,7 +45,7 @@ namespace ContentSearchUtilities {
 
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
 
-static String createSearchRegexSource(const String& text)
+static String escapeStringForRegularExpressionSource(const String& text)
 {
     StringBuilder result;
 
@@ -129,9 +129,21 @@ static Ref<Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t
         .release();
 }
 
-RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
+RegularExpression createRegularExpressionForSearchString(const String& searchString, bool caseSensitive, SearchStringType type)
 {
-    return RegularExpression { isRegex ? query : createSearchRegexSource(query), caseSensitive ? TextCaseSensitive : TextCaseInsensitive };
+    String pattern;
+    switch (type) {
+    case SearchStringType::Regex:
+        pattern = searchString;
+        break;
+    case SearchStringType::ExactString:
+        pattern = makeString('^', escapeStringForRegularExpressionSource(searchString), '$');
+        break;
+    case SearchStringType::ContainsString:
+        pattern = escapeStringForRegularExpressionSource(searchString);
+        break;
+    }
+    return RegularExpression(pattern, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
 }
 
 int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
@@ -156,7 +168,8 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
 Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
     auto result = JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>::create();
-    auto regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
+    auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
+    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, caseSensitive, searchStringType);
     for (const auto& match : getRegularExpressionMatchesByLines(regex, text))
         result->addItem(buildObjectForSearchMatch(match.first, match.second));
     return result;

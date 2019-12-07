@@ -644,9 +644,11 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
 {
     result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
 
-    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-    JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(text, caseSensitive, isRegex);
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
+
+    auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
+    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive, searchStringType);
 
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         for (auto* cachedResource : cachedResourcesForFrame(frame)) {

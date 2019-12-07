@@ -926,7 +926,8 @@ bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
 {
     if (!url.isEmpty()) {
         for (const auto& blackboxConfig : m_blackboxedURLs) {
-            auto regex = ContentSearchUtilities::createSearchRegex(blackboxConfig.url, blackboxConfig.caseSensitive, blackboxConfig.isRegex);
+            auto searchStringType = blackboxConfig.isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
+            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(blackboxConfig.url, blackboxConfig.caseSensitive, searchStringType);
             if (regex.match(url) != -1)
                 return true;
         }

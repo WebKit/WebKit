@@ -1,3 +1,30 @@
+2019-12-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: non-regex Local Overrides and Script Blackboxing shouldn't apply to scripts that just contain the URL
+        https://bugs.webkit.org/show_bug.cgi?id=204954
+
+        Reviewed by Joseph Pecoraro.
+
+        If `isRegex` is false, add `^` and `$` to the beginning and end of the search string to
+        ensure that the search string is exactly matched, not just contained within the potentially
+        intercepted URL.
+
+        This doesn't actually change functionality because the Web Inspector frontend wouldn't
+        replace the network response for these containing matches, as the frontend JavaScript
+        already correctly performed this logic, and would therefore `Network.interceptContinue`.
+
+        * inspector/ContentSearchUtilities.h:
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::escapeStringForRegularExpressionSource): Added.
+        (Inspector::ContentSearchUtilities::createRegularExpressionForSearchString): Added.
+        (Inspector::ContentSearchUtilities::searchInTextByLines):
+        (Inspector::ContentSearchUtilities::createSearchRegexSource): Deleted.
+        (Inspector::ContentSearchUtilities::createSearchRegex): Deleted.
+        Rename functions for clarity.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::shouldBlackboxURL const):
+
 2019-12-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Use bmalloc's memory footprint API for JSC heap growth management

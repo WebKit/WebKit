@@ -298,10 +298,10 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpo
     if (m_pauseOnAllURLsEnabled)
         breakpointURL = emptyString();
     else {
-        for (auto& entry : m_urlBreakpoints) {
-            const auto& query = entry.key;
-            bool isRegex = entry.value == URLBreakpointType::RegularExpression;
-            auto regex = ContentSearchUtilities::createSearchRegex(query, false, isRegex);
+        for (auto& [query, type] : m_urlBreakpoints) {
+            bool isRegex = type == URLBreakpointType::RegularExpression;
+            auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
+            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, false, searchStringType);
             if (regex.match(url) != -1) {
                 breakpointURL = query;
                 break;

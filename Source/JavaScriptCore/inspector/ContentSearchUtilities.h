@@ -39,7 +39,9 @@ namespace Inspector {
 
 namespace ContentSearchUtilities {
 
-JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
+enum class SearchStringType { Regex, ExactString, ContainsString };
+JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createRegularExpressionForSearchString(const String& searchString, bool caseSensitive, SearchStringType);
+
 JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
 JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 JS_EXPORT_PRIVATE TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
