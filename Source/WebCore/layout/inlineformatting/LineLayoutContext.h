@@ -46,7 +46,7 @@ public:
         Optional<PartialContent> partialContent;
         Vector<WeakPtr<InlineItem>> floats;
         const LineBuilder::RunList runList;
-        const LineBox lineBox;
+        const Display::LineBox lineBox;
     };
     LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength);
 

@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayLineBox.h"
 #include "DisplayRun.h"
-#include "InlineLineBox.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
 
@@ -37,40 +37,14 @@ namespace Display {
 
 struct InlineContent : public RefCounted<InlineContent> {
     using Runs = Vector<Run, 10>;
-    using LineBoxes = Vector<Layout::LineBox, 5>;
+    using LineBoxes = Vector<LineBox, 5>;
 
     Runs runs;
     LineBoxes lineBoxes;
 
-    const Layout::LineBox& lineBoxForRun(const Run& run) const { return lineBoxes[run.lineIndex()]; }
+    const LineBox& lineBoxForRun(const Run& run) const { return lineBoxes[run.lineIndex()]; }
     WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
 };
-
-inline WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect& rect) const
-{
-    // FIXME: Do something efficient.
-    const Run* first = nullptr;
-    for (auto& run : runs) {
-        LayoutRect runRect = run.logicalRect();
-        if (runRect.intersects(rect)) {
-            first = &run;
-            break;
-        }
-    }
-    if (!first)
-        return { nullptr, nullptr };
-
-    const Run* last = nullptr;
-    for (auto& run : WTF::makeReversedRange(runs)) {
-        LayoutRect runRect = run.logicalRect();
-        if (runRect.intersects(rect)) {
-            last = &run;
-            break;
-        }
-    }
-
-    return { first, last + 1 };
-}
 
 }
 }

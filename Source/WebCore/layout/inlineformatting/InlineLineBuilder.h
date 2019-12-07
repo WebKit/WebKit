@@ -27,9 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayLineBox.h"
 #include "DisplayRun.h"
 #include "InlineItem.h"
-#include "InlineLineBox.h"
 #include "InlineTextItem.h"
 
 namespace WebCore {
@@ -49,7 +49,7 @@ public:
         struct HeightAndBaseline {
             LayoutUnit height;
             LayoutUnit baselineOffset;
-            Optional<LineBox::Baseline> strut;
+            Optional<Display::LineBox::Baseline> strut;
         };
         Optional<HeightAndBaseline> heightAndBaseline;
     };
@@ -67,7 +67,7 @@ public:
     LayoutUnit trailingTrimmableWidth() const { return m_trimmableContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableContent.isTrailingRunFullyTrimmable(); }
 
-    const LineBox& lineBox() const { return m_lineBox; }
+    const Display::LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
     void moveLogicalRight(LayoutUnit);
     void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
@@ -115,7 +115,7 @@ public:
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
-    static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
+    static Display::LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
 private:
     LayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
@@ -225,12 +225,12 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineItemRunList m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
-    Optional<LineBox::Baseline> m_initialStrut;
+    Optional<Display::LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_skipAlignment { false };
     bool m_hasIntrusiveFloat { false };
-    LineBox m_lineBox;
+    Display::LineBox m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableContent;
 };
 

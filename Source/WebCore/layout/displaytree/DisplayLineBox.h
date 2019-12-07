@@ -30,7 +30,7 @@
 #include "DisplayBox.h"
 
 namespace WebCore {
-namespace Layout {
+namespace Display {
 
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,7 +57,7 @@ public:
         LayoutUnit m_descent;
     };
 
-    LineBox(Display::Rect, const Baseline&, LayoutUnit baselineOffset);
+    LineBox(Rect, const Baseline&, LayoutUnit baselineOffset);
     LineBox() = default;
     
     LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
@@ -123,13 +123,13 @@ private:
     bool m_hasValidBaseline { false };
     bool m_hasValidBaselineOffset { false };
 #endif
-    Display::Rect m_rect;
+    Rect m_rect;
     Baseline m_baseline;
     LayoutUnit m_baselineOffset;
     bool m_isConsideredEmpty { true };
 };
 
-inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline, LayoutUnit baselineOffset)
+inline LineBox::LineBox(Rect rect, const Baseline& baseline, LayoutUnit baselineOffset)
     : m_rect(rect)
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)

@@ -428,7 +428,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
 
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
-    inlineContent.lineBoxes.append(LineBox { lineContent.lineBox });
+    inlineContent.lineBoxes.append(Display::LineBox { lineContent.lineBox });
     Optional<unsigned> lastTextItemIndex;
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
