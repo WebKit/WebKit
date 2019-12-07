@@ -1,5 +1,26 @@
 2019-12-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for breaking at previous breaking opportunities when the overflown content is unbreakable
+        https://bugs.webkit.org/show_bug.cgi?id=204985
+        <rdar://problem/57727436>
+
+        Reviewed by Antti Koivisto.
+
+        <span>first</span><span style="word-break: break-all">second</span><span>third</span
+
+        In case of multiple runs in one commit content [firstsecondthrid], if the overflown run [thrid] does not have
+        a breaking opportunity, we need to backtrack the last breakable run [second] and break right there. ->
+
+        "firstsecond
+        third"
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::isContentWrappingAllowed):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Fix css1/formatting_model/floating_elements.html
         https://bugs.webkit.org/show_bug.cgi?id=204983
         <rdar://problem/57727197>

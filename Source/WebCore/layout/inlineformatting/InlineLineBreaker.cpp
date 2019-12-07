@@ -37,8 +37,15 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isContentWrappingAllowed(const RenderStyle& style)
+static inline bool isContentWrappingAllowed(const LineBreaker::Content::Run& run)
 {
+    if (!run.inlineItem.isText()) {
+        // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
+        // we need to check if there's another inline item beyond the [container end] to split.
+        return false;
+    }
+    auto& style = run.inlineItem.style();
+    // Do not try to split 'pre' and 'no-wrap' content.
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
@@ -74,11 +81,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         auto& runs = candidateRuns.runs();
         if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth))
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
-        // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
-        // FIXME: Keep tracking the last breaking opportunity where we can wrap the content:
-        // <span style="white-space: pre;">this fits</span> <span style="white-space: pre;">this does not fit but does not wrap either</span>
-        // ^^ could wrap at the whitespace position between the 2 inline containers.
-        auto contentShouldOverflow = lineStatus.lineIsEmpty || !isContentWrappingAllowed(runs[0].inlineItem.style());
+        // If we did not manage to break this content, we still need to decide whether keep it or push it to the next line.
+        auto contentShouldOverflow = lineStatus.lineIsEmpty || !isContentWrappingAllowed(runs[0]);
         // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
         // we need to keep the overlapping whitespace on the line (and hang it I'd assume).
         if (isTrailingWhitespaceWithPreWrap(runs.last().inlineItem))
@@ -98,33 +102,34 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    LayoutUnit runsWidth;
-    for (unsigned i = 0; i < runs.size(); ++i) {
-        auto& run = runs[i];
+    LayoutUnit accumulatedRunWidth;
+    unsigned index = 0;
+    while (index < runs.size()) {
+        auto& run = runs[index];
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
-        runsWidth += run.logicalWidth;
-        // FIXME: In case of multiple inline items, we might not be able to split the content where it overflows (<span style="white-space: normal">this still fits the line</span<span style="white-space: pre">this is not anymore, but can't split</span)
-        // so we need to look for split positions even runsWidth <= availableWidth.
-        if (runsWidth <= availableWidth)
-            continue;
-        // Let's find the first breaking opportunity starting from this overflown inline item.
-        if (!run.inlineItem.isText()) {
-            // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
-            // we need to check if there's another inline item beyond the [container end] to split.
-            continue;
+        if (accumulatedRunWidth + run.logicalWidth > availableWidth && isContentWrappingAllowed(run)) {
+            // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
+            // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
+            // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
+            auto adjustedAvailableWidth = std::max(0_lu, availableWidth - accumulatedRunWidth);
+            if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
+                return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
+            // If this run is not breakable, we need to check if any previous run is breakable
+            break;
         }
-        // Do not try to split 'pre' and 'no-wrap' content.
-        if (!isContentWrappingAllowed(run.inlineItem.style()))
-            continue;
-        // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
-        // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
-        // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
-        auto adjustedAvailableWidth = std::max(0_lu, availableWidth - runsWidth + run.logicalWidth);
-        if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
-            return BreakingContext::PartialTrailingContent { i, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
-        return { };
+        accumulatedRunWidth += run.logicalWidth;
+        ++index;
     }
-    // We did not manage to break in this sequence of runs.
+    // We did not manage to break the run that actually overflows the line.
+    // Let's try to find the first breakable run and wrap it at the content boundary (as it surely fits).
+    while (index--) {
+        auto& run = runs[index];
+        if (isContentWrappingAllowed(run)) {
+            ASSERT(run.inlineItem.isText());
+            return BreakingContext::PartialTrailingContent { index, downcast<InlineTextItem>(run.inlineItem).length(), run.logicalWidth, false };
+        }
+    }
+    // Give up, there's no breakable run in here.
     return { };
 }
 
