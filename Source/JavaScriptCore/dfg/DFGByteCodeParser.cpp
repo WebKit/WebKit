@@ -4734,11 +4734,14 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
         m_graph.m_shouldSkipIC.add(node);
         return;
     }
-    
+
+    GetByStatus::IdentifierKeepAlive keepAlive = [&] (Box<Identifier> identifier) {
+        m_graph.m_plan.keepAliveIdentifier(WTFMove(identifier));
+    };
     GetByStatus getByStatus = GetByStatus::computeFor(
         m_inlineStackTop->m_profiledBlock,
         m_inlineStackTop->m_baselineMap, m_icContextStack,
-        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No);
+        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No, keepAlive);
 
     handleGetById(
         bytecode.m_dst, prediction, base, identifierNumber, getByStatus, type, opcodeLength);
@@ -5639,7 +5642,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
             bool shouldCompileAsGetById = false;
-            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin(), GetByStatus::TrackIdentifiers::Yes);
+            GetByStatus::IdentifierKeepAlive keepAlive = [&] (Box<Identifier> identifier) {
+                m_graph.m_plan.keepAliveIdentifier(WTFMove(identifier));
+            };
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin(), GetByStatus::TrackIdentifiers::Yes, keepAlive);
+
             unsigned identifierNumber = 0;
 
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ void Safepoint::cancel()
     RELEASE_ASSERT(m_didCallBegin);
     RELEASE_ASSERT(!m_result.m_didGetCancelled); // We cannot get cancelled twice because subsequent GCs will think that we're alive and they will not do anything to us.
     
-    m_plan.cancel();
+    RELEASE_ASSERT(m_plan.stage() == Plan::Cancelled);
     m_result.m_didGetCancelled = true;
     m_vm = nullptr;
 }

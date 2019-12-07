@@ -3700,7 +3700,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             } else if (childConstant.isSymbol()) {
-                if (&jsCast<Symbol*>(childConstant)->privateName().uid() == uid) {
+                if (&jsCast<Symbol*>(childConstant)->uid() == uid) {
                     m_state.setShouldTryConstantFolding(true);
                     break;
                 }

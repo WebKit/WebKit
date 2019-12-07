@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,8 +90,14 @@ public:
         , m_wasSeenInJIT(wasSeenInJIT)
     {
     }
-    
-    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, TrackIdentifiers);
+
+    // If we use a Box<Identifier> in the compiler thread, we need to keep the
+    // Identifier alive and only deref it in the mutator thread later. This
+    // ensures that the compiler thread doesn't race against the mutator in
+    // adjusting the Identifier's refCount.
+    using IdentifierKeepAlive = std::function<void(Box<Identifier>)>;
+
+    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, TrackIdentifiers, IdentifierKeepAlive&);
     static GetByStatus computeFor(const StructureSet&, UniquedStringImpl*);
 
     State state() const { return m_state; }
@@ -126,7 +132,7 @@ public:
     bool finalize(VM&); // Return true if this gets to live.
 
     bool appendVariant(const GetByIdVariant&);
-    
+
     void dump(PrintStream&) const;
 
     Box<Identifier> singleIdentifier() const;
@@ -137,10 +143,10 @@ private:
 #if ENABLE(JIT)
     GetByStatus(const ModuleNamespaceAccessCase&);
     static GetByStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, TrackIdentifiers);
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, TrackIdentifiers, IdentifierKeepAlive&);
 #endif
     static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex, TrackIdentifiers);
-    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData, TrackIdentifiers);
+    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData, TrackIdentifiers, IdentifierKeepAlive&);
 
     struct ModuleNamespaceData {
         JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };

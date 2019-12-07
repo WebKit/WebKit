@@ -328,7 +328,7 @@ private:
                         }
                     } else if (childConstant.isSymbol()) {
                         Symbol* symbol = jsCast<Symbol*>(childConstant);
-                        constantUid = &symbol->privateName().uid();
+                        constantUid = &symbol->uid();
                     }
                 }
 

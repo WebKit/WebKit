@@ -79,6 +79,7 @@
 #include "ProfilerDatabase.h"
 #include "TrackedReferences.h"
 #include "VMInlines.h"
+#include <wtf/Threading.h>
 
 #if ENABLE(FTL_JIT)
 #include "FTLCapabilities.h"
@@ -154,13 +155,14 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
 
 Plan::~Plan()
 {
+    RELEASE_ASSERT(unnukedVM()->currentThreadIsHoldingAPILock());
 }
 
 bool Plan::computeCompileTimes() const
 {
     return reportCompileTimes()
         || Options::reportTotalCompileTimes()
-        || (m_vm && m_vm->m_perBytecodeProfiler);
+        || unnukedVM()->m_perBytecodeProfiler;
 }
 
 bool Plan::reportCompileTimes() const
@@ -693,7 +695,30 @@ bool Plan::isKnownToBeLiveDuringGC()
 
 void Plan::cancel()
 {
-    m_vm = nullptr;
+    RELEASE_ASSERT(m_stage != Cancelled);
+
+    // When we cancel a plan, there's a chance that the compiler thread may have
+    // already ref'ed it and is working on it. This results in a race where the
+    // compiler thread may hold the last reference to the plan. We require that
+    // the plan is only destructed on the mutator thread because we piggy back
+    // on the plan to ensure certain other objects are only destructed on the
+    // mutator thread. For example, see Plan::m_identifiersKeptAliveForCleanUp.
+    //
+    // To ensure that the plan is destructed on the mutator and not the compiler
+    // thread, the compiler thread will enqueue any cancelled plan it sees in
+    // the worklist's m_cancelledPlansPendingDestruction. The mutator will later
+    // delete the cancelled plans in m_cancelledPlansPendingDestruction.
+    // However, a mutator should only delete cancelled plans that belong to its
+    // VM. Hence, a cancelled plan needs to keep its m_vm pointer to let the
+    // mutator know which VM it belongs to.
+    // Ref: See Worklist::deleteCancelledPlansForVM().
+    ASSERT(m_vm);
+
+    // Nuke the VM pointer so that pointer comparisons against it will fail.
+    // We rely on VM pointer comparison in many places to filter out Cancelled
+    // plans.
+    m_vm = nuke(m_vm);
+
     m_codeBlock = nullptr;
     m_profiledDFGCodeBlock = nullptr;
     m_mustHandleValues.clear();

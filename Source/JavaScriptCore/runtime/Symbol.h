@@ -55,6 +55,7 @@ public:
     static Symbol* createWithDescription(VM&, const String&);
     JS_EXPORT_PRIVATE static Symbol* create(VM&, SymbolImpl& uid);
 
+    SymbolImpl& uid() const { return m_privateName.uid(); }
     PrivateName privateName() const { return m_privateName; }
     String descriptiveString() const;
     String description() const;

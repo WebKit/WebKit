@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "Operands.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
+#include <wtf/Box.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -82,6 +83,7 @@ public:
     void cleanMustHandleValuesIfNecessary();
 
     VM* vm() const { return m_vm; }
+    VM* unnukedVM() const { return unnuke(m_vm); }
 
     CodeBlock* codeBlock() { return m_codeBlock; }
 
@@ -115,6 +117,12 @@ public:
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
+    void keepAliveIdentifier(Box<Identifier> identifier)
+    {
+        if (identifier)
+            m_identifiersKeptAliveForCleanUp.append(WTFMove(identifier));
+    }
+
 private:
     bool computeCompileTimes() const;
     bool reportCompileTimes() const;
@@ -128,6 +136,14 @@ private:
 
     // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
     // you're writing code that is callable on the cancel path, be sure to null check everything!
+
+#if CPU(ADDRESS64)
+    static constexpr uintptr_t s_nukeBit = 1ull << 63;
+#else
+    static constexpr uintptr_t s_nukeBit = 1ull;
+#endif
+    static VM* nuke(VM* vm) { return bitwise_cast<VM*>(bitwise_cast<uintptr_t>(vm) | s_nukeBit); }
+    static VM* unnuke(VM* vm) { return bitwise_cast<VM*>(bitwise_cast<uintptr_t>(vm) & ~s_nukeBit); }
 
     CompilationMode m_mode;
 
@@ -165,6 +181,7 @@ private:
     Stage m_stage;
 
     RefPtr<DeferredCompilationCallback> m_callback;
+    Vector<Box<Identifier>, 16> m_identifiersKeptAliveForCleanUp;
 
     MonotonicTime m_timeBeforeFTL;
 };
