@@ -129,6 +129,7 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
     UNUSED_PARAM(map);
     UNUSED_PARAM(didExit);
     UNUSED_PARAM(callExitSiteData);
+    UNUSED_PARAM(keepAlive);
 #endif
 
     if (!result)

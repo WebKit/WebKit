@@ -1,3 +1,14 @@
+2019-12-07  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for: The compiler thread should not adjust Identifier refCounts.
+        https://bugs.webkit.org/show_bug.cgi?id=204919
+        <rdar://problem/57426861>
+
+        Not reviewed.
+
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeFor):
+
 2019-12-07  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r250009.
