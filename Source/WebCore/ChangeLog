@@ -1,3 +1,23 @@
+2019-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Rename ContentBreak to ContentWrappingRule and ContentBreak::wrap to ContentWrappingRule::push
+        https://bugs.webkit.org/show_bug.cgi?id=204966
+        <rdar://problem/57717049>
+
+        Reviewed by Sam Weinig.
+
+        Use the term "push" instead of "wrap" to move a run to the next line without breaking it.
+        This is mainly to avoid spec term confusion.
+        ContentWrappingRule::Keep -> keep the run (or continuous runs) on the current line.
+        ContentWrappingRule::Split -> keep the run (or continuous runs) partially on the current line (see BreakingContext::PartialTrailingContent).
+        ContentWrappingRule::Push -> move the run (or continuous runs) completely to the next line.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r253218.

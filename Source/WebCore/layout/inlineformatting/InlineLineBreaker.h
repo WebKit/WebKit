@@ -38,8 +38,12 @@ class InlineTextItem;
 class LineBreaker {
 public:
     struct BreakingContext {
-        enum class ContentBreak { Keep, Split, Wrap };
-        ContentBreak contentBreak;
+        enum class ContentWrappingRule {
+            Keep, // Keep content on the current line.
+            Split, // Partial content is on the current line.
+            Push // Content is pushed to the next line.
+        };
+        ContentWrappingRule contentWrappingRule;
         struct PartialTrailingContent {
             unsigned runIndex { 0 };
             unsigned length { 0 };

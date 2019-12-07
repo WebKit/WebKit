@@ -212,9 +212,9 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingTrimmableWidth(), line.isTrailingRunFullyTrimmable(), lineIsConsideredEmpty };
     auto breakingContext = lineBreaker.breakingContextForInlineContent(m_uncommittedContent, lineStatus);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
-    if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep)
+    if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep)
         commitPendingContent(line);
-    else if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Split) {
+    else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Split) {
         ASSERT(breakingContext.partialTrailingContent);
         ASSERT(m_uncommittedContent.runs()[breakingContext.partialTrailingContent->runIndex].inlineItem.isText());
         // Turn the uncommitted trailing run into a partial trailing run.
@@ -230,13 +230,13 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         m_uncommittedContent.trim(overflowInlineTextItemIndex);
         m_uncommittedContent.append(*m_partialTrailingTextItem, breakingContext.partialTrailingContent->logicalWidth);
         commitPendingContent(line);
-    } else if (breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Wrap)
+    } else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push)
         m_uncommittedContent.reset();
     else
         ASSERT_NOT_REACHED();
     // Adjust hyphenated line count
     m_successiveHyphenatedLineCount = breakingContext.partialTrailingContent && breakingContext.partialTrailingContent->needsHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-    return breakingContext.contentBreak == LineBreaker::BreakingContext::ContentBreak::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
+    return breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
 }
 
 }
