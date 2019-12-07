@@ -38,7 +38,7 @@ class Slider extends LayoutNode
         this._container.children = [this._track, this._primaryFill, this._secondaryFill, this._knob];
 
         this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
-        this._input.element.addEventListener(GestureRecognizer.SupportsTouches ? "touchstart" : "mousedown", this);
+        this._input.element.addEventListener("pointerdown", this);
         this._input.element.addEventListener("input", this);
         this._input.element.addEventListener("change", this);
 
@@ -109,17 +109,11 @@ class Slider extends LayoutNode
     handleEvent(event)
     {
         switch (event.type) {
-        case "mousedown":
-            this._handleMousedownEvent();
+        case "pointerdown":
+            this._handlePointerdownEvent();
             break;
-        case "touchstart":
-            this._handleTouchstartEvent(event);
-            break;
-        case "mouseup":
-            this._handleMouseupEvent();
-            break;
-        case "touchend":
-            this._handleTouchendEvent(event);
+        case "pointerup":
+            this._handlePointerupEvent();
             break;
         case "change":
         case "input":
@@ -158,10 +152,10 @@ class Slider extends LayoutNode
 
     // Private
 
-    _handleMousedownEvent()
+    _handlePointerdownEvent()
     {
-        this._mouseupTarget = this._interactionEndTarget();
-        this._mouseupTarget.addEventListener("mouseup", this, true);
+        this._pointerupTarget = this._interactionEndTarget();
+        this._pointerupTarget.addEventListener("pointerup", this, true);
 
         this._valueWillStartChanging();
     }
@@ -170,20 +164,6 @@ class Slider extends LayoutNode
     {
         const mediaControls = this.parentOfType(MediaControls);
         return (!mediaControls || mediaControls instanceof MacOSInlineMediaControls) ? window : mediaControls.element;
-    }
-
-    _handleTouchstartEvent(event)
-    {
-        // We're only interested in the very first touch on the <input>.
-        if (event.touches.length !== 1)
-            return;
-
-        this._initialTouchIdentifier = event.touches[0].identifier;
-
-        this._touchendTarget = this._interactionEndTarget();
-        this._touchendTarget.addEventListener("touchend", this, true);
-
-        this._valueWillStartChanging();
     }
 
     _valueWillStartChanging()
@@ -215,24 +195,11 @@ class Slider extends LayoutNode
         this.needsLayout = true;
     }
 
-    _handleMouseupEvent()
+    _handlePointerupEvent()
     {
-        this._mouseupTarget.removeEventListener("mouseup", this, true);
-        delete this._mouseupTarget;
+        this._pointerupTarget.removeEventListener("pointerup", this, true);
+        delete this._pointerupTarget;
 
         this._valueDidStopChanging();
     }
-
-    _handleTouchendEvent(event)
-    {
-        if (!Array.from(event.changedTouches).find(touch => touch.identifier === this._initialTouchIdentifier))
-            return;
-
-        this._touchendTarget.removeEventListener("touchend", this, true);
-        delete this._touchendTarget;
-        delete this._initialTouchIdentifier;
-
-        this._valueDidStopChanging();
-    }
-
 }

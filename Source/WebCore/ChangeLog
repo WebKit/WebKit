@@ -1,3 +1,58 @@
+2019-12-07  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: REGRESSION (r251320): WebKit-native media controls do not respond to hover or click
+        https://bugs.webkit.org/show_bug.cgi?id=204543
+        <rdar://problem/57208621>
+
+        Reviewed by Antoine Quint.
+
+        Adopt pointer events for media controls, in order to make them input-device agnostic.
+
+        * Modules/modern-media-controls/controls/auto-hide-controller.js:
+        (AutoHideController):
+        (AutoHideController.prototype.set fadesWhileIdle):
+        (AutoHideController.prototype.handleEvent):
+        (AutoHideController.prototype._autoHideTimerFired):
+        Instead of tracking state in a single bit (_disableAutoHiding), keep track
+        of sets of pointers that are active, for hover and for actual touch/click.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.handleEvent):
+        (Slider.prototype._handlePointerdownEvent):
+        (Slider.prototype._handlePointerupEvent):
+        (Slider.prototype._handleMousedownEvent): Deleted.
+        (Slider.prototype._handleTouchstartEvent): Deleted.
+        (Slider.prototype._handleMouseupEvent): Deleted.
+        (Slider.prototype._handleTouchendEvent): Deleted.
+        Adopt pointer events.
+
+        * Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js:
+        (GestureRecognizer):
+        (GestureRecognizer.prototype.get numberOfTouches):
+        (GestureRecognizer.prototype.locationInElement):
+        (GestureRecognizer.prototype.locationInClient):
+        (GestureRecognizer.prototype.touchesBegan):
+        (GestureRecognizer.prototype.handleEvent):
+        (GestureRecognizer.prototype._updateBaseListeners):
+        (GestureRecognizer.prototype._removeTrackingListeners):
+        (GestureRecognizer.prototype._updateTargetTouches):
+        (GestureRecognizer.prototype.locationOfTouchInElement): Deleted.
+        Instead of keeping track of Touches, keep track of the currently-active set of PointerEvents.
+        We just store events by pointerId, and update them when they change, so we can
+        later retrieve e.g. points.
+        Remove locationOfTouchInElement which seems to not be used.
+
+        * html/RangeInputType.cpp:
+        * html/RangeInputType.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::dragFrom):
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        * html/shadow/SliderThumbElement.h:
+        Allow range inputs to accept mouse events everywhere.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add some missing files to the project.
+
 2019-12-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: non-regex Local Overrides and Script Blackboxing shouldn't apply to scripts that just contain the URL

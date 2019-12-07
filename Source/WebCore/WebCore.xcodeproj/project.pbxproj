@@ -742,6 +742,7 @@
 		2D50A4B71CE10E0000198049 /* AttachmentPlaceholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D50A4B51CE10E0000198049 /* AttachmentPlaceholder.png */; };
 		2D50A4B81CE10E0000198049 /* AttachmentPlaceholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D50A4B61CE10E0000198049 /* AttachmentPlaceholder@2x.png */; };
 		2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5646AF1B8F8493003C4994 /* DictionaryPopupInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D56800323888604007ECB8A /* auto-hide-controller.js in Resources */ = {isa = PBXBuildFile; fileRef = 2D56800123888603007ECB8A /* auto-hide-controller.js */; };
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6721,6 +6722,7 @@
 		2D50A4B51CE10E0000198049 /* AttachmentPlaceholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AttachmentPlaceholder.png; sourceTree = "<group>"; };
 		2D50A4B61CE10E0000198049 /* AttachmentPlaceholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AttachmentPlaceholder@2x.png"; sourceTree = "<group>"; };
 		2D5646AF1B8F8493003C4994 /* DictionaryPopupInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryPopupInfo.h; sourceTree = "<group>"; };
+		2D56800123888603007ECB8A /* auto-hide-controller.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "auto-hide-controller.js"; sourceTree = "<group>"; };
 		2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityPolicyViolationEvent.h; sourceTree = "<group>"; };
 		2D5BC42616F882BE007048D0 /* SecurityPolicyViolationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecurityPolicyViolationEvent.idl; sourceTree = "<group>"; };
 		2D5C9CFB19C7B52E00B3C5C1 /* PageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlay.cpp; sourceTree = "<group>"; };
@@ -6744,6 +6746,9 @@
 		2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertEditableImageCommand.h; sourceTree = "<group>"; };
 		2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestLocation.cpp; sourceTree = "<group>"; };
 		2D8287F516E4A0380086BD00 /* HitTestLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestLocation.h; sourceTree = "<group>"; };
+		2D8D3BEB23847AC900657075 /* gesture-recognizer.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gesture-recognizer.js"; sourceTree = "<group>"; };
+		2D8D3BEC23847AC900657075 /* pinch.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = pinch.js; sourceTree = "<group>"; };
+		2D8D3BED23847AC900657075 /* tap.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = tap.js; sourceTree = "<group>"; };
 		2D8FEBDA143E3EF70072502B /* CSSCrossfadeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCrossfadeValue.cpp; sourceTree = "<group>"; };
 		2D8FEBDB143E3EF70072502B /* CSSCrossfadeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCrossfadeValue.h; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* RenderLayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayoutState.cpp; sourceTree = "<group>"; };
@@ -17769,6 +17774,16 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		2D8D3BEA23847AC800657075 /* gesture-recognizers */ = {
+			isa = PBXGroup;
+			children = (
+				2D8D3BEB23847AC900657075 /* gesture-recognizer.js */,
+				2D8D3BEC23847AC900657075 /* pinch.js */,
+				2D8D3BED23847AC900657075 /* tap.js */,
+			);
+			path = "gesture-recognizers";
+			sourceTree = "<group>";
+		};
 		2DDE1CAB1F57475900D1A365 /* webvr */ = {
 			isa = PBXGroup;
 			children = (
@@ -20967,6 +20982,7 @@
 				716FA0D81DB26591007323CC /* airplay-button.css */,
 				716FA0D91DB26591007323CC /* airplay-button.js */,
 				716FA0DA1DB26591007323CC /* airplay-placard.js */,
+				2D56800123888603007ECB8A /* auto-hide-controller.js */,
 				716FA0DC1DB26591007323CC /* button.css */,
 				716FA0DD1DB26591007323CC /* button.js */,
 				716FA0DE1DB26591007323CC /* buttons-container.css */,
@@ -21046,6 +21062,7 @@
 			isa = PBXGroup;
 			children = (
 				716FA0D71DB26591007323CC /* controls */,
+				2D8D3BEA23847AC800657075 /* gesture-recognizers */,
 				71D6AA6F1DA4EAF700B23969 /* images */,
 				714131481DC9D6EF00336107 /* js-files */,
 				71D02D911DB55C4E00DD5CF5 /* media */,
@@ -33188,6 +33205,7 @@
 			files = (
 				2D50A4B71CE10E0000198049 /* AttachmentPlaceholder.png in Resources */,
 				2D50A4B81CE10E0000198049 /* AttachmentPlaceholder@2x.png in Resources */,
+				2D56800323888604007ECB8A /* auto-hide-controller.js in Resources */,
 				A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */,
 				A11E8C051B1E28F40003A7C7 /* copyCursor.png in Resources */,
 				2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */,

@@ -135,8 +135,6 @@ bool RangeInputType::isSteppable() const
     return true;
 }
 
-#if !PLATFORM(IOS_FAMILY)
-
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
     ASSERT(element());
@@ -154,8 +152,6 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
         return;
     thumb.dragFrom(event.absoluteLocation());
 }
-
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void RangeInputType::handleTouchEvent(TouchEvent& event)

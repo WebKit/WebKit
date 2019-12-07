@@ -1,10 +1,9 @@
-
 class GestureRecognizer
 {
 
     constructor(target = null, delegate = null)
     {
-        this._targetTouches = [];
+        this._targetPointers = new Map;
 
         this.modifierKeys = {
             alt : false,
@@ -53,7 +52,7 @@ class GestureRecognizer
 
     get numberOfTouches()
     {
-        return this._targetTouches.length;
+        return this._targetPointers.size;
     }
 
     get enabled()
@@ -87,13 +86,13 @@ class GestureRecognizer
     locationInElement(element)
     {
         const p = new DOMPoint;
-        const touches = this._targetTouches;
-        const count = touches.length;
-        for (let i = 0; i < count; ++i) {
-            const touch = touches[i];
-            p.x += touch.pageX;
-            p.y += touch.pageY;
-        }
+        const count = this._targetPointers.size;
+        if (!count)
+            return p;
+        this._targetPointers.forEach(function (pointer) {
+            p.x += pointer.pageX;
+            p.y += pointer.pageY;
+        });
         p.x /= count;
         p.y /= count;
 
@@ -108,32 +107,17 @@ class GestureRecognizer
     locationInClient()
     {
         const p = new DOMPoint;
-        const touches = this._targetTouches;
-        const count = touches.length;
-        for (let i = 0; i < count; ++i) {
-            const touch = touches[i];
-            p.x += touch.clientX;
-            p.y += touch.clientY;
-        }
+        const count = this._targetPointers.size;
+        if (!count)
+            return p;
+        this._targetPointers.forEach(function (pointer) {
+            p.x += pointer.clientX;
+            p.y += pointer.clientY;
+        });
         p.x /= count;
         p.y /= count;
 
         return p;
-    }
-
-    locationOfTouchInElement(touchIndex, element)
-    {
-        const touch = this._targetTouches[touchIndex];
-        if (!touch)
-            return new DOMPoint;
-
-        const touchLocation = new DOMPoint(touch.pageX, touch.pageY);
-        if (!element)
-            return touchLocation;
-
-        // FIXME: are WebKitPoint and DOMPoint interchangeable?
-        const wkPoint = window.webkitConvertPointFromPageToNode(element, new WebKitPoint(touchLocation.x, touchLocation.y));
-        return new DOMPoint(wkPoint.x, wkPoint.y);
     }
 
     touchesBegan(event)
@@ -141,9 +125,9 @@ class GestureRecognizer
         if (event.currentTarget !== this._target)
             return;
 
-        window.addEventListener(GestureRecognizer.Events.TouchMove, this, true);
-        window.addEventListener(GestureRecognizer.Events.TouchEnd, this, true);
-        window.addEventListener(GestureRecognizer.Events.TouchCancel, this, true);
+        window.addEventListener(GestureRecognizer.Events.PointerMove, this, true);
+        window.addEventListener(GestureRecognizer.Events.PointerUp, this, true);
+        window.addEventListener(GestureRecognizer.Events.PointerCancel, this, true);
         this.enterPossibleState();
     }
 
@@ -235,16 +219,16 @@ class GestureRecognizer
         this._updateKeyboardModifiers(event);
 
         switch (event.type) {
-        case GestureRecognizer.Events.TouchStart:
+        case GestureRecognizer.Events.PointerDown:
             this.touchesBegan(event);
             break;
-        case GestureRecognizer.Events.TouchMove:
+        case GestureRecognizer.Events.PointerMove:
             this.touchesMoved(event);
             break;
-        case GestureRecognizer.Events.TouchEnd:
+        case GestureRecognizer.Events.PointerUp:
             this.touchesEnded(event);
             break;
-        case GestureRecognizer.Events.TouchCancel:
+        case GestureRecognizer.Events.PointerCancel:
             this.touchesCancelled(event);
             break;
         case GestureRecognizer.Events.GestureStart:
@@ -275,11 +259,11 @@ class GestureRecognizer
             return;
 
         if (this._enabled) {
-            this._target.addEventListener(GestureRecognizer.Events.TouchStart, this);
+            this._target.addEventListener(GestureRecognizer.Events.PointerDown, this);
             if (GestureRecognizer.SupportsGestures)
                 this._target.addEventListener(GestureRecognizer.Events.GestureStart, this);
         } else {
-            this._target.removeEventListener(GestureRecognizer.Events.TouchStart, this);
+            this._target.removeEventListener(GestureRecognizer.Events.PointerDown, this);
             if (GestureRecognizer.SupportsGestures)
                 this._target.removeEventListener(GestureRecognizer.Events.GestureStart, this);
         }
@@ -287,62 +271,31 @@ class GestureRecognizer
 
     _removeTrackingListeners()
     {
-        window.removeEventListener(GestureRecognizer.Events.TouchMove, this, true);
-        window.removeEventListener(GestureRecognizer.Events.TouchEnd, this, true);
+        window.removeEventListener(GestureRecognizer.Events.PointerMove, this, true);
+        window.removeEventListener(GestureRecognizer.Events.PointerUp, this, true);
+        window.removeEventListener(GestureRecognizer.Events.PointerCancel, this, true);
         this._target.removeEventListener(GestureRecognizer.Events.GestureChange, this, true);
         this._target.removeEventListener(GestureRecognizer.Events.GestureEnd, this, true);
+
+        this._targetPointers = new Map;
     }
 
     _updateTargetTouches(event)
     {
-        if (!GestureRecognizer.SupportsTouches) {
-            if (event.type === GestureRecognizer.Events.TouchEnd)
-                this._targetTouches = [];
-            else
-                this._targetTouches = [event];
+        if (!(event instanceof PointerEvent))
+            return;
+
+        if (event.type === GestureRecognizer.Events.PointerDown) {
+            this._targetPointers.set(event.pointerId, event);
             return;
         }
 
-        if (!(event instanceof TouchEvent))
-            return;
-
-        // With a touchstart event, event.targetTouches is accurate so
-        // we simply add all of those.
-        if (event.type === GestureRecognizer.Events.TouchStart) {
-            this._targetTouches = [];
-            let touches = event.targetTouches;
-            for (let i = 0, count = touches.length; i < count; ++i)
-                this._targetTouches.push(touches[i]);
+        if (event.type === GestureRecognizer.Events.PointerMove) {
+            this._targetPointers.set(event.pointerId, event);
             return;
         }
 
-        // With a touchmove event, the target is window so event.targetTouches is
-        // inaccurate so we add all touches that we knew about previously.
-        if (event.type === GestureRecognizer.Events.TouchMove) {
-            let targetIdentifiers = this._targetTouches.map(function(touch) {
-                return touch.identifier;
-            });
-
-            this._targetTouches = [];
-            let touches = event.touches;
-            for (let i = 0, count = touches.length; i < count; ++i) {
-                let touch = touches[i];
-                if (targetIdentifiers.indexOf(touch.identifier) !== -1)
-                    this._targetTouches.push(touch);
-            }
-            return;
-        }
-
-        // With a touchend or touchcancel event, we only keep the existing touches
-        // that are also found in event.touches.
-        let allTouches = event.touches;
-        let existingIdentifiers = [];
-        for (let i = 0, count = allTouches.length; i < count; ++i)
-            existingIdentifiers.push(allTouches[i].identifier);
-
-        this._targetTouches = this._targetTouches.filter(function(touch) {
-            return existingIdentifiers.indexOf(touch.identifier) !== -1;
-        });
+        this._targetPointers.delete(event.pointerId);
     }
 
     _updateKeyboardModifiers(event)
@@ -369,10 +322,10 @@ GestureRecognizer.States = {
 };
 
 GestureRecognizer.Events = {
-    TouchStart     : GestureRecognizer.SupportsTouches ? "touchstart" : "mousedown",
-    TouchMove      : GestureRecognizer.SupportsTouches ? "touchmove" : "mousemove",
-    TouchEnd       : GestureRecognizer.SupportsTouches ? "touchend" : "mouseup",
-    TouchCancel    : "touchcancel",
+    PointerDown    : "pointerdown",
+    PointerMove    : "pointermove",
+    PointerUp      : "pointerup",
+    PointerCancel  : "pointercancel",
     GestureStart   : "gesturestart",
     GestureChange  : "gesturechange",
     GestureEnd     : "gestureend"

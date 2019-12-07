@@ -50,9 +50,7 @@ private:
     bool supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     bool isSteppable() const final;
-#if !PLATFORM(IOS_FAMILY)
     void handleMouseDownEvent(MouseEvent&) final;
-#endif
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     void createShadowSubtree() final;

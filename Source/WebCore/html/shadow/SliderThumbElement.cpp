@@ -246,9 +246,7 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 {
     Ref<SliderThumbElement> protectedThis(*this);
     setPositionFromPoint(point);
-#if !PLATFORM(IOS_FAMILY)
     startDragging();
-#endif
 }
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
@@ -338,7 +336,6 @@ void SliderThumbElement::stopDragging()
         renderer()->setNeedsLayout();
 }
 
-#if !PLATFORM(IOS_FAMILY)
 void SliderThumbElement::defaultEventHandler(Event& event)
 {
     if (!is<MouseEvent>(event)) {
@@ -376,9 +373,6 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 
     HTMLDivElement::defaultEventHandler(mouseEvent);
 }
-#endif
-
-#if !PLATFORM(IOS_FAMILY)
 
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
@@ -398,7 +392,6 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
-#endif // !PLATFORM(IOS_FAMILY)
 
 void SliderThumbElement::willDetachRenderers()
 {

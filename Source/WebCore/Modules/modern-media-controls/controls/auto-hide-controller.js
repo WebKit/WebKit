@@ -32,10 +32,11 @@ class AutoHideController
     {
         this._mediaControls = mediaControls;
 
-        if (GestureRecognizer.SupportsTouches) {
-            this._touchIdentifiersPreventingAutoHide = new Set;
+        this._pointerIdentifiersPreventingAutoHide = new Set;
+        this._pointerIdentifiersPreventingAutoHideForHover = new Set;
+
+        if (GestureRecognizer.SupportsTouches)
             this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
-        }
 
         this.autoHideDelay = AutoHideDelayMS;
     }
@@ -54,23 +55,18 @@ class AutoHideController
 
         this._fadesWhileIdle = flag;
 
-        if (GestureRecognizer.SupportsTouches) {
-            if (flag) {
-                this._mediaControls.element.addEventListener("touchstart", this);
-                this._mediaControls.element.addEventListener("touchend", this);
-            } else {
-                this._mediaControls.element.removeEventListener("touchstart", this);
-                this._mediaControls.element.removeEventListener("touchend", this);
-            }
-            this._tapGestureRecognizer.enabled = flag;
+        if (flag) {
+            this._mediaControls.element.addEventListener("pointermove", this);
+            this._mediaControls.element.addEventListener("pointerdown", this);
+            this._mediaControls.element.addEventListener("pointerup", this);
+            this._mediaControls.element.addEventListener("pointerleave", this);
+            this._mediaControls.element.addEventListener("pointerout", this);
         } else {
-            if (flag) {
-                this._mediaControls.element.addEventListener("mousemove", this);
-                this._mediaControls.element.addEventListener("mouseleave", this);
-            } else {
-                this._mediaControls.element.removeEventListener("mousemove", this);
-                this._mediaControls.element.removeEventListener("mouseleave", this);
-            }
+            this._mediaControls.element.removeEventListener("pointermove", this);
+            this._mediaControls.element.removeEventListener("pointerdown", this);
+            this._mediaControls.element.removeEventListener("pointerup", this);
+            this._mediaControls.element.removeEventListener("pointerleave", this);
+            this._mediaControls.element.removeEventListener("pointerout", this);
         }
 
         if (flag && !this._mediaControls.faded)
@@ -86,35 +82,38 @@ class AutoHideController
         if (event.currentTarget !== this._mediaControls.element)
             return;
 
-        if (event.type === "mousemove") {
+        if (event.type === "pointermove") {
             this._mediaControls.faded = false;
             this._resetAutoHideTimer(true);
             if (this._mediaControls.isPointInControls(new DOMPoint(event.clientX, event.clientY))) {
-                this._disableAutoHiding = true;
+                this._pointerIdentifiersPreventingAutoHideForHover.add(event.pointerId);
                 this._cancelNonEnforcedAutoHideTimer();
             } else {
-                delete this._disableAutoHiding;
+                this._pointerIdentifiersPreventingAutoHideForHover.delete(event.pointerId);
                 this._resetAutoHideTimer(true);
             }
-        } else if (event.type === "mouseleave" && this._fadesWhileIdle && !this.hasSecondaryUIAttached && !this._enforceAutoHideTimer)
-            this._mediaControls.faded = !this._mediaControls.isPointInControls(new DOMPoint(event.clientX, event.clientY));
+        } else if (event.type === "pointerleave" && this._fadesWhileIdle && !this.hasSecondaryUIAttached && !this._enforceAutoHideTimer) {
+            this._pointerIdentifiersPreventingAutoHide.delete(event.pointerId);
+            this._pointerIdentifiersPreventingAutoHideForHover.delete(event.pointerId);
 
-        if (event.type === "touchstart") {
+            // If the pointer is a mouse (supports hover), see if we can
+            // immediately hide without waiting for the auto-hide timer.
+            if (event.pointerType == "mouse")
+                this._autoHideTimerFired();
+
+            this._resetAutoHideTimer(true);
+        }
+
+        if (event.type === "pointerdown") {
             // Remember the current faded state so that we can determine,
             // if we recognize a tap, if it should fade the controls out.
             this._nextTapCanFadeControls = !this._mediaControls.faded;
-            for (var touch in event.changedTouches)
-                this._touchIdentifiersPreventingAutoHide.add(touch.identifier);
+            this._pointerIdentifiersPreventingAutoHide.add(event.pointerId);
             this._mediaControls.faded = false;
-            this._disableAutoHiding = true;
             this._cancelNonEnforcedAutoHideTimer();
-        } else if (event.type === "touchend") {
-            for (var touch in event.changedTouches)
-                this._touchIdentifiersPreventingAutoHide.delete(touch.identifier);
-            if (!this._touchIdentifiersPreventingAutoHide.size) {
-                delete this._disableAutoHiding;
-                this._resetAutoHideTimer(true);
-            }
+        } else if (event.type === "pointerup") {
+            this._pointerIdentifiersPreventingAutoHide.delete(event.pointerId);
+            this._resetAutoHideTimer(true);
         }
     }
 
@@ -171,8 +170,10 @@ class AutoHideController
 
     _autoHideTimerFired()
     {
+        const disableAutoHiding = this._pointerIdentifiersPreventingAutoHide.size || this._pointerIdentifiersPreventingAutoHideForHover.size;
+
         delete this._enforceAutoHideTimer;
-        if (this._disableAutoHiding)
+        if (disableAutoHiding)
             return;
 
         this._cancelAutoHideTimer();

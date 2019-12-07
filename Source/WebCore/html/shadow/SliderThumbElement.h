@@ -66,11 +66,9 @@ private:
     bool matchesReadWritePseudoClass() const final;
     RefPtr<Element> focusDelegate() final;
 
-#if !PLATFORM(IOS_FAMILY)
     void defaultEventHandler(Event&) final;
     bool willRespondToMouseMoveEvents() final;
     bool willRespondToMouseClickEvents() final;
-#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void didAttachRenderers() final;
