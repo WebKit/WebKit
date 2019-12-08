@@ -101,6 +101,7 @@ struct NetworkSessionCreationParameters {
     bool staleWhileRevalidateEnabled { false };
     unsigned testSpeedMultiplier { 1 };
     bool suppressesConnectionTerminationOnSystemChange { false };
+    bool allowsServerPreconnect { true };
 };
 
 } // namespace WebKit

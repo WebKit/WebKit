@@ -125,6 +125,7 @@ public:
     WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
+    bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
 
     bool isStaleWhileRevalidateEnabled() const { return m_isStaleWhileRevalidateEnabled; }
 
@@ -168,6 +169,7 @@ protected:
     RefPtr<NetworkCache::Cache> m_cache;
     WebCore::BlobRegistryImpl m_blobRegistry;
     unsigned m_testSpeedMultiplier { 1 };
+    bool m_allowsServerPreconnect { true };
 
 #if ENABLE(SERVICE_WORKER)
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;

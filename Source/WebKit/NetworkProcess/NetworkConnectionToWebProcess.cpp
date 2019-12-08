@@ -504,15 +504,17 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
 {
     ASSERT(!parameters.request.httpBody());
-    
+
 #if ENABLE(SERVER_PRECONNECT)
-    new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
-        didFinishPreconnection(identifier, error);
-    });
-#else
-    UNUSED_PARAM(parameters);
-    didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
+    auto* session = networkSession();
+    if (session && session->allowsServerPreconnect()) {
+        new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
+            didFinishPreconnection(identifier, error);
+        });
+        return;
+    }
 #endif
+    didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
 }
 
 void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectionIdentifier, const ResourceError& error)

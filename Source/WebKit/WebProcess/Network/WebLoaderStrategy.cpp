@@ -644,10 +644,6 @@ void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceE
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
-    uint64_t preconnectionIdentifier = generateLoadIdentifier();
-    auto addResult = m_preconnectCompletionHandlers.add(preconnectionIdentifier, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
     if (!webFrameLoaderClient) {
         completionHandler(internalError(url));
@@ -664,11 +660,20 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
         return;
     }
 
+    preconnectTo(ResourceRequest { url }, *webPage, *webFrame, storedCredentialsPolicy, WTFMove(completionHandler));
+}
+
+void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
+{
+    uint64_t preconnectionIdentifier = generateLoadIdentifier();
+    auto addResult = m_preconnectCompletionHandlers.add(preconnectionIdentifier, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
     NetworkResourceLoadParameters parameters;
-    parameters.request = ResourceRequest { url };
-    parameters.webPageProxyID = webPage->webPageProxyIdentifier();
-    parameters.webPageID = webPage->identifier();
-    parameters.webFrameID = webFrame->frameID();
+    parameters.request = WTFMove(request);
+    parameters.webPageProxyID = webPage.webPageProxyIdentifier();
+    parameters.webPageID = webPage.identifier();
+    parameters.webFrameID = webFrame.frameID();
     parameters.parentPID = presentingApplicationPID();
 #if HAVE(AUDIT_TOKEN)
     parameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();

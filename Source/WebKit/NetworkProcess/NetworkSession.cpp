@@ -84,6 +84,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
+    , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;

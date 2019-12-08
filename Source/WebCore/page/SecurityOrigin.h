@@ -211,7 +211,7 @@ public:
     bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
     void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 
-    static bool isLocalHostOrLoopbackIPAddress(StringView);
+    WEBCORE_EXPORT static bool isLocalHostOrLoopbackIPAddress(StringView);
 
     const SecurityOriginData& data() const { return m_data; }
 

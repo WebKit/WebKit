@@ -534,6 +534,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 
     _WKWebsiteDataStoreConfiguration *storeConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
     storeConfiguration.httpsProxy = [NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", httpsServer.port()]];
+    storeConfiguration.allowsServerPreconnect = NO;
     WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:dataStore];

@@ -167,6 +167,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->staleWhileRevalidateEnabled(),
         m_configuration->testSpeedMultiplier(),
         m_configuration->suppressesConnectionTerminationOnSystemChange(),
+        m_configuration->allowsServerPreconnect(),
     };
     networkingHasBegun();
 

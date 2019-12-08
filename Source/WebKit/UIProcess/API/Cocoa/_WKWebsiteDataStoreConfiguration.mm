@@ -350,6 +350,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setSuppressesConnectionTerminationOnSystemChange(suppresses);
 }
 
+- (BOOL)allowsServerPreconnect
+{
+    return _configuration->allowsServerPreconnect();
+}
+
+- (void)setAllowsServerPreconnect:(BOOL)allows
+{
+    _configuration->setAllowsServerPreconnect(allows);
+}
+
 - (NSString *)boundInterfaceIdentifier
 {
     return _configuration->boundInterfaceIdentifier();

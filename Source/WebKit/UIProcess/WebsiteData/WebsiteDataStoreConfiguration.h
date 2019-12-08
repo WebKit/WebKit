@@ -144,6 +144,9 @@ public:
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppresses) { m_suppressesConnectionTerminationOnSystemChange = suppresses; }
 
+    bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
+    void setAllowsServerPreconnect(bool allows) { m_allowsServerPreconnect = allows; }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -182,6 +185,7 @@ private:
     bool m_serviceWorkerProcessTerminationDelayEnabled { true };
     bool m_testingSessionEnabled { false };
     bool m_suppressesConnectionTerminationOnSystemChange { false };
+    bool m_allowsServerPreconnect { true };
     unsigned m_testSpeedMultiplier { 1 };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
