@@ -60,7 +60,9 @@ public:
 
     LineBox(const InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
     LineBox() = default;
-    
+
+    const InlineRect& logicalRect() const { return m_rect; }
+
     InlineLayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
 
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }

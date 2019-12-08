@@ -1,3 +1,21 @@
+2019-12-08  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Collect overflow from lines
+        https://bugs.webkit.org/show_bug.cgi?id=204994
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::logicalRect const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::computeVisualOverflow):
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+
+        Connect to LFC layout.
+
 2019-12-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Switch over to float based types in inline layout

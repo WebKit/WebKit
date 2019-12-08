@@ -60,8 +60,11 @@ public:
 
     LayoutUnit contentLogicalHeight() const { return m_contentLogicalHeight; }
     size_t lineCount() const;
+
     LayoutUnit firstLineBaseline() const;
     LayoutUnit lastLineBaseline() const;
+
+    void collectOverflow(RenderBlockFlow&);
 
     const Display::InlineContent* displayInlineContent() const;
 

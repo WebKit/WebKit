@@ -132,6 +132,36 @@ LayoutUnit LineLayout::lastLineBaseline() const
     return Layout::toLayoutUnit(lastLineBox.logicalTop() + lastLineBox.baselineOffset());
 }
 
+// FIXME: LFC should handle overflow computations.
+static LayoutRect computeVisualOverflow(const RenderStyle& style, const LayoutRect& boxRect, IntSize& viewportSize)
+{
+    auto overflowRect = boxRect;
+    auto strokeOverflow = std::ceil(style.computedStrokeWidth(viewportSize));
+    overflowRect.inflate(strokeOverflow);
+
+    auto letterSpacing = style.fontCascade().letterSpacing();
+    if (letterSpacing >= 0)
+        return overflowRect;
+    // Last letter's negative spacing shrinks layout rect. Push it to visual overflow.
+    overflowRect.expand(-letterSpacing, 0);
+    return overflowRect;
+}
+
+void LineLayout::collectOverflow(RenderBlockFlow& flow)
+{
+    ASSERT(&flow == &m_flow);
+    ASSERT(!flow.hasOverflowClip());
+
+    auto viewportSize = m_flow.frame().view()->size();
+
+    for (auto& lineBox : displayInlineContent()->lineBoxes) {
+        auto lineRect = Layout::toLayoutRect(lineBox.logicalRect());
+        auto visualOverflowRect = computeVisualOverflow(flow.style(), lineRect, viewportSize);
+        flow.addLayoutOverflow(lineRect);
+        flow.addVisualOverflow(visualOverflowRect);
+    }
+}
+
 const Display::InlineContent* LineLayout::displayInlineContent() const
 {
     return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
@@ -184,20 +214,6 @@ const Layout::Container& LineLayout::rootLayoutBox() const
     return m_treeContent->rootLayoutBox();
 }
 
-static LayoutRect computeOverflow(const RenderStyle& style, const LayoutRect& boxRect, IntSize& viewportSize)
-{
-    auto overflowRect = boxRect;
-    auto strokeOverflow = std::ceil(style.computedStrokeWidth(viewportSize));
-    overflowRect.inflate(strokeOverflow);
-
-    auto letterSpacing = style.fontCascade().letterSpacing();
-    if (letterSpacing >= 0)
-        return overflowRect;
-    // Last letter's negative spacing shrinks layout rect. Push it to visual overflow.
-    overflowRect.expand(-letterSpacing, 0);
-    return overflowRect;
-}
-
 void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!displayInlineContent())
@@ -227,7 +243,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             return;
 
         auto rect = Layout::toLayoutRect(run.logicalRect());
-        auto visualOverflowRect = computeOverflow(style, rect, viewportSize);
+        auto visualOverflowRect = computeVisualOverflow(style, rect, viewportSize);
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 

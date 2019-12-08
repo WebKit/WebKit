@@ -2969,6 +2969,13 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         return;
     }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout()) {
+        layoutFormattingContextLineLayout()->collectOverflow(*this);
+        return;
+    }
+#endif
+    
     if (complexLineLayout())
         complexLineLayout()->addOverflowFromInlineChildren();
 }
