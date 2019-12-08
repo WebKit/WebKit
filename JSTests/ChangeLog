@@ -1,3 +1,13 @@
+2019-12-08  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7] Skip flaky stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=204996
+
+        Unreviewed gardening.
+
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+        * stress/sampling-profiler-should-not-sample-beyond-stack-bounds.js:
+
 2019-12-07  Mark Lam  <mark.lam@apple.com>
 
         Object.prototype.isPrototypeOf() should check if the passed in value is a non-object first.

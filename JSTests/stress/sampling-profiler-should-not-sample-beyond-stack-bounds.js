@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 //@ requireOptions("--useSamplingProfiler=true", "--useProbeOSRExit=true", "--useObjectAllocationSinking=false", "--sampleInterval=10")
 
 function foo(ranges) {
