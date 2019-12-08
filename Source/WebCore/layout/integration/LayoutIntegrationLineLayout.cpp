@@ -226,7 +226,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (style.visibility() != Visibility::Visible)
             return;
 
-        LayoutRect rect = run.logicalRect();
+        auto rect = Layout::toLayoutRect(run.logicalRect());
         auto visualOverflowRect = computeOverflow(style, rect, viewportSize);
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;

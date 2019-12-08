@@ -199,6 +199,21 @@ struct UsedVerticalValues {
     Optional<LayoutUnit> height;
 };
 
+inline LayoutUnit toLayoutUnit(InlineLayoutUnit value)
+{
+    return LayoutUnit { value };
+}
+
+inline LayoutPoint toLayoutPoint(const InlineLayoutPoint& point)
+{
+    return LayoutPoint { point };
+}
+
+inline LayoutRect toLayoutRect(const InlineLayoutRect& rect)
+{
+    return LayoutRect { rect };
+}
+
 }
 }
 #endif

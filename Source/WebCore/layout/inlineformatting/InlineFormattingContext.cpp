@@ -219,11 +219,11 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
             auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - displayBox.horizontalMarginBorderAndPadding();
             displayBox.setContentBoxWidth(contentWidth);
         }
-        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { 0_lu, availableWidth } };
+        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { 0_lu, toLayoutUnit(availableWidth) } };
         return computedIntrinsicWidthForConstraint(usedHorizontalValues);
     };
 
-    auto constraints = geometry().constrainByMinMaxWidth(root(), { maximumLineWidth(0), maximumLineWidth(InlineLayoutUnit::max()) });
+    auto constraints = geometry().constrainByMinMaxWidth(root(), { toLayoutUnit(maximumLineWidth(0)), toLayoutUnit(maximumLineWidth(InlineLayoutUnit::max())) });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
@@ -380,7 +380,7 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedH
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     if (!floatingContext.isEmpty()) {
-        auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
+        auto floatConstraints = floatingContext.constraints({ toLayoutUnit(lineLogicalTop) });
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
@@ -445,9 +445,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), lineRun.logicalRect(), lineRun.textContext() });
 
         if (lineRun.isLineBreak()) {
-            displayBox.setTopLeft(logicalRect.topLeft());
-            displayBox.setContentBoxWidth(logicalRect.width());
-            displayBox.setContentBoxHeight(logicalRect.height());
+            displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
+            displayBox.setContentBoxWidth(toLayoutUnit(logicalRect.width()));
+            displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
             continue;
         }
 
@@ -456,13 +456,13 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto topLeft = logicalRect.topLeft();
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, usedHorizontalValues);
-            displayBox.setTopLeft(topLeft);
+            displayBox.setTopLeft(toLayoutPoint(topLeft));
             continue;
         }
 
         // Inline level container start (<span>)
         if (lineRun.isContainerStart()) {
-            displayBox.setTopLeft(logicalRect.topLeft());
+            displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
             continue;
         }
 
@@ -476,8 +476,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto marginBoxWidth = logicalRect.left() - displayBox.left();
             auto contentBoxWidth = marginBoxWidth - (displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0));
             // FIXME fix it for multiline.
-            displayBox.setContentBoxWidth(contentBoxWidth);
-            displayBox.setContentBoxHeight(logicalRect.height());
+            displayBox.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
+            displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
             continue;
         }
 
@@ -486,12 +486,12 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto firstRunForLayoutBox = !index || &lineRuns[index - 1].layoutBox() != &layoutBox; 
             if (firstRunForLayoutBox) {
                 // Setup display box for the associated layout box.
-                displayBox.setTopLeft(logicalRect.topLeft());
-                displayBox.setContentBoxWidth(logicalRect.width());
-                displayBox.setContentBoxHeight(logicalRect.height());
+                displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
+                displayBox.setContentBoxWidth(toLayoutUnit(logicalRect.width()));
+                displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
             } else {
                 // FIXME fix it for multirun/multiline.
-                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
+                displayBox.setContentBoxWidth(toLayoutUnit(displayBox.contentBoxWidth() + logicalRect.width()));
             }
             continue;
         }

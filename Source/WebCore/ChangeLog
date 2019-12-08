@@ -1,3 +1,33 @@
+2019-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Convert InlineLayoutUnit/Point/Rect to LayoutUnit/Point/Rect when crossing inline/block boundary
+        https://bugs.webkit.org/show_bug.cgi?id=204991
+        <rdar://problem/57730383>
+
+        Reviewed by Sam Weinig.
+
+        Float -> LayoutUnit requires explicit conversion due to precision loss. Use these functions when
+        feeding inline box geometry information back to block layout.
+
+        Implicit floor will do for now (might need to call round though).
+
+        This is in preparation for using float based types in IFC. See webkit.org/b/204986 for more info.
+
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::toLayoutUnit):
+        (WebCore::Layout::toLayoutPoint):
+        (WebCore::Layout::toLayoutRect):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/displaytree/DisplayInlineContent.cpp:
+        (WebCore::Display:: const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
 2019-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unique origin's window must get its own event loop
