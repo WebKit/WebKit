@@ -25,22 +25,23 @@
 
 #pragma once
 
-#include "JSDOMMapLike.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class DOMMapAdapter;
 
 class InternalsMapLike : public RefCounted<InternalsMapLike> {
 public:
     static Ref<InternalsMapLike> create() { return adoptRef(*new InternalsMapLike); }
 
+    void initializeMapLike(DOMMapAdapter&);
     void setFromMapLike(String&&, unsigned);
     void clear();
     bool remove(const String&);
-
-    void synchronizeBackingMap(Ref<DOMMapLike>&&);
-    DOMMapLike* backingMap() { return m_mapLike.get(); }
 
     Vector<String> inspectKeys() const;
     Vector<unsigned> inspectValues() const;
@@ -48,7 +49,6 @@ public:
 private:
     InternalsMapLike();
     HashMap<String, unsigned> m_values;
-    RefPtr<DOMMapLike> m_mapLike;
 };
 
 } // namespace WebCore

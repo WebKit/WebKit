@@ -27,9 +27,8 @@
 #include "InternalsMapLike.h"
 
 #include "IDLTypes.h"
-#include <wtf/HashMap.h>
+#include "JSDOMMapLike.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -38,11 +37,10 @@ InternalsMapLike::InternalsMapLike()
     m_values.add("init", 0);
 }
 
-void InternalsMapLike::synchronizeBackingMap(Ref<DOMMapLike>&& mapLike)
+void InternalsMapLike::initializeMapLike(DOMMapAdapter& map)
 {
-    m_mapLike = WTFMove(mapLike);
     for (auto& keyValue : m_values)
-        m_mapLike->set<IDLDOMString, IDLUnsignedLong>(keyValue.key, keyValue.value);
+        map.set<IDLDOMString, IDLUnsignedLong>(keyValue.key, keyValue.value);
 }
 
 void InternalsMapLike::setFromMapLike(String&& key, unsigned value)

@@ -286,19 +286,12 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
 
 rtc::scoped_refptr<LibWebRTCStatsCollector> LibWebRTCMediaEndpoint::createStatsCollector(Ref<DeferredPromise>&& promise)
 {
-    return LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)]() mutable -> RefPtr<RTCStatsReport> {
+    return LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)](auto&& report) mutable {
         ASSERT(isMainThread());
-        if (protectedThis->isStopped())
-            return nullptr;
+        if (protectedThis->isStopped() || !report)
+            return;
 
-        auto report = RTCStatsReport::create();
-
-        promise->resolve<IDLInterface<RTCStatsReport>>(report.copyRef());
-
-        // The promise resolution might fail in which case no backing map will be created.
-        if (!report->backingMap())
-            return nullptr;
-        return report;
+        promise->resolve<IDLInterface<RTCStatsReport>>(report.releaseNonNull());
     });
 }
 

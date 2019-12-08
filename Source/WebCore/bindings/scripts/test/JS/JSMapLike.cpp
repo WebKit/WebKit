@@ -144,7 +144,6 @@ void JSMapLike::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, MapLike>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
-    synchronizeBackingMap(*globalObject(), *globalObject(), *this);
 }
 
 JSObject* JSMapLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

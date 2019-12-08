@@ -26,23 +26,21 @@
 #pragma once
 
 #include "HighlightRangeGroup.h"
-#include "JSDOMMapLike.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class DOMMapAdapter;
 class DOMString;
 class HighlightRangeGroup;
 
 class HighlightMap : public RefCounted<HighlightMap> {
 public:
     static Ref<HighlightMap> create() { return adoptRef(*new HighlightMap); }
-    
+
     void addHighlightGroup(String&, HighlightRangeGroup&);
-    
-    void synchronizeBackingMap(Ref<DOMMapLike>&& mapLike) { m_mapLike = WTFMove(mapLike); }
-    DOMMapLike* backingMap() { return m_mapLike.get(); }
+    void initializeMapLike(DOMMapAdapter&);
 
     // Bindings support.
     String namedItem(const AtomString& name) const;
@@ -55,8 +53,7 @@ public:
     
 private:
     HighlightMap() = default;
-    HashMap<String, RefPtr<HighlightRangeGroup>> m_map;
-    RefPtr<DOMMapLike> m_mapLike;
+    HashMap<String, Ref<HighlightRangeGroup>> m_map;
 };
 
 }

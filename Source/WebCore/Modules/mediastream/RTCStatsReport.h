@@ -25,19 +25,18 @@
 
 #pragma once
 
-#include "JSDOMMapLike.h"
+#include "LibWebRTCStatsCollector.h"
 
 namespace WebCore {
 
+class DOMMapAdapter;
+
 class RTCStatsReport : public RefCounted<RTCStatsReport> {
 public:
-    static Ref<RTCStatsReport> create() { return adoptRef(*new RTCStatsReport); }
+    using MapInitializer = Function<void(DOMMapAdapter&)>;
+    static Ref<RTCStatsReport> create(MapInitializer&& mapInitializer) { return adoptRef(*new RTCStatsReport(WTFMove(mapInitializer))); }
 
-    void synchronizeBackingMap(Ref<DOMMapLike>&& mapLike) { m_mapLike = WTFMove(mapLike); }
-    DOMMapLike* backingMap() { return m_mapLike.get(); }
-
-    template<typename Value> void addStats(typename Value::ParameterType&& value) { m_mapLike->set<IDLDOMString, Value>(value.id, std::forward<typename Value::ParameterType>(value)); }
-
+    void initializeMapLike(DOMMapAdapter& adapter) { m_mapInitializer(adapter); }
 
     enum class Type {
         Codec,
@@ -236,10 +235,14 @@ public:
     };
 
 private:
-    RTCStatsReport() = default;
+    explicit RTCStatsReport(MapInitializer&&);
 
-private:
-    RefPtr<DOMMapLike> m_mapLike;
+    MapInitializer m_mapInitializer;
 };
+
+inline RTCStatsReport::RTCStatsReport(MapInitializer&& mapInitializer)
+    : m_mapInitializer(WTFMove(mapInitializer))
+{
+}
 
 } // namespace WebCore

@@ -4404,10 +4404,6 @@ sub GenerateImplementation
         push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    if ($interface->mapLike) {
-        push(@implContent, "    synchronizeBackingMap(*globalObject(), *globalObject(), *this);\n");
-    }
-
     # Support for RuntimeEnabled attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
         next unless NeedsRuntimeCheck($interface, $attribute);

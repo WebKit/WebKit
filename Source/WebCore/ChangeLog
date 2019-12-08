@@ -1,5 +1,79 @@
 2019-12-08  youenn fablet  <youenn@apple.com>
 
+        Do not use DOMGuarded for maplike
+        https://bugs.webkit.org/show_bug.cgi?id=204879
+
+        Reviewed by Darin Adler.
+
+        Update maplike according setlike model where we support syncing at creation of the JS wrapper
+        and syncing whenever setlike/maplike methods are called.
+        Removing DOMGuardedObject makes implementation more lightweight, there is less things to implement on DOM side
+        and it allows collecting the private map to free memory if needed.
+
+        Covered by existing tests and rebased binding tests.
+
+        * Modules/highlight/HighlightMap.cpp:
+        (WebCore::HighlightMap::initializeMapLike):
+        * Modules/highlight/HighlightMap.h:
+        (WebCore::HighlightMap::synchronizeBackingMap): Deleted.
+        (WebCore::HighlightMap::backingMap): Deleted.
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::create):
+        (WebCore::RTCStatsReport::initializeMapLike):
+        (WebCore::RTCStatsReport::RTCStatsReport):
+        (WebCore::RTCStatsReport::synchronizeBackingMap): Deleted.
+        (WebCore::RTCStatsReport::backingMap): Deleted.
+        (WebCore::RTCStatsReport::addStats): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createStatsCollector):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::LibWebRTCStatsCollector::~LibWebRTCStatsCollector):
+        (WebCore::initializeRTCStatsReportBackingMap):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.h:
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::getBackingMap):
+        (WebCore::clearBackingMap):
+        (WebCore::setToBackingMap):
+        (WebCore::forwardAttributeGetterToBackingMap):
+        (WebCore::forwardFunctionCallToBackingMap):
+        (WebCore::forwardForEachCallToBackingMap):
+        (WebCore::initializeBackingMap): Deleted.
+        (WebCore::createBackingMap): Deleted.
+        * bindings/js/JSDOMMapLike.h:
+        (WebCore::DOMMapAdapter::DOMMapAdapter):
+        (WebCore::DOMMapAdapter::set):
+        (WebCore::DOMMapAdapter::clear):
+        (WebCore::getAndInitializeBackingMap):
+        (WebCore::forwardSizeToMapLike):
+        (WebCore::forwardEntriesToMapLike):
+        (WebCore::forwardKeysToMapLike):
+        (WebCore::forwardValuesToMapLike):
+        (WebCore::forwardClearToMapLike):
+        (WebCore::forwardForEachToMapLike):
+        (WebCore::forwardGetToMapLike):
+        (WebCore::forwardHasToMapLike):
+        (WebCore::forwardSetToMapLike):
+        (WebCore::forwardDeleteToMapLike):
+        (): Deleted.
+        (WebCore::DOMMapLike::set): Deleted.
+        (WebCore::synchronizeBackingMap): Deleted.
+        * bindings/js/JSDOMSetLike.cpp:
+        * bindings/js/JSDOMSetLike.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSMapLike::finishCreation):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSReadOnlyMapLike::finishCreation):
+        * testing/InternalsMapLike.cpp:
+        (WebCore::InternalsMapLike::initializeMapLike):
+        (WebCore::InternalsMapLike::synchronizeBackingMap): Deleted.
+        * testing/InternalsMapLike.h:
+        (WebCore::InternalsMapLike::backingMap): Deleted.
+
+2019-12-08  youenn fablet  <youenn@apple.com>
+
         Support different resolutions for video tracks captured from UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=204945
 

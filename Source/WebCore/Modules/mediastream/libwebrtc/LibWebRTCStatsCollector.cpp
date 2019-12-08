@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "JSDOMMapLike.h"
 #include "JSRTCStatsReport.h"
 #include "Performance.h"
 #include <wtf/MainThread.h>
@@ -44,7 +45,7 @@ LibWebRTCStatsCollector::~LibWebRTCStatsCollector()
         return;
 
     callOnMainThread([callback = WTFMove(m_callback)]() mutable {
-        callback();
+        callback(nullptr);
     });
 }
 
@@ -380,58 +381,60 @@ static inline void fillRTCPeerConnectionStats(RTCStatsReport::PeerConnectionStat
         stats.dataChannelsClosed = *rtcStats.data_channels_closed;
 }
 
+static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, const webrtc::RTCStatsReport& rtcReport)
+{
+    for (const auto& rtcStats : rtcReport) {
+        if (rtcStats.type() == webrtc::RTCInboundRTPStreamStats::kType) {
+            RTCStatsReport::InboundRTPStreamStats stats;
+            fillInboundRTPStreamStats(stats, static_cast<const webrtc::RTCInboundRTPStreamStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRTPStreamStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCOutboundRTPStreamStats::kType) {
+            RTCStatsReport::OutboundRTPStreamStats stats;
+            fillOutboundRTPStreamStats(stats, static_cast<const webrtc::RTCOutboundRTPStreamStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRTPStreamStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCMediaStreamTrackStats::kType) {
+            RTCStatsReport::MediaStreamTrackStats stats;
+            fillRTCMediaStreamTrackStats(stats, static_cast<const webrtc::RTCMediaStreamTrackStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::MediaStreamTrackStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCDataChannelStats::kType) {
+            RTCStatsReport::DataChannelStats stats;
+            fillRTCDataChannelStats(stats, static_cast<const webrtc::RTCDataChannelStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::DataChannelStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCIceCandidatePairStats::kType) {
+            RTCStatsReport::IceCandidatePairStats stats;
+            fillRTCIceCandidatePairStats(stats, static_cast<const webrtc::RTCIceCandidatePairStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCRemoteIceCandidateStats::kType || rtcStats.type() == webrtc::RTCLocalIceCandidateStats::kType) {
+            RTCStatsReport::IceCandidateStats stats;
+            fillRTCIceCandidateStats(stats, static_cast<const webrtc::RTCIceCandidateStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidateStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCCertificateStats::kType) {
+            RTCStatsReport::CertificateStats stats;
+            fillRTCCertificateStats(stats, static_cast<const webrtc::RTCCertificateStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CertificateStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCCodecStats::kType) {
+            RTCStatsReport::CodecStats stats;
+            fillRTCCodecStats(stats, static_cast<const webrtc::RTCCodecStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::CodecStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCTransportStats::kType) {
+            RTCStatsReport::TransportStats stats;
+            fillRTCTransportStats(stats, static_cast<const webrtc::RTCTransportStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::TransportStats>>(stats.id, WTFMove(stats));
+        } else if (rtcStats.type() == webrtc::RTCPeerConnectionStats::kType) {
+            RTCStatsReport::PeerConnectionStats stats;
+            fillRTCPeerConnectionStats(stats, static_cast<const webrtc::RTCPeerConnectionStats&>(rtcStats));
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::PeerConnectionStats>>(stats.id, WTFMove(stats));
+        }
+    }
+}
+
 void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
-    callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport] {
-        auto report = protectedThis->m_callback();
-        if (!report)
-            return;
-
-        ASSERT(report->backingMap());
-
-        for (const auto& rtcStats : *rtcReport) {
-            if (rtcStats.type() == webrtc::RTCInboundRTPStreamStats::kType) {
-                RTCStatsReport::InboundRTPStreamStats stats;
-                fillInboundRTPStreamStats(stats, static_cast<const webrtc::RTCInboundRTPStreamStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::InboundRTPStreamStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCOutboundRTPStreamStats::kType) {
-                RTCStatsReport::OutboundRTPStreamStats stats;
-                fillOutboundRTPStreamStats(stats, static_cast<const webrtc::RTCOutboundRTPStreamStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::OutboundRTPStreamStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCMediaStreamTrackStats::kType) {
-                RTCStatsReport::MediaStreamTrackStats stats;
-                fillRTCMediaStreamTrackStats(stats, static_cast<const webrtc::RTCMediaStreamTrackStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::MediaStreamTrackStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCDataChannelStats::kType) {
-                RTCStatsReport::DataChannelStats stats;
-                fillRTCDataChannelStats(stats, static_cast<const webrtc::RTCDataChannelStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::DataChannelStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCIceCandidatePairStats::kType) {
-                RTCStatsReport::IceCandidatePairStats stats;
-                fillRTCIceCandidatePairStats(stats, static_cast<const webrtc::RTCIceCandidatePairStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCRemoteIceCandidateStats::kType || rtcStats.type() == webrtc::RTCLocalIceCandidateStats::kType) {
-                RTCStatsReport::IceCandidateStats stats;
-                fillRTCIceCandidateStats(stats, static_cast<const webrtc::RTCIceCandidateStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::IceCandidateStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCCertificateStats::kType) {
-                RTCStatsReport::CertificateStats stats;
-                fillRTCCertificateStats(stats, static_cast<const webrtc::RTCCertificateStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::CertificateStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCCodecStats::kType) {
-                RTCStatsReport::CodecStats stats;
-                fillRTCCodecStats(stats, static_cast<const webrtc::RTCCodecStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::CodecStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCTransportStats::kType) {
-                RTCStatsReport::TransportStats stats;
-                fillRTCTransportStats(stats, static_cast<const webrtc::RTCTransportStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::TransportStats>>(WTFMove(stats));
-            } else if (rtcStats.type() == webrtc::RTCPeerConnectionStats::kType) {
-                RTCStatsReport::PeerConnectionStats stats;
-                fillRTCPeerConnectionStats(stats, static_cast<const webrtc::RTCPeerConnectionStats&>(rtcStats));
-                report->addStats<IDLDictionary<RTCStatsReport::PeerConnectionStats>>(WTFMove(stats));
-            }
-        }
+    callOnMainThread([this, protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport]() {
+        m_callback(RTCStatsReport::create([rtcReport](auto& mapAdapter) {
+            if (rtcReport)
+                initializeRTCStatsReportBackingMap(mapAdapter, *rtcReport);
+        }));
     });
 }
 

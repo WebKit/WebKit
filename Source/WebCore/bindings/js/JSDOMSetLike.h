@@ -30,7 +30,6 @@
 #include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CommonIdentifiers.h>
-#include <JavaScriptCore/JSSet.h>
 
 namespace WebCore {
 

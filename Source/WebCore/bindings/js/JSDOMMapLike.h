@@ -27,20 +27,18 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
-#include "JSDOMGuardedObject.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CommonIdentifiers.h>
-#include <JavaScriptCore/JSMap.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT JSC::JSMap& createBackingMap(JSC::JSGlobalObject&, JSC::JSGlobalObject&, JSC::JSObject&);
-WEBCORE_EXPORT void initializeBackingMap(JSC::VM&, JSC::JSObject&, JSC::JSMap&);
+WEBCORE_EXPORT std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlobalObject&, JSC::JSObject& mapLike);
 WEBCORE_EXPORT JSC::JSValue forwardAttributeGetterToBackingMap(JSC::JSGlobalObject&, JSC::JSObject&, const JSC::Identifier&);
 WEBCORE_EXPORT JSC::JSValue forwardFunctionCallToBackingMap(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&, const JSC::Identifier&);
-WEBCORE_EXPORT JSC::JSValue forwardForEachCallToBackingMap(JSC::JSGlobalObject&, JSC::CallFrame&, JSDOMGlobalObject&, JSC::JSObject&);
+WEBCORE_EXPORT JSC::JSValue forwardForEachCallToBackingMap(JSDOMGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
+WEBCORE_EXPORT void clearBackingMap(JSC::JSGlobalObject&, JSC::JSObject&);
+WEBCORE_EXPORT void setToBackingMap(JSC::JSGlobalObject&, JSC::JSObject&, JSC::JSValue, JSC::JSValue);
 
-template<typename WrapperClass> void synchronizeBackingMap(JSC::JSGlobalObject&, JSDOMGlobalObject&, WrapperClass&);
 template<typename WrapperClass> JSC::JSValue forwardSizeToMapLike(JSC::JSGlobalObject&, WrapperClass&);
 template<typename WrapperClass> JSC::JSValue forwardEntriesToMapLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
 template<typename WrapperClass> JSC::JSValue forwardKeysToMapLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
@@ -52,100 +50,107 @@ template<typename WrapperClass, typename ItemType> JSC::JSValue forwardHasToMapL
 template<typename WrapperClass, typename ItemType, typename ValueType> JSC::JSValue forwardSetToMapLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, ItemType&&, ValueType&&);
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToMapLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, ItemType&&);
 
-class DOMMapLike final : public DOMGuarded<JSC::JSMap> {
+class DOMMapAdapter {
 public:
-    static Ref<DOMMapLike> create(JSDOMGlobalObject& globalObject, JSC::JSMap& map) { return adoptRef(*new DOMMapLike(globalObject, map)); }
+    DOMMapAdapter(JSC::JSGlobalObject&, JSC::JSObject&);
+    template<typename IDLKeyType, typename IDLValueType> void set(typename IDLKeyType::ParameterType, typename IDLValueType::ParameterType);
+    void clear();
 
-    template<typename Key, typename Value> void set(typename Key::ParameterType, typename Value::ParameterType);
-
-    JSC::JSMap* backingMap() { return guarded(); }
-
-protected:
-    DOMMapLike(JSDOMGlobalObject& globalObject, JSC::JSMap& map) : DOMGuarded<JSC::JSMap>(globalObject, map) { }
+private:
+    JSC::JSGlobalObject& m_lexicalGlobalObject;
+    JSC::JSObject& m_backingMap;
 };
 
-template<typename Key, typename Value> inline void DOMMapLike::set(typename Key::ParameterType key, typename Value::ParameterType value)
+inline DOMMapAdapter::DOMMapAdapter(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& backingMap)
+    : m_lexicalGlobalObject(lexicalGlobalObject)
+    , m_backingMap(backingMap)
 {
-    if (isEmpty())
-        return;
-    auto* lexicalGlobalObject = globalObject();
-    JSC::JSLockHolder locker(lexicalGlobalObject);
-    backingMap()->set(lexicalGlobalObject,
-        toJS<Key>(*lexicalGlobalObject, *globalObject(), std::forward<typename Key::ParameterType>(key)),
-        toJS<Value>(*lexicalGlobalObject, *globalObject(), std::forward<typename Value::ParameterType>(value)));
 }
 
-template<typename WrapperClass> inline void synchronizeBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WrapperClass& mapLike)
+template<typename IDLKeyType, typename IDLValueType>
+void DOMMapAdapter::set(typename IDLKeyType::ParameterType key, typename IDLValueType::ParameterType value)
 {
-    auto backingMap = mapLike.wrapped().backingMap();
-    if (backingMap) {
-        ASSERT(backingMap->backingMap());
-        initializeBackingMap(JSC::getVM(&lexicalGlobalObject), mapLike, *backingMap->backingMap());
-        return;
+    JSC::JSLockHolder locker(&m_lexicalGlobalObject);
+    auto jsKey = toJS<IDLKeyType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLKeyType::ParameterType>(key));
+    auto jsValue = toJS<IDLValueType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLValueType::ParameterType>(value));
+    setToBackingMap(m_lexicalGlobalObject, m_backingMap, jsKey, jsValue);
+}
+
+template<typename WrapperClass> JSC::JSObject& getAndInitializeBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& mapLike)
+{
+    auto pair = getBackingMap(lexicalGlobalObject, mapLike);
+    if (pair.first) {
+        DOMMapAdapter adapter { lexicalGlobalObject, pair.second.get() };
+        mapLike.wrapped().initializeMapLike(adapter);
     }
-    auto& map = createBackingMap(lexicalGlobalObject, globalObject, mapLike);
-    mapLike.wrapped().synchronizeBackingMap(DOMMapLike::create(globalObject, map));
+    return pair.second.get();
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardSizeToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& mapLike)
+template<typename WrapperClass> JSC::JSValue forwardSizeToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& mapLike)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardAttributeGetterToBackingMap(lexicalGlobalObject, mapLike, vm.propertyNames->size);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardAttributeGetterToBackingMap(lexicalGlobalObject, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->size);
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardEntriesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
+template<typename WrapperClass> JSC::JSValue forwardEntriesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, vm.propertyNames->builtinNames().entriesPublicName());
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().entriesPublicName());
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardKeysToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
+template<typename WrapperClass> JSC::JSValue forwardKeysToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, vm.propertyNames->builtinNames().keysPublicName());
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().keysPublicName());
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardValuesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
+template<typename WrapperClass> JSC::JSValue forwardValuesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, vm.propertyNames->builtinNames().valuesPublicName());
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().valuesPublicName());
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardClearToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
+template<typename WrapperClass> JSC::JSValue forwardClearToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
     mapLike.wrapped().clear();
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, JSC::getVM(&lexicalGlobalObject).propertyNames->clear);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->clear);
 }
 
-template<typename WrapperClass, typename Callback> inline JSC::JSValue forwardForEachToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, Callback&&)
+template<typename WrapperClass, typename Callback> JSC::JSValue forwardForEachToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, Callback&&)
 {
-    return forwardForEachCallToBackingMap(lexicalGlobalObject, callFrame, *mapLike.globalObject(), mapLike);
+    getAndInitializeBackingMap(lexicalGlobalObject, mapLike);
+    return forwardForEachCallToBackingMap(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), callFrame, mapLike);
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardGetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
+template<typename WrapperClass, typename ItemType> JSC::JSValue forwardGetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, vm.propertyNames->builtinNames().getPublicName());
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().getPublicName());
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardHasToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
+template<typename WrapperClass, typename ItemType> JSC::JSValue forwardHasToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
 {
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, vm.propertyNames->builtinNames().hasPublicName());
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().hasPublicName());
 }
 
-template<typename WrapperClass, typename KeyType, typename ValueType> inline JSC::JSValue forwardSetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, KeyType&& key, ValueType&& value)
+template<typename WrapperClass, typename KeyType, typename ValueType> JSC::JSValue forwardSetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, KeyType&& key, ValueType&& value)
 {
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     mapLike.wrapped().setFromMapLike(std::forward<KeyType>(key), std::forward<ValueType>(value));
-    forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, JSC::getVM(&lexicalGlobalObject).propertyNames->set);
+    forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->set);
     return &mapLike;
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardDeleteToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&& item)
+template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&& item)
 {
     auto isDeleted = mapLike.wrapped().remove(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);
-    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, mapLike, JSC::getVM(&lexicalGlobalObject).propertyNames->deleteKeyword);
+
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->deleteKeyword);
+
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;
 }

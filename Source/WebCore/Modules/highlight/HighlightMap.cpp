@@ -26,12 +26,21 @@
 #include "config.h"
 #include "HighlightMap.h"
 
+#include "JSDOMMapLike.h"
+#include "JSHighlightRangeGroup.h"
+
 namespace WebCore {
 
 void HighlightMap::addHighlightGroup(String& cssStyle, HighlightRangeGroup &group)
 {
     UNUSED_PARAM(cssStyle);
     UNUSED_PARAM(group);
+}
+
+void HighlightMap::initializeMapLike(DOMMapAdapter& map)
+{
+    for (auto& keyValue : m_map)
+        map.set<IDLDOMString, IDLInterface<HighlightRangeGroup>>(keyValue.key, keyValue.value);
 }
 
 void HighlightMap::setFromMapLike(String&&, Ref<HighlightRangeGroup>&&)

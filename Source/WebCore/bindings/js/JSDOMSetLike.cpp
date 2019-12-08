@@ -28,6 +28,7 @@
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/JSSet.h>
 
 namespace WebCore {
 
