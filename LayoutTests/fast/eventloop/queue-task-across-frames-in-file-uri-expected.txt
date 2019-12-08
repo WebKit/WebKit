@@ -1,4 +1,4 @@
-This tests the order by which tasks are scheduled across documents of similar origins.
+This tests the order by which tasks are scheduled across documents of file URI documents.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

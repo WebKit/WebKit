@@ -105,6 +105,12 @@ public:
     {
     }
 
+    bool hasSameEventLoopAs(EventLoopTaskGroup& otherGroup)
+    {
+        ASSERT(m_eventLoop);
+        return m_eventLoop == otherGroup.m_eventLoop;
+    }
+
     bool matchesTask(EventLoopTask& task) const
     {
         auto* group = task.group();

@@ -1,3 +1,37 @@
+2019-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unique origin's window must get its own event loop
+        https://bugs.webkit.org/show_bug.cgi?id=204978
+
+        Reviewed by Antti Koivisto.
+
+        This patch fixes the bug that unique origin documents and documents of the same registrable domains
+        with different schemes / protocols were sharing the same event loop. Note that we continue to share
+        the event loop across file URI documents.
+
+        We now use the agent cluster key to looking up the event loop to better match the HTML5 spec:
+        https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
+
+        Tests: fast/eventloop/data-uri-document-has-its-own-event-loop.html
+               fast/eventloop/queue-task-across-frames-in-file-uri.html
+               http/tests/eventloop/documents-with-different-protocols-do-not-share-event-loop.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::eventLoop):
+        * dom/EventLoop.h:
+        (WebCore::EventLoopTaskGroup::hasSameEventLoopAs): Added for testing purposes.
+        * dom/WindowEventLoop.cpp:
+        (WebCore::agentClusterKeyOrNullIfUnique): Added.
+        (WebCore::WindowEventLoop::eventLoopForSecurityOrigin): Replaced ensureForRegistrableDomain.
+        (WebCore::WindowEventLoop::create): Added.
+        (WebCore::WindowEventLoop::WindowEventLoop):
+        (WebCore::WindowEventLoop::~WindowEventLoop):
+        * dom/WindowEventLoop.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSameEventLoopAs): Added for testing purposes.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-12-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Display::LineBox should adopt to InlineLayoutUnit

@@ -1,3 +1,28 @@
+2019-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unique origin's window must get its own event loop
+        https://bugs.webkit.org/show_bug.cgi?id=204978
+
+        Reviewed by Antti Koivisto.
+
+        Added tests to make sure data URI documents continue to use the same event loop but documents of
+        unique origin and of different schemes will use distinct event loops using newly added internals
+        method (hasSameEventLoopAs). Also added assertions to the existing tests using this new method.
+
+        * fast/eventloop: Added.
+        * fast/eventloop/data-uri-document-has-its-own-event-loop-expected.txt: Added.
+        * fast/eventloop/data-uri-document-has-its-own-event-loop.html: Added.
+        * fast/eventloop/queue-task-across-frames-in-file-uri-expected.txt: Added.
+        * fast/eventloop/queue-task-across-frames-in-file-uri.html: Added.
+        * fast/eventloop/resources: Added.
+        * fast/eventloop/resources/eventloop-helper.html: Added.
+        * http/tests/eventloop/documents-with-different-protocols-do-not-share-event-loop-expected.txt: Added.
+        * http/tests/eventloop/documents-with-different-protocols-do-not-share-event-loop.html: Added.
+        * http/tests/eventloop/queue-task-across-cross-site-frames-expected.txt:
+        * http/tests/eventloop/queue-task-across-cross-site-frames.html:
+        * http/tests/eventloop/queue-task-across-frames-expected.txt:
+        * http/tests/eventloop/queue-task-across-frames.html:
+
 2019-12-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Implementation of additional attribute caching in the IsolatedTree.

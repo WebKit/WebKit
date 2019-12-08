@@ -767,6 +767,8 @@ enum CompositingPolicy {
     void postTask(VoidCallback callback);
     [CallWith=ScriptExecutionContext, MayThrowException] void queueTask(DOMString source, VoidCallback callback);
     [CallWith=Document] void queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
+    [MayThrowException] boolean hasSameEventLoopAs(WindowProxy windowProxy);
+
     void markContextAsInsecure();
 
     void setMaxCanvasPixelMemory(unsigned long size);

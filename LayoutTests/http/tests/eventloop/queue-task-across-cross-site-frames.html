@@ -18,19 +18,19 @@ crossOriginLogs = [];
 
 async function startTest()
 {
-    const frame1 = document.createElement('iframe');
+    window.frame1 = document.createElement('iframe');
     document.body.appendChild(frame1);
 
-    const frame2 = document.createElement('iframe');
+    window.frame2 = document.createElement('iframe');
     frame2.name = 'frame2';
     frame2.src = 'http://localhost:8000/eventloop/resources/eventloop-helper.html';
     document.body.appendChild(frame2);
 
-    const frame3 = document.createElement('iframe');
+    window.frame3 = document.createElement('iframe');
     frame3.src = 'resources/eventloop-helper.html';
     document.body.appendChild(frame3);
 
-    const frame4 = document.createElement('iframe');
+    window.frame4 = document.createElement('iframe');
     frame4.name = 'frame4';
     frame4.src = 'http://localhost:8000/eventloop/resources/eventloop-helper.html';
 
@@ -57,6 +57,10 @@ async function startTest()
     setTimeout(() => {
         shouldBeEqualToString('logs.join(", ")', '1, 2, 3, 4, 5');
         shouldBeEqualToString('crossOriginLogs.join(", ")', '10, 11, 12');
+        shouldBeTrue('internals.hasSameEventLoopAs(frame1.contentWindow)');
+        shouldBeFalse('internals.hasSameEventLoopAs(frame2.contentWindow)');
+        shouldBeTrue('internals.hasSameEventLoopAs(frame3.contentWindow)');
+        shouldBeFalse('internals.hasSameEventLoopAs(frame4.contentWindow)');
         finishJSTest();
     }, 100);
 }

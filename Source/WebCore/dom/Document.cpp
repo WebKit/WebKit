@@ -6263,7 +6263,8 @@ EventLoopTaskGroup& Document::eventLoop()
 {
     ASSERT(isMainThread());
     if (UNLIKELY(!m_documentTaskGroup)) {
-        m_eventLoop = WindowEventLoop::ensureForRegistrableDomain(RegistrableDomain { securityOrigin().data() });
+        // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
+        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(securityOrigin());
         m_documentTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
         if (activeDOMObjectsAreStopped())
             m_documentTaskGroup->stopAndDiscardAllTasks();

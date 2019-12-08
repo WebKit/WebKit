@@ -27,9 +27,9 @@
 
 #include "DocumentIdentifier.h"
 #include "EventLoop.h"
-#include "RegistrableDomain.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -38,18 +38,19 @@ class Document;
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
 class WindowEventLoop final : public EventLoop {
 public:
-    static Ref<WindowEventLoop> ensureForRegistrableDomain(const RegistrableDomain&);
+    static Ref<WindowEventLoop> eventLoopForSecurityOrigin(const SecurityOrigin&);
 
     virtual ~WindowEventLoop();
 
 private:
-    WindowEventLoop(const RegistrableDomain&);
+    static Ref<WindowEventLoop> create(const String&);
+    WindowEventLoop(const String&);
 
     void scheduleToRun() final;
     bool isContextThread() const final;
     MicrotaskQueue& microtaskQueue() final;
 
-    RegistrableDomain m_domain;
+    String m_agentClusterKey;
     Timer m_timer;
 };
 
