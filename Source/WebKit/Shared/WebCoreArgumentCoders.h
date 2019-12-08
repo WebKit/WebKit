@@ -90,7 +90,6 @@ class LayoutPoint;
 class LinearTimingFunction;
 class Notification;
 class PasteboardCustomData;
-class Path;
 class ProtectionSpace;
 class Region;
 class ResourceError;
@@ -331,12 +330,6 @@ template<> struct ArgumentCoder<WebCore::LayoutSize> {
 template<> struct ArgumentCoder<WebCore::LayoutPoint> {
     static void encode(Encoder&, const WebCore::LayoutPoint&);
     static bool decode(Decoder&, WebCore::LayoutPoint&);
-};
-
-template<> struct ArgumentCoder<WebCore::Path> {
-    static void encode(Encoder&, const WebCore::Path&);
-    static bool decode(Decoder&, WebCore::Path&);
-    static Optional<WebCore::Path> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::Length> {

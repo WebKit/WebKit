@@ -1,3 +1,28 @@
+2019-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move WebCore::Path encoders and decoders into WebCore from WebCoreArgumentCoders
+        https://bugs.webkit.org/show_bug.cgi?id=204993
+
+        Reviewed by Tim Horton.
+
+        Move encoding and decoding logic from WebCoreArgumentCoders into WebCore. The ability to encode or decode Paths
+        is needed in order to encode or decode DisplayListItems that contain Paths; since these encoders live in
+        WebCore, the encoders for Paths should live there as well.
+
+        No change in behavior.
+
+        * platform/graphics/Path.cpp:
+        * platform/graphics/Path.h:
+
+        Also fixes up the indentation of the Path class in this header, such that the class declaration isn't indented
+        one level past the namespace.
+
+        (WebCore::Path::isNull const):
+        (WebCore::Path::platformPath const):
+        (WebCore::Path::circleControlPoint):
+        (WebCore::Path::encode const):
+        (WebCore::Path::decode):
+
 2019-12-08  youenn fablet  <youenn@apple.com>
 
         Do not use DOMGuarded for maplike
