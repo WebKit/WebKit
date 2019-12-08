@@ -61,6 +61,8 @@ private:
     void capabilities(uint64_t, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
     void setMuted(uint64_t, bool);
     void applyConstraints(uint64_t, const WebCore::MediaConstraints&);
+    void clone(uint64_t clonedID, uint64_t cloneID);
+    void requestToEnd(uint64_t);
 
     class SourceProxy;
     friend class SourceProxy;

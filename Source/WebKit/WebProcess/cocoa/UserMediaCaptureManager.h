@@ -134,6 +134,11 @@ private:
 
     class Source;
     friend class Source;
+
+    void requestToEnd(uint64_t sourceID);
+    Ref<WebCore::RealtimeMediaSource> cloneSource(Source&);
+    Ref<WebCore::RealtimeMediaSource> cloneVideoSource(Source&);
+
     HashMap<uint64_t, RefPtr<Source>> m_sources;
     WebProcess& m_process;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;

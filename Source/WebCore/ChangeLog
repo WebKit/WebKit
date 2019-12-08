@@ -1,3 +1,29 @@
+2019-12-08  youenn fablet  <youenn@apple.com>
+
+        Support different resolutions for video tracks captured from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204945
+
+        Reviewed by Eric Carlson.
+
+        Remove whether the a source is remote or not.
+        Previously we were doing the distinction as resizing would happen in WebProcess and not in UIProcess.
+        We are now moving away from doing resizing in WebProcess.
+        Covered by existing tests.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::adaptVideoSample):
+        For remote tracks, we also update the size for observers.
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::m_source):
+        (WebCore::RealtimeVideoSource::sourceSettingsChanged):
+        Update computation of size based on rotation.
+        This makes sure we have resizing done right.
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::emitFrame):
+
 2019-12-08  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Collect overflow from lines

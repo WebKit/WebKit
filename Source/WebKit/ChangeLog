@@ -1,5 +1,42 @@
 2019-12-08  youenn fablet  <youenn@apple.com>
 
+        Support different resolutions for video tracks captured from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204945
+
+        Reviewed by Eric Carlson.
+
+        Change video capture in uiprocess to an experimental flag.
+        Add support for remote video source cloning by sending some IPC to UIProcess and cloning the source there.
+        This triggers IPC for both cloning and cloned sources but this allows to do resizing in UIProcess instead of WebProcess.
+        We thus disable video capture resizing in WebProcess.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::start):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::stop):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::requestToEnd):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::preventSourceFromStopping):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::stopProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::clone):
+        (WebKit::UserMediaCaptureManagerProxy::requestToEnd):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::sourceID const):
+        (WebKit::UserMediaCaptureManager::Source::settings const):
+        (WebKit::UserMediaCaptureManager::Source::remoteVideoSampleAvailable):
+        (WebKit::UserMediaCaptureManager::Source::requestToEnd):
+        (WebKit::UserMediaCaptureManager::Source::stopBeingObserved):
+        (WebKit::UserMediaCaptureManager::cloneSource):
+        (WebKit::UserMediaCaptureManager::cloneVideoSource):
+        (WebKit::UserMediaCaptureManager::requestToEnd):
+        (WebKit::UserMediaCaptureManager::VideoFactory::setVideoCapturePageState):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
+2019-12-08  youenn fablet  <youenn@apple.com>
+
         Tighten Mac sandbox by removing microphone access
         https://bugs.webkit.org/show_bug.cgi?id=204939
 

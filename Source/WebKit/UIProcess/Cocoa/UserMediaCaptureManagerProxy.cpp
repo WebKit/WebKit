@@ -68,6 +68,25 @@ public:
     CAAudioStreamDescription& description() { return m_description; }
     int64_t numberOfFrames() { return m_numberOfFrames; }
 
+    void start()
+    {
+        m_isEnded = false;
+        m_source->start();
+    }
+
+    void stop()
+    {
+        m_isEnded = true;
+        m_source->stop();
+    }
+
+    void requestToEnd()
+    {
+        m_isEnded = true;
+        m_source->requestToEnd(*this);
+    }
+
+private:
     void sourceStopped() final {
         if (m_source->captureDidFail()) {
             m_connection->send(Messages::UserMediaCaptureManager::CaptureFailed(m_id), 0);
@@ -121,13 +140,19 @@ public:
         m_connection->send(Messages::UserMediaCaptureManager::StorageChanged(m_id, handle, m_description, m_numberOfFrames), 0);
     }
 
-protected:
+    bool preventSourceFromStopping()
+    {
+        // Do not allow the source to stop if we are still using it.
+        return !m_isEnded;
+    }
+
     uint64_t m_id;
     Ref<IPC::Connection> m_connection;
     Ref<RealtimeMediaSource> m_source;
     CARingBuffer m_ringBuffer;
     CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };
+    bool m_isEnded { false };
 };
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(WebProcessProxy& process)
@@ -169,7 +194,6 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     WebCore::RealtimeMediaSourceSettings settings;
     if (sourceOrError) {
         auto source = sourceOrError.source();
-        source->setIsRemote(true);
         settings = source->settings();
         ASSERT(!m_proxies.contains(id));
         m_proxies.add(id, makeUnique<SourceProxy>(id, *m_process.connection(), WTFMove(source)));
@@ -182,14 +206,14 @@ void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
 {
     MESSAGE_CHECK_CONTEXTID(id);
     if (auto* proxy = m_proxies.get(id))
-        proxy->source().start();
+        proxy->start();
 }
 
 void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
 {
     MESSAGE_CHECK_CONTEXTID(id);
     if (auto* proxy = m_proxies.get(id))
-        proxy->source().stop();
+        proxy->stop();
 }
 
 void UserMediaCaptureManagerProxy::end(uint64_t id)
@@ -227,6 +251,20 @@ void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::
         m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
     else
         m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->badConstraint, result->message), 0);
+}
+
+void UserMediaCaptureManagerProxy::clone(uint64_t clonedID, uint64_t newSourceID)
+{
+    ASSERT(m_proxies.contains(clonedID));
+    ASSERT(!m_proxies.contains(newSourceID));
+    if (auto* proxy = m_proxies.get(clonedID))
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, *m_process.connection(), proxy->source().clone()));
+}
+
+void UserMediaCaptureManagerProxy::requestToEnd(uint64_t sourceID)
+{
+    if (auto* proxy = m_proxies.get(sourceID))
+        proxy->requestToEnd();
 }
 
 void UserMediaCaptureManagerProxy::clear()

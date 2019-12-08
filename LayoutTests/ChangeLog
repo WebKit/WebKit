@@ -1,3 +1,13 @@
+2019-12-08  youenn fablet  <youenn@apple.com>
+
+        Support different resolutions for video tracks captured from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=204945
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-video-clone-expected.txt:
+        * fast/mediastream/mediastreamtrack-video-clone.html:
+
 2019-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView touch event gesture recognition should not block the application process main thread when possible

@@ -395,19 +395,18 @@ RefPtr<MediaSample> RealtimeVideoCaptureSource::adaptVideoSample(MediaSample& sa
     auto mediaSample = makeRefPtr(&sample);
 
 #if PLATFORM(COCOA)
-    if (!isRemote()) {
-        auto size = this->size();
-        if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
+    auto size = this->size();
+    if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
 
-            if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
-                m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
+        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
+            m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
 
-            if (m_imageTransferSession) {
-                mediaSample = m_imageTransferSession->convertMediaSample(sample, size);
-                if (!mediaSample) {
-                    ASSERT_NOT_REACHED();
-                    return nullptr;
-                }
+        ASSERT(m_imageTransferSession);
+        if (m_imageTransferSession) {
+            mediaSample = m_imageTransferSession->convertMediaSample(sample, size);
+            if (!mediaSample) {
+                ASSERT_NOT_REACHED();
+                return nullptr;
             }
         }
     }

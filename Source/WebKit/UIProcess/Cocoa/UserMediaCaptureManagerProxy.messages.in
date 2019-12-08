@@ -31,6 +31,8 @@ messages -> UserMediaCaptureManagerProxy NotRefCounted {
     Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities) Synchronous
     SetMuted(uint64_t id, bool muted)
     ApplyConstraints(uint64_t id, struct WebCore::MediaConstraints constraints)
+    Clone(uint64_t clonedID, uint64_t cloneID)
+    RequestToEnd(uint64_t sourceID)
 }
 
 #endif

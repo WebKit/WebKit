@@ -110,6 +110,21 @@ public:
         return static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
     }
 
+    Ref<RealtimeMediaSource> clone() final
+    {
+        return m_manager.cloneSource(*this);
+    }
+
+    uint64_t sourceID() const
+    {
+        return m_id;
+    }
+
+    const RealtimeMediaSourceSettings& settings() const
+    {
+        return m_settings;
+    }
+
     const RealtimeMediaSourceCapabilities& capabilities() final
     {
         if (!m_capabilities)
@@ -165,16 +180,7 @@ public:
     {
         ASSERT(type() == Type::Video);
 
-        auto remoteSampleSize = remoteSample.size();
-        setIntrinsicSize(remoteSampleSize);
-
-        auto videoSampleSize = IntSize(m_settings.width(), m_settings.height());
-        if (videoSampleSize.isZero())
-            videoSampleSize = remoteSampleSize;
-        else if (!videoSampleSize.height())
-            videoSampleSize.setHeight(videoSampleSize.width() * (remoteSampleSize.height() / static_cast<double>(remoteSampleSize.width())));
-        else if (!videoSampleSize.width())
-            videoSampleSize.setWidth(videoSampleSize.height() * (remoteSampleSize.width() / static_cast<double>(remoteSampleSize.height())));
+        setIntrinsicSize(remoteSample.size());
 
         if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
             m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
@@ -184,7 +190,7 @@ public:
             return;
         }
 
-        auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), videoSampleSize);
+        auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size());
         if (!sampleRef) {
             ASSERT_NOT_REACHED();
             return;
@@ -208,11 +214,12 @@ public:
         callback(ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
     }
 
+    CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
+
 private:
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
     bool isCaptureSource() const final { return true; }
-    CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
 
     // RealtimeMediaSource
     void beginConfiguration() final { }
@@ -223,6 +230,16 @@ private:
     {
         m_manager.applyConstraints(m_id, constraints);
         m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
+    }
+
+    void requestToEnd(RealtimeMediaSource::Observer&)
+    {
+        m_manager.requestToEnd(m_id);
+    }
+
+    void stopBeingObserved()
+    {
+        m_manager.requestToEnd(m_id);
     }
 
     uint64_t m_id;
@@ -400,17 +417,51 @@ void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, String&& faile
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
+Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneSource(Source& source)
+{
+    switch (source.type()) {
+    case RealtimeMediaSource::Type::Video:
+        return cloneVideoSource(source);
+    case RealtimeMediaSource::Type::Audio:
+        break;
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+    }
+    return makeRef(source);
+}
+
+Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& source)
+{
+    uint64_t id = nextSessionID();
+    if (!m_process.send(Messages::UserMediaCaptureManagerProxy::Clone { source.sourceID(), id }, 0))
+        return makeRef(source);
+
+    auto settings = source.settings();
+    auto cloneSource = adoptRef(*new Source(String::number(id), source.type(), source.deviceType(), String { settings.label().string() }, source.deviceIDHashSalt(), id, *this));
+    cloneSource->setSettings(WTFMove(settings));
+    m_sources.add(id, cloneSource.copyRef());
+    return cloneSource;
+}
+
+void UserMediaCaptureManager::requestToEnd(uint64_t sourceID)
+{
+    m_process.send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { sourceID }, 0);
+}
+
 #if PLATFORM(IOS_FAMILY)
 void UserMediaCaptureManager::AudioFactory::setAudioCapturePageState(bool interrupted, bool pageMuted)
 {
-    if (auto* activeSource = static_cast<AudioCaptureFactory*>(this)->activeSource())
+    if (auto* activeSource = this->activeSource())
         activeSource->setInterrupted(interrupted, pageMuted);
 }
 
 void UserMediaCaptureManager::VideoFactory::setVideoCapturePageState(bool interrupted, bool pageMuted)
 {
-    if (auto* activeSource = static_cast<VideoCaptureFactory*>(this)->activeSource())
-        activeSource->setInterrupted(interrupted, pageMuted);
+    // In case of cloning, we might have more than a single source.
+    for (auto& source : m_manager.m_sources.values()) {
+        if (source->deviceType() == CaptureDevice::DeviceType::Camera)
+            source->setInterrupted(interrupted, pageMuted);
+    }
 }
 #endif
 

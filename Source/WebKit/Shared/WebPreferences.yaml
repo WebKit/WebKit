@@ -1498,6 +1498,16 @@ GenericCueAPIEnabled:
   category: experimental
   webcoreName: genericCueAPIEnabled
 
+CaptureVideoInUIProcessEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Capture video in UIProcess"
+  humanReadableDescription: "Enable video capture in UIProcess"
+  category: experimental
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1677,15 +1687,6 @@ CaptureAudioInUIProcessEnabled:
   defaultValue: DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS
   humanReadableName: "Capture audio in UIProcess"
   humanReadableDescription: "Enable audio capture in UIProcess"
-  category: internal
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-
-CaptureVideoInUIProcessEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Capture video in UIProcess"
-  humanReadableDescription: "Enable video capture in UIProcess"
   category: internal
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)

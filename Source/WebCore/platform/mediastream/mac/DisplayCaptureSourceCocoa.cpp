@@ -186,7 +186,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     setIntrinsicSize(imageSize);
 
-    auto mediaSampleSize = isRemote() ? imageSize : frameSize();
+    auto mediaSampleSize = frameSize();
 
     RefPtr<MediaSample> sample = WTF::switchOn(frame,
         [this, sampleTime, mediaSampleSize](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {

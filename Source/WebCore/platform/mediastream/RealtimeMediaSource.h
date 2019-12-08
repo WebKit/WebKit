@@ -183,9 +183,6 @@ public:
     virtual bool isIncomingAudioSource() const { return false; }
     virtual bool isIncomingVideoSource() const { return false; }
 
-    void setIsRemote(bool isRemote) { m_isRemote = isRemote; }
-    bool isRemote() const { return m_isRemote; }
-
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*);
     const Logger* loggerPtr() const { return m_logger.get(); }
@@ -268,7 +265,6 @@ private:
     bool m_isProducingData { false };
     bool m_interrupted { false };
     bool m_captureDidFailed { false };
-    bool m_isRemote { false };
     bool m_isEnded { false };
 };
 
