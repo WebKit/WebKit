@@ -813,10 +813,6 @@
                        (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
             domains))
 
-;; Media capture, microphone access
-(with-filter (extension "com.apple.webkit.microphone")
-    (allow device-microphone))
-
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
     (shared-preferences-read "com.apple.coremedia")

@@ -1,5 +1,16 @@
 2019-12-08  youenn fablet  <youenn@apple.com>
 
+        Tighten Mac sandbox by removing microphone access
+        https://bugs.webkit.org/show_bug.cgi?id=204939
+
+        Reviewed by Brent Fulgham.
+
+        No change of behavior, we do audio capture in UIProcess.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-12-08  youenn fablet  <youenn@apple.com>
+
         Add logging to NetworkRTCMonitor
         https://bugs.webkit.org/show_bug.cgi?id=204850
         <rdar://problem/57618773>
