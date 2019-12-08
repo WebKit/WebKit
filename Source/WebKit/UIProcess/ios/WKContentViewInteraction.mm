@@ -643,6 +643,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 #endif // ENABLE(DRAG_SUPPORT)
 
+@implementation UIGestureRecognizer (WKContentViewHelpers)
+
+- (void)_wk_cancel
+{
+    [self setEnabled:NO];
+    [self setEnabled:YES];
+}
+
+@end
+
 @interface WKContentView (WKInteractionPrivate)
 - (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
 - (NSArray *)webSelectionRectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects;
@@ -740,6 +750,18 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchActionDownSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
     [_touchActionDownSwipeGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    _deferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_deferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch event deferrer (immediate reset)"];
+    [_deferringGestureRecognizerForImmediatelyResettableGestures setDelegate:self];
+    [self addGestureRecognizer:_deferringGestureRecognizerForImmediatelyResettableGestures.get()];
+
+    _deferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_deferringGestureRecognizerForDelayedResettableGestures setName:@"Touch event deferrer (delayed reset)"];
+    [_deferringGestureRecognizerForDelayedResettableGestures setDelegate:self];
+    [self addGestureRecognizer:_deferringGestureRecognizerForDelayedResettableGestures.get()];
 #endif
 
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
@@ -905,6 +927,14 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+    [_deferringGestureRecognizerForImmediatelyResettableGestures setDelegate:nil];
+    [self removeGestureRecognizer:_deferringGestureRecognizerForImmediatelyResettableGestures.get()];
+
+    [_deferringGestureRecognizerForDelayedResettableGestures setDelegate:nil];
+    [self removeGestureRecognizer:_deferringGestureRecognizerForDelayedResettableGestures.get()];
+#endif
+
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
     [_mouseGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
@@ -1017,6 +1047,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 - (void)_removeDefaultGestureRecognizers
 {
+#if ENABLE(IOS_TOUCH_EVENTS)
+    [self removeGestureRecognizer:_deferringGestureRecognizerForImmediatelyResettableGestures.get()];
+    [self removeGestureRecognizer:_deferringGestureRecognizerForDelayedResettableGestures.get()];
+#endif
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
     [self removeGestureRecognizer:_singleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
@@ -1043,6 +1077,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 - (void)_addDefaultGestureRecognizers
 {
+#if ENABLE(IOS_TOUCH_EVENTS)
+    [self addGestureRecognizer:_deferringGestureRecognizerForImmediatelyResettableGestures.get()];
+    [self addGestureRecognizer:_deferringGestureRecognizerForDelayedResettableGestures.get()];
+#endif
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
@@ -1418,9 +1456,9 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 #endif
 
     if (_touchEventsCanPreventNativeGestures)
-        _page->handleTouchEventSynchronously(nativeWebTouchEvent);
+        _page->handlePreventableTouchEvent(nativeWebTouchEvent);
     else
-        _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
+        _page->handleUnpreventableTouchEvent(nativeWebTouchEvent);
 
     if (nativeWebTouchEvent.allTouchPointsAreReleased()) {
         _touchEventsCanPreventNativeGestures = YES;
@@ -1590,13 +1628,23 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
 {
-    if (preventsNativeGesture) {
-        _longPressCanClick = NO;
+    if (!preventsNativeGesture || ![_touchEventGestureRecognizer isDispatchingTouchEvents])
+        return;
 
-        _touchEventsCanPreventNativeGestures = NO;
-        [_touchEventGestureRecognizer setDefaultPrevented:YES];
-    }
+    _longPressCanClick = NO;
+    _touchEventsCanPreventNativeGestures = NO;
+    [_touchEventGestureRecognizer setDefaultPrevented:YES];
 }
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+
+- (void)_doneDeferringNativeGestures:(BOOL)preventNativeGestures
+{
+    [_deferringGestureRecognizerForImmediatelyResettableGestures setDefaultPrevented:preventNativeGestures];
+    [_deferringGestureRecognizerForDelayedResettableGestures setDefaultPrevented:preventNativeGestures];
+}
+
 #endif
 
 static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius, CGFloat borderRadiusScale)
@@ -1972,6 +2020,17 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), _deferringGestureRecognizerForImmediatelyResettableGestures.get()))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), _deferringGestureRecognizerForDelayedResettableGestures.get()))
+        return YES;
+#endif
+
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] && [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return YES;
+
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
 
@@ -2022,6 +2081,17 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     if (gestureRecognizer == _touchEventGestureRecognizer && [_webView _isNavigationSwipeGestureRecognizer:otherGestureRecognizer])
         return YES;
+
+    if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
+
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
     return NO;
 }
@@ -2105,6 +2175,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     if ([self _currentPositionInformationIsValidForRequest:request])
         return YES;
+
+    if (!_page->hasRunningProcess())
+        return NO;
 
     auto* connection = _page->process().connection();
     if (!connection)
@@ -4137,12 +4210,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_didStartProvisionalLoadForMainFrame
 {
     // Reset the double tap gesture recognizer to prevent any double click that is in the process of being recognized.
-    [_doubleTapGestureRecognizerForDoubleClick setEnabled:NO];
-    [_doubleTapGestureRecognizerForDoubleClick setEnabled:YES];
+    [_doubleTapGestureRecognizerForDoubleClick _wk_cancel];
     // We also need to disable the double-tap gesture recognizers that are enabled for double-tap-to-zoom and which
     // are enabled when a single tap is first recognized. This avoids tests running in sequence and simulating taps
     // in the same location to trigger double-tap recognition.
     [self _setDoubleTapGesturesEnabled:NO];
+    [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
 }
 
 - (void)_didCommitLoadForMainFrame
@@ -6685,24 +6758,50 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
 
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesWithEvent:(UIEvent *)event
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesAfterBeginningTouchesWithEvent:(UIEvent *)event
 {
     return ![self gestureRecognizer:deferringGestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
 }
 
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesAfterEndingTouchesWithEvent:(UIEvent *)event
+{
+    return _page->isHandlingPreventableTouchStart();
+}
+
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
-    auto isMultipleTapGesture = [](UIGestureRecognizer *gesture) {
-        return [gesture isKindOfClass:UITapGestureRecognizer.class] && [(UITapGestureRecognizer *)gesture numberOfTapsRequired] > 1;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    auto isOneFingerMultipleTapGesture = [](UIGestureRecognizer *gesture) {
+        if (![gesture isKindOfClass:UITapGestureRecognizer.class])
+            return NO;
+
+        UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+        return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
     };
 
-    if (deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures)
-        return gestureRecognizer != _touchEventGestureRecognizer && isMultipleTapGesture(gestureRecognizer);
+    if (deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures) {
+        if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+            return NO;
 
-    if (deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures)
-        return gestureRecognizer != _touchEventGestureRecognizer && !isMultipleTapGesture(gestureRecognizer);
+        if (gestureRecognizer == _touchEventGestureRecognizer)
+            return NO;
+
+        return isOneFingerMultipleTapGesture(gestureRecognizer);
+    }
+
+    if (deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures) {
+        if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+            return NO;
+
+        if (gestureRecognizer == _touchEventGestureRecognizer)
+            return NO;
+
+        return !isOneFingerMultipleTapGesture(gestureRecognizer);
+    }
 
     ASSERT_NOT_REACHED();
+#endif
+
     return NO;
 }
 

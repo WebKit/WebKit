@@ -418,6 +418,15 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebtouc
 }
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+
+void PageClientImpl::doneDeferringNativeGestures(bool preventNativeGestures)
+{
+    [m_contentView _doneDeferringNativeGestures:preventNativeGestures];
+}
+
+#endif // ENABLE(IOS_TOUCH_EVENTS)
+
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
 {
     return nullptr;

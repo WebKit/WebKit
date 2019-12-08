@@ -1,0 +1,10 @@
+Verifies that calling preventDefault() on touchstart prevents scrolling when the touch event handler is unresponsive for an extended duration. To manually test, attempt to scroll the box; check that touchstart and touchend events were handled, and that the box did not scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Observed touchstart event
+PASS Observed touchend event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

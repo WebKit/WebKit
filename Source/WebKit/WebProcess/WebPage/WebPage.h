@@ -717,7 +717,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-    void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
+    void dispatchAsynchronousTouchEvents(const Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>& queue);
 #endif
 
     bool hasRichlyEditableSelection() const;

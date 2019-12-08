@@ -1,3 +1,143 @@
+2019-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView touch event gesture recognition should not block the application process main thread when possible
+        https://bugs.webkit.org/show_bug.cgi?id=204664
+        <rdar://problem/38670692>
+
+        Reviewed by Tim Horton.
+
+        Adds a mechanism that allows some sync touch events on iOS to be sent asynchronously. To do this, we use the
+        deferring gesture mechanism introduced in trac.webkit.org/r253005 to defer all gestures under WKContentView (and
+        WebKit-owned scroll views) when a touch starts, such that they will not recognize until we know that the page
+        has either prevented default or not (assuming that the touch was over an active listener). See below for more
+        details.
+
+        Tests: fast/events/touch/ios/prevent-default-on-touch-start-with-slow-event-listener.html
+               fast/events/touch/ios/scroll-on-touch-start-with-slow-event-listener.html
+
+        * UIProcess/GenericCallback.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKChildScrollView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKChildScrollView gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]):
+
+        Implement gesture recognizer delegate hooks to add dynamic failure requirements between a child scroll view's
+        gestures and the new deferring gesture recognizers on WKContentView. This allows pan gestures over a scrollable
+        container to hold off on recognizing while the deferring gesture recognizer has not failed yet.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        (WebKit::WebPageProxy::handleUnpreventableTouchEvent):
+
+        Rename handleTouchEventSynchronously and handleTouchEventAsynchronously to handlePreventableTouchEvent and
+        handleUnpreventableTouchEvent, respectively. Instead of always sending touchstart events that may prevent native
+        gestures synchronously, we may now go through the same `EventDispatcher::TouchEvent` codepath used when
+        dispatching touch events in passive tracking regions. However, in the case of preventable touchstarts, we
+        additionally store a completion callback that is invoked after the touch event has been handled by the page; we
+        then either un-defer or prevent native gestures here (depending on whether the page prevented default) by
+        calling PageClient::doneDeferringNativeGestures.
+
+        Non-touchstart events are still dispatched synchronously, to ensure that calling preventDefault() on touchmove
+        and touchend continue to prevent default gestures from recognizing.
+
+        (WebKit::WebPageProxy::boolCallback):
+        (WebKit::WebPageProxy::handleTouchEventSynchronously): Deleted.
+        (WebKit::WebPageProxy::handleTouchEventAsynchronously): Deleted.
+
+        See above.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isHandlingPreventableTouchStart const):
+
+        This is used in WKContentView to determine whether deferring gestures need to remain active after the touch
+        ends. See below for more detail.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneDeferringNativeGestures):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[UIGestureRecognizer _wk_cancel]):
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+
+        Add and remove the new deferring gesture recognizers here.
+
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _webTouchEvent:preventsNativeGestures:]):
+        (-[WKContentView _doneDeferringNativeGestures:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+
+        Drive-by fix: add a missing hasRunningProcess check that causes a flaky assertion under
+        `AuxiliaryProcessProxy::connection()` in layout tests.
+
+        (-[WKContentView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]):
+
+        Add dynamic failure requirements between WKContentView's gestures (including all text interaction, context menu,
+        and drag and drop gestures) and the new deferring gesture recognizers.
+
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+
+        Force the two-finger double tap gesture recognizer to reset when loading a new page. Without this, the layout
+        test fast/events/ios/click-event-while-editing-node.html will rarely fail when run after a test that dispatches
+        a two-finger tap, such as fast/events/ios/click-event-two-finger-single-tap-meta-key.html. This is because the
+        new deferring gestures will temporarily unite multi-finger tap gestures with one-finger double tap gestures in
+        the same subgraph when performing a tap gesture with more than one finger. This means that there's a 300 ms
+        delay before a normal single tap can be recognized again, which (without forcing the two-finger double tap to
+        reset) would cause a subsequent test that loads in under 300 ms and attempts to send a tap to fail.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesAfterBeginningTouchesWithEvent:]):
+
+        Avoid deferring native gestures if the scroll view is decelerating; this matches behavior of the web touch event
+        gesture recognizer.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesAfterEndingTouchesWithEvent:]):
+
+        Normally, after -touchesEnded:withEvent:, we stop deferring native gesture recognizers by failing the deferring
+        gestures. However, if we're still waiting for a response from the web process, then let
+        -_doneDeferringNativeGestures: handle this instead.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesWithEvent:]): Deleted.
+
+        Renamed to -shouldDeferGesturesAfterBeginningTouchesWithEvent:.
+
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKDeferringGestureRecognizer touchesEnded:withEvent:]):
+
+        Override this and add a new delegate hook to determine whether we want the deferring gesture recognizer to
+        immediately fail when touches end. It's important to override this and transition to failure state in this case,
+        since not doing so could mean that the deferring gestures stay in Possible state forever; this may lead to the
+        gesture subgraph containing these deferring gestures being unable to reset, since it's waiting for the deferring
+        gesture to either fail or end.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKScrollView gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]):
+
+        Defer more scroll view gestures.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::touchEvent):
+
+        Add an optional CallbackID parameter to this IPC message. If a callback ID is given, then we avoid coalescing
+        the touch event. To implement this, we additionally refactor the queued touch events map to contain lists of
+        <WebTouchEvent, Optional<CallbackID>> pairs; if a queued touch event has a corresponding CallbackID, then we
+        fire the callback corresponding to the ID, indicating whether the touch event was handled by the page.
+
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dispatchAsynchronousTouchEvents):
+
 2019-12-07  David Quesada  <david_quesada@apple.com>
 
         REGRESSION(r253231): Debug assertion failures under ~WebDeviceOrientationUpdateProvider(Proxy)

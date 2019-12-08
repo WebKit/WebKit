@@ -164,7 +164,7 @@ void EventDispatcher::getQueuedTouchEventsForPage(const WebPage& webPage, TouchE
     destinationQueue = m_touchEvents.take(webPage.identifier());
 }
 
-void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEvent& touchEvent)
+void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEvent& touchEvent, Optional<CallbackID> callbackID)
 {
     bool updateListWasEmpty;
     {
@@ -172,17 +172,16 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebKit::WebTouchEv
         updateListWasEmpty = m_touchEvents.isEmpty();
         auto addResult = m_touchEvents.add(pageID, TouchEventQueue());
         if (addResult.isNewEntry)
-            addResult.iterator->value.append(touchEvent);
+            addResult.iterator->value.append({ touchEvent, callbackID });
         else {
-            TouchEventQueue& queuedEvents = addResult.iterator->value;
+            auto& queuedEvents = addResult.iterator->value;
             ASSERT(!queuedEvents.isEmpty());
-            const WebTouchEvent& lastTouchEvent = queuedEvents.last();
-
+            auto& lastEventAndCallback = queuedEvents.last();
             // Coalesce touch move events.
-            if (touchEvent.type() == WebEvent::TouchMove && lastTouchEvent.type() == WebEvent::TouchMove)
-                queuedEvents.last() = touchEvent;
+            if (touchEvent.type() == WebEvent::TouchMove && lastEventAndCallback.first.type() == WebEvent::TouchMove && !callbackID && !lastEventAndCallback.second)
+                queuedEvents.last() = { touchEvent, WTF::nullopt };
             else
-                queuedEvents.append(touchEvent);
+                queuedEvents.append({ touchEvent, callbackID });
         }
     }
 

@@ -171,6 +171,7 @@
 #include <WebCore/WritingDirection.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
@@ -2794,7 +2795,7 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
+void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
 {
     if (!hasRunningProcess())
         return;
@@ -2803,9 +2804,20 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
 
     updateTouchEventTracking(event);
 
+    auto handleAllTouchPointsReleased = WTF::makeScopeExit([&] {
+        if (!event.allTouchPointsAreReleased())
+            return;
+
+        m_touchAndPointerEventTracking.reset();
+        didReleaseAllTouchPoints();
+    });
+
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
-    if (touchEventsTrackingType == TrackingType::NotTracking)
+    if (touchEventsTrackingType == TrackingType::NotTracking) {
+        if (!isHandlingPreventableTouchStart())
+            pageClient().doneDeferringNativeGestures(false);
         return;
+    }
 
     if (touchEventsTrackingType == TrackingType::Asynchronous) {
         // We can end up here if a native gesture has not started but the event handlers are passive.
@@ -2815,8 +2827,32 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
         // But, here we know that all events handlers that can handle this events are passive.
         // We can use asynchronous dispatch and pretend to the client that the page does nothing with the events.
         event.setCanPreventNativeGestures(false);
-        handleTouchEventAsynchronously(event);
+        handleUnpreventableTouchEvent(event);
         didReceiveEvent(event.type(), false);
+        if (!isHandlingPreventableTouchStart())
+            pageClient().doneDeferringNativeGestures(false);
+        return;
+    }
+
+    if (event.type() == WebEvent::TouchStart) {
+        ++m_handlingPreventableTouchStartCount;
+        Function<void(bool, CallbackBase::Error)> completionHandler = [this, protectedThis = makeRef(*this), event](bool handled, CallbackBase::Error error) {
+            ASSERT(m_handlingPreventableTouchStartCount);
+            if (m_handlingPreventableTouchStartCount)
+                --m_handlingPreventableTouchStartCount;
+
+            if (error == CallbackBase::Error::ProcessExited)
+                return;
+
+            bool handledOrFailedWithError = handled || error != CallbackBase::Error::None;
+            didReceiveEvent(event.type(), handledOrFailedWithError);
+            pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
+            if (!isHandlingPreventableTouchStart())
+                pageClient().doneDeferringNativeGestures(handledOrFailedWithError);
+        };
+
+        auto callbackID = m_callbacks.put(WTFMove(completionHandler), m_process->throttler().backgroundActivity("WebPageProxy::handlePreventableTouchEvent"_s));
+        m_process->send(Messages::EventDispatcher::TouchEvent(m_webPageID, event, callbackID), 0);
         return;
     }
 
@@ -2828,12 +2864,8 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
         handled = true;
     didReceiveEvent(event.type(), handled);
     pageClient().doneWithTouchEvent(event, handled);
+    pageClient().doneDeferringNativeGestures(handled);
     m_process->responsivenessTimer().stop();
-
-    if (event.allTouchPointsAreReleased()) {
-        m_touchAndPointerEventTracking.reset();
-        didReleaseAllTouchPoints();
-    }
 }
 
 void WebPageProxy::resetPotentialTapSecurityOrigin()
@@ -2844,7 +2876,7 @@ void WebPageProxy::resetPotentialTapSecurityOrigin()
     m_process->send(Messages::WebPage::ResetPotentialTapSecurityOrigin(), m_webPageID);
 }
 
-void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& event)
+void WebPageProxy::handleUnpreventableTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!hasRunningProcess())
         return;
@@ -2853,7 +2885,7 @@ void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& eve
     if (touchEventsTrackingType == TrackingType::NotTracking)
         return;
 
-    m_process->send(Messages::EventDispatcher::TouchEvent(m_webPageID, event), 0);
+    m_process->send(Messages::EventDispatcher::TouchEvent(m_webPageID, event, WTF::nullopt), 0);
 
     if (event.allTouchPointsAreReleased()) {
         m_touchAndPointerEventTracking.reset();
@@ -6697,6 +6729,17 @@ void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, Callbac
         return;
 
     callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
+}
+
+void WebPageProxy::boolCallback(bool result, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<BoolCallback>(callbackID);
+    if (!callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(result);
 }
 
 void WebPageProxy::imageCallback(const ShareableBitmap::Handle& bitmapHandle, CallbackID callbackID)

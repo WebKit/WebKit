@@ -29,6 +29,20 @@ window.UIHelper = class UIHelper {
         eventSender.mouseUp();
     }
 
+    static sendEventStream(eventStream)
+    {
+        const eventStreamAsString = JSON.stringify(eventStream);
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.sendEventStream(\`${eventStreamAsString}\`, () => {
+                        uiController.uiScriptComplete();
+                    });
+                })();
+            `, resolve);
+        });
+    }
+
     static tapAt(x, y, modifiers=[])
     {
         console.assert(this.isIOSFamily());
@@ -1103,5 +1117,91 @@ window.UIHelper = class UIHelper {
                     });
                 })();`, resolve);
         });
+    }
+}
+
+UIHelper.EventStreamBuilder = class {
+    constructor()
+    {
+        // FIXME: This could support additional customization options, such as interpolation, timestep, and different
+        // digitizer indices in the future. For now, just make it simpler to string together sequences of pan gestures.
+        this._reset();
+    }
+
+    _reset() {
+        this.events = [];
+        this.currentTimeOffset = 0;
+        this.currentX = 0;
+        this.currentY = 0;
+    }
+
+    begin(x, y) {
+        console.assert(this.currentTimeOffset === 0);
+        this.events.push({
+            interpolate : "linear",
+            timestep : 0.016,
+            coordinateSpace : "content",
+            startEvent : {
+                inputType : "hand",
+                timeOffset : this.currentTimeOffset,
+                touches : [{ inputType : "finger", phase : "began", id : 1, x : x, y : y, pressure : 0 }]
+            },
+            endEvent : {
+                inputType : "hand",
+                timeOffset : this.currentTimeOffset,
+                touches : [{ inputType : "finger", phase : "began", id : 1, x : x, y : y, pressure : 0 }]
+            }
+        });
+        this.currentX = x;
+        this.currentY = y;
+        return this;
+    }
+
+    move(x, y, duration = 0) {
+        const previousTimeOffset = this.currentTimeOffset;
+        this.currentTimeOffset += duration;
+        this.events.push({
+            interpolate : "linear",
+            timestep : 0.016,
+            coordinateSpace : "content",
+            startEvent : {
+                inputType : "hand",
+                timeOffset : previousTimeOffset,
+                touches : [{ inputType : "finger", phase : "moved", id : 1, x : this.currentX, y : this.currentY, pressure : 0 }]
+            },
+            endEvent : {
+                inputType : "hand",
+                timeOffset : this.currentTimeOffset,
+                touches : [{ inputType : "finger", phase : "moved", id : 1, x : x, y : y, pressure : 0 }]
+            }
+        });
+        this.currentX = x;
+        this.currentY = y;
+        return this;
+    }
+
+    end() {
+        this.events.push({
+            interpolate : "linear",
+            timestep : 0.016,
+            coordinateSpace : "content",
+            startEvent : {
+                inputType : "hand",
+                timeOffset : this.currentTimeOffset,
+                touches : [{ inputType : "finger", phase : "ended", id : 1, x : this.currentX, y : this.currentY, pressure : 0 }]
+            },
+            endEvent : {
+                inputType : "hand",
+                timeOffset : this.currentTimeOffset,
+                touches : [{ inputType : "finger", phase : "ended", id : 1, x : this.currentX, y : this.currentY, pressure : 0 }]
+            }
+        });
+        return this;
+    }
+
+    takeResult() {
+        const events = this.events;
+        this._reset();
+        return { "events": events };
     }
 }

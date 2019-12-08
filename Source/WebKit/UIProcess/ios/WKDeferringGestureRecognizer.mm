@@ -49,10 +49,23 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
-    if ([_deferringGestureDelegate deferringGestureRecognizer:self shouldDeferGesturesWithEvent:event])
-        self.state = UIGestureRecognizerStatePossible;
-    else
-        self.state = UIGestureRecognizerStateFailed;
+    if ([_deferringGestureDelegate deferringGestureRecognizer:self shouldDeferGesturesAfterBeginningTouchesWithEvent:event])
+        return;
+
+    self.state = UIGestureRecognizerStateFailed;
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesEnded:touches withEvent:event];
+
+    if (self.state != UIGestureRecognizerStatePossible)
+        return;
+
+    if ([_deferringGestureDelegate deferringGestureRecognizer:self shouldDeferGesturesAfterEndingTouchesWithEvent:event])
+        return;
+
+    self.state = UIGestureRecognizerStateFailed;
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

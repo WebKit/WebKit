@@ -205,8 +205,10 @@ struct WKAutoCorrectionData {
 @end
 
 @interface WKContentView () {
+#if ENABLE(IOS_TOUCH_EVENTS)
     RetainPtr<WKDeferringGestureRecognizer> _deferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _deferringGestureRecognizerForDelayedResettableGestures;
+#endif
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _touchEventsCanPreventNativeGestures;
@@ -462,6 +464,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
+#endif
+#if ENABLE(IOS_TOUCH_EVENTS)
+- (void)_doneDeferringNativeGestures:(BOOL)preventNativeGestures;
 #endif
 - (void)_commitPotentialTapFailed;
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;

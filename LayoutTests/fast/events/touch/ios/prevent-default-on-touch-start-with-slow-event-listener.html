@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #scroller {
+        overflow: scroll;
+        width: 200px;
+        height: 200px;
+        border: 2px solid black;
+    }
+
+    #content {
+        width: 100%;
+        height: 1000px;
+    }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            description("Verifies that calling preventDefault() on touchstart prevents scrolling when the touch event handler is unresponsive for an extended duration. To manually test, attempt to scroll the box; check that touchstart and touchend events were handled, and that the box did not scroll.");
+
+            const scroller = document.getElementById("scroller");
+
+            scroller.addEventListener("touchstart", event => {
+                const startTime = Date.now();
+                while (1) {
+                    if (Date.now() - startTime > 400)
+                        break;
+                }
+                testPassed("Observed touchstart event");
+                event.preventDefault();
+            });
+
+            scroller.addEventListener("touchend", () => {
+                testPassed("Observed touchend event");
+                finishJSTest();
+            });
+            scroller.addEventListener("scroll", () => testFailed("Observed scroll event"), { once : true });
+
+            if (!window.testRunner)
+                return;
+
+            const eventStreamData = new UIHelper.EventStreamBuilder()
+                .begin(100, 190)
+                .move(100, 10, 1)
+                .move(100, 190, 1)
+                .move(100, 100, 0.5)
+                .end()
+                .takeResult();
+
+            await UIHelper.sendEventStream(eventStreamData);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="content"></div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

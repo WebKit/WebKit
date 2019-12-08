@@ -1,3 +1,42 @@
+2019-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView touch event gesture recognition should not block the application process main thread when possible
+        https://bugs.webkit.org/show_bug.cgi?id=204664
+        <rdar://problem/38670692>
+
+        Reviewed by Tim Horton.
+
+        * fast/events/touch/ios/prevent-default-on-touch-start-with-slow-event-listener-expected.txt: Added.
+        * fast/events/touch/ios/prevent-default-on-touch-start-with-slow-event-listener.html: Added.
+        * fast/events/touch/ios/scroll-on-touch-start-with-slow-event-listener-expected.txt: Added.
+        * fast/events/touch/ios/scroll-on-touch-start-with-slow-event-listener.html: Added.
+
+        Add new layout tests to cover behaviors when panning over active touchstart handlers that spin for an extended
+        length of time (in this case, 400 milliseconds) in overflow scrolling containers. A touchstart handler that
+        prevents default should still block scrolling, and a touchstart handler that does not should still allow the
+        user to scroll.
+
+        * fast/events/touch/ios/show-modal-alert-during-touch-start.html:
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+
+        Rebaseline these tests by changing some line numbers.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.sendEventStream.return.new.Promise):
+        (window.UIHelper.sendEventStream):
+
+        Add a new UIHelper method to send a JSON object as an event stream.
+
+        (UIHelper.EventStreamBuilder.prototype._reset):
+        (UIHelper.EventStreamBuilder.prototype.begin):
+        (UIHelper.EventStreamBuilder.prototype.move):
+        (UIHelper.EventStreamBuilder.prototype.end):
+        (UIHelper.EventStreamBuilder.prototype.takeResult):
+
+        Add a new helper class to make it easier to construct event streams, for the purposes of sending to
+        UIScriptController::sendEventStream.
+
 2019-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unique origin's window must get its own event loop

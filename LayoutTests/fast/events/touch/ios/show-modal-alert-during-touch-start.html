@@ -31,7 +31,7 @@ if (window.testRunner) {
 }
 
 target.addEventListener("touchstart", () => alert("This is a modal alert."));
-target.addEventListener("touchend", () => testRunner.notifyDone());
+target.addEventListener("touchend", () => testRunner.notifyDone(), { passive : true });
 addEventListener("load", async () => await UIHelper.activateAt(100, 100));
 </script>
 </body>

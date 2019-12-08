@@ -26,8 +26,8 @@
 #ifndef EventDispatcher_h
 #define EventDispatcher_h
 
+#include "CallbackID.h"
 #include "Connection.h"
-
 #include "WebEvent.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/WheelEventDeltaFilter.h>
@@ -48,7 +48,6 @@ class ThreadedScrollingTree;
 
 namespace WebKit {
 
-class WebEvent;
 class WebPage;
 class WebWheelEvent;
 
@@ -63,7 +62,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    typedef Vector<WebTouchEvent, 1> TouchEventQueue;
+    using TouchEventQueue = Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>;
 
     void clearQueuedTouchEventsForPage(const WebPage&);
     void getQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
@@ -80,7 +79,7 @@ private:
     // Message handlers
     void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&);
+    void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, Optional<CallbackID>);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);

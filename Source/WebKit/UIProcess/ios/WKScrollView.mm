@@ -30,6 +30,7 @@
 
 #import "UIKitSPI.h"
 #import "VersionChecks.h"
+#import "WKDeferringGestureRecognizer.h"
 #import "WKWebViewInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
@@ -182,6 +183,22 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 - (id <UIScrollViewDelegate>)delegate
 {
     return _externalDelegate.getAutoreleased();
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
+
+    return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
+
+    return NO;
 }
 
 - (void)_updateDelegate

@@ -876,8 +876,8 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void resetPotentialTapSecurityOrigin();
-    void handleTouchEventSynchronously(NativeWebTouchEvent&);
-    void handleTouchEventAsynchronously(const NativeWebTouchEvent&);
+    void handlePreventableTouchEvent(NativeWebTouchEvent&);
+    void handleUnpreventableTouchEvent(const NativeWebTouchEvent&);
 
 #elif ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const NativeWebTouchEvent&);
@@ -1630,6 +1630,8 @@ public:
 
     void setOrientationForMediaCapture(uint64_t);
 
+    bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1934,6 +1936,7 @@ private:
     void voidCallback(CallbackID);
     void dataCallback(const IPC::DataReference&, CallbackID);
     void imageCallback(const ShareableBitmap::Handle&, CallbackID);
+    void boolCallback(bool result, CallbackID);
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
     void scriptValueCallback(const IPC::DataReference&, bool hadException, const WebCore::ExceptionDetails&, CallbackID);
@@ -2415,6 +2418,8 @@ private:
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
+
+    uint64_t m_handlingPreventableTouchStartCount { 0 };
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;
