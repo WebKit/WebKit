@@ -179,7 +179,6 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
     
     auto page = makeUnique<Page>(WTFMove(pageConfiguration));
-    page->setIsForSanitizingWebContent();
     page->settings().setMediaEnabled(false);
     page->settings().setScriptEnabled(false);
     page->settings().setPluginsEnabled(false);

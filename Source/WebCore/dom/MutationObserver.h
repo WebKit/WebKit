@@ -46,6 +46,7 @@ class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
 class Node;
+class WindowEventLoop;
 
 using MutationObserverOptions = unsigned char;
 using MutationRecordDeliveryOptions = unsigned char;
@@ -106,12 +107,12 @@ public:
 
     static void enqueueSlotChangeEvent(HTMLSlotElement&);
 
+    static void notifyMutationObservers(WindowEventLoop&);
+
 private:
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
-    static void queueMutationObserverCompoundMicrotask(Document&);
-    static void notifyMutationObservers();
     static bool validateOptions(MutationObserverOptions);
 
     Ref<MutationCallback> m_callback;

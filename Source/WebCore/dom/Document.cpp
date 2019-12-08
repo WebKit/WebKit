@@ -5803,11 +5803,8 @@ void Document::finishedParsing()
     if (!m_documentTiming.domContentLoadedEventStart)
         m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
 
-    if (!page() || !page()->isForSanitizingWebContent()) {
-        // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
-        eventLoop().performMicrotaskCheckpoint();
-    }
-
+    // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
+    eventLoop().performMicrotaskCheckpoint();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     if (!m_documentTiming.domContentLoadedEventEnd)
@@ -6263,15 +6260,21 @@ EventLoopTaskGroup& Document::eventLoop()
 {
     ASSERT(isMainThread());
     if (UNLIKELY(!m_documentTaskGroup)) {
-        // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
-        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(securityOrigin());
-        m_documentTaskGroup = makeUnique<EventLoopTaskGroup>(*m_eventLoop);
+        m_documentTaskGroup = makeUnique<EventLoopTaskGroup>(windowEventLoop());
         if (activeDOMObjectsAreStopped())
             m_documentTaskGroup->stopAndDiscardAllTasks();
         else if (activeDOMObjectsAreSuspended())
             m_documentTaskGroup->suspend();
     }
     return *m_documentTaskGroup;
+}
+
+WindowEventLoop& Document::windowEventLoop()
+{
+    ASSERT(isMainThread());
+    if (UNLIKELY(!m_eventLoop))
+        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(securityOrigin());
+    return *m_eventLoop;
 }
 
 void Document::suspendScheduledTasks(ReasonForSuspension reason)

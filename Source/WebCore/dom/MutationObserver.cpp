@@ -34,13 +34,13 @@
 #include "MutationObserver.h"
 
 #include "Document.h"
-#include "EventLoop.h"
 #include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
+#include "WindowEventLoop.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -137,40 +137,6 @@ void MutationObserver::observationEnded(MutationObserverRegistration& registrati
     m_registrations.remove(&registration);
 }
 
-typedef HashSet<RefPtr<MutationObserver>> MutationObserverSet;
-
-static MutationObserverSet& activeMutationObservers()
-{
-    static NeverDestroyed<MutationObserverSet> activeObservers;
-    return activeObservers;
-}
-
-static MutationObserverSet& suspendedMutationObservers()
-{
-    static NeverDestroyed<MutationObserverSet> suspendedObservers;
-    return suspendedObservers;
-}
-
-// https://dom.spec.whatwg.org/#signal-slot-list
-static Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList()
-{
-    static NeverDestroyed<Vector<GCReachableRef<HTMLSlotElement>>> list;
-    return list;
-}
-
-// This state must be per event loop.
-static bool mutationObserverCompoundMicrotaskQueuedFlag = false;
-
-void MutationObserver::queueMutationObserverCompoundMicrotask(Document& document)
-{
-    if (mutationObserverCompoundMicrotaskQueuedFlag)
-        return;
-    mutationObserverCompoundMicrotaskQueuedFlag = true;
-    document.eventLoop().queueMicrotask([] {
-        notifyMutationObservers();
-    });
-}
-
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
@@ -179,26 +145,28 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 
     m_pendingTargets.add(*mutation->target());
     m_records.append(WTFMove(mutation));
-    activeMutationObservers().add(this);
 
-    queueMutationObserverCompoundMicrotask(document.get());
+    auto eventLoop = makeRef(document->windowEventLoop());
+    eventLoop->activeMutationObservers().add(this);
+    eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
 void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
 {
     ASSERT(isMainThread());
-    ASSERT(signalSlotList().findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
-    signalSlotList().append(slot);
+    auto eventLoop = makeRef(slot.document().windowEventLoop());
+    auto& list = eventLoop->signalSlotList();
+    ASSERT(list.findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
+    list.append(slot);
 
-    queueMutationObserverCompoundMicrotask(slot.document());
+    eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
 void MutationObserver::setHasTransientRegistration(Document& document)
 {
-    ASSERT(isMainThread());
-    activeMutationObservers().add(this);
-
-    queueMutationObserverCompoundMicrotask(document);
+    auto eventLoop = makeRef(document.windowEventLoop());
+    eventLoop->activeMutationObservers().add(this);
+    eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
 HashSet<Node*> MutationObserver::observedNodes() const
@@ -251,32 +219,23 @@ void MutationObserver::deliver()
     }
 }
 
-void MutationObserver::notifyMutationObservers()
+// https://dom.spec.whatwg.org/#notify-mutation-observers
+void MutationObserver::notifyMutationObservers(WindowEventLoop& eventLoop)
 {
-    // https://dom.spec.whatwg.org/#notify-mutation-observers
-    // 1. Unset mutation observer compound microtask queued flag.
-    mutationObserverCompoundMicrotaskQueuedFlag = false;
-
-    ASSERT(isMainThread());
-    static bool deliveryInProgress = false;
-    if (deliveryInProgress)
-        return;
-    deliveryInProgress = true;
-
-    if (!suspendedMutationObservers().isEmpty()) {
-        for (auto& observer : copyToVector(suspendedMutationObservers())) {
+    if (!eventLoop.suspendedMutationObservers().isEmpty()) {
+        for (auto& observer : copyToVector(eventLoop.suspendedMutationObservers())) {
             if (!observer->canDeliver())
                 continue;
 
-            suspendedMutationObservers().remove(observer);
-            activeMutationObservers().add(observer);
+            eventLoop.suspendedMutationObservers().remove(observer);
+            eventLoop.activeMutationObservers().add(observer);
         }
     }
 
-    while (!activeMutationObservers().isEmpty() || !signalSlotList().isEmpty()) {
+    while (!eventLoop.activeMutationObservers().isEmpty() || !eventLoop.signalSlotList().isEmpty()) {
         // 2. Let notify list be a copy of unit of related similar-origin browsing contexts' list of MutationObserver objects.
-        auto notifyList = copyToVector(activeMutationObservers());
-        activeMutationObservers().clear();
+        auto notifyList = copyToVector(eventLoop.activeMutationObservers());
+        eventLoop.activeMutationObservers().clear();
         std::sort(notifyList.begin(), notifyList.end(), [](auto& lhs, auto& rhs) {
             return lhs->m_priority < rhs->m_priority;
         });
@@ -284,8 +243,8 @@ void MutationObserver::notifyMutationObservers()
         // 3. Let signalList be a copy of unit of related similar-origin browsing contexts' signal slot list.
         // 4. Empty unit of related similar-origin browsing contexts' signal slot list.
         Vector<GCReachableRef<HTMLSlotElement>> slotList;
-        if (!signalSlotList().isEmpty()) {
-            slotList.swap(signalSlotList());
+        if (!eventLoop.signalSlotList().isEmpty()) {
+            slotList.swap(eventLoop.signalSlotList());
             for (auto& slot : slotList)
                 slot->didRemoveFromSignalSlotList();
         }
@@ -295,15 +254,13 @@ void MutationObserver::notifyMutationObservers()
             if (observer->canDeliver())
                 observer->deliver();
             else
-                suspendedMutationObservers().add(observer);
+                eventLoop.suspendedMutationObservers().add(observer);
         }
 
         // 6. For each slot slot in signalList, in order, fire an event named slotchange, with its bubbles attribute set to true, at slot.
         for (auto& slot : slotList)
             slot->dispatchSlotChangeEvent();
     }
-
-    deliveryInProgress = false;
 }
 
 } // namespace WebCore

@@ -659,9 +659,6 @@ public:
     void clearWheelEventTestMonitor() { m_wheelEventTestMonitor = nullptr; }
     bool isMonitoringWheelEvents() const { return !!m_wheelEventTestMonitor; }
 
-    void setIsForSanitizingWebContent() { m_isForSanitizingWebContent = true; }
-    bool isForSanitizingWebContent() const { return m_isForSanitizingWebContent; }
-
 #if ENABLE(VIDEO)
     bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
     WEBCORE_EXPORT void setAllowsMediaDocumentInlinePlayback(bool);
@@ -1011,8 +1008,6 @@ private:
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
     bool m_inUpdateRendering { false };
-
-    bool m_isForSanitizingWebContent { false };
 };
 
 inline PageGroup& Page::group()

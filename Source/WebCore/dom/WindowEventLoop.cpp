@@ -27,8 +27,11 @@
 #include "WindowEventLoop.h"
 
 #include "CommonVM.h"
+#include "CustomElementReactionQueue.h"
 #include "Document.h"
+#include "HTMLSlotElement.h"
 #include "Microtasks.h"
+#include "MutationObserver.h"
 
 namespace WebCore {
 
@@ -79,6 +82,7 @@ inline Ref<WindowEventLoop> WindowEventLoop::create(const String& agentClusterKe
 inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
     : m_agentClusterKey(agentClusterKey)
     , m_timer(*this, &WindowEventLoop::run)
+    , m_perpetualTaskGroupForSimilarOriginWindowAgents(*this)
 {
 }
 
@@ -102,9 +106,45 @@ bool WindowEventLoop::isContextThread() const
 
 MicrotaskQueue& WindowEventLoop::microtaskQueue()
 {
-    // MicrotaskQueue must be one per event loop.
-    static NeverDestroyed<MicrotaskQueue> queue(commonVM());
-    return queue;
+    if (!m_microtaskQueue)
+        m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM());
+    return *m_microtaskQueue;
+}
+
+void WindowEventLoop::queueMutationObserverCompoundMicrotask()
+{
+    if (m_mutationObserverCompoundMicrotaskQueuedFlag)
+        return;
+    m_mutationObserverCompoundMicrotaskQueuedFlag = true;
+    m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
+        // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
+        auto protectedThis = makeRef(*this);
+        m_mutationObserverCompoundMicrotaskQueuedFlag = false;
+
+        // FIXME: This check doesn't exist in the spec.
+        if (m_deliveringMutationRecords)
+            return;
+        m_deliveringMutationRecords = true;
+        MutationObserver::notifyMutationObservers(*this);
+        m_deliveringMutationRecords = false;
+    });
+}
+
+CustomElementQueue& WindowEventLoop::backupElementQueue()
+{
+    if (!m_processingBackupElementQueue) {
+        m_processingBackupElementQueue = true;
+        m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
+            // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
+            auto protectedThis = makeRef(*this);
+            m_processingBackupElementQueue = false;
+            ASSERT(m_customElementQueue);
+            CustomElementReactionQueue::processBackupQueue(*m_customElementQueue);
+        });
+    }
+    if (!m_customElementQueue)
+        m_customElementQueue = makeUnique<CustomElementQueue>();
+    return *m_customElementQueue;
 }
 
 } // namespace WebCore

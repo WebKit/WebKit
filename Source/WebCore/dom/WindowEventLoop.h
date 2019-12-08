@@ -25,15 +25,18 @@
 
 #pragma once
 
-#include "DocumentIdentifier.h"
 #include "EventLoop.h"
+#include "GCReachableRef.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CustomElementQueue;
 class Document;
+class HTMLSlotElement;
+class MutationObserver;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
 class WindowEventLoop final : public EventLoop {
@@ -41,6 +44,13 @@ public:
     static Ref<WindowEventLoop> eventLoopForSecurityOrigin(const SecurityOrigin&);
 
     virtual ~WindowEventLoop();
+
+    void queueMutationObserverCompoundMicrotask();
+    Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList() { return m_signalSlotList; }
+    HashSet<RefPtr<MutationObserver>>& activeMutationObservers() { return m_activeObservers; }
+    HashSet<RefPtr<MutationObserver>>& suspendedMutationObservers() { return m_suspendedObservers; }
+
+    CustomElementQueue& backupElementQueue();
 
 private:
     static Ref<WindowEventLoop> create(const String&);
@@ -52,6 +62,21 @@ private:
 
     String m_agentClusterKey;
     Timer m_timer;
+    std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
+
+    // Each task scheduled in event loop is associated with a document so that it can be suspened or stopped
+    // when the associated document is suspened or stopped. This task group is used to schedule a task
+    // which is not scheduled to a specific document, and should only be used when it's absolutely required.
+    EventLoopTaskGroup m_perpetualTaskGroupForSimilarOriginWindowAgents;
+
+    bool m_mutationObserverCompoundMicrotaskQueuedFlag { false };
+    bool m_deliveringMutationRecords { false }; // FIXME: This flag doesn't exist in the spec.
+    Vector<GCReachableRef<HTMLSlotElement>> m_signalSlotList; // https://dom.spec.whatwg.org/#signal-slot-list
+    HashSet<RefPtr<MutationObserver>> m_activeObservers;
+    HashSet<RefPtr<MutationObserver>> m_suspendedObservers;
+
+    std::unique_ptr<CustomElementQueue> m_customElementQueue;
+    bool m_processingBackupElementQueue { false };
 };
 
 } // namespace WebCore

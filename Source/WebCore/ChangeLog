@@ -1,3 +1,68 @@
+2019-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There should be one MicrotaskQueue per EventLoop
+        https://bugs.webkit.org/show_bug.cgi?id=204492
+        <rdar://problem/57420645>
+
+        Reviewed by Antti Koivisto.
+
+        This patch makes microtask queue and the microtasks for mutation observers and custom elements
+        specific to each event loop so that only similar origin windows share the same microtask queue
+        and mutation observer's compound microtask or custom element's backup element queue.
+
+        As a result, we can remove the workaround we added in r247222.
+
+        Because microtasks for mutation observers and custom elements are shared across similar origin
+        window agents, we can't use any one document's task group to schedule these. Instead, we create
+        a new "perpetual" task group in WindowEventLoop which is never suspended or stopped. It's the
+        responsibility of mutation observer and custom elements' code to deal with suspened or stopped
+        documents as it has been the case.
+
+        See also: https://dom.spec.whatwg.org/#queue-a-mutation-observer-compound-microtask
+                  https://html.spec.whatwg.org/multipage/custom-elements.html#backup-element-queue
+
+        Test: editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementQueue::add): Renamed from CustomElementReactionQueue::ElementQueue to
+        allow forward declaration in EventLoop.h.
+        (WebCore::CustomElementQueue::invokeAll): Ditto.
+        (WebCore::CustomElementQueue::processQueue): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue):
+        (WebCore::CustomElementReactionQueue::processBackupQueue):
+        (WebCore::CustomElementReactionQueue::ensureBackupQueue): Deleted. Moved to WindowEventLoop.
+        (WebCore::CustomElementReactionQueue::backupElementQueue): Ditto.
+        * dom/CustomElementReactionQueue.h:
+        (WebCore::CustomElementQueue): Renamed from CustomElementReactionQueue::ElementQueue to allow
+        forward declaration in EventLoop.h.
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing): Removed the workaround added in r247222.
+        (WebCore::Document::eventLoop):
+        (WebCore::Document::windowEventLoop): Added.
+        * dom/Document.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::activeMutationObservers): Deleted. Moved to WindowEventLoop.
+        (WebCore::suspendedMutationObservers): Ditto.
+        (WebCore::signalSlotList): Ditto.
+        (WebCore::MutationObserver::queueMutationObserverCompoundMicrotask): Ditto.
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::enqueueSlotChangeEvent):
+        (WebCore::MutationObserver::setHasTransientRegistration):
+        (WebCore::MutationObserver::notifyMutationObservers): Now takes WindowEventLoop since various
+        lists and hash maps are specific to each WindowEventLoop.
+        * dom/MutationObserver.h:
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::WindowEventLoop): Create m_perpetualTaskGroupForSimilarOriginWindowAgents.
+        (WebCore::WindowEventLoop::microtaskQueue):
+        (WebCore::WindowEventLoop::queueMutationObserverCompoundMicrotask):
+        (WebCore::WindowEventLoop::backupElementQueue):
+        * dom/WindowEventLoop.h:
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent): Removed the workaround added in r247222.
+        * page/Page.h:
+        (WebCore::Page::setIsForSanitizingWebContent): Ditto.
+        (WebCore::Page::isForSanitizingWebContent const): Ditto.
+
 2019-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move WebCore::Path encoders and decoders into WebCore from WebCoreArgumentCoders

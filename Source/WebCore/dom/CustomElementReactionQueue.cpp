@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
+#include "WindowEventLoop.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
 #include <wtf/NeverDestroyed.h>
@@ -238,14 +239,14 @@ void CustomElementReactionQueue::invokeAll(Element& element)
     }
 }
 
-inline void CustomElementReactionQueue::ElementQueue::add(Element& element)
+inline void CustomElementQueue::add(Element& element)
 {
     ASSERT(!m_invoking);
     // FIXME: Avoid inserting the same element multiple times.
     m_elements.append(element);
 }
 
-inline void CustomElementReactionQueue::ElementQueue::invokeAll()
+inline void CustomElementQueue::invokeAll()
 {
     RELEASE_ASSERT(!m_invoking);
     SetForScope<bool> invoking(m_invoking, true);
@@ -262,7 +263,7 @@ inline void CustomElementReactionQueue::ElementQueue::invokeAll()
     m_elements.clear();
 }
 
-inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::JSGlobalObject* state)
+inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
 {
     if (!state) {
         invokeAll();
@@ -293,14 +294,13 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
 {
     ASSERT(element.reactionQueue());
     if (!CustomElementReactionStack::s_currentProcessingStack) {
-        auto& queue = ensureBackupQueue(element.document());
-        queue.add(element);
+        element.document().windowEventLoop().backupElementQueue().add(element);
         return;
     }
 
     auto*& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
     if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementReactionStack.
-        queue = new ElementQueue;
+        queue = new CustomElementQueue;
     queue->add(element);
 }
 
@@ -318,30 +318,9 @@ void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
     m_queue = nullptr;
 }
 
-static bool s_processingBackupElementQueue = false;
-
-// FIXME: BackupQueue must be per event loop.
-CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBackupQueue(Document& document)
+void CustomElementReactionQueue::processBackupQueue(CustomElementQueue& backupElementQueue)
 {
-    if (!s_processingBackupElementQueue) {
-        s_processingBackupElementQueue = true;
-        document.eventLoop().queueMicrotask([] {
-            CustomElementReactionQueue::processBackupQueue();
-        });
-    }
-    return backupElementQueue();
-}
-
-void CustomElementReactionQueue::processBackupQueue()
-{
-    backupElementQueue().processQueue(nullptr);
-    s_processingBackupElementQueue = false;
-}
-
-CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::backupElementQueue()
-{
-    static NeverDestroyed<ElementQueue> queue;
-    return queue.get();
+    backupElementQueue.processQueue(nullptr);
 }
 
 }
