@@ -385,7 +385,7 @@ inline bool RGBA::hasAlpha() const
 inline Color::Color(RGBA color, ColorSpace space)
 {
     setRGB(color.m_integer);
-    ASSERT_UNUSED(space, space == ColorSpaceSRGB);
+    ASSERT_UNUSED(space, space == ColorSpace::SRGB);
 }
 
 inline bool operator==(const Color& a, const Color& b)

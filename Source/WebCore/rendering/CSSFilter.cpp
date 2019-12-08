@@ -121,7 +121,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
 
         effectElement.setStandardAttributes(effect.get());
         if (effectElement.renderer())
-            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? ColorSpaceLinearRGB : ColorSpaceSRGB);
+            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? ColorSpace::LinearRGB : ColorSpace::SRGB);
 
         builder->add(effectElement.result(), effect);
         m_effects.append(*effect);
@@ -289,7 +289,7 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
             // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
             // property applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(consumer == FilterConsumer::FilterFunction);
-            effect->setOperatingColorSpace(ColorSpaceSRGB);
+            effect->setOperatingColorSpace(ColorSpace::SRGB);
             
             if (filterOperation.type() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(WTFMove(previousEffect));
@@ -366,7 +366,7 @@ void CSSFilter::apply()
 {
     auto& effect = m_effects.last().get();
     effect.apply();
-    effect.transformResultColorSpace(ColorSpaceSRGB);
+    effect.transformResultColorSpace(ColorSpace::SRGB);
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

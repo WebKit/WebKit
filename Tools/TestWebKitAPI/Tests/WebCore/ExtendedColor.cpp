@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 TEST(ExtendedColor, Constructor)
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
     EXPECT_FLOAT_EQ(1.0, c1.asExtended().red());
     EXPECT_FLOAT_EQ(0.5, c1.asExtended().green());
@@ -47,7 +47,7 @@ TEST(ExtendedColor, Constructor)
 
 TEST(ExtendedColor, CopyConstructor)
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
 
     Color c2(c1);
@@ -63,7 +63,7 @@ TEST(ExtendedColor, CopyConstructor)
 
 TEST(ExtendedColor, Assignment)
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
 
     Color c2 = c1;
@@ -79,7 +79,7 @@ TEST(ExtendedColor, Assignment)
 
 TEST(ExtendedColor, MoveConstructor)
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
 
     Color c2(WTFMove(c1));
@@ -98,7 +98,7 @@ TEST(ExtendedColor, MoveConstructor)
 
 TEST(ExtendedColor, MoveAssignment)
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
 
     Color c2 = WTFMove(c1);
@@ -118,7 +118,7 @@ TEST(ExtendedColor, MoveAssignment)
 
 TEST(ExtendedColor, BasicReferenceCounting)
 {
-    Color* c1 = new Color(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color* c1 = new Color(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1->isExtended());
 
     Color* c2 = new Color(*c1);
@@ -142,7 +142,7 @@ TEST(ExtendedColor, BasicReferenceCounting)
 
 Color makeColor()
 {
-    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpaceDisplayP3);
+    Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
     EXPECT_EQ(1u, c1.asExtended().refCount());
 

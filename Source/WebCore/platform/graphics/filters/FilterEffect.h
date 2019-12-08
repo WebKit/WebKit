@@ -211,8 +211,8 @@ private:
     // Should the effect clip to its primitive region, or expand to use the combined region of its inputs.
     bool m_clipsToBounds { true };
 
-    ColorSpace m_operatingColorSpace { ColorSpaceLinearRGB };
-    ColorSpace m_resultColorSpace { ColorSpaceSRGB };
+    ColorSpace m_operatingColorSpace { ColorSpace::LinearRGB };
+    ColorSpace m_resultColorSpace { ColorSpace::SRGB };
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterEffect&);

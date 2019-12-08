@@ -93,8 +93,8 @@ void FEImage::platformApplySoftware()
     if (!m_image && !renderer)
         return;
 
-    // FEImage results are always in ColorSpaceSRGB
-    setResultColorSpace(ColorSpaceSRGB);
+    // FEImage results are always in ColorSpace::SRGB
+    setResultColorSpace(ColorSpace::SRGB);
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)

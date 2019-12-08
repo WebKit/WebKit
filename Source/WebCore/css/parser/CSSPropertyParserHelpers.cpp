@@ -651,10 +651,10 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     ColorSpace colorSpace;
     switch (args.peek().id()) {
     case CSSValueSRGB:
-        colorSpace = ColorSpaceSRGB;
+        colorSpace = ColorSpace::SRGB;
         break;
     case CSSValueDisplayP3:
-        colorSpace = ColorSpaceDisplayP3;
+        colorSpace = ColorSpace::DisplayP3;
         break;
     default:
         return Color();

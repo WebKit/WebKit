@@ -111,11 +111,11 @@ static CGColorRef leakCGColor(const Color& color)
         components[2] = extendedColor.blue();
         components[3] = extendedColor.alpha();
         switch (extendedColor.colorSpace()) {
-        case ColorSpaceSRGB:
+        case ColorSpace::SRGB:
             return CGColorCreate(sRGBColorSpaceRef(), components);
-        case ColorSpaceDisplayP3:
+        case ColorSpace::DisplayP3:
             return CGColorCreate(displayP3ColorSpaceRef(), components);
-        case ColorSpaceLinearRGB:
+        case ColorSpace::LinearRGB:
             // FIXME: Do we ever create CGColorRefs in these spaces? It may only be ImageBuffers.
             return CGColorCreate(sRGBColorSpaceRef(), components);
         }

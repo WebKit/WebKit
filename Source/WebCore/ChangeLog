@@ -1,3 +1,89 @@
+2019-12-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Make ColorSpace an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=204970
+
+        Reviewed by Sam Weinig.
+
+        So it can be encoded and decoded through the IPC messages.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::copiedImage const):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/Color.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        * platform/graphics/ColorSpace.h:
+        (): Deleted.
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::drawPattern):
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::create):
+        (WebCore::ExtendedColor::cssText const):
+        * platform/graphics/ExtendedColor.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::transformColorSpace):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::leakCGColor):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::cachedCGColorSpace):
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::SourceGraphic):
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::buildReferenceFilter):
+        (WebCore::CSSFilter::build):
+        (WebCore::CSSFilter::apply):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForTouchAction):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage const):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::bufferForeground):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+
 2019-12-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Convert InlineLayoutUnit/Point/Rect to LayoutUnit/Point/Rect when crossing inline/block boundary

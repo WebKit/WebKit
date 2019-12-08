@@ -41,11 +41,11 @@ CGAffineTransform getUserToBaseCTM(CGContextRef);
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpaceSRGB:
+    case ColorSpace::SRGB:
         return sRGBColorSpaceRef();
-    case ColorSpaceLinearRGB:
+    case ColorSpace::LinearRGB:
         return linearRGBColorSpaceRef();
-    case ColorSpaceDisplayP3:
+    case ColorSpace::DisplayP3:
         return displayP3ColorSpaceRef();
     }
     ASSERT_NOT_REACHED();

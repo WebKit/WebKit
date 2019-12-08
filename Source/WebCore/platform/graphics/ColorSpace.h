@@ -27,10 +27,10 @@
 
 namespace WebCore {
 
-enum ColorSpace {
-    ColorSpaceSRGB,
-    ColorSpaceLinearRGB,
-    ColorSpaceDisplayP3
+enum class ColorSpace : uint8_t {
+    SRGB,
+    LinearRGB,
+    DisplayP3
 };
     
 } // namespace WebCore

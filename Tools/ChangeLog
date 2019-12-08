@@ -1,3 +1,14 @@
+2019-12-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Make ColorSpace an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=204970
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColor.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::makeColor):
+
 2019-12-06  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.tool (Follow-up, part 2)

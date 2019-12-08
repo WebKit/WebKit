@@ -650,13 +650,13 @@ TextStream& operator<<(TextStream& ts, const Color& color)
 TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpaceSRGB:
+    case ColorSpace::SRGB:
         ts << "sRGB";
         break;
-    case ColorSpaceLinearRGB:
+    case ColorSpace::LinearRGB:
         ts << "LinearRGB";
         break;
-    case ColorSpaceDisplayP3:
+    case ColorSpace::DisplayP3:
         ts << "DisplayP3";
         break;
     }

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
-    static Ref<ExtendedColor> create(float r, float g, float b, float a, ColorSpace = ColorSpace::ColorSpaceSRGB);
+    static Ref<ExtendedColor> create(float red, float green, float blue, float alpha, ColorSpace = ColorSpace::SRGB);
 
     float red() const { return m_red; }
     float green() const { return m_green; }
@@ -60,7 +60,7 @@ private:
     float m_blue { 0 };
     float m_alpha { 0 };
 
-    ColorSpace m_colorSpace { ColorSpace::ColorSpaceSRGB };
+    ColorSpace m_colorSpace { ColorSpace::SRGB };
 };
 
 }
