@@ -1,3 +1,19 @@
+2019-12-08  youenn fablet  <youenn@apple.com>
+
+        Add logging to NetworkRTCMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=204850
+        <rdar://problem/57618773>
+
+        Reviewed by Eric Carlson.
+
+        Add logging and send IPC message back to WebProcess even if monitoring is stopped.
+        No observable change of behavior.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkRTCMonitor::startUpdatingIfNeeded):
+        (WebKit::NetworkRTCMonitor::stopUpdating):
+        (WebKit::NetworkRTCMonitor::onNetworksChanged):
+
 2019-12-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make ColorSpace an enum class

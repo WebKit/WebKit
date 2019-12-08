@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include "Connection.h"
+#include "Logging.h"
 #include "NetworkRTCProvider.h"
 #include "WebRTCMonitorMessages.h"
 #include <wtf/Function.h>
@@ -42,6 +43,7 @@ NetworkRTCMonitor::~NetworkRTCMonitor()
 
 void NetworkRTCMonitor::startUpdatingIfNeeded()
 {
+    RELEASE_LOG(WebRTC, "NetworkRTCMonitor::startUpdatingIfNeeded %d", m_isStarted);
     if (m_isStarted)
         return;
 
@@ -55,6 +57,7 @@ void NetworkRTCMonitor::startUpdatingIfNeeded()
 
 void NetworkRTCMonitor::stopUpdating()
 {
+    RELEASE_LOG(WebRTC, "NetworkRTCMonitor::stopUpdating");
     m_isStarted = false;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
         if (!m_manager)
@@ -81,9 +84,8 @@ void NetworkRTCMonitor::onNetworksChanged()
         networkList.uncheckedAppend(RTCNetwork { *network });
     }
 
-    m_rtcProvider.sendFromMainThread([this, networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)](IPC::Connection& connection) {
-        if (!m_isStarted)
-            return;
+    m_rtcProvider.sendFromMainThread([networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)](IPC::Connection& connection) {
+        RELEASE_LOG(WebRTC, "NetworkRTCMonitor::onNetworksChanged");
         connection.send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
     });
 }
