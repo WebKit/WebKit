@@ -223,7 +223,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
         return computedIntrinsicWidthForConstraint(usedHorizontalValues);
     };
 
-    auto constraints = geometry().constrainByMinMaxWidth(root(), { toLayoutUnit(maximumLineWidth(0)), toLayoutUnit(maximumLineWidth(InlineLayoutUnit::max())) });
+    auto constraints = geometry().constrainByMinMaxWidth(root(), { toLayoutUnit(maximumLineWidth(0)), toLayoutUnit(maximumLineWidth(maxInlineLayoutUnit())) });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }

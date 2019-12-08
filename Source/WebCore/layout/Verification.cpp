@@ -54,9 +54,9 @@ static bool areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
     return abs(a.rawValue() - b.rawValue()) <= epsilon;
 }
 
-static bool areEssentiallyEqual(float a, LayoutUnit b)
+static bool areEssentiallyEqual(float a, InlineLayoutUnit b)
 {
-    return areEssentiallyEqual(LayoutUnit { a }, b);
+    return areEssentiallyEqual(LayoutUnit { a }, LayoutUnit { b });
 }
 
 static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)

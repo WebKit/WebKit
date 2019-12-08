@@ -343,10 +343,10 @@ void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlin
         case TextAlignMode::Right:
         case TextAlignMode::WebKitRight:
         case TextAlignMode::End:
-            return std::max(availableWidth(), 0_lu);
+            return std::max<InlineLayoutUnit>(availableWidth(), 0);
         case TextAlignMode::Center:
         case TextAlignMode::WebKitCenter:
-            return std::max(availableWidth() / 2, 0_lu);
+            return std::max<InlineLayoutUnit>(availableWidth() / 2, 0);
         case TextAlignMode::Justify:
             ASSERT_NOT_REACHED();
             break;
@@ -598,7 +598,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
                 // Non inline-block boxes sit on the baseline (including their bottom margin).
                 m_lineBox.setAscentIfGreater(marginBoxHeight);
                 // Ignore negative descent (yes, negative descent is a thing).
-                m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max(0_lu, baseline.descent()));
+                m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max<InlineLayoutUnit>(0, baseline.descent()));
             }
             break;
         }
@@ -682,10 +682,10 @@ Display::LineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fo
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();
     // 10.8.1 Leading and half-leading
-    auto leading = lineLogicalHeight - (ascent + descent);
-    // Inline tree is all integer based.
-    auto adjustedAscent = std::max((ascent + leading / 2).floor(), 0);
-    auto adjustedDescent = std::max((descent + leading / 2).ceil(), 0);
+    auto halfLeading = (lineLogicalHeight - (ascent + descent)) / 2;
+    // Inline tree height is all integer based.
+    auto adjustedAscent = std::max<InlineLayoutUnit>(floorf(ascent + halfLeading), 0);
+    auto adjustedDescent = std::max<InlineLayoutUnit>(ceilf(descent + halfLeading), 0);
     return { adjustedAscent, adjustedDescent };
 }
 
@@ -716,7 +716,7 @@ void LineBuilder::TrimmableContent::append(size_t runIndex)
         trimmableWidth = trimmableRun.trailingLetterSpacing();
     }
     // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
-    trimmableWidth = std::max(0_lu, trimmableWidth);
+    trimmableWidth = std::max<InlineLayoutUnit>(0, trimmableWidth);
 
     ASSERT(trimmableWidth >= 0);
     m_width += trimmableWidth;

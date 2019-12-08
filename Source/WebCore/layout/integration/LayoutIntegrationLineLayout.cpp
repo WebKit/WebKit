@@ -117,7 +117,7 @@ LayoutUnit LineLayout::firstLineBaseline() const
     }
 
     auto& firstLineBox = inlineContent->lineBoxes.first();
-    return firstLineBox.logicalTop() + firstLineBox.baselineOffset();
+    return Layout::toLayoutUnit(firstLineBox.logicalTop() + firstLineBox.baselineOffset());
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -129,7 +129,7 @@ LayoutUnit LineLayout::lastLineBaseline() const
     }
 
     auto& lastLineBox = inlineContent->lineBoxes.last();
-    return lastLineBox.logicalTop() + lastLineBox.baselineOffset();
+    return Layout::toLayoutUnit(lastLineBox.logicalTop() + lastLineBox.baselineOffset());
 }
 
 const Display::InlineContent* LineLayout::displayInlineContent() const
@@ -241,7 +241,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto baselineOffset = paintOffset.y() + lineBox.logicalTop() + lineBox.baselineOffset();
 
         auto behavior = textContext.expansion() ? textContext.expansion()->behavior : DefaultExpansion;
-        auto horizontalExpansion = textContext.expansion() ? textContext.expansion()->horizontalExpansion : 0_lu;
+        auto horizontalExpansion = textContext.expansion() ? Layout::toLayoutUnit(textContext.expansion()->horizontalExpansion) : 0_lu;
         auto logicalLeft = paintOffset.x() + run.logicalLeft();
 
         String textWithHyphen;

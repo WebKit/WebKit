@@ -38,7 +38,7 @@ namespace Layout {
 static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft)
 {
     if (inlineItem.isLineBreak())
-        return 0_lu;
+        return 0;
 
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
@@ -47,7 +47,7 @@ static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingConte
             auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
             contentWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
         }
-        auto wordSpacing = inlineTextItem.isWhitespace() ? InlineLayoutUnit(inlineTextItem.style().fontCascade().wordSpacing()) : 0_lu;
+        auto wordSpacing = InlineLayoutUnit(inlineTextItem.isWhitespace() ? inlineTextItem.style().fontCascade().wordSpacing() : 0);
         return *contentWidth + wordSpacing;
     }
 

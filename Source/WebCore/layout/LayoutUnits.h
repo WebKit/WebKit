@@ -34,14 +34,23 @@
 
 namespace WebCore {
 
-namespace Display {
-class Box;
-}
+#define USE_FLOAT_AS_INLINE_LAYOUT_UNIT 1
 
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+using InlineLayoutUnit = float;
+using InlineLayoutPoint = FloatPoint;
+using InlineLayoutSize = FloatSize;
+using InlineLayoutRect = FloatRect;
+#else
 using InlineLayoutUnit = LayoutUnit;
 using InlineLayoutPoint = LayoutPoint;
 using InlineLayoutSize = LayoutSize;
 using InlineLayoutRect = LayoutRect;
+#endif
+
+namespace Display {
+class Box;
+}
 
 namespace Layout {
 
@@ -212,6 +221,15 @@ inline LayoutPoint toLayoutPoint(const InlineLayoutPoint& point)
 inline LayoutRect toLayoutRect(const InlineLayoutRect& rect)
 {
     return LayoutRect { rect };
+}
+
+inline InlineLayoutUnit maxInlineLayoutUnit()
+{
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+    return std::numeric_limits<float>::max();
+#else
+    return LayoutUnit::max();
+#endif
 }
 
 }
