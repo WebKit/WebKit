@@ -594,8 +594,10 @@ SocketDispatcher::~SocketDispatcher() {
 bool SocketDispatcher::Initialize() {
   RTC_DCHECK(s_ != INVALID_SOCKET);
 #if defined(WEBRTC_WEBKIT_BUILD)
-  if (s_ < 0 || s_ >= FD_SETSIZE)
+  if (s_ < 0 || s_ >= FD_SETSIZE) {
+    RTC_LOG_ERR(LS_ERROR) << "SocketDispatcher::Initialize, file descriptor is invalid";
     return false;
+  }
 #endif
 // Must be a non-blocking
 #if defined(WEBRTC_WIN)
@@ -1433,8 +1435,10 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
         // FD_SETSIZE will result in undefined behavior.
         RTC_DCHECK_LT(fd, FD_SETSIZE);
 #if defined(WEBRTC_WEBKIT_BUILD)
-        if (fd < 0 || fd >= FD_SETSIZE)
+        if (fd < 0 || fd >= FD_SETSIZE) {
+          RTC_LOG_ERR(LS_ERROR) << "PhysicalSocketServer::WaitSelect, selecting a file descriptor that is invalid";
           continue;
+        }
 #endif
         if (fd > fdmax)
           fdmax = fd;
@@ -1474,8 +1478,10 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
         int fd = pdispatcher->GetDescriptor();
 
 #if defined(WEBRTC_WEBKIT_BUILD)
-        if (fd < 0 || fd >= FD_SETSIZE)
+        if (fd < 0 || fd >= FD_SETSIZE) {
+          RTC_LOG_ERR(LS_ERROR) << "PhysicalSocketServer::WaitSelect, signaled file descriptor is invalid";
           continue;
+        }
 #endif
 
         bool readable = FD_ISSET(fd, &fdsRead);
