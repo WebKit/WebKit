@@ -1,3 +1,16 @@
+2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Finish encoding/decoding support for DisplayList::SetState
+        https://bugs.webkit.org/show_bug.cgi?id=205018
+
+        Reviewed by Tim Horton.
+
+        Rebaseline several display list layout tests.
+
+        * displaylists/layer-dispay-list-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-shadow-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-transforms-expected.txt:
+
 2019-12-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

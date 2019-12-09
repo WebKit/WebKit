@@ -1,3 +1,63 @@
+2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Finish encoding/decoding support for DisplayList::SetState
+        https://bugs.webkit.org/show_bug.cgi?id=205018
+
+        Reviewed by Tim Horton.
+
+        Finishes encoding and decoding support for the `SetState` display list item. See below for more details.
+
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::ColorStop::encode const):
+        (WebCore::Gradient::ColorStop::decode):
+        (WebCore::Gradient::LinearData::encode const):
+        (WebCore::Gradient::LinearData::decode):
+        (WebCore::Gradient::RadialData::encode const):
+        (WebCore::Gradient::RadialData::decode):
+        (WebCore::Gradient::ConicData::encode const):
+        (WebCore::Gradient::ConicData::decode):
+        (WebCore::Gradient::encode const):
+        (WebCore::Gradient::decode):
+
+        Introduce encoding and decoding support for WebCore::Gradient, and all of its constituent data members.
+
+        * platform/graphics/GraphicsContext.h:
+
+        Remove ShadowColorChange, which was unused; instead, shadow color changes are indicated by the ShadowChange
+        flag, which also encompasses shadow offset and blur.
+
+        * platform/graphics/Image.h:
+
+        Move DisplayList::ImageHandle to ImageHandle in Image.h, so that it can be referenced in the encode/decode
+        methods of WebCore::Pattern.
+
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::encode const):
+        (WebCore::Pattern::decode):
+
+        Introduce encoding and decoding support for WebCore::Pattern.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::FillRectWithGradient::FillRectWithGradient):
+
+        Implement encode and decode for FillRectWithGradient, now that we're able to encode and decode Gradients.
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetState::encode const):
+        (WebCore::DisplayList::SetState::decode):
+
+        Encode the remaining data members of a GraphicsContextStateChange's state. These are: strokeGradient,
+        strokePattern, fillGradient, fillPattern, shadowOffset, shadowBlur, shadowColor (which was not previously being
+        encoded due to ShadowColorChange never being set), strokeThickness, textDrawingMode, strokeStyle, fillRule,
+        compositeOperator, blendMode, imageInterpolationQuality, shouldAntialias, shouldSmoothFonts,
+        shouldSubpixelQuantizeFonts and shadowsIgnoreTransforms.
+
+        (WebCore::DisplayList::FillRectWithGradient::encode const):
+        (WebCore::DisplayList::FillRectWithGradient::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        (WebCore::DisplayList::FillRectWithGradient::FillRectWithGradient): Deleted.
+
 2019-12-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for word-break: break-word (and overflow-wrap)

@@ -32,6 +32,7 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "Image.h"
+#include "Pattern.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
@@ -452,18 +453,85 @@ private:
 template<class Encoder>
 void SetState::encode(Encoder& encoder) const
 {
-    encoder << m_state.m_changeFlags;
+    auto changeFlags = m_state.m_changeFlags;
+    encoder << changeFlags;
 
-    // FIXME: Encode the other state changes.
+    auto& state = m_state.m_state;
 
-    if (m_state.m_changeFlags.contains(GraphicsContextState::StrokeColorChange))
-        encoder << m_state.m_state.strokeColor;
+    if (changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
+        encoder << !!state.strokeGradient;
+        if (state.strokeGradient)
+            encoder << *state.strokeGradient;
+    }
 
-    if (m_state.m_changeFlags.contains(GraphicsContextState::FillColorChange))
-        encoder << m_state.m_state.fillColor;
+    if (changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
+        encoder << !!state.strokePattern;
+        if (state.strokePattern)
+            encoder << *state.strokePattern;
+    }
 
-    if (m_state.m_changeFlags.contains(GraphicsContextState::AlphaChange))
-        encoder << m_state.m_state.alpha;
+    if (changeFlags.contains(GraphicsContextState::FillGradientChange)) {
+        encoder << !!state.fillGradient;
+        if (state.fillGradient)
+            encoder << *state.fillGradient;
+    }
+
+    if (changeFlags.contains(GraphicsContextState::FillPatternChange)) {
+        encoder << !!state.fillPattern;
+        if (state.fillPattern)
+            encoder << *state.fillPattern;
+    }
+
+    if (changeFlags.contains(GraphicsContextState::ShadowChange)) {
+        encoder << state.shadowOffset;
+        encoder << state.shadowBlur;
+        encoder << state.shadowColor;
+#if USE(CG)
+        encoder << state.shadowsUseLegacyRadius;
+#endif // USE(CG)
+    }
+
+    if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
+        encoder << state.strokeThickness;
+
+    if (changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
+        encoder.encodeEnum(state.textDrawingMode);
+
+    if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
+        encoder << state.strokeColor;
+
+    if (changeFlags.contains(GraphicsContextState::FillColorChange))
+        encoder << state.fillColor;
+
+    if (changeFlags.contains(GraphicsContextState::StrokeStyleChange))
+        encoder.encodeEnum(state.strokeStyle);
+
+    if (changeFlags.contains(GraphicsContextState::FillRuleChange))
+        encoder << state.fillRule;
+
+    if (changeFlags.contains(GraphicsContextState::CompositeOperationChange))
+        encoder << state.compositeOperator;
+
+    if (changeFlags.contains(GraphicsContextState::BlendModeChange))
+        encoder << state.blendMode;
+
+    if (changeFlags.contains(GraphicsContextState::ImageInterpolationQualityChange))
+        encoder << state.imageInterpolationQuality;
+
+    if (changeFlags.contains(GraphicsContextState::AlphaChange))
+        encoder << state.alpha;
+
+    if (changeFlags.contains(GraphicsContextState::ShouldAntialiasChange))
+        encoder << state.shouldAntialias;
+
+    if (changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange))
+        encoder << state.shouldSmoothFonts;
+
+    if (changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
+        encoder << state.shouldSubpixelQuantizeFonts;
+
+    if (changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
+        encoder << state.shadowsIgnoreTransforms;
 }
 
 template<class Decoder>
@@ -476,6 +544,115 @@ Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
 
     GraphicsContextStateChange stateChange;
     stateChange.m_changeFlags = *changeFlags;
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
+        Optional<bool> hasStrokeGradient;
+        decoder >> hasStrokeGradient;
+        if (!hasStrokeGradient.hasValue())
+            return WTF::nullopt;
+
+        if (hasStrokeGradient.value()) {
+            auto strokeGradient = Gradient::decode(decoder);
+            if (!strokeGradient)
+                return WTF::nullopt;
+
+            stateChange.m_state.strokeGradient = WTFMove(*strokeGradient);
+        }
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
+        Optional<bool> hasStrokePattern;
+        decoder >> hasStrokePattern;
+        if (!hasStrokePattern.hasValue())
+            return WTF::nullopt;
+
+        if (hasStrokePattern.value()) {
+            auto strokePattern = Pattern::decode(decoder);
+            if (!strokePattern)
+                return WTF::nullopt;
+
+            stateChange.m_state.strokePattern = WTFMove(*strokePattern);
+        }
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillGradientChange)) {
+        Optional<bool> hasFillGradient;
+        decoder >> hasFillGradient;
+        if (!hasFillGradient.hasValue())
+            return WTF::nullopt;
+
+        if (hasFillGradient.value()) {
+            auto fillGradient = Gradient::decode(decoder);
+            if (!fillGradient)
+                return WTF::nullopt;
+
+            stateChange.m_state.fillGradient = WTFMove(*fillGradient);
+        }
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange)) {
+        Optional<bool> hasFillPattern;
+        decoder >> hasFillPattern;
+        if (!hasFillPattern.hasValue())
+            return WTF::nullopt;
+
+        if (hasFillPattern.value()) {
+            auto fillPattern = Pattern::decode(decoder);
+            if (!fillPattern)
+                return WTF::nullopt;
+
+            stateChange.m_state.fillPattern = WTFMove(*fillPattern);
+        }
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
+        Optional<FloatSize> shadowOffset;
+        decoder >> shadowOffset;
+        if (!shadowOffset)
+            return WTF::nullopt;
+
+        stateChange.m_state.shadowOffset = *shadowOffset;
+
+        Optional<float> shadowBlur;
+        decoder >> shadowBlur;
+        if (!shadowBlur)
+            return WTF::nullopt;
+
+        stateChange.m_state.shadowBlur = *shadowBlur;
+
+        Optional<Color> shadowColor;
+        decoder >> shadowColor;
+        if (!shadowColor)
+            return WTF::nullopt;
+
+        stateChange.m_state.shadowColor = *shadowColor;
+
+#if USE(CG)
+        Optional<bool> shadowsUseLegacyRadius;
+        decoder >> shadowsUseLegacyRadius;
+        if (!shadowsUseLegacyRadius)
+            return WTF::nullopt;
+
+        stateChange.m_state.shadowsUseLegacyRadius = *shadowsUseLegacyRadius;
+#endif // USE(CG)
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeThicknessChange)) {
+        Optional<float> strokeThickness;
+        decoder >> strokeThickness;
+        if (!strokeThickness)
+            return WTF::nullopt;
+
+        stateChange.m_state.strokeThickness = *strokeThickness;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange)) {
+        TextDrawingModeFlags textDrawingMode;
+        if (!decoder.decodeEnum(textDrawingMode))
+            return WTF::nullopt;
+
+        stateChange.m_state.textDrawingMode = textDrawingMode;
+    }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeColorChange)) {
         Optional<Color> strokeColor;
@@ -495,6 +672,50 @@ Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
         stateChange.m_state.fillColor = *fillColor;
     }
 
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeStyleChange)) {
+        StrokeStyle strokeStyle;
+        if (!decoder.decodeEnum(strokeStyle))
+            return WTF::nullopt;
+
+        stateChange.m_state.strokeStyle = strokeStyle;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillRuleChange)) {
+        Optional<WindRule> fillRule;
+        decoder >> fillRule;
+        if (!fillRule)
+            return WTF::nullopt;
+
+        stateChange.m_state.fillRule = *fillRule;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::CompositeOperationChange)) {
+        Optional<CompositeOperator> compositeOperator;
+        decoder >> compositeOperator;
+        if (!compositeOperator)
+            return WTF::nullopt;
+
+        stateChange.m_state.compositeOperator = *compositeOperator;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::BlendModeChange)) {
+        Optional<BlendMode> blendMode;
+        decoder >> blendMode;
+        if (!blendMode)
+            return WTF::nullopt;
+
+        stateChange.m_state.blendMode = *blendMode;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ImageInterpolationQualityChange)) {
+        Optional<InterpolationQuality> imageInterpolationQuality;
+        decoder >> imageInterpolationQuality;
+        if (!imageInterpolationQuality)
+            return WTF::nullopt;
+
+        stateChange.m_state.imageInterpolationQuality = *imageInterpolationQuality;
+    }
+
     if (stateChange.m_changeFlags.contains(GraphicsContextState::AlphaChange)) {
         Optional<float> alpha;
         decoder >> alpha;
@@ -502,6 +723,42 @@ Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
             return WTF::nullopt;
 
         stateChange.m_state.alpha = *alpha;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldAntialiasChange)) {
+        Optional<bool> shouldAntialias;
+        decoder >> shouldAntialias;
+        if (!shouldAntialias)
+            return WTF::nullopt;
+
+        stateChange.m_state.shouldAntialias = *shouldAntialias;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange)) {
+        Optional<bool> shouldSmoothFonts;
+        decoder >> shouldSmoothFonts;
+        if (!shouldSmoothFonts)
+            return WTF::nullopt;
+
+        stateChange.m_state.shouldSmoothFonts = *shouldSmoothFonts;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange)) {
+        Optional<bool> shouldSubpixelQuantizeFonts;
+        decoder >> shouldSubpixelQuantizeFonts;
+        if (!shouldSubpixelQuantizeFonts)
+            return WTF::nullopt;
+
+        stateChange.m_state.shouldSubpixelQuantizeFonts = *shouldSubpixelQuantizeFonts;
+    }
+
+    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange)) {
+        Optional<bool> shadowsIgnoreTransforms;
+        decoder >> shadowsIgnoreTransforms;
+        if (!shadowsIgnoreTransforms)
+            return WTF::nullopt;
+
+        stateChange.m_state.shadowsIgnoreTransforms = *shadowsIgnoreTransforms;
     }
 
     return SetState::create(stateChange);
@@ -928,11 +1185,6 @@ private:
     FloatRect m_destination;
     FloatRect m_source;
     ImagePaintingOptions m_imagePaintingOptions;
-};
-
-class ImageHandle {
-public:
-    RefPtr<Image> image;
 };
 
 template<class Encoder>
@@ -1862,15 +2114,15 @@ public:
         return adoptRef(*new FillRectWithGradient(rect, gradient));
     }
 
+    WEBCORE_EXPORT virtual ~FillRectWithGradient();
+
     FloatRect rect() const { return m_rect; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<FillRectWithGradient>> decode(Decoder&);
+
 private:
-    FillRectWithGradient(const FloatRect& rect, Gradient& gradient)
-        : DrawingItem(ItemType::FillRectWithGradient)
-        , m_rect(rect)
-        , m_gradient(gradient)
-    {
-    }
+    WEBCORE_EXPORT FillRectWithGradient(const FloatRect&, Gradient&);
 
     void apply(GraphicsContext&) const override;
     Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
@@ -1878,6 +2130,28 @@ private:
     FloatRect m_rect;
     mutable Ref<Gradient> m_gradient; // FIXME: Make this not mutable
 };
+
+template<class Encoder>
+void FillRectWithGradient::encode(Encoder& encoder) const
+{
+    encoder << m_rect;
+    encoder << m_gradient.get();
+}
+
+template<class Decoder>
+Optional<Ref<FillRectWithGradient>> FillRectWithGradient::decode(Decoder& decoder)
+{
+    Optional<FloatRect> rect;
+    decoder >> rect;
+    if (!rect)
+        return WTF::nullopt;
+
+    auto gradient = Gradient::decode(decoder);
+    if (!gradient)
+        return WTF::nullopt;
+
+    return FillRectWithGradient::create(*rect, gradient->get());
+}
 
 class FillCompositedRect : public DrawingItem {
 public:
@@ -2511,7 +2785,7 @@ void Item::encode(Encoder& encoder) const
         encoder << downcast<FillRectWithColor>(*this);
         break;
     case ItemType::FillRectWithGradient:
-        WTFLogAlways("DisplayList::Item::encode cannot yet encode FillRectWithGradient");
+        encoder << downcast<FillRectWithGradient>(*this);
         break;
     case ItemType::FillCompositedRect:
         encoder << downcast<FillCompositedRect>(*this);
@@ -2698,7 +2972,8 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::FillRectWithGradient:
-        WTFLogAlways("DisplayList::Item::decode cannot yet decode FillRectWithGradient");
+        if (auto item = FillRectWithGradient::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::FillCompositedRect:
         if (auto item = FillCompositedRect::decode(decoder))

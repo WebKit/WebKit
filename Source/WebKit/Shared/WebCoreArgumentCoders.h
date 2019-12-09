@@ -81,6 +81,7 @@ class FloatRoundedRect;
 class FloatSize;
 class FixedPositionViewportConstraints;
 class HTTPHeaderMap;
+class ImageHandle;
 class IntPoint;
 class IntRect;
 class IntSize;
@@ -187,10 +188,6 @@ using IDBKeyPath = Variant<String, Vector<String>>;
 namespace DOMCacheEngine {
 struct CacheInfo;
 struct Record;
-}
-
-namespace DisplayList {
-class ImageHandle;
 }
 
 } // namespace WebCore
@@ -381,9 +378,9 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static bool decode(Decoder&, WebCore::Cursor&);
 };
 
-template<> struct ArgumentCoder<WebCore::DisplayList::ImageHandle> {
-    static void encode(Encoder&, const WebCore::DisplayList::ImageHandle&);
-    static bool decode(Decoder&, WebCore::DisplayList::ImageHandle&);
+template<> struct ArgumentCoder<WebCore::ImageHandle> {
+    static void encode(Encoder&, const WebCore::ImageHandle&);
+    static bool decode(Decoder&, WebCore::ImageHandle&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

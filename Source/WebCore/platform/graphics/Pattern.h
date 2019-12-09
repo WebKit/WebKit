@@ -54,10 +54,11 @@ namespace WebCore {
 class AffineTransform;
 class GraphicsContext;
 class Image;
+class ImageHandle;
 
 class Pattern final : public RefCounted<Pattern> {
 public:
-    static Ref<Pattern> create(Ref<Image>&& tileImage, bool repeatX, bool repeatY);
+    WEBCORE_EXPORT static Ref<Pattern> create(Ref<Image>&& tileImage, bool repeatX, bool repeatY);
     WEBCORE_EXPORT ~Pattern();
 
     Image& tileImage() const { return m_tileImage.get(); }
@@ -68,10 +69,13 @@ public:
 #else
     PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
 #endif
-    void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
+    WEBCORE_EXPORT void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
     const AffineTransform& patternSpaceTransform() const { return m_patternSpaceTransformation; };
     bool repeatX() const { return m_repeatX; }
     bool repeatY() const { return m_repeatY; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Pattern>> decode(Decoder&);
 
 private:
     Pattern(Ref<Image>&&, bool repeatX, bool repeatY);
@@ -81,6 +85,45 @@ private:
     bool m_repeatX;
     bool m_repeatY;
 };
+
+template<class Encoder>
+void Pattern::encode(Encoder& encoder) const
+{
+    ImageHandle imageHandle;
+    imageHandle.image = m_tileImage.ptr();
+    encoder << imageHandle;
+    encoder << m_patternSpaceTransformation;
+    encoder << m_repeatX;
+    encoder << m_repeatY;
+}
+
+template<class Decoder>
+Optional<Ref<Pattern>> Pattern::decode(Decoder& decoder)
+{
+    Optional<ImageHandle> imageHandle;
+    decoder >> imageHandle;
+    if (!imageHandle)
+        return WTF::nullopt;
+
+    Optional<AffineTransform> patternSpaceTransformation;
+    decoder >> patternSpaceTransformation;
+    if (!patternSpaceTransformation)
+        return WTF::nullopt;
+
+    Optional<bool> repeatX;
+    decoder >> repeatX;
+    if (!repeatX)
+        return WTF::nullopt;
+
+    Optional<bool> repeatY;
+    decoder >> repeatY;
+    if (!repeatY)
+        return WTF::nullopt;
+
+    auto pattern = Pattern::create(imageHandle->image.releaseNonNull(), *repeatX, *repeatY);
+    pattern->setPatternSpaceTransform(*patternSpaceTransformation);
+    return pattern;
+}
 
 } //namespace
 

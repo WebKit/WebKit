@@ -199,6 +199,11 @@ private:
     std::unique_ptr<Timer> m_animationStartTimer;
 };
 
+class ImageHandle {
+public:
+    RefPtr<Image> image;
+};
+
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
 
 } // namespace WebCore

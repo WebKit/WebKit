@@ -1028,12 +1028,12 @@ static bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
     return decodeImage(decoder, image);
 }
 
-void ArgumentCoder<DisplayList::ImageHandle>::encode(Encoder& encoder, const DisplayList::ImageHandle& imageHandle)
+void ArgumentCoder<ImageHandle>::encode(Encoder& encoder, const ImageHandle& imageHandle)
 {
     encodeOptionalImage(encoder, imageHandle.image.get());
 }
 
-bool ArgumentCoder<DisplayList::ImageHandle>::decode(Decoder& decoder, DisplayList::ImageHandle& imageHandle)
+bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHandle)
 {
     if (!decodeOptionalImage(decoder, imageHandle.image))
         return false;

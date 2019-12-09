@@ -979,6 +979,15 @@ static TextStream& operator<<(TextStream& ts, const FillRectWithColor& item)
     return ts;
 }
 
+FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, Gradient& gradient)
+    : DrawingItem(ItemType::FillRectWithGradient)
+    , m_rect(rect)
+    , m_gradient(gradient)
+{
+}
+
+FillRectWithGradient::~FillRectWithGradient() = default;
+
 void FillRectWithGradient::apply(GraphicsContext& context) const
 {
     context.fillRect(m_rect, m_gradient.get());

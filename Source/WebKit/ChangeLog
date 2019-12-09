@@ -1,3 +1,20 @@
+2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Finish encoding/decoding support for DisplayList::SetState
+        https://bugs.webkit.org/show_bug.cgi?id=205018
+
+        Reviewed by Tim Horton.
+
+        Replaces WebCore::DisplayList::ImageHandle with just WebCore::ImageHandle. See WebCore ChangeLog for more
+        details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ImageHandle>::encode):
+        (IPC::ArgumentCoder<ImageHandle>::decode):
+        (IPC::ArgumentCoder<DisplayList::ImageHandle>::encode): Deleted.
+        (IPC::ArgumentCoder<DisplayList::ImageHandle>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2019-12-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

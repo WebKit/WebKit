@@ -9,7 +9,7 @@
   (composite-operation source-over)
   (blend-mode normal))
 (set-state
-  (change-flags 131456)
+  (change-flags 65920)
   (fill-color #0000FF)
   (stroke-style 0)
   (should-antialias 0))
