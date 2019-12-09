@@ -40,7 +40,7 @@ public:
     struct LineContent {
         struct PartialContent {
             bool trailingContentNeedsHyphen { false };
-            unsigned overlfowContentLength { 0 };
+            unsigned overflowContentLength { 0 };
         };
         Optional<unsigned> trailingInlineItemIndex;
         Optional<PartialContent> partialContent;

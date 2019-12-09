@@ -141,7 +141,10 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
         auto& run = runs[index];
         if (isContentWrappingAllowed(run)) {
             ASSERT(run.inlineItem.isText());
-            return BreakingContext::PartialTrailingContent { index, downcast<InlineTextItem>(run.inlineItem).length(), run.logicalWidth, false };
+            if (auto leftSide = tryBreakingTextRun(run, maxInlineLayoutUnit())) {
+                // This run itself might not be partial but the content (series of runs) definitely is.
+                return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
+            }
         }
     }
     // Give up, there's no breakable run in here.
@@ -152,11 +155,15 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& style = overflowRun.inlineItem.style();
+    auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
     auto breakWords = style.wordBreak();
     if (breakWords == WordBreak::KeepAll)
         return { };
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
     if (breakWords == WordBreak::BreakAll) {
+        // When the run can be split at arbitrary positions, let's just return the entire run when it is intended to fit on the line.
+        if (findLastBreakablePosition)
+            return LeftSide { inlineTextItem.length(), overflowRun.logicalWidth, false };
         // FIXME: Pass in the content logical left to be able to measure tabs.
         auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
         return LeftSide { splitData.length, splitData.logicalWidth, false };
@@ -174,22 +181,25 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
     if (limitBefore >= runLength || limitAfter >= runLength || limitBefore + limitAfter > runLength)
         return { };
 
-    auto& fontCascade = style.fontCascade();
-    // FIXME: We might want to cache the hyphen width.
-    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
-    auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
+    unsigned leftSideLength = runLength;
+    if (!findLastBreakablePosition) {
+        auto& fontCascade = style.fontCascade();
+        // FIXME: We might want to cache the hyphen width.
+        auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+        auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
 
-    // For spaceWidth() see webkit.org/b/169613
-    if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen + fontCascade.spaceWidth(), fontCascade.pixelSize()))
-        return { };
+        // For spaceWidth() see webkit.org/b/169613
+        if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen + fontCascade.spaceWidth(), fontCascade.pixelSize()))
+            return { };
 
-    auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { });
-    if (splitData.length < limitBefore)
+        leftSideLength = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { }).length;
+    }
+    if (leftSideLength < limitBefore)
         return { };
 
     auto textContent = inlineTextItem.layoutBox().textContext()->content;
     // Adjust before index to accommodate the limit-after value (it's the last potential hyphen location in this run).
-    auto hyphenBefore = std::min(splitData.length, runLength - limitAfter) + 1;
+    auto hyphenBefore = std::min(leftSideLength, runLength - limitAfter) + 1;
     unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
     if (!hyphenLocation || hyphenLocation < limitBefore)
         return { };

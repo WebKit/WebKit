@@ -1,3 +1,36 @@
+2019-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] fix fast/text/simple-lines-multiple-renderers-break.html
+        https://bugs.webkit.org/show_bug.cgi?id=205014
+        <rdar://problem/57756348>
+
+        Reviewed by Antti Koivisto.
+
+        When dealing with series of runs (<span>text</span><span>content</span>) a partial content does not
+        necessarily mean partial runs. The content can actually be split right at a run boundary.
+        In such cases we have a partial trailing content but not a partial trailing run.
+
+        This patch also covers the case when the overflown run can't be split and
+        we attempt to find a previous breakable run (in the list of candidate runs).
+        Since it's guaranteed (with the FIXME of the extremely long hyphen) that all the previous runs fit the line,
+        we just pass in an infinite available width to LineBreaker::tryBreakingTextRun indicating that we only look for the last breakable position.
+
+        e.g. <span style="word-break: break-all">breakable</span><span>and</span><span>longandunbreakablecontent</span>
+        [breakable][and][longandunbreakablecontent] <- we try to commit this continuous list of runs
+        [longandunbreakablecontent] <- does not fit so let's go back to the previous runs to see if any of them can be split -> [breakableand].
+        result:
+        breakable
+        andlongandunbreakablecontent
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2019-12-07  Darin Adler  <darin@apple.com>
 
         Streamline PODIntervalTree code and remove ValueToString

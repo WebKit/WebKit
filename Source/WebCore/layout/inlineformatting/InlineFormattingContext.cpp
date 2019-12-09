@@ -111,7 +111,7 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
                 // Turn previous line's overflow content length into the next line's leading content partial length.
                 // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
-                partialLeadingContentLength = lineContent.partialContent->overlfowContentLength;
+                partialLeadingContentLength = lineContent.partialContent->overflowContentLength;
             } else
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
