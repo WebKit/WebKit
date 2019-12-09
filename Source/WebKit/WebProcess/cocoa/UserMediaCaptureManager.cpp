@@ -280,11 +280,12 @@ const char* UserMediaCaptureManager::supplementName()
 
 void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!parameters.shouldCaptureAudioInUIProcess);
+    MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!parameters.shouldCaptureAudioInUIProcess && !parameters.shouldCaptureAudioInGPUProcess);
     MockRealtimeMediaSourceCenter::singleton().setMockVideoCaptureEnabled(!parameters.shouldCaptureVideoInUIProcess);
     MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!parameters.shouldCaptureDisplayInUIProcess);
 
-    if (parameters.shouldCaptureAudioInUIProcess)
+    m_audioFactory.setShouldCaptureInGPUProcess(parameters.shouldCaptureAudioInGPUProcess);
+    if (parameters.shouldCaptureAudioInUIProcess || parameters.shouldCaptureAudioInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(m_audioFactory);
     if (parameters.shouldCaptureVideoInUIProcess)
         RealtimeMediaSourceCenter::singleton().setVideoCaptureFactory(m_videoFactory);
@@ -446,6 +447,13 @@ Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& sourc
 void UserMediaCaptureManager::requestToEnd(uint64_t sourceID)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { sourceID }, 0);
+}
+
+CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+{
+    if (m_shouldCaptureInGPUProcess)
+        return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
+    return m_manager.createCaptureSource(device, WTFMove(hashSalt), constraints);
 }
 
 #if PLATFORM(IOS_FAMILY)

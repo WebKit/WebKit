@@ -817,6 +817,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
 #if PLATFORM(COCOA)
     WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess);
+    WKPreferencesSetCaptureAudioInGPUProcessEnabled(preferences, options.enableCaptureAudioInGPUProcess);
 #endif
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap);
@@ -1454,6 +1455,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.allowsLinkPreview = parseBooleanTestHeaderValue(value);
         else if (key == "enableCaptureVideoInUIProcess")
             testOptions.enableCaptureVideoInUIProcess = parseBooleanTestHeaderValue(value);
+        else if (key == "enableCaptureAudioInGPUProcess")
+            testOptions.enableCaptureAudioInGPUProcess = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

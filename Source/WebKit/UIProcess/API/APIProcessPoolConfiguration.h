@@ -107,6 +107,9 @@ public:
     bool shouldCaptureAudioInUIProcess() const { return m_shouldCaptureAudioInUIProcess; }
     void setShouldCaptureAudioInUIProcess(bool shouldCaptureAudioInUIProcess) { m_shouldCaptureAudioInUIProcess = shouldCaptureAudioInUIProcess; }
 
+    bool shouldCaptureAudioInGPUProcess() const { return m_shouldCaptureAudioInGPUProcess; }
+    void setShouldCaptureAudioInGPUProcess(bool shouldCaptureAudioInGPUProcess) { m_shouldCaptureAudioInGPUProcess = shouldCaptureAudioInGPUProcess; }
+
     bool shouldCaptureVideoInUIProcess() const { return m_shouldCaptureVideoInUIProcess; }
     void setShouldCaptureVideoInUIProcess(bool shouldCaptureVideoInUIProcess) { m_shouldCaptureVideoInUIProcess = shouldCaptureVideoInUIProcess; }
 
@@ -160,6 +163,7 @@ private:
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };
+    bool m_shouldCaptureAudioInGPUProcess { false };
     bool m_shouldCaptureVideoInUIProcess { false };
     bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };

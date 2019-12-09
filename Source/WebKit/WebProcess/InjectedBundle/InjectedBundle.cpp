@@ -227,6 +227,12 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    if (preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+        for (auto* page : pages)
+            page->settings().setOutOfProcessMediaEnabled(enabled);
+        return;
+    }
     if (preference == "WebKitMediaDevicesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);
     if (preference == "WebKitScreenCaptureEnabled")

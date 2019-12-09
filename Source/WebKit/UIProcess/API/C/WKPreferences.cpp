@@ -2149,6 +2149,16 @@ bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferences
     return toImpl(preferencesRef)->captureAudioInUIProcessEnabled();
 }
 
+void WKPreferencesSetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCaptureAudioInGPUProcessEnabled(flag);
+}
+
+bool WKPreferencesGetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->captureAudioInGPUProcessEnabled();
+}
+
 void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCaptureVideoInUIProcessEnabled(flag);

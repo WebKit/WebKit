@@ -124,6 +124,12 @@ void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key
 
         return;
     }
+    if (key == WebPreferencesKey::captureAudioInGPUProcessEnabledKey()) {
+        for (auto* page : m_pages)
+            page->process().processPool().configuration().setShouldCaptureAudioInGPUProcess(value);
+
+        return;
+    }
     if (key == WebPreferencesKey::captureVideoInUIProcessEnabledKey()) {
         for (auto* page : m_pages)
             page->process().processPool().configuration().setShouldCaptureVideoInUIProcess(value);

@@ -1012,6 +1012,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if ENABLE(MEDIA_STREAM)
     parameters.shouldCaptureAudioInUIProcess = m_configuration->shouldCaptureAudioInUIProcess();
+    parameters.shouldCaptureAudioInGPUProcess = m_configuration->shouldCaptureAudioInGPUProcess();
     parameters.shouldCaptureVideoInUIProcess = m_configuration->shouldCaptureVideoInUIProcess();
     parameters.shouldCaptureDisplayInUIProcess = m_configuration->shouldCaptureDisplayInUIProcess();
 #endif
@@ -1270,6 +1271,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         m_webProcessCache->updateCapacity(*this);
 
     m_configuration->setShouldCaptureAudioInUIProcess(page->preferences().captureAudioInUIProcessEnabled());
+    m_configuration->setShouldCaptureAudioInGPUProcess(page->preferences().captureAudioInGPUProcessEnabled());
     m_configuration->setShouldCaptureVideoInUIProcess(page->preferences().captureVideoInUIProcessEnabled());
 
     return page;

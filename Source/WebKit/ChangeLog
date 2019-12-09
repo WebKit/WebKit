@@ -1,3 +1,36 @@
+2019-12-09  youenn fablet  <youenn@apple.com>
+
+        Add an option to capture audio in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=205007
+
+        Reviewed by Eric Carlson.
+
+        Add a flag to make audio capture in GPU process.
+        In WebProcess, if trying to capture through GPUProcess, send back an error since this is not implemented.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCaptureAudioInGPUProcessEnabled):
+        (WKPreferencesGetCaptureAudioInGPUProcessEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForInternalDebugFeatureKey):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::initialize):
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        (WebKit::UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess):
+
 2019-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move WebCore::Path encoders and decoders into WebCore from WebCoreArgumentCoders

@@ -98,6 +98,7 @@ struct TestOptions {
     bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
     bool enableCaptureVideoInUIProcess { true };
+    bool enableCaptureAudioInGPUProcess { false };
 
     double contentInsetTop { 0 };
 
@@ -158,7 +159,8 @@ struct TestOptions {
             || enableBackForwardCache != options.enableBackForwardCache
             || enableLazyImageLoading != options.enableLazyImageLoading
             || allowsLinkPreview != options.allowsLinkPreview
-            || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess)
+            || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess
+            || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

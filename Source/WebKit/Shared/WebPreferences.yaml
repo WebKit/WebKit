@@ -1691,6 +1691,15 @@ CaptureAudioInUIProcessEnabled:
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
 
+CaptureAudioInGPUProcessEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Capture audio in GPUProcess"
+  humanReadableDescription: "Capture audio in GPUProcess"
+  category: internal
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
 RestrictedHTTPResponseAccess:
   type: bool
   defaultValue: true

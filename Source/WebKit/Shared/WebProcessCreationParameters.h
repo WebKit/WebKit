@@ -85,6 +85,7 @@ struct WebProcessCreationParameters {
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::Handle audioCaptureExtensionHandle;
     bool shouldCaptureAudioInUIProcess { false };
+    bool shouldCaptureAudioInGPUProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
 #endif

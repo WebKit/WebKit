@@ -236,23 +236,25 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
     m_allowCompletionHandler = WTFMove(completionHandler);
     queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, audioDevice = WTFMove(audioDevice), videoDevice = WTFMove(videoDevice), deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)]() mutable {
-        auto callback = [this, protector = makePendingActivity(*this)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+        auto callback = [this, protector = makePendingActivity(*this)](auto privateStreamOrError) mutable {
             auto scopeExit = makeScopeExit([completionHandler = WTFMove(m_allowCompletionHandler)]() mutable {
                 completionHandler();
             });
             if (isContextStopped())
                 return;
 
-            if (!privateStream) {
+            if (!privateStreamOrError.has_value()) {
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
+                scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, privateStreamOrError.error());
                 deny(MediaAccessDenialReason::HardwareError);
                 return;
             }
+            auto privateStream = WTFMove(privateStreamOrError).value();
 
             auto& document = downcast<Document>(*m_scriptExecutionContext);
             privateStream->monitorOrientation(document.orientationNotifier());
 
-            auto stream = MediaStream::create(document, privateStream.releaseNonNull());
+            auto stream = MediaStream::create(document, WTFMove(privateStream));
             stream->startProducingData();
 
             if (!isMediaStreamCorrectlyStarted(stream)) {
