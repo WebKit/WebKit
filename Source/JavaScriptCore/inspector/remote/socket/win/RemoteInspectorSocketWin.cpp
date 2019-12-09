@@ -88,7 +88,7 @@ private:
     {
         PlatformSocketType socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         if (socket == INVALID_SOCKET) {
-            LOG_ERROR("socket() failed, errno = %d", WSAGetLastError());
+            LOG_ERROR("Failed to create socket (errno = %d)", WSAGetLastError());
             return INVALID_SOCKET_VALUE;
         }
         return socket;
@@ -101,7 +101,7 @@ static bool setOpt(PlatformSocketType socket, int optname, const void* optval, i
 {
     int error = ::setsockopt(socket, SOL_SOCKET, optname, static_cast<const char*>(optval), optlen);
     if (error < 0) {
-        LOG_ERROR("setsockopt() %s, errno = %d", debug, WSAGetLastError());
+        LOG_ERROR("setsockopt(%s) failed (errno = %d)", debug, WSAGetLastError());
         return false;
     }
     return true;
@@ -144,13 +144,13 @@ static PlatformSocketType bindAndListen(struct sockaddr_in& address)
 
     int error = ::bind(socket, (struct sockaddr*)&address, sizeof(address));
     if (error < 0) {
-        LOG_ERROR("bind() failed, errno = %d", WSAGetLastError());
+        LOG_ERROR("bind() failed (errno = %d)", WSAGetLastError());
         return INVALID_SOCKET_VALUE;
     }
 
     error = ::listen(socket, 1);
     if (error < 0) {
-        LOG_ERROR("listen() failed, errno = %d", WSAGetLastError());
+        LOG_ERROR("listen() failed (errno = %d)", WSAGetLastError());
         return INVALID_SOCKET_VALUE;
     }
 
@@ -167,7 +167,7 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
 
     auto socket = connectTo(address);
     if (!isValid(socket)) {
-        LOG_ERROR("Failed to connect to %s:%u, errno = %d", serverAddress, serverPort, WSAGetLastError());
+        LOG_ERROR("connecting to %s:%u failed (errno = %d)", serverAddress, serverPort, WSAGetLastError());
         return WTF::nullopt;
     }
 
@@ -201,7 +201,7 @@ Optional<PlatformSocketType> accept(PlatformSocketType socket)
     if (fd >= 0)
         return fd;
 
-    LOG_ERROR("accept(inet) error (errno = %d)", WSAGetLastError());
+    LOG_ERROR("failed (errno = %d)", WSAGetLastError());
     return WTF::nullopt;
 }
 
@@ -216,12 +216,18 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     if (!server)
         return WTF::nullopt;
 
-    address.sin_port = htons(getPort(server));
+    Optional<uint16_t> serverPort = getPort(server);
+    if (!serverPort)
+        return WTF::nullopt;
+
+    address.sin_port = htons(*serverPort);
 
     std::array<PlatformSocketType, 2> sockets;
     sockets[0] = connectTo(address);
-    if (!isValid(sockets[0]))
+    if (!isValid(sockets[0])) {
+        LOG_ERROR("connecting failed (errno = %d)", WSAGetLastError());
         return WTF::nullopt;
+    }
 
     if (auto socket = accept(server)) {
         sockets[1] = *socket;
@@ -231,10 +237,15 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     return WTF::nullopt;
 }
 
-void setup(PlatformSocketType socket)
+bool setup(PlatformSocketType socket)
 {
-    setOpt(socket, SO_RCVBUF, &BufferSize, sizeof(BufferSize), "SO_RCVBUF");
-    setOpt(socket, SO_SNDBUF, &BufferSize, sizeof(BufferSize), "SO_SNDBUF");
+    if (!setOpt(socket, SO_RCVBUF, &BufferSize, sizeof(BufferSize), "SO_RCVBUF"))
+        return false;
+
+    if (!setOpt(socket, SO_SNDBUF, &BufferSize, sizeof(BufferSize), "SO_SNDBUF"))
+        return false;
+
+    return true;
 }
 
 bool isValid(PlatformSocketType socket)
@@ -249,17 +260,20 @@ bool isListening(PlatformSocketType socket)
     if (getsockopt(socket, SOL_SOCKET, SO_ACCEPTCONN, reinterpret_cast<char*>(&out), &outSize) != -1)
         return out;
 
-    LOG_ERROR("getsockopt errno = %d", WSAGetLastError());
+    LOG_ERROR("getsockopt(SO_ACCEPTCONN) falied (errno = %d)", WSAGetLastError());
     return false;
 }
 
-uint16_t getPort(PlatformSocketType socket)
+Optional<uint16_t> getPort(PlatformSocketType socket)
 {
     ASSERT(isValid(socket));
 
     struct sockaddr_in address = { };
     int len = sizeof(address);
-    getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len);
+    if (getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len)) {
+        LOG_ERROR("getsockname() failed (errno = %d)", WSAGetLastError());
+        return WTF::nullopt;
+    }
     return ntohs(address.sin_port);
 }
 
@@ -271,7 +285,7 @@ Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
     if (readSize != SOCKET_ERROR)
         return static_cast<size_t>(readSize);
 
-    LOG_ERROR("read error (errno = %d)", WSAGetLastError());
+    LOG_ERROR("recv() failed (errno = %d)", WSAGetLastError());
     return WTF::nullopt;
 }
 
@@ -283,7 +297,7 @@ Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
     if (writeSize != SOCKET_ERROR)
         return static_cast<size_t>(writeSize);
 
-    LOG_ERROR("write error (errno = %d)", WSAGetLastError());
+    LOG_ERROR("send() failed (errno = %d)", WSAGetLastError());
     return WTF::nullopt;
 }
 
@@ -295,7 +309,7 @@ void close(PlatformSocketType& socket)
 
 PollingDescriptor preparePolling(PlatformSocketType socket)
 {
-    PollingDescriptor poll;
+    PollingDescriptor poll = { };
     poll.fd = socket;
     poll.events = POLLIN;
     return poll;

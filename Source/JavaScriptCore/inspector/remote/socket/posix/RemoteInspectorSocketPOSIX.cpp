@@ -54,7 +54,7 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
 
     int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (fd < 0) {
-        LOG_ERROR("Failed to create socket for  %s:%d, errno = %d", serverAddress, serverPort, errno);
+        LOG_ERROR("Failed to create socket for %s:%d, errno = %d", serverAddress, serverPort, errno);
         return WTF::nullopt;
     }
 
@@ -82,11 +82,13 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
     int error = setsockopt(fdListen, SOL_SOCKET, SO_REUSEADDR, &enabled, sizeof(enabled));
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEADDR, errno = %d", errno);
+        ::close(fdListen);
         return WTF::nullopt;
     }
     error = setsockopt(fdListen, SOL_SOCKET, SO_REUSEPORT, &enabled, sizeof(enabled));
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEPORT, errno = %d", errno);
+        ::close(fdListen);
         return WTF::nullopt;
     }
 
@@ -137,13 +139,29 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     return sockets;
 }
 
-void setup(PlatformSocketType socket)
+bool setup(PlatformSocketType socket)
 {
-    setCloseOnExec(socket);
-    setNonBlock(socket);
+    if (!setCloseOnExec(socket)) {
+        LOG_ERROR("setCloseOnExec() error");
+        return false;
+    }
 
-    setsockopt(socket, SOL_SOCKET, SO_RCVBUF, &BufferSize, sizeof(BufferSize));
-    setsockopt(socket, SOL_SOCKET, SO_SNDBUF, &BufferSize, sizeof(BufferSize));
+    if (!setNonBlock(socket)) {
+        LOG_ERROR("setNonBlock() error (errno = %d)", errno);
+        return false;
+    }
+
+    if (setsockopt(socket, SOL_SOCKET, SO_RCVBUF, &BufferSize, sizeof(BufferSize))) {
+        LOG_ERROR("setsockopt(SO_RCVBUF) error (errno = %d)", errno);
+        return false;
+    }
+
+    if (setsockopt(socket, SOL_SOCKET, SO_SNDBUF, &BufferSize, sizeof(BufferSize))) {
+        LOG_ERROR("setsockopt(SO_SNDBUF) error (errno = %d)", errno);
+        return false;
+    }
+
+    return true;
 }
 
 bool isValid(PlatformSocketType socket)
@@ -158,17 +176,20 @@ bool isListening(PlatformSocketType socket)
     if (getsockopt(socket, SOL_SOCKET, SO_ACCEPTCONN, &out, &outSize) != -1)
         return out;
 
-    LOG_ERROR("getsockopt errno = %d", errno);
+    LOG_ERROR("getsockopt(SO_ACCEPTCONN) error (errno = %d)", errno);
     return false;
 }
 
-uint16_t getPort(PlatformSocketType socket)
+Optional<uint16_t> getPort(PlatformSocketType socket)
 {
     ASSERT(isValid(socket));
 
     struct sockaddr_in address = { };
     socklen_t len = sizeof(address);
-    getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len);
+    if (getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len)) {
+        LOG_ERROR("getsockname() error (errno = %d)", errno);
+        return WTF::nullopt;
+    }
     return address.sin_port;
 }
 
@@ -207,7 +228,7 @@ void close(PlatformSocketType& socket)
 
 PollingDescriptor preparePolling(PlatformSocketType socket)
 {
-    PollingDescriptor poll;
+    PollingDescriptor poll = { };
     poll.fd = socket;
     poll.events = POLLIN;
     return poll;

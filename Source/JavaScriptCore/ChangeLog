@@ -1,3 +1,37 @@
+2019-12-08  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Refine initialization and error handling in RemoteInspectorSocket
+        https://bugs.webkit.org/show_bug.cgi?id=204338
+
+        Reviewed by Fujii Hironori.
+
+        RemoteInspectorSocket socket error handling is not enough,
+        which should be refined to avoid error cases.
+
+        * inspector/remote/socket/RemoteInspectorSocket.h: Modifed return value checks to hanlde error cases.
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp: Refined check error handling.
+        (Inspector::RemoteInspectorSocketEndpoint::createListener):
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp: Ditto
+        (Inspector::Socket::connect):
+        (Inspector::Socket::listen):
+        (Inspector::Socket::setup):
+        (Inspector::Socket::isListening):
+        (Inspector::Socket::getPort):
+        (Inspector::Socket::preparePolling):
+        * inspector/remote/socket/win/RemoteInspectorSocketWin.cpp: Ditto
+        (Inspector::Socket::Socket::create):
+        (Inspector::Socket::setOpt):
+        (Inspector::Socket::bindAndListen):
+        (Inspector::Socket::connect):
+        (Inspector::Socket::accept):
+        (Inspector::Socket::createPair):
+        (Inspector::Socket::setup):
+        (Inspector::Socket::isListening):
+        (Inspector::Socket::getPort):
+        (Inspector::Socket::read):
+        (Inspector::Socket::write):
+        (Inspector::Socket::preparePolling): Initialized 'poll' with zero
+
 2019-12-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Fix LLIntGenerator's checkConsistency contract

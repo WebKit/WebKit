@@ -193,7 +193,8 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createListener(PlatformSoc
 
     LockHolder lock(m_connectionsLock);
 
-    Socket::setup(socket);
+    if (!Socket::setup(socket))
+        return WTF::nullopt;
 
     auto connection = makeConnection(socket, client);
     auto id = connection->id;
