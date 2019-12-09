@@ -1,3 +1,39 @@
+2019-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r249329) ViewGestureController::requestRenderTreeSizeNotificationIfNeeded() sometimes uses wrong webPageID for IPC
+        https://bugs.webkit.org/show_bug.cgi?id=205012
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::connect):
+        (WebKit::InspectorTargetProxy::disconnect):
+        (WebKit::InspectorTargetProxy::sendMessageToTargetBackend):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+        (WebKit::ProvisionalPageProxy::messageSenderConnection const):
+        (WebKit::ProvisionalPageProxy::messageSenderDestinationID const):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::unsuspend):
+        (WebKit::SuspendedPageProxy::close):
+        (WebKit::SuspendedPageProxy::messageSenderConnection const):
+        (WebKit::SuspendedPageProxy::messageSenderDestinationID const):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        Have SuspendedPageProxy & ProvisionalPageProxy subclass IPC::MessageSender so that we can call send()
+        on them without having to pass in a PageIdentifier. Passing a PageIdentifier was error-prone.
+
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::requestRenderTreeSizeNotificationIfNeeded):
+        When there was a provisonal page proxy, we would properly send the IPC to the provisional page's process
+        but would use the wrong PageIdentifier for the IPC. We would use the identifier of the committed WebPage
+        instead of the one of the provisional WebPage.
+
 2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Finish encoding/decoding support for DisplayList::SetState

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "MessageSender.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessagesReplies.h"
@@ -47,7 +48,7 @@ class WebsiteDataStore;
 
 enum class ShouldDelayClosingUntilEnteringAcceleratedCompositingMode : bool { No, Yes };
 
-class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeWeakPtr<SuspendedPageProxy> {
+class SuspendedPageProxy final: public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeWeakPtr<SuspendedPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebCore::FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
@@ -84,6 +85,11 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+
+    // IPC::MessageSender
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
+    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>) final;
 
     WebPageProxy& m_page;
     WebCore::PageIdentifier m_webPageID;

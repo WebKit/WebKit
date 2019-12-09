@@ -110,7 +110,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
-    m_process->send(Messages::WebPage::SetIsSuspended(true), m_webPageID);
+    send(Messages::WebPage::SetIsSuspended(true));
 }
 
 SuspendedPageProxy::~SuspendedPageProxy()
@@ -165,7 +165,7 @@ void SuspendedPageProxy::unsuspend()
     ASSERT(m_suspensionState == SuspensionState::Suspended);
 
     m_suspensionState = SuspensionState::Resumed;
-    m_process->send(Messages::WebPage::SetIsSuspended(false), m_webPageID);
+    send(Messages::WebPage::SetIsSuspended(false));
 }
 
 void SuspendedPageProxy::close()
@@ -177,7 +177,7 @@ void SuspendedPageProxy::close()
 
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::close()", this);
     m_isClosed = true;
-    m_process->send(Messages::WebPage::Close(), m_webPageID);
+    send(Messages::WebPage::Close());
 }
 
 void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
@@ -258,6 +258,23 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 
 void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&)
 {
+}
+
+IPC::Connection* SuspendedPageProxy::messageSenderConnection() const
+{
+    return m_process->connection();
+}
+
+uint64_t SuspendedPageProxy::messageSenderDestinationID() const
+{
+    return m_webPageID.toUInt64();
+}
+
+bool SuspendedPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions)
+{
+    // Send messages via the WebProcessProxy instead of the IPC::Connection since AuxiliaryProcessProxy implements queueing of messages
+    // while the process is still launching.
+    return m_process->sendMessage(WTFMove(encoder), sendOptions);
 }
 
 #if !LOG_DISABLED

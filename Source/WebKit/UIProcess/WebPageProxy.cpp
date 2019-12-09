@@ -3151,9 +3151,9 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         m_provisionalPage = nullptr;
     }
 
-    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPage), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
+    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(newProcess), WTFMove(suspendedPage), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
 
-    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), newProcess = WTFMove(newProcess), websitePolicies = WTFMove(websitePolicies)]() mutable {
+    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), websitePolicies = WTFMove(websitePolicies)]() mutable {
         if (auto* item = navigation->targetItem()) {
             LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
 
@@ -3167,7 +3167,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         if (m_backForwardList->currentItem() && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
             // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
             // it instead of creating a new one.
-            newProcess->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_provisionalPage->webPageID());
+            m_provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()));
         }
 
         // FIXME: Work out timing of responding with the last policy delegate, etc

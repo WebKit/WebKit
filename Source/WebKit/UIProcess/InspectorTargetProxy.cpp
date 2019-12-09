@@ -59,12 +59,12 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 void InspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
     if (m_provisionalPage) {
-        m_provisionalPage->process().send(Messages::WebPage::ConnectInspector(identifier(), connectionType), m_provisionalPage->webPageID());
+        m_provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
         return;
     }
 
     if (m_page.hasRunningProcess())
-        m_page.process().send(Messages::WebPage::ConnectInspector(identifier(), connectionType), m_page.webPageID());
+        m_page.send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
 }
 
 void InspectorTargetProxy::disconnect()
@@ -73,23 +73,23 @@ void InspectorTargetProxy::disconnect()
         resume();
 
     if (m_provisionalPage) {
-        m_provisionalPage->process().send(Messages::WebPage::DisconnectInspector(identifier()), m_provisionalPage->webPageID());
+        m_provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
         return;
     }
 
     if (m_page.hasRunningProcess())
-        m_page.process().send(Messages::WebPage::DisconnectInspector(identifier()), m_page.webPageID());
+        m_page.send(Messages::WebPage::DisconnectInspector(identifier()));
 }
 
 void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
     if (m_provisionalPage) {
-        m_provisionalPage->process().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_provisionalPage->webPageID());
+        m_provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
         return;
     }
 
     if (m_page.hasRunningProcess())
-        m_page.process().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_page.webPageID());
+        m_page.send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
 }
 
 void InspectorTargetProxy::didCommitProvisionalTarget()

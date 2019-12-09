@@ -99,7 +99,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
             m_process->processPool().pageEndUsingWebsiteDataStore(m_page.identifier(), m_process->websiteDataStore());
 
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
-        m_process->send(Messages::WebPage::Close(), m_webPageID);
+        send(Messages::WebPage::Close());
         m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
     }
 
@@ -173,8 +173,8 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
         }
         return &item != targetItem;
     });
-    m_process->send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)), m_webPageID);
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies)), m_webPageID);
+    send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
+    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies)));
     m_process->responsivenessTimer().start();
 }
 
@@ -498,6 +498,23 @@ void ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IP
     }
 
     m_page.didReceiveSyncMessage(connection, decoder, replyEncoder);
+}
+
+IPC::Connection* ProvisionalPageProxy::messageSenderConnection() const
+{
+    return m_process->connection();
+}
+
+uint64_t ProvisionalPageProxy::messageSenderDestinationID() const
+{
+    return m_webPageID.toUInt64();
+}
+
+bool ProvisionalPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions)
+{
+    // Send messages via the WebProcessProxy instead of the IPC::Connection since AuxiliaryProcessProxy implements queueing of messages
+    // while the process is still launching.
+    return m_process->sendMessage(WTFMove(encoder), sendOptions);
 }
 
 } // namespace WebKit

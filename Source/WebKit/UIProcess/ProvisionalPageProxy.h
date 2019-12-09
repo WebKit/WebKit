@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "MessageSender.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyMessagesReplies.h"
@@ -60,7 +61,7 @@ struct NavigationActionData;
 struct URLSchemeTaskParameters;
 struct WebNavigationDataStore;
 
-class ProvisionalPageProxy : public IPC::MessageReceiver, public CanMakeWeakPtr<ProvisionalPageProxy> {
+class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeWeakPtr<ProvisionalPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient);
@@ -94,6 +95,11 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+
+    // IPC::MessageSender
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
+    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>) final;
 
     void decidePolicyForNavigationActionAsync(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&&,
         Optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,

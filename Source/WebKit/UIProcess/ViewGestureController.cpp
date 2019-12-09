@@ -609,10 +609,9 @@ void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
     if (!m_snapshotRemovalTracker.hasOutstandingEvent(SnapshotRemovalTracker::RenderTreeSizeThreshold))
         return;
 
-    auto& process = m_webPageProxy.provisionalPageProxy() ? m_webPageProxy.provisionalPageProxy()->process() : m_webPageProxy.process();
     auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
-
-    process.send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.webPageID());
+    auto* messageSender = m_webPageProxy.provisionalPageProxy() ? static_cast<IPC::MessageSender*>(m_webPageProxy.provisionalPageProxy()) : &m_webPageProxy;
+    messageSender->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
 }
 #endif
 
