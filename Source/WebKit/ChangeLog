@@ -1,3 +1,21 @@
+2019-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Re-disable TLS1.0 and TLS1.1 by default
+        https://bugs.webkit.org/show_bug.cgi?id=204922
+        <rdar://problem/57677752>
+
+        Reviewed by Youenn Fablet.
+
+        Covered by updated API tests.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2019-12-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix debug assertion for ApplePay API tests on iOS after r253277.

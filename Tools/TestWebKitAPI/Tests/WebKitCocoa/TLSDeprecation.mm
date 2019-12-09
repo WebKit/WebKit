@@ -84,8 +84,8 @@ TEST(WebKit, TLSVersionWebSocket)
             EXPECT_TRUE(!ssl == (clientAllowDeprecatedTLS != serverLimitTLS));
         }, maxServerTLSVersion);
 
-        if (!clientAllowDeprecatedTLS)
-            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
+        if (clientAllowDeprecatedTLS)
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:defaultsKey];
         
         auto webView = adoptNS([TestWKWebView new]);
         auto delegate = adoptNS([WebSocketDelegate new]);
@@ -100,7 +100,7 @@ TEST(WebKit, TLSVersionWebSocket)
             "</script>", server.port()]];
         NSString *message = [delegate waitForMessage];
         
-        if (!clientAllowDeprecatedTLS)
+        if (clientAllowDeprecatedTLS)
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
 
         return message;
@@ -125,8 +125,8 @@ NSString *getWebSocketEventWebKitLegacy(bool clientAllowDeprecatedTLS, bool serv
         EXPECT_TRUE(!ssl == (clientAllowDeprecatedTLS != serverLimitTLS));
     }, maxServerTLSVersion);
 
-    if (!clientAllowDeprecatedTLS)
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
+    if (clientAllowDeprecatedTLS)
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:defaultsKey];
     
     auto webView = adoptNS([WebView new]);
     auto delegate = adoptNS([WebSocketDelegate new]);
@@ -140,7 +140,7 @@ NSString *getWebSocketEventWebKitLegacy(bool clientAllowDeprecatedTLS, bool serv
         "</script>", server.port()] baseURL:nil];
     NSString *message = [delegate waitForMessage];
 
-    if (!clientAllowDeprecatedTLS)
+    if (clientAllowDeprecatedTLS)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
 
     return message;
@@ -181,23 +181,6 @@ TEST(WebKit, TLSVersionNetworkSession)
     };
     {
         TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            TCPServer::respondWithOK(ssl);
-        }, tls1_1);
-        auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFinishNavigation];
-    }
-    {
-        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            TCPServer::respondWithOK(ssl);
-        }, tls1_1);
-        auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFinishNavigation];
-    }
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
-    {
-        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
             EXPECT_FALSE(ssl);
         }, tls1_1);
         auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore]);
@@ -211,6 +194,23 @@ TEST(WebKit, TLSVersionNetworkSession)
         auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];
+    }
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:defaultsKey];
+    {
+        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
+            TCPServer::respondWithOK(ssl);
+        }, tls1_1);
+        auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+        [delegate waitForDidFinishNavigation];
+    }
+    {
+        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
+            TCPServer::respondWithOK(ssl);
+        }, tls1_1);
+        auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+        [delegate waitForDidFinishNavigation];
     }
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
 }

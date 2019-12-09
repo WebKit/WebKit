@@ -1,3 +1,17 @@
+2019-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Re-disable TLS1.0 and TLS1.1 by default
+        https://bugs.webkit.org/show_bug.cgi?id=204922
+        <rdar://problem/57677752>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::respondWithOK):
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::getWebSocketEventWebKitLegacy):
+
 2019-12-09  youenn fablet  <youenn@apple.com>
 
         Add an option to capture audio in GPU process

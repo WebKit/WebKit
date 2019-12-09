@@ -351,6 +351,7 @@ void TCPServer::respondWithChallengeThenOK(Socket socket)
 #if HAVE(SSL)
 void TCPServer::respondWithOK(SSL* ssl)
 {
+    ASSERT(ssl);
     read(ssl);
     
     const char* reply = ""

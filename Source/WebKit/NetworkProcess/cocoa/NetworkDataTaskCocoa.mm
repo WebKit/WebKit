@@ -51,6 +51,13 @@
 #import <CFNetwork/CFNSURLConnection.h>
 #endif
 
+#if __has_include(<WebKitAdditions/NetworkDataTaskCocoaAdditions.h>)
+#include <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
+#else
+#define NETWORK_DATA_TASK_COCOA_ADDITIONS_1
+#define NETWORK_DATA_TASK_COCOA_ADDITIONS_2
+#endif
+
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -220,6 +227,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
     m_task = [m_sessionWrapper.session dataTaskWithRequest:nsRequest];
+    
+    NETWORK_DATA_TASK_COCOA_ADDITIONS_1;
 
     RELEASE_ASSERT(!m_sessionWrapper.dataTaskMap.contains([m_task taskIdentifier]));
     m_sessionWrapper.dataTaskMap.add([m_task taskIdentifier], this);
@@ -372,6 +381,9 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);
+
+            NETWORK_DATA_TASK_COCOA_ADDITIONS_2;
+
             completionHandler(WTFMove(request));
         });
     else {

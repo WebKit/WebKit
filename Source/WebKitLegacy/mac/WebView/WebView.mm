@@ -1421,7 +1421,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitEnableLegacyTLS"])
             WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled([value boolValue]);
         else
-            WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(true);
+            WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(false);
 
         didOneTimeInitialization = true;
     }

@@ -317,7 +317,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
         }
     }
 
-    parameters.enableLegacyTLS = true;
+    parameters.enableLegacyTLS = false;
     if (id value = [defaults objectForKey:@"WebKitEnableLegacyTLS"])
         parameters.enableLegacyTLS = [value boolValue];
     parameters.defaultDataStoreParameters.networkSessionParameters.enableLegacyTLS = parameters.enableLegacyTLS;

@@ -72,7 +72,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool enableResourceLoadStatisticsDebugMode = false;
     auto thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::None;
-    bool enableLegacyTLS = true;
+    bool enableLegacyTLS = false;
     if (id value = [defaults objectForKey:@"WebKitEnableLegacyTLS"])
         enableLegacyTLS = [value boolValue];
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
