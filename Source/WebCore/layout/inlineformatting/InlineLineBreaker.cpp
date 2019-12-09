@@ -80,17 +80,23 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
         if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth)) {
-            // We tried to split the content but the available space can't even accommodate the first character (but we need something on the line).
-            if (lineStatus.lineIsEmpty && !partialTrailingContent->length) {
+            // We tried to split the content but the available space can't even accommodate the first character.
+            if (!partialTrailingContent->length) {
+                // 1. Push the content over to the next line when we've got content on the line already.
+                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
+                if (!lineStatus.lineIsEmpty)
+                    return { BreakingContext::ContentWrappingRule::Push, { } };
                 auto firstTextRunIndex = *candidateRuns.firstTextRunIndex();
                 auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
+                if (inlineTextItem.length() == 1)
+                    return { BreakingContext::ContentWrappingRule::Keep, { } };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.start() + 1);
-                partialTrailingContent = BreakingContext::PartialTrailingContent { firstTextRunIndex, 1, firstCharacterWidth, false };
+                return { BreakingContext::ContentWrappingRule::Split, BreakingContext::PartialTrailingContent { firstTextRunIndex, 1, firstCharacterWidth, false } };
             }
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
         }
-        // If we did not manage to break this content, we still need to decide whether keep it or push it to the next line.
+        // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
         auto contentShouldOverflow = lineStatus.lineIsEmpty || !isContentWrappingAllowed(runs[0]);
         // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
         // we need to keep the overlapping whitespace on the line (and hang it I'd assume).

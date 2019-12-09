@@ -1,3 +1,20 @@
+2019-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not create PartialContent for a single character run when it does not fit.
+        https://bugs.webkit.org/show_bug.cgi?id=205010
+        <rdar://problem/57752705>
+
+        Reviewed by Antti Koivisto.
+
+        Use ContentWrappingRule::Keep instead of ContentWrappingRule::Split when dealing with single character overflown runs on empty lines.
+        <div style="width: 0px; word-break: break-all">text</div> <- produces single character runs.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::left const):
+        (WebCore::Layout::InlineTextItem::right const):
+
 2019-12-09  youenn fablet  <youenn@apple.com>
 
         Add an option to capture audio in GPU process
