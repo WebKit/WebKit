@@ -6771,7 +6771,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    auto isOneFingerMultipleTapGesture = [](UIGestureRecognizer *gesture) {
+    auto isOneFingerMultipleTapGesture = [](UIGestureRecognizer *gesture) -> BOOL {
         if (![gesture isKindOfClass:UITapGestureRecognizer.class])
             return NO;
 

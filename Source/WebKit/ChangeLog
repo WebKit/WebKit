@@ -1,3 +1,10 @@
+2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macCatalyst build after r253267
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2019-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Re-disable TLS1.0 and TLS1.1 by default
