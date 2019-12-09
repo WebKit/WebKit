@@ -1,3 +1,22 @@
+2019-12-09  Mark Lam  <mark.lam@apple.com>
+
+        GetByIdVariant::dumpInContext() should not ref UniqueStringImpls.
+        https://bugs.webkit.org/show_bug.cgi?id=205023
+        <rdar://problem/57747265>
+
+        Reviewed by Saam Barati.
+
+        This is because GetByIdVariant::dumpInContext() may be called from the compiler
+        thread.  GetByIdVariant::dumpInContext() inadvertently invoking the String copy
+        constructor on an Identifier, which in turn, refs the underlying UniqueStringImpl.
+        This results in a race against the mutator to adjust the refCount.
+
+        The fix is to have GetByIdVariant::dumpInContext() print the underlying
+        StringImpl instead of the Identifier itself.
+
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::dumpInContext const):
+
 2019-12-08  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Refine initialization and error handling in RemoteInspectorSocket

@@ -182,7 +182,7 @@ void GetByIdVariant::dump(PrintStream& out) const
 void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print("<");
-    out.print("id='", m_identifier ? *m_identifier : Identifier(), "', ");
+    out.print("id='", m_identifier ? m_identifier->impl() : StringImpl::empty(), "', ");
     if (!isSet()) {
         out.print("empty>");
         return;
