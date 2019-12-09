@@ -79,8 +79,17 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
-        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth))
+        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth)) {
+            // We tried to split the content but the available space can't even accommodate the first character (but we need something on the line).
+            if (lineStatus.lineIsEmpty && !partialTrailingContent->length) {
+                auto firstTextRunIndex = *candidateRuns.firstTextRunIndex();
+                auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
+                ASSERT(inlineTextItem.length());
+                auto firstCharacterWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.start() + 1);
+                partialTrailingContent = BreakingContext::PartialTrailingContent { firstTextRunIndex, 1, firstCharacterWidth, false };
+            }
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
+        }
         // If we did not manage to break this content, we still need to decide whether keep it or push it to the next line.
         auto contentShouldOverflow = lineStatus.lineIsEmpty || !isContentWrappingAllowed(runs[0]);
         // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
@@ -322,6 +331,15 @@ bool LineBreaker::Content::hasTextContentOnly() const
         return inlineItem.isText();
     }
     return false;
+}
+
+Optional<unsigned> LineBreaker::Content::firstTextRunIndex() const
+{
+    for (size_t index = 0; index < m_continousRuns.size(); ++index) {
+        if (m_continousRuns[index].inlineItem.isText())
+            return index;
+    }
+    return { };
 }
 
 bool LineBreaker::Content::hasNonContentRunsOnly() const

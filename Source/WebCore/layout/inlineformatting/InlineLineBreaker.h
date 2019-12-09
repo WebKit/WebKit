@@ -87,6 +87,8 @@ public:
         bool hasTrailingTrimmableContent() const { return !!m_trailingTrimmableContent.width; }
         bool isTrailingContentFullyTrimmable() const { return m_trailingTrimmableContent.isFullyTrimmable; }
 
+        Optional<unsigned> firstTextRunIndex() const;
+
     private:
         RunList m_continousRuns;
         struct TrailingTrimmableContent {

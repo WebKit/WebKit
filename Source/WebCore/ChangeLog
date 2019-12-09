@@ -1,3 +1,18 @@
+2019-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix fast/text/word-break.html
+        https://bugs.webkit.org/show_bug.cgi?id=204999
+        <rdar://problem/57736608>
+
+        Reviewed by Antti Koivisto.
+
+        Keep at least one character on the line when even the first character overflows and the line is empty.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::Content::firstTextRunIndex const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+
 2019-12-09  youenn fablet  <youenn@apple.com>
 
         fast/mediastream/mediastreamtrack-video-clone.html is a flaky failure
