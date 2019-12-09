@@ -1,3 +1,16 @@
+2019-12-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Crashes in MediaPlayerPrivateGStreamer::ensureGstGLContext
+        https://bugs.webkit.org/show_bug.cgi?id=204848
+
+        Reviewed by Michael Catanzaro.
+
+        Make sure the GL video sink uses a valid WebKit shared GL context.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (ensureGstGLContext):
+        (webKitGLVideoSinkProbePlatform):
+
 2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add encoding and decoding support for more DisplayListItems

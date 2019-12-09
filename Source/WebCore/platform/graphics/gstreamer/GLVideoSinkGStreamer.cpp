@@ -190,6 +190,12 @@ static bool ensureGstGLContext(WebKitGLVideoSink* sink)
     }
 
     GLContext* sharedContext = sharedDisplay.sharingGLContext();
+    if (!sharedContext) {
+        GST_ELEMENT_ERROR(GST_ELEMENT_CAST(sink), RESOURCE, NOT_FOUND, (("WebKit shared GL context unavailable")),
+            ("The WebKit shared GL context somehow disappeared. Video textures rendering will fail."));
+        return false;
+    }
+
     // EGL and GLX are mutually exclusive, no need for ifdefs here.
     GstGLPlatform glPlatform = sharedContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
@@ -341,6 +347,13 @@ void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayer
 
 bool webKitGLVideoSinkProbePlatform()
 {
+    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    GLContext* sharedContext = sharedDisplay.sharingGLContext();
+    if (!sharedContext) {
+        GST_WARNING("WebKit shared GL context is not available.");
+        return false;
+    }
+
     return isGStreamerPluginAvailable("app") && isGStreamerPluginAvailable("opengl");
 }
 
