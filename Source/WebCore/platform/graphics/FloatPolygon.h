@@ -53,12 +53,11 @@ public:
     unsigned numberOfEdges() const { return m_edges.size(); }
 
     FloatRect boundingBox() const { return m_boundingBox; }
-    bool overlappingEdges(float minY, float maxY, Vector<const FloatPolygonEdge*>& result) const;
+    Vector<std::reference_wrapper<const FloatPolygonEdge>> overlappingEdges(float minY, float maxY) const;
     bool contains(const FloatPoint&) const;
     bool isEmpty() const { return m_empty; }
 
 private:
-    typedef PODInterval<float, FloatPolygonEdge*> EdgeInterval;
     typedef PODIntervalTree<float, FloatPolygonEdge*> EdgeIntervalTree;
 
     bool containsNonZero(const FloatPoint&) const;
@@ -121,8 +120,6 @@ public:
     unsigned vertexIndex2() const { return m_vertexIndex2; }
     unsigned edgeIndex() const { return m_edgeIndex; }
 
-    String debugString() const;
-
 private:
     // Edge vertex index1 is less than index2, except the last edge, where index2 is 0. When a polygon edge
     // is defined by 3 or more colinear vertices, index2 can be the index of the last colinear vertex.
@@ -132,17 +129,8 @@ private:
     const FloatPolygon* m_polygon;
 };
 
-} // namespace WebCore
-
 #ifndef NDEBUG
-
-namespace WTF {
-
-// This structure is used by PODIntervalTree for debugging.
-template<> struct ValueToString<WebCore::FloatPolygonEdge*> {
-    static String string(const WebCore::FloatPolygonEdge* edge) { return edge->debugString(); }
-};
-
-}
-
+TextStream& operator<<(TextStream&, const FloatPolygonEdge&);
 #endif
+
+} // namespace WebCore

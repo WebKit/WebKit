@@ -423,13 +423,17 @@ String TextTrackCue::toJSONString() const
     return object->toJSONString();
 }
 
-String TextTrackCue::debugString() const
+#ifndef NDEBUG
+
+TextStream& operator<<(TextStream& stream, const TextTrackCue& cue)
 {
     String text;
-    if (is<VTTCue>(this))
-        text = toVTTCue(this)->text();
-    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this)), " id=", id(), " interval=", startTime(), "-->", endTime(), " cue=", text, ')');
+    if (is<VTTCue>(cue))
+        text = toVTTCue(&cue)->text();
+    return stream << &cue << " id=" << cue.id() << " interval=" << cue.startTime() << "-->" << cue.endTime() << " cue=" << text << ')';
 }
+
+#endif
 
 RefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {

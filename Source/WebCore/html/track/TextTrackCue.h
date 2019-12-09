@@ -119,7 +119,6 @@ public:
     virtual RefPtr<DocumentFragment> getCueAsHTML();
 
     String toJSONString() const;
-    String debugString() const;
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -169,6 +168,10 @@ private:
     bool m_pauseOnExit { false };
     bool m_displayTreeNeedsUpdate { true };
 };
+
+#ifndef NDEBUG
+TextStream& operator<<(TextStream&, const TextTrackCue&);
+#endif
 
 } // namespace WebCore
 

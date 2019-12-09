@@ -125,13 +125,8 @@ LineSegment PolygonShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit 
     if (m_polygon.isEmpty() || !m_polygon.boundingBox().overlapsYRange(y1 - shapeMargin(), y2 + shapeMargin()))
         return LineSegment();
 
-    Vector<const FloatPolygonEdge*> overlappingEdges;
-    if (!m_polygon.overlappingEdges(y1 - shapeMargin(), y2 + shapeMargin(), overlappingEdges))
-        return LineSegment();
-
     FloatShapeInterval excludedInterval;
-    for (unsigned i = 0; i < overlappingEdges.size(); i++) {
-        const FloatPolygonEdge& edge = *(overlappingEdges[i]);
+    for (const FloatPolygonEdge& edge : m_polygon.overlappingEdges(y1 - shapeMargin(), y2 + shapeMargin())) {
         if (edge.maxY() == edge.minY())
             continue;
         if (!shapeMargin())

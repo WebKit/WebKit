@@ -1,3 +1,147 @@
+2019-12-07  Darin Adler  <darin@apple.com>
+
+        Streamline PODIntervalTree code and remove ValueToString
+        https://bugs.webkit.org/show_bug.cgi?id=199782
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Element.cpp: Updated includes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ignoreTrackDisplayUpdateRequests const): Moved this
+        function out of line so we don't have to include PODIntervalTree.h in the header.
+        But also, it's only used inside this file. Also updated for m_cueData.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): More of the same.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Ditto.
+        (WebCore::HTMLMediaElement::currentlyActiveCues const): Ditto.
+
+        * html/HTMLMediaElement.h: Changed to not include PODIntervalTree.h, which in turn
+        includes PODRedBlackTree.h, to significantly cut down how many times we have to
+        compile those headers. Moved some functions out of line. Made m_cueData to hold the
+        two cue-related objects so they don't have to be defined in the header. Also
+        removed ValueToString specializations.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::operator<<): Added debug-only overload of TextStream operator.
+        (WebCore::TextTrackCue::debugString const): Deleted.
+        * html/track/TextTrackCue.h: Updated for the above.
+
+        * html/track/VTTCue.h: Added comments about the incorrect implementation of
+        isType for VTTCue. Tweaked formatting a bit as well.
+
+        * platform/LayoutUnit.h: Removed ValueToString specialization.
+
+        * platform/PODInterval.h: Use #pragma once. Removed inaccurate comments
+        saying this works only with POD. Use TextStream instead of ValueToString.
+        Added overloads to the constructor so we can do move semantics instead of
+        copy semantics, slightly better for WeakPtr. Removed the toString function
+        and added an overload of operator<< with TextStream. Use "{ }" instead of
+        "0" as the default value for user data.
+
+        * platform/PODIntervalTree.h: Removed unneeded includes and unusual default
+        argument types for the templates. Changed setNeedsFullOrderingComparisons
+        and node updating to use template arguments instead of virtual functions
+        and runtime setters. This allowed removal of the constructor and the init
+        function since the defaults take care of both. Removed the overload of
+        the allOverlaps function that uses an out argument. Removed unneeded use
+        of WTF_MAKE_NONCOPYABLE. Use "{ }" instead of 0 for the default value
+        for user data. Changed the createInterval function to use move semantics.
+        Changed the nextIntervalAfter function to just take a point, not require
+        and interval and use its high point. The PODIntervalTree::updateNode
+        function is replaced with the PODIntervalNodeUpdater::update function.
+        Removed the ValueToString use and the overriding as well and replaced
+        with TextStream use.
+
+        * platform/PODRedBlackTree.h: Updated comments to reflect the fact
+        that this is not specific to POD and uses TextStream. Also that the
+        needsFullOrderingComparisons technique is now a template argument.
+        Use pragma once. Added FIXME about a few major improvements we should
+        make.
+        (WebCore::PODRedBlackTree::~PODRedBlackTree): Made non-virtual since
+        we use template arguments for polymorphism and don't need virtual
+        functions too.
+        (WebCore::PODRedBlackTree::clear): Rewrote to use a non-recursive
+        algorithm to delete the tree nodes.
+        (WebCore::PODRedBlackTree::add): Added an overload that takes an
+        rvalue reference for move semantics.
+        (WebCore::PODRedBlackTree::visitInorder const): Deleted.
+        (WebCore::PODRedBlackTree::size const): Deleted.
+        (WebCore::PODRedBlackTree::isEmpty const): Replaced the inefficiently
+        implemented size function with this much faster function. Could have
+        also made a more efficient size function, but no client needs it.
+        (WebCore::PODRedBlackTree::setNeedsFullOrderingComparisons): Deleted.
+        (WebCore::PODRedBlackTree::checkInvariants const): Made non-virtual
+        since there is no need for polymorphism.
+        (WebCore::PODRedBlackTree::Node::Node): Use rvalue reference and
+        move semantics.
+        (WebCore::PODRedBlackTree::Node::copyFrom): Deleted.
+        (WebCore::PODRedBlackTree::Node::moveDataFrom): Use move instead of
+        copy. Also removed the gratuitous use of virtual.
+        (WebCore::PODRedBlackTree::updateNode): Made non-virtual and instead
+        call through the NodeUpdaterType (actually more like "traits").
+        (WebCore::PODRedBlackTree::treeSearch const): Use template argument
+        instead of data member.
+        (WebCore::PODRedBlackTree::treeSuccessor): Made a static member function.
+        (WebCore::PODRedBlackTree::treeMinimum): Ditto.
+        (WebCore::PODRedBlackTree::treeSuccessorInPostOrder): Added. Useful
+        when deleting the tree so we visit children before deleting the parent.
+        (WebCore::PODRedBlackTree::deleteNode): Use moveDataFrom when moving
+        the data from a node that we are about to delete.
+        (WebCore::PODRedBlackTree::visitInorderImpl const): Deleted.
+        (WebCore::PODRedBlackTree::markFree): Deleted.
+        (WebCore::PODRedBlackTree::Counter): Deleted.
+        (WebCore::PODRedBlackTree::dumpFromNode const): Use TextStream.
+
+        * platform/graphics/FloatPolygon.cpp:
+        (WebCore::FloatPolygon::FloatPolygon): Tweaked coding style a bit.
+        (WebCore::FloatPolygon::overlappingEdges const): Changed to use a return
+        value instead of an out argument. Also tweaked coding style a bit.
+        (WebCore::FloatPolygonEdge::debugString const): Deleted.
+        (WebCore::ooperator>>): Implemented TextStream overload.
+
+        * platform/graphics/FloatPolygon.h: Updated for above, removed
+        ValueToString specialization.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::debugString const): Deleted.
+        (WebCore::operator<<): Implemented TextStream overload.
+        * rendering/FloatingObjects.h: Ditto. Also removed include of
+        PODIntervalTree.h and used a forward declaration instead.
+
+        * rendering/RenderBlock.cpp: Updated includes.
+
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::debugString const): Deleted.
+        (WebCore::operator<<): Implemented TextStream overload.
+        * rendering/RenderFragmentContainer.h: Ditto.
+
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::FragmentSearchAdapter::FragmentSearchAdapter):
+        Moved this class here from the header, moving the one function body that was
+        already here up in the file.
+        (WebCore::RenderFragmentedFlow::fragmentAtBlockOffset const): Refactored and
+        tweaked code sequence a bit, did not change logic.
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        Tweaked code style a bit.
+
+        * rendering/RenderFragmentedFlow.h: Moved FragmentSearchAdapter out of the
+        header, and tweaked coding style a bit. Removed ValueToString specialization.
+
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::PolygonShape::getExcludedInterval const): Updated to use the
+        return value from the overlappingEdges function rather than an out argument.
+
+        * rendering/updating/RenderTreeBuilder.cpp: Updated includes.
+        * rendering/updating/RenderTreeBuilderFirstLetter.h: Updated forward declarations.
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp: Updated includes.
+
+        * rendering/updating/RenderTreePosition.h: Removed includes of
+        RenderFragmentedFlow.h, RenderText.h, and RenderView.h, since none are
+        needed by this header.
+
+        * rendering/updating/RenderTreeUpdater.cpp: Updated includes.
+
 2019-12-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not create PartialContent for a single character run when it does not fit.

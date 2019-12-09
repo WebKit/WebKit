@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,21 +33,11 @@
 //   Deletion:  O(lg(n))
 //   Querying:  O(lg(n))
 //
-// The data type T that is stored in this red-black tree must be only
-// Plain Old Data (POD), or bottom out into POD. It must _not_ rely on
-// having its destructor called. This implementation internally
-// allocates storage in large chunks and does not call the destructor
-// on each object.
-//
 // Type T must supply a default constructor, a copy constructor, and
 // the "<" and "==" operators.
 //
 // In debug mode, printing of the data contained in the tree is
-// enabled. This requires the template specialization to be available:
-//
-//   template<> struct WebCore::ValueToString<T> {
-//       static String string(const T& t);
-//   };
+// enabled. This makes use of WTF::TextStream.
 //
 // Note that when complex types are stored in this red/black tree, it
 // is possible that single invocations of the "<" and "==" operators
@@ -57,8 +48,7 @@
 // the "==" operator takes into account the high endpoint as well.
 // This makes the necessary logic for querying and deletion somewhat
 // more complex. In order to properly handle such situations, the
-// property "needsFullOrderingComparisons" must be set to true on
-// the tree.
+// template argument "needsFullOrderingComparisons" must be true.
 //
 // This red-black tree is designed to be _augmented_; subclasses can
 // add additional and summary information to each node to efficiently
@@ -69,59 +59,54 @@
 // The design of this red-black tree comes from Cormen, Leiserson,
 // and Rivest, _Introduction to Algorithms_, MIT Press, 1990.
 
-#ifndef PODRedBlackTree_h
-#define PODRedBlackTree_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/ValueToString.h>
+
 #ifndef NDEBUG
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/TextStream.h>
 #endif
+
+// FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types too.
+// FIXME: Remove the unusual needsFullOrderingComparisons feature by changing the interval tree to use full ordering, sorting based on low, high, and data.
+// FIXME: Would be worthwhile to implement this on top of WTF::RedBlackTree rather than keeping two separate class templates around.
 
 namespace WebCore {
 
-template<class T>
+template<typename T, typename NodeUpdaterType, bool needsFullOrderingComparisons>
 class PODRedBlackTree {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PODRedBlackTree);
 public:
-    class Node;
+    PODRedBlackTree() = default;
 
-    // Visitor interface for walking all of the tree's elements.
-    class Visitor {
-    public:
-        virtual void visit(const T& data) = 0;
-    protected:
-        virtual ~Visitor() = default;
-    };
-
-    PODRedBlackTree()
-        : m_root(0)
-        , m_needsFullOrderingComparisons(false)
-#ifndef NDEBUG
-        , m_verboseDebugging(false)
-#endif
-    {
-    }
-
-    virtual ~PODRedBlackTree()
+    ~PODRedBlackTree()
     {
         clear();
     }
 
-    // Clearing will delete the contents of the tree. After this call
-    // isInitialized will return false.
+    // Clearing will delete the contents of the tree.
     void clear()
     {
-        markFree(m_root);
-        m_root = 0;
+        if (!m_root)
+            return;
+        Node* next;
+        for (Node* node = treeMinimum(m_root); node; node = next) {
+            next = treeSuccessorInPostOrder(node);
+            delete node;
+        }
+        m_root = nullptr;
     }
-    
+
     void add(const T& data)
     {
-        Node* node = new Node(data);
-        insertNode(node);
+        insertNode(new Node(T { data }));
+    }
+
+    void add(T&& data)
+    {
+        insertNode(new Node(WTFMove(data)));
     }
 
     // Returns true if the datum was found in the tree.
@@ -140,33 +125,19 @@ public:
         return treeSearch(data);
     }
 
-    void visitInorder(Visitor* visitor) const
+    bool isEmpty() const
     {
-        if (!m_root)
-            return;
-        visitInorderImpl(m_root, visitor);
+        return !m_root;
     }
 
-    int size() const
-    {
-        Counter counter;
-        visitInorder(&counter);
-        return counter.count();
-    }
+#ifndef NDEBUG
 
-    // See the class documentation for an explanation of this property.
-    void setNeedsFullOrderingComparisons(bool needsFullOrderingComparisons)
-    {
-        m_needsFullOrderingComparisons = needsFullOrderingComparisons;
-    }
-
-    virtual bool checkInvariants() const
+    bool checkInvariants() const
     {
         int blackCount;
         return checkInvariantsFromNode(m_root, &blackCount);
     }
 
-#ifndef NDEBUG
     // Dumps the tree's contents to the logging info stream for
     // debugging purposes.
     void dump() const
@@ -181,12 +152,11 @@ public:
     {
         m_verboseDebugging = verboseDebugging;
     }
+
 #endif
 
-    enum Color {
-        Red = 1,
-        Black
-    };
+protected:
+    enum Color { Red, Black };
 
     // The base Node class which is stored in the tree. Nodes are only
     // an internal concept; users of the tree deal only with the data
@@ -196,30 +166,17 @@ public:
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         // Constructor. Newly-created nodes are colored red.
-        explicit Node(const T& data)
-            : m_left(0)
-            , m_right(0)
-            , m_parent(0)
-            , m_color(Red)
-            , m_data(data)
+        explicit Node(T&& data)
+            : m_data(WTFMove(data))
         {
         }
-
-        virtual ~Node() = default;
 
         Color color() const { return m_color; }
         void setColor(Color color) { m_color = color; }
 
-        // Fetches the user data.
         T& data() { return m_data; }
 
-        // Copies all user-level fields from the source node, but not
-        // internal fields. For example, the base implementation of this
-        // method copies the "m_data" field, but not the child or parent
-        // fields. Any augmentation information also does not need to be
-        // copied, as it will be recomputed. Subclasses must call the
-        // superclass implementation.
-        virtual void copyFrom(Node* src) { m_data = src->data(); }
+        void moveDataFrom(Node* src) { m_data = WTFMove(src->m_data); }
 
         Node* left() const { return m_left; }
         void setLeft(Node* node) { m_left = node; }
@@ -231,19 +188,18 @@ public:
         void setParent(Node* node) { m_parent = node; }
 
     private:
-        Node* m_left;
-        Node* m_right;
-        Node* m_parent;
-        Color m_color;
+        Node* m_left { nullptr };
+        Node* m_right { nullptr };
+        Node* m_parent { nullptr };
+        Color m_color { Red };
         T m_data;
     };
 
-protected:
     // Returns the root of the tree, which is needed by some subclasses.
     Node* root() const { return m_root; }
 
 private:
-    // This virtual method is the hook that subclasses should use when
+    // This is the hook that subclasses should use when
     // augmenting the red-black tree with additional per-node summary
     // information. For example, in the case of an interval tree, this
     // is used to compute the maximum endpoint of the subtree below the
@@ -252,7 +208,10 @@ private:
     // properly update such summary information based only on the values
     // in the left and right children. This method should return true if
     // the node's summary information changed.
-    virtual bool updateNode(Node*) { return false; }
+    bool updateNode(Node* node)
+    {
+        return NodeUpdaterType::update(*node);
+    }
 
     //----------------------------------------------------------------------
     // Generic binary search tree operations
@@ -261,7 +220,7 @@ private:
     // Searches the tree for the given datum.
     Node* treeSearch(const T& data) const
     {
-        if (m_needsFullOrderingComparisons)
+        if (needsFullOrderingComparisons)
             return treeSearchFullComparisons(m_root, data);
 
         return treeSearchNormal(m_root, data);
@@ -326,7 +285,7 @@ private:
 
     // Finds the node following the given one in sequential ordering of
     // their data, or null if none exists.
-    Node* treeSuccessor(Node* x)
+    static Node* treeSuccessor(Node* x)
     {
         if (x->right())
             return treeMinimum(x->right());
@@ -340,11 +299,19 @@ private:
 
     // Finds the minimum element in the sub-tree rooted at the given
     // node.
-    Node* treeMinimum(Node* x)
+    static Node* treeMinimum(Node* x)
     {
         while (x->left())
             x = x->left();
         return x;
+    }
+
+    static Node* treeSuccessorInPostOrder(Node* x)
+    {
+        Node* y = x->parent();
+        if (y && x == y->left() && y->right())
+            return treeMinimum(y->right());
+        return y;
     }
 
     // Helper for maintaining the augmented red-black tree.
@@ -627,7 +594,7 @@ private:
                 y->parent()->setRight(x);
         }
         if (y != z) {
-            z->copyFrom(y);
+            z->moveDataFrom(y);
             // This node has changed location in the tree and must be updated.
             updateNode(z);
             // The parent and its parents may now be out of date.
@@ -643,48 +610,11 @@ private:
         delete y;
     }
 
-    // Visits the subtree rooted at the given node in order.
-    void visitInorderImpl(Node* node, Visitor* visitor) const
-    {
-        if (node->left())
-            visitInorderImpl(node->left(), visitor);
-        visitor->visit(node->data());
-        if (node->right())
-            visitInorderImpl(node->right(), visitor);
-    }
-
-    void markFree(Node *node)
-    {
-        if (!node)
-            return;
-
-        if (node->left())
-            markFree(node->left());
-        if (node->right())
-            markFree(node->right());
-        delete node;
-    }
-
-    //----------------------------------------------------------------------
-    // Helper class for size()
-
-    // A Visitor which simply counts the number of visited elements.
-    class Counter : public Visitor {
-        WTF_MAKE_NONCOPYABLE(Counter);
-    public:
-        Counter()
-            : m_count(0) { }
-
-        void visit(const T&) override { ++m_count; }
-        int count() const { return m_count; }
-
-    private:
-        int m_count;
-    };
-
     //----------------------------------------------------------------------
     // Verification and debugging routines
     //
+
+#ifndef NDEBUG
 
     // Returns in the "blackCount" parameter the number of black
     // children along all paths to all leaves of the given node.
@@ -721,6 +651,8 @@ private:
         return leftCount == rightCount;
     }
 
+#endif
+
 #ifdef NDEBUG
     void logIfVerbose(const char*) const { }
 #else
@@ -732,6 +664,7 @@ private:
 #endif
 
 #ifndef NDEBUG
+
     // Dumps the subtree rooted at the given node.
     void dumpFromNode(Node* node, int indentation) const
     {
@@ -741,27 +674,27 @@ private:
         builder.append('-');
         if (node) {
             builder.append(' ');
-            builder.append(ValueToString<T>::string(node->data()));
+            TextStream stream;
+            stream << node->data();
+            builder.append(stream.release());
             builder.append((node->color() == Black) ? " (black)" : " (red)");
         }
-        LOG_ERROR("%s", builder.toString().ascii().data());
+        LOG_ERROR("%s", builder.toString().utf8().data());
         if (node) {
             dumpFromNode(node->left(), indentation + 2);
             dumpFromNode(node->right(), indentation + 2);
         }
     }
+
 #endif
 
     //----------------------------------------------------------------------
     // Data members
 
-    Node* m_root;
-    bool m_needsFullOrderingComparisons;
+    Node* m_root { nullptr };
 #ifndef NDEBUG
-    bool m_verboseDebugging;
+    bool m_verboseDebugging { false };
 #endif
 };
 
 } // namespace WebCore
-
-#endif // PODRedBlackTree_h

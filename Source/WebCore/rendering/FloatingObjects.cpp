@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FloatingObjects.h"
 
+#include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderBox.h"
 #include "RenderView.h"
@@ -101,9 +102,9 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
 
 #ifndef NDEBUG
 
-String FloatingObject::debugString() const
+TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 {
-    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this)), " (", frameRect().x().toInt(), 'x', frameRect().y().toInt(), ' ', frameRect().maxX().toInt(), 'x', frameRect().maxY().toInt(), ')');
+    return stream << &object << " (" << object.frameRect().x().toInt() << 'x' << object.frameRect().y().toInt() << ' ' << object.frameRect().maxX().toInt() << 'x' << object.frameRect().maxY().toInt() << ')';
 }
 
 #endif

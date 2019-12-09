@@ -1,3 +1,20 @@
+2019-07-13  Darin Adler  <darin@apple.com>
+
+        Streamline PODIntervalTree code and remove ValueToString
+        https://bugs.webkit.org/show_bug.cgi?id=199782
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj: Remove ValueToString.h.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/MediaTime.cpp:
+        (WTF::operator<<): Implement debug-only TextStream serialization
+        based on toJSONString.
+        * wtf/MediaTime.h: Ditto.
+
+        * wtf/text/ValueToString.h: Removed.
+
 2019-12-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Use bmalloc's memory footprint API for JSC heap growth management

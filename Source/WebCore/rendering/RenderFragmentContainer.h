@@ -121,8 +121,6 @@ public:
 
     virtual void absoluteQuadsForBoxInFragment(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
-    String debugString() const;
-
 protected:
     RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
     RenderFragmentContainer(Document&, RenderStyle&&, RenderFragmentedFlow*);
@@ -179,6 +177,10 @@ public:
 private:
     RenderFragmentContainer& m_fragment;
 };
+
+#ifndef NDEBUG
+TextStream& operator<<(TextStream&, const RenderFragmentContainer&);
+#endif
 
 } // namespace WebCore
 

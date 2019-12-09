@@ -31,6 +31,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderView.h"
 
 namespace WebCore {
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +24,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PODIntervalTree_h
-#define PODIntervalTree_h
+#pragma once
 
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
-#include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
-#include <wtf/text/ValueToString.h>
+
+// FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types.
 
 namespace WebCore {
 
-template <class T, class UserData = void*>
+template <class T, class UserData>
 class PODIntervalSearchAdapter {
 public:
     typedef PODInterval<T, UserData> IntervalType;
@@ -62,24 +61,19 @@ private:
     T m_highValue;
 };
 
+struct PODIntervalNodeUpdater;
+
 // An interval tree, which is a form of augmented red-black tree. It
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
-template<class T, class UserData = void*>
-class PODIntervalTree : public PODRedBlackTree<PODInterval<T, UserData>> {
+template<class T, class UserData>
+class PODIntervalTree final : public PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater, true> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(PODIntervalTree);
 public:
     // Typedef to reduce typing when declaring intervals to be stored in
     // this tree.
     typedef PODInterval<T, UserData> IntervalType;
     typedef PODIntervalSearchAdapter<T, UserData> IntervalSearchAdapterType;
-
-    PODIntervalTree()
-        : PODRedBlackTree<IntervalType>()
-    {
-        init();
-    }
 
     // Returns all intervals in the tree which overlap the given query
     // interval. The returned intervals are sorted by increasing low
@@ -87,21 +81,11 @@ public:
     Vector<IntervalType> allOverlaps(const IntervalType& interval) const
     {
         Vector<IntervalType> result;
-        allOverlaps(interval, result);
+        IntervalSearchAdapterType adapter(result, interval.low(), interval.high());
+        allOverlapsWithAdapter<IntervalSearchAdapterType>(adapter);
         return result;
     }
 
-    // Returns all intervals in the tree which overlap the given query
-    // interval. The returned intervals are sorted by increasing low
-    // endpoint.
-    void allOverlaps(const IntervalType& interval, Vector<IntervalType>& result) const
-    {
-        // Explicit dereference of "this" required because of
-        // inheritance rules in template classes.
-        IntervalSearchAdapterType adapter(result, interval.low(), interval.high());
-        searchForOverlapsFrom<IntervalSearchAdapterType>(this->root(), adapter);
-    }
-    
     template <class AdapterType>
     void allOverlapsWithAdapter(AdapterType& adapter) const
     {
@@ -111,39 +95,35 @@ public:
     }
 
     // Helper to create interval objects.
-    static IntervalType createInterval(const T& low, const T& high, const UserData data = 0)
+    static IntervalType createInterval(const T& low, const T& high, UserData&& data = { })
     {
-        return IntervalType(low, high, data);
+        return IntervalType(low, high, WTFMove(data));
     }
 
-    Optional<IntervalType> nextIntervalAfter(const IntervalType& interval)
+    Optional<IntervalType> nextIntervalAfter(const T& point)
     {
-        auto next = smallestNodeGreaterThanFrom(interval, this->root());
+        auto next = smallestNodeGreaterThanFrom(point, this->root());
         if (!next)
             return WTF::nullopt;
-
         return next->data();
     }
 
-    bool checkInvariants() const override
+#ifndef NDEBUG
+
+    bool checkInvariants() const
     {
-        if (!PODRedBlackTree<IntervalType>::checkInvariants())
+        if (!Base::checkInvariants())
             return false;
         if (!this->root())
             return true;
         return checkInvariantsFromNode(this->root(), 0);
     }
 
-private:
-    typedef typename PODRedBlackTree<IntervalType>::Node IntervalNode;
+#endif
 
-    // Initializes the tree.
-    void init()
-    {
-        // Explicit dereference of "this" required because of
-        // inheritance rules in template classes.
-        this->setNeedsFullOrderingComparisons(true);
-    }
+private:
+    using Base = PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater, true>;
+    typedef typename Base::Node IntervalNode;
 
     // Starting from the given node, adds all overlaps with the given
     // interval to the result vector. The intervals are sorted by
@@ -175,42 +155,21 @@ private:
             searchForOverlapsFrom<AdapterType>(node->right(), adapter);
     }
 
-    IntervalNode* smallestNodeGreaterThanFrom(const IntervalType& interval, IntervalNode* node) const
+    IntervalNode* smallestNodeGreaterThanFrom(const T& point, IntervalNode* node) const
     {
         if (!node)
             return nullptr;
 
-        if (!(interval.high() < node->data().low()))
-            return smallestNodeGreaterThanFrom(interval, node->right());
+        if (!(point < node->data().low()))
+            return smallestNodeGreaterThanFrom(point, node->right());
 
-        if (auto left = smallestNodeGreaterThanFrom(interval, node->right()))
+        if (auto left = smallestNodeGreaterThanFrom(point, node->right()))
             return left;
 
         return node;
-}
-
-    bool updateNode(IntervalNode* node) override
-    {
-        // Would use const T&, but need to reassign this reference in this
-        // function.
-        const T* curMax = &node->data().high();
-        IntervalNode* left = node->left();
-        if (left) {
-            if (*curMax < left->data().maxHigh())
-                curMax = &left->data().maxHigh();
-        }
-        IntervalNode* right = node->right();
-        if (right) {
-            if (*curMax < right->data().maxHigh())
-                curMax = &right->data().maxHigh();
-        }
-        // This is phrased like this to avoid needing operator!= on type T.
-        if (!(*curMax == node->data().maxHigh())) {
-            node->data().setMaxHigh(*curMax);
-            return true;
-        }
-        return false;
     }
+
+#ifndef NDEBUG
 
     bool checkInvariantsFromNode(IntervalNode* node, T* currentMaxValue) const
     {
@@ -245,34 +204,42 @@ private:
         if (localMaxValue < node->data().high())
             localMaxValue = node->data().high();
         if (!(localMaxValue == node->data().maxHigh())) {
-#ifndef NDEBUG
-            String localMaxValueString = ValueToString<T>::string(localMaxValue);
-            LOG_ERROR("PODIntervalTree verification failed at node 0x%p: localMaxValue=%s and data=%s",
-                      node, localMaxValueString.utf8().data(), node->data().toString().utf8().data());
-#endif
+            TextStream stream;
+            stream << "localMaxValue=" << localMaxValue << "and data =" << node->data();
+            LOG_ERROR("PODIntervalTree verification failed at node 0x%p: %s",
+                node, stream.release().utf8().data());
             return false;
         }
         if (currentMaxValue)
             *currentMaxValue = localMaxValue;
         return true;
     }
+
+#endif
+
 };
 
-} // namespace WebCore
-
-#ifndef NDEBUG
-namespace WTF {
-
-// Support for printing PODIntervals at the PODRedBlackTree level.
-template<class T, class UserData>
-struct ValueToString<WebCore::PODInterval<T, UserData>> {
-    static String string(const WebCore::PODInterval<T, UserData>& interval)
+struct PODIntervalNodeUpdater {
+    template<typename Node> static bool update(Node& node)
     {
-        return interval.toString();
+        auto* curMax = &node.data().high();
+        auto* left = node.left();
+        if (left) {
+            if (*curMax < left->data().maxHigh())
+                curMax = &left->data().maxHigh();
+        }
+        auto* right = node.right();
+        if (right) {
+            if (*curMax < right->data().maxHigh())
+                curMax = &right->data().maxHigh();
+        }
+        // This is phrased like this to avoid needing operator!= on type T.
+        if (!(*curMax == node.data().maxHigh())) {
+            node.data().setMaxHigh(*curMax);
+            return true;
+        }
+        return false;
     }
 };
 
-} // namespace WTF
-#endif
-
-#endif // PODIntervalTree_h
+} // namespace WebCore

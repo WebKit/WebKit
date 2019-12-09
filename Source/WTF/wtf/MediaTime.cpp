@@ -37,6 +37,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WTF {
 
@@ -655,5 +656,14 @@ String MediaTimeRange::toJSONString() const
 
     return object->toJSONString();
 }
+
+#ifndef NDEBUG
+
+TextStream& operator<<(TextStream& stream, const MediaTime& time)
+{
+    return stream << time.toJSONString();
+}
+
+#endif
 
 }

@@ -23,18 +23,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PODInterval_h
-#define PODInterval_h
+#pragma once
 
 #ifndef NDEBUG
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/ValueToString.h>
+#include <wtf/text/TextStream.h>
 #endif
 
 namespace WebCore {
 
-// Class representing a closed interval which can hold an arbitrary
-// Plain Old Datatype (POD) as its endpoints and a piece of user
+// Class representing a closed interval which can hold arbitrary
+// endpoints and a piece of user
 // data. An important characteristic for the algorithms we use is that
 // if two intervals have identical endpoints but different user data,
 // they are not considered to be equal. This situation can arise when
@@ -49,47 +47,44 @@ namespace WebCore {
 // The following constructors and operators must be implemented on
 // type T:
 //
-//   - Copy constructor (if user data is desired)
+//   - Copy constructor
 //   - operator<
 //   - operator==
 //   - operator=
 //
-// If the UserData type is specified, it must support a copy
-// constructor and assignment operator.
+// The UserData type must support a copy constructor and assignment
+// operator.
 //
 // In debug mode, printing of intervals and the data they contain is
-// enabled. This requires the following template specializations to be
-// available:
-//
-//   template<> struct WebCore::ValueToString<T> {
-//       static String string(const T& t);
-//   };
-//   template<> struct WebCore::ValueToString<UserData> {
-//       static String string(const UserData& t);
-//   };
+// enabled. This uses WTF::TextStream.
 //
 // Note that this class requires a copy constructor and assignment
 // operator in order to be stored in the red-black tree.
 
-template<class T, class UserData = void*>
+// FIXME: The prefix "POD" here isn't correct; this works with non-POD types.
+
+template<class T, class UserData>
 class PODInterval {
 public:
-    // Constructor from endpoints. This constructor only works when the
-    // UserData type is a pointer or other type which can be initialized
-    // with 0.
     PODInterval(const T& low, const T& high)
         : m_low(low)
         , m_high(high)
-        , m_data(0)
         , m_maxHigh(high)
     {
     }
 
-    // Constructor from two endpoints plus explicit user data.
-    PODInterval(const T& low, const T& high, const UserData data)
+    PODInterval(const T& low, const T& high, const UserData& data)
         : m_low(low)
         , m_high(high)
         , m_data(data)
+        , m_maxHigh(high)
+    {
+    }
+
+    PODInterval(const T& low, const T& high, UserData&& data)
+        : m_low(low)
+        , m_high(high)
+        , m_data(WTFMove(data))
         , m_maxHigh(high)
     {
     }
@@ -131,31 +126,21 @@ public:
     const T& maxHigh() const { return m_maxHigh; }
     void setMaxHigh(const T& maxHigh) { m_maxHigh = maxHigh; }
 
-#ifndef NDEBUG
-    // Support for printing PODIntervals.
-    String toString() const
-    {
-        StringBuilder builder;
-        builder.appendLiteral("[PODInterval (");
-        builder.append(ValueToString<T>::string(low()));
-        builder.appendLiteral(", ");
-        builder.append(ValueToString<T>::string(high()));
-        builder.appendLiteral("), data=");
-        builder.append(ValueToString<UserData>::string(data()));
-        builder.appendLiteral(", maxHigh=");
-        builder.append(ValueToString<T>::string(maxHigh()));
-        builder.append(']');
-        return builder.toString();
-    }
-#endif
-
 private:
     T m_low;
     T m_high;
-    UserData m_data;
+    UserData m_data { };
     T m_maxHigh;
 };
 
-} // namespace WebCore
+#ifndef NDEBUG
 
-#endif // PODInterval_h
+template<class T, class UserData>
+TextStream& operator<<(TextStream& stream, const PODInterval<T, UserData>& interval)
+{
+    return stream << "[PODInterval (" << interval.low() << ", " << interval.high() << "), data=" << *interval.data() << ", maxHigh=" << interval.maxHigh() << ']';
+}
+
+#endif
+
+} // namespace WebCore

@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "PODIntervalTree.h"
+#include "PODInterval.h"
 #include "RootInlineBox.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -32,6 +32,8 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
+
+template<typename, typename> class PODIntervalTree;
 
 class FloatingObject {
     WTF_MAKE_NONCOPYABLE(FloatingObject); WTF_MAKE_FAST_ALLOCATED;
@@ -94,8 +96,6 @@ public:
     }
     LayoutSize marginOffset() const { ASSERT(isPlaced()); return m_marginOffset; }
     LayoutSize translationOffsetToAncestor() const;
-
-    String debugString() const;
 
 private:
     WeakPtr<RenderBox> m_renderer;
@@ -187,17 +187,8 @@ private:
     WeakPtr<const RenderBlockFlow> m_renderer;
 };
 
-} // namespace WebCore
-
 #ifndef NDEBUG
-
-namespace WTF {
-
-// This helper is used by PODIntervalTree for debugging purposes.
-template<> struct ValueToString<WebCore::FloatingObject*> {
-    static String string(const WebCore::FloatingObject* floatingObject) { return floatingObject->debugString(); }
-};
-
-} // namespace WTF
-
+TextStream& operator<<(TextStream&, const FloatingObject&);
 #endif
+
+} // namespace WebCore

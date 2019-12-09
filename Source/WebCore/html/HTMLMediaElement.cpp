@@ -72,6 +72,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
 #include "NetworkingContext.h"
+#include "PODIntervalTree.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PictureInPictureSupport.h"
@@ -1627,6 +1628,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
 #if ENABLE(VIDEO_TRACK)
 
+struct HTMLMediaElement::CueData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
+    CueList currentlyActiveCues;
+};
+
 static bool trackIndexCompare(TextTrack* a, TextTrack* b)
 {
     return a->trackIndex() - b->trackIndex() < 0;
@@ -1661,6 +1668,11 @@ static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval&
     return one.data()->endMediaTime() > two.data()->endMediaTime();
 }
 
+bool HTMLMediaElement::ignoreTrackDisplayUpdateRequests() const
+{
+    return m_ignoreTrackDisplayUpdate > 0 || !m_textTracks || !m_cueData || m_cueData->cueTree.isEmpty();
+}
+
 void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 {
     // 4.8.10.8 Playing the media resource
@@ -1680,9 +1692,9 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
-    auto movieTimeInterval = m_cueTree.createInterval(movieTime, movieTime);
+    auto movieTimeInterval = m_cueData->cueTree.createInterval(movieTime, movieTime);
     if (m_readyState != HAVE_NOTHING && m_player) {
-        currentCues = m_cueTree.allOverlaps(movieTimeInterval);
+        currentCues = m_cueData->cueTree.allOverlaps(movieTimeInterval);
         if (currentCues.size() > 1)
             std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
@@ -1693,7 +1705,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // 2 - Let other cues be a list of cues, initialized to contain all the cues
     // of hidden, showing, and showing by default text tracks of the media
     // element that are not present in current cues.
-    previousCues = m_currentlyActiveCues;
+    previousCues = m_cueData->currentlyActiveCues;
 
     // 3 - Let last time be the current playback position at the time this
     // algorithm was last run for this media element, if this is not the first
@@ -1707,7 +1719,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // end times are less than or equal to the current playback position.
     // Otherwise, let missed cues be an empty list.
     if (lastTime >= MediaTime::zeroTime() && m_lastSeekTime < movieTime) {
-        for (auto& cue : m_cueTree.allOverlaps(m_cueTree.createInterval(lastTime, movieTime))) {
+        for (auto& cue : m_cueData->cueTree.allOverlaps({ lastTime, movieTime })) {
             // Consider cues that may have been missed since the last seek time.
             if (cue.low() > std::max(m_lastSeekTime, lastTime) && cue.high() < movieTime)
                 missedCues.append(cue);
@@ -1752,7 +1764,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     if (auto nearestEndingCue = std::min_element(currentCues.begin(), currentCues.end(), compareCueIntervalEndTime))
         nextInterestingTime = nearestEndingCue->data()->endMediaTime();
 
-    Optional<CueInterval> nextCue = m_cueTree.nextIntervalAfter(movieTimeInterval);
+    Optional<CueInterval> nextCue = m_cueData->cueTree.nextIntervalAfter(movieTimeInterval.high());
     if (nextCue)
         nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
 
@@ -1897,7 +1909,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
             previousCues[i].data()->setIsActive(false);
 
     // Update the current active cues.
-    m_currentlyActiveCues = currentCues;
+    m_cueData->currentlyActiveCues = currentCues;
 
     if (activeSetChanged)
         updateTextTrackDisplay();
@@ -2034,24 +2046,30 @@ void HTMLMediaElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
     if (track.mode() == TextTrack::Mode::Disabled)
         return;
 
+    if (!m_cueData)
+        m_cueData = makeUnique<CueData>();
+
     // Negative duration cues need be treated in the interval tree as
     // zero-length cues.
     MediaTime endTime = std::max(cue.startMediaTime(), cue.endMediaTime());
 
-    CueInterval interval = m_cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
-    if (!m_cueTree.contains(interval))
-        m_cueTree.add(interval);
+    CueInterval interval = m_cueData->cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
+    if (!m_cueData->cueTree.contains(interval))
+        m_cueData->cueTree.add(interval);
     updateActiveTextTrackCues(currentMediaTime());
 }
 
 void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
 {
+    if (!m_cueData)
+        m_cueData = makeUnique<CueData>();
+
     // Negative duration cues need to be treated in the interval tree as
     // zero-length cues.
     MediaTime endTime = std::max(cue.startMediaTime(), cue.endMediaTime());
 
-    CueInterval interval = m_cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
-    m_cueTree.remove(interval);
+    CueInterval interval = m_cueData->cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
+    m_cueData->cueTree.remove(interval);
 
     // Since the cue will be removed from the media element and likely the
     // TextTrack might also be destructed, notifying the region of the cue
@@ -2060,10 +2078,10 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     if (isVTT)
         toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(false);
 
-    size_t index = m_currentlyActiveCues.find(interval);
+    size_t index = m_cueData->currentlyActiveCues.find(interval);
     if (index != notFound) {
         cue.setIsActive(false);
-        m_currentlyActiveCues.remove(index);
+        m_cueData->currentlyActiveCues.remove(index);
     }
 
     cue.removeDisplayTree();
@@ -2071,6 +2089,13 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
 
     if (isVTT)
         toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(true);
+}
+
+CueList HTMLMediaElement::currentlyActiveCues() const
+{
+    if (!m_cueData)
+        return { };
+    return m_cueData->currentlyActiveCues;
 }
 
 #endif

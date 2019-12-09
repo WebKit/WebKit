@@ -30,6 +30,7 @@
 #pragma once
 
 #include "LayerFragment.h"
+#include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderFragmentContainer.h"
 #include <wtf/ListHashSet.h>
@@ -202,8 +203,6 @@ protected:
     void removeRenderBoxFragmentInfo(RenderBox&);
     void removeLineFragmentInfo(const RenderBlockFlow&);
 
-    RenderFragmentContainerList m_fragmentList;
-
     class RenderFragmentContainerRange {
     public:
         RenderFragmentContainerRange() = default;
@@ -230,39 +229,23 @@ protected:
         bool m_rangeInvalidated;
     };
 
-    typedef PODInterval<LayoutUnit, WeakPtr<RenderFragmentContainer>> FragmentInterval;
-    typedef PODIntervalTree<LayoutUnit, WeakPtr<RenderFragmentContainer>> FragmentIntervalTree;
+    class FragmentSearchAdapter;
 
-    class FragmentSearchAdapter {
-    public:
-        FragmentSearchAdapter(LayoutUnit offset)
-            : m_offset(offset)
-        {
-        }
-        
-        const LayoutUnit& lowValue() const { return m_offset; }
-        const LayoutUnit& highValue() const { return m_offset; }
-        void collectIfNeeded(const FragmentInterval&);
-
-        RenderFragmentContainer* result() const { return m_result.get(); }
-
-    private:
-        LayoutUnit m_offset;
-        WeakPtr<RenderFragmentContainer> m_result;
-    };
+    RenderFragmentContainerList m_fragmentList;
 
     // Map a line to its containing fragment.
     std::unique_ptr<ContainingFragmentMap> m_lineToFragmentMap;
 
     // Map a box to the list of fragments in which the box is rendered.
-    typedef HashMap<const RenderBox*, RenderFragmentContainerRange> RenderFragmentContainerRangeMap;
+    using RenderFragmentContainerRangeMap = HashMap<const RenderBox*, RenderFragmentContainerRange>;
     RenderFragmentContainerRangeMap m_fragmentRangeMap;
 
     // Map a box with a fragment break to the auto height fragment affected by that break. 
-    typedef HashMap<RenderBox*, RenderFragmentContainer*> RenderBoxToFragmentMap;
+    using RenderBoxToFragmentMap = HashMap<RenderBox*, RenderFragmentContainer*>;
     RenderBoxToFragmentMap m_breakBeforeToFragmentMap;
     RenderBoxToFragmentMap m_breakAfterToFragmentMap;
 
+    using FragmentIntervalTree = PODIntervalTree<LayoutUnit, WeakPtr<RenderFragmentContainer>>;
     FragmentIntervalTree m_fragmentIntervalTree;
 
     CurrentRenderFragmentContainerMaintainer* m_currentFragmentMaintainer;
@@ -274,21 +257,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#ifndef NDEBUG
-
-namespace WTF {
-
-// This structure is used by PODIntervalTree for debugging.
-template <> struct ValueToString<WebCore::RenderFragmentContainer*> {
-    static String string(const WebCore::RenderFragmentContainer* value) { return value->debugString(); }
-};
-template <> struct ValueToString<WeakPtr<WebCore::RenderFragmentContainer>> {
-    static String string(const WeakPtr<WebCore::RenderFragmentContainer>& value) { return value ? value->debugString() : String { }; }
-};
-
-} // namespace WTF
-
-#endif
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentedFlow, isRenderFragmentedFlow())

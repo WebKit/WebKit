@@ -563,9 +563,9 @@ CurrentRenderFragmentContainerMaintainer::~CurrentRenderFragmentContainerMaintai
 
 #ifndef NDEBUG
 
-String RenderFragmentContainer::debugString() const
+TextStream& operator<<(TextStream& stream, const RenderFragmentContainer& container)
 {
-    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return stream << &container;
 }
 
 #endif

@@ -29,12 +29,13 @@
 
 namespace WebCore {
 
-class RenderElement;
+class RenderText;
+class RenderTextFragment;
 
 class RenderTreeBuilder::FirstLetter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FirstLetter(RenderTreeBuilder&);
+    explicit FirstLetter(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderBlock&);
     void cleanupOnDestroy(RenderTextFragment&);

@@ -252,18 +252,17 @@ const VTTCue* toVTTCue(const TextTrackCue*);
 
 namespace WTF {
 
-template<typename Type>
-struct LogArgument;
+template<typename> struct LogArgument;
 
-template <>
-struct LogArgument<WebCore::VTTCue> {
-    static String toString(const WebCore::VTTCue& cue)
-    {
-        return cue.toJSONString();
-    }
+template<> struct LogArgument<WebCore::VTTCue> {
+    static String toString(const WebCore::VTTCue& cue) { return cue.toJSONString(); }
 };
 
 } // namespace WTF
+
+// FIXME: The following isType function is incorrect, since it returns true for TextTrackCueGeneric.
+// Should fix this so that is<VTTCue> and downcast<VTTCue> will work correctly and eliminate toVTTCue
+// since it's just another name for downcast<VTTCue>.
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VTTCue)
 static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::WebVTT; }

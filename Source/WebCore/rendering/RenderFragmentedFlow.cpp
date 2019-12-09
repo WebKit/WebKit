@@ -34,7 +34,6 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "Node.h"
-#include "PODIntervalTree.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderFragmentContainer.h"
 #include "RenderInline.h"
@@ -219,6 +218,31 @@ void RenderFragmentedFlow::repaintRectangleInFragments(const LayoutRect& repaint
         fragment->repaintFragmentedFlowContent(repaintRect);
 }
 
+class RenderFragmentedFlow::FragmentSearchAdapter {
+public:
+    explicit FragmentSearchAdapter(LayoutUnit offset)
+        : m_offset(offset)
+    {
+    }
+
+    const LayoutUnit& lowValue() const { return m_offset; }
+    const LayoutUnit& highValue() const { return m_offset; }
+
+    void collectIfNeeded(const PODInterval<LayoutUnit, WeakPtr<RenderFragmentContainer>>& interval)
+    {
+        if (m_result)
+            return;
+        if (interval.low() <= m_offset && interval.high() > m_offset)
+            m_result = interval.data();
+    }
+
+    RenderFragmentContainer* result() const { return m_result.get(); }
+
+private:
+    LayoutUnit m_offset;
+    WeakPtr<RenderFragmentContainer> m_result;
+};
+
 RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const
 {
     ASSERT(!m_fragmentsInvalidated);
@@ -229,21 +253,24 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
     if (m_fragmentList.size() == 1 && extendLastFragment)
         return m_fragmentList.first();
 
+    auto clamp = [clampBox](RenderFragmentContainer* fragment)  {
+        return clampBox ? clampBox->clampToStartAndEndFragments(fragment) : fragment;
+    };
+
     if (offset <= 0)
-        return clampBox ? clampBox->clampToStartAndEndFragments(m_fragmentList.first()) : m_fragmentList.first();
+        return clamp(m_fragmentList.first());
 
     FragmentSearchAdapter adapter(offset);
-    m_fragmentIntervalTree.allOverlapsWithAdapter<FragmentSearchAdapter>(adapter);
+    m_fragmentIntervalTree.allOverlapsWithAdapter(adapter);
+    if (auto* fragment = adapter.result())
+        return clamp(fragment);
 
     // If no fragment was found, the offset is in the flow thread overflow.
     // The last fragment will contain the offset if extendLastFragment is set or if the last fragment is a set.
-    if (!adapter.result() && (extendLastFragment || m_fragmentList.last()->isRenderFragmentContainerSet()))
-        return clampBox ? clampBox->clampToStartAndEndFragments(m_fragmentList.last()) : m_fragmentList.last();
+    if (extendLastFragment || m_fragmentList.last()->isRenderFragmentContainerSet())
+        return clamp(m_fragmentList.last());
 
-    RenderFragmentContainer* fragment = adapter.result();
-    if (!clampBox)
-        return fragment;
-    return fragment ? clampBox->clampToStartAndEndFragments(fragment) : nullptr;
+    return nullptr;
 }
 
 LayoutPoint RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint) const
@@ -781,7 +808,7 @@ void RenderFragmentedFlow::markFragmentsForOverflowLayoutIfNeeded()
 void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 {
     LayoutUnit logicalHeight;
-    // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
+    // FIXME: Optimize not to clear the interval tree all the time. This would involve manually managing the tree nodes' lifecycle.
     m_fragmentIntervalTree.clear();
     for (auto& fragment : m_fragmentList) {
         LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
@@ -791,7 +818,7 @@ void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 
         fragment->setFragmentedFlowPortionRect(isHorizontalWritingMode() ? fragmentRect : fragmentRect.transposedRect());
 
-        m_fragmentIntervalTree.add(FragmentIntervalTree::createInterval(logicalHeight, logicalHeight + fragmentLogicalHeight, makeWeakPtr(fragment)));
+        m_fragmentIntervalTree.add({ logicalHeight, logicalHeight + fragmentLogicalHeight, makeWeakPtr(fragment) });
 
         logicalHeight += fragmentLogicalHeight;
     }
@@ -880,14 +907,6 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
     }
 
     return currentBlock->isHorizontalWritingMode() ? blockRect.y() : blockRect.x();
-}
-
-void RenderFragmentedFlow::FragmentSearchAdapter::collectIfNeeded(const FragmentInterval& interval)
-{
-    if (m_result)
-        return;
-    if (interval.low() <= m_offset && interval.high() > m_offset)
-        m_result = interval.data();
 }
 
 void RenderFragmentedFlow::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const

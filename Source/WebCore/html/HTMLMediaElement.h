@@ -47,7 +47,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
 #include "CaptionUserPreferences.h"
-#include "PODIntervalTree.h"
+#include "PODInterval.h"
 #include "TextTrack.h"
 #include "TextTrackCue.h"
 #include "VTTCue.h"
@@ -112,8 +112,7 @@ class RemotePlayback;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-using CueIntervalTree = PODIntervalTree<MediaTime, TextTrackCue*>;
-using CueInterval = CueIntervalTree::IntervalType;
+using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
 #endif
 
@@ -347,7 +346,7 @@ public:
     TextTrackList* textTracks() const { return m_textTracks.get(); }
     VideoTrackList* videoTracks() const { return m_videoTracks.get(); }
 
-    CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
+    CueList currentlyActiveCues() const;
 
     void addAudioTrack(Ref<AudioTrack>&&);
     void addTextTrack(Ref<TextTrack>&&);
@@ -611,12 +610,6 @@ protected:
     
     bool isMediaElement() const final { return true; }
 
-#if ENABLE(VIDEO_TRACK)
-    bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0 || !m_textTracks || !m_cueTree.size(); }
-    void beginIgnoringTrackDisplayUpdateRequests();
-    void endIgnoringTrackDisplayUpdateRequests();
-#endif
-
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -803,13 +796,14 @@ private:
     URL selectNextSourceChild(ContentType*, String* keySystem, InvalidURLAction);
 
 #if ENABLE(VIDEO_TRACK)
+    bool ignoreTrackDisplayUpdateRequests() const;
+    void beginIgnoringTrackDisplayUpdateRequests();
+    void endIgnoringTrackDisplayUpdateRequests();
+
     void updateActiveTextTrackCues(const MediaTime&);
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
-    enum ReconfigureMode {
-        Immediately,
-        AfterDelay,
-    };
+    enum ReconfigureMode { Immediately, AfterDelay };
     void markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode);
     void captionPreferencesChanged() override;
     CaptionUserPreferences::CaptionDisplayMode captionDisplayMode();
@@ -874,11 +868,7 @@ private:
     bool isLiveStream() const override { return movieLoadType() == MediaPlayerEnums::LiveStream; }
 
     void updateSleepDisabling();
-    enum class SleepType {
-        None,
-        Display,
-        System,
-    };
+    enum class SleepType { None, Display, System };
     SleepType shouldDisableSleep() const;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -1152,9 +1142,9 @@ private:
     RefPtr<VideoTrackList> m_videoTracks;
     Vector<RefPtr<TextTrack>> m_textTracksWhenResourceSelectionBegan;
 
-    CueIntervalTree m_cueTree;
+    struct CueData;
+    std::unique_ptr<CueData> m_cueData;
 
-    CueList m_currentlyActiveCues;
     int m_ignoreTrackDisplayUpdate { 0 };
 
     bool m_requireCaptionPreferencesChangedCallbacks { false };
@@ -1183,6 +1173,7 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<WebKitMediaKeys> m_webKitMediaKeys;
 #endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
     RefPtr<MediaKeys> m_mediaKeys;
     bool m_attachingMediaKeys { false };
@@ -1233,23 +1224,6 @@ namespace WTF {
 template<> struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
     static String toString(WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason) { return convertEnumerationToString(reason); }
 };
-
-#if ENABLE(VIDEO_TRACK) && !defined(NDEBUG)
-
-// Template specialization required by PodIntervalTree in debug mode.
-template<> struct ValueToString<WebCore::TextTrackCue*> {
-    static String string(const WebCore::TextTrackCue* cue) { return cue->debugString(); }
-};
-
-#endif
-
-#ifndef NDEBUG
-
-template<> struct ValueToString<MediaTime> {
-    static String string(const MediaTime& time) { return toString(time); }
-};
-
-#endif
 
 } // namespace WTF
 

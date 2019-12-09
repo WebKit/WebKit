@@ -135,24 +135,18 @@ FloatPolygon::FloatPolygon(std::unique_ptr<Vector<FloatPoint>> vertices, WindRul
     if (m_empty)
         return;
 
-    for (unsigned i = 0; i < m_edges.size(); ++i) {
-        FloatPolygonEdge* edge = &m_edges[i];
-        m_edgeTree.add(EdgeInterval(edge->minY(), edge->maxY(), edge));
-    }
+    for (auto& edge : m_edges)
+        m_edgeTree.add({ edge.minY(), edge.maxY(), &edge });
 }
 
-bool FloatPolygon::overlappingEdges(float minY, float maxY, Vector<const FloatPolygonEdge*>& result) const
+Vector<std::reference_wrapper<const FloatPolygonEdge>> FloatPolygon::overlappingEdges(float minY, float maxY) const
 {
-    Vector<FloatPolygon::EdgeInterval> overlappingEdgeIntervals;
-    m_edgeTree.allOverlaps(FloatPolygon::EdgeInterval(minY, maxY, 0), overlappingEdgeIntervals);
-    unsigned overlappingEdgeIntervalsSize = overlappingEdgeIntervals.size();
-    result.resize(overlappingEdgeIntervalsSize);
-    for (unsigned i = 0; i < overlappingEdgeIntervalsSize; ++i) {
-        const FloatPolygonEdge* edge = static_cast<const FloatPolygonEdge*>(overlappingEdgeIntervals[i].data());
-        ASSERT(edge);
-        result[i] = edge;
-    }
-    return overlappingEdgeIntervalsSize > 0;
+    auto overlappingEdgeIntervals = m_edgeTree.allOverlaps({ minY, maxY });
+    Vector<std::reference_wrapper<const FloatPolygonEdge>> result;
+    result.reserveInitialCapacity(overlappingEdgeIntervals.size());
+    for (auto& interval : overlappingEdgeIntervals)
+        result.uncheckedAppend(*interval.data());
+    return result;
 }
 
 static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
@@ -257,9 +251,9 @@ bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const
 
 #ifndef NDEBUG
 
-String FloatPolygonEdge::debugString() const
+TextStream& operator<<(TextStream& stream, const FloatPolygonEdge& edge)
 {
-    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this)), " (", vertex1().x(), ',', vertex1().y(), ' ', vertex2().x(), ',', vertex2().y(), ')');
+    return stream << &edge << " (" << edge.vertex1().x() << ',' << edge.vertex1().y() << ' ' << edge.vertex2().x() << ',' << edge.vertex2().y() << ')';
 }
 
 #endif

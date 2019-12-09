@@ -63,6 +63,8 @@
 #include "RenderTreeBuilderRuby.h"
 #include "RenderTreeBuilderSVG.h"
 #include "RenderTreeBuilderTable.h"
+#include "RenderView.h"
+
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "FrameView.h"
 #include "FrameViewLayoutContext.h"
