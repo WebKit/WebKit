@@ -76,6 +76,10 @@
 #include "WebPaymentCoordinatorProxyMessages.h"
 #endif
 
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+#include "LegacyCustomProtocolManager.h"
+#endif
+
 #undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
 
@@ -504,6 +508,13 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
 {
     ASSERT(!parameters.request.httpBody());
+
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    if (networkProcess().supplement<LegacyCustomProtocolManager>()->supportsScheme(parameters.request.url().protocol().toString())) {
+        didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
+        return;
+    }
+#endif
 
 #if ENABLE(SERVER_PRECONNECT)
     auto* session = networkSession();

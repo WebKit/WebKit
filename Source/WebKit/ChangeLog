@@ -1,3 +1,12 @@
+2019-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix debug assertion for ApplePay API tests on iOS after r253277.
+
+        Disable server preconnect if the load will be handled by the LegacyCustomProtocolManager.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+
 2019-12-09  youenn fablet  <youenn@apple.com>
 
         Add an option to capture audio in GPU process
