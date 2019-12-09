@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ActivityState.h"
+#include "AnimationFrameRate.h"
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "FindOptions.h"
@@ -273,6 +274,7 @@ public:
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
+    bool isRenderingUpdateThrottled() const { return !m_throttlingReasons.isEmpty(); }
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
@@ -713,6 +715,8 @@ public:
     bool isLowPowerModeEnabled() const;
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
+    Seconds preferredRenderingUpdateInterval() const;
+
     WEBCORE_EXPORT void applicationWillResignActive();
     WEBCORE_EXPORT void applicationDidEnterBackground();
     WEBCORE_EXPORT void applicationWillEnterForeground();
@@ -1008,6 +1012,7 @@ private:
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
     bool m_inUpdateRendering { false };
+    OptionSet<ThrottlingReason> m_throttlingReasons;
 };
 
 inline PageGroup& Page::group()

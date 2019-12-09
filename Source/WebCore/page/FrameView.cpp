@@ -2524,9 +2524,9 @@ void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& 
 
     if (auto* scriptedAnimationController = document->scriptedAnimationController()) {
         if (shouldThrottle)
-            scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::OutsideViewport);
+            scriptedAnimationController->addThrottlingReason(ThrottlingReason::OutsideViewport);
         else
-            scriptedAnimationController->removeThrottlingReason(ScriptedAnimationController::ThrottlingReason::OutsideViewport);
+            scriptedAnimationController->removeThrottlingReason(ThrottlingReason::OutsideViewport);
     }
 
     document->setTimerThrottlingEnabled(shouldThrottle);
