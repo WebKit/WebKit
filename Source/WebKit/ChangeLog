@@ -1,3 +1,22 @@
+2019-12-09  youenn fablet  <youenn@apple.com>
+
+        NetworkResourceLoader should consume its sandbox extensions when starting a fetch through service worker
+        https://bugs.webkit.org/show_bug.cgi?id=204883
+        <rdar://problem/57568535>
+
+        Reviewed by Alex Christensen.
+
+        Consume sandbox extensions in network process before sending fetch task to service worker.
+        This makes sure network process can send proper sandbox extensions to the service worker and it also ensures
+        it will have the necessary rights to access the file if the fetch task is not handled by service worker.
+        Test: http/wpt/service-workers/file-upload.html
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::consumeSandboxExtensionsIfNeeded):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::startFetch):
+
 2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macCatalyst build after r253267

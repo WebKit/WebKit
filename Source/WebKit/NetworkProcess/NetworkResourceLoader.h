@@ -125,6 +125,8 @@ public:
 
     bool isKeptAlive() const { return m_isKeptAlive; }
 
+    void consumeSandboxExtensionsIfNeeded();
+
 #if ENABLE(SERVICE_WORKER)
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle();

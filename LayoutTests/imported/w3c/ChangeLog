@@ -1,3 +1,14 @@
+2019-12-09  youenn fablet  <youenn@apple.com>
+
+        NetworkResourceLoader should consume its sandbox extensions when starting a fetch through service worker
+        https://bugs.webkit.org/show_bug.cgi?id=204883
+        <rdar://problem/57568535>
+
+        Reviewed by Alex Christensen.
+
+        Allow http/wpt tests to use LayoutTests/resources files.
+        * resources/config.json:
+
 2019-12-06  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r253148.

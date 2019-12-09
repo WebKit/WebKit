@@ -1014,6 +1014,12 @@ IPC::Connection* NetworkResourceLoader::messageSenderConnection() const
     return &connectionToWebProcess().connection();
 }
 
+void NetworkResourceLoader::consumeSandboxExtensionsIfNeeded()
+{
+    if (!m_didConsumeSandboxExtensions)
+        consumeSandboxExtensions();
+}
+
 void NetworkResourceLoader::consumeSandboxExtensions()
 {
     ASSERT(!m_didConsumeSandboxExtensions);

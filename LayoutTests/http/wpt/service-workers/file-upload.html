@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/webkit-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+const tempFileContent = "TEST";
+const tempFileName = "test.tmp";
+
+var fileInput = document.createElement("input");
+fileInput.type = 'file';
+fileInput.style.width = "100%"; // So that any manual testing will show full file names
+document.body.insertBefore(fileInput, document.body.firstChild);
+
+var scope = "resources";
+var activeWorker;
+var frame;
+var fileFrame;
+var formData;
+var fileSize;
+
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+function prepareUpload()
+{
+    let resolve, reject;
+    const promise = new Promise((resolve_, reject_) => {
+        resolve = resolve_;
+        reject = reject_;
+    });
+    setTimeout(() => reject("test timed out"), 5000);
+
+    var input = document.getElementsByTagName("input")[0];
+    input.onchange = async (e) => {
+        var formData = new FormData;
+        formData.append("file", e.target.files[0], tempFileName);
+        fileSize = e.target.files[0].size;
+        resolve(formData);
+    };
+
+    if (window.testRunner) {
+        testRunner.setOpenPanelFiles([tempFilePath]);
+
+        var centerX = input.offsetLeft + input.offsetWidth / 2;
+        var centerY = input.offsetTop + input.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY);
+    }
+    return promise;
+}
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    var registration = await navigator.serviceWorker.register("file-upload-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+}, "Setup worker");
+
+promise_test(async (test) => {
+    frame = await with_iframe("resources/file-upload-iframe.html");
+}, "Setup frame");
+
+promise_test(async (test) => {
+    const promise = new Promise(resolve => window.onmessage = resolve);
+    fileFrame = await with_iframe("http://127.0.0.1:8000/resources/create-temp-file-iframe.html");
+    let event = await promise;
+    tempFilePath = event.data;
+}, "Setup file to upload");
+
+promise_test(async (test) => {
+    formData = await prepareUpload();
+    assert_equals(fileSize, 4);
+}, "Setup file form data");
+
+promise_test(async (test) => {
+    const response = await frame.contentWindow.fetch("/WebKit/service-workers/file-upload-check.py?do-not-handle", {method: "POST", body: formData});
+    const text = await response.text();
+    assert_true(text.includes(tempFileContent), "content");
+    assert_true(text.includes(tempFileName), "name");
+}, "Upload not handled by service worker");
+
+promise_test(async (test) => {
+    const response = await frame.contentWindow.fetch("/WebKit/service-workers/file-upload-check.py", {method: "POST", body: formData});
+    const text = await response.text();
+    assert_true(text.includes(tempFileContent), "content");
+    assert_true(text.includes(tempFileName), "name");
+}, "Upload intercepted by service worker");
+
+promise_test(async (test) => {
+    await with_iframe("http://127.0.0.1:8000/resources/delete-temp-file-iframe.html");
+}, "Delete temporary file");
+</script>
+</body>
+</html>

@@ -95,6 +95,7 @@ void ServiceWorkerFetchTask::contextClosed()
 
 void ServiceWorkerFetchTask::startFetch()
 {
+    m_loader.consumeSandboxExtensionsIfNeeded();
     auto& options = m_loader.parameters().options;
     auto referrer = m_currentRequest.httpReferrer();
 
