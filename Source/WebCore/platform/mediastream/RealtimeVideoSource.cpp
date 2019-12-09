@@ -172,7 +172,7 @@ Ref<RealtimeMediaSource> RealtimeVideoSource::clone()
 {
     auto source = create(m_source.copyRef());
     source->m_currentSettings = m_currentSettings;
-
+    source->setSize(size());
     return source;
 }
 

@@ -1,3 +1,14 @@
+2019-12-09  youenn fablet  <youenn@apple.com>
+
+        fast/mediastream/mediastreamtrack-video-clone.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205006
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-video-clone-expected.txt:
+        * fast/mediastream/mediastreamtrack-video-clone.html:
+        Add br to spot any potential issue with video elements to text dump.
+
 2019-12-08  youenn fablet  <youenn@apple.com>
 
         Support different resolutions for video tracks captured from UIProcess
