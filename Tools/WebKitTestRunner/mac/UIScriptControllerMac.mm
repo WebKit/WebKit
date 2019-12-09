@@ -43,6 +43,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/BlockPtr.h>
 
 namespace WTR {
 
@@ -68,11 +69,11 @@ void UIScriptControllerMac::zoomToScale(double scale, JSValueRef callback)
     auto* webView = this->webView();
     [webView _setPageScale:scale withOrigin:CGPointZero];
 
-    [webView _doAfterNextPresentationUpdate:^{
+    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    }];
+    }).get()];
 }
 
 double UIScriptControllerMac::zoomScale() const
@@ -88,11 +89,11 @@ void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSVa
     NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
     [center postNotificationName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:webView];
 
-    [webView _doAfterNextPresentationUpdate:^{
+    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    }];
+    }).get()];
 }
 
 bool UIScriptControllerMac::isShowingDataListSuggestions() const
@@ -171,10 +172,11 @@ void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
         [activeMenu cancelTracking];
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_context)
-            m_context->asyncTaskComplete(callbackID);
-    });
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get());
 }
 
 void UIScriptControllerMac::beginBackSwipe(JSValueRef callback)
@@ -247,10 +249,11 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
     eventSender->mouseDown(0, 0);
     eventSender->mouseUp(0, 0);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_context)
-            m_context->asyncTaskComplete(callbackID);
-    });
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get());
 }
 
 void UIScriptControllerMac::copyText(JSStringRef text)

@@ -32,6 +32,7 @@
 #import "UIScriptContext.h"
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/FloatRect.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 
 extern DumpRenderTreeBrowserView *gWebBrowserView;
@@ -48,11 +49,11 @@ void UIScriptControllerIOS::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    });
+    }).get());
 }
 
 void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
@@ -61,11 +62,11 @@ void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 
     RefPtr<UIScriptController> protectedThis(this);
     dispatch_async(dispatch_get_main_queue(), ^{
-        [gWebScrollView zoomToScale:scale animated:YES completionHandler:^{
+        [gWebScrollView zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
             if (!m_context)
                 return;
             m_context->asyncTaskComplete(callbackID);
-        }];
+        }).get()];
     });
 }
 

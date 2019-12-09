@@ -1,3 +1,65 @@
+2019-12-08  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: Crash under UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification
+        https://bugs.webkit.org/show_bug.cgi?id=205002
+
+        Reviewed by Wenson Hsieh.
+
+        Keep a strong reference to the UIScriptController while running async tasks.
+        UIScriptContext will be nulled out if the view was torn down, but this way
+        we keep the UIScriptController itself and can find the null UIScriptContext
+        reliably.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::doAsyncTask):
+        (WTR::UIScriptControllerIOS::zoomToScale):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::doAsyncTask):
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+        (WTR::UIScriptControllerMac::removeViewFromWindow):
+        (WTR::UIScriptControllerMac::addViewToWindow):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::doAfterPresentationUpdate):
+        (WTR::UIScriptControllerIOS::doAfterNextStablePresentationUpdate):
+        (WTR::UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt):
+        (WTR::UIScriptControllerIOS::doAfterVisibleContentRectUpdate):
+        (WTR::UIScriptControllerIOS::zoomToScale):
+        (WTR::UIScriptControllerIOS::retrieveSpeakSelectionContent):
+        (WTR::UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptControllerIOS::touchDownAtPoint):
+        (WTR::UIScriptControllerIOS::liftUpAtPoint):
+        (WTR::UIScriptControllerIOS::twoFingerSingleTapAtPoint):
+        (WTR::UIScriptControllerIOS::doubleTapAtPoint):
+        (WTR::UIScriptControllerIOS::stylusDownAtPoint):
+        (WTR::UIScriptControllerIOS::stylusMoveToPoint):
+        (WTR::UIScriptControllerIOS::stylusUpAtPoint):
+        (WTR::UIScriptControllerIOS::stylusTapAtPointWithModifiers):
+        (WTR::UIScriptControllerIOS::dragFromPointToPoint):
+        (WTR::UIScriptControllerIOS::longPressAtPoint):
+        (WTR::UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptControllerIOS::dismissFilePicker):
+        (WTR::UIScriptControllerIOS::applyAutocorrection):
+        (WTR::UIScriptControllerIOS::simulateRotation):
+        (WTR::UIScriptControllerIOS::simulateRotationLikeSafari):
+        (WTR::UIScriptControllerIOS::setDidStartFormControlInteractionCallback):
+        (WTR::UIScriptControllerIOS::setDidEndFormControlInteractionCallback):
+        (WTR::UIScriptControllerIOS::setDidShowContextMenuCallback):
+        (WTR::UIScriptControllerIOS::setDidDismissContextMenuCallback):
+        (WTR::UIScriptControllerIOS::setWillBeginZoomingCallback):
+        (WTR::UIScriptControllerIOS::setDidEndZoomingCallback):
+        (WTR::UIScriptControllerIOS::setDidShowKeyboardCallback):
+        (WTR::UIScriptControllerIOS::setDidHideKeyboardCallback):
+        (WTR::UIScriptControllerIOS::setWillPresentPopoverCallback):
+        (WTR::UIScriptControllerIOS::setDidDismissPopoverCallback):
+        (WTR::UIScriptControllerIOS::setDidEndScrollingCallback):
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+        (WTR::UIScriptControllerIOS::doAfterDoubleTapDelay):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::zoomToScale):
+        (WTR::UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptControllerMac::chooseMenuAction):
+        (WTR::UIScriptControllerMac::activateAtPoint):
+
 2019-12-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make ColorSpace an enum class
