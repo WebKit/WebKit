@@ -113,13 +113,13 @@ public:
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, InlineLayoutUnit availableWidth) const;
+    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, const LineStatus&) const;
     struct LeftSide {
         unsigned length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
         bool needsHyphen { false };
     };
-    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth) const;
+    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
 
     bool n_hyphenationIsDisabled { false };
 };

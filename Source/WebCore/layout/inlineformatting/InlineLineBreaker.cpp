@@ -37,16 +37,35 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isContentWrappingAllowed(const LineBreaker::Content::Run& run)
+static inline bool isTextContentWrappingAllowed(const RenderStyle& style)
 {
+    // Do not try to push overflown 'pre' and 'no-wrap' content to next line.
+    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+}
+
+static inline bool isContentSplitAllowed(const LineBreaker::Content::Run& run)
+{
+    ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
     if (!run.inlineItem.isText()) {
         // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
         // we need to check if there's another inline item beyond the [container end] to split.
         return false;
     }
-    auto& style = run.inlineItem.style();
-    // Do not try to split 'pre' and 'no-wrap' content.
-    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+    return isTextContentWrappingAllowed(run.inlineItem.style());
+}
+
+static inline bool isTextSplitAtArbitraryPositionAllowed(const RenderStyle& style, bool lineIsEmpty)
+{
+    if (style.wordBreak() == WordBreak::BreakAll)
+        return true;
+    // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
+    // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
+    if (style.wordBreak() == WordBreak::BreakWord && lineIsEmpty)
+        return true;
+    // OverflowWrap::Break -> An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
+    if (style.overflowWrap() == OverflowWrap::Break && lineIsEmpty)
+        return true;
+    return false;
 }
 
 static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInlineItem)
@@ -79,7 +98,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
-        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus.availableWidth)) {
+        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus)) {
             // We tried to split the content but the available space can't even accommodate the first character.
             if (!partialTrailingContent->length) {
                 // 1. Push the content over to the next line when we've got content on the line already.
@@ -97,7 +116,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
         }
         // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
-        auto contentShouldOverflow = lineStatus.lineIsEmpty || !isContentWrappingAllowed(runs[0]);
+        auto contentShouldOverflow = lineStatus.lineIsEmpty || !isTextContentWrappingAllowed(runs[0].inlineItem.style());
         // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
         // we need to keep the overlapping whitespace on the line (and hang it I'd assume).
         if (isTrailingWhitespaceWithPreWrap(runs.last().inlineItem))
@@ -113,7 +132,7 @@ bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineL
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, InlineLayoutUnit availableWidth) const
+Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, const LineStatus& lineStatus) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -122,12 +141,12 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
     while (index < runs.size()) {
         auto& run = runs[index];
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
-        if (accumulatedRunWidth + run.logicalWidth > availableWidth && isContentWrappingAllowed(run)) {
+        if (accumulatedRunWidth + run.logicalWidth > lineStatus.availableWidth && isContentSplitAllowed(run)) {
             // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
-            auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, availableWidth - accumulatedRunWidth);
-            if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth))
+            auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
+            if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty))
                 return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
             // If this run is not breakable, we need to check if any previous run is breakable
             break;
@@ -139,9 +158,9 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
     // Let's try to find the first breakable run and wrap it at the content boundary (as it surely fits).
     while (index--) {
         auto& run = runs[index];
-        if (isContentWrappingAllowed(run)) {
+        if (isContentSplitAllowed(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto leftSide = tryBreakingTextRun(run, maxInlineLayoutUnit())) {
+            if (auto leftSide = tryBreakingTextRun(run, maxInlineLayoutUnit(), lineStatus.lineIsEmpty)) {
                 // This run itself might not be partial but the content (series of runs) definitely is.
                 return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
             }
@@ -151,16 +170,16 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
     return { };
 }
 
-Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth) const
+Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& style = overflowRun.inlineItem.style();
-    auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
-    auto breakWords = style.wordBreak();
-    if (breakWords == WordBreak::KeepAll)
+    if (style.wordBreak() == WordBreak::KeepAll)
         return { };
+
+    auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
-    if (breakWords == WordBreak::BreakAll) {
+    if (isTextSplitAtArbitraryPositionAllowed(style, lineIsEmpty)) {
         // When the run can be split at arbitrary positions, let's just return the entire run when it is intended to fit on the line.
         if (findLastBreakablePosition)
             return LeftSide { inlineTextItem.length(), overflowRun.logicalWidth, false };

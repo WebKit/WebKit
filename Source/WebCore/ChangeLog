@@ -1,3 +1,25 @@
+2019-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for word-break: break-word (and overflow-wrap)
+        https://bugs.webkit.org/show_bug.cgi?id=205024
+        <rdar://problem/57766087>
+
+        Reviewed by Antti Koivisto.
+
+        isTextSplitAtArbitraryPositionAllowed() returns true if the text content can just split anywhere.
+        word-break: break-word behaves like that unless the line already has breaking opportunity.
+        See https://www.w3.org/TR/css-text-3/#word-break-property
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::isTextContentWrappingAllowed):
+        (WebCore::Layout::isContentSplitAllowed):
+        (WebCore::Layout::isTextSplitAtArbitraryPositionAllowed):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::isContentWrappingAllowed): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+
 2019-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Stop active DOM objects in removedLastRef
