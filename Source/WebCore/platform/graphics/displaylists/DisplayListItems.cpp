@@ -322,6 +322,14 @@ static TextStream& operator<<(TextStream& ts, const SetState& state)
     return ts;
 }
 
+SetLineCap::SetLineCap(LineCap lineCap)
+    : Item(ItemType::SetLineCap)
+    , m_lineCap(lineCap)
+{
+}
+
+SetLineCap::~SetLineCap() = default;
+
 void SetLineCap::apply(GraphicsContext& context) const
 {
     context.setLineCap(m_lineCap);
@@ -332,6 +340,15 @@ static TextStream& operator<<(TextStream& ts, const SetLineCap& lineCap)
     ts.dumpProperty("line-cap", lineCap.lineCap());
     return ts;
 }
+
+SetLineDash::SetLineDash(const DashArray& dashArray, float dashOffset)
+    : Item(ItemType::SetLineDash)
+    , m_dashArray(dashArray)
+    , m_dashOffset(dashOffset)
+{
+}
+
+SetLineDash::~SetLineDash() = default;
 
 void SetLineDash::apply(GraphicsContext& context) const
 {
@@ -345,6 +362,14 @@ static TextStream& operator<<(TextStream& ts, const SetLineDash& lineDash)
     return ts;
 }
 
+SetLineJoin::SetLineJoin(LineJoin lineJoin)
+    : Item(ItemType::SetLineJoin)
+    , m_lineJoin(lineJoin)
+{
+}
+
+SetLineJoin::~SetLineJoin() = default;
+
 void SetLineJoin::apply(GraphicsContext& context) const
 {
     context.setLineJoin(m_lineJoin);
@@ -355,6 +380,14 @@ static TextStream& operator<<(TextStream& ts, const SetLineJoin& lineJoin)
     ts.dumpProperty("line-join", lineJoin.lineJoin());
     return ts;
 }
+
+SetMiterLimit::SetMiterLimit(float miterLimit)
+    : Item(ItemType::SetMiterLimit)
+    , m_miterLimit(miterLimit)
+{
+}
+
+SetMiterLimit::~SetMiterLimit() = default;
 
 void SetMiterLimit::apply(GraphicsContext& context) const
 {
@@ -367,10 +400,25 @@ static TextStream& operator<<(TextStream& ts, const SetMiterLimit& miterLimit)
     return ts;
 }
 
+ClearShadow::ClearShadow()
+    : Item(ItemType::ClearShadow)
+{
+}
+
+ClearShadow::~ClearShadow() = default;
+
 void ClearShadow::apply(GraphicsContext& context) const
 {
     context.clearShadow();
 }
+
+Clip::Clip(const FloatRect& rect)
+    : Item(ItemType::Clip)
+    , m_rect(rect)
+{
+}
+
+Clip::~Clip() = default;
 
 void Clip::apply(GraphicsContext& context) const
 {
@@ -383,6 +431,14 @@ static TextStream& operator<<(TextStream& ts, const Clip& item)
     return ts;
 }
 
+ClipOut::ClipOut(const FloatRect& rect)
+    : Item(ItemType::ClipOut)
+    , m_rect(rect)
+{
+}
+
+ClipOut::~ClipOut() = default;
+
 void ClipOut::apply(GraphicsContext& context) const
 {
     context.clipOut(m_rect);
@@ -394,6 +450,14 @@ static TextStream& operator<<(TextStream& ts, const ClipOut& item)
     return ts;
 }
 
+ClipOutToPath::ClipOutToPath(const Path& path)
+    : Item(ItemType::ClipOutToPath)
+    , m_path(path)
+{
+}
+
+ClipOutToPath::~ClipOutToPath() = default;
+
 void ClipOutToPath::apply(GraphicsContext& context) const
 {
     context.clipOut(m_path);
@@ -404,6 +468,15 @@ static TextStream& operator<<(TextStream& ts, const ClipOutToPath& item)
     ts.dumpProperty("path", item.path());
     return ts;
 }
+
+ClipPath::ClipPath(const Path& path, WindRule windRule)
+    : Item(ItemType::ClipPath)
+    , m_path(path)
+    , m_windRule(windRule)
+{
+}
+
+ClipPath::~ClipPath() = default;
 
 void ClipPath::apply(GraphicsContext& context) const
 {
@@ -519,6 +592,8 @@ DrawTiledImage::DrawTiledImage(Image& image, const FloatRect& destination, const
 {
 }
 
+DrawTiledImage::~DrawTiledImage() = default;
+
 void DrawTiledImage::apply(GraphicsContext& context) const
 {
     context.drawTiledImage(m_image.get(), m_destination, m_source, m_tileSize, m_spacing, m_imagePaintingOptions);
@@ -546,6 +621,8 @@ DrawTiledScaledImage::DrawTiledScaledImage(Image& image, const FloatRect& destin
     , m_imagePaintingOptions(imagePaintingOptions)
 {
 }
+
+DrawTiledScaledImage::~DrawTiledScaledImage() = default;
 
 void DrawTiledScaledImage::apply(GraphicsContext& context) const
 {
@@ -609,6 +686,8 @@ DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRec
 {
 }
 
+DrawPattern::~DrawPattern() = default;
+
 void DrawPattern::apply(GraphicsContext& context) const
 {
     context.drawPattern(m_image.get(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
@@ -648,6 +727,15 @@ static TextStream& operator<<(TextStream& ts, const DrawRect& item)
     return ts;
 }
 
+DrawLine::DrawLine(const FloatPoint& point1, const FloatPoint& point2)
+    : DrawingItem(ItemType::DrawLine)
+    , m_point1(point1)
+    , m_point2(point2)
+{
+}
+
+DrawLine::~DrawLine() = default;
+
 Optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
 {
     FloatRect bounds;
@@ -667,6 +755,19 @@ static TextStream& operator<<(TextStream& ts, const DrawLine& item)
     ts.dumpProperty("point-2", item.point2());
     return ts;
 }
+
+DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
+    : DrawingItem(ItemType::DrawLinesForText)
+    , m_blockLocation(blockLocation)
+    , m_localAnchor(localAnchor)
+    , m_widths(widths)
+    , m_thickness(thickness)
+    , m_printing(printing)
+    , m_doubleLines(doubleLines)
+{
+}
+
+DrawLinesForText::~DrawLinesForText() = default;
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
@@ -699,6 +800,15 @@ static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
     return ts;
 }
 
+DrawDotsForDocumentMarker::DrawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+    : DrawingItem(ItemType::DrawDotsForDocumentMarker)
+    , m_rect(rect)
+    , m_style(style)
+{
+}
+
+DrawDotsForDocumentMarker::~DrawDotsForDocumentMarker() = default;
+
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
     context.drawDotsForDocumentMarker(m_rect, m_style);
@@ -715,6 +825,14 @@ static TextStream& operator<<(TextStream& ts, const DrawDotsForDocumentMarker& i
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+DrawEllipse::DrawEllipse(const FloatRect& rect)
+    : DrawingItem(ItemType::DrawEllipse)
+    , m_rect(rect)
+{
+}
+
+DrawEllipse::~DrawEllipse() = default;
 
 void DrawEllipse::apply(GraphicsContext& context) const
 {
@@ -751,6 +869,17 @@ static TextStream& operator<<(TextStream& ts, const DrawPath& item)
     return ts;
 }
 
+DrawFocusRingPath::DrawFocusRingPath(const Path& path, float width, float offset, const Color& color)
+    : DrawingItem(ItemType::DrawFocusRingPath)
+    , m_path(path)
+    , m_width(width)
+    , m_offset(offset)
+    , m_color(color)
+{
+}
+
+DrawFocusRingPath::~DrawFocusRingPath() = default;
+
 void DrawFocusRingPath::apply(GraphicsContext& context) const
 {
     context.drawFocusRing(m_path, m_width, m_offset, m_color);
@@ -772,6 +901,17 @@ static TextStream& operator<<(TextStream& ts, const DrawFocusRingPath& item)
     ts.dumpProperty("color", item.color());
     return ts;
 }
+
+DrawFocusRingRects::DrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+    : DrawingItem(ItemType::DrawFocusRingRects)
+    , m_rects(rects)
+    , m_width(width)
+    , m_offset(offset)
+    , m_color(color)
+{
+}
+
+DrawFocusRingRects::~DrawFocusRingRects() = default;
 
 void DrawFocusRingRects::apply(GraphicsContext& context) const
 {
@@ -902,6 +1042,16 @@ static TextStream& operator<<(TextStream& ts, const FillRoundedRect& item)
     return ts;
 }
 
+FillRectWithRoundedHole::FillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
+    : DrawingItem(ItemType::FillRectWithRoundedHole)
+    , m_rect(rect)
+    , m_roundedHoleRect(roundedHoleRect)
+    , m_color(color)
+{
+}
+
+FillRectWithRoundedHole::~FillRectWithRoundedHole() = default;
+
 void FillRectWithRoundedHole::apply(GraphicsContext& context) const
 {
     context.fillRectWithRoundedHole(m_rect, m_roundedHoleRect, m_color);
@@ -936,6 +1086,14 @@ static TextStream& operator<<(TextStream& ts, const FillPath& item)
     return ts;
 }
 
+FillEllipse::FillEllipse(const FloatRect& rect)
+    : DrawingItem(ItemType::FillEllipse)
+    , m_rect(rect)
+{
+}
+
+FillEllipse::~FillEllipse() = default;
+
 void FillEllipse::apply(GraphicsContext& context) const
 {
     context.fillEllipse(m_rect);
@@ -947,6 +1105,15 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     ts.dumpProperty("rect", item.rect());
     return ts;
 }
+
+StrokeRect::StrokeRect(const FloatRect& rect, float lineWidth)
+    : DrawingItem(ItemType::StrokeRect)
+    , m_rect(rect)
+    , m_lineWidth(lineWidth)
+{
+}
+
+StrokeRect::~StrokeRect() = default;
 
 Optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
 {
@@ -990,6 +1157,14 @@ static TextStream& operator<<(TextStream& ts, const StrokePath& item)
     return ts;
 }
 
+StrokeEllipse::StrokeEllipse(const FloatRect& rect)
+    : DrawingItem(ItemType::StrokeEllipse)
+    , m_rect(rect)
+{
+}
+
+StrokeEllipse::~StrokeEllipse() = default;
+
 Optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
 {
     float strokeThickness = context.strokeThickness();
@@ -1011,6 +1186,14 @@ static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
     return ts;
 }
 
+StrokePath::StrokePath(const Path& path)
+    : DrawingItem(ItemType::StrokePath)
+    , m_path(path)
+{
+}
+
+StrokePath::~StrokePath() = default;
+
 ClearRect::ClearRect(const FloatRect& rect)
     : DrawingItem(ItemType::ClearRect)
     , m_rect(rect)
@@ -1031,6 +1214,14 @@ static TextStream& operator<<(TextStream& ts, const ClearRect& item)
     return ts;
 }
 
+BeginTransparencyLayer::BeginTransparencyLayer(float opacity)
+    : DrawingItem(ItemType::BeginTransparencyLayer)
+    , m_opacity(opacity)
+{
+}
+
+BeginTransparencyLayer::~BeginTransparencyLayer() = default;
+
 void BeginTransparencyLayer::apply(GraphicsContext& context) const
 {
     context.beginTransparencyLayer(m_opacity);
@@ -1043,22 +1234,51 @@ static TextStream& operator<<(TextStream& ts, const BeginTransparencyLayer& item
     return ts;
 }
 
+EndTransparencyLayer::EndTransparencyLayer()
+    : DrawingItem(ItemType::EndTransparencyLayer)
+{
+}
+
+EndTransparencyLayer::~EndTransparencyLayer() = default;
+
 void EndTransparencyLayer::apply(GraphicsContext& context) const
 {
     context.endTransparencyLayer();
 }
 
 #if USE(CG)
+ApplyStrokePattern::ApplyStrokePattern()
+    : Item(ItemType::ApplyStrokePattern)
+{
+}
+
+ApplyStrokePattern::~ApplyStrokePattern() = default;
+
 void ApplyStrokePattern::apply(GraphicsContext& context) const
 {
     context.applyStrokePattern();
 }
+
+ApplyFillPattern::ApplyFillPattern()
+    : Item(ItemType::ApplyFillPattern)
+{
+}
+
+ApplyFillPattern::~ApplyFillPattern() = default;
 
 void ApplyFillPattern::apply(GraphicsContext& context) const
 {
     context.applyFillPattern();
 }
 #endif
+
+ApplyDeviceScaleFactor::ApplyDeviceScaleFactor(float scaleFactor)
+    : Item(ItemType::ApplyDeviceScaleFactor)
+    , m_scaleFactor(scaleFactor)
+{
+}
+
+ApplyDeviceScaleFactor::~ApplyDeviceScaleFactor() = default;
 
 void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 {

@@ -1,3 +1,141 @@
+2019-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add encoding and decoding support for more DisplayListItems
+        https://bugs.webkit.org/show_bug.cgi?id=205001
+
+        Reviewed by Tim Horton.
+
+        Adds boilerplate code to encode and decode the following display list items: SetLineCap, SetLineDash,
+        SetLineJoin, SetMiterLimit, ClearShadow, Clip, ClipOut, ClipOutToPath, ClipPath, BeginTransparencyLayer,
+        EndTransparencyLayer, DrawLine, DrawLinesForText, DrawDotsForDocumentMarker, DrawEllipse, DrawFocusRingPath,
+        DrawFocusRingRects, FillRectWithRoundedHole, FillEllipse, StrokeRect, StrokePath, StrokeEllipse,
+        ApplyStrokePattern, ApplyFillPattern, ApplyDeviceScaleFactor, DrawTiledImage, DrawTiledScaledImage, and
+        DrawPattern.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::DocumentMarkerLineStyle::encode const):
+        (WebCore::DocumentMarkerLineStyle::decode):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/WindRule.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+
+        Additionally make a few other WebCore classes and enums encodable and decodable.
+
+        (WebCore::DisplayList::SetLineCap::SetLineCap):
+        (WebCore::DisplayList::SetLineDash::SetLineDash):
+        (WebCore::DisplayList::SetLineJoin::SetLineJoin):
+        (WebCore::DisplayList::SetMiterLimit::SetMiterLimit):
+        (WebCore::DisplayList::ClearShadow::ClearShadow):
+        (WebCore::DisplayList::Clip::Clip):
+        (WebCore::DisplayList::ClipOut::ClipOut):
+        (WebCore::DisplayList::ClipOutToPath::ClipOutToPath):
+        (WebCore::DisplayList::ClipPath::ClipPath):
+        (WebCore::DisplayList::DrawLine::DrawLine):
+        (WebCore::DisplayList::DrawLinesForText::DrawLinesForText):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::DrawDotsForDocumentMarker):
+        (WebCore::DisplayList::DrawEllipse::DrawEllipse):
+        (WebCore::DisplayList::DrawFocusRingPath::DrawFocusRingPath):
+        (WebCore::DisplayList::DrawFocusRingRects::DrawFocusRingRects):
+        (WebCore::DisplayList::FillRectWithRoundedHole::FillRectWithRoundedHole):
+        (WebCore::DisplayList::FillEllipse::FillEllipse):
+        (WebCore::DisplayList::StrokeRect::StrokeRect):
+        (WebCore::DisplayList::StrokeEllipse::StrokeEllipse):
+        (WebCore::DisplayList::StrokePath::StrokePath):
+
+        Also remove m_blockLocation from StrokePath (this member variable was unused, and seems to have been copied over
+        from other drawing items).
+
+        (WebCore::DisplayList::BeginTransparencyLayer::BeginTransparencyLayer):
+        (WebCore::DisplayList::EndTransparencyLayer::EndTransparencyLayer):
+        (WebCore::DisplayList::ApplyStrokePattern::ApplyStrokePattern):
+        (WebCore::DisplayList::ApplyFillPattern::ApplyFillPattern):
+        (WebCore::DisplayList::ApplyDeviceScaleFactor::ApplyDeviceScaleFactor):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetLineCap::encode const):
+        (WebCore::DisplayList::SetLineCap::decode):
+        (WebCore::DisplayList::SetLineDash::encode const):
+        (WebCore::DisplayList::SetLineDash::decode):
+        (WebCore::DisplayList::SetLineJoin::encode const):
+        (WebCore::DisplayList::SetLineJoin::decode):
+        (WebCore::DisplayList::SetMiterLimit::encode const):
+        (WebCore::DisplayList::SetMiterLimit::decode):
+        (WebCore::DisplayList::ClearShadow::encode const):
+        (WebCore::DisplayList::ClearShadow::decode):
+        (WebCore::DisplayList::Clip::encode const):
+        (WebCore::DisplayList::Clip::decode):
+        (WebCore::DisplayList::ClipOut::encode const):
+        (WebCore::DisplayList::ClipOut::decode):
+        (WebCore::DisplayList::ClipOutToPath::encode const):
+        (WebCore::DisplayList::ClipOutToPath::decode):
+        (WebCore::DisplayList::ClipPath::encode const):
+        (WebCore::DisplayList::ClipPath::decode):
+        (WebCore::DisplayList::DrawTiledImage::encode const):
+        (WebCore::DisplayList::DrawTiledImage::decode):
+        (WebCore::DisplayList::DrawTiledScaledImage::encode const):
+        (WebCore::DisplayList::DrawTiledScaledImage::decode):
+        (WebCore::DisplayList::DrawPattern::DrawPattern):
+        (WebCore::DisplayList::DrawPattern::encode const):
+        (WebCore::DisplayList::DrawPattern::decode):
+        (WebCore::DisplayList::BeginTransparencyLayer::encode const):
+        (WebCore::DisplayList::BeginTransparencyLayer::decode):
+        (WebCore::DisplayList::EndTransparencyLayer::encode const):
+        (WebCore::DisplayList::EndTransparencyLayer::decode):
+        (WebCore::DisplayList::DrawLine::encode const):
+        (WebCore::DisplayList::DrawLine::decode):
+        (WebCore::DisplayList::DrawLinesForText::encode const):
+        (WebCore::DisplayList::DrawLinesForText::decode):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::encode const):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::decode):
+        (WebCore::DisplayList::DrawEllipse::encode const):
+        (WebCore::DisplayList::DrawEllipse::decode):
+        (WebCore::DisplayList::DrawFocusRingPath::encode const):
+        (WebCore::DisplayList::DrawFocusRingPath::decode):
+        (WebCore::DisplayList::DrawFocusRingRects::encode const):
+        (WebCore::DisplayList::DrawFocusRingRects::decode):
+        (WebCore::DisplayList::FillRectWithRoundedHole::encode const):
+        (WebCore::DisplayList::FillRectWithRoundedHole::decode):
+        (WebCore::DisplayList::FillEllipse::encode const):
+        (WebCore::DisplayList::FillEllipse::decode):
+        (WebCore::DisplayList::StrokeRect::encode const):
+        (WebCore::DisplayList::StrokeRect::decode):
+        (WebCore::DisplayList::StrokePath::encode const):
+        (WebCore::DisplayList::StrokePath::decode):
+        (WebCore::DisplayList::StrokeEllipse::encode const):
+        (WebCore::DisplayList::StrokeEllipse::decode):
+        (WebCore::DisplayList::ApplyStrokePattern::encode const):
+        (WebCore::DisplayList::ApplyStrokePattern::decode):
+        (WebCore::DisplayList::ApplyFillPattern::encode const):
+        (WebCore::DisplayList::ApplyFillPattern::decode):
+        (WebCore::DisplayList::ApplyDeviceScaleFactor::encode const):
+        (WebCore::DisplayList::ApplyDeviceScaleFactor::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        (WebCore::DisplayList::SetLineCap::SetLineCap): Deleted.
+        (WebCore::DisplayList::SetLineDash::SetLineDash): Deleted.
+        (WebCore::DisplayList::SetLineJoin::SetLineJoin): Deleted.
+        (WebCore::DisplayList::SetMiterLimit::SetMiterLimit): Deleted.
+        (WebCore::DisplayList::ClearShadow::ClearShadow): Deleted.
+        (WebCore::DisplayList::Clip::Clip): Deleted.
+        (WebCore::DisplayList::ClipOut::ClipOut): Deleted.
+        (WebCore::DisplayList::ClipOutToPath::ClipOutToPath): Deleted.
+        (WebCore::DisplayList::ClipPath::ClipPath): Deleted.
+        (WebCore::DisplayList::BeginTransparencyLayer::BeginTransparencyLayer): Deleted.
+        (WebCore::DisplayList::EndTransparencyLayer::EndTransparencyLayer): Deleted.
+        (WebCore::DisplayList::DrawLine::DrawLine): Deleted.
+        (WebCore::DisplayList::DrawLinesForText::DrawLinesForText): Deleted.
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::DrawDotsForDocumentMarker): Deleted.
+        (WebCore::DisplayList::DrawEllipse::DrawEllipse): Deleted.
+        (WebCore::DisplayList::DrawFocusRingPath::DrawFocusRingPath): Deleted.
+        (WebCore::DisplayList::DrawFocusRingRects::DrawFocusRingRects): Deleted.
+        (WebCore::DisplayList::FillRectWithRoundedHole::FillRectWithRoundedHole): Deleted.
+        (WebCore::DisplayList::FillEllipse::FillEllipse): Deleted.
+        (WebCore::DisplayList::StrokeRect::StrokeRect): Deleted.
+        (WebCore::DisplayList::StrokePath::StrokePath): Deleted.
+        (WebCore::DisplayList::StrokeEllipse::StrokeEllipse): Deleted.
+        (WebCore::DisplayList::ApplyStrokePattern::ApplyStrokePattern): Deleted.
+        (WebCore::DisplayList::ApplyFillPattern::ApplyFillPattern): Deleted.
+        (WebCore::DisplayList::ApplyDeviceScaleFactor::ApplyDeviceScaleFactor): Deleted.
+
 2019-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         There should be one MicrotaskQueue per EventLoop

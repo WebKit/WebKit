@@ -193,6 +193,24 @@ template<> struct EnumTraits<WebCore::BlendMode> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::LineCap> {
+    using values = EnumValues<
+    WebCore::LineCap,
+    WebCore::LineCap::ButtCap,
+    WebCore::LineCap::RoundCap,
+    WebCore::LineCap::SquareCap
+    >;
+};
+
+template<> struct EnumTraits<WebCore::LineJoin> {
+    using values = EnumValues<
+    WebCore::LineJoin,
+    WebCore::LineJoin::MiterJoin,
+    WebCore::LineJoin::RoundJoin,
+    WebCore::LineJoin::BevelJoin
+    >;
+};
+
 template<> struct EnumTraits<WebCore::InterpolationQuality> {
     using values = EnumValues<
     WebCore::InterpolationQuality,

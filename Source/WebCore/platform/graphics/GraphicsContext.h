@@ -124,7 +124,33 @@ struct DocumentMarkerLineStyle {
         DictationAlternatives
     } mode;
     bool shouldUseDarkAppearance { false };
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<DocumentMarkerLineStyle> decode(Decoder&);
 };
+
+template<class Encoder>
+void DocumentMarkerLineStyle::encode(Encoder& encoder) const
+{
+    encoder << mode;
+    encoder << shouldUseDarkAppearance;
+}
+
+template<class Decoder>
+Optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decoder)
+{
+    Optional<Mode> mode;
+    decoder >> mode;
+    if (!mode)
+        return WTF::nullopt;
+
+    Optional<bool> shouldUseDarkAppearance;
+    decoder >> shouldUseDarkAppearance;
+    if (!shouldUseDarkAppearance)
+        return WTF::nullopt;
+
+    return {{ *mode, *shouldUseDarkAppearance }};
+}
 
 namespace DisplayList {
 class Recorder;
@@ -723,3 +749,18 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DocumentMarkerLineStyle::Mode> {
+    using values = EnumValues<
+    WebCore::DocumentMarkerLineStyle::Mode,
+    WebCore::DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives,
+    WebCore::DocumentMarkerLineStyle::Mode::Spelling,
+    WebCore::DocumentMarkerLineStyle::Mode::Grammar,
+    WebCore::DocumentMarkerLineStyle::Mode::AutocorrectionReplacement,
+    WebCore::DocumentMarkerLineStyle::Mode::DictationAlternatives
+    >;
+};
+
+} // namespace WTF
