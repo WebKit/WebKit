@@ -248,7 +248,7 @@ static const double kGravity = 9.80665;
 
         CMAttitude* attitude = newMotion.attitude;
 
-        Vector<WeakPtr<MotionManagerClient>> orientationClients;
+        Vector<WeakPtr<WebCore::MotionManagerClient>> orientationClients;
         orientationClients.reserveInitialCapacity(m_deviceOrientationClients.computeSize());
         for (auto& client : m_deviceOrientationClients)
             orientationClients.uncheckedAppend(makeWeakPtr(&client));

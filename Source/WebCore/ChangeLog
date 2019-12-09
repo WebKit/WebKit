@@ -1,3 +1,10 @@
+2019-12-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, speculative tvOS build fix after r253231.
+
+        * platform/ios/WebCoreMotionManager.mm:
+        (-[WebCoreMotionManager sendMotionData:withHeading:]):
+
 2019-12-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] fix fast/text/simple-lines-multiple-renderers-break.html
