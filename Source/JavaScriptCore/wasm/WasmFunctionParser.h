@@ -729,8 +729,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlEntry& controlEntry = m_controlStack.last();
 
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
         WASM_FAIL_IF_HELPER_FAILS(unify(controlEntry.controlData));
-
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, m_expressionStack));
         m_expressionStack = WTFMove(controlEntry.elseBlockStack);
         return { };
@@ -884,6 +884,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
         ControlEntry& data = m_controlStack.last();
         m_unreachableBlocks = 0;
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
         m_expressionStack = WTFMove(data.elseBlockStack);
         return { };
