@@ -591,8 +591,9 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
     m_stackSize = initialStackSize;
 
     auto commitResults = [this, temporaryResults = WTFMove(temporaryResults)](ResultList& results) {
+        checkConsistency();
         for (auto temporaryResult : temporaryResults) {
-            ExpressionType result = push();
+            ExpressionType result = push(NoConsistencyCheck);
             WasmMov::emit(this, result, temporaryResult);
             results.append(result);
         }
@@ -647,6 +648,8 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
 
 auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
 {
+    checkConsistency();
+
     m_codeBlock->m_numArguments = signature.argumentCount();
     m_normalizedArguments.resize(m_codeBlock->m_numArguments);
 
@@ -661,7 +664,7 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
 
     Vector<VirtualRegister> registerArguments(gprCount + fprCount);
     for (uint32_t i = 0; i < gprCount + fprCount; i++)
-        registerArguments[i] = push();
+        registerArguments[i] = push(NoConsistencyCheck);
 
     const auto addArgument = [&](uint32_t index, uint32_t& count, uint32_t max) {
         if (count < max)
@@ -695,12 +698,14 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
 
 auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 {
+    checkConsistency();
+
     m_codeBlock->m_numVars += count;
     switch (type) {
     case Type::Anyref:
     case Type::Funcref:
         while (count--)
-            m_unitializedLocals.append(push());
+            m_unitializedLocals.append(push(NoConsistencyCheck));
         break;
     default:
         m_stackSize += count;
