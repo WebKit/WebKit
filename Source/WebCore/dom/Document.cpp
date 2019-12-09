@@ -627,6 +627,8 @@ Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& ur
 
 Document::~Document()
 {
+    ASSERT(activeDOMObjectsAreStopped());
+
     if (m_logger)
         m_logger->removeObserver(*this);
 
@@ -756,6 +758,7 @@ void Document::removedLastRef()
 #endif
         decrementReferencingNodeCount();
     } else {
+        stopActiveDOMObjects();
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = false;
         m_deletionHasBegun = true;
@@ -766,6 +769,12 @@ void Document::removedLastRef()
 
 void Document::commonTeardown()
 {
+    stopActiveDOMObjects();
+
+#if ENABLE(FULLSCREEN_API)
+    m_fullscreenManager->emptyEventQueue();
+#endif
+
     if (svgExtensions())
         accessSVGExtensions().pauseAnimations();
 
@@ -2529,11 +2538,6 @@ void Document::prepareForDestruction()
     }
 
     InspectorInstrumentation::documentDetached(*this);
-
-    stopActiveDOMObjects();
-#if ENABLE(FULLSCREEN_API)
-    m_fullscreenManager->emptyEventQueue();
-#endif
 
     commonTeardown();
 
