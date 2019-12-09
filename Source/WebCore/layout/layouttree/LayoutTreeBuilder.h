@@ -59,8 +59,10 @@ public:
 
     Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
     const Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_renderObjectToLayoutBox.get(&renderer); }
-    
-    void addLayoutBoxForRenderer(const RenderObject& renderer, Box& layoutBox) { m_renderObjectToLayoutBox.add(&renderer, &layoutBox); }
+
+    const RenderObject* rendererForLayoutBox(const Box& box) const { return m_layoutBoxToRenderObject.get(&box); }
+
+    void addLayoutBoxForRenderer(const RenderObject&, Box&);
 
 private:
     const RenderBox& m_rootRenderer;
@@ -68,6 +70,7 @@ private:
     HashSet<std::unique_ptr<Box>> m_boxes;
 
     HashMap<const RenderObject*, Box*> m_renderObjectToLayoutBox;
+    HashMap<const Box*, const RenderObject*> m_layoutBoxToRenderObject;
 };
 
 class TreeBuilder {

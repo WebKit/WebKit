@@ -1,3 +1,30 @@
+2019-12-09  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=205008
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+
+        Hit test LFC.
+
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::LayoutTreeContent::addLayoutBoxForRenderer):
+
+        Add Layout::Box -> RenderObject map.
+
+        * layout/layouttree/LayoutTreeBuilder.h:
+        (WebCore::Layout::LayoutTreeContent::rendererForLayoutBox const):
+        (WebCore::Layout::LayoutTreeContent::addLayoutBoxForRenderer): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+
+        Call into LFC hit test function.
+
 2019-12-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/text/word-break.html

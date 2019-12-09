@@ -69,6 +69,14 @@ LayoutTreeContent::LayoutTreeContent(const RenderBox& rootRenderer, std::unique_
 
 LayoutTreeContent::~LayoutTreeContent() = default;
 
+
+void LayoutTreeContent::addLayoutBoxForRenderer(const RenderObject& renderer, Box& layoutBox)
+{
+    m_renderObjectToLayoutBox.add(&renderer, &layoutBox);
+    m_layoutBoxToRenderObject.add(&layoutBox, &renderer);
+}
+
+
 static void appendChild(Container& parent, Box& newChild)
 {
     if (!parent.hasChild()) {

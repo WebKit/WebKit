@@ -2955,8 +2955,13 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 {
     ASSERT(childrenInline());
 
-    if (auto simpleLineLayout = this->simpleLineLayout())
-        return SimpleLineLayout::hitTestFlow(*this, *simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    if (simpleLineLayout())
+        return SimpleLineLayout::hitTestFlow(*this, *simpleLineLayout(), request, result, locationInContainer, accumulatedOffset, hitTestAction);
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout())
+        return layoutFormattingContextLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+#endif
 
     return complexLineLayout() && complexLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }

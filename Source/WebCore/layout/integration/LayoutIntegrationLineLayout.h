@@ -29,10 +29,14 @@
 
 #include "LayoutPoint.h"
 #include "LineLayoutTraversal.h"
+#include "RenderObjectEnums.h"
 
 namespace WebCore {
 
 class GraphicsContext;
+class HitTestLocation;
+class HitTestRequest;
+class HitTestResult;
 class RenderBlockFlow;
 class RenderLineBreak;
 struct PaintInfo;
@@ -69,6 +73,7 @@ public:
     const Display::InlineContent* displayInlineContent() const;
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     LineLayoutTraversal::TextBoxIterator textBoxesFor(const RenderText&) const;
     LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;

@@ -30,6 +30,9 @@
 
 #include "DisplayBox.h"
 #include "EventRegion.h"
+#include "HitTestLocation.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutContext.h"
@@ -240,7 +243,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         auto& style = run.style();
         if (style.visibility() != Visibility::Visible)
-            return;
+            continue;
 
         auto rect = Layout::toLayoutRect(run.logicalRect());
         auto visualOverflowRect = computeVisualOverflow(style, rect, viewportSize);
@@ -284,6 +287,38 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             }
         }
     }
+}
+
+bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (hitTestAction != HitTestForeground)
+        return false;
+
+    if (!displayInlineContent())
+        return false;
+
+    auto& inlineContent = *displayInlineContent();
+
+    // FIXME: This should do something efficient to find the run range.
+    for (auto& run : inlineContent.runs) {
+        auto runRect = Layout::toLayoutRect(run.logicalRect());
+        runRect.moveBy(accumulatedOffset);
+
+        if (!locationInContainer.intersects(runRect))
+            continue;
+
+        auto& style = run.style();
+        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+            continue;
+
+        auto& renderer = const_cast<RenderObject&>(*m_treeContent->rendererForLayoutBox(run.layoutBox()));
+
+        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+        if (result.addNodeToListBasedTestResult(renderer.node(), request, locationInContainer, runRect) == HitTestProgress::Stop)
+            return true;
+    }
+
+    return false;
 }
 
 ShadowData* LineLayout::debugTextShadow()
