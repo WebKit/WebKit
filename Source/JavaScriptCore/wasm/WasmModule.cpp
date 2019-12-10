@@ -42,11 +42,6 @@ Module::Module(LLIntPlan& plan)
 {
 }
 
-Module::Module(BBQPlan& plan)
-    : m_moduleInformation(plan.takeModuleInformation())
-{
-}
-
 Module::~Module() { }
 
 Wasm::SignatureIndex Module::signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
@@ -54,8 +49,7 @@ Wasm::SignatureIndex Module::signatureIndexFromFunctionIndexSpace(unsigned funct
     return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
 }
 
-template<typename Plan>
-static Module::ValidationResult makeValidationResult(Plan& plan)
+static Module::ValidationResult makeValidationResult(LLIntPlan& plan)
 {
     ASSERT(!plan.hasWork());
     if (plan.failed())
@@ -63,38 +57,26 @@ static Module::ValidationResult makeValidationResult(Plan& plan)
     return Module::ValidationResult(Module::create(plan));
 }
 
-template<typename PlanT>
 static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallback&& callback)
 {
     return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (Plan& plan) {
         ASSERT(!plan.hasWork());
-        callback->run(makeValidationResult(static_cast<PlanT&>(plan)));
+        callback->run(makeValidationResult(static_cast<LLIntPlan&>(plan)));
     });
 }
 
 Module::ValidationResult Module::validateSync(Context* context, Vector<uint8_t>&& source)
 {
-    if (Options::useWasmLLInt()) {
-        Ref<LLIntPlan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, Plan::dontFinalize()));
-        Wasm::ensureWorklist().enqueue(plan.get());
-        plan->waitForCompletion();
-        return makeValidationResult(plan.get());
-    }
-
-    Ref<BBQPlan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), EntryPlan::Validation, Plan::dontFinalize()));
-    plan->parseAndValidateModule();
+    Ref<LLIntPlan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, Plan::dontFinalize()));
+    Wasm::ensureWorklist().enqueue(plan.get());
+    plan->waitForCompletion();
     return makeValidationResult(plan.get());
 }
 
 void Module::validateAsync(Context* context, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    if (Options::useWasmLLInt()) {
-        Ref<Plan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, makeValidationCallback<LLIntPlan>(WTFMove(callback))));
-        Wasm::ensureWorklist().enqueue(WTFMove(plan));
-    } else {
-        Ref<Plan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), EntryPlan::Validation, makeValidationCallback<BBQPlan>(WTFMove(callback))));
-        Wasm::ensureWorklist().enqueue(WTFMove(plan));
-    }
+    Ref<Plan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, makeValidationCallback(WTFMove(callback))));
+    Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 
 Ref<CodeBlock> Module::getOrCreateCodeBlock(Context* context, MemoryMode mode)

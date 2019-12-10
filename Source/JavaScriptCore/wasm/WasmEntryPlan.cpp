@@ -30,7 +30,6 @@
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include "WasmSignatureInlines.h"
-#include "WasmValidate.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>

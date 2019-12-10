@@ -37,7 +37,6 @@
 
 namespace JSC { namespace Wasm {
 
-class BBQPlan;
 class LLIntPlan;
 struct Context;
 struct ModuleInformation;
@@ -52,11 +51,6 @@ public:
 
     static ValidationResult validateSync(Context*, Vector<uint8_t>&& source);
     static void validateAsync(Context*, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
-
-    static Ref<Module> create(BBQPlan& plan)
-    {
-        return adoptRef(*new Module(plan));
-    }
 
     static Ref<Module> create(LLIntPlan& plan)
     {
@@ -75,7 +69,6 @@ public:
 private:
     Ref<CodeBlock> getOrCreateCodeBlock(Context*, MemoryMode);
 
-    Module(BBQPlan&);
     Module(LLIntPlan&);
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];

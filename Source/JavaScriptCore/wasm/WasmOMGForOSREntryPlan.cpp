@@ -40,7 +40,6 @@
 #include "WasmMemory.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"
-#include "WasmValidate.h"
 #include "WasmWorklist.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
@@ -79,7 +78,6 @@ void OMGForOSREntryPlan::work(CompilationEffort)
 
     SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
     const Signature& signature = SignatureInformation::get(signatureIndex);
-    ASSERT(validateFunction(function, signature, m_moduleInformation.get()));
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;

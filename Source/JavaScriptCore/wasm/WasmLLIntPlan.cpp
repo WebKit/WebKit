@@ -37,7 +37,6 @@
 #include "WasmCallee.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmSignatureInlines.h"
-#include "WasmValidate.h"
 
 namespace JSC { namespace Wasm {
 

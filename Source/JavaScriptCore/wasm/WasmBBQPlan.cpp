@@ -40,7 +40,6 @@
 #include "WasmMemory.h"
 #include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
-#include "WasmValidate.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/MonotonicTime.h>
@@ -222,7 +221,6 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     const Signature& signature = SignatureInformation::get(signatureIndex);
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
-    ASSERT(validateFunction(function, signature, m_moduleInformation.get()));
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
     unsigned osrEntryScratchBufferSize = 0;
 
@@ -317,24 +315,9 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
     }
 }
 
-bool BBQPlan::didReceiveFunctionData(unsigned functionIndex, const FunctionData& function)
+bool BBQPlan::didReceiveFunctionData(unsigned, const FunctionData&)
 {
-    dataLogLnIf(WasmBBQPlanInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
-    size_t functionLength = function.end - function.start;
-    ASSERT(functionLength == function.data.size());
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
-
-    auto validationResult = validateFunction(function, signature, m_moduleInformation.get());
-    if (!validationResult) {
-        if (WasmBBQPlanInternal::verbose) {
-            for (unsigned i = 0; i < functionLength; ++i)
-                dataLog(RawPointer(reinterpret_cast<void*>(function.data[i])), ", ");
-            dataLogLn();
-        }
-        fail(holdLock(m_lock), makeString(validationResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
-    }
-    return !!validationResult;
+    return true;
 }
 
 } } // namespace JSC::Wasm

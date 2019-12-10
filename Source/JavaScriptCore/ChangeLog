@@ -1,5 +1,37 @@
 2019-12-09  Tadeu Zagallo  <tzagallo@apple.com>
 
+        [WebAssembly] Remove WasmValidate
+        https://bugs.webkit.org/show_bug.cgi?id=205037
+
+        Reviewed by Saam Barati.
+
+        It's currently only used when JSC_useWasmLLInt is false and it creates an additional instantiation
+        of Wasm::FunctionParser, which adds about 100kb to the binary size. This does not introduce any
+        behavior changes with the default options, but it means that we'll generate bytecode when calling
+        WebAssembly.validate/new WebAssembly.Module even when the WasmLLInt is disabled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::didReceiveFunctionData):
+        * wasm/WasmEntryPlan.cpp:
+        * wasm/WasmLLIntPlan.cpp:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationResult):
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        * wasm/WasmModule.h:
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        * wasm/WasmValidate.cpp: Removed.
+        * wasm/WasmValidate.h: Removed.
+
+2019-12-09  Tadeu Zagallo  <tzagallo@apple.com>
+
         REGRESSION(r253140): WebAssembly validation should check for unmatched else before calling addElse/addElseToUnreachable
         https://bugs.webkit.org/show_bug.cgi?id=205022
         <rdar://problem/57748159>

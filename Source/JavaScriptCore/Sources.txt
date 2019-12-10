@@ -1038,7 +1038,6 @@ wasm/WasmStreamingParser.cpp
 wasm/WasmTable.cpp
 wasm/WasmThunks.cpp
 wasm/WasmTierUpCount.cpp
-wasm/WasmValidate.cpp
 wasm/WasmWorklist.cpp
 
 wasm/js/JSToWasm.cpp
