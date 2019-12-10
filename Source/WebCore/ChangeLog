@@ -1,3 +1,21 @@
+2019-12-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC][Painting] TextRuns always have 0 left offset
+        https://bugs.webkit.org/show_bug.cgi?id=205071
+        <rdar://problem/57801254>
+
+        Reviewed by Antti Koivisto.
+
+        As the comment indicates TextRun start with the left offset of 0.
+        This patch also removes some FloatRect -> LayoutRect conversions (to match SLL's painting coordinates).
+
+        * layout/displaytree/DisplayInlineContent.cpp:
+        (WebCore::Display:: const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::computeVisualOverflow):
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
 2019-12-10  Antti Koivisto  <antti@apple.com>
 
         Remove behavior that makes <br> boxes 0-height in quirks mode

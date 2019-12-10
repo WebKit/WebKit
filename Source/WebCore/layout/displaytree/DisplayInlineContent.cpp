@@ -36,7 +36,7 @@ WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect& rect
     // FIXME: Do something efficient.
     const Run* first = nullptr;
     for (auto& run : runs) {
-        auto runRect = Layout::toLayoutRect(run.logicalRect());
+        auto runRect = FloatRect { run.logicalRect() };
         if (runRect.intersects(rect)) {
             first = &run;
             break;
@@ -47,7 +47,7 @@ WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect& rect
 
     const Run* last = nullptr;
     for (auto& run : WTF::makeReversedRange(runs)) {
-        auto runRect = Layout::toLayoutRect(run.logicalRect());
+        auto runRect = FloatRect { run.logicalRect() };
         if (runRect.intersects(rect)) {
             last = &run;
             break;

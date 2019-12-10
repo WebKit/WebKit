@@ -136,7 +136,7 @@ LayoutUnit LineLayout::lastLineBaseline() const
 }
 
 // FIXME: LFC should handle overflow computations.
-static LayoutRect computeVisualOverflow(const RenderStyle& style, const LayoutRect& boxRect, IntSize& viewportSize)
+static FloatRect computeVisualOverflow(const RenderStyle& style, const FloatRect& boxRect, IntSize& viewportSize)
 {
     auto overflowRect = boxRect;
     auto strokeOverflow = std::ceil(style.computedStrokeWidth(viewportSize));
@@ -159,7 +159,7 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
 
     for (auto& lineBox : displayInlineContent()->lineBoxes) {
         auto lineRect = Layout::toLayoutRect(lineBox.logicalRect());
-        auto visualOverflowRect = computeVisualOverflow(flow.style(), lineRect, viewportSize);
+        auto visualOverflowRect = LayoutRect { computeVisualOverflow(flow.style(), lineRect, viewportSize) };
         flow.addLayoutOverflow(lineRect);
         flow.addVisualOverflow(visualOverflowRect);
     }
@@ -245,7 +245,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (style.visibility() != Visibility::Visible)
             continue;
 
-        auto rect = Layout::toLayoutRect(run.logicalRect());
+        auto rect = FloatRect { run.logicalRect() };
         auto visualOverflowRect = computeVisualOverflow(style, rect, viewportSize);
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
@@ -261,12 +261,12 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         auto behavior = textContext.expansion() ? textContext.expansion()->behavior : DefaultExpansion;
         auto horizontalExpansion = textContext.expansion() ? Layout::toLayoutUnit(textContext.expansion()->horizontalExpansion) : 0_lu;
-        auto logicalLeft = paintOffset.x() + run.logicalLeft();
 
         String textWithHyphen;
         if (textContext.needsHyphen())
             textWithHyphen = makeString(textContext.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), logicalLeft, horizontalExpansion, behavior };
+        // x position indicates the line offset from the rootbox. It's always 0 in case of integrated line layout setup.
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), 0, horizontalExpansion, behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
 
