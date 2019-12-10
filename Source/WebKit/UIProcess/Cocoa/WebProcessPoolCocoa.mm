@@ -72,6 +72,13 @@
 #import <sys/utsname.h>
 #endif
 
+#if PLATFORM(COCOA)
+#import <pal/spi/cocoa/NEFilterSourceSPI.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
+SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
+#endif
+
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
@@ -293,6 +300,16 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::Handle compilerServiceExtensionHandle;
         SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService", WTF::nullopt, compilerServiceExtensionHandle);
         parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
+    }
+#endif
+    
+#if PLATFORM(COCOA)
+    if ([getNEFilterSourceClass() filterRequired]) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.nehelper", WTF::nullopt, handle);
+        parameters.neHelperExtensionHandle = WTFMove(handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, handle);
+        parameters.neSessionManagerExtensionHandle = WTFMove(handle);
     }
 #endif
 }

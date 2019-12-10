@@ -833,6 +833,11 @@
     (allow device-camera))
 #endif // PLATFORM(MAC)
 
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.nehelper" "com.apple.nesessionmanager.content-filter")))
+
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix

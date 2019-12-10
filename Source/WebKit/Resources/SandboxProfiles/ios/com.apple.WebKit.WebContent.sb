@@ -477,7 +477,7 @@
 
 (define-once (network-extensions-support)
     ;; Network Extensions / VPN helper.
-    (allow mach-lookup
+    (allow mach-lookup (with report) (with telemetry)
         (global-name "com.apple.nehelper")
         (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
 )
@@ -966,7 +966,7 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.AGXCompilerService")))
+        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.AGXCompilerService" "com.apple.nehelper" "com.apple.nesessionmanager.content-filter")))
 
 (media-capture-support)
 

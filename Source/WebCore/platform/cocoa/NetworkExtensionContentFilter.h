@@ -53,12 +53,22 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
 
+    WEBCORE_EXPORT static void setHasConsumedSandboxExtensions(bool);
+
 private:
     static bool enabled();
 
     NetworkExtensionContentFilter() = default;
     void initialize(const URL* = nullptr);
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
+
+    enum class SandboxExtensionsState : uint8_t {
+        Consumed,
+        NotConsumed,
+        NotSet
+    };
+
+    WEBCORE_EXPORT static SandboxExtensionsState m_sandboxExtensionsState;
 
     OSObjectPtr<dispatch_queue_t> m_queue;
     RetainPtr<NSData> m_replacementData;

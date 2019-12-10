@@ -163,6 +163,11 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS)
     encoder << compilerServiceExtensionHandle;
 #endif
+    
+#if PLATFORM(COCOA)
+    encoder << neHelperExtensionHandle;
+    encoder << neSessionManagerExtensionHandle;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -401,6 +406,20 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!compilerServiceExtensionHandle)
         return false;
     parameters.compilerServiceExtensionHandle = WTFMove(*compilerServiceExtensionHandle);
+#endif
+
+#if PLATFORM(COCOA)
+    Optional<Optional<SandboxExtension::Handle>> neHelperExtensionHandle;
+    decoder >> neHelperExtensionHandle;
+    if (!neHelperExtensionHandle)
+        return false;
+    parameters.neHelperExtensionHandle = WTFMove(*neHelperExtensionHandle);
+
+    Optional<Optional<SandboxExtension::Handle>> neSessionManagerExtensionHandle;
+    decoder >> neSessionManagerExtensionHandle;
+    if (!neSessionManagerExtensionHandle)
+        return false;
+    parameters.neSessionManagerExtensionHandle = WTFMove(*neSessionManagerExtensionHandle);
 #endif
 
     return true;

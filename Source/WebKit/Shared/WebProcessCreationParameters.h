@@ -201,6 +201,11 @@ struct WebProcessCreationParameters {
 #if PLATFORM(IOS)
     Optional<SandboxExtension::Handle> compilerServiceExtensionHandle;
 #endif
+
+#if PLATFORM(COCOA)
+    Optional<SandboxExtension::Handle> neHelperExtensionHandle;
+    Optional<SandboxExtension::Handle> neSessionManagerExtensionHandle;
+#endif
 };
 
 } // namespace WebKit

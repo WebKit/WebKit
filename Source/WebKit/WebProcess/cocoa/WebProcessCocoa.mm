@@ -116,6 +116,10 @@
 #import <os/state_private.h>
 #endif
 
+#if PLATFORM(COCOA)
+#import <WebCore/NetworkExtensionContentFilter.h>
+#endif
+
 #if HAVE(CSCHECKFIXDISABLE)
 extern "C" void _CSCheckFixDisable();
 #endif
@@ -225,6 +229,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS)
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
+#endif
+    
+#if PLATFORM(COCOA)
+    if (parameters.neHelperExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.neHelperExtensionHandle);
+    if (parameters.neSessionManagerExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
+    NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
 #endif
 }
 

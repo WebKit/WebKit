@@ -51,9 +51,22 @@ static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo
 
 namespace WebCore {
 
+NetworkExtensionContentFilter::SandboxExtensionsState NetworkExtensionContentFilter::m_sandboxExtensionsState = SandboxExtensionsState::NotSet;
+
 bool NetworkExtensionContentFilter::enabled()
 {
-    bool enabled = [getNEFilterSourceClass() filterRequired];
+    bool enabled = false;
+    switch (m_sandboxExtensionsState) {
+    case SandboxExtensionsState::Consumed:
+        enabled = true;
+        break;
+    case SandboxExtensionsState::NotConsumed:
+        enabled = false;
+        break;
+    case SandboxExtensionsState::NotSet:
+        enabled = [getNEFilterSourceClass() filterRequired];
+        break;
+    }
     LOG(ContentFiltering, "NetworkExtensionContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
     return enabled;
 }
@@ -213,6 +226,11 @@ void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, 
     if (!needsMoreData())
         LOG(ContentFiltering, "NetworkExtensionContentFilter stopped buffering with status %zd and replacement data length %zu.\n", status, replacementData.length);
 #endif
+}
+
+void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasConsumedSandboxExtensions)
+{
+    m_sandboxExtensionsState = (hasConsumedSandboxExtensions ? SandboxExtensionsState::Consumed : SandboxExtensionsState::NotConsumed);
 }
 
 } // namespace WebCore

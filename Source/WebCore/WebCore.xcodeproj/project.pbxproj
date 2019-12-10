@@ -2972,7 +2972,7 @@
 		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1491DA31F859D870095F5D4 /* PaymentSession.h in Headers */ = {isa = PBXBuildFile; fileRef = A1491DA21F859D870095F5D4 /* PaymentSession.h */; };
 		A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A149786D1ABAF33800CEF7E4 /* ContentFilter.h */; };
-		A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */; };
+		A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14BB0A01F9813B800605A35 /* MockPayment.h in Headers */ = {isa = PBXBuildFile; fileRef = A14BB09E1F9813B800605A35 /* MockPayment.h */; };
 		A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75131E68F7B100A35FBC /* BlobCallback.h */; };
 		A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75181E68F83600A35FBC /* JSBlobCallback.h */; };
@@ -3001,7 +3001,7 @@
 		A1956F252331AD530057E9D2 /* WHLSLFunctionDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = C21BF6F421CD89B300227979 /* WHLSLFunctionDefinition.h */; };
 		A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */; };
 		A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */; };
-		A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */; };
+		A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */ = {isa = PBXBuildFile; fileRef = A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */; };
 		A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */; };
 		A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */; };
@@ -16747,11 +16747,11 @@
 				1199FA59208E3C7F002358CC /* DisplayBox.h */,
 				E4FB4B35239BEB10003C336A /* DisplayInlineContent.cpp */,
 				E451C6332394058E00993190 /* DisplayInlineContent.h */,
+				112FB350239C23C40087054A /* DisplayInlineRect.h */,
 				6FB47E612277425A00C7BCB0 /* DisplayLineBox.h */,
 				6F77868523491AC6004D9636 /* DisplayPainter.cpp */,
 				6F77868723491AD7004D9636 /* DisplayPainter.h */,
 				6FD9CD52227E21C800E53957 /* DisplayRect.h */,
-				112FB350239C23C40087054A /* DisplayInlineRect.h */,
 				6FCE1A1822618AB3004F0343 /* DisplayRun.h */,
 			);
 			path = displaytree;
@@ -29606,6 +29606,8 @@
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
 				1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */,
 				E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */,
+				112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */,
+				6FB47E632277425A00C7BCB0 /* DisplayLineBox.h in Headers */,
 				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
 				0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */,
 				0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */,
@@ -30265,7 +30267,6 @@
 				115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */,
 				6FE7CFA22177EEF2005B1573 /* InlineItem.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
-				6FB47E632277425A00C7BCB0 /* DisplayLineBox.h in Headers */,
 				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
 				6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */,
 				6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */,
@@ -31927,7 +31928,6 @@
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
 				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
-				112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */,
 				2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */,
 				43C092BC12D9E4EE00A989C3 /* RenderSVGForeignObject.h in Headers */,
 				436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */,
