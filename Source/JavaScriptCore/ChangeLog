@@ -1,3 +1,53 @@
+2019-12-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Reduce JSC's binary size
+        https://bugs.webkit.org/show_bug.cgi?id=204549
+
+        Reviewed by Saam Barati.
+
+        The Wasm interpreter landed in r251886 and significantly increased JSC's binary size. To try and
+        offset that, here and some easy fixes that get us ~200kb back:
+        - We were generating 2 instances of dumpBytecode, at 30kb each. I changed the generator to emit a cpp
+          file instead, avoiding the duplication.
+        - We had 3 instances of computeUsesForBytecodeIndex at 11kb each. I kept the work that depended on the
+         template type in the template function and moved the massive switch into computeUsesForBytecodeIndexImpl.
+         I also did the same for computeDefsForBytecodeIndex.
+        - We had 8 instances of emit_compareAndJump(Slow) at 8kb (7kb for Slow) each. I kept the code
+          that extracts the data from the bytecode in the template, but moved the bulk of the function
+          into emit_compareAndJump(Slow)Impl.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumperBase::printLocationAndOp):
+        (JSC::BytecodeDumperBase::dumpValue):
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumperBase::~BytecodeDumperBase):
+        (JSC::BytecodeDumperBase::dumpValue):
+        (JSC::BytecodeDumperBase::BytecodeDumperBase):
+        (JSC::BytecodeDumper::BytecodeDumper):
+        * bytecode/BytecodeUseDef.cpp: Copied from Source/JavaScriptCore/bytecode/BytecodeUseDef.h.
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        (JSC::computeDefsForBytecodeIndex):
+        * generator/DSL.rb:
+        * generator/Opcode.rb:
+        * generator/Options.rb:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpImpl):
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareUnsignedAndJumpImpl):
+        (JSC::JIT::emit_compareUnsigned):
+        (JSC::JIT::emit_compareUnsignedImpl):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_compareAndJumpSlowImpl):
+
 2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put JSArray in IsoSubspace

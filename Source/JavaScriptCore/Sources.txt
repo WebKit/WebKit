@@ -201,6 +201,7 @@ bytecode/BytecodeIndex.cpp
 bytecode/BytecodeIntrinsicRegistry.cpp
 bytecode/BytecodeLivenessAnalysis.cpp
 bytecode/BytecodeRewriter.cpp
+bytecode/BytecodeUseDef.cpp
 bytecode/CallEdge.cpp
 bytecode/CallLinkInfo.cpp
 bytecode/CallLinkStatus.cpp
@@ -283,6 +284,9 @@ bytecode/ValueRecovery.cpp
 bytecode/VariableWriteFireDetail.cpp
 bytecode/VirtualRegister.cpp
 bytecode/Watchpoint.cpp
+
+// Derived Sources
+BytecodeDumperGenerated.cpp
 
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/NodesCodegen.cpp

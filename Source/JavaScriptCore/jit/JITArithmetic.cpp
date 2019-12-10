@@ -171,15 +171,20 @@ void JIT::emit_op_unsigned(const Instruction* currentInstruction)
 template<typename Op>
 void JIT::emit_compareAndJump(const Instruction* instruction, RelationalCondition condition)
 {
+    auto bytecode = instruction->as<Op>();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
+    emit_compareAndJumpImpl(op1, op2, target, condition);
+}
+
+void JIT::emit_compareAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition condition)
+{
     // We generate inline code for the following cases in the fast path:
     // - int immediate to constant int immediate
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
-    auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.m_lhs.offset();
-    int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     bool disallowAllocation = false;
     if (isOperandConstantChar(op1)) {
         emitGetVirtualRegister(op2, regT0);
@@ -228,6 +233,11 @@ void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, Relational
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
+    emit_compareUnsignedAndJumpImpl(op1, op2, target, condition);
+}
+
+void JIT::emit_compareUnsignedAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition condition)
+{
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
@@ -249,6 +259,11 @@ void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalConditi
     int dst = bytecode.m_dst.offset();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
+    emit_compareUnsignedImpl(dst, op1, op2, condition);
+}
+
+void JIT::emit_compareUnsignedImpl(int dst, int op1, int op2, RelationalCondition condition)
+{
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
@@ -272,6 +287,11 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
+    emit_compareAndJumpSlowImpl(op1, op2, target, instruction->size(), condition, operation, invert, iter);
+}
+
+void JIT::emit_compareAndJumpSlowImpl(int op1, int op2, unsigned target, size_t instructionSize, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+{
 
     // We generate inline code for the following cases in the slow path:
     // - floating-point number to constant int immediate
@@ -302,7 +322,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
             emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-            emitJumpSlowToHot(jump(), instruction->size());
+            emitJumpSlowToHot(jump(), instructionSize);
 
             fail1.link(this);
         }
@@ -328,7 +348,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
             emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-            emitJumpSlowToHot(jump(), instruction->size());
+            emitJumpSlowToHot(jump(), instructionSize);
 
             fail1.link(this);
         }
@@ -352,7 +372,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
         emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-        emitJumpSlowToHot(jump(), instruction->size());
+        emitJumpSlowToHot(jump(), instructionSize);
 
         fail1.link(this);
         fail2.link(this);

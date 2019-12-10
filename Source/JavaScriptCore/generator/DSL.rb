@@ -108,6 +108,7 @@ module DSL
 
         write_bytecodes(bytecode_list, options[:bytecodes_filename])
         write_bytecode_structs(bytecode_list, options[:bytecode_structs_filename])
+        write_bytecode_dumper(bytecode_list, options[:bytecode_dumper_filename])
         write_bytecodes_init(options[:init_asm_filename], bytecode_list)
         write_indices(bytecode_list, options[:bytecode_indices_filename])
         write_llint_generator(options[:wasm_llint_generator_filename], bytecode_list, @wasm_json)
@@ -127,8 +128,6 @@ module DSL
 
     def self.write_bytecode_structs(bytecode_list, bytecode_structs_filename)
         GeneratedFile::create(bytecode_structs_filename, bytecode_list) do |template|
-            opcodes = opcodes_for(:emit_in_structs_file)
-
             template.prefix = <<-EOF
 #pragma once
 
@@ -144,12 +143,43 @@ module DSL
 #include "ToThisStatus.h"
 
 namespace JSC {
+
+void dumpBytecode(BytecodeDumperBase* dumper, InstructionStream::Offset, const Instruction*);
+
+#if ENABLE(WEBASSEMBLY)
+void dumpWasm(BytecodeDumperBase* dumper, InstructionStream::Offset, const Instruction*);
+#endif // ENABLE(WEBASSEMBLY)
+
 EOF
 
             template.body = <<-EOF
-#{opcodes.map(&:struct).join("\n")}
+#{opcodes_filter { |s| s.config[:emit_in_structs_file] && !s.is_wasm? }.map(&:struct).join("\n")}
+
+#if ENABLE(WEBASSEMBLY)
+#{opcodes_filter { |s| s.config[:emit_in_structs_file] && s.is_wasm? }.map(&:struct).join("\n")}
+#endif // ENABLE(WEBASSEMBLY)
+EOF
+            template.suffix = "} // namespace JSC"
+        end
+    end
+
+    def self.write_bytecode_dumper(bytecode_list, bytecode_dumper_filename)
+        GeneratedFile::create(bytecode_dumper_filename, bytecode_list) do |template|
+            template.prefix = <<-EOF
+#include "config.h"
+#include "BytecodeDumper.h"
+
+#include "BytecodeStructs.h"
+
+namespace JSC {
+EOF
+
+            template.body = <<-EOF
 #{Opcode.dump_bytecode(:Bytecode, :JSOpcodeTraits, opcodes_filter { |s| s.config[:emit_in_structs_file] && !s.is_wasm? })}
+
+#if ENABLE(WEBASSEMBLY)
 #{Opcode.dump_bytecode(:Wasm, :WasmOpcodeTraits, opcodes_filter { |s| s.is_wasm? })}
+#endif // ENABLE(WEBASSEMBLY)
 EOF
             template.suffix = "} // namespace JSC"
         end

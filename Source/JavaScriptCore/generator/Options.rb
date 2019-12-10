@@ -56,6 +56,10 @@ $config = {
         long: "--init_wasm_llint FILE",
         desc: "generate Wasm bytecodes init FILE",
     },
+    bytecode_dumper_filename: {
+        long: "--bytecode_dumper FILE",
+        desc: "generate bytecode dumper FILE",
+    },
 };
 
 module Options

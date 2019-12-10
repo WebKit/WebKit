@@ -469,12 +469,16 @@ namespace JSC {
 
         template<typename Op>
         void emit_compareAndJump(const Instruction*, RelationalCondition);
+        void emit_compareAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition);
         template<typename Op>
         void emit_compareUnsigned(const Instruction*, RelationalCondition);
+        void emit_compareUnsignedImpl(int dst, int op1, int op2, RelationalCondition);
         template<typename Op>
         void emit_compareUnsignedAndJump(const Instruction*, RelationalCondition);
+        void emit_compareUnsignedAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition);
         template<typename Op>
         void emit_compareAndJumpSlow(const Instruction*, DoubleCondition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
+        void emit_compareAndJumpSlowImpl(int op1, int op2, unsigned target, size_t instructionSize, DoubleCondition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
         
         void assertStackPointerOffset();
 

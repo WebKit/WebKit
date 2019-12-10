@@ -218,6 +218,7 @@ BYTECODE_FILES = \
     InitBytecodes.asm \
     WasmLLIntGeneratorInlines.h \
     InitWasm.asm \
+    BytecodeDumperGenerated.cpp \
 #
 BYTECODE_FILES_PATTERNS = $(subst .,%,$(BYTECODE_FILES))
 
@@ -232,6 +233,7 @@ $(BYTECODE_FILES_PATTERNS): $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaS
     --wasm_json $(JavaScriptCore)/wasm/wasm.json \
     --wasm_llint_generator_h WasmLLIntGeneratorInlines.h \
     --init_wasm_llint InitWasm.asm \
+    --bytecode_dumper BytecodeDumperGenerated.cpp \
 
 # Inspector interfaces
 

@@ -223,8 +223,7 @@ EOF
 
     def dumper
         <<-EOF
-    template<typename Block>
-    void dump(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, int __sizeShiftAmount)
+    void dump(BytecodeDumperBase* dumper, InstructionStream::Offset __location, int __sizeShiftAmount)
     {
         dumper->printLocationAndOp(__location, &"**#{@name}"[2 - __sizeShiftAmount]);
 #{print_args { |arg|
@@ -326,8 +325,7 @@ EOF
 
     def self.dump_bytecode(name, opcode_traits, opcodes)
         <<-EOF.chomp
-template<typename BytecodeDumper>
-static void dump#{name}(BytecodeDumper* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
+void dump#{name}(BytecodeDumperBase* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
 {
     switch (__instruction->opcodeID<#{opcode_traits}>()) {
 #{opcodes.map { |op|

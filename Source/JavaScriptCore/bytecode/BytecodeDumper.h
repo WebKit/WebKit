@@ -26,20 +26,21 @@
 
 #pragma once
 
+#include "BytecodeGeneratorBase.h"
 #include "CallLinkInfo.h"
 #include "ICStatusMap.h"
 #include "InstructionStream.h"
-#include "Label.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
 
 struct Instruction;
 
-template<class Block>
-class BytecodeDumper {
+class BytecodeDumperBase {
 public:
-    static void dumpBytecode(Block*, PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
+    virtual ~BytecodeDumperBase()
+    {
+    }
 
     void printLocationAndOp(InstructionStream::Offset location, const char* op);
 
@@ -54,18 +55,30 @@ public:
     void dumpValue(VirtualRegister);
 
     template<typename Traits>
-    void dumpValue(GenericBoundLabel<Traits> label)
-    {
-        InstructionStream::Offset targetOffset = label.target() + m_currentLocation;
-        m_out.print(label.target(), "(->", targetOffset, ")");
-    }
-
+    void dumpValue(GenericBoundLabel<Traits>);
 
     template<typename T>
     void dumpValue(T v) { m_out.print(v); }
 
-    BytecodeDumper(Block* block, PrintStream& out)
+protected:
+    virtual CString registerName(int) const = 0;
+
+    BytecodeDumperBase(PrintStream& out)
         : m_out(out)
+    {
+    }
+
+    PrintStream& m_out;
+    InstructionStream::Offset m_currentLocation { 0 };
+};
+
+template<class Block>
+class BytecodeDumper : public BytecodeDumperBase {
+public:
+    static void dumpBytecode(Block*, PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
+
+    BytecodeDumper(Block* block, PrintStream& out)
+        : BytecodeDumperBase(out)
         , m_block(block)
     {
     }
@@ -77,14 +90,12 @@ protected:
 
     void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
 
-    PrintStream& m_out;
+    CString registerName(int r) const override;
 
 private:
-    CString registerName(int r) const;
     virtual CString constantName(int index) const;
 
     Block* m_block;
-    InstructionStream::Offset m_currentLocation { 0 };
 };
 
 template<class Block>
