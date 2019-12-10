@@ -1,5 +1,37 @@
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][iOS] Visibility propagation view is not properly updated when navigating cross-process
+        https://bugs.webkit.org/show_bug.cgi?id=205028
+
+        Reviewed by Tim Horton.
+
+        Make sure we keep the contextIDForVisibilityPropagation on the ProvisionalPageProxy / SuspendedPageProxy
+        objects and update WebPageProxy::m_contextIDForVisibilityPropagation whenever we commit a provisional
+        page. Also update ProvisionalPageProxy to listen for the WebPageProxy::DidCreateContextForVisibilityPropagation
+        IPC so that it can update m_contextIDForVisibilityPropagation once the WebPage is created in the
+        provisional WebProcess (which creates the visibility propagation view).
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::didCreateContextForVisibilityPropagation):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::contextIDForVisibilityPropagation const):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToProvisionalPage):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::swapToWebProcess): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setupVisibilityPropagationView]):
+        (-[WKContentView _removeVisibilityPropagationView]):
+
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
         Regression(r253277) ASSERTION FAILED: !parameters.request.httpBody() in NetworkConnectionToWebProcess::preconnectTo()
         https://bugs.webkit.org/show_bug.cgi?id=205030
 

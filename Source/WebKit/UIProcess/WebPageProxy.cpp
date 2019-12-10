@@ -827,29 +827,39 @@ bool WebPageProxy::shouldUseBackForwardCache() const
     return m_preferences->usesBackForwardCache() && backForwardCache().capacity() > 0;
 }
 
-void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, std::unique_ptr<DrawingAreaProxy>&& drawingArea, RefPtr<WebFrameProxy>&& mainFrame)
+void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> provisionalPage)
 {
     ASSERT(!m_isClosed);
-    RELEASE_LOG_IF_ALLOWED(Loading, "swapToWebProcess: newWebPageID=%" PRIu64, webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(Loading, "swapToProvisionalPage: newWebPageID=%" PRIu64, provisionalPage->webPageID().toUInt64());
 
-    m_process = WTFMove(process);
-    m_webPageID = webPageID;
+    m_process = provisionalPage->process();
+    m_webPageID = provisionalPage->webPageID();
     pageClient().didChangeWebPageID();
     m_websiteDataStore = m_process->websiteDataStore();
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextIDForVisibilityPropagation = provisionalPage->contextIDForVisibilityPropagation();
+#endif
 
     if (m_logger)
         m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
 
     ASSERT(!m_drawingArea);
-    setDrawingArea(WTFMove(drawingArea));
+    setDrawingArea(provisionalPage->takeDrawingArea());
     ASSERT(!m_mainFrame);
-    m_mainFrame = WTFMove(mainFrame);
+    m_mainFrame = provisionalPage->mainFrame();
     m_hasRunningProcess = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     finishAttachingToWebProcess(ProcessLaunchReason::ProcessSwap);
+
+#if PLATFORM(COCOA)
+    auto accessibilityToken = provisionalPage->takeAccessibilityToken();
+    if (!accessibilityToken.isEmpty())
+        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
+#endif
 }
 
 void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
@@ -3124,18 +3134,11 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
         m_process->send(Messages::WebPage::Close(), m_webPageID);
 
     const auto oldWebPageID = m_webPageID;
-    swapToWebProcess(m_provisionalPage->process(), m_provisionalPage->webPageID(), m_provisionalPage->takeDrawingArea(), m_provisionalPage->mainFrame());
-
-#if PLATFORM(COCOA)
-    auto accessibilityToken = m_provisionalPage->takeAccessibilityToken();
-    if (!accessibilityToken.isEmpty())
-        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
-#endif
+    swapToProvisionalPage(std::exchange(m_provisionalPage, nullptr));
 
     didCommitLoadForFrame(frameID, navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, containsPluginDocument, forcedHasInsecureContent, userData);
 
     m_inspectorController->didCommitProvisionalPage(oldWebPageID, m_webPageID);
-    m_provisionalPage = nullptr;
 }
 
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, Optional<WebsitePoliciesData>&& websitePolicies)
@@ -7231,6 +7234,11 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         m_fullScreenManager->close();
         m_fullScreenManager = nullptr;
     }
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    if (resetStateReason != ResetStateReason::NavigationSwap)
+        m_contextIDForVisibilityPropagation = 0;
 #endif
 
     if (m_openPanelResultListener) {

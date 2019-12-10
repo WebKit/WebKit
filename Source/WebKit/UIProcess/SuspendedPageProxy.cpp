@@ -104,6 +104,9 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 #if PLATFORM(IOS_FAMILY)
     , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s).moveToUniquePtr())
 #endif
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    , m_contextIDForVisibilityPropagation(page.contextIDForVisibilityPropagation())
+#endif
 {
     allSuspendedPages().add(this);
     m_process->incrementSuspendedPageCount();
