@@ -1212,7 +1212,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
 
     if (milestones)
-        webPageProxy->process().send(Messages::WebPage::ListenForLayoutMilestones(milestones), webPageProxy->webPageID());
+        webPageProxy->send(Messages::WebPage::ListenForLayoutMilestones(milestones));
 
     webPageProxy->setLoaderClient(WTFMove(loaderClient));
 }

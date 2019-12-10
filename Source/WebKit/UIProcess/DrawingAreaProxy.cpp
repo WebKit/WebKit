@@ -79,9 +79,9 @@ IPC::Connection* DrawingAreaProxy::messageSenderConnection() const
     return process().connection();
 }
 
-bool DrawingAreaProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions)
+bool DrawingAreaProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
 {
-    return process().sendMessage(WTFMove(encoder), sendOptions);
+    return process().sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo));
 }
 
 #if PLATFORM(MAC)

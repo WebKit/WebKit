@@ -492,7 +492,7 @@ void WebInspectorProxy::platformSave(const String& filename, const String& conte
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
     GUniquePtr<char> path(g_file_get_path(file.get()));
     if (g_file_set_contents(path.get(), data, dataLength, nullptr))
-        m_inspectorPage->process().send(Messages::WebInspectorUI::DidSave(path.get()), m_inspectorPage->webPageID());
+        m_inspectorPage->send(Messages::WebInspectorUI::DidSave(path.get()));
 }
 
 void WebInspectorProxy::platformAppend(const String&, const String&)

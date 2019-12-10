@@ -1,5 +1,174 @@
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
+        Leverage the fact that WebPageProxy subclasses IPC::MessageSender to simplify IPC sending code
+        https://bugs.webkit.org/show_bug.cgi?id=205065
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::setFilesForInputFileUpload):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::load):
+        (WebKit::RemoteWebInspectorProxy::sendMessageToFrontend):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::loadURL):
+        (WebKit::WebFrameProxy::loadData):
+        (WebKit::WebFrameProxy::stopLoading const):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::sendMessageToFrontend):
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::close):
+        (WebKit::WebInspectorProxy::updateForNewPageProcess):
+        (WebKit::WebInspectorProxy::setFrontendConnection):
+        (WebKit::WebInspectorProxy::showConsole):
+        (WebKit::WebInspectorProxy::showResources):
+        (WebKit::WebInspectorProxy::showMainResourceForFrame):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::togglePageProfiling):
+        (WebKit::WebInspectorProxy::toggleElementSelection):
+        (WebKit::WebInspectorProxy::openLocalInspectorFrontend):
+        (WebKit::WebInspectorProxy::open):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setUIClient):
+        (WebKit::WebPageProxy::setIconLoadingClient):
+        (WebKit::WebPageProxy::launchProcessForReload):
+        (WebKit::WebPageProxy::launchProcessWithItem):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::tryRestoreScrollPosition):
+        (WebKit::WebPageProxy::setControlledByAutomation):
+        (WebKit::WebPageProxy::setIndicating):
+        (WebKit::WebPageProxy::setBackgroundColor):
+        (WebKit::WebPageProxy::setTopContentInset):
+        (WebKit::WebPageProxy::setUnderlayColor):
+        (WebKit::WebPageProxy::viewWillStartLiveResize):
+        (WebKit::WebPageProxy::viewWillEndLiveResize):
+        (WebKit::WebPageProxy::viewDidEnterWindow):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::layerHostingModeDidChange):
+        (WebKit::WebPageProxy::setInitialFocus):
+        (WebKit::WebPageProxy::clearSelection):
+        (WebKit::WebPageProxy::restoreSelectionInFocusedEditableElement):
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::increaseListLevel):
+        (WebKit::WebPageProxy::decreaseListLevel):
+        (WebKit::WebPageProxy::changeListType):
+        (WebKit::WebPageProxy::setBaseWritingDirection):
+        (WebKit::WebPageProxy::setNeedsFontAttributes):
+        (WebKit::WebPageProxy::scheduleFullEditorStateUpdate):
+        (WebKit::WebPageProxy::selectAll):
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPageProxy::setEditable):
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::dragEnded):
+        (WebKit::WebPageProxy::didStartDrag):
+        (WebKit::WebPageProxy::dragCancelled):
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::handleGestureEvent):
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        (WebKit::WebPageProxy::resetPotentialTapSecurityOrigin):
+        (WebKit::WebPageProxy::handleUnpreventableTouchEvent):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::cancelPointer):
+        (WebKit::WebPageProxy::touchWithIdentifierWasRemoved):
+        (WebKit::WebPageProxy::scrollBy):
+        (WebKit::WebPageProxy::centerSelectionInVisibleArea):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::setUserAgent):
+        (WebKit::WebPageProxy::resumeActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::setCustomTextEncodingName):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::setTextZoomFactor):
+        (WebKit::WebPageProxy::setPageZoomFactor):
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors):
+        (WebKit::WebPageProxy::scalePage):
+        (WebKit::WebPageProxy::scalePageInViewCoordinates):
+        (WebKit::WebPageProxy::scaleView):
+        (WebKit::WebPageProxy::windowScreenDidChange):
+        (WebKit::WebPageProxy::accessibilitySettingsDidChange):
+        (WebKit::WebPageProxy::setUseFixedLayout):
+        (WebKit::WebPageProxy::setFixedLayoutSize):
+        (WebKit::WebPageProxy::setAlwaysShowsHorizontalScroller):
+        (WebKit::WebPageProxy::setAlwaysShowsVerticalScroller):
+        (WebKit::WebPageProxy::listenForLayoutMilestones):
+        (WebKit::WebPageProxy::setSuppressScrollbarAnimations):
+        (WebKit::WebPageProxy::setEnableVerticalRubberBanding):
+        (WebKit::WebPageProxy::setEnableHorizontalRubberBanding):
+        (WebKit::WebPageProxy::setBackgroundExtendsBeyondPage):
+        (WebKit::WebPageProxy::setPaginationMode):
+        (WebKit::WebPageProxy::setPaginationBehavesLikeColumns):
+        (WebKit::WebPageProxy::setPageLength):
+        (WebKit::WebPageProxy::setGapBetweenPages):
+        (WebKit::WebPageProxy::setPaginationLineGridEnabled):
+        (WebKit::WebPageProxy::findStringMatches):
+        (WebKit::WebPageProxy::findString):
+        (WebKit::WebPageProxy::getImageForFindMatch):
+        (WebKit::WebPageProxy::selectFindMatch):
+        (WebKit::WebPageProxy::indicateFindMatch):
+        (WebKit::WebPageProxy::hideFindUI):
+        (WebKit::WebPageProxy::countStringMatches):
+        (WebKit::WebPageProxy::replaceMatches):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld):
+        (WebKit::WebPageProxy::runJavaScriptInFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getSamplingProfilerOutput):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::showShareSheet):
+        (WebKit::WebPageProxy::setMediaVolume):
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::stopMediaCapture):
+        (WebKit::WebPageProxy::stopAllMediaPlayback):
+        (WebKit::WebPageProxy::suspendAllMediaPlayback):
+        (WebKit::WebPageProxy::resumeAllMediaPlayback):
+        (WebKit::WebPageProxy::handleMediaEvent):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
         Gyroscope (DeviceMotion related) permission cannot be requested in WKWebView unless the client app sets a WKUIDelegate
         https://bugs.webkit.org/show_bug.cgi?id=203287
 

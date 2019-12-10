@@ -72,12 +72,29 @@ public:
     }
 
     template<typename T, typename C>
-    void sendWithAsyncReply(T&& message, C&& completionHandler)
+    void sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption> sendOptions = { })
     {
-        messageSenderConnection()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID());
+        sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID(), sendOptions);
     }
 
-    virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>);
+    template<typename T, typename C>
+    void sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    {
+        COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+
+        auto encoder = makeUnique<IPC::Encoder>(T::receiverName(), T::name(), destinationID);
+        uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
+        encoder->encode(listenerID);
+        encoder->encode(message.arguments());
+        sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
+            if (decoder && !decoder->isInvalid())
+                T::callReply(*decoder, WTFMove(completionHandler));
+            else
+                T::cancelReply(WTFMove(completionHandler));
+        }, listenerID }});
+    }
+
+    virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = WTF::nullopt);
 
 private:
     virtual Connection* messageSenderConnection() const = 0;
