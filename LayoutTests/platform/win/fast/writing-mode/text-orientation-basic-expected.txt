@@ -20,13 +20,13 @@ layer at (0,0) size 785x704
       RenderBlock {DIV} at (0,88) size 168x600
         RenderBlock {DIV} at (0,0) size 168x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (2,1) size 40x173
-              text run at (2,1) width 173: "Hello world"
-          RenderBR {BR} at (10,174) size 0x0
+            RenderText {#text} at (3,1) size 40x173
+              text run at (3,1) width 173: "Hello world"
+          RenderBR {BR} at (11,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (44,1) size 40x173
-              text run at (44,1) width 173: "Hello world"
-          RenderBR {BR} at (52,174) size 0x0
+            RenderText {#text} at (45,1) size 40x173
+              text run at (45,1) width 173: "Hello world"
+          RenderBR {BR} at (53,174) size 0x0
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (85,1) size 41x173
               text run at (85,1) width 173: "Hello world"
@@ -39,13 +39,13 @@ layer at (0,0) size 785x704
           text run at (126,175) width 9: " "
         RenderBlock {DIV} at (0,184) size 168x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (2,1) size 40x173
-              text run at (2,1) width 173: "Hello world"
-          RenderBR {BR} at (10,174) size 0x0
+            RenderText {#text} at (3,1) size 40x173
+              text run at (3,1) width 173: "Hello world"
+          RenderBR {BR} at (11,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (44,1) size 40x173
-              text run at (44,1) width 173: "Hello world"
-          RenderBR {BR} at (52,174) size 0x0
+            RenderText {#text} at (45,1) size 40x173
+              text run at (45,1) width 173: "Hello world"
+          RenderBR {BR} at (53,174) size 0x0
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (85,1) size 41x173
               text run at (85,1) width 173: "Hello world"

@@ -1,5 +1,62 @@
 2019-12-10  Antti Koivisto  <antti@apple.com>
 
+        Remove behavior that makes <br> boxes 0-height in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=205004
+
+        Reviewed by Zalan Bujtas.
+
+        Implementation of the <br> quirk includes zeroing its height. This has no layout or rendering effects,
+        it exists purely to maintain render tree dump output for tests.
+
+        This patch removes this behavior but maintains the render tree dump output on the RenderTreeAsText
+        level (thus avoiding giant test rebasing), and makes it easier to get the same output from all paths.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight const):
+        (WebCore::InlineBox::baselinePosition const):
+        (WebCore::InlineBox::lineHeight const):
+
+        Remove the hack from line boxes.
+
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::boundingBoxForRenderTreeDump const):
+
+        Add special bounding box code for this case.
+        This can be removed in future with a test rebase.
+
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect const):
+
+        Remove the hack from simple lines.
+
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::baselineOffset const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::atBegin const):
+        * rendering/line/LineLayoutTraversal.h:
+        (WebCore::LineLayoutTraversal::Box::baselineOffset const):
+        (WebCore::LineLayoutTraversal::Box::isHorizontal const):
+        (WebCore::LineLayoutTraversal::Box::useLineBreakBoxRenderTreeDumpQuirk const):
+        * rendering/line/LineLayoutTraversalComplexPath.h:
+        (WebCore::LineLayoutTraversal::ComplexPath::isHorizontal const):
+        (WebCore::LineLayoutTraversal::ComplexPath::baselineOffset const):
+        (WebCore::LineLayoutTraversal::ComplexPath::useLineBreakBoxRenderTreeDumpQuirk const):
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
+        (WebCore::LineLayoutTraversal::DisplayRunPath::baselineOffset const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isHorizontal const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::useLineBreakBoxRenderTreeDumpQuirk const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::lineBox const):
+        * rendering/line/LineLayoutTraversalSimplePath.h:
+        (WebCore::LineLayoutTraversal::SimplePath::baselineOffset const):
+        (WebCore::LineLayoutTraversal::SimplePath::isHorizontal const):
+        (WebCore::LineLayoutTraversal::SimplePath::useLineBreakBoxRenderTreeDumpQuirk const):
+
+2019-12-10  Antti Koivisto  <antti@apple.com>
+
         [LFC][Integration] Output hyphen strings
         https://bugs.webkit.org/show_bug.cgi?id=205058
 

@@ -44,8 +44,15 @@ public:
     FloatRect logicalRect() const { return m_inlineBox->logicalFrameRect(); }
 
     bool isLeftToRightDirection() const { return m_inlineBox->isLeftToRightDirection(); }
+    bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
     bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
+    float baselineOffset() const { return m_inlineBox->baselinePosition(AlphabeticBaseline); }
+
+    bool useLineBreakBoxRenderTreeDumpQuirk() const
+    {
+        return !m_inlineBox->behavesLikeText();
+    }
 
     bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
     StringView text() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }

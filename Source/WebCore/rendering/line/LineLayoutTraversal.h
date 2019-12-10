@@ -61,9 +61,13 @@ public:
     FloatRect rect() const;
     FloatRect logicalRect() const;
 
+    float baselineOffset() const;
+
     bool isLeftToRightDirection() const;
+    bool isHorizontal() const;
     bool dirOverride() const;
     bool isLineBreak() const;
+    bool useLineBreakBoxRenderTreeDumpQuirk() const;
 
 protected:
     friend class ElementBoxIterator;
@@ -170,10 +174,24 @@ inline FloatRect Box::logicalRect() const
     });
 }
 
+inline float Box::baselineOffset() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.baselineOffset();
+    });
+}
+
 inline bool Box::isLeftToRightDirection() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isLeftToRightDirection();
+    });
+}
+
+inline bool Box::isHorizontal() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.isHorizontal();
     });
 }
 
@@ -188,6 +206,13 @@ inline bool Box::isLineBreak() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isLineBreak();
+    });
+}
+
+inline bool Box::useLineBreakBoxRenderTreeDumpQuirk() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.useLineBreakBoxRenderTreeDumpQuirk();
     });
 }
 
@@ -244,6 +269,7 @@ inline bool TextBox::isLast() const
         return path.isLast();
     });
 }
+
 
 }
 }

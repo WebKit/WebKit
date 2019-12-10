@@ -206,7 +206,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             adjustForTableCells = false;
     } else if (o.isBR()) {
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
-        IntRect linesBox = br.linesBoundingBox();
+        IntRect linesBox = br.boundingBoxForRenderTreeDump();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
         if (!br.inlineBoxWrapper())
             adjustForTableCells = false;

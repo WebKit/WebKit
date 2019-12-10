@@ -67,14 +67,7 @@ FloatRect RunResolver::Run::rect() const
     float baseline = computeBaselinePosition();
     FloatPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent);
     FloatSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent + resolver.m_visualOverflowOffset);
-    bool moveLineBreakToBaseline = false;
-    if (run.start == run.end && m_iterator != resolver.begin() && resolver.m_inQuirksMode) {
-        auto previousRun = m_iterator;
-        --previousRun;
-        moveLineBreakToBaseline = !previousRun.simpleRun().isEndOfLine;
-    }
-    if (moveLineBreakToBaseline)
-        return FloatRect(FloatPoint(position.x(), baseline), FloatSize(size.width(), std::max<float>(0, resolver.m_ascent - resolver.m_baseline.toFloat())));
+
     return FloatRect(position, size);
 }
 
@@ -154,7 +147,6 @@ RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
     , m_ascent(flow.style().fontCascade().fontMetrics().ascent())
     , m_descent(flow.style().fontCascade().fontMetrics().descent())
     , m_visualOverflowOffset(visualOverflowForDecorations(flow.style(), nullptr).bottom)
-    , m_inQuirksMode(flow.document().inQuirksMode())
 {
 }
 

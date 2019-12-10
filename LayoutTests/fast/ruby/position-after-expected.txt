@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
               RenderRubyText {RT} at (0,-20) size 100x20 [color=#FFA500]
                 RenderText {#text} at (45,0) size 10x10
                   text run at (45,0) width 10: "y"
-                RenderBR {BR} at (55,2) size 0x0
+                RenderBR {BR} at (55,8) size 0x0
                 RenderText {#text} at (45,10) size 10x10
                   text run at (45,10) width 10: "y"
               RenderRubyBase (anonymous) at (0,0) size 100x20

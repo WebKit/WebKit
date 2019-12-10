@@ -177,6 +177,28 @@ IntRect RenderLineBreak::linesBoundingBox() const
     return enclosingIntRect(box->rect());
 }
 
+IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
+{
+    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    if (!box)
+        return { };
+
+    auto rect = box->rect();
+
+    // FIXME: Remove and rebase the tests.
+    bool inQuirksMode = !document().inNoQuirksMode();
+    if (inQuirksMode && !isWBR() && box->useLineBreakBoxRenderTreeDumpQuirk()) {
+        if (!box->isHorizontal()) {
+            auto baseline = style().isFlippedBlocksWritingMode() ? rect.x() + box->baselineOffset() : rect.maxX() - box->baselineOffset();
+            return enclosingIntRect(FloatRect(FloatPoint(baseline, rect.y()), FloatSize(0, rect.height())));
+        }
+        auto baseline = rect.y() + box->baselineOffset();
+        return enclosingIntRect(FloatRect(FloatPoint(rect.x(), baseline), FloatSize(rect.width(), 0)));
+    }
+
+    return enclosingIntRect(rect);
+}
+
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     auto box = LineLayoutTraversal::elementBoxFor(*this);

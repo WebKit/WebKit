@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 207x34
           text run at (0,1) width 207: "This is a test of kerning when"
           text run at (0,19) width 157: "using SVG web fonts. "
-        RenderBR {BR} at (156,32) size 1x0
+        RenderBR {BR} at (156,33) size 1x0
         RenderBR {BR} at (0,37) size 0x16
         RenderText {#text} at (0,55) size 230x34
           text run at (0,55) width 230: "Wow, The V/A Team's Task Was"

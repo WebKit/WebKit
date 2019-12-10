@@ -58,6 +58,7 @@ public:
         float expansion() const;
         ExpansionBehavior expansionBehavior() const;
         int baselinePosition() const;
+        int baselineOffset() const { return m_iterator.resolver().m_baseline; }
         StringView text() const;
         String textWithHyphen() const;
         const RenderObject& renderer() const;
@@ -89,6 +90,8 @@ public:
         bool operator!=(const Iterator&) const;
 
         Run operator*() const;
+
+        bool atBegin() const;
 
     private:
         const SimpleLineLayout::Run& simpleRun() const;
@@ -131,7 +134,6 @@ private:
     const float m_ascent;
     const float m_descent;
     const float m_visualOverflowOffset;
-    const bool m_inQuirksMode;
 };
 
 class LineResolver {
@@ -252,6 +254,11 @@ inline bool RunResolver::Iterator::operator!=(const Iterator& other) const
 inline RunResolver::Run RunResolver::Iterator::operator*() const
 {
     return Run(*this);
+}
+
+inline bool RunResolver::Iterator::atBegin() const
+{
+    return *this == resolver().begin();
 }
 
 inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const

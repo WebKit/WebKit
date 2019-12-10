@@ -58,9 +58,20 @@ public:
         return { position, logicalRect.size() };
     }
 
+    float baselineOffset() const { return lineBox().baselineOffset(); }
+
     bool isLeftToRightDirection() const { return true; }
+    bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
+
+    bool useLineBreakBoxRenderTreeDumpQuirk() const
+    {
+        if (!m_runIndex)
+            return false;
+        auto& previous = runs()[m_runIndex - 1];
+        return previous.lineIndex() == run().lineIndex();
+    }
 
     bool hasHyphen() const { return run().textContext()->needsHyphen(); }
     StringView text() const { return run().textContext()->content(); }
@@ -73,7 +84,7 @@ public:
         if (isLast())
             return true;
         auto& next = runs()[m_runIndex + 1];
-        return run().lineIndex() != next.lineIndex();
+        return run().lineIndex() == next.lineIndex();
     }
     bool isLast() const
     {
@@ -93,6 +104,7 @@ public:
 private:
     const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Display::Run& run() const { return runs()[m_runIndex]; }
+    const Display::LineBox& lineBox() const { return m_inlineContent->lineBoxForRun(run()); }
 
     RefPtr<const Display::InlineContent> m_inlineContent;
     size_t m_endIndex { 0 };

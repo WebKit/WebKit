@@ -132,7 +132,7 @@ float InlineBox::logicalHeight() const
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isTextOrLineBreak())
-        return behavesLikeText() ? lineStyle.fontMetrics().height() : 0;
+        return lineStyle.fontMetrics().height();
     if (is<RenderBox>(renderer()) && parent())
         return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();
 
@@ -147,15 +147,11 @@ float InlineBox::logicalHeight() const
 
 int InlineBox::baselinePosition(FontBaseline baselineType) const
 {
-    if (renderer().isLineBreak() && !behavesLikeText())
-        return 0;
     return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 LayoutUnit InlineBox::lineHeight() const
 {
-    if (renderer().isLineBreak() && !behavesLikeText())
-        return 0;
     return boxModelObject()->lineHeight(m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 

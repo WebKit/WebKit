@@ -41,9 +41,21 @@ public:
     FloatRect rect() const { return (*m_iterator).rect(); }
     FloatRect logicalRect() const { return rect(); }
 
+    float baselineOffset() const { return (*m_iterator).baselineOffset(); }
+
     bool isLeftToRightDirection() const { return true; }
+    bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return (*m_iterator).isLineBreak(); }
+
+    bool useLineBreakBoxRenderTreeDumpQuirk() const
+    {
+        if (m_iterator.atBegin())
+            return false;
+        auto previous = m_iterator;
+        --previous;
+        return !(*previous).isEndOfLine();
+    }
 
     bool hasHyphen() const { return (*m_iterator).hasHyphen(); }
     StringView text() const { return (*m_iterator).text(); }

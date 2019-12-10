@@ -1,3 +1,29 @@
+2019-12-10  Antti Koivisto  <antti@apple.com>
+
+        Remove hack that makes <br> boxes 0-height in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=205004
+
+        Reviewed by Zalan Bujtas.
+
+        A few changes due to aligning simple line path with complex, rounding, and some vertical text details.
+
+        * fast/multicol/pagination-h-horizontal-bt-expected.txt:
+        * fast/multicol/pagination-v-horizontal-bt-expected.txt:
+        * fast/ruby/position-after-expected.txt:
+        * platform/ios/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/ios/fast/writing-mode/english-bt-text-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/mac/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/mac/fast/text/svg-font-face-with-kerning-expected.txt:
+        * platform/mac/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/english-bt-text-expected.txt:
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/win/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/win/fast/writing-mode/english-bt-text-expected.txt:
+        * platform/win/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        
 2019-12-09  Patrick Griffis  <pgriffis@igalia.com>
 
         Import secure cookie tests from WPT
