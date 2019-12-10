@@ -1,5 +1,23 @@
 2019-12-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r251038): Elements: Computed: implicit shorthands are not shown when "Prefer Shorthands" is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=205035
+        <rdar://problem/57773470>
+
+        Reviewed by Brian Burg.
+
+        The computed style treats most shorthand properties as "implicit", meaning that if "Prefer
+        Shorthands" is enabled, we won't show the shorthand properties unless "Show All" is also
+        enabled. The frontend can fix this by checking to see if there are any non-implicit longhand
+        values for each shorthand value, and therefore decide not to hide the "implicit" shorthand.
+
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection.prototype.get propertiesToRender):
+        (WI.ComputedStyleSection.prototype.get propertiesToRender.hasNonImplicitLonghand): Added.
+        Drive-by: filter the list of properties to render before sorting them for performance.
+
+2019-12-10  Devin Rousso  <drousso@apple.com>
+
         REGRESSION(r252523): Web Inspector: Styles: semicolon is wrongly positioned in multiline values
         https://bugs.webkit.org/show_bug.cgi?id=205034
         <rdar://problem/57772846>

@@ -140,17 +140,36 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         else
             properties = this._style.properties;
 
-        properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
+        let propertyNameMap = new Map(properties.map((property) => [property.canonicalName, property]));
+
+        function hasNonImplicitLonghand(property) {
+            if (property.canonicalName === "all")
+                return false;
+
+            let longhandPropertyNames = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(property.canonicalName);
+            if (!longhandPropertyNames)
+                return false;
+
+            for (let longhandPropertyName of longhandPropertyNames) {
+                let property = propertyNameMap.get(longhandPropertyName);
+                if (property && !property.implicit)
+                    return true;
+            }
+
+            return false;
+        }
 
         let hideVariables = this._propertyVisibilityMode === ComputedStyleSection.PropertyVisibilityMode.HideVariables;
         let hideNonVariables = this._propertyVisibilityMode === ComputedStyleSection.PropertyVisibilityMode.HideNonVariables;
 
-        return properties.filter((property) => {
+        properties = properties.filter((property) => {
             if (this._alwaysShowPropertyNames.has(property.canonicalName))
                 return true;
 
-            if (property.implicit && !this._showsImplicitProperties)
-                return false;
+            if (property.implicit && !this._showsImplicitProperties) {
+                if (!(this._showsShorthandsInsteadOfLonghands && property.isShorthand && hasNonImplicitLonghand(property)))
+                    return false;
+            }
 
             if (this._showsShorthandsInsteadOfLonghands) {
                 if (property.shorthandPropertyNames.length)
@@ -166,6 +185,9 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
             return true;
         });
+
+        properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
+        return properties;
     }
 
     layout()
