@@ -1,3 +1,13 @@
+2019-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Rename media in the GPU process preference
+        https://bugs.webkit.org/show_bug.cgi?id=205013
+        <rdar://problem/57755319>
+
+        Reviewed by Tim Horton.
+
+        * page/Settings.yaml:
+
 2019-12-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Add support of Unicode surrogate pair for simple texts

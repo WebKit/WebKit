@@ -1,3 +1,15 @@
+2019-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Rename media in the GPU process preference
+        https://bugs.webkit.org/show_bug.cgi?id=205013
+        <rdar://problem/57755319>
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2019-12-09  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253299.

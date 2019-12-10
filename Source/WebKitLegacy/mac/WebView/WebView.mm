@@ -3211,8 +3211,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setGenericCueAPIEnabled(preferences.genericCueAPIEnabled);
 #endif
 
-#if ENABLE(VIDEO)
-    settings.setOutOfProcessMediaEnabled(preferences.outOfProcessMediaEnabled);
+#if ENABLE(GPU_PROCESS)
+    settings.setUseGPUProcessForMedia(preferences.useGPUProcessForMedia);
 #endif
 
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);

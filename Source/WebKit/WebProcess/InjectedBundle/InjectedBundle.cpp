@@ -227,12 +227,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    if (preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
-        for (auto* page : pages)
-            page->settings().setOutOfProcessMediaEnabled(enabled);
-        return;
-    }
     if (preference == "WebKitMediaDevicesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);
     if (preference == "WebKitScreenCaptureEnabled")
@@ -246,18 +240,18 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
 #if ENABLE(VIDEO_TRACK)
     if (preference == "WebKitGenericCueAPIEnabled") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::genericCueAPIEnabledKey(), enabled);
         for (auto* page : pages)
             page->settings().setGenericCueAPIEnabled(enabled);
         return;
     }
 #endif
 
-#if ENABLE(VIDEO)
-    if (preference == "WebKitOutOfProcessMediaEnabled") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+#if ENABLE(GPU_PROCESS)
+    if (preference == "WebKitUseGPUProcessForMedia" || preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaKey(), enabled);
         for (auto* page : pages)
-            page->settings().setOutOfProcessMediaEnabled(enabled);
+            page->settings().setUseGPUProcessForMedia(enabled);
         return;
     }
 #endif

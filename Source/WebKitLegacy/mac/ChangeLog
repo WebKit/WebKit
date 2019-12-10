@@ -1,3 +1,22 @@
+2019-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Rename media in the GPU process preference
+        https://bugs.webkit.org/show_bug.cgi?id=205013
+        <rdar://problem/57755319>
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences useGPUProcessForMedia]):
+        (-[WebPreferences setUseGPUProcessForMedia:]):
+        (-[WebPreferences outOfProcessMediaEnabled]): Deleted.
+        (-[WebPreferences setOutOfProcessMediaEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Re-disable TLS1.0 and TLS1.1 by default

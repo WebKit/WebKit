@@ -617,8 +617,8 @@ public:
         @NO, WebKitGenericCueAPIEnabledKey,
 #endif
 
-#if ENABLE(VIDEO)
-        @NO, WebKitOutOfProcessMediaEnabledKey,
+#if ENABLE(GPU_PROCESS)
+        @NO, WebKitUseGPUProcessForMediaKey,
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -3383,14 +3383,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
 }
 
-- (BOOL)outOfProcessMediaEnabled
+- (BOOL)useGPUProcessForMedia
 {
-    return [self _boolValueForKey:WebKitOutOfProcessMediaEnabledKey];
+    return [self _boolValueForKey:WebKitUseGPUProcessForMediaKey];
 }
 
-- (void)setOutOfProcessMediaEnabled:(BOOL)flag
+- (void)setUseGPUProcessForMedia:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitOutOfProcessMediaEnabledKey];
+    [self _setBoolValue:flag forKey:WebKitUseGPUProcessForMediaKey];
 }
 
 - (BOOL)viewportFitEnabled

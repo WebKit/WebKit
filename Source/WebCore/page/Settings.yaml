@@ -322,11 +322,11 @@ shouldDisplayTextDescriptions:
   initial: false
   conditional: VIDEO_TRACK
 genericCueAPIEnabled:
-    initial: false
-    conditional: VIDEO_TRACK
-outOfProcessMediaEnabled:
-    initial: false
-    conditional: VIDEO
+  initial: false
+  conditional: VIDEO_TRACK
+useGPUProcessForMedia:
+  initial: false
+  conditional: GPU_PROCESS
 scrollingCoordinatorEnabled:
   initial: false
 scrollingTreeIncludesFrames:
