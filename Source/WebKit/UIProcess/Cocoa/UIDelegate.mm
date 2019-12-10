@@ -865,14 +865,14 @@ void UIDelegate::UIClient::didAttachInspector(WebKit::WebPageProxy&, WebKit::Web
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy& webFrameProxy, WebCore::SecurityOriginData&& securityOriginData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate)
-        return completionHandler(false);
-
     if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler) {
         presentOrientationAccessAlert(m_uiDelegate.m_webView, securityOriginData.host, WTFMove(completionHandler));
         return;
     }
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return completionHandler(false);
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:wrapper(API::FrameInfo::create(webFrameProxy, WTFMove(securityOriginData))) decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL granted) mutable {

@@ -1,5 +1,25 @@
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
+        Gyroscope (DeviceMotion related) permission cannot be requested in WKWebView unless the client app sets a WKUIDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=203287
+
+        Reviewed by Alex Christensen.
+
+        Device orientation / motion events permission dialog would not be shown unless the client app
+        set a WKUIDelegate on the WKWebView, even though we do not need this WKUIDelegate to show the
+        prompt.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _deviceOrientationUserPermissionHandler]):
+        (-[WKWebView _setDeviceOrientationUserPermissionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/Cocoa/WKOrientationAccessAlert.mm:
+        (WebKit::presentOrientationAccessAlert):
+
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop bad assertion in PreconnectTask::willSendRedirectedRequest()
 
         PreconnectTask::willSendRedirectedRequest() may get called in case of HSTS redirect,

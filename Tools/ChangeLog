@@ -1,3 +1,16 @@
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Gyroscope (DeviceMotion related) permission cannot be requested in WKWebView unless the client app sets a WKUIDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=203287
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        (runDeviceOrientationTest):
+        (TEST):
+
 2019-12-10  youenn fablet  <youenn@apple.com>
 
         Mark some WPT test folders as DumpJSConsoleLogInStdErr

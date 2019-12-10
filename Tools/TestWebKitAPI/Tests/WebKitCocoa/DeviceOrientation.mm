@@ -82,7 +82,7 @@ Function<bool()> _decisionHandler;
 
 @end
 
-enum class DeviceOrientationPermission { Granted, Denied, Default };
+enum class DeviceOrientationPermission { GrantedByClient, DeniedByClient, GrantedByUser, DeniedByUser };
 static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientationPermission)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -94,13 +94,17 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
 
     RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate;
     switch (deviceOrientationPermission) {
-    case DeviceOrientationPermission::Granted:
+    case DeviceOrientationPermission::GrantedByClient:
         uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
         break;
-    case DeviceOrientationPermission::Denied:
+    case DeviceOrientationPermission::DeniedByClient:
         uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return false; }]);
         break;
-    case DeviceOrientationPermission::Default:
+    case DeviceOrientationPermission::GrantedByUser:
+        [webView _setDeviceOrientationUserPermissionHandlerForTesting:^{ return YES; }];
+        break;
+    case DeviceOrientationPermission::DeniedByUser:
+        [webView _setDeviceOrientationUserPermissionHandlerForTesting:^{ return NO; }];
         break;
     }
     [webView setUIDelegate:uiDelegate.get()];
@@ -116,11 +120,12 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
     didReceiveMessage = false;
 
     switch (deviceOrientationPermission) {
-    case DeviceOrientationPermission::Granted:
+    case DeviceOrientationPermission::GrantedByClient:
+    case DeviceOrientationPermission::GrantedByUser:
         EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
         break;
-    case DeviceOrientationPermission::Denied:
-    case DeviceOrientationPermission::Default:
+    case DeviceOrientationPermission::DeniedByClient:
+    case DeviceOrientationPermission::DeniedByUser:
         EXPECT_WK_STREQ(@"denied", receivedMessages.get()[0]);
         break;
     }
@@ -135,7 +140,7 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
 
     [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
 
-    if (deviceOrientationPermission == DeviceOrientationPermission::Granted) {
+    if (deviceOrientationPermission == DeviceOrientationPermission::GrantedByClient || deviceOrientationPermission == DeviceOrientationPermission::GrantedByUser) {
         TestWebKitAPI::Util::run(&didReceiveMessage);
         EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
     } else {
@@ -145,19 +150,24 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
     didReceiveMessage = false;
 }
 
-TEST(DeviceOrientation, PermissionDeniedByDefault)
+TEST(DeviceOrientation, PermissionGrantedByUser)
 {
-    runDeviceOrientationTest(DeviceOrientationPermission::Default);
+    runDeviceOrientationTest(DeviceOrientationPermission::GrantedByUser);
 }
 
-TEST(DeviceOrientation, PermissionGranted)
+TEST(DeviceOrientation, PermissionDeniedByUser)
 {
-    runDeviceOrientationTest(DeviceOrientationPermission::Granted);
+    runDeviceOrientationTest(DeviceOrientationPermission::DeniedByUser);
 }
 
-TEST(DeviceOrientation, PermissionDenied)
+TEST(DeviceOrientation, PermissionGrantedByClient)
 {
-    runDeviceOrientationTest(DeviceOrientationPermission::Denied);
+    runDeviceOrientationTest(DeviceOrientationPermission::GrantedByClient);
+}
+
+TEST(DeviceOrientation, PermissionDeniedByClient)
+{
+    runDeviceOrientationTest(DeviceOrientationPermission::DeniedByClient);
 }
 
 TEST(DeviceOrientation, RememberPermissionForSession)

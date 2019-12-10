@@ -6973,6 +6973,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     }];
 }
 
+- (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)())handler
+{
+    Function<bool()> handlerWrapper;
+    if (handler)
+        handlerWrapper = [handler = makeBlockPtr(handler)] { return handler(); };
+    _page->setDeviceOrientationUserPermissionHandlerForTesting(WTFMove(handlerWrapper));
+}
+
 - (void)_accessibilityStoreSelection
 {
     [_contentView _accessibilityStoreSelection];
