@@ -79,7 +79,6 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     , m_database(database)
     , m_info(info)
     , m_pendingOperationTimer(*this, &IDBTransaction::pendingOperationTimerFired)
-    , m_completedOperationTimer(*this, &IDBTransaction::completedOperationTimerFired)
     , m_openDBRequest(request)
     , m_currentlyCompletingRequest(request)
 
@@ -447,30 +446,18 @@ void IDBTransaction::operationCompletedOnServer(const IDBResultData& data, IDBCl
     m_completedOnServerQueue.append({ &operation, data });
 
     if (!m_currentlyCompletingRequest)
-        scheduleCompletedOperationTimer();
+        handleOperationsCompletedOnServer();
 }
 
-void IDBTransaction::scheduleCompletedOperationTimer()
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    if (!m_completedOperationTimer.isActive())
-        m_completedOperationTimer.startOneShot(0_s);
-}
-
-void IDBTransaction::completedOperationTimerFired()
+void IDBTransaction::handleOperationsCompletedOnServer()
 {
     LOG(IndexedDB, "IDBTransaction::completedOperationTimerFired (%p)", this);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    if (m_completedOnServerQueue.isEmpty() || m_currentlyCompletingRequest)
-        return;
-
-    auto iterator = m_completedOnServerQueue.takeFirst();
-    iterator.first->doComplete(iterator.second);
-
-    if (!m_completedOnServerQueue.isEmpty() && !m_currentlyCompletingRequest)
-        scheduleCompletedOperationTimer();
+    while (!m_completedOnServerQueue.isEmpty() && !m_currentlyCompletingRequest) {
+        auto iterator = m_completedOnServerQueue.takeFirst();
+        iterator.first->doComplete(iterator.second);
+    }
 }
 
 void IDBTransaction::completeNoncursorRequest(IDBRequest& request, const IDBResultData& result)
@@ -499,7 +486,7 @@ void IDBTransaction::finishedDispatchEventForRequest(IDBRequest& request)
     ASSERT_UNUSED(request, !m_currentlyCompletingRequest || m_currentlyCompletingRequest == &request);
 
     m_currentlyCompletingRequest = nullptr;
-    scheduleCompletedOperationTimer();
+    handleOperationsCompletedOnServer();
 }
 
 void IDBTransaction::commit()
