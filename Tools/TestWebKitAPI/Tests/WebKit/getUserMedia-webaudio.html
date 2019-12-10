@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+async function capture()
+{
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 2);
+
+        var audioContext = new webkitAudioContext();
+        var analyzer = audioContext.createAnalyser();
+        analyzer.fftSize = 256;
+        let source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyzer);
+        analyzer.connect(audioContext.destination);
+
+        for (let cptr = 0; cptr < 1000; cptr++) {
+          internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], (cptr % 2) ? 1 : 2);
+          await new Promise(resolve => setTimeout(resolve, 20));
+        }
+
+        source.disconnect(analyzer);
+        analyzer.disconnect(audioContext.destination);
+
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+    } catch (e) {
+        window.webkit.messageHandlers.gum.postMessage("FAIL: " + e);
+    }
+}
+        </script>
+    <head>
+
+    <body onload="capture()">
+    </body>
+</html>

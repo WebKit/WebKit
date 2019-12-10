@@ -50,6 +50,38 @@
                 navigator.mediaDevices.getUserMedia({audio: true});
                 navigator.mediaDevices.getUserMedia({audio: true, video: true});
             }
+
+            function captureAudio()
+            {
+                navigator.mediaDevices.getUserMedia({audio: true}).then(s => stream = s);
+            }
+
+            function captureAudioAndVideo()
+            {
+                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => stream = s);
+            }
+
+            function notifyEndedEvent()
+            {
+                if (!stream || !stream.getVideoTracks().length) {
+                    window.webkit.messageHandlers.gum.postMessage("No stream or video track");
+                    return;
+                }
+                
+                let waitForEndedEvent = true;
+                stream.getVideoTracks()[0].onended = () => {
+                    if (!waitForEndedEvent)
+                        return;
+                    waitForEndedEvent = false;
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                }
+                setTimeout(() => {
+                    if (!waitForEndedEvent)
+                       return;
+                    waitForEndedEvent = false;
+                    window.webkit.messageHandlers.gum.postMessage("Did not receive an ended event after 5 seconds");
+                }, 5000);
+            }
         </script>
     <head>
 
