@@ -715,10 +715,6 @@ void LineBuilder::TrimmableContent::append(size_t runIndex)
         ASSERT(trimmableRun.hasTrailingLetterSpacing());
         trimmableWidth = trimmableRun.trailingLetterSpacing();
     }
-    // word-spacing could very well be negative, but it does not mean that the line gains that much extra space when the content is trimmed.
-    trimmableWidth = std::max<InlineLayoutUnit>(0, trimmableWidth);
-
-    ASSERT(trimmableWidth >= 0);
     m_width += trimmableWidth;
     m_lastRunIsFullyTrimmable = isFullyTrimmable;
     m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);

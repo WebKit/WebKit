@@ -1,3 +1,17 @@
+2019-12-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix fast/text/basic/005.html
+        https://bugs.webkit.org/show_bug.cgi?id=205047
+        <rdar://problem/57780017>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the code that triggers the assert on negative word-spacing.
+        Trimming is safe with negative values (and any negative trimmed width special handing should be in LineBreaker).
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::TrimmableContent::append):
+
 2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put JSArray in IsoSubspace
