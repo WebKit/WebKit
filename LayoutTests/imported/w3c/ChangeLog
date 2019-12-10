@@ -1,3 +1,16 @@
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html from usptream
+        https://bugs.webkit.org/show_bug.cgi?id=205070
+
+        Reviewed by Alex Christensen.
+
+        Re-sync imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html from usptream
+        ab28e18f067f17a76d9c32.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+
 2019-12-10  youenn fablet  <youenn@apple.com>
 
         Mark some WPT test folders as DumpJSConsoleLogInStdErr

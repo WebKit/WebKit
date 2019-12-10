@@ -1,10 +1,28 @@
+CONSOLE MESSAGE: line 302: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 287: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 302: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 287: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame being accessed set "document.domain" to "localhost", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: line 302: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame being accessed set "document.domain" to "localhost", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: line 287: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 302: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Unable to post message to http://does-not.exist. Recipient has origin http://127.0.0.1:8800.
 
-PASS Basic sanity-checking (cross-origin) 
-PASS Basic sanity-checking (same-origin + document.domain) 
-PASS Basic sanity-checking (cross-site) 
+
+FAIL Basic sanity-checking (cross-origin) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
+    [native code]
+}"
+FAIL Basic sanity-checking (same-origin + document.domain) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
+    [native code]
+}"
+FAIL Basic sanity-checking (cross-site) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
+    [native code]
+}"
 FAIL Only whitelisted properties are accessible cross-origin (cross-origin) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
 FAIL Only whitelisted properties are accessible cross-origin (same-origin + document.domain) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
 FAIL Only whitelisted properties are accessible cross-origin (cross-site) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
+FAIL Only whitelisted properties are usable as cross-origin this objects (cross-origin) promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Only whitelisted properties are usable as cross-origin this objects (same-origin + document.domain) assert_throws: Should throw when calling window.createImageBitmap with cross-origin this object function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Only whitelisted properties are usable as cross-origin this objects (cross-site) assert_throws: Should throw when calling window.createImageBitmap with cross-origin this object function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
 PASS [[GetPrototypeOf]] should return null (cross-origin) 
 PASS [[GetPrototypeOf]] should return null (same-origin + document.domain) 
 PASS [[GetPrototypeOf]] should return null (cross-site) 
@@ -98,22 +116,16 @@ PASS Same-origin observers get different accessors for cross-origin Location (cr
 PASS {}.toString.call() does the right thing on cross-origin objects (cross-origin) 
 PASS {}.toString.call() does the right thing on cross-origin objects (same-origin + document.domain) 
 PASS {}.toString.call() does the right thing on cross-origin objects (cross-site) 
-PASS Cross-origin behavior of Window and Location 
-PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (cross-origin). 
-PASS Cross-origin behavior of Window and Location 1 
-PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (same-origin + document.domain). 
-PASS Cross-origin behavior of Window and Location 2 
-PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (cross-site). 
-PASS Cross-origin behavior of Window and Location 3 
-PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (cross-origin). 
-PASS Cross-origin behavior of Window and Location 4 
-PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (same-origin + document.domain). 
-PASS Cross-origin behavior of Window and Location 5 
-PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (cross-site). 
-PASS Cross-origin behavior of Window and Location 6 
-PASS Resolving a promise with a cross-origin location should work (cross-origin). 
-PASS Cross-origin behavior of Window and Location 7 
-PASS Resolving a promise with a cross-origin location should work (same-origin + document.domain). 
-PASS Cross-origin behavior of Window and Location 8 
-PASS Resolving a promise with a cross-origin location should work (cross-site). 
+PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (cross-origin) 
+PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (same-origin + document.domain) 
+PASS Resolving a promise with a cross-origin window without a 'then' subframe should work (cross-site) 
+PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (cross-origin) 
+PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (same-origin + document.domain) 
+PASS Resolving a promise with a cross-origin window with a 'then' subframe should work (cross-site) 
+PASS Resolving a promise with a cross-origin location should work (cross-origin) 
+PASS Resolving a promise with a cross-origin location should work (same-origin + document.domain) 
+PASS Resolving a promise with a cross-origin location should work (cross-site) 
+PASS LenientThis behavior (cross-origin) 
+PASS LenientThis behavior (same-origin + document.domain) 
+PASS LenientThis behavior (cross-site) 
       
