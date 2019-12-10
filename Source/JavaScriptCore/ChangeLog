@@ -1,3 +1,51 @@
+2019-12-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix the x86_64 probe so that we can get a full stack trace with libunwind and lldb.
+        https://bugs.webkit.org/show_bug.cgi?id=205050
+
+        Reviewed by Michael Saboff.
+
+        Before this patch, the stack trace from inside a probe function is cut off at ctiMasmProbeTrampoline:
+
+            (lldb) bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0xbbadbeef)
+                ...
+                frame #4: 0x0000000100824607 JavaScriptCore`WTF::Function<void (JSC::Probe::Context&)>::operator(this=0x000000010b88bd00, in=0x00007ffeefbfd400)(JSC::Probe::Context&) const at Function.h:79:35
+                frame #5: 0x0000000100823996 JavaScriptCore`JSC::stdFunctionCallback(context=0x00007ffeefbfd400) at MacroAssembler.cpp:53:5
+                frame #6: 0x000000010082701e JavaScriptCore`JSC::Probe::executeProbe(state=0x00007ffeefbfd480) at ProbeContext.cpp:51:5
+                frame #7: 0x000000010082614b JavaScriptCore`ctiMasmProbeTrampoline + 299
+            (lldb) 
+
+        After this patch, we'll now get the full stack trace from inside the probe function:
+
+            (lldb) bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0xbbadbeef)
+                ...
+                frame #4: 0x0000000100826d17 JavaScriptCore`WTF::Function<void (JSC::Probe::Context&)>::operator(this=0x0000000106b878f8, in=0x00007ffeefbfd400)(JSC::Probe::Context&) const at Function.h:79:35
+                frame #5: 0x0000000100826106 JavaScriptCore`JSC::stdFunctionCallback(context=0x00007ffeefbfd400) at MacroAssembler.cpp:53:5
+                frame #6: 0x000000010082986e JavaScriptCore`JSC::Probe::executeProbe(state=0x00007ffeefbfd480) at ProbeContext.cpp:51:5
+                frame #7: 0x00000001008289a2 JavaScriptCore`ctiMasmProbeTrampoline + 338
+                frame #8: 0x0000466db28025be
+                frame #9: 0x0000000100754ffc JavaScriptCore`llint_entry at LowLevelInterpreter.asm:994
+                frame #10: 0x0000000100738173 JavaScriptCore`vmEntryToJavaScript at LowLevelInterpreter64.asm:307
+                frame #11: 0x0000000101489307 JavaScriptCore`JSC::JITCode::execute(this=0x0000000106ba1520, vm=0x0000000106d00000, protoCallFrame=0x00007ffeefbfd9b8) at JITCodeInlines.h:38:38
+                frame #12: 0x0000000101488982 JavaScriptCore`JSC::Interpreter::executeProgram(this=0x0000000106bfd1f8, source=0x00007ffeefbff090, (null)=0x000000010d0e0000, thisObj=0x000000010d0e8020) at Interpreter.cpp:847:51
+                frame #13: 0x00000001017d1f9c JavaScriptCore`JSC::evaluate(globalObject=0x000000010d0e0000, source=0x00007ffeefbff090, thisValue=JSValue @ 0x00007ffeefbfef60, returnedException=0x00007ffeefbff0b0) at Completion.cpp:146:38
+                frame #14: 0x000000010005838f jsc`runWithOptions(globalObject=0x000000010d0e0000, options=0x00007ffeefbff620, success=0x00007ffeefbff48b) at jsc.cpp:2670:35
+                frame #15: 0x000000010002a0da jsc`jscmain(this=0x00007ffeefbff5a0, vm=0x0000000106d00000, globalObject=0x000000010d0e0000, success=0x00007ffeefbff48b)::$_6::operator()(JSC::VM&, GlobalObject*, bool&) const at jsc.cpp:3157:13
+                frame #16: 0x0000000100006eff jsc`int runJSC<jscmain(int, char**)::$_6>(options=0x00007ffeefbff620, isWorker=false, func=0x00007ffeefbff5a0)::$_6 const&) at jsc.cpp:3003:9
+                frame #17: 0x0000000100005988 jsc`jscmain(argc=10, argv=0x00007ffeefbff6c8) at jsc.cpp:3150:18
+                frame #18: 0x000000010000575e jsc`main(argc=10, argv=0x00007ffeefbff6c8) at jsc.cpp:2498:15
+                frame #19: 0x00007fff6cfc4da9 libdyld.dylib`start + 1
+                frame #20: 0x00007fff6cfc4da9 libdyld.dylib`start + 1
+            (lldb)
+
+        The difference is that the x86_64 ctiMasmProbeTrampoline now uses the standard
+        function prologue, and keeps %rbp pointing to trampoline function's semblance of
+        a frame that libunwind can understand while it calls the probe function.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+
 2019-12-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put CustomGetterSetter and DOMAttributeGetterSetter in IsoSubspace
