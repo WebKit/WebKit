@@ -253,7 +253,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         for (let node of this._messageBodyElement.querySelectorAll(".console-saved-variable"))
             node.remove();
 
-        if (this._objectTree)
+        if (this._objectTree instanceof WI.ObjectTreeView)
             this._objectTree.resetPropertyPath();
 
         // FIXME: <https://webkit.org/b/196956> Web Inspector: use weak collections for holding event listeners
