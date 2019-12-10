@@ -62,6 +62,19 @@
         * http/wpt/service-workers/file-upload-worker.js: Added.
         * http/wpt/service-workers/file-upload.html: Added.
 
+2019-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+        compositing/video/video-border-radius-clipping.html is a flaky Image Failure
+        https://bugs.webkit.org/show_bug.cgi?id=204951
+        rdar://problem/57703078
+
+        Unreviewed test gardening. Make the test seek so we have a higher chance
+        of getting a video frame. It's apparently impossible to know when we have
+        a frame for ref testing.
+
+        * compositing/video/video-border-radius-clipping-expected.html:
+        * compositing/video/video-border-radius-clipping.html:
+
 2019-12-09  Truitt Savell  <tsavell@apple.com>
 
         (r252889) webrtc/peerconnection-page-cache.html is crashing on iOS Debug

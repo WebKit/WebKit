@@ -18,32 +18,31 @@
     </style>
     <script src="../../media/media-file.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
+        var requirePixelDump = true;
+        var video;
 
-        function setupTest()
+        function testComplete()
         {
-            var totalCount = document.getElementsByTagName('video').length;
-            var count = totalCount;
-            document.addEventListener("canplaythrough", function () {
-                if (!--count && window.testRunner) {
-                    setTimeout(function() {
-                        testRunner.notifyDone();
-                    }, totalCount * 150);
-                }
-            }, true);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
 
-            document.addEventListener("error", function (event) {
-                console.log("Video " + event.target.getAttribute("name") + " failed to load, error " + event.target.error.code);
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, true);
+        function canplaythrough()
+        {
+            video.currentTime = 1;
+        }
 
-            setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
+        function doTest()
+        {
+            findMediaElement();
+            waitForEvent('canplaythrough', canplaythrough);
+            waitForEvent('seeked', testComplete);
+            video.src = findMediaFile('video', '../../media/content/counting');
         }
         
-        window.addEventListener('load', setupTest, false);
+        window.addEventListener('load', doTest, false);
     </script>
+    <script src="../../media/video-test.js"></script>
 </head>
 <body>
     <video></video>
