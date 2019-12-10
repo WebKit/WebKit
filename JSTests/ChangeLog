@@ -1,3 +1,44 @@
+2019-12-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r253280. rdar://problem/57733405
+
+    [WebAssembly] Fix LLIntGenerator's checkConsistency contract
+    https://bugs.webkit.org/show_bug.cgi?id=204998
+    <rdar://problem/57733405>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * wasm/regress/stack-consistency.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    We check the consistency of the WebAssembly parser's expression stack every time the LLIntGenerator calls
+    push to allocate a new stack value. However, if we call push more than once (e.g. in a loop), the stack
+    is no longer consistent, since those values have not yet been placed in the parser's expression stack, so
+    the generator and parser's stacks are out of sync. Instead, whenever we need to push multiple values, we
+    should first manually call checkConsistency before any pushes, and all pushes after that should be replaced
+    with push(NoConsistencyCheck).
+    
+    * wasm/WasmLLIntGenerator.cpp:
+    (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+    (JSC::Wasm::LLIntGenerator::addArguments):
+    (JSC::Wasm::LLIntGenerator::addLocal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253280 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+            [WebAssembly] Fix LLIntGenerator's checkConsistency contract
+            https://bugs.webkit.org/show_bug.cgi?id=204998
+            <rdar://problem/57733405>
+
+            Reviewed by Mark Lam.
+
+            * wasm/regress/stack-consistency.js: Added.
+
 2019-12-06  Mark Lam  <mark.lam@apple.com>
 
         The compiler thread should not adjust Identifier refCounts.

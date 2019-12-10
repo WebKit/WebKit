@@ -1,3 +1,54 @@
+2019-12-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r253280. rdar://problem/57733405
+
+    [WebAssembly] Fix LLIntGenerator's checkConsistency contract
+    https://bugs.webkit.org/show_bug.cgi?id=204998
+    <rdar://problem/57733405>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * wasm/regress/stack-consistency.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    We check the consistency of the WebAssembly parser's expression stack every time the LLIntGenerator calls
+    push to allocate a new stack value. However, if we call push more than once (e.g. in a loop), the stack
+    is no longer consistent, since those values have not yet been placed in the parser's expression stack, so
+    the generator and parser's stacks are out of sync. Instead, whenever we need to push multiple values, we
+    should first manually call checkConsistency before any pushes, and all pushes after that should be replaced
+    with push(NoConsistencyCheck).
+    
+    * wasm/WasmLLIntGenerator.cpp:
+    (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+    (JSC::Wasm::LLIntGenerator::addArguments):
+    (JSC::Wasm::LLIntGenerator::addLocal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253280 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+            [WebAssembly] Fix LLIntGenerator's checkConsistency contract
+            https://bugs.webkit.org/show_bug.cgi?id=204998
+            <rdar://problem/57733405>
+
+            Reviewed by Mark Lam.
+
+            We check the consistency of the WebAssembly parser's expression stack every time the LLIntGenerator calls
+            push to allocate a new stack value. However, if we call push more than once (e.g. in a loop), the stack
+            is no longer consistent, since those values have not yet been placed in the parser's expression stack, so
+            the generator and parser's stacks are out of sync. Instead, whenever we need to push multiple values, we
+            should first manually call checkConsistency before any pushes, and all pushes after that should be replaced
+            with push(NoConsistencyCheck).
+
+            * wasm/WasmLLIntGenerator.cpp:
+            (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+            (JSC::Wasm::LLIntGenerator::addArguments):
+            (JSC::Wasm::LLIntGenerator::addLocal):
+
 2019-12-07  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Roll out r253201. It was not a progression on any benchmarks, and was 8% slower on JetStream 2 ML.
@@ -624,88 +675,7 @@
         (JSC::Wasm::AirIRGenerator::ControlData::isIf):
         (JSC::Wasm::AirIRGenerator::ControlData::isTopLevel):
         (JSC::Wasm::AirIRGenerator::ControlData::branchTargetArity const):
-        (JSC::Wasm::AirIRGenerator::ControlData::branchTargetType const):
-        (JSC::Wasm::AirIRGenerator::emptyExpression):
-        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
-        (JSC::Wasm::AirIRGenerator::tmpsForSignature):
-        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
-        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
-        (JSC::Wasm::AirIRGenerator::addRefIsNull):
-        (JSC::Wasm::AirIRGenerator::addTableGet):
-        (JSC::Wasm::AirIRGenerator::addTableSet):
-        (JSC::Wasm::AirIRGenerator::addTableGrow):
-        (JSC::Wasm::AirIRGenerator::addTableFill):
-        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
-        (JSC::Wasm::AirIRGenerator::addLoop):
-        (JSC::Wasm::AirIRGenerator::addBlock):
-        (JSC::Wasm::AirIRGenerator::addIf):
-        (JSC::Wasm::AirIRGenerator::addReturn):
-        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
-        (JSC::Wasm::AirIRGenerator::addCall):
-        (JSC::Wasm::AirIRGenerator::addCallIndirect):
-        (JSC::Wasm::AirIRGenerator::unify):
-        (JSC::Wasm::dumpExpressionStack):
-        (JSC::Wasm::AirIRGenerator::dump):
-        (JSC::Wasm::parseAndCompileAir):
-        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
-        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
-        * wasm/WasmAirIRGenerator.h:
-        * wasm/WasmB3IRGenerator.cpp:
-        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
-        (JSC::Wasm::B3IRGenerator::ControlData::isIf):
-        (JSC::Wasm::B3IRGenerator::ControlData::isTopLevel):
-        (JSC::Wasm::B3IRGenerator::ControlData::signature const):
-        (JSC::Wasm::B3IRGenerator::ControlData::hasNonVoidresult const):
-        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetArity const):
-        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetType const):
-        (JSC::Wasm::B3IRGenerator::emptyExpression):
-        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
-        (JSC::Wasm::B3IRGenerator::addRefIsNull):
-        (JSC::Wasm::B3IRGenerator::addTableGet):
-        (JSC::Wasm::B3IRGenerator::addTableSet):
-        (JSC::Wasm::B3IRGenerator::addTableGrow):
-        (JSC::Wasm::B3IRGenerator::addTableFill):
-        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
-        (JSC::Wasm::B3IRGenerator::addLoop):
-        (JSC::Wasm::B3IRGenerator::addBlock):
-        (JSC::Wasm::B3IRGenerator::addIf):
-        (JSC::Wasm::B3IRGenerator::addReturn):
-        (JSC::Wasm::B3IRGenerator::endBlock):
-        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
-        (JSC::Wasm::dumpExpressionStack):
-        (JSC::Wasm::B3IRGenerator::dump):
-        (JSC::Wasm::parseAndCompile):
-        * wasm/WasmB3IRGenerator.h:
-        * wasm/WasmBBQPlan.cpp:
-        (JSC::Wasm::BBQPlan::BBQPlan):
-        (JSC::Wasm::BBQPlan::work):
-        (JSC::Wasm::BBQPlan::compileFunction):
-        (JSC::Wasm::BBQPlan::initializeCallees):
-        (JSC::Wasm::BBQPlan::didReceiveFunctionData):
-        * wasm/WasmBBQPlan.h:
-        * wasm/WasmCodeBlock.cpp:
-        (JSC::Wasm::CodeBlock::create):
-        (JSC::Wasm::CodeBlock::CodeBlock):
-        * wasm/WasmCodeBlock.h:
-        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
-        * wasm/WasmEntryPlan.cpp:
-        (JSC::Wasm::EntryPlan::EntryPlan):
-        (JSC::Wasm::EntryPlan::parseAndValidateModule):
-        (JSC::Wasm::EntryPlan::prepare):
-        (JSC::Wasm::EntryPlan::compileFunctions):
-        (JSC::Wasm::EntryPlan::complete):
-        * wasm/WasmEntryPlan.h:
-        * wasm/WasmFunctionParser.h:
-        (JSC::Wasm::splitStack):
-        (JSC::Wasm::FunctionParser::TypedExpression::TypedExpression):
-        (JSC::Wasm::FunctionParser::TypedExpression::type const):
-        (JSC::Wasm::FunctionParser::TypedExpression::value const):
-        (JSC::Wasm::FunctionParser::TypedExpression::operator ExpressionType const):
-        (JSC::Wasm::FunctionParser::TypedExpression::operator-> const):
-        (JSC::Wasm::FunctionParser::controlStack):
-        (JSC::Wasm::FunctionParser::validationFail const):
-        (JSC::Wasm::FunctionParser<Context>::parse):
-        (JSC::Wasm::FunctionParser<Context>::binaryCase):
+        (JSC::Wasm::AFvvEZ3runPKcE5$_567EEEEONS_16remove_referenceIT_E4typeEOSB_ __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_567EENS_13DumbPtrTraitsIS6_EEED2Ev __ZN3WTF8adoptRefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEEENS_3RefIT_T0_EERSA_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568EC1EOS4_ __ZN3WTF3RefINS_10SharedTaskIFvvEEENS_13DumbPtrTraitsIS3_EEEC1INS_17SharedTaskFunctorIS2_Z3runPKcE5$_568EENS4_ISC_EEEEONS0_IT_T0_EE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEED1Ev __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEEC1ERS6_NS9_8AdoptTagE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEEC2ERS6_NS9_8AdoptTagE __ZNSt3__14moveIRZ3runPKcE5$_568EEONS_16remove_referenceIT_E4typeEOS6_ __ZNSt3__17forwardIRZ3runPKcE5$_568EEOT_RNS_16remove_referenceIS5_E4typeE __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568EC2EOS4_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568ED1Ev __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568ED0Ev __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568E3runEv __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568ED2Ev __ZZ3runPKcENK5$_568clEv __ZN3WTF3RefINS_10SharedTaskIFvvEEENS_13DumbPtrTraitsIS3_EEEC2INS_17SharedTaskFunctorIS2_Z3runPKcE5$_568EENS4_ISC_EEEEONS0_IT_T0_EE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEE7leakRefEv __ZNSt3__18exchangeIPN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568EERDnEET_RSA_OT0_ __ZNSt3__14moveIRPN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_568EEEEONS_16remove_referenceIT_E4typeEOSB_ __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_568EENS_13DumbPtrTraitsIS6_EEED2Ev __ZN3WTF8adoptRefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEEENS_3RefIT_T0_EERSA_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569EC1EOS4_ __ZN3WTF3RefINS_10SharedTaskIFvvEEENS_13DumbPtrTraitsIS3_EEEC1INS_17SharedTaskFunctorIS2_Z3runPKcE5$_569EENS4_ISC_EEEEONS0_IT_T0_EE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEED1Ev __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEEC1ERS6_NS9_8AdoptTagE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEEC2ERS6_NS9_8AdoptTagE __ZNSt3__14moveIRZ3runPKcE5$_569EEONS_16remove_referenceIT_E4typeEOS6_ __ZNSt3__17forwardIRZ3runPKcE5$_569EEOT_RNS_16remove_referenceIS5_E4typeE __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569EC2EOS4_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569ED1Ev __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569ED0Ev __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569E3runEv __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569ED2Ev __ZZ3runPKcENK5$_569clEv __ZN3WTF3RefINS_10SharedTaskIFvvEEENS_13DumbPtrTraitsIS3_EEEC2INS_17SharedTaskFunctorIS2_Z3runPKcE5$_569EENS4_ISC_EEEEONS0_IT_T0_EE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEE7leakRefEv __ZNSt3__18exchangeIPN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569EERDnEET_RSA_OT0_ __ZNSt3__14moveIRPN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_569EEEEONS_16remove_referenceIT_E4typeEOSB_ __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_569EENS_13DumbPtrTraitsIS6_EEED2Ev __ZN3WTF8adoptRefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_570EENS_13DumbPtrTraitsIS6_EEEENS_3RefIT_T0_EERSA_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_570EC1EOS4_ __ZN3WTF3RefINS_10SharedTaskIFvvEEENS_13DumbPtrTraitsIS3_EEEC1INS_17SharedTaskFunctorIS2_Z3runPKcE5$_570EENS4_ISC_EEEEONS0_IT_T0_EE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_570EENS_13DumbPtrTraitsIS6_EEED1Ev __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_570EENS_13DumbPtrTraitsIS6_EEEC1ERS6_NS9_8AdoptTagE __ZN3WTF3RefINS_17SharedTaskFunctorIFvvEZ3runPKcE5$_570EENS_13DumbPtrTraitsIS6_EEEC2ERS6_NS9_8AdoptTagE __ZNSt3__14moveIRZ3runPKcE5$_570EEONS_16remove_referenceIT_E4typeEOS6_ __ZNSt3__17forwardIRZ3runPKcE5$_570EEOT_RNS_16remove_referenceIS5_E4typeE __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_570EC2EOS4_ __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_570ED1Ev __ZN3WTF17SharedTaskFunctorIFvvEZ3runPKcE5$_57unctionParser<Context>::binaryCase):
         (JSC::Wasm::FunctionParser<Context>::unaryCase):
         (JSC::Wasm::FunctionParser<Context>::load):
         (JSC::Wasm::FunctionParser<Context>::store):
