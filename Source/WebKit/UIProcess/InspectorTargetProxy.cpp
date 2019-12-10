@@ -94,7 +94,6 @@ void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 
 void InspectorTargetProxy::didCommitProvisionalTarget()
 {
-    ASSERT(isProvisional());
     m_provisionalPage = nullptr;
 }
 

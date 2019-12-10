@@ -1,3 +1,14 @@
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop debug assertion in InspectorTargetProxy::didCommitProvisionalTarget() that is hitting after r253337
+
+        r253337 causes the ProvisionalPageProxy to get destroyed a little bit early, before didCommitProvisionalTarget()
+        is called. didCommitProvisionalTarget() had an assertion that isProvisional() returns true, which merely checked
+        that the ProvisionalPageProxy is still alive before nulling out its WeakPtr.
+
+        * UIProcess/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::didCommitProvisionalTarget):
+
 2019-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to network extension services in the WebContent sandbox
