@@ -303,6 +303,10 @@
 #include "GraphicsContext3DManager.h"
 #endif
 
+#if PLATFORM(COCOA)
+#import <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -5340,6 +5344,21 @@ Ref<InternalsMapLike> Internals::createInternalsMapLike()
 Ref<InternalsSetLike> Internals::createInternalsSetLike()
 {
     return InternalsSetLike::create();
+}
+
+bool Internals::hasSandboxMachLookupAccessToGlobalName(const String& process, const String& service)
+{
+#if PLATFORM(COCOA)
+    pid_t pid;
+    if (process == "com.apple.WebKit.WebContent")
+        pid = getpid();
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    return !sandbox_check(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), service.utf8().data());
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore

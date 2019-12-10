@@ -823,4 +823,6 @@ enum CompositingPolicy {
     InternalsSetLike createInternalsSetLike();
 
     DOMString highlightPseudoElementColor(DOMString highlightName, Element element);
+
+    boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
 };

@@ -1,3 +1,22 @@
+2019-12-10  Per Arne Vollan  <pvollan@apple.com>
+
+        Make it possible to add regression tests for blocked XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=204967
+
+        Reviewed by Brent Fulgham.
+
+        On macOS and iOS, it should be possible to add regression tests for blocked mach services. Add a method
+        to Internals, which checks whether a given process has access to mach lookup for a given global service
+        name. Currently, the only supported process is the WebContent process since the PIDs of other processes
+        are not readily available in Internals, but support for other processes will be added when needed.
+
+        No new tests, since this patch is in preparation for adding regression tests for sandbox changes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSandboxMachLookupAccessToGlobalName):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-12-10  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: remove timer for completed operation in IDBTransaction
