@@ -191,7 +191,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
     std::unique_ptr<Box> childLayoutBox;
     if (is<RenderText>(childRenderer)) {
         auto& textRenderer = downcast<RenderText>(childRenderer);
-        auto text = applyTextTransform(textRenderer.originalText(), parentRenderer.style());
+        auto text = applyTextTransform(textRenderer.text(), parentRenderer.style());
         // FIXME: Clearly there must be a helper function for this.
         auto textContent = TextContext { text, canUseSimplifiedTextMeasuring(text, parentRenderer.style().fontCascade(), parentRenderer.style().collapseWhiteSpace()) };
         if (parentRenderer.style().display() == DisplayType::Inline)
