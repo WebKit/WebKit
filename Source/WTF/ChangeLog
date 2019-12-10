@@ -1,3 +1,17 @@
+2019-12-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] writeNumberToBufferUnsigned is unsafe for bool type
+        https://bugs.webkit.org/show_bug.cgi?id=204873
+
+        Reviewed by Darin Adler.
+
+        MSVC reports warning for using / operator for bool type.
+        > warning C4804: '/': unsafe use of type 'bool' in operation
+
+        And, 'bool' isn't expected to be serialized as '0' or '1'. 'bool' isn't supported.
+
+        * wtf/text/IntegerToStringConversion.h: Added a static_assert to ensure UnsignedIntegerType isn't bool.
+
 2019-07-13  Darin Adler  <darin@apple.com>
 
         Streamline PODIntervalTree code and remove ValueToString
