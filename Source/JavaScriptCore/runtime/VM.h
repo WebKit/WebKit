@@ -421,7 +421,6 @@ public:
     CompleteSubspace destructibleCellSpace;
     CompleteSubspace destructibleObjectSpace;
     
-    IsoSubspace arraySpace;
     IsoSubspace bigIntSpace;
     IsoSubspace calleeSpace;
     IsoSubspace clonedArgumentsSpace;

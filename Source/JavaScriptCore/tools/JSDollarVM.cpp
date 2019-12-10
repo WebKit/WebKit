@@ -492,16 +492,10 @@ private:
     }
 };
 
-class RuntimeArray final : public JSArray {
+class RuntimeArray : public JSArray {
 public:
-    using Base = JSArray;
+    typedef JSArray Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
-
-    template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.cellSpace;
-    }
 
     static RuntimeArray* create(JSGlobalObject* globalObject, CallFrame* callFrame)
     {
