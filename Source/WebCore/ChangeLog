@@ -1,5 +1,18 @@
 2019-12-10  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Fix fast/text/simple-line-layout-hyphenation-constrains.html
+        https://bugs.webkit.org/show_bug.cgi?id=205048
+        <rdar://problem/57780425>
+
+        Reviewed by Antti Koivisto.
+
+        Remove this hack for now and come up with a more sensible fix later if it breaks some tests.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+
+2019-12-10  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Fix fast/text/basic/005.html
         https://bugs.webkit.org/show_bug.cgi?id=205047
         <rdar://problem/57780017>
