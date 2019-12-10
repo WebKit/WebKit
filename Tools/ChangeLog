@@ -1,3 +1,13 @@
+2019-12-10  youenn fablet  <youenn@apple.com>
+
+        Disable video capture in UIProcess for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=205054
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/TestOptions.h:
+        Some tests are still flaky as noted in bug 205053 and this option is still experimental.
+
 2019-12-09  Jonathan Bedard  <jbedard@apple.com>
 
         test-webkitpy: Remove --<configuration> flags from CI
