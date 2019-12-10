@@ -1,3 +1,28 @@
+2019-12-10  Saam Barati  <sbarati@apple.com>
+
+        methodOfGettingAValueProfileFor should return argument value profiles even when node and operandNode are the same origin
+        https://bugs.webkit.org/show_bug.cgi?id=205083
+
+        Reviewed by Yusuke Suzuki.
+
+        Inside methodOfGettingAValueProfileFor, we only grab profiles when the child
+        node and the parent node were from different code origins. This policy doesn't
+        make sense when the child node is the load of an argument value. In that case,
+        we can always just grab the argument profile.
+        
+        We might want to reconsider this policy in general, since it's common for a
+        node to emit a GetLocal to grab its incoming arguments (this is frequently
+        done in the DFG when reloading locals across basic blocks).
+        
+        This fixes an OSR exit compile loop inside Speedometer 2's React-Redux-TodoMVC
+        benchmark. That benchmark would repeatedly exit inside CompareStrictEq by
+        repeatedly speculating Object. That node would run with 95% incoming Objects,
+        and 5% incoming strings, and because we didn't grab the argument value profile
+        during exit, we never updated the profile with the String type information.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+
 2019-12-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r253321.
