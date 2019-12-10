@@ -1,5 +1,16 @@
 2019-12-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r253167): Elements: class list toggle doesn't stay sticky to the bottom of the sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=205033
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content):
+        Ensure that the main content of the sidebar panel takes up as much space as possible.
+
+2019-12-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: this._objectTree.resetPropertyPath is not a function. (In 'this._objectTree.resetPropertyPath()', 'this._objectTree.resetPropertyPath' is undefined)
         https://bugs.webkit.org/show_bug.cgi?id=205026
 

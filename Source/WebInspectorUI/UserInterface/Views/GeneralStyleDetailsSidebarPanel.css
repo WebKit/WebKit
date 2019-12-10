@@ -24,6 +24,7 @@
  */
 
 .sidebar > .panel.details.css-style > .content {
+    flex-grow: 1;
     position: relative;
 }
 
