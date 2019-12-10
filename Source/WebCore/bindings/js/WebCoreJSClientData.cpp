@@ -28,13 +28,14 @@
 
 #include "DOMGCOutputConstraint.h"
 #include "JSDOMBinding.h"
+#include "runtime_array.h"
+#include "runtime_method.h"
 #include <JavaScriptCore/FastMallocAlignedMemoryAllocator.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #include <JavaScriptCore/MarkingConstraint.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
-#include "runtime_method.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ using namespace JSC;
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(vm)
+    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeArray)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeMethod) // Hash:0xf70c4a85
     , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, vm.destructibleObjectHeapCellType.get(), vm.fastMallocAllocator.get()) // Hash:0x7724c2e4
     , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, vm.cellHeapCellType.get(), vm.fastMallocAllocator.get()) // Hash:0x522d6ec9

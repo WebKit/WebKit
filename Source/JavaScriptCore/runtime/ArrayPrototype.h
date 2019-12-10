@@ -29,7 +29,7 @@ private:
     ArrayPrototype(VM&, Structure*);
 
 public:
-    typedef JSArray Base;
+    using Base = JSArray;
 
     enum class SpeciesWatchpointStatus {
         Uninitialized,
@@ -49,6 +49,7 @@ public:
 protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ArrayPrototype, JSArray);
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject*, CallFrame*);

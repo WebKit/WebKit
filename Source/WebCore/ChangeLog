@@ -1,3 +1,25 @@
+2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put JSArray in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205049
+
+        Reviewed by Mark Lam.
+
+        RuntimeArray is inheriting JSArray. We should have separate IsoSubspace for this.
+
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::JSVMClientData::runtimeArraySpace):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::subspaceForImpl):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create): Deleted.
+        (JSC::RuntimeArray::getLength const): Deleted.
+        (JSC::RuntimeArray::getConcreteArray const): Deleted.
+        (JSC::RuntimeArray::createPrototype): Deleted.
+        (JSC::RuntimeArray::createStructure): Deleted.
+
 2019-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Rename media in the GPU process preference

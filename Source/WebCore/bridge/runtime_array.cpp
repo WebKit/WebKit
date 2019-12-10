@@ -27,6 +27,7 @@
 #include "runtime_array.h"
 
 #include "JSDOMBinding.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/ArrayPrototype.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
@@ -156,6 +157,11 @@ bool RuntimeArray::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
 bool RuntimeArray::deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned)
 {
     return false;
+}
+
+IsoSubspace* RuntimeArray::subspaceForImpl(VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->runtimeArraySpace();
 }
 
 }

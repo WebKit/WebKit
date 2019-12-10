@@ -32,10 +32,16 @@
 
 namespace JSC {
     
-class RuntimeArray : public JSArray {
+class RuntimeArray final : public JSArray {
 public:
-    typedef JSArray Base;
+    using Base = JSArray;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
+
+    template<typename CellType, JSC::SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return subspaceForImpl(vm);
+    }
 
     static RuntimeArray* create(JSGlobalObject* lexicalGlobalObject, Bindings::Array* array)
     {
@@ -85,6 +91,8 @@ protected:
 private:
     RuntimeArray(JSGlobalObject*, Structure*);
     static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+
+    static IsoSubspace* subspaceForImpl(VM&);
 
     BindingsArray* m_array;
 };

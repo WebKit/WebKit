@@ -59,6 +59,7 @@ public:
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
     
+    JSC::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
     JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
     
     JSC::CompleteSubspace& outputConstraintSpace() { return m_outputConstraintSpace; }
@@ -78,6 +79,7 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
     
+    JSC::IsoSubspace m_runtimeArraySpace;
     JSC::IsoSubspace m_runtimeMethodSpace;
     
     JSC::CompleteSubspace m_outputConstraintSpace;
