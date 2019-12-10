@@ -62,7 +62,7 @@ public:
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
 
-    bool hasHyphen() const { return false; } // FIXME: Implement.
+    bool hasHyphen() const { return run().textContext()->needsHyphen(); }
     StringView text() const { return run().textContext()->content(); }
     unsigned localStartOffset() const { return run().textContext()->start(); }
     unsigned localEndOffset() const { return run().textContext()->end(); }

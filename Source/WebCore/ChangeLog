@@ -1,3 +1,13 @@
+2019-12-10  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Output hyphen strings
+        https://bugs.webkit.org/show_bug.cgi?id=205058
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
+        (WebCore::LineLayoutTraversal::DisplayRunPath::hasHyphen const):
+
 2019-12-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/text/simple-line-layout-hyphenation-constrains.html
