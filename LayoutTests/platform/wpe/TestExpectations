@@ -498,6 +498,8 @@ webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/002.html 
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/004.html [ Failure ]
 
+webkit.org/b/169356 imported/w3c/web-platform-tests/cookies/secure/set-from-dom.sub.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

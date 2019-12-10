@@ -1,3 +1,67 @@
+2019-12-09  Patrick Griffis  <pgriffis@igalia.com>
+
+        Import secure cookie tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=204193
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/cookies/resources/cookie-helper.sub.js: Added.
+        (credFetch):
+        (assert_dom_cookie):
+        (assert_cookie):
+        (resetSameSiteCookies):
+        (resetSecureCookies):
+        * web-platform-tests/cookies/resources/drop.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/dropSameSite.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/dropSecure.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/echo-cookie.html: Added.
+        * web-platform-tests/cookies/resources/echo-json.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/helpers.py: Added.
+        (setNoCacheAndCORSHeaders):
+        (makeCookieHeader):
+        (makeCookieHeader.makeAV):
+        (makeDropCookie):
+        (readParameter):
+        (readCookies):
+        * web-platform-tests/cookies/resources/imgIfMatch.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/list.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/postToParent.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/redirectWithCORSHeaders.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/set-cookie.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/set.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/setSameSite.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/setSecure.py: Added.
+        (main):
+        * web-platform-tests/cookies/resources/testharness-helpers.js: Added.
+        (executeNextTest):
+        (executeTestsSerially):
+        * web-platform-tests/cookies/secure/set-from-dom.https.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-dom.https.sub.html: Added.
+        * web-platform-tests/cookies/secure/set-from-dom.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-dom.sub.html: Added.
+        * web-platform-tests/cookies/secure/set-from-http.https.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-http.https.sub.html: Added.
+        * web-platform-tests/cookies/secure/set-from-http.https.sub.html.headers: Added.
+        * web-platform-tests/cookies/secure/set-from-http.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-http.sub.html: Added.
+        * web-platform-tests/cookies/secure/set-from-http.sub.html.headers: Added.
+        * web-platform-tests/cookies/secure/set-from-ws.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-ws.sub.html: Added.
+        * web-platform-tests/cookies/secure/set-from-wss.https.sub-expected.txt: Added.
+        * web-platform-tests/cookies/secure/set-from-wss.https.sub.html: Added.
+
 2019-12-09  youenn fablet  <youenn@apple.com>
 
         NetworkResourceLoader should consume its sandbox extensions when starting a fetch through service worker

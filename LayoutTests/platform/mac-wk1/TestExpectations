@@ -395,6 +395,10 @@ webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 # So we shouldn't bother with this test in WebKit1.
 storage/indexeddb/modern/exceed-open-file-limit.html
 
+# Only fails in WK1
+imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 

@@ -1,0 +1,4 @@
+
+PASS 'secure' cookie present in `document.cookie` 
+PASS 'secure' cookie sent in HTTP request 
+

@@ -3954,6 +3954,8 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscre
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/filter/offscreencanvas.filter.w.html [ Missing ]
 
+webkit.org/b/169356 imported/w3c/web-platform-tests/cookies/secure/set-from-dom.sub.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

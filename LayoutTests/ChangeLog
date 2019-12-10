@@ -1,3 +1,18 @@
+2019-12-09  Patrick Griffis  <pgriffis@igalia.com>
+
+        Import secure cookie tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=204193
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Mark newly imported test as failing.
+        Pending fix for WPE/GTK in webkit.org/b/169356
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies-expected.txt: Added.
+
 2019-12-09  Megan Gardner  <megan_gardner@apple.com>
 
         Fill HighlightRangeGroup and HighlightMap with values from JavaScript
