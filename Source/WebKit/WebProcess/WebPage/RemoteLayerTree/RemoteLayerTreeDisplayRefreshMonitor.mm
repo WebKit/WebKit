@@ -43,12 +43,6 @@ RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor()
         m_drawingArea->willDestroyDisplayRefreshMonitor(this);
 }
 
-void RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
-{
-    if (m_drawingArea)
-        m_drawingArea->setPreferredFramesPerSecond(preferredFramesPerSecond);
-}
-
 bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
 {
     if (!m_drawingArea || !isActive())
