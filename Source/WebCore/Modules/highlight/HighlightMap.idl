@@ -29,5 +29,4 @@
     ImplementationLacksVTable
 ] interface HighlightMap {
     maplike<DOMString, HighlightRangeGroup>;
-    [CEReactions, MayThrowException] setter void (DOMString style, HighlightRangeGroup group);
 };

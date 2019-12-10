@@ -26,15 +26,18 @@
 #include "config.h"
 #include "HighlightRangeGroup.h"
 
+#include "IDLTypes.h"
+#include "JSDOMSetLike.h"
+#include "JSStaticRange.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StaticRange.h"
 #include "StyleProperties.h"
 
 namespace WebCore {
 
-HighlightRangeGroup::HighlightRangeGroup(StaticRange& range)
+HighlightRangeGroup::HighlightRangeGroup(Ref<StaticRange>&& range)
 {
-    addRange(range);
+    m_ranges.append(WTFMove(range));
 }
 
 Ref<HighlightRangeGroup> HighlightRangeGroup::create(StaticRange& range)
@@ -42,30 +45,30 @@ Ref<HighlightRangeGroup> HighlightRangeGroup::create(StaticRange& range)
     return adoptRef(*new HighlightRangeGroup(range));
 }
 
-ExceptionOr<void> HighlightRangeGroup::addRange(StaticRange& range)
+void HighlightRangeGroup::initializeSetLike(DOMSetAdapter& set)
 {
-    UNUSED_PARAM(range);
-
-    return { };
+    for (auto& range : m_ranges)
+        set.add<IDLInterface<StaticRange>>(range);
 }
 
-ExceptionOr<void> HighlightRangeGroup::removeRange(StaticRange& range)
+bool HighlightRangeGroup::removeFromSetLike(const StaticRange& range)
 {
-    UNUSED_PARAM(range);
-    
-    return { };
+    return m_ranges.removeFirstMatching([&range](const Ref<StaticRange>& current) {
+        return current.get() == range;
+    });
 }
 
-HighlightRangeGroup::Iterator::Iterator(HighlightRangeGroup& group)
-    : m_group(group)
+void HighlightRangeGroup::clearFromSetLike()
 {
+    m_ranges.clear();
 }
 
-RefPtr<StaticRange> HighlightRangeGroup::Iterator::next()
+bool HighlightRangeGroup::addToSetLike(StaticRange& range)
 {
-    if (m_index == m_group->ranges.size())
-        return nullptr;
-    return m_group->ranges[m_index++].ptr();
+    if (notFound != m_ranges.findMatching([&range](const Ref<StaticRange>& current) { return current.get() == range; }))
+        return false;
+    m_ranges.append(makeRef(range));
+    return true;
 }
 
 }

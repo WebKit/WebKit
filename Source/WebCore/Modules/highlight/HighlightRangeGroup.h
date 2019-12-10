@@ -32,33 +32,26 @@
 namespace WebCore {
 
 class CSSStyleDeclaration;
+class DOMSetAdapter;
 class StaticRange;
 class PropertySetCSSStyleDeclaration;
 
 class HighlightRangeGroup : public RefCounted<HighlightRangeGroup> {
 public:
     static Ref<HighlightRangeGroup> create(StaticRange&);
-
-    ExceptionOr<void> addRange(StaticRange&);
-    ExceptionOr<void> removeRange(StaticRange&);
     
-    Vector<Ref<StaticRange>> ranges;
-
-    WEBCORE_EXPORT CSSStyleDeclaration& style();
+    void clearFromSetLike();
+    bool addToSetLike(StaticRange&);
+    bool removeFromSetLike(const StaticRange&);
+    void initializeSetLike(DOMSetAdapter&);
     
-    class Iterator {
-    public:
-        explicit Iterator(HighlightRangeGroup&);
-        RefPtr<StaticRange> next();
-        
-    private:
-        Ref<HighlightRangeGroup> m_group;
-        size_t m_index { 0 }; // FIXME: There needs to be a mechanism to handle when ranges are added or removed from the middle of the HighlightRangeGroup.
-    };
-    Iterator createIterator() { return Iterator(*this); }
+    const Vector<Ref<StaticRange>>& ranges() const { return m_ranges; }
+
+    // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();
     
 private:
-    HighlightRangeGroup(StaticRange&);
+    Vector<Ref<StaticRange>> m_ranges; // TODO: use a HashSet instead of a Vector <rdar://problem/57760614>
+    explicit HighlightRangeGroup(Ref<StaticRange>&&);
 };
 
 }

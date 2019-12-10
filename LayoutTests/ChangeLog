@@ -1,3 +1,13 @@
+2019-12-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Fill HighlightRangeGroup and HighlightMap with values from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=204934
+
+        Reviewed by Simon Fraser.
+
+        * highlight/highlight-map-and-group-expected.txt: Added.
+        * highlight/highlight-map-and-group.html: Added.
+
 2019-12-09  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253299.

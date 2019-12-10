@@ -39,17 +39,12 @@ class HighlightMap : public RefCounted<HighlightMap> {
 public:
     static Ref<HighlightMap> create() { return adoptRef(*new HighlightMap); }
 
-    void addHighlightGroup(String&, HighlightRangeGroup&);
     void initializeMapLike(DOMMapAdapter&);
-
-    // Bindings support.
-    String namedItem(const AtomString& name) const;
-    ExceptionOr<void> setNamedItem(const String& name, const HighlightRangeGroup& value);
-    bool deleteNamedProperty(const String& name);
-    
     void setFromMapLike(String&&, Ref<HighlightRangeGroup>&&);
-    void clear() { };
-    bool remove(const String& value);
+    void clear();
+    bool remove(const String&);
+    
+    RefPtr<HighlightRangeGroup> getGroupForKey(const String& key);
     
 private:
     HighlightMap() = default;

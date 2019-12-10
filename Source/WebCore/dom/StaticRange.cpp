@@ -81,4 +81,9 @@ bool StaticRange::collapsed() const
     return m_startOffset == m_endOffset && m_startContainer.ptr() == m_endContainer.ptr();
 }
 
+bool StaticRange::operator==(const StaticRange& other) const
+{
+    return (m_startOffset == other.startOffset() && m_endOffset == other.endOffset() && m_startContainer->isEqualNode(other.startContainer()) && m_endContainer->isEqualNode(other.endContainer()));
+}
+
 }

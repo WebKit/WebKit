@@ -26,52 +26,36 @@
 #include "config.h"
 #include "HighlightMap.h"
 
+#include "IDLTypes.h"
 #include "JSDOMMapLike.h"
 #include "JSHighlightRangeGroup.h"
 
 namespace WebCore {
-
-void HighlightMap::addHighlightGroup(String& cssStyle, HighlightRangeGroup &group)
-{
-    UNUSED_PARAM(cssStyle);
-    UNUSED_PARAM(group);
-}
-
+    
 void HighlightMap::initializeMapLike(DOMMapAdapter& map)
 {
     for (auto& keyValue : m_map)
         map.set<IDLDOMString, IDLInterface<HighlightRangeGroup>>(keyValue.key, keyValue.value);
 }
 
-void HighlightMap::setFromMapLike(String&&, Ref<HighlightRangeGroup>&&)
+void HighlightMap::setFromMapLike(String&& key, Ref<HighlightRangeGroup>&& value)
 {
+    m_map.set(WTFMove(key), WTFMove(value));
 }
 
-bool HighlightMap::remove(const String& value)
+void HighlightMap::clear()
 {
-    UNUSED_PARAM(value);
-    return false;
+    m_map.clear();
 }
 
-String HighlightMap::namedItem(const AtomString& name) const
+bool HighlightMap::remove(const String& key)
 {
-    UNUSED_PARAM(name);
-    
-    return String { };
+    return m_map.remove(key);
 }
 
-ExceptionOr<void> HighlightMap::setNamedItem(const String& name, const HighlightRangeGroup& value)
+RefPtr<HighlightRangeGroup> HighlightMap::getGroupForKey(const String& key)
 {
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(value);
-    
-    return { };
-}
-
-bool HighlightMap::deleteNamedProperty(const String& name)
-{
-    UNUSED_PARAM(name);
-    return false;
+    return m_map.get(key);
 }
 
 }

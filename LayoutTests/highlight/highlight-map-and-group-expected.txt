@@ -1,0 +1,13 @@
+PASS highlightRangeGroup1.size is 1
+PASS highlightRangeGroup2.size is 2
+PASS highlightRangeGroup3.size is 3
+PASS CSS.highlights.size is 3
+PASS CSS.highlights.has("example-highlight1") is true
+PASS CSS.highlights.has("example-highlight2") is true
+PASS CSS.highlights.has("example-highlight3") is true
+PASS CSS.highlights.get("example-highlight1").entries().next().value[0].startOffset is 1
+PASS CSS.highlights.get("example-highlight1").entries().next().value[0].endOffset is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+One two three...

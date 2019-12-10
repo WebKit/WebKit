@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:HighlightAPIEnabled=true ] -->
+<html>
+<script src="../resources/js-test.js"></script>
+<head>
+    <style>
+    :root::highlight(example-highlight1) {
+        background-color: yellow;
+        color:blue;
+    }
+    :root::highlight(example-highlight2) {
+        background-color: yellow;
+        color:blue;
+    }
+    :root::highlight(example-highlight3) {
+        background-color: yellow;
+        color:blue;
+    }
+    </style>
+</head>
+    <body><span>One </span><span>two </span><span>three...</span>
+
+    <script>
+        let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}));
+
+        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 2, endContainer: document.body, endOffset: 3}));
+        highlightRangeGroup2.add(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 5}));
+
+        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: document.body, startOffset: 4, endContainer: document.body, endOffset: 8}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: document.body, startOffset: 10, endContainer: document.body, endOffset: 12}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: document.body, startOffset: 5, endContainer: document.body, endOffset: 6}));
+        
+
+        CSS.highlights.set("example-highlight1", highlightRangeGroup1);
+        CSS.highlights.set("example-highlight2", highlightRangeGroup2);
+        CSS.highlights.set("example-highlight3", highlightRangeGroup3);
+
+        shouldBe("highlightRangeGroup1.size","1");
+        shouldBe("highlightRangeGroup2.size","2");
+        shouldBe("highlightRangeGroup3.size","3");
+
+        shouldBe("CSS.highlights.size","3");
+
+        shouldBeTrue("CSS.highlights.has(\"example-highlight1\")");
+        shouldBeTrue("CSS.highlights.has(\"example-highlight2\")");
+        shouldBeTrue("CSS.highlights.has(\"example-highlight3\")");
+
+        shouldBe("CSS.highlights.get(\"example-highlight1\").entries().next().value[0].startOffset","1");
+        shouldBe("CSS.highlights.get(\"example-highlight1\").entries().next().value[0].endOffset","2");
+
+        
+    </script>
+
+    </body>
+</html>
