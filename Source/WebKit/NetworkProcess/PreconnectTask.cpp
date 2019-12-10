@@ -64,7 +64,7 @@ PreconnectTask::~PreconnectTask()
 
 void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
-    ASSERT_NOT_REACHED();
+    // HSTS redirection may happen here.
 }
 
 void PreconnectTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
