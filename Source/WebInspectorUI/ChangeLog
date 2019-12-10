@@ -1,5 +1,18 @@
 2019-12-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: Styles: there is a double border between the last rule and the class list area or filter area
+        https://bugs.webkit.org/show_bug.cgi?id=205040
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style.style-rules > .content ~ :matches(.options-container, .class-list-container)): Added.
+        (.sidebar > .panel.details.css-style > .content ~ .options-container):
+        Use a CSS transform to move the class list area and filter area up when the Styles panel is
+        selected in the details sidebar of the Elements Tab.
+
+2019-12-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r253167): Elements: class list toggle doesn't stay sticky to the bottom of the sidebar
         https://bugs.webkit.org/show_bug.cgi?id=205033
 

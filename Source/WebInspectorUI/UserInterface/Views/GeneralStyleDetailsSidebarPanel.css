@@ -64,9 +64,14 @@
     border-top: 1px solid var(--border-color);
 }
 
+.sidebar > .panel.details.css-style.style-rules > .content ~ :matches(.options-container, .class-list-container) {
+    /* Cover the border-bottom of the last CSS rule. */
+    transform: translateY(-1px);
+}
+
 .sidebar > .panel.details.css-style > .content ~ .options-container {
-    height: calc(var(--console-prompt-min-height) - 1px);
-    padding-top: 1px;
+    height: var(--navigation-bar-height);
+    padding-top: 2px;
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container) {
