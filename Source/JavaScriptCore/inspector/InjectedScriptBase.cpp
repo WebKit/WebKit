@@ -37,7 +37,6 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSNativeStdFunction.h"
-#include "NativeStdFunctionCell.h"
 #include "ScriptFunctionCall.h"
 #include <wtf/JSONValues.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -132,7 +131,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     if (!result) {
         // Since `callback` is moved above, we can't call it if there's an exception while trying to
         // execute the `JSNativeStdFunction` inside InjectedScriptSource.js.
-        jsFunction->nativeStdFunctionCell()->function()(globalObject, nullptr);
+        jsFunction->function()(globalObject, nullptr);
     }
 }
 

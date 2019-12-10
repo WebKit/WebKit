@@ -1,3 +1,31 @@
+2019-12-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove NativeStdFunctionCell
+        https://bugs.webkit.org/show_bug.cgi?id=205045
+
+        Reviewed by Sam Weinig.
+
+        NativeStdFunctionCell is introduced because we were not able to make derived classes of JSFunction destructible.
+        But now we can do that by using IsoSubspace. And we already have IsoSubspace for JSNativeStdFunction. So we do
+        not need to have NativeStdFunctionCell cell. This patch removes it. And making JSNativeStdFunction destructible.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeAsyncCall):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::JSNativeStdFunction):
+        (JSC::JSNativeStdFunction::visitChildren):
+        (JSC::JSNativeStdFunction::finishCreation):
+        (JSC::runStdFunction):
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSNativeStdFunction.h:
+        * runtime/NativeStdFunctionCell.cpp: Removed.
+        * runtime/NativeStdFunctionCell.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-12-09  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Remove WasmValidate

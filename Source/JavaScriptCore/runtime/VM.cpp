@@ -99,6 +99,7 @@
 #include "JSMapIterator.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
+#include "JSNativeStdFunction.h"
 #include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScriptFetchParameters.h"
@@ -128,7 +129,6 @@
 #include "ModuleProgramExecutable.h"
 #include "NativeErrorConstructor.h"
 #include "NativeExecutable.h"
-#include "NativeStdFunctionCell.h"
 #include "Nodes.h"
 #include "NumberObject.h"
 #include "ObjCCallbackFunction.h"
@@ -296,6 +296,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
     , jsModuleRecordHeapCellType(makeUnique<IsoHeapCellType<JSModuleRecord>>())
     , moduleNamespaceObjectHeapCellType(makeUnique<IsoHeapCellType<JSModuleNamespaceObject>>())
+    , nativeStdFunctionHeapCellType(makeUnique<IsoHeapCellType<JSNativeStdFunction>>())
     , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
     , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
@@ -445,7 +446,6 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
-    nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));
     programCodeBlockStructure.set(*this, ProgramCodeBlock::createStructure(*this, 0, jsNull()));
     moduleProgramCodeBlockStructure.set(*this, ModuleProgramCodeBlock::createStructure(*this, 0, jsNull()));
     evalCodeBlockStructure.set(*this, EvalCodeBlock::createStructure(*this, 0, jsNull()));
@@ -1377,7 +1377,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int16ArraySpace, cellHeapCellType.get(),
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int32ArraySpace, cellHeapCellType.get(), JSInt32Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapSpace, cellHeapCellType.get(), JSMap)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType.get(), JSModuleNamespaceObject)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, cellHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, nativeStdFunctionHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get(), ProxyObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)

@@ -132,6 +132,7 @@ class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSModuleNamespaceObject;
 class JSModuleRecord;
+class JSNativeStdFunction;
 class JSObject;
 class JSPromise;
 class JSPropertyNameEnumerator;
@@ -362,6 +363,7 @@ public:
     std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSModuleRecord>> jsModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSModuleNamespaceObject>> moduleNamespaceObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSNativeStdFunction>> nativeStdFunctionHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
@@ -633,7 +635,6 @@ public:
     Strong<Structure> propertyTableStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
-    Strong<Structure> nativeStdFunctionCellStructure;
     Strong<Structure> programCodeBlockStructure;
     Strong<Structure> moduleProgramCodeBlockStructure;
     Strong<Structure> evalCodeBlockStructure;

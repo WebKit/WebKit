@@ -895,7 +895,6 @@ runtime/ModuleProgramExecutable.cpp
 runtime/NativeErrorConstructor.cpp
 runtime/NativeErrorPrototype.cpp
 runtime/NativeExecutable.cpp
-runtime/NativeStdFunctionCell.cpp
 runtime/NullGetterFunction.cpp
 runtime/NullSetterFunction.cpp
 runtime/NumberConstructor.cpp
