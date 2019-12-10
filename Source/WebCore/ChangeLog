@@ -1,3 +1,30 @@
+2019-12-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Add support of Unicode surrogate pair for simple texts
+        https://bugs.webkit.org/show_bug.cgi?id=205003
+
+        Reviewed by Don Olmstead.
+
+        FontCache::systemFallbackForCharacters of Windows port was working
+        only for BMP because it's using GetFontUnicodeRanges API which
+        supports only BMP. Use GetCharacterPlacement API to get glyphs for
+        non-BMP.
+
+        GlyphPage::fill of WinCairo port was working only for BMP because
+        it's using GetGlyphIndices API which supports only BMP. Use
+        GetCharacterPlacement API to get glyphs for non-BMP.
+
+        This change can be tested by pixel tests, but WinCairo port
+        doesn't include -expected.png files yet. Tested manually.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::currentFontContainsCharacterNonBMP): Added.
+        (WebCore::currentFontContainsCharacter): Changed to take a string
+        instead of a 16bit character.
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill): Use GetCharacterPlacement for non-BMP.
+
 2019-12-09  Megan Gardner  <megan_gardner@apple.com>
 
         Fill HighlightRangeGroup and HighlightMap with values from JavaScript

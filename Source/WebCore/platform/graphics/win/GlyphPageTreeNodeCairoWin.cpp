@@ -37,10 +37,7 @@ namespace WebCore {
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
-    // bufferLength will be greater than the requested number of glyphs if the buffer contains surrogate pairs.
-    // We won't support this for now.
-    if (bufferLength > GlyphPage::size)
-        return false;
+    ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
 
     const Font& font = this->font();
     bool haveGlyphs = false;
@@ -49,17 +46,45 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     SaveDC(dc);
     SelectObject(dc, font.platformData().hfont());
 
-    WORD localGlyphBuffer[GlyphPage::size * 2];
-    DWORD result = GetGlyphIndices(dc, wcharFrom(buffer), bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
-    bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
-    if (success) {
+    if (bufferLength == GlyphPage::size) {
+        WORD localGlyphBuffer[GlyphPage::size * 2];
+        DWORD result = GetGlyphIndices(dc, wcharFrom(buffer), bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+        bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
+
+        if (success) {
+            for (unsigned i = 0; i < GlyphPage::size; i++) {
+                Glyph glyph = localGlyphBuffer[i];
+                if (glyph == 0xffff)
+                    setGlyphForIndex(i, 0);
+                else {
+                    setGlyphForIndex(i, glyph);
+                    haveGlyphs = true;
+                }
+            }
+        }
+    } else {
+        SCRIPT_CACHE sc = { };
+        SCRIPT_FONTPROPERTIES fp = { };
+        fp.cBytes = sizeof fp;
+        ScriptGetFontProperties(dc, &sc, &fp);
+        ScriptFreeCache(&sc);
+
         for (unsigned i = 0; i < GlyphPage::size; i++) {
-            Glyph glyph = localGlyphBuffer[i];
-            if (glyph == 0xffff)
-                setGlyphForIndex(i, 0);
-            else {
-                setGlyphForIndex(i, glyph);
-                haveGlyphs = true;
+            wchar_t glyphs[2] = { };
+            GCP_RESULTS gcpResults = { };
+            gcpResults.lStructSize = sizeof gcpResults;
+            gcpResults.nGlyphs = 2;
+            gcpResults.lpGlyphs = glyphs;
+            GetCharacterPlacement(dc, wcharFrom(buffer) + i * 2, 2, 0, &gcpResults, GCP_GLYPHSHAPE);
+            bool success = 1 == gcpResults.nGlyphs;
+            if (success) {
+                auto glyph = glyphs[0];
+                if (glyph == fp.wgBlank || glyph == fp.wgInvalid || glyph == fp.wgDefault)
+                    setGlyphForIndex(i, 0);
+                else {
+                    setGlyphForIndex(i, glyph);
+                    haveGlyphs = true;
+                }
             }
         }
     }

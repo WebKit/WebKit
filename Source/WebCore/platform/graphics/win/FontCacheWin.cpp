@@ -183,8 +183,36 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     return codePageMasks;
 }
 
-static bool currentFontContainsCharacter(HDC hdc, UChar character)
+static bool currentFontContainsCharacterNonBMP(HDC hdc, const UChar* str)
 {
+    ASSERT(U_IS_LEAD(str[0]) && U_IS_TRAIL(str[1]));
+
+    SCRIPT_CACHE sc = { };
+    SCRIPT_FONTPROPERTIES fp = { };
+    fp.cBytes = sizeof fp;
+    ScriptGetFontProperties(hdc, &sc, &fp);
+    ScriptFreeCache(&sc);
+
+    wchar_t glyphs[2] = { };
+    GCP_RESULTS gcpResults = { };
+    gcpResults.lStructSize = sizeof gcpResults;
+    gcpResults.nGlyphs = 2;
+    gcpResults.lpGlyphs = glyphs;
+    GetCharacterPlacement(hdc, wcharFrom(str), 2, 0, &gcpResults, GCP_GLYPHSHAPE);
+
+    if (gcpResults.nGlyphs != 1)
+        return false;
+    auto glyph = glyphs[0];
+    return !(glyph == fp.wgBlank || glyph == fp.wgInvalid || glyph == fp.wgDefault);
+}
+
+static bool currentFontContainsCharacter(HDC hdc, const UChar* str, size_t length)
+{
+    ASSERT(length <= 2);
+    if (length == 2)
+        return currentFontContainsCharacterNonBMP(hdc, str);
+    UChar character = str[0];
+
     static Vector<char, 512> glyphsetBuffer;
     glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, 0));
     GLYPHSET* glyphset = reinterpret_cast<GLYPHSET*>(glyphsetBuffer.data());
@@ -213,14 +241,15 @@ static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD co
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
 {
-    UChar character = characters[0];
     RefPtr<Font> fontData;
     HWndDC hdc(0);
     HFONT primaryFont = originalFontData->platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
+    IMLangFontLinkType* langFontLink = getFontLinkInterface();
 
-    if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
+    if (length == 1 && langFontLink) {
+        UChar character = characters[0];
         // Try MLang font linking first.
         DWORD codePages = 0;
         if (SUCCEEDED(langFontLink->GetCharCodePages(character, &codePages))) {
@@ -236,7 +265,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
                         // We asked about a code page that is not one of the code pages
                         // returned by MLang, so the font might not contain the character.
                         SelectObject(hdc, hfont);
-                        if (!currentFontContainsCharacter(hdc, character)) {
+                        if (!currentFontContainsCharacter(hdc, characters, length)) {
                             DeleteObject(hfont);
                             hfont = 0;
                         }
@@ -287,7 +316,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         GetTextFace(hdc, LF_FACESIZE, name);
         familyName = String(name);
 
-        if (containsCharacter || currentFontContainsCharacter(hdc, character))
+        if (containsCharacter || currentFontContainsCharacter(hdc, characters, length))
             break;
 
         if (!linkedFonts)
