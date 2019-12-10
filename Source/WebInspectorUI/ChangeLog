@@ -1,5 +1,23 @@
 2019-12-10  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION(r252523): Web Inspector: Styles: semicolon is wrongly positioned in multiline values
+        https://bugs.webkit.org/show_bug.cgi?id=205034
+        <rdar://problem/57772846>
+
+        Reviewed by Brian Burg.
+
+        Wrap the value node in another `<span class="value-container">` so that the semicolon can be
+        included as part of the `display: inline-block;` when there are multiple lines in the value.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.update):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value-container): Added.
+        (.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value): Deleted.
+
+2019-12-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: there is a double border between the last rule and the class list area or filter area
         https://bugs.webkit.org/show_bug.cgi?id=205040
 
