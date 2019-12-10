@@ -1,5 +1,18 @@
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r253277) ASSERTION FAILED: !parameters.request.httpBody() in NetworkConnectionToWebProcess::preconnectTo()
+        https://bugs.webkit.org/show_bug.cgi?id=205030
+
+        Reviewed by Antti Koivisto.
+
+        Instead of using the full request as preconnect request, create a simple one that contains only the destination URL.
+        This avoids sending a request body unnecessarily over IPC, which was the cause of the assertion.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
         Make preconnectTo()'s completionHandler optional
         https://bugs.webkit.org/show_bug.cgi?id=205011
 
