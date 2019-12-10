@@ -1,3 +1,13 @@
+2019-12-09  Jonathan Bedard  <jbedard@apple.com>
+
+        test-webkitpy: Remove --<configuration> flags from CI
+        https://bugs.webkit.org/show_bug.cgi?id=205016
+
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunPythonTests): Remove --debug/--release flags to test-webkitpy.
+
 2019-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Re-disable TLS1.0 and TLS1.1 by default

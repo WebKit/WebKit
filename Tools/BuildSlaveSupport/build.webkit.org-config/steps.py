@@ -601,7 +601,6 @@ class RunPythonTests(TestWithFailureCount):
         "python",
         "./Tools/Scripts/test-webkitpy",
         "--verbose",
-        WithProperties("--%(configuration)s"),
         "--buildbot-master", BUILD_WEBKIT_URL,
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
