@@ -1,3 +1,23 @@
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Make preconnectTo()'s completionHandler optional
+        https://bugs.webkit.org/show_bug.cgi?id=205011
+
+        Reviewed by Antti Koivisto.
+
+        Make preconnectTo()'s completionHandler optional, so that the network process does not unnecessarily
+        send an IPC back if the client is not interested.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+
 2019-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Rename media in the GPU process preference

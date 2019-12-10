@@ -644,6 +644,7 @@ void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceE
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
+    ASSERT(completionHandler);
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
     if (!webFrameLoaderClient) {
         completionHandler(internalError(url));
@@ -665,9 +666,12 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
-    uint64_t preconnectionIdentifier = generateLoadIdentifier();
-    auto addResult = m_preconnectCompletionHandlers.add(preconnectionIdentifier, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    Optional<uint64_t> preconnectionIdentifier;
+    if (completionHandler) {
+        preconnectionIdentifier = generateLoadIdentifier();
+        auto addResult = m_preconnectCompletionHandlers.add(*preconnectionIdentifier, WTFMove(completionHandler));
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
 
     NetworkResourceLoadParameters parameters;
     parameters.request = WTFMove(request);

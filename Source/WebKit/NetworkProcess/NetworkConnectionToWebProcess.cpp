@@ -505,13 +505,18 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     m_networkProcess->prefetchDNS(hostname);
 }
 
-void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
+void NetworkConnectionToWebProcess::preconnectTo(Optional<uint64_t> preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
 {
     ASSERT(!parameters.request.httpBody());
 
+    auto completionHandler = [this, protectedThis = makeRef(*this), preconnectionIdentifier = WTFMove(preconnectionIdentifier)](const ResourceError& error) {
+        if (preconnectionIdentifier)
+            didFinishPreconnection(*preconnectionIdentifier, error);
+    };
+
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     if (networkProcess().supplement<LegacyCustomProtocolManager>()->supportsScheme(parameters.request.url().protocol().toString())) {
-        didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
+        completionHandler(internalError(parameters.request.url()));
         return;
     }
 #endif
@@ -519,13 +524,13 @@ void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifie
 #if ENABLE(SERVER_PRECONNECT)
     auto* session = networkSession();
     if (session && session->allowsServerPreconnect()) {
-        new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
-            didFinishPreconnection(identifier, error);
+        new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [completionHandler = WTFMove(completionHandler)] (const ResourceError& error) {
+            completionHandler(error);
         });
         return;
     }
 #endif
-    didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
+    completionHandler(internalError(parameters.request.url()));
 }
 
 void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectionIdentifier, const ResourceError& error)

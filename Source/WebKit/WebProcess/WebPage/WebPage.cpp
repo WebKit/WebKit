@@ -1536,7 +1536,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     SendStopResponsivenessTimer stopper;
 
     if (loadParameters.request.url().protocolIsInHTTPFamily() && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(loadParameters.request.url().host()))
-        WebProcess::singleton().webLoaderStrategy().preconnectTo(ResourceRequest { loadParameters.request }, *this, *m_mainFrame, StoredCredentialsPolicy::Use, [](const ResourceError&) { });
+        WebProcess::singleton().webLoaderStrategy().preconnectTo(ResourceRequest { loadParameters.request }, *this, *m_mainFrame, StoredCredentialsPolicy::Use);
 
     m_pendingNavigationID = loadParameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);

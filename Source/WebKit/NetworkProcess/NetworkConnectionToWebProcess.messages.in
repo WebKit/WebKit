@@ -29,7 +29,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     PrefetchDNS(String hostname)
-    PreconnectTo(uint64_t preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
+    PreconnectTo(Optional<uint64_t> preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
 
     StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
     ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
