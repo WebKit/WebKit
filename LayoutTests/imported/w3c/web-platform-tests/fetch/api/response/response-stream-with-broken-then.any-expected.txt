@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object
 
 Harness Error (FAIL), message = undefined is not an object
 

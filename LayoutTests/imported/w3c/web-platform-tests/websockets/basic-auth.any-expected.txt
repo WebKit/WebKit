@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://foo:bar@localhost:49001/basic_auth' failed: Unexpected response code: 401
 
 FAIL HTTP basic authentication should work with WebSockets assert_unreached: open should succeed Reached unreachable code
 

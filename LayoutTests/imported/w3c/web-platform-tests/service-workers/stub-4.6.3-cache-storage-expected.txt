@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 871: Invalid object member name CacheStorageIterationCallback
 
 Harness Error (FAIL), message = Invalid object member name CacheStorageIterationCallback
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 10: Wrong protocol for WebSocket 'foobar, foobar'
 
 PASS WebSockets: Same sub protocol twice 
 

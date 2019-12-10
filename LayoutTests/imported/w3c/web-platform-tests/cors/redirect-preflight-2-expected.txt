@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Request header field custom-header is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?origin=*&ident=fail_1560002681190 due to access control checks.
 Preflight after redirect
 
 

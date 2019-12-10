@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Fetch API cannot load data:notAdataUrl.com.
 
 PASS Fetching data:,response%27s%20body is OK 
 PASS Fetching data:,response%27s%20body is OK (same-origin) 

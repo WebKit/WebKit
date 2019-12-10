@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/304.py?id=7&r=%s1560002646354 due to access control checks.
 CORS - 304 Responses
 
 

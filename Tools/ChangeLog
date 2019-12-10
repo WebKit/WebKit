@@ -1,5 +1,25 @@
 2019-12-10  youenn fablet  <youenn@apple.com>
 
+        Mark some WPT test folders as DumpJSConsoleLogInStdErr
+        https://bugs.webkit.org/show_bug.cgi?id=204793
+
+        Reviewed by Eric Carlson.
+
+        Make DTR and WTR set the default DumpJSConsoleLogInStdErr to true for some WPT sub-folders.
+        This is easier done there instead of TestExpectations as TestExpectations can be overriden in more specific expectations. 
+
+        * DumpRenderTree/TestOptions.cpp:
+        (pathContains):
+        (shouldDumpJSConsoleLogInStdErr):
+        (TestOptions::TestOptions):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::shouldDumpJSConsoleLogInStdErr):
+        (WTR::TestOptions::TestOptions):
+
+2019-12-10  youenn fablet  <youenn@apple.com>
+
         Disable video capture in UIProcess for WebKitTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=205054
 

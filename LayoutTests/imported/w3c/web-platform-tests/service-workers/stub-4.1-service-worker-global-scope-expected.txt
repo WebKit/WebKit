@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 1965: TypeError: undefined is not an object (evaluating 'this.get_interface_object().prototype')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'this.get_interface_object().prototype')
 

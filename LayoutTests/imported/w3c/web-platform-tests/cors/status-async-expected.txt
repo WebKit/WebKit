@@ -1,17 +1,3 @@
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=699&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=501&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=401&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=400&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=404&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=501&headers=x-nonsimple&text=OHAI due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/status.py?code=699&headers=x-nonsimple&text=OHAI due to access control checks.
 Status returned
 
 

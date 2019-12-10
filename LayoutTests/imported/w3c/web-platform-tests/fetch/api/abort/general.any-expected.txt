@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Request signal is aborted
 
 PASS Aborting rejects with AbortError 
 PASS Aborting rejects with AbortError - no-cors 

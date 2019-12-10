@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
 
 PASS Preflight for {"content-type":"text /plain"} 
 PASS Preflight for {"content-type":"text\t/\tplain"} 

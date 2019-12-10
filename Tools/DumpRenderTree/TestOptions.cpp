@@ -27,6 +27,8 @@
 #include "TestOptions.h"
 
 #include <fstream>
+#include <string>
+#include <wtf/text/WTFString.h>
 
 static bool parseBooleanTestHeaderValue(const std::string& value)
 {
@@ -39,11 +41,30 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
     return false;
 }
 
+static bool pathContains(const std::string& pathOrURL, const char* substring)
+{
+    String path(pathOrURL.c_str());
+    return path.contains(substring);
+}
+
+static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "localhost:8800/beacon") || pathContains(pathOrURL, "localhost:9443/beacon")
+        || pathContains(pathOrURL, "localhost:8800/cors") || pathContains(pathOrURL, "localhost:9443/cors")
+        || pathContains(pathOrURL, "localhost:8800/fetch") || pathContains(pathOrURL, "localhost:9443/fetch")
+        || pathContains(pathOrURL, "localhost:8800/service-workers") || pathContains(pathOrURL, "localhost:9443/service-workers")
+        || pathContains(pathOrURL, "localhost:8800/xhr") || pathContains(pathOrURL, "localhost:9443/xhr")
+        || pathContains(pathOrURL, "localhost:8800/webrtc") || pathContains(pathOrURL, "localhost:9443/webrtc")
+        || pathContains(pathOrURL, "localhost:8800/websockets") || pathContains(pathOrURL, "localhost:9443/websockets");
+}
+
 TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolutePath)
 {
     const auto& path = absolutePath.empty() ? pathOrURL : absolutePath;
     if (path.empty())
         return;
+
+    dumpJSConsoleLogInStdErr = shouldDumpJSConsoleLogInStdErr(pathOrURL);
 
     std::string options;
     std::ifstream testFile(path.data());

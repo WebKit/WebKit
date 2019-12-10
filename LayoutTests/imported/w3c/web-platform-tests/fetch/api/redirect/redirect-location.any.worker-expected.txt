@@ -1,13 +1,3 @@
-CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
-CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
 
 PASS Redirect 301 in "follow" mode without location 
 PASS Redirect 301 in "manual" mode without location 

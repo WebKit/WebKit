@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: line 28: Request header field save-data is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: line 28: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=c2ec634e-96af-4eda-848a-b3996ea00efe due to access control checks.
-CONSOLE MESSAGE: line 28: Request header field save-data is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: line 28: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=d58cee1e-327f-43e8-b058-be260560715a due to access control checks.
-CONSOLE MESSAGE: line 28: Request header field save-data is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: line 28: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=f1fce021-81c7-476c-8a2e-c4b05377cb76 due to access control checks.
-CONSOLE MESSAGE: Request header field Accept-Language is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=ff1b3347-8513-473b-862e-b62ea5995368 due to access control checks.
 Simple requests
 
 Simple requests shouldn't trigger preflight

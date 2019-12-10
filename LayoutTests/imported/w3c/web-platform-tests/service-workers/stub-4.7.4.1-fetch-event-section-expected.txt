@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 871: Invalid object member name Context
 
 Harness Error (FAIL), message = Invalid object member name Context
 

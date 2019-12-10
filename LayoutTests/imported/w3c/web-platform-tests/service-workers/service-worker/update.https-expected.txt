@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/update-worker.py?Key=7cca7f1f-2ac8-4721-86d1-d11813406efe&Mode=redirect
-CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/update-worker.py?Key=7cca7f1f-2ac8-4721-86d1-d11813406efe&Mode=redirect due to access control checks.
 
 PASS update() should succeed when new script is available. 
 PASS update() should fail when mime type is invalid. 

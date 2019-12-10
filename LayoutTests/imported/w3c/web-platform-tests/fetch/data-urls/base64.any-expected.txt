@@ -1,38 +1,3 @@
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,%F0%90%80%80.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,==.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,===.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,=====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a==.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a===.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde==.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde===.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde=====.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,=a.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,=a=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=b.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=b=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab=c.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab=c=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abc=d.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abc=d=.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab%C2%A0cd.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,A.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,////A.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,/.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,AAAA/.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,%00nonsense.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcd%00nonsense.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,~~.
-CONSOLE MESSAGE: Fetch API cannot load data:;base64,...
 
 PASS Setup. 
 PASS data: URL base64 handling: "" 

@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: network error to show interception occurred
-CONSOLE MESSAGE: Cannot load https://localhost:9443/images/green.png.
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: network error to show interception occurred
-CONSOLE MESSAGE: Cannot load https://localhost:9443/images/green.png.
 
 PASS initialize global state 
 FAIL requests for EMBED elements of embedded HTML content should not be intercepted by service workers assert_equals: expected "request for embedded content was not intercepted" but got "request for embedded content was intercepted by service worker"
