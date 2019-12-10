@@ -42,6 +42,7 @@
 #include "CommonSlowPaths.h"
 #include "CustomGetterSetter.h"
 #include "DFGWorklist.h"
+#include "DOMAttributeGetterSetter.h"
 #include "DateInstance.h"
 #include "DirectEvalExecutable.h"
 #include "Disassembler.h"
@@ -333,7 +334,9 @@ VM::VM(VMType vmType, HeapType heapType)
     , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
     , calleeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCallee)
     , clonedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ClonedArguments)
+    , customGetterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), CustomGetterSetter)
     , dateInstanceSpace ISO_SUBSPACE_INIT(heap, dateInstanceHeapCellType.get(), DateInstance)
+    , domAttributeGetterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), DOMAttributeGetterSetter)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
     , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)

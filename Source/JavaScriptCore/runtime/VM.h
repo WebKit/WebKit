@@ -424,7 +424,9 @@ public:
     IsoSubspace bigIntSpace;
     IsoSubspace calleeSpace;
     IsoSubspace clonedArgumentsSpace;
+    IsoSubspace customGetterSetterSpace;
     IsoSubspace dateInstanceSpace;
+    IsoSubspace domAttributeGetterSetterSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace getterSetterSpace;

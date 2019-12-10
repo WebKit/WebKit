@@ -34,11 +34,17 @@ namespace JSC {
 
 class CustomGetterSetter : public JSCell {
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    typedef PropertySlot::GetValueFunc CustomGetter;
-    typedef PutPropertySlot::PutValueFunc CustomSetter;
+    using CustomGetter = PropertySlot::GetValueFunc;
+    using CustomSetter = PutPropertySlot::PutValueFunc;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.customGetterSetterSpace;
+    }
 
     static CustomGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter)
     {
