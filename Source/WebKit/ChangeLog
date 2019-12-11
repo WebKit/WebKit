@@ -1,3 +1,10 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a nit after r253366
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        Improve the naming of the new SPI a bit.
+
 2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make incremental builds faster after modifying DisplayListItems.h
