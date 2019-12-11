@@ -236,13 +236,16 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
             m_uncommittedContent.append(*m_partialTrailingTextItem, breakingContext.partialTrailingContent->logicalWidth);
         }
         commitPendingContent(line);
-    } else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push)
+        // Adjust hyphenated line count.
+        if (breakingContext.partialTrailingContent->needsHyphen)
+            ++m_successiveHyphenatedLineCount;
+    } else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push) {
         m_uncommittedContent.reset();
-    else
+        // Closing the line without any hyphen.
+        m_successiveHyphenatedLineCount = 0;
+    } else
         ASSERT_NOT_REACHED();
-    // Adjust hyphenated line count
-    m_successiveHyphenatedLineCount = breakingContext.partialTrailingContent && breakingContext.partialTrailingContent->needsHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-    return breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep ? IsEndOfLine::No :IsEndOfLine::Yes;
+    return breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep ? IsEndOfLine::No : IsEndOfLine::Yes;
 }
 
 }
